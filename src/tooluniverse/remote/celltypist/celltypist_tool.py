@@ -1,75 +1,192 @@
-"""
-CellTypist automated single-cell type annotation — MCP Server.
+"""CellTypist automated single-cell annotation — MCP server.
 
-CellTypist (Domínguez Conde et al., Science 2022; Xu et al., Bioinformatics
-2023) is a logistic-regression-based tool for automated cell-type annotation of
-single-cell RNA-seq data. It ships a large collection of pre-trained models
-(immune, lung, brain, developmental, pan-tissue, ...) and predicts a cell-type
-label for every cell, with an optional over-clustering "majority-voting"
-refinement that harmonises predictions within transcriptionally similar groups.
-
-This module exposes CellTypist as a ToolUniverse *remote* tool because it
-carries a single-cell dependency stack (`celltypist` -> scikit-learn +
-scanpy/anndata) and downloads model files on first use. Running it on a
-dedicated server keeps the core ToolUniverse install light.
-
-Inputs are referenced by an ``adata_path`` (a server-accessible ``.h5ad``)
-rather than inlined, because single-cell matrices are large. CellTypist expects
-expression that is log1p-normalised to 10,000 counts per cell, so the module
-normalises a copy of the matrix before annotating.
-
-One operation is served:
-  * run_celltypist_annotate -> per-cell predicted labels + cell-type counts
-
-References
-----------
-Domínguez Conde C, Xu C, Jarvis LB, et al. "Cross-tissue immune cell analysis
-reveals tissue-specific features in humans." Science 376, eabl5197 (2022).
-Xu C, Prete M, Webb S, et al. "Automatic cell-type harmonization and
-integration across Human Cell Atlas datasets." Cell 186, 5876-5891 (2023).
+The upstream project distributes pickle-serialized scikit-learn objects.  This
+provider never deserializes those files.  An administrator converts a reviewed,
+digest-pinned upstream model once into a data-only NumPy archive; the live
+service loads that archive with ``allow_pickle=False`` and reconstructs the
+known logistic-regression/scaler factory in code.
 """
 
+from __future__ import annotations
+
+from collections import Counter
+import os
+from pathlib import Path
+import threading
 from typing import Any, Dict
 
 import celltypist
+from celltypist.models import Model
+import numpy as np
 import scanpy as sc
-from celltypist import models
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_data_path import load_remote_h5ad
 
 
-def _prepare_adata(adata_path: str):
-    """Load an .h5ad and log1p-normalise to 10,000 counts (CellTypist's input)."""
-    adata = sc.read_h5ad(adata_path)
-    sc.pp.normalize_total(adata, target_sum=1e4)
-    sc.pp.log1p(adata)
-    return adata
+_DEFAULT_ALLOWED_MODELS = {
+    "Adult_Mouse_Gut.pkl",
+    "Human_Lung_Atlas.pkl",
+    "Immune_All_High.pkl",
+    "Immune_All_Low.pkl",
+}
+_MAX_MODEL_BYTES = 1_000_000_000
+_MAX_FEATURES = 100_000
+_MAX_CLASSES = 2_000
+_MAX_INLINE_CELLS = 50_000
+_MODEL_CACHE: dict[str, dict[str, Any]] = {}
+_MODEL_LOCK = threading.Lock()
+
+
+def _allowed_models() -> set[str]:
+    configured = os.environ.get("TOOLUNIVERSE_CELLTYPIST_MODELS", "")
+    if not configured.strip():
+        return _DEFAULT_ALLOWED_MODELS
+    return {name.strip() for name in configured.split(",") if name.strip()}
+
+
+def _safe_model_path(model_name: str) -> Path:
+    root_value = os.environ.get("CELLTYPIST_SAFE_MODEL_DIR", "").strip()
+    if not root_value:
+        raise ValueError("the provider must configure CELLTYPIST_SAFE_MODEL_DIR")
+    try:
+        root = Path(root_value).expanduser().resolve(strict=True)
+        path = (root / f"{Path(model_name).stem}.npz").resolve(strict=True)
+        path.relative_to(root)
+    except (OSError, RuntimeError, ValueError):
+        raise ValueError("the configured safe CellTypist model is unavailable") from None
+    if not root.is_dir() or not path.is_file() or path.suffix.lower() != ".npz":
+        raise ValueError("the configured safe CellTypist model is unavailable")
+    if path.stat().st_size > _MAX_MODEL_BYTES:
+        raise ValueError("the configured safe CellTypist model exceeds the size limit")
+    return path
+
+
+def _strings(value: np.ndarray, name: str, maximum: int) -> np.ndarray:
+    if value.ndim != 1 or not 1 <= value.size <= maximum or value.dtype.kind not in "US":
+        raise ValueError(f"the safe CellTypist model has invalid {name}")
+    result = value.astype(str)
+    if any(not item or len(item) > 256 for item in result.tolist()):
+        raise ValueError(f"the safe CellTypist model has invalid {name}")
+    return result
+
+
+def _load_safe_arrays(path: Path) -> dict[str, Any]:
+    cache_key = str(path)
+    with _MODEL_LOCK:
+        cached = _MODEL_CACHE.get(cache_key)
+        if cached is not None:
+            return cached
+        try:
+            with np.load(path, allow_pickle=False) as archive:
+                required = {
+                    "coef", "intercept", "classes", "features", "scaler_mean",
+                    "scaler_scale", "scaler_var", "with_mean", "source_sha256",
+                }
+                if set(archive.files) != required:
+                    raise ValueError("unexpected fields")
+                arrays = {name: archive[name].copy() for name in archive.files}
+        except (OSError, ValueError):
+            # Keep the public failure independent of parser/library details.
+            raise ValueError("the safe CellTypist model archive is invalid") from None
+
+        coef = np.asarray(arrays["coef"], dtype=np.float64)
+        intercept = np.asarray(arrays["intercept"], dtype=np.float64)
+        mean = np.asarray(arrays["scaler_mean"], dtype=np.float64)
+        scale = np.asarray(arrays["scaler_scale"], dtype=np.float64)
+        variance = np.asarray(arrays["scaler_var"], dtype=np.float64)
+        features = _strings(arrays["features"], "features", _MAX_FEATURES)
+        classes = _strings(arrays["classes"], "classes", _MAX_CLASSES)
+        with_mean_raw = np.asarray(arrays["with_mean"])
+        source_hash = _strings(
+            np.asarray(arrays["source_sha256"]).reshape(-1), "source digest", 1
+        )[0]
+        expected_rows = {classes.size}
+        if classes.size == 2:
+            expected_rows.add(1)
+        if len(source_hash) != 64 or any(ch not in "0123456789abcdef" for ch in source_hash):
+            raise ValueError("the safe CellTypist model has an invalid source digest")
+        if (
+            coef.ndim != 2
+            or intercept.ndim != 1
+            or mean.shape != (features.size,)
+            or scale.shape != (features.size,)
+            or variance.shape != (features.size,)
+            or coef.shape[1] != features.size
+            or coef.shape[0] not in expected_rows
+            or intercept.shape != (coef.shape[0],)
+            or with_mean_raw.shape != (1,)
+            or with_mean_raw.dtype.kind != "b"
+            or np.unique(features).size != features.size
+            or np.unique(classes).size != classes.size
+            or not np.isfinite(coef).all()
+            or not np.isfinite(intercept).all()
+            or not np.isfinite(mean).all()
+            or not np.isfinite(scale).all()
+            or not np.isfinite(variance).all()
+            or np.any(scale <= 0)
+            or np.any(variance < 0)
+        ):
+            raise ValueError("the safe CellTypist model arrays are invalid")
+        cached = {
+            "coef": coef,
+            "intercept": intercept,
+            "classes": classes,
+            "features": features,
+            "mean": mean,
+            "scale": scale,
+            "variance": variance,
+            "with_mean": bool(with_mean_raw.reshape(-1)[0]),
+            "source_sha256": source_hash,
+        }
+        _MODEL_CACHE[cache_key] = cached
+        return cached
+
+
+def _build_model(arrays: dict[str, Any]) -> Model:
+    classifier = LogisticRegression()
+    classifier.coef_ = arrays["coef"].copy()
+    classifier.intercept_ = arrays["intercept"].copy()
+    classifier.classes_ = arrays["classes"].copy()
+    classifier.features = arrays["features"].copy()
+    classifier.n_features_in_ = int(arrays["features"].size)
+
+    scaler = StandardScaler(with_mean=arrays["with_mean"])
+    scaler.mean_ = arrays["mean"].copy()
+    scaler.scale_ = arrays["scale"].copy()
+    scaler.var_ = arrays["variance"].copy()
+    scaler.n_features_in_ = int(arrays["features"].size)
+    return Model(classifier, scaler, {"source_sha256": arrays["source_sha256"]})
 
 
 @register_mcp_tool(
     tool_type_name="run_celltypist_annotate",
     config={
         "description": (
-            "Annotate single-cell RNA-seq data with CellTypist: predict a "
-            "cell-type label for every cell using a pre-trained logistic-"
-            "regression model and return the per-cell labels plus a cell-type "
-            "count summary. Optional majority-voting over-clustering harmonises "
-            "predictions within transcriptionally similar groups."
+            "Annotate single-cell expression with CellTypist using a provider-"
+            "converted data-only model archive. The live service never downloads "
+            "or deserializes upstream pickle files."
         ),
         "parameter_schema": {
             "type": "object",
             "properties": {
                 "adata_path": {
                     "type": "string",
-                    "description": "Server-accessible path or URL to an .h5ad AnnData of single-cell expression (raw or normalized counts).",
+                    "description": "An .h5ad file inside the provider data directory containing log1p-normalized expression to 10,000 counts per cell.",
                 },
                 "model": {
                     "type": "string",
-                    "description": "CellTypist pre-trained model name (default 'Immune_All_Low.pkl'). Other examples: 'Immune_All_High.pkl', 'Adult_Mouse_Gut.pkl', 'Human_Lung_Atlas.pkl'.",
+                    "minLength": 1,
+                    "maxLength": 128,
+                    "default": "Immune_All_Low.pkl",
+                    "description": "Provider-approved CellTypist model identity; the server maps it to a safe .npz archive.",
                 },
                 "majority_voting": {
                     "type": "boolean",
-                    "description": "Refine predictions by over-clustering so cells in the same group share a label (default true).",
+                    "default": True,
+                    "description": "Refine predictions by CellTypist over-clustering when the dataset has more than 50 cells.",
                 },
             },
             "required": ["adata_path"],
@@ -83,45 +200,62 @@ def _prepare_adata(adata_path: str):
     },
 )
 class CelltypistAnnotateTool:
-    """Annotate cells with a pre-trained CellTypist model."""
+    """Run CellTypist from a data-only provider artifact."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        if not isinstance(arguments, dict):
+            return {"error": "Arguments must be an object."}
         adata_path = arguments.get("adata_path")
         if not adata_path:
             return {"error": "Missing required parameter: adata_path"}
-        model = arguments.get("model") or "Immune_All_Low.pkl"
+        model_name = arguments.get("model") or "Immune_All_Low.pkl"
+        if not isinstance(model_name, str) or model_name not in _allowed_models():
+            return {"error": "The requested CellTypist model is not provider-approved."}
         majority_voting = arguments.get("majority_voting")
-        majority_voting = True if majority_voting is None else bool(majority_voting)
+        majority_voting = True if majority_voting is None else majority_voting
+        if not isinstance(majority_voting, bool):
+            return {"error": "majority_voting must be a boolean."}
+        try:
+            model_path = _safe_model_path(model_name)
+            arrays = _load_safe_arrays(model_path)
+            adata = load_remote_h5ad(adata_path, sc.read_h5ad)
+        except ValueError as exc:
+            return {"error": str(exc)}
+        if not 1 <= adata.n_obs <= _MAX_INLINE_CELLS:
+            return {"error": f"CellTypist input must contain between 1 and {_MAX_INLINE_CELLS} cells."}
 
         try:
-            adata = _prepare_adata(adata_path)
-            models.download_models(model=model)  # fetch the built-in model if absent
-            predictions = celltypist.annotate(
-                adata, model=model, majority_voting=majority_voting
+            result = celltypist.annotate(
+                adata,
+                model=_build_model(arrays),
+                majority_voting=majority_voting,
             )
-            labels_df = predictions.predicted_labels
-            # majority_voting adds a 'majority_voting' column; otherwise use
-            # 'predicted_labels'. Prefer the refined column when present.
-            if "majority_voting" in labels_df.columns:
-                label_series = labels_df["majority_voting"]
-            else:
-                label_series = labels_df["predicted_labels"]
-            label_series = label_series.astype(str)
-            predicted_labels = label_series.tolist()
-            cell_ids = labels_df.index.astype(str).tolist()
-            label_counts = {
-                str(k): int(v) for k, v in label_series.value_counts().items()
-            }
-            return {
-                "model": model,
-                "majority_voting": majority_voting,
-                "n_cells": len(cell_ids),
-                "cell_ids": cell_ids,
-                "predicted_labels": predicted_labels,
-                "label_counts": label_counts,
-            }
-        except Exception as exc:  # never raise out of run()
-            return {"error": f"CellTypist annotation failed: {exc}"}
+            label_column = (
+                "majority_voting"
+                if majority_voting and "majority_voting" in result.predicted_labels
+                else "predicted_labels"
+            )
+            labels = result.predicted_labels[label_column].astype(str).tolist()
+            cell_ids = [str(cell) for cell in adata.obs_names]
+        except Exception:
+            return {"error": "CellTypist annotation failed on the provider."}
+        if (
+            len(labels) != adata.n_obs
+            or len(cell_ids) != adata.n_obs
+            or any(not label or len(label) > 256 for label in labels)
+            or any(not cell or len(cell) > 256 for cell in cell_ids)
+        ):
+            return {"error": "CellTypist returned invalid aligned labels."}
+        return {
+            "model": model_name,
+            "artifact_format": "celltypist-safe-npz-v1",
+            "source_sha256": arrays["source_sha256"],
+            "majority_voting": label_column == "majority_voting",
+            "n_cells": int(adata.n_obs),
+            "cell_ids": cell_ids,
+            "predicted_labels": labels,
+            "label_counts": dict(Counter(labels)),
+        }
 
 
 if __name__ == "__main__":

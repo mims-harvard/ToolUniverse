@@ -26,11 +26,16 @@ Wolock SL, Lopez R, Klein AM. "Scrublet: Computational Identification of Cell
 Doublets in Single-Cell Transcriptomic Data." Cell Systems 8, 281-291 (2019).
 """
 
+import math
 from typing import Any, Dict
 
 import scanpy as sc
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_data_path import load_remote_h5ad
+
+
+_MAX_INLINE_CELLS = 10_000
 
 
 @register_mcp_tool(
@@ -48,11 +53,14 @@ from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
             "properties": {
                 "adata_path": {
                     "type": "string",
-                    "description": "Server-accessible path or URL to an .h5ad AnnData of RAW counts.",
+                    "description": "An .h5ad file inside the provider's TOOLUNIVERSE_REMOTE_DATA_ROOT directory, containing RAW counts.",
                 },
                 "expected_doublet_rate": {
                     "type": "number",
                     "description": "Expected fraction of transcriptomes that are doublets (default 0.06; scale ~0.008 per 1000 cells loaded for 10x).",
+                    "default": 0.06,
+                    "exclusiveMinimum": 0,
+                    "exclusiveMaximum": 1,
                 },
             },
             "required": ["adata_path"],
@@ -69,16 +77,27 @@ class ScrubletDoubletTool:
     """Run Scrublet and return per-cell doublet scores and boolean predictions."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        if not isinstance(arguments, dict):
+            return {"error": "Arguments must be an object."}
         adata_path = arguments.get("adata_path")
         if not adata_path:
             return {"error": "Missing required parameter: adata_path"}
         expected_rate = arguments.get("expected_doublet_rate")
-        expected_rate = 0.06 if expected_rate is None else float(expected_rate)
+        if expected_rate is None:
+            expected_rate = 0.06
+        if isinstance(expected_rate, bool) or not isinstance(
+            expected_rate, (int, float)
+        ):
+            return {"error": "expected_doublet_rate must be a number between 0 and 1"}
+        if not math.isfinite(expected_rate) or not 0 < expected_rate < 1:
+            return {"error": "expected_doublet_rate must be a number between 0 and 1"}
 
         try:
-            adata = sc.read_h5ad(adata_path)
-        except Exception as exc:
-            return {"error": f"Failed to read AnnData from {adata_path}: {exc}"}
+            adata = load_remote_h5ad(adata_path, sc.read_h5ad)
+        except ValueError as exc:
+            if "could not be read" in str(exc):
+                return {"error": "Failed to read the provider .h5ad file."}
+            return {"error": f"Invalid adata_path: {exc}"}
 
         try:
             sc.pp.scrublet(adata, expected_doublet_rate=expected_rate)
@@ -102,18 +121,35 @@ class ScrubletDoubletTool:
                     }
                 predicted = predicted.astype(bool)
             except Exception as exc:
-                return {"error": f"Scrublet doublet detection failed: {exc}"}
+                return {"error": "Scrublet doublet detection failed on the provider."}
 
         n_doublets = int(predicted.sum())
         n_cells = int(predicted.shape[0])
+        score_values = scores.tolist()
+        if scores.shape[0] != n_cells or any(
+            not math.isfinite(float(score)) for score in score_values
+        ):
+            return {"error": "Scrublet returned invalid scores on the provider."}
         doublet_rate = float(n_doublets / n_cells) if n_cells else 0.0
-        return {
-            "cell_ids": adata.obs_names.astype(str).tolist(),
-            "doublet_score": scores.tolist(),
-            "predicted_doublet": predicted.tolist(),
+        result = {
             "n_doublets": n_doublets,
+            "n_cells": n_cells,
             "doublet_rate": doublet_rate,
         }
+        if n_cells <= _MAX_INLINE_CELLS:
+            result.update(
+                {
+                    "cell_ids": adata.obs_names.astype(str).tolist(),
+                    "doublet_score": score_values,
+                    "predicted_doublet": predicted.tolist(),
+                }
+            )
+        else:
+            result["note"] = (
+                f"Per-cell results omitted because {n_cells} cells exceeds the "
+                f"{_MAX_INLINE_CELLS}-cell public output limit."
+            )
+        return result
 
 
 if __name__ == "__main__":

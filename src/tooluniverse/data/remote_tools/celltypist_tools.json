@@ -2,13 +2,14 @@
   {
     "type": "RemoteTool",
     "name": "run_celltypist_annotate",
-    "description": "Annotate single-cell RNA-seq data with CellTypist (Domínguez Conde 2022 / Xu 2023): predict a cell-type label for every cell using a pre-trained logistic-regression model and return the per-cell predicted labels plus a cell-type count summary. Optional majority-voting over-clustering harmonises predictions within transcriptionally similar groups. Input is a server-accessible .h5ad; the matrix is log1p-normalised to 10,000 counts per cell before annotation.",
+    "description": "Annotate single-cell expression with CellTypist using a provider-converted data-only model archive. The live service never downloads or deserializes upstream pickle files.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData of single-cell expression (raw or normalized counts)."},
-        "model": {"type": "string", "description": "CellTypist pre-trained model name (default 'Immune_All_Low.pkl'). Other examples: 'Immune_All_High.pkl', 'Human_Lung_Atlas.pkl', 'Adult_Mouse_Gut.pkl'."},
-        "majority_voting": {"type": "boolean", "description": "Refine predictions by over-clustering so cells in the same group share a label (default true)."}
+        "adata_path": {"type": "string", "description": "An .h5ad file inside the provider data directory containing log1p-normalized expression to 10,000 counts per cell."},
+        "model": {"type": "string", "minLength": 1, "maxLength": 128, "default": "Immune_All_Low.pkl", "description": "Provider-approved CellTypist model identity; the server maps it to a safe .npz archive."},
+        "majority_voting": {"type": "boolean", "default": true, "description": "Refine predictions by CellTypist over-clustering when the dataset has more than 50 cells."}
       },
       "required": ["adata_path"]
     },
@@ -16,10 +17,12 @@
       "type": "object",
       "properties": {
         "model": {"type": "string", "description": "CellTypist model used for annotation."},
+        "artifact_format": {"type": "string", "description": "Safe provider artifact format used for inference."},
+        "source_sha256": {"type": "string", "description": "SHA-256 of the reviewed upstream model source."},
         "majority_voting": {"type": "boolean", "description": "Whether over-clustering refinement was applied."},
         "n_cells": {"type": "integer", "description": "Number of annotated cells."},
-        "cell_ids": {"type": "array", "items": {"type": "string"}, "description": "Per-cell barcodes/identifiers."},
-        "predicted_labels": {"type": "array", "items": {"type": "string"}, "description": "Predicted cell-type label per cell (aligned with cell_ids)."},
+        "cell_ids": {"type": "array", "maxItems": 50000, "items": {"type": "string"}, "description": "Per-cell barcodes/identifiers."},
+        "predicted_labels": {"type": "array", "maxItems": 50000, "items": {"type": "string"}, "description": "Predicted cell-type label per cell (aligned with cell_ids)."},
         "label_counts": {"type": "object", "additionalProperties": {"type": "integer"}, "description": "Cell-type label -> number of cells assigned to it."},
         "error": {"type": "string", "description": "Error description if the run failed."}
       }

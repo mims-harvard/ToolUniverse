@@ -378,12 +378,40 @@ def _provider_probe_code(deployment: RemoteDeployment) -> str:
     commands = json.dumps(list(deployment.required_commands))
     check_gpu = repr(deployment.gpu_policy != "none")
     return f"""
-import importlib.util, json, shutil, sys
+import importlib.util, json, pathlib, shutil, sys
+
+def module_exists_without_import(name):
+    parts = name.split(".")
+    spec = importlib.util.find_spec(parts[0])
+    if spec is None:
+        return False
+    if len(parts) == 1:
+        return True
+    locations = list(spec.submodule_search_locations or [])
+    for index, part in enumerate(parts[1:], start=1):
+        final = index == len(parts) - 1
+        next_locations = []
+        for location in locations:
+            base = pathlib.Path(location)
+            if final and (base / (part + ".py")).is_file():
+                return True
+            package = base / part
+            if package.is_dir():
+                next_locations.append(str(package))
+        locations = next_locations
+        if not locations:
+            return False
+    return bool(locations)
+
 result = {{
     "python_version": list(sys.version_info[:3]),
-    "module_available": importlib.util.find_spec({module}) is not None,
     "commands": {{name: shutil.which(name) is not None for name in {commands}}},
 }}
+try:
+    result["module_available"] = module_exists_without_import({module})
+except Exception as exc:
+    result["module_available"] = False
+    result["module_probe_error"] = type(exc).__name__
 if {check_gpu}:
     gpu = {{"torch_available": False, "cuda_available": False}}
     try:
@@ -524,6 +552,9 @@ def check_environment(
         provider = {
             "error": "provider preflight returned invalid output",
             "exit_code": completed.returncode,
+            "python_version": [],
+            "module_available": None,
+            "commands": {},
         }
 
     variables = []
@@ -535,8 +566,13 @@ def check_environment(
         variables.append(item)
 
     python_version = provider.get("python_version") or []
-    python_supported = python_version[:2] == [3, 12]
-    module_available = provider.get("module_available") is True
+    python_supported = (
+        python_version[:2] == [3, 12] if len(python_version) >= 2 else None
+    )
+    module_available_value = provider.get("module_available")
+    module_available = (
+        module_available_value if isinstance(module_available_value, bool) else None
+    )
     commands_ok = all((provider.get("commands") or {}).values())
     variables_ok = all(item["set"] for item in variables) and all(
         item.get("path_exists", True) for item in variables
@@ -558,8 +594,8 @@ def check_environment(
     share_ok = not share or (sdk_available and key_set)
     ok = (
         completed.returncode == 0
-        and python_supported
-        and module_available
+        and python_supported is True
+        and module_available is True
         and commands_ok
         and variables_ok
         and credentials_ok
