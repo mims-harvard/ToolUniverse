@@ -206,11 +206,18 @@ def main() -> None:
                     and a.get("standard_value") is not None
                 ]
                 if affinities:
+                    # The minimum over one page of activities is not a stable
+                    # quantity: ChEMBL returns them unsorted, so the best value
+                    # depends on which 100 rows you fetch (0.50, 1.0 and 0.09 nM
+                    # at offsets 0, 100 and 200 respectively). What reproduces
+                    # is the conclusion -- this receptor has nanomolar ligands --
+                    # not one particular minimum, so don't pin it to one.
                     report(
-                        "best measured affinity",
-                        f"{min(affinities):.1f} nM",
-                        "Ki as low as 3.2 nM",
+                        "best affinity in this sample of 100",
+                        f"{min(affinities):.2g} nM",
+                        "single-digit nM; the exact minimum is page-dependent",
                     )
+                    report("nanomolar ligands confirmed", min(affinities) < 10, "yes")
 
     # ------------------------------------------------------------------
     step(6, "Reason about pharmacology and CNS druggability")

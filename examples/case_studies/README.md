@@ -198,8 +198,12 @@ Expect some movement, and know which kind matters:
   the count.
 - **Case 3 should never move.** Frozen dataset, deterministic model, identical
   on pandas 2 and 3. If its numbers change, something in your environment did.
-- **ChEMBL's data API is currently down** (HTTP 500 upstream, [known
-  issue](https://github.com/chembl/chembl_webresource_client/issues/144)). The
-  two steps that need it — Case 1's analog comparison and Case 2's measured
-  affinities — print `[unavailable]` and the case carries on rather than
-  failing. Everything else is unaffected.
+- **One number is deliberately not pinned.** Case 2 reports the best binding
+  affinity it finds, but ChEMBL returns activities unsorted, so the minimum
+  depends on which page you fetch — 0.50, 1.0 and 0.09 nM at offsets 0, 100 and
+  200. What reproduces is the conclusion, that this receptor has nanomolar
+  ligands, not one particular value.
+- **ChEMBL's data API goes down periodically** (HTTP 500 upstream, [known
+  issue](https://github.com/chembl/chembl_webresource_client/issues/144)). When
+  it does, the two steps that need it print `[unavailable]` and the case carries
+  on rather than failing. Everything else is unaffected.
