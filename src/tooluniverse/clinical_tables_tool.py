@@ -4,6 +4,18 @@ Covers the Clinical Tables endpoints not already wrapped by ICDTool/LOINCTool:
   - rxterms        → drug-name autocomplete with strengths/forms + RxCUIs
   - conditions     → patient problem-list autocomplete with ICD-10-CM/ICD-9 crosswalk
   - disease_names  → disease-name autocomplete with UMLS CUI
+  - hcpcs          → US procedure/durable-medical-equipment billing codes
+  - star_alleles   → pharmacogenomic star alleles (e.g. CYP2D6*4), pairs
+                     with the existing CPIC tools
+  - npi_idv/npi_org → NPPES registry of every US healthcare provider and
+                     organization; pairs with CMSOpenPaymentsTool, whose
+                     records are keyed by NPI with no way to resolve who
+                     that NPI actually is
+
+ICD-11 is intentionally not added here even though this same service hosts
+an icd11_codes table: ICDTool already covers ICD-11 via the authoritative
+WHO API, so adding it through this backend would just duplicate that
+capability under a different, less authoritative source.
 
 API: https://clinicaltables.nlm.nih.gov/api/<table>/v3/search
 Response shape: [total_count, codes, extra_fields_hash_or_null, display_arrays]
@@ -143,10 +155,59 @@ class ClinicalTablesTool(BaseTool):
             send_df=False,
         )
 
+    def _search_hcpcs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """US procedure/durable-medical-equipment billing code autocomplete."""
+        return self._search(
+            "hcpcs",
+            arguments,
+            display_fields=["code", "display"],
+            extra_fields=[],
+        )
+
+    def _search_star_alleles(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Pharmacogenomic star allele autocomplete (e.g. CYP2D6*4).
+
+        The table's second default column is always empty in every sample
+        checked; labeled 'unused' rather than a guessed name.
+        """
+        return self._search(
+            "star_alleles",
+            arguments,
+            display_fields=[
+                "allele",
+                "unused",
+                "nucleotide_change",
+                "alternate_name",
+                "protein_change",
+            ],
+            extra_fields=[],
+            send_df=False,
+        )
+
+    def _search_npi(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """NPPES registry search for a US healthcare provider or organization."""
+        is_org = bool(arguments.get("organization"))
+        table = "npi_org" if is_org else "npi_idv"
+        extra_fields = ["name.full", "NPI", "provider_type", "addr_practice.full"]
+        result = self._search(
+            table,
+            arguments,
+            display_fields=[],
+            extra_fields=extra_fields,
+            send_df=False,
+        )
+        if isinstance(result, dict) and "results" in result:
+            for row in result["results"]:
+                row["is_organization"] = is_org
+        return result
+
     _OPERATION_MAP = {
         "RxTerms_search": "_search_rxterms",
         "HealthConditions_search": "_search_conditions",
         "DiseaseNames_search": "_search_disease_names",
+        "HCPCS_search": "_search_hcpcs",
+        "StarAlleles_search": "_search_star_alleles",
+        "NPIProvider_search": "_search_npi",
     }
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
