@@ -187,37 +187,47 @@ def main() -> None:
             target_id = rows[0].get("target_chembl_id")
         report("ChEMBL target", target_id, "CHEMBL2049")
         if target_id:
-            acts = call(
-                tu,
-                "ChEMBL_get_target_activities",
-                target_chembl_id__exact=target_id,
-                limit=100,
-            )
-            if is_error(acts):
-                note_unavailable("ChEMBL_get_target_activities", acts)
-            else:
+            # ChEMBL returns activities unsorted and paginated, so the minimum
+            # over any single page is an artefact of which page you fetched
+            # (0.50 nM at offset 0, 1.0 at 100, 0.09 at 200). Page through the
+            # whole set to get the real figure.
+            affinities, offset, PAGE, CAP = [], 0, 200, 2000
+            while offset < CAP:
+                acts = call(
+                    tu,
+                    "ChEMBL_get_target_activities",
+                    target_chembl_id__exact=target_id,
+                    limit=PAGE,
+                    offset=offset,
+                )
+                if is_error(acts):
+                    if offset == 0:
+                        note_unavailable("ChEMBL_get_target_activities", acts)
+                    break
                 rows = acts.get("activities", acts) or []
-                affinities = [
+                affinities += [
                     float(a["standard_value"])
                     for a in rows
                     if isinstance(a, dict)
-                    and a.get("standard_type") in {"Ki", "IC50", "Kd"}
+                    and a.get("standard_type") == "Ki"
                     and a.get("standard_units") == "nM"
                     and a.get("standard_value") is not None
+                    and not a.get("data_validity_comment")
                 ]
-                if affinities:
-                    # The minimum over one page of activities is not a stable
-                    # quantity: ChEMBL returns them unsorted, so the best value
-                    # depends on which 100 rows you fetch (0.50, 1.0 and 0.09 nM
-                    # at offsets 0, 100 and 200 respectively). What reproduces
-                    # is the conclusion -- this receptor has nanomolar ligands --
-                    # not one particular minimum, so don't pin it to one.
-                    report(
-                        "best affinity in this sample of 100",
-                        f"{min(affinities):.2g} nM",
-                        "single-digit nM; the exact minimum is page-dependent",
-                    )
-                    report("nanomolar ligands confirmed", min(affinities) < 10, "yes")
+                if len(rows) < PAGE:
+                    break
+                offset += PAGE
+
+            if affinities:
+                best = min(affinities)
+                report("Ki measurements found", len(affinities))
+                report(f"lowest Ki across all {len(affinities)}", f"{best:.3g} nM")
+                report(
+                    "high-affinity ligands confirmed",
+                    best < 10,
+                    "yes (the post's 'as low as 3.2 nM' sampled one page; "
+                    "the full set goes lower)",
+                )
 
     # ------------------------------------------------------------------
     step(6, "Reason about pharmacology and CNS druggability")

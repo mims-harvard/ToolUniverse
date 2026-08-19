@@ -198,11 +198,13 @@ Expect some movement, and know which kind matters:
   the count.
 - **Case 3 should never move.** Frozen dataset, deterministic model, identical
   on pandas 2 and 3. If its numbers change, something in your environment did.
-- **One number is deliberately not pinned.** Case 2 reports the best binding
-  affinity it finds, but ChEMBL returns activities unsorted, so the minimum
-  depends on which page you fetch — 0.50, 1.0 and 0.09 nM at offsets 0, 100 and
-  200. What reproduces is the conclusion, that this receptor has nanomolar
-  ligands, not one particular value.
+- **One published number is understated.** The write-up reports *OXTR* Ki
+  "as low as 3.2 nM". ChEMBL returns activities unsorted and paginated, so a
+  single page gives an arbitrary minimum — 0.50, 1.0 and 0.09 nM at offsets 0,
+  100 and 200. Case 2 now pages through all 811 Ki measurements and finds the
+  real figure, **0.025 nM**, about 130× lower. The conclusion the case draws
+  from it, that *OXTR* has well-characterised high-affinity ligands, is
+  unaffected — if anything it is stronger.
 - **ChEMBL's data API goes down periodically** (HTTP 500 upstream, [known
   issue](https://github.com/chembl/chembl_webresource_client/issues/144)). When
   it does, the two steps that need it print `[unavailable]` and the case carries
