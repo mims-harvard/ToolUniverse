@@ -18,24 +18,16 @@ Setup:
     python case3_bcg_ae_severity.py
 
 The analysis runs through the ``clinical_trial_ae_severity_test`` tool, the
-same tool the AI scientist used. That tool loads its implementation from the
-repository's ``skills/`` directory, so it only resolves in a git clone. When it
-is unavailable -- a plain ``pip install``, for instance -- this script falls
-back to the equivalent implementation bundled alongside it in ``scripts/``,
-reports which path it took, and produces the same numbers either way.
+same tool the AI scientist used.
 """
 
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
 
 from _common import call, footer, header, is_error, load_universe, report, step
 
-# Bundled equivalent of the skill script the tool wraps, used when the tool
-# cannot locate its own implementation (see the module docstring).
-sys.path.insert(0, str(Path(__file__).parent / "scripts"))
 
 DM_FILE = "TASK008_BCG-CORONA_DM.csv"
 AE_FILE = "TASK008_BCG-CORONA_AE.csv"
@@ -69,56 +61,11 @@ def main() -> None:
     tu = load_universe(["clinical_trial_stats"])
     common = {"dm_file": str(dm), "ae_file": str(ae), "group_col": "TRTGRP"}
 
-    def analyse(test, **extra):
-        """Run one mode through the tool, or the bundled script if it is absent.
-
-        The tool resolves its implementation relative to the repository root, so
-        outside a git clone it reports "Skill script not available". Rather than
-        fail, fall back to the copy bundled under scripts/ and say so.
-        """
-        result = call(
-            tu, "clinical_trial_ae_severity_test", test=test, **extra, **common
-        )
-        if not is_error(result):
-            return result, "tool"
-        if "Skill script not available" not in str(result["__error__"]):
-            raise SystemExit(f"{test} failed: {result['__error__']}")
-
-        import prepare_ae_cohort as script
-
-        df = script.prepare_cohort(str(dm), str(ae), "")
-        out = {
-            "n_subjects": len(df),
-            "aesev_distribution": {
-                int(k): int(v)
-                for k, v in df["AESEV"].value_counts().sort_index().to_dict().items()
-            },
-        }
-        if test == "chi-square":
-            chi2, pval, dof, table = script.run_chi_square(df, "TRTGRP")
-            out |= {
-                "test_statistic": chi2,
-                "p_value": pval,
-                "dof": dof,
-                "contingency_table": table,
-            }
-        elif test == "ordinal":
-            covs = [c for c in extra.get("covariates", "").split(",") if c]
-            fit = script.run_ordinal(df, "TRTGRP", covs)
-            primary = fit["odds_ratios"]["TRTGRP"]
-            out |= {
-                "or": primary["or"],
-                "ci_lower": primary["ci_lower"],
-                "ci_upper": primary["ci_upper"],
-                "p_value": primary["p_value"],
-                "odds_ratios": fit["odds_ratios"],
-            }
-        return out, "bundled script"
-
     # ------------------------------------------------------------------
     step(1, "Construct the analysis cohort  (prepare mode)")
-    prepared, via = analyse("prepare")
-    print(f"  (running via: {via})")
+    prepared = call(tu, "clinical_trial_ae_severity_test", test="prepare", **common)
+    if is_error(prepared):
+        raise SystemExit(f"prepare failed: {prepared['__error__']}")
     report("evaluable subjects", prepared["n_subjects"], "791")
     report(
         "max-severity distribution",
@@ -130,7 +77,9 @@ def main() -> None:
 
     # ------------------------------------------------------------------
     step(2, "Test for an unadjusted association  (chi-square mode)")
-    chi, _ = analyse("chi-square")
+    chi = call(tu, "clinical_trial_ae_severity_test", test="chi-square", **common)
+    if is_error(chi):
+        raise SystemExit(f"chi-square failed: {chi['__error__']}")
     report("chi-square", f"{chi['test_statistic']:.2f}", "10.12")
     report("degrees of freedom", chi["dof"], "3")
     report("p-value", f"{chi['p_value']:.3f}", "0.018")
@@ -141,7 +90,15 @@ def main() -> None:
 
     # ------------------------------------------------------------------
     step(3, "Fit an adjusted model  (ordinal mode)")
-    ordinal, _ = analyse("ordinal", covariates=COVARIATES)
+    ordinal = call(
+        tu,
+        "clinical_trial_ae_severity_test",
+        test="ordinal",
+        covariates=COVARIATES,
+        **common,
+    )
+    if is_error(ordinal):
+        raise SystemExit(f"ordinal failed: {ordinal['__error__']}")
 
     # The tool reports the odds ratio against its own reference level. Treatment
     # is encoded alphabetically (BCG=0, Placebo=1), so the raw OR is Placebo vs

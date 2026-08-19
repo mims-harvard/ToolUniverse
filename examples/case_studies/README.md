@@ -43,18 +43,7 @@ Two things worth knowing:
 
 - Without the **`ml` extra**, the ADMET-AI steps in Cases 1 and 2 report
   `ADMETModel requires 'admet-ai' package`. The rest of both cases still runs.
-- Case 3 calls `clinical_trial_ae_severity_test`, and that tool loads its
-  implementation from the repository's `skills/` directory, resolved relative
-  to the repo root. Outside a git clone it reports
-  `Skill script not available`. The script therefore falls back to
-  [`scripts/prepare_ae_cohort.py`](scripts/prepare_ae_cohort.py), bundled here,
-  and prints which path it took. Both give identical results, on pandas 2 and
-  pandas 3 alike:
-
-  ```
-  (running via: tool)             # git clone
-  (running via: bundled script)   # pip install
-  ```
+- Case 3 gives identical results on pandas 2 and pandas 3.
 
 ## Running
 
@@ -192,9 +181,9 @@ supplementary note rather than in the post.
   `ConnectivitySMILES`. For nolasiban the flat form scores BBB 0.913 and the
   stereo form 0.925; the published 0.93 is the stereo form. ML216 has no
   stereocentre, so both agree.
-- **Case 3 should never drift.** Frozen dataset, deterministic model, and
-  identical output whether it runs through the tool or the bundled script, on
-  pandas 2 or 3. If its numbers move, something in the environment changed.
+- **Case 3 should never drift.** Frozen dataset, deterministic model, identical
+  output on pandas 2 and 3. If its numbers move, something in the environment
+  changed.
 - **ChEMBL's data API is down upstream.** Throughout verification
   `https://www.ebi.ac.uk/chembl/api/data/` failed on every request, in two
   modes: HTTP 500 after ~5 s, or no response at all. The fault is specific to
