@@ -39,6 +39,11 @@ import scanpy as sc  # scvelo builds on scanpy/anndata; also used to read .h5ad
 import scvelo as scv
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_argument_validation import (
+    bounded_text,
+    require_argument_object,
+)
+from tooluniverse.remote_data_path import load_remote_h5ad
 
 _VALID_MODES = ("deterministic", "stochastic", "dynamical")
 
@@ -76,14 +81,17 @@ def _summarize(values) -> Dict[str, float]:
             "properties": {
                 "adata_path": {
                     "type": "string",
-                    "description": "Server-accessible path or URL to an .h5ad AnnData that contains `spliced` and `unspliced` layers.",
+                    "description": "An .h5ad file inside the provider-configured data directory that contains `spliced` and `unspliced` layers.",
                 },
                 "cluster_key": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
                     "description": "obs column to summarize pseudotime by (optional); returns mean velocity_pseudotime per cluster as a coarse ordering.",
                 },
                 "mode": {
                     "type": "string",
+                    "enum": ["deterministic", "stochastic", "dynamical"],
                     "description": "Velocity estimation mode: 'deterministic', 'stochastic' (default), or 'dynamical'.",
                 },
             },
@@ -101,22 +109,32 @@ class ScveloVelocityTool:
     """Run scVelo RNA velocity and return pseudotime + confidence summaries."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        try:
+            arguments = require_argument_object(arguments)
+        except ValueError as exc:
+            return {"error": str(exc)}
         adata_path = arguments.get("adata_path")
         if not adata_path:
             return {"error": "Missing required parameter: adata_path"}
-        cluster_key = arguments.get("cluster_key") or None
-        mode = (arguments.get("mode") or "stochastic").lower()
-        if mode not in _VALID_MODES:
-            return {
-                "error": (
-                    f"Invalid mode '{mode}'. Choose one of: {', '.join(_VALID_MODES)}."
-                )
-            }
+        try:
+            cluster_key = bounded_text(arguments.get("cluster_key"), "cluster_key")
+            raw_mode = arguments.get("mode")
+            if raw_mode is not None and not isinstance(raw_mode, str):
+                raise ValueError("mode must be a string.")
+            mode = bounded_text(
+                raw_mode.lower() if raw_mode else None,
+                "mode",
+                default="stochastic",
+                maximum=13,
+                allowed=_VALID_MODES,
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
 
         try:
-            adata = sc.read_h5ad(adata_path)
+            adata = load_remote_h5ad(adata_path, sc.read_h5ad)
         except Exception as exc:  # noqa: BLE001
-            return {"error": f"Failed to read adata_path '{adata_path}': {exc}"}
+            return {"error": f"Invalid adata_path: {exc}"}
 
         # RNA velocity requires spliced + unspliced layers.
         missing = [
@@ -128,18 +146,12 @@ class ScveloVelocityTool:
                     "AnnData is missing required layer(s) "
                     f"{missing} for RNA velocity. scVelo needs both `spliced` "
                     "and `unspliced` count layers, e.g. produced by velocyto, "
-                    "kb-python (kallisto|bustools), or STARsolo. "
-                    f"Available layers: {list(adata.layers.keys())}."
+                    "kb-python (kallisto|bustools), or STARsolo."
                 )
             }
 
         if cluster_key is not None and cluster_key not in adata.obs:
-            return {
-                "error": (
-                    f"cluster_key '{cluster_key}' not found in adata.obs. "
-                    f"Available columns: {list(adata.obs.columns)}"
-                )
-            }
+            return {"error": "cluster_key was not found in adata.obs."}
 
         try:
             # filter + normalize + log (no n_top_genes: scVelo routes it through
@@ -155,13 +167,24 @@ class ScveloVelocityTool:
             scv.tl.velocity_pseudotime(adata)
             scv.tl.velocity_confidence(adata)
         except Exception as exc:  # noqa: BLE001
-            return {"error": f"scVelo velocity computation failed: {exc}"}
+            return {"error": "scVelo velocity computation failed on the provider."}
 
         n_cells = int(adata.n_obs)
         pseudotime = adata.obs.get("velocity_pseudotime")
         confidence = adata.obs.get("velocity_confidence")
         if pseudotime is None:
             return {"error": "scVelo did not write velocity_pseudotime."}
+        pseudotime_values = np.asarray(pseudotime, dtype=float)
+        confidence_values = (
+            np.asarray(confidence, dtype=float) if confidence is not None else None
+        )
+        if pseudotime_values.shape != (n_cells,) or not np.isfinite(pseudotime_values).all():
+            return {"error": "scVelo returned invalid pseudotime values."}
+        if confidence_values is not None and (
+            confidence_values.shape != (n_cells,)
+            or not np.isfinite(confidence_values).all()
+        ):
+            return {"error": "scVelo returned invalid confidence values."}
 
         result: Dict[str, Any] = {
             "n_cells": n_cells,
@@ -183,6 +206,10 @@ class ScveloVelocityTool:
                 .mean()
                 .sort_values()
             )
+            if len(grouped) > 256 or any(len(str(key)) > 128 for key in grouped.index):
+                return {"error": "cluster_key contains too many or invalid labels."}
+            if not np.isfinite(grouped.to_numpy(dtype=float)).all():
+                return {"error": "scVelo returned invalid cluster pseudotime values."}
             result["pseudotime_by_cluster"] = {
                 str(k): float(v) for k, v in grouped.items()
             }
@@ -190,13 +217,9 @@ class ScveloVelocityTool:
 
         # Only return the full per-cell arrays for small datasets.
         if n_cells <= 500:
-            result["pseudotime"] = [
-                float(x) for x in np.asarray(pseudotime, dtype=float)
-            ]
-            if confidence is not None:
-                result["confidence"] = [
-                    float(x) for x in np.asarray(confidence, dtype=float)
-                ]
+            result["pseudotime"] = pseudotime_values.tolist()
+            if confidence_values is not None:
+                result["confidence"] = confidence_values.tolist()
 
         ordering = ""
         if cluster_key is not None and result.get("pseudotime_by_cluster"):

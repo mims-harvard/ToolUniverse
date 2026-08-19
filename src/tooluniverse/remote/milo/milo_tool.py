@@ -31,9 +31,20 @@ abundance testing on single-cell data using k-nearest neighbor graphs."
 Nature Biotechnology 40, 245-253 (2022).
 """
 
+import re
 from typing import Any, Dict
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_argument_validation import (
+    bounded_integer,
+    bounded_number,
+    bounded_text,
+    require_argument_object,
+)
+from tooluniverse.remote_data_path import load_remote_h5ad
+
+
+_FORMULA_COLUMN_PATTERN = re.compile(r"^[A-Za-z_][A-Za-z0-9_]{0,63}$")
 
 
 @register_mcp_tool(
@@ -54,30 +65,44 @@ from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
             "properties": {
                 "adata_path": {
                     "type": "string",
-                    "description": "Server-accessible path or URL to an .h5ad AnnData of single cells.",
+                    "description": "An .h5ad file of single cells inside the provider-configured data directory.",
                 },
                 "sample_col": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,63}$",
                     "description": "obs column identifying the biological replicate/sample id (the unit of replication).",
                 },
                 "condition_col": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64,
+                    "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,63}$",
                     "description": "obs column naming the condition being tested for differential abundance (design '~condition_col').",
                 },
                 "n_pcs": {
                     "type": "integer",
+                    "minimum": 2,
+                    "maximum": 100,
                     "description": "Number of principal components for the kNN graph (default 30).",
                 },
                 "n_neighbors": {
                     "type": "integer",
+                    "minimum": 2,
+                    "maximum": 200,
                     "description": "Number of neighbours for the kNN graph (default 15).",
                 },
                 "prop": {
                     "type": "number",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1,
                     "description": "Fraction of cells sampled as neighbourhood index cells (default 0.1).",
                 },
                 "spatial_fdr": {
                     "type": "number",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1,
                     "description": "SpatialFDR threshold for calling a neighbourhood significant (default 0.1).",
                 },
             },
@@ -95,6 +120,10 @@ class MiloDifferentialAbundanceTool:
     """Run Milo differential abundance testing on kNN-graph neighbourhoods."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        try:
+            arguments = require_argument_object(arguments)
+        except ValueError as exc:
+            return {"error": str(exc)}
         adata_path = arguments.get("adata_path")
         sample_col = arguments.get("sample_col")
         condition_col = arguments.get("condition_col")
@@ -103,15 +132,54 @@ class MiloDifferentialAbundanceTool:
                 "error": "Missing required parameter(s): adata_path, sample_col, condition_col"
             }
 
-        n_pcs = int(arguments.get("n_pcs") or 30)
-        n_neighbors = int(arguments.get("n_neighbors") or 15)
-        prop = float(arguments.get("prop") or 0.1)
-        spatial_fdr = float(arguments.get("spatial_fdr") or 0.1)
+        try:
+            sample_col = bounded_text(sample_col, "sample_col", maximum=64)
+            condition_col = bounded_text(
+                condition_col, "condition_col", maximum=64
+            )
+            if not _FORMULA_COLUMN_PATTERN.fullmatch(sample_col) or not _FORMULA_COLUMN_PATTERN.fullmatch(condition_col):
+                raise ValueError(
+                    "sample_col and condition_col must use letters, digits, and underscores only."
+                )
+            if sample_col == condition_col:
+                raise ValueError("sample_col and condition_col must be different.")
+            n_pcs = bounded_integer(
+                arguments.get("n_pcs"),
+                "n_pcs",
+                default=30,
+                minimum=2,
+                maximum=100,
+            )
+            n_neighbors = bounded_integer(
+                arguments.get("n_neighbors"),
+                "n_neighbors",
+                default=15,
+                minimum=2,
+                maximum=200,
+            )
+            prop = bounded_number(
+                arguments.get("prop"),
+                "prop",
+                default=0.1,
+                minimum=0,
+                maximum=1,
+                exclusive_minimum=True,
+            )
+            spatial_fdr = bounded_number(
+                arguments.get("spatial_fdr"),
+                "spatial_fdr",
+                default=0.1,
+                minimum=0,
+                maximum=1,
+                exclusive_minimum=True,
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
 
         try:
             import scanpy as sc
         except ImportError as exc:
-            return {"error": f"scanpy is not installed on the server: {exc}"}
+            return {"error": "scanpy is not installed on the provider."}
 
         # Prefer pertpy (current Milo implementation); fall back to milopy.
         backend = None
@@ -127,24 +195,26 @@ class MiloDifferentialAbundanceTool:
                 import milopy.core as milo_core  # noqa: F401
 
                 backend = "milopy"
-            except ImportError as exc:
+            except ImportError:
                 return {
                     "error": (
-                        "Neither 'pertpy' nor 'milopy' is installed on the server. "
-                        f"Install pertpy to run Milo ({exc})."
+                        "Neither 'pertpy' nor 'milopy' is installed on the provider. "
+                        "Install pertpy to run Milo."
                     )
                 }
 
         try:
-            adata = sc.read_h5ad(adata_path)
+            adata = load_remote_h5ad(adata_path, sc.read_h5ad)
         except Exception as exc:  # noqa: BLE001
-            return {"error": f"Failed to read AnnData from {adata_path}: {exc}"}
+            return {"error": f"Invalid adata_path: {exc}"}
 
         for col in (sample_col, condition_col):
             if col not in adata.obs.columns:
-                return {
-                    "error": f"Column '{col}' not found in adata.obs (available: {list(adata.obs.columns)})."
-                }
+                return {"error": f"Column '{col}' was not found in adata.obs."}
+        if adata.n_obs < 3 or n_neighbors >= adata.n_obs:
+            return {"error": "n_neighbors must be smaller than the number of cells."}
+        if adata.obs[condition_col].astype(str).nunique() < 2:
+            return {"error": "condition_col must contain at least two conditions."}
 
         try:
             if backend == "pertpy":
@@ -171,13 +241,16 @@ class MiloDifferentialAbundanceTool:
                 spatial_fdr,
             )
         except Exception as exc:  # noqa: BLE001
-            return {"error": f"Milo differential abundance testing failed: {exc}"}
+            return {"error": "Milo differential abundance testing failed on the provider."}
 
     @staticmethod
     def _build_graph(sc, adata, n_pcs, n_neighbors):
         """Compute PCA + a kNN graph in place (Milo reads .obsp connectivities)."""
         if "X_pca" not in adata.obsm:
-            sc.pp.pca(adata, n_comps=min(n_pcs, max(1, adata.n_vars - 1, 1)))
+            sc.pp.pca(
+                adata,
+                n_comps=min(n_pcs, max(1, adata.n_vars - 1), adata.n_obs - 1),
+            )
         # never request more PCs than X_pca actually has (a pre-computed X_pca
         # may have fewer components than the requested n_pcs).
         n_pcs = min(n_pcs, adata.obsm["X_pca"].shape[1])

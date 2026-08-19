@@ -43,6 +43,12 @@ import scanpy as sc
 import scvi
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_argument_validation import (
+    bounded_integer,
+    bounded_text,
+    require_argument_object,
+)
+from tooluniverse.remote_data_path import load_remote_h5ad
 
 # Above this cell count, per-cell arrays are omitted from the response to keep
 # the payload bounded; only the label-count summary is returned.
@@ -67,22 +73,30 @@ _CELL_ARRAY_LIMIT = 5000
             "properties": {
                 "adata_path": {
                     "type": "string",
-                    "description": "Server-accessible path or URL to an .h5ad AnnData of RAW UMI counts.",
+                    "description": "An .h5ad file of raw UMI counts inside the provider-configured data directory.",
                 },
                 "labels_key": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
                     "description": "obs column holding known cell-type labels for some cells and the unlabeled_category sentinel for the cells to annotate.",
                 },
                 "unlabeled_category": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
                     "description": "Value in labels_key marking unlabeled cells (default 'Unknown').",
                 },
                 "scvi_epochs": {
                     "type": "integer",
+                    "minimum": 1,
+                    "maximum": 400,
                     "description": "Unsupervised scVI pretraining epochs (default 100).",
                 },
                 "scanvi_epochs": {
                     "type": "integer",
+                    "minimum": 1,
+                    "maximum": 200,
                     "description": "Semi-supervised scANVI refinement epochs (default 20).",
                 },
             },
@@ -100,6 +114,10 @@ class ScanviAnnotateTool:
     """Train scANVI on a partially-labeled count matrix and transfer labels."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        try:
+            arguments = require_argument_object(arguments)
+        except ValueError as exc:
+            return {"error": str(exc)}
         adata_path = arguments.get("adata_path")
         labels_key = arguments.get("labels_key")
         if not adata_path:
@@ -107,22 +125,37 @@ class ScanviAnnotateTool:
         if not labels_key:
             return {"error": "Missing required parameter: labels_key"}
 
-        unlabeled_category = arguments.get("unlabeled_category") or "Unknown"
-        scvi_epochs = int(arguments.get("scvi_epochs") or 100)
-        scanvi_epochs = int(arguments.get("scanvi_epochs") or 20)
+        try:
+            labels_key = bounded_text(labels_key, "labels_key")
+            unlabeled_category = bounded_text(
+                arguments.get("unlabeled_category"),
+                "unlabeled_category",
+                default="Unknown",
+            )
+            scvi_epochs = bounded_integer(
+                arguments.get("scvi_epochs"),
+                "scvi_epochs",
+                default=100,
+                minimum=1,
+                maximum=400,
+            )
+            scanvi_epochs = bounded_integer(
+                arguments.get("scanvi_epochs"),
+                "scanvi_epochs",
+                default=20,
+                minimum=1,
+                maximum=200,
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
 
         try:
-            adata = sc.read_h5ad(adata_path)
+            adata = load_remote_h5ad(adata_path, sc.read_h5ad)
         except Exception as exc:  # noqa: BLE001
-            return {"error": f"Failed to read AnnData from '{adata_path}': {exc}"}
+            return {"error": f"Invalid adata_path: {exc}"}
 
         if labels_key not in adata.obs:
-            return {
-                "error": (
-                    f"labels_key '{labels_key}' not found in adata.obs "
-                    f"(available: {list(adata.obs.columns)})."
-                )
-            }
+            return {"error": "labels_key was not found in adata.obs."}
 
         try:
             # Preserve raw counts in a 'counts' layer before any normalization.
@@ -134,6 +167,8 @@ class ScanviAnnotateTool:
             n_cells = int(adata.n_obs)
             n_unlabeled = int(unlabeled_mask.sum())
 
+            if n_unlabeled == 0:
+                return {"error": "No cells use the requested unlabeled_category."}
             if n_unlabeled == n_cells:
                 return {
                     "error": (
@@ -158,9 +193,13 @@ class ScanviAnnotateTool:
 
             preds = scanvi_model.predict()
         except Exception as exc:  # noqa: BLE001
-            return {"error": f"scANVI annotation failed: {exc}"}
+            return {"error": "scANVI annotation failed on the provider."}
 
         preds = [str(p) for p in preds]
+        if len(preds) != n_cells:
+            return {"error": "scANVI returned an invalid number of predictions."}
+        if any(not label or len(label) > 128 for label in preds):
+            return {"error": "scANVI returned an invalid prediction label."}
         cell_ids = adata.obs_names.astype(str).tolist()
 
         # Label counts over the predictions for the previously-unlabeled cells.
@@ -168,6 +207,8 @@ class ScanviAnnotateTool:
         for keep, label in zip(unlabeled_mask, preds):
             if keep:
                 label_counts[label] = label_counts.get(label, 0) + 1
+        if len(label_counts) > 256:
+            return {"error": "scANVI returned too many distinct prediction labels."}
 
         result: Dict[str, Any] = {
             "model": "scANVI",
