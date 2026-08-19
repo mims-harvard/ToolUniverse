@@ -1,0 +1,102 @@
+[
+  {
+    "name": "OpenFDADevice_search_recalls",
+    "type": "OpenFDADeviceTool",
+    "description": "Search openFDA's medical device recall database by device name, recalling firm, or free text. Returns each recall's product description, recalling firm, stated reason and root cause, status, and date initiated. Example: query='pacemaker' returns hundreds of pacemaker-related recalls including terminated Guidant and Medtronic actions. ToolUniverse's existing openFDA tools cover only drug data; this is the device side.",
+    "fields": {
+      "operation": "search_recalls"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Device name, recalling firm, or free text, e.g. 'pacemaker', 'insulin pump'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max recalls to return, 1-100. Default 20."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "product_description": {"type": ["string", "null"]},
+              "recalling_firm": {"type": ["string", "null"]},
+              "reason_for_recall": {"type": ["string", "null"]},
+              "root_cause_description": {"type": ["string", "null"]},
+              "recall_status": {"type": ["string", "null"]},
+              "event_date_initiated": {"type": ["string", "null"]},
+              "action": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "pacemaker", "limit": 5},
+      {"query": "insulin pump", "limit": 5}
+    ]
+  },
+  {
+    "name": "OpenFDADevice_search_adverse_events",
+    "type": "OpenFDADeviceTool",
+    "description": "Search openFDA's MAUDE database of medical device adverse event reports by device generic name. Returns each report's device brand/generic name and manufacturer, event type (Malfunction/Injury/Death), date, product problems, and patient problems. Example: device_name='pacemaker' surfaces reports like under-sensing and high capture threshold in pacemaker leads. ToolUniverse's existing openFDA tools cover only drug adverse events (FAERS); this is the device side.",
+    "fields": {
+      "operation": "search_adverse_events"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["device_name"],
+      "properties": {
+        "device_name": {
+          "type": "string",
+          "description": "Device generic name, e.g. 'pacemaker', 'insulin pump'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max reports to return, 1-100. Default 20."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "brand_name": {"type": ["string", "null"]},
+              "generic_name": {"type": ["string", "null"]},
+              "manufacturer": {"type": ["string", "null"]},
+              "event_type": {"type": ["string", "null"]},
+              "date_of_event": {"type": ["string", "null"]},
+              "product_problems": {"type": "array", "items": {"type": "string"}},
+              "patient_problems": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"device_name": "pacemaker", "limit": 5},
+      {"device_name": "insulin pump", "limit": 5}
+    ]
+  }
+]

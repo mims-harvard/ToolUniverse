@@ -1087,6 +1087,11 @@ default_tool_files = {
     # NCI EVS - CTCAE, ICD-10-CM/ICD-9-CM, RadLex, NDF-RT/MedRT terminologies
     # (sibling to the existing NCIt-only NCIThesaurusTool)
     "nci_evs": os.path.join(current_dir, "data", "nci_evs_tools.json"),
+    # openFDA device - recalls and MAUDE adverse events, the device side of
+    # openFDA (existing tools cover only drug/label, drug/event, drugsfda)
+    "openfda_device": os.path.join(
+        current_dir, "data", "openfda_device_tools.json"
+    ),
     # Gene2Phenotype - EBI curated gene-disease associations for clinical genetics
     "gene2phenotype": os.path.join(current_dir, "data", "gene2phenotype_tools.json"),
     # NASA Exoplanet Archive - ADQL queries for 5500+ confirmed exoplanets and stellar hosts
