@@ -27,9 +27,12 @@ DEFAULT_URL = (
     "https://github.com/mims-harvard/ToolUniverse/releases/download/"
     "benchmark-data-v1/tool_finder_benchmark_data.tar.gz"
 )
-# sha256 of the released archive. If you publish a rebuilt archive, update this;
-# gzip output is not byte-reproducible, so a re-tar of identical data changes the hash.
-EXPECTED_SHA256 = "a7cb01ea9f64087fda34effecb0bfa169f1b4fe8964a792073d1d9a2c1189b6c"
+# sha256 of the released archive (3,055,637 bytes). The archive is built to be
+# byte-reproducible, so rebuilding it from identical inputs reproduces this hash:
+#     tar --sort=name --mtime='UTC 2026-01-01' --owner=0 --group=0 --numeric-owner \
+#         --format=gnu -cf - queries.jsonl qrels.tsv | gzip -n -9 > archive.tar.gz
+# Drop any of those flags and the bytes change even though the data does not.
+EXPECTED_SHA256 = "0f7aaf18e273660ce2b448f6e467cf746dc13d15479bdebeaa921d24afbf7a0d"
 
 MEMBERS = ("queries.jsonl", "qrels.tsv")
 
