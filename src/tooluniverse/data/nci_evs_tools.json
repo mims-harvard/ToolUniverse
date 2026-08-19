@@ -2,7 +2,7 @@
   {
     "name": "NCIEVS_search_terminology",
     "type": "NCIEVSTool",
-    "description": "Keyword-search an NCI EVS clinical/biomedical terminology other than NCIt (use NCIThesaurus_search for NCIt itself): 'ctcae5'/'ctcae6' (adverse event grading, the clinical-trial safety standard), 'icd10cm'/'icd9cm'/'icd10' (US diagnosis codes), 'radlex' (radiology), 'ndfrt'/'medrt' (drug reference terminology), 'canmed'. Example: terminology='ctcae5', term='neutropenia' returns graded adverse event terms (Grade 3/4/5 Febrile neutropenia). MedDRA is licensed and not queryable here. Returns each concept's code for use with NCIEVS_get_concept.",
+    "description": "Keyword-search an NCI EVS clinical/biomedical terminology other than NCIt (use NCIThesaurus_search for NCIt) or ICD-10-CM (use ICD10Tool): 'ctcae5'/'ctcae6' (adverse event grading, the clinical-trial safety standard), 'icd9cm' (US legacy diagnosis codes), 'radlex' (radiology), 'ndfrt'/'medrt' (drug reference terminology), 'canmed'. Example: terminology='ctcae5', term='neutropenia' returns graded adverse event terms (Grade 3/4/5 Febrile neutropenia). MedDRA is licensed and not queryable here. Returns each concept's code for use with NCIEVS_get_concept.",
     "fields": {
       "operation": "search_terminology"
     },
@@ -12,11 +12,11 @@
       "properties": {
         "terminology": {
           "type": "string",
-          "description": "NCI EVS terminology code, e.g. 'ctcae5', 'icd10cm', 'icd9cm', 'radlex', 'ndfrt', 'medrt', 'canmed'."
+          "description": "NCI EVS terminology code, e.g. 'ctcae5', 'icd9cm', 'radlex', 'ndfrt', 'medrt', 'canmed'."
         },
         "term": {
           "type": "string",
-          "description": "Free-text search term, e.g. 'neutropenia', 'diabetes'."
+          "description": "Free-text search term, e.g. 'neutropenia', 'fracture'."
         },
         "limit": {
           "type": ["integer", "null"],
@@ -46,7 +46,7 @@
     },
     "test_examples": [
       {"terminology": "ctcae5", "term": "neutropenia", "limit": 5},
-      {"terminology": "icd10cm", "term": "diabetes", "limit": 5}
+      {"terminology": "radlex", "term": "fracture", "limit": 5}
     ]
   },
   {
@@ -62,11 +62,11 @@
       "properties": {
         "terminology": {
           "type": "string",
-          "description": "NCI EVS terminology code, e.g. 'ctcae5', 'icd10cm'."
+          "description": "NCI EVS terminology code, e.g. 'ctcae5', 'radlex'."
         },
         "code": {
           "type": "string",
-          "description": "Concept code within that terminology, e.g. 'C143481' (CTCAE5) or 'E11.9' (ICD-10-CM)."
+          "description": "Concept code within that terminology, e.g. 'C143481' (CTCAE5) or 'RID4650' (RadLex)."
         }
       }
     },

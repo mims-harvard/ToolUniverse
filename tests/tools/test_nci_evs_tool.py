@@ -52,19 +52,21 @@ class TestSearchTerminology:
         assert any(r["code"] == FEBRILE_NEUTROPENIA for r in rows)
         assert any("Grade" in (r["name"] or "") for r in rows)
 
-    def test_icd10cm_finds_diabetes_codes(self, tu):
+    def test_radlex_finds_fracture_terms(self, tu):
+        # ICD-10-CM is intentionally not exercised here: ICD10Tool already
+        # covers it via the same NLM Clinical Tables backend.
         rows = data_of(
             tu.tools.NCIEVS_search_terminology(
-                terminology="icd10cm", term="diabetes", limit=10
+                terminology="radlex", term="fracture", limit=10
             )
         )
         assert rows
-        assert all("diabet" in (r["name"] or "").lower() for r in rows)
+        assert all("fracture" in (r["name"] or "").lower() for r in rows)
 
     def test_limit_is_respected(self, tu):
         rows = data_of(
             tu.tools.NCIEVS_search_terminology(
-                terminology="icd10cm", term="diabetes", limit=3
+                terminology="radlex", term="fracture", limit=3
             )
         )
         assert len(rows) <= 3

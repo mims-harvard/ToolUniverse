@@ -4,19 +4,21 @@ NCI EVS (Enterprise Vocabulary Services) terminology tool for ToolUniverse.
 
 The same public API that backs the existing NCIThesaurusTool hosts over a
 dozen other clinical and biomedical terminologies: CTCAE (adverse event
-grading, the clinical-trial safety standard), ICD-10-CM/ICD-9-CM (US
-diagnosis coding), RadLex (radiology), NDF-RT/MedRT (drug reference
-terminology), CanMED, plus GO/ChEBI/HGNC/SNOMED CT/LOINC. None of the
-non-NCIt terminologies were reachable anywhere in ToolUniverse before
-this, and CTCAE/ICD-10-CM/ICD-9-CM/RadLex/NDF-RT/MedRT specifically have
-no dedicated tool at all. Built as a sibling to NCIThesaurusTool rather
-than modifying it, since that tool's contract is deliberately NCIt-only.
+grading, the clinical-trial safety standard), ICD-9-CM, RadLex
+(radiology), NDF-RT/MedRT (drug reference terminology), CanMED, plus
+GO/ChEBI/HGNC/SNOMED CT/LOINC/ICD-10-CM. CTCAE/ICD-9-CM/RadLex/NDF-RT/
+MedRT specifically have no dedicated tool anywhere else in ToolUniverse.
+Built as a sibling to NCIThesaurusTool rather than modifying it, since
+that tool's contract is deliberately NCIt-only.
 
 MedDRA is also listed in this API's terminology metadata but returns
 HTTP 403 on every query (it is a separately licensed vocabulary); this
-tool does not expose it. GO, ChEBI, HGNC, and SNOMED CT already have
-dedicated ToolUniverse tools that may return richer data than this
-generic interface; prefer those for those four vocabularies.
+tool does not expose it. GO, ChEBI, HGNC, SNOMED CT, and ICD-10-CM
+(ICD10Tool, via NLM Clinical Tables) already have dedicated ToolUniverse
+tools that may return richer or more authoritative data than this
+generic interface; prefer those five for those five vocabularies. This
+tool still accepts them for completeness, since the underlying API is
+shared and free either way.
 
 API: https://api-evsrest.nci.nih.gov/api/v1
 No authentication required for the terminologies this tool exposes.
@@ -97,7 +99,7 @@ class NCIEVSTool(BaseTool):
             return {
                 "status": "error",
                 "error": "terminology is required, e.g. 'ctcae5' (adverse "
-                "events), 'icd10cm' (US diagnosis codes), 'radlex' "
+                "events), 'icd9cm' (US legacy diagnosis codes), 'radlex' "
                 "(radiology).",
             }
         if terminology.lower() in _BLOCKED_TERMINOLOGIES:
