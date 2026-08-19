@@ -237,6 +237,4 @@ The narrative and the step-by-step tool sequences come from the
 [case-studies post](https://aiscientist.tools/posts/tooluniverse-case-studies),
 which condenses the supplementary note "Step-by-step real-world case studies"
 in the ToolUniverse manuscript,
-[arXiv:2509.23426](https://arxiv.org/abs/2509.23426). Companion posts cover the
-[LAB-Bench benchmark](https://aiscientist.tools/posts/labbench-benchmark) and the
-[Tool Finder retrieval benchmark](https://aiscientist.tools/posts/tool-finder-benchmark).
+[arXiv:2509.23426](https://arxiv.org/abs/2509.23426).
