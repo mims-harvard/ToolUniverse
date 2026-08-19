@@ -11,6 +11,7 @@ Strategies:
   gte-qwen2-7b    Tool_Finder with gte-Qwen2-7B-instruct
   e5-mistral-7b   Tool_Finder with e5-mistral-7b-instruct
   gte-large       gte-large-en-v1.5
+  s-pubmedbert    S-PubMedBert-MS-MARCO, a biomedical sentence encoder
 
 Every embedding strategy encodes the identical per-tool document text and the identical
 query text, so differences between them come from the encoder alone. Document
@@ -64,6 +65,12 @@ ENCODERS = {
     "gte-large": dict(
         model="Alibaba-NLP/gte-large-en-v1.5", maxlen=4096, prompt="", trc=True
     ),
+    # A biomedical encoder, included because domain pretraining is the obvious
+    # alternative hypothesis to fine-tuning on tool descriptions. It is a BERT model:
+    # 512 tokens, no instruction prefix, mean pooling rather than last-token.
+    "s-pubmedbert": dict(
+        model="pritamdeka/S-PubMedBert-MS-MARCO", maxlen=512, prompt="", trc=False
+    ),
 }
 
 HOSTED = {
@@ -71,7 +78,8 @@ HOSTED = {
     "openai-3-small": "text-embedding-3-small",
 }
 
-ALL_STRATEGIES = ["toolrag", "base", "keyword", "llm", *HOSTED, "gte-qwen2-7b", "e5-mistral-7b", "gte-large"]
+ALL_STRATEGIES = ["toolrag", "base", "keyword", "llm", *HOSTED, "gte-qwen2-7b",
+                  "e5-mistral-7b", "gte-large", "s-pubmedbert"]
 
 
 def load_inputs():

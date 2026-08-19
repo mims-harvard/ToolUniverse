@@ -18,6 +18,9 @@ import subprocess
 
 import common as C
 
+# The catalogue commit the released judgments were graded against.
+JUDGED_COMMIT = "e2520a9610c9b8a54aed42837929cca7f4659590"
+
 
 def git_add_date(path):
     """First commit date (ISO 8601) that added ``path``, or None if unknown."""
@@ -94,6 +97,18 @@ def main():
     C.log(
         f"commit={commit[:10]}  pool={len(names)}  seed_tools={n_seed}  held_out={n_heldout}"
     )
+
+    # The released judgments were pooled over a specific catalogue. If you pinned that
+    # commit but ended up with a different pool, the difference is usually API keys:
+    # key-gated tools join the pool, were never judged, and therefore score 0.
+    if commit.startswith(JUDGED_COMMIT[:10]) and len(names) != C.POOL_AT_JUDGED_COMMIT:
+        C.log(
+            f"WARNING: pool is {len(names)} tools, but the released judgments were made "
+            f"over {C.POOL_AT_JUDGED_COMMIT} at this commit. Extra tools were never "
+            f"judged and score 0 however relevant they are, which depresses every "
+            f"strategy. Usual cause: one of {', '.join(C.KEY_GATED_ENV)} is set. "
+            f"Unset them and rebuild."
+        )
     C.log(f"Wrote {C.DATA_DIR / 'corpus_snapshot.json'}")
 
 

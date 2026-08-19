@@ -131,9 +131,53 @@ def log(*a):
 
 
 # --------------------------------------------------------------------------- corpus
+# Tools that only load when their API key is present. They are legitimate catalogue
+# entries, but whether they exist changes the size of the retrieval pool, and a tool that
+# was not in the pool when the released judgments were made scores 0 however good it is.
+# The published run held no key for these, so its pool was 2,634 tools.
+KEY_GATED_ENV = ("DISGENET_API_KEY", "OMIM_API_KEY")
+POOL_AT_JUDGED_COMMIT = 2634
+
+
 def get_tooluniverse():
-    """Load a ToolUniverse instance with the full catalogue."""
+    """Load a ToolUniverse instance with the full catalogue.
+
+    If ``TOOLUNIVERSE_REPO`` is set, that checkout is put at the front of ``sys.path``
+    first, so the catalogue really comes from the commit you pinned. Setting the variable
+    alone is not enough: ``import tooluniverse`` otherwise resolves to whatever is
+    installed in the environment, which is usually a different catalogue than the one you
+    checked out. That mismatch is silent -- the run completes and reports metrics against
+    a pool the released judgments never covered -- so it is checked rather than assumed.
+    """
+    env_repo = os.environ.get("TOOLUNIVERSE_REPO")
+    if env_repo:
+        src = Path(env_repo).resolve() / "src"
+        if not (src / "tooluniverse" / "__init__.py").exists():
+            raise SystemExit(
+                f"TOOLUNIVERSE_REPO={env_repo} does not look like a ToolUniverse checkout "
+                f"({src / 'tooluniverse' / '__init__.py'} is missing)"
+            )
+        sys.path.insert(0, str(src))
+
+    import tooluniverse as _tu
     from tooluniverse import ToolUniverse
+
+    loaded = Path(_tu.__file__).resolve()
+    if env_repo and Path(env_repo).resolve() not in loaded.parents:
+        raise SystemExit(
+            f"TOOLUNIVERSE_REPO points at {env_repo}, but 'import tooluniverse' loaded "
+            f"{loaded}. The catalogue would not be the one you pinned. Run with "
+            f"PYTHONPATH={Path(env_repo).resolve() / 'src'}, or pip install -e that checkout."
+        )
+    log(f"Catalogue from {loaded.parent}")
+
+    present = [k for k in KEY_GATED_ENV if os.environ.get(k)]
+    if present:
+        log(
+            f"NOTE: {', '.join(present)} is set, so key-gated tools will join the pool. "
+            "The released judgments were made without them; unset these to reproduce "
+            "the published pool exactly."
+        )
 
     tu = ToolUniverse()
     tu.load_tools()

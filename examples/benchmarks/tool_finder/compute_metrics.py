@@ -8,7 +8,8 @@ grade >= 1 as relevant.
 
 Three breakdowns are produced:
   * overall, across every judged query;
-  * by difficulty level (L1 named, L2 intent, L3 scenario);
+  * by difficulty level (L1 named, L2 intent, L3 scenario), both over all queries at
+    each level and paired over complete L1/L2/L3 triples;
   * on the leakage-free held-out split, i.e. only queries whose target tool entered the
     catalogue after the fine-tuning cutoff, so the fine-tuned encoder cannot have seen
     it during training.
@@ -16,8 +17,8 @@ Three breakdowns are produced:
 Significance for the fine-tuning ablation uses a paired bootstrap over per-query scores,
 which respects the pairing of the two strategies on identical queries.
 
-Outputs (in results/): main_table.csv, by_difficulty.csv, heldout_table.csv,
-significance.json, summary.md
+Outputs (in results/): main_table.csv, by_difficulty.csv, by_difficulty_paired.csv,
+heldout_table.csv, significance.json, summary.md
 
 Usage:
     python compute_metrics.py
@@ -40,6 +41,7 @@ STRATEGY_ORDER = [
     "gte-qwen2-7b",
     "e5-mistral-7b",
     "gte-large",
+    "s-pubmedbert",
     "keyword",
     "llm",
 ]
@@ -51,6 +53,7 @@ LABELS = {
     "gte-qwen2-7b": "Tool_Finder, embedding_model=gte-qwen2-7b",
     "e5-mistral-7b": "Tool_Finder, embedding_model=e5-mistral-7b",
     "gte-large": "gte-large-en-v1.5",
+    "s-pubmedbert": "S-PubMedBert-MS-MARCO",
     "keyword": "Tool_Finder_Keyword (BM25)",
     "llm": "Tool_Finder_LLM",
 }
@@ -66,6 +69,7 @@ MODEL_INFO = {
     "gte-qwen2-7b": ("7.6B", "2024-06"),
     "e5-mistral-7b": ("7B", "2024-01"),
     "gte-large": ("434M", "2024-04"),
+    "s-pubmedbert": ("109M", "2022"),
     "keyword": ("-", "-"),
     "llm": ("-", "-"),
 }
@@ -156,6 +160,41 @@ def paired_boot_p(a, b, nboot=NBOOT, seed=C.SEED):
     return float(min(1.0, p))
 
 
+def paired_difficulty(queries, rankings, qrels, strategies):
+    """NDCG@10 by level over complete L1/L2/L3 triples.
+
+    The per-level tables above are computed on whatever queries survive at each level, so
+    a level's score partly reflects which tools happen to be in it. Restricting to
+    (tool, example) triples that have at least one pooled positive at all three levels
+    removes that confound: every level then scores the same underlying needs, and the
+    L1-to-L3 drop is a property of the phrasing rather than of the sample.
+    """
+    with_positive = {q for q, d in qrels.items() if any(g >= 1 for g in d.values())}
+    by_triple = defaultdict(dict)
+    for qid in with_positive:
+        r = queries.get(qid)
+        if r:
+            by_triple[(r["source_tool"], r.get("example_index", 0))][r["difficulty"]] = qid
+    triples = [t for t, levels in by_triple.items() if {"L1", "L2", "L3"} <= set(levels)]
+    if not triples:
+        return None, []
+    per_level = {d: [by_triple[t][d] for t in sorted(triples)] for d in ("L1", "L2", "L3")}
+
+    rows = []
+    for st in strategies:
+        cells, nd = {}, {}
+        for level, qids in per_level.items():
+            used = [q for q in qids if q in rankings[st]]
+            scores = [per_query_metrics(rankings[st][q], qrels[q]) for q in used]
+            nd[level] = sum(x["NDCG@10"] for x in scores) / len(used)
+            cells[f"NDCG@10_{level}"] = nd[level]
+            cells[f"Recall@10_{level}"] = sum(x["Recall@10"] for x in scores) / len(used)
+        cells["NDCG@10_drop_L1_L3"] = nd["L1"] - nd["L3"]
+        rows.append((st, cells))
+    rows.sort(key=lambda r: -r[1]["NDCG@10_L3"])
+    return len(triples), rows
+
+
 def table_for(qids, rankings, qrels, strategies):
     out = {}
     for s in strategies:
@@ -203,6 +242,21 @@ def main():
             cells = ",".join(f"{t[s][m][0]:.4f}" for m in METRICS)
             lines.append(f'{level},"{LABELS[s]}",{cells},{t[s]["n"]}')
     (C.RESULTS_DIR / "by_difficulty.csv").write_text("\n".join(lines) + "\n")
+
+    # Paired by difficulty: same underlying needs at all three levels.
+    n_triples, paired_rows = paired_difficulty(queries, rankings, qrels, strategies)
+    if n_triples:
+        cols = ["strategy", "NDCG@10_L1", "NDCG@10_L2", "NDCG@10_L3", "NDCG@10_drop_L1_L3",
+                "Recall@10_L1", "Recall@10_L2", "Recall@10_L3", "n_triples"]
+        lines = [",".join(cols)]
+        for st, cells in paired_rows:
+            lines.append(
+                ",".join(['"' + LABELS[st] + '"']
+                         + [f"{cells[c]:.4f}" for c in cols[1:-1]]
+                         + [str(n_triples)])
+            )
+        (C.RESULTS_DIR / "by_difficulty_paired.csv").write_text("\n".join(lines) + "\n")
+        C.log(f"paired triples with a positive at all three levels: {n_triples}")
 
     # Leakage-free held-out split.
     held_qids = [q for q in all_qids if queries.get(q, {}).get("heldout")]
@@ -274,8 +328,8 @@ def main():
             + " ".join(f"{main_table[s][m][0]:10.3f}" for m in METRICS)
             + f"  {main_table[s]['n']}"
         )
-    C.log(f"\nWrote {C.RESULTS_DIR}/: main_table.csv, by_difficulty.csv, heldout_table.csv, "
-          "significance.json, summary.md")
+    C.log(f"\nWrote {C.RESULTS_DIR}/: main_table.csv, by_difficulty.csv, "
+          "by_difficulty_paired.csv, heldout_table.csv, significance.json, summary.md")
 
 
 if __name__ == "__main__":

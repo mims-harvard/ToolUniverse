@@ -5,7 +5,7 @@ self-contained and has its own README with the exact commands.
 
 | Folder | What it measures | Write-up |
 |---|---|---|
-| [`tool_finder/`](tool_finder/) | Retrieval: does the Tool Finder return the tool that answers a request? Compares the fine-tuned default encoder against its un-fine-tuned base, the keyword and LLM strategies, and the alternative encoders selectable through `embedding_model`. | [Tool Finder benchmark](https://aiscientist.tools/posts/tool-finder-benchmark) |
+| [`tool_finder/`](tool_finder/) | Retrieval: does the Tool Finder return the tool that answers a request? Compares the fine-tuned default encoder against its un-fine-tuned base, the keyword and LLM strategies, the alternative encoders selectable through `embedding_model`, and two off-the-shelf external encoders. | [Tool Finder benchmark](https://aiscientist.tools/posts/tool-finder-benchmark) |
 | [`labbench/`](labbench/) | End to end: how much does adding ToolUniverse improve an agent's accuracy on LAB-Bench DbQA and SeqQA, with the base model held constant? | [LAB-Bench benchmark](https://aiscientist.tools/posts/labbench-benchmark) |
 
 ## What is not committed here
@@ -35,7 +35,9 @@ this and should be run before every session.
 runs are sampled, so the numbers land near the published ones rather than on them, and
 the with-condition also depends on which tool API keys you hold. The retrieval benchmark
 *is* deterministic, but only along one path: re-scoring the released judgments against
-the catalogue commit they were judged on. Regenerating its queries or re-judging them
+the catalogue commit they were judged on -- and pinning that commit takes more than a
+`git checkout`, because both the package your Python actually imports and the API keys
+you happen to hold change which tools are in the pool. Regenerating its queries or re-judging them
 uses sampled models and produces a different, equally valid dataset. Both folders spell
 out which of their steps reproduce exactly and which reproduce only in conclusion.
 
