@@ -1092,6 +1092,11 @@ default_tool_files = {
     "openfda_device": os.path.join(
         current_dir, "data", "openfda_device_tools.json"
     ),
+    # FHIR Terminology Service - SNOMED CT code lookup and hierarchy
+    # expansion (LOINC/RxNorm/ICD-10-CM already have dedicated tools)
+    "fhir_terminology": os.path.join(
+        current_dir, "data", "fhir_terminology_tools.json"
+    ),
     # Gene2Phenotype - EBI curated gene-disease associations for clinical genetics
     "gene2phenotype": os.path.join(current_dir, "data", "gene2phenotype_tools.json"),
     # NASA Exoplanet Archive - ADQL queries for 5500+ confirmed exoplanets and stellar hosts

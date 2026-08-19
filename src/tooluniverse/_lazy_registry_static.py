@@ -644,6 +644,7 @@ STATIC_LAZY_REGISTRY = {
     "SmartAPITool": "smartapi_tool",
     "NCIEVSTool": "nci_evs_tool",
     "OpenFDADeviceTool": "openfda_device_tool",
+    "FHIRTerminologyTool": "fhir_terminology_tool",
     "OrphadataTool": "orphadata_tool",
     "SCREENRESTTool": "screen_tool",
     "SingleCellPortalTool": "single_cell_portal_tool",
