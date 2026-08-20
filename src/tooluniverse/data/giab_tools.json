@@ -1,0 +1,43 @@
+[
+  {
+    "name": "GIAB_list_directory",
+    "type": "GIABTool",
+    "description": "Browse NIST Genome in a Bottle's (GIAB) benchmark file release tree -- the reference-standard high-confidence variant (VCF) and callable-region (BED) sets used to validate variant-calling pipelines for samples HG001-HG007. There is no JSON API for this data, only a directory listing, so this tool navigates it: an empty path lists top-level trios/samples; e.g. path='AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38' lists that release's benchmark VCF/BED files with direct download URLs.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "path": {
+          "type": ["string", "null"],
+          "description": "Path relative to the GIAB release root, e.g. '' (top level), 'AshkenazimTrio', or 'AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38'. Default '' lists top-level trios/samples."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "type": {"type": "string", "enum": ["directory", "file"]},
+              "size": {"type": ["string", "null"]},
+              "last_modified": {"type": ["string", "null"]},
+              "url": {"type": "string"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"path": ""},
+      {"path": "AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38"}
+    ]
+  }
+]
