@@ -816,7 +816,7 @@ class UsptoDownloaderBoundaryTests(unittest.TestCase):
         with mock.patch.dict(
             sys.modules,
             {
-                "fitz": fitz,
+                "pymupdf": fitz,
                 "easyocr": easyocr,
                 "docx": docx,
                 "PIL": pil,
@@ -909,6 +909,34 @@ class UsptoDownloaderBoundaryTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "page limit"):
                 tool._run_provider({"applicationNumberText": "19113417"})
         pdf.close.assert_called_once()
+
+    def test_missing_pdf_extra_has_an_actionable_error(self):
+        module = self._load_uspto_downloader()
+        tool = module.USPTOPatentDocumentDownloader({"document": "ABST"})
+        metadata = {
+            "data": {
+                "documentBag": [
+                    {
+                        "documentCode": "ABST",
+                        "downloadOptionBag": [
+                            {
+                                "mimeTypeIdentifier": "PDF",
+                                "downloadUrl": "https://data.uspto.gov/document.pdf",
+                            }
+                        ],
+                    }
+                ]
+            }
+        }
+        with mock.patch.object(
+            module.USPTOOpenDataPortalTool, "run", return_value=metadata
+        ), mock.patch.object(
+            module, "_download_uspto_document", return_value=b"pdf"
+        ), mock.patch.object(module, "fitz", None):
+            result = tool.run({"applicationNumberText": "19113417"})
+
+        self.assertIn("dependency is not installed", result["error"])
+        self.assertIn("PyMuPDF", result["hint"])
 
 
 class StandaloneFastmcpSecurityTests(unittest.TestCase):

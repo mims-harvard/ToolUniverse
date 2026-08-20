@@ -1,5 +1,4 @@
 import requests
-import pymupdf as fitz
 import easyocr
 import re
 import zipfile
@@ -9,6 +8,11 @@ from PIL import Image
 from urllib.parse import urljoin, urlparse
 from tooluniverse.uspto_tool import USPTOOpenDataPortalTool
 from tooluniverse.tool_registry import register_tool
+
+try:
+    import pymupdf as fitz
+except ImportError:  # PyMuPDF is an explicit, AGPL/commercial opt-in dependency.
+    fitz = None
 
 
 _APPLICATION_NUMBER_PATTERN = re.compile(r"^[0-9]{8,16}$")
@@ -20,6 +24,18 @@ _MAX_PDF_PAGES = 2_000
 _MAX_OCR_PAGES = 100
 _MAX_OCR_PIXELS_PER_PAGE = 25_000_000
 _MAX_OCR_TOTAL_PIXELS = 250_000_000
+
+
+class _MissingPdfDependencyError(RuntimeError):
+    pass
+
+
+def _pdf_backend():
+    if fitz is None:
+        raise _MissingPdfDependencyError(
+            "PDF extraction requires the optional PyMuPDF dependency."
+        )
+    return fitz
 
 
 def _validate_uspto_download_url(url):
@@ -145,6 +161,11 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
             result = self._run_provider(
                 {"applicationNumberText": application_number.strip()}
             )
+        except _MissingPdfDependencyError:
+            return {
+                "error": "USPTO PDF extraction dependency is not installed.",
+                "hint": "Install the provider setup dependencies, including PyMuPDF, and retry.",
+            }
         except (requests.RequestException, ValueError):
             return {"error": "USPTO document retrieval failed on the provider."}
         except Exception:
@@ -163,7 +184,7 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
     def _run_provider(self, arguments):
         def ocr_pdf_bytes(pdf_bytes, dpi=300):
             print("Running OCR on PDF bytes...")
-            doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+            doc = _pdf_backend().open(stream=pdf_bytes, filetype="pdf")
             try:
                 if doc.page_count > _MAX_PDF_PAGES:
                     raise ValueError("USPTO PDF exceeds the page limit.")
@@ -246,7 +267,7 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
                 pdf_bytes = _download_uspto_document(
                     pdf_opt.get("downloadUrl"), self.headers
                 )
-                pdf_doc = fitz.open(stream=pdf_bytes, filetype="pdf")
+                pdf_doc = _pdf_backend().open(stream=pdf_bytes, filetype="pdf")
                 try:
                     if pdf_doc.page_count > _MAX_PDF_PAGES:
                         raise ValueError("USPTO PDF exceeds the page limit.")

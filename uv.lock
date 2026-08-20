@@ -2756,6 +2756,35 @@ all = [
     { name = "xlrd" },
     { name = "youtube-transcript-api" },
 ]
+audio-transcription = [
+    { name = "pydub" },
+    { name = "speechrecognition" },
+]
+az-doc-intel = [
+    { name = "azure-ai-documentintelligence" },
+    { name = "azure-identity" },
+]
+docx = [
+    { name = "lxml" },
+    { name = "mammoth" },
+]
+outlook = [
+    { name = "olefile" },
+]
+pdf = [
+    { name = "pdfminer-six" },
+]
+pptx = [
+    { name = "python-pptx" },
+]
+xls = [
+    { name = "pandas" },
+    { name = "xlrd" },
+]
+xlsx = [
+    { name = "openpyxl" },
+    { name = "pandas" },
+]
 
 [[package]]
 name = "markupsafe"
@@ -6237,7 +6266,9 @@ dependencies = [
     { name = "jsonpath-ng" },
     { name = "jsonschema" },
     { name = "lxml" },
-    { name = "markitdown", extra = ["all"] },
+    { name = "markitdown" },
+    { name = "markitdown", extra = ["all"], marker = "python_full_version < '3.14'" },
+    { name = "markitdown", extra = ["audio-transcription", "az-doc-intel", "docx", "outlook", "pdf", "pptx", "xls", "xlsx"], marker = "python_full_version >= '3.14'" },
     { name = "mcp", extra = ["cli"] },
     { name = "networkx" },
     { name = "numpy" },
@@ -6431,7 +6462,8 @@ requires-dist = [
     { name = "kaleido", marker = "extra == 'visualization'", specifier = ">=0.2.1" },
     { name = "linkify-it-py", marker = "extra == 'docs'", specifier = ">=2.0.0" },
     { name = "lxml", specifier = ">=6.0.0" },
-    { name = "markitdown", extras = ["all"], specifier = ">=0.1.0" },
+    { name = "markitdown", extras = ["all"], marker = "python_full_version < '3.14'", specifier = ">=0.1.0" },
+    { name = "markitdown", extras = ["audio-transcription", "az-doc-intel", "docx", "outlook", "pdf", "pptx", "xls", "xlsx"], marker = "python_full_version >= '3.14'", specifier = ">=0.1.0" },
     { name = "matplotlib", marker = "extra == 'graph'", specifier = ">=3.5.0" },
     { name = "matplotlib", marker = "extra == 'visualization'", specifier = ">=3.5.0" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.29.0,<2.0.0" },
