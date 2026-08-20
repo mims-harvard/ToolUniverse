@@ -178,7 +178,7 @@ class MiloDifferentialAbundanceTool:
 
         try:
             import scanpy as sc
-        except ImportError as exc:
+        except ImportError:
             return {"error": "scanpy is not installed on the provider."}
 
         # Prefer pertpy (current Milo implementation); fall back to milopy.
@@ -240,7 +240,7 @@ class MiloDifferentialAbundanceTool:
                 prop,
                 spatial_fdr,
             )
-        except Exception as exc:  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return {"error": "Milo differential abundance testing failed on the provider."}
 
     @staticmethod

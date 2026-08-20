@@ -147,7 +147,7 @@ class LianaCellPhoneDBTool:
                 use_raw=False,
                 verbose=False,
             )
-        except Exception as exc:  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return {"error": "LIANA CellPhoneDB failed on the provider."}
 
         res = adata.uns.get("liana_res")

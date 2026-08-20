@@ -252,7 +252,7 @@ class Cell2locationDeconvolutionTool:
                     "CPU; raise on GPU for production-quality posteriors)."
                 ),
             }
-        except Exception as exc:  # never raise out of run()
+        except Exception:  # never raise out of run()
             return {"error": "cell2location deconvolution failed on the provider."}
 
 

@@ -192,7 +192,7 @@ class ScanviAnnotateTool:
             scanvi_model.train(max_epochs=scanvi_epochs)
 
             preds = scanvi_model.predict()
-        except Exception as exc:  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return {"error": "scANVI annotation failed on the provider."}
 
         preds = [str(p) for p in preds]

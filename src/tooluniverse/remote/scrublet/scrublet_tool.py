@@ -120,7 +120,7 @@ class ScrubletDoubletTool:
                         )
                     }
                 predicted = predicted.astype(bool)
-            except Exception as exc:
+            except Exception:
                 return {"error": "Scrublet doublet detection failed on the provider."}
 
         n_doublets = int(predicted.sum())

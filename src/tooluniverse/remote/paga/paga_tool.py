@@ -162,7 +162,7 @@ class PagaTrajectoryTool:
         try:
             _ensure_neighbors(adata)
             sc.tl.paga(adata, groups=cluster_key)
-        except Exception as exc:  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return {"error": "PAGA computation failed on the provider."}
 
         conn = adata.uns["paga"]["connectivities"]

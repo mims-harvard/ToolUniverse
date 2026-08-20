@@ -161,7 +161,7 @@ class HarmonyIntegrateTool:
             pca = pca[:, :n_pcs]
             if not np.isfinite(pca).all():
                 return {"error": "X_pca contains non-finite values."}
-        except Exception as exc:
+        except Exception:
             return {"error": "PCA computation failed on the provider."}
 
         try:
@@ -176,7 +176,7 @@ class HarmonyIntegrateTool:
             if z.shape != pca.shape or not np.isfinite(z).all():
                 return {"error": "Harmony returned an invalid corrected embedding."}
             adata.obsm["X_pca_harmony"] = z
-        except Exception as exc:
+        except Exception:
             return {"error": "Harmony integration failed on the provider."}
 
         try:
@@ -199,7 +199,7 @@ class HarmonyIntegrateTool:
                     f"{_MAX_EMBEDDING_CELLS}-cell inline cap."
                 )
             return result
-        except Exception as exc:
+        except Exception:
             return {"error": "Failed to assemble the Harmony result on the provider."}
 
 

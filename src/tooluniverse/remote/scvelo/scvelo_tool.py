@@ -166,7 +166,7 @@ class ScveloVelocityTool:
             scv.tl.velocity_graph(adata)
             scv.tl.velocity_pseudotime(adata)
             scv.tl.velocity_confidence(adata)
-        except Exception as exc:  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return {"error": "scVelo velocity computation failed on the provider."}
 
         n_cells = int(adata.n_obs)

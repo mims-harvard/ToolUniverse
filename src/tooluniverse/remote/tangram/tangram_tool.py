@@ -155,7 +155,7 @@ class TangramDeconvolutionTool:
             # Project cell-type annotations to space; writes a spots x cell_types
             # DataFrame to adata_sp.obsm["tangram_ct_pred"].
             tg.project_cell_annotations(ad_map, adata_sp, annotation=cluster_label)
-        except Exception as exc:  # noqa: BLE001
+        except Exception:  # noqa: BLE001
             return {"error": "Tangram mapping failed on the provider."}
 
         ct_pred = adata_sp.obsm.get("tangram_ct_pred")

@@ -152,7 +152,7 @@ class SquidpyNhoodEnrichmentTool:
             # seed for reproducibility; n_jobs=1 avoids multiprocessing-spawn
             # issues when the server runs outside an `if __name__ == '__main__'`.
             sq.gr.nhood_enrichment(adata, cluster_key=cluster_key, seed=0, n_jobs=1)
-        except Exception as exc:
+        except Exception:
             return {"error": "Squidpy neighborhood enrichment failed on the provider."}
 
         result = adata.uns.get(f"{cluster_key}_nhood_enrichment")
