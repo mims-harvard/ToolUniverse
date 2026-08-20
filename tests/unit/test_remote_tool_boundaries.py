@@ -379,10 +379,28 @@ class CelltypistBoundaryTests(unittest.TestCase):
 
         models.Model = Model
         celltypist.models = models
+        sklearn = types.ModuleType("sklearn")
+        linear_model = types.ModuleType("sklearn.linear_model")
+        preprocessing = types.ModuleType("sklearn.preprocessing")
+
+        class LogisticRegression:
+            pass
+
+        class StandardScaler:
+            def __init__(self, with_mean=True):
+                self.with_mean = with_mean
+
+        linear_model.LogisticRegression = LogisticRegression
+        preprocessing.StandardScaler = StandardScaler
+        sklearn.linear_model = linear_model
+        sklearn.preprocessing = preprocessing
         stubs = {
             "celltypist": celltypist,
             "celltypist.models": models,
             "scanpy": scanpy,
+            "sklearn": sklearn,
+            "sklearn.linear_model": linear_model,
+            "sklearn.preprocessing": preprocessing,
             "tooluniverse.mcp_tool_registry": _registry_stub(),
             "tooluniverse.remote_data_path": path_module,
         }
