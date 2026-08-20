@@ -885,8 +885,15 @@ Examples:
 
             print("Available tools (for this server configuration):")
             print("=" * 50)
-            for name in sorted(tool_names)[:200]:  # cap output for readability
+            display_limit = 200
+            displayed_names = sorted(tool_names)[:display_limit]
+            for name in displayed_names:  # cap output for readability
                 print(f"  {name}")
+            if len(tool_names) > len(displayed_names):
+                print(
+                    f"\nShowing first {len(displayed_names)} of "
+                    f"{len(tool_names)} tools."
+                )
             print(f"\nTotal: {len(tool_names)} tools available")
             print("\nNote: Use --exclude-tools to exclude specific tools by name")
             print("      Use --exclude-categories to exclude entire categories")

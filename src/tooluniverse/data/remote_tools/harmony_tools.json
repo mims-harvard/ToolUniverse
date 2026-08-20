@@ -5,10 +5,11 @@
     "description": "Integrate single-cell data across batches/samples with Harmony (Korsunsky et al., Nature Methods 2019) — the default batch-correction baseline. Computes (or reuses an existing X_pca) a PCA embedding and returns the batch-corrected PCA embedding (X_pca_harmony), the standard input to neighbor graphs / clustering / UMAP. Harmony is fast and CPU-friendly even on large datasets. Input is a server-accessible .h5ad AnnData.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData."},
-        "batch_key": {"type": "string", "description": "obs column naming the batch/sample to integrate over."},
-        "n_pcs": {"type": "integer", "description": "Number of principal components to compute/use for Harmony (default 30)."}
+        "adata_path": {"type": "string", "description": "An .h5ad file inside the provider-configured data directory."},
+        "batch_key": {"type": "string", "minLength": 1, "maxLength": 128, "description": "obs column naming the batch/sample to integrate over."},
+        "n_pcs": {"type": "integer", "minimum": 2, "maximum": 100, "description": "Number of principal components to compute/use for Harmony (default 30)."}
       },
       "required": ["adata_path", "batch_key"]
     },

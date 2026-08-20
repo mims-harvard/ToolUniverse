@@ -8,5 +8,6 @@ Remote tools are external services, APIs, or tools running on separate servers t
    :hidden:
    :caption: Remote Tools
 
+   launch_and_share
    tutorial
    mcp_integration

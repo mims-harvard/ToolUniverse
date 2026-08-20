@@ -23,6 +23,7 @@ import threading
 import time
 import uuid
 import argparse
+import re
 import sys
 import webbrowser
 from concurrent.futures import ThreadPoolExecutor
@@ -31,7 +32,11 @@ from threading import Timer
 from typing import Dict, List, Optional, Any
 
 # Import the new registration system
-from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.mcp_tool_registry import (
+    collect_tools_for_serve,
+    register_mcp_tool,
+    start_mcp_server,
+)
 import requests
 
 # Check Flask availability for web interface
@@ -41,6 +46,13 @@ try:
     FLASK_AVAILABLE = True
 except ImportError:
     FLASK_AVAILABLE = False
+
+
+_MAX_PENDING_REQUESTS = 1_000
+_MAX_QUESTION_CHARS = 20_000
+_MAX_CONTEXT_CHARS = 50_000
+_MAX_RESPONSE_CHARS = 50_000
+_REQUEST_ID_PATTERN = re.compile(r"^[0-9a-f]{8}$")
 
 # =============================================================================
 #  HUMAN EXPERT SYSTEM (Same as original)
@@ -99,15 +111,12 @@ class HumanExpertSystem:
         }
 
         with self.lock:
+            if len(self.pending_requests) >= _MAX_PENDING_REQUESTS:
+                raise RuntimeError("the expert request queue is full")
             self.pending_requests.append(request_data)
             self.request_status[request_id] = "pending"
 
-        print(f"📝 New expert request submitted: {request_id}")
-        print(f"   ❓ Question: {question[:100]}{'...' if len(question) > 100 else ''}")
-
-        if context:
-            print(f"   🎯 Specialty: {context.get('specialty', 'general')}")
-            print(f"   ⚡ Priority: {context.get('priority', 'normal')}")
+        print("📝 New expert request submitted")
 
     def get_pending_requests(self) -> List[Dict]:
         """Get all pending expert consultation requests"""
@@ -135,7 +144,7 @@ class HumanExpertSystem:
                     self.request_status[request_id] = "completed"
                     self.expert_info["last_activity"] = datetime.now().isoformat()
 
-                    print(f"✅ Expert response submitted for request: {request_id}")
+                    print("✅ Expert response submitted")
                     return True
 
             return False
@@ -178,11 +187,15 @@ executor = ThreadPoolExecutor(max_workers=4)
             "properties": {
                 "question": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 20000,
                     "description": "The scientific question or case requiring expert consultation",
                 },
                 "specialty": {
                     "type": "string",
                     "default": "general",
+                    "minLength": 1,
+                    "maxLength": 128,
                     "description": "Area of expertise needed (e.g., 'cardiology', 'oncology', 'pharmacology')",
                 },
                 "priority": {
@@ -194,11 +207,14 @@ executor = ThreadPoolExecutor(max_workers=4)
                 "context": {
                     "type": "string",
                     "default": "",
+                    "maxLength": 50000,
                     "description": "Additional context or background information",
                 },
                 "timeout_minutes": {
                     "type": "integer",
                     "default": 5,
+                    "minimum": 1,
+                    "maximum": 60,
                     "description": "How long to wait for expert response (default: 5 minutes)",
                 },
             },
@@ -230,21 +246,53 @@ class ConsultHumanExpertTool:
 
         # Extract parameters
         question_any = arguments.get("question")
-        if not isinstance(question_any, str) or not question_any:
-            return {"status": "error", "error": "'question' must be a non-empty string"}
-        question = question_any
+        if (
+            not isinstance(question_any, str)
+            or not question_any.strip()
+            or len(question_any) > _MAX_QUESTION_CHARS
+        ):
+            return {
+                "status": "error",
+                "error": "'question' must contain 1 to 20,000 characters",
+            }
+        question = question_any.strip()
         specialty = arguments.get("specialty", "general")
         priority = arguments.get("priority", "normal")
         context = arguments.get("context", "")
         timeout_minutes = arguments.get("timeout_minutes", 5)
 
+        if (
+            not isinstance(specialty, str)
+            or not specialty.strip()
+            or len(specialty) > 128
+        ):
+            return {
+                "status": "error",
+                "error": "'specialty' must contain 1 to 128 characters",
+            }
+        specialty = specialty.strip()
+        if priority not in {"low", "normal", "high", "urgent"}:
+            return {
+                "status": "error",
+                "error": "'priority' must be one of: low, normal, high, urgent",
+            }
+        if not isinstance(context, str) or len(context) > _MAX_CONTEXT_CHARS:
+            return {
+                "status": "error",
+                "error": "'context' must be a string of at most 50,000 characters",
+            }
+        if (
+            isinstance(timeout_minutes, bool)
+            or not isinstance(timeout_minutes, int)
+            or not 1 <= timeout_minutes <= 60
+        ):
+            return {
+                "status": "error",
+                "error": "'timeout_minutes' must be an integer from 1 to 60",
+            }
+
         request_id = str(uuid.uuid4())[:8]
         timeout_seconds = timeout_minutes * 60
-
-        print(f"\n🔔 EXPERT CONSULTATION REQUEST [{request_id}]")
-        print(f"🎯 Specialty: {specialty}")
-        print(f"⚡ Priority: {priority}")
-        print(f"⏱️ Timeout: {timeout_minutes} minutes")
 
         try:
             # Submit request to expert system
@@ -257,7 +305,7 @@ class ConsultHumanExpertTool:
             expert_system.submit_request(request_id, question, context_data)
 
             # Wait for expert response
-            print(f"⏳ Waiting for expert response (max {timeout_minutes} minutes)...")
+            print("⏳ Waiting for expert response...")
 
             response_data = expert_system.get_response(request_id, timeout_seconds)
 
@@ -279,11 +327,11 @@ class ConsultHumanExpertTool:
                     "note": "Request may still be processed. Check with get_expert_response tool later.",
                 }
 
-        except Exception as e:
-            print(f"❌ Expert consultation failed: {str(e)}")
+        except Exception:
+            print("❌ Expert consultation failed")
             return {
                 "status": "error",
-                "error": f"Expert consultation failed: {str(e)}",
+                "error": "Expert consultation failed due to an internal provider error.",
                 "request_id": request_id,
             }
 
@@ -298,6 +346,7 @@ class ConsultHumanExpertTool:
             "properties": {
                 "request_id": {
                     "type": "string",
+                    "pattern": "^[0-9a-f]{8}$",
                     "description": "The ID of the expert consultation request",
                 }
             },
@@ -313,6 +362,15 @@ class GetExpertResponseTool:
         """Check for expert response"""
 
         request_id = arguments.get("request_id")
+        if (
+            not isinstance(request_id, str)
+            or not _REQUEST_ID_PATTERN.fullmatch(request_id.strip())
+        ):
+            return {
+                "status": "error",
+                "error": "'request_id' must be a non-empty string",
+            }
+        request_id = request_id.strip()
 
         try:
             with expert_system.lock:
@@ -339,10 +397,10 @@ class GetExpertResponseTool:
                         "request_id": request_id,
                     }
 
-        except Exception as e:
+        except Exception:
             return {
                 "status": "error",
-                "error": f"Failed to check expert response: {str(e)}",
+                "error": "Failed to check expert response due to an internal provider error.",
                 "request_id": request_id,
             }
 
@@ -352,7 +410,11 @@ class GetExpertResponseTool:
     tool_type_name="list_pending_expert_requests",
     config={
         "description": "List all pending expert consultation requests (for expert use)",
-        "parameter_schema": {"type": "object", "properties": {}, "required": []},
+        "parameter_schema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": False,
+        },
     },
     mcp_config={"port": 9876},  # Same server
 )
@@ -395,10 +457,10 @@ class ListPendingExpertRequestsTool:
                 "expert_info": expert_system.expert_info,
             }
 
-        except Exception as e:
+        except Exception:
             return {
                 "status": "error",
-                "error": f"Failed to list pending requests: {str(e)}",
+                "error": "Failed to list pending requests due to an internal provider error.",
             }
 
 
@@ -412,10 +474,13 @@ class ListPendingExpertRequestsTool:
             "properties": {
                 "request_id": {
                     "type": "string",
+                    "pattern": "^[0-9a-f]{8}$",
                     "description": "The ID of the request to respond to",
                 },
                 "response": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 50000,
                     "description": "The expert's response and recommendations",
                 },
             },
@@ -432,13 +497,19 @@ class SubmitExpertResponseTool:
 
         request_id_any = arguments.get("request_id")
         response_any = arguments.get("response")
-        if not isinstance(request_id_any, str) or not isinstance(response_any, str):
+        if (
+            not isinstance(request_id_any, str)
+            or not _REQUEST_ID_PATTERN.fullmatch(request_id_any.strip())
+            or not isinstance(response_any, str)
+            or not response_any.strip()
+            or len(response_any) > _MAX_RESPONSE_CHARS
+        ):
             return {
                 "status": "error",
-                "error": "'request_id' and 'response' must be strings",
+                "error": "'request_id' must be an 8-character request ID and 'response' must contain 1 to 50,000 characters",
             }
-        request_id = request_id_any
-        response = response_any
+        request_id = request_id_any.strip()
+        response = response_any.strip()
 
         try:
             success = expert_system.submit_response(request_id, response)
@@ -458,10 +529,10 @@ class SubmitExpertResponseTool:
                     "request_id": request_id,
                 }
 
-        except Exception as e:
+        except Exception:
             return {
                 "status": "error",
-                "error": f"Failed to submit expert response: {str(e)}",
+                "error": "Failed to submit the expert response due to an internal provider error.",
                 "request_id": request_id,
             }
 
@@ -471,7 +542,11 @@ class SubmitExpertResponseTool:
     tool_type_name="get_expert_status",
     config={
         "description": "Get current expert system status and statistics",
-        "parameter_schema": {"type": "object", "properties": {}, "required": []},
+        "parameter_schema": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": False,
+        },
     },
     mcp_config={"port": 9876},  # Same server
 )
@@ -503,10 +578,10 @@ class GetExpertStatusTool:
                 "mcp_server_port": 9876,
             }
 
-        except Exception as e:
+        except Exception:
             return {
                 "status": "error",
-                "error": f"Failed to get expert status: {str(e)}",
+                "error": "Failed to get expert status due to an internal provider error.",
             }
 
 
@@ -515,12 +590,42 @@ class GetExpertStatusTool:
 # =============================================================================
 
 
+def _install_flask_token_auth(app):
+    """Require the shared Bearer token on every Flask request when configured."""
+    from tooluniverse.server_security import get_api_token, token_matches
+
+    expected_token = get_api_token()
+    if expected_token is None:
+        return
+
+    @app.before_request
+    def require_bearer_token():
+        if not token_matches(request.headers.get("Authorization"), expected_token):
+            return (
+                {"status": "error", "error": "Unauthorized"},
+                401,
+                {"WWW-Authenticate": "Bearer"},
+            )
+
+
+def _expert_api_headers(*, json_content=False):
+    """Build local companion-API headers without exposing the configured token."""
+    from tooluniverse.server_security import get_api_token
+
+    headers = {"Content-Type": "application/json"} if json_content else {}
+    token = get_api_token()
+    if token is not None:
+        headers["Authorization"] = f"Bearer {token}"
+    return headers
+
+
 def create_http_api_server():
     """Create independent HTTP API server for expert system communication"""
     if not FLASK_AVAILABLE:
         return None
 
     api_app = Flask(__name__)
+    _install_flask_token_auth(api_app)
 
     @api_app.route("/health", methods=["GET"])
     def health_check():
@@ -574,18 +679,28 @@ def create_http_api_server():
                 "timestamp": datetime.now().isoformat(),
             }
 
-        except Exception as e:
-            return {"status": "error", "error": str(e)}, 500
+        except Exception:
+            return {
+                "status": "error",
+                "error": "Failed to list expert requests on the provider.",
+            }, 500
 
     @api_app.route("/api/requests/<request_id>/respond", methods=["POST"])
     def submit_expert_response_api(request_id):
         """Submit expert response via HTTP API"""
         try:
-            data = request.get_json()
-            response_text = data.get("response", "").strip()
+            data = request.get_json(silent=True)
+            response_text = data.get("response", "").strip() if isinstance(data, dict) else ""
 
-            if not response_text:
-                return {"status": "error", "error": "Response text is required"}, 400
+            if (
+                not _REQUEST_ID_PATTERN.fullmatch(request_id)
+                or not response_text
+                or len(response_text) > _MAX_RESPONSE_CHARS
+            ):
+                return {
+                    "status": "error",
+                    "error": "A valid request ID and response of at most 50,000 characters are required",
+                }, 400
 
             success = expert_system.submit_response(request_id, response_text)
 
@@ -603,8 +718,11 @@ def create_http_api_server():
                     "error": f"Request {request_id} not found or already completed",
                 }, 404
 
-        except Exception as e:
-            return {"status": "error", "error": str(e)}, 500
+        except Exception:
+            return {
+                "status": "error",
+                "error": "Failed to submit the expert response on the provider.",
+            }, 500
 
     @api_app.route("/api/status", methods=["GET"])
     def get_system_status():
@@ -632,8 +750,11 @@ def create_http_api_server():
                 "api_server_port": 9877,
             }
 
-        except Exception as e:
-            return {"status": "error", "error": str(e)}, 500
+        except Exception:
+            return {
+                "status": "error",
+                "error": "Failed to read expert-system status on the provider.",
+            }, 500
 
     return api_app
 
@@ -649,6 +770,7 @@ def create_web_app():
         return None
 
     app = Flask(__name__)
+    _install_flask_token_auth(app)
 
     # Web interface HTML template with modern UI improvements
     WEB_TEMPLATE = """
@@ -1372,7 +1494,9 @@ def create_web_app():
             try:
                 # Get pending requests from HTTP API server
 
-                response = requests.get(api_url, timeout=5)
+                response = requests.get(
+                    api_url, headers=_expert_api_headers(), timeout=5
+                )
 
                 if response.status_code == 200:
                     api_data = response.json()
@@ -1406,14 +1530,14 @@ def create_web_app():
                     print(f"⚠️  HTTP API returned status {response.status_code}")
                     api_connected = False
 
-            except requests.exceptions.ConnectinError:
+            except requests.exceptions.ConnectionError:
                 print(f"⚠️  Cannot connect to HTTP API server at {api_host}:{api_port}")
                 api_connected = False
             except requests.exceptions.Timeout:
                 print(f"⚠️  HTTP API server timeout at {api_host}:{api_port}")
                 api_connected = False
-            except Exception as e:
-                print(f"⚠️  Error connecting to HTTP API server: {e}")
+            except Exception:
+                print("⚠️  Error connecting to HTTP API server")
                 api_connected = False
 
             # If API connection failed, show error page
@@ -1449,8 +1573,8 @@ def create_web_app():
                 WEB_TEMPLATE, status=status, requests=requests_data, mcp_info=api_info
             )
 
-        except Exception as e:
-            return f"Error loading interface: {str(e)}", 500
+        except Exception:
+            return "Error loading the expert interface", 500
 
     @app.route("/submit_response", methods=["POST"])
     def submit_response():
@@ -1461,7 +1585,13 @@ def create_web_app():
             request_id = request.form.get("request_id")
             response_text = request.form.get("response")
 
-            if not request_id or not response_text:
+            if (
+                not isinstance(request_id, str)
+                or not _REQUEST_ID_PATTERN.fullmatch(request_id)
+                or not isinstance(response_text, str)
+                or not response_text.strip()
+                or len(response_text) > _MAX_RESPONSE_CHARS
+            ):
                 return "Missing request ID or response", 400
 
             # Get HTTP API server URL
@@ -1471,7 +1601,7 @@ def create_web_app():
 
             # Submit response via HTTP API
             payload = {"response": response_text}
-            headers = {"Content-Type": "application/json"}
+            headers = _expert_api_headers(json_content=True)
 
             try:
                 api_response = requests.post(
@@ -1485,20 +1615,20 @@ def create_web_app():
                     return redirect(url_for("index"))
                 else:
                     print(
-                        f"⚠️  API submission failed: {api_response.status_code} - {api_response.text}"
+                        f"⚠️  API submission failed with status {api_response.status_code}"
                     )
                     return f"API Error: {api_response.status_code}", 500
 
-            except requests.exceptions.ConnectinError:
+            except requests.exceptions.ConnectionError:
                 return "Cannot connect to API server", 503
             except requests.exceptions.Timeout:
                 return "API server timeout", 504
-            except Exception as e:
-                print(f"⚠️  Error submitting via API: {e}")
-                return f"Submission failed: {str(e)}", 500
+            except Exception:
+                print("⚠️  Error submitting via API")
+                return "Submission failed on the provider", 500
 
-        except Exception as e:
-            return f"Error: {str(e)}", 500
+        except Exception:
+            return "Expert response submission failed", 500
 
     @app.route("/api/status")
     def api_status():
@@ -1526,8 +1656,8 @@ def create_web_app():
                 }
             )
 
-        except Exception as e:
-            return jsonify({"error": str(e)}), 500
+        except Exception:
+            return jsonify({"error": "Failed to read expert-system status"}), 500
 
     return app
 
@@ -1811,8 +1941,8 @@ def start_http_api_server(port=9877, host=None):
         print(f"📡 API endpoints available at http://{host}:{port}/api/")
         try:
             api_app.run(host=host, port=port, debug=False, use_reloader=False)
-        except Exception as e:
-            print(f"❌ HTTP API server failed: {e}")
+        except Exception:
+            print("❌ HTTP API server failed")
 
     # Start API server in background thread
     api_thread = threading.Thread(target=run_api_server, daemon=True)
@@ -1863,8 +1993,8 @@ def open_web_interface():
     def open_browser():
         try:
             webbrowser.open("http://localhost:8090")
-        except Exception as e:
-            print(f"Could not open browser automatically: {str(e)}")
+        except Exception:
+            print("Could not open browser automatically")
             print("Please manually open: http://localhost:8090")
 
     # Delay browser opening to allow server to start
@@ -1884,8 +2014,8 @@ def start_monitoring_thread():
                         f"🔔 {pending_count} pending expert request(s) - experts needed!"
                     )
                 time.sleep(30)  # Check every 30 seconds
-            except Exception as e:
-                print(f"Monitoring error: {e}")
+            except Exception:
+                print("Monitoring error")
                 time.sleep(60)
 
     monitor_thread = threading.Thread(target=monitor, daemon=True)
@@ -1973,6 +2103,17 @@ def main():
     elif args.start_server:
         # Determine the port to use
         port = args.port if args.port is not None else 9876
+        if not 1 <= port <= 65534:
+            parser.error("--port must be between 1 and 65534")
+        api_port = port + 1
+
+        # Decorators register the default deployment on 9876. Rebind all tools
+        # in this dedicated CLI process when the operator requests another port.
+        collect_tools_for_serve(
+            port,
+            host="127.0.0.1",
+            server_name="Human Expert Consultation Server",
+        )
 
         # Tools are already registered via decorators at module import time
         print("🚀 Starting MCP Server with Expert Tools...")
@@ -1985,20 +2126,19 @@ def main():
         print("   - get_expert_status: Get system status")
 
         print("\n📡 Starting HTTP API Server...")
-        api_port = 9877  # Default API port
         try:
             start_http_api_server(api_port)
             print(f"✅ HTTP API server started on port {api_port}")
             print(f"🌐 API endpoints: http://localhost:{api_port}/api/")
-        except Exception as e:
-            print(f"⚠️  HTTP API server failed to start: {e}")
+        except Exception:
+            print("⚠️  HTTP API server failed to start")
 
         print("\n🔄 Starting background monitoring...")
         start_monitoring_thread()
 
         print("\n🎯 Expert Interface Options:")
         print(
-            f"   🌐 Web Interface: tooluniverse-expert-feedback --web-only --mcp-host localhost --mcp-port {api_port}"
+            f"   🌐 Web Interface: tooluniverse-expert-feedback --web-only --mcp-host localhost --mcp-port {port}"
         )
         print("   💻 Terminal Interface: tooluniverse-expert-feedback --interface-only")
         print("\n💡 For remote experts, use:")
@@ -2007,7 +2147,7 @@ def main():
 
         # Start the MCP server using the standard method
         print(f"\n✅ Starting MCP server on port {port}...")
-        start_mcp_server()
+        start_mcp_server(port=port)
     else:
         # Default: show usage information
         print("🧑‍⚕️ Human Expert MCP Tools - Console Script")
