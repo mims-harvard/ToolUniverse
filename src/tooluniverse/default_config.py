@@ -979,6 +979,7 @@ default_tool_files = {
         current_dir, "data", "allen_cell_types_tools.json"
     ),
     "idigbio": os.path.join(current_dir, "data", "idigbio_tools.json"),
+    "bold_systems": os.path.join(current_dir, "data", "bold_systems_tools.json"),
     "pathoplexus": os.path.join(current_dir, "data", "pathoplexus_tools.json"),
     "open_genes": os.path.join(current_dir, "data", "open_genes_tools.json"),
     "foodb": os.path.join(current_dir, "data", "foodb_tools.json"),

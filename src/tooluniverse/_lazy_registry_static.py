@@ -283,6 +283,7 @@ STATIC_LAZY_REGISTRY = {
     "AllenCellTypesSpecimensTool": "allen_cell_types_tool",
     "iDigBioSearchTool": "idigbio_tool",
     "iDigBioRecordTool": "idigbio_tool",
+    "BOLDSystemsTool": "bold_systems_tool",
     "PathoplexusCountTool": "pathoplexus_tool",
     "PathoplexusMutationsTool": "pathoplexus_tool",
     "OpenGenesGeneTool": "open_genes_tool",
