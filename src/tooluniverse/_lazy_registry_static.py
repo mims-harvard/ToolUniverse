@@ -289,6 +289,7 @@ STATIC_LAZY_REGISTRY = {
     "MolGlueDBTool": "molgluedb_tool",
     "GSATool": "gsa_tool",
     "BARTool": "bar_tool",
+    "PlanteomeTool": "planteome_tool",
     "PathoplexusCountTool": "pathoplexus_tool",
     "PathoplexusMutationsTool": "pathoplexus_tool",
     "OpenGenesGeneTool": "open_genes_tool",
