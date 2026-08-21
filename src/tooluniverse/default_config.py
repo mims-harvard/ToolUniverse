@@ -982,6 +982,7 @@ default_tool_files = {
     "bold_systems": os.path.join(current_dir, "data", "bold_systems_tools.json"),
     "giab": os.path.join(current_dir, "data", "giab_tools.json"),
     "fda_purple_book": os.path.join(current_dir, "data", "fda_purple_book_tools.json"),
+    "molgluedb": os.path.join(current_dir, "data", "molgluedb_tools.json"),
     "pathoplexus": os.path.join(current_dir, "data", "pathoplexus_tools.json"),
     "open_genes": os.path.join(current_dir, "data", "open_genes_tools.json"),
     "foodb": os.path.join(current_dir, "data", "foodb_tools.json"),
