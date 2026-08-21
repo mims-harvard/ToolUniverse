@@ -62,5 +62,7 @@ Provider Notes
 --------------
 
 Use ``OPENAI`` for OpenAI-compatible chat completions endpoints. Use
-``OPENROUTER`` when you want OpenRouter-specific headers and model naming, and
-use ``VLLM`` for self-hosted vLLM servers.
+``OPENROUTER`` when you want OpenRouter-specific headers and model naming, use
+``ORCAROUTER`` to route chat completions through the OrcaRouter gateway
+(``https://api.orcarouter.ai/v1``), and use ``VLLM`` for self-hosted vLLM
+servers.

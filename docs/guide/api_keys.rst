@@ -398,7 +398,7 @@ Environment Variables
 
 .. code-block:: bash
 
-   # Default LLM provider (CHATGPT, OPENAI, OPENROUTER, GEMINI, VLLM)
+   # Default LLM provider (CHATGPT, OPENAI, OPENROUTER, ORCAROUTER, GEMINI, VLLM)
    TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=OPENAI
 
    # Model configuration per task

@@ -38,6 +38,7 @@ Tutorials & Workflows
 - :doc:`guide/examples` - Examples
 - :doc:`guide/logging` - Logging
 - :doc:`guide/openrouter_support` - OpenRouter Support
+- :doc:`guide/orcarouter_support` - OrcaRouter Support
 - :doc:`guide/streaming_tools` - Streaming Tools
 - :doc:`guide/tools` - Tools
 - :doc:`guide/vllm_support` - vLLM Support
