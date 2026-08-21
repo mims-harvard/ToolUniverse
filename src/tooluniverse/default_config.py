@@ -984,6 +984,7 @@ default_tool_files = {
     "fda_purple_book": os.path.join(current_dir, "data", "fda_purple_book_tools.json"),
     "molgluedb": os.path.join(current_dir, "data", "molgluedb_tools.json"),
     "gsa": os.path.join(current_dir, "data", "gsa_tools.json"),
+    "bar": os.path.join(current_dir, "data", "bar_tools.json"),
     "pathoplexus": os.path.join(current_dir, "data", "pathoplexus_tools.json"),
     "open_genes": os.path.join(current_dir, "data", "open_genes_tools.json"),
     "foodb": os.path.join(current_dir, "data", "foodb_tools.json"),

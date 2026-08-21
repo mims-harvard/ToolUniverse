@@ -288,6 +288,7 @@ STATIC_LAZY_REGISTRY = {
     "FDAPurpleBookTool": "fda_purple_book_tool",
     "MolGlueDBTool": "molgluedb_tool",
     "GSATool": "gsa_tool",
+    "BARTool": "bar_tool",
     "PathoplexusCountTool": "pathoplexus_tool",
     "PathoplexusMutationsTool": "pathoplexus_tool",
     "OpenGenesGeneTool": "open_genes_tool",
