@@ -755,7 +755,14 @@ def test_runtime_tools_do_not_read_credentials_directly_from_environment():
     source_root = Path(__file__).parents[2] / "src" / "tooluniverse"
     excluded_paths = {
         "http_client.py",  # ToolUniverse service-to-service authentication
+        "remote_runtime.py",  # Deployment preflight reads the provider process env
         "server_security.py",  # MCP server ingress authentication
+    }
+    process_scoped_names = {
+        # These authenticate the ToolUniverse server/process itself. Treating them as
+        # tenant BYOK credentials would let a request override the server's identity.
+        "TOOLUNIVERSE_SERVICE_KEY",
+        "TU_API_KEY",
     }
     findings = []
 
@@ -776,6 +783,8 @@ def test_runtime_tools_do_not_read_credentials_directly_from_environment():
             ):
                 continue
             credential_name = first_arg.value
+            if credential_name in process_scoped_names:
+                continue
             if not credential_name.endswith(
                 (
                     "KEY",
@@ -796,6 +805,38 @@ def test_runtime_tools_do_not_read_credentials_directly_from_environment():
         "Runtime tools must use BaseTool.credential()/get_credential() so hosted BYOK "
         f"stays request-scoped; direct environment reads found: {findings}"
     )
+
+
+@pytest.mark.unit
+def test_newer_provider_tools_resolve_credentials_per_request(monkeypatch):
+    from tooluniverse.faers_analytics_tool import FAERSAnalyticsTool
+    from tooluniverse.fda_label_tool import FDALabelTool
+    from tooluniverse.ncbi_datasets_tool import NCBIDatasetsTool
+
+    fda_analytics = FAERSAnalyticsTool({"name": "FAERSTest"})
+    fda_label = FDALabelTool({"name": "FDALabelTest"})
+    ncbi = NCBIDatasetsTool({"name": "NCBITest"})
+
+    monkeypatch.setenv("FDA_API_KEY", "process-fda")
+    monkeypatch.setenv("NCBI_API_KEY", "process-ncbi")
+    with credential_context({}):
+        assert fda_analytics.api_key is None
+        assert fda_label.api_key is None
+        assert ncbi.api_key == ""
+
+    with credential_context(
+        {"FDA_API_KEY": "fda-tenant-one", "NCBI_API_KEY": "ncbi-tenant-one"}
+    ):
+        assert fda_analytics.api_key == "fda-tenant-one"
+        assert fda_label.api_key == "fda-tenant-one"
+        assert ncbi.api_key == "ncbi-tenant-one"
+
+    with credential_context(
+        {"FDA_API_KEY": "fda-tenant-two", "NCBI_API_KEY": "ncbi-tenant-two"}
+    ):
+        assert fda_analytics.api_key == "fda-tenant-two"
+        assert fda_label.api_key == "fda-tenant-two"
+        assert ncbi.api_key == "ncbi-tenant-two"
 
 
 @pytest.mark.unit

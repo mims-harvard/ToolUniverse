@@ -102,8 +102,11 @@ class TestRunHttpErrorHandling:
     def test_run_404_returns_no_records_hint(self, tool):
         resp = _http_error_response(
             404,
-            {"code": "404", "message": "Not Found",
-             "detailedMessage": "No matching records found"},
+            {
+                "code": "404",
+                "message": "Not Found",
+                "detailedMessage": "No matching records found",
+            },
         )
         with patch.object(tool.session, "get", return_value=resp):
             result = tool.run(

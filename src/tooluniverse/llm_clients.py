@@ -669,7 +669,7 @@ class OpenAICompatibleClient(BaseLLMClient):
         self.model_name = model_id
         self.logger = logger
 
-        api_key = os.getenv("OPENAI_API_KEY")
+        api_key = get_credential("OPENAI_API_KEY")
         if not api_key:
             raise ValueError("OPENAI_API_KEY not set")
 

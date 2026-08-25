@@ -80,8 +80,9 @@ class RXNChemistryTool(BaseTool):
       * predict_reaction       -- forward prediction: reactants -> product
       * predict_retrosynthesis -- retrosynthesis: product -> precursor routes
 
-    The API key is read ONLY from os.environ[RXN4CHEMISTRY_API_KEY]; it is
-    never accepted as a parameter. If the key is missing the tool returns a
+    The API key is resolved from the active request credential scope, with
+    RXN4CHEMISTRY_API_KEY as the local environment fallback; it is never
+    accepted as a tool argument. If the key is missing the tool returns a
     structured error rather than raising.
     """
 
