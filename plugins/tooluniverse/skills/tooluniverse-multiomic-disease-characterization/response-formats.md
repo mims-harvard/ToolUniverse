@@ -73,16 +73,20 @@ Verified JSON response structures for key tools used in multi-omics disease char
         "is_lowest_level": true,
         "entities_found": 3,
         "entities_total": 47,
-        "entities_ratio": 0.00291,
+        "entities_coverage": 0.0638,
         "p_value": 4.0e-06,
         "fdr": 0.00068,
         "reactions_found": 3,
-        "reactions_total": 34
+        "reactions_total": 34,
+        "pathway_size_fraction_of_reactome": 0.00289,
+        "entities_ratio": 0.00289
       }
     ]
   }
 }
 ```
+
+`entities_coverage` is found/total (3/47). `pathway_size_fraction_of_reactome` is the pathway's share of Reactome's entity universe (47/16251) and is the same for any gene list; its deprecated alias `entities_ratio` holds that same value. Rank by `fdr`/`p_value`.
 
 ## HPA RNA Expression
 ```json

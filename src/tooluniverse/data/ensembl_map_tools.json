@@ -59,51 +59,38 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "mappings": {
-                                    "type": "array",
-                                    "items": {
+                        "mappings": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "original": {
                                         "type": "object",
                                         "properties": {
-                                            "original": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "assembly": {"type": "string"},
-                                                    "seq_region_name": {"type": "string"},
-                                                    "start": {"type": "integer"},
-                                                    "end": {"type": "integer"},
-                                                    "strand": {"type": "integer"},
-                                                    "coord_system": {"type": "string"}
-                                                }
-                                            },
-                                            "mapped": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "assembly": {"type": "string"},
-                                                    "seq_region_name": {"type": "string"},
-                                                    "start": {"type": "integer"},
-                                                    "end": {"type": "integer"},
-                                                    "strand": {"type": "integer"},
-                                                    "coord_system": {"type": "string"}
-                                                }
-                                            }
+                                            "assembly": {"type": "string"},
+                                            "seq_region_name": {"type": "string"},
+                                            "start": {"type": "integer"},
+                                            "end": {"type": "integer"},
+                                            "strand": {"type": "integer"},
+                                            "coord_system": {"type": "string"}
                                         }
                                     },
-                                    "description": "List of coordinate mappings between assemblies"
+                                    "mapped": {
+                                        "type": "object",
+                                        "properties": {
+                                            "assembly": {"type": "string"},
+                                            "seq_region_name": {"type": "string"},
+                                            "start": {"type": "integer"},
+                                            "end": {"type": "integer"},
+                                            "strand": {"type": "integer"},
+                                            "coord_system": {"type": "string"}
+                                        }
+                                    }
                                 }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"},
-                                "total_mappings": {"type": "integer"}
-                            }
+                            },
+                            "description": "List of coordinate mappings between assemblies"
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -160,36 +147,21 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "mappings": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "seq_region_name": {"type": "string", "description": "Chromosome"},
-                                            "start": {"type": "integer", "description": "Genomic start"},
-                                            "end": {"type": "integer", "description": "Genomic end"},
-                                            "strand": {"type": "integer", "description": "Strand (1 or -1)"},
-                                            "coord_system": {"type": "string"}
-                                        }
-                                    },
-                                    "description": "Genomic coordinates corresponding to the protein/cDNA positions"
+                        "mappings": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "seq_region_name": {"type": "string", "description": "Chromosome"},
+                                    "start": {"type": "integer", "description": "Genomic start"},
+                                    "end": {"type": "integer", "description": "Genomic end"},
+                                    "strand": {"type": "integer", "description": "Strand (1 or -1)"},
+                                    "coord_system": {"type": "string"}
                                 }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"},
-                                "query_id": {"type": "string"},
-                                "coordinate_type": {"type": "string"},
-                                "total_mappings": {"type": "integer"}
-                            }
+                            },
+                            "description": "Genomic coordinates corresponding to the protein/cDNA positions"
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",

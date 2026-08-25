@@ -12,9 +12,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "biopandas",
     "local_info": {
@@ -154,9 +152,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "openmm",
     "local_info": {
@@ -292,6 +288,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -301,9 +298,7 @@
           "description": "Type of information to retrieve about MDAnalysis"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "MDAnalysis",
     "local_info": {
@@ -443,9 +438,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "ase",
     "local_info": {
@@ -585,9 +578,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "pyscf",
     "local_info": {
@@ -723,6 +714,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -732,9 +724,7 @@
           "description": "Type of information to retrieve about DiffDock"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "diffdock",
     "local_info": {
@@ -871,6 +861,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -880,9 +871,7 @@
           "description": "Type of information to retrieve about Descriptastorus"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "descriptastorus",
     "local_info": {

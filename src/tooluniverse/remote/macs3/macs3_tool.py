@@ -26,15 +26,44 @@ Zhang Y, Liu T, Meyer CA, et al. "Model-based Analysis of ChIP-Seq (MACS)."
 Genome Biology 9, R137 (2008).
 """
 
+import math
 import os
+import statistics
 import subprocess
 import tempfile
 from typing import Any, Dict, List
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_data_path import resolve_remote_data_path
 
 _TIMEOUT = 1800
-_VALID_FORMATS = {"AUTO", "BAM", "BED", "BAMPE", "BEDPE", "ELAND", "SAM", "BOWTIE"}
+_VALID_FORMATS = {
+    "AUTO",
+    "BAM",
+    "BAMPE",
+    "BED",
+    "BEDPE",
+    "BOWTIE",
+    "ELAND",
+    "ELANDEXPORT",
+    "ELANDMULTI",
+    "FRAG",
+    "SAM",
+}
+_ALIGNMENT_SUFFIXES = {
+    ".bam",
+    ".bed",
+    ".bed.gz",
+    ".bedpe",
+    ".bowtie",
+    ".eland",
+    ".sam",
+    ".tsv",
+    ".tsv.gz",
+    ".txt",
+}
+_MAX_TOP_N = 1000
+_MAX_EXTSIZE = 1_000_000
 
 
 def _parse_narrowpeak(path: str, top_n: int) -> Dict[str, Any]:
@@ -83,7 +112,7 @@ def _parse_narrowpeak(path: str, top_n: int) -> Dict[str, Any]:
         widths = [p["end"] - p["start"] for p in peaks]
         scores = [p["score"] for p in peaks]
         summary["mean_peak_width"] = round(sum(widths) / n_peaks, 2)
-        summary["median_peak_width"] = sorted(widths)[n_peaks // 2]
+        summary["median_peak_width"] = statistics.median(widths)
         summary["max_score"] = max(scores)
         summary["mean_score"] = round(sum(scores) / n_peaks, 2)
     return {"n_peaks": n_peaks, "top_peaks": top_peaks, "summary": summary}
@@ -106,27 +135,60 @@ def _parse_narrowpeak(path: str, top_n: int) -> Dict[str, Any]:
             "properties": {
                 "treatment": {
                     "type": "string",
-                    "description": "Server-accessible path to the treatment/ChIP alignment file (BAM/BED/BED-PE).",
+                    "description": "Treatment/ChIP alignment file inside the provider-configured data directory (BAM/BED/BED-PE).",
                 },
                 "control": {
                     "type": "string",
-                    "description": "Server-accessible path to the input/control alignment file (optional but recommended).",
+                    "description": "Input/control alignment file inside the provider-configured data directory (optional but recommended).",
                 },
                 "format": {
                     "type": "string",
-                    "description": "Input format: AUTO (default), BAM, BED, BAMPE, or BEDPE. Use BAMPE/BEDPE for paired-end (e.g. ATAC-seq).",
+                    "enum": [
+                        "AUTO",
+                        "BAM",
+                        "BAMPE",
+                        "BED",
+                        "BEDPE",
+                        "BOWTIE",
+                        "ELAND",
+                        "ELANDEXPORT",
+                        "ELANDMULTI",
+                        "FRAG",
+                        "SAM",
+                    ],
+                    "default": "AUTO",
+                    "description": "MACS3 input format. AUTO is the default; BAMPE, BEDPE, and FRAG must be selected explicitly for paired-end or fragment data.",
                 },
                 "genome_size": {
                     "type": "string",
+                    "default": "hs",
                     "description": "Effective genome size: 'hs' (human, default), 'mm' (mouse), 'ce' (worm), 'dm' (fly), or a number (e.g. '2.7e9').",
                 },
                 "qvalue": {
                     "type": "number",
+                    "default": 0.05,
+                    "exclusiveMinimum": 0,
+                    "maximum": 1,
                     "description": "q-value (minimum FDR) cutoff to call significant peaks (default 0.05).",
                 },
                 "top_n": {
                     "type": "integer",
+                    "default": 50,
+                    "minimum": 1,
+                    "maximum": 1000,
                     "description": "Number of top peaks (by score) to return (default 50).",
+                },
+                "nomodel": {
+                    "type": ["boolean", "null"],
+                    "default": False,
+                    "description": "Skip the shift-model step and pass --extsize. Use for appropriate single-end data; paired-end and FRAG modes infer fragment lengths. Default false.",
+                },
+                "extsize": {
+                    "type": ["integer", "null"],
+                    "default": 200,
+                    "minimum": 1,
+                    "maximum": 1000000,
+                    "description": "Fragment extension size used with nomodel (default 200; ~147 for ATAC).",
                 },
             },
             "required": ["treatment"],
@@ -143,37 +205,68 @@ class Macs3CallpeakTool:
     """Run MACS3 callpeak and return peak count, top peaks, and summary stats."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        treatment = arguments.get("treatment")
-        if not treatment:
+        treatment_value = arguments.get("treatment")
+        if not treatment_value:
             return {"error": "Missing required parameter: treatment"}
-        if not os.path.exists(treatment):
-            return {"error": f"Treatment file not found: {treatment}"}
+        try:
+            treatment = resolve_remote_data_path(
+                treatment_value, allowed_suffixes=_ALIGNMENT_SUFFIXES
+            )
+        except ValueError as exc:
+            return {"error": f"Invalid treatment file: {exc}"}
 
-        control = arguments.get("control") or None
-        if control and not os.path.exists(control):
-            return {"error": f"Control file not found: {control}"}
+        control_value = arguments.get("control") or None
+        control = None
+        if control_value:
+            try:
+                control = resolve_remote_data_path(
+                    control_value, allowed_suffixes=_ALIGNMENT_SUFFIXES
+                )
+            except ValueError as exc:
+                return {"error": f"Invalid control file: {exc}"}
 
-        fmt = (arguments.get("format") or "AUTO").upper()
+        format_value = arguments.get("format") or "AUTO"
+        if not isinstance(format_value, str):
+            return {"error": "Parameter 'format' must be a string."}
+        fmt = format_value.upper()
         if fmt not in _VALID_FORMATS:
             return {
                 "error": f"Invalid format '{fmt}'; expected one of {sorted(_VALID_FORMATS)}."
             }
-        genome_size = str(arguments.get("genome_size") or "hs")
+        genome_size = arguments.get("genome_size") or "hs"
+        if not isinstance(genome_size, str):
+            return {"error": "Parameter 'genome_size' must be a string."}
 
-        try:
-            qvalue = float(arguments.get("qvalue") or 0.05)
-        except (TypeError, ValueError):
-            return {"error": "Parameter 'qvalue' must be a number."}
+        qvalue_value = arguments.get("qvalue", 0.05)
+        if (
+            isinstance(qvalue_value, bool)
+            or not isinstance(qvalue_value, (int, float))
+            or not math.isfinite(qvalue_value)
+            or not 0 < qvalue_value <= 1
+        ):
+            return {"error": "Parameter 'qvalue' must be a finite number in (0, 1]."}
+        qvalue = float(qvalue_value)
+
         top_n = arguments.get("top_n")
-        try:
-            top_n = 50 if top_n is None else int(top_n)
-        except (TypeError, ValueError):
-            return {"error": "Parameter 'top_n' must be an integer."}
-        nomodel = bool(arguments.get("nomodel", False))
-        try:
-            extsize = int(arguments.get("extsize") or 200)
-        except (TypeError, ValueError):
-            return {"error": "Parameter 'extsize' must be an integer."}
+        top_n = 50 if top_n is None else top_n
+        if isinstance(top_n, bool) or not isinstance(top_n, int) or not 1 <= top_n <= _MAX_TOP_N:
+            return {"error": f"Parameter 'top_n' must be an integer from 1 to {_MAX_TOP_N}."}
+
+        nomodel_value = arguments.get("nomodel", False)
+        nomodel = False if nomodel_value is None else nomodel_value
+        if not isinstance(nomodel, bool):
+            return {"error": "Parameter 'nomodel' must be a boolean."}
+
+        extsize_value = arguments.get("extsize", 200)
+        extsize = 200 if extsize_value is None else extsize_value
+        if (
+            isinstance(extsize, bool)
+            or not isinstance(extsize, int)
+            or not 1 <= extsize <= _MAX_EXTSIZE
+        ):
+            return {
+                "error": f"Parameter 'extsize' must be an integer from 1 to {_MAX_EXTSIZE}."
+            }
 
         name = "macs3_run"
         with tempfile.TemporaryDirectory() as tmp:
@@ -181,7 +274,7 @@ class Macs3CallpeakTool:
                 "macs3",
                 "callpeak",
                 "-t",
-                treatment,
+                str(treatment),
                 "-f",
                 fmt,
                 "-g",
@@ -194,7 +287,7 @@ class Macs3CallpeakTool:
                 str(qvalue),
             ]
             if control:
-                cmd[4:4] = ["-c", control]
+                cmd[4:4] = ["-c", str(control)]
             # --nomodel skips the cross-correlation shift-model step (which needs
             # paired +/- strand peaks); required for ATAC-seq and single-end data.
             if nomodel:
@@ -210,18 +303,23 @@ class Macs3CallpeakTool:
                 }
             except subprocess.TimeoutExpired:
                 return {"error": f"MACS3 timed out after {_TIMEOUT}s."}
+            except OSError:
+                return {"error": "MACS3 could not be started by the provider."}
 
             narrowpeak = os.path.join(tmp, f"{name}_peaks.narrowPeak")
-            if not os.path.exists(narrowpeak):
-                stderr = (proc.stderr or "")[-500:]
+            if proc.returncode != 0:
                 return {
-                    "error": f"MACS3 did not produce a narrowPeak output (returncode {proc.returncode}): {stderr}"
+                    "error": f"MACS3 failed on the provider (returncode {proc.returncode})."
+                }
+            if not os.path.exists(narrowpeak):
+                return {
+                    "error": "MACS3 completed without producing a narrowPeak output."
                 }
 
             try:
                 parsed = _parse_narrowpeak(narrowpeak, top_n)
-            except OSError as exc:
-                return {"error": f"Failed to read narrowPeak output: {exc}"}
+            except OSError:
+                return {"error": "Failed to read the MACS3 narrowPeak output."}
 
         return {
             "tool": "MACS3 callpeak",

@@ -23,25 +23,40 @@ from sequence by integrating long-range interactions." Nature Methods 18,
 1196-1203 (2021).
 """
 
+import threading
 from typing import Any, Dict, List, Optional
 
 import torch
 from enformer_pytorch import from_pretrained
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_sequence_input import (
+    validate_sequence,
+    validate_track_selection,
+    validate_variant_sequences,
+)
 
 SEQ_LENGTH = 196_608
 N_BINS = 896
+MAX_INPUT_LENGTH = SEQ_LENGTH * 2
+_ORGANISM_TRACKS = {"human": 5_313, "mouse": 1_643}
 _BASE_TO_IDX = {"A": 0, "C": 1, "G": 2, "T": 3, "N": 4}
 _MODEL = None
+_MODEL_INIT_LOCK = threading.Lock()
+_INFERENCE_LOCK = threading.Lock()
+_DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def _get_model():
     """Lazy-load the pretrained Enformer model (cached)."""
     global _MODEL
     if _MODEL is None:
-        _MODEL = from_pretrained("EleutherAI/enformer-official-rough")
-        _MODEL.eval()
+        with _MODEL_INIT_LOCK:
+            if _MODEL is None:
+                _MODEL = from_pretrained(
+                    "EleutherAI/enformer-official-rough"
+                ).to(_DEVICE)
+                _MODEL.eval()
     return _MODEL
 
 
@@ -56,15 +71,27 @@ def _encode(sequence: str) -> torch.Tensor:
         left = pad // 2
         seq = "N" * left + seq + "N" * (pad - left)
     idx = [_BASE_TO_IDX.get(b, 4) for b in seq]
-    return torch.tensor([idx], dtype=torch.long)
+    return torch.tensor([idx], dtype=torch.long, device=_DEVICE)
 
 
 def _predict(sequence: str, organism: str) -> torch.Tensor:
     """Return the (N_BINS, n_tracks) prediction tensor for one sequence."""
     model = _get_model()
-    with torch.no_grad():
-        out = model(_encode(sequence))
+    with _INFERENCE_LOCK:
+        with torch.no_grad():
+            out = model(_encode(sequence))
     return out[organism][0]  # (896, n_tracks)
+
+
+def _validate_organism(value):
+    if value is None:
+        return "human"
+    if not isinstance(value, str):
+        raise ValueError("'organism' must be 'human' or 'mouse'.")
+    organism = value.strip().lower()
+    if organism not in _ORGANISM_TRACKS:
+        raise ValueError("'organism' must be 'human' or 'mouse'.")
+    return organism
 
 
 def _top_center_tracks(
@@ -97,22 +124,34 @@ def _top_center_tracks(
                 "sequence": {
                     "type": "string",
                     "description": "DNA sequence (A/C/G/T/N). Cropped/padded to 196,608 bp around its center.",
+                    "minLength": 1,
+                    "maxLength": 393216,
+                    "pattern": "^[ACGTNacgtn]+$",
                 },
                 "organism": {
                     "type": "string",
                     "description": "'human' (5,313 tracks, default) or 'mouse' (1,643 tracks).",
+                    "enum": ["human", "mouse"],
+                    "default": "human",
                 },
                 "track_indices": {
                     "type": "array",
-                    "items": {"type": "integer"},
+                    "items": {"type": "integer", "minimum": 0, "maximum": 5312},
+                    "minItems": 1,
+                    "maxItems": 1000,
+                    "uniqueItems": True,
                     "description": "Track indices to report (optional). If omitted, the top-signal tracks are returned.",
                 },
                 "top_n": {
                     "type": "integer",
                     "description": "When track_indices is omitted, how many top tracks to return (default 20).",
+                    "default": 20,
+                    "minimum": 1,
+                    "maximum": 1000,
                 },
             },
             "required": ["sequence"],
+            "additionalProperties": False,
         },
     },
     mcp_config={
@@ -126,24 +165,36 @@ class EnformerPredictTool:
     """Predict Enformer track activity for a DNA sequence."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        sequence = arguments.get("sequence")
-        if not sequence:
-            return {"error": "Missing required parameter: sequence"}
-        organism = (arguments.get("organism") or "human").lower()
-        if organism not in ("human", "mouse"):
-            return {"error": "organism must be 'human' or 'mouse'"}
-        track_indices = arguments.get("track_indices")
-        top_n = int(arguments.get("top_n") or 20)
+        if not isinstance(arguments, dict):
+            return {"error": "Arguments must be an object."}
+        try:
+            sequence = validate_sequence(
+                arguments.get("sequence"),
+                name="sequence",
+                alphabet="ACGTN",
+                max_length=MAX_INPUT_LENGTH,
+            )
+            organism = _validate_organism(arguments.get("organism"))
+            track_indices, top_n = validate_track_selection(
+                arguments.get("track_indices"),
+                arguments.get("top_n"),
+                n_tracks=_ORGANISM_TRACKS[organism],
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
 
-        pred = _predict(sequence, organism)
-        return {
-            "model": "Enformer",
-            "organism": organism,
-            "n_tracks": int(pred.shape[1]),
-            "n_bins": int(pred.shape[0]),
-            "bin_size_bp": 128,
-            "tracks": _top_center_tracks(pred, track_indices, top_n),
-        }
+        try:
+            pred = _predict(sequence, organism)
+            return {
+                "model": "Enformer",
+                "organism": organism,
+                "n_tracks": int(pred.shape[1]),
+                "n_bins": int(pred.shape[0]),
+                "bin_size_bp": 128,
+                "tracks": _top_center_tracks(pred, track_indices, top_n),
+            }
+        except Exception:
+            return {"error": "Enformer prediction failed on the provider."}
 
 
 @register_mcp_tool(
@@ -161,26 +212,41 @@ class EnformerPredictTool:
                 "ref_sequence": {
                     "type": "string",
                     "description": "Reference DNA sequence centered on the variant (cropped/padded to 196,608 bp).",
+                    "minLength": 1,
+                    "maxLength": 393216,
+                    "pattern": "^[ACGTNacgtn]+$",
                 },
                 "alt_sequence": {
                     "type": "string",
                     "description": "Alternate DNA sequence (same length/centering as ref).",
+                    "minLength": 1,
+                    "maxLength": 393216,
+                    "pattern": "^[ACGTNacgtn]+$",
                 },
                 "organism": {
                     "type": "string",
                     "description": "'human' (default) or 'mouse'.",
+                    "enum": ["human", "mouse"],
+                    "default": "human",
                 },
                 "track_indices": {
                     "type": "array",
-                    "items": {"type": "integer"},
+                    "items": {"type": "integer", "minimum": 0, "maximum": 5312},
+                    "minItems": 1,
+                    "maxItems": 1000,
+                    "uniqueItems": True,
                     "description": "Track indices to report (optional; default = top |delta| tracks).",
                 },
                 "top_n": {
                     "type": "integer",
                     "description": "When track_indices omitted, number of top |delta| tracks to return (default 20).",
+                    "default": 20,
+                    "minimum": 1,
+                    "maximum": 1000,
                 },
             },
             "required": ["ref_sequence", "alt_sequence"],
+            "additionalProperties": False,
         },
     },
     mcp_config={
@@ -194,34 +260,46 @@ class EnformerVariantEffectTool:
     """Score a regulatory variant as the Enformer central-bin alt-ref delta."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        ref = arguments.get("ref_sequence")
-        alt = arguments.get("alt_sequence")
-        if not (ref and alt):
-            return {
-                "error": "Missing required parameter(s): ref_sequence, alt_sequence"
-            }
-        organism = (arguments.get("organism") or "human").lower()
-        track_indices = arguments.get("track_indices")
-        top_n = int(arguments.get("top_n") or 20)
+        if not isinstance(arguments, dict):
+            return {"error": "Arguments must be an object."}
+        try:
+            ref, alt = validate_variant_sequences(
+                arguments.get("ref_sequence"),
+                arguments.get("alt_sequence"),
+                alphabet="ACGTN",
+                max_length=MAX_INPUT_LENGTH,
+            )
+            organism = _validate_organism(arguments.get("organism"))
+            track_indices, top_n = validate_track_selection(
+                arguments.get("track_indices"),
+                arguments.get("top_n"),
+                n_tracks=_ORGANISM_TRACKS[organism],
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
 
-        ref_center = _predict(ref, organism)[N_BINS // 2]
-        alt_center = _predict(alt, organism)[N_BINS // 2]
-        delta = alt_center - ref_center
-        if track_indices:
-            tracks = [
-                {"track": int(t), "delta": float(delta[int(t)])}
-                for t in track_indices
-                if 0 <= int(t) < delta.shape[0]
-            ]
-        else:
-            order = torch.argsort(delta.abs(), descending=True)[:top_n]
-            tracks = [{"track": int(t), "delta": float(delta[int(t)])} for t in order]
-        return {
-            "model": "Enformer",
-            "organism": organism,
-            "n_tracks": int(delta.shape[0]),
-            "tracks": tracks,
-        }
+        try:
+            ref_center = _predict(ref, organism)[N_BINS // 2]
+            alt_center = _predict(alt, organism)[N_BINS // 2]
+            delta = alt_center - ref_center
+            if track_indices:
+                tracks = [
+                    {"track": int(t), "delta": float(delta[int(t)])}
+                    for t in track_indices
+                ]
+            else:
+                order = torch.argsort(delta.abs(), descending=True)[:top_n]
+                tracks = [
+                    {"track": int(t), "delta": float(delta[int(t)])} for t in order
+                ]
+            return {
+                "model": "Enformer",
+                "organism": organism,
+                "n_tracks": int(delta.shape[0]),
+                "tracks": tracks,
+            }
+        except Exception:
+            return {"error": "Enformer variant scoring failed on the provider."}
 
 
 if __name__ == "__main__":

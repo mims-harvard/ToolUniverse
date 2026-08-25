@@ -129,3 +129,10 @@ class TestInitRequiresKey:
 
         with pytest.raises(ValueError, match="USPTO_API_KEY"):
             USPTOOpenDataPortalTool(tool_config, api_key=None)
+
+    def test_omitted_key_is_resolved_when_instance_is_constructed(self, tool_config):
+        from tooluniverse.uspto_tool import USPTOOpenDataPortalTool
+
+        with patch.dict("os.environ", {"USPTO_API_KEY": "runtime-key"}, clear=False):
+            runtime_tool = USPTOOpenDataPortalTool(tool_config)
+        assert runtime_tool.headers["X-API-KEY"] == "runtime-key"

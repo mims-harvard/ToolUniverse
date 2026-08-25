@@ -6,13 +6,13 @@
     "parameter": {
       "type": "object",
       "required": [
-        "operation",
         "input"
       ],
       "properties": {
         "operation": {
           "const": "run_prediction",
-          "description": "Operation selector (fixed)."
+          "description": "Operation selector (fixed).",
+          "default": "run_prediction"
         },
         "model": {
           "type": [
@@ -136,6 +136,9 @@
         "purpose": "Replicate API token \u2014 runs hosted ML model inference (image, protein, language models) via the predictions API.",
         "without": "Replicate tools return a clear missing-token error and cannot run model inference."
       }
+    },
+    "fields": {
+      "operation": "run_prediction"
     }
   },
   {
@@ -145,13 +148,13 @@
     "parameter": {
       "type": "object",
       "required": [
-        "operation",
         "prediction_id"
       ],
       "properties": {
         "operation": {
           "const": "get_prediction",
-          "description": "Operation selector (fixed)."
+          "description": "Operation selector (fixed).",
+          "default": "get_prediction"
         },
         "prediction_id": {
           "type": "string",
@@ -251,6 +254,9 @@
         "purpose": "Replicate API token \u2014 runs hosted ML model inference (image, protein, language models) via the predictions API.",
         "without": "Replicate tools return a clear missing-token error and cannot run model inference."
       }
+    },
+    "fields": {
+      "operation": "get_prediction"
     }
   }
 ]

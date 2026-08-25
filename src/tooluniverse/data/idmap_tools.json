@@ -1,7 +1,7 @@
 [
   {
     "name": "OpenTargets_get_disease_ids_by_name",
-    "description": "Given a disease or phenotype name, find all cross-referenced external IDs (e.g., OMIM, MONDO, MeSH, ICD10, UMLS, MedDRA, NCIt, Orphanet) using Open Targets GraphQL API.",
+    "description": "Given a disease or phenotype name, find candidate diseases and their cross-referenced external IDs (e.g., OMIM, MONDO, MeSH, ICD10, UMLS, MedDRA, NCIt, Orphanet) using Open Targets GraphQL full-text search. Returns up to 5 ranked candidates, not a single guaranteed match -- OpenTargets' relevance ranking can surface an unrelated top hit for multi-word or qualified phrasing (e.g. 'localized prostate cancer' or 'high-risk prostate cancer' rank an unrelated disease/trait above 'prostate cancer' itself). Always check each hit's 'name' against the disease you intended before using its dbXRefs; prefer a plain, unqualified disease name (e.g. 'prostate cancer' rather than 'localized prostate cancer') if the top hit's name looks wrong.",
     "label": [
       "Disease",
       "Phenotype",
@@ -22,7 +22,7 @@
         "name"
       ]
     },
-    "query_schema": "query getDiseaseDbXRefsByName($name: String!) {\n  search(queryString: $name, entityNames: [\"disease\"], page: { index: 0, size: 1 }) {\n    hits {\n      id\n      name\n      object {\n        ... on Disease {\n          id\n          name\n          dbXRefs\n        }\n      }\n    }\n  }\n}",
+    "query_schema": "query getDiseaseDbXRefsByName($name: String!) {\n  search(queryString: $name, entityNames: [\"disease\"], page: { index: 0, size: 5 }) {\n    hits {\n      id\n      name\n      score\n      object {\n        ... on Disease {\n          id\n          name\n          dbXRefs\n        }\n      }\n    }\n  }\n}",
     "type": "OpenTarget",
     "test_examples": [
       {
@@ -48,6 +48,10 @@
                       },
                       "name": {
                         "type": "string"
+                      },
+                      "score": {
+                        "type": "number",
+                        "description": "Open Targets' own relevance score for this candidate, in the order it was ranked. Not comparable across different queries -- use it only to judge whether the top hit clearly dominates the rest, not as an absolute confidence value."
                       },
                       "object": {
                         "type": "object",

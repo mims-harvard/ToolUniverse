@@ -37,7 +37,10 @@
           "default": 100
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Alias for pagesize."
         },
         "page": {
@@ -58,44 +61,23 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "array"
-        },
-        "metadata": {
-          "type": "object",
-          "properties": {
-            "db_published_date": {
-              "type": "string"
-            },
-            "elements_per_page": {
-              "type": "integer"
-            },
-            "current_url": {
-              "type": "string"
-            },
-            "next_page_url": {
-              "type": ["string", "null"]
-            },
-            "total_elements": {
-              "type": "integer"
-            },
-            "total_pages": {
-              "type": "integer"
-            },
-            "current_page": {
-              "type": "integer"
-            },
-            "previous_page": {
-              "type": ["string", "integer", "null"]
-            },
-            "previous_page_url": {
-              "type": ["string", "null"]
-            },
-            "next_page": {
-              "type": ["string", "integer", "null"]
-            }
+      "type": "array",
+      "description": "List of matching Structured Product Labeling (SPL) documents.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "spl_version": {
+            "type": "integer"
+          },
+          "published_date": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "setid": {
+            "type": "string",
+            "format": "uuid"
           }
         }
       }
@@ -191,7 +173,10 @@
       {
         "setid": "030d9bca-a934-6ef9-e063-6394a90a8277"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "parse_adverse_reactions"
+    }
   },
   {
     "type": "DailyMedSPLParserTool",
@@ -234,7 +219,10 @@
       {
         "setid": "030d9bca-a934-6ef9-e063-6394a90a8277"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "parse_dosing"
+    }
   },
   {
     "type": "DailyMedSPLParserTool",
@@ -277,7 +265,10 @@
       {
         "setid": "030d9bca-a934-6ef9-e063-6394a90a8277"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "parse_contraindications"
+    }
   },
   {
     "type": "DailyMedSPLParserTool",
@@ -320,7 +311,10 @@
       {
         "setid": "030d9bca-a934-6ef9-e063-6394a90a8277"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "parse_drug_interactions"
+    }
   },
   {
     "type": "DailyMedSPLParserTool",
@@ -363,7 +357,10 @@
       {
         "setid": "030d9bca-a934-6ef9-e063-6394a90a8277"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "parse_clinical_pharmacology"
+    }
   },
   {
     "type": "GetSPLBySetIDTool",
@@ -395,50 +392,46 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "setid": {
               "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "setid": {
-                  "type": "string"
-                },
-                "title": {
-                  "type": ["string", "null"]
-                },
-                "spl_version": {
-                  "type": ["integer", "null"]
-                },
-                "media": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "mime_type": {
-                        "type": "string",
-                        "description": "Image MIME type, e.g., image/jpeg"
-                      },
-                      "name": {
-                        "type": "string",
-                        "description": "Media file name"
-                      },
-                      "url": {
-                        "type": "string",
-                        "description": "Direct image URL"
-                      }
-                    }
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "spl_version": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "media": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "mime_type": {
+                    "type": "string",
+                    "description": "Image MIME type, e.g., image/jpeg"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Media file name"
+                  },
+                  "url": {
+                    "type": "string",
+                    "description": "Direct image URL"
                   }
                 }
-              },
-              "required": ["setid", "media"]
-            },
-            "metadata": {
-              "type": "object",
-              "additionalProperties": true
+              }
             }
           },
-          "required": ["data"]
+          "required": [
+            "setid",
+            "media"
+          ]
         },
         {
           "type": "object",
@@ -447,7 +440,9 @@
               "type": "string"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -482,43 +477,36 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "setid": {
               "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "setid": {
-                  "type": "string"
-                },
-                "title": {
-                  "type": ["string", "null"]
-                },
-                "history": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "spl_version": {
-                        "type": "integer",
-                        "description": "SPL version number"
-                      },
-                      "published_date": {
-                        "type": "string",
-                        "description": "Publication date, e.g., 'Jul 22, 2022'"
-                      }
-                    }
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "history": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "spl_version": {
+                    "type": "integer",
+                    "description": "SPL version number"
+                  },
+                  "published_date": {
+                    "type": "string",
+                    "description": "Publication date, e.g., 'Jul 22, 2022'"
                   }
                 }
-              },
-              "required": ["setid", "history"]
-            },
-            "metadata": {
-              "type": "object",
-              "additionalProperties": true
+              }
             }
           },
-          "required": ["data"]
+          "required": [
+            "setid",
+            "history"
+          ]
         },
         {
           "type": "object",
@@ -527,7 +515,9 @@
               "type": "string"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

@@ -72,14 +72,14 @@ Tool Overview Table
      - DOAJ
      - Open Access
      - Articles & Journals, HTML cleaning
-   * - ``BioRxiv_search_preprints``
+   * - ``BioRxiv_get_preprint``
      - BioRxiv
      - Biology Preprints
-     - Biology preprints, Abstracts
-   * - ``MedRxiv_search_preprints``
+     - Retrieval by DOI, Full metadata
+   * - ``MedRxiv_get_preprint``
      - MedRxiv
      - Medical Preprints
-     - Medical preprints, Abstracts
+     - Retrieval by DOI, Full metadata
    * - ``HAL_search_archive``
      - HAL
      - French Research Archive
@@ -143,8 +143,8 @@ First, let's initialize ToolUniverse and load the literature search tools:
         "PubMed_search_articles",
         "DOAJ_search_articles",
         "Unpaywall_check_oa_status",
-        "BioRxiv_search_preprints",
-        "MedRxiv_search_preprints",
+        "BioRxiv_get_preprint",
+        "MedRxiv_get_preprint",
         "HAL_search_archive",
         "SemanticScholar_search_papers",
         "openalex_literature_search",
@@ -331,22 +331,28 @@ Search for preprints in specific fields:
 
 .. code-block:: python
 
-    # Biology preprints
-    biorxiv_results = tu.run({
-        "name": "BioRxiv_search_preprints",
+    # The bioRxiv/medRxiv APIs offer DOI and date-based retrieval only -- they
+    # have no keyword search endpoint. Search for preprints through Europe PMC,
+    # which indexes both, then fetch full metadata by DOI.
+    preprints = tu.run({
+        "name": "EuropePMC_search_articles",
         "arguments": {
         "query": "CRISPR gene editing",
-        "max_results": 2
+        "source": "PPR",
+        "pageSize": 2
         }
     })
 
-    # Medical preprints
-    medrxiv_results = tu.run({
-        "name": "MedRxiv_search_preprints",
-        "arguments": {
-        "query": "COVID-19 treatment",
-        "max_results": 2
-        }
+    # Biology preprint metadata, by DOI
+    biorxiv_result = tu.run({
+        "name": "BioRxiv_get_preprint",
+        "arguments": {"doi": "10.1101/2020.09.09.289769"}
+    })
+
+    # Medical preprint metadata, by DOI
+    medrxiv_result = tu.run({
+        "name": "MedRxiv_get_preprint",
+        "arguments": {"doi": "10.1101/2020.03.24.20042937"}
     })
 
     # French research archive
@@ -796,22 +802,16 @@ Preprint Archives:
 
 .. code-block:: python
 
-    # BioRxiv (Biology)
+    # BioRxiv (Biology) -- retrieval is by DOI; search via Europe PMC
     result = tu.run({
-        "name": "BioRxiv_search_preprints",
-        "arguments": {
-        "query": "CRISPR",
-        "max_results": 5
-        }
+        "name": "BioRxiv_get_preprint",
+        "arguments": {"doi": "10.1101/2020.09.09.289769"}
     })
 
-    # MedRxiv (Medical)
+    # MedRxiv (Medical) -- retrieval is by DOI; search via Europe PMC
     result = tu.run({
-        "name": "MedRxiv_search_preprints",
-        "arguments": {
-        "query": "COVID-19",
-        "max_results": 5
-        }
+        "name": "MedRxiv_get_preprint",
+        "arguments": {"doi": "10.1101/2020.03.24.20042937"}
     })
 
     # HAL (French Archive)

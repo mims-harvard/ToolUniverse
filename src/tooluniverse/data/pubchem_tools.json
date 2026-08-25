@@ -184,7 +184,7 @@
   },
   {
     "name": "PubChem_get_compound_properties_by_CID",
-    "description": "Get a set of specified molecular properties through CID (Compound ID), such as molecular weight, IUPAC name, Canonical SMILES.",
+    "description": "Get a set of specified molecular properties through CID (Compound ID), such as molecular weight, IUPAC name, and SMILES. PubChem's PUG-REST renamed its SMILES properties: ask for 'ConnectivitySMILES' (formerly 'CanonicalSMILES') and 'SMILES' (formerly 'IsomericSMILES'). Requesting a legacy name returns the value under the CURRENT key, so a caller that looks up the key it asked for will not find it.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -201,7 +201,7 @@
           "items": {
             "type": "string"
           },
-          "description": "Optional list of PubChem property names to retrieve (e.g. ['MolecularFormula','InChIKey','XLogP','IUPACName','MolecularWeight']). If omitted, returns a default set (MolecularWeight, IUPACName, SMILES). See PubChem PUG-REST property tables for valid names. Accepts a list or a comma-separated string."
+          "description": "Optional list of PubChem property names to retrieve (e.g. ['MolecularFormula','InChIKey','XLogP','IUPACName','MolecularWeight']). If omitted, returns a default set (MolecularWeight, IUPACName, ConnectivitySMILES). For SMILES use the current names 'ConnectivitySMILES' (was 'CanonicalSMILES') or 'SMILES' (was 'IsomericSMILES') — a legacy name still returns data, but under the current key, not the one requested. See PubChem PUG-REST property tables for valid names. Accepts a list or a comma-separated string."
         }
       },
       "required": [
@@ -212,11 +212,11 @@
       "endpoint": "/compound/cid/{cid}/property/{property_list}/JSON",
       "use_pugview": false,
       "input_description": "Input is a PubChem compound ID (integer).",
-      "output_description": "Returns a JSON object with structure example:\n{\n  \"PropertyTable\": {\n    \"Properties\": [\n      {\n        \"CID\": 2244,\n        \"MolecularWeight\": 180.157,\n        \"IUPACName\": \"2-acetyloxybenzoic acid\",\n        \"CanonicalSMILES\": \"CC(=O)OC1=CC=CC=C1C(=O)O\",\n        ...\n      }\n    ]\n  }\n}\n\nWhere:\n- PropertyTable.Properties list: each element contains properties for that CID;\n- Property names determined by {property_list}, example here is [\"MolecularWeight\",\"IUPACName\",\"CanonicalSMILES\"].\nAfter calling, LLM can directly access these important molecular properties for subsequent chemical/pharmacological reasoning.",
+      "output_description": "Returns a JSON object with structure example:\n{\n  \"PropertyTable\": {\n    \"Properties\": [\n      {\n        \"CID\": 2244,\n        \"MolecularWeight\": 180.157,\n        \"IUPACName\": \"2-acetyloxybenzoic acid\",\n        \"ConnectivitySMILES\": \"CC(=O)OC1=CC=CC=C1C(=O)O\",\n        ...\n      }\n    ]\n  }\n}\n\nWhere:\n- PropertyTable.Properties list: each element contains properties for that CID;\n- Property names determined by {property_list}, example here is [\"MolecularWeight\",\"IUPACName\",\"ConnectivitySMILES\"]. Note: PubChem's PUG-REST API renamed the legacy \"CanonicalSMILES\" property to \"ConnectivitySMILES\" (and \"IsomericSMILES\" to \"SMILES\") — requesting the old names either returns data under the new key or drops the field entirely, so use the current names shown here.\nAfter calling, LLM can directly access these important molecular properties for subsequent chemical/pharmacological reasoning.",
       "property_list": [
         "MolecularWeight",
         "IUPACName",
-        "CanonicalSMILES"
+        "ConnectivitySMILES"
       ]
     },
     "type": "PubChemRESTTool",

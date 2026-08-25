@@ -267,7 +267,7 @@ result = tu.tools.FAERS_analyze_temporal_trends(
 ### MedDRA Hierarchy
 | Tool | Purpose | Key Output |
 |------|---------|------------|
-| `FAERS_rollup_meddra_hierarchy` | Aggregate by Preferred Term level | Top 50 PTs with counts |
+| `FAERS_rollup_meddra_hierarchy` | Aggregate by Preferred Term level | Most-reported PTs with counts (up to 999). `unique_PTs_returned` is a row count, NOT a total — openFDA reports no total; check `truncated` |
 
 **Example**:
 ```python

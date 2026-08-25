@@ -37,185 +37,170 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "input": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Input variant identifier"
-                },
-                "assembly_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Reference genome assembly"
-                },
-                "seq_region_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Chromosome or contig"
-                },
-                "start": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Genomic start position"
-                },
-                "end": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Genomic end position"
-                },
-                "strand": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Strand (1 or -1)"
-                },
-                "allele_string": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Allele string (ref/alt)"
-                },
-                "most_severe_consequence": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Most severe consequence (e.g., missense_variant)"
-                },
-                "transcript_consequences": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "gene_symbol": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "gene_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "transcript_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "biotype": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "consequence_terms": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "impact": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "amino_acids": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "codons": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "sift_prediction": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "sift_score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "polyphen_prediction": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "polyphen_score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
+            "input": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Input variant identifier"
+            },
+            "assembly_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reference genome assembly"
+            },
+            "seq_region_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Chromosome or contig"
+            },
+            "start": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Genomic start position"
+            },
+            "end": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Genomic end position"
+            },
+            "strand": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Strand (1 or -1)"
+            },
+            "allele_string": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Allele string (ref/alt)"
+            },
+            "most_severe_consequence": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Most severe consequence (e.g., missense_variant)"
+            },
+            "transcript_consequences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "transcript_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "biotype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "variant_allele": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The alternate allele this consequence is predicted for. For multi-allelic variants the same transcript appears once per allele, so this field is required to attribute a consequence to the correct allele."
+                  },
+                  "consequence_terms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
-                  }
-                },
-                "colocated_variants": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "allele_string": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+                  },
+                  "impact": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "amino_acids": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "codons": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "sift_prediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "sift_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "polyphen_prediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "polyphen_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "input": {
-                  "type": "string"
+            "colocated_variants": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "allele_string": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -274,118 +259,103 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "input": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "assembly_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "seq_region_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "start": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "end": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "allele_string": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "most_severe_consequence": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "transcript_consequences": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "gene_symbol": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "consequence_terms": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "impact": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "amino_acids": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "sift_prediction": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "polyphen_prediction": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
+            "input": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "assembly_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "seq_region_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "start": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "end": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "allele_string": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "most_severe_consequence": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "transcript_consequences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "variant_allele": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The alternate allele this consequence is predicted for. For multi-allelic variants the same transcript appears once per allele, so this field is required to attribute a consequence to the correct allele."
+                  },
+                  "consequence_terms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
+                  },
+                  "impact": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "amino_acids": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "sift_prediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "polyphen_prediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
-                },
-                "colocated_variants": {
-                  "type": "array"
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "input": {
-                  "type": "string"
-                }
-              }
+            "colocated_variants": {
+              "type": "array"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -436,80 +406,55 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "allele": {
-                    "type": "string",
-                    "description": "Alternative allele"
-                  },
-                  "input": {
-                    "type": "string",
-                    "description": "Original input variant ID"
-                  },
-                  "id": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Known variant IDs (rsIDs, COSMIC, etc.)"
-                  },
-                  "hgvsg": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "HGVS genomic notation(s)"
-                  },
-                  "hgvsc": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "HGVS coding notation(s) for each transcript"
-                  },
-                  "hgvsp": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "HGVS protein notation(s)"
-                  },
-                  "spdi": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "SPDI notation(s)"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "allele": {
+                "type": "string",
+                "description": "Alternative allele"
+              },
+              "input": {
+                "type": "string",
+                "description": "Original input variant ID"
+              },
+              "id": {
+                "type": "array",
+                "items": {
                   "type": "string"
                 },
-                "species": {
+                "description": "Known variant IDs (rsIDs, COSMIC, etc.)"
+              },
+              "hgvsg": {
+                "type": "array",
+                "items": {
                   "type": "string"
                 },
-                "input": {
+                "description": "HGVS genomic notation(s)"
+              },
+              "hgvsc": {
+                "type": "array",
+                "items": {
                   "type": "string"
                 },
-                "num_alleles": {
-                  "type": "integer"
-                }
+                "description": "HGVS coding notation(s) for each transcript"
+              },
+              "hgvsp": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "HGVS protein notation(s)"
+              },
+              "spdi": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "SPDI notation(s)"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

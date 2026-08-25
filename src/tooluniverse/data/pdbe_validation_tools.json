@@ -1,178 +1,207 @@
 [
-    {
-        "name": "PDBeValidation_get_quality_scores",
-        "description": "Get global quality validation scores for a PDB structure from PDBe. Returns percentile rankings for Ramachandran outliers, rotamer outliers, and clashscore. Each metric has a raw value, an absolute percentile (compared to all structures), and a relative percentile (compared to structures at similar resolution). Higher percentile = better quality. Essential for assessing whether a structure is reliable enough for downstream analysis. Example: 4HHB (hemoglobin) has clashscore raw=141.11 (absolute: 0.0%, relative: 0.0% - very poor by modern standards); 1TUP (p53-DNA complex) has similar vintage quality issues.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "pdb_id": {
-                    "type": "string",
-                    "description": "PDB identifier (4-character code). Case-insensitive. Examples: '4hhb' (hemoglobin), '1tup' (p53-DNA), '6lu7' (SARS-CoV-2 main protease)."
-                }
-            },
-            "required": ["pdb_id"]
-        },
-        "fields": {
-            "endpoint": "quality_scores"
-        },
-        "type": "PDBeValidationTool",
-        "test_examples": [
-            {
-                "pdb_id": "4hhb"
-            },
-            {
-                "pdb_id": "1tup"
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "pdb_id": {"type": "string"},
-                                "quality_metrics": {
-                                    "type": "object",
-                                    "properties": {
-                                        "ramachandran_outliers": {
-                                            "type": "object",
-                                            "properties": {
-                                                "raw_value": {"type": "number", "description": "Percentage of Ramachandran outliers"},
-                                                "absolute_percentile": {"type": "number", "description": "Percentile vs all structures (0-100)"},
-                                                "relative_percentile": {"type": "number", "description": "Percentile vs similar resolution structures (0-100)"}
-                                            }
-                                        },
-                                        "rotamer_outliers": {
-                                            "type": "object",
-                                            "properties": {
-                                                "raw_value": {"type": "number"},
-                                                "absolute_percentile": {"type": "number"},
-                                                "relative_percentile": {"type": "number"}
-                                            }
-                                        },
-                                        "clashscore": {
-                                            "type": "object",
-                                            "properties": {
-                                                "raw_value": {"type": "number", "description": "Number of clashes per 1000 atoms"},
-                                                "absolute_percentile": {"type": "number"},
-                                                "relative_percentile": {"type": "number"}
-                                            }
-                                        }
-                                    },
-                                    "description": "Structure quality validation metrics with percentile scores"
-                                }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"},
-                                "description": {"type": "string"}
-                            }
-                        }
-                    },
-                    "required": ["data"]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {"type": "string"}
-                    },
-                    "required": ["error"]
-                }
-            ]
+  {
+    "name": "PDBeValidation_get_quality_scores",
+    "description": "Get global quality validation scores for a PDB structure from PDBe. Returns percentile rankings for Ramachandran outliers, rotamer outliers, and clashscore. Each metric has a raw value, an absolute percentile (compared to all structures), and a relative percentile (compared to structures at similar resolution). Higher percentile = better quality. Essential for assessing whether a structure is reliable enough for downstream analysis. Example: 4HHB (hemoglobin) has clashscore raw=141.11 (absolute: 0.0%, relative: 0.0% - very poor by modern standards); 1TUP (p53-DNA complex) has similar vintage quality issues.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier (4-character code). Case-insensitive. Examples: '4hhb' (hemoglobin), '1tup' (p53-DNA), '6lu7' (SARS-CoV-2 main protease)."
         }
+      },
+      "required": [
+        "pdb_id"
+      ]
     },
-    {
-        "name": "PDBeValidation_get_outlier_residues",
-        "description": "Get residue-level validation outliers for a PDB structure from PDBe. Identifies specific residues with geometry problems (Ramachandran outliers, sidechain rotamer outliers, bond angle/length deviations). Returns problematic residues organized by molecule/chain. Essential for identifying unreliable regions before using structure data for molecular docking, mutation analysis, or protein engineering. Example: 4HHB has residue-level outliers in chains A-D with rotamer and Ramachandran deviations.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "pdb_id": {
-                    "type": "string",
-                    "description": "PDB identifier (4-character code). Case-insensitive. Examples: '4hhb', '1tup', '6lu7'."
-                }
+    "fields": {
+      "endpoint": "quality_scores"
+    },
+    "type": "PDBeValidationTool",
+    "test_examples": [
+      {
+        "pdb_id": "4hhb"
+      },
+      {
+        "pdb_id": "1tup"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "pdb_id": {
+              "type": "string"
             },
-            "required": ["pdb_id"]
-        },
-        "fields": {
-            "endpoint": "outlier_residues"
-        },
-        "type": "PDBeValidationTool",
-        "test_examples": [
-            {
-                "pdb_id": "4hhb"
-            },
-            {
-                "pdb_id": "6lu7"
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "pdb_id": {"type": "string"},
-                                "molecules": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "entity_id": {"type": "integer"},
-                                            "chains": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "chain_id": {"type": "string"},
-                                                        "outlier_residues": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "type": "object",
-                                                                "properties": {
-                                                                    "residue_number": {"type": ["integer", "null"]},
-                                                                    "residue_name": {"type": ["integer", "string", "null"]},
-                                                                    "outlier_types": {
-                                                                        "type": "array",
-                                                                        "items": {"type": "string"},
-                                                                        "description": "Types of outliers (e.g., RAMACHANDRAN, SIDECHAIN, BOND_ANGLES)"
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "description": "Molecules with outlier residues"
-                                }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"},
-                                "total_outlier_residues": {"type": "integer"}
-                            }
-                        }
+            "quality_metrics": {
+              "type": "object",
+              "properties": {
+                "ramachandran_outliers": {
+                  "type": "object",
+                  "properties": {
+                    "raw_value": {
+                      "type": "number",
+                      "description": "Percentage of Ramachandran outliers"
                     },
-                    "required": ["data"]
+                    "absolute_percentile": {
+                      "type": "number",
+                      "description": "Percentile vs all structures (0-100)"
+                    },
+                    "relative_percentile": {
+                      "type": "number",
+                      "description": "Percentile vs similar resolution structures (0-100)"
+                    }
+                  }
                 },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {"type": "string"}
+                "rotamer_outliers": {
+                  "type": "object",
+                  "properties": {
+                    "raw_value": {
+                      "type": "number"
                     },
-                    "required": ["error"]
+                    "absolute_percentile": {
+                      "type": "number"
+                    },
+                    "relative_percentile": {
+                      "type": "number"
+                    }
+                  }
+                },
+                "clashscore": {
+                  "type": "object",
+                  "properties": {
+                    "raw_value": {
+                      "type": "number",
+                      "description": "Number of clashes per 1000 atoms"
+                    },
+                    "absolute_percentile": {
+                      "type": "number"
+                    },
+                    "relative_percentile": {
+                      "type": "number"
+                    }
+                  }
                 }
-            ]
+              },
+              "description": "Structure quality validation metrics with percentile scores"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
+      ]
     }
+  },
+  {
+    "name": "PDBeValidation_get_outlier_residues",
+    "description": "Get residue-level validation outliers for a PDB structure from PDBe. Identifies specific residues with geometry problems (Ramachandran outliers, sidechain rotamer outliers, bond angle/length deviations). Returns problematic residues organized by molecule/chain. Essential for identifying unreliable regions before using structure data for molecular docking, mutation analysis, or protein engineering. Example: 4HHB has residue-level outliers in chains A-D with rotamer and Ramachandran deviations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB identifier (4-character code). Case-insensitive. Examples: '4hhb', '1tup', '6lu7'."
+        }
+      },
+      "required": [
+        "pdb_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "outlier_residues"
+    },
+    "type": "PDBeValidationTool",
+    "test_examples": [
+      {
+        "pdb_id": "4hhb"
+      },
+      {
+        "pdb_id": "6lu7"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "pdb_id": {
+              "type": "string"
+            },
+            "molecules": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "entity_id": {
+                    "type": "integer"
+                  },
+                  "chains": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "chain_id": {
+                          "type": "string"
+                        },
+                        "outlier_residues": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "residue_number": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "residue_name": {
+                                "type": [
+                                  "integer",
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "outlier_types": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                },
+                                "description": "Types of outliers (e.g., RAMACHANDRAN, SIDECHAIN, BOND_ANGLES)"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "description": "Molecules with outlier residues"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
 ]

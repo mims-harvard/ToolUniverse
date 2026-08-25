@@ -40,45 +40,111 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_id": {
-                  "type": "string"
-                },
-                "organism": {
-                  "type": "integer"
-                },
-                "family_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "subfamily_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "annotations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "category": {
-                        "type": "string"
-                      },
-                      "terms": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "name": {
-                              "type": "string"
+            "gene_id": {
+              "type": "string"
+            },
+            "organism": {
+              "type": "integer"
+            },
+            "family_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subfamily_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "annotations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "category": {
+                    "type": "string"
+                  },
+                  "terms": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "genes": {
+              "type": "array",
+              "description": "Every gene PANTHER mapped the query to. family_id, subfamily_id and annotations above describe genes[0] only.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "input_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The identifier from gene_id that this row answers for. PANTHER does not preserve input order, so match on this rather than position."
+                  },
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "family_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "family_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "subfamily_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "subfamily_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "annotations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "category": {
+                          "type": "string"
+                        },
+                        "terms": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
                             }
                           }
                         }
@@ -88,24 +154,10 @@
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "total_genes": {
+              "type": "integer"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -171,76 +223,54 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_list": {
-                  "type": "string"
-                },
-                "organism": {
-                  "type": "integer"
-                },
-                "annotation_dataset": {
-                  "type": "string"
-                },
-                "result_count": {
-                  "type": "integer"
-                },
-                "enriched_terms": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "term_id": {
-                        "type": "string"
-                      },
-                      "term_label": {
-                        "type": "string"
-                      },
-                      "number_in_list": {
-                        "type": "integer"
-                      },
-                      "number_in_reference": {
-                        "type": "integer"
-                      },
-                      "expected": {
-                        "type": "number"
-                      },
-                      "fold_enrichment": {
-                        "type": "number"
-                      },
-                      "pvalue": {
-                        "type": "number"
-                      },
-                      "fdr": {
-                        "type": "number"
-                      },
-                      "direction": {
-                        "type": "string"
-                      }
-                    }
+            "gene_list": {
+              "type": "string"
+            },
+            "organism": {
+              "type": "integer"
+            },
+            "annotation_dataset": {
+              "type": "string"
+            },
+            "result_count": {
+              "type": "integer"
+            },
+            "enriched_terms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "term_id": {
+                    "type": "string"
+                  },
+                  "term_label": {
+                    "type": "string"
+                  },
+                  "number_in_list": {
+                    "type": "integer"
+                  },
+                  "number_in_reference": {
+                    "type": "integer"
+                  },
+                  "expected": {
+                    "type": "number"
+                  },
+                  "fold_enrichment": {
+                    "type": "number"
+                  },
+                  "pvalue": {
+                    "type": "number"
+                  },
+                  "fdr": {
+                    "type": "number"
+                  },
+                  "direction": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -258,7 +288,7 @@
   },
   {
     "name": "PANTHER_ortholog",
-    "description": "Find orthologs of a gene across species using PANTHER evolutionary classification. Returns the orthologous gene in a target species with its persistent ID, gene symbol, and ortholog type (LDO=Least Diverged Ortholog, O=ortholog, P=paralog, X=xenolog, LDX=least diverged xenolog). PANTHER classifies orthologs by evolutionary divergence across 144 fully sequenced genomes. Example: P04637 (human TP53) maps to Tp53 (mouse P02340) as LDO.",
+    "description": "Find orthologs of a gene across species using PANTHER evolutionary classification. Returns EVERY matching ortholog in 'mappings' (count in 'total_mappings'), each with its persistent ID, gene symbol, and ortholog type (LDO=Least Diverged Ortholog, O=ortholog, P=paralog, X=xenolog, LDX=least diverged xenolog); 'mapping' repeats the first entry for backward compatibility and is not the whole answer. A gene often has several orthologs in one target species -- human ABCB1 maps to both mouse Abcb1a (LDO) and Abcb1b (O) -- so read 'mappings', especially with ortholog_type='O'. PANTHER classifies orthologs by evolutionary divergence across 144 fully sequenced genomes. Example: P04637 (human TP53) maps to Tp53 (mouse P02340) as LDO.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -315,76 +345,92 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
+            "gene_id": {
+              "type": "string"
+            },
+            "source_organism": {
+              "type": "integer"
+            },
+            "target_organism": {
+              "type": "integer"
+            },
+            "ortholog_type": {
+              "type": "string"
+            },
+            "mapping": {
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
-                "gene_id": {
+                "source_gene": {
                   "type": "string"
                 },
-                "source_organism": {
-                  "type": "integer"
+                "target_gene": {
+                  "type": "string"
                 },
-                "target_organism": {
-                  "type": "integer"
+                "target_gene_symbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "ortholog_type": {
                   "type": "string"
                 },
-                "mapping": {
+                "persistent_id": {
                   "type": [
-                    "object",
+                    "string",
                     "null"
-                  ],
-                  "properties": {
-                    "source_gene": {
-                      "type": "string"
-                    },
-                    "target_gene": {
-                      "type": "string"
-                    },
-                    "target_gene_symbol": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "ortholog_type": {
-                      "type": "string"
-                    },
-                    "persistent_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "target_persistent_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    }
+                  ]
+                },
+                "target_persistent_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "mappings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source_gene": {
+                    "type": "string"
+                  },
+                  "target_gene": {
+                    "type": "string"
+                  },
+                  "target_gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ortholog_type": {
+                    "type": "string"
+                  },
+                  "persistent_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "target_persistent_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "total_mappings": {
+              "type": "integer"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

@@ -24,6 +24,41 @@ import os
 logger = get_logger(__name__)
 
 
+def _unwrap_mcp_tool_result(result: Any) -> Any:
+    """Return the value of a standard MCP tools/call response when unambiguous."""
+    if not isinstance(result, dict):
+        return result
+
+    content = result.get("content")
+    if result.get("isError"):
+        error_parts = [
+            str(item.get("text"))
+            for item in content or []
+            if isinstance(item, dict)
+            and item.get("type") == "text"
+            and item.get("text") is not None
+        ]
+        detail: Any = "\n".join(error_parts) or result.get("structuredContent")
+        return {"status": "error", "error": detail or "remote MCP tool failed"}
+
+    structured = result.get("structuredContent")
+    if structured is not None:
+        return structured
+
+    if not isinstance(content, list) or len(content) != 1:
+        return result
+    item = content[0]
+    if not isinstance(item, dict) or item.get("type") != "text":
+        return result
+    text = item.get("text")
+    if not isinstance(text, str):
+        return result
+    try:
+        return json.loads(text)
+    except (json.JSONDecodeError, TypeError):
+        return text
+
+
 class BaseMCPClient:
     """
     Base MCP client with common functionality shared between MCPClientTool and MCPAutoLoaderTool.
@@ -35,6 +70,8 @@ class BaseMCPClient:
         server_url: str,
         transport: str = "http",
         timeout: int = 30,
+        headers: Optional[Dict[str, str]] = None,
+        auth_env: str = "",
         http_headers_from_env: Optional[Dict[str, Any]] = None,
     ):
         self.server_url = os.path.expandvars(server_url)
@@ -48,6 +85,21 @@ class BaseMCPClient:
         self.timeout = timeout
         self.http_headers_from_env = http_headers_from_env or {}
         self.session = None
+        self.header_templates = dict(headers or {})
+        self.auth_env = auth_env
+        self.headers = {}
+        for name, value in self.header_templates.items():
+            expanded_name = str(name).strip()
+            expanded_value = os.path.expandvars(str(value)).strip()
+            if not expanded_name or "\r" in expanded_name or "\n" in expanded_name:
+                raise ValueError("Invalid MCP header name")
+            if "\r" in expanded_value or "\n" in expanded_value:
+                raise ValueError("Invalid MCP header value")
+            self.headers[expanded_name] = expanded_value
+        if auth_env:
+            token = os.getenv(auth_env, "").strip()
+            if token:
+                self.headers["Authorization"] = f"Bearer {token}"
 
         # Validate transport (accept 'stdio' via normalization above)
         supported_transports = ["http", "websocket"]
@@ -119,7 +171,8 @@ class BaseMCPClient:
         """Make an MCP JSON-RPC request"""
         if self.transport == "http":
             endpoint = self._get_mcp_endpoint("")
-            headers = self._resolve_http_headers()
+            headers = dict(self.headers)
+            headers.update(self._resolve_http_headers())
             async with streamablehttp_client(
                 endpoint,
                 headers=headers or None,
@@ -213,6 +266,8 @@ class MCPClientTool(BaseTool, BaseMCPClient):
             server_url=tool_config.get("server_url", "http://localhost:8000"),
             transport=tool_config.get("transport", "http"),
             timeout=tool_config.get("timeout", 600),
+            headers=tool_config.get("headers"),
+            auth_env=tool_config.get("auth_env", ""),
             http_headers_from_env=tool_config.get("http_headers_from_env"),
         )
 
@@ -462,7 +517,7 @@ class MCPProxyTool(MCPClientTool):
                 result = await self.call_tool(self.target_tool_name, arguments)
                 if self.normalize_mcp_result:
                     return self._normalize_result(result)
-                return result
+                return _unwrap_mcp_tool_result(result)
             except Exception as e:
                 return {"status": "error", "error": str(e)}
             finally:
@@ -625,6 +680,8 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
             server_url=tool_config.get("server_url", "http://localhost:8000"),
             transport=tool_config.get("transport", "http"),
             timeout=tool_config.get("timeout", 5),
+            headers=tool_config.get("headers"),
+            auth_env=tool_config.get("auth_env", ""),
             http_headers_from_env=tool_config.get("http_headers_from_env"),
         )
 
@@ -784,6 +841,11 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
             if isinstance(tool_info.get("annotations"), dict):
                 config["annotations"] = copy.deepcopy(tool_info["annotations"])
 
+            if self.header_templates:
+                config["headers"] = dict(self.header_templates)
+            if self.auth_env:
+                config["auth_env"] = self.auth_env
+
             configs.append(config)
 
         return configs
@@ -856,7 +918,10 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
                     "configs": self.generate_proxy_tool_configs(),
                 }
         except Exception as e:
-            logger.error(f"❌ MCPAutoLoaderTool auto-load failed: {str(e)}")
+            # The engine emits one concise, actionable availability message.
+            # Keep the full exception chain at debug level for diagnostics instead
+            # of printing a second, vague failure to ordinary SDK users.
+            logger.debug("MCPAutoLoaderTool auto-load failed", exc_info=True)
             raise Exception(f"Auto-load failed: {str(e)}")
 
     def run(self, arguments):

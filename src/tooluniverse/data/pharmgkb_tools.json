@@ -152,12 +152,8 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "items": {
             "type": "object",
@@ -181,8 +177,19 @@
             },
             "additionalProperties": true
           }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     }
   },
   {
@@ -338,35 +345,58 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
-        },
-        "data": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "objCls": {
-                "type": "string"
-              },
-              "id": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              },
-              "location": {
-                "type": "object"
-              },
-              "gene": {
-                "type": "object"
-              }
-            },
-            "additionalProperties": true
+      "type": "array",
+      "description": "List of matching PharmGKB genetic variants.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "objCls": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "changeClassification": {
+            "type": "string"
+          },
+          "clinicalSignificance": {
+            "type": "string"
+          },
+          "history": {
+            "type": "array"
+          },
+          "lastUpdatedFromDbsnp": {
+            "type": "string"
+          },
+          "obsolete": {
+            "type": "boolean"
+          },
+          "rare": {
+            "type": "boolean"
+          },
+          "raritySource": {
+            "type": "string"
+          },
+          "terms": {
+            "type": "array"
+          },
+          "type": {
+            "type": "string"
+          },
+          "location": {
+            "type": "object"
+          },
+          "gene": {
+            "type": "object"
           }
-        }
+        },
+        "additionalProperties": true
       }
     }
   },
@@ -431,13 +461,13 @@
   },
   {
     "name": "PharmGKB_get_drug_label_annotations",
-    "description": "Get regulatory drug-label pharmacogenomic annotations from PharmGKB/ClinPGx. By default lists FDA label annotations (id + name), capped by 'limit'. Pass source to switch agency (FDA, EMA, HCSC, PMDA). Pass label_id (e.g., 'PA166114907' for bosutinib) for one full annotation including biomarkerStatus, alternateDrugAvailable, dosingInformation, cancerGenome, and source literature. Keyless.",
+    "description": "Get regulatory drug-label pharmacogenomic annotations from PharmGKB/ClinPGx. By default lists FDA label annotations (id + name), capped by 'limit'. Pass drug_name to filter the listing to a specific drug (e.g. 'imatinib') instead of browsing unfiltered. Pass source to switch agency (FDA, EMA, HCSC, PMDA). Pass label_id (e.g., 'PA166114907' for bosutinib) for one full annotation including biomarkerStatus, alternateDrugAvailable, dosingInformation, cancerGenome, and source literature. Keyless.",
     "parameter": {
       "type": "object",
       "properties": {
         "label_id": {
           "type": "string",
-          "description": "PharmGKB Label Annotation ID (e.g., 'PA166114907' for the FDA bosutinib label). When provided, returns the full single annotation and ignores 'source'/'limit'."
+          "description": "PharmGKB Label Annotation ID (e.g., 'PA166114907' for the FDA bosutinib label). When provided, returns the full single annotation and ignores 'source'/'limit'/'drug_name'."
         },
         "source": {
           "type": "string",
@@ -449,6 +479,10 @@
             "PMDA"
           ]
         },
+        "drug_name": {
+          "type": "string",
+          "description": "Filter the listing to annotations whose name mentions this drug (case-insensitive substring match, e.g. 'imatinib'). Ignored when label_id is given."
+        },
         "limit": {
           "type": "integer",
           "description": "Maximum number of label annotations to return in listing mode (default 50, max 500)."
@@ -456,6 +490,10 @@
         "id": {
           "type": "string",
           "description": "Alias for label_id."
+        },
+        "drug": {
+          "type": "string",
+          "description": "Alias for drug_name."
         }
       },
       "required": []
@@ -471,6 +509,10 @@
       {
         "source": "FDA",
         "limit": 5
+      },
+      {
+        "source": "FDA",
+        "drug_name": "imatinib"
       }
     ],
     "return_schema": {

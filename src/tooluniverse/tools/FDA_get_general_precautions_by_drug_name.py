@@ -1,7 +1,7 @@
 """
 FDA_get_general_precautions_by_drug_name
 
-Retrieve general precautions information based on the drug name.
+Retrieve general precautions information based on the drug name. IMPORTANT -- FDA labels file saf...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def FDA_get_general_precautions_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve general precautions information based on the drug name.
+    Retrieve general precautions information based on the drug name. IMPORTANT -- FDA labels file saf...
 
     Parameters
     ----------

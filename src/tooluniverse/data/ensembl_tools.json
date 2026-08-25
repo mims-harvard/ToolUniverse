@@ -27,63 +27,49 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "transcript_id": {
               "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "transcript_id": {
-                  "type": "string"
-                },
-                "total_haplotype_count": {
-                  "type": "integer"
-                },
-                "protein_haplotypes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "count": {
-                        "type": "integer"
-                      },
-                      "frequency": {
-                        "type": "number"
-                      },
-                      "has_indel": {},
-                      "population_frequencies": {
-                        "type": "object"
-                      },
-                      "population_counts": {
-                        "type": "object"
-                      },
-                      "contributing_variants": {
-                        "type": "array"
-                      }
-                    }
-                  }
-                },
-                "cds_haplotypes": {
-                  "type": "array",
-                  "items": {
+            "total_haplotype_count": {
+              "type": "integer"
+            },
+            "protein_haplotypes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "count": {
+                    "type": "integer"
+                  },
+                  "frequency": {
+                    "type": "number"
+                  },
+                  "has_indel": {},
+                  "population_frequencies": {
                     "type": "object"
+                  },
+                  "population_counts": {
+                    "type": "object"
+                  },
+                  "contributing_variants": {
+                    "type": "array"
                   }
-                },
-                "total_population_counts": {
-                  "type": "object"
                 }
               }
             },
-            "url": {
-              "type": "string"
+            "cds_haplotypes": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "total_population_counts": {
+              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -193,10 +179,11 @@
             "genomic",
             "cds",
             "cdna",
+            "protein",
             "peptide"
           ],
           "default": "genomic",
-          "description": "Sequence type: 'genomic' (genomic DNA), 'cds' (coding sequence), 'cdna' (cDNA), 'peptide' (protein sequence)"
+          "description": "Sequence type: 'genomic' (genomic DNA), 'cds' (coding sequence), 'cdna' (cDNA), 'protein' (protein/peptide sequence -- 'peptide' is also accepted and mapped to 'protein', the name Ensembl's own REST API actually expects)"
         },
         "species": {
           "type": "string",

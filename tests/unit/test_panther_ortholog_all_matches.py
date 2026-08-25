@@ -1,0 +1,225 @@
+"""Regression guard for PANTHER_ortholog publishing every ortholog match.
+
+PANTHER's ortholog/matchortho endpoint returns a bare object when exactly one
+ortholog matches and a JSON list when several do. The tool collapsed the list
+with `mapped = mapped[0]`, so every match past the first was discarded without
+any indication that data had been dropped -- including under
+`ortholog_type='O'`, whose own parameter description promises "all orthologs".
+
+Confirmed live against https://pantherdb.org/services/oai/pantherdb before the
+fix: human ABCB1 -> mouse (orthologType=O) returns two rows, Abcb1b (O) and
+Abcb1a (LDO). The tool published only Abcb1b, silently losing Abcb1a -- the
+P-glycoprotein paralogue pair that makes mouse Abcb1a/1b the standard model
+for human ABCB1 efflux, so dropping one is a substantive loss for anyone
+mapping human transporter biology onto a mouse model.
+"""
+
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+from tooluniverse.panther_tool import PANTHERTool
+
+pytestmark = pytest.mark.unit
+
+
+def _tool():
+    return PANTHERTool({"fields": {"endpoint_type": "ortholog"}})
+
+
+def _resp(payload):
+    r = MagicMock()
+    r.status_code = 200
+    r.raise_for_status.return_value = None
+    r.json.return_value = payload
+    return r
+
+
+# Trimmed from the real live payload for
+# geneInputList=ABCB1&organism=9606&targetOrganism=10090&orthologType=O
+_ABCB1B = {
+    "target_gene_symbol": "Abcb1b",
+    "persistent_id": "PTN002516972",
+    "target_persistent_id": "PTN000657248",
+    "ortholog": "O",
+    "gene": "HUMAN|HGNC=40|UniProtKB=P08183",
+    "target_gene": "MOUSE|MGI=MGI=97568|UniProtKB=P06795",
+    "id": "ABCB1",
+}
+_ABCB1A = {
+    "target_gene_symbol": "Abcb1a",
+    "persistent_id": "PTN002516972",
+    "target_persistent_id": "PTN000657251",
+    "ortholog": "LDO",
+    "gene": "HUMAN|HGNC=40|UniProtKB=P08183",
+    "target_gene": "MOUSE|MGI=MGI=97570|UniProtKB=P21447",
+    "id": "ABCB1",
+}
+
+
+def _payload(mapped):
+    return {"search": {"mapping": {"mapped": mapped}}}
+
+
+def _run(mapped, **overrides):
+    args = {
+        "gene_id": "ABCB1",
+        "organism": 9606,
+        "target_organism": 10090,
+        "ortholog_type": "O",
+    }
+    args.update(overrides)
+    with patch(
+        "tooluniverse.panther_tool.requests.get",
+        return_value=_resp(_payload(mapped)),
+    ):
+        return _tool().run(args)
+
+
+class TestEveryOrthologIsPublished:
+    def test_second_ortholog_is_not_dropped(self):
+        """The assertion that bites: reverting to `mapped[0]` loses Abcb1a."""
+        result = _run([_ABCB1B, _ABCB1A])
+
+        symbols = [m["target_gene_symbol"] for m in result["data"]["mappings"]]
+        assert symbols == ["Abcb1b", "Abcb1a"]
+
+    def test_total_mappings_matches_the_rows_beside_it(self):
+        result = _run([_ABCB1B, _ABCB1A])
+
+        data = result["data"]
+        assert data["total_mappings"] == 2
+        assert data["total_mappings"] == len(data["mappings"])
+
+    def test_ortholog_type_is_carried_per_match_not_flattened(self):
+        """Abcb1b is an O and Abcb1a an LDO -- one shared value would be wrong."""
+        result = _run([_ABCB1B, _ABCB1A])
+
+        assert [m["ortholog_type"] for m in result["data"]["mappings"]] == ["O", "LDO"]
+
+
+class TestSingleAndEmptyShapes:
+    def test_bare_object_response_still_parses(self):
+        """PANTHER sends a dict, not a list, when exactly one ortholog matches."""
+        result = _run(_ABCB1A, ortholog_type="LDO")
+
+        data = result["data"]
+        assert data["total_mappings"] == 1
+        assert data["mappings"][0]["target_gene_symbol"] == "Abcb1a"
+
+    def test_no_match_reports_zero_rather_than_a_phantom_row(self):
+        result = _run({})
+
+        data = result["data"]
+        assert data["mappings"] == []
+        assert data["total_mappings"] == 0
+        assert data["mapping"] is None
+
+
+class TestBackwardCompatibleSingularField:
+    def test_mapping_remains_the_first_match(self):
+        result = _run([_ABCB1B, _ABCB1A])
+
+        data = result["data"]
+        assert data["mapping"] == data["mappings"][0]
+        assert data["mapping"]["target_gene_symbol"] == "Abcb1b"
+
+
+# `geneinfo` collapses the same way `matchortho` did -- found by sweeping the
+# file after fixing the ortholog path rather than by a separate report.
+# Confirmed live that gene_id "TP53,BRCA1" echoed both names back while
+# publishing only BRCA1's family PTHR13763; TP53's PTHR11447 was dropped.
+_GENEINFO_BRCA1 = {
+    "accession": "HUMAN|HGNC=1100|UniProtKB=P38398",
+    "mapped_id_list": "BRCA1",
+    "family_id": "PTHR13763",
+    "family_name": "BREAST CANCER TYPE 1 SUSCEPTIBILITY PROTEIN",
+    "sf_id": "PTHR13763:SF0",
+    "annotation_type_list": {
+        "annotation_data_type": {
+            "content": "ANNOT_TYPE_ID_PANTHER_GO_SLIM_MF",
+            "annotation_list": {
+                "annotation": {
+                    "id": "GO:0004842",
+                    "name": "ubiquitin-protein transferase activity",
+                }
+            },
+        }
+    },
+}
+_GENEINFO_TP53 = {
+    "accession": "HUMAN|HGNC=11998|UniProtKB=P04637",
+    "mapped_id_list": "TP53",
+    "family_id": "PTHR11447",
+    "family_name": "CELLULAR TUMOR ANTIGEN P53",
+    "sf_id": "PTHR11447:SF6",
+    "annotation_type_list": {"annotation_data_type": []},
+}
+
+
+def _run_gene_info(gene_payload):
+    payload = {"search": {"mapped_genes": {"gene": gene_payload}}}
+    with patch(
+        "tooluniverse.panther_tool.requests.get", return_value=_resp(payload)
+    ):
+        return PANTHERTool({"fields": {"endpoint_type": "gene_info"}}).run(
+            {"gene_id": "TP53,BRCA1", "organism": 9606}
+        )
+
+
+class TestGeneInfoKeepsEveryMappedGene:
+    def test_second_gene_is_not_dropped(self):
+        result = _run_gene_info([_GENEINFO_BRCA1, _GENEINFO_TP53])
+
+        data = result["data"]
+        assert data["total_genes"] == 2
+        assert [g["family_id"] for g in data["genes"]] == ["PTHR13763", "PTHR11447"]
+
+    def test_annotations_stay_attached_to_their_own_gene(self):
+        """Flattening them into one list would misattribute GO terms."""
+        result = _run_gene_info([_GENEINFO_BRCA1, _GENEINFO_TP53])
+
+        brca1, tp53 = result["data"]["genes"]
+        assert brca1["annotations"][0]["terms"][0]["id"] == "GO:0004842"
+        assert tp53["annotations"] == []
+
+    def test_single_gene_dict_response_still_parses(self):
+        result = _run_gene_info(_GENEINFO_BRCA1)
+
+        data = result["data"]
+        assert data["total_genes"] == 1
+        assert data["family_id"] == "PTHR13763"
+        assert data["subfamily_id"] == "PTHR13763:SF0"
+
+    def test_legacy_top_level_fields_track_the_first_gene(self):
+        result = _run_gene_info([_GENEINFO_BRCA1, _GENEINFO_TP53])
+
+        data = result["data"]
+        assert data["family_id"] == data["genes"][0]["family_id"]
+        assert data["annotations"] == data["genes"][0]["annotations"]
+
+    def test_each_row_names_the_input_it_answers_for(self):
+        """Validation finding: rows were unattributable.
+
+        The first version published `gene_symbol`, a key `geneinfo` entries do
+        not have, so it was null on every row. The identifier the caller typed
+        lives in `mapped_id_list`, and PANTHER does not return rows in input
+        order -- confirmed live that "TP53,BRCA1" comes back BRCA1 first --
+        so without it a multi-gene answer cannot be matched to its question
+        except by decoding "HUMAN|HGNC=1100|UniProtKB=P38398".
+        """
+        result = _run_gene_info([_GENEINFO_BRCA1, _GENEINFO_TP53])
+
+        genes = result["data"]["genes"]
+        assert [g["input_id"] for g in genes] == ["BRCA1", "TP53"]
+        # Rows arrive in a different order than the query named them.
+        assert genes[0]["input_id"] != "TP53"
+
+    def test_family_name_is_published_so_rows_are_readable(self):
+        result = _run_gene_info([_GENEINFO_BRCA1, _GENEINFO_TP53])
+
+        names = [g["family_name"] for g in result["data"]["genes"]]
+        assert names == [
+            "BREAST CANCER TYPE 1 SUSCEPTIBILITY PROTEIN",
+            "CELLULAR TUMOR ANTIGEN P53",
+        ]

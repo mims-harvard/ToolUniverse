@@ -135,7 +135,10 @@
         "organism_name": "Homo sapiens",
         "limit": 3
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_datasets"
+    }
   },
   {
     "name": "CryoET_get_dataset",
@@ -272,7 +275,10 @@
         "operation": "get_dataset",
         "dataset_id": 10053
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_dataset"
+    }
   },
   {
     "name": "CryoET_list_runs",
@@ -381,7 +387,10 @@
         "dataset_id": 10053,
         "limit": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_runs"
+    }
   },
   {
     "name": "CryoET_list_tomograms",
@@ -543,7 +552,10 @@
         "operation": "list_tomograms",
         "run_id": 3430
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_tomograms"
+    }
   },
   {
     "name": "CryoET_list_annotations",
@@ -692,7 +704,10 @@
         "operation": "list_annotations",
         "run_id": 3430
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_annotations"
+    }
   },
   {
     "name": "CryoET_list_tiltseries",
@@ -907,7 +922,10 @@
         "run_id": 8260,
         "limit": 2
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_tiltseries"
+    }
   },
   {
     "name": "CryoET_list_depositions",
@@ -1047,6 +1065,9 @@
         "operation": "list_depositions",
         "deposition_id": 10014
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_depositions"
+    }
   }
 ]

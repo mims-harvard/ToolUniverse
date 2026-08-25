@@ -308,6 +308,19 @@ def extract_or_skip(article, terms):
 pip install 'markitdown[all]>=0.1.0'
 ```
 
+### Optional PyMuPDF backend
+
+The default installation can extract PDF text without PyMuPDF. To opt into the
+faster `extractor="fitz"` backend, install:
+
+```bash
+pip install 'tooluniverse[pdf]'
+```
+
+PyMuPDF is licensed under AGPL-3.0 or a commercial Artifex license and is
+therefore not installed by default or by `tooluniverse[all]`. Review those
+terms before enabling it in a distributed or commercial deployment.
+
 ### Issue: Europe PMC auto-snippets returns empty
 
 **Possible causes:**

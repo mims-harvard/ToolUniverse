@@ -47,111 +47,92 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "uniprot_accession": {
-                  "type": "string",
-                  "description": "UniProt accession queried"
-                },
-                "structures": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "pdb_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "PDB entry ID (4 characters)"
-                      },
-                      "chain_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Chain ID in PDB entry"
-                      },
-                      "uniprot_start": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ],
-                        "description": "UniProt sequence start covered"
-                      },
-                      "uniprot_end": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ],
-                        "description": "UniProt sequence end covered"
-                      },
-                      "resolution": {
-                        "type": [
-                          "number",
-                          "null"
-                        ],
-                        "description": "Structure resolution in Angstroms"
-                      },
-                      "experimental_method": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Method (X-ray diffraction, Electron Microscopy, NMR)"
-                      },
-                      "coverage": {
-                        "type": [
-                          "number",
-                          "null"
-                        ],
-                        "description": "Fraction of UniProt sequence covered"
-                      },
-                      "tax_id": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ],
-                        "description": "Taxonomy ID of source organism"
-                      }
-                    }
-                  },
-                  "description": "Ranked PDB structures (this page)"
-                },
-                "total_structures": {
-                  "type": "integer",
-                  "description": "Total available structure-chain entries"
-                },
-                "returned_structures": {
-                  "type": "integer",
-                  "description": "Number of entries in this page of results"
-                },
-                "offset": {
-                  "type": "integer",
-                  "description": "Zero-based index of the first entry returned"
-                },
-                "note": {
-                  "type": "string",
-                  "description": "Present when more entries remain; explains how to page to them"
-                }
-              }
+            "uniprot_accession": {
+              "type": "string",
+              "description": "UniProt accession queried"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
+            "structures": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pdb_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "PDB entry ID (4 characters)"
+                  },
+                  "chain_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Chain ID in PDB entry"
+                  },
+                  "uniprot_start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "UniProt sequence start covered"
+                  },
+                  "uniprot_end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "UniProt sequence end covered"
+                  },
+                  "resolution": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Structure resolution in Angstroms"
+                  },
+                  "experimental_method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Method (X-ray diffraction, Electron Microscopy, NMR)"
+                  },
+                  "coverage": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Fraction of UniProt sequence covered"
+                  },
+                  "tax_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Taxonomy ID of source organism"
+                  }
                 }
-              }
+              },
+              "description": "Ranked PDB structures (this page)"
+            },
+            "total_structures": {
+              "type": "integer",
+              "description": "Total available structure-chain entries"
+            },
+            "returned_structures": {
+              "type": "integer",
+              "description": "Number of entries in this page of results"
+            },
+            "offset": {
+              "type": "integer",
+              "description": "Zero-based index of the first entry returned"
+            },
+            "note": {
+              "type": "string",
+              "description": "Present when more entries remain; explains how to page to them"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -199,109 +180,90 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "pdb_id": {
-                  "type": "string",
-                  "description": "PDB entry ID"
-                },
-                "proteins": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "uniprot_accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "UniProt accession"
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Protein identifier"
-                      },
-                      "chain_mappings": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "chain_id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ],
-                              "description": "Chain ID"
-                            },
-                            "pdb_start": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ],
-                              "description": "PDB residue start"
-                            },
-                            "pdb_end": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ],
-                              "description": "PDB residue end"
-                            },
-                            "uniprot_start": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ],
-                              "description": "UniProt residue start"
-                            },
-                            "uniprot_end": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ],
-                              "description": "UniProt residue end"
-                            }
-                          }
-                        },
-                        "description": "Chain-to-UniProt residue mappings"
-                      },
-                      "total_chain_mappings": {
-                        "type": "integer",
-                        "description": "Total chain mappings for this accession (chain_mappings shows at most the first 20)"
-                      },
-                      "chain_mappings_truncated": {
-                        "type": "boolean",
-                        "description": "True when total_chain_mappings exceeds the 20 returned in chain_mappings"
-                      }
-                    }
-                  },
-                  "description": "UniProt proteins found in PDB entry"
-                },
-                "total_proteins": {
-                  "type": "integer",
-                  "description": "Number of distinct UniProt proteins"
-                }
-              }
+            "pdb_id": {
+              "type": "string",
+              "description": "PDB entry ID"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "pdb_id": {
-                  "type": "string"
+            "proteins": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "uniprot_accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt accession"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Protein identifier"
+                  },
+                  "chain_mappings": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "chain_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Chain ID"
+                        },
+                        "pdb_start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "PDB residue start"
+                        },
+                        "pdb_end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "PDB residue end"
+                        },
+                        "uniprot_start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "UniProt residue start"
+                        },
+                        "uniprot_end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "UniProt residue end"
+                        }
+                      }
+                    },
+                    "description": "Chain-to-UniProt residue mappings"
+                  },
+                  "total_chain_mappings": {
+                    "type": "integer",
+                    "description": "Total chain mappings for this accession (chain_mappings shows at most the first 20)"
+                  },
+                  "chain_mappings_truncated": {
+                    "type": "boolean",
+                    "description": "True when total_chain_mappings exceeds the 20 returned in chain_mappings"
+                  }
                 }
-              }
+              },
+              "description": "UniProt proteins found in PDB entry"
+            },
+            "total_proteins": {
+              "type": "integer",
+              "description": "Number of distinct UniProt proteins"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -365,113 +327,94 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "uniprot_accession": {
-                  "type": "string",
-                  "description": "UniProt accession queried"
-                },
-                "pdb_entries": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "pdb_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "PDB entry ID"
-                      },
-                      "resolution": {
-                        "type": [
-                          "number",
-                          "null"
-                        ],
-                        "description": "Resolution in Angstroms"
-                      },
-                      "experimental_method": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Experimental method"
-                      },
-                      "chains": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "chain_id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "uniprot_start": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ]
-                            },
-                            "uniprot_end": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ]
-                            },
-                            "coverage": {
-                              "type": [
-                                "number",
-                                "null"
-                              ]
-                            }
-                          }
-                        },
-                        "description": "Chains in this PDB entry"
-                      }
-                    }
-                  },
-                  "description": "PDB entries sorted by resolution (this page)"
-                },
-                "total_pdb_entries": {
-                  "type": "integer",
-                  "description": "Total unique PDB entries"
-                },
-                "total_chain_mappings": {
-                  "type": "integer",
-                  "description": "Total chain-level mappings"
-                },
-                "returned_pdb_entries": {
-                  "type": "integer",
-                  "description": "Number of entries in this page of results"
-                },
-                "offset": {
-                  "type": "integer",
-                  "description": "Zero-based index of the first entry returned"
-                },
-                "note": {
-                  "type": "string",
-                  "description": "Present when more entries remain; explains how to page to them"
-                }
-              }
+            "uniprot_accession": {
+              "type": "string",
+              "description": "UniProt accession queried"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
+            "pdb_entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pdb_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "PDB entry ID"
+                  },
+                  "resolution": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Resolution in Angstroms"
+                  },
+                  "experimental_method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Experimental method"
+                  },
+                  "chains": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "chain_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "uniprot_start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "uniprot_end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "coverage": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
+                    "description": "Chains in this PDB entry"
+                  }
                 }
-              }
+              },
+              "description": "PDB entries sorted by resolution (this page)"
+            },
+            "total_pdb_entries": {
+              "type": "integer",
+              "description": "Total unique PDB entries"
+            },
+            "total_chain_mappings": {
+              "type": "integer",
+              "description": "Total chain-level mappings"
+            },
+            "returned_pdb_entries": {
+              "type": "integer",
+              "description": "Number of entries in this page of results"
+            },
+            "offset": {
+              "type": "integer",
+              "description": "Zero-based index of the first entry returned"
+            },
+            "note": {
+              "type": "string",
+              "description": "Present when more entries remain; explains how to page to them"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -516,165 +459,143 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "pdb_id": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "pdb_id": {
-                  "type": "string"
-                },
-                "scop_domains": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "scop_sunid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "SCOP sunid (stable unique identifier) for the domain"
-                      },
-                      "sccs": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "SCOP Concise Classification String (e.g., 'b.60.1.2')"
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "identifier": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "class": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "SCOP class (e.g., 'All beta proteins')"
-                      },
-                      "class_sunid": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "fold": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "SCOP fold (e.g., 'Lipocalins')"
-                      },
-                      "fold_sunid": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "superfamily": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "SCOP superfamily"
-                      },
-                      "superfamily_sunid": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "mappings": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "chain_id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "struct_asym_id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "entity_id": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ]
-                            },
-                            "scop_id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "start_residue": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ]
-                            },
-                            "end_residue": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ]
-                            },
-                            "start_author_residue": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ]
-                            },
-                            "end_author_residue": {
-                              "type": [
-                                "integer",
-                                "null"
-                              ]
-                            }
-                          }
+            "scop_domains": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "scop_sunid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SCOP sunid (stable unique identifier) for the domain"
+                  },
+                  "sccs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SCOP Concise Classification String (e.g., 'b.60.1.2')"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "identifier": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "class": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SCOP class (e.g., 'All beta proteins')"
+                  },
+                  "class_sunid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "fold": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SCOP fold (e.g., 'Lipocalins')"
+                  },
+                  "fold_sunid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "superfamily": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SCOP superfamily"
+                  },
+                  "superfamily_sunid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "mappings": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "chain_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         },
-                        "description": "Per-chain residue-range mappings for this SCOP domain"
+                        "struct_asym_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "entity_id": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "scop_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "start_residue": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "end_residue": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "start_author_residue": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "end_author_residue": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        }
                       }
-                    }
+                    },
+                    "description": "Per-chain residue-range mappings for this SCOP domain"
                   }
-                },
-                "total_domains": {
-                  "type": "integer"
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "pdb_id": {
-                  "type": "string"
-                }
-              }
+            "total_domains": {
+              "type": "integer"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

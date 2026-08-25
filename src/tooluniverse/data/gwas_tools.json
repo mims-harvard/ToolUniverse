@@ -2,13 +2,13 @@
   {
     "type": "GWASAssociationSearch",
     "name": "gwas_search_associations",
-    "description": "Search the GWAS Catalog for genome-wide association study results by keyword. Accepts free-text disease/trait names (e.g., 'melanoma', 'diabetes', 'breast cancer'), SNP rs IDs, EFO ontology IDs, or study accession IDs. This is the primary tool for discovering GWAS associations when you do NOT already have a specific association ID. Returns SNPs, p-values, odds ratios, mapped genes, and study metadata with pagination support.",
+    "description": "Search the GWAS Catalog for genome-wide association study results by keyword. Accepts free-text disease/trait names (e.g., 'melanoma', 'diabetes', 'breast cancer'), SNP rs IDs, EFO ontology IDs, or study accession IDs. This is the primary tool for discovering GWAS associations when you do NOT already have a specific association ID. Returns SNPs, p-values, odds ratios, mapped genes, and study metadata with pagination support. Response envelope keys beyond 'data': 'metadata.pagination' (upstream page block - its totalElements/totalPages always describe the UNFILTERED result set); when a p_value threshold is given, 'metadata.p_value_filter', 'metadata.p_value_filter_scope' and 'metadata.p_value_filter_note' state that the threshold was applied CLIENT-SIDE (GWAS Catalog REST v2 has no server-side p-value filter), 'metadata.pagination_totals_are_prefilter' is true, 'metadata.filtered_total' / 'filtered_total_is_exact' / 'filtered_total_at_least' / 'filtered_total_note' give the post-filter denominator, and 'metadata.sort_override' records that the page was fetched p_value-ascending so the threshold could match anything. When a disease_trait is resolved to an ontology term, 'query_trait', 'resolved_efo_id', 'resolved_efo_label' and 'trait_resolution_source' are returned, plus a 'trait_resolution_note' whenever the resolved label is not an exact match for the trait you asked for. An empty 'data' comes with a 'note' that names the real cause: a client-side filter that removed every row is reported as such, and only a genuinely empty unfiltered result set suggests trying a trait synonym or a gene-based tool.",
     "parameter": {
       "type": "object",
       "properties": {
         "disease_trait": {
           "type": "string",
-          "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'coronary artery disease', 'breast cancer'). NOTE: GWAS associations are indexed by trait/disease, not by gene or drug name — passing a gene symbol or drug name here will fail. Use efo_id for precise filtering."
+          "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'coronary artery disease', 'breast cancer'). NOTE: GWAS associations are indexed by trait/disease, not by gene or drug name \u2014 passing a gene symbol or drug name here will fail. Use efo_id for precise filtering."
         },
         "query": {
           "type": "string",
@@ -36,19 +36,19 @@
         },
         "p_value": {
           "type": "number",
-          "description": "Maximum p-value threshold for filtering (e.g., 5e-8 for genome-wide significance). Applied client-side after retrieval."
+          "description": "Maximum p-value threshold for filtering (e.g., 5e-8 for genome-wide significance). IMPORTANT: the GWAS Catalog REST API v2 has NO server-side p-value filter (its OpenAPI document lists only pubmed_id, rs_id, full_pvalue_set, accession_id, efo_trait, efo_id, show_child_trait, mapped_gene, extended_geneset, sort, direction, page and size on GET /v2/associations), so this threshold is applied CLIENT-SIDE to the page of associations fetched. To make it meaningful the page is fetched p_value-ascending (most-significant-first) whenever sort is 'p_value' (the default), and the surviving rows are then re-ordered into the direction you asked for. metadata.p_value_filter_scope, metadata.filtered_total and metadata.p_value_filter_note report exactly what was filtered."
         },
         "p_value_threshold": {
           "type": "number",
-          "description": "Alias for p_value: maximum p-value threshold."
+          "description": "Alias for p_value: maximum p-value threshold (also applied client-side; see p_value)."
         },
         "sort": {
           "type": "string",
-          "description": "Sort field (e.g., 'p_value', 'or_value')"
+          "description": "Sort field (e.g., 'p_value', 'or_value'). Defaults to 'p_value'. When a p_value threshold is supplied and sort is 'p_value', the upstream page is always fetched ascending so the threshold sees the significant end; metadata.sort_override records this and the returned rows are ordered per your 'direction'."
         },
         "direction": {
           "type": "string",
-          "description": "Sort direction ('asc' or 'desc')"
+          "description": "Sort direction ('asc' or 'desc'). Defaults to 'asc'. Combined with a p_value threshold this orders the RETURNED rows; see metadata.sort_override."
         },
         "size": {
           "type": "integer",
@@ -250,10 +250,8 @@
       "Search"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS studies search results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of GWAS study objects",
           "items": {
@@ -369,34 +367,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -438,10 +420,8 @@
       "Search"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS SNPs search results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of SNP objects",
           "items": {
@@ -514,34 +494,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -685,18 +649,20 @@
   {
     "type": "GWASStudyByID",
     "name": "gwas_get_study_by_id",
-    "description": "Get a specific GWAS study by its unique identifier.",
+    "description": "Get a specific GWAS study by its unique identifier. Accepts either 'study_id' or 'accession_id' (the same GCST identifier field name used by GWASAssociationsForStudy and returned on every association record) so IDs can be chained directly between gwas_* tools without renaming.",
     "parameter": {
       "type": "object",
       "properties": {
         "study_id": {
           "type": "string",
-          "description": "GWAS study identifier"
+          "description": "GWAS study identifier (GCST accession, e.g. 'GCST000392')"
+        },
+        "accession_id": {
+          "type": "string",
+          "description": "Alias for study_id -- the same GCST accession identifier, accepted so results from other gwas_* tools (which use the field name 'accession_id') can be passed straight in."
         }
       },
-      "required": [
-        "study_id"
-      ]
+      "required": []
     },
     "label": [
       "GWAS",
@@ -922,7 +888,7 @@
   {
     "type": "GWASVariantsForTrait",
     "name": "gwas_get_variants_for_trait",
-    "description": "Search the GWAS Catalog for all genetic variants (SNPs) linked to a specific disease or trait. Accepts free-text disease/trait names (e.g., 'diabetes', 'breast cancer'), EFO ontology IDs, or EFO trait labels. Returns variant details including rsIDs, p-values, mapped genes, and genomic locations. Results are sorted by p-value ascending (most significant first) by default, so the first page holds the strongest loci; override with the 'sort' and 'direction' parameters. This is the best tool for finding all GWAS variants for a disease when you do NOT already have a specific variant ID.",
+    "description": "Search the GWAS Catalog for all genetic variants (SNPs) linked to a specific disease or trait. Accepts free-text disease/trait names (e.g., 'diabetes', 'breast cancer'), EFO ontology IDs, or EFO trait labels. Returns variant details including rsIDs, p-values, mapped genes, and genomic locations. Results are sorted by p-value ascending (most significant first) by default, so the first page holds the strongest loci; override with the 'sort' and 'direction' parameters. This is the best tool for finding all GWAS variants for a disease when you do NOT already have a specific variant ID. A free-text disease_trait is resolved to an EFO/MONDO term first, and that resolution is disclosed: 'query_trait', 'resolved_efo_id', 'resolved_efo_label' and 'trait_resolution_source' are returned, plus a 'trait_resolution_note' whenever the resolved label is not an exact match for your query - check them before trusting the results, and pass efo_id explicitly to bypass the resolver.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1002,10 +968,8 @@
       "Genetics"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS variants for trait results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of variant objects",
           "items": {
@@ -1078,34 +1042,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -1117,7 +1065,7 @@
   {
     "type": "GWASAssociationsForTrait",
     "name": "gwas_get_associations_for_trait",
-    "description": "Get all associations for a specific trait, sorted by p-value (most significant first).",
+    "description": "Get all associations for a specific trait, sorted by p-value (most significant first). A free-text disease_trait is resolved to an EFO/MONDO term first, and that resolution is disclosed in the response: 'query_trait' (what you asked for), 'resolved_efo_id', 'resolved_efo_label' (the term's label in GWAS Catalog) and 'trait_resolution_source', plus a 'trait_resolution_note' whenever the resolved label is not an exact match for your query. Check those before trusting the results: e.g. 'cardiorespiratory fitness' resolves to EFO_0009184 'heart rate response to exercise', which is a different phenotype from VO2max (EFO_0004887 'maximal oxygen uptake measurement'). Pass efo_id explicitly to bypass the resolver.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1176,10 +1124,8 @@
       "Significance"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS associations for trait results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of GWAS association objects",
           "items": {
@@ -1287,34 +1233,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -1362,10 +1292,8 @@
       "Traits"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS associations for SNP results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of GWAS association objects",
           "items": {
@@ -1473,34 +1401,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -1585,10 +1497,8 @@
       "Research"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS studies for trait results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of GWAS study objects",
           "items": {
@@ -1704,34 +1614,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -1777,10 +1671,8 @@
       "Mapping"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS SNPs for gene results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of SNP objects",
           "items": {
@@ -1853,34 +1745,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -1921,10 +1797,8 @@
       "Results"
     ],
     "return_schema": {
-      "type": "object",
-      "description": "GWAS associations for study results with pagination metadata",
-      "properties": {
-        "data": {
+      "oneOf": [
+        {
           "type": "array",
           "description": "Array of GWAS association objects",
           "items": {
@@ -2032,34 +1906,18 @@
             }
           }
         },
-        "metadata": {
+        {
           "type": "object",
-          "description": "Pagination and navigation metadata",
           "properties": {
-            "pagination": {
-              "type": "object",
-              "properties": {
-                "size": {
-                  "type": "integer"
-                },
-                "totalElements": {
-                  "type": "integer"
-                },
-                "totalPages": {
-                  "type": "integer"
-                },
-                "number": {
-                  "type": "integer"
-                }
-              }
-            },
-            "links": {
-              "type": "object",
-              "description": "Navigation links"
+            "error": {
+              "type": "string"
             }
-          }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -2107,6 +1965,14 @@
         },
         "total_found": {
           "type": "integer"
+        },
+        "queried_gene_name": {
+          "type": "string",
+          "description": "Present only when the requested symbol matched nothing and an unhyphenated spelling was used instead; holds the symbol originally requested."
+        },
+        "gene_name_note": {
+          "type": "string",
+          "description": "Present only when the requested symbol matched nothing and an unhyphenated spelling was used instead; explains which spelling produced these results."
         }
       }
     },

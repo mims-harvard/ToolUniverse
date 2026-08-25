@@ -1,9 +1,13 @@
 """FAERS / openFDA adverse-event tools: unrecognized params must not corrupt the query.
 
-Regression for a silent-failure bug: an unknown argument (e.g. a stray 'limit')
-was forwarded into the openFDA search query as a bogus filter ('limit:2'),
-which matches nothing and returns a silent empty result. The tool must now
-ignore params not in its search-field map.
+Regression for a silent failure: an unknown argument was forwarded into the
+openFDA search query as a bogus Lucene filter (e.g. 'limit:2'), which matches
+nothing and returns a silent empty result. The tool must ignore params not in
+its search-field map.
+
+'limit' is now a real pagination parameter rather than an unknown one, so it is
+covered here too: it must reach openFDA as the '&limit=' query argument and
+never as part of the search clause.
 """
 
 import unittest
@@ -46,11 +50,19 @@ class TestUnknownParam(unittest.TestCase):
         self.assertIn("SIMVASTATIN", url)
 
     def test_unknown_param_is_ignored_not_forwarded(self):
-        # 'limit' is not in search_fields -> must NOT appear as a bogus filter
+        # 'not_a_field' is not in search_fields -> must NOT appear as a bogus filter
+        url = self._run_and_capture_url(
+            {"medicinalproduct": "SIMVASTATIN", "not_a_field": 2}
+        )
+        self.assertIn("patient.drug.medicinalproduct", url)  # the real query survives
+        self.assertNotIn("not_a_field", url)  # the stray param is dropped
+
+    def test_limit_is_a_query_argument_not_a_search_filter(self):
         url = self._run_and_capture_url({"medicinalproduct": "SIMVASTATIN", "limit": 2})
         self.assertIn("patient.drug.medicinalproduct", url)  # the real query survives
-        self.assertNotIn("limit:2", url)  # the stray param is dropped
+        self.assertNotIn("limit:2", url)  # never a Lucene term filter
         self.assertNotIn("limit", url.split("count=")[0])  # not in the search clause
+        self.assertIn("&limit=", url)  # forwarded as openFDA paging instead
 
 
 if __name__ == "__main__":

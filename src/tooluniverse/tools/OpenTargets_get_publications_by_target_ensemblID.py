@@ -1,7 +1,7 @@
 """
 OpenTargets_get_publications_by_target_ensemblID
 
-Retrieve publications related to a target ensemblID, including PubMed IDs and publication dates.
+Retrieve publications related to a target ensemblID, including PubMed IDs and publication dates. ...
 """
 
 from typing import Any, Optional, Callable
@@ -21,7 +21,7 @@ def OpenTargets_get_publications_by_target_ensemblID(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve publications related to a target ensemblID, including PubMed IDs and publication dates.
+    Retrieve publications related to a target ensemblID, including PubMed IDs and publication dates. ...
 
     Parameters
     ----------

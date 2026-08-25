@@ -16,6 +16,28 @@ from .tool_registry import register_tool
 
 ENRICHR_BASE = "https://maayanlab.cloud/Enrichr"
 
+# Enrichr runs one instance per organism, all sharing the same API shape.
+# The gene set libraries differ, so callers must pick the matching species.
+ENRICHR_SPECIES_HOSTS = {
+    "human": "https://maayanlab.cloud/Enrichr",
+    "mouse": "https://maayanlab.cloud/Enrichr",
+    "fly": "https://maayanlab.cloud/FlyEnrichr",
+    "worm": "https://maayanlab.cloud/WormEnrichr",
+    "yeast": "https://maayanlab.cloud/YeastEnrichr",
+    "fish": "https://maayanlab.cloud/FishEnrichr",
+}
+
+
+def _base_for(params: Dict[str, Any]) -> str:
+    """Resolve the Enrichr instance for the requested species.
+
+    Human and mouse share the main instance; Enrichr distinguishes them by
+    library rather than by host.
+    """
+    species = (params.get("species") or "human").lower()
+    return ENRICHR_SPECIES_HOSTS.get(species, ENRICHR_BASE)
+
+
 
 @register_tool("EnrichrExtTool")
 class EnrichrExtTool(BaseTool):
@@ -57,7 +79,7 @@ class EnrichrExtTool(BaseTool):
         category = params.get("category")
         try:
             resp = requests.get(
-                f"{ENRICHR_BASE}/datasetStatistics",
+                f"{_base_for(params)}/datasetStatistics",
                 timeout=self.timeout,
             )
             resp.raise_for_status()
@@ -85,11 +107,13 @@ class EnrichrExtTool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Request failed: {str(e)}"}
 
-    def _submit_genes(self, gene_list: List[str]) -> Dict[str, Any]:
-        """Submit a gene list to Enrichr and return the user list ID."""
+    def _submit_genes(
+        self, gene_list: List[str], base: str = ENRICHR_BASE
+    ) -> Dict[str, Any]:
+        """Submit a gene list to an Enrichr instance and return its list ID."""
         gene_str = "\n".join(gene_list)
         resp = requests.post(
-            f"{ENRICHR_BASE}/addList",
+            f"{base}/addList",
             files={
                 "list": (None, gene_str),
                 "description": (None, "ToolUniverse enrichment query"),
@@ -107,12 +131,12 @@ class EnrichrExtTool(BaseTool):
         if not gene_list:
             return {"status": "error", "error": "gene_list is required."}
         try:
-            submit_resp = self._submit_genes(gene_list)
+            submit_resp = self._submit_genes(gene_list, _base_for(params))
             user_list_id = submit_resp.get("userListId")
             if not user_list_id:
                 return {"status": "error", "error": "Failed to submit gene list."}
             resp = requests.get(
-                f"{ENRICHR_BASE}/enrich",
+                f"{_base_for(params)}/enrich",
                 params={"userListId": user_list_id, "backgroundType": library},
                 timeout=self.timeout,
             )
@@ -161,14 +185,14 @@ class EnrichrExtTool(BaseTool):
         if not gene_list:
             return {"status": "error", "error": "gene_list is required."}
         try:
-            submit_resp = self._submit_genes(gene_list)
+            submit_resp = self._submit_genes(gene_list, _base_for(params))
             user_list_id = submit_resp.get("userListId")
             if not user_list_id:
                 return {"status": "error", "error": "Failed to submit gene list."}
             all_results: Dict[str, Any] = {}
             for library in libraries:
                 resp = requests.get(
-                    f"{ENRICHR_BASE}/enrich",
+                    f"{_base_for(params)}/enrich",
                     params={
                         "userListId": user_list_id,
                         "backgroundType": library,
@@ -233,7 +257,7 @@ class EnrichrExtTool(BaseTool):
             query["setup"] = "true"
         try:
             resp = requests.get(
-                f"{ENRICHR_BASE}/genemap",
+                f"{_base_for(params)}/genemap",
                 params=query,
                 timeout=self.timeout,
             )

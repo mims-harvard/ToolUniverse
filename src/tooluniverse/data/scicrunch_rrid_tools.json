@@ -1,0 +1,46 @@
+[
+  {
+    "name": "SciCrunch_resolve_rrid",
+    "type": "SciCrunchRRIDTool",
+    "description": "Resolve any Research Resource Identifier (RRID) via SciCrunch's registry: software/tools (SCR_ prefix), cell lines, model organisms, and plasmids, plus a general fallback for any other RRID. Example: rrid='SCR_002526' (Stereo Investigator software) returns its name, description, and proper citation. For antibody RRIDs (AB_ prefix), AntibodyRegistry_resolve_rrid gives richer antibody-specific fields (target, clonality, host organism).",
+    "fields": {
+      "operation": "resolve_rrid"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["rrid"],
+      "properties": {
+        "rrid": {
+          "type": "string",
+          "description": "RRID with or without prefix, e.g. 'SCR_002526' or 'RRID:SCR_002526'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "rrid": {"type": ["string", "null"]},
+            "name": {"type": ["string", "null"]},
+            "description": {"type": ["string", "null"]},
+            "categories": {"type": "array", "items": {"type": "string"}},
+            "keywords": {"type": "array", "items": {"type": "string"}},
+            "synonyms": {"type": "array", "items": {"type": "string"}},
+            "proper_citation": {"type": ["string", "null"]},
+            "landing_page_urls": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"rrid": "SCR_002526"},
+      {"rrid": "RRID:SCR_002526"}
+    ]
+  }
+]

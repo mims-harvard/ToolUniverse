@@ -1,0 +1,95 @@
+[
+  {
+    "name": "SmartAPI_search_apis",
+    "type": "SmartAPITool",
+    "description": "Search the SmartAPI registry of ~270 biomedical web APIs (OpenAPI-described, many NCATS Translator components), by keyword or field-scoped query. Example: query='variant' or query='tags.name:translator'. Returns each match's api_id/slug, title, base URL, and tags. Use to discover APIs not yet wrapped in ToolUniverse, or resolve an API named in a paper to its base URL and endpoints via SmartAPI_get_api.",
+    "fields": {
+      "operation": "search_apis"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Free-text keyword, or a field-scoped Lucene query like 'tags.name:translator'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max APIs to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "api_id": {"type": ["string", "null"]},
+              "slug": {"type": ["string", "null"]},
+              "title": {"type": ["string", "null"]},
+              "description": {"type": ["string", "null"]},
+              "base_url": {"type": ["string", "null"]},
+              "tags": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "variant", "limit": 5},
+      {"query": "tags.name:translator", "limit": 5}
+    ]
+  },
+  {
+    "name": "SmartAPI_get_api",
+    "type": "SmartAPITool",
+    "description": "Retrieve one SmartAPI registry entry's full metadata: base URL(s), tags, contact, terms of service, and endpoint list, by its registry id or slug. Example: api_id='myvariant' returns the MyVariant.info API's 5 endpoints including '/variant/{id}' and '/query'. Use SmartAPI_search_apis to find an api_id or slug.",
+    "fields": {
+      "operation": "get_api"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["api_id"],
+      "properties": {
+        "api_id": {
+          "type": "string",
+          "description": "SmartAPI registry id (32-char hash) or slug, e.g. 'myvariant'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "title": {"type": ["string", "null"]},
+            "description": {"type": ["string", "null"]},
+            "version": {"type": ["string", "null"]},
+            "contact": {"type": ["string", "null"]},
+            "terms_of_service": {"type": ["string", "null"]},
+            "base_urls": {"type": "array", "items": {"type": "string"}},
+            "tags": {"type": "array", "items": {"type": "string"}},
+            "endpoint_count": {"type": "integer"},
+            "endpoints": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"api_id": "myvariant"}
+    ]
+  }
+]

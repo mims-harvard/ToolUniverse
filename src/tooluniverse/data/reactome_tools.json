@@ -228,7 +228,7 @@
       "properties": {
         "stId": {
           "type": "string",
-          "description": "Complex Stable ID (e.g., 'R-HSA-XXXXX'). To find complex IDs, use Reactome_get_participants with a reaction ID to see complexes participating in that reaction."
+          "description": "Complex Stable ID (e.g., 'R-HSA-3209194', the TP53 Tetramer). To find complex IDs, use Reactome_get_participants with a reaction ID to see complexes participating in that reaction. Passing a Pathway or Reaction stId here will still return data (the endpoint is unified across entity types), but the response's schemaClass will not be 'Complex'."
         }
       },
       "required": ["stId"]
@@ -236,7 +236,7 @@
     "type": "ReactomeRESTTool",
     "test_examples": [
       {
-        "stId": "R-HSA-73817"
+        "stId": "R-HSA-3209194"
       }
     ],
     "return_schema": {
@@ -250,7 +250,7 @@
         "name": {"type": "array", "items": {"type": "string"}, "description": "Complex names"},
         "speciesName": {"type": "string", "description": "Species name"},
         "compartment": {"type": "array", "items": {"type": "object"}, "description": "Cellular compartments"},
-        "hasComponent": {"type": "array", "items": {"type": "object"}, "description": "Complex subunits/components"},
+        "hasComponent": {"type": "array", "items": {"type": ["object", "integer"]}, "description": "Complex subunits/components. Reactome fully expands the first occurrence of each distinct subunit but lists repeated (homomeric) copies as a bare dbId integer instead of repeating the full object."},
         "schemaClass": {"type": "string", "description": "Schema class (e.g., 'Complex')"},
         "className": {"type": "string", "description": "Class name"}
       }
@@ -336,14 +336,14 @@
         },
         "species": {
           "type": "string",
-          "description": "Optional: Filter by species using exact scientific name (e.g., 'Homo sapiens') or taxonomy ID. Common names like 'human' are not supported."
+          "description": "NOT SUPPORTED by this endpoint; supplying it returns an error. Reactome's /data/query/ids performs no server-side species filtering, so the request cannot be honoured. Filter the returned array client-side on each record's 'speciesName', or use Reactome_list_top_pathways / Reactome_get_events_hierarchy, which take species as a path parameter."
         },
         "types": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "Optional: Filter by types (e.g., ['Pathway', 'Reaction'])"
+          "description": "NOT SUPPORTED by this endpoint; supplying it returns an error. Reactome's /data/query/ids performs no server-side type filtering, so the request cannot be honoured. Filter the returned array client-side on each record's 'schemaClass' (e.g. 'Pathway', 'Reaction')."
         }
       },
       "required": ["ids"]

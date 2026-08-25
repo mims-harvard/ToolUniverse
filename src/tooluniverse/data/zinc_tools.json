@@ -11,7 +11,8 @@
           "enum": [
             "get_compound"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_compound"
         },
         "zinc_id": {
           "type": "string",
@@ -19,7 +20,6 @@
         }
       },
       "required": [
-        "operation",
         "zinc_id"
       ]
     },
@@ -129,7 +129,10 @@
         "operation": "get_compound",
         "zinc_id": "ZINC000000000053"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_compound"
+    }
   },
   {
     "name": "ZINC_get_purchasable",
@@ -143,7 +146,8 @@
           "enum": [
             "get_purchasable"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_purchasable"
         },
         "zinc_id": {
           "type": "string",
@@ -151,7 +155,6 @@
         }
       },
       "required": [
-        "operation",
         "zinc_id"
       ]
     },
@@ -260,7 +263,10 @@
         "operation": "get_purchasable",
         "zinc_id": "ZINC000000000053"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_purchasable"
+    }
   },
   {
     "name": "ZINC_search_by_smiles",
@@ -274,7 +280,8 @@
           "enum": [
             "search_by_smiles"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_by_smiles"
         },
         "smiles": {
           "type": "string",
@@ -308,7 +315,6 @@
         }
       },
       "required": [
-        "operation",
         "smiles"
       ]
     },
@@ -403,7 +409,10 @@
         "database": "zinc22",
         "count": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_by_smiles"
+    }
   },
   {
     "name": "ZINC_search_compounds",
@@ -417,16 +426,15 @@
           "enum": [
             "search_compounds"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_compounds"
         },
         "query": {
           "type": "string",
           "description": "Drug name or keyword (NOTE: name search is not supported by CartBlanche22; this returns a clean error pointing to ZINC_search_by_smiles)"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -446,7 +454,10 @@
         }
       ]
     },
-    "test_examples": []
+    "test_examples": [],
+    "fields": {
+      "operation": "search_compounds"
+    }
   },
   {
     "name": "ZINC_search_by_properties",
@@ -460,7 +471,8 @@
           "enum": [
             "search_by_properties"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_by_properties"
         },
         "mwt_min": {
           "type": [
@@ -491,9 +503,7 @@
           "description": "Maximum LogP (not supported; see error)"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -513,6 +523,9 @@
         }
       ]
     },
-    "test_examples": []
+    "test_examples": [],
+    "fields": {
+      "operation": "search_by_properties"
+    }
   }
 ]

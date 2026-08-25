@@ -11,7 +11,8 @@
           "enum": [
             "search"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search"
         },
         "search_term": {
           "type": "string",
@@ -113,7 +114,10 @@
         "role": "Substrate",
         "max_results": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search"
+    }
   },
   {
     "name": "iPTMnet_get_ptm_sites",
@@ -127,7 +131,8 @@
           "enum": [
             "get_ptm_sites"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_ptm_sites"
         },
         "uniprot_id": {
           "type": "string",
@@ -142,7 +147,6 @@
         }
       },
       "required": [
-        "operation",
         "uniprot_id"
       ]
     },
@@ -214,7 +218,10 @@
         "uniprot_id": "P00533",
         "ptm_type": "Phosphorylation"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_ptm_sites"
+    }
   },
   {
     "name": "iPTMnet_get_proteoforms",
@@ -228,7 +235,8 @@
           "enum": [
             "get_proteoforms"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_proteoforms"
         },
         "uniprot_id": {
           "type": "string",
@@ -236,7 +244,6 @@
         }
       },
       "required": [
-        "operation",
         "uniprot_id"
       ]
     },
@@ -287,7 +294,10 @@
         "operation": "get_proteoforms",
         "uniprot_id": "P04637"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_proteoforms"
+    }
   },
   {
     "name": "iPTMnet_get_ptm_ppi",
@@ -301,7 +311,8 @@
           "enum": [
             "get_ptm_ppi"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_ptm_ppi"
         },
         "uniprot_id": {
           "type": "string",
@@ -316,7 +327,6 @@
         }
       },
       "required": [
-        "operation",
         "uniprot_id"
       ]
     },
@@ -377,7 +387,10 @@
         "uniprot_id": "P00533",
         "ptm_type": "Phosphorylation"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_ptm_ppi"
+    }
   },
   {
     "name": "iPTMnet_get_proteoform_ppi",
@@ -391,7 +404,8 @@
           "enum": [
             "get_proteoform_ppi"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_proteoform_ppi"
         },
         "uniprot_id": {
           "type": "string",
@@ -399,7 +413,6 @@
         }
       },
       "required": [
-        "operation",
         "uniprot_id"
       ]
     },
@@ -462,6 +475,9 @@
         "operation": "get_proteoform_ppi",
         "uniprot_id": "Q15796"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_proteoform_ppi"
+    }
   }
 ]

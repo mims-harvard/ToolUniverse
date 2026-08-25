@@ -22,7 +22,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/drug/label.json"
+            "endpoint": "https://api.fda.gov/drug/label.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -205,13 +209,13 @@
     },
     {
         "name": "OpenFDA_search_drug_events",
-        "description": "Search the FDA Adverse Event Reporting System (FAERS) database via openFDA for drug safety reports. Accepts convenience parameters drug_name and reaction (e.g., drug_name='warfarin', reaction='haemorrhage'), or a raw Lucene 'search' string for advanced queries. Contains 20+ million adverse event reports. IMPORTANT: MedDRA reaction terms use British English spelling (e.g., 'haemorrhage' not 'hemorrhage', 'haematoma' not 'hematoma'). Returns serious adverse events with outcomes (hospitalization, death), suspect drugs, and MedDRA reactions.",
+        "description": "Search the FDA Adverse Event Reporting System (FAERS) database via openFDA for drug safety reports. Accepts convenience parameters drug_name and reaction (e.g., drug_name='warfarin', reaction='haemorrhage'), a raw Lucene 'search' string for advanced queries, or any combination of them -- whichever you supply are AND-ed together, so passing 'search' alongside drug_name narrows that drug rather than replacing it. Contains 20+ million adverse event reports. IMPORTANT: MedDRA reaction terms use British English spelling (e.g., 'haemorrhage' not 'hemorrhage', 'haematoma' not 'hematoma'). Returns serious adverse events with outcomes (hospitalization, death), suspect drugs, and MedDRA reactions.",
         "parameter": {
             "type": "object",
             "properties": {
                 "search": {
                     "type": "string",
-                    "description": "Lucene query for adverse event reports. Use AND/OR with spaces (not +AND+). Examples: 'patient.drug.medicinalproduct:aspirin', 'patient.reaction.reactionmeddrapt:\"myocardial infarction\"', 'serious:1 AND patient.drug.medicinalproduct:warfarin'. Combine drugs: 'patient.drug.medicinalproduct:metformin AND patient.drug.medicinalproduct:atorvastatin'."
+                    "description": "Lucene query for adverse event reports. Use AND/OR with spaces (not +AND+). A FAERS report names its drug in up to three fields and none is a superset of the others, so a drug clause must OR all three inside parentheses or it undercounts (measured 2026-08-11: tofacitinib has 13,075 reports under patient.drug.medicinalproduct alone against 186,783 across all three). Prefer the 'drug_name' parameter, which builds that clause for you. Examples: '(patient.drug.medicinalproduct:aspirin OR patient.drug.openfda.generic_name:aspirin OR patient.drug.openfda.brand_name:aspirin)', 'patient.reaction.reactionmeddrapt:\"myocardial infarction\"', 'serious:1 AND (patient.drug.medicinalproduct:warfarin OR patient.drug.openfda.generic_name:warfarin OR patient.drug.openfda.brand_name:warfarin)'. Combine drugs by AND-ing one parenthesized group per drug."
                 },
                 "limit": {
                     "type": [
@@ -232,7 +236,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Drug name to search for adverse events (e.g., 'warfarin', 'metformin'). Alternative to writing a full Lucene 'search' query."
+                    "description": "Drug name to search for adverse events (e.g., 'warfarin', 'metformin'). Brand or generic: the name is matched against patient.drug.medicinalproduct, patient.drug.openfda.generic_name and patient.drug.openfda.brand_name, the same three fields every FAERS_* tool searches. Alternative to writing a full Lucene 'search' query, and preferred over it."
                 },
                 "reaction": {
                     "type": [
@@ -252,16 +256,20 @@
             "required": []
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/drug/event.json"
+            "endpoint": "https://api.fda.gov/drug/event.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "OpenFDADrugEventsTool",
         "test_examples": [
             {
-                "search": "patient.drug.medicinalproduct:aspirin",
+                "drug_name": "aspirin",
                 "limit": 2
             },
             {
-                "search": "patient.drug.medicinalproduct:warfarin",
+                "search": "(patient.drug.medicinalproduct:warfarin OR patient.drug.openfda.generic_name:warfarin OR patient.drug.openfda.brand_name:warfarin)",
                 "count": "patient.reaction.reactionmeddrapt.exact"
             }
         ],
@@ -389,7 +397,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/drug/ndc.json"
+            "endpoint": "https://api.fda.gov/drug/ndc.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -532,7 +544,11 @@
             "required": []
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/drug/enforcement.json"
+            "endpoint": "https://api.fda.gov/drug/enforcement.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -667,7 +683,11 @@
             "required": []
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/device/enforcement.json"
+            "endpoint": "https://api.fda.gov/device/enforcement.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -769,7 +789,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/device/510k.json"
+            "endpoint": "https://api.fda.gov/device/510k.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -885,7 +909,11 @@
             "required": []
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/food/enforcement.json"
+            "endpoint": "https://api.fda.gov/food/enforcement.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -1005,7 +1033,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/drug/shortages.json"
+            "endpoint": "https://api.fda.gov/drug/shortages.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -1128,7 +1160,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/device/event.json"
+            "endpoint": "https://api.fda.gov/device/event.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -1239,7 +1275,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/device/recall.json"
+            "endpoint": "https://api.fda.gov/device/recall.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -1358,7 +1398,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/food/event.json"
+            "endpoint": "https://api.fda.gov/food/event.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [
@@ -1472,7 +1516,11 @@
             ]
         },
         "fields": {
-            "endpoint": "https://api.fda.gov/animalandveterinary/event.json"
+            "endpoint": "https://api.fda.gov/animalandveterinary/event.json",
+            "auth_param": {
+                "env_var": "FDA_API_KEY",
+                "param": "api_key"
+            }
         },
         "type": "BaseRESTTool",
         "test_examples": [

@@ -3,16 +3,42 @@ from graphql.language import parse
 from graphql.validation import validate
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+import logging
 import re
 import requests
 import copy
 import time
+
+logger = logging.getLogger(__name__)
 
 # Upper bound on how long DiseaseTargetScoreTool will paginate through
 # OpenTargets associatedTargets before returning what it has so far. A
 # disease can have >10,000 associated targets; without a bound the loop
 # issues hundreds of sequential requests and can run for many minutes.
 _DISEASE_TARGET_SCORE_TIME_BUDGET_S = 25.0
+
+# OpenTargets rejects a baselineExpression page size above 3000 with a
+# "pagination error" (probed live against the v4 API: size=3000 succeeds,
+# size=5000 returns "the size must be between 0 and 3000"). Clamp rather than
+# let a caller's optimistic size turn into an opaque API failure.
+_OT_EXPRESSION_MAX_PAGE_SIZE = 3000
+
+# Page size Open Targets applies when a query passes no `page`/`size` argument.
+# Nothing in this repo sets it: the tool configs declare no default page size
+# and GraphQLTool.run only injects a default for a flat `size` parameter, so a
+# `page: Pagination` variable simply arrives null. Probed live against the v4
+# API for drug(chemblId: "CHEMBL521").adverseEvents -- `page` omitted and
+# `page: null` both return 25 rows beside `count: 55`, while
+# `page: {index: 0, size: 60}` returns all 55.
+_OT_DEFAULT_PAGE_SIZE = 25
+
+# The 3000-row page ceiling is API-wide, not specific to baselineExpression:
+# probed live, target(ensemblId: "ENSG00000141510").interactions with
+# `page: {index: 0, size: 8626}` fails with "There was a pagination error. You
+# used size 8626 but the size must be between 0 and 3000", while size 3000
+# succeeds. A "re-query with size=<total>" hint must therefore be clamped, or
+# it would hand the caller an argument the API rejects.
+_OT_MAX_PAGE_SIZE = _OT_EXPRESSION_MAX_PAGE_SIZE
 
 
 def validate_query(query_str, schema_str):
@@ -73,18 +99,29 @@ def execute_query(endpoint_url, query, variables=None):
         result = remove_none_and_empty_values(result)
         # Check if the response contains errors
         if "errors" in result:
-            print("Invalid Query: ", result["errors"])
+            # Log only the human-readable `message` of each GraphQL error, not
+            # the raw error objects: some APIs (e.g. OpenNeuro) include an
+            # `extensions.stacktrace` with internal server file paths, which
+            # was previously printed to stdout verbatim -- visible in every
+            # caller's output (CLI, MCP client) as an internal-implementation
+            # leak, not a useful diagnostic. `logger.debug` also keeps this out
+            # of default-level output entirely.
+            messages = [
+                e.get("message", str(e)) if isinstance(e, dict) else str(e)
+                for e in result["errors"]
+            ]
+            logger.debug("GraphQL query returned errors: %s", "; ".join(messages))
             return None
         # Feature-94A-002: always return result when data key is present,
         # even if all values are empty/null (e.g. disease not found = {"data": {}}).
         # Callers distinguish empty results from errors via status envelope.
         elif "data" not in result:
-            print("No data returned")
+            logger.debug("GraphQL response had no 'data' key")
             return None
         else:
             return result
     except requests.exceptions.JSONDecodeError:
-        print("JSONDecodeError: Could not decode the response as JSON")
+        logger.debug("Could not decode GraphQL response as JSON")
         return None
 
 
@@ -131,7 +168,107 @@ class GraphQLTool(BaseTool):
         # ({"search": {}}) and is therefore not caught here.
         if not data:
             return {"status": "error", "error": self._empty_result_error(arguments)}
-        return {"status": "success", "data": data}
+        result = {"status": "success", "data": data}
+        # Fix Round 17: for a search(...)-shaped query, the same stripping
+        # collapses a genuine 0-hit result down to an opaque empty container
+        # ({"search": {}}) once its "hits": [] list is removed -- indistinguishable
+        # from a malformed/broken response without reading this source file.
+        # Confirmed live: OpenTargets_get_disease_ids_by_name with
+        # "high-risk prostate cancer" returns status=success, data={"search": {}},
+        # with no indication that this means zero matches. Only fires for queries
+        # that actually declare a "hits" field, so entity-lookup tools (which
+        # legitimately return smaller nested objects) are unaffected.
+        if "hits" in self.query_schema:
+            empty_key = next((k for k, v in data.items() if v == {}), None)
+            if empty_key:
+                result.setdefault("metadata", {})["note"] = (
+                    f"0 matches found (empty '{empty_key}' result). This is a "
+                    "genuine zero-hit search, not an error -- try a shorter or "
+                    "simpler phrasing of the search term."
+                )
+        return result
+
+
+# Open Targets datasource IDs that were renamed upstream. The retired name is
+# not aliased server-side -- it simply matches nothing -- so queries using it
+# come back as a successful zero-row result.
+_OT_RENAMED_DATASOURCES = {
+    "ot_genetics_portal": "gwas_credible_sets",
+    "chembl": "clinical_precedence",
+}
+
+
+def _ot_more_rows_hint(parameters, count):
+    """Name the exact argument that fetches the rows Open Targets withheld.
+
+    Open Targets tools expose pagination three different ways -- a `page`
+    object, a flat `size` (sometimes with `index`), or nothing at all -- so the
+    hint is derived from the tool's own declared parameters instead of assumed.
+    A truncation flag that says "there is more" without saying how to get it is
+    only half a disclosure.
+    """
+    size = min(count, _OT_MAX_PAGE_SIZE)
+    page = parameters.get("page")
+    if isinstance(page, dict) and "size" in (page.get("properties") or {}):
+        hint = f'Re-query with page: {{"index": 0, "size": {size}}}'
+    elif "size" in parameters:
+        index = " and index: 0" if "index" in parameters else ""
+        hint = f"Re-query with size: {size}{index}"
+    else:
+        return (
+            "This tool exposes no pagination parameter, so the withheld rows "
+            "cannot be retrieved through it -- narrow the query instead."
+        )
+    if size < count:
+        return (
+            f"{hint} to get the first {size} rows (Open Targets rejects a page "
+            f"size above {_OT_MAX_PAGE_SIZE}), then step the page index to "
+            "reach the rest."
+        )
+    return f"{hint} to get every row."
+
+
+def _ot_disclose_row_truncation(node, field=None, findings=None):
+    """Annotate every ``count`` + ``rows`` container with returned/truncated.
+
+    Open Targets reports a collection as ``{count, rows}`` where ``count`` is
+    the size of the whole collection and ``rows`` is one page of it. Nothing in
+    the payload says so, so ``count: 55`` sits directly beside 25 rows and reads
+    as "the number of rows you were given" (or makes the 25 rows look complete).
+
+    Purely additive: ``returned`` and ``truncated`` are new keys placed beside
+    the untouched ``count`` and ``rows``. Containers that already carry a
+    ``truncated`` key keep theirs (baselineExpression computes a page-index
+    aware one), and payloads with no ``count``/``rows`` pair -- e.g. a
+    ``mechanismsOfAction { rows }`` block, which reports no total -- are left
+    alone, since truncation is not detectable there.
+
+    Returns the ``(field, returned, count)`` triples that came up short.
+    """
+    if findings is None:
+        findings = []
+    if isinstance(node, dict):
+        rows = node.get("rows")
+        count = node.get("count")
+        if (
+            isinstance(rows, list)
+            and isinstance(count, int)
+            and not isinstance(count, bool)
+            and "truncated" not in node
+        ):
+            returned = len(rows)
+            node["returned"] = returned
+            node["truncated"] = returned < count
+            if returned < count:
+                findings.append((field or "rows", returned, count))
+        for key, value in node.items():
+            if key in ("returned", "truncated"):
+                continue
+            _ot_disclose_row_truncation(value, key, findings)
+    elif isinstance(node, list):
+        for item in node:
+            _ot_disclose_row_truncation(item, field, findings)
+    return findings
 
 
 _OT_SEARCH_QUERY = """
@@ -330,7 +467,84 @@ class OpentargetTool(GraphQLTool):
                     "Try passing efoId directly (e.g. MONDO_0005011 for Crohn disease).",
                 }
 
+        # Open Targets retires datasource IDs without keeping the old name as an
+        # alias, so a stale ID returns a perfectly successful "count: 0" that is
+        # indistinguishable from "this datasource has no evidence for this pair"
+        # (confirmed live: IL23R/Crohn disease returns 0 rows for
+        # 'ot_genetics_portal' and 43 for 'gwas_credible_sets'; TP53/cancer
+        # returns 0 and 51). Remap the retired IDs and say so, rather than
+        # letting the caller conclude the evidence does not exist.
+        renamed_datasources = []
+        _ds = arguments.get("datasourceIds")
+        if isinstance(_ds, list):
+            remapped = []
+            for _id in _ds:
+                _new = _OT_RENAMED_DATASOURCES.get(_id)
+                if _new:
+                    renamed_datasources.append(f"'{_id}' -> '{_new}'")
+                    remapped.append(_new)
+                else:
+                    remapped.append(_id)
+            arguments = dict(arguments, datasourceIds=remapped)
+
+        # OpenTargets_get_target_expression_by_ensemblID paginates
+        # baselineExpression. Pin the effective page here (clamped to what the
+        # API accepts) so the post-processing below can report "N of COUNT"
+        # instead of leaving the caller to compare `count` against len(rows).
+        _is_expression_tool = (
+            self.tool_config.get("name")
+            == "OpenTargets_get_target_expression_by_ensemblID"
+        )
+        if _is_expression_tool:
+            _size = arguments.get("size")
+            if not isinstance(_size, int) or isinstance(_size, bool) or _size < 1:
+                _size = self.parameters.get("size", {}).get("default", 250)
+            arguments["size"] = min(int(_size), _OT_EXPRESSION_MAX_PAGE_SIZE)
+            _index = arguments.get("index")
+            if not isinstance(_index, int) or isinstance(_index, bool) or _index < 0:
+                _index = 0
+            arguments["index"] = int(_index)
+
         result = super().run(arguments)
+
+        if renamed_datasources and result.get("status") == "success":
+            result.setdefault("metadata", {})["datasource_rename_note"] = (
+                "Retired Open Targets datasource ID(s) remapped: "
+                + "; ".join(renamed_datasources)
+                + ". Use the current name(s) directly to avoid this remapping."
+            )
+
+        # Make baselineExpression truncation explicit. The API's default page
+        # size is 25 and the query previously passed no `page` argument at all,
+        # so a target with 1409 rows returned 25 of them with `count: 1409` as
+        # the only (easily missed) hint -- e.g. for NLRP7 (ENSG00000167634) the
+        # 25 delivered rows held exactly one GTEx tissue and omitted testis,
+        # its highest-expressing GTEx tissue. Report returned/truncated/page
+        # so a caller can tell "250 of 1409" from "1409 of 1409" directly.
+        if _is_expression_tool and result.get("status") == "success":
+            _target = result.get("data", {}).get("target") or {}
+            _expr = _target.get("baselineExpression")
+            if isinstance(_expr, dict):
+                _rows = _expr.get("rows")
+                _returned = len(_rows) if isinstance(_rows, list) else 0
+                _count = _expr.get("count")
+                _index = arguments.get("index", 0)
+                _size = arguments.get("size", 250)
+                _expr["returned"] = _returned
+                _expr["page"] = {"index": _index, "size": _size}
+                _fetched_through = _index * _size + _returned
+                _truncated = isinstance(_count, int) and _fetched_through < _count
+                _expr["truncated"] = _truncated
+                if _truncated:
+                    result.setdefault("metadata", {})["note"] = (
+                        f"PARTIAL RESULT: {_returned} of {_count} baseline "
+                        f"expression rows returned (page index={_index}, "
+                        f"size={_size}). Rows from any one datasource (e.g. "
+                        "gtex) are interleaved across the full result, so this "
+                        "page is not a complete view of any single source. "
+                        f"Re-query with size={_OT_EXPRESSION_MAX_PAGE_SIZE} to "
+                        "get every row, or advance `index` to page through."
+                    )
 
         # Add note when IntOGen evidence count is 0 (Feature-122B-002).
         # Fix-R31D-3: this note is IntOGen-specific but was applied to every
@@ -414,6 +628,46 @@ class OpentargetTool(GraphQLTool):
                 if isinstance(arg_value, str) and "-" in arg_value:
                     modified_arguments[each_arg] = arg_value.replace("-", " ")
             result = super().run(modified_arguments)
+
+        # Disclose partial pages. Open Targets pages every `count` + `rows`
+        # collection and defaults to 25 rows when the query passes no page
+        # size, but the response gives no hint that `rows` is a page: `count`
+        # sits directly beside a shorter list. Confirmed live for
+        # OpenTargets_get_drug_adverse_events_by_chemblId with CHEMBL521
+        # (ibuprofen) -- `count: 55` beside 25 rows, silently dropping toxic
+        # epidermal necrolysis, urticaria, systemic lupus erythematosus and
+        # hepatic enzyme increased, exactly the signals a safety reviewer is
+        # looking for. Same silent drop measured on
+        # OpenTargets_get_publications_by_drug_chemblId (25 of 41523),
+        # ..._get_target_interactions_by_ensemblID (25 of 8626) and
+        # ..._get_diseases_phenotypes_by_target_ensembl (25 of 5638). Runs last
+        # so it sees the final rows, including the approved-indications filter
+        # above (which rewrites `count` to match, so nothing is flagged there).
+        if result.get("status") == "success":
+            truncated_rows = _ot_disclose_row_truncation(result.get("data"))
+            if truncated_rows:
+                parameters = self.tool_config.get("parameter", {}).get("properties", {})
+                notes = []
+                for _field, _returned, _count in truncated_rows:
+                    # Only blame the API default when the page really is the
+                    # default size; a tool that declares its own default (e.g.
+                    # associatedTargets pages 50 at a time) would otherwise be
+                    # described wrongly.
+                    _why = (
+                        " Open Targets defaults to a page size of "
+                        f"{_OT_DEFAULT_PAGE_SIZE} when no page size is given."
+                        if _returned == _OT_DEFAULT_PAGE_SIZE
+                        else ""
+                    )
+                    notes.append(
+                        f"PARTIAL RESULT: '{_field}' returned {_returned} of "
+                        f"{_count} rows -- 'rows' is one page of the collection, "
+                        f"not all of it.{_why} The {_count - _returned} rows not "
+                        "shown are missing from this response only; their absence "
+                        "here is NOT evidence they are absent from Open Targets. "
+                        f"{_ot_more_rows_hint(parameters, _count)}"
+                    )
+                result.setdefault("metadata", {})["truncation_note"] = " ".join(notes)
 
         return result
 
@@ -528,7 +782,13 @@ class DiseaseTargetScoreTool(GraphQLTool):
         if not datasource_id:
             return {"status": "error", "error": "datasourceId is required"}
 
+        renamed_from = None
+        if datasource_id in _OT_RENAMED_DATASOURCES:
+            renamed_from = datasource_id
+            datasource_id = _OT_RENAMED_DATASOURCES[datasource_id]
+
         results = []
+        seen_datasources = set()
         page_index = 0
         total_fetched = 0
         total_count = None
@@ -578,10 +838,11 @@ class DiseaseTargetScoreTool(GraphQLTool):
             for row in rows:
                 symbol = row["target"]["approvedSymbol"]
                 target_id = row["target"]["id"]
-                score_entry = next(
-                    (ds for ds in row["datasourceScores"] if ds["id"] == datasource_id),
-                    None,
-                )
+                score_entry = None
+                for ds in row["datasourceScores"]:
+                    seen_datasources.add(ds["id"])
+                    if ds["id"] == datasource_id:
+                        score_entry = ds
                 if score_entry:
                     results.append(
                         {
@@ -597,18 +858,51 @@ class DiseaseTargetScoreTool(GraphQLTool):
                 break
             page_index += 1
 
+        # The API returns targets in its own order, so a run cut short by the
+        # time budget used to yield an arbitrary subset in arbitrary order --
+        # "the top expression-atlas targets for this disease" was unobtainable.
+        # Sort by score so the strongest associations are always first.
+        results.sort(key=lambda r: r["score"], reverse=True)
+
         data = {
             "disease_info": disease_info,
             "datasource": datasource_id,
             "total_targets_with_scores": len(results),
             "target_scores": results,
         }
+        if renamed_from:
+            data["datasource_rename_note"] = (
+                f"Retired Open Targets datasource ID '{renamed_from}' remapped to "
+                f"'{datasource_id}'. Use the current name directly to avoid this "
+                "remapping."
+            )
+        if not results and seen_datasources:
+            # Distinguish "this datasource has no scores for this disease" from
+            # "that datasource ID does not exist any more" -- otherwise both look
+            # like an empty success. The available IDs cost nothing: they were
+            # already present in the rows just scanned.
+            data["available_datasources"] = sorted(seen_datasources)
+            data["note"] = (
+                f"No target has a '{datasource_id}' score for this disease among the "
+                f"{total_fetched} associated targets scanned. Datasource IDs actually "
+                "present for this disease are listed in available_datasources."
+            )
         if truncated:
             data["truncated"] = True
-            data["note"] = (
+            truncation_note = (
                 f"Stopped after {_DISEASE_TARGET_SCORE_TIME_BUDGET_S:.0f}s; "
                 f"scanned {total_fetched} of {total_count} associated targets. "
+                "Scores are sorted strongest-first within what was scanned. "
                 "Increase pageSize to scan more targets per request, or query a "
                 "more specific disease."
+            )
+            # Don't drop the "which datasources actually exist" guidance when a
+            # zero-result run also hit the time budget -- that combination is
+            # exactly when the caller most needs to know the ID was wrong.
+            existing_note = data.get("note")
+            data["note"] = (
+                f"{existing_note} {truncation_note}"
+                if existing_note
+                else truncation_note
             )
         return {"status": "success", "data": data}

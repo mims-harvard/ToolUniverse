@@ -26,6 +26,9 @@ from pathlib import Path
 # (dev, docs, build) and the aggregate ``all`` extra are intentionally absent —
 # missing them says nothing about whether a tool can run.
 EXTRA_PACKAGES: dict[str, dict[str, str]] = {
+    "pdf": {
+        "pymupdf": "pymupdf",
+    },
     "ml": {
         "admet_ai": "admet-ai",
         "sentence_transformers": "sentence-transformers",
@@ -72,7 +75,7 @@ EXTRA_PACKAGES: dict[str, dict[str, str]] = {
 
 # Extras NOT covered by ``tooluniverse[all]`` — worth telling users about,
 # because "all" reads like it means all.
-EXTRAS_NOT_IN_ALL = ("singlecell", "smolagents", "client", "build")
+EXTRAS_NOT_IN_ALL = ("pdf", "singlecell", "smolagents", "client", "build")
 
 
 def _is_importable(import_name: str) -> bool:

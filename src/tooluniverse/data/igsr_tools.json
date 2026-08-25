@@ -113,7 +113,10 @@
         "operation": "search_populations",
         "limit": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_populations"
+    }
   },
   {
     "name": "IGSR_search_samples",
@@ -239,7 +242,10 @@
         "sample_name": "NA12878",
         "limit": 1
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_samples"
+    }
   },
   {
     "name": "IGSR_list_data_collections",
@@ -333,6 +339,9 @@
         "operation": "list_data_collections",
         "limit": 20
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_data_collections"
+    }
   }
 ]

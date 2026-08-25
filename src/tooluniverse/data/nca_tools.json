@@ -64,36 +64,21 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "Cmax": {"type": "number", "description": "Maximum concentration"},
-                "Tmax": {"type": "number", "description": "Time of maximum concentration"},
-                "Clast": {"type": "number", "description": "Last measured positive concentration"},
-                "Tlast": {"type": "number", "description": "Time of last measured positive concentration"},
-                "lambda_z": {"type": ["number", "null"], "description": "Terminal elimination rate constant (1/time_unit)"},
-                "t_half": {"type": ["number", "null"], "description": "Terminal half-life in time_unit"},
-                "r_squared_terminal_fit": {"type": ["number", "null"], "description": "R² of terminal log-linear regression"},
-                "AUC0-inf": {"type": ["number", "null"], "description": "AUC extrapolated to infinity"},
-                "AUC_extrapolation_pct": {"type": ["number", "null"], "description": "Percent of AUC from extrapolation (should be <20%)"},
-                "clearance_CL": {"type": ["number", "null"], "description": "Systemic clearance (dose/AUC)"},
-                "volume_distribution_Vd": {"type": ["number", "null"], "description": "Volume of distribution"},
-                "method": {"type": "string"},
-                "note": {"type": "string"},
-                "units": {"type": "object"}
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "n_timepoints": {"type": "integer"},
-                "route_of_administration": {"type": "string"},
-                "reference": {"type": "string"}
-              }
-            }
-          },
-          "required": ["data"]
+            "Cmax": {"type": "number", "description": "Maximum concentration"},
+            "Tmax": {"type": "number", "description": "Time of maximum concentration"},
+            "Clast": {"type": "number", "description": "Last measured positive concentration"},
+            "Tlast": {"type": "number", "description": "Time of last measured positive concentration"},
+            "lambda_z": {"type": ["number", "null"], "description": "Terminal elimination rate constant (1/time_unit)"},
+            "t_half": {"type": ["number", "null"], "description": "Terminal half-life in time_unit"},
+            "r_squared_terminal_fit": {"type": ["number", "null"], "description": "R² of terminal log-linear regression"},
+            "AUC0-inf": {"type": ["number", "null"], "description": "AUC extrapolated to infinity"},
+            "AUC_extrapolation_pct": {"type": ["number", "null"], "description": "Percent of AUC from extrapolation (should be <20%)"},
+            "clearance_CL": {"type": ["number", "null"], "description": "Systemic clearance (dose/AUC)"},
+            "volume_distribution_Vd": {"type": ["number", "null"], "description": "Volume of distribution"},
+            "method": {"type": "string"},
+            "note": {"type": "string"},
+            "units": {"type": "object"}
+          }
         },
         {
           "type": "object",
@@ -164,32 +149,19 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "model": {"type": "string"},
-                "equation": {"type": "string"},
-                "C0_initial_concentration": {"type": "number"},
-                "k_el_elimination_rate": {"type": "number"},
-                "t_half": {"type": "number"},
-                "r_squared": {"type": "number"},
-                "goodness_of_fit": {"type": "string"},
-                "standard_errors": {"type": "object"},
-                "volume_distribution_Vd": {"type": ["number", "null"]},
-                "clearance_CL": {"type": ["number", "null"]},
-                "AUC0_inf_model": {"type": ["number", "null"]},
-                "units": {"type": "object"}
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "n_timepoints_fitted": {"type": "integer"}
-              }
-            }
-          },
-          "required": ["data"]
+            "model": {"type": "string"},
+            "equation": {"type": "string"},
+            "C0_initial_concentration": {"type": "number"},
+            "k_el_elimination_rate": {"type": "number"},
+            "t_half": {"type": "number"},
+            "r_squared": {"type": "number"},
+            "goodness_of_fit": {"type": "string"},
+            "standard_errors": {"type": "object"},
+            "volume_distribution_Vd": {"type": ["number", "null"]},
+            "clearance_CL": {"type": ["number", "null"]},
+            "AUC0_inf_model": {"type": ["number", "null"]},
+            "units": {"type": "object"}
+          }
         },
         {
           "type": "object",
@@ -240,27 +212,14 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "bioavailability_F": {"type": "number", "description": "Absolute bioavailability as fraction (0-1)"},
-                "bioavailability_pct": {"type": "number", "description": "Bioavailability as percentage"},
-                "category": {"type": "string"},
-                "clinical_note": {"type": "string"},
-                "formula": {"type": "string"},
-                "inputs": {"type": "object"},
-                "general_note": {"type": "string"}
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "method": {"type": "string"}
-              }
-            }
-          },
-          "required": ["data"]
+            "bioavailability_F": {"type": "number", "description": "Absolute bioavailability as fraction (0-1)"},
+            "bioavailability_pct": {"type": "number", "description": "Bioavailability as percentage"},
+            "category": {"type": "string"},
+            "clinical_note": {"type": "string"},
+            "formula": {"type": "string"},
+            "inputs": {"type": "object"},
+            "general_note": {"type": "string"}
+          }
         },
         {
           "type": "object",

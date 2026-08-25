@@ -42,11 +42,23 @@ def _aopwiki_not_found(result: Any) -> bool:
             "List Adverse Outcome Pathways (AOPs) from AOPWiki. Returns AOP IDs, "
             "titles, and short names. AOPs describe causal chains from molecular "
             "initiating events through key events to adverse outcomes, used in "
-            "toxicology and risk assessment."
+            "toxicology and risk assessment. Pass `search` to keep only AOPs whose "
+            "title or short name contains a keyword (e.g. 'thyroid', 'PPAR', "
+            "'steatosis') -- AOPWiki publishes ~600 AOPs, so an unfiltered list is "
+            "rarely what you want. Use AOPWiki_get_aop on a returned ID for its key "
+            "events, stressor chemicals, and causal relationships."
         ),
         "parameter": {
             "type": "object",
-            "properties": {},
+            "properties": {
+                "search": {
+                    "type": "string",
+                    "description": (
+                        "Case-insensitive keyword to filter AOPs by title or short "
+                        "name. Omit to return every AOP."
+                    ),
+                },
+            },
         },
         "settings": {"base_url": _BASE, "timeout": 30},
     },
@@ -85,7 +97,33 @@ class AOPWikiListTool:
         except Exception as e:
             return {"status": "error", "error": f"AOPWiki API error: {e}"}
 
-        return {"status": "success", "data": aops}
+        # AOPWiki's /aops.json has no server-side keyword filter, so filter the
+        # fetched list here rather than making callers pull ~600 AOPs and grep.
+        search = str(arguments.get("search") or "").strip().lower()
+        if not search:
+            return {"status": "success", "data": aops}
+
+        matches = [
+            a
+            for a in aops
+            if search in str(a.get("title") or "").lower()
+            or search in str(a.get("short_name") or "").lower()
+        ]
+        result = {
+            "status": "success",
+            "data": matches,
+            "count": len(matches),
+            "total_aops": len(aops),
+            "search": arguments.get("search"),
+        }
+        if not matches:
+            result["note"] = (
+                f"No AOP title or short name contains '{arguments.get('search')}'. "
+                f"Searched all {len(aops)} AOPs. Try a broader keyword (AOPWiki "
+                "titles use terms like 'thyroid', 'PPAR', 'steatosis', "
+                "'neurotoxicity'), or omit `search` to list every AOP."
+            )
+        return result
 
 
 @register_tool(

@@ -8,46 +8,103 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["kaplan_meier"],
-          "description": "Operation type"
+          "enum": [
+            "kaplan_meier"
+          ],
+          "description": "Operation type",
+          "default": "kaplan_meier"
         },
         "durations": {
           "type": "array",
-          "items": {"type": "number"},
+          "items": {
+            "type": "number"
+          },
           "description": "Observed time durations (e.g., months to event or censoring). All values must be >= 0."
         },
         "event_observed": {
           "type": "array",
-          "items": {"type": "integer"},
+          "items": {
+            "type": "integer"
+          },
           "description": "Event indicator: 1 = event occurred (death/relapse), 0 = censored. Same length as durations."
         },
         "group_labels": {
-          "type": ["array", "null"],
-          "items": {"type": "string"},
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
           "description": "Optional group labels for stratified KM analysis (e.g., ['high', 'low', 'high', ...])"
         }
       },
-      "required": ["operation", "durations", "event_observed"]
+      "required": [
+        "durations",
+        "event_observed"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "method": {"type": "string"},
-        "n_subjects": {"type": "integer"},
-        "n_events": {"type": "integer"},
-        "n_censored": {"type": "integer"},
-        "median_survival_time": {"type": ["number", "null"]},
-        "survival_table": {"type": "object"},
-        "follow_up_time": {"type": "number"}
+        "method": {
+          "type": "string"
+        },
+        "n_subjects": {
+          "type": "integer"
+        },
+        "n_events": {
+          "type": "integer"
+        },
+        "n_censored": {
+          "type": "integer"
+        },
+        "median_survival_time": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "survival_table": {
+          "type": "object"
+        },
+        "follow_up_time": {
+          "type": "number"
+        }
       }
     },
     "test_examples": [
       {
         "operation": "kaplan_meier",
-        "durations": [5, 10, 15, 20, 25, 30, 12, 8, 22, 18],
-        "event_observed": [1, 0, 1, 1, 0, 1, 1, 0, 0, 1]
+        "durations": [
+          5,
+          10,
+          15,
+          20,
+          25,
+          30,
+          12,
+          8,
+          22,
+          18
+        ],
+        "event_observed": [
+          1,
+          0,
+          1,
+          1,
+          0,
+          1,
+          1,
+          0,
+          0,
+          1
+        ]
       }
-    ]
+    ],
+    "fields": {
+      "operation": "kaplan_meier"
+    }
   },
   {
     "name": "Survival_log_rank_test",
@@ -58,53 +115,110 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["log_rank_test"],
-          "description": "Operation type"
+          "enum": [
+            "log_rank_test"
+          ],
+          "description": "Operation type",
+          "default": "log_rank_test"
         },
         "durations_a": {
           "type": "array",
-          "items": {"type": "number"},
+          "items": {
+            "type": "number"
+          },
           "description": "Time durations for group A"
         },
         "events_a": {
           "type": "array",
-          "items": {"type": "integer"},
+          "items": {
+            "type": "integer"
+          },
           "description": "Event indicators for group A (1=event, 0=censored)"
         },
         "durations_b": {
           "type": "array",
-          "items": {"type": "number"},
+          "items": {
+            "type": "number"
+          },
           "description": "Time durations for group B"
         },
         "events_b": {
           "type": "array",
-          "items": {"type": "integer"},
+          "items": {
+            "type": "integer"
+          },
           "description": "Event indicators for group B (1=event, 0=censored)"
         }
       },
-      "required": ["operation", "durations_a", "events_a", "durations_b", "events_b"]
+      "required": [
+        "durations_a",
+        "events_a",
+        "durations_b",
+        "events_b"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "method": {"type": "string"},
-        "group_a": {"type": "object"},
-        "group_b": {"type": "object"},
-        "chi2_statistic": {"type": "number"},
-        "p_value": {"type": "number"},
-        "degrees_of_freedom": {"type": "integer"},
-        "interpretation": {"type": "string"}
+        "method": {
+          "type": "string"
+        },
+        "group_a": {
+          "type": "object"
+        },
+        "group_b": {
+          "type": "object"
+        },
+        "chi2_statistic": {
+          "type": "number"
+        },
+        "p_value": {
+          "type": "number"
+        },
+        "degrees_of_freedom": {
+          "type": "integer"
+        },
+        "interpretation": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
       {
         "operation": "log_rank_test",
-        "durations_a": [5, 10, 15, 20, 25],
-        "events_a": [1, 0, 1, 1, 0],
-        "durations_b": [3, 7, 12, 18, 9],
-        "events_b": [1, 1, 1, 0, 1]
+        "durations_a": [
+          5,
+          10,
+          15,
+          20,
+          25
+        ],
+        "events_a": [
+          1,
+          0,
+          1,
+          1,
+          0
+        ],
+        "durations_b": [
+          3,
+          7,
+          12,
+          18,
+          9
+        ],
+        "events_b": [
+          1,
+          1,
+          1,
+          0,
+          1
+        ]
       }
-    ]
+    ],
+    "fields": {
+      "operation": "log_rank_test"
+    }
   },
   {
     "name": "Survival_cox_regression",
@@ -115,51 +229,126 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["cox_regression"],
-          "description": "Operation type"
+          "enum": [
+            "cox_regression"
+          ],
+          "description": "Operation type",
+          "default": "cox_regression"
         },
         "durations": {
           "type": "array",
-          "items": {"type": "number"},
+          "items": {
+            "type": "number"
+          },
           "description": "Observed time durations"
         },
         "event_observed": {
           "type": "array",
-          "items": {"type": "integer"},
+          "items": {
+            "type": "integer"
+          },
           "description": "Event indicators (1=event, 0=censored)"
         },
         "covariates": {
           "type": "object",
           "additionalProperties": {
             "type": "array",
-            "items": {"type": "number"}
+            "items": {
+              "type": "number"
+            }
           },
           "description": "Dict mapping covariate name to array of values. E.g., {'age': [45, 62, ...], 'stage': [1, 2, ...]}"
         }
       },
-      "required": ["operation", "durations", "event_observed", "covariates"]
+      "required": [
+        "durations",
+        "event_observed",
+        "covariates"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "method": {"type": "string"},
-        "n_subjects": {"type": "integer"},
-        "n_events": {"type": "integer"},
-        "coefficients": {"type": "array", "items": {"type": "object"}},
-        "log_likelihood": {"type": "number"},
-        "convergence": {"type": "boolean"}
+        "method": {
+          "type": "string"
+        },
+        "n_subjects": {
+          "type": "integer"
+        },
+        "n_events": {
+          "type": "integer"
+        },
+        "coefficients": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "log_likelihood": {
+          "type": "number"
+        },
+        "convergence": {
+          "type": "boolean"
+        }
       }
     },
     "test_examples": [
       {
         "operation": "cox_regression",
-        "durations": [5, 10, 15, 20, 25, 8, 12, 18, 22, 6],
-        "event_observed": [1, 0, 1, 1, 0, 1, 0, 1, 0, 1],
+        "durations": [
+          5,
+          10,
+          15,
+          20,
+          25,
+          8,
+          12,
+          18,
+          22,
+          6
+        ],
+        "event_observed": [
+          1,
+          0,
+          1,
+          1,
+          0,
+          1,
+          0,
+          1,
+          0,
+          1
+        ],
         "covariates": {
-          "age": [45, 62, 38, 55, 70, 48, 51, 67, 43, 59],
-          "stage": [1, 2, 1, 3, 2, 2, 1, 3, 1, 2]
+          "age": [
+            45,
+            62,
+            38,
+            55,
+            70,
+            48,
+            51,
+            67,
+            43,
+            59
+          ],
+          "stage": [
+            1,
+            2,
+            1,
+            3,
+            2,
+            2,
+            1,
+            3,
+            1,
+            2
+          ]
         }
       }
-    ]
+    ],
+    "fields": {
+      "operation": "cox_regression"
+    }
   }
 ]

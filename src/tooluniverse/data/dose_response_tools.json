@@ -8,43 +8,88 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["fit_curve"],
-          "description": "Operation type"
+          "enum": [
+            "fit_curve"
+          ],
+          "description": "Operation type",
+          "default": "fit_curve"
         },
         "concentrations": {
           "type": "array",
-          "items": {"type": "number"},
-          "description": "Drug concentrations (must be positive, e.g., [0.001, 0.01, 0.1, 1, 10, 100] in µM). At least 4 points required."
+          "items": {
+            "type": "number"
+          },
+          "description": "Drug concentrations (must be positive, e.g., [0.001, 0.01, 0.1, 1, 10, 100] in \u00b5M). At least 4 points required."
         },
         "responses": {
           "type": "array",
-          "items": {"type": "number"},
+          "items": {
+            "type": "number"
+          },
           "description": "Observed responses at each concentration (e.g., % inhibition [0-100] or viability [0-100]). Same length as concentrations."
         }
       },
-      "required": ["operation", "concentrations", "responses"]
+      "required": [
+        "concentrations",
+        "responses"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "model": {"type": "string"},
-        "formula": {"type": "string"},
-        "parameters": {"type": "object"},
-        "goodness_of_fit": {"type": "object"},
-        "ic50_95_confidence_interval": {"type": "array"},
-        "standard_errors": {"type": "object"},
-        "fitted_values": {"type": "array"},
-        "input_concentrations": {"type": "array"},
-        "input_responses": {"type": "array"}
+        "model": {
+          "type": "string"
+        },
+        "formula": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "goodness_of_fit": {
+          "type": "object"
+        },
+        "ic50_95_confidence_interval": {
+          "type": "array"
+        },
+        "standard_errors": {
+          "type": "object"
+        },
+        "fitted_values": {
+          "type": "array"
+        },
+        "input_concentrations": {
+          "type": "array"
+        },
+        "input_responses": {
+          "type": "array"
+        }
       }
     },
     "test_examples": [
       {
         "operation": "fit_curve",
-        "concentrations": [0.001, 0.01, 0.1, 1.0, 10.0, 100.0],
-        "responses": [2, 5, 15, 50, 85, 95]
+        "concentrations": [
+          0.001,
+          0.01,
+          0.1,
+          1.0,
+          10.0,
+          100.0
+        ],
+        "responses": [
+          2,
+          5,
+          15,
+          50,
+          85,
+          95
+        ]
       }
-    ]
+    ],
+    "fields": {
+      "operation": "fit_curve"
+    }
   },
   {
     "name": "DoseResponse_calculate_ic50",
@@ -55,42 +100,85 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["calculate_ic50"],
-          "description": "Operation type"
+          "enum": [
+            "calculate_ic50"
+          ],
+          "description": "Operation type",
+          "default": "calculate_ic50"
         },
         "concentrations": {
           "type": "array",
-          "items": {"type": "number"},
-          "description": "Drug concentrations (positive values, e.g., in µM or nM)"
+          "items": {
+            "type": "number"
+          },
+          "description": "Drug concentrations (positive values, e.g., in \u00b5M or nM)"
         },
         "responses": {
           "type": "array",
-          "items": {"type": "number"},
+          "items": {
+            "type": "number"
+          },
           "description": "Percent inhibition or effect values at each concentration"
         }
       },
-      "required": ["operation", "concentrations", "responses"]
+      "required": [
+        "concentrations",
+        "responses"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "ic50": {"type": "number"},
-        "ic50_95_confidence_interval": {"type": "array"},
-        "hill_slope": {"type": "number"},
-        "emax": {"type": "number"},
-        "emin": {"type": "number"},
-        "r_squared": {"type": "number"},
-        "log_ic50": {"type": "number"},
-        "note": {"type": "string"}
+        "ic50": {
+          "type": "number"
+        },
+        "ic50_95_confidence_interval": {
+          "type": "array"
+        },
+        "hill_slope": {
+          "type": "number"
+        },
+        "emax": {
+          "type": "number"
+        },
+        "emin": {
+          "type": "number"
+        },
+        "r_squared": {
+          "type": "number"
+        },
+        "log_ic50": {
+          "type": "number"
+        },
+        "note": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
       {
         "operation": "calculate_ic50",
-        "concentrations": [0.001, 0.01, 0.1, 1.0, 10.0, 100.0],
-        "responses": [2, 5, 15, 50, 85, 95]
+        "concentrations": [
+          0.001,
+          0.01,
+          0.1,
+          1.0,
+          10.0,
+          100.0
+        ],
+        "responses": [
+          2,
+          5,
+          15,
+          50,
+          85,
+          95
+        ]
       }
-    ]
+    ],
+    "fields": {
+      "operation": "calculate_ic50"
+    }
   },
   {
     "name": "DoseResponse_compare_potency",
@@ -101,50 +189,103 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["compare_potency"],
-          "description": "Operation type"
+          "enum": [
+            "compare_potency"
+          ],
+          "description": "Operation type",
+          "default": "compare_potency"
         },
         "conc_a": {
           "type": "array",
-          "items": {"type": "number"},
+          "items": {
+            "type": "number"
+          },
           "description": "Concentrations for compound A"
         },
         "resp_a": {
           "type": "array",
-          "items": {"type": "number"},
+          "items": {
+            "type": "number"
+          },
           "description": "Responses for compound A"
         },
         "conc_b": {
           "type": "array",
-          "items": {"type": "number"},
+          "items": {
+            "type": "number"
+          },
           "description": "Concentrations for compound B"
         },
         "resp_b": {
           "type": "array",
-          "items": {"type": "number"},
+          "items": {
+            "type": "number"
+          },
           "description": "Responses for compound B"
         }
       },
-      "required": ["operation", "conc_a", "resp_a", "conc_b", "resp_b"]
+      "required": [
+        "conc_a",
+        "resp_a",
+        "conc_b",
+        "resp_b"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "compound_a": {"type": "object"},
-        "compound_b": {"type": "object"},
-        "ic50_fold_shift_b_over_a": {"type": "number"},
-        "more_potent": {"type": "string"},
-        "potency_interpretation": {"type": "string"}
+        "compound_a": {
+          "type": "object"
+        },
+        "compound_b": {
+          "type": "object"
+        },
+        "ic50_fold_shift_b_over_a": {
+          "type": "number"
+        },
+        "more_potent": {
+          "type": "string"
+        },
+        "potency_interpretation": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
       {
         "operation": "compare_potency",
-        "conc_a": [0.01, 0.1, 1.0, 10.0, 100.0],
-        "resp_a": [5, 20, 50, 80, 95],
-        "conc_b": [0.01, 0.1, 1.0, 10.0, 100.0],
-        "resp_b": [2, 8, 30, 65, 90]
+        "conc_a": [
+          0.01,
+          0.1,
+          1.0,
+          10.0,
+          100.0
+        ],
+        "resp_a": [
+          5,
+          20,
+          50,
+          80,
+          95
+        ],
+        "conc_b": [
+          0.01,
+          0.1,
+          1.0,
+          10.0,
+          100.0
+        ],
+        "resp_b": [
+          2,
+          8,
+          30,
+          65,
+          90
+        ]
       }
-    ]
+    ],
+    "fields": {
+      "operation": "compare_potency"
+    }
   }
 ]

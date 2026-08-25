@@ -6,6 +6,45 @@ disable-model-invocation: true
 
 # Phylogenetics and Sequence Analysis
 
+## Four traps that produce a confidently wrong number
+
+Each of these was observed producing a wrong answer *while the correct guidance
+was already present further down this file*. Check them before you answer.
+
+1. **PhyKIT prints more than one column, and for `saturation` the two
+   conventions disagree — state which you used.** `phykit saturation` prints
+   `saturation <TAB> |saturation-1|`. Its own `--help` is explicit: *"The first
+   value is the saturation value and the second column is the absolute value of
+   saturation minus 1."* But several published analyses (and some reference
+   answers derived from them) report the **second** column as "the saturation
+   value". The two always sum to 1.0000, which is the tell that you may be
+   looking at the wrong one — on the fungal scogs set the medians are 0.39
+   (col 1) and 0.61 (col 2).
+
+   So: **follow phykit and use column 1** unless the question or source defines
+   saturation the other way, and say in your answer which column you read. Do
+   not silently pick the one that looks closer to an expected number.
+
+   `treeness_over_rcv` has no such ambiguity: it gives
+   `ratio <TAB> treeness <TAB> RCV` and the ratio is first.
+
+2. **"Gap percentage" means the fraction of alignment COLUMNS containing at
+   least one gap**, not the fraction of residues that are gaps. On the fungal
+   scogs set the residue definition maxes out at 0.556, so a ">70% gaps" filter
+   selects **nothing** and the question looks unanswerable; by columns, three
+   orthologs qualify (max 0.783).
+
+3. **`treeness_over_rcv` and `rcv` take the UNTRIMMED `.faa.mafft`**, while
+   `saturation` takes the trimmed `.clipkit`. RCV measures variability across
+   columns, so trimming changes it: median 0.2683 untrimmed against 0.3050
+   trimmed, and among >70%-gap genes the maximum is 0.2572 untrimmed against
+   0.4174 trimmed.
+
+4. **Never loop PhyKIT per file.** `phykit_batch_analysis` is parallel and does
+   ~250 trees in about 35 seconds; a shell loop takes ~9 minutes and runs out of
+   turns mid-way, producing no answer at all. It also selects the right column
+   for every function, which removes trap 1 entirely.
+
 ## RULE ZERO — Check for pre-computed results FIRST
 
 Before following any instruction below, scan the data folder for:
@@ -148,7 +187,6 @@ that line when the raw min in a group is 0.
 scogs zips ship in two shapes:
 - **Full**: `<gene>.faa`, `<gene>.faa.mafft`, `<gene>.faa.mafft.clipkit`,
   `<gene>.faa.mafft.clipkit.treefile`, plus iqtree/bionj/log/mldist.
-  Use clipkit alignment + treefile for tree-paired metrics.
 - **Alignment-only**: just `<gene>.faa` + `<gene>.faa.mafft`. No
   trees, no clipkit. Used for parsimony, RCV, gap-percentage
   questions. Use the `.faa.mafft` (NOT raw `.faa`) — the published
@@ -157,6 +195,48 @@ scogs zips ship in two shapes:
 Both bundled scripts auto-detect the layout and use the best available
 alignment per ortholog. Do NOT re-run MAFFT or ClipKit yourself; the
 shipped files are canonical.
+
+#### Which alignment goes with which metric (this changes the answer)
+
+The tree is always the ClipKit-derived `.faa.mafft.clipkit.treefile`. The
+**alignment** argument depends on the metric:
+
+| metric | alignment to pass |
+|---|---|
+| `treeness`, `dvmc`, `total_tree_length`, `long_branch_score` | tree only — no alignment |
+| `saturation` | `.faa.mafft.clipkit` (trimmed) |
+| **`treeness_over_rcv` / `rcv`** | **`.faa.mafft` (untrimmed)** |
+| parsimony-informative sites, gap percentage | `.faa.mafft` (untrimmed) |
+
+RCV measures compositional variability **across the alignment's columns**, so
+trimming changes it materially — and `treeness_over_rcv` divides by RCV, so the
+trimmed alignment shifts the ratio for every gene. Verified on the fungal scogs
+set (249 orthologs, canonical shipped files):
+
+```
+median treeness/RCV   untrimmed .faa.mafft = 0.2683    trimmed .clipkit = 0.3050
+max treeness/RCV      (over the 3 genes with >70% gapped columns:
+                       1260807at2759 0.0861, 1567796at2759 0.1866, 939345at2759 0.2572)
+                      untrimmed .faa.mafft = 0.2572    trimmed .clipkit = 0.4174
+```
+
+Plain `treeness` needs no alignment and is unaffected — it reproduces exactly
+(median 0.0501 on the same 249 files), which is how the alignment choice was
+isolated as the cause rather than the tree set or the tool.
+
+`phykit_batch_analysis` takes the two independently, so pass them explicitly:
+
+```bash
+tu run phykit_batch_analysis '{"operation":"batch","function":"treeness_over_rcv",
+  "directory":"<dir>","extension":".faa.mafft",
+  "tree_directory":"<dir>","tree_extension":".faa.mafft.clipkit.treefile"}'
+```
+
+**Gap percentage** in these questions means the fraction of alignment
+**columns containing at least one gap**, not the fraction of all residues that
+are gaps. The two differ by an order of magnitude: with the residue definition
+no fungal ortholog exceeds 70% gaps, so a ">70% gaps" filter silently selects
+nothing.
 
 **Anti-pattern:** running `phykit` on the raw `*.busco.zip` extracted
 ortholog FASTAs and aligning/tree-building yourself. The pre-computed
@@ -304,6 +384,63 @@ tu run phykit_batch_analysis '{"operation":"batch","function":"saturation","dire
 tu run phykit_batch_analysis '{"operation":"gap_percentage","directory":"./alignments","extension":".fa"}'
 ```
 Do NOT run phykit manually in a loop — the tool handles all files and returns correct summary statistics.
+
+**The batch tool is parallel: ~250 trees finish in about 35 seconds.** A per-tree
+shell loop takes ~9 minutes for the same work and is the single most common way
+these questions end with no answer at all — the run hits its turn or time budget
+mid-loop and reports "I'll report when it finishes" instead of a number. If you
+find yourself writing `for f in *.treefile`, stop and call the batch tool.
+
+Supported `function` values include `treeness`, `saturation`, `dvmc`,
+`long_branch_score`, `total_tree_length`, `parsimony_informative`,
+`treeness_over_rcv` (alias `toverr`). `dvmc` and `long_branch_score` are
+covered — you do not need to loop for those.
+
+**Two-group comparisons (Mann-Whitney U, differences of medians).** Questions
+comparing fungi against animals need one batch call per group, then the test on
+the two value lists — not a per-tree loop over both groups:
+
+```bash
+tu run phykit_batch_analysis '{"operation":"batch","function":"dvmc","directory":"<fungi>","extension":".treefile"}'
+tu run phykit_batch_analysis '{"operation":"batch","function":"dvmc","directory":"<animals>","extension":".treefile"}'
+# then scipy.stats.mannwhitneyu(fungi_values, animal_values)
+```
+
+Ask for `values` in the result when you need the full list for a test; the batch
+tool returns them for sets up to 50 and summary statistics always. For larger
+sets, compute the statistic from the per-group summaries the tool returns rather
+than re-deriving every value by hand.
+
+### PhyKIT column conventions — take the right one
+
+Several PhyKIT subcommands print more than one number per file, and the value
+the question wants is usually not the first:
+
+| subcommand | prints | the value asked for |
+|---|---|---|
+| `saturation` | `saturation <TAB> \|saturation-1\|` | **column 1** per phykit's docs; some sources report col 2 — say which you used |
+| `treeness_over_rcv` | `treeness/RCV <TAB> treeness <TAB> RCV` | **column 1**, the ratio |
+| `parsimony_informative_sites` | `n_pi <TAB> n_total <TAB> %PIS` | column 3 for a percentage |
+
+Taking `saturation`'s first column gives exactly `1 - answer`: a fungal set
+whose saturation is 0.6146 reports 0.3854 instead, and the two sum to 1.0000,
+which is the tell. `phykit_batch_analysis` already selects the right column for
+each function — another reason to call it rather than run the CLI yourself.
+
+### Commit the value you computed
+
+Two failures in this benchmark came from computing the right number and then
+answering a different one:
+
+- a tree-length ratio computed as **2.1775**, then answered as 1.9 after
+  re-reading "paired orthologs";
+- an average treeness that listed **19** among the alternatives, then committed 10.
+
+When a question is ambiguous, compute the reading you judge most literal, state
+the alternative in one clause, and **answer with the value you actually
+computed**. Do not replace a computed result with a re-derived one at the last
+step — if two readings are both defensible, give the computed number first and
+name the other, rather than silently switching.
 
 ### PhyKIT column-position cheat sheet (parse output carefully)
 

@@ -7,6 +7,57 @@ on:
     branches: [ main ]
 
 jobs:
+  wheel-compatibility:
+    name: Wheel smoke test (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Build and install wheel
+        run: |
+          uv build --wheel
+          uv pip install dist/*.whl --system
+          uv pip check --system
+
+      - name: Verify standalone SDK path
+        env:
+          TOOLUNIVERSE_CACHE_PERSIST: 'false'
+        run: |
+          python - <<'PY'
+          import importlib.util
+          import sys
+
+          from tooluniverse import ToolUniverse
+
+          assert importlib.util.find_spec("tuplatform_connect") is None
+          assert "faiss" not in sys.modules
+          assert "tooluniverse.platform_remote_tool" not in sys.modules
+
+          tu = ToolUniverse()
+          tu.load_tools(include_tools=["ToolUniverse_get_usage_tips"])
+          assert "ToolUniverse_get_usage_tips" in tu.all_tool_dict
+          result = tu.run(
+              {"name": "ToolUniverse_get_usage_tips", "arguments": {}}
+          )
+          assert isinstance(result, dict) and result.get("status") != "error"
+          assert "faiss" not in sys.modules
+          assert "tooluniverse.platform_remote_tool" not in sys.modules
+          PY
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -69,6 +120,11 @@ jobs:
       - name: Test doctor CLI tool
         run: |
           python -m src.tooluniverse.doctor
+
+      - name: Test opt-in PyMuPDF backend
+        run: |
+          uv pip install -e '.[pdf]' --system
+          pytest tests/integration/test_core_pdf_pymupdf_backend.py -q --no-cov
 
       - name: Run tools, examples, and api tests (optional, requires network)
         if: github.event.inputs.run_tools_tests == 'true' || github.event_name == 'workflow_dispatch'

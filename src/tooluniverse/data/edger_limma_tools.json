@@ -21,10 +21,9 @@
       }
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
-        {"properties": {"status": {"const": "success"}, "data": {"type": "object"}}, "required": ["data"]},
-        {"properties": {"status": {"const": "error"}, "error": {"type": "string"}}, "required": ["error"]}
+        {"type": "object"},
+        {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
       ]
     },
     "test_examples": [

@@ -1,55 +1,131 @@
 """Clinical trial adverse-event severity statistical test tool.
 
-Wraps the skill script at
-``skills/tooluniverse-statistical-modeling/scripts/prepare_ae_cohort.py``
-so the merge-and-test logic is callable as a ToolUniverse tool.
-
 Merge convention (matches bix-10 correct answer): take max(AESEV) per subject
 across ALL AE records (no AEPT filtering), inner-join to DM on USUBJID.
+
+The implementation is inlined below rather than loaded from
+``skills/tooluniverse-statistical-modeling/scripts/prepare_ae_cohort.py`` at
+runtime: that path is resolved relative to the repository root, so it does not
+exist under site-packages and the tool failed for every install from PyPI.
 """
 
 from __future__ import annotations
 
-import importlib.util
 import os
-import sys
-from pathlib import Path
 from typing import Any, Dict
+
+import pandas as pd
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 
-# Resolve the skill script path and load it as a module so we don't duplicate
-# logic. The skill script stays in place for direct Python use.
-_REPO_ROOT = Path(__file__).resolve().parents[2]
-_SCRIPT_PATH = (
-    _REPO_ROOT
-    / "skills"
-    / "tooluniverse-statistical-modeling"
-    / "scripts"
-    / "prepare_ae_cohort.py"
-)
+def prepare_cohort(dm_path: str, ae_path: str, subgroup: str = "") -> pd.DataFrame:
+    """Prepare AE severity cohort with correct convention."""
+    # Try latin1 encoding (common for clinical trial exports)
+    for enc in ["utf-8", "latin1"]:
+        try:
+            dm = pd.read_csv(dm_path, encoding=enc)
+            break
+        except UnicodeDecodeError:
+            continue
+
+    for enc in ["utf-8", "latin1"]:
+        try:
+            ae = pd.read_csv(ae_path, encoding=enc)
+            break
+        except UnicodeDecodeError:
+            continue
+
+    # Max AESEV per subject across ALL AE records (no AEPT filtering)
+    sev = ae.groupby("USUBJID")["AESEV"].max().reset_index()
+    df = dm.merge(sev, on="USUBJID", how="inner").dropna(subset=["AESEV"])
+    df["AESEV"] = df["AESEV"].astype(int)
+
+    print(f"DM: {len(dm)} subjects")
+    print(f"AE: {len(ae)} records, {ae['USUBJID'].nunique()} subjects")
+    print(f"After merge (inner join, max AESEV): {len(df)} subjects")
+
+    # Apply subgroup filter if specified
+    if subgroup:
+        col, val = subgroup.split("=")
+        before = len(df)
+        df = df[df[col.strip()] == val.strip()]
+        print(f"After subgroup {subgroup}: {len(df)} subjects (from {before})")
+
+    print(f"AESEV distribution: {df['AESEV'].value_counts().sort_index().to_dict()}")
+    return df
 
 
-def _load_script_module():
-    """Dynamically import the skill script as a module."""
-    if not _SCRIPT_PATH.exists():
-        return None
-    spec = importlib.util.spec_from_file_location(
-        "_ae_cohort_script", str(_SCRIPT_PATH)
-    )
-    if spec is None or spec.loader is None:
-        return None
-    module = importlib.util.module_from_spec(spec)
-    # Avoid re-running argparse/main when importing
-    saved_argv = sys.argv
-    sys.argv = [str(_SCRIPT_PATH)]
+def run_chi_square(df: pd.DataFrame, group_col: str):
+    """Run chi-square test on group × AESEV. Returns (chi2, p, dof, ct_dict)."""
+    from scipy import stats
+
+    ct = pd.crosstab(df[group_col], df["AESEV"])
+    print(f"\nContingency table ({group_col} × AESEV):")
+    print(ct)
+    chi2, p, dof, _ = stats.chi2_contingency(ct)
+    print(f"\nChi-square = {chi2:.4f}, p = {p:.6f}, dof = {dof}")
+    # ct_dict: nested dict keyed by group then AESEV level
+    ct_dict = {
+        str(k): {str(k2): int(v2) for k2, v2 in row.items()}
+        for k, row in ct.to_dict(orient="index").items()
+    }
+    return float(chi2), float(p), int(dof), ct_dict
+
+
+def run_ordinal(df: pd.DataFrame, group_col: str, covariates: list):
+    """Run ordinal logistic regression. Returns dict with OR results and model summary."""
     try:
-        spec.loader.exec_module(module)
-    finally:
-        sys.argv = saved_argv
-    return module
+        from statsmodels.miscmodels.ordinal_model import OrderedModel
+    except ImportError:
+        print("statsmodels required: pip install statsmodels")
+        return None
+
+    import numpy as np
+
+    formula_vars = [group_col] + covariates
+    X = df[formula_vars].copy()
+
+    # Convert categorical to numeric
+    for col in X.columns:
+        # Not ``dtype == object``: pandas 3 gives string columns a dedicated
+        # ``str`` dtype, so that check silently skips the encoding and
+        # statsmodels then fails with "Pandas data cast to numpy dtype of object".
+        if not pd.api.types.is_numeric_dtype(X[col]):
+            X[col] = pd.Categorical(X[col]).codes
+
+    model = OrderedModel(df["AESEV"], X, distr="logit")
+    result = model.fit(method="bfgs", disp=False)
+    print("\nOrdinal logistic regression:")
+    print(result.summary())
+
+    # Extract odds ratios (with 95% CI from conf_int)
+    print("\nOdds ratios:")
+    conf = result.conf_int()
+    ors = {}
+    for var in formula_vars:
+        idx = list(X.columns).index(var)
+        # ``.iloc``: these are positions, and pandas 3 treats an integer key on
+        # a labelled Series as a label, raising KeyError.
+        coef = float(result.params.iloc[idx])
+        or_val = float(np.exp(coef))
+        p_val = float(result.pvalues.iloc[idx])
+        ci_low = float(np.exp(conf.iloc[idx, 0]))
+        ci_high = float(np.exp(conf.iloc[idx, 1]))
+        print(f"  {var}: OR = {or_val:.4f}, p = {p_val:.6f}")
+        ors[var] = {
+            "coef": coef,
+            "or": or_val,
+            "ci_lower": ci_low,
+            "ci_upper": ci_high,
+            "p_value": p_val,
+        }
+    return {
+        "odds_ratios": ors,
+        "model_summary": str(result.summary()),
+        "primary_var": group_col,
+    }
 
 
 @register_tool("ClinicalTrialAESeverityTestTool")
@@ -93,15 +169,8 @@ class ClinicalTrialAESeverityTestTool(BaseTool):
                 "error": f"Invalid test: {test}. Use chi-square, ordinal, or prepare.",
             }
 
-        module = _load_script_module()
-        if module is None:
-            return {
-                "status": "error",
-                "error": f"Skill script not available at {_SCRIPT_PATH}",
-            }
-
         try:
-            df = module.prepare_cohort(dm_file, ae_file, subgroup)
+            df = prepare_cohort(dm_file, ae_file, subgroup)
         except KeyError as exc:
             return {"status": "error", "error": f"Missing required column: {exc}"}
         except Exception as exc:  # noqa: BLE001
@@ -134,7 +203,7 @@ class ClinicalTrialAESeverityTestTool(BaseTool):
 
         if test == "chi-square":
             try:
-                chi2, p, dof, ct_dict = module.run_chi_square(df, group_col)
+                chi2, p, dof, ct_dict = run_chi_square(df, group_col)
             except Exception as exc:  # noqa: BLE001
                 return {"status": "error", "error": f"Chi-square failed: {exc}"}
             return {
@@ -158,7 +227,7 @@ class ClinicalTrialAESeverityTestTool(BaseTool):
                 "error": f"Covariates not in DM columns: {missing}",
             }
         try:
-            result = module.run_ordinal(df, group_col, covariates)
+            result = run_ordinal(df, group_col, covariates)
         except Exception as exc:  # noqa: BLE001
             return {"status": "error", "error": f"Ordinal regression failed: {exc}"}
         if result is None:

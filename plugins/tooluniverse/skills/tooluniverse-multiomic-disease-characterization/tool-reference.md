@@ -217,7 +217,8 @@ genomics_genes = {
 
 **ReactomeAnalysis_pathway_enrichment**:
 - **Input**: `identifiers` (string - space-separated gene list), optional `page_size` (int, default 20), `include_disease` (bool), `projection` (bool)
-- **Output**: `{data: {token, analysis_type, pathways_found, pathways: [{pathway_id, name, species, is_disease, is_lowest_level, entities_found, entities_total, entities_ratio, p_value, fdr, reactions_found, reactions_total}]}}`
+- **Output**: `{data: {token, analysis_type, pathways_found, pathways: [{pathway_id, name, species, is_disease, is_lowest_level, entities_found, entities_total, entities_coverage, p_value, fdr, reactions_found, reactions_total, pathway_size_fraction_of_reactome}]}}`
+- **NOTE**: rank by `fdr`/`p_value`. `entities_coverage` = found/total. `pathway_size_fraction_of_reactome` (deprecated alias `entities_ratio`) is pathway size over Reactome's entity universe and is independent of the submitted genes — never rank by it
 
 **Reactome_map_uniprot_to_pathways**:
 - **Input**: `id` (string - UniProt accession)

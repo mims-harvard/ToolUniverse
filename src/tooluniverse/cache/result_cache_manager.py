@@ -58,6 +58,7 @@ class ResultCacheManager:
         default_ttl: Optional[int] = None,
         async_persist: Optional[bool] = None,
         async_queue_size: int = 10000,
+        warn_on_persistence_error: bool = True,
     ):
         self.enabled = enabled
         self.default_ttl = default_ttl
@@ -73,7 +74,8 @@ class ResultCacheManager:
             try:
                 self.persistent = PersistentCache(persistence_path, enable=True)
             except Exception as exc:
-                logger.warning("Failed to initialize persistent cache: %s", exc)
+                log = logger.warning if warn_on_persistence_error else logger.debug
+                log("Failed to initialize persistent cache; using memory only: %s", exc)
                 self.persistent = None
 
         self.singleflight = SingleFlight() if singleflight else None

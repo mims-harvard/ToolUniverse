@@ -31,95 +31,76 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "aid": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Assay ID"
-                },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Assay name"
-                },
-                "source_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Data source organization"
-                },
-                "description": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Assay description paragraphs"
-                },
-                "protocol": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Experimental protocol"
-                },
-                "comment": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Additional comments"
-                },
-                "targets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "molecule_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "gi": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
-                  },
-                  "description": "Molecular targets of the assay"
-                }
-              }
+            "aid": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Assay ID"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "aid": {
-                  "type": "string"
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Assay name"
+            },
+            "source_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Data source organization"
+            },
+            "description": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Assay description paragraphs"
+            },
+            "protocol": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Experimental protocol"
+            },
+            "comment": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Additional comments"
+            },
+            "targets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "molecule_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gi": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
                 }
-              }
+              },
+              "description": "Molecular targets of the assay"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -167,80 +148,55 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total_assays": {
-                  "type": "integer",
-                  "description": "Total number of assays targeting this gene"
-                },
-                "assays": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "aid": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "source": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "method": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "targets": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "has_score": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
-                      }
+            "total_assays": {
+              "type": "integer",
+              "description": "Total number of assays targeting this gene"
+            },
+            "assays": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "aid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "targets": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
+                  },
+                  "has_score": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "gene_symbol": {
-                  "type": "string"
-                },
-                "total_assays": {
-                  "type": "integer"
-                },
-                "returned": {
-                  "type": "integer"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -288,120 +244,101 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "aid": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "source": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "source_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "method": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "has_score": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
-                },
-                "number_of_tids": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "targets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  }
-                },
-                "gene_targets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "gene_symbols": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "gene_ids": {
-                        "type": "array",
-                        "items": {
-                          "type": "integer"
-                        }
-                      },
-                      "protein_names": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                },
-                "description": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+            "aid": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "method": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "has_score": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "number_of_tids": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "targets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "aid": {
-                  "type": "string"
+            "gene_targets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_symbols": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "gene_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  },
+                  "protein_names": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
+            },
+            "description": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -428,7 +365,10 @@
           "description": "PubChem BioAssay ID (AID). Examples: 504832 (malaria qHTS, 305803 rows), 1259393 (TSHR counter screen)."
         },
         "max_rows": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum number of compound rows to return in the payload (default 1000, max 100000). total_rows always reports the true full count regardless of this cap."
         }
       },
@@ -455,61 +395,36 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "aid": {
-                  "type": ["integer", "string"],
-                  "description": "Assay ID"
-                },
-                "columns": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Column headers (AID, SID, CID, Activity Outcome, Target Accession, Target GeneID, Activity Value [uM], Activity Name, ...)"
-                },
-                "total_rows": {
-                  "type": "integer",
-                  "description": "Total number of compound rows in the assay (full count, not capped)"
-                },
-                "returned_rows": {
-                  "type": "integer",
-                  "description": "Number of rows actually returned in this payload"
-                },
-                "rows": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  },
-                  "description": "Per-compound rows keyed by column header. Each row maps each column name to its cell value (SID, CID, Activity Outcome, Activity Value [uM], etc.)."
-                }
-              }
+            "aid": {
+              "type": [
+                "integer",
+                "string"
+              ],
+              "description": "Assay ID"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "aid": {
-                  "type": "string"
-                },
-                "total_rows": {
-                  "type": "integer"
-                },
-                "returned_rows": {
-                  "type": "integer"
-                },
-                "truncated": {
-                  "type": "boolean"
-                }
-              }
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Column headers (AID, SID, CID, Activity Outcome, Target Accession, Target GeneID, Activity Value [uM], Activity Name, ...)"
+            },
+            "total_rows": {
+              "type": "integer",
+              "description": "Total number of compound rows in the assay (full count, not capped)"
+            },
+            "returned_rows": {
+              "type": "integer",
+              "description": "Number of rows actually returned in this payload"
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Per-compound rows keyed by column header. Each row maps each column name to its cell value (SID, CID, Activity Outcome, Activity Value [uM], etc.)."
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

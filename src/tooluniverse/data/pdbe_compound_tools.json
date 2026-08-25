@@ -1,164 +1,218 @@
 [
-    {
-        "name": "PDBe_get_compound_summary",
-        "description": "Get detailed chemical compound information from PDBe by PDB chemical component ID (3-letter code). Returns molecular formula, weight, formal charge, compound type, InChI identifier, InChI key, SMILES representations, systematic IUPAC names, and cross-references to PubChem, DrugBank, EPA CompTox, ClinicalTrials, and other chemical databases. Essential for studying protein-ligand interactions, drug binding, or identifying compounds in crystal structures. Example: 'ATP' returns adenosine-5'-triphosphate (C10H16N5O13P3, 507.18 Da, linked to DrugBank DB00171 and PubChem 5957); 'HEM' returns protoporphyrin IX containing Fe (616.49 Da); 'CFF' returns caffeine (194.19 Da).",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "comp_id": {
-                    "type": "string",
-                    "description": "PDB chemical component ID (3-letter code). Examples: 'ATP', 'HEM' (heme), 'NAG' (N-acetylglucosamine), 'CFF' (caffeine), 'GOL' (glycerol), 'ZN' (zinc ion), 'FAD', 'NAD'. Case-insensitive."
-                }
-            },
-            "required": ["comp_id"]
-        },
-        "fields": {
-            "endpoint": "get_summary"
-        },
-        "type": "PDBECompoundTool",
-        "test_examples": [
-            {
-                "comp_id": "ATP"
-            },
-            {
-                "comp_id": "HEM"
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "comp_id": {"type": "string"},
-                                "name": {"type": "string", "description": "Chemical compound name"},
-                                "formula": {"type": "string", "description": "Molecular formula"},
-                                "weight": {"type": "number", "description": "Molecular weight in Daltons"},
-                                "formal_charge": {"type": "integer"},
-                                "compound_type": {"type": "string", "description": "Type (NON-POLYMER, D-saccharide, etc.)"},
-                                "inchi": {"type": ["string", "null"], "description": "InChI identifier"},
-                                "inchi_key": {"type": ["string", "null"], "description": "InChI key for database lookup"},
-                                "smiles": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "program": {"type": "string"},
-                                            "value": {"type": "string"}
-                                        }
-                                    },
-                                    "description": "SMILES representations"
-                                },
-                                "systematic_names": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "program": {"type": "string"},
-                                            "name": {"type": "string"}
-                                        }
-                                    }
-                                },
-                                "cross_references": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "resource": {"type": "string"},
-                                            "resource_id": {"type": "string"}
-                                        }
-                                    },
-                                    "description": "Links to PubChem, DrugBank, EPA, ClinicalTrials, etc."
-                                },
-                                "first_observed_in": {"type": "array", "items": {"type": "string"}},
-                                "release_status": {"type": "string"},
-                                "creation_date": {"type": ["string", "null"]}
-                            }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"}
-                            }
-                        }
-                    },
-                    "required": ["data"]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {"type": "string"}
-                    },
-                    "required": ["error"]
-                }
-            ]
+  {
+    "name": "PDBe_get_compound_summary",
+    "description": "Get detailed chemical compound information from PDBe by PDB chemical component ID (3-letter code). Returns molecular formula, weight, formal charge, compound type, InChI identifier, InChI key, SMILES representations, systematic IUPAC names, and cross-references to PubChem, DrugBank, EPA CompTox, ClinicalTrials, and other chemical databases. Essential for studying protein-ligand interactions, drug binding, or identifying compounds in crystal structures. Example: 'ATP' returns adenosine-5'-triphosphate (C10H16N5O13P3, 507.18 Da, linked to DrugBank DB00171 and PubChem 5957); 'HEM' returns protoporphyrin IX containing Fe (616.49 Da); 'CFF' returns caffeine (194.19 Da).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "comp_id": {
+          "type": "string",
+          "description": "PDB chemical component ID (3-letter code). Examples: 'ATP', 'HEM' (heme), 'NAG' (N-acetylglucosamine), 'CFF' (caffeine), 'GOL' (glycerol), 'ZN' (zinc ion), 'FAD', 'NAD'. Case-insensitive."
         }
+      },
+      "required": [
+        "comp_id"
+      ]
     },
-    {
-        "name": "PDBe_get_compound_structures",
-        "description": "Get PDB structures containing a specific chemical compound (ligand/cofactor/ion). Returns compound details and a list of PDB entry IDs where the compound appears. Useful for finding all crystal structures with a drug or cofactor bound, studying binding site diversity, or identifying protein targets of a compound. Example: 'ATP' appears in thousands of PDB structures (kinases, ATPases, motor proteins); 'HEM' appears in hemoglobins, cytochromes, peroxidases; 'NAG' (N-acetylglucosamine) appears in glycoproteins.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "comp_id": {
-                    "type": "string",
-                    "description": "PDB chemical component ID (3-letter code). Examples: 'ATP', 'HEM', 'NAG', 'FAD', 'NAD', 'ZN', 'GOL'. Case-insensitive."
+    "fields": {
+      "endpoint": "get_summary"
+    },
+    "type": "PDBECompoundTool",
+    "test_examples": [
+      {
+        "comp_id": "ATP"
+      },
+      {
+        "comp_id": "HEM"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "comp_id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string",
+              "description": "Chemical compound name"
+            },
+            "formula": {
+              "type": "string",
+              "description": "Molecular formula"
+            },
+            "weight": {
+              "type": "number",
+              "description": "Molecular weight in Daltons"
+            },
+            "formal_charge": {
+              "type": "integer"
+            },
+            "compound_type": {
+              "type": "string",
+              "description": "Type (NON-POLYMER, D-saccharide, etc.)"
+            },
+            "inchi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChI identifier"
+            },
+            "inchi_key": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChI key for database lookup"
+            },
+            "smiles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "program": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
                 }
+              },
+              "description": "SMILES representations"
             },
-            "required": ["comp_id"]
-        },
-        "fields": {
-            "endpoint": "get_structures"
-        },
-        "type": "PDBECompoundTool",
-        "test_examples": [
-            {
-                "comp_id": "CFF"
+            "systematic_names": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "program": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
             },
-            {
-                "comp_id": "NAG"
+            "cross_references": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "resource": {
+                    "type": "string"
+                  },
+                  "resource_id": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": "Links to PubChem, DrugBank, EPA, ClinicalTrials, etc."
+            },
+            "first_observed_in": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "release_status": {
+              "type": "string"
+            },
+            "creation_date": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "comp_id": {"type": "string"},
-                                "name": {"type": "string"},
-                                "formula": {"type": "string"},
-                                "weight": {"type": "number"},
-                                "first_observed_in": {"type": "array", "items": {"type": "string"}},
-                                "pdb_entries": {
-                                    "type": "array",
-                                    "items": {"type": "string"},
-                                    "description": "PDB entry IDs containing this compound"
-                                }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"},
-                                "total_structures": {"type": "integer"}
-                            }
-                        }
-                    },
-                    "required": ["data"]
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {"type": "string"}
-                    },
-                    "required": ["error"]
-                }
-            ]
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
+      ]
     }
+  },
+  {
+    "name": "PDBe_get_compound_structures",
+    "description": "Get PDB structures containing a specific chemical compound (ligand/cofactor/ion). Returns compound details and a list of PDB entry IDs where the compound appears. Useful for finding all crystal structures with a drug or cofactor bound, studying binding site diversity, or identifying protein targets of a compound. Example: 'ATP' appears in thousands of PDB structures (kinases, ATPases, motor proteins); 'HEM' appears in hemoglobins, cytochromes, peroxidases; 'NAG' (N-acetylglucosamine) appears in glycoproteins.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "comp_id": {
+          "type": "string",
+          "description": "PDB chemical component ID (3-letter code). Examples: 'ATP', 'HEM', 'NAG', 'FAD', 'NAD', 'ZN', 'GOL'. Case-insensitive."
+        }
+      },
+      "required": [
+        "comp_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "get_structures"
+    },
+    "type": "PDBECompoundTool",
+    "test_examples": [
+      {
+        "comp_id": "CFF"
+      },
+      {
+        "comp_id": "NAG"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "comp_id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "formula": {
+              "type": "string"
+            },
+            "weight": {
+              "type": "number"
+            },
+            "first_observed_in": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "pdb_entries": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "PDB entry IDs containing this compound"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
 ]

@@ -20,10 +20,22 @@
     },
     "return_schema": {
       "type": "object",
-      "oneOf": [
-        {"properties": {"status": {"const": "success"}, "data": {"type": "object"}}, "required": ["data"]},
-        {"properties": {"status": {"const": "error"}, "error": {"type": "string"}}, "required": ["error"]}
-      ]
+      "description": "Network proximity (Guney/Barabasi 'closest'/'shortest' or Menche 'separation') between two node sets, with a degree-matched random Z-score and empirical p-value.",
+      "properties": {
+        "measure": {"type": "string", "description": "Distance measure used: 'closest', 'shortest', or 'separation'."},
+        "value": {"type": "number", "description": "Observed distance/separation value."},
+        "n_set_a_in_network": {"type": "integer", "description": "Number of set_a nodes found in the network."},
+        "n_set_b_in_network": {"type": "integer", "description": "Number of set_b nodes found in the network."},
+        "nodes_in_network": {"type": "integer", "description": "Total number of nodes in the network."},
+        "missing_set_a": {"type": ["array", "null"], "items": {"type": "string"}, "description": "set_a nodes not found in the network."},
+        "missing_set_b": {"type": ["array", "null"], "items": {"type": "string"}, "description": "set_b nodes not found in the network."},
+        "z_score": {"type": "number", "description": "Z-score of the observed value against the degree-matched random null."},
+        "p_value": {"type": "number", "description": "Empirical p-value from the randomizations."},
+        "random_mean": {"type": "number", "description": "Mean of the degree-matched random null distribution."},
+        "random_std": {"type": "number", "description": "Standard deviation of the degree-matched random null distribution."},
+        "n_randomizations": {"type": "integer", "description": "Number of randomizations performed."}
+      },
+      "required": ["measure", "value", "z_score", "p_value"]
     },
     "test_examples": [
       {"edges": [["A", "B"], ["B", "C"], ["C", "D"], ["D", "E"], ["A", "C"], ["B", "D"], ["E", "F"], ["F", "G"], ["A", "F"], ["C", "G"]], "set_a": ["A", "B"], "set_b": ["D", "E"], "measure": "closest", "n_rand": 200, "seed": 1}

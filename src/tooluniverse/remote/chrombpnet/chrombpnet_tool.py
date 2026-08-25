@@ -9,9 +9,10 @@ interpretation and TF-motif discovery, and underlies the ENCODE accessibility
 model zoo.
 
 Served as a ToolUniverse *remote* tool because it carries a heavy dependency
-stack (`tensorflow` + Keras) and requires a trained, cell-type-specific model
-(a ``.h5`` from the ChromBPNet model zoo / your own training), referenced by
-``model_path`` on the server.
+stack (`tensorflow` + Keras) and requires a trained, cell-type-specific model.
+The provider—not the caller—selects one reviewed Keras v3 ``.keras`` artifact
+through ``CHROMBPNET_MODEL_PATH``. Legacy ``.h5`` deserialization and
+caller-selected model paths are intentionally rejected.
 
 The model takes a 2,114 bp one-hot sequence and outputs two heads: a 1,000 bp
 accessibility *profile* (base-resolution shape) and a scalar *log total count*
@@ -29,23 +30,54 @@ regulatory sequence syntax." Nature Methods (2025).
 """
 
 import math
+import os
+import sys
+import threading
+from pathlib import Path
 from typing import Any, Dict
 
 import numpy as np
 import tensorflow as tf
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_argument_validation import require_argument_object
+from tooluniverse.remote_sequence_input import (
+    validate_sequence,
+    validate_variant_sequences,
+)
 
 INPUT_LEN = 2114
 OUTPUT_LEN = 1000
+MAX_SEQUENCE_LENGTH = 10_000
 _BASE_TO_CHANNEL = {"A": 0, "C": 1, "G": 2, "T": 3}
 _MODELS: Dict[str, Any] = {}
+_MODEL_INIT_LOCK = threading.Lock()
+_INFERENCE_LOCK = threading.Lock()
 
 
-def _get_model(model_path: str):
-    """Lazy-load and cache a trained ChromBPNet Keras model (custom losses ignored)."""
+def _configured_model_path() -> str:
+    """Resolve the administrator-selected, safe Keras v3 model artifact."""
+    configured = os.environ.get("CHROMBPNET_MODEL_PATH", "").strip()
+    if not configured:
+        raise RuntimeError("CHROMBPNET_MODEL_PATH is not configured")
+    try:
+        model_path = Path(configured).expanduser().resolve(strict=True)
+    except (OSError, RuntimeError):
+        raise RuntimeError("the configured ChromBPNet model is unavailable") from None
+    if not model_path.is_file() or model_path.suffix.lower() != ".keras":
+        raise RuntimeError("the configured ChromBPNet model must be a .keras file")
+    return str(model_path)
+
+
+def _get_model():
+    """Lazy-load the reviewed Keras v3 model with safe deserialization enabled."""
+    model_path = _configured_model_path()
     if model_path not in _MODELS:
-        _MODELS[model_path] = tf.keras.models.load_model(model_path, compile=False)
+        with _MODEL_INIT_LOCK:
+            if model_path not in _MODELS:
+                _MODELS[model_path] = tf.keras.models.load_model(
+                    model_path, compile=False, safe_mode=True
+                )
     return _MODELS[model_path]
 
 
@@ -69,13 +101,27 @@ def _encode(sequence: str) -> np.ndarray:
 
 def _predict(model, sequence: str):
     """Return (profile_probabilities[OUTPUT_LEN], log_total_counts) for one sequence."""
-    out = model.predict(_encode(sequence), verbose=0)
-    profile_logits = np.asarray(out[0]).reshape(-1)  # (OUTPUT_LEN,)
-    log_counts = float(np.asarray(out[1]).reshape(-1)[0])
+    with _INFERENCE_LOCK:
+        out = model.predict(_encode(sequence), verbose=0)
+    if not isinstance(out, (list, tuple)) or len(out) != 2:
+        raise RuntimeError("ChromBPNet returned an invalid output structure")
+    profile_logits = np.asarray(out[0], dtype=float).reshape(-1)
+    count_values = np.asarray(out[1], dtype=float).reshape(-1)
+    if (
+        profile_logits.size != OUTPUT_LEN
+        or count_values.size != 1
+        or not np.isfinite(profile_logits).all()
+        or not np.isfinite(count_values).all()
+    ):
+        raise RuntimeError("ChromBPNet returned invalid prediction values")
+    log_counts = float(count_values[0])
     # softmax over the profile logits -> a probability distribution over positions
     z = profile_logits - profile_logits.max()
     profile = np.exp(z)
-    profile /= profile.sum()
+    profile_sum = profile.sum()
+    if not math.isfinite(float(profile_sum)) or profile_sum <= 0:
+        raise RuntimeError("ChromBPNet returned an invalid accessibility profile")
+    profile /= profile_sum
     return profile, log_counts
 
 
@@ -98,17 +144,17 @@ def _jsd(p: np.ndarray, q: np.ndarray) -> float:
             "ChromBPNet model. The sequence is center-cropped / N-padded to 2,114 "
             "bp; returns the predicted log total counts (coverage magnitude), the "
             "total counts, and the base-resolution accessibility profile (1,000 bp "
-            "probability distribution). Requires a server-side model_path (.h5)."
+            "probability distribution). The provider must configure a reviewed "
+            "Keras v3 model with CHROMBPNET_MODEL_PATH."
         ),
         "parameter_schema": {
             "type": "object",
             "properties": {
-                "model_path": {
-                    "type": "string",
-                    "description": "Server-accessible path to a trained ChromBPNet Keras model (.h5), cell-type-specific.",
-                },
                 "sequence": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000,
+                    "pattern": "^[ACGTNacgtn]+$",
                     "description": "DNA sequence (A/C/G/T/N); cropped/padded to 2,114 bp around its center.",
                 },
                 "return_profile": {
@@ -116,7 +162,7 @@ def _jsd(p: np.ndarray, q: np.ndarray) -> float:
                     "description": "Include the full 1,000-bp profile array in the response (default false; summary stats are always returned).",
                 },
             },
-            "required": ["model_path", "sequence"],
+            "required": ["sequence"],
         },
     },
     mcp_config={
@@ -130,18 +176,34 @@ class ChrombpnetPredictTool:
     """Predict accessibility (counts + profile) for a DNA sequence with ChromBPNet."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        model_path = arguments.get("model_path")
+        try:
+            arguments = require_argument_object(arguments)
+        except ValueError as exc:
+            return {"error": str(exc)}
         sequence = arguments.get("sequence")
-        if not model_path:
-            return {"error": "Missing required parameter: model_path"}
         if not sequence:
             return {"error": "Missing required parameter: sequence"}
+        try:
+            sequence = validate_sequence(
+                sequence,
+                name="sequence",
+                alphabet="ACGTN",
+                max_length=MAX_SEQUENCE_LENGTH,
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
+        return_profile = arguments.get("return_profile")
+        return_profile = False if return_profile is None else return_profile
+        if not isinstance(return_profile, bool):
+            return {"error": "return_profile must be a boolean."}
 
         try:
-            model = _get_model(model_path)
-        except Exception as exc:  # model file missing / unreadable
-            return {"error": f"Could not load ChromBPNet model: {exc}"}
-        profile, log_counts = _predict(model, sequence)
+            model = _get_model()
+            profile, log_counts = _predict(model, sequence)
+        except Exception:
+            return {"error": "Could not load the configured ChromBPNet model."}
+        if log_counts > math.log(sys.float_info.max):
+            return {"error": "ChromBPNet returned an invalid total-count prediction."}
         peak = int(np.argmax(profile))
         result = {
             "model": "ChromBPNet",
@@ -150,7 +212,7 @@ class ChrombpnetPredictTool:
             "profile_length": OUTPUT_LEN,
             "peak_offset": peak - OUTPUT_LEN // 2,  # bp from profile center
         }
-        if arguments.get("return_profile"):
+        if return_profile:
             result["profile"] = [float(x) for x in profile]
         return result
 
@@ -165,25 +227,27 @@ class ChrombpnetPredictTool:
             "(alt vs ref accessibility magnitude) and the profile Jensen-Shannon "
             "divergence (change in base-resolution accessibility shape) — the "
             "canonical ChromBPNet variant-effect scores. Requires a server-side "
-            "model_path (.h5)."
+            "provider-configured reviewed Keras v3 model."
         ),
         "parameter_schema": {
             "type": "object",
             "properties": {
-                "model_path": {
-                    "type": "string",
-                    "description": "Server-accessible path to a trained ChromBPNet Keras model (.h5), cell-type-specific.",
-                },
                 "ref_sequence": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000,
+                    "pattern": "^[ACGTNacgtn]+$",
                     "description": "Reference DNA sequence centered on the variant (cropped/padded to 2,114 bp).",
                 },
                 "alt_sequence": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000,
+                    "pattern": "^[ACGTNacgtn]+$",
                     "description": "Alternate DNA sequence (same length/centering as ref).",
                 },
             },
-            "required": ["model_path", "ref_sequence", "alt_sequence"],
+            "required": ["ref_sequence", "alt_sequence"],
         },
     },
     mcp_config={
@@ -197,28 +261,41 @@ class ChrombpnetVariantEffectTool:
     """Score a variant as ChromBPNet count log2FC + profile JS-divergence."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        model_path = arguments.get("model_path")
+        try:
+            arguments = require_argument_object(arguments)
+        except ValueError as exc:
+            return {"error": str(exc)}
         ref = arguments.get("ref_sequence")
         alt = arguments.get("alt_sequence")
-        if not model_path:
-            return {"error": "Missing required parameter: model_path"}
         if not (ref and alt):
             return {
                 "error": "Missing required parameter(s): ref_sequence, alt_sequence"
             }
+        try:
+            ref, alt = validate_variant_sequences(
+                ref,
+                alt,
+                alphabet="ACGTN",
+                max_length=MAX_SEQUENCE_LENGTH,
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
 
         try:
-            model = _get_model(model_path)
-        except Exception as exc:
-            return {"error": f"Could not load ChromBPNet model: {exc}"}
-        ref_profile, ref_log = _predict(model, ref)
-        alt_profile, alt_log = _predict(model, alt)
+            model = _get_model()
+            ref_profile, ref_log = _predict(model, ref)
+            alt_profile, alt_log = _predict(model, alt)
+        except Exception:
+            return {"error": "Could not load the configured ChromBPNet model."}
+        scores = ((alt_log - ref_log) / math.log(2.0), _jsd(ref_profile, alt_profile))
+        if not all(math.isfinite(score) for score in scores):
+            return {"error": "ChromBPNet returned invalid variant-effect scores."}
         return {
             "model": "ChromBPNet",
             "ref_log_total_counts": ref_log,
             "alt_log_total_counts": alt_log,
-            "count_log2fc": (alt_log - ref_log) / math.log(2.0),
-            "profile_jsd": _jsd(ref_profile, alt_profile),
+            "count_log2fc": scores[0],
+            "profile_jsd": scores[1],
         }
 
 

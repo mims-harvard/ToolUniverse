@@ -15,6 +15,7 @@ import xml.etree.ElementTree as ET
 from typing import Any
 
 from .base_tool import BaseTool
+from .ncbi_eutils_tool import esearch_query_disclosure
 from .tool_registry import register_tool
 
 
@@ -118,16 +119,24 @@ class SRATool(BaseTool):
         total_count = int(result.get("count", 0))
         id_list = result.get("idlist", [])
 
+        # Fix-54A-1: ``query_used`` reported the term as SUBMITTED, which is
+        # precisely the claim esearch contradicts -- it drops phrases it cannot
+        # match and answers the remainder. Measured: "RNA-seq zzzqqqxyz
+        # nonexistentterm12345" returned total 7209038, identical to "RNA-seq"
+        # alone, with both nonsense phrases in errorlist.phrasesnotfound. The
+        # field named for which query ran was the one field stating it wrongly.
+        disclosure = esearch_query_disclosure(result, source="SRA")
+
         if not id_list:
-            return {
-                "status": "success",
-                "data": {
-                    "total": total_count,
-                    "returned": 0,
-                    "experiments": [],
-                    "query_used": search_term,
-                },
+            payload = {
+                "total": total_count,
+                "returned": 0,
+                "experiments": [],
+                "query_used": search_term,
             }
+            if disclosure:
+                payload["query_disclosure"] = disclosure
+            return {"status": "success", "data": payload}
 
         # Brief pause to avoid NCBI rate limits (3 req/sec without key)
         time.sleep(0.4)
@@ -151,15 +160,15 @@ class SRATool(BaseTool):
             parsed = self._parse_sra_summary(entry, uid)
             experiments.append(parsed)
 
-        return {
-            "status": "success",
-            "data": {
-                "total": total_count,
-                "returned": len(experiments),
-                "experiments": experiments,
-                "query_used": search_term,
-            },
+        payload = {
+            "total": total_count,
+            "returned": len(experiments),
+            "experiments": experiments,
+            "query_used": search_term,
         }
+        if disclosure:
+            payload["query_disclosure"] = disclosure
+        return {"status": "success", "data": payload}
 
     def _get_experiment(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Get detailed metadata for a specific SRA experiment by accession."""

@@ -58,7 +58,9 @@ def test_tsv_body_parsed_into_row_dicts():
     assert result["data"][0] == {
         "Input m/z": "386.354865",
         "Matched m/z": "386.3549",
-        "Delta": ".0000",
+        # Metabolomics Workbench's own endpoint omits the leading zero
+        # (".0000"); the tool now restores it to valid numeric-string syntax.
+        "Delta": "0.0000",
         "Name": "5alpha-Cholestanone",
         "Formula": "C27H46O",
     }

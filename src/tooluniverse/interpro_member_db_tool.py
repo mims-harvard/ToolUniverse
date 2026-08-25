@@ -165,14 +165,32 @@ class InterProMemberDBTool(BaseTool):
             }
         return db, None
 
-    def _get(self, url: str, params: Dict[str, Any] = None):
-        """GET with shared timeout; returns (json, error_dict). One of them is None."""
+    def _get(self, url: str, params: Dict[str, Any] = None, empty_ok: bool = False):
+        """GET with shared timeout; returns (json, error_dict). One of them is None.
+
+        The InterPro REST API returns HTTP 204 No Content when a *list*
+        query is well-formed but matches zero records (e.g. filtering
+        AntiFam, which is all-family, down to entry_type=domain). For
+        list-shaped endpoints (empty_ok=True) that is a legitimate empty
+        result, not a failure, so we synthesize an empty payload
+        ({"count": 0, "results": []}) instead of erroring. Detail-shaped
+        endpoints (empty_ok=False) keep failing loudly on 204, since a 204
+        there would otherwise turn into an object of all-None fields.
+        """
         resp = requests.get(url, params=params or {}, timeout=self.timeout)
         if resp.status_code == 404:
             return None, {
                 "status": "error",
                 "error": "Not found in InterPro (HTTP 404). "
                 "Check the accession / database slug.",
+            }
+        if resp.status_code == 204:
+            if empty_ok:
+                return {"count": 0, "results": [], "_empty_204": True}, None
+            return None, {
+                "status": "error",
+                "error": "InterPro API returned no content (HTTP 204) for this "
+                "request: the query was valid but matched zero records.",
             }
         if resp.status_code != 200:
             return None, {
@@ -252,7 +270,7 @@ class InterProMemberDBTool(BaseTool):
             params["type"] = str(entry_type).strip().lower()
 
         url = f"{INTERPRO_BASE_URL}/entry/{db}/"
-        payload, err = self._get(url, params)
+        payload, err = self._get(url, params, empty_ok=True)
         if err:
             return err
 
@@ -273,6 +291,14 @@ class InterProMemberDBTool(BaseTool):
             "returned": len(entries),
             "entries": entries,
         }
+        if payload.get("_empty_204"):
+            note = (
+                "InterPro returned no content (HTTP 204) for this query: the "
+                "request was valid and matched zero signatures."
+            )
+            if entry_type:
+                note += f" The filter entry_type='{params['type']}' narrowed the results to zero."
+            result["note"] = note
         return {"status": "success", "data": result}
 
     # ------------------------------------------------------------------ #
@@ -291,7 +317,7 @@ class InterProMemberDBTool(BaseTool):
         page_size = self._clamp_page_size(arguments.get("page_size", 20))
 
         url = f"{INTERPRO_BASE_URL}/structure/pdb/entry/interpro/{interpro_id}/"
-        payload, err = self._get(url, {"page_size": page_size})
+        payload, err = self._get(url, {"page_size": page_size}, empty_ok=True)
         if err:
             return err
 
@@ -312,6 +338,12 @@ class InterProMemberDBTool(BaseTool):
             "returned": len(structures),
             "structures": structures,
         }
+        if payload.get("_empty_204"):
+            result["note"] = (
+                "InterPro returned no content (HTTP 204) for this query: the "
+                "request was valid and matched zero PDB structures for "
+                f"{interpro_id}."
+            )
         return {"status": "success", "data": result}
 
     # ------------------------------------------------------------------ #

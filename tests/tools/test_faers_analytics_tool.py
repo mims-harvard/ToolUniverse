@@ -153,11 +153,19 @@ class TestFAERSAnalyticsTool:
         assert result.get("status") in ["success", "error"]
         
         if result.get("status") == "success":
-            data = result["data"]
-            assert "meddra_hierarchy" in data
-            assert "PT_level" in data["meddra_hierarchy"]
-            print(f"\n✅ Unique PTs: {data['meddra_hierarchy']['total_unique_PTs']}")
-            for pt in data["meddra_hierarchy"]["PT_level"][:5]:
+            hierarchy = result["data"]["meddra_hierarchy"]
+            assert "PT_level" in hierarchy
+            # Fix-R38: the old `total_unique_PTs` key was the page size (a
+            # constant 50 for every drug), not a total, and openFDA's count
+            # endpoint reports no total at all -- so the key is gone rather than
+            # aliased. See tests/unit/test_faers_rollup_pt_truncation.py.
+            assert "total_unique_PTs" not in hierarchy
+            assert hierarchy["unique_PTs_returned"] == len(hierarchy["PT_level"])
+            print(
+                f"\n✅ Unique PTs returned: {hierarchy['unique_PTs_returned']} "
+                f"(truncated={hierarchy['truncated']})"
+            )
+            for pt in hierarchy["PT_level"][:5]:
                 print(f"   {pt['preferred_term']}: {pt['count']}")
         else:
             print(f"\n⚠️  MedDRA rollup error: {result.get('error')}")

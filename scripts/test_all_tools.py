@@ -492,6 +492,26 @@ def generate_report(
     return str(output_path)
 
 
+def select_shard(patterns, spec):
+    """Return the slice of `patterns` belonging to shard `spec` ("I/N").
+
+    Strided, not contiguous: consecutive patterns often share an upstream host,
+    so a contiguous block would concentrate one API's outage in one shard and
+    leave the others looking healthy. Striding also keeps every shard's slice
+    stable as long as the pattern list is sorted.
+
+    Raises ValueError on a malformed or out-of-range spec.
+    """
+    try:
+        index_str, count_str = str(spec).split("/", 1)
+        shard_index, shard_count = int(index_str), int(count_str)
+    except ValueError:
+        raise ValueError(f"--shard must look like I/N, got {spec!r}") from None
+    if shard_count < 1 or not (0 <= shard_index < shard_count):
+        raise ValueError(f"--shard out of range: {spec!r}")
+    return sorted(patterns)[shard_index::shard_count], shard_index, shard_count
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Test all ToolUniverse tool configurations"
@@ -527,6 +547,14 @@ def main():
     parser.add_argument(
         "--skip-pattern",
         help="Skip tools matching wildcard pattern (e.g., 'agentic*' or '*discovery*')"
+    )
+    parser.add_argument(
+        "--shard",
+        help=(
+            "Run only one slice of the patterns, as I/N (e.g. '0/8'). Patterns are "
+            "sorted then strided, so slices are stable across runs and each covers "
+            "the whole alphabet rather than one contiguous block."
+        ),
     )
     parser.add_argument(
         "--skip-remote",
@@ -626,7 +654,22 @@ def main():
         print("❌ No tools remaining after filtering")
         sys.exit(1)
     
-    print(f"✅ Found {len(config_patterns)} unique tool patterns to test")
+    # Sharding. The weekly sweep is one long job, and losing the runner discards
+    # everything it had done -- 10 of 12 consecutive weekly runs ended that way,
+    # one of them after 636 of 638 categories. Splitting the sweep across jobs
+    # bounds both the blast radius of an eviction and the memory a single job
+    # holds.
+    selected = sorted(config_patterns.keys())
+    if args.shard:
+        try:
+            selected, shard_index, shard_count = select_shard(selected, args.shard)
+        except ValueError as exc:
+            print(f"❌ {exc}")
+            sys.exit(2)
+        print(f"🔀 Shard {shard_index + 1}/{shard_count}: {len(selected)} of "
+              f"{len(config_patterns)} patterns")
+
+    print(f"✅ Found {len(selected)} unique tool patterns to test")
     print()
     print("🧪 Running tests...")
     print()
@@ -635,7 +678,7 @@ def main():
     start_time = time.time()
 
     results = run_all_patterns(
-        sorted(config_patterns.keys()),
+        selected,
         repo_root,
         verbose=args.verbose,
         fail_fast=args.fail_fast,

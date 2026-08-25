@@ -8,15 +8,20 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["sa_score"],
-          "description": "Operation type"
+          "enum": [
+            "sa_score"
+          ],
+          "description": "Operation type",
+          "default": "sa_score"
         },
         "smiles": {
           "type": "string",
           "description": "SMILES string of the molecule (e.g., 'CC(=O)Oc1ccccc1C(=O)O' for aspirin)"
         }
       },
-      "required": ["operation", "smiles"]
+      "required": [
+        "smiles"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -33,11 +38,17 @@
             },
             "interpretation": {
               "type": "string",
-              "enum": ["easy", "moderate", "difficult"],
+              "enum": [
+                "easy",
+                "moderate",
+                "difficult"
+              ],
               "description": "Qualitative interpretation: easy (<3), moderate (3-6), difficult (>6)"
             }
           },
-          "required": ["sa_score"]
+          "required": [
+            "sa_score"
+          ]
         },
         {
           "type": "object",
@@ -46,7 +57,9 @@
               "type": "string"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -55,6 +68,9 @@
         "operation": "sa_score",
         "smiles": "CC(=O)Oc1ccccc1C(=O)O"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "sa_score"
+    }
   }
 ]

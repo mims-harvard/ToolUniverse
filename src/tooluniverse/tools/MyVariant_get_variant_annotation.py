@@ -1,7 +1,7 @@
 """
 MyVariant_get_variant_annotation
 
-Get detailed annotations for a specific variant by its HGVS ID (e.g., 'chr1:g.2186318G>A'). Retur...
+Get detailed annotations for a specific variant by its HGVS ID (e.g., 'chr1:g.2186318G>A') or rsI...
 """
 
 from typing import Any, Optional, Callable
@@ -11,20 +11,23 @@ from ._shared_client import get_shared_client
 def MyVariant_get_variant_annotation(
     variant_id: str,
     fields: Optional[str] = "dbsnp,clinvar,cadd,gnomad_genome,dbnsfp",
+    assembly: Optional[str] = "hg19",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get detailed annotations for a specific variant by its HGVS ID (e.g., 'chr1:g.2186318G>A'). Retur...
+    Get detailed annotations for a specific variant by its HGVS ID (e.g., 'chr1:g.2186318G>A') or rsI...
 
     Parameters
     ----------
     variant_id : str
-        HGVS variant ID (e.g., 'chr1:g.2186318G>A' or 'rs123').
+        HGVS variant ID (e.g., 'chr1:g.2186318G>A') or rsID (e.g., 'rs123'). An HGVS ...
     fields : str
         Fields to return. Useful fields: dbsnp, clinvar, cadd, gnomad_genome, gnomad_...
+    assembly : str
+        Reference genome assembly for both the HGVS variant_id and the returned coord...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def MyVariant_get_variant_annotation(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"variant_id": variant_id, "fields": fields}.items()
+        for k, v in {
+            "variant_id": variant_id,
+            "fields": fields,
+            "assembly": assembly,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

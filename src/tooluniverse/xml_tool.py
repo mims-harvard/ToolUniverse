@@ -4,6 +4,14 @@ from typing import List, Dict, Any, Optional, Set
 from .base_tool import BaseTool
 from .utils import download_from_hf
 from .tool_registry import register_tool
+from .logging_config import get_logger
+
+# Fix-R13B-4: dataset-load status was reported via print(), which writes
+# straight to stdout. Any caller piping a tool's raw stdout as JSON (e.g.
+# `tu run ... --raw` or a script parsing captured output) got this line
+# prepended ahead of the JSON payload and failed to parse it. Routing
+# through the logging module keeps it on stderr instead.
+logger = get_logger(__name__)
 
 
 @register_tool("XMLTool")
@@ -21,7 +29,10 @@ class XMLDatasetTool(BaseTool):
         self.namespaces: Dict[str, str] = tool_config.get("settings").get(
             "namespaces", {}
         )
-        self.field_mappings: Dict[str, str] = tool_config.get("settings").get(
+        # Values may be a single XPath string, a LIST of XPath strings (tried
+        # in order, first non-empty wins -- see _extract_field_value), or a
+        # dict describing a nested structure (see _extract_record_data).
+        self.field_mappings: Dict[str, Any] = tool_config.get("settings").get(
             "field_mappings", {}
         )  # Dict of fields we're interested in extracting from each record
         self.filter_field: Optional[str] = tool_config.get("settings").get(
@@ -47,12 +58,14 @@ class XMLDatasetTool(BaseTool):
                 self.record_xpath, namespaces=self.namespaces
             )
 
-            print(
-                f"Loaded XML dataset: {len(self.records)} records from root '{self.xml_root.tag}'"
+            logger.info(
+                "Loaded XML dataset: %d records from root '%s'",
+                len(self.records),
+                self.xml_root.tag,
             )
 
         except Exception as e:
-            print(f"Error loading XML dataset: {e}")
+            logger.error("Error loading XML dataset: %s", e)
             self.records = []
 
     def _get_dataset_path(self) -> Optional[str]:
@@ -61,14 +74,56 @@ class XMLDatasetTool(BaseTool):
             result = download_from_hf(self.tool_config["settings"])
             if result.get("success"):
                 return result["local_path"]
-            print(f"Failed to download dataset: {result.get('error')}")
+            logger.error("Failed to download dataset: %s", result.get("error"))
             return None
 
         if "local_dataset_path" in self.tool_config["settings"]:
             return self.tool_config["settings"]["local_dataset_path"]
 
-        print("No dataset path provided in tool configuration")
+        logger.warning("No dataset path provided in tool configuration")
         return None
+
+    # Fix-R13B-4: a record's nested list field (e.g. DrugBank's
+    # interacting_drugs) has no size bound of its own -- the tool's `limit`
+    # parameter only caps how many *top-level matched records* come back,
+    # not the length of a list field inside one record. A well-connected
+    # drug like azathioprine has ~1286 documented interactions, so a
+    # single matched record (limit=5 had no effect, since only 1 record
+    # matched "azathioprine") produced an 80k+ token payload with the
+    # clinically critical interaction undifferentiated among hundreds of
+    # others. Capping nested list fields for display (while still using
+    # the untruncated list to build searchable text, so search matching
+    # is unaffected) keeps responses usable; the true count is preserved
+    # in a sibling `<field>_total_count` key so callers know more exist.
+    # Fix-R28B: the cap above bounds payload size, but on its own it produced a
+    # silently truncated list -- `interacting_drugs` came back with 25 of
+    # labetalol's 1855 interactions, in raw document order, with no flag saying
+    # the list was cut and no way to reach entry #71 (nifedipine). An empty or
+    # short list then reads as "no such interaction". The cap value is shared by
+    # every nested list field of every XMLTool and is deliberately left alone;
+    # what is added is (a) unconditional disclosure keys next to the list and
+    # (b) the optional `nested_contains` / `nested_offset` arguments below, whose
+    # defaults reproduce the previous output byte for byte.
+    _NESTED_LIST_DISPLAY_CAP = 25
+
+    def _is_nested_mapping(self, xpath_expr: Any) -> bool:
+        """True when a field mapping describes a nested (structured list) field."""
+        return isinstance(xpath_expr, dict) and "parent_path" in xpath_expr
+
+    def _extract_nested_list(
+        self, record_element: ET.Element, xpath_expr: Dict[str, Any]
+    ) -> List[Dict[str, str]]:
+        """Extract the FULL, untruncated structured list for a nested field."""
+        parent_xpath = xpath_expr["parent_path"]
+        subfields = xpath_expr.get("subfields", {})
+        structured_list = []
+        for el in record_element.findall(parent_xpath, namespaces=self.namespaces):
+            entry = {}
+            for sf_name, sf_path in subfields.items():
+                entry[sf_name] = self._extract_field_value(el, sf_path)
+            if any(entry.values()):  # Only add entries with non-empty values
+                structured_list.append(entry)
+        return structured_list
 
     def _extract_record_data(self, record_element: ET.Element) -> Dict[str, Any]:
         """Extract data from a record element with caching."""
@@ -80,24 +135,13 @@ class XMLDatasetTool(BaseTool):
 
         for field_name, xpath_expr in self.field_mappings.items():
             # Extract mapped fields
-            if isinstance(xpath_expr, dict) and "parent_path" in xpath_expr:
+            if self._is_nested_mapping(xpath_expr):
                 # Handle nested structure
-                parent_xpath = xpath_expr["parent_path"]
                 subfields = xpath_expr.get("subfields", {})
-                elements = record_element.findall(
-                    parent_xpath, namespaces=self.namespaces
-                )
-                structured_list = []
-                for el in elements:
-                    entry = {}
-                    for sf_name, sf_path in subfields.items():
-                        entry[sf_name] = self._extract_field_value(el, sf_path)
-                    if any(entry.values()):  # Only add entries with non-empty values
-                        structured_list.append(entry)
+                structured_list = self._extract_nested_list(record_element, xpath_expr)
 
-                data[field_name] = structured_list
-
-                # Flatten for search
+                # Flatten for search using the full, untruncated list so
+                # matching behavior doesn't change based on the display cap.
                 for sf_name, _ in subfields.items():
                     flat_key = f"{field_name}_{sf_name}"
 
@@ -107,14 +151,116 @@ class XMLDatasetTool(BaseTool):
                     )
 
                     self.temporary_record_fields.add(flat_key)
+
+                total_count = len(structured_list)
+                max_items = xpath_expr.get("max_items", self._NESTED_LIST_DISPLAY_CAP)
+                truncated = bool(max_items) and total_count > max_items
+                if truncated:
+                    structured_list = structured_list[:max_items]
+                data[field_name] = structured_list
+                # Disclosure keys sit next to every nested list so a caller can
+                # always tell a complete list from a truncated window.
+                data[f"{field_name}_total_count"] = total_count
+                data[f"{field_name}_shown_count"] = len(structured_list)
+                data[f"{field_name}_offset"] = 0
+                data[f"{field_name}_truncated"] = truncated
             else:
                 # Regular flat field extraction
                 data[field_name] = self._extract_field_value(record_element, xpath_expr)
 
         return data
 
-    def _extract_field_value(self, element: ET.Element, xpath_expr: str) -> str:
-        """Extract field value using XPath expression."""
+    def _nested_view_args(self, arguments: Dict[str, Any]) -> tuple:
+        """Parse the optional nested-list view arguments.
+
+        Returns ``(contains, offset)``. ``(None, 0)`` -- the default -- means
+        "behave exactly as before": first page of every nested list, unfiltered.
+        """
+        contains = arguments.get("nested_contains")
+        if isinstance(contains, str):
+            contains = contains.strip() or None
+        else:
+            contains = None
+
+        offset = arguments.get("nested_offset", 0)
+        try:
+            offset = max(0, int(offset))
+        except (TypeError, ValueError):
+            offset = 0
+
+        return contains, offset
+
+    def _apply_nested_view(
+        self,
+        result_record: Dict[str, Any],
+        record_element: ET.Element,
+        contains: Optional[str],
+        offset: int,
+    ) -> None:
+        """Re-window every nested list field of one result record, in place.
+
+        Only called when the caller actually supplied `nested_contains` or
+        `nested_offset`; otherwise the cached first-page view is returned
+        untouched, so the default response is unchanged.
+        """
+        needle = contains.lower() if contains else None
+
+        for field_name, xpath_expr in self.field_mappings.items():
+            if not self._is_nested_mapping(xpath_expr):
+                continue
+
+            full_list = self._extract_nested_list(record_element, xpath_expr)
+            total_count = len(full_list)
+
+            if needle:
+                selected = [
+                    entry
+                    for entry in full_list
+                    if any(needle in str(v).lower() for v in entry.values())
+                ]
+            else:
+                selected = full_list
+
+            window = selected[offset:]
+            max_items = xpath_expr.get("max_items", self._NESTED_LIST_DISPLAY_CAP)
+            shown = window[:max_items] if max_items else window
+
+            result_record[field_name] = shown
+            result_record[f"{field_name}_total_count"] = total_count
+            if needle:
+                # Only meaningful under a filter; without one it would just
+                # duplicate `_total_count`. A 0 here is a searched-and-found-
+                # nothing answer, not a truncation artifact.
+                result_record[f"{field_name}_matching_count"] = len(selected)
+            result_record[f"{field_name}_shown_count"] = len(shown)
+            result_record[f"{field_name}_offset"] = offset
+            # More entries remain after this window -- raise `nested_offset` to
+            # reach them.
+            result_record[f"{field_name}_truncated"] = offset + len(shown) < len(
+                selected
+            )
+
+    def _extract_field_value(self, element: ET.Element, xpath_expr: Any) -> str:
+        """Extract field value using XPath expression.
+
+        Fix Round 25: `xpath_expr` may also be a LIST of XPath strings, which
+        are tried in order and the first non-empty result returned. Some
+        source datasets file the same logical field under different parents
+        depending on the record -- DrugBank puts Molecular Formula/Weight
+        under <calculated-properties> for small molecules but under
+        <experimental-properties> for biotech/peptide entries, so a single
+        XPath silently yields "" for one whole class of records. Note that
+        ElementTree/lxml's findall() does not accept `|` XPath unions, so a
+        list of expressions (rather than one union expression) is the right
+        shape here.
+        """
+        if isinstance(xpath_expr, (list, tuple)):
+            for candidate in xpath_expr:
+                value = self._extract_field_value(element, candidate)
+                if value:
+                    return value
+            return ""
+
         try:
             # Handle attribute extraction with /@
             if "/@" in xpath_expr:
@@ -129,7 +275,7 @@ class XMLDatasetTool(BaseTool):
                     for el in found_elements
                     if el.get(attr_name)
                 )
-                return " | ".join(values)
+                return " | ".join(dict.fromkeys(values))
 
             # Handle direct attribute on current element
             if xpath_expr.startswith("@"):
@@ -143,7 +289,11 @@ class XMLDatasetTool(BaseTool):
             # Use generator expression and filter out empty text
             values = ((elem.text or "").strip() for elem in found_elements)
             non_empty_values = (v for v in values if v)
-            return " | ".join(non_empty_values)
+            # Dedupe while preserving order: fields with many repeated child
+            # elements (e.g. DrugBank <products><product><name> repeats the
+            # same brand name once per country/dosage-form combination) would
+            # otherwise return the same string hundreds of times.
+            return " | ".join(dict.fromkeys(non_empty_values))
 
         except Exception:
             return ""
@@ -172,6 +322,36 @@ class XMLDatasetTool(BaseTool):
             .get("default", fallback)
         )
 
+    # Fix Round 17: every _search-mode tool built on this shared class takes
+    # a single param named 'query', regardless of what its own tool NAME
+    # promises (e.g. drugbank_get_pharmacology_by_drug_name_or_drugbank_id,
+    # mesh_get_subjects_by_subject_name). Confirmed live: calling that tool
+    # with 'drug_name' (the exact term in its own name) errored with
+    # "'query' is a required property" -- a natural first guess from reading
+    # the tool name fails. Accept the terms these tool names actually use as
+    # synonyms for 'query' instead of renaming the parameter across every
+    # config entry (a much larger, more disruptive change).
+    _QUERY_ALIASES = ("drug_name", "drugbank_id", "subject_name", "subject_id")
+
+    def _resolve_query_alias(self, arguments: Dict[str, Any]) -> None:
+        """Mutate arguments in place, filling in 'query' from a known alias.
+
+        Must run before schema validation (not just inside run()): jsonschema
+        rejects a missing required 'query' before run() is ever reached, so an
+        alias resolved only in run() would be dead code for every normal
+        (validated) call path.
+        """
+        if "query" in arguments or "condition" in arguments:
+            return
+        for alias in self._QUERY_ALIASES:
+            if arguments.get(alias):
+                arguments["query"] = arguments[alias]
+                break
+
+    def validate_parameters(self, arguments: Dict[str, Any]) -> Optional[Any]:
+        self._resolve_query_alias(arguments)
+        return super().validate_parameters(arguments)
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Main entry point for the tool."""
         if not self.records:
@@ -179,6 +359,10 @@ class XMLDatasetTool(BaseTool):
                 "status": "error",
                 "error": "XML dataset not loaded or contains no records",
             }
+
+        # Also resolve here so direct run() calls that skip validate_parameters
+        # (e.g. validate=False, or calling the tool class directly) still work.
+        self._resolve_query_alias(arguments)
 
         # Route to appropriate function based on arguments
         if "query" in arguments:
@@ -205,11 +389,20 @@ class XMLDatasetTool(BaseTool):
         )  # Cap at 1000
 
         search_query = query if case_sensitive else query.lower()
-        results = []
 
         all_records = self._get_all_records_data()
-        total_matches = 0
-        for record_data in all_records:
+        # Feature-27B-01: this loop used to truncate to `limit` *while*
+        # scanning, so the page handed back was simply "the first N records in
+        # the file that matched anything" and match quality never entered into
+        # it. Asking DrugBank for "Aspirin" was therefore answered with
+        # caffeine's chemistry: DB00201 Caffeine and nine other combination
+        # products merely carry the string "Aspirin" inside a brand name, and
+        # being earlier in the document they filled the entire page, while the
+        # record the caller actually asked for -- DB00945 Acetylsalicylic
+        # acid, an exact synonym hit -- was pushed off it. Collect every match
+        # first, rank, and only then truncate.
+        matched_records = []
+        for position, record_data in enumerate(all_records):
             matched_fields = self._find_matches(
                 record_data,
                 search_query,
@@ -219,13 +412,33 @@ class XMLDatasetTool(BaseTool):
             )
 
             if matched_fields:
-                total_matches += 1
-                if len(results) < limit:
-                    result_record = record_data.copy()
-                    for temp in self.temporary_record_fields:
-                        result_record.pop(temp, None)
-                    result_record["matched_fields"] = matched_fields
-                    results.append(result_record)
+                rank = self._match_rank(
+                    record_data, matched_fields, search_query, case_sensitive
+                )
+                matched_records.append((rank, position, record_data, matched_fields))
+
+        total_matches = len(matched_records)
+        # Stable sort on (rank, position) keeps document order as the final
+        # tiebreaker among equally-ranked records.
+        matched_records.sort(key=lambda item: (item[0], item[1]))
+
+        nested_contains, nested_offset = self._nested_view_args(arguments)
+        nested_view_requested = bool(nested_contains) or nested_offset > 0
+
+        results = []
+        for _rank, position, record_data, matched_fields in matched_records[:limit]:
+            result_record = record_data.copy()
+            for temp in self.temporary_record_fields:
+                result_record.pop(temp, None)
+            if nested_view_requested:
+                self._apply_nested_view(
+                    result_record,
+                    self.records[position],
+                    nested_contains,
+                    nested_offset,
+                )
+            result_record["matched_fields"] = matched_fields
+            results.append(result_record)
 
         return {
             "status": "success",
@@ -238,9 +451,56 @@ class XMLDatasetTool(BaseTool):
                     "case_sensitive": case_sensitive,
                     "exact_match": exact_match,
                     "limit": limit,
+                    "nested_contains": nested_contains,
+                    "nested_offset": nested_offset,
                 },
             },
         }
+
+    def _match_rank(
+        self,
+        record_data: Dict[str, Any],
+        matched_fields: List[str],
+        search_query: str,
+        case_sensitive: bool,
+    ) -> tuple:
+        """Rank key for a matched record -- lower sorts first.
+
+        Feature-27B-01: scored on the *best* field the record matched, as
+        ``(exactness_tier, field_index)``:
+
+        * ``exactness_tier`` is 0 when the query equals a whole field value, or
+          a whole ``|``-separated item within a multi-valued field (how
+          synonyms and brand names are stored), and 1 for a mere substring hit.
+        * ``field_index`` is the field's position in the tool's declared
+          ``search_fields``, which the configs order by identity strength
+          (drug_name, drugbank_id, then synonyms, then brand_names).
+
+        Exactness deliberately outranks field priority: an exact synonym hit is
+        a stronger signal that this is the entity the caller named than a
+        substring buried in a nominally higher-priority field. Under
+        ``exact_match=True`` every hit is already whole-value, so the tier is a
+        constant 0 and ranking degenerates to field priority plus document
+        order.
+        """
+        lowest_priority = len(self.search_fields)
+        best = (1, lowest_priority)
+
+        for field in matched_fields:
+            field_value = self._get_searchable_value(record_data, field, case_sensitive)
+            # Reuse the exact-match predicate so "whole value" means exactly
+            # what exact_match=True already means for this class.
+            exactness_tier = 0 if self._is_match(field_value, search_query, True) else 1
+            field_index = (
+                self.search_fields.index(field)
+                if field in self.search_fields
+                else lowest_priority
+            )
+            candidate = (exactness_tier, field_index)
+            if candidate < best:
+                best = candidate
+
+        return best
 
     def _find_matches(
         self,
@@ -325,14 +585,24 @@ class XMLDatasetTool(BaseTool):
                 "error": f"Unknown condition '{condition}'. Supported: contains, starts_with, ends_with, exact, not_empty, has_attribute",
             }
 
+        nested_contains, nested_offset = self._nested_view_args(arguments)
+        nested_view_requested = bool(nested_contains) or nested_offset > 0
+
         total_matches = 0
-        for record_data in all_records:
+        for position, record_data in enumerate(all_records):
             if field in record_data and filter_func(record_data, field):
                 total_matches += 1
                 if len(filtered_records) < limit:
                     result_record = record_data.copy()
                     for temp in self.temporary_record_fields:
                         result_record.pop(temp, None)
+                    if nested_view_requested:
+                        self._apply_nested_view(
+                            result_record,
+                            self.records[position],
+                            nested_contains,
+                            nested_offset,
+                        )
                     filtered_records.append(result_record)
 
         return {
@@ -351,6 +621,8 @@ class XMLDatasetTool(BaseTool):
                         else None
                     ),
                     "limit": limit,
+                    "nested_contains": nested_contains,
+                    "nested_offset": nested_offset,
                 },
             },
         }
@@ -359,16 +631,17 @@ class XMLDatasetTool(BaseTool):
         """Get the appropriate filter function for the condition."""
         filter_functions = {
             "contains": lambda data, field: value.lower() in str(data[field]).lower(),
-            "starts_with": lambda data, field: str(data[field])
-            .lower()
-            .startswith(value.lower()),
-            "ends_with": lambda data, field: str(data[field])
-            .lower()
-            .endswith(value.lower()),
+            "starts_with": lambda data, field: (
+                str(data[field]).lower().startswith(value.lower())
+            ),
+            "ends_with": lambda data, field: (
+                str(data[field]).lower().endswith(value.lower())
+            ),
             "exact": lambda data, field: str(data[field]).lower() == value.lower(),
             "not_empty": lambda data, field: str(data[field]).strip() != "",
-            "has_attribute": lambda data, field: field == "_attributes"
-            and value in data["_attributes"],
+            "has_attribute": lambda data, field: (
+                field == "_attributes" and value in data["_attributes"]
+            ),
         }
         return filter_functions.get(condition)
 

@@ -20,6 +20,15 @@ from .tool_registry import register_tool
 
 CHEBI_BASE_URL = "https://www.ebi.ac.uk/chebi/backend/api/public"
 
+# advanced_search is server-side paginated at 15 hits per page and exposes the
+# page number as a 1-indexed query-string parameter (`?page=1` is the first
+# page and is byte-identical to omitting the parameter; `?page=0` and any page
+# beyond `number_pages` return a non-JSON error body). `limit` is clamped to
+# 100, so at most ceil(100 / 15) == 7 pages are ever needed; the cap below is
+# a hard stop that protects against a server that stops honouring `page`.
+_SEARCH_PAGE_SIZE = 15
+_SEARCH_MAX_PAGES = 8
+
 _HTML_TAG_RE = re.compile(r"<[^>]+>")
 
 
@@ -42,6 +51,93 @@ def _normalize_chebi_id(chebi_id):
         if chebi_id.upper().startswith("CHEBI:"):
             chebi_id = chebi_id.split(":", 1)[1].strip()
     return chebi_id
+
+
+def _redirect_disclosure(requested_id, raw):
+    """Disclose it when ChEBI answers about a *different* entity than the one
+    that was asked for.
+
+    ChEBI merges obsolete/duplicate accessions into a single primary entry and
+    then serves that primary entry for every accession that was merged into it.
+    `GET /compound/1/` returns id 18357, chebi_accession 'CHEBI:18357',
+    ascii_name '(R)-noradrenaline' -- CHEBI:1 is one of that entry's
+    `secondary_ids`. (EBI OLS4 agrees: CHEBI_1 is `is_obsolete: true` with
+    `term_replaced_by: CHEBI_18357`.) Serving the primary is correct upstream
+    behaviour; presenting it as though it *were* the requested compound is not.
+    A researcher pasting a legacy accession out of an old paper or dataset
+    would otherwise get a confident, success-labelled answer about the wrong
+    molecule.
+
+    Returns the keys to merge into the tool's `data` payload, or an empty dict
+    when the returned entity is the requested one -- so a direct hit stays
+    byte-identical to the pre-fix output.
+    """
+    if not isinstance(raw, dict):
+        return {}
+
+    try:
+        requested_int = int(str(_normalize_chebi_id(requested_id)).strip())
+        returned_int = int(raw.get("id"))
+    except (TypeError, ValueError):
+        # Either side unparseable: we cannot prove a substitution happened, and
+        # inventing a warning would be worse than staying quiet.
+        return {}
+
+    if requested_int == returned_int:
+        return {}
+
+    requested_accession = f"CHEBI:{requested_int}"
+    returned_accession = raw.get("chebi_accession") or f"CHEBI:{returned_int}"
+    name = _strip_html(raw.get("ascii_name") or raw.get("name") or "")
+    described = f"{returned_accession} ({name})" if name else returned_accession
+
+    secondary_ids = raw.get("secondary_ids")
+    if not isinstance(secondary_ids, list):
+        secondary_ids = None
+
+    disclosure = {
+        "requested_chebi_id": requested_int,
+        "requested_chebi_accession": requested_accession,
+    }
+
+    if secondary_ids is None:
+        # The ontology endpoints redirect identically but do not return
+        # secondary_ids, so the precise relationship cannot be asserted from
+        # this response -- say only what this payload proves.
+        note = (
+            f"Requested {requested_accession}, but ChEBI returned "
+            f"{described}. Every field below describes {returned_accession}, "
+            f"not {requested_accession}. This endpoint does not report "
+            f"secondary_ids, so the exact relationship is not confirmable "
+            f"from this response; ChEBI normally serves the primary entry "
+            f"when an obsolete or secondary accession is requested. Call "
+            f"ChEBI_get_compound with {requested_accession} to confirm."
+        )
+    elif requested_accession in {str(s).strip().upper() for s in secondary_ids}:
+        note = (
+            f"Requested {requested_accession}, but ChEBI returned "
+            f"{described}. {requested_accession} is a secondary (merged or "
+            f"obsolete) accession of the primary entry {returned_accession}, "
+            f"as listed in that entry's secondary_ids. Every field below "
+            f"describes {returned_accession}, not {requested_accession}."
+        )
+    else:
+        note = (
+            f"Requested {requested_accession}, but ChEBI returned "
+            f"{described}, and {requested_accession} is NOT listed among that "
+            f"entry's secondary_ids. The reason for the substitution is "
+            f"therefore unknown and unverified. Every field below describes "
+            f"{returned_accession}; do not treat it as data about "
+            f"{requested_accession} without independent confirmation."
+        )
+
+    disclosure["redirect_note"] = note
+    if secondary_ids is not None:
+        # Provenance, and the evidence for the note itself. Emitted only on the
+        # redirect path, where it is the thing that makes the claim checkable --
+        # so the normal path carries no extra bytes.
+        disclosure["secondary_ids"] = [str(s) for s in secondary_ids]
+    return disclosure
 
 
 @register_tool("ChEBITool")
@@ -115,10 +211,7 @@ class ChEBITool(BaseTool):
         # Accept the "CHEBI:27732" CURIE form that ChEBI_search returns as
         # chebi_accession, not just the bare integer — so the two tools chain
         # without the caller having to strip the prefix.
-        if isinstance(chebi_id, str):
-            chebi_id = chebi_id.strip()
-            if chebi_id.upper().startswith("CHEBI:"):
-                chebi_id = chebi_id.split(":", 1)[1].strip()
+        chebi_id = _normalize_chebi_id(chebi_id)
 
         url = f"{CHEBI_BASE_URL}/compound/{chebi_id}/"
         response = requests.get(
@@ -180,6 +273,11 @@ class ChEBITool(BaseTool):
             "synonyms": synonyms[:20],
         }
 
+        # ChEBI serves the primary entry when a merged/obsolete accession is
+        # requested. Lead with the disclosure so the substitution is the first
+        # thing a reader sees, not a footnote after the synonym list.
+        result = {**_redirect_disclosure(chebi_id, raw), **result}
+
         return {
             "status": "success",
             "data": result,
@@ -202,7 +300,11 @@ class ChEBITool(BaseTool):
 
         if limit is None:
             limit = 10
-        limit = min(limit, 100)
+        try:
+            limit = int(limit)
+        except (TypeError, ValueError):
+            limit = 10
+        limit = max(0, min(limit, 100))
 
         # Use advanced_search endpoint for better relevance
         url = f"{CHEBI_BASE_URL}/advanced_search/"
@@ -212,35 +314,90 @@ class ChEBITool(BaseTool):
             },
             "stars": [2, 3],
         }
-        response = requests.post(
-            url,
-            json=payload,
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
-            timeout=self.timeout,
-        )
-        response.raise_for_status()
-        raw = response.json()
+        headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
-        results = raw.get("results", [])
+        # The endpoint returns only one page (15 hits) per request, so a single
+        # POST can never satisfy limit > 15. Walk successive pages until we have
+        # `limit` compounds or the result set is exhausted.
         compounds = []
-        for hit in results[:limit]:
-            source = hit.get("_source", {})
-            # Strip HTML tags from name (ChEBI stores stereochemistry as HTML)
-            raw_name = source.get("name", "")
-            clean_name = re.sub(r"<[^>]+>", "", raw_name)
-            compounds.append(
-                {
-                    "chebi_accession": source.get("chebi_accession", ""),
-                    "name": clean_name,
-                    "formula": source.get("formula", None),
-                    "mass": source.get("mass", None),
-                    "stars": source.get("stars", None),
-                }
-            )
+        total_matches = None
+        number_pages = None
+        page = 1
+        pages_fetched = 0
+        while page <= _SEARCH_MAX_PAGES:
+            try:
+                response = requests.post(
+                    url,
+                    json=payload,
+                    params={"page": page},
+                    headers=headers,
+                    timeout=self.timeout,
+                )
+                response.raise_for_status()
+                raw = response.json()
+            except Exception:
+                # Never discard the pages already in hand: a failure while
+                # fetching page N > 1 degrades to "fewer results than asked
+                # for", not to an error. Only a failed first page is fatal.
+                if page == 1:
+                    raise
+                break
+
+            pages_fetched += 1
+
+            if not isinstance(raw, dict):
+                break
+
+            # `total` / `number_pages` are informational and may be absent on
+            # some responses; fall back to single-page behaviour rather than
+            # crashing or looping forever.
+            if total_matches is None and isinstance(raw.get("total"), int):
+                total_matches = raw["total"]
+            if number_pages is None and isinstance(raw.get("number_pages"), int):
+                number_pages = raw["number_pages"]
+
+            results = raw.get("results", [])
+            if not isinstance(results, list):
+                results = []
+
+            for hit in results:
+                source = hit.get("_source", {}) if isinstance(hit, dict) else {}
+                if not isinstance(source, dict):
+                    source = {}
+                compounds.append(
+                    {
+                        "chebi_accession": source.get("chebi_accession", ""),
+                        # Strip HTML tags from name (ChEBI stores
+                        # stereochemistry as HTML).
+                        "name": _strip_html(source.get("name", "")),
+                        "formula": source.get("formula", None),
+                        "mass": source.get("mass", None),
+                        "stars": source.get("stars", None),
+                    }
+                )
+
+            if len(compounds) >= limit:
+                break
+            if not results:
+                break
+            if number_pages is not None:
+                if page >= number_pages:
+                    break
+            elif len(results) < _SEARCH_PAGE_SIZE:
+                # No page metadata and a short page: this was the last one.
+                break
+            page += 1
+
+        compounds = compounds[:limit]
 
         result = {
             "query": query,
+            # `result_count` keeps its original meaning: how many compounds are
+            # in `compounds`. `total_matches` is how many the query matches in
+            # ChEBI overall, so a caller can distinguish "10 of 116" from
+            # "10 exist". It is None when the API omits the count.
             "result_count": len(compounds),
+            "total_matches": total_matches,
             "compounds": compounds,
         }
 
@@ -251,6 +408,7 @@ class ChEBITool(BaseTool):
                 "source": "ChEBI",
                 "query": query,
                 "endpoint": "advanced_search",
+                "pages_fetched": pages_fetched,
             },
         }
 
@@ -295,6 +453,10 @@ class ChEBITool(BaseTool):
             "relation_count": len(relations),
             "relations": relations,
         }
+
+        # Same silent-substitution shape as _get_compound: /ontology/children/1/
+        # answers with id 18357. Disclosed through the same helper.
+        result = {**_redirect_disclosure(chebi_id, raw), **result}
 
         return {
             "status": "success",
@@ -346,6 +508,10 @@ class ChEBITool(BaseTool):
             "relation_count": len(relations),
             "relations": relations,
         }
+
+        # Same silent-substitution shape as _get_compound: /ontology/parents/1/
+        # answers with id 18357. Disclosed through the same helper.
+        result = {**_redirect_disclosure(chebi_id, raw), **result}
 
         return {
             "status": "success",

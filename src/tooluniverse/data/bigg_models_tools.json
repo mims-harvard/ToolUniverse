@@ -8,38 +8,60 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["list_models"],
-          "description": "Operation type"
+          "enum": [
+            "list_models"
+          ],
+          "description": "Operation type",
+          "default": "list_models"
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "models": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "bigg_id": {"type": "string"},
-              "organism": {"type": "string"},
-              "reaction_count": {"type": "integer"},
-              "metabolite_count": {"type": "integer"},
-              "gene_count": {"type": "integer"}
+              "bigg_id": {
+                "type": "string"
+              },
+              "organism": {
+                "type": "string"
+              },
+              "reaction_count": {
+                "type": "integer"
+              },
+              "metabolite_count": {
+                "type": "integer"
+              },
+              "gene_count": {
+                "type": "integer"
+              }
             }
           }
         },
-        "count": {"type": "integer"},
-        "error": {"type": "string"}
+        "count": {
+          "type": "integer"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
       {
         "operation": "list_models"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_models"
+    }
   },
   {
     "name": "BiGG_get_model",
@@ -50,34 +72,59 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_model"],
-          "description": "Operation type"
+          "enum": [
+            "get_model"
+          ],
+          "description": "Operation type",
+          "default": "get_model"
         },
         "model_id": {
           "type": "string",
           "description": "Required: BiGG model ID (e.g., 'iJO1366', 'iMM904', 'Recon3D')"
         }
       },
-      "required": ["operation", "model_id"]
+      "required": [
+        "model_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "model": {
           "type": "object",
           "properties": {
-            "organism": {"type": "string"},
-            "genome": {"type": "string"},
-            "metabolite_count": {"type": "integer"},
-            "gene_count": {"type": "integer"},
-            "reaction_count": {"type": "integer"},
-            "reference_type": {"type": "string"},
-            "reference_id": {"type": "string"}
+            "organism": {
+              "type": "string"
+            },
+            "genome": {
+              "type": "string"
+            },
+            "metabolite_count": {
+              "type": "integer"
+            },
+            "gene_count": {
+              "type": "integer"
+            },
+            "reaction_count": {
+              "type": "integer"
+            },
+            "reference_type": {
+              "type": "string"
+            },
+            "reference_id": {
+              "type": "string"
+            }
           }
         },
-        "model_id": {"type": "string"},
-        "error": {"type": "string"}
+        "model_id": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -85,7 +132,10 @@
         "operation": "get_model",
         "model_id": "iJO1366"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_model"
+    }
   },
   {
     "name": "BiGG_get_model_reactions",
@@ -96,34 +146,53 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_model_reactions"],
-          "description": "Operation type"
+          "enum": [
+            "get_model_reactions"
+          ],
+          "description": "Operation type",
+          "default": "get_model_reactions"
         },
         "model_id": {
           "type": "string",
           "description": "Required: BiGG model ID"
         }
       },
-      "required": ["operation", "model_id"]
+      "required": [
+        "model_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "reactions": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "bigg_id": {"type": "string"},
-              "name": {"type": "string"},
-              "organism": {"type": "string"}
+              "bigg_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "organism": {
+                "type": "string"
+              }
             }
           }
         },
-        "count": {"type": "integer"},
-        "model_id": {"type": "string"},
-        "error": {"type": "string"}
+        "count": {
+          "type": "integer"
+        },
+        "model_id": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -131,7 +200,10 @@
         "operation": "get_model_reactions",
         "model_id": "e_coli_core"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_model_reactions"
+    }
   },
   {
     "name": "BiGG_get_reaction",
@@ -142,8 +214,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_reaction"],
-          "description": "Operation type"
+          "enum": [
+            "get_reaction"
+          ],
+          "description": "Operation type",
+          "default": "get_reaction"
         },
         "reaction_id": {
           "type": "string",
@@ -155,25 +230,45 @@
           "description": "Model ID or 'universal' for universal reaction database"
         }
       },
-      "required": ["operation", "reaction_id"]
+      "required": [
+        "reaction_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "reaction": {
           "type": "object",
           "properties": {
-            "bigg_id": {"type": "string"},
-            "name": {"type": "string"},
-            "metabolites": {"type": "array"},
-            "database_links": {"type": "object"},
-            "models_containing_reaction": {"type": "array"}
+            "bigg_id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "metabolites": {
+              "type": "array"
+            },
+            "database_links": {
+              "type": "object"
+            },
+            "models_containing_reaction": {
+              "type": "array"
+            }
           }
         },
-        "reaction_id": {"type": "string"},
-        "model_id": {"type": "string"},
-        "error": {"type": "string"}
+        "reaction_id": {
+          "type": "string"
+        },
+        "model_id": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -182,7 +277,10 @@
         "reaction_id": "GAPD",
         "model_id": "iJO1366"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_reaction"
+    }
   },
   {
     "name": "BiGG_get_metabolite",
@@ -193,8 +291,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_metabolite"],
-          "description": "Operation type"
+          "enum": [
+            "get_metabolite"
+          ],
+          "description": "Operation type",
+          "default": "get_metabolite"
         },
         "metabolite_id": {
           "type": "string",
@@ -206,25 +307,45 @@
           "description": "Model ID or 'universal' for universal metabolite database"
         }
       },
-      "required": ["operation", "metabolite_id"]
+      "required": [
+        "metabolite_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "metabolite": {
           "type": "object",
           "properties": {
-            "bigg_id": {"type": "string"},
-            "name": {"type": "string"},
-            "formula": {"type": "string"},
-            "database_links": {"type": "object"},
-            "compartments_in_models": {"type": "array"}
+            "bigg_id": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "formula": {
+              "type": "string"
+            },
+            "database_links": {
+              "type": "object"
+            },
+            "compartments_in_models": {
+              "type": "array"
+            }
           }
         },
-        "metabolite_id": {"type": "string"},
-        "model_id": {"type": "string"},
-        "error": {"type": "string"}
+        "metabolite_id": {
+          "type": "string"
+        },
+        "model_id": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -233,7 +354,10 @@
         "metabolite_id": "g3p",
         "model_id": "universal"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_metabolite"
+    }
   },
   {
     "name": "BiGG_search",
@@ -244,8 +368,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search"],
-          "description": "Operation type"
+          "enum": [
+            "search"
+          ],
+          "description": "Operation type",
+          "default": "search"
         },
         "query": {
           "type": "string",
@@ -253,33 +380,58 @@
         },
         "search_type": {
           "type": "string",
-          "enum": ["models", "reactions", "metabolites", "genes"],
+          "enum": [
+            "models",
+            "reactions",
+            "metabolites",
+            "genes"
+          ],
           "default": "reactions",
           "description": "What to search for"
         }
       },
-      "required": ["operation", "query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
         "results": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "bigg_id": {"type": "string"},
-              "name": {"type": "string"},
-              "organism": {"type": "string"},
-              "model_bigg_id": {"type": "string"}
+              "bigg_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "organism": {
+                "type": "string"
+              },
+              "model_bigg_id": {
+                "type": "string"
+              }
             }
           }
         },
-        "count": {"type": "integer"},
-        "query": {"type": "string"},
-        "search_type": {"type": "string"},
-        "error": {"type": "string"}
+        "count": {
+          "type": "integer"
+        },
+        "query": {
+          "type": "string"
+        },
+        "search_type": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -288,7 +440,10 @@
         "query": "glucose",
         "search_type": "metabolites"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search"
+    }
   },
   {
     "name": "BiGG_get_database_version",
@@ -299,27 +454,43 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_database_version"],
-          "description": "Operation type"
+          "enum": [
+            "get_database_version"
+          ],
+          "description": "Operation type",
+          "default": "get_database_version"
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "bigg_models_version": {"type": "string"},
-        "api_version": {"type": "string"},
-        "last_updated": {"type": "string"},
-        "error": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "bigg_models_version": {
+          "type": "string"
+        },
+        "api_version": {
+          "type": "string"
+        },
+        "last_updated": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
       {
         "operation": "get_database_version"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_database_version"
+    }
   },
   {
     "name": "BiGG_download_model",
@@ -330,8 +501,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["download_model"],
-          "description": "Operation type"
+          "enum": [
+            "download_model"
+          ],
+          "description": "Operation type",
+          "default": "download_model"
         },
         "model_id": {
           "type": "string",
@@ -339,20 +513,30 @@
         },
         "format": {
           "type": "string",
-          "enum": ["json", "sbml", "xml"],
+          "enum": [
+            "json",
+            "sbml",
+            "xml"
+          ],
           "description": "Model file format. 'json' (default) returns the parsed COBRA JSON model dict; 'sbml' (alias 'xml') returns the raw SBML XML text.",
           "default": "json"
         }
       },
-      "required": ["operation", "model_id"]
+      "required": [
+        "model_id"
+      ]
     },
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "model_id": {"type": "string"},
-            "format": {"type": "string"},
+            "model_id": {
+              "type": "string"
+            },
+            "format": {
+              "type": "string"
+            },
             "model": {
               "type": "object",
               "description": "Full COBRA JSON model: reactions (with lower_bound/upper_bound/objective_coefficient/metabolites/gene_reaction_rule), metabolites, genes, compartments, id, version. Present only when format='json'."
@@ -361,27 +545,52 @@
               "type": "string",
               "description": "Raw SBML/XML model text. Present only when format='sbml'."
             },
-            "reaction_count": {"type": "integer"},
-            "metabolite_count": {"type": "integer"},
-            "gene_count": {"type": "integer"},
-            "compartments": {"type": "object"},
+            "reaction_count": {
+              "type": "integer"
+            },
+            "metabolite_count": {
+              "type": "integer"
+            },
+            "gene_count": {
+              "type": "integer"
+            },
+            "compartments": {
+              "type": "object"
+            },
             "objective_reactions": {
               "type": "array",
               "description": "Reaction IDs with non-zero objective coefficient (FBA objective / biomass)",
-              "items": {"type": "string"}
+              "items": {
+                "type": "string"
+              }
             },
-            "version": {"type": ["string", "null"]},
-            "size_bytes": {"type": "integer"},
-            "source_url": {"type": "string"}
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "size_bytes": {
+              "type": "integer"
+            },
+            "source_url": {
+              "type": "string"
+            }
           },
-          "required": ["model_id"]
+          "required": [
+            "model_id"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -395,6 +604,9 @@
         "model_id": "e_coli_core",
         "format": "sbml"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "download_model"
+    }
   }
 ]

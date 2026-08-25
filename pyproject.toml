@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tooluniverse"
-version = "1.4.0"
+version = "1.4.1"
 description = "A comprehensive collection of scientific tools for Agentic AI, offering integration with the ToolUniverse SDK and MCP Server to support advanced scientific workflows."
 authors = [
     { name = "Shanghua Gao", email = "shanghuagao@gmail.com" }
@@ -29,7 +29,12 @@ dependencies = [
     "huggingface_hub>=0.34.0",
     "jsonpath-ng>=1.6.0",
     "rcsb-api>=1.4.0",
-    "fitz>=0.0.1.dev2",
+    # Imported by dose_response, survival, nca, drug_synergy, metaboanalyst,
+    # timer and two remote tools. It was previously reaching installs only as a
+    # transitive of that `fitz` placeholder (which required nibabel, nipype,
+    # pyxnat, scipy and more), so removing it left these modules without their
+    # dependency. It stays listed in the graph/visualization extras as well.
+    "scipy>=1.7.0",
     "pandas>=2.2.3",
     "openpyxl>=3.1.0", # Read .xlsx bulk downloads (CellMarker, dataset tools)
     "setuptools>=70.0.0", # Fix pkg_resources deprecation warnings
@@ -41,13 +46,13 @@ dependencies = [
     "beautifulsoup4>=4.12.0",
     "python-dotenv>=1.0.0",
     # markitdown[all] (~32 MB: SpeechRecognition, youtube-transcript-api, pydub,
-    # azure-ai-documentintelligence). The [all] marker is deliberate: the
-    # convert_to_markdown tool takes an arbitrary http/https/file/data URI with no
-    # format allowlist, so every converter dropped here becomes a silent runtime
-    # failure for that input type. markitdown is also imported unconditionally at
-    # module scope by unified_guideline_tools.py, so it cannot move to an extra
-    # without guarding that import. Narrow only alongside those two changes.
-    "markitdown[all]>=0.1.0",
+    # azure-ai-documentintelligence). The broad converter set is deliberate: the
+    # convert_to_markdown tool accepts arbitrary supported resources. Upstream
+    # youtube-transcript-api currently declares Python <3.14, so Python 3.14+
+    # receives every MarkItDown converter except YouTube transcription. Keeping
+    # that one incompatible converter must not make the whole SDK inconsistent.
+    "markitdown[all]>=0.1.0; python_version < '3.14'",
+    "markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx]>=0.1.0; python_version >= '3.14'",
     "psutil>=5.9.0",
     "ddgs>=9.0.0",
     "pip>=25.3",
@@ -57,6 +62,12 @@ requires-python = ">=3.10"
 readme = "README.md"
 
 [project.optional-dependencies]
+pdf = [
+    # PyMuPDF is AGPL-3.0 or commercially licensed. Keep it opt-in and out of
+    # the aggregate `all` extra so default Apache-2.0 installations do not pull
+    # it in implicitly.
+    "pymupdf>=1.24.3",
+]
 client = [
     "requests>=2.32.0",
     "pydantic>=2.11.0",
@@ -149,7 +160,7 @@ build = [
 Homepage = "https://github.com/mims-harvard/ToolUniverse"
 
 [project.scripts]
-tu = "tooluniverse.cli:main"
+tu = "tooluniverse_cli_entry:main"
 tooluniverse = "tooluniverse.smcp_server:run_default_stdio_server"
 tooluniverse-mcp = "tooluniverse.smcp_server:run_http_server"
 tooluniverse-smcp = "tooluniverse.smcp_server:run_smcp_server"
@@ -168,6 +179,9 @@ tu-datastore = "tooluniverse.database_setup.cli:main"
 # tooluniverse-wide-research = "tooluniverse.web_tools.literature_search_ui.simple_app:main"
 # Health Check Tool
 tooluniverse-doctor = "tooluniverse.doctor:main"
+
+[tool.setuptools]
+py-modules = ["tooluniverse_cli_entry"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -27,15 +27,10 @@
           "description": "Variable name to extract as result from the executed code",
           "default": "result"
         },
-        "allowed_imports": {
-          "type": "array",
-          "items": {"type": "string"},
-          "description": "Additional allowed modules beyond the default safe set (math, json, datetime, etc.)"
-        },
         "dependencies": {
           "type": "array",
           "items": {"type": "string"},
-          "description": "List of Python packages that the code depends on. Will be checked and optionally installed before execution."
+          "description": "List of exact Python distribution package names, as accepted by pip, that the code depends on (for example, scikit-learn or onnxruntime-gpu). Distribution names are checked and optionally installed before execution; do not use import submodule names."
         },
         "auto_install_dependencies": {
           "type": "boolean",
@@ -191,7 +186,7 @@
         "dependencies": {
           "type": "array",
           "items": {"type": "string"},
-          "description": "List of Python packages that the script depends on. Will be checked and optionally installed before execution."
+          "description": "List of exact Python distribution package names, as accepted by pip, that the script depends on (for example, scikit-learn or onnxruntime-gpu). Distribution names are checked and optionally installed before execution; do not use import submodule names."
         },
         "auto_install_dependencies": {
           "type": "boolean",

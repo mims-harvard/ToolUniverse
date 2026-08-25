@@ -17,50 +17,168 @@
     },
     "return_schema": {
       "type": "object",
-      "oneOf": [
-        {
+      "description": "Unwrapped payload (result['data']) of a successful call.",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The disease name that was queried."
+        },
+        "sources_queried": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sources_failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Human-readable error messages for sources that failed or returned no usable data."
+        },
+        "profile": {
+          "type": "object",
+          "description": "Unified profile built from all successfully-queried sources.",
           "properties": {
-            "status": {
-              "const": "success"
+            "disease": {
+              "type": "string"
             },
-            "data": {
+            "identifiers": {
               "type": "object",
-              "properties": {
-                "query": {
-                  "type": "string"
-                },
-                "sources_queried": {
-                  "type": "array"
-                },
-                "sources_failed": {
-                  "type": "array"
-                },
-                "profile": {
-                  "type": "object"
-                },
-                "per_source": {
-                  "type": "object"
-                }
+              "description": "Cross-reference identifiers keyed by ontology/source name (e.g. orphanet, efo, mondo, doid, mesh, snomed, ncit, ordo, hp, omim); keys vary per disease."
+            },
+            "prevalence": {
+              "type": "string"
+            },
+            "inheritance": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "top_genes": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             }
           },
           "required": [
-            "data"
+            "disease",
+            "identifiers"
           ]
         },
-        {
+        "per_source": {
+          "type": "object",
+          "description": "Raw-ish per-source parsed results; sources that failed or returned nothing appear as {}.",
           "properties": {
-            "status": {
-              "const": "error"
+            "orphanet": {
+              "type": "object",
+              "properties": {
+                "orpha_code": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "prevalence": {
+                  "type": "string"
+                },
+                "inheritance": {
+                  "type": "string"
+                }
+              }
             },
-            "error": {
-              "type": "string"
+            "omim": {
+              "type": "object",
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "mim_number": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "disgenet": {
+              "type": "object",
+              "properties": {
+                "associated_genes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "gene": {
+                        "type": "string"
+                      },
+                      "score": {}
+                    }
+                  }
+                }
+              }
+            },
+            "opentargets": {
+              "type": "object",
+              "properties": {
+                "efo_id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "dbXRefs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "ols": {
+              "type": "object",
+              "properties": {
+                "terms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "label": {
+                        "type": "string"
+                      },
+                      "ontology": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
+      },
+      "required": [
+        "query",
+        "sources_queried",
+        "sources_failed",
+        "profile",
+        "per_source"
       ]
     },
     "test_examples": [

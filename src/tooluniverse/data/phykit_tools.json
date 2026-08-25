@@ -13,7 +13,8 @@
             "batch",
             "gap_percentage"
           ],
-          "description": "single: one file, batch: all files in directory, gap_percentage: compute gap % across alignments"
+          "description": "single: one file, batch: all files in directory, gap_percentage: compute gap % across alignments",
+          "default": "single"
         },
         "function": {
           "type": "string",
@@ -23,9 +24,10 @@
             "dvmc",
             "long_branch_score",
             "total_tree_length",
-            "parsimony_informative"
+            "parsimony_informative",
+            "treeness_over_rcv"
           ],
-          "description": "PhyKIT function to run"
+          "description": "PhyKIT function to run. 'treeness_over_rcv' (treeness/RCV) is distinct from 'treeness' and needs both an alignment and a tree."
         },
         "file": {
           "type": [
@@ -65,51 +67,36 @@
           "description": "How to summarize per-tree values for long_branch_score (default: mean)"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "function": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "function": {
-                  "type": "string"
-                },
-                "n_files": {
-                  "type": "integer"
-                },
-                "mean": {
-                  "type": "number"
-                },
-                "median": {
-                  "type": "number"
-                },
-                "min": {
-                  "type": "number"
-                },
-                "max": {
-                  "type": "number"
-                }
-              }
+            "n_files": {
+              "type": "integer"
+            },
+            "mean": {
+              "type": "number"
+            },
+            "median": {
+              "type": "number"
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "error"
-            },
             "error": {
               "type": "string"
             }
@@ -127,6 +114,9 @@
         "function": "treeness",
         "file": "/tmp/test.treefile"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "single"
+    }
   }
 ]

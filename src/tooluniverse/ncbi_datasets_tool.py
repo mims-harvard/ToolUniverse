@@ -275,7 +275,37 @@ class NCBIDatasetsTool(BaseTool):
     def _get_gene_by_symbol(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get gene information by gene symbol and taxon."""
         symbol = str(arguments.get("symbol") or "").strip()
-        taxon = str(arguments.get("taxon") or "human").strip()
+        # Fix-47-3: the species parameter is named `taxon`, but this tool's own
+        # description asks the caller to "look up gene information by gene
+        # symbol and ORGANISM", and the sibling species-scoped tool in the
+        # library (UniProt_search) calls it `organism`. A caller who follows
+        # either had their value dropped -- the schema declares no
+        # `organism`/`species`, and an unknown key alongside a recognized one
+        # is deliberately passed through rather than rejected -- and the lookup
+        # then fell back to the "human" default. That default was echoed as
+        # `query_taxon: "human"`, so the response asserted that a human filter
+        # had been applied when the caller had asked for something else:
+        # `{"symbol":"NR2F2","organism":"mouse"}` returned human NR2F2
+        # (gene_id 7026, tax_id 9606) under `query_taxon: "human"`, and
+        # `organism:"Vulcan"` returned the same human gene just as confidently.
+        # Both spellings are accepted here and declared in the JSON schema, so
+        # the value is honoured instead of silently discarded.
+        supplied = next(
+            (
+                value
+                for value in (
+                    str(arguments.get(key) or "").strip()
+                    for key in ("taxon", "organism", "species")
+                )
+                if value
+            ),
+            "",
+        )
+        # Whether the species was chosen by the caller or defaulted is not
+        # recoverable from the echoed value alone, and reading a defaulted
+        # "human" as a filter the caller set is exactly the misread above.
+        taxon_defaulted = not supplied
+        taxon = supplied or "human"
         if not symbol:
             return {"status": "error", "error": "symbol parameter is required"}
 
@@ -288,15 +318,42 @@ class NCBIDatasetsTool(BaseTool):
 
         reports = result.get("reports", [])
         if not reports:
+            metadata = {
+                "total_results": 0,
+                "query_symbol": symbol,
+                "query_taxon": taxon,
+                "query_taxon_defaulted": taxon_defaulted,
+                "source": "NCBI Datasets API v2",
+            }
+            # Fix-R15C-1: NCBI returns HTTP 200 (not an error) for some
+            # unresolvable taxon tokens, but includes a "messages" warning
+            # explaining why -- e.g. taxon="cattle" gets
+            # gene_warning_code=ABOVE_SPECIES_TAXON ("belongs to a taxonomy
+            # level above species") instead of the "reports" the caller
+            # expects. Previously this warning was discarded, so a plain
+            # empty-success response was indistinguishable from "this gene
+            # genuinely has no match for this taxon" (confirmed: taxon="cow"
+            # succeeds with data, taxon="bovine" errors outright, and
+            # taxon="cattle" -- silently -- returns neither). Surface the
+            # warning so the caller can tell "bad taxon token" from "real
+            # zero-match".
+            api_messages = result.get("messages") or []
+            warnings = [
+                m["warning"]["message"]
+                for m in api_messages
+                if isinstance(m, dict) and m.get("warning", {}).get("message")
+            ]
+            if warnings:
+                metadata["warning"] = (
+                    " ".join(warnings)
+                    + " Try a more specific taxon (e.g. a species common name "
+                    "like 'cow' or 'pig' rather than a broader group name, "
+                    "or an NCBI Taxonomy ID)."
+                )
             return {
                 "status": "success",
                 "data": [],
-                "metadata": {
-                    "total_results": 0,
-                    "query_symbol": symbol,
-                    "query_taxon": taxon,
-                    "source": "NCBI Datasets API v2",
-                },
+                "metadata": metadata,
             }
 
         genes = []
@@ -324,6 +381,7 @@ class NCBIDatasetsTool(BaseTool):
                 "total_results": len(genes),
                 "query_symbol": symbol,
                 "query_taxon": taxon,
+                "query_taxon_defaulted": taxon_defaulted,
                 "source": "NCBI Datasets API v2",
             },
         }

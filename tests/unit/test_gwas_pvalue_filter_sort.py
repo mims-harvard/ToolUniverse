@@ -1,11 +1,13 @@
-"""Unit test: gwas_search_associations p-value threshold fetches most-significant first.
+"""Unit test: gwas_search_associations defaults to most-significant-first.
 
 Regression: the p_value threshold is applied CLIENT-SIDE to the fetched page, but
 the GWAS Catalog API returns associations UNSORTED. So a strict threshold filtered
 an arbitrary window and falsely returned 0 -- SLE p<=1e-100 -> 0 even though the
-catalog has hits at p=2e-298. When a p-value filter is requested and no explicit
-sort is given, the tool now sorts by p_value ascending so the fetched window holds
-the strongest loci.
+catalog has hits at p=2e-298. The tool now sorts by p_value ascending by default
+whenever the caller gives no explicit sort (not only when a p-value filter is
+present), matching sibling tools GWASAssociationsForTrait and GWASVariantsForTrait,
+which already default to sort=p_value unconditionally -- so a plain discovery call
+also lands on the trait's strongest loci instead of an arbitrary API-order slice.
 """
 from unittest.mock import patch
 
@@ -47,6 +49,7 @@ def test_explicit_sort_is_respected_over_default():
 
 
 @pytest.mark.unit
-def test_no_pvalue_filter_leaves_sort_unset():
+def test_no_pvalue_filter_still_defaults_to_significance_sort():
     params = _params_for({"efo_trait": "x"})
-    assert "sort" not in params
+    assert params.get("sort") == "p_value"
+    assert params.get("direction") == "asc"

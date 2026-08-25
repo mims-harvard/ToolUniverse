@@ -155,14 +155,38 @@
       "timeout": 200
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": ["array", "object"]
-        },
-        "total": {"type": "integer"},
-        "context": {"type": "string"},
-        "source": {"type": "string"}
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "docId": {"type": "string"},
+          "topicIri": {"type": "string"},
+          "curationType": {"type": "string"},
+          "latestSearchDate": {"type": "string"},
+          "lastUpdated": {"type": "string"},
+          "lastAuthor": {"type": "string"},
+          "context": {"type": "string"},
+          "contextIri": {"type": "string"},
+          "release": {"type": "string"},
+          "releaseDate": {"type": "string"},
+          "geneOrVariant": {"type": "string"},
+          "geneOmim": {"type": "string"},
+          "disease": {"type": "string"},
+          "omim": {"type": "string"},
+          "status-overall": {"type": "string"},
+          "status-stg1": {"type": "string"},
+          "status-stg2": {"type": "string"},
+          "status-scoring": {"type": "string"},
+          "outcome": {"type": ["string", "null"]},
+          "outcomeScoringGroup": {"type": "string"},
+          "intervention": {"type": ["string", "null"]},
+          "interventionScoringGroup": {"type": "string"},
+          "severity": {"type": ["string", "null"]},
+          "likelihood": {"type": ["string", "null"]},
+          "natureOfIntervention": {"type": ["string", "null"]},
+          "effectiveness": {"type": ["string", "null"]},
+          "overall": {"type": ["string", "null"]}
+        }
       }
     },
     "test_examples": [
@@ -189,14 +213,38 @@
       "timeout": 200
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": ["array", "object"]
-        },
-        "total": {"type": "integer"},
-        "context": {"type": "string"},
-        "source": {"type": "string"}
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "docId": {"type": "string"},
+          "topicIri": {"type": "string"},
+          "curationType": {"type": "string"},
+          "latestSearchDate": {"type": "string"},
+          "lastUpdated": {"type": "string"},
+          "lastAuthor": {"type": "string"},
+          "context": {"type": "string"},
+          "contextIri": {"type": "string"},
+          "release": {"type": "string"},
+          "releaseDate": {"type": "string"},
+          "geneOrVariant": {"type": "string"},
+          "geneOmim": {"type": "string"},
+          "disease": {"type": "string"},
+          "omim": {"type": "string"},
+          "status-overall": {"type": "string"},
+          "status-stg1": {"type": "string"},
+          "status-stg2": {"type": "string"},
+          "status-scoring": {"type": "string"},
+          "outcome": {"type": ["string", "null"]},
+          "outcomeScoringGroup": {"type": "string"},
+          "intervention": {"type": ["string", "null"]},
+          "interventionScoringGroup": {"type": "string"},
+          "severity": {"type": ["string", "null"]},
+          "likelihood": {"type": ["string", "null"]},
+          "natureOfIntervention": {"type": ["string", "null"]},
+          "effectiveness": {"type": ["string", "null"]},
+          "overall": {"type": ["string", "null"]}
+        }
       }
     },
     "test_examples": [
@@ -235,6 +283,14 @@
         "gene_searched": {"type": "string"},
         "adult_count": {"type": "integer"},
         "pediatric_count": {"type": "integer"},
+        "failed_contexts": {
+          "type": "object",
+          "description": "Maps context name (Adult/Pediatric) to the fetch error. Present only on partial or total failure."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present when some but not all contexts failed: warns that the failed context's count of 0 means 'not retrieved', not 'no curation exists'."
+        },
         "source": {"type": "string"}
       }
     },
@@ -256,7 +312,7 @@
         },
         "variant": {
           "type": "string",
-          "description": "Optional: Filter by variant (HGVS notation or protein change)"
+          "description": "Optional: filter to one variant. Accepts a ClinGen canonical allele ID ('CA16020993', with or without a 'CAR:' prefix), a ClinVar VariationID ('370074'), full HGVS ('NM_000277.3:c.1315+1G>T'), or a protein change ('p.Arg408Trp'). The form supplied selects the matching server-side filter. HGVS and protein-change strings match on substring, so a short fragment can return many rows -- combine with 'gene' to scope them."
         }
       },
       "required": []
@@ -282,7 +338,9 @@
     },
     "test_examples": [
       {"gene": "BRCA1"},
-      {"gene": "PAH"}
+      {"gene": "PAH"},
+      {"variant": "CA16020993"},
+      {"gene": "PAH", "variant": "p.Arg408Trp"}
     ]
   }
 ]

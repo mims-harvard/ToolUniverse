@@ -45,73 +45,58 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "inchi": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "inchikey": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "formula": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "source_count": {
-                  "type": "integer"
-                },
-                "sources": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "source_name": {
-                        "type": "string"
-                      },
-                      "source_long_name": {
-                        "type": "string"
-                      },
-                      "compound_id": {
-                        "type": "string"
-                      },
-                      "url": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "inchi": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "inchikey": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "formula": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "uci": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "UniChem Compound Identifier (UCI) for the matched structure"
+            },
+            "source_count": {
+              "type": "integer"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source_name": {
+                    "type": "string"
+                  },
+                  "source_long_name": {
+                    "type": "string"
+                  },
+                  "compound_id": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -147,67 +132,45 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "source_count": {
-                  "type": "integer"
-                },
-                "sources": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "source_id": {
-                        "type": "integer"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "long_name": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "compound_count": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "last_updated": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "source_count": {
+              "type": "integer"
+            },
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source_id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "long_name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "compound_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "last_updated": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -269,89 +232,94 @@
         {
           "type": "object",
           "properties": {
-            "data": {
+            "response": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UniChem response status (e.g. 'Success')"
+            },
+            "searched_compound": {
               "type": "object",
               "properties": {
-                "response": {
-                  "type": ["string", "null"],
-                  "description": "UniChem response status (e.g. 'Success')"
+                "inchi": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
-                "searched_compound": {
-                  "type": "object",
-                  "properties": {
-                    "inchi": {
-                      "type": ["string", "null"]
-                    },
-                    "inchikey": {
-                      "type": ["string", "null"]
-                    },
-                    "uci": {
-                      "type": ["integer", "null"]
-                    }
-                  }
+                "inchikey": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
-                "total_compounds": {
-                  "type": ["integer", "null"],
-                  "description": "Total number of distinct connectivity-matched compounds"
-                },
-                "total_sources": {
-                  "type": ["integer", "null"],
-                  "description": "Total number of source-database match entries"
-                },
-                "match_count": {
-                  "type": "integer",
-                  "description": "Number of match entries returned"
-                },
-                "matches": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "source_id": {
-                        "type": ["integer", "null"]
-                      },
-                      "source_name": {
-                        "type": "string"
-                      },
-                      "source_long_name": {
-                        "type": "string"
-                      },
-                      "compound_id": {
-                        "type": "string"
-                      },
-                      "type_of_search": {
-                        "type": ["string", "null"]
-                      },
-                      "url": {
-                        "type": ["string", "null"]
-                      },
-                      "comparison": {
-                        "type": "object",
-                        "description": "Per-match boolean flags showing how this match differs from the query (charge, connectivity, formula, isotope, protonation, stereoDbond, stereoSp3, HAtoms, ...)"
-                      }
-                    }
-                  }
+                "uci": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
+            "total_compounds": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total number of distinct connectivity-matched compounds"
+            },
+            "total_sources": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total number of source-database match entries"
+            },
+            "match_count": {
+              "type": "integer",
+              "description": "Number of match entries returned"
+            },
+            "matches": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "source_name": {
+                    "type": "string"
+                  },
+                  "source_long_name": {
+                    "type": "string"
+                  },
+                  "compound_id": {
+                    "type": "string"
+                  },
+                  "type_of_search": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "comparison": {
+                    "type": "object",
+                    "description": "Per-match boolean flags showing how this match differs from the query (charge, connectivity, formula, isotope, protonation, stereoDbond, stereoSp3, HAtoms, ...)"
+                  }
                 }
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
