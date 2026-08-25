@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 from typing import Any, Dict
 from .base_rest_tool import BaseRESTTool
 from .http_utils import request_with_retry
+from .ncbi_eutils_tool import esearch_query_disclosure
 from .tool_registry import register_tool
 
 
@@ -213,12 +214,17 @@ class PubMedRESTTool(BaseRESTTool):
             return {"status": "success", "data": []}
 
         def parse_article(pmid: str, article_data: Dict[str, Any]) -> Dict[str, Any]:
-            # Extract author list
-            authors = []
-            if "authors" in article_data:
-                authors = [
-                    author.get("name", "") for author in article_data["authors"]
-                ][:5]  # Limit to first 5 authors
+            # Extract author list. esummary returns the complete author list, so
+            # the full count is always known even though only the first 5 names
+            # are echoed back here (kept at 5 to bound the payload size). Report
+            # `author_count` / `authors_truncated` alongside so a caller building
+            # a bibliography can tell "this article really has 5 authors" apart
+            # from "we cut the list short" -- otherwise the two are
+            # byte-indistinguishable. Use PubMed_get_article for the full list.
+            all_authors = [
+                author.get("name", "") for author in article_data.get("authors", [])
+            ]
+            authors = all_authors[:5]  # Limit to first 5 authors
 
             # Extract article info
             pub_date = article_data.get("pubdate", "")
@@ -246,6 +252,8 @@ class PubMedRESTTool(BaseRESTTool):
                 "pmid": pmid,
                 "title": article_data.get("title", ""),
                 "authors": authors,
+                "author_count": len(all_authors),
+                "authors_truncated": len(all_authors) > 5,
                 "journal": journal,
                 "pub_date": pub_date,
                 "pub_year": pub_year,
@@ -493,6 +501,33 @@ class PubMedRESTTool(BaseRESTTool):
             result["count"] = len(articles)
         return result
 
+    @staticmethod
+    def _search_warning_metadata(esearch_result: dict) -> dict:
+        """Surface NCBI's own report that it did not run the query as asked.
+
+        Fix-54A-1: this parsing was PubMed-only, but every eutils database
+        behaves identically -- measured across fourteen of them -- and twelve
+        other modules here parse esearch responses without reading either
+        disclosure container. The logic now lives in one place,
+        :func:`~tooluniverse.ncbi_eutils_tool.esearch_query_disclosure`, which
+        carries the measurements; this method stays as PubMed's entry point.
+
+        The sweep is NOT complete. Six modules were wired (medgen, sra,
+        ncbi_sra, ncbi_nucleotide, epigenomics' four GEO searches, and this
+        one). Still unwired, all confirmed to parse ``esearchresult`` and build
+        their own payload, all with a measured database in that table:
+        ``clinvar_tool``, ``dbsnp_tool``, ``pmc_tool``, ``geo_tool``,
+        ``unified_guideline_tools``, ``clinical_society_tools`` and
+        ``icite_tool``. ``pmc_tool`` and ``icite_tool`` return a bare list with
+        nowhere to put the disclosure, so wiring them is a response-shape
+        change rather than an additive one.
+
+        Note this method splats its result flat into ``metadata`` while the six
+        new sites nest it under a ``query_disclosure`` key. One helper, two
+        shapes; unifying them would change PubMed's published response.
+        """
+        return esearch_query_disclosure(esearch_result, source="PubMed")
+
     def _fetch_abstracts(self, pmid_list: list[str]) -> Dict[str, str]:
         """Best-effort abstract fetch via efetch XML for a list of PMIDs."""
         pmids = [str(p).strip() for p in (pmid_list or []) if str(p).strip()]
@@ -601,6 +636,11 @@ class PubMedRESTTool(BaseRESTTool):
                     # If this is a search request (has 'query' in arguments),
                     # fetch article summaries and return the standard envelope.
                     if "query" in arguments:
+                        # NCBI reports quoted phrases it could not match; that
+                        # report must reach the caller or the answer looks like
+                        # it came from the query they actually submitted.
+                        search_warnings = self._search_warning_metadata(esearch_result)
+
                         # A search that matched nothing must still return the
                         # same {status, data, metadata} envelope as a search
                         # that matched — otherwise zero-hit queries fall through
@@ -615,6 +655,7 @@ class PubMedRESTTool(BaseRESTTool):
                                     "total": int(esearch_result.get("count", 0)),
                                     "query": arguments.get("query"),
                                     "source": "PubMed",
+                                    **search_warnings,
                                 },
                             }
 
@@ -701,6 +742,7 @@ class PubMedRESTTool(BaseRESTTool):
                                 ),
                                 "query": arguments.get("query"),
                                 "source": "PubMed",
+                                **search_warnings,
                             },
                         }
 

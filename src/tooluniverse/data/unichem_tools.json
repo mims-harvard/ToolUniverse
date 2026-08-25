@@ -63,6 +63,13 @@
                 "null"
               ]
             },
+            "uci": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "UniChem Compound Identifier (UCI) for the matched structure"
+            },
             "source_count": {
               "type": "integer"
             },

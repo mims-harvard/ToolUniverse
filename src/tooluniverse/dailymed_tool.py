@@ -473,7 +473,7 @@ class DailyMedSPLParserTool(BaseTool):
                     # Extract lists
                     list_items = text_el.xpath(".//hl7:item", namespaces=self.ns)
                     for item in list_items:
-                        text_content = "".join(item.itertext()).strip()
+                        text_content = self._flow_text(item)
                         if text_content and len(text_content) > 5:
                             contraindications.append(
                                 {
@@ -488,7 +488,7 @@ class DailyMedSPLParserTool(BaseTool):
                             ".//hl7:paragraph", namespaces=self.ns
                         )
                         for para in paragraphs:
-                            text_content = "".join(para.itertext()).strip()
+                            text_content = self._flow_text(para)
                             if text_content and len(text_content) > 2:
                                 contraindications.append(
                                     {
@@ -609,22 +609,54 @@ class DailyMedSPLParserTool(BaseTool):
                 # handles the empty case without a separate guard.
                 items.extend(self._extract_table_data(child))
             elif tag == "paragraph":
-                text_content = "".join(child.itertext()).strip()
+                text_content = self._flow_text(child)
                 if text_content and len(text_content) > min_len:
                     items.append({"type": text_type, "content": text_content})
             elif tag == "list":
                 for item_el in child.xpath(".//hl7:item", namespaces=self.ns):
-                    text_content = "".join(item_el.itertext()).strip()
+                    text_content = self._flow_text(item_el)
                     if text_content and len(text_content) > 5:
                         items.append({"type": text_type, "content": text_content})
         return items
 
-    def _cell_text(self, element) -> str:
-        """Fix-R6E-2: SPL table cells use <br/> as an in-cell line break
-        (e.g. "TRIKAFTA" on one line, "N=202" on the next, "n (%)" on a
-        third), but joining itertext() with no separator collapsed these
-        into a single run like "TRIKAFTAN=202n (%)". Walk the cell's mixed
-        content and insert a space at each <br/> boundary instead."""
+    def _flow_text(self, element) -> str:
+        """Render one SPL flow element (cell, paragraph or list item) to text.
+
+        Every text-flattening path in this file goes through here. That is
+        the point: the two things below are properties of SPL markup, not of
+        tables, and when only the table path knew about them one response
+        could contain the same equation rendered both correctly and
+        incorrectly.
+
+        Fix-R6E-2: SPL uses <br/> as an in-line break (e.g. "TRIKAFTA" on one
+        line, "N=202" on the next, "n (%)" on a third), but joining
+        itertext() with no separator collapsed these into a single run like
+        "TRIKAFTAN=202n (%)". Walk the mixed content and insert a space at
+        each <br/> boundary instead.
+
+        A <br/> is not always a line break, though. SPL has no fraction
+        element, so a dosing equation is drawn as a stacked fraction: the
+        numerator is an underlined <content> on its own line and the
+        denominator is the text run after the following <br/>, with the
+        underline serving as the division bar. Rendering that break as a
+        space deletes the division. DigiFab (digoxin immune fab, setid
+        c05ee6a5-c98b-45f4-83fd-40781639d653) encodes its dosing equations
+        this way -- twice in a table and three more times in <paragraph>s --
+        and flattening turned
+
+            Dose (in vials) = (Serum digoxin ng/mL)(weight in kg) / 100
+
+        into "... (weight in kg) 100", which reads as a multiplication by
+        100 rather than a division -- a 10,000-fold error in an antidote
+        dose, at the bedside, with no indication anything was lost.
+
+        The bar is only recognised on the exact stacked-fraction shape:
+        an underlined <content> that directly follows an "=" and is
+        directly followed by a <br/>. Requiring the "=" is what keeps an
+        underlined heading that happens to precede a line break (a common
+        and unrelated use of underline -- this same label has two, "Risk
+        Summary" in Pregnancy and Lactation) from becoming a division.
+        """
         parts: List[str] = []
 
         def walk(el) -> None:
@@ -632,7 +664,7 @@ class DailyMedSPLParserTool(BaseTool):
                 parts.append(el.text)
             for child in el:
                 if etree.QName(child).localname == "br":
-                    parts.append(" ")
+                    parts.append(" / " if self._is_division_bar(el, child) else " ")
                 else:
                     walk(child)
                 if child.tail:
@@ -640,6 +672,40 @@ class DailyMedSPLParserTool(BaseTool):
 
         walk(element)
         return " ".join("".join(parts).split())
+
+    @staticmethod
+    def _is_division_bar(parent, br) -> bool:
+        """Does this <br/> close a stacked fraction rather than a line?
+
+        Decided from sibling structure alone: the element before the <br/>
+        must be an underlined <content> (the numerator, drawn with the
+        underline as the division bar), nothing but whitespace may separate
+        the two, and the text before the numerator must end at the "=" the
+        fraction is the right-hand side of.
+        """
+        numerator = br.getprevious()
+        if numerator is None or etree.QName(numerator).localname != "content":
+            return False
+        if "underline" not in (numerator.get("styleCode") or ""):
+            return False
+        # Text between numerator and bar means this was never a fraction;
+        # whitespace-only indentation (how SPL pretty-prints these) is fine.
+        if (numerator.tail or "").strip():
+            return False
+        # Walk back to the last real text before the numerator. The "=" is
+        # normally in the cell's own text with a <br/> after it -- the label
+        # puts the numerator on its own line -- so intervening <br/>s and
+        # their whitespace tails are stepped over, but any other element
+        # means this is not the simple "X = num/den" shape.
+        node = numerator.getprevious()
+        while node is not None:
+            tail = node.tail or ""
+            if tail.strip():
+                return tail.rstrip().endswith("=")
+            if etree.QName(node).localname != "br":
+                return False
+            node = node.getprevious()
+        return (parent.text or "").rstrip().endswith("=")
 
     def _extract_table_data(self, table_element) -> List[Dict[str, Any]]:
         """Extract structured data from table element."""
@@ -651,7 +717,7 @@ class DailyMedSPLParserTool(BaseTool):
             thead = table_element.xpath(".//hl7:thead", namespaces=self.ns)
             if thead:
                 header_cells = thead[0].xpath(".//hl7:th", namespaces=self.ns)
-                headers = [self._cell_text(cell) for cell in header_cells]
+                headers = [self._flow_text(cell) for cell in header_cells]
 
             # Get table rows
             tbody = table_element.xpath(".//hl7:tbody", namespaces=self.ns)
@@ -659,7 +725,7 @@ class DailyMedSPLParserTool(BaseTool):
                 rows = tbody[0].xpath(".//hl7:tr", namespaces=self.ns)
                 for row in rows:
                     cells = row.xpath(".//hl7:td", namespaces=self.ns)
-                    cell_data = [self._cell_text(cell) for cell in cells]
+                    cell_data = [self._flow_text(cell) for cell in cells]
 
                     if cell_data:
                         # Create dict if we have headers

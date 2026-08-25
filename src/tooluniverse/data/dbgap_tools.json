@@ -1,0 +1,95 @@
+[
+  {
+    "name": "DbGaP_search_studies",
+    "type": "DbGaPTool",
+    "description": "Search dbGaP (NCBI's controlled-access US genotype-phenotype archive, the American counterpart to EGA) for studies by title keyword, via its FHIR API. Example: query='diabetes' returns the Diabetes Prevention Program Genetics study. Returns each study's phs_id for use with DbGaP_get_study.",
+    "fields": {
+      "operation": "search_studies"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Study title keyword, e.g. 'diabetes', 'autism'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max studies to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "phs_id": {"type": ["string", "null"]},
+              "title": {"type": ["string", "null"]},
+              "status": {"type": ["string", "null"]},
+              "conditions": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "diabetes", "limit": 5},
+      {"query": "autism", "limit": 5}
+    ]
+  },
+  {
+    "name": "DbGaP_get_study",
+    "type": "DbGaPTool",
+    "description": "Retrieve one dbGaP study's full public metadata by its phs accession: description, medical conditions studied, release date, and phenotype/molecular dataset and variable counts. Example: phs_id='phs000681' returns the Diabetes Prevention Program Genetics study with 4 phenotype datasets and 15 variables. Metadata only -- the underlying genotype/phenotype data requires Data Access Committee approval. Use DbGaP_search_studies to find a phs_id.",
+    "fields": {
+      "operation": "get_study"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["phs_id"],
+      "properties": {
+        "phs_id": {
+          "type": "string",
+          "description": "dbGaP study accession, e.g. 'phs000681'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "phs_id": {"type": ["string", "null"]},
+            "title": {"type": ["string", "null"]},
+            "status": {"type": ["string", "null"]},
+            "description": {"type": ["string", "null"]},
+            "conditions": {"type": "array", "items": {"type": "string"}},
+            "study_overview_url": {"type": ["string", "null"]},
+            "release_date": {"type": ["string", "null"]},
+            "phenotype_dataset_count": {"type": ["integer", "null"]},
+            "molecular_dataset_count": {"type": ["integer", "null"]},
+            "variable_count": {"type": ["integer", "null"]},
+            "document_count": {"type": ["integer", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"phs_id": "phs000681"}
+    ]
+  }
+]

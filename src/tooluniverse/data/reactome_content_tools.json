@@ -1,7 +1,7 @@
 [
   {
     "name": "ReactomeContent_search",
-    "description": "Search Reactome for pathways, reactions, and biological entities by keyword. Performs free-text search across Reactome's knowledge base of biological pathways. Supports filtering by species and entity type. Example: searching 'apoptosis' in Homo sapiens returns pathways like R-HSA-109581 (Apoptosis), R-HSA-169911 (Regulation of Apoptosis), R-HSA-9635465 (Suppression of apoptosis). Use this to discover relevant pathways before querying their details.",
+    "description": "Search Reactome for pathways, reactions, and biological entities by keyword. Performs free-text search across Reactome's knowledge base of biological pathways. Supports filtering by species and entity type. Example: searching 'apoptosis' in Homo sapiens returns pathways like R-HSA-109581 (Apoptosis), R-HSA-169911 (Regulation of Apoptosis), R-HSA-9635465 (Suppression of apoptosis). Use this to discover relevant pathways before querying their details. Results are paged: 'count' is how many entries came back, 'total_results' is how many matched in Reactome overall, and 'has_more' flags that the list is a slice -- use 'rows' and 'start' to page through the rest.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -18,6 +18,20 @@
           "type": "string",
           "description": "Entity type to search. Options: 'Pathway', 'Reaction', 'Complex', 'Protein', 'SmallMolecule'. Default: 'Pathway'.",
           "default": "Pathway"
+        },
+        "rows": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results to return per page (1-1000). Omit to use Reactome's default page of 10. Queries often match far more than that ('DNA repair' in Homo sapiens matches 455 pathways), so raise this to see beyond the first page. Compare the returned 'count' against 'total_results' to know how much you are holding."
+        },
+        "start": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Zero-based offset of the first result to return, for paging through large result sets. Use together with 'rows' (e.g. rows=50 with start=0, then start=50). Omit to start at the first result."
         }
       },
       "required": [
@@ -50,9 +64,21 @@
               "type": "string",
               "description": "Species filter applied"
             },
+            "count": {
+              "type": "integer",
+              "description": "Number of entries actually returned in 'results' on this page"
+            },
             "total_results": {
               "type": "integer",
-              "description": "Total number of results"
+              "description": "Total number of results matching the query in Reactome (upstream 'numberOfMatches'), which is usually far larger than 'count'"
+            },
+            "start": {
+              "type": "integer",
+              "description": "Zero-based offset of the first returned entry within the full result set"
+            },
+            "has_more": {
+              "type": "boolean",
+              "description": "True when more matching entries exist beyond this page; raise 'rows' or advance 'start' to reach them"
             },
             "results": {
               "type": "array",

@@ -23,11 +23,59 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "items": {
-            "type": "object"
+          "type": "object",
+          "description": "Search results plus the upstream match count, so a page of rows is distinguishable from the whole corpus.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success'"
+            },
+            "data": {
+              "type": "array",
+              "description": "List of NICE clinical guidelines.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Documents matching the query upstream. Null when the backend publishes no match count (a curated topic page rather than a search index)."
+                },
+                "retrieved": {
+                  "type": "integer",
+                  "description": "Rows fetched from upstream, before this tool filtered them."
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Rows in `data`. Fewer than `retrieved` means this tool dropped rows, not that upstream had fewer."
+                },
+                "truncated": {
+                  "type": "boolean",
+                  "description": "True when `total` exceeds `retrieved`."
+                },
+                "source": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "total",
+                "retrieved",
+                "returned",
+                "truncated"
+              ]
+            }
           },
-          "description": "List of NICE guidelines"
+          "required": [
+            "status",
+            "data",
+            "metadata"
+          ]
         },
         {
           "type": "object",
@@ -80,11 +128,59 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "description": "List of guidelines from PubMed_Guidelines_Search",
-          "items": {
-            "type": "object"
-          }
+          "type": "object",
+          "description": "Search results plus the upstream match count, so a page of rows is distinguishable from the whole corpus.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success'"
+            },
+            "data": {
+              "type": "array",
+              "description": "List of guidelines from PubMed.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Documents matching the query upstream. Null when the backend publishes no match count (a curated topic page rather than a search index)."
+                },
+                "retrieved": {
+                  "type": "integer",
+                  "description": "Rows fetched from upstream, before this tool filtered them."
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Rows in `data`. Fewer than `retrieved` means this tool dropped rows, not that upstream had fewer."
+                },
+                "truncated": {
+                  "type": "boolean",
+                  "description": "True when `total` exceeds `retrieved`."
+                },
+                "source": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "total",
+                "retrieved",
+                "returned",
+                "truncated"
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "data",
+            "metadata"
+          ]
         },
         {
           "type": "object",
@@ -131,11 +227,59 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "description": "List of guidelines from EuropePMC_Guidelines_Search",
-          "items": {
-            "type": "object"
-          }
+          "type": "object",
+          "description": "Search results plus the upstream match count, so a page of rows is distinguishable from the whole corpus.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success'"
+            },
+            "data": {
+              "type": "array",
+              "description": "List of guidelines from Europe PMC.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Documents matching the query upstream. Null when the backend publishes no match count (a curated topic page rather than a search index)."
+                },
+                "retrieved": {
+                  "type": "integer",
+                  "description": "Rows fetched from upstream, before this tool filtered them."
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Rows in `data`. Fewer than `retrieved` means this tool dropped rows, not that upstream had fewer."
+                },
+                "truncated": {
+                  "type": "boolean",
+                  "description": "True when `total` exceeds `retrieved`."
+                },
+                "source": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "total",
+                "retrieved",
+                "returned",
+                "truncated"
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "data",
+            "metadata"
+          ]
         },
         {
           "type": "object",
@@ -186,11 +330,59 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "description": "List of guidelines from TRIP_Database_Guidelines_Search",
-          "items": {
-            "type": "object"
-          }
+          "type": "object",
+          "description": "Search results plus the upstream match count, so a page of rows is distinguishable from the whole corpus.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success'"
+            },
+            "data": {
+              "type": "array",
+              "description": "List of guidelines from the TRIP Database.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Documents matching the query upstream. Null when the backend publishes no match count (a curated topic page rather than a search index)."
+                },
+                "retrieved": {
+                  "type": "integer",
+                  "description": "Rows fetched from upstream, before this tool filtered them."
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Rows in `data`. Fewer than `retrieved` means this tool dropped rows, not that upstream had fewer."
+                },
+                "truncated": {
+                  "type": "boolean",
+                  "description": "True when `total` exceeds `retrieved`."
+                },
+                "source": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "total",
+                "retrieved",
+                "returned",
+                "truncated"
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "data",
+            "metadata"
+          ]
         },
         {
           "type": "object",
@@ -216,7 +408,7 @@
   {
     "type": "WHOGuidelinesTool",
     "name": "WHO_Guidelines_Search",
-    "description": "Search WHO (World Health Organization) official clinical guidelines and health recommendations. Provides access to authoritative global health guidelines published by WHO.",
+    "description": "Search WHO (World Health Organization) official clinical guidelines and health recommendations. Provides access to authoritative global health guidelines published by WHO. Searches WHO's curated health-topic pages when the query names a WHO health topic, falling back to the query's first significant word (so 'malaria vaccine' can be answered by the whole malaria topic page), and otherwise searches the WHO IRIS institutional repository for the query term. Each result reports which answered it in 'matched_via', including the topic slug actually used, so a broadened match is visible. Both backends return WHO publications generally, not guidelines only, so 'is_guideline' is set only where the record's title or document type says so -- expect many results with 'is_guideline': false, including on topics where WHO does publish guidance under another name (handbooks, toolkits, operational manuals). A term WHO has no documents for returns an empty list.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -237,11 +429,124 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "description": "List of guidelines from WHO_Guidelines_Search",
-          "items": {
-            "type": "object"
-          }
+          "type": "object",
+          "description": "Search results plus the upstream match count, so a page of rows is distinguishable from the whole corpus.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success'"
+            },
+            "data": {
+              "type": "array",
+              "description": "List of WHO documents matching the query.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "content": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "organization": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_guideline": {
+                    "type": "boolean",
+                    "description": "True only where the record's title or document type identifies it as a guideline. WHO publishes guidance under other names (handbooks, toolkits, operational manuals), which this does not detect."
+                  },
+                  "official": {
+                    "type": "boolean"
+                  },
+                  "document_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "IRIS document type (e.g. 'Publications', 'Technical Documents', 'Journal articles'). Null for health-topic page results, which carry no type."
+                  },
+                  "date_issued": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "matched_via": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which backend answered: 'health_topic:<slug>' (the slug shows any broadening) or 'iris_search'."
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Documents matching the query upstream. Null when the backend publishes no match count (a curated topic page rather than a search index)."
+                },
+                "retrieved": {
+                  "type": "integer",
+                  "description": "Rows fetched from upstream, before this tool filtered them."
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Rows in `data`. Fewer than `retrieved` means this tool dropped rows, not that upstream had fewer."
+                },
+                "truncated": {
+                  "type": "boolean",
+                  "description": "True when `total` exceeds `retrieved`."
+                },
+                "source": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "total",
+                "retrieved",
+                "returned",
+                "truncated"
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "data",
+            "metadata"
+          ]
         },
         {
           "type": "object",
@@ -301,11 +606,59 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "description": "List of guidelines from OpenAlex_Guidelines_Search",
-          "items": {
-            "type": "object"
-          }
+          "type": "object",
+          "description": "Search results plus the upstream match count, so a page of rows is distinguishable from the whole corpus.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success'"
+            },
+            "data": {
+              "type": "array",
+              "description": "List of guidelines from OpenAlex.",
+              "items": {
+                "type": "object"
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Documents matching the query upstream. Null when the backend publishes no match count (a curated topic page rather than a search index)."
+                },
+                "retrieved": {
+                  "type": "integer",
+                  "description": "Rows fetched from upstream, before this tool filtered them."
+                },
+                "returned": {
+                  "type": "integer",
+                  "description": "Rows in `data`. Fewer than `retrieved` means this tool dropped rows, not that upstream had fewer."
+                },
+                "truncated": {
+                  "type": "boolean",
+                  "description": "True when `total` exceeds `retrieved`."
+                },
+                "source": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "total",
+                "retrieved",
+                "returned",
+                "truncated"
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "data",
+            "metadata"
+          ]
         },
         {
           "type": "object",

@@ -1,0 +1,100 @@
+[
+  {
+    "name": "MDDB_search_projects",
+    "type": "MDDBTool",
+    "description": "Search MDDB, an index of over 15,000 molecular dynamics simulation trajectories (MoDEL, BioExcel, DESRES-ANTON, and community depositions), by protein name or PDB id. Example: query='kinase' or query='6M71'. Returns each project's accession for use with MDDB_get_project.",
+    "fields": {
+      "operation": "search_projects"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Protein name or PDB id, e.g. 'kinase', '6M71'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max projects to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {"type": ["string", "null"]},
+              "name": {"type": ["string", "null"]},
+              "pdb_ids": {"type": "array", "items": {"type": "string"}},
+              "description": {"type": ["string", "null"]},
+              "force_field": {},
+              "program": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "kinase", "limit": 5},
+      {"query": "6M71", "limit": 5}
+    ]
+  },
+  {
+    "name": "MDDB_get_project",
+    "type": "MDDBTool",
+    "description": "Retrieve one MDDB molecular dynamics project's simulation parameters: force field, temperature, ensemble, simulation program, chains, replica count, total simulated time, frame count, and trajectory file size. Example: accession='MD-A001UA' returns a 10 microsecond Amber ff99SB-ILDN simulation of the SARS-CoV-2 RNA polymerase complex. Use MDDB_search_projects to find an accession.",
+    "fields": {
+      "operation": "get_project"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["accession"],
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "MDDB project accession, e.g. 'MD-A001UA'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "accession": {"type": ["string", "null"]},
+            "name": {"type": ["string", "null"]},
+            "pdb_ids": {"type": "array", "items": {"type": "string"}},
+            "description": {"type": ["string", "null"]},
+            "force_field": {},
+            "temperature_k": {"type": ["number", "null"]},
+            "ensemble": {"type": ["string", "null"]},
+            "program": {"type": ["string", "null"]},
+            "chains": {"type": "array", "items": {"type": "string"}},
+            "md_replica_count": {"type": ["integer", "null"]},
+            "total_simulated_time_ps": {"type": ["number", "null"]},
+            "total_frames": {"type": ["integer", "null"]},
+            "total_size_bytes": {"type": ["integer", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"accession": "MD-A001UA"},
+      {"accession": "MD-A00001"}
+    ]
+  }
+]

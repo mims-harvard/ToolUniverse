@@ -189,9 +189,9 @@ The report lists every optional dependency group that is not installed.
    uv pip install 'tooluniverse[ml]'              # ADMET-AI, embeddings
    uv pip install 'tooluniverse[visualization]'   # RDKit, py3Dmol, plotting
    uv pip install 'tooluniverse[bioinformatics]'  # Biopython, freesasa
-   uv pip install 'tooluniverse[all]'             # everything except the four below
+   uv pip install 'tooluniverse[all]'             # everything except the five below
 
-``[all]`` excludes ``singlecell``, ``smolagents``, ``client``, and ``build`` —
+``[all]`` excludes ``pdf``, ``singlecell``, ``smolagents``, ``client``, and ``build`` —
 install those by name.
 
 PyTorch / Lightning warnings during ML tool calls

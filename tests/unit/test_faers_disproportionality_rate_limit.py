@@ -62,7 +62,7 @@ def test_rate_limited_total_count_returns_actionable_error_not_negative_d():
         # The unfiltered total-count request (no `search=`) is rate limited;
         # every filtered request succeeds -- reproduces the exact live
         # scenario that produced a=0, b=283544, c=0, d=-283544.
-        if "limit=1" in url and "search=" not in url:
+        if "limit=0" in url and "search=" not in url:
             return _FakeResponse(429, {"error": {"code": "OVER_RATE_LIMIT"}})
         return _FakeResponse(200, {"meta": {"results": {"total": 283544}}})
 
@@ -89,7 +89,7 @@ def test_all_counts_succeed_produces_sane_positive_contingency_table():
     tool = _make_tool()
 
     def fake_request_with_retry(session, method, url, **kwargs):
-        if "limit=1" in url and "search=" not in url:
+        if "limit=0" in url and "search=" not in url:
             return _FakeResponse(200, {"meta": {"results": {"total": 20000000}}})
         if 'generic_name:"IBUPROFEN"' in url and "reactionmeddrapt" in url:
             return _FakeResponse(200, {"meta": {"results": {"total": 50}}})

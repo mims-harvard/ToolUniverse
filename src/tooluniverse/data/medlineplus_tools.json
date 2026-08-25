@@ -1,7 +1,7 @@
 [
   {
     "name": "MedlinePlus_search_topics_by_keyword",
-    "description": "Search for relevant information in MedlinePlus Web Service by keyword across health topics or other sub-libraries (such as drugs, genetics, etc.).",
+    "description": "Search MedlinePlus health topics by keyword via NLM's wsearch Web Service. IMPORTANT: although the db parameter accepts seven historical database names, the live service only returns results for healthTopics (English) and healthTopicsSpanish (Spanish); drugs, drugsSpanish, genetics, medicalTests and medicalEncyclopedia are accepted but always answer with zero results. Use MedlinePlus_get_genetics_gene_by_name / MedlinePlus_get_genetics_condition_by_name for genetics, and MedlinePlus_connect_lookup_by_code for drug/test codes.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -20,7 +20,7 @@
             "medicalTests",
             "medicalEncyclopedia"
           ],
-          "description": "Specify the database to search, e.g., healthTopics (English health topics), healthTopicsSpanish (Spanish health topics), drugs (English drugs), etc."
+          "description": "Database to search. Only two values are actually served by NLM's wsearch endpoint: healthTopics (English health topics) and healthTopicsSpanish (Spanish health topics). The remaining values (drugs, drugsSpanish, genetics, medicalTests, medicalEncyclopedia) are still accepted for backward compatibility but the service returns zero results for every query against them; the tool reports that explicitly instead of pretending the term had no match."
         },
         "rettype": {
           "type": "string",
@@ -29,7 +29,7 @@
             "topic",
             "all"
           ],
-          "description": "Result return format, options: brief (concise information, default), topic (detailed XML record), all (includes all available information).",
+          "description": "Result return format (default: topic). topic returns the full structured health-topic record (title, meta description, aliases, full summary, topic groups). brief returns the condensed search-result fields (title, alternate title, full summary, group names and a match snippet, which is surfaced as meta_desc); it carries no language attribute, so the language is derived from db. all returns the brief fields plus the same structured record as topic, and is parsed identically to topic. All three produce the same output keys.",
           "default": "topic"
         }
       },
@@ -40,8 +40,8 @@
     },
     "fields": {
       "endpoint": "https://wsearch.nlm.nih.gov/ws/query?db={db}&term={term}&rettype={rettype}",
-      "input_description": "Input parameters:\n- term: keyword to search (URL encoded);\n- db: database name, e.g., healthTopics, drugs, etc.;\n- rettype: return format, options: brief, topic, all.",
-      "output_description": "Returns MedlinePlus Web Service response XML, will contain title, summary, links, etc. for matching topics, the returned data will be parsed into a Python dictionary for subsequent use."
+      "input_description": "Input parameters:\n- term: keyword to search (URL encoded);\n- db: database name; only healthTopics and healthTopicsSpanish return results (the other enum values are accepted but always yield zero results);\n- rettype: return format, options: topic (default), brief, all.",
+      "output_description": "Returns {\"topics\": [...]} where each entry has title, meta_desc, url, language, rank, also_called, summary and groups, parsed from the wsearch XML. The same keys are produced for all three rettype values. On zero results the tool returns an error naming the cause, including an explicit note when the requested db is one that MedlinePlus wsearch does not serve."
     },
     "type": "MedlinePlusRESTTool",
     "test_examples": [
@@ -49,6 +49,11 @@
         "term": "cancer",
         "db": "healthTopics",
         "rettype": "topic"
+      },
+      {
+        "term": "leishmaniasis",
+        "db": "healthTopics",
+        "rettype": "brief"
       }
     ],
     "return_schema": {

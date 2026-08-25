@@ -9,12 +9,55 @@ API Documentation: https://www.dgidb.org/api
 """
 
 import requests
-from typing import Dict, Any, List
+from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 # Base URL for DGIdb GraphQL API
 DGIDB_BASE_URL = "https://dgidb.org/api/graphql"
+
+
+def _unmatched_names(
+    requested: list[Any], nodes: list[Any], prefix_match: bool = False
+) -> list[str]:
+    """Return the requested names DGIdb returned no node for.
+
+    Fix-R30: DGIdb's ``names:`` filter silently omits anything it cannot
+    resolve -- it does not error and does not report the omission. Verified
+    live against https://dgidb.org/api/graphql::
+
+        {"genes": ["JAK1", "NOTAREALGENEXYZ", "jak2"]}
+        -> {"data":{"genes":{"nodes":[{"name":"JAK2"},{"name":"JAK1"}]}}}
+
+    so a typo or an obsolete alias vanishes from an otherwise successful
+    answer. The two upstream matching modes were probed directly:
+
+    * genes -- exact, case-insensitive (``jak2`` -> ``JAK2``, but ``JAK``,
+      ``ERBB1`` and ``HER2`` all return zero nodes, so there is no prefix
+      or alias resolution to allow for).
+    * drugs -- case-insensitive *prefix* (``imatinib`` returns both
+      ``IMATINIB`` and ``IMATINIB MESYLATE``; ``imatin`` returns the same
+      pair; ``mesylate`` returns nothing). Hence ``prefix_match``.
+
+    The caller's original spelling is echoed back, not the normalized form.
+    """
+    returned = [
+        str(node.get("name") or "").strip().lower()
+        for node in nodes
+        if isinstance(node, dict)
+    ]
+    unmatched: list[str] = []
+    for name in requested:
+        key = str(name).strip().lower()
+        if not key:
+            continue
+        if prefix_match:
+            matched = any(r.startswith(key) for r in returned)
+        else:
+            matched = key in returned
+        if not matched and name not in unmatched:
+            unmatched.append(name)
+    return unmatched
 
 
 @register_tool("DGIdbTool")
@@ -36,7 +79,12 @@ class DGIdbTool(BaseTool):
         self.operation = tool_config.get("fields", {}).get("operation", "interactions")
 
     @staticmethod
-    def _envelope(payload: Dict[str, Any], collection: str) -> Dict[str, Any]:
+    def _envelope(
+        payload: Dict[str, Any],
+        collection: str,
+        requested: list[Any] | None = None,
+        prefix_match: bool = False,
+    ) -> Dict[str, Any]:
         """Unwrap the GraphQL ``data`` key into the standard envelope.
 
         DGIdb's GraphQL responses are shaped ``{"data": {<collection>:
@@ -44,6 +92,14 @@ class DGIdbTool(BaseTool):
         another ``data`` key produced an awkward ``data.data.<collection>``
         shape with no metadata. Unwrap one level so ``data`` holds the payload
         directly and attach a ``metadata.total`` node count.
+
+        Fix-R30: ``requested`` is the caller's input list. Names DGIdb did
+        not resolve are dropped from ``nodes`` with no trace, leaving an
+        unrecognised symbol byte-indistinguishable from a real gene that
+        simply has no interactions on record. When any are missing, report
+        ``<collection>_requested`` and ``unmatched_<collection>`` so the two
+        cases can be told apart. Both keys are omitted when everything
+        matched, keeping the happy-path payload unchanged.
         """
         if payload.get("errors"):
             return {"status": "error", "error": payload["errors"]}
@@ -65,6 +121,13 @@ class DGIdbTool(BaseTool):
         metadata = {"total": len(nodes), f"{collection}_returned": len(nodes)}
         if interaction_total:
             metadata["interactions_total"] = interaction_total
+
+        if requested:
+            unmatched = _unmatched_names(requested, nodes, prefix_match)
+            if unmatched:
+                metadata[f"{collection}_requested"] = len(requested)
+                metadata[f"unmatched_{collection}"] = unmatched
+
         return {
             "status": "success",
             "data": inner,
@@ -173,7 +236,7 @@ class DGIdbTool(BaseTool):
                         filtered.append(interaction)
                     node["interactions"] = filtered
 
-            return self._envelope(data, "genes")
+            return self._envelope(data, "genes", requested=genes)
         except requests.RequestException as e:
             return {"status": "error", "error": f"DGIdb API request failed: {str(e)}"}
 
@@ -216,7 +279,7 @@ class DGIdbTool(BaseTool):
                 timeout=self.timeout,
             )
             response.raise_for_status()
-            return self._envelope(response.json(), "genes")
+            return self._envelope(response.json(), "genes", requested=genes)
         except requests.RequestException as e:
             return {"status": "error", "error": f"DGIdb API request failed: {str(e)}"}
 
@@ -252,7 +315,9 @@ class DGIdbTool(BaseTool):
                 timeout=self.timeout,
             )
             response.raise_for_status()
-            return self._envelope(response.json(), "drugs")
+            return self._envelope(
+                response.json(), "drugs", requested=drugs, prefix_match=True
+            )
         except requests.RequestException as e:
             return {"status": "error", "error": f"DGIdb API request failed: {str(e)}"}
 
@@ -295,6 +360,6 @@ class DGIdbTool(BaseTool):
                 timeout=self.timeout,
             )
             response.raise_for_status()
-            return self._envelope(response.json(), "genes")
+            return self._envelope(response.json(), "genes", requested=genes)
         except requests.RequestException as e:
             return {"status": "error", "error": f"DGIdb API request failed: {str(e)}"}

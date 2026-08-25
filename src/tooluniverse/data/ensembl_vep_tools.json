@@ -122,6 +122,13 @@
                       "null"
                     ]
                   },
+                  "variant_allele": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The alternate allele this consequence is predicted for. For multi-allelic variants the same transcript appears once per allele, so this field is required to attribute a consequence to the correct allele."
+                  },
                   "consequence_terms": {
                     "type": "array",
                     "items": {
@@ -304,6 +311,13 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "variant_allele": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The alternate allele this consequence is predicted for. For multi-allelic variants the same transcript appears once per allele, so this field is required to attribute a consequence to the correct allele."
                   },
                   "consequence_terms": {
                     "type": "array",

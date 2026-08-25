@@ -32,7 +32,7 @@
         },
         "exact_match": {
           "type": "boolean",
-          "description": "Search for exact matches only (default: false)",
+          "description": "Restrict results to exact matches (default: false). The query must equal a term's label or one of its exact synonyms in full - substring and word-overlap hits are excluded, so 'fibroblast' returns CL:0000057 but not 'skin fibroblast'. If the query is instead an identifier (a CURIE such as 'CL:0000084', the OBO underscore form 'CL_0000084', or a full IRI), the exact match is applied to the obo_id/short_form/iri fields, which returns that identifier in every ontology that declares it - pass `ontology` to narrow it to one.",
           "default": false
         },
         "include_obsolete": {
@@ -173,6 +173,10 @@
             },
             "exact_match": {
               "type": "boolean"
+            },
+            "exact_match_fields": {
+              "type": "string",
+              "description": "Comma-separated OLS fields the exact match was applied to. Present only when exact_match is true."
             },
             "include_obsolete": {
               "type": "boolean"

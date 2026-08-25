@@ -1,0 +1,206 @@
+"""
+Guards on the declared runtime dependencies and on release version sync.
+
+Background: the PDF backend was declared as ``fitz>=0.0.1.dev2``. ``fitz`` is
+the *import* name of PyMuPDF, not its distribution name -- the PyPI project
+named ``fitz`` is an unrelated placeholder that has since been deactivated and
+now only publishes a 0.0.0 sdist that raises on build:
+
+    ERROR: Package 'fitz' has been deactivated and cannot be installed.
+    Please install 'pymupdf' instead.
+
+Once that happened the constraint became permanently unsatisfiable. Resolvers
+backtracked to the newest release without it (tooluniverse 0.2.0), which does
+not ship the ``tooluniverse`` console script, so the MCP server died at startup
+with "An executable named `tooluniverse` is not provided by package
+`tooluniverse`". The MCPB bundle re-resolves on every launch, so working
+installs broke without any local change.
+
+These tests reject the wrong distribution, keep PyMuPDF behind its explicit
+license-sensitive extra, keep the bundle's default dependency list in step with
+the root one, and keep every version marker moving together so a fix actually
+reaches PyPI.
+"""
+
+import json
+import re
+from importlib.metadata import packages_distributions
+from pathlib import Path
+
+import pytest
+
+tomllib = pytest.importorskip(
+    "tomllib", reason="TOML parsing requires Python 3.11+ (tomllib)"
+)
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+ROOT_PYPROJECT = REPO_ROOT / "pyproject.toml"
+MCPB_PYPROJECT = REPO_ROOT / "mcpb" / "pyproject.toml"
+MCPB_MANIFEST = REPO_ROOT / "mcpb" / "manifest.json"
+UV_LOCK = REPO_ROOT / "uv.lock"
+SRC_ROOT = REPO_ROOT / "src" / "tooluniverse"
+
+# PyPI projects that must never appear in dependencies, mapped to what to use
+# instead. These are names that look like the right dependency but resolve to an
+# unrelated or deactivated project.
+FORBIDDEN_DISTRIBUTIONS = {
+    "fitz": "pymupdf",
+}
+
+# mcpb/pyproject.toml documents itself as a mirror of the root dependency list.
+# Anything intentionally left out of the bundle belongs here with a reason.
+KNOWN_MCPB_OMISSIONS = {
+    # Not currently bundled; tracked separately from the pymupdf migration.
+    "openpyxl",
+}
+
+
+def _load_pyproject(pyproject_path):
+    with open(pyproject_path, "rb") as fh:
+        return tomllib.load(fh)["project"]
+
+
+def _load_dependencies(pyproject_path):
+    return _load_pyproject(pyproject_path)["dependencies"]
+
+
+def _distribution_name(requirement):
+    """Extract the normalized distribution name from a PEP 508 requirement."""
+    name = re.split(r"[<>=!~\[;\s]", requirement.strip(), maxsplit=1)[0]
+    return name.lower().replace("_", "-")
+
+
+def _names(pyproject_path):
+    return {_distribution_name(r) for r in _load_dependencies(pyproject_path)}
+
+
+def _requirements_by_name(pyproject_path):
+    return {
+        _distribution_name(requirement): requirement
+        for requirement in _load_dependencies(pyproject_path)
+    }
+
+
+def _project_version(pyproject_path):
+    with open(pyproject_path, "rb") as fh:
+        return tomllib.load(fh)["project"]["version"]
+
+
+@pytest.mark.parametrize("pyproject", [ROOT_PYPROJECT, MCPB_PYPROJECT])
+def test_no_forbidden_distributions(pyproject):
+    """No dependency may name a deactivated or wrong-project distribution."""
+    declared = _names(pyproject)
+    for forbidden, replacement in FORBIDDEN_DISTRIBUTIONS.items():
+        assert forbidden not in declared, (
+            f"{pyproject.relative_to(REPO_ROOT)} depends on '{forbidden}', which is "
+            f"not installable from PyPI. Use '{replacement}' instead."
+        )
+
+
+def test_pymupdf_is_an_explicit_root_extra_only():
+    """Do not impose PyMuPDF's AGPL/commercial terms on default installs."""
+    root = _load_pyproject(ROOT_PYPROJECT)
+    root_default = {_distribution_name(r) for r in root["dependencies"]}
+    mcpb_default = _names(MCPB_PYPROJECT)
+    pdf_extra = {
+        _distribution_name(r) for r in root["optional-dependencies"].get("pdf", [])
+    }
+    all_extra = " ".join(root["optional-dependencies"]["all"]).lower()
+
+    assert "pymupdf" not in root_default
+    assert "pymupdf" not in mcpb_default
+    assert pdf_extra == {"pymupdf"}
+    assert "pdf" not in all_extra
+
+
+def test_mcpb_dependencies_mirror_root():
+    """The bundle list is documented as a mirror of the root list."""
+    root_requirements = _requirements_by_name(ROOT_PYPROJECT)
+    mcpb_requirements = _requirements_by_name(MCPB_PYPROJECT)
+    root = set(root_requirements)
+    mcpb = set(mcpb_requirements)
+
+    missing = root - mcpb - KNOWN_MCPB_OMISSIONS
+    assert not missing, (
+        f"mcpb/pyproject.toml is missing dependencies present in the root "
+        f"pyproject.toml: {sorted(missing)}. Add them, or record them in "
+        f"KNOWN_MCPB_OMISSIONS with a reason."
+    )
+
+    extra = mcpb - root
+    assert not extra, (
+        f"mcpb/pyproject.toml declares dependencies absent from the root "
+        f"pyproject.toml: {sorted(extra)}."
+    )
+
+    mismatched = {
+        name: (root_requirements[name], mcpb_requirements[name])
+        for name in root & mcpb
+        if root_requirements[name] != mcpb_requirements[name]
+    }
+    assert not mismatched, (
+        "mcpb/pyproject.toml has dependency constraints that differ from the "
+        f"root pyproject.toml: {mismatched}."
+    )
+
+
+def test_release_versions_move_together():
+    """A release must bump the package, the bundle, the manifest, and the lock.
+
+    publish-pypi.yml gates on the root pyproject version being newer than the
+    latest release on PyPI, so a fix that lands without a bump never ships. The
+    lockfile records the project's own version too; leaving it behind breaks
+    `uv sync --locked`.
+    """
+    root_version = _project_version(ROOT_PYPROJECT)
+    mcpb_version = _project_version(MCPB_PYPROJECT)
+    manifest_version = json.loads(MCPB_MANIFEST.read_text())["version"]
+
+    assert root_version == mcpb_version == manifest_version, (
+        f"Version drift: pyproject.toml={root_version}, "
+        f"mcpb/pyproject.toml={mcpb_version}, mcpb/manifest.json={manifest_version}"
+    )
+
+    lock_match = re.search(
+        r'\[\[package\]\]\nname = "tooluniverse"\nversion = "([^"]+)"',
+        UV_LOCK.read_text(),
+    )
+    assert lock_match, "Could not find the tooluniverse package entry in uv.lock"
+    assert lock_match.group(1) == root_version, (
+        f"uv.lock records tooluniverse {lock_match.group(1)} but pyproject.toml "
+        f"declares {root_version}; run `uv lock` after bumping the version."
+    )
+
+
+def test_pymupdf_module_is_provided_by_pymupdf():
+    """Confirm the `pymupdf` module comes from the PyMuPDF distribution."""
+    pymupdf = pytest.importorskip("pymupdf", reason="PyMuPDF is not installed")
+    assert hasattr(pymupdf, "open"), "`import pymupdf` did not provide PyMuPDF's API."
+
+    providers = packages_distributions().get("pymupdf", [])
+    assert [p.lower() for p in providers] == ["pymupdf"], (
+        f"The `pymupdf` module is provided by {providers or 'an unknown distribution'}, "
+        "expected ['pymupdf']."
+    )
+
+
+def test_sources_use_canonical_pymupdf_import():
+    """PDF consumers must import `pymupdf`, not PyMuPDF's deprecated `fitz` shim.
+
+    PyMuPDF still ships a `fitz` alias, but importing it emits a deprecation
+    warning and it is slated for removal. A bare `import fitz` would also start
+    resolving against the placeholder distribution again if it ever returns.
+    """
+    offenders = []
+    for path in SRC_ROOT.rglob("*.py"):
+        for lineno, line in enumerate(
+            path.read_text(encoding="utf-8", errors="ignore").splitlines(), 1
+        ):
+            stripped = line.strip()
+            if re.match(r"^(import fitz\b|from fitz\b)", stripped):
+                offenders.append(f"{path.relative_to(REPO_ROOT)}:{lineno}: {stripped}")
+
+    assert not offenders, (
+        "Use `import pymupdf as fitz` instead of the deprecated `fitz` alias:\n"
+        + "\n".join(offenders)
+    )

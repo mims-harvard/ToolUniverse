@@ -1,0 +1,92 @@
+[
+  {
+    "name": "BAR_get_gene_info",
+    "type": "BARTool",
+    "description": "Get plant gene annotation from the BAR (Bio-Analytic Resource for Plant Biology, a Global Core Biodata Resource): genomic position, strand, aliases, and functional annotation. Example: gene_id='AT1G01010' (species='arabidopsis', the default) returns NAC domain protein 1's Chr1 coordinates and aliases ANAC001/NAC001/NTL10. Distinct from ToolUniverse's plant_reactome tools, which cover pathways, not per-gene annotation.",
+    "fields": {
+      "operation": "get_gene_info"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["gene_id"],
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Gene locus identifier, e.g. 'AT1G01010' (Arabidopsis)."
+        },
+        "species": {
+          "type": ["string", "null"],
+          "description": "Species, e.g. 'arabidopsis' (default)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {"type": ["string", "null"]},
+            "chromosome": {"type": ["string", "null"]},
+            "start": {"type": ["integer", "null"]},
+            "end": {"type": ["integer", "null"]},
+            "strand": {"type": ["string", "null"]},
+            "aliases": {"type": "array", "items": {"type": "string"}},
+            "annotation": {"type": ["string", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"gene_id": "AT1G01010"},
+      {"gene_id": "AT3G62980"}
+    ]
+  },
+  {
+    "name": "BAR_get_rnaseq_expression",
+    "type": "BARTool",
+    "description": "Get RNA-seq gene expression data from the BAR (Bio-Analytic Resource for Plant Biology). database='single_cell' (the default) returns per-cluster mean expression across replicates from single-cell atlases -- a data type no other ToolUniverse plant tool exposes. Example: gene_id='At1g01010' returns its mean expression value in each of dozens of single-cell clusters.",
+    "fields": {
+      "operation": "get_rnaseq_expression"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["gene_id"],
+      "properties": {
+        "gene_id": {
+          "type": "string",
+          "description": "Gene locus identifier, e.g. 'At1g01010' (Arabidopsis)."
+        },
+        "species": {
+          "type": ["string", "null"],
+          "description": "Species, e.g. 'arabidopsis' (default)."
+        },
+        "database": {
+          "type": ["string", "null"],
+          "description": "RNA-seq dataset, e.g. 'single_cell' (default)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": {"type": "number"}
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"gene_id": "At1g01010"},
+      {"gene_id": "At3g62980"}
+    ]
+  }
+]

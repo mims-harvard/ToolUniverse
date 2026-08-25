@@ -299,8 +299,6 @@ class ESMTool(BaseTool):
 
             # Compute mean log-prob (pseudo-likelihood) per residue
             import torch
-            from . import configure_torch_cpu as _cfg_cpu
-            _cfg_cpu()
             import torch.nn.functional as F
 
             seq_logits = logits_output.logits.sequence  # (L+2, vocab)

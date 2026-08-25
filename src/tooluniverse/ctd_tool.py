@@ -50,6 +50,14 @@ _GENE_CHEMICAL_SUGGESTION = (
     "Use DGIdb_get_drug_gene_interactions for drug-gene interactions, or "
     "ChEMBL/OpenTargets tools for target-compound bioactivity data."
 )
+_CHEMICAL_NAME_SUGGESTION = (
+    "CTD's canonical chemical names are MeSH chemical names, so a common "
+    "trade name or an informally worded synonym can miss even when the "
+    "substance is covered. Retry with the MeSH descriptor/supplementary "
+    "concept name, a MeSH chemical ID (e.g. 'D002857', optionally prefixed "
+    "'MESH:'), or a CAS Registry Number. ChEBI_search or "
+    "PubChem name lookups can resolve a synonym to a canonical name first."
+)
 
 
 def _term_and_prefix(term: str) -> tuple:
@@ -186,18 +194,75 @@ class CTDTool(BaseTool):
             return {
                 "status": "error",
                 "error": f"'{term}' was not found among CTD's curated chemical-disease associations.",
+                "suggestion": _CHEMICAL_NAME_SUGGESTION,
                 "metadata": metadata,
             }
-        edges = []
-        for hit in hits:
-            disease_id = hit.get("_id")
-            disease_name = (hit.get("mondo") or {}).get("label")
-            for entry in _ctd_disease_entries(hit):
-                if not _entry_matches(entry, field, value):
-                    continue
-                edges.append(_format_chem_disease_edge(entry, disease_id, disease_name))
-        metadata["total_results"] = len(edges)
-        return {"status": "success", "data": edges, "metadata": metadata}
+
+        edges = _collect_chem_disease_edges(hits, field, value)
+        if edges:
+            metadata["total_results"] = len(edges)
+            return {"status": "success", "data": edges, "metadata": metadata}
+
+        # The upstream phrase query DID match documents, but no nested entry
+        # carries `value` verbatim, so the strict post-filter above threw every
+        # fetched row away. Returning `success` with `data: []` here would be a
+        # lie the caller cannot distinguish from "CTD curates nothing for this
+        # chemical" -- exactly the failure seen for "chromium, hexavalent",
+        # which matches 55 documents whose entries are all named
+        # "chromium hexavalent ion". Elasticsearch matched the caller's phrase
+        # as a sub-phrase of the stored value, so reconstruct which stored
+        # values could have produced the match and surface them.
+        candidates = _phrase_candidates(hits, field, value)
+        if len(candidates) == 1:
+            resolved = candidates[0]
+            edges = _collect_chem_disease_edges(hits, field, resolved)
+            if edges:
+                key = (
+                    "resolved_chemical_name"
+                    if field == "chemical_name"
+                    else "resolved_match_value"
+                )
+                metadata[key] = resolved
+                metadata["normalization_note"] = (
+                    f"No CTD entry is named exactly '{value}'. All "
+                    f"{len(hits)} matching CTD document(s) use the single "
+                    f"canonical value '{resolved}' for "
+                    f"{metadata['matched_field']}, so that value was used "
+                    "instead. Re-run with it for an unambiguous query."
+                )
+                metadata["total_results"] = len(edges)
+                return {"status": "success", "data": edges, "metadata": metadata}
+
+        metadata["total_results"] = 0
+        if candidates:
+            metadata["candidates"] = candidates
+            shown = ", ".join(repr(c) for c in candidates[:10])
+            extra = "" if len(candidates) <= 10 else f", and {len(candidates) - 10} more"
+            return {
+                "status": "error",
+                "error": (
+                    f"'{term}' is not a canonical CTD value for "
+                    f"{metadata['matched_field']}. It matched {len(hits)} CTD "
+                    f"document(s), but those records are curated under "
+                    f"{len(candidates)} different values: {shown}{extra}. "
+                    "Re-run with exactly one of these so the result is "
+                    "unambiguous."
+                ),
+                "suggestion": _CHEMICAL_NAME_SUGGESTION,
+                "metadata": metadata,
+            }
+        return {
+            "status": "error",
+            "error": (
+                f"'{term}' matched {len(hits)} CTD document(s) upstream, but "
+                f"none of their curated entries carry '{value}' in {field}, "
+                "and no canonical CTD value could be derived from them. The "
+                "upstream match was a partial text match rather than a real "
+                "chemical identity, so no association can be reported."
+            ),
+            "suggestion": _CHEMICAL_NAME_SUGGESTION,
+            "metadata": metadata,
+        }
 
     def _disease_to_chemicals(self, term: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
         mondo_id, disease_label = self._resolve_disease(term)
@@ -303,11 +368,89 @@ def _pubmed_ids(entry: Dict[str, Any]) -> Any:
     return [pubmed] if pubmed else []
 
 
+def _entry_values(entry: Dict[str, Any], field: str) -> List[str]:
+    """Every non-empty string value an entry carries for `field`.
+
+    BioThings sometimes collapses repeated sub-fields into a list, so a single
+    entry's `chemical_name` may be either a scalar or a list of scalars.
+    """
+    raw = entry.get(field)
+    if raw is None:
+        return []
+    values = raw if isinstance(raw, list) else [raw]
+    return [str(v).strip() for v in values if v is not None and str(v).strip()]
+
+
 def _entry_matches(entry: Dict[str, Any], field: str, value: str) -> bool:
-    entry_value = entry.get(field)
-    if entry_value is None:
+    """Strict, case-insensitive full-string match -- the preferred match.
+
+    Deliberately NOT a substring match: `"chromium"` must keep meaning the CTD
+    chemical named `Chromium` and must never silently widen to
+    `"chromium hexavalent ion"`. Callers that find zero strict matches against
+    a non-empty hit set go through `_phrase_candidates` instead, which
+    discloses the widening.
+    """
+    wanted = value.strip().lower()
+    return any(v.lower() == wanted for v in _entry_values(entry, field))
+
+
+_TOKEN_RE = re.compile(r"[a-z0-9]+")
+
+
+def _tokens(value: str) -> List[str]:
+    return _TOKEN_RE.findall(str(value).lower())
+
+
+def _is_subphrase(needle: List[str], haystack: List[str]) -> bool:
+    """True if `needle` occurs as a contiguous run of tokens within `haystack`."""
+    if not needle or len(needle) > len(haystack):
         return False
-    return str(entry_value).strip().lower() == value.strip().lower()
+    return any(
+        haystack[i : i + len(needle)] == needle
+        for i in range(len(haystack) - len(needle) + 1)
+    )
+
+
+def _phrase_candidates(
+    hits: List[Dict[str, Any]], field: str, value: str
+) -> List[str]:
+    """Distinct stored values that could have produced the upstream match.
+
+    mydisease.info runs the tool's `field:"<value>"` query as an Elasticsearch
+    phrase query over an analysed text field, so it matches whenever the
+    caller's tokens appear as a contiguous run inside the stored value --
+    `"chromium, hexavalent"` matches the stored `"chromium hexavalent ion"`.
+    Reconstructing that same sub-phrase rule locally tells us which stored
+    values the caller actually reached, without inventing a synonym table and
+    without loosening the strict match in `_entry_matches`. Order of first
+    appearance is preserved and comparison is case-insensitive.
+    """
+    needle = _tokens(value)
+    found: Dict[str, str] = {}
+    for hit in hits:
+        for entry in _ctd_disease_entries(hit):
+            for text in _entry_values(entry, field):
+                key = text.lower()
+                if key in found:
+                    continue
+                if _is_subphrase(needle, _tokens(text)):
+                    found[key] = text
+    return list(found.values())
+
+
+def _collect_chem_disease_edges(
+    hits: List[Dict[str, Any]], field: str, value: str
+) -> List[Dict[str, Any]]:
+    """Format every nested CTD entry across `hits` that strictly matches `value`."""
+    edges: List[Dict[str, Any]] = []
+    for hit in hits:
+        disease_id = hit.get("_id")
+        disease_name = (hit.get("mondo") or {}).get("label")
+        for entry in _ctd_disease_entries(hit):
+            if not _entry_matches(entry, field, value):
+                continue
+            edges.append(_format_chem_disease_edge(entry, disease_id, disease_name))
+    return edges
 
 
 _EVIDENCE_TO_PREDICATE = {

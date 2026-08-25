@@ -1410,17 +1410,13 @@
   {
     "type": "ChEMBLRESTTool",
     "name": "ChEMBL_search_binding_sites",
-    "description": "Search binding sites by target, site name, or other criteria.",
+    "description": "Search binding sites by site name. ChEMBL's /binding_site resource filters only on site_id, site_name and site_components -- it cannot be filtered by target, so use ChEMBL_get_target or ChEMBL_search_targets for target-centric queries.",
     "fields": {
       "endpoint": "/binding_site.json"
     },
     "parameter": {
       "type": "object",
       "properties": {
-        "target_chembl_id": {
-          "type": "string",
-          "description": "Filter by target ChEMBL ID"
-        },
         "site_name__contains": {
           "type": "string",
           "description": "Filter by site name (contains)"
@@ -1461,7 +1457,7 @@
     },
     "test_examples": [
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "site_name__contains": "kinase",
         "limit": 10
       }
     ]
@@ -1739,17 +1735,13 @@
   {
     "type": "ChEMBLRESTTool",
     "name": "ChEMBL_search_protein_classification",
-    "description": "Search protein classifications by target, classification type, or other criteria. To find a target ID, use ChEMBL_search_targets.",
+    "description": "Browse ChEMBL's protein family classification by class ID. ChEMBL's /protein_classification resource filters only on its own class fields (protein_class_id, pref_name, short_name, class_level, parent_id, protein_class_desc, definition, sort_order) -- it cannot be filtered by target, so use ChEMBL_get_target and read its target_components for a specific target's classification.",
     "fields": {
       "endpoint": "/protein_classification.json"
     },
     "parameter": {
       "type": "object",
       "properties": {
-        "target_chembl_id": {
-          "type": "string",
-          "description": "Filter by target ChEMBL ID"
-        },
         "protein_class_id": {
           "type": "string",
           "description": "Filter by protein class ID"
@@ -1790,7 +1782,7 @@
     },
     "test_examples": [
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "protein_class_id": "2",
         "limit": 10
       }
     ]
@@ -1860,9 +1852,9 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "document_id": {
+        "document_chembl_id": {
           "type": "string",
-          "description": "Filter by document ID"
+          "description": "Filter by document ChEMBL ID (e.g. 'CHEMBL1158643'). This is the identifier /document indexes on; the internal numeric document_id is not a filter ChEMBL accepts."
         },
         "title__contains": {
           "type": "string",
@@ -2041,9 +2033,9 @@
           "type": "string",
           "description": "Filter by molecule ChEMBL ID"
         },
-        "alert_name__contains": {
+        "alert__alert_name__icontains": {
           "type": "string",
-          "description": "Filter by alert name (contains)"
+          "description": "Filter by alert name, case-insensitive substring (e.g. 'nitro'). The alert name lives on the related alert record, so it is reached through 'alert__'; a bare alert_name filter is not one ChEMBL accepts."
         },
         "limit": {
           "type": "integer",

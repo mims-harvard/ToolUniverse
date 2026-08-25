@@ -276,6 +276,10 @@ def clinical_guidelines_search_workflow(query: str, max_results_per_source: int 
                 # Handle different response formats
                 if isinstance(guidelines, list):
                     guideline_list = guidelines
+                elif isinstance(guidelines, dict) and 'data' in guidelines:
+                    # Sources that publish a match count return
+                    # {"status", "data", "metadata"}; the rest return a list.
+                    guideline_list = guidelines['data']
                 elif isinstance(guidelines, dict) and 'guidelines' in guidelines:
                     guideline_list = guidelines['guidelines']
                 elif isinstance(guidelines, dict) and 'results' in guidelines:

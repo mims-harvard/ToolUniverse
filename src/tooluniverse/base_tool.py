@@ -16,6 +16,69 @@ import hashlib
 import inspect
 
 
+def request_url(sent: Any, endpoint: str) -> str:
+    """The URI actually sent, falling back to ``endpoint``.
+
+    A tool that puts its query in ``params=`` and then echoes the endpoint
+    constant publishes a URL identical for every call, which no caller can
+    replay -- so echo what the HTTP layer resolved instead. ``sent`` is a
+    Response or a PreparedRequest; both carry ``.url``. Stubbed responses in
+    tests carry a non-string there, which must never reach the payload.
+    """
+    resolved = getattr(sent, "url", None)
+    return resolved if isinstance(resolved, str) and resolved else endpoint
+
+
+def resolve_configured_operation(tool_config: Any) -> Optional[str]:
+    """Return the ``operation`` a tool's own config implies, if any.
+
+    Many multi-operation tool classes are registered once per operation and
+    still read ``arguments["operation"]``, so ToolUniverse fills that key in
+    from the tool's own config (``fields.operation``, else the schema default)
+    before the tool runs -- see
+    ``ToolUniverse._apply_operation_default``. Both the injection and the
+    validation-side recognition of the injected key resolve the value through
+    this single function, so the two cannot drift apart.
+    """
+    if not isinstance(tool_config, dict):
+        return None
+    operation = (tool_config.get("fields") or {}).get("operation")
+    if not operation:
+        schema = tool_config.get("parameter") or {}
+        prop = (schema.get("properties") or {}).get("operation")
+        if isinstance(prop, dict):
+            operation = prop.get("default")
+    return operation if isinstance(operation, str) and operation else None
+
+
+def null_result_error(tool_name: Any) -> Dict[str, Any]:
+    """The response for a tool that returned ``None``.
+
+    Fix-47-4: there is no tool for which ``None`` is a valid answer, but the
+    dispatch wrappers used to fall back on a generic ``{"result": <value>}``
+    envelope, so a ``None`` became ``{"result": None}`` -- a dict carrying
+    neither ``status`` nor ``error``, which the CLI prints as
+    ``{"result": null}`` and exits 0 on. Every one of those was a failed call
+    presented as a successful empty answer: for the openFDA label family
+    (157 tools) ``{"result": null}`` in reply to a boxed-warning question
+    reads as "this drug has no boxed warning".
+
+    The openFDA path that produced most of them is fixed at source in
+    ``openfda_tool.search_openfda``, but a ``None`` from ANY tool reaches the
+    caller through these wrappers, so the invariant is stated once here and
+    applied by each of them rather than re-worded per call site.
+    """
+    return {
+        "status": "error",
+        "error": (
+            f"Tool '{tool_name}' returned no result. This is a failure of the "
+            "call, not an answer: it does not mean the query matched nothing, "
+            "and no conclusion may be drawn from it. Retry, and if it "
+            "persists report the tool name and arguments."
+        ),
+    }
+
+
 class BaseTool:
     STATIC_CACHE_VERSION = "1"
 
@@ -295,6 +358,42 @@ class BaseTool:
                 k: v for k, v in arguments.items() if k not in internal_params
             }
 
+            # Feature-26A-8: ToolUniverse fills `operation` into `arguments`
+            # from the tool's own config before validation, for the tool
+            # classes that read it from there. The caller never sent it, so
+            # the unrecognized-parameter reporting below must not see it:
+            # `Pharos_get_target_expression {"target": "EGFR"}` was answered
+            # with "Unrecognized parameter(s): 'target', 'operation'", naming a
+            # parameter the caller did not pass and could not remove. Drop the
+            # key only when its value is exactly what the config would have
+            # supplied -- a caller-supplied `operation` that says anything else
+            # is a genuine mistake and stays in the report. Dropping it from
+            # `checked_arguments` (not just from the message) also keeps the
+            # total-mismatch guard honest in both directions: the injected key
+            # must not pad the "recognized" side for the 348 configs that do
+            # declare `operation`, nor pad the "unknown" side for the 235 that
+            # do not. jsonschema itself still sees the full argument set.
+            #
+            # Feature-34A-1: this must be computed *before* the
+            # `jsonschema.validate` call below, not after it. The caller-blame
+            # reporting in the `except jsonschema.ValidationError` handler
+            # needs `checked_arguments` too, and that handler runs precisely
+            # when `validate` raised -- so a binding created after the call
+            # would not exist there, and the handler fell back to the raw
+            # `filtered_arguments`, re-introducing the exact blame this drop
+            # exists to prevent: `ARCHS4_get_gene_expression
+            # {"gene_symbol": "ATM"}` was answered with "'gene' is a required
+            # property (unrecognized parameter(s): 'gene_symbol',
+            # 'operation')". Keep passing the *full* `filtered_arguments` to
+            # `jsonschema.validate` itself -- only the blame reporting uses
+            # the filtered view, so no accept/reject outcome changes.
+            checked_arguments = filtered_arguments
+            auto_operation = resolve_configured_operation(self.tool_config)
+            if auto_operation and filtered_arguments.get("operation") == auto_operation:
+                checked_arguments = {
+                    k: v for k, v in filtered_arguments.items() if k != "operation"
+                }
+
             jsonschema.validate(filtered_arguments, schema)
 
             # Feature-14A-01 / Feature-14B-01: jsonschema only rejects an
@@ -325,10 +424,10 @@ class BaseTool:
             # risk of being a genuine mistake, and flagging it risks
             # rejecting legitimate pass-through/forward-compatible callers.
             properties = schema.get("properties", {})
-            if properties and filtered_arguments:
-                unknown = self._unknown_keys(filtered_arguments, properties)
+            if properties and checked_arguments:
+                unknown = self._unknown_keys(checked_arguments, properties)
                 if unknown:
-                    unset_props = [p for p in properties if p not in filtered_arguments]
+                    unset_props = [p for p in properties if p not in checked_arguments]
                     # Match each *unknown supplied key* (typically 1-2) against
                     # the unset schema properties (can be 30+ for a
                     # filter-heavy endpoint), rather than the reverse -- same
@@ -351,7 +450,7 @@ class BaseTool:
                                 "valid_parameters": sorted(properties),
                             },
                         )
-                    if len(unknown) == len(filtered_arguments):
+                    if len(unknown) == len(checked_arguments):
                         return ToolValidationError(
                             f"Unrecognized parameter(s): "
                             f"{', '.join(repr(k) for k in unknown)}. "
@@ -396,7 +495,7 @@ class BaseTool:
                     missing_prop = _m.group(1)
                     wrong_key = self._find_misspelled_key(
                         missing_prop,
-                        filtered_arguments,
+                        checked_arguments,
                         properties=schema.get("properties", {}),
                     )
                     if wrong_key is not None:
@@ -406,7 +505,7 @@ class BaseTool:
                         )
                     else:
                         unknown = self._unknown_keys(
-                            filtered_arguments, schema.get("properties", {})
+                            checked_arguments, schema.get("properties", {})
                         )
                         if unknown:
                             error_msg += (
@@ -438,7 +537,7 @@ class BaseTool:
                         continue
                     wrong_key = self._find_misspelled_key(
                         alt_prop,
-                        filtered_arguments,
+                        checked_arguments,
                         properties=schema.get("properties", {}),
                     )
                     if wrong_key is not None:
@@ -448,7 +547,7 @@ class BaseTool:
                         break
                 else:
                     unknown = self._unknown_keys(
-                        filtered_arguments, schema.get("properties", {})
+                        checked_arguments, schema.get("properties", {})
                     )
                     if unknown:
                         error_msg += (

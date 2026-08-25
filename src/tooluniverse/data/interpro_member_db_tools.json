@@ -227,6 +227,10 @@
                   }
                 }
               }
+            },
+            "note": {
+              "type": "string",
+              "description": "Present only when InterPro returned HTTP 204 No Content: explains that the query was valid but matched zero signatures (optionally noting which filter narrowed it to zero)."
             }
           },
           "required": [
@@ -337,6 +341,10 @@
                   }
                 }
               }
+            },
+            "note": {
+              "type": "string",
+              "description": "Present only when InterPro returned HTTP 204 No Content: explains that the query was valid but matched zero PDB structures."
             }
           },
           "required": [

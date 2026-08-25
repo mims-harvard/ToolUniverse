@@ -1,7 +1,7 @@
 [
   {
     "name": "ClinGenAllele_lookup_hgvs",
-    "description": "Look up a genetic variant by HGVS expression in the ClinGen Allele Registry to get its canonical allele identifier (CA ID) and cross-references to ClinVar, dbSNP, COSMIC, gnomAD, and other databases. Accepts genomic (NC_*), coding (NM_*), or protein (NP_*) HGVS expressions.",
+    "description": "Look up a genetic variant by HGVS expression in the ClinGen Allele Registry to get its canonical allele identifier (CA ID) and cross-references to ClinVar, dbSNP, COSMIC, gnomAD, and other databases. Accepts genomic (NC_*), coding (NM_*), or protein (NP_*) HGVS expressions. COORDINATES: every genomic_alleles row reports start/end in 0-based interbase (half-open) form and carries a 'coordinate_system' field saying so; the 1-based genomic position used by HGVS, VCF and gnomAD is start+1 (e.g. start 32332711 = g.32332712). Each row also carries 'reference_sequence', the registry RefSeq URI (e.g. http://reg.genome.network/refseq/RS000061) identifying the sequence the coordinates are counted against - for RefSeqGene/LRG rows that have no reference_genome and no chromosome, this is the only field identifying the coordinate frame.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -45,11 +45,25 @@
             "type": "object",
             "properties": {
               "chromosome": {"type": ["string", "null"]},
-              "start": {"type": ["integer", "null"]},
-              "end": {"type": ["integer", "null"]},
+              "start": {
+                "type": ["integer", "null"],
+                "description": "0-based interbase start. NOT a 1-based genomic position: add 1 to compare with HGVS g./VCF/gnomAD coordinates. See coordinate_system."
+              },
+              "end": {
+                "type": ["integer", "null"],
+                "description": "0-based interbase end, exclusive. For a single-nucleotide substitution end equals the 1-based genomic position. See coordinate_system."
+              },
               "allele": {"type": ["string", "null"]},
               "reference_allele": {"type": ["string", "null"]},
-              "reference_genome": {"type": ["string", "null"]}
+              "reference_genome": {"type": ["string", "null"]},
+              "reference_sequence": {
+                "type": ["string", "null"],
+                "description": "ClinGen registry RefSeq URI for the sequence these coordinates are counted against (e.g. 'http://reg.genome.network/refseq/RS000061'). On RefSeqGene/LRG rows, where reference_genome and chromosome are null, this is the only identifier of the coordinate frame."
+              },
+              "coordinate_system": {
+                "type": ["string", "null"],
+                "description": "Machine-readable coordinate convention for start/end on this row. Always '0-based interbase (half-open); start is 0-based, end is exclusive - the 1-based genomic position is start+1'."
+              }
             }
           }
         },
@@ -60,7 +74,11 @@
             "properties": {
               "hgvs": {"type": ["array", "null"], "items": {"type": "string"}},
               "gene_symbol": {"type": ["string", "null"]},
-              "protein_effect": {"type": ["string", "null"]}
+              "protein_effect": {"type": ["string", "null"]},
+              "reference_sequence": {
+                "type": ["string", "null"],
+                "description": "ClinGen registry RefSeq URI for the transcript this HGVS is expressed against (e.g. 'http://reg.genome.network/refseq/RS914116')."
+              }
             }
           }
         }
@@ -69,7 +87,7 @@
   },
   {
     "name": "ClinGenAllele_get_allele",
-    "description": "Get detailed information for a canonical allele by its ClinGen Allele Registry CA ID. Returns cross-references to ClinVar, dbSNP, COSMIC, gnomAD, genomic coordinates, and transcript-level HGVS expressions.",
+    "description": "Get detailed information for a canonical allele by its ClinGen Allele Registry CA ID. Returns cross-references to ClinVar, dbSNP, COSMIC, gnomAD, genomic coordinates, and transcript-level HGVS expressions. COORDINATES: every genomic_alleles row reports start/end in 0-based interbase (half-open) form and carries a 'coordinate_system' field saying so; the 1-based genomic position used by HGVS, VCF and gnomAD is start+1 (e.g. start 32332711 = g.32332712). Each row also carries 'reference_sequence', the registry RefSeq URI (e.g. http://reg.genome.network/refseq/RS000061) identifying the sequence the coordinates are counted against - for RefSeqGene/LRG rows that have no reference_genome and no chromosome, this is the only field identifying the coordinate frame.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -114,11 +132,25 @@
             "type": "object",
             "properties": {
               "chromosome": {"type": ["string", "null"]},
-              "start": {"type": ["integer", "null"]},
-              "end": {"type": ["integer", "null"]},
+              "start": {
+                "type": ["integer", "null"],
+                "description": "0-based interbase start. NOT a 1-based genomic position: add 1 to compare with HGVS g./VCF/gnomAD coordinates. See coordinate_system."
+              },
+              "end": {
+                "type": ["integer", "null"],
+                "description": "0-based interbase end, exclusive. For a single-nucleotide substitution end equals the 1-based genomic position. See coordinate_system."
+              },
               "allele": {"type": ["string", "null"]},
               "reference_allele": {"type": ["string", "null"]},
-              "reference_genome": {"type": ["string", "null"]}
+              "reference_genome": {"type": ["string", "null"]},
+              "reference_sequence": {
+                "type": ["string", "null"],
+                "description": "ClinGen registry RefSeq URI for the sequence these coordinates are counted against (e.g. 'http://reg.genome.network/refseq/RS000061'). On RefSeqGene/LRG rows, where reference_genome and chromosome are null, this is the only identifier of the coordinate frame."
+              },
+              "coordinate_system": {
+                "type": ["string", "null"],
+                "description": "Machine-readable coordinate convention for start/end on this row. Always '0-based interbase (half-open); start is 0-based, end is exclusive - the 1-based genomic position is start+1'."
+              }
             }
           }
         },
@@ -129,7 +161,11 @@
             "properties": {
               "hgvs": {"type": ["array", "null"], "items": {"type": "string"}},
               "gene_symbol": {"type": ["string", "null"]},
-              "protein_effect": {"type": ["string", "null"]}
+              "protein_effect": {"type": ["string", "null"]},
+              "reference_sequence": {
+                "type": ["string", "null"],
+                "description": "ClinGen registry RefSeq URI for the transcript this HGVS is expressed against (e.g. 'http://reg.genome.network/refseq/RS914116')."
+              }
             }
           }
         }

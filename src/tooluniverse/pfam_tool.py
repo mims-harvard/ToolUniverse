@@ -23,6 +23,27 @@ from .base_tool import BaseTool
 INTERPRO_BASE_URL = "https://www.ebi.ac.uk/interpro/api"
 
 
+def _json_or_none(response):
+    """Parse a JSON response body, returning None when there is no body.
+
+    The InterPro API reports an empty result set as HTTP 204 No Content with a
+    zero-length body instead of a 200 carrying ``{"count": 0, "results": []}``.
+    ``raise_for_status()`` treats 204 as success, so calling ``.json()`` on it
+    raises a JSONDecodeError that used to escape as an opaque
+    "Unexpected error querying Pfam API" message -- callers could not tell
+    "no such family" from "the tool is broken".
+
+    Callers translate a ``None`` return into their own empty-result shape (for
+    search/list endpoints) or a not-found error (for single-record endpoints).
+    """
+    if response.status_code == 204:
+        return None
+    body = response.content
+    if not body or not body.strip():
+        return None
+    return response.json()
+
+
 class PfamTool(BaseTool):
     """
     Tool for Pfam protein family queries via the InterPro API.
@@ -61,8 +82,8 @@ class PfamTool(BaseTool):
                     "status": "error",
                     "error": f"Not found in Pfam/InterPro: {param}",
                 }
-            if code == 204:
-                return {"status": "error", "error": "No results found"}
+            # NB: 204 never reaches here -- raise_for_status() only raises for
+            # 4xx/5xx. It is handled as an empty result set by _json_or_none().
             return {"status": "error", "error": f"InterPro/Pfam API HTTP error: {code}"}
         except Exception as e:
             return {
@@ -108,7 +129,9 @@ class PfamTool(BaseTool):
         params = {"search": query, "page_size": max_results}
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
-        data = response.json()
+        # HTTP 204 / empty body == "no family matched"; report it as an empty
+        # result set rather than letting .json() raise.
+        data = _json_or_none(response) or {}
 
         total = data.get("count", 0)
         results = data.get("results", [])
@@ -151,7 +174,14 @@ class PfamTool(BaseTool):
         url = f"{INTERPRO_BASE_URL}/entry/pfam/{pfam_acc}"
         response = requests.get(url, timeout=self.timeout)
         response.raise_for_status()
-        data = response.json()
+        # A single-record endpoint answers an unknown accession with HTTP 204,
+        # not 404. Report it as not-found rather than a success full of blanks.
+        data = _json_or_none(response)
+        if data is None:
+            return {
+                "status": "error",
+                "error": f"Not found in Pfam/InterPro: {pfam_acc}",
+            }
 
         meta = data.get("metadata", {})
         name_info = meta.get("name", {})
@@ -249,7 +279,8 @@ class PfamTool(BaseTool):
         params = {"page_size": max_results}
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
-        data = response.json()
+        # HTTP 204 / empty body == "no protein matched this family (+ filter)".
+        data = _json_or_none(response) or {}
 
         total = data.get("count", 0)
         results = data.get("results", [])
@@ -315,7 +346,8 @@ class PfamTool(BaseTool):
         params = {"page_size": 50}
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
-        data = response.json()
+        # HTTP 204 / empty body == "this protein has no Pfam annotations".
+        data = _json_or_none(response) or {}
 
         results = data.get("results", [])
 
@@ -380,7 +412,8 @@ class PfamTool(BaseTool):
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
-        data = response.json()
+        # HTTP 204 / empty body == "no clan matched".
+        data = _json_or_none(response) or {}
 
         total = data.get("count", 0)
         results = data.get("results", [])
@@ -425,7 +458,8 @@ class PfamTool(BaseTool):
         params = {"page_size": max_results}
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
-        data = response.json()
+        # HTTP 204 / empty body == "no proteome carries this family".
+        data = _json_or_none(response) or {}
 
         total = data.get("count", 0)
         results = data.get("results", [])

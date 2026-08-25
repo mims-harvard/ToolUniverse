@@ -238,7 +238,7 @@
   },
   {
     "name": "CTD_get_gene_diseases",
-    "description": "PERMANENTLY UNAVAILABLE: this tool always returns an error. No live, free source of CTD's curated gene-disease associations was found (CTD's native API is CAPTCHA-blocked, and the RENCI Automat mirror this tool previously fell back on has been fully decommissioned). This tool returns a structured error and redirects callers to OpenTargets_get_associated_diseases. Use that tool instead.",
+    "description": "PERMANENTLY UNAVAILABLE: this tool always returns an error. No live, free source of CTD's curated gene-disease associations was found (CTD's native API is CAPTCHA-blocked, and the RENCI Automat mirror this tool previously fell back on has been fully decommissioned). This tool returns a structured error and redirects callers to OpenTargets_get_diseases_phenotypes_by_target_ensembl. Use that tool instead.",
     "parameter": {
       "type": "object",
       "properties": {

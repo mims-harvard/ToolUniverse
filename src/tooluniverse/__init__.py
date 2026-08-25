@@ -1,42 +1,18 @@
 from importlib.metadata import version, PackageNotFoundError
 import importlib
 import os
-import sys
 from typing import Any, Optional, List
 
-# Force CPU before torch is imported anywhere — prevents MPS (Metal) segfaults
-# in forked subprocesses (uvx MCP server, tu CLI, Claude Code plugin).
+_TRUTHY_VALUES = {"true", "1", "yes"}
+_LIGHT_IMPORT = (
+    os.getenv("TOOLUNIVERSE_LIGHT_IMPORT", "false").lower() in _TRUTHY_VALUES
+)
+
+# Configure MPS safeguards before torch is imported anywhere. Individual tools
+# select their own explicit device; changing PyTorch's process-wide default here
+# can break unrelated CPU/GPU tools sharing the same process.
 os.environ.setdefault("PYTORCH_MPS_HIGH_WATERMARK_RATIO", "0.0")
 os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
-
-
-def configure_torch_cpu():
-    """Pin torch to CPU, if and only if torch is already imported.
-
-    Importing torch eagerly here cost ~4 s on *every* process that touches
-    tooluniverse -- the MCP server, each `tu` CLI call, every SDK import --
-    though most never run a model. That start-up cost is what pushed the MCP
-    server past the client's connection timeout, so the server was dropped and
-    the agent silently ran with no ToolUniverse tools at all.
-
-    The MPS protection that actually matters is the two environment variables
-    above, set before anything can import torch. This keeps the remaining
-    `set_default_device("cpu")` guarantee without paying for the import: the
-    modules that genuinely need torch call this right after importing it.
-    """
-    torch_module = sys.modules.get("torch")
-    if torch_module is None:
-        return False
-    try:
-        if hasattr(torch_module, "set_default_device"):
-            torch_module.set_default_device("cpu")
-    except Exception:
-        pass
-    return True
-
-
-configure_torch_cpu()  # no-op unless something upstream already imported torch
-
 
 # Allow installed sub-packages (e.g. tooluniverse-circuit) to contribute
 # modules into the tooluniverse namespace even when the main package is
@@ -45,17 +21,18 @@ from pkgutil import extend_path
 
 __path__ = extend_path(__path__, __name__)
 
-from .execute_function import ToolUniverse
-from .base_tool import BaseTool
-from .default_config import default_tool_files
-from .profile import (
-    ProfileLoader,
-    validate_profile_config,
-    validate_with_schema,
-    validate_yaml_file_with_schema,
-    validate_yaml_format_by_template,
-    PROFILE_SCHEMA,
-)
+if not _LIGHT_IMPORT:
+    from .execute_function import ToolUniverse
+    from .base_tool import BaseTool
+    from .default_config import default_tool_files
+    from .profile import (
+        ProfileLoader,
+        validate_profile_config,
+        validate_with_schema,
+        validate_yaml_file_with_schema,
+        validate_yaml_format_by_template,
+        PROFILE_SCHEMA,
+    )
 
 from .tool_registry import (
     register_tool,
@@ -63,12 +40,7 @@ from .tool_registry import (
     get_tool_class_lazy,
     auto_discover_tools,
 )
-
-_TRUTHY_VALUES = {"true", "1", "yes"}
-
-_LIGHT_IMPORT = (
-    os.getenv("TOOLUNIVERSE_LIGHT_IMPORT", "false").lower() in _TRUTHY_VALUES
-)
+from .mcp_tool_registry import remote_tool, register_remote_tool
 
 # Version information. The MCPB bundle installs as "tooluniverse-mcpb-native"
 # (Pattern 2: bundled source, no PyPI dep), and running straight from source
@@ -125,24 +97,6 @@ if not _LIGHT_IMPORT:
 else:
     _SMCP_AVAILABLE = False
 
-    class SMCP:  # type: ignore[no-redef]
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            raise ImportError(
-                "SMCP not loaded in light-import mode. "
-                "Use `from tooluniverse.smcp import SMCP` directly."
-            )
-
-    def create_smcp_server(
-        name: str = "SMCP Server",
-        tool_categories: Optional[List[str]] = None,
-        search_enabled: bool = True,
-        **kwargs: Any,
-    ) -> SMCP:
-        raise ImportError(
-            "SMCP not loaded in light-import mode. "
-            "Use `from tooluniverse.smcp import create_smcp_server` directly."
-        )
-
 
 # Import HTTP Client with graceful fallback for minimal installation
 if not _LIGHT_IMPORT:
@@ -162,19 +116,44 @@ if not _LIGHT_IMPORT:
 else:
     _HTTP_CLIENT_AVAILABLE = False
 
-    class ToolUniverseClient:  # type: ignore[no-redef]
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            raise ImportError(
-                "HTTP Client not loaded in light-import mode. "
-                "Use `from tooluniverse.http_client import ToolUniverseClient` directly."
-            )
-
 
 def __getattr__(name: str) -> Any:
     """
     Dynamic dispatch for tool classes.
     This replaces the manual _LazyImportProxy list.
     """
+    # Provider-only CLI startup intentionally skips the public SDK imports
+    # above. Resolve an explicitly requested public symbol from its owning
+    # module instead of treating it as a scientific tool and triggering a noisy
+    # full-package discovery. Cache it so subsequent imports are ordinary.
+    if _LIGHT_IMPORT:
+        light_public_symbols = {
+            "ToolUniverse": (".execute_function", "ToolUniverse"),
+            "BaseTool": (".base_tool", "BaseTool"),
+            "default_tool_files": (".default_config", "default_tool_files"),
+            "ProfileLoader": (".profile", "ProfileLoader"),
+            "validate_profile_config": (".profile", "validate_profile_config"),
+            "validate_with_schema": (".profile", "validate_with_schema"),
+            "validate_yaml_file_with_schema": (
+                ".profile",
+                "validate_yaml_file_with_schema",
+            ),
+            "validate_yaml_format_by_template": (
+                ".profile",
+                "validate_yaml_format_by_template",
+            ),
+            "PROFILE_SCHEMA": (".profile", "PROFILE_SCHEMA"),
+            "SMCP": (".smcp", "SMCP"),
+            "create_smcp_server": (".smcp", "create_smcp_server"),
+            "ToolUniverseClient": (".http_client", "ToolUniverseClient"),
+        }
+        target = light_public_symbols.get(name)
+        if target:
+            module = importlib.import_module(target[0], __name__)
+            value = getattr(module, target[1])
+            globals()[name] = value
+            return value
+
     # 1. Try to get it from the tool registry (lazy or eager)
     # The registry knows about all tools via AST discovery or manual registration
     tool_class = get_tool_class_lazy(name)
@@ -206,6 +185,8 @@ __all__ = [
     "ToolUniverse",
     "BaseTool",
     "register_tool",
+    "remote_tool",
+    "register_remote_tool",
     "get_tool_registry",
     "SMCP",
     "create_smcp_server",

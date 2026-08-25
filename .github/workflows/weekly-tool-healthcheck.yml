@@ -8,6 +8,13 @@ name: Weekly Tool Health Check
 # It does NOT fail the workflow on tool failures; the value is the uploaded
 # report + the job summary. API-key-gated tools are expected to "fail" in
 # CI unless the corresponding repo secret is provided (see `env:` below).
+#
+# The sweep is SHARDED. As a single job it wrote its report only after the
+# last category, and an evicted runner never reaches the upload step, so
+# nothing survived: 10 of 12 consecutive weekly runs ended that way (exit
+# code 143, "the runner has received a shutdown signal"), one of them after
+# 636 of 638 categories. Sharding bounds both the blast radius of an eviction
+# and the memory one job holds; `summarize` merges whatever shards finished.
 
 on:
   schedule:
@@ -27,11 +34,19 @@ concurrency:
   group: weekly-tool-healthcheck
   cancel-in-progress: false
 
+env:
+  SHARD_COUNT: "8"
+
 jobs:
-  health-check:
-    name: Tool sweep (live APIs)
+  sweep:
+    name: Tool sweep shard ${{ matrix.shard }} (live APIs)
     runs-on: ubuntu-latest
-    timeout-minutes: 350 # under the 6h hard limit; full sweep is network-bound
+    timeout-minutes: 120
+
+    strategy:
+      fail-fast: false # a lost shard must not cancel the other seven
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5, 6, 7]
 
     # Optional API keys. Tools that need a key will be skipped/failed unless
     # the matching repo secret exists. Add more here as needed — an unset
@@ -74,121 +89,76 @@ jobs:
           if [ -n "${{ github.event.inputs.pattern }}" ]; then
             PATTERN_ARG="--pattern ${{ github.event.inputs.pattern }}"
           fi
-          # Keep the human-readable log and report, plus an atomic JSON
-          # checkpoint that is updated after every completed category.
+          # Tee to a per-shard log. The .md report is only written when the
+          # shard finishes; the progress log is what survives a shard killed
+          # part-way, and `summarize` reads whichever exists.
           set -o pipefail
           python scripts/test_all_tools.py \
             --skip-remote --skip-mcp --parallel \
-            --json-output TOOL_TEST_RESULTS.json \
-            --output TOOL_TEST_REPORT.md $PATTERN_ARG 2>&1 | tee sweep_output.log
+            --shard ${{ matrix.shard }}/${{ env.SHARD_COUNT }} \
+            --output TOOL_TEST_REPORT_${{ matrix.shard }}.md $PATTERN_ARG \
+            2>&1 | tee sweep_output_${{ matrix.shard }}.log
 
-      - name: Build job summary
-        if: always()
-        run: |
-          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
-          import json
-          import pathlib
-
-          checkpoint = pathlib.Path("TOOL_TEST_RESULTS.json")
-          print("# Weekly Tool Health Check\n")
-
-          if not checkpoint.exists():
-              print("No JSON checkpoint was produced; inspect `sweep_output.log`.")
-              raise SystemExit(0)
-
-          try:
-              payload = json.loads(checkpoint.read_text(encoding="utf-8"))
-          except (OSError, json.JSONDecodeError) as exc:
-              print(f"Could not read the JSON checkpoint: {exc}")
-              raise SystemExit(0)
-
-          results = payload.get("results", {})
-          expected = payload.get("expected_patterns", [])
-          completed = payload.get("completed_patterns", len(results))
-          complete = payload.get("complete", False)
-          counts = payload.get("status_counts", {})
-          total = sum(result.get("tests_run", 0) for result in results.values())
-          passed = sum(result.get("passed", 0) for result in results.values())
-          failed = sum(result.get("failed", 0) for result in results.values())
-          print(f"- Sweep complete: **{'yes' if complete else 'no'}**")
-          print(f"- Categories completed: **{completed}/{len(expected)}**")
-          print(f"- Total tests: **{total}**")
-          print(f"- Passed: **{passed}**")
-          print(f"- Failed: **{failed}**")
-          print(
-              "- Category states: "
-              + ", ".join(f"**{state}**={count}" for state, count in counts.items())
-              + "\n"
-          )
-
-          failure_states = {"failed", "schema_error", "timeout", "error"}
-          cats = sorted(
-              name
-              for name, result in results.items()
-              if result.get("state") in failure_states
-          )
-          no_tests = sorted(
-              name for name, result in results.items()
-              if result.get("state") == "no_tests"
-          )
-          missing = sorted(set(expected) - set(results))
-
-          if missing:
-              print(f"## Incomplete categories ({len(missing)})\n")
-              print(", ".join(f"`{name}`" for name in missing))
-
-          if no_tests:
-              print(f"\n## Categories without executable tests ({len(no_tests)})\n")
-              print(", ".join(f"`{name}`" for name in no_tests))
-
-          # Diff against the known-failing baseline so the report highlights the
-          # one thing worth acting on: a category that failed but is NOT already
-          # a known/expected failure (usually an upstream API just changed).
-          baseline = set()
-          bl = pathlib.Path(".github/known_failing_categories.txt")
-          if bl.exists():
-              for line in bl.read_text().splitlines():
-                  tok = line.split("#", 1)[0].strip()
-                  if tok:
-                      baseline.add(tok)
-
-          new_fail = [c for c in cats if c not in baseline]
-          if new_fail:
-              print(f"## 🆕 NEW failing categories ({len(new_fail)}) — investigate\n")
-              print(", ".join(f"`{c}`" for c in new_fail))
-              print(
-                  "\n> These are not in `.github/known_failing_categories.txt`. A "
-                  "newly-failing category usually means an upstream API changed — "
-                  "reproduce, then fix or add it to the baseline."
-              )
-          elif cats:
-              print("No new failures — every failing category is a known/expected one. ✅")
-
-          if cats:
-              print(f"\n<details><summary>All failing categories ({len(cats)})</summary>\n")
-              print(", ".join(f"`{c}`" for c in cats))
-              recovered = sorted(baseline - set(cats)) if complete else []
-              if recovered:
-                  print(
-                      f"\nBaseline entries that PASSED this week ({len(recovered)}, "
-                      "candidates to prune from the baseline): "
-                      + ", ".join(f"`{c}`" for c in recovered)
-                  )
-              print("\n</details>")
-          elif complete and not no_tests:
-              print("All categories passed. ✅")
-          elif not cats:
-              print("No failures were recorded in the completed categories.")
-          PY
-
-      - name: Upload report and log
+      - name: Upload shard results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: tool-test-report
+          name: sweep-shard-${{ matrix.shard }}
           path: |
-            TOOL_TEST_REPORT.md
-            TOOL_TEST_RESULTS.json
-            sweep_output.log
+            TOOL_TEST_REPORT_${{ matrix.shard }}.md
+            sweep_output_${{ matrix.shard }}.log
           if-no-files-found: warn
           retention-days: 90
+
+  summarize:
+    name: Summarize and record history
+    runs-on: ubuntu-latest
+    needs: sweep
+    if: always() # summarize whatever shards did finish
+    permissions:
+      contents: write # appends one row to .github/tool-health-history.jsonl
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Download shard results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: sweep-shard-*
+          path: shards
+
+      - name: Summarize
+        run: |
+          python scripts/summarize_health_sweep.py \
+            --logs 'shards/*/sweep_output_*.log' \
+            --baseline .github/known_failing_categories.txt \
+            --history .github/tool-health-history.jsonl \
+            --summary "$GITHUB_STEP_SUMMARY" \
+            --run-id "${{ github.run_id }}" \
+            --sha "${{ github.sha }}"
+
+      # Artifacts and run logs expire, so nothing outlived a quarter and decay
+      # over any longer window could not be measured at all. One line per run,
+      # committed to the repository, is the entire history.
+      - name: Commit history row
+        if: github.event_name == 'schedule'
+        run: |
+          if git diff --quiet -- .github/tool-health-history.jsonl; then
+            echo "no history change"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .github/tool-health-history.jsonl
+          git commit -m "chore: record weekly tool health check (run ${{ github.run_id }})"
+          # Another workflow may have pushed since checkout. Rebase rather than
+          # fail; if the branch has genuinely diverged, leave it for next week
+          # rather than forcing anything.
+          git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || exit 0
+          git push origin "HEAD:${GITHUB_REF_NAME}"

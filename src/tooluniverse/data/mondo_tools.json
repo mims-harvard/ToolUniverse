@@ -76,6 +76,10 @@
                   "type": "string"
                 },
                 "description": "Cross-references to other ontologies (OMIM, Orphanet, DOID, MeSH, etc.)"
+              },
+              "deprecated": {
+                "type": "boolean",
+                "description": "True if this Mondo term is obsolete. Obsolete terms still match searches but carry no annotations."
               }
             }
           }
@@ -262,6 +266,17 @@
             "association_counts": {
               "type": "object",
               "description": "Counts of different association types (phenotypes, genes, etc.)"
+            },
+            "deprecated": {
+              "type": "boolean",
+              "description": "True if this Mondo term is obsolete. Monarch strips the annotations of obsolete terms, so empty fields mean 'not recorded here', not 'none exist'."
+            },
+            "replaced_by": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "For an obsolete term, the current Mondo term that replaced it (present only when deprecated is true)."
             }
           }
         },

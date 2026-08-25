@@ -2,7 +2,7 @@
   {
     "type": "FDAOrangeBookTool",
     "name": "FDA_OrangeBook_search_drug",
-    "description": "Search FDA Drugs@FDA database by brand name, generic name, or application number. Returns approval status, products, and basic regulatory info. Example: brand_name='ADVIL' finds all Advil products with NDA numbers.",
+    "description": "Search FDA Drugs@FDA database by brand name, generic name, or application number. Returns approval status, products, and basic regulatory info. Example: brand_name='ADVIL' finds all Advil products with NDA numbers. A query that matches nothing returns status='success' with count=0 and an explanatory note -- an 'error' status means the request itself failed, never that there were no matches.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -19,6 +19,10 @@
         "generic_name": {
           "type": "string",
           "description": "Generic/active ingredient name (e.g., 'IBUPROFEN', 'ATORVASTATIN')"
+        },
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name of either kind when you do not know whether it is a brand or a generic name (e.g., 'QUVIVIQ', 'IBUPROFEN'). Matches the brand name OR the active-ingredient name. Prefer brand_name or generic_name when you know which one you have."
         },
         "application_number": {
           "type": "string",
@@ -44,6 +48,10 @@
         },
         "total": {
           "type": "integer"
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when count=0, explaining that the query matched no Drugs@FDA records (an empty result, not a failure)."
         }
       }
     },

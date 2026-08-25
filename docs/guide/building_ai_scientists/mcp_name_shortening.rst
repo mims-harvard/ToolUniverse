@@ -52,7 +52,7 @@ The algorithm intelligently truncates tool names by:
  
  - Short words (≤3 chars) kept intact: ``by``, ``get``, ``on``, ``or``, ``for``
  - Medium words (4-6 chars): first 4 chars: ``drug`` → ``drug``
- - Long words (>6 chars): first 4 chars: ``consultation`` → ``cons``
+ - Long words (>6 chars): first 4 chars: ``conditions`` → ``cond``
 
 4. **Handling collisions**: Appends numeric suffix if shortened names clash
 
@@ -67,14 +67,14 @@ Examples
      - Length
      - Shortened Name
      - Length
-   * - ``FDA_get_info_on_conditions_for_doctor_consultation_by_drug_name``
-     - 63
-     - ``FDA_get_info_on_cond_for_doct_cons_by_drug_name``
-     - 47
-   * - ``euhealthinfo_search_diabetes_mellitus_epidemiology_registry``
-     - 59
-     - ``euhealthinfo_sear_diab_mell_epid_regi``
-     - 38
+   * - ``FDA_get_conditions_info_for_doctor_consult_by_drug_name``
+     - 55
+     - ``FDA_get_cond_info_for_doct_cons_by_drug_name``
+     - 44
+   * - ``euhealthinfo_search_alcohol_tobacco_psychoactive_use``
+     - 52
+     - ``euhealthinfo_sear_alco_toba_psyc_use``
+     - 36
    * - ``UniProt_get_function_by_accession``
      - 34
      - ``UniProt_get_function_by_accession``
@@ -172,8 +172,8 @@ Direct Python API Usage (Default)
     # DON'T enable shortening unnecessarily
     tu = ToolUniverse()  # Default: enable_name_shortening=False
     tu.run_one_function({
-        "name": "FDA_get_drug_info_by_name",
-        "arguments": {...}
+        "name": "FDA_get_drug_label",
+        "arguments": {"drug_name": "warfarin"}
     })
 
 Internal Tool Development
@@ -245,10 +245,10 @@ If you're using ToolUniverse directly in Python:
 
     # Name shortening is applied automatically during MCP server exposure
     # When enable_name_shortening=True, tool names are shortened to fit MCP limits
-    long_name = "FDA_get_info_on_conditions_for_doctor_consultation_by_drug_name"
+    long_name = "FDA_get_conditions_info_for_doctor_consult_by_drug_name"
 
     # Execute tools using their full original name — ToolUniverse handles resolution
-    tu.run_one_function({"name": long_name, "arguments": {}})
+    tu.run_one_function({"name": long_name, "arguments": {"drug_name": "aspirin"}})
 
 API Reference
 =============
@@ -294,17 +294,25 @@ Execute a tool function. Automatically accepts both shortened and original names
 
 .. code-block:: python
 
+    from tooluniverse.tool_name_utils import shorten_tool_name
+
     tu = ToolUniverse(enable_name_shortening=True)
     tu.load_tools()
 
+    # The original name is the one declared in the tool config; the shortened
+    # name is derived from it and exists only as an alias.
+    original_name = "FDA_get_conditions_info_for_doctor_consult_by_drug_name"
+    shortened_name = shorten_tool_name(original_name)
+    # -> "FDA_get_cond_info_for_doct_cons_by_drug_name"
+
     # Both names work identically (transparent resolution):
     result1 = tu.run_one_function({
-        "name": "FDA_get_info_on_conditions_for_doctor_consultation_by_drug_name",
+        "name": original_name,
         "arguments": {"drug_name": "aspirin"}
     })
 
     result2 = tu.run_one_function({
-        "name": "FDA_get_info_on_cond_for_doct_cons_by_drug_name",
+        "name": shortened_name,
         "arguments": {"drug_name": "aspirin"}
     })
 
@@ -321,7 +329,7 @@ When you use ToolUniverse with MCP:
 1. **User Configuration**: Set server key as ``"tu"`` in MCP config
 2. **SMCP Startup**: Automatically enables shortening
 3. **Tool Exposure**: Each tool name shortened and cached
-4. **MCP Registration**: Tools registered with shortened names (e.g., ``mcp__tu__FDA_get_info_on_cond_for_doct_cons_by_drug_name``)
+4. **MCP Registration**: Tools registered with shortened names (e.g., ``mcp__tu__FDA_get_cond_info_for_doct_cons_by_drug_name``)
 5. **User Calls Tool**: MCP client sends full MCP name
 6. **FastMCP Processing**: Strips prefix, passes shortened name
 7. **Transparent Resolution**: ToolUniverse resolves shortened → original

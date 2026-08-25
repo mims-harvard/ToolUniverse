@@ -336,14 +336,14 @@
         },
         "species": {
           "type": "string",
-          "description": "Optional: Filter by species using exact scientific name (e.g., 'Homo sapiens') or taxonomy ID. Common names like 'human' are not supported."
+          "description": "NOT SUPPORTED by this endpoint; supplying it returns an error. Reactome's /data/query/ids performs no server-side species filtering, so the request cannot be honoured. Filter the returned array client-side on each record's 'speciesName', or use Reactome_list_top_pathways / Reactome_get_events_hierarchy, which take species as a path parameter."
         },
         "types": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "Optional: Filter by types (e.g., ['Pathway', 'Reaction'])"
+          "description": "NOT SUPPORTED by this endpoint; supplying it returns an error. Reactome's /data/query/ids performs no server-side type filtering, so the request cannot be honoured. Filter the returned array client-side on each record's 'schemaClass' (e.g. 'Pathway', 'Reaction')."
         }
       },
       "required": ["ids"]

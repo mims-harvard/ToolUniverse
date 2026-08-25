@@ -101,7 +101,13 @@ def test_zero_hit_query_is_success_not_error(mock_get):
     )
 
     assert result["status"] == "success"
-    assert result["data"] == {"studies": [], "total_count": 0}
+    assert result["data"]["studies"] == []
+    assert result["data"]["total_count"] == 0
+    # Feature-R33-1 also discloses the executed query. Nothing was rewritten
+    # here, so there is no rewrite to blame for the zero and no relaxed-wording
+    # probe is issued -- the unrewritten path costs no extra request.
+    assert result["data"]["query_rewrites"] == []
+    assert "relaxed_match_check" not in result["data"]
 
 
 @pytest.mark.unit

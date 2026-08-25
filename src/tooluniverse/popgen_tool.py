@@ -215,13 +215,23 @@ class PopGenTool(BaseTool):
                     "n2": n2,
                     "p_bar": round(p_bar, 4),
                     "Fst": 0.0,
+                    "estimator": "Weir-Cockerham (1984) theta, with n_c sample-size correction",
                     "interpretation": "Allele is fixed or absent in both populations; Fst is 0.",
                 },
             }
 
+        # Weir & Cockerham (1984) theta estimator, r=2 populations (df = r-1 = 1):
+        #   MSP = sum_i n_i*(p_i - p_bar)^2 / (r-1)
+        #   MSG = sum_i n_i*p_i*(1-p_i) / (sum(n_i) - r)
+        #   n_c = (1/(r-1)) * (sum(n_i) - sum(n_i^2)/sum(n_i))
+        #       = (n1 + n2) - (n1**2 + n2**2)/(n1 + n2)      [for r=2]
+        #   theta = (MSP - MSG) / (MSP + (n_c - 1)*MSG)
+        # Source: Weir BS, Cockerham CC (1984) "Estimating F-statistics for the
+        # analysis of population structure." Evolution 38(6):1358-1370, eq. 2-4.
         msp = (n1 * (p1 - p_bar) ** 2 + n2 * (p2 - p_bar) ** 2) / 1.0
         msg = (n1 * p1 * (1 - p1) + n2 * p2 * (1 - p2)) / (n1 + n2 - 2)
-        denom = msp + msg
+        n_c = (n1 + n2) - (n1**2 + n2**2) / (n1 + n2)
+        denom = msp + (n_c - 1) * msg
         fst = max(0.0, (msp - msg) / denom) if denom > 0 else 0.0
 
         if fst < 0.05:
@@ -242,6 +252,7 @@ class PopGenTool(BaseTool):
                 "n2": n2,
                 "p_bar": round(p_bar, 4),
                 "Fst": round(fst, 4),
+                "estimator": "Weir-Cockerham (1984) theta, with n_c sample-size correction",
                 "interpretation": interp,
             },
         }

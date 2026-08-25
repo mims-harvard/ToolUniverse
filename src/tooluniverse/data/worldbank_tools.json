@@ -1,7 +1,7 @@
 [
   {
     "name": "WorldBank_get_indicator",
-    "description": "Get World Bank development indicator data for one or more countries over time. Returns economic, health, education, and social development metrics from the World Development Indicators (WDI) database. Covers 200+ countries with annual data going back to 1960s. Example indicators: NY.GDP.MKTP.CD (GDP current USD), SP.POP.TOTL (total population), SH.DYN.MORT (child mortality), SE.ADT.LITR.ZS (adult literacy rate), SP.DYN.LE00.IN (life expectancy), SH.MED.PHYS.ZS (physicians per 1000), EN.ATM.CO2E.PC (CO2 per capita), SL.UEM.TOTL.ZS (unemployment rate).",
+    "description": "Get World Bank development indicator data for one or more countries over time. Returns economic, health, education, and social development metrics from the World Development Indicators (WDI) database. Covers 200+ countries with annual data going back to 1960s. Example indicators: NY.GDP.MKTP.CD (GDP current USD), SP.POP.TOTL (total population), SH.DYN.MORT (child mortality), SE.ADT.LITR.ZS (adult literacy rate), SP.DYN.LE00.IN (life expectancy), SH.MED.PHYS.ZS (physicians per 1000), EN.ATM.CO2E.PC (CO2 per capita), SL.UEM.TOTL.ZS (unemployment rate). Results are paginated server-side: the response reports 'count' (rows returned), 'total_available' (rows matching upstream) and a 'truncated' flag, and when truncated a 'truncation_note' explaining how to retrieve the rest via 'per_page'/'page'.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -26,6 +26,20 @@
             "null"
           ],
           "description": "Year or year range to filter data (e.g., '2020', '2015:2023' for a range)"
+        },
+        "per_page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Rows returned per request (default 1000, maximum 32500). One row is one country-year observation, so a panel of N countries over Y years needs per_page >= N*Y. Raise this when the response reports truncated=true."
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "1-based page number of the result set (default 1). Only needed when a result exceeds per_page: the response reports total_available and pages so you can fetch the remaining pages."
         }
       },
       "required": [
@@ -37,7 +51,26 @@
       "endpoint": "https://api.worldbank.org/v2/country/{country}/indicator/{indicator}",
       "params": {
         "format": "json",
-        "per_page": "50"
+        "per_page": "1000"
+      },
+      "echo_request_url": true,
+      "pagination_disclosure": {
+        "total_path": [
+          0,
+          "total"
+        ],
+        "rows_path": [
+          1
+        ],
+        "page_path": [
+          0,
+          "page"
+        ],
+        "pages_path": [
+          0,
+          "pages"
+        ],
+        "more_hint": "The World Bank API paginates server-side. Re-run with a larger `per_page` (maximum 32500) to get every row in one call, or step through the remaining pages with `page`. Narrowing `date` or `mrv` also reduces the result set."
       }
     },
     "type": "BaseRESTTool",

@@ -2,32 +2,54 @@
   {
     "type": "RemoteTool",
     "name": "run_macs3_callpeak",
-    "description": "Call ChIP-seq / ATAC-seq peaks from an aligned reads file with MACS3 `callpeak` (Model-based Analysis of ChIP-Seq; Zhang et al., Genome Biology 2008; macs3-project successor). Models read enrichment over a background/input control to identify regions of significant signal \u2014 the field-standard first analysis step after alignment. Input is a server-accessible BAM/BED/BED-PE alignment file; returns the number of peaks, the top-N peaks by score, and summary statistics, parsed from the ENCODE narrowPeak output.",
+    "description": "Call ChIP-seq / ATAC-seq peaks from provider-approved alignment or fragment data with MACS3 `callpeak` (Model-based Analysis of ChIP-Seq; Zhang et al., Genome Biology 2008; macs3-project successor). Models read enrichment over a background/input control to identify significant signal and returns the number of peaks, the top-N peaks by score, and summary statistics parsed from the ENCODE narrowPeak output.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "treatment": {
           "type": "string",
-          "description": "Server-accessible path to the treatment/ChIP alignment file (BAM/BED/BED-PE)."
+          "description": "Treatment/ChIP alignment file inside the provider-configured data directory (BAM/BED/BED-PE)."
         },
         "control": {
           "type": "string",
-          "description": "Server-accessible path to the input/control alignment file (optional but recommended)."
+          "description": "Input/control alignment file inside the provider-configured data directory (optional but recommended)."
         },
         "format": {
           "type": "string",
-          "description": "Input format: AUTO (default), BAM, BED, BAMPE, or BEDPE. Use BAMPE/BEDPE for paired-end (e.g. ATAC-seq)."
+          "enum": [
+            "AUTO",
+            "BAM",
+            "BAMPE",
+            "BED",
+            "BEDPE",
+            "BOWTIE",
+            "ELAND",
+            "ELANDEXPORT",
+            "ELANDMULTI",
+            "FRAG",
+            "SAM"
+          ],
+          "default": "AUTO",
+          "description": "MACS3 input format. AUTO is the default; BAMPE, BEDPE, and FRAG must be selected explicitly for paired-end or fragment data."
         },
         "genome_size": {
           "type": "string",
+          "default": "hs",
           "description": "Effective genome size: 'hs' (human, default), 'mm' (mouse), 'ce' (worm), 'dm' (fly), or a number (e.g. '2.7e9')."
         },
         "qvalue": {
           "type": "number",
+          "default": 0.05,
+          "exclusiveMinimum": 0,
+          "maximum": 1,
           "description": "q-value (minimum FDR) cutoff to call significant peaks (default 0.05)."
         },
         "top_n": {
           "type": "integer",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 1000,
           "description": "Number of top peaks (by score) to return (default 50)."
         },
         "nomodel": {
@@ -35,13 +57,17 @@
             "boolean",
             "null"
           ],
-          "description": "Skip the shift-model step (pass --nomodel --extsize). Required for ATAC-seq / single-end data where model building fails. Default false."
+          "default": false,
+          "description": "Skip the shift-model step and pass --extsize. Use for appropriate single-end data; paired-end and FRAG modes infer fragment lengths. Default false."
         },
         "extsize": {
           "type": [
             "integer",
             "null"
           ],
+          "default": 200,
+          "minimum": 1,
+          "maximum": 1000000,
           "description": "Fragment extension size used with nomodel (default 200; ~147 for ATAC)."
         }
       },
@@ -52,6 +78,10 @@
     "return_schema": {
       "type": "object",
       "properties": {
+        "tool": {
+          "type": "string",
+          "description": "Analysis engine used for this result."
+        },
         "n_peaks": {
           "type": "integer",
           "description": "Total number of significant peaks called."
@@ -72,6 +102,12 @@
         },
         "genome_size": {
           "type": "string"
+        },
+        "qvalue": {
+          "type": "number"
+        },
+        "control_used": {
+          "type": "boolean"
         },
         "error": {
           "type": "string",

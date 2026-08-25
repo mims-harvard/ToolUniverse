@@ -1,0 +1,324 @@
+[
+  {
+    "name": "BacDive_search_by_taxon",
+    "type": "BacDiveTool",
+    "description": "List BacDive strain IDs described for a bacterial or archaeal taxon. BacDive is the DSMZ strain-level phenotype resource and a Global Core Biodata Resource, covering morphology, growth conditions, physiology, and isolation source for 100k+ strains. Give genus alone, or genus plus species. Example: genus='Bacillus', species='subtilis'. Pass a returned bacdive_id to BacDive_get_strain for the full phenotype.",
+    "fields": {
+      "operation": "search_by_taxon"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "genus"
+      ],
+      "properties": {
+        "genus": {
+          "type": "string",
+          "description": "Genus name, capitalized, e.g. 'Bacillus'."
+        },
+        "species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Species epithet, lowercase, e.g. 'subtilis'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum strain IDs to return (default 25, max 100)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Matching strain IDs",
+          "items": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "bacdive_id": {
+                "type": [
+                  "integer",
+                  "string"
+                ],
+                "description": "BacDive strain ID"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "genus": "Bacillus",
+        "species": "subtilis",
+        "limit": 5
+      },
+      {
+        "genus": "Escherichia",
+        "species": "coli",
+        "limit": 5
+      },
+      {
+        "genus": "Phaeobacter",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "BacDive_get_strain",
+    "type": "BacDiveTool",
+    "description": "Retrieve one BacDive strain's curated phenotype: taxonomy down to species, cell morphology and Gram stain, culture temperatures and media, oxygen tolerance, isolation source, and biosafety risk group. Complements GTDB (taxonomy only) and MGnify (metagenomes) by describing how the organism actually grows. Example: bacdive_id=24493. Use BacDive_search_by_taxon to find IDs.",
+    "fields": {
+      "operation": "get_strain"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "bacdive_id"
+      ],
+      "properties": {
+        "bacdive_id": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "BacDive strain ID, e.g. 24493."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Curated strain phenotype",
+          "properties": {
+            "bacdive_id": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "BacDive strain ID"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Strain description"
+            },
+            "keywords": {
+              "type": "array",
+              "description": "Summary keywords",
+              "items": {
+                "type": "string",
+                "description": "Keyword"
+              }
+            },
+            "dsm_number": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "DSMZ collection number"
+            },
+            "domain": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Domain"
+            },
+            "phylum": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Phylum"
+            },
+            "class": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Class"
+            },
+            "order": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Order"
+            },
+            "family": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Family"
+            },
+            "genus": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Genus"
+            },
+            "species": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Species"
+            },
+            "strain_designation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Strain designation"
+            },
+            "type_strain": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether this is the type strain"
+            },
+            "cell_morphology": {
+              "type": "object",
+              "description": "Cell morphology block",
+              "properties": {}
+            },
+            "gram_stain": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gram stain result"
+            },
+            "culture_temperatures": {
+              "type": "array",
+              "description": "Recorded culture temperatures",
+              "items": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "temperature": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Temperature or range in Celsius"
+                  },
+                  "growth": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether growth occurs"
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Optimum or growth"
+                  }
+                }
+              }
+            },
+            "culture_media": {
+              "type": "array",
+              "description": "Recorded culture media",
+              "items": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Medium name"
+                  },
+                  "growth": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether growth occurs"
+                  }
+                }
+              }
+            },
+            "oxygen_tolerance": {
+              "type": "array",
+              "description": "Oxygen tolerance terms",
+              "items": {
+                "type": "string",
+                "description": "Oxygen tolerance"
+              }
+            },
+            "isolation_source": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Sample type the strain was isolated from"
+            },
+            "risk_group": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ],
+              "description": "Biosafety risk group"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "bacdive_id": 24493
+      },
+      {
+        "bacdive_id": "1"
+      }
+    ]
+  }
+]

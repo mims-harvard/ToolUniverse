@@ -123,3 +123,79 @@ def test_search_actionability_one_context_failing_does_not_drop_the_other():
     assert result["status"] == "success"
     assert len(result["data"]["Adult"]) == 1
     assert result["data"]["Pediatric"] == []
+    # Fix-R43-1: the surviving context's data is necessary but not sufficient.
+    # The empty Pediatric list must also be marked as unmeasured -- see
+    # test_failed_context_is_not_reported_as_a_genuine_zero below.
+    assert "Pediatric" in result["failed_contexts"]
+
+
+@pytest.mark.parametrize("failing", ["Adult", "Pediatric"])
+def test_failed_context_is_not_reported_as_a_genuine_zero(failing):
+    """Fix-R43-1: a context whose fetch fails must not be reported as a
+    curation count of zero.
+
+    The failure branch used to swallow the exception, leaving that context's
+    list empty, and the tool answered status "success" with
+    pediatric_count 0 -- indistinguishable from "ClinGen has curated no
+    pediatric actionability for this gene", a clinically different statement.
+    Confirmed live against the real endpoints before the fix: BRCA1 has 6
+    adult and 1 pediatric curation, but with only the Pediatric fetch failing
+    the tool still answered {"status": "success", "adult_count": 6,
+    "pediatric_count": 0} with nothing marking the pediatric figure as
+    unmeasured.
+    """
+    tool = _tool("search_actionability")
+
+    def fake_get(url, headers=None, timeout=None):
+        if failing in url:
+            raise TimeoutError("simulated timeout")
+        return _resp(TABLE_RESPONSE)
+
+    with patch("tooluniverse.clingen_tool.requests.get", side_effect=fake_get):
+        result = tool.run({"gene": "BRCA1"})
+
+    # The count itself stays 0 -- there is nothing else it could be -- but the
+    # caller must be able to tell 0 apart from "not retrieved".
+    assert result[f"{failing.lower()}_count"] == 0
+    assert set(result["failed_contexts"]) == {failing}
+    assert "TimeoutError: simulated timeout" in result["failed_contexts"][failing]
+    assert "not retrieved" in result["note"]
+    # The other half is real data, so this is still a partial success.
+    assert result["status"] == "success"
+
+
+def test_every_context_failing_is_an_error_not_a_zero_count():
+    """Reporting success with both counts 0 would be a fabricated
+    "this gene has no actionability curation" answer. proteins_api_tool
+    likewise reports error when nothing at all was retrieved."""
+    tool = _tool("search_actionability")
+
+    def fake_get(url, headers=None, timeout=None):
+        raise ConnectionError("simulated outage")
+
+    with patch("tooluniverse.clingen_tool.requests.get", side_effect=fake_get):
+        result = tool.run({"gene": "BRCA1"})
+
+    assert result["status"] == "error"
+    assert "adult_count" not in result
+    assert "pediatric_count" not in result
+    assert set(result["failed_contexts"]) == {"Adult", "Pediatric"}
+
+
+def test_clean_run_carries_no_failure_keys():
+    """A run where both contexts succeed must carry the same keys and values
+    as the pre-fix response -- the new keys appear only on partial or total
+    failure. (Key insertion order does differ from pre-fix; only a consumer
+    byte-comparing serialized output would notice.)"""
+    tool = _tool("search_actionability")
+
+    with patch(
+        "tooluniverse.clingen_tool.requests.get",
+        side_effect=lambda url, headers=None, timeout=None: _resp(TABLE_RESPONSE),
+    ):
+        result = tool.run({"gene": "BRCA1"})
+
+    assert result["status"] == "success"
+    assert result["adult_count"] == 1 and result["pediatric_count"] == 1
+    assert "failed_contexts" not in result
+    assert "note" not in result

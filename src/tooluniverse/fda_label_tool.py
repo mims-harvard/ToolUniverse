@@ -12,6 +12,7 @@ default ~40 req/min anonymous rate limit (https://open.fda.gov/apis/authenticati
 """
 
 import os
+import re
 import requests
 from typing import Any
 
@@ -20,8 +21,133 @@ from .tool_registry import register_tool
 
 FDA_LABEL_URL = "https://api.fda.gov/drug/label.json"
 
+# Evidence for the vaccine sentence below, measured on the live API: both
+# `openfda.generic_name.exact:*VACCINE*` and `openfda.generic_name:vaccine`
+# return nothing, and YF-VAX, TYPHIM VI, FLUZONE, SHINGRIX and GARDASIL are all
+# absent as brand names.
+_NO_MATCH_SUGGESTION = (
+    "Nothing matched this as a brand or generic name. Check the spelling, try "
+    "the generic name instead of the brand (or vice versa), or drop dosage form "
+    "and strength qualifiers. Note that vaccines and most other biologics are "
+    "licensed under a BLA and are not published on the openFDA drug label "
+    "endpoint at all."
+)
+
 # Placeholder values users sometimes leave in FDA_API_KEY; treat as "unset".
 _API_KEY_PLACEHOLDERS = {"none", "null", "your_fda_key_here", "your_key_here"}
+
+# Per-section character budget, by query_type.
+#
+# openFDA label sections are unbounded prose. Measured against the live API:
+# a complete Prograf (tacrolimus) label is ~103,000 characters of section text,
+# Humira ~86,000 and a warfarin label ~47,000; the single largest section seen
+# was 28,292 characters (Prograf adverse_reactions).
+#
+# A section longer than the applied budget is cut, and every cut is disclosed
+# at the top level of the response via `truncated` / `truncation_note`; callers
+# override the budget with the `max_section_chars` argument (0 = no limit).
+DEFAULT_SECTION_CHARS = {
+    # FDA_get_drug_label advertises the *complete* prescribing information for
+    # one drug, so its budget has to hold a whole clinical section. 25,000
+    # characters keeps every section of the labels measured above intact except
+    # Prograf's outsized adverse_reactions, and bounds one label at a few
+    # hundred KB instead of being unbounded.
+    "get": 25000,
+    # FDA_search_drug_labels returns up to 20 records at once, so it stays a
+    # deliberately compact summary view -- it just says so now instead of
+    # presenting cut prose as complete.
+    "search": 2000,
+}
+_FALLBACK_SECTION_CHARS = 2000
+
+# Extracted record keys that hold free-text clinical prose and are therefore
+# subject to the per-section budget. Identifier/metadata keys are not.
+#
+# openFDA carries a label in whichever format it was submitted in, and the two
+# formats do not share section names. Partitioning the full drug/label corpus of
+# 261,646 records by which warnings section a label has, measured against the
+# live API (the same split `test_fda_label_plr_section_split` measures for the
+# openfda_tool family; its counts are 7 records older, the corpus grows):
+#
+#   has warnings_and_cautions (PLR)                      46,930
+#   has warnings only, no warnings_and_cautions         204,636
+#   has neither                                          10,080
+#
+# So the PLR name alone reaches under a fifth of the corpus. Reading only it
+# meant `warnings_and_precautions` came back null -- alongside
+# `truncated: false`, i.e. an explicit "nothing was cut" -- for 204,636 of the
+# 251,566 labels that do carry a warnings section, or 81% of them.
+#
+# This follows the label's vintage, not the drug: flumazenil is pre-PLR while
+# naloxone and pralidoxime are PLR, so it is not specific to any therapeutic
+# class. Flumazenil's WARNINGS ("Risk of Seizures ... not recommended in cases
+# of serious cyclic antidepressant poisoning") was retrievable by field query
+# the whole time; this extraction just never asked for it.
+#
+# `warnings_and_precautions` is NOT an openFDA field name -- it is the printed
+# heading. It is used here only as the response key, mapped from whichever
+# source section the label actually has.
+_SECTION_FIELDS = (
+    "boxed_warning",
+    "indications_and_usage",
+    "dosage_and_administration",
+    "dosage_forms_and_strengths",
+    "contraindications",
+    "warnings_and_precautions",
+    "adverse_reactions",
+    "drug_interactions",
+    "use_in_specific_populations",
+    "precautions",
+    "clinical_pharmacology",
+    "mechanism_of_action",
+)
+
+
+def _phrase(field: str, text: str) -> str:
+    """Bind `text` to `field` as a single quoted phrase.
+
+    The escaping is the point: an unescaped quote in `text` closes the phrase
+    early and turns the remainder into free-text terms OR-ed across the whole
+    document. Measured on the live API, `indications_and_usage:"pain"` matches
+    24,135 labels while `indications_and_usage:"pain" OR "x"` matches 57,661.
+    Every query built from caller-supplied text goes through here.
+    """
+    escaped = text.strip().replace("\\", "\\\\").replace('"', '\\"')
+    return f'{field}:"{escaped}"'
+
+
+def _name_queries(field: str, drug_name: str) -> list[str]:
+    """Build openFDA queries for `drug_name`, most precise first.
+
+    Every term stays bound to `field`, which is what keeps a miss a miss.
+    openFDA speaks Elasticsearch query_string syntax, where a bare field prefix
+    binds to the FIRST token only: `openfda.generic_name:yellow fever vaccine`
+    searches generic_name for "yellow", then searches the WHOLE document for
+    "fever" and "vaccine" and OR-s the three together. Measured on the live API
+    that matches 87,153 of the 261,639 labels in the corpus -- a third of it --
+    and its top hit is naproxen, so an unbound query cannot be used to look up
+    a drug by name.
+
+    Two bound forms are tried:
+
+    1. Exact phrase. Because openFDA analyses these name fields, a phrase also
+       covers salt forms -- "tofacitinib" matches "TOFACITINIB CITRATE" (29
+       labels, identical to the unquoted form) and "mefloquine" matches
+       "MEFLOQUINE HYDROCHLORIDE".
+    2. Every token AND-ed, each still bound to `field`. This recovers names
+       written with different connectors or token order -- "amoxicillin
+       clavulanate" finds the 166 "AMOXICILLIN AND CLAVULANATE POTASSIUM"
+       labels that the phrase form misses -- while still guaranteeing that a
+       hit contains all the search terms in the name field it matched. It is
+       skipped for a single token, where it is identical to the phrase query.
+    """
+    queries = [_phrase(field, drug_name)]
+    # Tokens come out of an alphanumeric-only split, so they need no escaping.
+    tokens = [t for t in re.split(r"[^0-9A-Za-z]+", drug_name) if t]
+    if len(tokens) > 1:
+        anded = " AND ".join(f'"{t}"' for t in tokens)
+        queries.append(f"{field}:({anded})")
+    return queries
 
 
 def _valid_api_key(value: Any) -> bool:
@@ -43,8 +169,56 @@ def _ok(data: Any, **metadata: Any) -> dict:
     return {"status": "success", "data": data, "metadata": metadata}
 
 
-def _extract_label(result: dict) -> dict:
-    """Extract key clinical sections from a raw openFDA label record."""
+def _disclose_truncation(
+    response: dict, truncated_fields: list[str], max_chars: int | None
+) -> dict:
+    """Attach the top-level truncation disclosure to a success envelope.
+
+    `truncated` is always present (False when nothing was cut) so callers can
+    rely on the key existing; `truncated_fields` and `truncation_note` appear
+    only when something really was cut. The note names the affected sections,
+    the budget that was applied, and the argument to raise it -- a flag that
+    says "there is more" without saying how to get it is only half a disclosure.
+    """
+    fields = sorted(set(truncated_fields))
+    response["truncated"] = bool(fields)
+    if fields:
+        response["truncated_fields"] = fields
+        response["truncation_note"] = (
+            f"{len(fields)} label section(s) exceeded max_section_chars="
+            f"{max_chars} and were cut mid-text: {', '.join(fields)}. "
+            "Pass a larger max_section_chars (or max_section_chars=0 for no "
+            "limit) to retrieve these sections in full."
+        )
+    return response
+
+
+def _apply_section_limit(record: dict, max_chars: int | None) -> tuple[dict, list[str]]:
+    """Cut every clinical section of an extracted record down to `max_chars`.
+
+    Returns the limited record plus the names of the sections that were cut, so
+    the caller can disclose them. `max_chars=None` means no limit.
+    """
+    if max_chars is None:
+        return record, []
+    truncated_fields: list[str] = []
+    limited = dict(record)
+    for key in _SECTION_FIELDS:
+        text = record.get(key)
+        if isinstance(text, str) and len(text) > max_chars:
+            limited[key] = text[:max_chars]
+            truncated_fields.append(key)
+    return limited, truncated_fields
+
+
+def _extract_label(
+    result: dict, max_chars: int | None = None
+) -> tuple[dict, list[str]]:
+    """Extract key clinical sections from a raw openFDA label record.
+
+    Returns the extracted record plus the names of the sections that had to be
+    cut to fit `max_chars` (empty when `max_chars` is None, meaning no limit).
+    """
     openfda = result.get("openfda", {})
     brand = openfda.get("brand_name", [])
     generic = openfda.get("generic_name", [])
@@ -58,9 +232,9 @@ def _extract_label(result: dict) -> dict:
 
     def section(key):
         val = result.get(key, [])
-        return " ".join(val)[:2000] if val else None
+        return " ".join(val) if val else None
 
-    return {
+    record = {
         "brand_name": first(brand),
         "generic_name": first(generic),
         "manufacturer": first(mfr),
@@ -72,15 +246,29 @@ def _extract_label(result: dict) -> dict:
         "dosage_and_administration": section("dosage_and_administration"),
         "dosage_forms_and_strengths": section("dosage_forms_and_strengths"),
         "contraindications": section("contraindications"),
-        "warnings_and_precautions": section("warnings_and_precautions")
-        or section("warnings_and_cautions"),
+        # PLR heading first, then the pre-PLR WARNINGS section; see the note on
+        # _SECTION_FIELDS for why the fallback is needed and how much it covers.
+        "warnings_and_precautions": section("warnings_and_cautions")
+        or section("warnings"),
         "adverse_reactions": section("adverse_reactions"),
         "drug_interactions": section("drug_interactions"),
         "use_in_specific_populations": section("use_in_specific_populations"),
+        # On a pre-PLR label the PRECAUTIONS section is where drug-interaction,
+        # pediatric- and geriatric-use guidance is subheaded when the label has
+        # no separate top-level section for it -- 18,821 labels have
+        # `precautions` and no `drug_interactions` at all. (Many pre-PLR labels
+        # do expose `drug_interactions` separately, and that is already read
+        # above; PRECAUTIONS is not a replacement for it, it is the fallback
+        # home for the same material.) Returned under its own name rather than
+        # folded into the PLR keys, so provenance stays exact.
+        # `general_precautions` is the same section under an alternate name on
+        # 25,729 labels, 725 of which have no `precautions` at all.
+        "precautions": section("precautions") or section("general_precautions"),
         "clinical_pharmacology": section("clinical_pharmacology"),
         "mechanism_of_action": section("mechanism_of_action"),
         "spl_id": result.get("id"),
     }
+    return _apply_section_limit(record, max_chars)
 
 
 @register_tool("FDALabelTool")
@@ -108,6 +296,21 @@ class FDALabelTool(BaseTool):
             kwargs["api_key"] = self.api_key
         return kwargs
 
+    def _max_section_chars(self, arguments: dict) -> int | None:
+        """Resolve the per-section character budget for this call.
+
+        Returns None when the caller asked for no limit (max_section_chars <= 0).
+        """
+        default = DEFAULT_SECTION_CHARS.get(self.query_type, _FALLBACK_SECTION_CHARS)
+        raw = arguments.get("max_section_chars")
+        if raw is None:
+            return default
+        try:
+            value = int(raw)
+        except (TypeError, ValueError):
+            return default
+        return value if value > 0 else None
+
     def run(self, arguments: dict[str, Any]) -> Any:
         try:
             qt = self.query_type
@@ -125,15 +328,17 @@ class FDALabelTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {e}"}
 
-    def _query_drug_fields(self, drug_name: str, limit: int) -> list[dict] | None:
-        """Search generic_name then brand_name with quoted then unquoted fallback.
+    def _query_drug_fields(
+        self, drug_name: str, limit: int, max_chars: int | None = None
+    ) -> tuple[list[dict] | None, list[str]]:
+        """Search generic_name then brand_name, exact phrase then all-tokens.
 
-        Returns extracted label results on first match, or None if no results found.
-        Quoted search finds exact matches; unquoted fallback catches salt forms
-        (e.g., "tofacitinib" matching "TOFACITINIB CITRATE").
+        Returns (extracted label results, truncated section names) on the first
+        match, or (None, []) if no results found. See `_name_queries` for the
+        query forms and why every term has to stay bound to the name field.
         """
         for field in ("openfda.generic_name", "openfda.brand_name"):
-            for q in (f'{field}:"{drug_name}"', f"{field}:{drug_name}"):
+            for q in _name_queries(field, drug_name):
                 resp = requests.get(
                     FDA_LABEL_URL,
                     params=self._params(search=q, limit=limit),
@@ -144,41 +349,82 @@ class FDALabelTool(BaseTool):
                 resp.raise_for_status()
                 results = resp.json().get("results", [])
                 if results:
-                    return [_extract_label(r) for r in results]
-        return None
+                    labels: list[dict] = []
+                    truncated: list[str] = []
+                    for r in results:
+                        record, cut = _extract_label(r, max_chars)
+                        labels.append(record)
+                        truncated.extend(cut)
+                    return labels, truncated
+        return None, []
 
     def _search(self, arguments: dict) -> Any:
         drug_name = arguments.get("drug_name")
         indication = arguments.get("indication")
         limit = min(int(arguments.get("limit", 5)), 20)
+        max_chars = self._max_section_chars(arguments)
 
         if not drug_name and not indication:
             return {"status": "error", "error": "Provide drug_name or indication"}
 
         if drug_name:
-            labels = self._query_drug_fields(drug_name, limit) or []
-            return _ok(labels, query=drug_name, query_field="drug_name")
+            labels, truncated = self._query_drug_fields(drug_name, limit, max_chars)
+            response = _disclose_truncation(
+                _ok(
+                    labels or [],
+                    query=drug_name,
+                    query_field="drug_name",
+                    max_section_chars=max_chars or 0,
+                ),
+                truncated,
+                max_chars,
+            )
+            if not labels:
+                response["suggestion"] = _NO_MATCH_SUGGESTION
+            return response
 
-        q = f'indications_and_usage:"{indication}"'
+        q = _phrase("indications_and_usage", indication)
         resp = requests.get(
             FDA_LABEL_URL,
             params=self._params(search=q, limit=limit),
             timeout=20,
         )
         labels = []
+        truncated = []
         if resp.status_code != 404:
             resp.raise_for_status()
-            labels = [_extract_label(r) for r in resp.json().get("results", [])]
-        return _ok(labels, query=indication, query_field="indication")
+            for r in resp.json().get("results", []):
+                record, cut = _extract_label(r, max_chars)
+                labels.append(record)
+                truncated.extend(cut)
+        return _disclose_truncation(
+            _ok(
+                labels,
+                query=indication,
+                query_field="indication",
+                max_section_chars=max_chars or 0,
+            ),
+            truncated,
+            max_chars,
+        )
 
     def _get_label(self, arguments: dict) -> Any:
         drug_name = arguments.get("drug_name", "")
         if not drug_name:
             return {"status": "error", "error": "drug_name is required"}
 
-        results = self._query_drug_fields(drug_name, limit=10)
+        max_chars = self._max_section_chars(arguments)
+
+        # Fetch candidates untruncated so the best-match choice below is made on
+        # complete records, and only the record we actually return gets cut --
+        # otherwise the disclosure would name sections from discarded matches.
+        results, _ = self._query_drug_fields(drug_name, limit=10, max_chars=None)
         if not results:
-            return {"status": "error", "error": f"No FDA label found for '{drug_name}'"}
+            return {
+                "status": "error",
+                "error": f"No FDA label found for '{drug_name}'",
+                "suggestion": _NO_MATCH_SUGGESTION,
+            }
 
         dn_upper = drug_name.upper()
 
@@ -190,7 +436,12 @@ class FDALabelTool(BaseTool):
             return len(brand) or 999
 
         results.sort(key=_match_score)
-        return _ok(results[0], query=drug_name)
+        label, truncated = _apply_section_limit(results[0], max_chars)
+        return _disclose_truncation(
+            _ok(label, query=drug_name, max_section_chars=max_chars or 0),
+            truncated,
+            max_chars,
+        )
 
     def _list_classes(self, arguments: dict) -> Any:
         limit = min(int(arguments.get("limit", 20)), 100)

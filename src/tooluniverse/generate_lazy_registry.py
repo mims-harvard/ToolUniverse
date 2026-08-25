@@ -23,7 +23,13 @@ except ImportError:
     sys.exit(1)
 
 
-def main():
+def main(output_path: Path | None = None):
+    """Write the static lazy registry.
+
+    ``output_path`` defaults to ``_lazy_registry_static.py`` inside the
+    installed package; pass an explicit path to generate elsewhere (tests use
+    this so they never write into the source tree).
+    """
     print("🔍 Scanning for tools using AST discovery...")
 
     # Build the registry using the existing AST logic
@@ -36,7 +42,8 @@ def main():
         print(f"✅ Discovered {len(registry)} tool classes.")
 
     # Generate the static file content
-    output_path = Path(__file__).parent / "_lazy_registry_static.py"
+    if output_path is None:
+        output_path = Path(__file__).parent / "_lazy_registry_static.py"
 
     content = f'''"""
 STATIC LAZY REGISTRY - GENERATED FILE

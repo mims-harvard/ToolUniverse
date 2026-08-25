@@ -38,6 +38,15 @@ import scanpy as sc
 import squidpy as sq
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_argument_validation import (
+    bounded_integer,
+    bounded_text,
+    require_argument_object,
+)
+from tooluniverse.remote_data_path import load_remote_h5ad
+
+
+_MAX_CATEGORIES = 64
 
 
 @register_mcp_tool(
@@ -57,14 +66,18 @@ from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
             "properties": {
                 "adata_path": {
                     "type": "string",
-                    "description": "Server-accessible path or URL to a spatial .h5ad AnnData with adata.obsm['spatial'] coordinates and `cluster_key` in adata.obs.",
+                    "description": "A spatial .h5ad file inside the provider-configured data directory with adata.obsm['spatial'] coordinates and `cluster_key` in adata.obs.",
                 },
                 "cluster_key": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
                     "description": "obs column with the categorical cluster/cell-type labels to test for co-localization (e.g. 'cell_type').",
                 },
                 "n_neighs": {
                     "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
                     "description": "Number of nearest spatial neighbors per cell when building the graph (default 6).",
                 },
             },
@@ -82,41 +95,76 @@ class SquidpyNhoodEnrichmentTool:
     """Build a spatial graph and run Squidpy neighborhood enrichment."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        try:
+            arguments = require_argument_object(arguments)
+        except ValueError as exc:
+            return {"error": str(exc)}
         adata_path = arguments.get("adata_path")
         cluster_key = arguments.get("cluster_key")
         if not (adata_path and cluster_key):
             return {"error": "Missing required parameter(s): adata_path, cluster_key"}
-        n_neighs = int(arguments.get("n_neighs") or 6)
+        try:
+            cluster_key = bounded_text(cluster_key, "cluster_key")
+            n_neighs = bounded_integer(
+                arguments.get("n_neighs"),
+                "n_neighs",
+                default=6,
+                minimum=1,
+                maximum=100,
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
 
         try:
-            adata = sc.read_h5ad(adata_path)
+            adata = load_remote_h5ad(adata_path, sc.read_h5ad)
         except Exception as exc:
-            return {"error": f"Failed to read AnnData from {adata_path!r}: {exc}"}
+            return {"error": f"Invalid adata_path: {exc}"}
 
         if "spatial" not in adata.obsm:
             return {"error": "adata.obsm['spatial'] coordinates not found."}
+        spatial = adata.obsm["spatial"]
+        if (
+            getattr(spatial, "ndim", None) != 2
+            or spatial.shape[0] != adata.n_obs
+            or spatial.shape[1] < 2
+        ):
+            return {"error": "adata.obsm['spatial'] has an invalid shape."}
+        if n_neighs >= adata.n_obs:
+            return {"error": "n_neighs must be smaller than the number of cells."}
         if cluster_key not in adata.obs:
-            return {
-                "error": f"cluster_key {cluster_key!r} not found in adata.obs columns."
-            }
+            return {"error": "cluster_key was not found in adata.obs."}
 
         try:
             # Squidpy permutation tests require a categorical cluster key.
             if str(adata.obs[cluster_key].dtype) != "category":
                 adata.obs[cluster_key] = adata.obs[cluster_key].astype("category")
+            categories = adata.obs[cluster_key].cat.categories.astype(str).tolist()
+            if len(categories) < 2 or len(categories) > _MAX_CATEGORIES:
+                return {
+                    "error": (
+                        f"cluster_key must contain between 2 and "
+                        f"{_MAX_CATEGORIES} categories."
+                    )
+                }
+            if any(not category or len(category) > 128 for category in categories):
+                return {"error": "cluster_key contains an invalid category label."}
             sq.gr.spatial_neighbors(adata, coord_type="generic", n_neighs=n_neighs)
             # seed for reproducibility; n_jobs=1 avoids multiprocessing-spawn
             # issues when the server runs outside an `if __name__ == '__main__'`.
             sq.gr.nhood_enrichment(adata, cluster_key=cluster_key, seed=0, n_jobs=1)
-        except Exception as exc:
-            return {"error": f"Squidpy neighborhood enrichment failed: {exc}"}
+        except Exception:
+            return {"error": "Squidpy neighborhood enrichment failed on the provider."}
 
         result = adata.uns.get(f"{cluster_key}_nhood_enrichment")
         if not result or "zscore" not in result:
             return {"error": "Neighborhood-enrichment z-score matrix not produced."}
 
-        categories = adata.obs[cluster_key].cat.categories.astype(str).tolist()
         zscore = result["zscore"]
+        if (
+            getattr(zscore, "shape", None) != (len(categories), len(categories))
+            or not bool((zscore == zscore).all())
+        ):
+            return {"error": "Neighborhood enrichment returned an invalid matrix."}
         return {
             "cluster_key": cluster_key,
             "n_cells": int(adata.n_obs),

@@ -38,7 +38,7 @@ def ols_search_terms(
     ontology : str
         Filter by specific ontology (optional)
     exact_match : bool
-        Search for exact matches only (default: false)
+        Restrict results to exact matches (default: false). The query must equal a te...
     include_obsolete : bool
         Include obsolete terms (default: false)
     limit : int | Any

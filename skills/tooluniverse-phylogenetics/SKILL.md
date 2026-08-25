@@ -6,6 +6,45 @@ disable-model-invocation: true
 
 # Phylogenetics and Sequence Analysis
 
+## Four traps that produce a confidently wrong number
+
+Each of these was observed producing a wrong answer *while the correct guidance
+was already present further down this file*. Check them before you answer.
+
+1. **PhyKIT prints more than one column, and for `saturation` the two
+   conventions disagree — state which you used.** `phykit saturation` prints
+   `saturation <TAB> |saturation-1|`. Its own `--help` is explicit: *"The first
+   value is the saturation value and the second column is the absolute value of
+   saturation minus 1."* But several published analyses (and some reference
+   answers derived from them) report the **second** column as "the saturation
+   value". The two always sum to 1.0000, which is the tell that you may be
+   looking at the wrong one — on the fungal scogs set the medians are 0.39
+   (col 1) and 0.61 (col 2).
+
+   So: **follow phykit and use column 1** unless the question or source defines
+   saturation the other way, and say in your answer which column you read. Do
+   not silently pick the one that looks closer to an expected number.
+
+   `treeness_over_rcv` has no such ambiguity: it gives
+   `ratio <TAB> treeness <TAB> RCV` and the ratio is first.
+
+2. **"Gap percentage" means the fraction of alignment COLUMNS containing at
+   least one gap**, not the fraction of residues that are gaps. On the fungal
+   scogs set the residue definition maxes out at 0.556, so a ">70% gaps" filter
+   selects **nothing** and the question looks unanswerable; by columns, three
+   orthologs qualify (max 0.783).
+
+3. **`treeness_over_rcv` and `rcv` take the UNTRIMMED `.faa.mafft`**, while
+   `saturation` takes the trimmed `.clipkit`. RCV measures variability across
+   columns, so trimming changes it: median 0.2683 untrimmed against 0.3050
+   trimmed, and among >70%-gap genes the maximum is 0.2572 untrimmed against
+   0.4174 trimmed.
+
+4. **Never loop PhyKIT per file.** `phykit_batch_analysis` is parallel and does
+   ~250 trees in about 35 seconds; a shell loop takes ~9 minutes and runs out of
+   turns mid-way, producing no answer at all. It also selects the right column
+   for every function, which removes trap 1 entirely.
+
 ## RULE ZERO — Check for pre-computed results FIRST
 
 Before following any instruction below, scan the data folder for:
@@ -176,8 +215,9 @@ set (249 orthologs, canonical shipped files):
 
 ```
 median treeness/RCV   untrimmed .faa.mafft = 0.2683    trimmed .clipkit = 0.3050
-max treeness/RCV                                                      (>70% gap genes)
-                      untrimmed .faa.mafft = 0.1866    trimmed .clipkit = 0.4205
+max treeness/RCV      (over the 3 genes with >70% gapped columns:
+                       1260807at2759 0.0861, 1567796at2759 0.1866, 939345at2759 0.2572)
+                      untrimmed .faa.mafft = 0.2572    trimmed .clipkit = 0.4174
 ```
 
 Plain `treeness` needs no alignment and is unaffected — it reproduces exactly
@@ -370,6 +410,22 @@ Ask for `values` in the result when you need the full list for a test; the batch
 tool returns them for sets up to 50 and summary statistics always. For larger
 sets, compute the statistic from the per-group summaries the tool returns rather
 than re-deriving every value by hand.
+
+### PhyKIT column conventions — take the right one
+
+Several PhyKIT subcommands print more than one number per file, and the value
+the question wants is usually not the first:
+
+| subcommand | prints | the value asked for |
+|---|---|---|
+| `saturation` | `saturation <TAB> \|saturation-1\|` | **column 1** per phykit's docs; some sources report col 2 — say which you used |
+| `treeness_over_rcv` | `treeness/RCV <TAB> treeness <TAB> RCV` | **column 1**, the ratio |
+| `parsimony_informative_sites` | `n_pi <TAB> n_total <TAB> %PIS` | column 3 for a percentage |
+
+Taking `saturation`'s first column gives exactly `1 - answer`: a fungal set
+whose saturation is 0.6146 reports 0.3854 instead, and the two sum to 1.0000,
+which is the tell. `phykit_batch_analysis` already selects the right column for
+each function — another reason to call it rather than run the CLI yourself.
 
 ### Commit the value you computed
 

@@ -35,20 +35,69 @@ _ORGANISM_TAXIDS = {
 }
 
 
+# Rewrite an explicit, caller-written `organism_id:<taxid>` clause. See
+# _uniprot_organism_filter for why the numeric path must use `taxonomy_id`.
+_ORGANISM_ID_CLAUSE = re.compile(r"\borganism_id:\"?(\d+)\"?")
+
+_TAXONOMY_WIDENING_NOTE = (
+    "Query scope widened: 'organism_id:<taxid>' was rewritten to "
+    "'taxonomy_id:<taxid>'. UniProt's organism_id field (labelled "
+    "'Organism [OS]') matches only an entry's own organism node, while "
+    "taxonomy_id ('Taxonomy [OC]') matches anywhere in the entry's lineage. "
+    "Most bacterial entries are annotated at strain level, so a species-level "
+    "organism_id silently returns 0 or an undercount (e.g. "
+    "'gene:gyrA AND organism_id:1423 AND reviewed:true' -> 0 hits vs 1 for "
+    "taxonomy_id; gene:recA + E. coli 562 -> 9 vs 30). Results therefore "
+    "include descendant strains of the taxid you supplied. To match the "
+    "exact organism node only, write 'organism_id:<taxid>' yourself against "
+    "the UniProt REST API, or use organism_name with the exact strain name."
+)
+
+
 def _uniprot_organism_filter(organism: str) -> str:
     """Build the UniProt query clause for an organism the caller named.
 
-    UniProt's `organism_id` field accepts numeric taxonomy IDs only; passing a
-    species name to it makes the whole search fail with HTTP 400 rather than
-    returning zero hits. Any organism that does not resolve to a taxid is
-    therefore expressed as `organism_name:"..."`, which accepts free text and
-    covers the long tail of species (pathogens, plants, non-model organisms)
-    that no shortcut table can enumerate.
+    Numeric taxonomy IDs are emitted as ``taxonomy_id:<taxid>``, NOT
+    ``organism_id:<taxid>``. UniProt's field configuration
+    (https://rest.uniprot.org/configure/uniprotkb/search-fields) documents
+    these as two different fields:
+
+    * ``organism_name`` / ``organism_id`` -- label "Organism [OS]" -- matches
+      the entry's OWN organism node, exactly.
+    * ``taxonomy_name`` / ``taxonomy_id`` -- label "Taxonomy [OC]" -- matches
+      anywhere in the entry's taxonomic LINEAGE, i.e. includes descendant
+      strains.
+
+    Almost every bacterial UniProtKB entry is annotated at STRAIN level rather
+    than species level, so scoping by a species-level taxid with
+    ``organism_id`` silently returns 0 hits or a large undercount. Measured
+    live against rest.uniprot.org (``size=0``, X-Total-Results header):
+
+    ==========================================  ===========  ===========
+    query                                       organism_id  taxonomy_id
+    ==========================================  ===========  ===========
+    gene:gyrA AND <f>:1423 AND reviewed:true              0            1
+    gene:recA AND <f>:562                                 9           30
+    gene:katG AND <f>:1773                              105          157
+    gene:TP53 AND <f>:9606                              114          114
+    ==========================================  ===========  ===========
+
+    Human (and other single-node model organisms) are identical either way, so
+    the switch is strictly an increase in correctness.
+
+    Names are still routed to ``organism_name:"..."``: ``organism_id`` accepts
+    numeric taxonomy IDs only, and passing a species name to it makes the whole
+    search fail with HTTP 400 rather than returning zero hits. ``organism_name``
+    accepts free text and covers the long tail of species (pathogens, plants,
+    non-model organisms) that no shortcut table can enumerate. Confirmed live
+    that ``organism_name:"Escherichia coli"`` returns 30 -- matching
+    ``taxonomy_id:562`` -- so the name path already had lineage semantics and
+    needs no change.
     """
     name = str(organism).strip()
     resolved = _ORGANISM_TAXIDS.get(name.lower(), name)
     if resolved.isdigit():
-        return f"organism_id:{resolved}"
+        return f"taxonomy_id:{resolved}"
     return f'organism_name:"{resolved}"'
 
 
@@ -282,13 +331,22 @@ class UniProtRESTTool(BaseTool):
         2`` when the real total is 395446. Prefer the header, and keep the
         body/page-size fallbacks for any endpoint that does supply them.
         """
-        header = getattr(resp, "headers", {}).get("x-total-results")
+        header = UniProtRESTTool._header_total(resp)
         if header is not None:
-            try:
-                return int(header)
-            except (TypeError, ValueError):
-                pass
+            return header
         return data.get("resultsFound", len(results))
+
+    @staticmethod
+    def _header_total(resp):
+        """The ``x-total-results`` figure, or None when it is absent/unusable."""
+        try:
+            header = getattr(resp, "headers", {}).get("x-total-results")
+        except (AttributeError, TypeError):
+            return None
+        try:
+            return int(header)
+        except (TypeError, ValueError):
+            return None
 
     def _handle_search(self, arguments: Dict[str, Any]) -> Any:
         """Handle search queries with flexible parameters"""
@@ -305,22 +363,44 @@ class UniProtRESTTool(BaseTool):
         limit = min(limit_value, 500)
 
         # Normalize query: UniProt has no bare 'organism' field. Numeric values
-        # belong in organism_id, everything else in organism_name -- rewriting a
-        # species name into organism_id makes UniProt reject the whole request
-        # with HTTP 400 (confirmed live: 'organism_id:Klebsiella pneumoniae').
+        # belong in a taxonomy field, everything else in organism_name --
+        # rewriting a species name into a numeric-only field makes UniProt
+        # reject the whole request with HTTP 400 (confirmed live:
+        # 'organism_id:Klebsiella pneumoniae').
         query = re.sub(
             r"\borganism:(\"[^\"]+\"|\S+)",
             lambda m: _uniprot_organism_filter(m.group(1).strip('"')),
             query,
         )
 
+        # The tool's own description used to tell callers to write
+        # 'organism_id:9606' directly, so plenty of queries arrive with an
+        # explicit organism_id clause. That field is exact-node-only ("Organism
+        # [OS]") and undercounts strain-level entries, so rewrite it to the
+        # lineage field ("Taxonomy [OC]") -- but DISCLOSE the rewrite in the
+        # response rather than mutating the caller's query silently.
+        query, organism_id_rewrites = _ORGANISM_ID_CLAUSE.subn(r"taxonomy_id:\1", query)
+        normalization_note = _TAXONOMY_WIDENING_NOTE if organism_id_rewrites else None
+
         # Build query string
         query_parts = [query]
         if organism:
             # Skip when the caller already scoped the query themselves, so we
-            # don't AND two conflicting organism clauses together.
+            # don't AND two conflicting organism clauses together. Both the
+            # exact-node fields and the lineage fields count as "already
+            # scoped" -- otherwise a caller-supplied taxonomy_id: clause (or
+            # one we just rewrote from organism_id:) would be ANDed with a
+            # second, conflicting organism clause.
             lowered = query.lower()
-            if "organism_id:" not in lowered and "organism_name:" not in lowered:
+            if not any(
+                field in lowered
+                for field in (
+                    "organism_id:",
+                    "organism_name:",
+                    "taxonomy_id:",
+                    "taxonomy_name:",
+                )
+            ):
                 query_parts.append(_uniprot_organism_filter(organism))
 
         # Auto-convert length parameters to range syntax
@@ -350,14 +430,14 @@ class UniProtRESTTool(BaseTool):
 
             # If custom fields requested, return raw API response for flexibility
             if fields and isinstance(fields, list):
-                return {
-                    "status": "success",
-                    "data": {
-                        "total_results": self._total_results(resp, data, results),
-                        "returned": len(results),
-                        "results": results,
-                    },
+                payload = {
+                    "total_results": self._total_results(resp, data, results),
+                    "returned": len(results),
+                    "results": results,
                 }
+                if normalization_note:
+                    payload["normalization_note"] = normalization_note
+                return {"status": "success", "data": payload}
 
             # Otherwise, use formatted extraction logic
             formatted_results = []
@@ -393,14 +473,14 @@ class UniProtRESTTool(BaseTool):
 
                 formatted_results.append(formatted_entry)
 
-            return {
-                "status": "success",
-                "data": {
-                    "total_results": self._total_results(resp, data, results),
-                    "returned": len(results),
-                    "results": formatted_results,
-                },
+            payload = {
+                "total_results": self._total_results(resp, data, results),
+                "returned": len(results),
+                "results": formatted_results,
             }
+            if normalization_note:
+                payload["normalization_note"] = normalization_note
+            return {"status": "success", "data": payload}
 
         except requests.exceptions.Timeout:
             return {"status": "error", "error": "Request to UniProt API timed out"}
@@ -467,6 +547,23 @@ class UniProtRESTTool(BaseTool):
             results_url = f"https://rest.uniprot.org/idmapping/results/{job_id}"
 
             raw_results = None
+            # UniProt pages ID-mapping results, reports the unpaged total in
+            # the `x-total-results` header, and lists unmappable inputs under
+            # `failedIds`. All three were ignored here, so P04637 -> PDB came
+            # back `mapped_count: 25, failed_ids: []` -- 25 being a page size
+            # against a real 295 -- and a typo'd accession vanished silently.
+            #
+            # Feature-26A-13 noted the status endpoint 303-redirects to a
+            # results page once the job finishes. Both figures are already on
+            # that response, so only rows beyond its short default page need
+            # a second request. Re-fetch through the URL the redirect landed
+            # on rather than the generic one: for `to_db=UniProtKB` the
+            # redirect targets /idmapping/uniprotkb/results/, which streams
+            # full entries, while /idmapping/results/ returns bare accession
+            # strings -- fetching the latter silently replaced each
+            # {accession, id, gene_name} object with a plain string.
+            total_results = None
+            failed_ids = []
             start_time = time.time()
             while time.time() - start_time < max_wait_time:
                 status_resp = requests.get(status_url, timeout=self.timeout)
@@ -474,15 +571,22 @@ class UniProtRESTTool(BaseTool):
 
                 job_status = status_data.get("jobStatus") or status_data.get("status")
 
-                if job_status == "FINISHED":
-                    # Explicit FINISHED status — fetch results separately
-                    results_resp = requests.get(results_url, timeout=self.timeout)
-                    raw_results = results_resp.json().get("results", [])
-                    break
-                elif "results" in status_data:
-                    # Feature-26A-13: UniProt status endpoint redirected (303) to
-                    # results page; results are embedded directly in status_data.
-                    raw_results = status_data["results"]
+                if job_status == "FINISHED" or "results" in status_data:
+                    resp, payload = status_resp, status_data
+                    carried = status_data.get("results")
+                    total = self._header_total(status_resp)
+                    if carried is None or total is None or total > len(carried):
+                        landed = str(getattr(status_resp, "url", "") or "")
+                        fetch_url = landed if "/results/" in landed else results_url
+                        page = requests.get(
+                            fetch_url, params={"size": 500}, timeout=self.timeout
+                        )
+                        page_payload = page.json()
+                        if "results" in page_payload:
+                            resp, payload = page, page_payload
+                    raw_results = payload.get("results", [])
+                    failed_ids = payload.get("failedIds") or []
+                    total_results = self._total_results(resp, payload, raw_results)
                     break
                 elif job_status in ("FAILED", "ERROR"):
                     return {
@@ -530,8 +634,19 @@ class UniProtRESTTool(BaseTool):
             result_data = {
                 "mapped_count": len(formatted_results),
                 "results": formatted_results,
-                "failed_ids": [],
+                "failed_ids": failed_ids,
+                "total_results": total_results,
             }
+            if total_results is not None and len(formatted_results) < total_results:
+                result_data["truncated"] = True
+                result_data["truncation_note"] = (
+                    f"Returned {len(formatted_results)} of {total_results} mappings "
+                    f"UniProt holds for these IDs. `mapped_count` counts the rows "
+                    f"below, not the matches; an identifier absent here may still "
+                    f"map. Narrow the request to fewer input IDs to see the rest."
+                )
+            else:
+                result_data["truncated"] = False
             return {"status": "success", "data": result_data}
 
         except requests.exceptions.Timeout:

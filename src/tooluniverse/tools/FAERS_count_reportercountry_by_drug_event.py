@@ -13,11 +13,12 @@ def FAERS_count_reportercountry_by_drug_event(
     patientsex: Optional[str] = None,
     patientagegroup: Optional[str] = None,
     serious: Optional[str] = None,
+    limit: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Count the number of FDA adverse event reports grouped by the country of the primary reporter. Onl...
 
@@ -31,6 +32,8 @@ def FAERS_count_reportercountry_by_drug_event(
         Optional: Filter by patient age group. Omit this parameter if you don't want ...
     serious : str
         Optional: Filter by event seriousness. Omit this parameter if you don't want ...
+    limit : int
+        Optional: maximum number of ranked terms to return (default 100, which is ope...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,7 @@ def FAERS_count_reportercountry_by_drug_event(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -52,6 +55,7 @@ def FAERS_count_reportercountry_by_drug_event(
             "patientsex": patientsex,
             "patientagegroup": patientagegroup,
             "serious": serious,
+            "limit": limit,
         }.items()
         if v is not None
     }

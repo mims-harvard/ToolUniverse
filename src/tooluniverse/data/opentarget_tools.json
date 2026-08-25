@@ -1,7 +1,7 @@
 [
     {
         "name": "OpenTargets_get_associated_targets_by_disease_efoId",
-        "description": "Find targets associated with a specific disease or phenotype based on efoId.",
+        "description": "Find targets associated with a specific disease or phenotype based on efoId. Results are PAGINATED (50 per call by default): `associatedTargets.count` is the total number of associated targets, `associatedTargets.returned` is how many are in `rows`, and `associatedTargets.truncated` is true when targets remain unfetched, in which case `metadata.truncation_note` names the `size`/`index` values to pass. Raise `size` (Open Targets rejects a page above 3000) and step `index` to page through; a common disease has thousands of associated targets, so the first page is NOT the full list.",
         "label": [
             "Disease",
             "Phenotype",
@@ -59,6 +59,14 @@
                                         "count": {
                                             "type": "integer"
                                         },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of associated targets actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. targets remain unfetched; `metadata.truncation_note` then names the `size`/`index` values to pass."
+                                        },
                                         "rows": {
                                             "type": "array",
                                             "items": {
@@ -86,13 +94,22 @@
                             }
                         }
                     }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact argument that fetches the rest."
+                        }
+                    }
                 }
             }
         }
     },
     {
         "name": "OpenTargets_get_diseases_phenotypes_by_target_ensembl",
-        "description": "Find diseases or phenotypes associated with a specific target using ensemblId. `associatedDiseases.count` is the total number of associations; `rows` returns only one page of them (25 by default) -- pass `page` to retrieve more (e.g. page 2 of a target with thousands of associations like SIRT1's 3432).",
+        "description": "Find diseases or phenotypes associated with a specific target using ensemblId. `associatedDiseases.count` is the total number of associations; `rows` returns only one page of them (25 by default) -- pass `page` to retrieve more (e.g. page 2 of a target with thousands of associations like SIRT1's 3432). `associatedDiseases.returned` reports how many rows this response actually contains and `associatedDiseases.truncated` is true when associations remain unfetched, in which case `metadata.truncation_note` names the exact `page` argument to pass.",
         "label": [
             "Target",
             "Disease",
@@ -163,6 +180,14 @@
                                         "count": {
                                             "type": "integer"
                                         },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of associations actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. associations remain unfetched; `metadata.truncation_note` then names the exact `page` argument to pass."
+                                        },
                                         "rows": {
                                             "type": "array",
                                             "items": {
@@ -201,13 +226,22 @@
                             }
                         }
                     }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact argument that fetches the rest."
+                        }
+                    }
                 }
             }
         }
     },
     {
         "name": "OpenTargets_target_disease_evidence",
-        "description": "Explore IntOGen somatic driver evidence for a target-disease association. IMPORTANT: IntOGen only covers somatic tumor driver mutations \u2014 this tool returns empty data ({}) for non-cancer diseases (e.g., type 2 diabetes, hypertension). Empty results are expected and normal when querying non-oncology phenotypes. For non-cancer diseases or to query other data sources, use OpenTargets_get_evidence_by_datasource instead. Accepts gene_symbol (e.g. 'TP53') and disease_name (e.g. 'Crohn disease') as alternatives to ensemblId/efoId \u2014 IDs are auto-resolved via OpenTargets search.",
+        "description": "Explore IntOGen somatic driver evidence for a target-disease association. IMPORTANT: IntOGen only covers somatic tumor driver mutations \u2014 this tool returns empty data ({}) for non-cancer diseases (e.g., type 2 diabetes, hypertension). Empty results are expected and normal when querying non-oncology phenotypes. For non-cancer diseases or to query other data sources, use OpenTargets_get_evidence_by_datasource instead. Accepts gene_symbol (e.g. 'TP53') and disease_name (e.g. 'Crohn disease') as alternatives to ensemblId/efoId \u2014 IDs are auto-resolved via OpenTargets search. Results are PAGINATED and Open Targets returns only 25 evidence rows: `evidences.count` is the total, `evidences.returned` is how many are in `rows`, and `evidences.truncated` is true when evidence remains unfetched, in which case `metadata.truncation_note` says so. This tool exposes no pagination parameter, so use OpenTargets_get_evidence_by_datasource (which takes `size`) when the full evidence set is needed.",
         "label": [
             "Target",
             "Disease",
@@ -266,10 +300,27 @@
                                     "properties": {
                                         "count": {
                                             "type": "integer"
+                                        },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of evidence rows actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. evidence rows remain unfetched; `metadata.truncation_note` then says so. This tool exposes no pagination parameter, so use OpenTargets_get_evidence_by_datasource (which takes `size`) to reach the rest."
                                         }
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and why the withheld rows cannot be fetched through this tool."
                         }
                     }
                 }
@@ -362,6 +413,14 @@
                                         "count": {
                                             "type": "integer"
                                         },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of evidence rows actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. evidence rows remain unfetched; `metadata.truncation_note` then names the `size` value to pass."
+                                        },
                                         "rows": {
                                             "type": "array",
                                             "items": {
@@ -385,6 +444,19 @@
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact argument that fetches the rest."
+                        },
+                        "datasource_rename_note": {
+                            "type": "string",
+                            "description": "Present only when a retired datasource ID was remapped to its current name."
                         }
                     }
                 }
@@ -602,6 +674,14 @@
                                         "count": {
                                             "type": "integer"
                                         },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of drugs and clinical candidates actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. rows remain unfetched; `metadata.truncation_note` then names the exact argument that fetches the rest."
+                                        },
                                         "rows": {
                                             "type": "array",
                                             "items": {
@@ -660,6 +740,15 @@
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact argument that fetches the rest."
                         }
                     }
                 }
@@ -2215,7 +2304,7 @@
     },
     {
         "name": "OpenTargets_get_target_interactions_by_ensemblID",
-        "description": "Retrieve interaction data for a specific target ensemblID, including interaction partners and evidence.",
+        "description": "Retrieve interaction data for a specific target ensemblID, including interaction partners and evidence. Results are PAGINATED and Open Targets returns only 25 rows when no `page` is given: `interactions.count` is the total number of interactions (a well-studied target has thousands), `interactions.returned` is how many are in `rows`, and `interactions.truncated` is true when interactions remain unfetched, in which case `metadata.truncation_note` names the exact `page` argument to pass. Pass page: {\"index\": 0, \"size\": N} (Open Targets rejects a size above 3000) and step `index` to page through.",
         "label": [
             "Target",
             "Interaction",
@@ -2264,6 +2353,125 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "target": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "interactions": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "description": "Total number of interactions for this target across all pages — NOT the number of rows in this response."
+                                        },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of interactions actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. interactions remain unfetched; `metadata.truncation_note` then names the exact `page` argument to pass."
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "intA": {
+                                                        "type": "string"
+                                                    },
+                                                    "targetA": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ],
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string"
+                                                            },
+                                                            "approvedSymbol": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    },
+                                                    "intB": {
+                                                        "type": "string"
+                                                    },
+                                                    "targetB": {
+                                                        "type": [
+                                                            "object",
+                                                            "null"
+                                                        ],
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "string"
+                                                            },
+                                                            "approvedSymbol": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    },
+                                                    "score": {
+                                                        "type": [
+                                                            "number",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "sourceDatabase": {
+                                                        "type": "string"
+                                                    },
+                                                    "evidences": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "evidenceScore": {
+                                                                    "type": [
+                                                                        "number",
+                                                                        "null"
+                                                                    ]
+                                                                },
+                                                                "pubmedId": {
+                                                                    "type": [
+                                                                        "string",
+                                                                        "null"
+                                                                    ]
+                                                                },
+                                                                "interactionDetectionMethodShortName": {
+                                                                    "type": [
+                                                                        "string",
+                                                                        "null"
+                                                                    ]
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact `page` argument that fetches the rest."
+                        }
+                    }
+                },
                 "error": {
                     "type": "string"
                 },
@@ -2763,7 +2971,7 @@
     },
     {
         "name": "OpenTargets_get_drug_adverse_events_by_chemblId",
-        "description": "Retrieve significant adverse events reported for a specific drug chemblId.",
+        "description": "Retrieve significant adverse events reported for a specific drug chemblId, ranked by log-likelihood ratio. Results are PAGINATED and Open Targets returns only 25 rows when no `page` is given: `adverseEvents.count` is the total number of signals, `adverseEvents.returned` is how many are present in `rows`, and `adverseEvents.truncated` is true when signals remain unfetched, in which case a `truncation_note` naming the exact `page` argument to pass is added to `metadata`. Pass page: {\"index\": 0, \"size\": <count>} to retrieve every signal before drawing any safety conclusion — a default page is NOT the full list (ibuprofen, CHEMBL521, has 55 signals; the default 25 omit toxic epidermal necrolysis, urticaria, systemic lupus erythematosus and hepatic enzyme increased).",
         "parameter": {
             "type": "object",
             "properties": {
@@ -2814,6 +3022,66 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "drug": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "adverseEvents": {
+                            "type": "object",
+                            "properties": {
+                                "count": {
+                                    "type": "integer",
+                                    "description": "Total number of significant adverse-event signals for this drug across all pages — NOT the number of rows in this response."
+                                },
+                                "returned": {
+                                    "type": "integer",
+                                    "description": "Number of signals actually present in `rows` for this page."
+                                },
+                                "truncated": {
+                                    "type": "boolean",
+                                    "description": "True when `returned` is less than `count`, i.e. signals remain unfetched; `metadata.truncation_note` then names the exact `page` argument to pass."
+                                },
+                                "criticalValue": {
+                                    "type": "number"
+                                },
+                                "rows": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "name": {
+                                                "type": "string"
+                                            },
+                                            "meddraCode": {
+                                                "type": "string"
+                                            },
+                                            "count": {
+                                                "type": "integer"
+                                            },
+                                            "logLR": {
+                                                "type": "number"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact `page` argument that fetches the rest."
+                        }
+                    }
+                },
                 "error": {
                     "type": "string"
                 },
@@ -3800,6 +4068,14 @@
                                         "count": {
                                             "type": "integer"
                                         },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of drugs and clinical candidates actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. rows remain unfetched; `metadata.truncation_note` then names the exact argument that fetches the rest."
+                                        },
                                         "rows": {
                                             "type": "array",
                                             "items": {
@@ -3848,6 +4124,15 @@
                                     }
                                 }
                             }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and names the exact argument that fetches the rest."
                         }
                     }
                 }
@@ -4399,7 +4684,7 @@
     },
     {
         "name": "OpenTargets_get_publications_by_disease_efoId",
-        "description": "Retrieve publications related to a disease efoId, including PubMed IDs and publication dates.",
+        "description": "Retrieve publications related to a disease efoId, including PubMed IDs and publication dates. Only the first 25 publications are returned and this tool exposes no pagination parameter: `literatureOcurrences.count` is the total (often tens of thousands), `literatureOcurrences.returned` is how many are in `rows`, and `literatureOcurrences.truncated` is true when publications remain unfetched, in which case `metadata.truncation_note` says so. Narrow the query with startYear/endYear/additionalIds rather than treating `rows` as the literature for this disease.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -4455,6 +4740,78 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "disease": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "literatureOcurrences": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "description": "Total number of publications for this disease — NOT the number of rows in this response."
+                                        },
+                                        "filteredCount": {
+                                            "type": "integer",
+                                            "description": "Total number of publications left after the startYear/startMonth/endYear/endMonth filter."
+                                        },
+                                        "earliestPubYear": {
+                                            "type": "integer"
+                                        },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of publications actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. publications remain unfetched; `metadata.truncation_note` then says so. This tool exposes no pagination parameter, so narrow the query with startYear/endYear/additionalIds instead."
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "pmid": {
+                                                        "type": "string"
+                                                    },
+                                                    "pmcid": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "publicationDate": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and why the withheld rows cannot be fetched through this tool."
+                        }
+                    }
+                },
                 "error": {
                     "type": "string"
                 },
@@ -4596,7 +4953,7 @@
     },
     {
         "name": "OpenTargets_get_publications_by_target_ensemblID",
-        "description": "Retrieve publications related to a target ensemblID, including PubMed IDs and publication dates.",
+        "description": "Retrieve publications related to a target ensemblID, including PubMed IDs and publication dates. Only the first 25 publications are returned and this tool exposes no pagination parameter: `literatureOcurrences.count` is the total (often hundreds of thousands), `literatureOcurrences.returned` is how many are in `rows`, and `literatureOcurrences.truncated` is true when publications remain unfetched, in which case `metadata.truncation_note` says so. Narrow the query with startYear/endYear/additionalIds rather than treating `rows` as the literature for this target.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -4652,6 +5009,78 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "target": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "approvedSymbol": {
+                                    "type": "string"
+                                },
+                                "literatureOcurrences": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "description": "Total number of publications for this target — NOT the number of rows in this response."
+                                        },
+                                        "filteredCount": {
+                                            "type": "integer",
+                                            "description": "Total number of publications left after the startYear/startMonth/endYear/endMonth filter."
+                                        },
+                                        "earliestPubYear": {
+                                            "type": "integer"
+                                        },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of publications actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. publications remain unfetched; `metadata.truncation_note` then says so. This tool exposes no pagination parameter, so narrow the query with startYear/endYear/additionalIds instead."
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "pmid": {
+                                                        "type": "string"
+                                                    },
+                                                    "pmcid": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "publicationDate": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and why the withheld rows cannot be fetched through this tool."
+                        }
+                    }
+                },
                 "error": {
                     "type": "string"
                 },
@@ -4793,7 +5222,7 @@
     },
     {
         "name": "OpenTargets_get_publications_by_drug_chemblId",
-        "description": "Retrieve publications related to a drug chemblId, including PubMed IDs and publication dates.",
+        "description": "Retrieve publications related to a drug chemblId, including PubMed IDs and publication dates. Only the first 25 publications are returned and this tool exposes no pagination parameter: `literatureOcurrences.count` is the total (often tens of thousands), `literatureOcurrences.returned` is how many are in `rows`, and `literatureOcurrences.truncated` is true when publications remain unfetched, in which case `metadata.truncation_note` says so. Narrow the query with startYear/endYear/additionalIds rather than treating `rows` as the literature for this drug.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -4849,6 +5278,78 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "drug": {
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string"
+                                },
+                                "literatureOcurrences": {
+                                    "type": "object",
+                                    "properties": {
+                                        "count": {
+                                            "type": "integer",
+                                            "description": "Total number of publications for this drug — NOT the number of rows in this response."
+                                        },
+                                        "filteredCount": {
+                                            "type": "integer",
+                                            "description": "Total number of publications left after the startYear/startMonth/endYear/endMonth filter."
+                                        },
+                                        "earliestPubYear": {
+                                            "type": "integer"
+                                        },
+                                        "returned": {
+                                            "type": "integer",
+                                            "description": "Number of publications actually present in `rows` for this page."
+                                        },
+                                        "truncated": {
+                                            "type": "boolean",
+                                            "description": "True when `returned` is less than `count`, i.e. publications remain unfetched; `metadata.truncation_note` then says so. This tool exposes no pagination parameter, so narrow the query with startYear/endYear/additionalIds instead."
+                                        },
+                                        "rows": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "pmid": {
+                                                        "type": "string"
+                                                    },
+                                                    "pmcid": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    },
+                                                    "publicationDate": {
+                                                        "type": [
+                                                            "string",
+                                                            "null"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "metadata": {
+                    "type": "object",
+                    "properties": {
+                        "truncation_note": {
+                            "type": "string",
+                            "description": "Present only when a collection came back truncated: states how many of how many rows were returned and why the withheld rows cannot be fetched through this tool."
+                        }
+                    }
+                },
                 "error": {
                     "type": "string"
                 },

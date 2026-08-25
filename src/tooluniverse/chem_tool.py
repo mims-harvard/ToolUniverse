@@ -6,6 +6,7 @@ This module provides tools for accessing the ChEMBL database:
 - ChEMBLRESTTool: Generic REST API tool for ChEMBL endpoints
 """
 
+import re
 import requests
 from urllib.parse import quote
 from typing import Any, Dict, Optional
@@ -15,6 +16,36 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 from .http_utils import request_with_retry
 from indigo import Indigo
+
+# Query parameters that shape the response rather than filter it, so they are
+# absent from ChEMBL's per-resource "filtering" list by design.
+_CHEMBL_QUERY_CONTROLS = frozenset({"limit", "offset", "format", "only", "ordering"})
+
+# Argument names _build_params consumes, renames or maps itself, so they are
+# never forwarded to ChEMBL under their incoming spelling. Every response-shaping
+# control is one of these, hence the union.
+_CHEMBL_HANDLED_ARGS = _CHEMBL_QUERY_CONTROLS | frozenset(
+    {
+        "fields",  # mapped to `only`
+        "q",  # mapped to pref_name__icontains
+        "query",  # alias for q
+        "pref_name__contains",  # mapped to pref_name__icontains
+        "mechanism_of_action__contains",  # mapped to __icontains
+        "max_results",  # alias for limit
+        "chembl_id",
+        "target_chembl_id",  # mapped to target_chembl_id__exact
+        "assay_chembl_id",  # mapped to assay_chembl_id__exact
+        "activity_id",
+        "drug_chembl_id",  # mapped to molecule_chembl_id__exact / parent_...
+        "molecule_chembl_id",  # alias for drug_chembl_id
+        "drug_name",  # not a ChEMBL API param; handled per-tool in run()
+    }
+)
+
+# ChEMBL resource name -> the field names it will filter on, read once per
+# process from /<resource>/schema.json. A None value records a lookup that could
+# not be completed, so it is not retried on every call.
+_CHEMBL_FILTER_FIELDS: Dict[str, Optional[set]] = {}
 
 
 @register_tool("ChEMBLRESTTool")
@@ -210,33 +241,131 @@ class ChEMBLRESTTool(BaseTool):
         # Add any filter parameters (ChEMBL uses field__filter syntax)
         # e.g., molecule_chembl_id__exact, pref_name__icontains
         for key, value in args.items():
-            if (
-                key
-                not in [
-                    "limit",
-                    "offset",
-                    "format",
-                    "fields",
-                    "only",
-                    "ordering",
-                    "q",  # handled above: mapped to pref_name__icontains
-                    "query",  # handled above: alias for q
-                    "pref_name__contains",  # handled above: alias for pref_name__icontains
-                    "mechanism_of_action__contains",  # handled above: mapped to __icontains
-                    "max_results",  # handled above: alias for limit
-                    "chembl_id",
-                    "target_chembl_id",  # handled above: mapped to target_chembl_id__exact
-                    "assay_chembl_id",  # handled above: mapped to assay_chembl_id__exact
-                    "activity_id",
-                    "drug_chembl_id",  # handled above: mapped to molecule_chembl_id__exact / parent_molecule_chembl_id
-                    "molecule_chembl_id",  # handled above: alias for drug_chembl_id
-                    "drug_name",  # Feature-40B-03: not a valid ChEMBL API param; caught in run() with error
-                ]
-                and value is not None
-            ):
+            if key not in _CHEMBL_HANDLED_ARGS and value is not None:
                 params[key] = value
 
+        # ChEMBL_get_compound_record_activities requires compound_record_id__exact,
+        # but /activity.json names that column `record_id` and ignores the other
+        # spelling: ?compound_record_id__exact=1 and no filter at all both return
+        # activity_id 31863 first, while ?record_id=1 returns 57025. The tool's own
+        # required parameter therefore returned the whole activity table. Skipped
+        # for ChEMBL_get_compound_record, where the same name is a path segment
+        # (/compound_record/{compound_record_id}.json) and already selects the row.
+        endpoint = self.tool_config.get("fields", {}).get("endpoint", "")
+        if "{compound_record_id}" not in endpoint:
+            record_id = params.pop("compound_record_id__exact", None)
+            plain = params.pop("compound_record_id", None)
+            record_id = record_id if record_id is not None else plain
+            if record_id is not None:
+                params["record_id"] = record_id
+
         return params
+
+    def _resource_name(self, url: str) -> Optional[str]:
+        """ChEMBL resource being queried, e.g. 'assay' for /assay.json.
+
+        Read from the built URL rather than the configured endpoint because
+        _build_url can reroute (/drug.json becomes /molecule.json for name
+        queries) and the resource decides which filter list applies.
+        """
+        path = url.split("?")[0].replace(self.base_url, "")
+        segments = [seg for seg in path.split("/") if seg]
+        if not segments:
+            return None
+        return segments[0].split(".")[0] or None
+
+    def _upstream_filter_fields(self, url: str) -> Optional[set]:
+        """Field names ChEMBL will actually filter this resource on, or None.
+
+        ChEMBL publishes them per resource at /<resource>/schema.json under
+        "filtering" -- the authoritative answer to "is this a real filter?".
+        Fetched at most once per resource per process. None means the lookup was
+        unavailable; it is cached too, so a resource ChEMBL will not describe
+        does not cost a request per call. Retries first, because a negative
+        entry disables the check for that resource for the rest of the process
+        and a single transient 5xx should not buy that.
+        """
+        resource = self._resource_name(url)
+        if not resource:
+            return None
+        if resource in _CHEMBL_FILTER_FIELDS:
+            return _CHEMBL_FILTER_FIELDS[resource]
+        fields = None
+        try:
+            resp = request_with_retry(
+                self.session,
+                "GET",
+                f"{self.base_url}/{resource}/schema.json",
+                timeout=self.timeout,
+                max_attempts=3,
+                backoff_seconds=0.5,
+            )
+            resp.raise_for_status()
+            filtering = resp.json().get("filtering")
+            if isinstance(filtering, dict) and filtering:
+                fields = set(filtering)
+        except Exception:
+            fields = None
+        _CHEMBL_FILTER_FIELDS[resource] = fields
+        return fields
+
+    def _inert_filters(self, params: Dict[str, Any], url: str) -> list:
+        """Query parameters ChEMBL will drop instead of filtering on.
+
+        ChEMBL ignores query parameters it does not recognise and answers with
+        the whole unfiltered resource. Verified live against /target.json: no
+        filter, `species=Schistosoma+mansoni` and `bananaparam=x` all return the
+        identical `total_count` of 18552 with Homo sapiens rows on top. Sent
+        verbatim, a caller's misspelled or invented filter therefore comes back
+        as `status: success` over a table answering a different question than the
+        one asked.
+
+        This does not subsume the per-tool guards in run(): they catch cases this
+        cannot see. `drug_name` never reaches the query at all, `target_chembl_id`
+        IS a real /mechanism filter that returns the wrong records for another
+        reason, and ChEMBL_get_drug_mechanisms rejects the *absence* of a filter.
+        Do not delete them believing this covers them.
+
+        Judged against ChEMBL's own filter list rather than the tool config,
+        because the two disagree in both directions and each direction is a live
+        defect: `assay_organism` is a real /assay.json filter that
+        ChEMBL_search_assays does not declare, while `organism__icontains` looks
+        like filter syntax but `organism` is not an /assay.json field, so ChEMBL
+        drops it exactly like `bananaparam`. Only the part before `__` is
+        checked -- an unrecognised lookup on a real field fails loudly upstream
+        (`organism__bogus` on /target.json returns an error_message body), so it
+        cannot pass itself off as an unfiltered success.
+
+        The built query is checked rather than the caller's arguments so that
+        names _build_params rewrites are covered too: `target_chembl_id` becomes
+        `target_chembl_id__exact`, which /binding_site.json and
+        /protein_classification.json do not filter on -- both returned their
+        whole table (905 protein classifications, filtered and unfiltered alike)
+        for the target ID in their own shipped test_examples.
+
+        When the upstream list is unavailable, nothing is reported: a network
+        failure must not turn working queries into errors.
+        """
+        # Endpoint templates such as /similarity/{smiles}/{threshold}.json carry
+        # these in the path, where they select the resource rather than filter
+        # it. _build_params also copies them into the query string, where ChEMBL
+        # ignores them -- harmlessly, since the path already applied them.
+        endpoint = self.tool_config.get("fields", {}).get("endpoint", "")
+        path_keys = set(re.findall(r"\{(\w+)\}", endpoint))
+        candidates = [
+            key
+            for key in params
+            if key not in _CHEMBL_QUERY_CONTROLS and key.split("__")[0] not in path_keys
+        ]
+        # Decided before the schema is fetched: a get-by-ID call carries nothing
+        # but controls and path segments, so there is provably nothing to report
+        # and no reason to spend a round-trip learning that.
+        if not candidates:
+            return []
+        filterable = self._upstream_filter_fields(url)
+        if not filterable:
+            return []
+        return sorted(key for key in candidates if key.split("__")[0] not in filterable)
 
     def _extract_parent_chembl_id(self, mol: dict) -> Optional[str]:
         """Extract the parent ChEMBL ID from a molecule record."""
@@ -259,7 +388,9 @@ class ChEMBLRESTTool(BaseTool):
         base = f"{self.base_url}/molecule/{chembl_id}.json"
         headers = {"Accept": "application/json", "User-Agent": "ToolUniverse/1.0"}
         try:
-            resp = requests.get(base, headers=headers, timeout=20)
+            resp = request_with_retry(
+                self.session, "GET", base, headers=headers, timeout=20
+            )
             resp.raise_for_status()
             parent = self._extract_parent_chembl_id(resp.json())
             return parent if parent and parent != chembl_id else None
@@ -281,8 +412,13 @@ class ChEMBLRESTTool(BaseTool):
             {"pref_name__iexact": drug_name, "format": "json", "limit": 5},
         ):
             try:
-                resp = requests.get(
-                    base, params=lookup_params, headers=headers, timeout=20
+                resp = request_with_retry(
+                    self.session,
+                    "GET",
+                    base,
+                    params=lookup_params,
+                    headers=headers,
+                    timeout=20,
                 )
                 resp.raise_for_status()
                 molecules = resp.json().get("molecules", [])
@@ -322,6 +458,20 @@ class ChEMBLRESTTool(BaseTool):
                 if mol_id and not arguments.get("drug_chembl_id"):
                     arguments = dict(arguments)
                     arguments["drug_chembl_id"] = mol_id
+                    # Both `__exact` aliases have to be dropped, not just
+                    # superseded: rebuilding while either is still in
+                    # `arguments` sends it alongside the correct
+                    # parent_molecule_chembl_id. `drug_chembl_id__exact` is not
+                    # a /mechanism filter so it is merely discarded, but
+                    # `molecule_chembl_id__exact` IS one, and ANDing it with the
+                    # parent filter drops the mechanisms recorded against other
+                    # salt forms: CHEMBL20 answers 8 mechanisms via
+                    # drug_chembl_id and 4 via molecule_chembl_id__exact, same
+                    # drug, both status:success. Verified upstream --
+                    # parent_molecule_chembl_id=CHEMBL1382 returns 2 rows,
+                    # adding molecule_chembl_id__exact=CHEMBL1382 returns 0.
+                    arguments.pop("drug_chembl_id__exact", None)
+                    arguments.pop("molecule_chembl_id__exact", None)
                     params = self._build_params(arguments)
 
                 if not mol_id:
@@ -384,6 +534,28 @@ class ChEMBLRESTTool(BaseTool):
                         "drug_chembl_id (e.g., 'CHEMBL3137343' for pembrolizumab). "
                         "Alternatively, filter by mechanism_of_action__contains (e.g., 'PD-1').",
                     }
+
+            # Placed after the tool-specific guards above, so it validates the
+            # query actually about to be sent (ChEMBL_get_drug_mechanisms
+            # rebuilds `params` in that block) and so a request rejected without
+            # ever contacting ChEMBL does not first pay for a schema lookup.
+            inert = self._inert_filters(params, url)
+            if inert:
+                resource = self._resource_name(url)
+                filterable = self._upstream_filter_fields(url)
+                return {
+                    "status": "error",
+                    "error": (
+                        f"{', '.join(inert)} "
+                        f"{'is not a filter' if len(inert) == 1 else 'are not filters'} "
+                        f"ChEMBL applies to /{resource}. ChEMBL ignores query "
+                        "parameters it does not recognise and returns the whole "
+                        "unfiltered table, so this request would have succeeded while "
+                        f"answering a different question. /{resource} filters on: "
+                        f"{', '.join(sorted(filterable))} -- each usable directly or "
+                        "with a lookup suffix such as '__icontains'."
+                    ),
+                }
 
             # Feature-36A-01: ChEMBL_get_molecule_targets — the /target.json endpoint
             # does NOT support molecule_chembl_id__exact filtering (silently ignored).
@@ -596,6 +768,11 @@ class ChEMBLTool(BaseTool):
         super().__init__(tool_config)
         self.base_url = base_url
         self.indigo = Indigo()
+        # Match ChEMBLRESTTool: a pooled session and an explicit timeout, so no
+        # request can hang indefinitely when the upstream service stops
+        # responding rather than returning an error.
+        self.session = requests.Session()
+        self.timeout = 30
 
     def run(self, arguments):
         query = arguments.get("query")
@@ -613,7 +790,13 @@ class ChEMBLTool(BaseTool):
         headers = {"Accept": "application/json"}
         search_url = f"{self.base_url}/molecule/search.json?q={quote(compound_name)}"
         print(search_url)
-        response = requests.get(search_url, headers=headers)
+        response = request_with_retry(
+            self.session,
+            "GET",
+            search_url,
+            headers=headers,
+            timeout=self.timeout,
+        )
         response.raise_for_status()
         results = response.json().get("molecules", [])
         if not results or not isinstance(results, list):
@@ -646,7 +829,13 @@ class ChEMBLTool(BaseTool):
         headers = {"Accept": "application/json"}
         if query.upper().startswith("CHEMBL"):
             molecule_url = f"{self.base_url}/molecule/{quote(query)}.json"
-            response = requests.get(molecule_url, headers=headers)
+            response = request_with_retry(
+                self.session,
+                "GET",
+                molecule_url,
+                headers=headers,
+                timeout=self.timeout,
+            )
             response.raise_for_status()
             molecule = response.json()
             if not molecule or not isinstance(molecule, dict):
@@ -677,7 +866,13 @@ class ChEMBLTool(BaseTool):
         """
         headers = {"Accept": "application/json"}
         search_url = f"{self.base_url}/molecule/search.json?q={quote(compound_name)}"
-        response = requests.get(search_url, headers=headers)
+        response = request_with_retry(
+            self.session,
+            "GET",
+            search_url,
+            headers=headers,
+            timeout=self.timeout,
+        )
         response.raise_for_status()
         results = response.json().get("molecules", [])
         if not results or not isinstance(results, list):
@@ -805,7 +1000,13 @@ class ChEMBLTool(BaseTool):
                 headers = {"Accept": "application/json"}
                 search_url = f"{self.base_url}/molecule/search.json?q={quote(query)}"
                 try:
-                    response = requests.get(search_url, headers=headers)
+                    response = request_with_retry(
+                        self.session,
+                        "GET",
+                        search_url,
+                        headers=headers,
+                        timeout=self.timeout,
+                    )
                     response.raise_for_status()
                     results = response.json().get("molecules", [])
                     if results and len(results) > 0:
@@ -860,7 +1061,13 @@ class ChEMBLTool(BaseTool):
 
             encoded_smiles = quote(smiles)
             similarity_url = f"{self.base_url}/similarity/{encoded_smiles}/{similarity_threshold}.json?limit={max_results}"
-            sim_response = requests.get(similarity_url, headers=headers)
+            sim_response = request_with_retry(
+                self.session,
+                "GET",
+                similarity_url,
+                headers=headers,
+                timeout=self.timeout,
+            )
             sim_response.raise_for_status()
             sim_results = sim_response.json().get("molecules", [])
             similar_molecules = []

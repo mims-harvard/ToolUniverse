@@ -7,6 +7,13 @@ from .tool_registry import register_tool
 
 FDA_BASE_URL = "https://api.fda.gov"
 
+# openFDA joins search clauses with a literal " AND "/" OR " (the operator must
+# survive URL-encoding as a real space). Writing "+AND+" into a requests params
+# dict encodes it as "%2BAND%2B", which openFDA cannot parse and answers with a
+# 404 -- so the separator has to be a plain space-delimited operator.
+_AND = " AND "
+_OR = " OR "
+
 
 @register_tool("FDAOrangeBookTool")
 class FDAOrangeBookTool(BaseTool):
@@ -68,6 +75,32 @@ class FDAOrangeBookTool(BaseTool):
         data = {k: v for k, v in result.items() if k != "status"}
         return {"status": "success", "data": data}
 
+    @staticmethod
+    def _openfda_get(params: Dict[str, Any]) -> Dict[str, Any]:
+        """GET Drugs@FDA, translating openFDA's "404 == zero matches" convention.
+
+        openFDA answers a well-formed query that matches nothing with HTTP 404 and
+        a body of {"error": {"code": "NOT_FOUND", ...}} rather than an empty 200
+        (verified live: /drug/drugsfda.json?search=products.active_ingredients.name:
+        "Quviviq" -> 404 {"error":{"code":"NOT_FOUND","message":"No matches
+        found!"}}). Reporting that as a transport failure makes "no such product"
+        indistinguishable from "the API is down", so an explicit NOT_FOUND body is
+        translated into an empty result set. A 404 *without* that body is still a
+        real error, so a genuinely missing endpoint is not silently swallowed.
+        """
+        response = requests.get(
+            f"{FDA_BASE_URL}/drug/drugsfda.json", params=params, timeout=30
+        )
+        if response.status_code == 404:
+            try:
+                code = (response.json().get("error") or {}).get("code")
+            except ValueError:
+                code = None
+            if code == "NOT_FOUND":
+                return {"results": [], "meta": {"results": {"total": 0}}}
+        response.raise_for_status()
+        return response.json()
+
     def _search_drug(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for drugs by brand name, generic name, or application number."""
         try:
@@ -77,10 +110,23 @@ class FDAOrangeBookTool(BaseTool):
             if arguments.get("brand_name"):
                 search_terms.append(f'products.brand_name:"{arguments["brand_name"]}"')
 
-            # Feature-81B-004: accept drug_name as alias for generic_name
-            generic = arguments.get("generic_name") or arguments.get("drug_name")
-            if generic:
-                search_terms.append(f'products.active_ingredients.name:"{generic}"')
+            if arguments.get("generic_name"):
+                search_terms.append(
+                    f'products.active_ingredients.name:"{arguments["generic_name"]}"'
+                )
+
+            # Feature-81B-004: drug_name is the caller-friendly "name of any kind"
+            # parameter this tool's description advertises ("by brand name, generic
+            # name, or application number"). It used to be a plain alias for
+            # generic_name, which meant a brand name passed here searched only the
+            # active-ingredient field and could never match. It now matches either
+            # field, so the parameter behaves the way its name reads.
+            drug_name = arguments.get("drug_name")
+            if drug_name:
+                search_terms.append(
+                    f'(products.brand_name:"{drug_name}"'
+                    f'{_OR}products.active_ingredients.name:"{drug_name}")'
+                )
 
             if arguments.get("application_number"):
                 search_terms.append(
@@ -90,19 +136,18 @@ class FDAOrangeBookTool(BaseTool):
             if not search_terms:
                 return {
                     "status": "error",
-                    "error": "Must provide brand_name, generic_name, or application_number",
+                    "error": (
+                        "Must provide at least one of: brand_name, generic_name, "
+                        "drug_name, or application_number"
+                    ),
                 }
 
-            search_query = "+AND+".join(search_terms)
+            search_query = _AND.join(search_terms)
             limit = arguments.get("limit", 10)
 
-            url = f"{FDA_BASE_URL}/drug/drugsfda.json"
             params = {"search": search_query, "limit": min(limit, 100)}
 
-            response = requests.get(url, params=params, timeout=30)
-            response.raise_for_status()
-
-            data = response.json()
+            data = self._openfda_get(params)
             results = data.get("results", [])
 
             # Extract key information
@@ -128,12 +173,19 @@ class FDAOrangeBookTool(BaseTool):
 
                 drugs.append(drug_info)
 
-            return {
+            payload = {
                 "status": "success",
                 "drugs": drugs,
                 "count": len(drugs),
                 "total": data.get("meta", {}).get("results", {}).get("total", 0),
             }
+            if not drugs:
+                payload["note"] = (
+                    "No Drugs@FDA records matched this query. This is an empty "
+                    "result, not an API failure. Check spelling, or try the other "
+                    "name form (brand_name vs generic_name)."
+                )
+            return payload
 
         except requests.exceptions.Timeout:
             return {"status": "error", "error": "Request timeout after 30s"}
@@ -155,13 +207,9 @@ class FDAOrangeBookTool(BaseTool):
                     "error": "Missing required parameter: application_number",
                 }
 
-            url = f"{FDA_BASE_URL}/drug/drugsfda.json"
-            params = {"search": f'application_number:"{app_number}"', "limit": 1}
-
-            response = requests.get(url, params=params, timeout=30)
-            response.raise_for_status()
-
-            data = response.json()
+            data = self._openfda_get(
+                {"search": f'application_number:"{app_number}"', "limit": 1}
+            )
             results = data.get("results", [])
 
             if not results:

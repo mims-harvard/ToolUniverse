@@ -5,10 +5,11 @@
     "description": "Run scVelo (RNA velocity; Bergen et al., Nature Biotechnology 2020) on a single-cell AnnData and return a velocity-derived pseudotime ordering of cells plus a per-cell velocity confidence. The input .h5ad MUST contain `spliced` and `unspliced` count layers (e.g. from velocyto, kb-python / kallisto|bustools, or STARsolo); without them RNA velocity cannot be estimated and the tool returns an error. Pipeline: filter_and_normalize -> moments -> velocity -> velocity_graph -> velocity_pseudotime + velocity_confidence. When a cluster_key is supplied, also returns the mean pseudotime per cluster (a coarse trajectory ordering).",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData that contains `spliced` and `unspliced` layers."},
-        "cluster_key": {"type": "string", "description": "obs column to summarize pseudotime by (optional); returns mean velocity_pseudotime per cluster as a coarse ordering."},
-        "mode": {"type": "string", "description": "Velocity estimation mode: 'deterministic', 'stochastic' (default), or 'dynamical'."}
+        "adata_path": {"type": "string", "description": "An .h5ad file inside the provider-configured data directory that contains `spliced` and `unspliced` layers."},
+        "cluster_key": {"type": "string", "minLength": 1, "maxLength": 128, "description": "obs column to summarize pseudotime by (optional); returns mean velocity_pseudotime per cluster as a coarse ordering."},
+        "mode": {"type": "string", "enum": ["deterministic", "stochastic", "dynamical"], "description": "Velocity estimation mode: 'deterministic', 'stochastic' (default), or 'dynamical'."}
       },
       "required": ["adata_path"]
     },

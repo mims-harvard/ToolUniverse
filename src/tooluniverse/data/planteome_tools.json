@@ -1,0 +1,137 @@
+[
+  {
+    "name": "Planteome_search_terms",
+    "type": "PlanteomeTool",
+    "description": "Search Planteome (a Global Core Biodata Resource) for plant ontology terms by keyword, across the Plant Ontology, Plant Trait Ontology, Plant Stress Ontology, and crop-specific ontologies together. Example: query='pollen' returns terms like 'pollen development' (GO:0009555) and crop-specific pollen traits. Complements ToolUniverse's generic GO tools (OLS/QuickGO), which don't carry plant-specific trait/structure ontologies.",
+    "fields": {
+      "operation": "search_terms"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Keyword or phrase, e.g. 'pollen development'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max terms to return, 1-100. Default 20."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": ["string", "null"]},
+              "annotation_class_label": {"type": ["string", "null"]},
+              "description": {"type": ["string", "null"]},
+              "source": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "pollen development", "limit": 5},
+      {"query": "drought stress", "limit": 5}
+    ]
+  },
+  {
+    "name": "Planteome_get_term",
+    "type": "PlanteomeTool",
+    "description": "Get a single Planteome ontology term by its accession ID (from Planteome_search_terms or Planteome_search_annotations results). Example: term_id='GO:0009555' returns the full definition of 'pollen development'.",
+    "fields": {
+      "operation": "get_term"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["term_id"],
+      "properties": {
+        "term_id": {
+          "type": "string",
+          "description": "Ontology term accession, e.g. 'GO:0009555' or 'PO:0025281'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {"type": "string"},
+            "annotation_class_label": {"type": ["string", "null"]},
+            "description": {"type": ["string", "null"]},
+            "source": {"type": ["string", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"term_id": "GO:0009555"},
+      {"term_id": "PO:0025281"}
+    ]
+  },
+  {
+    "name": "Planteome_search_annotations",
+    "type": "PlanteomeTool",
+    "description": "Search Planteome's gene-to-ontology-term annotation index by gene id or accession. Resolves a plant gene to every ontology term (GO/PO/TO/crop ontologies) it has been annotated with, across evidence types and source databases. Example: query='AT4G32150' (Arabidopsis VAMP711) returns its GO annotations including 'vesicle-mediated transport'.",
+    "fields": {
+      "operation": "search_annotations"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Gene id or accession, e.g. 'AT4G32150'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max annotations to return, 1-100. Default 20."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "bioentity": {"type": ["string", "null"]},
+              "bioentity_label": {"type": ["string", "null"]},
+              "annotation_class": {"type": ["string", "null"]},
+              "annotation_class_label": {"type": ["string", "null"]},
+              "taxon_label": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "AT4G32150", "limit": 5},
+      {"query": "AT1G01010", "limit": 5}
+    ]
+  }
+]

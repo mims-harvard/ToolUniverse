@@ -23,6 +23,23 @@ _DISEASE_TARGET_SCORE_TIME_BUDGET_S = 25.0
 # let a caller's optimistic size turn into an opaque API failure.
 _OT_EXPRESSION_MAX_PAGE_SIZE = 3000
 
+# Page size Open Targets applies when a query passes no `page`/`size` argument.
+# Nothing in this repo sets it: the tool configs declare no default page size
+# and GraphQLTool.run only injects a default for a flat `size` parameter, so a
+# `page: Pagination` variable simply arrives null. Probed live against the v4
+# API for drug(chemblId: "CHEMBL521").adverseEvents -- `page` omitted and
+# `page: null` both return 25 rows beside `count: 55`, while
+# `page: {index: 0, size: 60}` returns all 55.
+_OT_DEFAULT_PAGE_SIZE = 25
+
+# The 3000-row page ceiling is API-wide, not specific to baselineExpression:
+# probed live, target(ensemblId: "ENSG00000141510").interactions with
+# `page: {index: 0, size: 8626}` fails with "There was a pagination error. You
+# used size 8626 but the size must be between 0 and 3000", while size 3000
+# succeeds. A "re-query with size=<total>" hint must therefore be clamped, or
+# it would hand the caller an argument the API rejects.
+_OT_MAX_PAGE_SIZE = _OT_EXPRESSION_MAX_PAGE_SIZE
+
 
 def validate_query(query_str, schema_str):
     try:
@@ -179,6 +196,79 @@ _OT_RENAMED_DATASOURCES = {
     "ot_genetics_portal": "gwas_credible_sets",
     "chembl": "clinical_precedence",
 }
+
+
+def _ot_more_rows_hint(parameters, count):
+    """Name the exact argument that fetches the rows Open Targets withheld.
+
+    Open Targets tools expose pagination three different ways -- a `page`
+    object, a flat `size` (sometimes with `index`), or nothing at all -- so the
+    hint is derived from the tool's own declared parameters instead of assumed.
+    A truncation flag that says "there is more" without saying how to get it is
+    only half a disclosure.
+    """
+    size = min(count, _OT_MAX_PAGE_SIZE)
+    page = parameters.get("page")
+    if isinstance(page, dict) and "size" in (page.get("properties") or {}):
+        hint = f'Re-query with page: {{"index": 0, "size": {size}}}'
+    elif "size" in parameters:
+        index = " and index: 0" if "index" in parameters else ""
+        hint = f"Re-query with size: {size}{index}"
+    else:
+        return (
+            "This tool exposes no pagination parameter, so the withheld rows "
+            "cannot be retrieved through it -- narrow the query instead."
+        )
+    if size < count:
+        return (
+            f"{hint} to get the first {size} rows (Open Targets rejects a page "
+            f"size above {_OT_MAX_PAGE_SIZE}), then step the page index to "
+            "reach the rest."
+        )
+    return f"{hint} to get every row."
+
+
+def _ot_disclose_row_truncation(node, field=None, findings=None):
+    """Annotate every ``count`` + ``rows`` container with returned/truncated.
+
+    Open Targets reports a collection as ``{count, rows}`` where ``count`` is
+    the size of the whole collection and ``rows`` is one page of it. Nothing in
+    the payload says so, so ``count: 55`` sits directly beside 25 rows and reads
+    as "the number of rows you were given" (or makes the 25 rows look complete).
+
+    Purely additive: ``returned`` and ``truncated`` are new keys placed beside
+    the untouched ``count`` and ``rows``. Containers that already carry a
+    ``truncated`` key keep theirs (baselineExpression computes a page-index
+    aware one), and payloads with no ``count``/``rows`` pair -- e.g. a
+    ``mechanismsOfAction { rows }`` block, which reports no total -- are left
+    alone, since truncation is not detectable there.
+
+    Returns the ``(field, returned, count)`` triples that came up short.
+    """
+    if findings is None:
+        findings = []
+    if isinstance(node, dict):
+        rows = node.get("rows")
+        count = node.get("count")
+        if (
+            isinstance(rows, list)
+            and isinstance(count, int)
+            and not isinstance(count, bool)
+            and "truncated" not in node
+        ):
+            returned = len(rows)
+            node["returned"] = returned
+            node["truncated"] = returned < count
+            if returned < count:
+                findings.append((field or "rows", returned, count))
+        for key, value in node.items():
+            if key in ("returned", "truncated"):
+                continue
+            _ot_disclose_row_truncation(value, key, findings)
+    elif isinstance(node, list):
+        for item in node:
+            _ot_disclose_row_truncation(item, field, findings)
+    return findings
 
 
 _OT_SEARCH_QUERY = """
@@ -538,6 +628,46 @@ class OpentargetTool(GraphQLTool):
                 if isinstance(arg_value, str) and "-" in arg_value:
                     modified_arguments[each_arg] = arg_value.replace("-", " ")
             result = super().run(modified_arguments)
+
+        # Disclose partial pages. Open Targets pages every `count` + `rows`
+        # collection and defaults to 25 rows when the query passes no page
+        # size, but the response gives no hint that `rows` is a page: `count`
+        # sits directly beside a shorter list. Confirmed live for
+        # OpenTargets_get_drug_adverse_events_by_chemblId with CHEMBL521
+        # (ibuprofen) -- `count: 55` beside 25 rows, silently dropping toxic
+        # epidermal necrolysis, urticaria, systemic lupus erythematosus and
+        # hepatic enzyme increased, exactly the signals a safety reviewer is
+        # looking for. Same silent drop measured on
+        # OpenTargets_get_publications_by_drug_chemblId (25 of 41523),
+        # ..._get_target_interactions_by_ensemblID (25 of 8626) and
+        # ..._get_diseases_phenotypes_by_target_ensembl (25 of 5638). Runs last
+        # so it sees the final rows, including the approved-indications filter
+        # above (which rewrites `count` to match, so nothing is flagged there).
+        if result.get("status") == "success":
+            truncated_rows = _ot_disclose_row_truncation(result.get("data"))
+            if truncated_rows:
+                parameters = self.tool_config.get("parameter", {}).get("properties", {})
+                notes = []
+                for _field, _returned, _count in truncated_rows:
+                    # Only blame the API default when the page really is the
+                    # default size; a tool that declares its own default (e.g.
+                    # associatedTargets pages 50 at a time) would otherwise be
+                    # described wrongly.
+                    _why = (
+                        " Open Targets defaults to a page size of "
+                        f"{_OT_DEFAULT_PAGE_SIZE} when no page size is given."
+                        if _returned == _OT_DEFAULT_PAGE_SIZE
+                        else ""
+                    )
+                    notes.append(
+                        f"PARTIAL RESULT: '{_field}' returned {_returned} of "
+                        f"{_count} rows -- 'rows' is one page of the collection, "
+                        f"not all of it.{_why} The {_count - _returned} rows not "
+                        "shown are missing from this response only; their absence "
+                        "here is NOT evidence they are absent from Open Targets. "
+                        f"{_ot_more_rows_hint(parameters, _count)}"
+                    )
+                result.setdefault("metadata", {})["truncation_note"] = " ".join(notes)
 
         return result
 

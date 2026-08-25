@@ -2,11 +2,12 @@
   {
     "type": "CBioPortalRESTTool",
     "name": "cBioPortal_get_cancer_studies",
-    "description": "Get list of cancer studies from cBioPortal",
+    "description": "Get one page of the cBioPortal study catalogue. This returns a SLICE, not the whole catalogue: `limit` defaults to 20 while cBioPortal currently holds several hundred studies. The response always reports `total_available` (the full catalogue size) alongside `count` (studies actually returned), and sets `truncated: true` with a `truncation_note` whenever studies were left behind. Never conclude a study is missing from cBioPortal from a truncated page — raise `limit` to `total_available`, or page with `offset`, before drawing that conclusion.",
     "parameter": {
       "type": "object",
       "properties": {
-        "limit": {"type": "integer", "default": 20, "description": "Number of studies to return"}
+        "limit": {"type": "integer", "default": 20, "description": "Number of studies to return in this page. The default of 20 covers only a small fraction of the catalogue; set it to the `total_available` reported in the response to retrieve every study."},
+        "offset": {"type": "integer", "default": 0, "description": "0-based index of the first study to return, for paging through the catalogue. Applied client-side because the cBioPortal /studies endpoint ignores its own pageNumber parameter."}
       }
     },
     "fields": {
@@ -318,7 +319,7 @@
   {
     "type": "CBioPortalRESTTool",
     "name": "cBioPortal_get_gene_panels",
-    "description": "Get all gene panels used in cBioPortal studies. Gene panels define which genes were sequenced in a study. Use to understand coverage before querying mutation data.",
+    "description": "Get gene panels used in cBioPortal studies. Gene panels define which genes were sequenced in a study. Use to understand coverage before querying mutation data. Returns one page: `page_size` defaults to 50, and the response reports `total_available` (all panels matching) next to `count` (panels returned), plus `truncated`/`truncation_note` when panels were left behind.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -409,7 +410,7 @@
   {
     "type": "CBioPortalRESTTool",
     "name": "cBioPortal_get_clinical_data",
-    "description": "Get clinical data for all samples in a study. Returns patient-level data like tumor stage, histology, survival status. Filter by clinical attribute ID for specific data types.",
+    "description": "Get clinical data for samples in a study. Returns patient-level data like tumor stage, histology, survival status. Filter by clinical attribute ID for specific data types. Returns one page: `page_size` defaults to 100 while a single TCGA study can hold tens of thousands of clinical records, so the response reports `total_available` (all records matching) next to `count` (records returned), plus `truncated`/`truncation_note` when records were left behind.",
     "parameter": {
       "type": "object",
       "properties": {

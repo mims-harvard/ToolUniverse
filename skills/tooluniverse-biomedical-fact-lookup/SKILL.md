@@ -8,6 +8,36 @@ when_to_use: "A factual biomedical question has a single database-checkable answ
 
 Factual biomedical questions — "which gene is in set X", "which gene is associated with disease Y according to DisGeNet", "which gene has a TF binding site per GTRD" — have an authoritative answer in a public database. Guessing from memory is unreliable (≈chance on niche annotations); the matching ToolUniverse tool returns the ground truth.
 
+## Six traps that produce a confidently wrong answer
+
+Each was observed producing a wrong answer on a real question. Check them before
+answering; the detail for each is further down.
+
+1. **"Highest p-value" in GWAS means most significant** — the *smallest* number.
+   Read literally it picks the study's weakest hit (`rs2476491` at 1e-06 instead
+   of `rs7775055-G` at 3e-174).
+
+2. **A window of "N bp upstream plus M bp downstream" spans N+M+1 bases** — the
+   anchor counts. 100 either side of a TSS is 201 nt, not 200. Check the length
+   you got against the length you asked for.
+
+3. **HPA subcellular locations pool every cell line the antibody was tested in.**
+   Report both `main_locations` and `additional_locations`, but when the question
+   names a line, treat them as candidates and drop annotations belonging to
+   another line — reciting all five is as wrong as reciting one.
+
+4. **Allen Brain: answer the leaf structure, not its parent.** The atlas colours
+   the specific structure and gives the parent a different colour, so
+   "Hypothalamus" is wrong where `Lateral preoptic area` (#F2483B) is right.
+   `AllenBrain_search_structures` returns `color_hex_triplet`.
+
+5. **SCREEN's `is_proximal` is unreliable; filter on `element_type`** — `PLS`
+   and `pELS` are TSS-proximal, `dELS` distal.
+
+6. **Derived scores are release-pinned.** gnomAD pLI for APOC2 is 0.047 in r4
+   and 0.402 in r2.1 — an 8.5x difference for the same gene. Set the release the
+   question names and say which you used.
+
 ## RULE ZERO: Look it up, never guess
 
 If a question names a database, a gene set, or any annotation that lives in a database, you MUST query the tool before answering. Answering a "according to <database>" question from memory is a failure mode — these annotations (predicted miRNA targets, ChIP-seq binding, curated gene sets, disease associations) are exactly what models hallucinate. A tool-verified answer beats any recalled fact.

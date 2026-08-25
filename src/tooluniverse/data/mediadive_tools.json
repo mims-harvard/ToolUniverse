@@ -1,0 +1,203 @@
+[
+  {
+    "name": "MediaDive_search_media",
+    "type": "MediaDiveTool",
+    "description": "Search MediaDive's catalogue of over 3,300 standardized microbial cultivation media by name substring. Returns each match's medium_id, source, pH range, and any published reference. Example: query='nutrient agar' finds DSMZ Medium 1. Use medium_id with MediaDive_get_medium to retrieve the full recipe.",
+    "fields": {
+      "operation": "search_media"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Medium name or substring, e.g. 'nutrient agar', 'marine broth', 'R2A'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max matches to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "medium_id": {"type": ["string", "integer", "null"]},
+              "name": {"type": ["string", "null"]},
+              "source": {"type": ["string", "null"]},
+              "min_pH": {"type": ["number", "null"]},
+              "max_pH": {"type": ["number", "null"]},
+              "description": {"type": ["string", "null"]},
+              "reference": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "nutrient agar"},
+      {"query": "marine broth", "limit": 5}
+    ]
+  },
+  {
+    "name": "MediaDive_get_medium",
+    "type": "MediaDiveTool",
+    "description": "Retrieve the full recipe for one MediaDive medium: every solution's ingredient list with exact amounts and units, plus the preparation steps. Example: medium_id=1 (DSMZ Nutrient Agar) returns peptone, meat extract, and agar in g/L with pH adjustment instructions. Use MediaDive_search_media to find a medium_id by name.",
+    "fields": {
+      "operation": "get_medium"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["medium_id"],
+      "properties": {
+        "medium_id": {
+          "type": ["string", "integer"],
+          "description": "MediaDive medium identifier, e.g. 1 or '1a'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "medium_id": {"type": ["string", "integer", "null"]},
+            "name": {"type": ["string", "null"]},
+            "complex_medium": {"type": ["integer", "string", "null"]},
+            "min_pH": {"type": ["number", "null"]},
+            "max_pH": {"type": ["number", "null"]},
+            "source": {"type": ["string", "null"]},
+            "reference_link": {"type": ["string", "null"]},
+            "solutions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "solution_name": {"type": ["string", "null"]},
+                  "volume_ml": {"type": ["number", "null"]},
+                  "recipe": {"type": "array", "items": {"type": "object"}},
+                  "preparation_steps": {"type": "array", "items": {"type": "string"}}
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"medium_id": 1},
+      {"medium_id": "1a"}
+    ]
+  },
+  {
+    "name": "MediaDive_search_ingredients",
+    "type": "MediaDiveTool",
+    "description": "Search MediaDive's catalogue of over 1,200 media ingredients by name substring. Returns each match's ingredient_id and chemical identifiers (CAS, ChEBI, PubChem, formula) where known. Example: query='agar' finds the gelling agent used across most solid media. Use ingredient_id with MediaDive_get_ingredient for full details.",
+    "fields": {
+      "operation": "search_ingredients"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Ingredient name or substring, e.g. 'yeast extract', 'agar', 'NaCl'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max matches to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ingredient_id": {"type": ["integer", "string", "null"]},
+              "name": {"type": ["string", "null"]},
+              "cas_number": {"type": ["string", "null"]},
+              "chebi_id": {"type": ["integer", "null"]},
+              "pubchem_id": {"type": ["integer", "null"]},
+              "formula": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "agar"},
+      {"query": "yeast extract", "limit": 5}
+    ]
+  },
+  {
+    "name": "MediaDive_get_ingredient",
+    "type": "MediaDiveTool",
+    "description": "Retrieve one MediaDive ingredient's chemical identifiers, synonyms, and how widely it is used. Example: ingredient_id=3 (Agar) returns CAS 9002-18-0, ChEBI, PubChem, and formula (C12H18O9)n. Use MediaDive_search_ingredients to find an ingredient_id by name.",
+    "fields": {
+      "operation": "get_ingredient"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["ingredient_id"],
+      "properties": {
+        "ingredient_id": {
+          "type": ["string", "integer"],
+          "description": "MediaDive ingredient identifier, e.g. 3."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "ingredient_id": {"type": ["integer", "string", "null"]},
+            "name": {"type": ["string", "null"]},
+            "synonyms": {"type": "array", "items": {"type": "string"}},
+            "cas_number": {"type": ["string", "null"]},
+            "chebi_id": {"type": ["integer", "null"]},
+            "kegg_compound": {"type": ["string", "null"]},
+            "pubchem_id": {"type": ["integer", "null"]},
+            "formula": {"type": ["string", "null"]},
+            "molecular_mass": {"type": ["number", "null"]},
+            "used_in_media_count": {"type": "integer"},
+            "used_in_media_sample": {"type": "array", "items": {"type": ["string", "integer"]}}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"ingredient_id": 3},
+      {"ingredient_id": 1}
+    ]
+  }
+]

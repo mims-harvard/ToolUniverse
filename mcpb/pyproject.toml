@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tooluniverse-mcpb-native"
-version = "1.4.0"
+version = "1.4.1"
 description = "ToolUniverse MCP Server (Native MCPB bundle)"
 requires-python = ">=3.10,<3.14"
 
@@ -25,14 +25,14 @@ dependencies = [
     "openai>=1.107.0",
     "pyyaml>=6.0.0",
     "google-genai>=1.36.0",
-    "mcp[cli]>=1.9.3",
-    "fastmcp>=2.12.3,<4.0.0",
+    "mcp[cli]>=1.29.0,<2.0.0",
+    "fastmcp>=3.4.5,<4.0.0",
     "xmltodict>=1.0.0",
     "lxml>=6.0.0",
     "huggingface_hub>=0.34.0",
     "jsonpath-ng>=1.6.0",
     "rcsb-api>=1.4.0",
-    "fitz>=0.0.1.dev2",
+    "scipy>=1.7.0",
     "pandas>=2.2.3",
     "setuptools>=70.0.0",
     "pdfplumber>=0.11.0",
@@ -42,7 +42,10 @@ dependencies = [
     "aiohttp",
     "beautifulsoup4>=4.12.0",
     "python-dotenv>=1.0.0",
-    "markitdown[all]>=0.1.0",
+    # Keep the bundle aligned with the root package: YouTube transcription does
+    # not support Python 3.14 yet, so retain every other converter there.
+    "markitdown[all]>=0.1.0; python_version < '3.14'",
+    "markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx]>=0.1.0; python_version >= '3.14'",
     "psutil>=5.9.0",
     "ddgs>=9.0.0",
     "pip>=25.3",

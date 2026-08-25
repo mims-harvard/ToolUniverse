@@ -237,6 +237,87 @@ class BaseRESTTool(BaseTool):
 
         return result
 
+    @staticmethod
+    def _resolve_path(data: Any, path) -> Any:
+        """
+        Walk a list of dict keys / list indices into a decoded JSON payload.
+
+        Returns None if any step is missing, so callers can treat "not found"
+        and "explicitly null" alike (neither is usable as a total/row list).
+        """
+        current = data
+        for step in path or []:
+            if isinstance(step, int) and not isinstance(step, bool):
+                if not isinstance(current, (list, tuple)) or not (
+                    -len(current) <= step < len(current)
+                ):
+                    return None
+                current = current[step]
+            else:
+                if not isinstance(current, dict) or step not in current:
+                    return None
+                current = current[step]
+        return current
+
+    def _apply_pagination_disclosure(self, result: Dict[str, Any]) -> None:
+        """
+        Surface upstream truncation at the top level of the response.
+
+        Opt-in via ``fields.pagination_disclosure``; tools without the key are
+        untouched. Many APIs return a server-side page of a larger result set
+        and report the real total somewhere inside the payload (World Bank puts
+        ``{"page","pages","per_page","total"}`` at ``data[0]``; OData services
+        return ``@odata.count``). Left buried there, a partial answer is
+        indistinguishable from a complete one -- a country panel can lose a
+        whole country and still report ``status: success``.
+
+        Config keys (all paths are lists of dict keys / list indices into
+        ``result["data"]``)::
+
+            {
+              "total_path": [0, "total"],   # int: rows matching upstream
+              "rows_path": [1],             # list: rows actually returned
+              "page_path": [0, "page"],     # optional int
+              "pages_path": [0, "pages"],   # optional int
+              "more_hint": "How to fetch the rest."
+            }
+
+        Sets ``count`` to the real row count (not the length of an envelope),
+        plus ``total_available`` and an explicit ``truncated`` boolean so
+        "complete" and "partial" are never conflated. When truncated, adds a
+        top-level ``truncation_note`` naming the true total.
+        """
+        config = self.tool_config.get("fields", {}).get("pagination_disclosure")
+        if not config:
+            return
+
+        data = result.get("data")
+        total = self._resolve_path(data, config.get("total_path"))
+        rows = self._resolve_path(data, config.get("rows_path"))
+        if not isinstance(total, int) or isinstance(total, bool):
+            return
+        if not isinstance(rows, list):
+            return
+
+        returned = len(rows)
+        result["count"] = returned
+        result["total_available"] = total
+        result["truncated"] = returned < total
+        if returned >= total:
+            return
+
+        page = self._resolve_path(data, config.get("page_path"))
+        pages = self._resolve_path(data, config.get("pages_path"))
+        page_part = ""
+        if isinstance(page, int) and isinstance(pages, int):
+            page_part = f" This is page {page} of {pages}."
+        hint = config.get("more_hint", "")
+        result["truncation_note"] = (
+            f"Partial result: {returned} of {total} matching records were "
+            f"returned; {total - returned} are missing.{page_part} "
+            f"{hint}"
+        ).strip()
+
     def _handle_special_endpoint(
         self, url: str, response: requests.Response, arguments: Dict[str, Any]
     ) -> Optional[Dict[str, Any]]:
@@ -339,6 +420,15 @@ class BaseRESTTool(BaseTool):
                 max_attempts=3,
             )
 
+            # The echoed `url` is the endpoint only -- query params live in
+            # `params` and never appear in it, so a caller cannot tell what was
+            # actually requested (which page? which filter? which $top?) and
+            # cannot reproduce the call. `fields.echo_request_url` opts a tool
+            # into echoing the fully-resolved request URI instead. Guarded with
+            # getattr so stubbed responses in tests stay valid.
+            if self.tool_config.get("fields", {}).get("echo_request_url"):
+                url = getattr(response, "url", None) or url
+
             # Check for errors (accept any 2xx success status)
             if not (200 <= response.status_code < 300):
                 return {
@@ -370,6 +460,10 @@ class BaseRESTTool(BaseTool):
                     result["total_before_limit"] = len(data)
                     result["data"] = data[: int(limit)]
                     result["count"] = int(limit)
+
+            # Disclose server-side pagination/truncation at the top level for
+            # tools that opt in via `fields.pagination_disclosure`.
+            self._apply_pagination_disclosure(result)
 
             # Fix-R32C-4/5: an exact-match backend (e.g. CPIC's PostgREST
             # name=eq.{name}) silently returns status:success with an empty

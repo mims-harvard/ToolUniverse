@@ -1592,7 +1592,7 @@
     "aliases": [
       "drugbank_get_drug_interactions_by_drug_name_or_drugbank_id"
     ],
-    "description": "Get drug interactions and contraindications by drug name or DrugBank ID.",
+    "description": "Get drug interactions and contraindications by drug name or DrugBank ID. The returned interacting_drugs list is a window of at most 25 entries in raw database order, NOT the full list - a drug such as labetalol has 1855 documented interactions. To check a specific drug pair, pass nested_contains with the partner drug name; to page through the whole list, use nested_offset. Always read interacting_drugs_total_count / interacting_drugs_truncated before concluding that no interaction exists.",
     "settings": {
       "hf_dataset_path": {
         "repo_id": "agenticx/DrugBank",
@@ -1644,10 +1644,20 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of results to return",
+          "description": "Maximum number of matched DRUG RECORDS to return. This does NOT control how many interacting drugs are listed inside each record - that nested list is capped at 25 entries per record. Use nested_contains/nested_offset to reach interactions beyond the first 25.",
           "default": 10,
           "minimum": 1,
           "maximum": 100
+        },
+        "nested_contains": {
+          "type": "string",
+          "description": "Optional. Case-insensitive substring; keeps only the interacting-drug entries whose id, name, or description contains it. Use this to answer 'does drug A interact with drug B' - e.g. query='labetalol', nested_contains='nifedipine' - because interacting_drugs is otherwise capped at the first 25 entries in raw database order and a well-connected drug can have 1800+. Omit for the default first-25 view."
+        },
+        "nested_offset": {
+          "type": "integer",
+          "description": "Optional. Number of interacting-drug entries to skip before the 25-entry display window, for paging through the full list. Combine with interacting_drugs_total_count (and interacting_drugs_matching_count when nested_contains is set) to know how many pages remain. Defaults to 0 (first page).",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -1717,7 +1727,27 @@
                     }
                   }
                 },
-                "description": "List of drugs that interact with the queried drug"
+                "description": "A WINDOW of at most 25 interacting drugs, not the complete list. Check interacting_drugs_truncated / interacting_drugs_total_count before concluding an interaction does not exist - absence from this array does NOT mean no interaction. Re-query with nested_contains='<partner drug>' to look up a specific pair, or page with nested_offset."
+              },
+              "interacting_drugs_total_count": {
+                "type": "integer",
+                "description": "Total number of drug interactions DrugBank documents for this drug, regardless of how many are shown."
+              },
+              "interacting_drugs_matching_count": {
+                "type": "integer",
+                "description": "Number of interactions that matched nested_contains (present only when nested_contains was supplied). 0 means the partner drug genuinely has no documented interaction with this drug."
+              },
+              "interacting_drugs_shown_count": {
+                "type": "integer",
+                "description": "Number of entries actually present in the interacting_drugs array."
+              },
+              "interacting_drugs_offset": {
+                "type": "integer",
+                "description": "Index into the (optionally filtered) interaction list at which this window starts."
+              },
+              "interacting_drugs_truncated": {
+                "type": "boolean",
+                "description": "True when more interactions remain beyond this window; raise nested_offset or set nested_contains to reach them. False means interacting_drugs is complete for the current view."
               },
               "food_interactions": {
                 "type": "string",
@@ -1747,6 +1777,17 @@
             "limit": {
               "type": "integer",
               "description": "Maximum number of results requested"
+            },
+            "nested_contains": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The nested_contains filter that was applied to the interacting_drugs list, or null"
+            },
+            "nested_offset": {
+              "type": "integer",
+              "description": "The nested_offset that was applied to the interacting_drugs list"
             }
           }
         }
@@ -1758,6 +1799,11 @@
         "case_sensitive": false,
         "exact_match": false,
         "limit": 5
+      },
+      {
+        "query": "labetalol",
+        "exact_match": true,
+        "nested_contains": "nifedipine"
       }
     ]
   },
