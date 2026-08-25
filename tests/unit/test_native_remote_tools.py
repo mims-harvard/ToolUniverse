@@ -762,6 +762,44 @@ def test_mcp_auth_env_propagates_without_copying_secret(monkeypatch):
     assert "super-secret" not in json.dumps(proxy)
 
 
+def test_mcp_auth_env_is_reread_on_every_request(monkeypatch):
+    """auth_env is a config-surface alias for http_headers_from_env (unified in
+    _resolve_http_headers), so a rotated token is picked up without restarting
+    the tool -- unlike the `.headers` snapshot taken once at __init__."""
+    monkeypatch.setenv("PRIVATE_MCP_TOKEN", "first-secret")
+    loader = MCPAutoLoaderTool(
+        {
+            "name": "loader",
+            "server_url": "https://gpu.example/mcp",
+            "tool_prefix": "gpu_",
+            "auth_env": "PRIVATE_MCP_TOKEN",
+        }
+    )
+    assert loader._resolve_http_headers() == {"Authorization": "Bearer first-secret"}
+
+    monkeypatch.setenv("PRIVATE_MCP_TOKEN", "rotated-secret")
+    assert loader._resolve_http_headers() == {"Authorization": "Bearer rotated-secret"}
+
+
+def test_explicit_http_headers_from_env_authorization_wins_over_auth_env(
+    monkeypatch,
+):
+    monkeypatch.setenv("PRIVATE_MCP_TOKEN", "legacy-secret")
+    monkeypatch.setenv("REVIEWED_TOKEN", "reviewed-secret")
+    loader = MCPAutoLoaderTool(
+        {
+            "name": "loader",
+            "server_url": "https://gpu.example/mcp",
+            "tool_prefix": "gpu_",
+            "auth_env": "PRIVATE_MCP_TOKEN",
+            "http_headers_from_env": {
+                "Authorization": {"env": "REVIEWED_TOKEN", "prefix": "Bearer "}
+            },
+        }
+    )
+    assert loader._resolve_http_headers() == {"Authorization": "Bearer reviewed-secret"}
+
+
 def test_mcp_proxy_unwraps_standard_text_and_error_results():
     assert _unwrap_mcp_tool_result(
         {
