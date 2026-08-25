@@ -266,6 +266,30 @@
     ]
   },
   {
+    "name": "GENOMIC_INTELLIGENCE_API_KEY",
+    "requirement": "optional",
+    "type": "api_key",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://docs.genomicintelligence.ai/mcp",
+    "purpose": "Optional private Genomic Intelligence credential sent as X-GI-Key to the configured MCP endpoint.",
+    "without": "The hosted public demo works without a key but uses a shared, rate-limited evaluation quota and is not suitable for private sequences or production.",
+    "used_by": [
+      "mcp_auto_loader_gi.json"
+    ]
+  },
+  {
+    "name": "GENOMIC_INTELLIGENCE_MCP_URL",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://docs.genomicintelligence.ai",
+    "purpose": "Endpoint URL for the opt-in Genomic Intelligence MCP service.",
+    "without": "Leave blank to keep this third-party MCP service disabled. To use its public demo, set https://mcp.genomicintelligence.ai/mcp.",
+    "used_by": [
+      "mcp_auto_loader_gi.json"
+    ]
+  },
+  {
     "name": "HF_TOKEN",
     "requirement": "required",
     "type": "secret",
