@@ -111,9 +111,23 @@ class BaseMCPClient:
             raise ValueError("http_headers_from_env must be an object")
 
     def _resolve_http_headers(self) -> Dict[str, str]:
-        """Resolve configured HTTP headers without storing secrets in tool configs."""
+        """Resolve configured HTTP headers without storing secrets in tool configs.
+
+        `auth_env` predates `http_headers_from_env` and is kept as a config-surface
+        alias for it (CLI-saved connections still write `auth_env`), routed through
+        the same validation and re-read fresh on every call instead of once at
+        `__init__`, so a rotated token is picked up without restarting the tool.
+        An explicit `Authorization` entry in `http_headers_from_env` wins if both
+        are set.
+        """
+        mappings = dict(self.http_headers_from_env)
+        if self.auth_env:
+            mappings.setdefault(
+                "Authorization", {"env": self.auth_env, "prefix": "Bearer "}
+            )
+
         headers = {}
-        for header_name, header_config in self.http_headers_from_env.items():
+        for header_name, header_config in mappings.items():
             if (
                 not isinstance(header_name, str)
                 or not header_name
