@@ -1,0 +1,113 @@
+[
+  {
+    "name": "mcp_auto_loader_folklore",
+    "description": "Opt-in connection to Folklore Clinical Variant Interpretation MCP, published by Helena Bioinformatics. Discovers four reviewed, read-only tools for public GRCh38 germline variant evidence and source-linked literature. The service accepts no patient, phenotype, family, segregation, or private case data. Results require qualified professional review and are not diagnoses or treatment recommendations.",
+    "type": "MCPAutoLoaderTool",
+    "tool_prefix": "folklore_",
+    "server_url": "${FOLKLORE_MCP_URL}",
+    "transport": "http",
+    "timeout": 30,
+    "strict_tool_contracts": true,
+    "normalize_mcp_result": true,
+    "require_structured_content": true,
+    "mcp_structured_error_field": "adapter_error",
+    "selected_tools": [
+      "search_variant_evidence",
+      "search_variant_literature",
+      "get_publication_details",
+      "search_literature_corpus"
+    ],
+    "tool_contracts": [
+      {
+        "name": "search_variant_evidence",
+        "title": "Classify a germline variant with Folklore",
+        "description": "Resolve one public GRCh38 germline nuclear SNV or simple indel smaller than 50 bp. Returns normalized identity, automated ACMG/AMP decision support, evidence, provenance, and explicit limitations. Do not send patient or case context. Results require qualified professional review and are not diagnoses or treatment recommendations. Never select a candidate when the result is ambiguous.",
+        "contract_sha256": "7a537fea79ae459ada1ef188e0b84147b35aead716295b423a0d8c7173e5d42f",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "search_variant_literature",
+        "title": "Find literature for a germline variant",
+        "description": "Resolve one public GRCh38 germline variant and retrieve source-linked publications from Folklore's PubMed-derived genetics corpus. Exact variant mentions precede broader gene associations. Associations do not establish causality, pathogenicity, or a diagnosis and do not change the ACMG/AMP classification.",
+        "contract_sha256": "999ec1ddb4ea413fe8a22df866086e0fa94f5e5f8027e6fbb6a1faabb38174d8",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "get_publication_details",
+        "title": "Get details for a PubMed publication",
+        "description": "Retrieve one complete public bibliographic record by PMID from Folklore's PubMed-derived genetics corpus, including abstract, authors, publication metadata, gene and variant mentions, retraction status, and source links. This read-only literature evidence contains no patient context.",
+        "contract_sha256": "7f91cb6ac7c93b9a59116ab81aa74620b9eff248a66a29da2c0e3847c4f9017b",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "search_literature_corpus",
+        "title": "Search the Folklore Literature Corpus",
+        "description": "Search source-linked scientific literature by natural-language question or exact PMID, DOI, PMCID, gene, variant, phenotype, HPO, or OMIM query. Include every known publication identifier when comparing papers. Results are evidence candidates for professional review, not diagnoses, causality claims, or treatment recommendations.",
+        "contract_sha256": "3f48a079fcef31724f35ac5cd22051f208194eba9fab38b0a90de9b478d70186",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      }
+    ],
+    "required_api_keys": [
+      "FOLKLORE_MCP_URL"
+    ],
+    "api_key_info": {
+      "FOLKLORE_MCP_URL": {
+        "domain": "Clinical & Safety",
+        "type": "endpoint",
+        "register_url": "https://folklore.helena.bio/integrations",
+        "purpose": "Endpoint URL for the opt-in Folklore Clinical Variant Interpretation MCP connection.",
+        "without": "Leave blank to keep this third-party MCP connection disabled. The public read-only endpoint is https://api.helena.bio/folklore/v1/mcp and requires no authentication."
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "discover",
+            "generate_configs",
+            "call_tool"
+          ],
+          "description": "Discover reviewed tools, generate proxy configurations, or call one reviewed tool."
+        },
+        "tool_name": {
+          "type": "string",
+          "description": "Reviewed MCP tool name, required when operation is call_tool."
+        },
+        "tool_arguments": {
+          "type": "object",
+          "description": "Public variant-level or literature arguments for the selected tool. Never include patient or private case data."
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Reviewed Folklore Clinical Variant Interpretation MCP discovery data or structured tool result.",
+      "additionalProperties": true
+    }
+  }
+]
