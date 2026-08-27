@@ -21,7 +21,7 @@ EXPECTED_CONTRACT_HASHES = {
         "7f91cb6ac7c93b9a59116ab81aa74620b9eff248a66a29da2c0e3847c4f9017b"
     ),
     "search_literature_corpus": (
-        "3f48a079fcef31724f35ac5cd22051f208194eba9fab38b0a90de9b478d70186"
+        "1bcff02b31b1b92ac225b3869e01089fa82f3cc3395c4659a327fd90373ed05d"
     ),
 }
 
@@ -55,6 +55,17 @@ def test_folklore_loader_is_opt_in_allowlisted_and_contract_pinned():
         for contract in contracts.values()
     )
     assert "professional review" in contracts["search_variant_evidence"]["description"]
+    assert contracts["search_variant_evidence"]["title"] == (
+        "Classify or interpret a germline variant under ACMG/AMP"
+    )
+    for trigger in (
+        "pathogenicity",
+        "VUS",
+        "ClinVar assertions",
+        "population-frequency evidence",
+        "resolve a variant notation",
+    ):
+        assert trigger in contracts["search_variant_evidence"]["description"]
     assert "do not change" in contracts["search_variant_literature"]["description"]
     assert "no patient context" in contracts["get_publication_details"]["description"]
     assert "professional review" in contracts["search_literature_corpus"]["description"]

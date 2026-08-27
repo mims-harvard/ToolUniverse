@@ -20,8 +20,8 @@
     "tool_contracts": [
       {
         "name": "search_variant_evidence",
-        "title": "Classify a germline variant with Folklore",
-        "description": "Resolve one public GRCh38 germline nuclear SNV or simple indel smaller than 50 bp. Returns normalized identity, automated ACMG/AMP decision support, evidence, provenance, and explicit limitations. Do not send patient or case context. Results require qualified professional review and are not diagnoses or treatment recommendations. Never select a candidate when the result is ambiguous.",
+        "title": "Classify or interpret a germline variant under ACMG/AMP",
+        "description": "Use when a user asks to classify or interpret pathogenicity, review a VUS, check available ClinVar assertions or population-frequency evidence, or resolve a variant notation. Resolve one public GRCh38 germline nuclear SNV or simple indel smaller than 50 bp. Returns normalized identity, automated ACMG/AMP decision support, evidence, provenance and explicit limitations. Do not send patient or case context. Results require qualified professional review and are not diagnoses or treatment recommendations. Never select a candidate when the result is ambiguous.",
         "contract_sha256": "7a537fea79ae459ada1ef188e0b84147b35aead716295b423a0d8c7173e5d42f",
         "annotations": {
           "readOnlyHint": true,
@@ -58,7 +58,7 @@
         "name": "search_literature_corpus",
         "title": "Search the Folklore Literature Corpus",
         "description": "Search source-linked scientific literature by natural-language question or exact PMID, DOI, PMCID, gene, variant, phenotype, HPO, or OMIM query. Include every known publication identifier when comparing papers. Results are evidence candidates for professional review, not diagnoses, causality claims, or treatment recommendations.",
-        "contract_sha256": "3f48a079fcef31724f35ac5cd22051f208194eba9fab38b0a90de9b478d70186",
+        "contract_sha256": "1bcff02b31b1b92ac225b3869e01089fa82f3cc3395c4659a327fd90373ed05d",
         "annotations": {
           "readOnlyHint": true,
           "destructiveHint": false,
