@@ -1,0 +1,374 @@
+[
+  {
+    "name": "OpenNIH_source_status",
+    "description": "Inspect OpenNIH corpus coverage, snapshot freshness, official sidecar availability, and known lag. Call before concluding that a missing grant does not exist. Returns source counts, fiscal-year coverage, and provenance notes.",
+    "type": "OpenNIHTool",
+    "operation": "source_status",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    },
+    "test_examples": [{}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  },
+  {
+    "name": "OpenNIH_search_grants",
+    "description": "Search NIH project-year rows. WARNING: total_funding is a row sum, and repeated full project numbers can double-count parent/component dollars. Covers FY1985-present and filters by topic, project number, PI, institution, Institute/Center, activity code, or fiscal-year window. Returns matching rows, distinct-award counts, recorded funding totals, IDs, and provenance. Results are paged by at most 50 rows with offset capped at 100000, so a slice above 100050 rows cannot be fully retrieved: narrow the year or filters before custom aggregation. total_funding is null, not zero, when no matching row reports an award amount.",
+    "type": "OpenNIHTool",
+    "operation": "search_grants",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {"type": ["string", "null"], "minLength": 2, "maxLength": 64, "description": "Natural-language topic or combined search string."},
+        "text_search": {"type": ["string", "null"], "minLength": 2, "maxLength": 64, "description": "Text to match in grant fields."},
+        "project_num": {"type": ["string", "null"], "pattern": "^[A-Z0-9-]{1,24}$", "description": "Full NIH project number."},
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "activity_code": {"type": ["string", "null"], "pattern": "^[A-Z0-9]{1,5}$", "description": "NIH activity code such as R01 or K23."},
+        "ic": {"type": ["string", "null"], "minLength": 2, "maxLength": 64, "description": "NIH Institute/Center abbreviation, code, or name. Prefer an exact abbreviation; a name fragment can select multiple or unexpected historical labels, so inspect returned ic_scope. In the verified deployment, fragment ic_scope.n can differ from the length of matched_ic_names and modernized names can repeat; do not infer a precise IC count from either field."},
+        "institution": {"type": ["string", "null"], "minLength": 2, "maxLength": 64, "description": "Case-insensitive substring over raw organization names. This can match multiple canonical institutions or campuses (for example, Harvard); inspect org_name values and use rank_institutions to resolve one entity_id before institution-level analysis."},
+        "pi_name": {"type": ["string", "null"], "minLength": 2, "maxLength": 64},
+        "limit": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20},
+        "offset": {"type": "integer", "minimum": 0, "maximum": 100000, "default": 0, "description": "Zero-based row offset, capped at 100000. With limit=50 the largest fully retrievable matching slice is 100050 rows."}
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "test_examples": [{"query": "CRISPR", "fiscal_year_start": 2025, "fiscal_year_end": 2025, "limit": 3}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  },
+  {
+    "name": "OpenNIH_rank_institutions",
+    "description": "Rank institutions within competitive Research Project Grant (RPG) research and return entity IDs for drill-down. RPG totals are not comparable to all-mechanism funding-trend totals. Verified deployment caveat: FY1985-1998 funding rankings can contain positive dollars even when search_grants, funding_trend, institution profiles, growth, and concentration report no recorded dollars; do not publish those historical funding rankings without cross-endpoint reconciliation.",
+    "type": "OpenNIHTool",
+    "operation": "rank_institutions",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "ic": {"type": ["string", "null"], "minLength": 2, "maxLength": 64},
+        "sort_by": {"type": "string", "enum": ["composite", "funding_scale", "portfolio_breadth", "new_grant_activity", "avg_award_size"], "default": "composite", "description": "Ranking objective. Use funding_scale for 'top-funded'; composite is a weighted multi-dimensional score and can order institutions differently. The other values rank by their named dimension."},
+        "limit": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20},
+        "offset": {"type": "integer", "minimum": 0, "maximum": 100000, "default": 0}
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "test_examples": [{"fiscal_year_start": 2024, "fiscal_year_end": 2025, "sort_by": "funding_scale", "limit": 3}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  },
+  {
+    "name": "OpenNIH_get_pi_profile",
+    "description": "Publications are not returned by the deployed endpoint. Return PI grant rows and shared-award contacts. Profile counts and total_funding are row-level, not deduplicated award facts. A fiscal-year window filters grants and profile totals but not collaborators. Obtain the numeric profile_id from OpenNIH_search_grants first; the identifier is not safely guessable. Collaborators indicate association with a shared award, not coauthorship or a direct working relationship. Repeated full project numbers can inflate profile grant counts and total_funding, so reconcile multi-component awards before reporting award-level totals.",
+    "type": "OpenNIHTool",
+    "operation": "get_pi_profile",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "profile_id": {"type": "string", "pattern": "^[0-9]{1,20}$", "description": "NIH RePORTER PI profile identifier from a search result."},
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "limit": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20},
+        "offset": {"type": "integer", "minimum": 0, "maximum": 100000, "default": 0}
+      },
+      "required": ["profile_id"],
+      "additionalProperties": false
+    },
+    "test_examples": [{"profile_id": "78918667", "fiscal_year_start": 2025, "fiscal_year_end": 2025, "limit": 5}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  },
+  {
+    "name": "OpenNIH_get_institution_profile",
+    "description": "Retrieve one resolved institution's funding history, mechanism mix, and top PIs for an optional fiscal-year window. Obtain entity_id from OpenNIH_rank_institutions; grant search results do not provide this identifier.",
+    "type": "OpenNIHTool",
+    "operation": "get_institution_profile",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "entity_id": {"type": "string", "minLength": 2, "maxLength": 256, "description": "Canonical institution identifier returned by rank_institutions."},
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100}
+      },
+      "required": ["entity_id"],
+      "additionalProperties": false
+    },
+    "test_examples": [{"entity_id": "nih:duns:042250712:university-of-pennsylvania", "fiscal_year_start": 2024, "fiscal_year_end": 2025}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  },
+  {
+    "name": "OpenNIH_funding_trend",
+    "description": "Return annual NIH funding totals and project-row counts for all NIH or a selected Institute/Center, activity code, or institution. The series covers all mechanisms, uses nominal dollars, and flags partial current years.",
+    "type": "OpenNIHTool",
+    "operation": "funding_trend",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "ic": {"type": ["string", "null"], "description": "NIH Institute/Center filter."},
+        "activity_code": {"type": ["string", "null"], "description": "Activity code such as R01."},
+        "institution": {"type": ["string", "null"], "description": "Institution name substring."}
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "test_examples": [{"fiscal_year_start": 2020, "fiscal_year_end": 2025, "activity_code": "R01"}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  },
+  {
+    "name": "OpenNIH_topic_trend",
+    "description": "Trace annual NIH project-row counts and recorded award totals for a research topic using title-keyword matching. Multiword queries require all words; use grant search for the underlying projects and avoid treating this as semantic classification. Years with no matches are omitted rather than returned as zero-filled rows, and a completely unmatched window returns data=[].",
+    "type": "OpenNIHTool",
+    "operation": "topic_trend",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "minLength": 2, "maxLength": 64, "description": "Topic words to match in grant titles."},
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100}
+      },
+      "required": ["query"],
+      "additionalProperties": false
+    },
+    "test_examples": [{"query": "CRISPR", "fiscal_year_start": 2012, "fiscal_year_end": 2025}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  },
+  {
+    "name": "OpenNIH_activity_code_distribution",
+    "description": "Break NIH or one Institute/Center portfolio into research, career, training, center, contract, intramural, and other mechanism classes. Returns project-row counts and recorded totals for an optional fiscal-year window.",
+    "type": "OpenNIHTool",
+    "operation": "activity_code_distribution",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "ic": {"type": ["string", "null"], "description": "NIH Institute/Center filter."}
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "test_examples": [{"fiscal_year_start": 2025, "fiscal_year_end": 2025, "ic": "NCI"}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  },
+  {
+    "name": "OpenNIH_institution_concentration",
+    "description": "Measure concentration of competitive Research Project Grant (RPG) funding across institutions using Gini, HHI, top-five share, and top-five institutions. Null award amounts are excluded; when no institution has recorded dollars, all metrics and total_funding are null and total_institutions is 0, not evidence of zero concentration.",
+    "type": "OpenNIHTool",
+    "operation": "institution_concentration",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100}
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "test_examples": [{"fiscal_year_start": 2020, "fiscal_year_end": 2025}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  },
+  {
+    "name": "OpenNIH_mechanism_mix",
+    "description": "Analyze the mix of NIH award mechanisms for one resolved institution, or the system-wide RPG research breakdown when entity_id is omitted. Obtain institution IDs from rank_institutions and do not compare the two different scopes directly.",
+    "type": "OpenNIHTool",
+    "operation": "mechanism_mix",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "entity_id": {"type": ["string", "null"], "description": "Canonical institution identifier from rank_institutions."},
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100}
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "test_examples": [{"entity_id": "nih:duns:042250712:university-of-pennsylvania", "fiscal_year_start": 2024, "fiscal_year_end": 2025}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  },
+  {
+    "name": "OpenNIH_ic_topic_cross",
+    "description": "Measure one research topic within one NIH Institute/Center (IC), or within one combined all-IC scope using ic=ALL. Uses official Research, Condition, and Disease Categorization (RCDC) categories when coverage permits and title-text matching otherwise. Important: ic=ALL does not return a per-IC ranking; fully paginate search_grants and group its ic field for that analysis. total_grants is the number of distinct core awards in the competitive Research Project Grant (RPG) research scope, not project-year rows. Forced RCDC over a window ending before FY2008 is a coverage-floor zero, not zero funding; inspect no_match_note and use text or a later window.",
+    "type": "OpenNIHTool",
+    "operation": "ic_topic_cross",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ic": {"type": "string", "minLength": 2, "maxLength": 64, "description": "One Institute/Center abbreviation, code, or name; use ALL for one combined all-IC scope. ALL does not produce separate rows for each IC."},
+        "query": {"type": "string", "minLength": 2, "maxLength": 64, "description": "Research topic or RCDC category."},
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "match_strategy": {"type": "string", "enum": ["auto", "rcdc", "text"], "default": "auto"}
+      },
+      "required": ["ic", "query"],
+      "additionalProperties": false
+    },
+    "test_examples": [{"ic": "NCI", "query": "immunotherapy", "fiscal_year_start": 2020, "fiscal_year_end": 2025, "match_strategy": "auto"}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  },
+  {
+    "name": "OpenNIH_funding_growth",
+    "description": "Calculate annual competitive Research Project Grant (RPG) funding growth and window CAGR for all NIH or one resolved institution. Percent fields are already percentages and null awards are excluded. The response does not mark partial years: call funding_trend for the same window and exclude any partial endpoint before interpreting year-over-year growth or CAGR. Obtain institution entity_id from rank_institutions.",
+    "type": "OpenNIHTool",
+    "operation": "funding_growth",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "entity_id": {"type": ["string", "null"], "description": "Canonical institution identifier or null for all NIH."},
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100}
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "test_examples": [{"fiscal_year_start": 2020, "fiscal_year_end": 2025}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  },
+  {
+    "name": "OpenNIH_search",
+    "description": "Return citation-shaped canonical project-level NIH grant hits for OpenAI Deep Research compatibility. In multi-component awards, the returned parent/canonical title can omit the terms that matched a component title; validate topical evidence with OpenNIH_search_grants. Prefer OpenNIH_search_grants for filters, matching project-year rows, funding totals, pagination, and detailed provenance.",
+    "type": "OpenNIHTool",
+    "operation": "search",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {"type": "string", "minLength": 2, "maxLength": 64, "description": "Natural-language grant-title query."}
+      },
+      "required": ["query"],
+      "additionalProperties": false
+    },
+    "test_examples": [{"query": "CRISPR"}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  },
+  {
+    "name": "OpenNIH_fetch",
+    "description": "Fetch one canonical project record; when metadata.matching_rows is greater than one, its amount is not a component sum or deduplicated award total. Requires a full NIH project number returned by OpenNIH_search. Returns citation-ready id, title, text, public URL, and metadata; check source_status before treating an absent snapshot record as nonexistent, and inspect OpenNIH_search_grants before reporting parent/component dollars.",
+    "type": "OpenNIHTool",
+    "operation": "fetch",
+    "server_url": "https://mcp.opennih.org/mcp",
+    "transport": "http",
+    "timeout": 30,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "id": {"type": "string", "pattern": "^[A-Z0-9-]{1,24}$", "description": "Full NIH project number returned by OpenNIH_search."}
+      },
+      "required": ["id"],
+      "additionalProperties": false
+    },
+    "test_examples": [{"id": "1F31DC023096-01"}],
+    "return_schema": {
+      "oneOf": [
+        {"type": "object", "not": {"required": ["error"]}},
+        {"type": "object", "required": ["error"], "properties": {"error": {"type": "string"}}}
+      ]
+    }
+  }
+]
