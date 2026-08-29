@@ -103,9 +103,11 @@ jobs:
         with:
           version: "0.15.22"
 
-
       - name: Generate SDK
         run: python scripts/build_tools.py
+
+      - name: Validate documentation examples
+        run: python docs/validate_examples.py --check-imports
 
       - name: Run core tests (unit + integration)
         timeout-minutes: 15

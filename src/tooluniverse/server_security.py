@@ -29,7 +29,7 @@ import os
 API_TOKEN_ENV = "TOOLUNIVERSE_API_TOKEN"
 
 # Hostnames that resolve to the local machine only.
-_LOOPBACK_HOSTNAMES = {"localhost", ""}
+_LOOPBACK_HOSTNAMES = {"localhost"}
 
 
 def get_api_token():
@@ -43,8 +43,8 @@ def get_api_token():
 
 def is_loopback_host(host):
     """Return ``True`` if ``host`` only accepts connections from the local machine."""
-    if host is None:
-        return True
+    if host is None or not isinstance(host, str):
+        return False
     candidate = host.strip().lower()
     if candidate in _LOOPBACK_HOSTNAMES:
         return True

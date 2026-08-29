@@ -17,6 +17,23 @@ import os
 import sys
 
 
+def _positive_int(value):
+    try:
+        parsed = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("must be an integer") from exc
+    if parsed < 1:
+        raise argparse.ArgumentTypeError("must be at least 1")
+    return parsed
+
+
+def _port(value):
+    parsed = _positive_int(value)
+    if parsed > 65535:
+        raise argparse.ArgumentTypeError("must be between 1 and 65535")
+    return parsed
+
+
 def run_http_api_server():
     """Main entry point for the HTTP API server"""
     parser = argparse.ArgumentParser(
@@ -66,12 +83,12 @@ Note:
     )
 
     parser.add_argument(
-        "--port", type=int, default=8080, help="Port to bind to (default: 8080)"
+        "--port", type=_port, default=8080, help="Port to bind to (default: 8080)"
     )
 
     parser.add_argument(
         "--workers",
-        type=int,
+        type=_positive_int,
         default=1,
         help="Number of worker processes (default: 1). WARNING: Multiple workers create separate ToolUniverse instances, each consuming GPU memory. Use single worker with larger thread pool for GPU workloads.",
     )
@@ -91,12 +108,24 @@ Note:
 
     parser.add_argument(
         "--thread-pool-size",
-        type=int,
+        type=_positive_int,
         default=20,
         help="Size of thread pool for async execution per worker (default: 20). Increase this for higher concurrency instead of adding workers.",
     )
 
     args = parser.parse_args()
+    if args.reload and args.workers != 1:
+        parser.error("--reload requires --workers 1")
+
+    from .server_security import enforce_bind_security
+
+    try:
+        # Validate the bind before mutating process settings or advertising
+        # endpoints that will never be started.
+        enforce_bind_security(args.host)
+    except RuntimeError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        sys.exit(1)
 
     # Set thread pool size via environment variable
     os.environ["TOOLUNIVERSE_THREAD_POOL_SIZE"] = str(args.thread_pool_size)
@@ -141,14 +170,17 @@ Note:
     try:
         import uvicorn
 
-        from .server_security import enforce_bind_security
-
-        # Refuse to expose the server on a non-loopback interface unless a
-        # TOOLUNIVERSE_API_TOKEN is configured to require Bearer authentication.
-        enforce_bind_security(args.host)
-
-        # Use import string when workers > 1 (required by uvicorn)
-        if args.workers > 1 and not args.reload:
+        # Uvicorn requires an import string for reload and multiple workers.
+        if args.reload:
+            uvicorn.run(
+                "tooluniverse.http_api_server:app",
+                host=args.host,
+                port=args.port,
+                workers=1,
+                reload=True,
+                log_level=args.log_level,
+            )
+        elif args.workers > 1:
             app_import = "tooluniverse.http_api_server:app"
             uvicorn.run(
                 app_import,
@@ -158,15 +190,15 @@ Note:
                 log_level=args.log_level,
             )
         else:
-            # Single worker or reload mode: import app directly
+            # A direct app object is supported for an ordinary single process.
             from .http_api_server import app
 
             uvicorn.run(
                 app,
                 host=args.host,
                 port=args.port,
-                workers=1,  # reload requires workers=1
-                reload=args.reload,
+                workers=1,
+                reload=False,
                 log_level=args.log_level,
             )
 
