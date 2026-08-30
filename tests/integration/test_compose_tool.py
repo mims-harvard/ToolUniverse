@@ -252,6 +252,7 @@ def test_config_file_tools(tooluni):
         engine.close()
 
 
+@pytest.mark.timeout(180)
 def test_external_file_tools(tooluni):
     """
     Test additional ComposeTool functionality
@@ -260,6 +261,13 @@ def test_external_file_tools(tooluni):
     1. Additional composite tools from configuration
     2. Testing ProteinFunctionAnalyzer and LiteratureMetaAnalyzer
     3. Demonstrate complex biomedical analysis workflows
+
+    Runs every loaded ComposeTool (not just the two named above), each of
+    which may make a live external API call, so total runtime scales with
+    however many compose tools exist in the repo -- it grows over time and
+    the global 60s default (pytest.ini) has repeatedly been too tight for it
+    under CI's parallel (-n auto) load, where several workers can be
+    contending for the same rate-limited external services at once.
     """
     print("\nTesting additional composite tools")
     print("=" * 40)
@@ -330,6 +338,7 @@ def test_external_file_tools(tooluni):
         engine.close()
 
 
+@pytest.mark.timeout(180)
 def test_dependency_auto_loading(tooluni):
     """
     Test ComposeTool automatic dependency loading functionality
@@ -339,6 +348,10 @@ def test_dependency_auto_loading(tooluni):
     2. Auto-loading of missing tool categories
     3. Error handling for unavailable tools
     4. Configuration options for dependency behavior
+
+    Calls the live EuropePMC API through call_tool(); see
+    test_external_file_tools above for why this needs more than the
+    pytest.ini default under CI's parallel load.
     """
     print("\nTesting automatic dependency loading functionality")
     print("=" * 40)
