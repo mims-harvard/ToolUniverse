@@ -29,7 +29,13 @@ async def test_folklore_reviewed_tools_match_live_contract_and_return_boundaries
         "search_variant_evidence",
         {
             "assembly": "GRCh38",
-            "query": "chr17:43045705:A:G",
+            # BRCA1 is minus-strand; the reference genome's plus-strand base at
+            # this position is T, not A (A is T's complement). The previous
+            # A:G here was written in BRCA1's gene-strand orientation, so the
+            # server correctly rejected it (reference_mismatch) rather than
+            # resolving it -- this always returned invalid_request instead of
+            # exercising the resolved path this test claims to cover.
+            "query": "chr17:43045705:T:C",
         },
     )
     structured = response["structuredContent"]
