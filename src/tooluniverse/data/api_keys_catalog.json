@@ -254,6 +254,18 @@
     ]
   },
   {
+    "name": "NOODLE_MCP_URL",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Literature & Evidence",
+    "register_url": "https://noodle.helena.bio/integrations",
+    "purpose": "Endpoint URL for the opt-in Noodle Biomedical Literature Discovery MCP connection.",
+    "without": "Leave blank to keep this third-party MCP connection disabled. The public read-only endpoint is https://api.helena.bio/noodle/v1/mcp and requires no authentication.",
+    "used_by": [
+      "mcp_auto_loader_noodle.json"
+    ]
+  },
+  {
     "name": "GEMINI_API_KEY",
     "requirement": "optional",
     "type": "secret",

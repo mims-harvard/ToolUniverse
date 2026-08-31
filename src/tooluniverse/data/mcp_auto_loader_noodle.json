@@ -1,0 +1,101 @@
+[
+  {
+    "name": "mcp_auto_loader_noodle",
+    "description": "Opt-in connection to Noodle Biomedical Literature Discovery MCP, published by Helena Bioinformatics. Discovers six reviewed, read-only tools for PubMed-derived biomedical literature search, publication details, corpus metadata, and bounded citation or semantic graph traversal. Search rank, citation proximity, semantic similarity, and graph distance are discovery signals, not evidence of causality, scientific validity, diagnosis, or treatment.",
+    "type": "MCPAutoLoaderTool",
+    "tool_prefix": "noodle_",
+    "server_url": "${NOODLE_MCP_URL}",
+    "transport": "http",
+    "timeout": 30,
+    "strict_tool_contracts": true,
+    "normalize_mcp_result": true,
+    "require_structured_content": true,
+    "mcp_structured_error_field": "adapter_error",
+    "selected_tools": [
+      "search_biomedical_literature",
+      "get_publication_details",
+      "get_work_details",
+      "get_publication_neighborhood",
+      "get_work_neighborhood",
+      "get_corpus_summary"
+    ],
+    "tool_contracts": [
+      {
+        "name": "search_biomedical_literature",
+        "title": "Search biomedical literature",
+        "description": "Semantically search Noodle's public PubMed-derived biomedical corpus. Include a known PMID, DOI, or PMCID as an exact anchor when available. Results support literature discovery and professional review, not diagnosis or treatment.",
+        "contract_sha256": "7f9ccd9ddaa845f2e412116ef322b5dc571f767b75ee6b8c346e8e256913f368",
+        "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}
+      },
+      {
+        "name": "get_publication_details",
+        "title": "Get publication details by PMID",
+        "description": "Retrieve one source-linked public bibliographic record by PMID after search, including retraction status and available identifiers. Results support literature discovery and professional review, not diagnosis or treatment.",
+        "contract_sha256": "640e336c39dc047c7b56854f27d6acfe1293a130529ff633de5d0efb5e35fde0",
+        "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}
+      },
+      {
+        "name": "get_work_details",
+        "title": "Get publication details by work ID",
+        "description": "Retrieve one source-linked public bibliographic record by canonical Noodle work identifier. Results support literature discovery and professional review, not diagnosis or treatment.",
+        "contract_sha256": "6ae98c93cd0ba0878b2d1f7b07ee082f2a94fb0062ca7a92cfdaa25f4274a14d",
+        "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}
+      },
+      {
+        "name": "get_publication_neighborhood",
+        "title": "Explore a PMID literature neighborhood",
+        "description": "Retrieve one bounded citation and semantic neighborhood around a PMID. Preserve returned edge types and provenance; graph proximity and semantic similarity are discovery signals, not evidence of causality or scientific validity.",
+        "contract_sha256": "31cc91ee94d10ad4eb112b34ff0b36e14fdb3867c87f9da980e942c0918c3875",
+        "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}
+      },
+      {
+        "name": "get_work_neighborhood",
+        "title": "Explore a work literature neighborhood",
+        "description": "Retrieve one bounded citation and semantic neighborhood around a Noodle work identifier. Preserve returned edge types and provenance; graph proximity and semantic similarity are discovery signals, not evidence of causality or scientific validity.",
+        "contract_sha256": "7b0c25725c1c7c7ef848725923d59e59cdaa4231be999e3edf7b56cf312081bd",
+        "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}
+      },
+      {
+        "name": "get_corpus_summary",
+        "title": "Get corpus summary",
+        "description": "Return public corpus coverage, source, freshness, active graph metadata, and counts so an agent can state Noodle's current discovery boundary before interpreting search results.",
+        "contract_sha256": "cf03aed706e344baa94da5ff1aa1e7fc0827d23c6e10ec8ebb8e9cf43bf8a590",
+        "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": false}
+      }
+    ],
+    "required_api_keys": ["NOODLE_MCP_URL"],
+    "api_key_info": {
+      "NOODLE_MCP_URL": {
+        "domain": "Literature & Evidence",
+        "type": "endpoint",
+        "register_url": "https://noodle.helena.bio/integrations",
+        "purpose": "Endpoint URL for the opt-in Noodle Biomedical Literature Discovery MCP connection.",
+        "without": "Leave blank to keep this third-party MCP connection disabled. The public endpoint requires no authentication."
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["discover", "generate_configs", "call_tool"],
+          "description": "Discover reviewed tools, generate proxy configurations, or call one reviewed tool."
+        },
+        "tool_name": {
+          "type": "string",
+          "description": "Reviewed MCP tool name, required when operation is call_tool."
+        },
+        "tool_arguments": {
+          "type": "object",
+          "description": "Public literature-search, publication-identifier, graph-neighborhood, or corpus-summary arguments for the selected tool. Never include patient, private case, credential, or private uploaded content."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Reviewed Noodle Biomedical Literature Discovery MCP discovery data or structured tool result.",
+      "additionalProperties": true
+    }
+  }
+]
