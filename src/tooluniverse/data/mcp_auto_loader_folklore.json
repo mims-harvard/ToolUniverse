@@ -58,7 +58,7 @@
         "name": "search_literature_corpus",
         "title": "Search the Folklore Literature Corpus",
         "description": "Search source-linked scientific literature by natural-language question or exact PMID, DOI, PMCID, gene, variant, phenotype, HPO, or OMIM query. Include every known publication identifier when comparing papers. Results are evidence candidates for professional review, not diagnoses, causality claims, or treatment recommendations.",
-        "contract_sha256": "1bcff02b31b1b92ac225b3869e01089fa82f3cc3395c4659a327fd90373ed05d",
+        "contract_sha256": "6e09be489f4d1a5d25652df12ca0ec0924d8fc27f4c940e31528dd1ea22d776e",
         "annotations": {
           "readOnlyHint": true,
           "destructiveHint": false,

@@ -21,7 +21,7 @@ EXPECTED_CONTRACT_HASHES = {
         "7f91cb6ac7c93b9a59116ab81aa74620b9eff248a66a29da2c0e3847c4f9017b"
     ),
     "search_literature_corpus": (
-        "1bcff02b31b1b92ac225b3869e01089fa82f3cc3395c4659a327fd90373ed05d"
+        "6e09be489f4d1a5d25652df12ca0ec0924d8fc27f4c940e31528dd1ea22d776e"
     ),
 }
 
