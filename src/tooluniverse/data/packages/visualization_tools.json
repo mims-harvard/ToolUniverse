@@ -292,9 +292,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "marsilea",
     "local_info": {
