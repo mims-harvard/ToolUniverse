@@ -254,6 +254,18 @@
     ]
   },
   {
+    "name": "FOLKLORE_MCP_URL",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Clinical & Safety",
+    "register_url": "https://folklore.helena.bio/integrations",
+    "purpose": "Endpoint URL for the opt-in Folklore Clinical Variant Interpretation MCP connection.",
+    "without": "Leave blank to keep this third-party MCP connection disabled. The public read-only endpoint is https://api.helena.bio/folklore/v1/mcp and requires no authentication.",
+    "used_by": [
+      "mcp_auto_loader_folklore.json"
+    ]
+  },
+  {
     "name": "GEMINI_API_KEY",
     "requirement": "optional",
     "type": "secret",
