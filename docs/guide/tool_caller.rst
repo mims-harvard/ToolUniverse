@@ -152,6 +152,7 @@ Python Configuration
    server = SMCP(
        name="Scientific Research Server",
        tool_categories=["uniprot", "opentarget", "ChEMBL"],
+       expose_agentic_prompts=True,
        search_enabled=True,
        max_workers=10
    )
@@ -181,6 +182,9 @@ Command Line Setup
 
    # List available categories
    tooluniverse-smcp --list-categories
+
+   # Expose AgenticTool templates as prompts executed by the connected host model
+   tooluniverse-smcp --expose-agentic-prompts
 
 MCP Client Integration
 ~~~~~~~~~~~~~~~~~~~~~~

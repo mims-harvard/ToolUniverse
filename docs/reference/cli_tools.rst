@@ -103,6 +103,9 @@ Start the Scientific Model Context Protocol (SMCP) server with HTTP/SSE transpor
    * - ``--load``
      - None
      - Load profile configuration (preset/workspace)
+   * - ``--expose-agentic-prompts``
+     - False
+     - Expose AgenticTool templates as host-executed MCP prompts without backend LLM credentials
 
 **Examples**::
 
@@ -120,6 +123,9 @@ Start the Scientific Model Context Protocol (SMCP) server with HTTP/SSE transpor
    
    # Load workspace configuration
    tooluniverse-smcp --load "community/proteomics-toolkit"
+
+   # Let the connected host model execute AgenticTool instructions
+   tooluniverse-smcp --expose-agentic-prompts
 
 **See also**: :doc:`../guide/building_ai_scientists/mcp_support` for detailed MCP integration guide
 

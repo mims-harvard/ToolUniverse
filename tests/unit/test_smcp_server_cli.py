@@ -121,6 +121,7 @@ def test_main_dispatches_full_scientific_server_configuration(monkeypatch, tmp_p
         "hook_config": {"hooks": [{"type": "LoggingHook"}]},
         "hook_type": None,
         "compact_mode": True,
+        "expose_agentic_prompts": False,
     }
     assert server.run_calls == [
         {"transport": "sse", "host": "127.0.0.1", "port": 8123}

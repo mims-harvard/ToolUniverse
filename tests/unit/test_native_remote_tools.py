@@ -244,6 +244,7 @@ def test_smcp_does_not_reload_a_preconfigured_remote_tool_universe():
     server.tool_categories = None
     server.auto_expose_tools = True
     server.compact_mode = False
+    server.expose_agentic_prompts = False
     server.search_enabled = False
     server.logger = MagicMock()
     server._load_tools_with_filters = MagicMock()
