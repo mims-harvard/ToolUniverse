@@ -305,7 +305,7 @@ def extract_or_skip(article, terms):
 **Solution:** Install markitdown with all dependencies:
 
 ```bash
-pip install 'markitdown[all]>=0.1.0'
+pip install 'markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx,youtube-transcription]>=0.1.0'
 ```
 
 ### Optional PyMuPDF backend

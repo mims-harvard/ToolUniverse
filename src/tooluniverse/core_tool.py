@@ -266,7 +266,10 @@ class CorePDFSnippetsTool(BaseTool):
         if extractor == "markitdown" and not MARKITDOWN_AVAILABLE:
             return {
                 "status": "error",
-                "error": "markitdown library not available. Install with: pip install 'markitdown[all]'",
+                "error": (
+                    "markitdown library not available. Install with: "
+                    "pip install 'markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx,youtube-transcription]'"
+                ),
                 "retryable": False,
             }
         if extractor == "fitz" and not FITZ_AVAILABLE:
