@@ -875,7 +875,15 @@
                 "type": [
                   "string",
                   "null"
-                ]
+                ],
+                "description": "Organism of BV-BRC's reference annotation source for this hit -- NOT the organism carrying the gene, and frequently a different species. Use `genome_name` for the carrier."
+              },
+              "genome_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Name of the genome the gene was actually found in, which is what 'which species carries this gene' means. Agrees with `taxon_id`."
               },
               "source_id": {
                 "type": [

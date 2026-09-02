@@ -771,13 +771,29 @@
               "type": [
                 "integer",
                 "number"
-              ]
+              ],
+              "description": "Number of recommendation rows in this response. Compare with 'total_count' -- they differ whenever 'limit' truncated the result."
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "number"
+              ],
+              "description": "Total recommendation rows available for this guideline (or, when gene/phenotype filters are given, matching those filters) across all pages. 'limit' defaults to 50, so this is often larger than 'count'."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "number"
+              ],
+              "description": "Zero-based index of the first recommendation row in this response."
             },
             "note": {
               "type": [
                 "string",
                 "null"
-              ]
+              ],
+              "description": "Explains a truncated page, an empty filtered result, or a guideline that publishes no recommendation table."
             }
           },
           "required": [
@@ -823,7 +839,7 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results to return (default 50)"
+          "description": "Maximum number of pairs to return. Omit to get every matching pair (CPIC publishes 635 in total, 96 at level A); there is no default cap, so 'count' equals the full match count unless you set this."
         },
         "gene_symbol": {
           "type": [
@@ -926,14 +942,26 @@
   },
   {
     "name": "CPIC_list_drugs",
-    "description": "List all drugs in the CPIC database that have pharmacogenomic annotations. Returns drug names and their associated CPIC guideline IDs. Drugs without a guideline ID have annotations but no full CPIC dosing guideline yet. Use the guidelineid with CPIC_get_recommendations to retrieve dosing recommendations. Covers 100+ drugs including commonly used medications like warfarin, codeine, clopidogrel, simvastatin, tamoxifen, fluorouracil, and abacavir.",
+    "description": "List every drug in the CPIC database that has pharmacogenomic annotations (324 as of the last census). Returns drug names and their associated CPIC guideline IDs. Drugs without a guideline ID have annotations but no full CPIC dosing guideline yet. Use the guidelineid with CPIC_get_recommendations to retrieve dosing recommendations. The full list is returned by default -- pass 'limit'/'offset' only if you deliberately want a page of it. Includes commonly used medications like warfarin, codeine, clopidogrel, simvastatin, tamoxifen, fluorouracil, abacavir, efavirenz and clozapine.",
     "parameter": {
       "type": "object",
-      "properties": {},
+      "properties": {
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Optional: return at most this many drugs instead of the full list. Omit to get all of them."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Optional: skip this many drugs before returning results. Only meaningful together with 'limit'."
+        }
+      },
       "required": []
     },
     "fields": {
-      "endpoint": "https://api.cpicpgx.org/v1/drug?select=name,guidelineid&limit=200"
+      "endpoint": "https://api.cpicpgx.org/v1/drug?select=name,guidelineid",
+      "echo_request_url": true
     },
     "type": "BaseRESTTool",
     "test_examples": [

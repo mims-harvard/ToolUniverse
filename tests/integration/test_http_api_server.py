@@ -29,12 +29,19 @@ def test_root_endpoint(client):
 
 
 def test_health_check(client):
-    """Test health check endpoint"""
+    """Health reports an idle SDK without triggering its initialization."""
+    assert _tu_manager._instance is None
+
     response = client.get("/health")
+
     assert response.status_code == 200
     data = response.json()
-    assert "status" in data
-    assert "tooluniverse_initialized" in data
+    assert data == {
+        "status": "healthy",
+        "tooluniverse_initialized": False,
+        "loaded_tools_count": 0,
+    }
+    assert _tu_manager._instance is None
 
 
 def test_list_methods(client):

@@ -132,14 +132,18 @@
                 "string",
                 "null"
               ],
-              "description": "Descriptor name"
+              "description": "Record name. Read from 'label' for descriptors and from 'prefLabel' for Term and Concept records."
             },
             "type": {
               "type": [
                 "string",
                 "null"
               ],
-              "description": "Entry type (TopicalDescriptor, etc.)"
+              "description": "Record class: TopicalDescriptor, PublicationType, GeographicalDescriptor, Qualifier, Term, or Concept."
+            },
+            "note": {
+              "type": "string",
+              "description": "Present only when the identifier resolves to something other than a topical descriptor, explaining what the record is and, for Term/Concept records, how to reach the descriptor that owns it."
             },
             "annotation": {
               "type": [

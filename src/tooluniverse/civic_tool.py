@@ -239,6 +239,7 @@ class CIViCTool(BaseTool):
         PAGINATED_QUERY = (
             "query GetVariantsByGene($gene_id: Int!, $page_size: Int, $after: String) { "
             "gene(id: $gene_id) { id name variants(first: $page_size, after: $after) { "
+            "totalCount "
             "nodes { id name ... on GeneVariant { feature { id name } } } "
             "pageInfo { hasNextPage endCursor } } } }"
         )
@@ -246,8 +247,22 @@ class CIViCTool(BaseTool):
         all_nodes: list = []
         cursor = None
         gene_meta: Dict[str, Any] = {}
+        total_count: Optional[int] = None
+        # Page budget. The loop's only exits were "hasNextPage is false" and "no
+        # endCursor", both of which are the server's to give: a page carrying
+        # zero nodes with hasNextPage true never grows all_nodes, and a server
+        # repeating the same endCursor never advances, so either one spins this
+        # request forever inside a tool the harness itself calls. The budget is
+        # derived from the caller's own limit rather than fixed, so it cannot
+        # truncate a request that is making progress -- ceil(limit/PAGE_SIZE)
+        # full pages suffice by construction, and the spare page absorbs a
+        # short page from server-side filtering. Reaching it means the pages
+        # stopped advancing.
+        max_pages = -(-limit // PAGE_SIZE) + 1
         try:
-            while len(all_nodes) < limit:
+            for _ in range(max_pages):
+                if len(all_nodes) >= limit:
+                    break
                 fetch = min(PAGE_SIZE, limit - len(all_nodes))
                 variables: Dict[str, Any] = {
                     "gene_id": gene_id,
@@ -276,14 +291,17 @@ class CIViCTool(BaseTool):
                         "name": gene_data.get("name"),
                     }
                 variants_block = gene_data.get("variants", {})
+                if total_count is None:
+                    total_count = variants_block.get("totalCount")
                 nodes = variants_block.get("nodes", [])
                 all_nodes.extend(nodes)
                 page_info = variants_block.get("pageInfo", {})
-                if not page_info.get("hasNextPage"):
+                if not page_info.get("hasNextPage") or not nodes:
                     break
-                cursor = page_info.get("endCursor")
-                if not cursor:
+                next_cursor = page_info.get("endCursor")
+                if not next_cursor or next_cursor == cursor:
                     break
+                cursor = next_cursor
             # Feature-46B-01: deduplicate by variant ID (prevents pagination overlap artifacts)
             seen_ids: set = set()
             deduped: list = []
@@ -301,11 +319,21 @@ class CIViCTool(BaseTool):
             all_nodes = deduped
             # Flag variant names that appear multiple times (distinct CIViC records)
             duplicate_names = [n for n, c in name_count.items() if c > 1]
-            # Reassemble in the original single-request structure
+            # Reassemble in the original single-request structure.
+            # totalCount is how many variants the gene has in CIViC; len(nodes)
+            # is only how many `limit` allowed through. Dropping it left callers
+            # reporting the page size as if it were the gene's variant count.
+            returned = all_nodes[:limit]
+            variants_out: Dict[str, Any] = {"nodes": returned}
+            if total_count is not None:
+                variants_out.update(
+                    totalCount=total_count,
+                    pageInfo={"hasNextPage": len(returned) < total_count},
+                )
             data = {
                 "gene": {
                     **gene_meta,
-                    "variants": {"nodes": all_nodes[:limit]},
+                    "variants": variants_out,
                 }
             }
             metadata: Dict[str, Any] = {"source": "CIViC", "format": "GraphQL"}

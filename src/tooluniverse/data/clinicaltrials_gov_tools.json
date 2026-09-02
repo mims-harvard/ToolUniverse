@@ -1180,7 +1180,12 @@
               "type": [
                 "integer",
                 "null"
-              ]
+              ],
+              "description": "Studies matching the query, independent of page_size. NULL on any page fetched with next_page_token: ClinicalTrials.gov reports this figure only on a first page, and a page's row count is not a substitute for it. Read the total from the first page of the same query. When null, total_count_note says so."
+            },
+            "total_count_note": {
+              "type": "string",
+              "description": "Present only when total_count is null, explaining that the registry does not report a matching-study count on a paged response and where to read the real total."
             },
             "next_page_token": {
               "type": [
@@ -1467,7 +1472,12 @@
               "type": [
                 "integer",
                 "null"
-              ]
+              ],
+              "description": "Studies matching the query, independent of page_size. NULL on any page fetched with next_page_token: ClinicalTrials.gov reports this figure only on a first page, and a page's row count is not a substitute for it. Read the total from the first page of the same query. When null, total_count_note says so."
+            },
+            "total_count_note": {
+              "type": "string",
+              "description": "Present only when total_count is null, explaining that the registry does not report a matching-study count on a paged response and where to read the real total."
             },
             "next_page_token": {
               "type": [
@@ -1621,7 +1631,12 @@
               "type": [
                 "integer",
                 "null"
-              ]
+              ],
+              "description": "Studies matching the query, independent of page_size. NULL on any page fetched with next_page_token: ClinicalTrials.gov reports this figure only on a first page, and a page's row count is not a substitute for it. Read the total from the first page of the same query. When null, total_count_note says so."
+            },
+            "total_count_note": {
+              "type": "string",
+              "description": "Present only when total_count is null, explaining that the registry does not report a matching-study count on a paged response and where to read the real total."
             },
             "next_page_token": {
               "type": [
@@ -1790,7 +1805,7 @@
   },
   {
     "name": "ClinicalTrials_get_field_values",
-    "description": "Get the registry-wide value distribution for one ClinicalTrials.gov field: each distinct value with the number of studies recording it. Use to see what status, phase, or study type options exist. Example: 'Phase' returns counts for PHASE1, PHASE2, PHASE3, etc. IMPORTANT for any share or percentage: the rows are NOT a partition of the registry. Studies that record no value for the field are excluded from the rows entirely (for 'Phase', 141,728 of 597,913), and where the field is multi-valued a study recording several values is counted in several rows (for 'Phase', 24,529 studies), so the rows sum to neither the registry total nor a subset of it. Never use the sum of the rows as a denominator; use 'total_studies_in_registry' for a share of all studies or 'studies_with_value' for a share of those recording the field, and read 'coverage_note' before quoting any percentage.",
+    "description": "Get the registry-wide value distribution for one ClinicalTrials.gov field: each distinct value with the number of studies recording it. Use to see what status, phase, or study type options exist. Example: 'Phase' returns counts for PHASE1, PHASE2, PHASE3, etc. IMPORTANT for any share or percentage: the rows are NOT a partition of the registry. Studies that record no value for the field are excluded from the rows entirely (for 'Phase', 141,728 of 597,913), and where the field is multi-valued a study recording several values is counted in several rows (for 'Phase', 24,529 studies), so the rows sum to neither the registry total nor a subset of it. Never use the sum of the rows as a denominator; use 'total_studies_in_registry' for a share of all studies or 'studies_with_value' for a share of those recording the field, and read 'coverage_note' before quoting any percentage. Only ENUM, STRING and BOOLEAN fields have a value distribution: for INTEGER and DATE fields (e.g. 'EnrollmentCount', 'StartDate') ClinicalTrials.gov publishes a min/max range instead of a ranking, so 'values' is empty and 'value_summary' carries the range.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1846,10 +1861,11 @@
                 "string",
                 "null"
               ],
-              "description": "Upstream field type, e.g. ENUM or STRING."
+              "description": "Upstream field type: ENUM, STRING, BOOLEAN, INTEGER or DATE. Only ENUM, STRING and BOOLEAN have a per-value distribution; INTEGER and DATE return value_summary instead and an empty 'values'."
             },
             "values": {
               "type": "array",
+              "description": "Distinct values with study counts, highest first. Empty for INTEGER and DATE fields, which ClinicalTrials.gov does not rank per value - read value_summary and coverage_note, and do not read the empty list as 'no study records this field'.",
               "items": {
                 "type": "object",
                 "properties": {
@@ -1869,12 +1885,50 @@
                 }
               }
             },
+            "value_summary": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Range summary ClinicalTrials.gov returns in place of a value ranking for INTEGER and DATE fields: 'minimum', 'maximum', and 'average' (INTEGER) or 'date_formats' (DATE). Null whenever 'values' carries the distribution instead.",
+              "properties": {
+                "minimum": {
+                  "type": [
+                    "string",
+                    "number",
+                    "null"
+                  ]
+                },
+                "maximum": {
+                  "type": [
+                    "string",
+                    "number",
+                    "null"
+                  ]
+                },
+                "average": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "date_formats": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
             "unique_values_count": {
               "type": [
                 "integer",
                 "null"
               ],
-              "description": "True number of distinct values for this field across the registry, independent of page_size. Replaces the former 'total_count', which named the row count here but the matching-study count in ClinicalTrials_search_studies."
+              "description": "True number of distinct values for this field across the registry, independent of page_size. Null when ClinicalTrials.gov does not publish it (INTEGER and DATE fields) - null means unknown, never zero. Replaces the former 'total_count', which named the row count here but the matching-study count in ClinicalTrials_search_studies."
             },
             "values_returned": {
               "type": [
@@ -1888,7 +1942,7 @@
                 "boolean",
                 "null"
               ],
-              "description": "True when the returned rows are fewer than unique_values_count, because page_size cut them or ClinicalTrials.gov itself capped the ranking."
+              "description": "True when the returned rows are fewer than the field's distinct values, because page_size cut them or ClinicalTrials.gov itself capped or withheld the ranking. Null when the facet size is unpublished and truncation cannot be determined - null is not false."
             },
             "missing_studies_count": {
               "type": [

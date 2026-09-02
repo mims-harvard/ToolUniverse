@@ -1,7 +1,7 @@
 """
 LOINC_search_forms
 
-Search LOINC clinical forms and survey instruments such as standardized questionnaires and assess...
+Search LOINC clinical forms, panels and survey instruments -- whole instruments, not their indivi...
 """
 
 from typing import Any, Optional, Callable
@@ -17,12 +17,12 @@ def LOINC_search_forms(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search LOINC clinical forms and survey instruments such as standardized questionnaires and assess...
+    Search LOINC clinical forms, panels and survey instruments -- whole instruments, not their indivi...
 
     Parameters
     ----------
     terms : str
-        Search terms for clinical forms or survey instruments (e.g., 'PHQ-9', 'depres...
+        Search terms naming a clinical form, panel or survey instrument (e.g. 'PHQ-9'...
     max_results : int
         Maximum number of results to return (default: 20, max: 200)
     stream_callback : Callable, optional

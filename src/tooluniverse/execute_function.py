@@ -77,6 +77,27 @@ LAZY_LOADING_ENABLED = (
     os.getenv("TOOLUNIVERSE_LAZY_LOADING", "true").lower() in _TRUTHY_VALUES
 )
 
+
+def _concise_exception_message(exc: BaseException) -> str:
+    """Return the most useful leaf message without dumping an exception group."""
+    seen = set()
+    current = exc
+    while current is not None and id(current) not in seen:
+        seen.add(id(current))
+        children = getattr(current, "exceptions", None)
+        if children:
+            current = children[0]
+            continue
+        nested = current.__cause__ or current.__context__
+        if nested is not None:
+            current = nested
+            continue
+        message = str(current).strip()
+        return message or type(current).__name__
+    message = str(exc).strip()
+    return message or type(exc).__name__
+
+
 if LAZY_LOADING_ENABLED:
     # Use lazy auto-discovery by default (much faster)
     debug("Starting lazy tool auto-discovery...")
@@ -335,6 +356,7 @@ class ToolUniverse:
         profile: Optional[str] = None,
         workspace: Optional[str] = None,
         use_global: bool = False,
+        load_workspace: bool = True,
     ):
         """
         Initialize the ToolUniverse with tool file configurations.
@@ -363,6 +385,10 @@ class ToolUniverse:
             use_global (bool, optional): When True, use the global ``~/.tooluniverse`` directory
                                          as the default workspace instead of ``./.tooluniverse``.
                                          Has no effect if ``workspace`` or ``TOOLUNIVERSE_HOME`` is set.
+            load_workspace (bool, optional): When False, do not read workspace ``.env``,
+                                            Profile, or user tools during initialization.
+                                            Provider servers use this isolation mode so they
+                                            expose only explicitly registered tools.
         """
         # Set log level if specified
         if log_level is not None:
@@ -376,6 +402,12 @@ class ToolUniverse:
 
         self.name_mapper = ToolNameMapper()
         self.enable_name_shortening = enable_name_shortening
+        # The mapper only learns short->original for names it has shortened
+        # itself. A client that received shortened names from a *different*
+        # process calls back with names this mapper has never seen, so the
+        # reverse index is primed from the registry on the first miss.
+        self._name_mapper_primed = False
+        self.load_workspace = load_workspace
 
         if enable_name_shortening:
             self.logger.debug("Name shortening enabled for MCP compatibility")
@@ -388,6 +420,10 @@ class ToolUniverse:
         self.tool_category_dicts: Dict[str, List[Dict[str, Any]]] = {}
         # Maps tool name → missing required API key names (for better "not found" errors)
         self._excluded_api_key_tools: Dict[str, List[str]] = {}
+        # Keep the corresponding configurations for discovery-only consumers such as
+        # ``tu find``.  Gated tools must stay out of ``all_tool_dict`` so agents cannot
+        # execute them, but dropping their metadata made real tools undiscoverable.
+        self._excluded_api_key_tool_configs: Dict[str, Dict[str, Any]] = {}
         self.tool_finder = None
         if tool_files is None:
             tool_files = default_tool_files
@@ -443,13 +479,23 @@ class ToolUniverse:
             in _TRUTHY_VALUES
         )
 
-        cache_path = os.getenv("TOOLUNIVERSE_CACHE_PATH")
+        configured_cache_path = os.getenv("TOOLUNIVERSE_CACHE_PATH")
+        configured_cache_dir = os.getenv("TOOLUNIVERSE_CACHE_DIR")
+        cache_path = configured_cache_path
         if not cache_path and persistence_enabled:
-            base_dir = os.getenv("TOOLUNIVERSE_CACHE_DIR")
+            base_dir = configured_cache_dir
             if not base_dir:
                 base_dir = os.path.join(str(Path.home()), ".tooluniverse")
-            os.makedirs(base_dir, exist_ok=True)
-            cache_path = os.path.join(base_dir, "cache.sqlite")
+            try:
+                os.makedirs(base_dir, exist_ok=True)
+                cache_path = os.path.join(base_dir, "cache.sqlite")
+            except OSError:
+                # A read-only home is common in containers and hosted runners. The default cache
+                # is an optimization, so continue with the memory layer. Explicit user paths still
+                # surface a warning below because they represent requested configuration.
+                if configured_cache_dir:
+                    raise
+                cache_path = None
 
         self.cache_manager = ResultCacheManager(
             memory_size=memory_size,
@@ -458,6 +504,9 @@ class ToolUniverse:
             persistence_enabled=persistence_enabled,
             singleflight=singleflight_enabled,
             default_ttl=default_ttl,
+            warn_on_persistence_error=bool(
+                configured_cache_path or configured_cache_dir
+            ),
         )
 
         self._strict_validation = (
@@ -477,6 +526,13 @@ class ToolUniverse:
         # Priority: workspace= param → TOOLUNIVERSE_HOME env → ./.tooluniverse (local)
         # Use ~/.tooluniverse when use_global=True and no explicit workspace is set.
         self._workspace_dir: Path = self._resolve_workspace(workspace, use_global)
+
+        # Provider runtimes must not inherit a developer's local Profile, tools,
+        # secrets, or saved consumer connections. Keep the path available for
+        # APIs that inspect it, but skip all workspace I/O and auto-loading.
+        if not self.load_workspace:
+            self._workspace_profile_config = None
+            return
 
         # Auto-load .env from workspace directory (secrets stay out of profile.yaml).
         # Existing env vars are never overwritten (shell / system env always wins).
@@ -906,6 +962,7 @@ class ToolUniverse:
         exclude_tool_types=None,
         python_files=None,
         quiet=True,
+        _apply_profile_defaults=True,
     ):
         """
         Load tools into the instance, with optional filtering.
@@ -935,6 +992,11 @@ class ToolUniverse:
                 ``.env.template`` generation. Default ``True``. Pass ``False``
                 to see which keys are missing.
 
+        When a Profile is active, omitted filter arguments inherit the Profile's
+        ``tools`` settings.  This keeps a plain ``load_tools()`` reload consistent
+        with the Profile that initialized the instance.  Explicit arguments still
+        override the corresponding Profile defaults.
+
         Examples:
             # Load everything (default)
             tu.load_tools()
@@ -951,6 +1013,30 @@ class ToolUniverse:
                 exclude_tools=["EuropePMC_slow_tool"],
             )
         """
+        # A Profile describes the tool universe for the lifetime of this instance,
+        # not only for the first load.  Re-applying its omitted filter arguments
+        # prevents a later, otherwise ordinary ``load_tools()`` call from silently
+        # restoring tools that the Profile excluded.  ``load_profile()`` disables
+        # this inheritance for its own load so a newly selected Profile cannot
+        # inherit filters from the previous one.
+        if _apply_profile_defaults:
+            profile_tools = (getattr(self, "_current_profile_config", {}) or {}).get(
+                "tools", {}
+            )
+            if categories is None and tool_type is None:
+                profile_categories = profile_tools.get("categories")
+                categories = profile_categories or None
+            if exclude_tools is None:
+                exclude_tools = profile_tools.get("exclude_tools", [])
+            if exclude_categories is None:
+                exclude_categories = profile_tools.get("exclude_categories", [])
+            if include_tools is None and tools_file is None:
+                include_tools = profile_tools.get("include_tools", [])
+            if include_tool_types is None:
+                include_tool_types = profile_tools.get("include_tool_types", [])
+            if exclude_tool_types is None:
+                exclude_tool_types = profile_tools.get("exclude_tool_types", [])
+
         # --- backward-compat: tool_type → categories ---
         if tool_type is not None:
             warnings.warn(
@@ -969,6 +1055,7 @@ class ToolUniverse:
             self.all_tool_dict = {}
             self.tool_category_dicts = {}
             self._excluded_api_key_tools = {}
+            self._excluded_api_key_tool_configs = {}
 
         # Handle tools_file parameter (alternative to include_tools)
         if tools_file:
@@ -1143,6 +1230,11 @@ class ToolUniverse:
         if json_files:
             self._load_user_json_configs(json_files)
 
+        # Connections are explicit, local, and secret-free. Load them after
+        # user configs so their generated proxy names are deterministic and
+        # can be filtered by the normal include/exclude options below.
+        self._load_connected_remote_tools()
+
         # Filter and deduplicate tools
         self._filter_and_deduplicate_tools(
             exclude_tools_set,
@@ -1156,6 +1248,29 @@ class ToolUniverse:
         # Process MCP Auto Loader tools
         self.logger.debug("Checking for MCP Auto Loader tools...")
         self._process_mcp_auto_loaders()
+
+    def _load_connected_remote_tools(self):
+        """Load tools selected with ``tu connect`` without contacting a registry."""
+        if not self.load_workspace:
+            return
+        try:
+            from .remote_connections import connection_configs
+
+            configs = connection_configs()
+        except Exception as exc:
+            self.logger.warning(f"Could not read remote tool connections: {exc}")
+            return
+
+        existing = {
+            item.get("name")
+            for item in self.all_tools
+            if isinstance(item, dict) and item.get("name")
+        }
+        for config in configs:
+            if config.get("name") in existing:
+                continue
+            self.all_tools.append(config)
+            existing.add(config.get("name"))
 
     def _load_tool_names_from_file(self, file_path):
         """
@@ -1295,10 +1410,15 @@ class ToolUniverse:
                 if not all_keys_available:
                     all_missing_keys.update(missing_keys)
                     self._excluded_api_key_tools[tool_name] = list(missing_keys)
+                    self._excluded_api_key_tool_configs[tool_name] = copy.deepcopy(each)
                     self.logger.debug(
                         f"Skipping tool '{tool_name}' due to missing API keys: {', '.join(missing_keys)}"
                     )
                     continue
+                # A partial reload after the operator supplied the key should not
+                # leave stale discovery metadata saying that the tool is gated.
+                self._excluded_api_key_tools.pop(tool_name, None)
+                self._excluded_api_key_tool_configs.pop(tool_name, None)
 
             # Check API key requirements for AgenticTool type
             if each.get("type") == "AgenticTool":
@@ -1711,21 +1831,6 @@ class ToolUniverse:
                                     f"  - Tools: {', '.join(result['registered_tools'])}"
                                 )
 
-                            # Show available tools in callable_functions
-                            expert_tools = [
-                                name
-                                for name in self.callable_functions.keys()
-                                if name.startswith("expert_")
-                            ]
-                            if expert_tools:
-                                info(
-                                    f"  ✅ Expert tools now available: {', '.join(expert_tools)}"
-                                )
-                            else:
-                                info(
-                                    "  ⚠️  No expert tools found in callable_functions after registration"
-                                )
-
                         finally:
                             self.logger.debug("Closing async loop...")
                             # Clean up any remaining tasks
@@ -1744,12 +1849,12 @@ class ToolUniverse:
                             self.logger.debug("Async loop closed")
 
             except Exception as e:
-                self.logger.debug(f"Exception in auto loader processing: {e}")
-                import traceback
-
-                traceback.print_exc()
-                self.logger.debug(
-                    f"Failed to process MCP Auto Loader '{loader_config['name']}': {str(e)}"
+                self.logger.debug("MCP auto-loader processing failed", exc_info=True)
+                detail = _concise_exception_message(e)
+                warning(
+                    f"Remote MCP server '{loader_config['name']}' is unavailable: "
+                    f"{detail}. The connection was kept; start the server and call "
+                    "load_tools() again."
                 )
 
         # Update tool count after MCP registration
@@ -3007,6 +3112,13 @@ class ToolUniverse:
             str: Resolved tool name (primary identifier in all_tool_dict)
         """
         if function_name:
+            # Prime before resolving, not after. `resolve()` calls
+            # `get_shortened(name)` on a miss, which caches a short name as its
+            # own original; the real original then collides on priming and is
+            # pushed to a `_2` suffix, so the round trip silently breaks for
+            # exactly the names that need it.
+            if function_name not in self.all_tool_dict:
+                self._prime_name_mapper()
             # Let the mapper handle all resolution (aliases, original->short, etc.)
             resolved = self.name_mapper.resolve(
                 function_name, max_length=self.MAX_TOOL_NAME_LENGTH
@@ -3014,7 +3126,42 @@ class ToolUniverse:
             # Only return resolved name if it exists in all_tool_dict
             if resolved in self.all_tool_dict:
                 return resolved
+            # Shortened -> original. `resolve()` covers alias->primary and
+            # original->short but never the reverse, and MCP clients only ever
+            # see the shortened name, so calling back with it failed with
+            # "not found even after loading tools" -- confirmed live for
+            # OpenTargets_get_dise_phen_by_targ_ense (shortened form of
+            # OpenTargets_get_diseases_phenotypes_by_target_ensembl).
+            original = self._resolve_shortened_name(function_name)
+            if original:
+                return original
         return function_name
+
+    def _prime_name_mapper(self) -> None:
+        """Populate the mapper's short->original index from the registry.
+
+        Idempotent and cheap (pure string work, once per instance). Skipped
+        entirely until a lookup actually misses.
+        """
+        if self._name_mapper_primed:
+            return
+        for name in list(self.all_tool_dict.keys()):
+            self.name_mapper.get_shortened(name, self.MAX_TOOL_NAME_LENGTH)
+        self._name_mapper_primed = True
+
+    def _resolve_shortened_name(self, function_name: str) -> str | None:
+        """Map a shortened tool name back to the registered name, or None.
+
+        Collision suffixes (`_2`, `_3`) are assigned in registry iteration
+        order, so a colliding pair could in principle resolve to the other
+        member. Names that do not collide -- the overwhelming majority -- round
+        trip exactly, and the alternative is the current total failure.
+        """
+        self._prime_name_mapper()
+        original = self.name_mapper.get_original(function_name)
+        if original != function_name and original in self.all_tool_dict:
+            return original
+        return None
 
     def run_one_function(
         self, function_call_json, stream_callback=None, use_cache=False, validate=True
@@ -3110,10 +3257,7 @@ class ToolUniverse:
                 # Update the original dict so coerced arguments are used
                 function_call_json["arguments"] = arguments
 
-            # Strip None values from arguments: optional params default to None in
-            # Python wrappers, but schema validation rejects None for typed params.
-            # None means "not provided" — simply omit such keys.
-            arguments = {k: v for k, v in arguments.items() if v is not None}
+            arguments = self._strip_omitted_none_arguments(function_name, arguments)
             self._apply_operation_default(function_name, arguments)
             function_call_json["arguments"] = arguments
 
@@ -3201,6 +3345,9 @@ class ToolUniverse:
                         tool_instance.__class__.__name__
                         if tool_instance is not None
                         else "unknown"
+                    ),
+                    "category": self.all_tool_dict.get(function_name, {}).get(
+                        "category"
                     ),
                     "execution_time": time.time(),
                     "arguments": tool_arguments,
@@ -3301,6 +3448,10 @@ class ToolUniverse:
             arguments = self._coerce_arguments_to_schema(function_name, arguments)
             function_call_json["arguments"] = arguments
 
+        arguments = self._strip_omitted_none_arguments(function_name, arguments)
+        self._apply_operation_default(function_name, arguments)
+        function_call_json["arguments"] = arguments
+
         # Validate parameters if requested
         if validate:
             validation_error = self._validate_parameters(function_name, arguments)
@@ -3386,6 +3537,7 @@ class ToolUniverse:
                     if tool_instance is not None
                     else "unknown"
                 ),
+                "category": self.all_tool_dict.get(function_name, {}).get("category"),
                 "execution_time": time.time(),
                 "arguments": tool_arguments,
             }
@@ -3836,6 +3988,36 @@ class ToolUniverse:
                 return False
 
         return value
+
+    def _strip_omitted_none_arguments(
+        self, function_name: str, arguments: dict
+    ) -> dict:
+        """Drop wrapper-default ``None`` values without deleting valid JSON nulls."""
+        config = self.all_tool_dict.get(function_name, {})
+        parameter_schema = config.get("parameter", {})
+        properties = parameter_schema.get("properties") or {}
+        required = set(parameter_schema.get("required") or [])
+
+        def allows_null(schema: dict) -> bool:
+            schema_type = schema.get("type")
+            if schema_type == "null":
+                return True
+            if isinstance(schema_type, list) and "null" in schema_type:
+                return True
+            return any(
+                allows_null(option)
+                for key in ("oneOf", "anyOf")
+                for option in schema.get(key, [])
+                if isinstance(option, dict)
+            )
+
+        return {
+            name: value
+            for name, value in arguments.items()
+            if value is not None
+            or name in required
+            or allows_null(properties.get(name, {}))
+        }
 
     def _coerce_arguments_to_schema(self, function_name: str, arguments: dict) -> dict:
         """
@@ -4704,6 +4886,16 @@ class ToolUniverse:
             "exclude_tool_types", []
         )
 
+        # Loading a Profile selects a complete tool universe.  Clear the previous
+        # selection before loading Profile sources so ``include_tools`` merge mode
+        # cannot accidentally retain tools selected by an earlier Profile.
+        self.all_tools = []
+        self.all_tool_dict = {}
+        self.tool_category_dicts = {}
+        self._excluded_api_key_tools = {}
+        self._excluded_api_key_tool_configs = {}
+        self.callable_functions = {}
+
         # Load tools from external sources declared in the Profile
         sources = config.get("sources", [])
         if sources:
@@ -4718,6 +4910,7 @@ class ToolUniverse:
             tools_file=tools_file_param,  # KEY FIX: Pass tools_file
             include_tool_types=include_tool_types,
             exclude_tool_types=exclude_tool_types,
+            _apply_profile_defaults=False,
         )
 
         # Store the configuration for reference

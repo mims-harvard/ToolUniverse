@@ -136,9 +136,10 @@ def test_combination_detail_tool_encodes_a_multi_word_drug_name_once():
 
     assert ENCODED_ONCE in url
     assert DOUBLE_ENCODED not in url
-    # The second name is single-token, so it must arrive bare -- quoting is only
-    # applied where Lucene would otherwise split the term.
-    assert "patient.drug.medicinalproduct:ASPIRIN" in url
+    # Both names are quoted -- since Fix-54B-1 quoting is the default and only a
+    # Lucene range is exempt -- but the quotes must arrive as literal `"`, not
+    # percent-encoded, which is what this file regresses against.
+    assert 'patient.drug.medicinalproduct:"ASPIRIN"' in url
 
 
 def test_every_name_in_a_list_is_quoted_not_just_the_first():
@@ -156,11 +157,19 @@ def test_every_name_in_a_list_is_quoted_not_just_the_first():
     assert DOUBLE_ENCODED not in url
 
 
-def test_a_single_word_drug_name_is_unchanged_by_the_fix():
-    """Single-token names never hit the defect; they must stay byte-identical.
+def test_a_single_word_drug_name_reaches_openfda_encoded_once():
+    """Single-token names never hit the defect; the answer must not change.
 
     Verified live: ASPIRIN counts 435,388 serious + 182,287 non-serious both
     before and after the fix, matching the API called directly.
+
+    Fix-54B-1 later made single-token values quoted as well (only a Lucene
+    range is exempt), so the query STRING gained a pair of quotes here. The
+    answer did not move: measured against api.fda.gov,
+    patient.drug.medicinalproduct:ASPIRIN returns 617,932 quoted and unquoted.
+    The invariant this test exists for is the ENCODING -- the quote must reach
+    openFDA as a literal `"`, not percent-encoded to %22, which is exactly the
+    double-encoding this file regresses against.
     """
     cfg = _config(
         "fda_drug_adverse_event_tools.json",
@@ -170,5 +179,5 @@ def test_a_single_word_drug_name_is_unchanged_by_the_fix():
         FDACountAdditiveReactionsTool(cfg), {"medicinalproducts": ["ASPIRIN"]}
     )
 
-    assert "patient.drug.medicinalproduct:ASPIRIN" in url
-    assert '"' not in url.split("search=")[1].split("&")[0]
+    assert 'patient.drug.medicinalproduct:"ASPIRIN"' in url
+    assert "%22" not in url.split("search=")[1].split("&")[0]

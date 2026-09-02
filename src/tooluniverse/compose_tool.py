@@ -11,7 +11,7 @@ import importlib.util
 import re
 from datetime import datetime
 from typing import Set
-from .base_tool import BaseTool
+from .base_tool import BaseTool, null_result_error
 from .tool_registry import register_tool
 
 
@@ -486,6 +486,13 @@ class ComposeTool(BaseTool):
         function_call = {"name": tool_name, "arguments": arguments}
 
         result = self.tooluniverse.run_one_function(function_call)
+
+        # Fix-47-4: composition scripts reach tools through here rather than
+        # through ExecuteToolTool, so this is a second, independent way for a
+        # `None` to reach a caller as `{"result": None}`. Same invariant, same
+        # wording -- see null_result_error.
+        if result is None:
+            return null_result_error(tool_name)
 
         # Ensure consistent result format for backward compatibility
         if isinstance(result, str):

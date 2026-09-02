@@ -110,6 +110,36 @@ def _missing_callset_note(dataset: Optional[str], payload: Any) -> Optional[str]
     )
 
 
+_CONSTRAINT_KEYS = (
+    "gnomad_constraint",
+    "exac_constraint",
+    "mitochondrial_constraint",
+)
+
+
+def _note_absent_constraints(result: Dict[str, Any]) -> None:
+    """Say plainly when gnomAD scored a gene under none of its constraint keys.
+
+    gnomAD scores mtDNA genes under `mitochondrial_constraint`, never under
+    `gnomad_constraint`/`exac_constraint`, which the query used to ask for
+    alone. MT-ND4 came back `success` with both nuclear blocks null -- read as
+    "unconstrained" when gnomAD in fact scores it at oe_lof_upper 0.022, among
+    the most LoF-intolerant genes there are. Now that all three are requested,
+    an all-null answer is a real absence, so name it as one rather than
+    leaving nulls to be misread.
+    """
+    gene = (result.get("data") or {}).get("gene")
+    if not isinstance(gene, dict):
+        return
+    if any(gene.get(key) for key in _CONSTRAINT_KEYS):
+        return
+    result["note"] = (
+        f"gnomAD returned no constraint metrics for {result.get('gene_symbol')} "
+        f"under any of {', '.join(_CONSTRAINT_KEYS)}. This means gnomAD has not "
+        f"scored the gene, not that the gene is unconstrained."
+    )
+
+
 def describe_dataset(
     dataset: Optional[str], payload: Any = None, assembly: Optional[str] = None
 ) -> Dict[str, Any]:
@@ -497,6 +527,21 @@ query GeneConstraints(
       obs_syn
       oe_syn
     }
+    mitochondrial_constraint {
+      __typename
+      ... on ProteinMitochondrialGeneConstraint {
+        exp_lof
+        obs_lof
+        oe_lof
+        oe_lof_upper
+      }
+      ... on RNAMitochondrialGeneConstraint {
+        observed
+        expected
+        oe
+        oe_upper
+      }
+    }
   }
 }
 """
@@ -520,5 +565,6 @@ query GeneConstraints(
         # Add gene_symbol to result for reference
         if result.get("status") == "success":
             result["gene_symbol"] = gene_symbol
+            _note_absent_constraints(result)
 
         return result

@@ -15,32 +15,37 @@ import numpy as np
 import os
 import h5py
 import asyncio
-import uuid
+import math
+import re
+import threading
 from typing import Dict, Optional
 from fastmcp import FastMCP
-
-
-def _optional_token_auth():
-    """Require a Bearer token only when TOOLUNIVERSE_API_TOKEN is set.
-
-    Returns None (no authentication, unchanged behavior) when the variable is
-    not set, so existing deployments are unaffected.
-    """
-    token = os.getenv("TOOLUNIVERSE_API_TOKEN")
-    if not token:
-        return None
-    try:
-        from fastmcp.server.auth import StaticTokenVerifier
-
-        return StaticTokenVerifier(
-            tokens={token: {"client_id": "tooluniverse", "scopes": []}}
-        )
-    except Exception:
-        return None
+from tooluniverse.server_security import (
+    get_fastmcp_token_auth,
+    run_fastmcp_server,
+)
 
 
 # Initialize MCP Server for DepMap gene correlation analysis
-server = FastMCP("DepMap Gene Correlation SMCP Server", auth=_optional_token_auth())
+server = FastMCP(
+    "DepMap Gene Correlation SMCP Server", auth=get_fastmcp_token_auth()
+)
+
+
+_GENE_PATTERN = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
+_DEPMAP_TOOL = None
+_DEPMAP_TOOL_LOCK = threading.Lock()
+_DEPMAP_REQUEST_LOCK = threading.Lock()
+
+
+def _get_depmap_tool():
+    """Open and index the provider dataset at most once per server process."""
+    global _DEPMAP_TOOL
+    if _DEPMAP_TOOL is None:
+        with _DEPMAP_TOOL_LOCK:
+            if _DEPMAP_TOOL is None:
+                _DEPMAP_TOOL = DepmapCorrelationTool()
+    return _DEPMAP_TOOL
 
 
 class DepmapCorrelationTool:
@@ -111,7 +116,7 @@ class DepmapCorrelationTool:
             gene_idx_path = os.path.join(self.data_dir, "gene_idx_array.npy")
             if os.path.exists(gene_idx_path):
                 self.gene_names = np.load(
-                    gene_idx_path, allow_pickle=True, mmap_mode="r"
+                    gene_idx_path, allow_pickle=False, mmap_mode="r"
                 )
             else:
                 # Fallback to text file format
@@ -150,12 +155,22 @@ class DepmapCorrelationTool:
             # Load dense matrices with memory mapping for efficiency
             self.corr_matrix = np.load(corr_matrix_path, mmap_mode="r")
             self.p_val_matrix = np.load(p_val_matrix_path, mmap_mode="r")
+            expected_shape = (self.num_genes, self.num_genes)
+            if (
+                self.corr_matrix.shape != expected_shape
+                or self.p_val_matrix.shape != expected_shape
+            ):
+                raise ValueError("DepMap matrices do not match the gene index")
             self.format = "dense"
 
             # Check for FDR-adjusted p-values
             p_adj_matrix_path = os.path.join(self.data_dir, "p_adj_matrix.npy")
             if os.path.exists(p_adj_matrix_path):
                 self.p_adj_matrix = np.load(p_adj_matrix_path, mmap_mode="r")
+                if self.p_adj_matrix.shape != expected_shape:
+                    raise ValueError(
+                        "DepMap adjusted p-value matrix does not match the gene index"
+                    )
                 self.has_adj_p = True
             else:
                 self.has_adj_p = False
@@ -218,14 +233,17 @@ class DepmapCorrelationTool:
 
             def get_csr_value(group, row, col):
                 """Extract value from compressed sparse row matrix in HDF5 format."""
-                indptr, indices, data = (
-                    group["indptr"][:],
-                    group["indices"][:],
-                    group["data"][:],
-                )
-                for i in range(indptr[row], indptr[row + 1]):
-                    if indices[i] == col:
-                        return float(data[i])
+                row_bounds = group["indptr"][row : row + 2]
+                if len(row_bounds) != 2:
+                    raise ValueError("DepMap sparse matrix row index is invalid")
+                start, end = int(row_bounds[0]), int(row_bounds[1])
+                if start < 0 or end < start:
+                    raise ValueError("DepMap sparse matrix row bounds are invalid")
+                indices = group["indices"][start:end]
+                values = group["data"][start:end]
+                for index, value in zip(indices, values):
+                    if int(index) == col:
+                        return float(value)
                 return 0.0  # Return 0 for missing values in sparse matrix
 
             # Extract correlation data from sparse HDF5 format
@@ -255,9 +273,8 @@ class DepmapCorrelationTool:
             self.h5_file.close()
 
 
-@server.tool()
-async def compute_depmap24q2_gene_correlations(
-    gene_a: str, gene_b: str, data_dir: Optional[str] = None
+def _compute_depmap24q2_gene_correlations(
+    gene_a: str, gene_b: str
 ):
     """
     MCP Tool: Analyzes gene-gene correlations from DepMap CRISPR knockout screening data.
@@ -313,30 +330,34 @@ async def compute_depmap24q2_gene_correlations(
         # Check synthetic lethality between DNA repair genes
         result = await compute_depmap24q2_gene_correlations("BRCA1", "PARP1")
     """
-    # Generate unique request ID for tracking and logging
-    request_id = str(uuid.uuid4())[:8]
-    print(
-        f"[{request_id}] Received DepMap gene correlation analysis request: {gene_a} vs {gene_b}"
-    )
+    print("Received DepMap gene correlation analysis request")
 
     context_info = []
+
+    if (
+        not isinstance(gene_a, str)
+        or not isinstance(gene_b, str)
+        or not _GENE_PATTERN.fullmatch(gene_a.strip())
+        or not _GENE_PATTERN.fullmatch(gene_b.strip())
+    ):
+        return {
+            "error": "Gene symbols must use 1 to 64 letters, digits, dots, underscores, or hyphens.",
+            "context_info": ["Please provide valid HUGO gene symbols."],
+        }
 
     # Initialize global DepMap tool instance for MCP server
     # This instance will be used by the MCP tool function to serve correlation queries
     try:
-        depmap_tool = DepmapCorrelationTool(data_dir=data_dir)
+        depmap_tool = _get_depmap_tool()
         print("DepMap Correlation tool instance created and ready for MCP server")
-    except Exception as e:
-        print(f"Error creating DepMap Correlation tool: {str(e)}")
-        print(
-            "Please ensure DEPMAP_DATA_PATH is correctly set and correlation data exists."
-        )
-        raise e
+    except Exception:
+        print("Error creating DepMap Correlation tool")
+        return {
+            "error": "DepMap data are unavailable on the provider.",
+            "context_info": ["The provider must verify DEPMAP_DATA_PATH."],
+        }
 
     try:
-        # Brief async pause to allow for proper request handling
-        await asyncio.sleep(0.1)
-
         # Input validation and standardization
         gene_a_std = gene_a.upper().strip()
         gene_b_std = gene_b.upper().strip()
@@ -351,15 +372,25 @@ async def compute_depmap24q2_gene_correlations(
                 f"Note: Analyzing self-correlation for gene {gene_a_std} (diagonal element)."
             )
 
-        print(
-            f"[{request_id}] Processing correlation analysis for standardized genes: {gene_a_std} vs {gene_b_std}"
-        )
-
         # Execute DepMap correlation lookup
         corr_data = depmap_tool.get_correlation(gene_a_std, gene_b_std)
         correlation = corr_data["correlation"]
         p_value = corr_data["p_value"]
         adj_p_value = corr_data.get("adjusted_p_value")
+        if (
+            not math.isfinite(correlation)
+            or not -1.0 <= correlation <= 1.0
+            or not math.isfinite(p_value)
+            or not 0.0 <= p_value <= 1.0
+            or (
+                adj_p_value is not None
+                and (
+                    not math.isfinite(adj_p_value)
+                    or not 0.0 <= adj_p_value <= 1.0
+                )
+            )
+        ):
+            raise RuntimeError("DepMap returned invalid statistical values")
 
         context_info.append(
             "Successfully retrieved correlation data from DepMap 24Q2 dataset."
@@ -420,9 +451,7 @@ async def compute_depmap24q2_gene_correlations(
         }
 
         # Log successful completion with key metrics
-        print(
-            f"[{request_id}] DepMap correlation analysis completed: r={correlation:.3f}, p={p_value:.2e}"
-        )
+        print("DepMap correlation analysis completed")
 
         return {
             "correlation_data": corr_data,
@@ -432,20 +461,33 @@ async def compute_depmap24q2_gene_correlations(
 
     except (KeyError, ValueError, FileNotFoundError) as e:
         error_message = f"DepMap correlation analysis validation error: {str(e)}"
-        print(f"[{request_id}] {error_message}")
+        print("DepMap correlation analysis validation error")
         return {
             "error": error_message,
             "context_info": context_info
             + ["Please verify gene symbols and data availability."],
         }
-    except Exception as e:
-        error_message = f"Unexpected error during DepMap correlation analysis: {str(e)}"
-        print(f"[{request_id}] {error_message}")
+    except Exception:
+        error_message = "DepMap analysis failed due to an internal provider error."
+        print("Unexpected error during DepMap correlation analysis")
         return {
             "error": error_message,
             "context_info": context_info
             + ["Internal server error occurred during analysis."],
         }
+
+
+@server.tool()
+async def compute_depmap24q2_gene_correlations(gene_a: str, gene_b: str):
+    """Run one bounded DepMap lookup without blocking the MCP event loop."""
+
+    def execute():
+        # Sparse deployments keep one HDF5 handle open. Serialize access so
+        # concurrent requests cannot race through that shared provider handle.
+        with _DEPMAP_REQUEST_LOCK:
+            return _compute_depmap24q2_gene_correlations(gene_a, gene_b)
+
+    return await asyncio.to_thread(execute)
 
 
 if __name__ == "__main__":
@@ -457,6 +499,9 @@ if __name__ == "__main__":
     print("Port: 7002 (configured to avoid conflicts with other biomedical tools)")
 
     # Launch the MCP server with DepMap correlation analysis capabilities
-    server.run(
-        transport="streamable-http", host="0.0.0.0", port=7002, stateless_http=True
+    run_fastmcp_server(
+        server,
+        host=os.getenv("TOOLUNIVERSE_MCP_HOST", "127.0.0.1"),
+        port=7002,
+        stateless_http=True,
     )

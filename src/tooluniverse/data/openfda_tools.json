@@ -209,7 +209,7 @@
     },
     {
         "name": "OpenFDA_search_drug_events",
-        "description": "Search the FDA Adverse Event Reporting System (FAERS) database via openFDA for drug safety reports. Accepts convenience parameters drug_name and reaction (e.g., drug_name='warfarin', reaction='haemorrhage'), or a raw Lucene 'search' string for advanced queries. Contains 20+ million adverse event reports. IMPORTANT: MedDRA reaction terms use British English spelling (e.g., 'haemorrhage' not 'hemorrhage', 'haematoma' not 'hematoma'). Returns serious adverse events with outcomes (hospitalization, death), suspect drugs, and MedDRA reactions.",
+        "description": "Search the FDA Adverse Event Reporting System (FAERS) database via openFDA for drug safety reports. Accepts convenience parameters drug_name and reaction (e.g., drug_name='warfarin', reaction='haemorrhage'), a raw Lucene 'search' string for advanced queries, or any combination of them -- whichever you supply are AND-ed together, so passing 'search' alongside drug_name narrows that drug rather than replacing it. Contains 20+ million adverse event reports. IMPORTANT: MedDRA reaction terms use British English spelling (e.g., 'haemorrhage' not 'hemorrhage', 'haematoma' not 'hematoma'). Returns serious adverse events with outcomes (hospitalization, death), suspect drugs, and MedDRA reactions.",
         "parameter": {
             "type": "object",
             "properties": {

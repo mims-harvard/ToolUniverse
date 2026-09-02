@@ -1,0 +1,309 @@
+[
+  {
+    "name": "OPM_search_structures",
+    "type": "OPMTool",
+    "description": "Search the Orientations of Proteins in Membranes database for solved structures positioned in a lipid bilayer. Returns hydrophobic thickness in angstroms, tilt angle, and the calculated transfer free energy, plus the membrane type and protein family. Transfer energy is negative for favourable insertion. Complements EBI_predict_membrane_topology, which predicts topology from sequence: OPM reports what was measured for a solved structure. Example: query='rhodopsin' or query='1uaz'.",
+    "fields": {
+      "operation": "search_structures"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "query"
+      ],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Protein name or PDB identifier, e.g. 'rhodopsin', 'aquaporin', '1uaz'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum structures to return (default 25, max 100)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Membrane-positioned structures",
+          "items": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "pdb_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PDB identifier"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Protein name"
+              },
+              "family": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OPM family"
+              },
+              "membrane": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Membrane the protein was positioned in"
+              },
+              "hydrophobic_thickness_angstrom": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Hydrophobic bilayer thickness"
+              },
+              "thickness_error": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Uncertainty on the thickness"
+              },
+              "tilt_angle_degrees": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Tilt of the protein relative to the membrane normal"
+              },
+              "transfer_energy_kcal_per_mol": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Calculated membrane transfer free energy; negative is favourable"
+              },
+              "resolution_angstrom": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Structure resolution"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Free-text description"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query": "rhodopsin",
+        "limit": 5
+      },
+      {
+        "query": "aquaporin",
+        "limit": 5
+      },
+      {
+        "query": "potassium channel",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "TopDB_get_topology",
+    "type": "TopDBTool",
+    "description": "Retrieve experimentally curated transmembrane topology for a protein from TopDB. Returns each sequence region labelled Membrane, Inside or Outside with its residue range, the number of transmembrane regions, a reliability score, and the underlying experimental evidence records. Use this to check a sequence-based prediction from EBI_predict_membrane_topology against curated experimental data. Example: identifier='P02699' (bovine rhodopsin, seven transmembrane helices).",
+    "fields": {
+      "operation": "get_topology"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "identifier"
+      ],
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "UniProt accession such as 'P02699', or a TopDB entry name such as 'OPSD_BOVIN'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Curated topology",
+          "properties": {
+            "topdb_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "TopDB entry name"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Protein name"
+            },
+            "protein_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Structural class, e.g. Alpha_Polytopic"
+            },
+            "transmembrane_region_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of transmembrane regions"
+            },
+            "reliability": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "TopDB reliability score for the assignment"
+            },
+            "regions": {
+              "type": "array",
+              "description": "Topology regions in sequence order",
+              "items": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Membrane, Inside, or Outside"
+                  },
+                  "start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "First residue of the region"
+                  },
+                  "end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Last residue of the region"
+                  }
+                }
+              }
+            },
+            "experimental_evidence": {
+              "type": "array",
+              "description": "Experimental evidence records, up to 50",
+              "items": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Assigned location"
+                  },
+                  "start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Region start"
+                  },
+                  "end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Region end"
+                  },
+                  "experiment_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Experiment type"
+                  },
+                  "experiment_subtype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Experiment subtype"
+                  }
+                }
+              }
+            },
+            "evidence_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total evidence records available"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "identifier": "P02699"
+      },
+      {
+        "identifier": "P00404"
+      }
+    ]
+  }
+]

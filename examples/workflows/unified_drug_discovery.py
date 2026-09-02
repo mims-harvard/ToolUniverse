@@ -113,8 +113,8 @@ from tooluniverse.tools import (
     OpenTargets_get_associated_targets_by_disease_efoId,
     ChEMBL_search_similar_molecules,
     drugbank_get_drug_name_and_description_by_target_name,
-    drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action,
-    drugbank_get_drug_interactions_by_drug_name_or_drugbank_id,
+    drugbank_get_drug_desc_pharmacology_by_moa,
+    drugbank_get_drug_interactions_by_drug_name_or_id,
     drugbank_get_pharmacology_by_drug_name_or_drugbank_id,
     ADMETAI_predict_toxicity,
     ADMETAI_predict_bioavailability,
@@ -133,8 +133,6 @@ from tooluniverse.tools import (
     SemanticScholar_search_papers,
     openalex_literature_search,
     ArXiv_search_papers,
-    BioRxiv_search_preprints,
-    MedRxiv_search_preprints,
     Crossref_search_works,
     PubChem_get_CID_by_compound_name,
     PubChem_get_compound_properties_by_CID,
@@ -388,7 +386,7 @@ def unified_drug_discovery_workflow(
             mechanisms = []
             for mechanism in mechanisms:
                 try:
-                    mech_drugs = drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action(
+                    mech_drugs = drugbank_get_drug_desc_pharmacology_by_moa(
                         mechanism, case_sensitive=False, exact_match=False, limit=5
                     )
                     if mech_drugs and mech_drugs.get("success"):
@@ -679,7 +677,7 @@ def unified_drug_discovery_workflow(
                 
                 # DrugBank DDI
                 try:
-                    drugbank_ddi = drugbank_get_drug_interactions_by_drug_name_or_drugbank_id(
+                    drugbank_ddi = drugbank_get_drug_interactions_by_drug_name_or_id(
                         compound_name, 
                         case_sensitive=False, 
                         exact_match=False, 
@@ -961,7 +959,7 @@ def neurodegenrative_drug_discovery(
     for mechanism in neuro_mechanisms[:6]:  # Use top 6 mechanisms
         try:
             print(f"   Searching for {mechanism} compounds...")
-            compounds = drugbank_get_drug_name_description_pharmacology_by_mechanism_of_action(
+            compounds = drugbank_get_drug_desc_pharmacology_by_moa(
                 query=mechanism,
                 case_sensitive=False,
                 exact_match=False,

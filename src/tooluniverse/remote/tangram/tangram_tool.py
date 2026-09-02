@@ -36,6 +36,15 @@ import scanpy as sc
 import tangram as tg
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_argument_validation import (
+    bounded_integer,
+    bounded_text,
+    require_argument_object,
+)
+from tooluniverse.remote_data_path import load_remote_h5ad
+
+
+_MAX_CELL_TYPES = 128
 
 
 @register_mcp_tool(
@@ -54,18 +63,22 @@ from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
             "properties": {
                 "sc_path": {
                     "type": "string",
-                    "description": "Server-accessible path or URL to an .h5ad single-cell REFERENCE AnnData; obs must contain `cluster_label`.",
+                    "description": "A single-cell reference .h5ad file inside the provider-configured data directory; obs must contain `cluster_label`.",
                 },
                 "sp_path": {
                     "type": "string",
-                    "description": "Server-accessible path or URL to an .h5ad SPATIAL AnnData (spots x genes) to deconvolve.",
+                    "description": "A spatial .h5ad file inside the provider-configured data directory (spots x genes) to deconvolve.",
                 },
                 "cluster_label": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
                     "description": "obs column in the single-cell reference naming the cell type/cluster (e.g. 'cell_type').",
                 },
                 "num_epochs": {
                     "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5000,
                     "description": "Tangram mapping epochs (default 500).",
                 },
             },
@@ -83,6 +96,10 @@ class TangramDeconvolutionTool:
     """Map a single-cell reference onto a spatial assay and return per-spot cell-type proportions."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        try:
+            arguments = require_argument_object(arguments)
+        except ValueError as exc:
+            return {"error": str(exc)}
         sc_path = arguments.get("sc_path")
         sp_path = arguments.get("sp_path")
         cluster_label = arguments.get("cluster_label")
@@ -90,22 +107,36 @@ class TangramDeconvolutionTool:
             return {
                 "error": "Missing required parameter(s): sc_path, sp_path, cluster_label"
             }
-        num_epochs = arguments.get("num_epochs")
-        num_epochs = 500 if num_epochs is None else int(num_epochs)
+        try:
+            cluster_label = bounded_text(cluster_label, "cluster_label")
+            num_epochs = bounded_integer(
+                arguments.get("num_epochs"),
+                "num_epochs",
+                default=500,
+                minimum=1,
+                maximum=5_000,
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
 
         try:
-            adata_sc = sc.read_h5ad(sc_path)
-            adata_sp = sc.read_h5ad(sp_path)
+            adata_sc = load_remote_h5ad(sc_path, sc.read_h5ad)
+            adata_sp = load_remote_h5ad(sp_path, sc.read_h5ad)
         except Exception as exc:  # noqa: BLE001
             return {"error": f"Failed to load AnnData input(s): {exc}"}
 
         if cluster_label not in adata_sc.obs:
+            return {"error": "cluster_label was not found in the reference obs."}
+        reference_types = adata_sc.obs[cluster_label].astype(str).unique().tolist()
+        if len(reference_types) < 2 or len(reference_types) > _MAX_CELL_TYPES:
             return {
                 "error": (
-                    f"cluster_label '{cluster_label}' not found in single-cell "
-                    f"reference obs columns: {list(adata_sc.obs.columns)}"
+                    f"cluster_label must contain between 2 and "
+                    f"{_MAX_CELL_TYPES} cell types."
                 )
             }
+        if any(not label or len(label) > 128 for label in reference_types):
+            return {"error": "cluster_label contains an invalid cell-type label."}
 
         try:
             # Pick shared training genes and align the two AnnData objects.
@@ -124,8 +155,8 @@ class TangramDeconvolutionTool:
             # Project cell-type annotations to space; writes a spots x cell_types
             # DataFrame to adata_sp.obsm["tangram_ct_pred"].
             tg.project_cell_annotations(ad_map, adata_sp, annotation=cluster_label)
-        except Exception as exc:  # noqa: BLE001
-            return {"error": f"Tangram mapping failed: {exc}"}
+        except Exception:  # noqa: BLE001
+            return {"error": "Tangram mapping failed on the provider."}
 
         ct_pred = adata_sp.obsm.get("tangram_ct_pred")
         if ct_pred is None:
@@ -134,6 +165,16 @@ class TangramDeconvolutionTool:
         # Normalize each spot's cell-type scores to proportions summing to 1.
         cell_types = [str(c) for c in ct_pred.columns]
         scores = np.asarray(ct_pred.values, dtype=float)
+        if (
+            scores.ndim != 2
+            or scores.shape[0] != adata_sp.n_obs
+            or scores.shape[1] != len(cell_types)
+            or not 1 <= len(cell_types) <= _MAX_CELL_TYPES
+            or len(set(cell_types)) != len(cell_types)
+            or any(not label or len(label) > 128 for label in cell_types)
+            or not np.isfinite(scores).all()
+        ):
+            return {"error": "Tangram returned an invalid deconvolution matrix."}
         scores = np.clip(scores, 0.0, None)
         row_sums = scores.sum(axis=1, keepdims=True)
         row_sums[row_sums == 0] = 1.0

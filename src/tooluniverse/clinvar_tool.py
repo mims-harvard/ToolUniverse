@@ -260,7 +260,7 @@ class ClinVarRESTTool(BaseTool):
                         return {
                             "status": "error",
                             "error": f"Rate limited after {max_retries} retries. Please wait before making more requests.",
-                            "url": url,
+                            "url": response.url,
                             "retry_after": retry_after,
                         }
 
@@ -276,7 +276,9 @@ class ClinVarRESTTool(BaseTool):
                 return {
                     "status": "success",
                     "data": data,
-                    "url": url,
+                    # response.url includes the query string that params=
+                    # adds; the pre-request url does not.
+                    "url": response.url,
                     "content_type": response.headers.get(
                         "content-type", "application/xml"
                     ),

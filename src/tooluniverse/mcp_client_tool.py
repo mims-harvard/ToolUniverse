@@ -7,6 +7,9 @@ supporting all MCP functionality including tools, resources, and prompts.
 
 import json
 import asyncio
+import copy
+import hashlib
+import re
 import websockets
 from typing import Dict, List, Any, Optional
 from urllib.parse import urljoin
@@ -21,13 +24,56 @@ import os
 logger = get_logger(__name__)
 
 
+def _unwrap_mcp_tool_result(result: Any) -> Any:
+    """Return the value of a standard MCP tools/call response when unambiguous."""
+    if not isinstance(result, dict):
+        return result
+
+    content = result.get("content")
+    if result.get("isError"):
+        error_parts = [
+            str(item.get("text"))
+            for item in content or []
+            if isinstance(item, dict)
+            and item.get("type") == "text"
+            and item.get("text") is not None
+        ]
+        detail: Any = "\n".join(error_parts) or result.get("structuredContent")
+        return {"status": "error", "error": detail or "remote MCP tool failed"}
+
+    structured = result.get("structuredContent")
+    if structured is not None:
+        return structured
+
+    if not isinstance(content, list) or len(content) != 1:
+        return result
+    item = content[0]
+    if not isinstance(item, dict) or item.get("type") != "text":
+        return result
+    text = item.get("text")
+    if not isinstance(text, str):
+        return result
+    try:
+        return json.loads(text)
+    except (json.JSONDecodeError, TypeError):
+        return text
+
+
 class BaseMCPClient:
     """
     Base MCP client with common functionality shared between MCPClientTool and MCPAutoLoaderTool.
     Provides session management, request handling, and async cleanup patterns.
     """
 
-    def __init__(self, server_url: str, transport: str = "http", timeout: int = 30):
+    def __init__(
+        self,
+        server_url: str,
+        transport: str = "http",
+        timeout: int = 30,
+        headers: Optional[Dict[str, str]] = None,
+        auth_env: str = "",
+        http_headers_from_env: Optional[Dict[str, Any]] = None,
+    ):
         self.server_url = os.path.expandvars(server_url)
         # Normalize transport for backward compatibility: treat 'stdio' as HTTP
         normalized_transport = (
@@ -37,13 +83,84 @@ class BaseMCPClient:
             normalized_transport = "http"
         self.transport = normalized_transport
         self.timeout = timeout
+        self.http_headers_from_env = http_headers_from_env or {}
         self.session = None
+        self.header_templates = dict(headers or {})
+        self.auth_env = auth_env
+        self.headers = {}
+        for name, value in self.header_templates.items():
+            expanded_name = str(name).strip()
+            expanded_value = os.path.expandvars(str(value)).strip()
+            if not expanded_name or "\r" in expanded_name or "\n" in expanded_name:
+                raise ValueError("Invalid MCP header name")
+            if "\r" in expanded_value or "\n" in expanded_value:
+                raise ValueError("Invalid MCP header value")
+            self.headers[expanded_name] = expanded_value
+        if auth_env:
+            token = os.getenv(auth_env, "").strip()
+            if token:
+                self.headers["Authorization"] = f"Bearer {token}"
 
         # Validate transport (accept 'stdio' via normalization above)
         supported_transports = ["http", "websocket"]
         if self.transport not in supported_transports:
             # Keep message concise to satisfy line length rules
             raise ValueError("Invalid transport")
+
+        if not isinstance(self.http_headers_from_env, dict):
+            raise ValueError("http_headers_from_env must be an object")
+
+    def _resolve_http_headers(self) -> Dict[str, str]:
+        """Resolve configured HTTP headers without storing secrets in tool configs.
+
+        `auth_env` predates `http_headers_from_env` and is kept as a config-surface
+        alias for it (CLI-saved connections still write `auth_env`), routed through
+        the same validation and re-read fresh on every call instead of once at
+        `__init__`, so a rotated token is picked up without restarting the tool.
+        An explicit `Authorization` entry in `http_headers_from_env` wins if both
+        are set.
+        """
+        mappings = dict(self.http_headers_from_env)
+        if self.auth_env:
+            mappings.setdefault(
+                "Authorization", {"env": self.auth_env, "prefix": "Bearer "}
+            )
+
+        headers = {}
+        for header_name, header_config in mappings.items():
+            if (
+                not isinstance(header_name, str)
+                or not header_name
+                or any(char in header_name for char in "\r\n:")
+            ):
+                raise ValueError("Invalid HTTP header name")
+
+            if isinstance(header_config, str):
+                env_name = header_config
+                prefix = ""
+            elif isinstance(header_config, dict):
+                env_name = header_config.get("env")
+                prefix = header_config.get("prefix", "")
+            else:
+                raise ValueError(
+                    f"Invalid environment mapping for HTTP header {header_name}"
+                )
+
+            if not isinstance(env_name, str) or not re.fullmatch(
+                r"[A-Za-z_][A-Za-z0-9_]*", env_name
+            ):
+                raise ValueError(
+                    f"Invalid environment variable for HTTP header {header_name}"
+                )
+            if not isinstance(prefix, str) or any(char in prefix for char in "\r\n"):
+                raise ValueError(f"Invalid prefix for HTTP header {header_name}")
+
+            value = os.environ.get(env_name)
+            if value:
+                if any(char in value for char in "\r\n"):
+                    raise ValueError(f"Invalid value for HTTP header {header_name}")
+                headers[header_name] = f"{prefix}{value}"
+        return headers
 
     async def _close_session(self):
         """Placeholder for compatibility; HTTP client calls are scoped per request."""
@@ -68,7 +185,13 @@ class BaseMCPClient:
         """Make an MCP JSON-RPC request"""
         if self.transport == "http":
             endpoint = self._get_mcp_endpoint("")
-            async with streamablehttp_client(endpoint, timeout=self.timeout) as (
+            headers = dict(self.headers)
+            headers.update(self._resolve_http_headers())
+            async with streamablehttp_client(
+                endpoint,
+                headers=headers or None,
+                timeout=self.timeout,
+            ) as (
                 read_stream,
                 write_stream,
                 _,
@@ -157,6 +280,9 @@ class MCPClientTool(BaseTool, BaseMCPClient):
             server_url=tool_config.get("server_url", "http://localhost:8000"),
             transport=tool_config.get("transport", "http"),
             timeout=tool_config.get("timeout", 600),
+            headers=tool_config.get("headers"),
+            auth_env=tool_config.get("auth_env", ""),
+            http_headers_from_env=tool_config.get("http_headers_from_env"),
         )
 
         # Debug logging for transport configuration
@@ -325,6 +451,77 @@ class MCPProxyTool(MCPClientTool):
         self.target_tool_name = tool_config.get("target_tool_name")
         if not self.target_tool_name:
             raise ValueError("MCPProxyTool requires 'target_tool_name' in tool_config")
+        self.normalize_mcp_result = tool_config.get("normalize_mcp_result", False)
+        self.require_structured_content = tool_config.get(
+            "require_structured_content", False
+        )
+        self.output_schema = tool_config.get("return_schema")
+        self.contract_sha256 = tool_config.get("mcp_contract_sha256")
+        self.structured_error_field = tool_config.get("mcp_structured_error_field")
+
+    @staticmethod
+    def _error_text(result: Dict[str, Any]) -> str:
+        for item in result.get("content", []):
+            if isinstance(item, dict) and item.get("type") == "text":
+                text = item.get("text")
+                if isinstance(text, str) and text:
+                    return text
+        return "Remote MCP tool reported an error"
+
+    def _normalize_result(self, result: Dict[str, Any]) -> Dict[str, Any]:
+        if result.get("isError"):
+            return {"status": "error", "error": self._error_text(result)}
+
+        structured_content = result.get("structuredContent")
+        if structured_content is None:
+            if self.require_structured_content:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"MCP tool '{self.target_tool_name}' did not return "
+                        "required structuredContent"
+                    ),
+                }
+            return result
+
+        structured_error = None
+        if self.structured_error_field and isinstance(structured_content, dict):
+            structured_error = structured_content.get(self.structured_error_field)
+        if structured_error is not None:
+            if isinstance(structured_error, dict):
+                error_message = structured_error.get("message")
+                if not error_message:
+                    error_message = json.dumps(structured_error, sort_keys=True)
+            else:
+                error_message = str(structured_error)
+            return {
+                "status": "error",
+                "error": error_message,
+                "error_details": structured_error,
+            }
+
+        if self.output_schema:
+            try:
+                import jsonschema
+
+                jsonschema.validate(structured_content, self.output_schema)
+            except jsonschema.ValidationError as exc:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"MCP tool '{self.target_tool_name}' returned invalid "
+                        f"structuredContent: {exc.message}"
+                    ),
+                }
+
+        provenance = {"protocol": "mcp", "tool": self.target_tool_name}
+        if self.contract_sha256:
+            provenance["contract_sha256"] = self.contract_sha256
+        return {
+            "status": "success",
+            "data": structured_content,
+            "provenance": provenance,
+        }
 
     def run(self, arguments):
         """Forward the call directly to the target tool on the MCP server"""
@@ -332,7 +529,9 @@ class MCPProxyTool(MCPClientTool):
         async def _run_async():
             try:
                 result = await self.call_tool(self.target_tool_name, arguments)
-                return result
+                if self.normalize_mcp_result:
+                    return self._normalize_result(result)
+                return _unwrap_mcp_tool_result(result)
             except Exception as e:
                 return {"status": "error", "error": str(e)}
             finally:
@@ -392,6 +591,9 @@ class MCPServerDiscovery:
                         "required": tool.get("inputSchema", {}).get("required", []),
                     },
                 }
+                output_schema = tool.get("outputSchema")
+                if isinstance(output_schema, dict):
+                    config["return_schema"] = output_schema
 
                 tool_configs.append(config)
 
@@ -492,6 +694,9 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
             server_url=tool_config.get("server_url", "http://localhost:8000"),
             transport=tool_config.get("transport", "http"),
             timeout=tool_config.get("timeout", 5),
+            headers=tool_config.get("headers"),
+            auth_env=tool_config.get("auth_env", ""),
+            http_headers_from_env=tool_config.get("http_headers_from_env"),
         )
 
         self.auto_register = tool_config.get("auto_register", True)
@@ -499,6 +704,22 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
         self.selected_tools = tool_config.get(
             "selected_tools", None
         )  # None means load all
+        contracts = tool_config.get("tool_contracts", [])
+        if not isinstance(contracts, list):
+            raise ValueError("tool_contracts must be a list")
+        self.tool_contracts = {
+            contract.get("name"): contract
+            for contract in contracts
+            if isinstance(contract, dict) and contract.get("name")
+        }
+        self.strict_tool_contracts = tool_config.get("strict_tool_contracts", False)
+        self.normalize_mcp_result = tool_config.get("normalize_mcp_result", False)
+        self.require_structured_content = tool_config.get(
+            "require_structured_content", False
+        )
+        self.structured_error_field = tool_config.get("mcp_structured_error_field")
+        if self.strict_tool_contracts and not self.tool_contracts:
+            raise ValueError("strict_tool_contracts requires reviewed tool_contracts")
 
         # Debug logging
         logger.debug(
@@ -514,17 +735,66 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
         self._discovered_tools = {}
         self._registered_tools = {}
 
+    @staticmethod
+    def _contract_sha256(tool_info: Dict[str, Any]) -> str:
+        reviewed_contract = {
+            "name": tool_info.get("name"),
+            "inputSchema": tool_info.get("inputSchema"),
+            "outputSchema": tool_info.get("outputSchema"),
+        }
+        encoded = json.dumps(
+            reviewed_contract,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+        ).encode("utf-8")
+        return hashlib.sha256(encoded).hexdigest()
+
+    def _verify_and_pin_contracts(
+        self, remote_tools: Dict[str, Dict[str, Any]]
+    ) -> Dict[str, Dict[str, Any]]:
+        expected_names = self.selected_tools or list(self.tool_contracts)
+        missing_remote = [name for name in expected_names if name not in remote_tools]
+        if missing_remote:
+            raise ValueError(
+                "Reviewed MCP tools missing from server: "
+                + ", ".join(sorted(missing_remote))
+            )
+
+        pinned_tools = {}
+        for name in expected_names:
+            reviewed = self.tool_contracts.get(name)
+            if reviewed is None:
+                raise ValueError(f"No reviewed MCP contract for tool: {name}")
+            reviewed_hash = reviewed.get("contract_sha256")
+            if not reviewed_hash:
+                reviewed_hash = self._contract_sha256(reviewed)
+            remote_hash = self._contract_sha256(remote_tools[name])
+            if reviewed_hash != remote_hash:
+                raise ValueError(f"MCP contract changed for reviewed tool: {name}")
+            pinned_tool = copy.deepcopy(remote_tools[name])
+            for local_field in ("description", "title", "annotations"):
+                if local_field in reviewed:
+                    pinned_tool[local_field] = copy.deepcopy(reviewed[local_field])
+            pinned_tools[name] = pinned_tool
+        return pinned_tools
+
     async def discover_tools(self) -> Dict[str, Any]:
         """Discover all available tools from the MCP server"""
         try:
             tools_response = await self._make_mcp_request("tools/list")
             tools = tools_response.get("tools", [])
 
-            self._discovered_tools = {}
+            remote_tools = {}
             for tool in tools:
                 tool_name = tool.get("name")
                 if tool_name:
-                    self._discovered_tools[tool_name] = tool
+                    remote_tools[tool_name] = tool
+
+            if self.strict_tool_contracts:
+                self._discovered_tools = self._verify_and_pin_contracts(remote_tools)
+            else:
+                self._discovered_tools = remote_tools
 
             return self._discovered_tools
         except Exception as e:
@@ -561,11 +831,34 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
                 "type": "MCPProxyTool",
                 "server_url": self.server_url,
                 "transport": self.transport,
+                "timeout": self.timeout,
                 "target_tool_name": tool_name,
                 "parameter": tool_info.get(
                     "inputSchema", {"type": "object", "properties": {}, "required": []}
                 ),
             }
+            output_schema = tool_info.get("outputSchema")
+            if isinstance(output_schema, dict):
+                config["return_schema"] = output_schema
+            if self.http_headers_from_env:
+                config["http_headers_from_env"] = copy.deepcopy(
+                    self.http_headers_from_env
+                )
+            if self.normalize_mcp_result:
+                config["normalize_mcp_result"] = True
+            if self.require_structured_content:
+                config["require_structured_content"] = True
+            if self.structured_error_field:
+                config["mcp_structured_error_field"] = self.structured_error_field
+            if self.strict_tool_contracts:
+                config["mcp_contract_sha256"] = self._contract_sha256(tool_info)
+            if isinstance(tool_info.get("annotations"), dict):
+                config["annotations"] = copy.deepcopy(tool_info["annotations"])
+
+            if self.header_templates:
+                config["headers"] = dict(self.header_templates)
+            if self.auth_env:
+                config["auth_env"] = self.auth_env
 
             configs.append(config)
 
@@ -639,7 +932,10 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
                     "configs": self.generate_proxy_tool_configs(),
                 }
         except Exception as e:
-            logger.error(f"❌ MCPAutoLoaderTool auto-load failed: {str(e)}")
+            # The engine emits one concise, actionable availability message.
+            # Keep the full exception chain at debug level for diagnostics instead
+            # of printing a second, vague failure to ordinary SDK users.
+            logger.debug("MCPAutoLoaderTool auto-load failed", exc_info=True)
             raise Exception(f"Auto-load failed: {str(e)}")
 
     def run(self, arguments):

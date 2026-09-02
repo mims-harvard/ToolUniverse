@@ -5,8 +5,112 @@ import tempfile
 import yaml
 import json
 import shutil
+import math
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+
+
+_ALLOWED_AMINO_ACIDS = frozenset("ACDEFGHIKLMNPQRSTVWY")
+_MAX_PROTEIN_LENGTH = 4096
+_MAX_LIGANDS = 8
+_MAX_STRUCTURE_BYTES = 5_000_000
+_MAX_AFFINITY_BYTES = 1_000_000
+
+
+def _bounded_integer(arguments, name, default, minimum, maximum):
+    value = arguments.get(name, default)
+    if type(value) is not int or not minimum <= value <= maximum:
+        raise ValueError(f"'{name}' must be an integer from {minimum} to {maximum}.")
+    return value
+
+
+def _validate_boltz_arguments(arguments):
+    if not isinstance(arguments, dict):
+        raise ValueError("Arguments must be an object.")
+
+    normalized = dict(arguments)
+    sequence = normalized.get("sequence", normalized.get("protein_sequence"))
+    if not isinstance(sequence, str) or not sequence.strip():
+        raise ValueError("The 'sequence' parameter is required.")
+    sequence = sequence.strip().upper()
+    if len(sequence) > _MAX_PROTEIN_LENGTH:
+        raise ValueError(
+            f"'sequence' must contain at most {_MAX_PROTEIN_LENGTH} amino acids."
+        )
+    if set(sequence) - _ALLOWED_AMINO_ACIDS:
+        raise ValueError("'sequence' must use the 20 standard amino-acid letters.")
+    normalized["sequence"] = sequence
+    normalized.pop("protein_sequence", None)
+
+    ligands = normalized.get("ligands")
+    if not isinstance(ligands, list) or not 1 <= len(ligands) <= _MAX_LIGANDS:
+        raise ValueError(f"'ligands' must contain 1 to {_MAX_LIGANDS} entries.")
+    clean_ligands = []
+    for index, ligand in enumerate(ligands):
+        if not isinstance(ligand, dict):
+            raise ValueError(f"Ligand at index {index} must be an object.")
+        ligand_id = ligand.get("id")
+        if not isinstance(ligand_id, str) or not 1 <= len(ligand_id.strip()) <= 64:
+            raise ValueError(
+                f"Ligand at index {index} must have a nonempty 'id' of at most 64 characters."
+            )
+        smiles = ligand.get("smiles")
+        ccd = ligand.get("ccd")
+        if (smiles is None) == (ccd is None):
+            raise ValueError(
+                f"Ligand at index {index} must provide exactly one of 'smiles' or 'ccd'."
+            )
+        representation = smiles if smiles is not None else ccd
+        representation_name = "smiles" if smiles is not None else "ccd"
+        if not isinstance(representation, str) or not 1 <= len(
+            representation.strip()
+        ) <= 4096:
+            raise ValueError(
+                f"Ligand at index {index} has an invalid '{representation_name}'."
+            )
+        clean_ligands.append(
+            {
+                "id": ligand_id.strip(),
+                representation_name: representation.strip(),
+            }
+        )
+    normalized["ligands"] = clean_ligands
+
+    normalized["recycling_steps"] = _bounded_integer(
+        normalized, "recycling_steps", 3, 0, 20
+    )
+    normalized["sampling_steps"] = _bounded_integer(
+        normalized, "sampling_steps", 200, 1, 2000
+    )
+    normalized["diffusion_samples"] = _bounded_integer(
+        normalized, "diffusion_samples", 1, 1, 16
+    )
+    step_scale = normalized.get("step_scale", 1.638)
+    if (
+        isinstance(step_scale, bool)
+        or not isinstance(step_scale, (int, float))
+        or not math.isfinite(step_scale)
+        or not 0 < step_scale <= 10
+    ):
+        raise ValueError("'step_scale' must be a finite number greater than 0 and at most 10.")
+    normalized["step_scale"] = float(step_scale)
+    for name, default in (
+        ("use_potentials", False),
+        ("return_structure", False),
+        ("use_msa_server", True),
+    ):
+        value = normalized.get(name, default)
+        if type(value) is not bool:
+            raise ValueError(f"'{name}' must be a boolean.")
+        normalized[name] = value
+
+    for name in ("constraints", "templates"):
+        if name in normalized and (
+            not isinstance(normalized[name], list) or len(normalized[name]) > 100
+        ):
+            raise ValueError(f"'{name}' must be an array with at most 100 entries.")
+
+    return normalized
 
 
 @register_tool("Boltz2DockingTool")
@@ -32,7 +136,7 @@ class Boltz2DockingTool(BaseTool):
 
     def _build_yaml_input(self, arguments: dict) -> dict:
         """Constructs the YAML data structure for the Boltz input."""
-        protein_sequence = arguments.get("protein_sequence")
+        protein_sequence = arguments["sequence"]
         ligands = arguments.get("ligands", [])
 
         # The first ligand is assumed to be the binder for affinity prediction
@@ -46,7 +150,13 @@ class Boltz2DockingTool(BaseTool):
             raise ValueError("The first ligand in the list must have a valid 'id'.")
 
         # --- Sequences Section ---
-        sequences = [{"protein": {"id": "A", "sequence": protein_sequence}}]
+        protein = {"id": "A", "sequence": protein_sequence}
+        if not arguments["use_msa_server"]:
+            # Boltz's documented explicit single-sequence mode. Do not silently
+            # fall back when the external MSA provider is unavailable because
+            # that changes the scientific execution mode.
+            protein["msa"] = "empty"
+        sequences = [{"protein": protein}]
 
         for i, ligand_data in enumerate(ligands):
             chain_id = ligand_data.get("id")
@@ -94,13 +204,34 @@ class Boltz2DockingTool(BaseTool):
         Returns
             dict: A dictionary containing the path to the predicted structure and affinity data, or an error.
         """
-        arguments = arguments or {}
-        if not arguments.get("protein_sequence"):
+        try:
+            arguments = _validate_boltz_arguments(arguments or {})
+        except ValueError as exc:
+            return {"status": "error", "error": str(exc)}
+        if type(timeout) is not int or not 1 <= timeout <= 7200:
             return {
                 "status": "error",
-                "error": "The 'protein_sequence' parameter is required.",
+                "error": "'timeout' must be an integer from 1 to 7200 seconds.",
+            }
+        try:
+            return self._run_provider(arguments, timeout)
+        except subprocess.TimeoutExpired:
+            return {
+                "status": "error",
+                "error": "Boltz prediction timed out on the provider.",
+            }
+        except subprocess.CalledProcessError:
+            return {
+                "status": "error",
+                "error": "Boltz prediction failed on the provider.",
+            }
+        except Exception:
+            return {
+                "status": "error",
+                "error": "Boltz prediction failed due to an internal provider error.",
             }
 
+    def _run_provider(self, arguments: dict, timeout: int) -> dict:
         # Create a temporary directory to store input and output files
         with tempfile.TemporaryDirectory() as temp_dir:
             input_filename = "boltz_input"
@@ -111,7 +242,7 @@ class Boltz2DockingTool(BaseTool):
             # Build and write the input YAML file
             yaml_data = self._build_yaml_input(arguments)
             with open(input_yaml_path, "w") as f:
-                yaml.dump(yaml_data, f, sort_keys=False)
+                yaml.safe_dump(yaml_data, f, sort_keys=False)
 
             # Construct the command-line arguments for Boltz
             command = [
@@ -120,9 +251,17 @@ class Boltz2DockingTool(BaseTool):
                 input_yaml_path,
                 "--out_dir",
                 output_dir,
-                "--use_msa_server",
                 "--override",  # Override existing results if any
+                # Multiprocessing data-loader workers can deadlock when Boltz is
+                # launched from a long-lived MCP worker process.  A single
+                # in-process loader is slower at high throughput but reliable
+                # for this one-request-at-a-time provider wrapper.
+                "--num_workers",
+                "0",
             ]
+
+            if arguments["use_msa_server"]:
+                command.append("--use_msa_server")
 
             # Add optional command-line flags from arguments
             for key in [
@@ -168,7 +307,11 @@ class Boltz2DockingTool(BaseTool):
 
             # 2. now point at predictions/<input_filename>
             prediction_folder = os.path.join(run_root, "predictions", input_filename)
-            results = {}
+            results = {
+                "msa_mode": (
+                    "server" if arguments["use_msa_server"] else "single_sequence"
+                )
+            }
 
             # 3. structure .cif
             if arguments.get("return_structure", False):
@@ -176,9 +319,14 @@ class Boltz2DockingTool(BaseTool):
                     prediction_folder, f"{input_filename}_model_0.cif"
                 )
                 if os.path.exists(structure_file):
-                    with open(structure_file, "r", encoding="utf-8") as f:
-                        results["predicted_structure"] = f.read()
-                    results["structure_format"] = "cif"
+                    if os.path.getsize(structure_file) > _MAX_STRUCTURE_BYTES:
+                        results["structure_error"] = (
+                            "Predicted structure exceeds the public output limit"
+                        )
+                    else:
+                        with open(structure_file, "r", encoding="utf-8") as f:
+                            results["predicted_structure"] = f.read()
+                        results["structure_format"] = "cif"
                 else:
                     results["structure_error"] = (
                         f"Missing {os.path.basename(structure_file)}"
@@ -189,10 +337,34 @@ class Boltz2DockingTool(BaseTool):
                 prediction_folder, f"affinity_{input_filename}.json"
             )
             if os.path.exists(affinity_file):
-                with open(affinity_file, "r", encoding="utf-8") as f:
-                    results["affinity_prediction"] = json.load(f)
+                if os.path.getsize(affinity_file) > _MAX_AFFINITY_BYTES:
+                    return {
+                        "status": "error",
+                        "error": "Boltz produced an invalid affinity prediction.",
+                        "msa_mode": results["msa_mode"],
+                    }
+                else:
+                    try:
+                        with open(affinity_file, "r", encoding="utf-8") as f:
+                            affinity = json.load(f)
+                        json.dumps(affinity, allow_nan=False)
+                        results["affinity_prediction"] = affinity
+                    except (OSError, UnicodeError, ValueError, json.JSONDecodeError):
+                        return {
+                            "status": "error",
+                            "error": "Boltz produced an invalid affinity prediction.",
+                            "msa_mode": results["msa_mode"],
+                        }
             else:
-                results["affinity_error"] = f"Missing {os.path.basename(affinity_file)}"
+                # Boltz 2.2.1 may exit zero after skipping an input whose MSA
+                # request failed. Missing the required affinity artifact must
+                # therefore fail closed instead of looking like a successful
+                # docking result to MCP and Platform callers.
+                return {
+                    "status": "error",
+                    "error": "Boltz did not produce an affinity prediction.",
+                    "msa_mode": results["msa_mode"],
+                }
 
             return results
 
@@ -201,7 +373,7 @@ if __name__ == "__main__":
     # Example usage
     tool = Boltz2DockingTool(tool_config={})
     query = {
-        "protein_sequence": "ACDEFGHIKLMNPQRSTVWY",
+        "sequence": "ACDEFGHIKLMNPQRSTVWY",
         "ligands": [
             {"id": "LIG1", "smiles": "C1=CC=CC=C1"},
         ],

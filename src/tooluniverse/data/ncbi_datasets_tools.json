@@ -188,7 +188,7 @@
     },
     {
         "name": "NCBIDatasets_get_gene_by_symbol",
-        "description": "Look up gene information by gene symbol and organism. Searches NCBI Gene database using official gene symbols. Specify the taxon as common name (human, mouse, rat) or taxonomy ID. Returns gene ID, description, chromosomal location, and database cross-references.",
+        "description": "Look up gene information by gene symbol and organism. Searches NCBI Gene database using official gene symbols. Specify the species with `taxon` (or its synonyms `organism`/`species`) as a common name (human, mouse, rat) or taxonomy ID. IMPORTANT -- the species defaults to HUMAN when none is given, so a gene symbol shared across species returns the human gene unless you say otherwise; `metadata.query_taxon_defaulted` is true whenever that default was applied, and `metadata.query_taxon` echoes the species actually used. Every returned row also carries its own `tax_id`/`taxname`, which is the authoritative check. Returns gene ID, description, chromosomal location, and database cross-references.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -202,7 +202,19 @@
                     "type": "string",
                     "minLength": 1,
                     "pattern": ".*\\S.*",
-                    "description": "Organism as common name or taxonomy ID. Examples: 'human', 'mouse', 'rat', '9606', '10090'. Default: 'human'."
+                    "description": "Organism as common name or taxonomy ID. Examples: 'human', 'mouse', 'rat', '9606', '10090'. Default: 'human' (reported as metadata.query_taxon_defaulted). Synonyms `organism` and `species` are accepted."
+                },
+                "organism": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": ".*\\S.*",
+                    "description": "Synonym for `taxon`. Used when `taxon` is not supplied."
+                },
+                "species": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": ".*\\S.*",
+                    "description": "Synonym for `taxon`. Used when neither `taxon` nor `organism` is supplied."
                 }
             },
             "required": [

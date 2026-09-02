@@ -221,6 +221,7 @@ credentials.json
 
 # Local-only harness sweep artifacts (test-all command output)
 TOOL_TEST_REPORT.md
+TOOL_TEST_RESULTS.json
 TOOL_SWEEP_TRIAGE.md
 
 # Local-only runtime artifact from test_new_tools.py

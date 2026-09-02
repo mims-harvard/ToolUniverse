@@ -266,6 +266,18 @@
     ]
   },
   {
+    "name": "FOLKLORE_MCP_URL",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Clinical & Safety",
+    "register_url": "https://folklore.helena.bio/integrations",
+    "purpose": "Endpoint URL for the opt-in Folklore Clinical Variant Interpretation MCP connection.",
+    "without": "Leave blank to keep this third-party MCP connection disabled. The public read-only endpoint is https://api.helena.bio/folklore/v1/mcp and requires no authentication.",
+    "used_by": [
+      "mcp_auto_loader_folklore.json"
+    ]
+  },
+  {
     "name": "GEMINI_API_KEY",
     "requirement": "optional",
     "type": "secret",
@@ -275,6 +287,30 @@
     "without": "Only needed if you select Gemini as the agentic LLM provider.",
     "used_by": [
       "agentic_tools.json"
+    ]
+  },
+  {
+    "name": "GENOMIC_INTELLIGENCE_API_KEY",
+    "requirement": "optional",
+    "type": "api_key",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://docs.genomicintelligence.ai/mcp",
+    "purpose": "Optional private Genomic Intelligence credential sent as X-GI-Key to the configured MCP endpoint.",
+    "without": "The hosted public demo works without a key but uses a shared, rate-limited evaluation quota and is not suitable for private sequences or production.",
+    "used_by": [
+      "mcp_auto_loader_gi.json"
+    ]
+  },
+  {
+    "name": "GENOMIC_INTELLIGENCE_MCP_URL",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://docs.genomicintelligence.ai",
+    "purpose": "Endpoint URL for the opt-in Genomic Intelligence MCP service.",
+    "without": "Leave blank to keep this third-party MCP service disabled. To use its public demo, set https://mcp.genomicintelligence.ai/mcp.",
+    "used_by": [
+      "mcp_auto_loader_gi.json"
     ]
   },
   {
@@ -364,6 +400,18 @@
       "ncbi_datasets_tools.json",
       "pubmed_tools.json",
       "pubtator3_ext_tools.json"
+    ]
+  },
+  {
+    "name": "NOODLE_MCP_URL",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Literature & Patents",
+    "register_url": "https://noodle.helena.bio/integrations",
+    "purpose": "Endpoint URL for the opt-in Noodle Biomedical Literature Discovery MCP connection.",
+    "without": "Leave blank to keep this third-party MCP connection disabled. The public endpoint requires no authentication.",
+    "used_by": [
+      "mcp_auto_loader_noodle.json"
     ]
   },
   {

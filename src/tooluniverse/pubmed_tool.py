@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 from typing import Any, Dict
 from .base_rest_tool import BaseRESTTool
 from .http_utils import request_with_retry
+from .ncbi_eutils_tool import esearch_query_disclosure
 from .tool_registry import register_tool
 
 
@@ -504,65 +505,28 @@ class PubMedRESTTool(BaseRESTTool):
     def _search_warning_metadata(esearch_result: dict) -> dict:
         """Surface NCBI's own report that it did not run the query as asked.
 
-        esearch silently drops quoted phrases it cannot match and then answers
-        a broader query. NCBI discloses this in ``esearchresult.warninglist``;
-        without propagating it a caller cannot tell that the returned articles
-        answer a different question than the one they submitted.
+        Fix-54A-1: this parsing was PubMed-only, but every eutils database
+        behaves identically -- measured across fourteen of them -- and twelve
+        other modules here parse esearch responses without reading either
+        disclosure container. The logic now lives in one place,
+        :func:`~tooluniverse.ncbi_eutils_tool.esearch_query_disclosure`, which
+        carries the measurements; this method stays as PubMed's entry point.
 
-        Returns an empty dict when NCBI reported no warnings, so unaffected
-        queries keep their existing metadata shape.
+        The sweep is NOT complete. Six modules were wired (medgen, sra,
+        ncbi_sra, ncbi_nucleotide, epigenomics' four GEO searches, and this
+        one). Still unwired, all confirmed to parse ``esearchresult`` and build
+        their own payload, all with a measured database in that table:
+        ``clinvar_tool``, ``dbsnp_tool``, ``pmc_tool``, ``geo_tool``,
+        ``unified_guideline_tools``, ``clinical_society_tools`` and
+        ``icite_tool``. ``pmc_tool`` and ``icite_tool`` return a bare list with
+        nowhere to put the disclosure, so wiring them is a response-shape
+        change rather than an additive one.
+
+        Note this method splats its result flat into ``metadata`` while the six
+        new sites nest it under a ``query_disclosure`` key. One helper, two
+        shapes; unifying them would change PubMed's published response.
         """
-        if not isinstance(esearch_result, dict):
-            return {}
-
-        warning_list = esearch_result.get("warninglist")
-        if not isinstance(warning_list, dict):
-            return {}
-
-        def _as_list(value: Any) -> list:
-            if isinstance(value, str):
-                return [value] if value.strip() else []
-            if isinstance(value, (list, tuple)):
-                return [v for v in value if v]
-            return []
-
-        not_found = _as_list(warning_list.get("quotedphrasesnotfound"))
-        ignored = _as_list(warning_list.get("phrasesignored"))
-        messages = _as_list(warning_list.get("outputmessages"))
-
-        if not (not_found or ignored or messages):
-            return {}
-
-        metadata: dict = {}
-        if not_found:
-            metadata["quoted_phrases_not_found"] = not_found
-        if ignored:
-            metadata["phrases_ignored"] = ignored
-        if messages:
-            metadata["ncbi_messages"] = messages
-
-        translation = esearch_result.get("querytranslation")
-        if isinstance(translation, str) and translation.strip():
-            metadata["executed_query"] = translation.strip()
-
-        # Top-level, unmissable statement of the mismatch for any caller that
-        # reads metadata but not the individual warning keys.
-        notes = []
-        if not_found:
-            notes.append(
-                "PubMed could not match the quoted phrase(s) "
-                f"{not_found}; they were dropped and these results answer a "
-                "BROADER query than the one submitted."
-            )
-        if ignored:
-            notes.append(f"PubMed ignored the phrase(s) {ignored}.")
-        if messages:
-            notes.append("; ".join(str(m) for m in messages))
-        if notes:
-            metadata["query_not_executed_as_submitted"] = True
-            metadata["warning"] = " ".join(notes)
-
-        return metadata
+        return esearch_query_disclosure(esearch_result, source="PubMed")
 
     def _fetch_abstracts(self, pmid_list: list[str]) -> Dict[str, str]:
         """Best-effort abstract fetch via efetch XML for a list of PMIDs."""

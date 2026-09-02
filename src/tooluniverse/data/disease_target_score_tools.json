@@ -472,7 +472,7 @@
   },
   {
     "name": "europepmc_disease_target_score",
-    "description": "Extract disease-target association scores from Europe PMC literature. This includes literature-based evidence.",
+    "description": "Extract disease-target association scores from Europe PMC literature. This includes literature-based evidence. Returns EVERY target with a Europe PMC score for the disease, sorted strongest-first -- it is not a paged or top-N view. Scanning is capped at 25 seconds; when the cap is hit the response sets 'truncated' and a 'note' saying how many of the disease's associated targets were scanned.",
     "datasource_id": "europepmc",
     "parameter": {
       "type": "object",
@@ -483,7 +483,7 @@
         },
         "pageSize": {
           "type": "integer",
-          "description": "Number of results per page (default: 100, max: 100)",
+          "description": "Upstream fetch batch size (max 100), NOT a limit on results returned. The tool pages through all of the disease's associated targets regardless of this value -- 'pageSize': 10 on MONDO_0005011 (Crohn disease) still returns 390 scored targets. Lower it only to make each upstream request smaller.",
           "default": 100
         }
       },

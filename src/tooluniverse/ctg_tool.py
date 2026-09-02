@@ -2,7 +2,11 @@ import re
 import time
 from copy import deepcopy
 from urllib.parse import urljoin
-from .restful_tool import RESTfulTool, execute_RESTful_query
+from .restful_tool import (
+    RESTfulTool,
+    execute_RESTful_query,
+    execute_RESTful_query_detailed,
+)
 from .tool_registry import register_tool
 
 _ESSIE_OPERATOR_RE = re.compile(r'"|[()\[\]]|\b(?:AND|OR|NOT|AREA)\b', re.IGNORECASE)
@@ -123,7 +127,22 @@ def _relaxed_match_check(params, rewrites, fetch_total_count):
     except Exception as exc:  # transport, HTTP or decode failure
         total, failure = None, f"{type(exc).__name__}: {exc}"
 
-    check = {"relaxed_query": relaxed, "relaxed_total_count": total}
+    # Fix-53A-1: `relaxed_query` used to publish `relaxed` -- ONLY the rewritten
+    # parameters -- while `relaxed_total_count` was measured over `probe`, which
+    # the line above deliberately fills with every other filter of the real
+    # query. The two therefore disagreed, and they disagreed in the direction
+    # that misleads: the caller saw a broad query beside a 0 and a note calling
+    # that 0 "a genuine absence of matching trials". Measured live 2026-08-13,
+    # query_intr="levetiracetam" + query_term="subcutaneous palliative"
+    # published `{"query.intr": "levetiracetam"}` next to
+    # `relaxed_total_count: 0` -- while sending exactly that displayed query to
+    # /studies returns totalCount 306. Publishing the query that was actually
+    # counted keeps the comment above true of the output as well as of the
+    # request.
+    check = {
+        "relaxed_query": _executed_query(probe),
+        "relaxed_total_count": total,
+    }
     if failure:
         # Degrade rather than turn a working call into an error: the studies
         # above are still whatever the strict query matched.
@@ -562,12 +581,34 @@ class ClinicalTrialsTool(RESTfulTool):
                 }
             )
 
+        # ClinicalTrials.gov v2 returns `totalCount` on a first page and OMITS it
+        # on every subsequent page, i.e. exactly when `pageToken` was supplied.
+        # Falling back to `len(studies)` therefore published the PAGE SIZE under
+        # the name `total_count`. Measured live 2026-08-13, query_cond
+        # "silicosis" with page_size 3: page 1 reported total_count 20 (correct),
+        # page 2 reported total_count 3. Reproduced on mesothelioma: 64 then 5.
+        # Nothing in the response distinguished the invented figure from the real
+        # one, so paging a query to the end left the caller with a denominator
+        # equal to their last page.
+        #
+        # `None` rather than a guess: the count genuinely is not knowable from a
+        # paged response, and the sibling ClinicalTrialsSearchTool already omits
+        # the key in this situation rather than inventing one. Note the guard is
+        # `is None`, not falsiness -- a real `totalCount` of 0 is a true answer
+        # and must survive, which the old `or` could not express.
+        total_count = data.get("totalCount")
         result_data = {
             "studies": studies,
-            # totalCount may be absent from API response; fallback to len(studies)
-            "total_count": data.get("totalCount") or len(studies),
+            "total_count": total_count,
             "next_page_token": data.get("nextPageToken"),
         }
+        if total_count is None:
+            result_data["total_count_note"] = (
+                "ClinicalTrials.gov does not report the number of matching "
+                "studies on a paged response, so total_count is null here. The "
+                "figure from the FIRST page of this same query is still the "
+                "total; re-run without next_page_token to read it."
+            )
         self._attach_disclosure(result_data, params, query_rewrites)
 
         return {
@@ -776,6 +817,52 @@ class ClinicalTrialsTool(RESTfulTool):
             {"value": item.get("value"), "studies_count": item.get("studiesCount")}
             for item in field_obj.get("topValues") or []
         ]
+        field_type = field_obj.get("type")
+
+        # Fix-R53-1: `topValues` is not something ClinicalTrials.gov sends for
+        # every field, and 149 of the 418 fields it exposes (measured live
+        # 2026-08-13 over the whole /stats/fieldValues payload: 92 INTEGER,
+        # 29 DATE, 28 BOOLEAN) carry no `topValues` and no `uniqueValuesCount`
+        # at all. They carry a different summary instead, which this tool read
+        # past and dropped:
+        #   BOOLEAN -> trueCount / falseCount
+        #   INTEGER -> min / max / avg
+        #   DATE    -> min / max / formats
+        # Both halves of that are recovered here rather than reported as an
+        # empty-but-complete facet (see the `unique_values_count` fallback
+        # below for what the old code claimed instead).
+        value_summary = None
+        synthesized_whole_facet = False
+        if not all_values:
+            if field_type == "BOOLEAN":
+                # The distribution exists upstream, just under two scalar keys
+                # instead of a ranking. `HasResults` is the case that matters:
+                # the caller asking how many registered studies have posted
+                # results was handed `values: []`.
+                boolean_rows = [
+                    {"value": name, "studies_count": field_obj.get(key)}
+                    for name, key in (("true", "trueCount"), ("false", "falseCount"))
+                    if isinstance(field_obj.get(key), int)
+                ]
+                all_values = sorted(
+                    boolean_rows, key=lambda row: row["studies_count"], reverse=True
+                )
+                synthesized_whole_facet = bool(all_values)
+            else:
+                # INTEGER and DATE have no per-value ranking upstream -- with
+                # ~600k distinct dates there is nothing to rank -- so the range
+                # summary is the whole of what ClinicalTrials.gov knows.
+                summary = {
+                    out: field_obj.get(key)
+                    for out, key in (
+                        ("minimum", "min"),
+                        ("maximum", "max"),
+                        ("average", "avg"),
+                        ("date_formats", "formats"),
+                    )
+                    if field_obj.get(key) is not None
+                }
+                value_summary = summary or None
 
         # Fix-R37-1 (denominator): the response used to be the rows and nothing
         # else, discarding the two numbers upstream sends alongside them --
@@ -786,7 +873,19 @@ class ClinicalTrialsTool(RESTfulTool):
         # with the registry total, so the caller has a real denominator.
         unique_values_count = field_obj.get("uniqueValuesCount")
         if not isinstance(unique_values_count, int):
-            unique_values_count = len(all_values)
+            # Fix-R53-1 (fabricated total): this used to fall back to
+            # `len(all_values)` -- the number of rows we happened to receive --
+            # and then two lines down derive `upstream_truncated` from it, so
+            # the comparison was `len(all_values) < len(all_values)` and every
+            # field without an upstream count reported itself COMPLETE. For the
+            # 149 non-categorical fields that meant `unique_values_count: 0`,
+            # `values: []`, `truncated: false`: a positive claim that the field
+            # has no distinct values, produced by a response that in fact
+            # carried a range or a true/false split. The synthesized BOOLEAN
+            # rows above are a real, whole facet and can be counted; nothing
+            # else may be, so it stays null and the truncation flag says
+            # "unknown" rather than "complete".
+            unique_values_count = len(all_values) if synthesized_whole_facet else None
         missing_studies_count = field_obj.get("missingStudiesCount")
         if not isinstance(missing_studies_count, int):
             missing_studies_count = None
@@ -798,7 +897,17 @@ class ClinicalTrialsTool(RESTfulTool):
         # 132,704 distinct values), which no page_size can lift; page_size cuts
         # further on our side. Distinguishing them matters because only the
         # second is the caller's to undo.
-        upstream_truncated = len(all_values) < unique_values_count
+        if isinstance(unique_values_count, int):
+            upstream_truncated = len(all_values) < unique_values_count
+        elif value_summary is not None:
+            # A range summary and no rows: the field does have values, we just
+            # were not given any of them. Zero rows are unambiguously fewer than
+            # the field's distinct values, so this is truncation of the most
+            # complete kind, and reporting it as such is what stops `values: []`
+            # being read as "this field is never populated".
+            upstream_truncated = True
+        else:
+            upstream_truncated = None
         page_truncated = len(values) < len(all_values)
         rows_sum = sum(
             v["studies_count"]
@@ -815,10 +924,12 @@ class ClinicalTrialsTool(RESTfulTool):
 
         # How many studies are counted in more than one row. Only derivable when
         # the rows are the WHOLE facet -- with an upstream-truncated ranking
-        # rows_sum is a partial sum and the subtraction is meaningless.
+        # rows_sum is a partial sum and the subtraction is meaningless, and with
+        # an unknown facet size (`upstream_truncated is None`) we cannot even
+        # tell which of those we have, so the identity check is deliberate.
         duplicate_studies_count = None
         if (
-            not upstream_truncated
+            upstream_truncated is False
             and isinstance(total_studies, int)
             and isinstance(missing_studies_count, int)
         ):
@@ -830,8 +941,12 @@ class ClinicalTrialsTool(RESTfulTool):
             "data": {
                 "field": field,
                 "field_path": field_path,
-                "field_type": field_obj.get("type"),
+                "field_type": field_type,
                 "values": values,
+                # Fix-R53-1: null for the categorical fields that have a real
+                # ranking; the range ClinicalTrials.gov sends INSTEAD of one for
+                # numeric and date fields, which used to be parsed and dropped.
+                "value_summary": value_summary,
                 # Fix-R37-1 (naming): this used to be `total_count`, holding the
                 # number of ROWS returned -- while `total_count` in the sibling
                 # ClinicalTrials_search_studies holds the number of matching
@@ -850,6 +965,16 @@ class ClinicalTrialsTool(RESTfulTool):
                 # conflated are below under names that say which they are.
                 "unique_values_count": unique_values_count,
                 "values_returned": len(values),
+                # `upstream_truncated` is now tri-state and this expression is
+                # unchanged, because `or` already does the right thing with it:
+                # it returns its SECOND operand when the first is falsy, so
+                # `False or None` is None, not False. An unknown facet size
+                # therefore stays unknown here without any help. Checked over
+                # all six inputs before leaving it alone -- an earlier version
+                # of this round rewrote it to `True if page_truncated else
+                # upstream_truncated` on the belief that `or` would coerce the
+                # None to False. That is not what Python does, the rewrite was
+                # a no-op, and no test could have caught it either way.
                 "truncated": page_truncated or upstream_truncated,
                 "missing_studies_count": missing_studies_count,
                 "total_studies_in_registry": total_studies,
@@ -859,6 +984,7 @@ class ClinicalTrialsTool(RESTfulTool):
                 "coverage_note": self._field_values_coverage_note(
                     field=field,
                     field_path=field_path,
+                    field_type=field_type,
                     rows_sum=rows_sum,
                     missing_studies_count=missing_studies_count,
                     total_studies=total_studies,
@@ -868,6 +994,8 @@ class ClinicalTrialsTool(RESTfulTool):
                     unique_values_count=unique_values_count,
                     values_returned=len(values),
                     upstream_values=len(all_values),
+                    upstream_truncated=upstream_truncated,
+                    value_summary=value_summary,
                     page_size=page_size,
                 ),
             },
@@ -1008,6 +1136,7 @@ class ClinicalTrialsTool(RESTfulTool):
         self,
         field,
         field_path,
+        field_type,
         rows_sum,
         missing_studies_count,
         total_studies,
@@ -1017,6 +1146,8 @@ class ClinicalTrialsTool(RESTfulTool):
         unique_values_count,
         values_returned,
         upstream_values,
+        upstream_truncated,
+        value_summary,
         page_size,
     ):
         """Prose stating what the rows do and do NOT sum to, and which way.
@@ -1031,12 +1162,11 @@ class ClinicalTrialsTool(RESTfulTool):
         report only (b) and they deflate it. Both are named, with numbers, and
         the note ends by saying which figure may be used as a denominator.
         """
-        # Derived here rather than passed in: both are one comparison over
-        # numbers this method already receives, and computing them twice (once
-        # in the caller, once implicitly in the prose) is two places to keep in
-        # step. The caller keeps its own copies only because the response has a
-        # single combined `truncated` flag.
-        upstream_truncated = upstream_values < unique_values_count
+        # Fix-R53-1: `upstream_truncated` used to be recomputed here as
+        # `upstream_values < unique_values_count`. That is now tri-state and
+        # `unique_values_count` may be null, so it is passed in from the single
+        # place that derives it rather than being derived a second time from
+        # numbers that can no longer support the comparison.
         page_truncated = values_returned < upstream_values
         # A study is counted more than once either because the field is
         # structurally a list, or because the arithmetic says so outright
@@ -1069,6 +1199,42 @@ class ClinicalTrialsTool(RESTfulTool):
                 f"bucketed as unknown{tail}"
             )
 
+        # 1b. Fix-R53-1: for a field with no per-value ranking upstream every
+        # sentence below is not merely uninformative but false -- the old note
+        # told the caller that zero rows "partition the studies that record it"
+        # and that "the rows sum to 0", in the same breath as reporting 598,509
+        # studies represented. Say what actually happened and stop.
+        #
+        # Guarded on `unique_values_count is None` rather than on
+        # `value_summary`: those two coincide for the INTEGER and DATE fields
+        # this was written for, but not for the residual case of no rows, no
+        # count and no summary either (a BOOLEAN whose trueCount/falseCount
+        # were absent). Keying on the summary would send that case into the
+        # completeness prose below -- the same false sentences, for a payload
+        # one step further from what upstream normally sends. It is also the
+        # guard that keeps `{unique_values_count:,}` in sections 3 and 4 from
+        # formatting None, which is stated in those branches too rather than
+        # left resting on this one.
+        if not upstream_values and unique_values_count is None:
+            sentence = (
+                f"ClinicalTrials.gov publishes NO per-value ranking for {field} "
+                f"({field_type}): for numeric and date fields it returns a range "
+                "summary instead. `values` is empty because none were offered, "
+                "NOT because no study records a value, and unique_values_count is "
+                "null because the number of distinct values is not published -- do "
+                "not infer it from the empty list."
+            )
+            if value_summary:
+                printable = ", ".join(f"{k}={v!r}" for k, v in value_summary.items())
+                sentence += (
+                    f" What the API does report is in value_summary: {printable}."
+                )
+            parts.append(
+                sentence + " To count studies per value, bucket them yourself "
+                "from ClinicalTrials_search_studies."
+            )
+            return " ".join(parts)
+
         # 2. Whether one study can appear in several rows.
         if double_counts:
             sentence = (
@@ -1095,7 +1261,23 @@ class ClinicalTrialsTool(RESTfulTool):
             )
 
         # 3. What the rows sum to, and what may be divided by what.
-        if upstream_truncated:
+        #
+        # Feature-53A-3: "The rows sum to 481,189" is a statement about the
+        # WHOLE facet, and with page_size=2 the reader is looking at two rows
+        # summing to 324,064. Section 4 reconciles it several sentences later,
+        # but this is the sentence a reader uses to sanity-check the numbers,
+        # and until they reach section 4 it reads as arithmetic that does not
+        # work. Say which rows are meant, in the sentence that means them.
+        rows_phrase = (
+            f"All {upstream_values:,} rows of the facet sum to {rows_sum:,} "
+            f"(the {values_returned:,} shown below are only part of that)"
+            if page_truncated
+            else f"The rows sum to {rows_sum:,}"
+        )
+        # `isinstance` rather than relying on the early return above to have
+        # caught every null count: this branch formats `unique_values_count`,
+        # and a branch that can format None should say so itself.
+        if upstream_truncated and isinstance(unique_values_count, int):
             parts.append(
                 f"The {upstream_values:,} rows ClinicalTrials.gov returned are "
                 f"only the most common of {unique_values_count:,} distinct "
@@ -1105,7 +1287,7 @@ class ClinicalTrialsTool(RESTfulTool):
             )
         elif double_counts and isinstance(total_studies, int):
             parts.append(
-                f"The rows sum to {rows_sum:,}, which is neither the registry "
+                f"{rows_phrase}, which is neither the registry "
                 f"total ({total_studies:,}) nor a clean subset of it: the two "
                 "distortions run in OPPOSITE directions, excluded studies "
                 "pulling the sum down and double-counted studies pulling it up. "
@@ -1119,13 +1301,13 @@ class ClinicalTrialsTool(RESTfulTool):
             )
         elif double_counts:
             parts.append(
-                f"The rows sum to {rows_sum:,}, which counts recorded values, "
+                f"{rows_phrase}, which counts recorded values, "
                 "NOT studies -- do NOT use it as a denominator and do NOT divide "
                 "one row by it to obtain a share."
             )
         elif isinstance(total_studies, int):
             parts.append(
-                f"The rows sum to {rows_sum:,}. Divide a row by "
+                f"{rows_phrase}. Divide a row by "
                 f"studies_with_value ({studies_with_value:,}) for a share of the "
                 "studies that record it, or by total_studies_in_registry "
                 f"({total_studies:,}) for a share of all registered studies -- "
@@ -1133,18 +1315,25 @@ class ClinicalTrialsTool(RESTfulTool):
             )
         else:
             parts.append(
-                f"The rows sum to {rows_sum:,} and partition the studies that "
+                f"{rows_phrase} and partition the studies that "
                 f"record {field}; the registry total could not be retrieved, so "
                 "no share of all registered studies can be computed here."
             )
 
-        # 4. Whether the caller is looking at the whole list.
+        # 4. Whether the caller is looking at the whole list. Same reason for
+        # the `isinstance` as in section 3: page_truncated implies rows exist,
+        # which today implies a real count, but the branch formats the count.
         if page_truncated:
+            true_number = (
+                f"unique_values_count ({unique_values_count:,}) is the true "
+                "number of distinct values, and the "
+                if isinstance(unique_values_count, int)
+                else "The "
+            )
             parts.append(
                 f"Only the top {values_returned:,} of {upstream_values:,} "
                 f"returned values are shown (page_size={page_size}); "
-                f"unique_values_count ({unique_values_count:,}) is the true "
-                "number of distinct values, and the omitted rows are still "
+                f"{true_number}omitted rows are still "
                 "included in every total above."
             )
 
@@ -1243,7 +1432,11 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
         request, so the check fails the same way -- and mocks the same way -- as
         the search it is explaining.
         """
-        probe = execute_RESTful_query(
+        # Fix-R48: moved onto the detailed transport with the search itself.
+        # The invariant above is the point -- when the search switched and this
+        # did not, a test patching the search's transport left the probe
+        # reaching the live network and reading a real totalCount.
+        probe, _ = execute_RESTful_query_detailed(
             endpoint_url=self.endpoint_url, variables=probe_params
         )
         return (probe or {}).get("totalCount")
@@ -1331,9 +1524,25 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
 
         formatted_endpoint_url = self.endpoint_url
 
-        response = execute_RESTful_query(
+        response, failure_reason = execute_RESTful_query_detailed(
             endpoint_url=formatted_endpoint_url, variables=api_params
         )
+
+        # Fix-R48: returned here rather than after the success path, so none of
+        # the phase-filter/intervention notes below are computed to explain an
+        # empty result for a request that never ran. Reporting "no studies
+        # found" for a query the API refused told callers a false fact about
+        # the trial landscape and pointed them at the phase filter for it.
+        if failure_reason:
+            return {
+                "status": "error",
+                "error": (
+                    "The ClinicalTrials.gov query did not run, so no "
+                    "conclusion can be drawn about how many studies match: "
+                    f"{failure_reason}. This is an upstream request failure, "
+                    "not a report that zero studies exist."
+                ),
+            }
 
         # Feature-14C-02: this tool always applies a hardcoded phase>=2
         # filter (see default_params_not_shown above), which silently
@@ -1391,10 +1600,10 @@ class ClinicalTrialsSearchTool(ClinicalTrialsTool):
         )
 
         # Fix-Round3-002: a well-formed query that legitimately matches zero
-        # trials (empty `studies` list) is a success, not the error below --
-        # `execute_RESTful_query` already returns False for genuine failures
-        # (HTTP error, JSON decode error, API error field), so only that (or
-        # a response missing "studies" entirely) is a real error.
+        # trials (empty `studies` list) is a success, not the error below.
+        # Genuine request failures already returned above with the upstream
+        # reason (Fix-R48), so the only case left here is a 200 whose body has
+        # no "studies" key at all.
         # _simplify_output handles an empty list fine on its own.
         if response is not None and response and "studies" in response.keys():
             metadata = {"source": "ClinicalTrials.gov API v2"}

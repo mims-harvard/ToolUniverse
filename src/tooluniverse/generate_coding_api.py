@@ -12,6 +12,7 @@ deleted). Files without the marker (hand-written helpers like
 """
 
 import keyword
+import re
 import sys
 from pathlib import Path
 
@@ -29,6 +30,8 @@ _TYPE_MAP: dict[str, str] = {
     "array": "list",
     "object": "dict",
 }
+
+_CONTROL_PARAMETER_NAMES = {"stream_callback", "use_cache", "validate"}
 
 # Static header of tools/__init__.py (tool imports are appended after)
 _INIT_HEADER = """\
@@ -84,17 +87,21 @@ def _clean_desc(text: str) -> str:
 
 def _is_valid_tool_name(name: str) -> bool:
     """Return True only for names that are safe Python identifiers."""
-    return name.isidentifier() and not name.startswith("_") and not keyword.iskeyword(name)
+    return (
+        name.isidentifier() and not name.startswith("_") and not keyword.iskeyword(name)
+    )
 
 
 def _safe_param(name: str) -> str:
     """Convert a parameter name to a valid Python identifier.
 
-    - Replaces hyphens with underscores (e.g. ``dist-max`` → ``dist_max``)
-    - Appends ``_`` to Python reserved words (e.g. ``from`` → ``from_``)
+    - Replaces non-identifier characters with underscores
+    - Appends ``_`` to Python and wrapper-control reserved names
     """
-    safe = name.replace("-", "_")
-    if keyword.iskeyword(safe):
+    safe = re.sub(r"\W", "_", name)
+    if not safe:
+        safe = "parameter"
+    if keyword.iskeyword(safe) or safe in _CONTROL_PARAMETER_NAMES:
         safe += "_"
     if safe and safe[0].isdigit():
         safe = "_" + safe

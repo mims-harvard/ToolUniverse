@@ -161,6 +161,19 @@ class PhyKITTool(BaseTool):
         missing = []  # (index, message)
         for idx, f in enumerate(files):
             extra: List[str] = []
+            if function == "long_branch_score":
+                # `phykit lb_score <tree>` prints a LABELLED SUMMARY BLOCK
+                # ("mean: -25.0\nmedian: -30.4551\n..."), not per-taxon rows.
+                # The aggregation below parses `line.split("\t")[-1]` expecting
+                # `taxon<TAB>score`, so every line failed to parse, taxon_values
+                # stayed empty, and each tree was skipped -- the batch reported
+                # "No values computed from 249 files (0 errors)", which reads
+                # like an empty directory rather than a parse failure.
+                # -v/--verbose is what emits the per-taxon rows this path needs.
+                # Scoped to the batch path on purpose: `operation="single"`
+                # returns phykit's raw text, and its summary block is exactly
+                # what a caller asking for "the median LB score" wants to read.
+                extra = ["-v"]
             if function in PHYKIT_NEEDS_TREE and tree_dir:
                 # Path.stem drops only the LAST suffix, but these files carry
                 # multi-part extensions (foo.faa.mafft.clipkit). Using .stem built

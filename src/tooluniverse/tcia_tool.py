@@ -48,6 +48,7 @@ from difflib import get_close_matches
 from typing import Any
 
 from .base_rest_tool import BaseRESTTool
+from .base_tool import request_url
 from .http_utils import request_with_retry
 from .tool_registry import register_tool
 
@@ -150,24 +151,9 @@ class TCIATool(BaseRESTTool):
         ]
         return ", ".join(parts)
 
-    @staticmethod
-    def _requested_url(response: Any, url: str) -> str:
-        """
-        Echo the fully-resolved request URI rather than the bare endpoint.
-
-        BaseRESTTool keeps the query string in ``params``, so the echoed ``url``
-        was just the endpoint -- two very different queries against
-        ``/getSeries`` were reported identically and neither could be
-        reproduced from the response. ``response.url`` carries the filters that
-        were actually sent. Falls back to the endpoint when the attribute is
-        absent or is not a real string (stubbed responses in tests).
-        """
-        resolved = getattr(response, "url", None)
-        return resolved if isinstance(resolved, str) and resolved else url
-
     def _process_response(self, response, url):
         """Attach the resolved request URI to the normal (non-empty) success path."""
-        return super()._process_response(response, self._requested_url(response, url))
+        return super()._process_response(response, request_url(response, url))
 
     def _handle_special_endpoint(self, url, response, arguments):
         """
@@ -179,7 +165,7 @@ class TCIATool(BaseRESTTool):
         if (getattr(response, "text", "") or "").strip():
             return None
 
-        url = self._requested_url(response, url)
+        url = request_url(response, url)
         endpoint = self.tool_config.get("fields", {}).get("endpoint", "")
         collection = (arguments or {}).get("Collection")
         collection = collection.strip() if isinstance(collection, str) else None

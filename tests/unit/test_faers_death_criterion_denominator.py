@@ -23,7 +23,7 @@ Regression for Fix-R33, two problems in one response.
 2. NO DENOMINATOR. Verified live before the fix:
      FAERS_count_death_related_by_drug {"medicinalproduct": "ACETAMINOPHEN"}
        -> [{"term": "alive", "count": 288391}, {"term": "death", "count": 125240}]
-     https://api.fda.gov/drug/event.json?search=<same query>&limit=1
+     https://api.fda.gov/drug/event.json?search=<same query>&limit=0
        -> meta.results.total = 799284
    The rows sum to 413,631 of 799,284 matching reports -- openFDA computes a
    `count=` facet only over records that populate the counted field, so the 48%
@@ -254,7 +254,9 @@ def test_a_reaction_count_tool_discloses_as_well():
         facet=[{"term": "DYSPNOEA", "count": 448}],
     )
 
-    assert len(urls) == 2  # the facet plus the denominator probe
+    # The facet, the denominator probe, and the drug-name-scope probe that
+    # re-asks it with the name narrowed to patient.drug.medicinalproduct.
+    assert len(urls) == 3
     assert result["total_reports_matching_query"] == TRUE_TOTAL
     assert result["stratified_report_count"] == 448
     assert "multi-valued" in result["coverage_note"]

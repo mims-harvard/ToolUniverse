@@ -1041,5 +1041,84 @@
         "circular": true
       }
     ]
+  },
+  {
+    "name": "DNA_crispr_guide_design",
+    "type": "DNATool",
+    "description": "Find candidate SpCas9 (NGG PAM) guide RNAs in a target DNA sequence, on both strands. Ranks 20 bp protospacers by a transparent rule-based heuristic (GC content, PAM-proximal G, Pol III terminator and homopolymer avoidance) -- not a trained on-target efficiency model, and no off-target search against any genome is performed. Use for a first-pass candidate list; verify with CRISPOR or the Broad GPP sgRNA designer before ordering.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "crispr_guide_design"
+          ],
+          "description": "Operation (optional; defaults to 'crispr_guide_design' for this tool).",
+          "default": "crispr_guide_design"
+        },
+        "sequence": {
+          "type": "string",
+          "description": "DNA target sequence (A, T, G, C only; no N), at least 23 bp."
+        },
+        "gc_min": {
+          "type": ["number", "null"],
+          "default": 30.0,
+          "description": "Minimum acceptable protospacer GC%, 0-100 (default 30)."
+        },
+        "gc_max": {
+          "type": ["number", "null"],
+          "default": 70.0,
+          "description": "Maximum acceptable protospacer GC%, 0-100 (default 70)."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "default": 10,
+          "description": "Max candidate guides to return, 1-100 (default 10)."
+        }
+      },
+      "required": ["sequence"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "protospacer": {"type": "string"},
+              "pam": {"type": "string"},
+              "strand": {"type": "string"},
+              "start": {"type": "integer"},
+              "end": {"type": "integer"},
+              "gc_content_percent": {"type": "number"},
+              "has_pol3_terminator": {"type": "boolean"},
+              "has_homopolymer_run": {"type": "boolean"},
+              "heuristic_score": {"type": "number"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "sequence": "GGAAGGTGAAGGTCGGAGTCAACGGATTTGGTCGTATTGGGCGCCTGGTCACCAGGGCTGCTTTTAACTCTGGTAAAGTGGATATTGTTGCCATCAATGACCCCTTCATTGACCTCAACTACATGGTTTACATGTTCCAATATGATTCCACCCATGGCAAATTCCATGGCACCGTCAAGGCTGAGAACGGGAAGCTTGTCATCAATGGAAATCCCATCACCATCTTCCAGGAGCGAGATCCC",
+        "limit": 5
+      },
+      {
+        "sequence": "ATGGAGGAGCCGCAGTCAGATCCTAGCGTTGAATTCGGATCCAAGCTTACGTACGTATGGAGGAGCCGCAGTCAGATCCTAGCGTTGAATTC",
+        "gc_min": 40,
+        "gc_max": 60,
+        "limit": 3
+      }
+    ],
+    "fields": {
+      "operation": "crispr_guide_design"
+    }
   }
 ]

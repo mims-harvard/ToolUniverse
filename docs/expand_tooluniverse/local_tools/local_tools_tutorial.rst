@@ -372,6 +372,8 @@ Add to your config:
            "base_url": "https://api.example.com"
        }
    })
+   class MyAPITool:
+       ...
 
 Then in your run method:
 
@@ -436,7 +438,8 @@ Naming Conflicts (Failed to initialize tool for validation)
 **Cause**: Wrapper function name matches the class name
 
 **Solution**: Use different names
-.. code-block:: python
+
+.. code-block:: text
 
    # Wrapper function must use snake_case
    def my_tool(...):  # ✅ Good

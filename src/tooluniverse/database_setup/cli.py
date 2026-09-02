@@ -42,6 +42,65 @@ from .packager import pack_folder
 from tooluniverse.utils import get_user_cache_dir
 
 
+def positive_int(value):
+    parsed = int(value)
+    if parsed < 1:
+        raise argparse.ArgumentTypeError("must be at least 1")
+    return parsed
+
+
+def unit_interval(value):
+    parsed = float(value)
+    if not 0.0 <= parsed <= 1.0:
+        raise argparse.ArgumentTypeError("must be between 0 and 1")
+    return parsed
+
+
+def collection_name(value):
+    """Reject names that could escape the default embeddings directory."""
+    if not value or value in {".", ".."} or "/" in value or "\\" in value:
+        raise argparse.ArgumentTypeError(
+            "must be a non-empty name without path separators"
+        )
+    return value
+
+
+def load_docs_json(json_file):
+    """Load and validate datastore document rows from JSON."""
+    try:
+        raw = json.loads(Path(json_file).read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Could not read document JSON: {exc}") from exc
+    if not isinstance(raw, list):
+        raise SystemExit("Document JSON must contain a list of document rows")
+
+    docs = []
+    for index, item in enumerate(raw):
+        if isinstance(item, dict):
+            key = item.get("doc_key")
+            text = item.get("text")
+            metadata = item.get("metadata", {})
+            text_hash = item.get("text_hash")
+        elif isinstance(item, (list, tuple)) and len(item) in {3, 4}:
+            key, text, metadata = item[:3]
+            text_hash = item[3] if len(item) == 4 else None
+        else:
+            raise SystemExit(
+                f"Document row {index} must be an object or a 3/4-item array"
+            )
+
+        if not isinstance(key, str) or not key:
+            raise SystemExit(f"Document row {index} requires a non-empty doc_key")
+        if not isinstance(text, str):
+            raise SystemExit(f"Document row {index} requires string text")
+        if not isinstance(metadata, dict):
+            raise SystemExit(f"Document row {index} metadata must be an object")
+        if text_hash is not None and not isinstance(text_hash, str):
+            raise SystemExit(f"Document row {index} text_hash must be a string or null")
+        docs.append((key, text, metadata, text_hash))
+    return docs
+
+
 def resolve_db_path(db_arg, collection):
     """Return resolved db path (user-specified or default cache dir)."""
     if db_arg:
@@ -78,6 +137,8 @@ def add_tool(json_file: str, name: str | None = None, overwrite: bool = False):
         name = src.name
     if not name.endswith(".json"):
         name = name + ".json"
+    if name in {".json", "..json"} or "/" in name or "\\" in name:
+        raise SystemExit("[ERROR] Tool filename must not contain path separators")
 
     dest = Path(USER_TOOLS_DIR) / name
     if dest.exists() and not overwrite:
@@ -97,13 +158,18 @@ def main():
     p = argparse.ArgumentParser(
         "tu-datastore", description="Manage local searchable datastores."
     )
-    sub = p.add_subparsers(dest="cmd")
+    sub = p.add_subparsers(dest="cmd", required=True)
 
     # --------------------------------------------------------------------------
     # build
     # --------------------------------------------------------------------------
     b = sub.add_parser("build", help="Build or extend a collection from JSON docs")
-    b.add_argument("--collection", required=True, help="Collection name (e.g. toy)")
+    b.add_argument(
+        "--collection",
+        required=True,
+        type=collection_name,
+        help="Collection name (e.g. toy)",
+    )
     b.add_argument("--docs-json", required=True, help="Path to JSON list of docs")
     b.add_argument("--db", required=False, help="Optional path to SQLite DB")
     b.add_argument(
@@ -120,7 +186,12 @@ def main():
     qb = sub.add_parser(
         "quickbuild", help="Build from a folder of text files (.txt/.md)"
     )
-    qb.add_argument("--name", required=True, help="Collection name (e.g. mydata)")
+    qb.add_argument(
+        "--name",
+        required=True,
+        type=collection_name,
+        help="Collection name (e.g. mydata)",
+    )
     qb.add_argument("--from-folder", required=True, help="Folder containing text files")
     qb.add_argument(
         "--provider", help="Embedding provider (openai, azure, huggingface, local)"
@@ -134,7 +205,12 @@ def main():
     # search
     # --------------------------------------------------------------------------
     s = sub.add_parser("search", help="Query an existing collection")
-    s.add_argument("--collection", required=True, help="Collection name (e.g. toy)")
+    s.add_argument(
+        "--collection",
+        required=True,
+        type=collection_name,
+        help="Collection name (e.g. toy)",
+    )
     s.add_argument("--query", required=True, help="Search query text")
     s.add_argument("--db", required=False, help="Optional path to SQLite DB")
     s.add_argument(
@@ -143,10 +219,19 @@ def main():
         choices=["keyword", "embedding", "hybrid"],
         help="Search method",
     )
-    s.add_argument("--top-k", default=10, type=int, help="Number of results")
-    s.add_argument("--alpha", default=0.5, type=float, help="Hybrid mix weight")
-    s.add_argument("--provider", help="Embedding provider (optional)")
-    s.add_argument("--model", help="Embedding model (optional)")
+    s.add_argument("--top-k", default=10, type=positive_int, help="Number of results")
+    s.add_argument("--alpha", default=0.5, type=unit_interval, help="Hybrid mix weight")
+    s.add_argument(
+        "--provider",
+        help=(
+            "Embedding provider (required for embedding/hybrid unless "
+            "EMBED_PROVIDER is set)"
+        ),
+    )
+    s.add_argument(
+        "--model",
+        help="Embedding model override (defaults to collection metadata)",
+    )
 
     # --------------------------------------------------------------------------
     # sync-hf
@@ -157,7 +242,7 @@ def main():
     sh_sub = sh.add_subparsers(dest="action", required=True)
 
     up = sh_sub.add_parser("upload", help="Upload collection artifacts to HF")
-    up.add_argument("--collection", required=True)
+    up.add_argument("--collection", required=True, type=collection_name)
     up.add_argument(
         "--repo", help="HF dataset repo ID (defaults to <username>/<collection>)"
     )
@@ -176,7 +261,7 @@ def main():
 
     down = sh_sub.add_parser("download", help="Download collection artifacts from HF")
     down.add_argument("--repo", required=True)
-    down.add_argument("--collection", required=True)
+    down.add_argument("--collection", required=True, type=collection_name)
     down.add_argument(
         "--overwrite", action="store_true", help="Overwrite existing index"
     )
@@ -209,21 +294,7 @@ def main():
     args = p.parse_args()
 
     if args.cmd == "build":
-        with open(args.docs_json) as f:
-            raw = json.load(f)
-        docs = [
-            (
-                (
-                    d.get("doc_key"),
-                    d.get("text"),
-                    d.get("metadata", {}),
-                    d.get("text_hash"),
-                )
-                if isinstance(d, dict)
-                else tuple(d)
-            )
-            for d in raw
-        ]
+        docs = load_docs_json(args.docs_json)
 
         provider, model = resolve_provider_model(args.provider, args.model)
         db_path = resolve_db_path(args.db, args.collection)
@@ -260,11 +331,21 @@ def main():
 
     elif args.cmd == "search":
         db_path = resolve_db_path(args.db, args.collection)
-        # Only require provider/model when embeddings are needed
         if args.method == "keyword":
             provider = model = None
         else:
-            provider, model = resolve_provider_model(args.provider, args.model)
+            # Collections record the embedding model but not its provider.
+            # Require the provider explicitly so a stored remote model is not
+            # accidentally executed by the default local provider. The model
+            # itself may still come from collection metadata in the pipeline.
+            provider = args.provider or os.getenv("EMBED_PROVIDER")
+            if not provider:
+                raise SystemExit(
+                    "Missing embedding provider. Use --provider or set "
+                    "EMBED_PROVIDER; the collection stores its model but not "
+                    "its provider."
+                )
+            model = args.model or os.getenv("EMBED_MODEL")
         res = search(
             db_path=db_path,
             collection=args.collection,
@@ -298,6 +379,3 @@ def main():
             name=args.name,
             overwrite=args.overwrite,
         )
-
-    else:
-        p.print_help()

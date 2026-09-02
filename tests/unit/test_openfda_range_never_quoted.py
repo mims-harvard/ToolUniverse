@@ -107,7 +107,7 @@ def test_render_clause_leaves_a_range_unquoted_but_quotes_a_phrase():
         _render_clause("patient.reaction.reactionmeddrapt", "ACUTE KIDNEY INJURY")
         == 'patient.reaction.reactionmeddrapt:"ACUTE KIDNEY INJURY"'
     )
-    assert _render_clause("serious", "1") == "serious:1"
+    assert _render_clause("serious", "1") == 'serious:"1"'
 
 
 def test_render_field_group_applies_the_same_rule_to_one_field_and_to_many():
@@ -141,7 +141,7 @@ def test_count_tool_sends_the_range_unquoted_from_the_single_field_path():
     assert ENCODED_RANGE in url
     assert QUOTED_RANGE not in url
     # The multi-field drug parameter is still OR-ed inside a parenthesized group.
-    assert "%28patient.drug.medicinalproduct:ASPIRIN+OR+" in url
+    assert '%28patient.drug.medicinalproduct:"ASPIRIN"+OR+' in url
 
 
 def test_additive_tool_sends_the_range_unquoted():

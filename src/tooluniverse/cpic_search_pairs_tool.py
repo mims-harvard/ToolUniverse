@@ -16,6 +16,35 @@ from .tool_registry import register_tool
 _CPIC_API = "https://api.cpicpgx.org/v1"
 
 
+def _total_from_content_range(header: Optional[str]) -> Optional[int]:
+    """Parse the unpaged total out of a PostgREST Content-Range header.
+
+    PostgREST answers ``Prefer: count=exact`` with e.g. ``0-49/208``, which is
+    the only route to "how many rows exist beyond this page". Module-level
+    because both the recommendations and the alleles tool now need it.
+    """
+    if not header or "/" not in header:
+        return None
+    total = header.rsplit("/", 1)[1].strip()
+    return int(total) if total.isdigit() else None
+
+
+def _paging_note(
+    kind: str, offset: int, shown: int, total: int, subject: str, limit_hint: str = ""
+) -> Optional[str]:
+    """The "you are seeing part of a larger set" sentence, or None if you aren't.
+
+    Shared by the two paged CPIC tools so the paging contract is worded once.
+    """
+    end = offset + shown
+    if not shown or end >= total:
+        return None
+    return (
+        f"Showing {kind} {offset + 1}-{end} of {total} {subject}. "
+        f"Re-run with offset={end} for the next page, or raise 'limit'{limit_hint}."
+    )
+
+
 def _resolve_drug_to_guideline_id(
     drug_name: str,
 ) -> Optional[Tuple[int, Optional[str]]]:
@@ -195,7 +224,28 @@ class CPICGetRecommendationsTool(BaseTool):
             # needed for the eq. value.
             if drug_id:
                 params["drugid"] = f"eq.{drug_id}"
-            r = requests.get(url, params=params, timeout=30)
+            # Fix-R59-1: ask PostgREST for the unpaged total. Without it the
+            # only number in the response was `count`, which reports the size
+            # of the returned page -- the exact defect this file already fixed
+            # for CPICGetAllelesTool (see its class docstring), still present
+            # here 300 lines up. Confirmed live: guideline 100416 (CYP2D6 and
+            # opioids) has 66 recommendation rows, but the documented default
+            # `limit` of 50 returned `count: 50` with no note and no total, so
+            # 16 rows were dropped indistinguishably from the guideline having
+            # exactly 50. Codeine, tramadol and hydrocodone recommendations
+            # all live on that guideline.
+            #
+            # Only the unfiltered path needs it: when filtering, the request
+            # already pulls limit=1000 and the total that matters is the number
+            # of rows matching the caller's filter, which is counted locally --
+            # so asking PostgREST for an exact server-side COUNT there would be
+            # work whose result is thrown away.
+            r = requests.get(
+                url,
+                params=params,
+                headers=None if filtering else {"Prefer": "count=exact"},
+                timeout=30,
+            )
             r.raise_for_status()
             data = r.json()
 
@@ -231,13 +281,33 @@ class CPICGetRecommendationsTool(BaseTool):
                     )
 
                 data = [row for row in data if _row_matches(row)]
+                # The total that matters to a caller who filtered is the number
+                # of rows matching their filter, not the guideline's row count.
+                unpaged_total = len(data)
                 data = data[offset : offset + limit]
+            else:
+                unpaged_total = _total_from_content_range(
+                    r.headers.get("Content-Range")
+                )
+                if unpaged_total is None:
+                    unpaged_total = offset + len(data)
 
             result: Dict[str, Any] = {
                 "guideline_id": guideline_id,
                 "recommendations": data,
                 "count": len(data),
+                "total_count": unpaged_total,
+                "offset": offset,
             }
+            truncation_note = _paging_note(
+                "recommendations",
+                offset,
+                len(data),
+                unpaged_total,
+                f"for guideline {guideline_id}" + (" (filtered)" if filtering else ""),
+            )
+            if truncation_note:
+                result["note"] = truncation_note
             if filtering and not data:
                 result["note"] = (
                     f"No recommendations matched gene={gene_filter!r} "
@@ -535,7 +605,7 @@ class CPICGetAllelesTool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"CPIC API error: {e}"}
 
-        total = self._total_from_content_range(response.headers.get("Content-Range"))
+        total = _total_from_content_range(response.headers.get("Content-Range"))
         if total is None:
             total = offset + len(data)
 
@@ -547,22 +617,18 @@ class CPICGetAllelesTool(BaseTool):
             "total_count": total,
             "offset": offset,
         }
-        if data and offset + len(data) < total:
-            result["note"] = (
-                f"Showing alleles {offset + 1}-{offset + len(data)} of {total} curated "
-                f"by CPIC for {gene}. Re-run with offset={offset + len(data)} for the "
-                f"next page, or raise 'limit' (max {self._MAX_LIMIT})."
-            )
+        truncation_note = _paging_note(
+            "alleles",
+            offset,
+            len(data),
+            total,
+            f"curated by CPIC for {gene}",
+            f" (max {self._MAX_LIMIT})",
+        )
+        if truncation_note:
+            result["note"] = truncation_note
         elif not data and total:
             result["note"] = (
                 f"No alleles at offset={offset}; {gene} has {total} alleles in CPIC."
             )
         return result
-
-    @staticmethod
-    def _total_from_content_range(header: Optional[str]) -> Optional[int]:
-        """Parse the unpaged total out of a PostgREST Content-Range header."""
-        if not header or "/" not in header:
-            return None
-        total = header.rsplit("/", 1)[1].strip()
-        return int(total) if total.isdigit() else None

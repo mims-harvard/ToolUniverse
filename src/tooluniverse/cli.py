@@ -16,12 +16,13 @@ Subcommands:
     serve   Start the MCP stdio server (same as `tooluniverse`)
 """
 
+import argparse
 import contextlib
 import difflib
 import json
 import os
 import sys
-import argparse
+from pathlib import Path
 from typing import Any
 
 try:
@@ -56,12 +57,28 @@ def _non_neg_int(value: str) -> int:
     return n
 
 
+def _bounded_int(minimum: int, maximum: int):
+    def parse(value: str) -> int:
+        try:
+            number = int(value)
+        except (TypeError, ValueError) as exc:
+            raise argparse.ArgumentTypeError(f"invalid int value: '{value}'") from exc
+        if not minimum <= number <= maximum:
+            raise argparse.ArgumentTypeError(
+                f"value must be between {minimum} and {maximum}, got {number}"
+            )
+        return number
+
+    return parse
+
+
 def _get_tu():
     """Lazy-initialize a ToolUniverse instance."""
     # Reconfigure logger to stderr and suppress INFO messages in CLI mode.
     # The CLI has its own status output; library-level info logs are noise.
     try:
         import logging
+
         from tooluniverse.logging_config import reconfigure_for_stdio
 
         reconfigure_for_stdio()
@@ -69,7 +86,7 @@ def _get_tu():
     except Exception:
         pass
 
-    from tooluniverse import ToolUniverse
+    from tooluniverse.execute_function import ToolUniverse
 
     tu = ToolUniverse()
     if not tu.all_tool_dict:
@@ -365,9 +382,11 @@ def _render_find(d: dict) -> str:
             score_str = f"{score:.3f}"
         else:
             score_str = str(score)
-        lines.append(
-            f"{score_str:>7}  {t.get('name', ''):<{col1}}  {_trunc(t.get('description', ''))}"
-        )
+        description = _trunc(t.get("description", ""))
+        missing_keys = t.get("missing_api_keys") or []
+        if t.get("available") is False and missing_keys:
+            description = f"[requires: {', '.join(missing_keys)}] {description}"
+        lines.append(f"{score_str:>7}  {t.get('name', ''):<{col1}}  {description}")
     total = d.get("total_matches", len(tools))
     has_more = d.get("has_more", total > len(tools))
     offset = d.get("offset", 0)
@@ -1126,6 +1145,17 @@ def cmd_info(args: argparse.Namespace) -> None:
                 and "parameters" not in tool
             ):
                 tool["parameters"] = tool.pop("parameter")
+        # Preserve the stable batch envelope while restoring the top-level error
+        # contract used by shell clients.  Per-tool details remain available in
+        # ``tools``; the alias only appears when the request was a total failure.
+        tools_in_result = result.get("tools", [])
+        if tools_in_result and all(
+            isinstance(tool, dict) and "error" in tool for tool in tools_in_result
+        ):
+            if len(tools_in_result) == 1:
+                result.setdefault("error", tools_in_result[0]["error"])
+            else:
+                result.setdefault("error", "no requested tools are available")
     # In human-readable mode, route per-tool errors to stderr and valid tools to stdout
     if (
         not args.raw
@@ -1323,6 +1353,8 @@ def cmd_status(args: argparse.Namespace) -> None:
         readiness = runtime_readiness(tu.all_tools)
     status = {
         "total_tools": len(tu.all_tools),
+        # Backward-compatible alias retained for existing CLI JSON consumers.
+        "tools_loaded": len(tu.all_tools),
         "categories": len(category_counts),
         "workspace": str(tu._workspace_dir),
         "profile_active": tu._workspace_profile_config is not None,
@@ -1691,11 +1723,1034 @@ def cmd_build(args: argparse.Namespace) -> None:
         sys.exit(1)
 
 
-def cmd_serve(_args: argparse.Namespace) -> None:
-    """Start the MCP stdio server — identical to running `tooluniverse`."""
-    from tooluniverse.smcp_server import run_default_stdio_server
+def _remote_tool_install_hint() -> str:
+    return (
+        "tuplatform-connect is not published on PyPI; install its reviewed "
+        "public wheel with the pinned SHA-256:\n  "
+        'pip install "tuplatform-connect @ '
+        "https://connect.aiscientist.tools/downloads/"
+        "tuplatform_connect-0.3.0-py3-none-any.whl"
+        "#sha256=3fad5eee5ecf7887a693d93ccd1aa112dc0955617a885d1fc3daded0030f9ae0"
+        '"'
+    )
 
-    run_default_stdio_server()
+
+def _resolve_private_connection_key(
+    service: str = "", *, auto_login: bool = False, no_browser: bool = False
+) -> str:
+    import getpass
+
+    key = os.getenv("TOOLUNIVERSE_SERVICE_KEY", "").strip()
+    if key:
+        return key
+    try:
+        key = _read_stored_remote_key()
+    except (OSError, ValueError) as exc:
+        raise SystemExit(f"Stored remote login is unusable: {exc}") from exc
+    if key:
+        return key
+    if not sys.stdin.isatty():
+        return ""
+    if auto_login and service:
+        key = _device_authorization_login(service, no_browser=no_browser)
+        _write_stored_remote_key(key)
+        return key
+    try:
+        return getpass.getpass("Private connection key: ").strip()
+    except (EOFError, KeyboardInterrupt):
+        return ""
+
+
+def _private_connection_key_available() -> bool:
+    """Check key availability for preflight without prompting or exposing it."""
+
+    environment_key = os.getenv("TOOLUNIVERSE_SERVICE_KEY", "").strip()
+    if environment_key and not _valid_remote_key(environment_key):
+        raise SystemExit(
+            "TOOLUNIVERSE_SERVICE_KEY has an invalid format; unset it or replace "
+            "it with `tu remote login`."
+        )
+    if environment_key:
+        return True
+    try:
+        return bool(_read_stored_remote_key())
+    except (OSError, ValueError) as exc:
+        raise SystemExit(f"Stored remote login is unusable: {exc}") from exc
+
+
+def _remote_auth_path() -> Path:
+    """Return the private per-user credential path without resolving symlinks."""
+
+    override = os.getenv("TOOLUNIVERSE_REMOTE_AUTH_FILE", "").strip()
+    if override:
+        return Path(os.path.abspath(os.path.expanduser(override)))
+    xdg = os.getenv("XDG_CONFIG_HOME", "").strip()
+    base = (
+        Path(os.path.abspath(os.path.expanduser(xdg)))
+        if xdg
+        else Path.home() / ".config"
+    )
+    return base / "tooluniverse" / "remote-auth.json"
+
+
+def _read_private_bytes(path: Path, *, maximum: int = 1 << 16) -> bytes:
+    """Read one small regular 0600 file without following its final symlink."""
+
+    import stat
+
+    flags = os.O_RDONLY
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    descriptor = os.open(path, flags)
+    try:
+        metadata = os.fstat(descriptor)
+        if not stat.S_ISREG(metadata.st_mode):
+            raise ValueError(f"{path} is not a regular file")
+        if metadata.st_mode & 0o077:
+            raise ValueError(f"{path} permissions must be 0600")
+        if metadata.st_size > maximum:
+            raise ValueError(f"{path} is unexpectedly large")
+        chunks = []
+        remaining = maximum + 1
+        while remaining:
+            chunk = os.read(descriptor, min(remaining, 8192))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        content = b"".join(chunks)
+        if len(content) > maximum:
+            raise ValueError(f"{path} is unexpectedly large")
+        return content
+    finally:
+        os.close(descriptor)
+
+
+def _valid_remote_key(key: str) -> bool:
+    import re
+
+    return re.fullmatch(r"tu-sk-(?:[0-9a-f]{60}|[A-Za-z0-9_-]{54})", key) is not None
+
+
+def _read_stored_remote_key() -> str:
+    """Load a locally stored key while preserving its secrecy."""
+
+    path = _remote_auth_path()
+    if not path.exists():
+        return ""
+    try:
+        document = json.loads(_read_private_bytes(path).decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError(f"{path} does not contain valid login data") from exc
+    if not isinstance(document, dict):
+        raise ValueError(f"{path} does not contain valid login data")
+    key = str(document.get("service_key", "")).strip()
+    if not _valid_remote_key(key):
+        raise ValueError(f"{path} contains an invalid connection key")
+    return key
+
+
+def _write_stored_remote_key(key: str) -> Path:
+    """Write the verified key to a no-follow 0600 config file."""
+
+    path = _remote_auth_path()
+    path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
+    if hasattr(os, "O_NOFOLLOW"):
+        flags |= os.O_NOFOLLOW
+    descriptor = os.open(path, flags, 0o600)
+    try:
+        os.fchmod(descriptor, 0o600)
+        payload = json.dumps(
+            {"version": 1, "service_key": key}, separators=(",", ":")
+        ).encode("utf-8")
+        view = memoryview(payload)
+        while view:
+            written = os.write(descriptor, view)
+            if not written:
+                raise OSError("could not finish writing the stored remote login")
+            view = view[written:]
+    finally:
+        os.close(descriptor)
+    return path
+
+
+def _key_from_protected_env_file(path_value: str) -> str:
+    """Read TOOLUNIVERSE_SERVICE_KEY from a protected dotenv-style file."""
+
+    import shlex
+
+    path = Path(os.path.abspath(os.path.expanduser(path_value)))
+    text = _read_private_bytes(path).decode("utf-8")
+    found = []
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line[7:].lstrip()
+        name, separator, value = line.partition("=")
+        if separator and name.strip() == "TOOLUNIVERSE_SERVICE_KEY":
+            parsed = shlex.split(value, comments=True, posix=True)
+            if len(parsed) != 1:
+                raise ValueError("protected env file has an invalid service-key value")
+            found.append(parsed[0].strip())
+    if len(found) != 1 or not _valid_remote_key(found[0]):
+        raise ValueError(
+            "protected env file must contain one valid TOOLUNIVERSE_SERVICE_KEY"
+        )
+    return found[0]
+
+
+class _PlatformHTTPError(RuntimeError):
+    """Structured platform failure used by the short-lived device polling loop."""
+
+    def __init__(
+        self,
+        message: str,
+        *,
+        status: int,
+        error_code: str = "",
+        retry_after: int | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.status = status
+        self.error_code = error_code
+        self.retry_after = retry_after
+
+
+class _DeviceAuthorizationExpired(RuntimeError):
+    """Internal signal used to replace one expired browser request."""
+
+
+def _validate_remote_connection_key(service: str, key: str) -> dict:
+    """Validate both least-privilege relay keys and legacy full-access keys safely."""
+
+    return _platform_request(
+        service, "/remote-servers/preflight", api_key=key, payload={}
+    )
+
+
+def _connection_key_for_share(service: str, *, no_browser: bool = False) -> str:
+    """Resolve, validate, and interactively repair the key before starting a provider."""
+
+    key = _resolve_private_connection_key(
+        service, auto_login=True, no_browser=no_browser
+    )
+    if not key or not _valid_remote_key(key):
+        return key
+    try:
+        _validate_remote_connection_key(service, key)
+        return key
+    except RuntimeError as exc:
+        # Explicit environment configuration wins: silently replacing it would leave the next
+        # process broken again. Non-interactive jobs also fail fast instead of waiting on a browser.
+        if not sys.stdin.isatty() or os.getenv("TOOLUNIVERSE_SERVICE_KEY", "").strip():
+            raise RuntimeError(
+                "TU Platform connection-key validation failed before provider "
+                f"startup: {exc}. Run `tu remote login` to replace an expired or "
+                "revoked key."
+            ) from exc
+        print("Stored connection expired or was revoked; re-authorizing...")
+        key = _device_authorization_login(service, no_browser=no_browser)
+        _write_stored_remote_key(key)
+        return key
+
+
+def _device_authorization_login(service: str, *, no_browser: bool = False) -> str:
+    """Authorize interactively, automatically replacing one expired request."""
+
+    for attempt in range(2):
+        try:
+            return _device_authorization_attempt(service, no_browser=no_browser)
+        except _DeviceAuthorizationExpired:
+            if attempt:
+                raise RuntimeError(
+                    "browser authorization expired twice; run the command again when ready"
+                ) from None
+            print(
+                "Authorization expired; creating one fresh link automatically...",
+                flush=True,
+            )
+    raise AssertionError("unreachable")
+
+
+def _device_authorization_attempt(service: str, *, no_browser: bool = False) -> str:
+    """Run one short-lived browser authorization request."""
+
+    import platform
+    import time
+    import urllib.parse
+    import webbrowser
+
+    host = platform.node().strip() or "this computer"
+    started = _platform_request(
+        service,
+        "/auth/device/start",
+        payload={"client_name": f"ToolUniverse CLI on {host}", "expires_in_days": 30},
+    )
+    device_code = str(started.get("device_code", ""))
+    user_code = str(started.get("user_code", ""))
+    verification_url = str(
+        started.get("verification_uri_complete")
+        or started.get("verification_uri")
+        or ""
+    )
+    try:
+        expires_in = int(started.get("expires_in", 0))
+        interval = int(started.get("interval", 5))
+    except (TypeError, ValueError) as exc:
+        raise RuntimeError(
+            "platform returned invalid device authorization timing"
+        ) from exc
+    parsed_url = urllib.parse.urlsplit(verification_url)
+    if (
+        not _valid_device_code(device_code)
+        or not _valid_device_user_code(user_code)
+        or expires_in < 1
+        or expires_in > 15 * 60
+        or interval < 1
+        or interval > 30
+        or parsed_url.scheme not in {"http", "https"}
+        or not parsed_url.hostname
+        or parsed_url.username is not None
+        or parsed_url.password is not None
+        or any(ord(character) < 32 for character in verification_url)
+    ):
+        raise RuntimeError("platform returned an invalid device authorization response")
+
+    print("Authorize this computer in your browser:")
+    print(f"  {verification_url}")
+    print(f"Code: {user_code}")
+    print("Waiting for approval (Ctrl-C to cancel)...", flush=True)
+    if not no_browser:
+        try:
+            if not webbrowser.open(verification_url, new=2):
+                print("The browser did not open automatically; use the link above.")
+        except Exception:
+            print("The browser did not open automatically; use the link above.")
+
+    deadline = time.monotonic() + expires_in
+    poll_interval = interval
+    while time.monotonic() < deadline:
+        time.sleep(poll_interval)
+        try:
+            token = _platform_request(
+                service,
+                "/auth/device/token",
+                payload={"device_code": device_code},
+            )
+        except _PlatformHTTPError as exc:
+            if exc.error_code == "authorization_pending":
+                continue
+            if exc.error_code == "slow_down":
+                poll_interval = min(30, max(poll_interval + 5, exc.retry_after or 0))
+                continue
+            if exc.error_code == "access_denied":
+                raise RuntimeError("browser authorization was denied") from exc
+            if exc.error_code == "expired_token":
+                raise _DeviceAuthorizationExpired(
+                    "browser authorization expired"
+                ) from exc
+            if exc.error_code == "key_limit_reached":
+                raise RuntimeError(
+                    "the account has 20 connection keys; revoke one in TU Platform and retry"
+                ) from exc
+            raise
+
+        key = str(token.get("access_token", ""))
+        if token.get("purpose") != "relay" or not _valid_remote_key(key):
+            raise RuntimeError("platform returned an invalid computer-only connection")
+        _validate_remote_connection_key(service, key)
+        return key
+    raise _DeviceAuthorizationExpired("browser authorization expired")
+
+
+def _valid_device_code(code: str) -> bool:
+    import re
+
+    return re.fullmatch(r"[0-9a-f]{64}", code) is not None
+
+
+def _valid_device_user_code(code: str) -> bool:
+    import re
+
+    return (
+        re.fullmatch(
+            r"[BCDFGHJKLMNPQRSTVWXYZ23456789]{4}-[BCDFGHJKLMNPQRSTVWXYZ23456789]{4}",
+            code,
+        )
+        is not None
+    )
+
+
+def cmd_remote_login(args: argparse.Namespace) -> None:
+    """Authorize in a browser or import and securely remember one connection key."""
+
+    import getpass
+
+    try:
+        if args.env_file:
+            key = _key_from_protected_env_file(args.env_file)
+        else:
+            key = os.getenv("TOOLUNIVERSE_SERVICE_KEY", "").strip()
+            if not key and getattr(args, "manual_key", False) and sys.stdin.isatty():
+                key = getpass.getpass("Computer-only connection key: ").strip()
+            if not key and not getattr(args, "manual_key", False):
+                key = _device_authorization_login(
+                    args.service, no_browser=getattr(args, "no_browser", False)
+                )
+        if not _valid_remote_key(key):
+            raise ValueError("a valid computer-only connection key is required")
+        _validate_remote_connection_key(args.service, key)
+        path = _write_stored_remote_key(key)
+    except (OSError, RuntimeError, ValueError) as exc:
+        print(f"Error: remote login failed: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+    print(f"Remote login verified and stored securely at {path} (0600).")
+    print("The connection key was not displayed.")
+
+
+def cmd_remote_logout(args: argparse.Namespace) -> None:
+    """Remove the local login and optionally revoke its platform credential."""
+
+    path = _remote_auth_path()
+    try:
+        if getattr(args, "revoke", False):
+            key = _read_stored_remote_key()
+            if not key:
+                raise ValueError("no stored connection key is available to revoke")
+            _platform_request(
+                getattr(
+                    args,
+                    "service",
+                    "https://tooluniverse-backend.onrender.com",
+                ),
+                "/remote-servers/connection-key",
+                api_key=key,
+                method="DELETE",
+            )
+        path.unlink(missing_ok=True)
+    except (OSError, RuntimeError, ValueError) as exc:
+        print(f"Error: could not remove stored remote login: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+    if getattr(args, "revoke", False):
+        print(f"Revoked the platform connection and removed its local login at {path}.")
+    else:
+        print(f"Removed stored remote login at {path}.")
+
+
+def _local_mcp_endpoint(host: str, port: int) -> tuple[str, str]:
+    """Return a connectable host and correctly formatted local MCP URL."""
+    connect_host = {"0.0.0.0": "127.0.0.1", "::": "::1"}.get(host, host)
+    url_host = f"[{connect_host}]" if ":" in connect_host else connect_host
+    return connect_host, f"http://{url_host}:{port}/mcp"
+
+
+def _start_remote_tool_server(args: argparse.Namespace) -> None:
+    import hashlib
+    import importlib.util
+    import socket
+    import threading
+    import time
+    from pathlib import Path
+
+    from tooluniverse.mcp_tool_registry import (
+        _mcp_tool_registry,
+        _start_server_for_port,
+        collect_tools_for_serve,
+    )
+
+    for raw_path in args.files:
+        path = Path(raw_path).expanduser().resolve()
+        if not path.is_file() or path.suffix != ".py":
+            raise ValueError(f"remote tool file not found or not Python: {raw_path}")
+        module_name = (
+            "_tooluniverse_remote_"
+            + hashlib.sha256(str(path).encode("utf-8")).hexdigest()[:16]
+        )
+        spec = importlib.util.spec_from_file_location(module_name, path)
+        if spec is None or spec.loader is None:
+            raise ValueError(f"could not import remote tool file: {raw_path}")
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[module_name] = module
+        try:
+            spec.loader.exec_module(module)
+        except Exception:
+            sys.modules.pop(module_name, None)
+            raise
+
+    server_name = args.name or Path(args.files[0]).stem.replace("_", " ").title()
+    selected = collect_tools_for_serve(
+        args.port,
+        host=args.host,
+        server_name=server_name,
+        max_workers=args.workers,
+    )
+    if not selected or not _mcp_tool_registry:
+        raise ValueError(
+            "no remote tools found; decorate a function with @remote_tool or "
+            "a class with @register_remote_tool"
+        )
+
+    local_host, local_url = _local_mcp_endpoint(args.host, args.port)
+    print(f"Remote tool server: {server_name}", flush=True)
+    print(f"Tools: {', '.join(item['name'] for item in selected)}", flush=True)
+    print(f"Local MCP: {local_url}", flush=True)
+
+    if not args.share:
+        _start_server_for_port(args.port)
+        return
+
+    try:
+        from tuplatform_connect.relay import RelayAgent, RelayError
+    except ImportError as exc:
+        raise RuntimeError(
+            "--share requires the maintained tuplatform-connect relay.\n"
+            + _remote_tool_install_hint()
+        ) from exc
+
+    api_key = _connection_key_for_share(
+        args.service,
+        no_browser=getattr(args, "no_browser", False),
+    )
+    if not api_key:
+        raise RuntimeError(
+            "--share requires a computer-only connection key. Set "
+            "TOOLUNIVERSE_SERVICE_KEY or run interactively to enter it securely."
+        )
+
+    server_errors = []
+
+    def run_server():
+        try:
+            _start_server_for_port(args.port)
+        except BaseException as exc:  # surface failures from the daemon thread
+            server_errors.append(exc)
+
+    thread = threading.Thread(
+        target=run_server, name="tooluniverse-remote-mcp", daemon=True
+    )
+    thread.start()
+    deadline = time.monotonic() + 20
+    while time.monotonic() < deadline:
+        if server_errors:
+            raise RuntimeError(f"local MCP server failed: {server_errors[0]}")
+        try:
+            with socket.create_connection((local_host, args.port), timeout=0.5):
+                break
+        except OSError:
+            time.sleep(0.1)
+    else:
+        raise RuntimeError("local MCP server did not start within 20 seconds")
+
+    print("Sharing through ToolUniverse Platform; press Ctrl-C to stop.")
+    print(
+        "Manage the computer and publish one selected tool at: "
+        "https://connect.aiscientist.tools/remote-servers"
+    )
+    try:
+        RelayAgent(
+            args.service,
+            api_key,
+            local_url,
+            server_name,
+            workers=args.workers,
+        ).run_forever()
+    except RelayError as exc:
+        raise RuntimeError(str(exc)) from exc
+
+
+def _forward_remote_tool_server(args: argparse.Namespace) -> None:
+    try:
+        from tuplatform_connect.relay import RelayAgent, RelayError
+    except ImportError as exc:
+        raise RuntimeError(
+            "--forward requires tuplatform-connect.\n" + _remote_tool_install_hint()
+        ) from exc
+    key = _connection_key_for_share(
+        args.service,
+        no_browser=getattr(args, "no_browser", False),
+    )
+    if not key:
+        raise RuntimeError("a computer-only connection key is required")
+    try:
+        RelayAgent(
+            args.service,
+            key,
+            args.forward,
+            args.name or "Remote MCP Server",
+            workers=args.workers,
+        ).run_forever()
+    except RelayError as exc:
+        raise RuntimeError(str(exc)) from exc
+
+
+def cmd_doctor(args: argparse.Namespace) -> None:
+    """Run local SDK diagnostics or a joined local-MCP/platform preflight."""
+    if not args.forward:
+        from tooluniverse.doctor import main as doctor_main
+
+        raise SystemExit(doctor_main())
+    try:
+        from tuplatform_connect.doctor import run_checks
+    except ImportError as exc:
+        raise SystemExit(
+            "Remote diagnostics require tuplatform-connect.\n"
+            + _remote_tool_install_hint()
+        ) from exc
+    result = run_checks(
+        args.service,
+        _resolve_private_connection_key(args.service),
+        args.forward,
+    )
+    if args.json:
+        print(json.dumps(result, separators=(",", ":")))
+    else:
+        for check in result["checks"]:
+            marker = "✓" if check["ok"] else "✗"
+            print(f"{marker} {check['name']}: {check['detail']}")
+        print(
+            "Ready to share."
+            if result["ok"]
+            else "Fix the failed checks and run this command again."
+        )
+    if not result["ok"]:
+        raise SystemExit(1)
+
+
+def cmd_serve(args: argparse.Namespace) -> None:
+    """Start the normal MCP server or expose provider-owned remote tools."""
+    try:
+        forward = getattr(args, "forward", None)
+        files = getattr(args, "files", [])
+        share = getattr(args, "share", False)
+        if forward and files:
+            raise ValueError("use either TOOL.py files or --forward, not both")
+        if share and not files and not forward:
+            raise ValueError("--share requires TOOL.py files or --forward URL")
+        if forward:
+            _forward_remote_tool_server(args)
+        elif files:
+            _start_remote_tool_server(args)
+        else:
+            from tooluniverse.smcp_server import run_default_stdio_server
+
+            run_default_stdio_server()
+    except Exception as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+
+
+def _print_remote_check(result: dict, *, as_json: bool) -> None:
+    """Render remote preflight without ever including secret values."""
+    if as_json:
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+        return
+    marker = "✓" if result.get("ok") else "✗"
+    print(f"{marker} implementation: {result.get('implementation', 'unknown')}")
+    if result.get("error"):
+        print(f"  error: {result['error']}")
+    if result.get("python"):
+        print(f"  provider Python: {result['python']}")
+    provider = result.get("provider") or {}
+    if provider.get("error"):
+        print(f"  provider error: {provider['error']}")
+    python_supported = result.get("python_supported_3_12")
+    python_label = (
+        "unknown" if python_supported is None else ("yes" if python_supported else "no")
+    )
+    print(f"  Python 3.12: {python_label}")
+    module_available = provider.get("module_available")
+    module_label = (
+        "unknown"
+        if module_available is None
+        else ("yes" if module_available else "no")
+    )
+    print(f"  provider module: {module_label}")
+    for command, available in (provider.get("commands") or {}).items():
+        print(f"  command {command}: {'yes' if available else 'no'}")
+    for variable in result.get("provider_environment") or []:
+        ready = variable.get("set") and variable.get("path_exists", True)
+        print(f"  environment {variable['name']}: {'ready' if ready else 'missing'}")
+    credentials = result.get("provider_credentials") or {}
+    if credentials:
+        state = "ready" if credentials.get("ready") else "blocked"
+        status = credentials.get("http_status")
+        suffix = f" (HTTP {status})" if status else ""
+        print(f"  provider credential {credentials['name']}: {state}{suffix}")
+        if credentials.get("detail"):
+            print(f"    {credentials['detail']}")
+    gpu = provider.get("gpu") or {}
+    gpu_policy = result.get("gpu_policy")
+    if gpu_policy != "none":
+        passed = gpu.get("tensor_sum") == 28.0
+        label = (
+            "passed"
+            if passed
+            else ("unavailable (optional)" if gpu_policy == "recommended" else "failed")
+        )
+        print(f"  CUDA tensor check: {label}")
+        if gpu.get("device"):
+            print(f"  GPU: {gpu['device']}")
+    share = result.get("share_prerequisites") or {}
+    if share.get("requested"):
+        print(f"  relay SDK: {'yes' if share.get('sdk_available') else 'no'}")
+        print(
+            f"  connection key set: {'yes' if share.get('service_key_set') else 'no'}"
+        )
+
+
+def cmd_remote_list(args: argparse.Namespace) -> None:
+    """List reviewed provider entry points."""
+    from tooluniverse.remote_runtime import REMOTE_DEPLOYMENTS
+
+    rows = [
+        {
+            "implementation": deployment.slug,
+            "endpoint": deployment.endpoint,
+            "operations": list(deployment.operations),
+            "gpu_policy": deployment.gpu_policy,
+            "relay_workers": deployment.relay_workers,
+        }
+        for deployment in REMOTE_DEPLOYMENTS
+    ]
+    if args.json:
+        print(json.dumps({"implementations": rows}, indent=2))
+        return
+    for row in rows:
+        print(
+            f"{row['implementation']:<22} {row['endpoint']:<32} gpu={row['gpu_policy']}"
+        )
+
+
+def cmd_remote_check(args: argparse.Namespace) -> None:
+    """Check a reviewed provider environment and current endpoint."""
+    from tooluniverse.remote_runtime import (
+        REMOTE_BY_SLUG,
+        check_environment,
+        discover_endpoint,
+    )
+
+    deployment = REMOTE_BY_SLUG[args.implementation]
+    result = check_environment(
+        deployment,
+        python=args.python,
+        share=args.share,
+        service_key_available=(
+            _private_connection_key_available() if args.share else None
+        ),
+        allow_cpu=args.allow_cpu,
+        timeout=args.timeout,
+    )
+    local_mcp = discover_endpoint(deployment, timeout=2)
+    result["local_mcp"] = local_mcp
+    # An absent endpoint is expected before first launch. A reachable endpoint
+    # with the wrong tool set is a hard conflict and must never appear healthy.
+    if local_mcp.get("reachable") and not local_mcp.get("ok"):
+        result["ok"] = False
+    _print_remote_check(result, as_json=args.json)
+    if not result.get("ok"):
+        raise SystemExit(1)
+
+
+def cmd_remote_run(args: argparse.Namespace) -> None:
+    """Start/reuse one reviewed provider and optionally share it privately."""
+    from tooluniverse.remote_runtime import (
+        REMOTE_BY_SLUG,
+        check_environment,
+        ensure_provider,
+        resolve_python,
+        stop_provider,
+    )
+
+    deployment = REMOTE_BY_SLUG[args.implementation]
+    try:
+        key = (
+            _connection_key_for_share(
+                getattr(args, "service", ""),
+                no_browser=getattr(args, "no_browser", False),
+            )
+            if args.share
+            else ""
+        )
+    except (OSError, RuntimeError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+    if args.share and not key:
+        print(
+            "Error: no private connection key is configured. "
+            "Run `tu remote login` once, then retry this command.",
+            file=sys.stderr,
+        )
+        raise SystemExit(2)
+    if args.share and not _valid_remote_key(key):
+        print(
+            "Error: the private connection key has an invalid format. "
+            "Unset TOOLUNIVERSE_SERVICE_KEY if it is overriding a stored login, "
+            "then run `tu remote login`.",
+            file=sys.stderr,
+        )
+        raise SystemExit(2)
+    check = check_environment(
+        deployment,
+        python=args.python,
+        share=args.share,
+        service_key_available=bool(key),
+        allow_cpu=args.allow_cpu,
+        timeout=args.timeout,
+    )
+    _print_remote_check(check, as_json=False)
+    if not check.get("ok"):
+        raise SystemExit(1)
+
+    managed = None
+    try:
+        if args.share:
+            print("TU Platform connection key verified.")
+
+        provider_python = resolve_python(args.python, deployment)
+        managed, ready = ensure_provider(
+            deployment,
+            python=provider_python,
+            log_dir=args.log_dir,
+            startup_timeout=args.startup_timeout,
+        )
+        action = "Started" if managed is not None else "Reused"
+        print(f"{action} exact local MCP: {ready['endpoint']}")
+        print(f"Tools: {', '.join(ready['discovered_operations'])}")
+        if managed is not None:
+            print(f"Provider log: {managed.log_path}")
+
+        if not args.share:
+            if managed is None:
+                return
+            print("Remote tool is ready; press Ctrl-C to stop.")
+            try:
+                exit_code = managed.process.wait()
+            except KeyboardInterrupt:
+                return
+            if exit_code:
+                raise RuntimeError(f"provider exited with code {exit_code}")
+            return
+
+        from tuplatform_connect.doctor import run_checks
+        from tuplatform_connect.relay import RelayAgent, RelayError
+
+        doctor = run_checks(args.service, key, deployment.endpoint)
+        if not doctor.get("ok"):
+            details = "; ".join(
+                check_item.get("detail", check_item.get("name", "failed"))
+                for check_item in doctor.get("checks", [])
+                if not check_item.get("ok")
+            )
+            raise RuntimeError(f"TU Platform preflight failed: {details}")
+        print("TU Platform preflight passed.")
+        print("Sharing privately; press Ctrl-C to stop the relay.")
+        try:
+            workers = args.workers or deployment.relay_workers
+            RelayAgent(
+                args.service,
+                key,
+                deployment.endpoint,
+                args.name or f"{deployment.slug}-remote",
+                workers=workers,
+            ).run_forever()
+        except RelayError as exc:
+            raise RuntimeError(str(exc)) from exc
+    except KeyboardInterrupt:
+        print("Stopping remote tool.")
+    except (ImportError, OSError, RuntimeError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+    finally:
+        stop_provider(managed)
+
+
+def _platform_request(
+    base_url: str,
+    path: str,
+    *,
+    api_key: str = "",
+    payload: dict | None = None,
+    method: str | None = None,
+) -> dict:
+    import urllib.error
+    import urllib.request
+
+    from tooluniverse.platform_remote_tool import _NoRedirect, _validated_base_url
+
+    body = None
+    headers = {"Accept": "application/json", "User-Agent": "tooluniverse-cli/1"}
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+    if payload is not None:
+        body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+    request = urllib.request.Request(
+        _validated_base_url(base_url) + path,
+        data=body,
+        method=method or ("POST" if payload is not None else "GET"),
+        headers=headers,
+    )
+    try:
+        with urllib.request.build_opener(_NoRedirect).open(
+            request, timeout=15
+        ) as response:
+            raw = response.read((16 << 20) + 1)
+        if len(raw) > 16 << 20:
+            raise ValueError("platform response exceeded 16 MiB")
+        result = json.loads(raw.decode("utf-8"))
+        if not isinstance(result, dict):
+            raise ValueError("platform returned an unexpected response")
+        return result
+    except urllib.error.HTTPError as exc:
+        detail = f"platform returned HTTP {exc.code}"
+        error_code = ""
+        try:
+            parsed = json.loads(exc.read(1 << 20).decode("utf-8"))
+            if isinstance(parsed, dict):
+                detail = str(
+                    parsed.get("error_description") or parsed.get("detail") or detail
+                )
+                error_code = str(parsed.get("error") or "")
+        except Exception:
+            pass
+        retry_after = None
+        try:
+            retry_after = int(exc.headers.get("Retry-After", ""))
+        except (TypeError, ValueError):
+            pass
+        raise _PlatformHTTPError(
+            detail,
+            status=exc.code,
+            error_code=error_code,
+            retry_after=retry_after,
+        ) from exc
+
+
+def cmd_connect(args: argparse.Namespace) -> None:
+    """Persist one explicit MCP server, shared server, or marketplace tool."""
+    from tooluniverse.remote_connections import (
+        extract_resource_id,
+        mcp_connection,
+        platform_connection,
+        save_connection,
+    )
+
+    target = args.target.strip()
+    base_url = args.service.rstrip("/")
+    try:
+        if target.upper().startswith("TU-SHARE-"):
+            env_name = (
+                "TU_API_KEY" if os.getenv("TU_API_KEY") else "TOOLUNIVERSE_SERVICE_KEY"
+            )
+            api_key = os.getenv(env_name, "").strip()
+            if not api_key:
+                raise RuntimeError(
+                    "joining a share code requires TU_API_KEY or TOOLUNIVERSE_SERVICE_KEY"
+                )
+            joined = _platform_request(
+                base_url,
+                "/remote-servers/join",
+                api_key=api_key,
+                payload={"share_code": target},
+            )
+            server_id = joined.get("server_id")
+            if not server_id:
+                raise RuntimeError("platform did not return the joined server")
+            server = _platform_request(
+                base_url, f"/remote-servers/{server_id}", api_key=api_key
+            )
+            connection = mcp_connection(
+                server["relay_url"], args.name or server.get("name", "remote"), env_name
+            )
+        else:
+            resource_id = extract_resource_id(target)
+            looks_like_marketplace = args.platform or resource_id == target.lower()
+            if resource_id and (
+                looks_like_marketplace
+                or "connect.aiscientist.tools" in target
+                or "/discover/" in target
+            ):
+                metadata = _platform_request(
+                    base_url, f"/expert-sessions/public/{resource_id}"
+                )
+                if metadata.get("tool_type") not in {"remote-mcp", "hosted-sdk"}:
+                    raise ValueError("only automated published tools can be connected")
+                raw_schema = metadata.get("input_schema") or "{}"
+                schema = (
+                    json.loads(raw_schema)
+                    if isinstance(raw_schema, str)
+                    else raw_schema
+                )
+                if not isinstance(schema, dict):
+                    schema = {"type": "object"}
+                connection = platform_connection(
+                    resource_id,
+                    name=args.name or metadata.get("name", "Remote tool"),
+                    description=metadata.get("description", ""),
+                    input_schema=schema,
+                    base_url=base_url,
+                )
+            else:
+                connection = mcp_connection(target, args.name, args.auth_env)
+        changed = save_connection(connection)
+    except (KeyError, OSError, RuntimeError, ValueError, json.JSONDecodeError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+
+    tool_hint = (
+        connection.get("tool_name") or connection.get("prefix", "remote_") + "<tool>"
+    )
+    action = "Connected" if changed else "Already connected"
+    print(f"{action}: {connection['name']}")
+    print(f"Tool name: {tool_hint}")
+    print("It will load on the next ToolUniverse.load_tools() or `tu serve` start.")
+
+
+def cmd_connections(args: argparse.Namespace) -> None:
+    """List explicit remote connections without resolving or contacting them."""
+    from tooluniverse.remote_connections import read_connections
+
+    connections = read_connections()
+    if args.json:
+        print(json.dumps(connections, indent=2, ensure_ascii=False))
+        return
+    if not connections:
+        print("No remote tool connections saved.")
+        print("Add one with: tu connect <MCP-URL> --name <unique-name>")
+        return
+    for connection in connections:
+        kind = connection.get("kind", "remote")
+        target = connection.get("url") or connection.get("resource_id") or "unknown"
+        namespace = connection.get("tool_name") or connection.get("prefix") or ""
+        auth = (
+            f" (token from {connection['auth_env']})"
+            if connection.get("auth_env")
+            else ""
+        )
+        print(f"{connection.get('name', 'Remote tool')} [{kind}]")
+        print(f"  target: {target}{auth}")
+        print(f"  tool namespace: {namespace}")
+
+
+def cmd_disconnect(args: argparse.Namespace) -> None:
+    """Remove one explicit remote connection without contacting the server."""
+    from tooluniverse.remote_connections import remove_connection
+
+    try:
+        removed = remove_connection(args.target)
+    except (OSError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+    if removed is None:
+        print(f"No saved connection matched: {args.target}", file=sys.stderr)
+        raise SystemExit(1)
+    print(f"Disconnected: {removed.get('name', 'Remote tool')}")
+    print(
+        "It will be absent after the next ToolUniverse.load_tools() or `tu serve` start."
+    )
 
 
 # ── argument parser ────────────────────────────────────────────────────────────
@@ -2023,12 +3078,277 @@ def main() -> None:
     )
     p.set_defaults(func=cmd_build)
 
+    # ── remote ────────────────────────────────────────────────────────────────
+    from tooluniverse.remote_runtime import REMOTE_BY_SLUG
+
+    remote = sub.add_parser(
+        "remote",
+        help="Check, start, and privately share reviewed remote-tool providers",
+    )
+    remote_sub = remote.add_subparsers(dest="remote_command", required=True)
+
+    p = remote_sub.add_parser("list", help="List reviewed remote-tool providers")
+    p.add_argument("--json", action="store_true", help="output machine-readable JSON")
+    p.set_defaults(func=cmd_remote_list)
+
+    p = remote_sub.add_parser(
+        "login",
+        help="authorize this computer in a browser and remember it securely",
+    )
+    p.add_argument(
+        "--env-file",
+        metavar="PATH",
+        help="import TOOLUNIVERSE_SERVICE_KEY from an existing 0600 env file",
+    )
+    p.add_argument(
+        "--manual-key",
+        action="store_true",
+        help="read a connection key from a hidden terminal prompt instead of opening a browser",
+    )
+    p.add_argument(
+        "--no-browser",
+        action="store_true",
+        help="print the authorization link without trying to open a browser",
+    )
+    p.add_argument(
+        "--service",
+        default=os.getenv(
+            "TOOLUNIVERSE_SERVICE_URL",
+            os.getenv("TU_BASE_URL", "https://tooluniverse-backend.onrender.com"),
+        ),
+        help="ToolUniverse Platform API base URL",
+    )
+    p.set_defaults(func=cmd_remote_login)
+
+    p = remote_sub.add_parser(
+        "logout", help="remove the locally stored private connection key"
+    )
+    p.add_argument(
+        "--revoke",
+        action="store_true",
+        help="also revoke this computer-only connection on TU Platform",
+    )
+    p.add_argument(
+        "--service",
+        default=os.getenv(
+            "TOOLUNIVERSE_SERVICE_URL",
+            os.getenv("TU_BASE_URL", "https://tooluniverse-backend.onrender.com"),
+        ),
+        help="ToolUniverse Platform API base URL",
+    )
+    p.set_defaults(func=cmd_remote_logout)
+
+    def _add_remote_common(
+        remote_parser: argparse.ArgumentParser, *, include_share: bool = True
+    ) -> None:
+        remote_parser.add_argument(
+            "implementation",
+            choices=sorted(REMOTE_BY_SLUG),
+            help="reviewed remote-tool implementation",
+        )
+        remote_parser.add_argument(
+            "--python",
+            metavar="PATH",
+            help="Python executable from the provider environment",
+        )
+        if include_share:
+            remote_parser.add_argument(
+                "--share",
+                action="store_true",
+                help="also require TU Platform relay credentials",
+            )
+        remote_parser.add_argument(
+            "--no-browser",
+            action="store_true",
+            help="print login links without trying to open a browser",
+        )
+        remote_parser.add_argument(
+            "--allow-cpu",
+            action="store_true",
+            help="allow CPU execution when the provider normally requires CUDA",
+        )
+        remote_parser.add_argument(
+            "--timeout",
+            type=float,
+            default=30,
+            help="provider-environment check timeout in seconds (default: 30)",
+        )
+
+    p = remote_sub.add_parser(
+        "check",
+        help="validate one provider environment and probe its local endpoint",
+    )
+    _add_remote_common(p)
+    p.add_argument("--json", action="store_true", help="output machine-readable JSON")
+    p.set_defaults(func=cmd_remote_check)
+
+    def _add_remote_run_options(remote_parser: argparse.ArgumentParser) -> None:
+        remote_parser.add_argument(
+            "--name", help="private connection name shown on TU Platform"
+        )
+        remote_parser.add_argument(
+            "--workers",
+            type=_bounded_int(1, 2),
+            default=None,
+            help=(
+                "maximum concurrent relayed calls "
+                "(default: reviewed provider value; maximum: 2)"
+            ),
+        )
+        remote_parser.add_argument(
+            "--startup-timeout",
+            type=float,
+            default=120,
+            help="local provider startup timeout in seconds (default: 120)",
+        )
+        remote_parser.add_argument(
+            "--log-dir",
+            default=os.getenv(
+                "TOOLUNIVERSE_REMOTE_LOG_DIR", ".tooluniverse/remote-logs"
+            ),
+            help="provider log directory (default: .tooluniverse/remote-logs)",
+        )
+        remote_parser.add_argument(
+            "--service",
+            default=os.getenv(
+                "TOOLUNIVERSE_SERVICE_URL",
+                os.getenv("TU_BASE_URL", "https://tooluniverse-backend.onrender.com"),
+            ),
+            help="ToolUniverse Platform API base URL",
+        )
+
+    p = remote_sub.add_parser(
+        "run",
+        help="start or reuse one provider and optionally share it privately",
+    )
+    _add_remote_common(p)
+    _add_remote_run_options(p)
+    p.set_defaults(func=cmd_remote_run)
+
+    p = remote_sub.add_parser(
+        "share",
+        help="start or reuse one provider and share it privately",
+    )
+    _add_remote_common(p, include_share=False)
+    _add_remote_run_options(p)
+    p.set_defaults(func=cmd_remote_run, share=True)
+
+    # ── doctor ────────────────────────────────────────────────────────────────
+    p = sub.add_parser(
+        "doctor",
+        help="Check local ToolUniverse, or validate a remote MCP server and platform connection",
+    )
+    p.add_argument(
+        "--forward",
+        metavar="URL",
+        help="local Streamable HTTP MCP endpoint to validate",
+    )
+    p.add_argument(
+        "--service",
+        default=os.getenv(
+            "TOOLUNIVERSE_SERVICE_URL",
+            os.getenv("TU_BASE_URL", "https://tooluniverse-backend.onrender.com"),
+        ),
+        help="ToolUniverse Platform API base URL",
+    )
+    p.add_argument("--json", action="store_true", help="output machine-readable JSON")
+    p.set_defaults(func=cmd_doctor)
+
     # ── serve ─────────────────────────────────────────────────────────────────
     p = sub.add_parser(
         "serve",
-        help="Start the MCP stdio server (identical to `tooluniverse`)",
+        help="Start ToolUniverse MCP or launch/share provider-owned remote tools",
+    )
+    p.add_argument(
+        "files",
+        nargs="*",
+        metavar="TOOL.py",
+        help="Python files containing @remote_tool or @register_remote_tool",
+    )
+    p.add_argument(
+        "--share",
+        action="store_true",
+        help="share the remote tool server through ToolUniverse Platform",
+    )
+    p.add_argument(
+        "--forward",
+        metavar="URL",
+        help="share an already-running Streamable HTTP MCP server",
+    )
+    p.add_argument("--name", help="server name shown to users")
+    p.add_argument(
+        "--host",
+        default="127.0.0.1",
+        help="local bind host for file mode (default: 127.0.0.1)",
+    )
+    p.add_argument(
+        "--port",
+        type=_bounded_int(1, 65535),
+        default=8080,
+        help="local MCP port for file mode (default: 8080)",
+    )
+    p.add_argument(
+        "--workers",
+        type=_bounded_int(1, 32),
+        default=8,
+        help="maximum concurrent local requests (default: 8)",
+    )
+    p.add_argument(
+        "--service",
+        default=os.getenv(
+            "TOOLUNIVERSE_SERVICE_URL",
+            os.getenv("TU_BASE_URL", "https://tooluniverse-backend.onrender.com"),
+        ),
+        help="ToolUniverse Platform API base URL",
+    )
+    p.add_argument(
+        "--no-browser",
+        action="store_true",
+        help="print login links without trying to open a browser",
     )
     p.set_defaults(func=cmd_serve)
+
+    # ── connect ───────────────────────────────────────────────────────────────
+    p = sub.add_parser(
+        "connect",
+        help="connect one explicit MCP server, shared server, or published tool",
+    )
+    p.add_argument(
+        "target", help="MCP URL, TU-SHARE code, marketplace URL, or tool UUID"
+    )
+    p.add_argument("--name", help="local display name and tool prefix")
+    p.add_argument(
+        "--auth-env",
+        default="",
+        help="environment variable containing a direct MCP server bearer token",
+    )
+    p.add_argument(
+        "--platform",
+        action="store_true",
+        help="treat a UUID-containing target as a published platform tool",
+    )
+    p.add_argument(
+        "--service",
+        default=os.getenv("TU_BASE_URL", "https://tooluniverse-backend.onrender.com"),
+        help="ToolUniverse Platform API base URL",
+    )
+    p.set_defaults(func=cmd_connect)
+
+    p = sub.add_parser(
+        "connections",
+        help="list saved remote tool connections without contacting them",
+    )
+    p.add_argument("--json", action="store_true", help="output JSON")
+    p.set_defaults(func=cmd_connections)
+
+    p = sub.add_parser(
+        "disconnect",
+        help="remove one saved remote tool connection",
+    )
+    p.add_argument(
+        "target", help="exact MCP URL, UUID, display name, or tool namespace"
+    )
+    p.set_defaults(func=cmd_disconnect)
 
     # Quiet is now the default. --verbose/-v opts back in to warnings.
     # We check argv directly because argparse hasn't run yet.

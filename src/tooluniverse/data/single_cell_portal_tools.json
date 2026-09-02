@@ -1,0 +1,315 @@
+[
+  {
+    "name": "SCP_search_studies",
+    "type": "SingleCellPortalTool",
+    "description": "Keyword search across the Broad Institute Single Cell Portal, which hosts 1000+ single-cell studies covering 80M+ cells. Searches study titles, descriptions, and metadata. Returns accession, title, cell count, gene count, and study URL. Example: query='glioblastoma'. Complements CxGDisc_search_datasets (CELLxGENE) and SCXA_list_experiments (EBI), which index different study sets. Descriptions are truncated; use SCP_get_study for the full text.",
+    "fields": {
+      "operation": "search_studies"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "query"
+      ],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search terms, e.g. 'lung', 'glioblastoma', 'COVID-19', 'pancreatic islet'. Case-insensitive."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum studies to return (default 20, max 100)."
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "1-based result page. Use with the total_pages value returned in metadata."
+        },
+        "description_chars": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Truncate each description to this many characters (default 500). Set 0 to omit descriptions."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Matching studies, most relevant first",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string",
+                "description": "SCP accession, e.g. 'SCP1'"
+              },
+              "name": {
+                "type": "string",
+                "description": "Study title"
+              },
+              "description": {
+                "type": "string",
+                "description": "Study description"
+              },
+              "cell_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of cells"
+              },
+              "gene_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of genes quantified"
+              },
+              "study_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Portal URL for the study"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query": "lung",
+        "limit": 5
+      },
+      {
+        "query": "glioblastoma",
+        "limit": 3
+      },
+      {
+        "query": "pancreatic islet",
+        "limit": 5,
+        "description_chars": 200
+      }
+    ]
+  },
+  {
+    "name": "SCP_list_studies",
+    "type": "SingleCellPortalTool",
+    "description": "List the public Single Cell Portal study catalog (1000+ studies), sorted by cell count descending. Optionally filter by a minimum cell count or a keyword matched against title and description. Use this to find the largest available single-cell studies, or to survey what the portal holds. Returns accession, title, cell count, gene count, and study URL.",
+    "fields": {
+      "operation": "list_studies"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "keyword": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional case-insensitive filter matched against study title and description, e.g. 'brain'."
+        },
+        "min_cells": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Only return studies with at least this many cells, e.g. 100000."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum studies to return (default 20, max 100)."
+        },
+        "description_chars": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Truncate each description to this many characters (default 300). Set 0 to omit descriptions."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Studies sorted by cell count descending",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string",
+                "description": "SCP accession, e.g. 'SCP1'"
+              },
+              "name": {
+                "type": "string",
+                "description": "Study title"
+              },
+              "description": {
+                "type": "string",
+                "description": "Study description"
+              },
+              "cell_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of cells"
+              },
+              "gene_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of genes quantified"
+              },
+              "study_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Portal URL for the study"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "limit": 5
+      },
+      {
+        "min_cells": 500000,
+        "limit": 5
+      },
+      {
+        "keyword": "brain",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "SCP_get_study",
+    "type": "SingleCellPortalTool",
+    "description": "Retrieve one Single Cell Portal study by accession, with its full untruncated description. Accessions look like 'SCP1' and are returned by SCP_search_studies and SCP_list_studies. Private or detached studies are not exposed by the public API and will return an error.",
+    "fields": {
+      "operation": "get_study"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "accession"
+      ],
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "SCP accession, e.g. 'SCP1'. Case-insensitive."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "accession": {
+              "type": "string",
+              "description": "SCP accession, e.g. 'SCP1'"
+            },
+            "name": {
+              "type": "string",
+              "description": "Study title"
+            },
+            "description": {
+              "type": "string",
+              "description": "Study description"
+            },
+            "cell_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of cells"
+            },
+            "gene_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of genes quantified"
+            },
+            "study_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Portal URL for the study"
+            }
+          },
+          "description": "A single study record"
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "accession": "SCP1"
+      },
+      {
+        "accession": "SCP3184"
+      }
+    ]
+  }
+]

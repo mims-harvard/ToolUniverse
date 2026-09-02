@@ -16,6 +16,10 @@ This module centralizes two controls used by every server entry point:
    on a non-loopback interface unless a token is configured. The shipped default
    bind address is loopback (``127.0.0.1``); operators must opt in to remote
    exposure *and* set a token to do so.
+
+3. Fail-closed FastMCP helpers used by standalone remote-tool servers. When a
+   token is configured but FastMCP authentication cannot be initialized, server
+   construction raises instead of silently exposing an unauthenticated service.
 """
 
 import hmac
@@ -25,7 +29,7 @@ import os
 API_TOKEN_ENV = "TOOLUNIVERSE_API_TOKEN"
 
 # Hostnames that resolve to the local machine only.
-_LOOPBACK_HOSTNAMES = {"localhost", ""}
+_LOOPBACK_HOSTNAMES = {"localhost"}
 
 
 def get_api_token():
@@ -39,8 +43,8 @@ def get_api_token():
 
 def is_loopback_host(host):
     """Return ``True`` if ``host`` only accepts connections from the local machine."""
-    if host is None:
-        return True
+    if host is None or not isinstance(host, str):
+        return False
     candidate = host.strip().lower()
     if candidate in _LOOPBACK_HOSTNAMES:
         return True
@@ -83,3 +87,40 @@ def enforce_bind_security(host):
             f"on every request, or bind to 127.0.0.1 for local-only access."
         )
     return token
+
+
+def get_fastmcp_token_auth():
+    """Build FastMCP bearer-token authentication from the provider environment.
+
+    Returns None for a loopback-only deployment with no configured token. If a
+    token is configured, inability to import or construct FastMCP's token
+    verifier is a fatal configuration error: remote servers must never fall
+    back to unauthenticated operation.
+    """
+    token = get_api_token()
+    if token is None:
+        return None
+    try:
+        from fastmcp.server.auth import StaticTokenVerifier
+
+        return StaticTokenVerifier(
+            tokens={token: {"client_id": "tooluniverse", "scopes": []}}
+        )
+    except Exception as exc:
+        raise RuntimeError(
+            "TOOLUNIVERSE_API_TOKEN is set but FastMCP bearer-token "
+            "authentication could not be initialized."
+        ) from exc
+
+
+def run_fastmcp_server(
+    server,
+    *,
+    host="127.0.0.1",
+    port,
+    transport="streamable-http",
+    **kwargs,
+):
+    """Run a standalone FastMCP server after enforcing the network bind guard."""
+    enforce_bind_security(host)
+    return server.run(transport=transport, host=host, port=port, **kwargs)

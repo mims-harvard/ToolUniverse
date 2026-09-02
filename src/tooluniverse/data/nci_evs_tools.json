@@ -1,0 +1,108 @@
+[
+  {
+    "name": "NCIEVS_search_terminology",
+    "type": "NCIEVSTool",
+    "description": "Keyword-search an NCI EVS clinical/biomedical terminology other than NCIt (use NCIThesaurus_search for NCIt) or ICD-10-CM (use ICD10Tool): 'ctcae5'/'ctcae6' (adverse event grading, the clinical-trial safety standard), 'icd9cm' (US legacy diagnosis codes), 'radlex' (radiology), 'ndfrt'/'medrt' (drug reference terminology), 'canmed'. Example: terminology='ctcae5', term='neutropenia' returns graded adverse event terms (Grade 3/4/5 Febrile neutropenia). MedDRA is licensed and not queryable here. Returns each concept's code for use with NCIEVS_get_concept.",
+    "fields": {
+      "operation": "search_terminology"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["terminology", "term"],
+      "properties": {
+        "terminology": {
+          "type": "string",
+          "description": "NCI EVS terminology code, e.g. 'ctcae5', 'icd9cm', 'radlex', 'ndfrt', 'medrt', 'canmed'."
+        },
+        "term": {
+          "type": "string",
+          "description": "Free-text search term, e.g. 'neutropenia', 'fracture'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max concepts to return, 1-100. Default 20."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {"type": ["string", "null"]},
+              "name": {"type": ["string", "null"]},
+              "leaf": {"type": ["boolean", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"terminology": "ctcae5", "term": "neutropenia", "limit": 5},
+      {"terminology": "radlex", "term": "fracture", "limit": 5}
+    ]
+  },
+  {
+    "name": "NCIEVS_get_concept",
+    "type": "NCIEVSTool",
+    "description": "Retrieve one concept's full detail (definition, synonyms, properties) from an NCI EVS terminology other than NCIt, by its code. Example: terminology='ctcae5', code='C143481' returns 'Febrile neutropenia' with its clinical definition and MedDRA cross-reference code. Use NCIEVS_search_terminology to find a code.",
+    "fields": {
+      "operation": "get_concept"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["terminology", "code"],
+      "properties": {
+        "terminology": {
+          "type": "string",
+          "description": "NCI EVS terminology code, e.g. 'ctcae5', 'radlex'."
+        },
+        "code": {
+          "type": "string",
+          "description": "Concept code within that terminology, e.g. 'C143481' (CTCAE5) or 'RID4650' (RadLex)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "code": {"type": ["string", "null"]},
+            "name": {"type": ["string", "null"]},
+            "terminology": {"type": ["string", "null"]},
+            "active": {"type": ["boolean", "null"]},
+            "definition": {"type": ["string", "null"]},
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": ["string", "null"]},
+                  "type": {"type": ["string", "null"]},
+                  "source": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "properties": {"type": "object"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"terminology": "ctcae5", "code": "C143481"}
+    ]
+  }
+]

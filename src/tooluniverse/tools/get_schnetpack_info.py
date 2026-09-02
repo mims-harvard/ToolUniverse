@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def get_schnetpack_info(
-    include_examples: bool,
+    include_examples: Optional[bool] = True,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

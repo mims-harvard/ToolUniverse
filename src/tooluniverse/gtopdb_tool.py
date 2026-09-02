@@ -766,7 +766,8 @@ class GtoPdbRESTTool(BaseTool):
                                     "Note: many kinases and signaling enzymes (MAP2K1/MEK1, "
                                     "MAP2K2/MEK2, MAPK1/ERK2, MAPK3/ERK1, etc.) have limited "
                                     "or no interaction data in GtoPdb — use "
-                                    "ChEMBL_get_drug_mechanisms or ChEMBL_search_compounds "
+                                    "ChEMBL_search_targets then "
+                                    "ChEMBL_search_activities(target_chembl_id=...) "
                                     "for approved inhibitors of MAP kinase pathway proteins."
                                 ),
                             }
@@ -1074,8 +1075,8 @@ class GtoPdbRESTTool(BaseTool):
                         f"interaction(s) for this target. GtoPdb interaction data focuses on "
                         "pharmacological research compounds with measured affinity — approved "
                         "drugs are rarely listed here. For approved drug-target interactions, "
-                        "use ChEMBL_get_drug_mechanisms or ChEMBL_search_compounds with the "
-                        "target gene name."
+                        "run ChEMBL_search_targets(pref_name__contains=<target name>) to get a "
+                        "target_chembl_id, then ChEMBL_search_activities(target_chembl_id=...)."
                     )
                 else:
                     result["warning"] = (
@@ -1092,9 +1093,15 @@ class GtoPdbRESTTool(BaseTool):
             if isinstance(data, list) and data and "/interactions" in url:
                 first = data[0]
                 if "targetId" in first or "targetName" in first:
+                    # Fix-R55C-4: targetName carries GtoPdb's raw markup -- target 1
+                    # arrives as "5-HT<sub>1A</sub> receptor" -- and this field is
+                    # both shown to the caller as a plain-text name and reused in
+                    # the coverage_note below. _strip_html is already applied to
+                    # every other GtoPdb text field in this module; this one was
+                    # missed.
                     result["queried_target"] = {
                         "id": first.get("targetId"),
-                        "name": first.get("targetName"),
+                        "name": _strip_html(first.get("targetName")),
                     }
                 elif "ligandId" in first or "ligandName" in first:
                     result["queried_ligand"] = {
@@ -1116,8 +1123,10 @@ class GtoPdbRESTTool(BaseTool):
                     result["coverage_note"] = (
                         "GtoPdb interactions list pharmacological research compounds — approved "
                         "drugs for this target are not represented in these results. For approved "
-                        "drugs and clinical compounds, use ChEMBL_get_drug_mechanisms or "
-                        f"ChEMBL_search_compounds with target_name='{_chembl_target}'."
+                        "drugs and clinical compounds, run "
+                        f"ChEMBL_search_targets(pref_name__contains='{_chembl_target}') "
+                        "to get a target_chembl_id, then "
+                        "ChEMBL_search_activities(target_chembl_id=...)."
                     )
 
             # Feature-49A-M5: for ligand search results, add a hint about getting interaction data.

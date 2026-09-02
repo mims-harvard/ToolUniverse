@@ -40,6 +40,7 @@ default_tool_files = {
     "enrichr_ext": os.path.join(current_dir, "data", "enrichr_ext_tools.json"),
     "HumanBase": os.path.join(current_dir, "data", "humanbase_tools.json"),
     "OpenAlex": os.path.join(current_dir, "data", "openalex_tools.json"),
+    "opennih": os.path.join(current_dir, "data", "opennih_tools.json"),
     # BGPT - structured full-text study evidence (methods, sample size,
     # limitations, conflicts, how_to_falsify). Free for 50 results, then
     # BGPT_API_KEY. Requested in issue #204.
@@ -230,6 +231,8 @@ default_tool_files = {
     "dtu_protein": os.path.join(current_dir, "data", "dtu_protein_tools.json"),
     # Cellpose deep-learning cell/nucleus segmentation (local, cellpose pkg)
     "cellpose": os.path.join(current_dir, "data", "cellpose_tools.json"),
+    # DeepSpot-M spatial gene expression from an H&E tile (local, deepspotm pkg)
+    "deepspotm": os.path.join(current_dir, "data", "deepspotm_tools.json"),
     # Therapeutics Data Commons benchmark dataset retrieval (PyTDC)
     "tdc_dataset": os.path.join(current_dir, "data", "tdc_dataset_tools.json"),
     # ENCODE SCREEN cCRE registry (candidate cis-regulatory elements, GraphQL)
@@ -352,6 +355,13 @@ default_tool_files = {
     "boltz_api": os.path.join(current_dir, "data", "boltz_api_tools.json"),
     "mcp_auto_loader_esm": os.path.join(
         current_dir, "data", "mcp_auto_loader_esm.json"
+    ),
+    "mcp_auto_loader_gi": os.path.join(current_dir, "data", "mcp_auto_loader_gi.json"),
+    "mcp_auto_loader_folklore": os.path.join(
+        current_dir, "data", "mcp_auto_loader_folklore.json"
+    ),
+    "mcp_auto_loader_noodle": os.path.join(
+        current_dir, "data", "mcp_auto_loader_noodle.json"
     ),
     "cryoet": os.path.join(current_dir, "data", "cryoet_tools.json"),
     "esm": os.path.join(current_dir, "data", "esm_tools.json"),
@@ -578,8 +588,50 @@ default_tool_files = {
     "glygen": os.path.join(current_dir, "data", "glygen_tools.json"),
     # MGnify Expanded - Metagenomics genome catalog, biomes, study details
     "mgnify_expanded": os.path.join(current_dir, "data", "mgnify_expanded_tools.json"),
+    # EBI Job Dispatcher - pairwise alignment, translation, Pfam, Phobius, profile search
+    "ebi_sequence": os.path.join(current_dir, "data", "ebi_sequence_tools.json"),
+    # Codon usage - species codon tables for codon optimization
+    "codon_usage": os.path.join(current_dir, "data", "codon_usage_tools.json"),
+    # M-CSA - curated enzyme catalytic residues and mechanisms
+    "mcsa": os.path.join(current_dir, "data", "mcsa_tools.json"),
+    # OPM and TopDB - structure-derived and curated membrane protein topology
+    "membrane_topology": os.path.join(
+        current_dir, "data", "membrane_topology_tools.json"
+    ),
+    # SKEMPI - measured protein-protein binding affinity changes on mutation
+    "skempi": os.path.join(current_dir, "data", "skempi_tools.json"),
+    # REBASE - full restriction enzyme catalogue (~6000 enzymes)
+    "rebase": os.path.join(current_dir, "data", "rebase_tools.json"),
+    # NCATS Translator - cross-source biolink reasoning via the Aragorn TRAPI reasoner
+    "ncats_translator": os.path.join(
+        current_dir, "data", "ncats_translator_tools.json"
+    ),
+    # MediaDive - DSMZ cultivation media recipes, pairs with BacDive
+    "mediadive": os.path.join(current_dir, "data", "mediadive_tools.json"),
+    # BioThings gateway - uniform access to ~50 BioThings-hosted biomedical APIs
+    "biothings_gateway": os.path.join(
+        current_dir, "data", "biothings_gateway_tools.json"
+    ),
+    # DDBJ - DNA Data Bank of Japan, third INSDC member (BioProject/BioSample/DRA/JGA)
+    "ddbj": os.path.join(current_dir, "data", "ddbj_tools.json"),
+    # BacDive - DSMZ bacterial strain phenotype and growth conditions
+    "bacdive": os.path.join(current_dir, "data", "bacdive_tools.json"),
+    # Orphadata - Orphanet rare disease cross-references, epidemiology, phenotypes
+    "orphadata": os.path.join(current_dir, "data", "orphadata_tools.json"),
     # SCXA - EBI Single Cell Expression Atlas (scRNA-seq experiments, gene expression)
     "scxa": os.path.join(current_dir, "data", "scxa_tools.json"),
+    # Single Cell Portal - Broad Institute single-cell study catalog (1000+ studies)
+    "single_cell_portal": os.path.join(
+        current_dir, "data", "single_cell_portal_tools.json"
+    ),
+    # UCSC Cell Browser - curated single-cell datasets with organism/tissue/disease facets
+    "ucsc_cell_browser": os.path.join(
+        current_dir, "data", "ucsc_cell_browser_tools.json"
+    ),
+    # CellTypist - pre-trained model catalog for automated cell type annotation
+    "celltypist_catalog": os.path.join(
+        current_dir, "data", "celltypist_catalog_tools.json"
+    ),
     # SGD - Saccharomyces Genome Database (yeast genes, phenotypes, interactions)
     "sgd": os.path.join(current_dir, "data", "sgd_tools.json"),
     # NCBI Datasets API v2 - Gene info, orthologs, taxonomy, genome metadata
@@ -938,6 +990,13 @@ default_tool_files = {
         current_dir, "data", "allen_cell_types_tools.json"
     ),
     "idigbio": os.path.join(current_dir, "data", "idigbio_tools.json"),
+    "bold_systems": os.path.join(current_dir, "data", "bold_systems_tools.json"),
+    "giab": os.path.join(current_dir, "data", "giab_tools.json"),
+    "fda_purple_book": os.path.join(current_dir, "data", "fda_purple_book_tools.json"),
+    "molgluedb": os.path.join(current_dir, "data", "molgluedb_tools.json"),
+    "gsa": os.path.join(current_dir, "data", "gsa_tools.json"),
+    "bar": os.path.join(current_dir, "data", "bar_tools.json"),
+    "planteome": os.path.join(current_dir, "data", "planteome_tools.json"),
     "pathoplexus": os.path.join(current_dir, "data", "pathoplexus_tools.json"),
     "open_genes": os.path.join(current_dir, "data", "open_genes_tools.json"),
     "foodb": os.path.join(current_dir, "data", "foodb_tools.json"),
@@ -1006,10 +1065,61 @@ default_tool_files = {
     "eva": os.path.join(current_dir, "data", "eva_tools.json"),
     # eQTL Catalogue - Expression quantitative trait loci associations
     "eqtl": os.path.join(current_dir, "data", "eqtl_tools.json"),
-    # OSDR - NASA Open Science Data Repository (space biology studies)
-    # Removed: API unreachable/down (see commit c70493c6); data file deleted,
-    # this entry was left behind and has been silently loading 0 tools since.
-    # "osdr": os.path.join(current_dir, "data", "osdr_tools.json"),
+    # OSDR - NASA Open Science Data Repository (space biology studies).
+    # Re-added: the domain from the prior attempt (genelab-data.ndc.nasa.gov)
+    # is dead, but OSDR has since migrated to osdr.nasa.gov, verified live.
+    "nasa_osdr": os.path.join(current_dir, "data", "nasa_osdr_tools.json"),
+    # EWAS Catalog - epigenome-wide association study results (MRC-IEU)
+    "ewas_catalog": os.path.join(current_dir, "data", "ewas_catalog_tools.json"),
+    # NIH DSLD - Dietary Supplement Label Database, a regulatory category
+    # separate from FDA drug labels with no prior coverage
+    "nih_dsld": os.path.join(current_dir, "data", "nih_dsld_tools.json"),
+    # DANDI - neurophysiology archive (NWB), pairs with existing OpenNeuro
+    "dandi": os.path.join(current_dir, "data", "dandi_tools.json"),
+    # PDBTM - structure-derived per-chain TM classification, third view
+    # alongside existing OPM (geometry) and TopDB (curated evidence)
+    "pdbtm": os.path.join(current_dir, "data", "pdbtm_tools.json"),
+    # GoaT - genome sequencing status across Earth BioGenome, DToL, VGP, ERGA
+    "goat": os.path.join(current_dir, "data", "goat_tools.json"),
+    # NIH RePORTER - funded research project database, a funding-landscape
+    # layer ToolUniverse had no equivalent of
+    "nih_reporter": os.path.join(current_dir, "data", "nih_reporter_tools.json"),
+    # SciCrunch RRID resolver - any RRID prefix beyond the existing
+    # antibody-specific AntibodyRegistry tool
+    "scicrunch_rrid": os.path.join(
+        current_dir, "data", "scicrunch_rrid_tools.json"
+    ),
+    # CMS Open Payments - drug/device manufacturer payments to physicians,
+    # a health-economics/conflict-of-interest layer with no prior coverage
+    "cms_open_payments": os.path.join(
+        current_dir, "data", "cms_open_payments_tools.json"
+    ),
+    # DHS Program - household health survey data across ~90 LMIC countries,
+    # correcting the LMIC skew in existing population-health coverage
+    "dhs_program": os.path.join(current_dir, "data", "dhs_program_tools.json"),
+    # MDDB - molecular dynamics trajectory database (MoDEL, BioExcel, DESRES)
+    "mddb": os.path.join(current_dir, "data", "mddb_tools.json"),
+    # SmartAPI - registry of ~270 biomedical web APIs, resolves an API
+    # name to its base URL and endpoints
+    "smartapi": os.path.join(current_dir, "data", "smartapi_tools.json"),
+    # NCI EVS - CTCAE, ICD-10-CM/ICD-9-CM, RadLex, NDF-RT/MedRT terminologies
+    # (sibling to the existing NCIt-only NCIThesaurusTool)
+    "nci_evs": os.path.join(current_dir, "data", "nci_evs_tools.json"),
+    # openFDA device - recalls and MAUDE adverse events, the device side of
+    # openFDA (existing tools cover only drug/label, drug/event, drugsfda)
+    "openfda_device": os.path.join(
+        current_dir, "data", "openfda_device_tools.json"
+    ),
+    # FHIR Terminology Service - SNOMED CT code lookup and hierarchy
+    # expansion (LOINC/RxNorm/ICD-10-CM already have dedicated tools)
+    "fhir_terminology": os.path.join(
+        current_dir, "data", "fhir_terminology_tools.json"
+    ),
+    # EGA - controlled-access human genomic archive, public metadata only
+    "ega": os.path.join(current_dir, "data", "ega_tools.json"),
+    # dbGaP - controlled-access US genotype-phenotype archive (FHIR API),
+    # the American counterpart to EGA
+    "dbgap": os.path.join(current_dir, "data", "dbgap_tools.json"),
     # Gene2Phenotype - EBI curated gene-disease associations for clinical genetics
     "gene2phenotype": os.path.join(current_dir, "data", "gene2phenotype_tools.json"),
     # NASA Exoplanet Archive - ADQL queries for 5500+ confirmed exoplanets and stellar hosts

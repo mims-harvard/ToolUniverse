@@ -78,10 +78,10 @@ All tool interactions follow a uniform request format:
 .. code-block:: python
 
    {
-       "name": "Tool_identifier",
+       "name": "<tool_name>",
        "arguments": {
-           "parameter1": "value1",
-           "parameter2": "value2"
+           "<parameter1>": "<value1>",
+           "<parameter2>": "<value2>"
        }
    }
 
@@ -164,7 +164,7 @@ Find Tool Operation
    # Protocol returns relevant tools:
    tools_found = [
        "boltz2_docking",
-       "ADMETAI_predict_properties",
+       "ADMETAI_predict_physicochemical_properties",
        "ChEMBL_search_similar_molecules"
    ]
 
@@ -225,8 +225,8 @@ Machine Learning Models
 
    # ADMET property prediction
    {
-       "name": "ADMETAI_predict_admet_properties",
-       "arguments": {"smiles": "CCO", "properties": ["BBB_penetrance"]}
+       "name": "ADMETAI_predict_BBB_penetrance",
+       "arguments": {"smiles": ["CCO"]}
    }
 
 Database APIs
@@ -259,8 +259,8 @@ Scientific Software Packages
 
    # Analysis packages
    {
-       "name": "Enrichr_analyze_gene_list",
-       "arguments": {"genes": ["BRCA1", "BRCA2"], "library": "KEGG_2021_Human"}
+       "name": "Enrichr_enrich",
+       "arguments": {"gene_list": ["BRCA1", "BRCA2"], "library": "KEGG_2021_Human"}
    }
 
 AI Agents & Tools
@@ -270,8 +270,8 @@ AI Agents & Tools
 
    # Literature review agent
    {
-       "name": "conduct_literature_review_and_summarize",
-       "arguments": {"topic": "HMG-CoA reductase inhibitors"}
+       "name": "LiteratureSearchTool",
+       "arguments": {"research_topic": "HMG-CoA reductase inhibitors"}
    }
 
    # Hypothesis generation

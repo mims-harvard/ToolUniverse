@@ -363,6 +363,6 @@ class BindingDBTool(BaseTool):
             "error": (
                 "BindingDB search-by-target requires a UniProt accession "
                 "(e.g. 'P00533'). For free-text target name search, use "
-                "ChEMBL_search_target or PubChem BioAssay."
+                "ChEMBL_search_targets or PubChem BioAssay."
             ),
         }

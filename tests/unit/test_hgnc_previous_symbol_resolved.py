@@ -206,10 +206,30 @@ class TestPreviousSymbolResolves:
         assert result["status"] == "success"
         assert result["data"]["symbol"] == "UBE2V2"
         assert result["metadata"]["resolution_relation"] == "alias_symbol"
-        assert "alias symbol" in result["metadata"]["symbol_resolution_note"]
+        note = result["metadata"]["symbol_resolution_note"]
+        assert "alias symbol" in note
+        # Fix-R60-3: the note was templated as "a {relation}", so every alias
+        # hit -- the more common of the two relations -- read "a alias symbol".
+        assert "an alias symbol" in note
+        assert "a alias" not in note
         # prev_symbol is tried first: an official rename beats an informal alias.
         joined = " ".join(calls)
         assert joined.index("prev_symbol") < joined.index("alias_symbol")
+
+    def test_previous_symbol_note_keeps_its_own_article(self):
+        """The article helper must not regress the consonant-initial label."""
+        get, _ = _router(
+            {
+                "/fetch/symbol/CYP2E": _EMPTY,
+                "/fetch/prev_symbol/CYP2E": _hgnc(1, [_CYP2E1]),
+            }
+        )
+        with patch("tooluniverse.hgnc_tool.requests.get", side_effect=get):
+            result = _symbol_tool().run({"symbol": "CYP2E"})
+
+        note = result["metadata"]["symbol_resolution_note"]
+        assert "a previous symbol" in note
+        assert "an previous" not in note
 
 
 class TestDirectHitUnchanged:

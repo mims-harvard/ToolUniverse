@@ -312,7 +312,8 @@ class TestMCPProtocol:
         # Should succeed and show tools (or at least not crash)
         # Note: This might fail due to missing API keys, which is expected in test environment
         if result.returncode == 0:
-            assert "UniProt" in result.stdout or "ChEMBL" in result.stdout
+            assert "Available tools (for this server configuration):" in result.stdout
+            assert "tools available" in result.stdout
         else:
             # If it fails, it should be due to missing API keys, not a crash
             assert "API" in result.stderr or "key" in result.stderr.lower()

@@ -16,7 +16,7 @@
             "Male",
             "Female"
           ],
-          "description": "Filter by patient sex (optional)"
+          "description": "Optional. Restricts the FAERS adverse-event counts to one sex. Omit it to analyse all reports; supplying it roughly halves the denominator. Must be 'Male' or 'Female', not the FAERS-native numeric encoding."
         },
         "serious_events_only": {
           "type": "boolean",
@@ -25,8 +25,7 @@
         }
       },
       "required": [
-        "drug_name",
-        "patient_sex"
+        "drug_name"
       ]
     },
     "auto_load_dependencies": true,

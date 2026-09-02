@@ -68,9 +68,14 @@ def _run(tool, arguments, studies=None, total=None):
         # the query the tool actually executed for the caller.
         if not captured:
             captured.update(variables)
-        return payload
+        # Fix-R48: the search path now calls execute_RESTful_query_detailed,
+        # which returns (result, failure_reason) so an upstream failure can be
+        # told apart from a query that ran and matched nothing. None = ran fine.
+        return payload, None
 
-    with patch("tooluniverse.ctg_tool.execute_RESTful_query", side_effect=fake_query):
+    with patch(
+        "tooluniverse.ctg_tool.execute_RESTful_query_detailed", side_effect=fake_query
+    ):
         result = tool.run(dict(arguments))
     return captured, result
 

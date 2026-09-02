@@ -331,13 +331,22 @@ class UniProtRESTTool(BaseTool):
         2`` when the real total is 395446. Prefer the header, and keep the
         body/page-size fallbacks for any endpoint that does supply them.
         """
-        header = getattr(resp, "headers", {}).get("x-total-results")
+        header = UniProtRESTTool._header_total(resp)
         if header is not None:
-            try:
-                return int(header)
-            except (TypeError, ValueError):
-                pass
+            return header
         return data.get("resultsFound", len(results))
+
+    @staticmethod
+    def _header_total(resp):
+        """The ``x-total-results`` figure, or None when it is absent/unusable."""
+        try:
+            header = getattr(resp, "headers", {}).get("x-total-results")
+        except (AttributeError, TypeError):
+            return None
+        try:
+            return int(header)
+        except (TypeError, ValueError):
+            return None
 
     def _handle_search(self, arguments: Dict[str, Any]) -> Any:
         """Handle search queries with flexible parameters"""
@@ -538,6 +547,23 @@ class UniProtRESTTool(BaseTool):
             results_url = f"https://rest.uniprot.org/idmapping/results/{job_id}"
 
             raw_results = None
+            # UniProt pages ID-mapping results, reports the unpaged total in
+            # the `x-total-results` header, and lists unmappable inputs under
+            # `failedIds`. All three were ignored here, so P04637 -> PDB came
+            # back `mapped_count: 25, failed_ids: []` -- 25 being a page size
+            # against a real 295 -- and a typo'd accession vanished silently.
+            #
+            # Feature-26A-13 noted the status endpoint 303-redirects to a
+            # results page once the job finishes. Both figures are already on
+            # that response, so only rows beyond its short default page need
+            # a second request. Re-fetch through the URL the redirect landed
+            # on rather than the generic one: for `to_db=UniProtKB` the
+            # redirect targets /idmapping/uniprotkb/results/, which streams
+            # full entries, while /idmapping/results/ returns bare accession
+            # strings -- fetching the latter silently replaced each
+            # {accession, id, gene_name} object with a plain string.
+            total_results = None
+            failed_ids = []
             start_time = time.time()
             while time.time() - start_time < max_wait_time:
                 status_resp = requests.get(status_url, timeout=self.timeout)
@@ -545,15 +571,22 @@ class UniProtRESTTool(BaseTool):
 
                 job_status = status_data.get("jobStatus") or status_data.get("status")
 
-                if job_status == "FINISHED":
-                    # Explicit FINISHED status — fetch results separately
-                    results_resp = requests.get(results_url, timeout=self.timeout)
-                    raw_results = results_resp.json().get("results", [])
-                    break
-                elif "results" in status_data:
-                    # Feature-26A-13: UniProt status endpoint redirected (303) to
-                    # results page; results are embedded directly in status_data.
-                    raw_results = status_data["results"]
+                if job_status == "FINISHED" or "results" in status_data:
+                    resp, payload = status_resp, status_data
+                    carried = status_data.get("results")
+                    total = self._header_total(status_resp)
+                    if carried is None or total is None or total > len(carried):
+                        landed = str(getattr(status_resp, "url", "") or "")
+                        fetch_url = landed if "/results/" in landed else results_url
+                        page = requests.get(
+                            fetch_url, params={"size": 500}, timeout=self.timeout
+                        )
+                        page_payload = page.json()
+                        if "results" in page_payload:
+                            resp, payload = page, page_payload
+                    raw_results = payload.get("results", [])
+                    failed_ids = payload.get("failedIds") or []
+                    total_results = self._total_results(resp, payload, raw_results)
                     break
                 elif job_status in ("FAILED", "ERROR"):
                     return {
@@ -601,8 +634,19 @@ class UniProtRESTTool(BaseTool):
             result_data = {
                 "mapped_count": len(formatted_results),
                 "results": formatted_results,
-                "failed_ids": [],
+                "failed_ids": failed_ids,
+                "total_results": total_results,
             }
+            if total_results is not None and len(formatted_results) < total_results:
+                result_data["truncated"] = True
+                result_data["truncation_note"] = (
+                    f"Returned {len(formatted_results)} of {total_results} mappings "
+                    f"UniProt holds for these IDs. `mapped_count` counts the rows "
+                    f"below, not the matches; an identifier absent here may still "
+                    f"map. Narrow the request to fewer input IDs to see the rest."
+                )
+            else:
+                result_data["truncated"] = False
             return {"status": "success", "data": result_data}
 
         except requests.exceptions.Timeout:

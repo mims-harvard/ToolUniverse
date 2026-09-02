@@ -10,7 +10,7 @@ of reports, so the sum is the stratifiable subset, not the total.
 Verified live before the fix:
   FAERS_stratify_by_demographics {"drug": "ondansetron", "stratify_by": "age"}
     -> "total_reports": 25424, groups summing to exactly 25424
-  https://api.fda.gov/drug/event.json?search=...ondansetron...&limit=1
+  https://api.fda.gov/drug/event.json?search=...ondansetron...&limit=0
     -> meta.results.total = 136216
 A clinician reading `total_reports` would have understated the drug's report
 count more than fivefold.
@@ -70,12 +70,12 @@ class _Response:
 def _run(facet=None, total=TRUE_TOTAL, total_fails=False, **arguments):
     """Drive the tool with the facet request and the total request mocked."""
     facet_payload = {"results": AGE_FACET if facet is None else facet}
-    total_payload = {"meta": {"results": {"skip": 0, "limit": 1, "total": total}}}
+    total_payload = {"meta": {"results": {"skip": 0, "limit": 0, "total": total}}}
     seen_urls = []
 
     def fake_request(_module, _method, url, **_kwargs):
         seen_urls.append(url)
-        if "&limit=1" in url:
+        if "&limit=0" in url:
             if total_fails:
                 raise RuntimeError("openFDA 429 Too Many Requests")
             return _Response(total_payload)
@@ -132,8 +132,8 @@ def test_the_total_is_fetched_with_the_same_base_query_as_the_facet():
     _, urls = _run(stratify_by="age")
 
     facet_url = next(u for u in urls if "&count=" in u)
-    total_url = next(u for u in urls if "&limit=1" in u)
-    assert facet_url.split("&count=")[0] == total_url.split("&limit=1")[0]
+    total_url = next(u for u in urls if "&limit=0" in u)
+    assert facet_url.split("&count=")[0] == total_url.split("&limit=0")[0]
     assert "patient.patientagegroup" in facet_url
 
 

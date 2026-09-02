@@ -38,8 +38,9 @@ def main():
         ("EuropePMC_search_articles", {"query": query, "limit": 2}, "Europe PMC"),
         ("openalex_literature_search", {"search_keywords": query, "max_results": 2}, "OpenAlex"),
         ("Crossref_search_works", {"query": query, "limit": 2}, "Crossref"),
-        ("BioRxiv_search_preprints", {"query": query, "max_results": 2}, "BioRxiv"),
-        ("MedRxiv_search_preprints", {"query": query, "max_results": 2}, "MedRxiv"),
+        # bioRxiv/medRxiv have no keyword-search endpoint -- their APIs are
+        # DOI/date retrieval only. Europe PMC (above) indexes both; fetch full
+        # preprint metadata by DOI with BioRxiv_get_preprint / MedRxiv_get_preprint.
     ]
     
     # Test each tool

@@ -1,7 +1,7 @@
 """
 FDA_get_drug_names_by_boxed_warning
 
-Retrieve drug names that have specific boxed warnings and adverse effects.
+Find drugs whose FDA label carries a boxed warning matching a phrase you supply. IMPORTANT -- `wa...
 """
 
 from typing import Any, Optional, Callable
@@ -19,18 +19,18 @@ def FDA_get_drug_names_by_boxed_warning(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve drug names that have specific boxed warnings and adverse effects.
+    Find drugs whose FDA label carries a boxed warning matching a phrase you supply. IMPORTANT -- `wa...
 
     Parameters
     ----------
     warning_text : str
-        The text of the boxed warning to search for.
+        Phrase to find within the boxed_warning field, matched CONTIGUOUSLY and in or...
     indication : str
-        The indication or usage of the drug.
+        Optional additional phrase, matched the same contiguous way against indicatio...
     limit : int
-        The number of records to return.
+        Number of LABEL RECORDS to return (not distinct drugs).
     skip : int
-        The number of records to skip.
+        Number of label records to skip before this page. Deduplication runs per page...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

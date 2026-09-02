@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ChEMBL_search_documents(
-    document_id: Optional[str] = None,
+    document_chembl_id: Optional[str] = None,
     title__contains: Optional[str] = None,
     limit: Optional[int] = 20,
     offset: Optional[int] = 0,
@@ -23,8 +23,8 @@ def ChEMBL_search_documents(
 
     Parameters
     ----------
-    document_id : str
-        Filter by document ID
+    document_chembl_id : str
+        Filter by document ChEMBL ID (e.g. 'CHEMBL1158643'). This is the identifier /...
     title__contains : str
         Filter by document title (contains)
     limit : int
@@ -48,7 +48,7 @@ def ChEMBL_search_documents(
     _args = {
         k: v
         for k, v in {
-            "document_id": document_id,
+            "document_chembl_id": document_chembl_id,
             "title__contains": title__contains,
             "limit": limit,
             "offset": offset,

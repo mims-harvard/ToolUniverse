@@ -12,72 +12,56 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from src.tooluniverse import ToolUniverse
 
+def show_targets(result, limit):
+    if result and result.get("status") == "success":
+        data = result.get("data", [])
+        print(f"Found {len(data)} drug targets")
+
+        for i, target in enumerate(data[:limit], 1):
+            name = target.get("name", "Unknown")
+            target_id = target.get("targetId", "Unknown")
+            target_type = target.get("type", "Unknown")
+            print(f"   {i}. {name} ({target_type}) - ID {target_id}")
+    else:
+        print(f"Error: {result.get('error')}")
+
 def main():
     # Initialize ToolUniverse
     tu = ToolUniverse()
-    
+
     # Load tools first
     tu.load_tools()
-    
-    print("💊 GtoPdb Pharmacology Database Examples")
+
+    print("GtoPdb Pharmacology Database Examples")
     print("=" * 40)
-    
-    # Example 1: Query drug targets
-    print("\n1. Querying drug targets")
+
+    # Example 1: Search drug targets by name
+    print("\n1. Searching drug targets by name")
     print("-" * 25)
-    
-    result = tu.run({"name": "GtoPdb_get_targets", "arguments": {
-        "limit": 5
+
+    result = tu.run({"name": "GtoPdb_search_targets", "arguments": {
+        "name": "dopamine"
     }})
-    
-    if result and result.get("status") == "success":
-        data = result.get("data", [])
-        print(f"✅ Found {len(data)} drug targets")
-        
-        for i, target in enumerate(data[:3], 1):
-            name = target.get("name", "Unknown")
-            target_id = target.get("targetId", "Unknown")
-            print(f"   {i}. {name} (ID: {target_id})")
-    else:
-        print(f"❌ Error: {result.get('error')}")
-    
-    # Example 2: Query specific target types
-    print("\n2. Querying specific target types")
+    show_targets(result, 3)
+
+    # Example 2: Restrict the search to one target type
+    print("\n2. Restricting the search to one target type")
     print("-" * 30)
-    
-    result = tu.run({"name": "GtoPdb_get_targets", "arguments": {
-        "limit": 8
+
+    result = tu.run({"name": "GtoPdb_search_targets", "arguments": {
+        "name": "serotonin",
+        "type": "GPCR"
     }})
-    
-    if result and result.get("status") == "success":
-        data = result.get("data", [])
-        print(f"✅ Found {len(data)} drug targets")
-        
-        # Show different target types
-        for i, target in enumerate(data[:4], 1):
-            name = target.get("name", "Unknown")
-            target_id = target.get("targetId", "Unknown")
-            target_type = target.get("targetType", "Unknown")
-            print(f"   {i}. {name} ({target_type}) - {target_id}")
-    else:
-        print(f"❌ Error: {result.get('error')}")
-    
-    # Example 3: Query with different limits
-    print("\n3. Querying with different limits")
+    show_targets(result, 4)
+
+    # Example 3: Exact lookup by HGNC gene symbol
+    print("\n3. Exact lookup by gene symbol")
     print("-" * 30)
-    
-    result = tu.run({"name": "GtoPdb_get_targets", "arguments": {
-        "limit": 3
+
+    result = tu.run({"name": "GtoPdb_search_targets", "arguments": {
+        "gene_symbol": "HTR2A"
     }})
-    
-    if result and result.get("status") == "success":
-        data = result.get("data", [])
-        print(f"✅ Found {len(data)} drug targets")
-        
-        for i, target in enumerate(data, 1):
-            name = target.get("name", "Unknown")
-            target_id = target.get("targetId", "Unknown")
-            print(f"   {i}. {name} - {target_id}")
+    show_targets(result, 3)
 
 if __name__ == "__main__":
     main()

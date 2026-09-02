@@ -20,9 +20,9 @@ dependencies = [
     "pydantic>=2.11.0",
     "epam.indigo>=1.34.0",
     "networkx>=3.4.0",
-    "openai>=1.107.0",
+    # openai / google-genai are NOT here on purpose: they are optional extras
+    # (`tooluniverse[openai]`, `tooluniverse[gemini]`), both covered by [all].
     "pyyaml>=6.0.0",
-    "google-genai>=1.36.0",
     "mcp[cli]>=1.29.0,<2.0.0",
     "fastmcp>=3.4.5,<4.0.0",
     "xmltodict>=1.0.0",
@@ -47,13 +47,13 @@ dependencies = [
     "beautifulsoup4>=4.12.0",
     "python-dotenv>=1.0.0",
     # markitdown[all] (~32 MB: SpeechRecognition, youtube-transcript-api, pydub,
-    # azure-ai-documentintelligence). The [all] marker is deliberate: the
-    # convert_to_markdown tool takes an arbitrary http/https/file/data URI with no
-    # format allowlist, so every converter dropped here becomes a silent runtime
-    # failure for that input type. markitdown is also imported unconditionally at
-    # module scope by unified_guideline_tools.py, so it cannot move to an extra
-    # without guarding that import. Narrow only alongside those two changes.
-    "markitdown[all]>=0.1.0",
+    # azure-ai-documentintelligence). The broad converter set is deliberate: the
+    # convert_to_markdown tool accepts arbitrary supported resources. Upstream
+    # youtube-transcript-api currently declares Python <3.14, so Python 3.14+
+    # receives every MarkItDown converter except YouTube transcription. Keeping
+    # that one incompatible converter must not make the whole SDK inconsistent.
+    "markitdown[all]>=0.1.0; python_version < '3.14'",
+    "markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx]>=0.1.0; python_version >= '3.14'",
     "psutil>=5.9.0",
     "ddgs>=9.0.0",
     "pip>=25.3",
@@ -68,6 +68,22 @@ pdf = [
     # the aggregate `all` extra so default Apache-2.0 installations do not pull
     # it in implicitly.
     "pymupdf>=1.24.3",
+]
+# LLM provider SDKs. Both are imported lazily inside the client constructors in
+# llm_clients.py (AzureOpenAIClient, OpenAICompatibleClient, OpenRouterClient,
+# VLLMClient, GeminiClient) and in database_setup/embedder.py — never at module
+# scope — so tooluniverse imports and runs fine without them, and a constructor
+# reached without its extra raises a clear RuntimeError. Unlike `pdf` these ARE
+# in the aggregate `all` extra, so `tooluniverse[all]` keeps today's behavior.
+# They are separate extras rather than one combined group so that an
+# OpenAI-only user is not subjected to google-genai's `websockets` upper bound,
+# which is the constraint that can push a downstream universal resolver onto a
+# much older tooluniverse instead of reporting a conflict (issue #526).
+openai = [
+    "openai>=1.107.0",
+]
+gemini = [
+    "google-genai>=1.36.0",
 ]
 client = [
     "requests>=2.32.0",
@@ -93,6 +109,10 @@ dev = [
     "pytest-html>=3.0",
     "requests-mock>=1.12.1",
     "ruff>=0.14.5",
+    # tests/unit/test_gemini_client.py constructs a real google.genai Client, so
+    # the provider SDKs stay part of `[dev]` now that they left the base set.
+    # This keeps `pip install -e .[dev] && pytest` green, as CI runs exactly that.
+    "tooluniverse[openai,gemini]",
 ]
 docs = [
     "sphinx>=4.0",
@@ -151,7 +171,7 @@ bioinformatics = [
 ]
 # circuit: install manually with `pip install git+https://github.com/tooluniverse/circuit.git`
 all = [
-    "tooluniverse[dev,docs,graph,visualization,space,embedding,ml,bioinformatics]",
+    "tooluniverse[dev,docs,graph,visualization,space,embedding,ml,bioinformatics,openai,gemini]",
 ]
 build = [
     "pyinstaller>=6.0.0",
@@ -161,7 +181,7 @@ build = [
 Homepage = "https://github.com/mims-harvard/ToolUniverse"
 
 [project.scripts]
-tu = "tooluniverse.cli:main"
+tu = "tooluniverse_cli_entry:main"
 tooluniverse = "tooluniverse.smcp_server:run_default_stdio_server"
 tooluniverse-mcp = "tooluniverse.smcp_server:run_http_server"
 tooluniverse-smcp = "tooluniverse.smcp_server:run_smcp_server"
@@ -180,6 +200,9 @@ tu-datastore = "tooluniverse.database_setup.cli:main"
 # tooluniverse-wide-research = "tooluniverse.web_tools.literature_search_ui.simple_app:main"
 # Health Check Tool
 tooluniverse-doctor = "tooluniverse.doctor:main"
+
+[tool.setuptools]
+py-modules = ["tooluniverse_cli_entry"]
 
 [tool.setuptools.packages.find]
 where = ["src"]

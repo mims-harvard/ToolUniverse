@@ -20,7 +20,7 @@ def FAERS_search_reports_by_drug_and_reaction(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
     Search and retrieve detailed adverse event reports for a specific drug and reaction type. Returns...
 
@@ -49,7 +49,7 @@ def FAERS_search_reports_by_drug_and_reaction(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
