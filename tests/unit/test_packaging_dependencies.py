@@ -47,13 +47,6 @@ FORBIDDEN_DISTRIBUTIONS = {
     "fitz": "pymupdf",
 }
 
-# mcpb/pyproject.toml documents itself as a mirror of the root dependency list.
-# Anything intentionally left out of the bundle belongs here with a reason.
-KNOWN_MCPB_OMISSIONS = {
-    # Not currently bundled; tracked separately from the pymupdf migration.
-    "openpyxl",
-}
-
 # Dependencies the bundle declares on purpose that the root list leaves to an
 # extra. The bundle is a sealed Claude Desktop runtime: the end user cannot
 # install an extra into it, so anything optional upstream must be unconditional
@@ -131,11 +124,11 @@ def test_mcpb_dependencies_mirror_root():
     root = set(root_requirements)
     mcpb = set(mcpb_requirements)
 
-    missing = root - mcpb - KNOWN_MCPB_OMISSIONS
+    missing = root - mcpb
     assert not missing, (
         f"mcpb/pyproject.toml is missing dependencies present in the root "
-        f"pyproject.toml: {sorted(missing)}. Add them, or record them in "
-        f"KNOWN_MCPB_OMISSIONS with a reason."
+        f"pyproject.toml: {sorted(missing)}. Add them to the bundle dependency "
+        f"list."
     )
 
     extra = mcpb - root - KNOWN_MCPB_ADDITIONS
