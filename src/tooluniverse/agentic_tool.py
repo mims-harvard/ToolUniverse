@@ -14,6 +14,7 @@ from .llm_clients import (
     GeminiClient,
     OpenAICompatibleClient,
     OpenRouterClient,
+    OrcaRouterClient,
     VLLMClient,
 )
 
@@ -30,6 +31,7 @@ API_KEY_ENV_VARS = {
     "CHATGPT": ["AZURE_OPENAI_API_KEY", "AZURE_OPENAI_ENDPOINT"],
     "OPENAI": ["OPENAI_API_KEY"],
     "OPENROUTER": ["OPENROUTER_API_KEY"],
+    "ORCAROUTER": ["ORCAROUTER_API_KEY"],
     "GEMINI": ["GEMINI_API_KEY"],
     "VLLM": ["VLLM_SERVER_URL"],
 }
@@ -316,6 +318,8 @@ class AgenticTool(BaseTool):
                 self._llm_client = OpenAICompatibleClient(model_id, self.logger)
             elif api_type == "OPENROUTER":
                 self._llm_client = OpenRouterClient(model_id, self.logger)
+            elif api_type == "ORCAROUTER":
+                self._llm_client = OrcaRouterClient(model_id, self.logger)
             elif api_type == "GEMINI":
                 self._llm_client = GeminiClient(model_id, self.logger)
             elif api_type == "VLLM":
@@ -357,7 +361,7 @@ class AgenticTool(BaseTool):
 
     # ------------------------------------------------------------------ LLM utilities -----------
     def _validate_model_config(self):
-        supported_api_types = ["CHATGPT", "OPENAI", "OPENROUTER", "GEMINI", "VLLM"]
+        supported_api_types = ["CHATGPT", "OPENAI", "OPENROUTER", "ORCAROUTER", "GEMINI", "VLLM"]
         if self._api_type not in supported_api_types:
             raise ValueError(
                 f"Unsupported API type: {self._api_type}. Supported types: {supported_api_types}"
@@ -664,6 +668,8 @@ class AgenticTool(BaseTool):
                 self._llm_client = OpenAICompatibleClient(self._model_id, self.logger)
             elif self._api_type == "OPENROUTER":
                 self._llm_client = OpenRouterClient(self._model_id, self.logger)
+            elif self._api_type == "ORCAROUTER":
+                self._llm_client = OrcaRouterClient(self._model_id, self.logger)
             elif self._api_type == "GEMINI":
                 self._llm_client = GeminiClient(self._gemini_model_id, self.logger)
             elif self._api_type == "VLLM":
