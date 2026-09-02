@@ -2183,41 +2183,52 @@ Returns:
                 destructiveHint=annotations_dict.get("destructiveHint"),
             )
 
-            # Register with FastMCP using exposed_name for MCP, but tool execution uses original tool_name
-            registered_tool = self.tool(
-                description=description, annotations=tool_annotations
-            )(
-                dynamic_tool_function
-            )
-            if self.strict_input_schemas:
-                # FastMCP derives discovery metadata from the Python signature.
-                # Preserve the reviewed provider contract verbatim so omitted
-                # optional fields are not incorrectly advertised as nullable
-                # and bounds/enums remain visible to TOU clients.
-                # FunctionTool is a Pydantic model whose normal assignment path
-                # re-normalizes the schema and reintroduces nullable/default
-                # metadata. Bypass that normalization after construction; the
-                # callable's strict signature remains the runtime validator.
-                strict_parameters = copy.deepcopy(parameters)
-                object.__setattr__(
-                    registered_tool, "parameters", strict_parameters
+            if tool_config.get("mcp_schema_mode") == "passthrough":
+                from .mcp_schema_adapter import register_schema_passthrough_tool
+
+                register_schema_passthrough_tool(
+                    self,
+                    name=exposed_name,
+                    description=description,
+                    parameters=parameters,
+                    annotations=tool_annotations,
+                    fn=dynamic_tool_function,
                 )
-                # FastMCP 3 stores a validated copy in its local provider.
-                # Update that copy as well; get_tool()/tools/list read it.
-                local_provider = getattr(self, "_local_provider", None)
-                components = getattr(local_provider, "_components", {})
-                stored_tools = [
-                    component
-                    for component in components.values()
-                    if getattr(component, "name", None) == exposed_name
-                    and hasattr(component, "parameters")
-                ]
-                for stored_tool in stored_tools:
+            else:
+                # Register with FastMCP using exposed_name for MCP, but tool
+                # execution uses original tool_name.
+                registered_tool = self.tool(
+                    description=description, annotations=tool_annotations
+                )(dynamic_tool_function)
+                if self.strict_input_schemas:
+                    # FastMCP derives discovery metadata from the Python signature.
+                    # Preserve the reviewed provider contract verbatim so omitted
+                    # optional fields are not incorrectly advertised as nullable
+                    # and bounds/enums remain visible to TOU clients.
+                    # FunctionTool is a Pydantic model whose normal assignment path
+                    # re-normalizes the schema and reintroduces nullable/default
+                    # metadata. Bypass that normalization after construction; the
+                    # callable's strict signature remains the runtime validator.
+                    strict_parameters = copy.deepcopy(parameters)
                     object.__setattr__(
-                        stored_tool,
-                        "parameters",
-                        copy.deepcopy(strict_parameters),
+                        registered_tool, "parameters", strict_parameters
                     )
+                    # FastMCP 3 stores a validated copy in its local provider.
+                    # Update that copy as well; get_tool()/tools/list read it.
+                    local_provider = getattr(self, "_local_provider", None)
+                    components = getattr(local_provider, "_components", {})
+                    stored_tools = [
+                        component
+                        for component in components.values()
+                        if getattr(component, "name", None) == exposed_name
+                        and hasattr(component, "parameters")
+                    ]
+                    for stored_tool in stored_tools:
+                        object.__setattr__(
+                            stored_tool,
+                            "parameters",
+                            copy.deepcopy(strict_parameters),
+                        )
 
         except Exception as e:
             self.logger.error(f"Error creating MCP tool from config: {e}")
