@@ -169,6 +169,84 @@ def test_mcpb_dependencies_mirror_root():
     )
 
 
+def _markitdown_requirements():
+    """Every declared markitdown requirement, keyed by the file that declares it."""
+    found = {}
+    for pyproject in (ROOT_PYPROJECT, MCPB_PYPROJECT):
+        for requirement in _load_dependencies(pyproject):
+            if _distribution_name(requirement) == "markitdown":
+                found.setdefault(pyproject, []).append(requirement)
+    return found
+
+
+def test_markitdown_extras_do_not_cap_supported_python():
+    """MarkItDown must be requested by converter extra, never through `all`.
+
+    `markitdown[all]` pins ``youtube-transcript-api~=1.0.0``, and every 1.0.x
+    release of that project declares ``Requires-Python <3.14``. Because the
+    requirement is unconditional, that cap propagated to tooluniverse and made
+    it uninstallable on Python 3.14 without a downstream override (issue #527).
+    MarkItDown's own ``youtube-transcription`` extra leaves the dependency
+    unpinned, so 1.2.3+ (``Requires-Python <3.15``) resolves instead.
+
+    Naming the extras also keeps installs on current MarkItDown: since 0.1.6 the
+    `all` extra requires ``azure-ai-contentunderstanding>=1.2.0b1``, which has no
+    stable release, so a default resolver silently backtracks `markitdown[all]`
+    to 0.1.5.
+    """
+    declared = _markitdown_requirements()
+    assert declared, "no markitdown requirement is declared any more"
+
+    for pyproject, requirements in declared.items():
+        location = pyproject.relative_to(REPO_ROOT)
+        for requirement in requirements:
+            extras = re.search(r"\[([^\]]*)\]", requirement)
+            assert extras, (
+                f"{location}: markitdown must request converter extras: {requirement}"
+            )
+            names = {extra.strip() for extra in extras.group(1).split(",")}
+
+            assert "all" not in names, (
+                f"{location} requests `markitdown[all]`, which pins "
+                f"youtube-transcript-api~=1.0.0 (Requires-Python <3.14) and caps "
+                f"the Python versions tooluniverse can be installed on. List the "
+                f"converter extras individually instead (issue #527)."
+            )
+            assert "youtube-transcription" in names, (
+                f"{location} drops MarkItDown's `youtube-transcription` extra, so "
+                f"YouTube transcription silently stops working. Keep the extra: it "
+                f"leaves youtube-transcript-api unpinned, which is what lifts the "
+                f"Python cap."
+            )
+            assert "az-content-understanding" not in names, (
+                f"{location} requests `az-content-understanding`, whose "
+                f"azure-ai-contentunderstanding>=1.2.0b1 dependency has no stable "
+                f"release; the requirement becomes unresolvable. Add it back only "
+                f"once that project ships a final version."
+            )
+
+
+def test_markitdown_requirement_is_unconditional():
+    """One requirement, no environment markers, in both dependency lists.
+
+    The Python-version split that worked around issue #527 left the bundle with
+    a dead branch (it caps itself at Python <3.14) and hid a real drift risk:
+    `test_mcpb_dependencies_mirror_root` keys requirements by distribution name,
+    so only the last of two `markitdown` lines was ever compared.
+    """
+    for pyproject, requirements in _markitdown_requirements().items():
+        location = pyproject.relative_to(REPO_ROOT)
+        assert len(requirements) == 1, (
+            f"{location} declares markitdown {len(requirements)} times: "
+            f"{requirements}. A single unconditional requirement now covers every "
+            f"supported Python version."
+        )
+        assert ";" not in requirements[0], (
+            f"{location} still guards markitdown with an environment marker: "
+            f"{requirements[0]}."
+        )
+
+
 def test_release_versions_move_together():
     """A release must bump the package, the bundle, the manifest, and the lock.
 

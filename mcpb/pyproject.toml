@@ -51,10 +51,11 @@ dependencies = [
     "aiohttp",
     "beautifulsoup4>=4.12.0",
     "python-dotenv>=1.0.0",
-    # Keep the bundle aligned with the root package: YouTube transcription does
-    # not support Python 3.14 yet, so retain every other converter there.
-    "markitdown[all]>=0.1.0; python_version < '3.14'",
-    "markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx]>=0.1.0; python_version >= '3.14'",
+    # Named converter extras rather than `all`, mirroring the root package: the
+    # `all` extra pins youtube-transcript-api~=1.0.0 (Requires-Python <3.14) and
+    # pulls a prerelease-only Azure dependency. See the root pyproject.toml
+    # comment and issue #527.
+    "markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx,youtube-transcription]>=0.1.0",
     "psutil>=5.9.0",
     "ddgs>=9.0.0",
     "pip>=25.3",
