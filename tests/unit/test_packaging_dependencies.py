@@ -22,8 +22,10 @@ the root one, and keep every version marker moving together so a fix actually
 reaches PyPI.
 """
 
+import ast
 import json
 import re
+import sys
 from importlib.metadata import packages_distributions
 from pathlib import Path
 
@@ -46,6 +48,13 @@ SRC_ROOT = REPO_ROOT / "src" / "tooluniverse"
 FORBIDDEN_DISTRIBUTIONS = {
     "fitz": "pymupdf",
 }
+
+# `src/tooluniverse/remote/` holds provider-side services that are deployed
+# separately, each with its own dependency manifest. Their heavy imports (torch,
+# scanpy, tensorflow, easyocr, ...) are deliberately absent from the SDK's
+# dependency list, so the module-scope import audit below stops at that boundary.
+# Undeclared imports inside those services are tracked in issue #521 instead.
+SEPARATELY_DEPLOYED = "remote"
 
 # Dependencies the bundle declares on purpose that the root list leaves to an
 # extra. The bundle is a sealed Claude Desktop runtime: the end user cannot
@@ -72,6 +81,17 @@ def _distribution_name(requirement):
     """Extract the normalized distribution name from a PEP 508 requirement."""
     name = re.split(r"[<>=!~\[;\s]", requirement.strip(), maxsplit=1)[0]
     return name.lower().replace("_", "-")
+
+
+def _canonical(name):
+    """PEP 503 name normalization.
+
+    `_distribution_name` leaves dots alone, which is fine while it only ever
+    compares requirement strings with each other. Comparing against
+    `packages_distributions()` needs the real rule, or the declared
+    `epam.indigo` never matches the installed `epam-indigo`.
+    """
+    return re.sub(r"[-_.]+", "-", _distribution_name(name))
 
 
 def _names(pyproject_path):
@@ -245,6 +265,75 @@ def test_markitdown_requirement_is_unconditional():
             f"{location} still guards markitdown with an environment marker: "
             f"{requirements[0]}."
         )
+
+
+def _module_scope_imports(path):
+    """Top-level import statements only.
+
+    Imports nested in a try/except or an `if` are already guarded by the module
+    itself and are not the pattern this audit is looking for.
+    """
+    try:
+        tree = ast.parse(path.read_text(encoding="utf-8", errors="ignore"))
+    except SyntaxError:  # pragma: no cover - generated sources are valid
+        return
+    for node in tree.body:
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                yield alias.name.split(".")[0], node.lineno
+        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+            yield node.module.split(".")[0], node.lineno
+
+
+def test_core_module_scope_imports_come_from_declared_distributions():
+    """A module the SDK imports at import time must be a dependency we declare.
+
+    `websockets` and `urllib3` both used to fail this. `websockets` reached
+    installs only through fastmcp's `fastmcp-slim[server]` extra, so an upstream
+    reshuffle would have broken `mcp_client_tool` with no local change;
+    `urllib3` rode in on requests. Relying on another package's dependency is
+    how `PIL` stayed invisible in the USPTO downloader until issue #521.
+    """
+    declared = {
+        _canonical(requirement) for requirement in _load_dependencies(ROOT_PYPROJECT)
+    }
+    declared |= {
+        _canonical(requirement)
+        for requirements in _load_pyproject(ROOT_PYPROJECT)[
+            "optional-dependencies"
+        ].values()
+        for requirement in requirements
+    }
+    providers = packages_distributions()
+    first_party = {"tooluniverse"} | {
+        path.stem for path in (REPO_ROOT / "src").iterdir()
+    }
+
+    offenders = []
+    for path in sorted(SRC_ROOT.rglob("*.py")):
+        if SEPARATELY_DEPLOYED in path.relative_to(SRC_ROOT).parts:
+            continue
+        for module, lineno in _module_scope_imports(path):
+            if module in sys.stdlib_module_names or module in first_party:
+                continue
+            # A distribution may publish a module under its own name (`requests`)
+            # or under another one (`pyyaml` -> `yaml`), and a metapackage
+            # publishes neither itself (`fastmcp` -> `fastmcp-slim`). Accept any
+            # of those spellings.
+            candidates = {_canonical(module)}
+            candidates |= {_canonical(dist) for dist in providers.get(module, [])}
+            if candidates & declared:
+                continue
+            offenders.append(
+                f"{path.relative_to(REPO_ROOT)}:{lineno}: `{module}` "
+                f"(installed from {sorted(providers.get(module, [])) or 'nothing'})"
+            )
+
+    assert not offenders, (
+        "These modules are imported at module scope in the core package but no "
+        "declared dependency provides them, so they only work while some other "
+        "package happens to pull them in:\n" + "\n".join(offenders)
+    )
 
 
 def test_release_versions_move_together():

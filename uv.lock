@@ -6273,7 +6273,9 @@ dependencies = [
     { name = "scipy" },
     { name = "setuptools" },
     { name = "sympy" },
+    { name = "urllib3" },
     { name = "uvicorn" },
+    { name = "websockets" },
     { name = "xmltodict" },
 ]
 
@@ -6521,7 +6523,9 @@ requires-dist = [
     { name = "tiledbsoma", marker = "extra == 'singlecell'", specifier = ">=1.15.3" },
     { name = "tooluniverse", extras = ["dev", "docs", "graph", "visualization", "space", "embedding", "ml", "bioinformatics", "openai", "gemini"], marker = "extra == 'all'", editable = "." },
     { name = "tooluniverse", extras = ["openai", "gemini"], marker = "extra == 'dev'", editable = "." },
+    { name = "urllib3", specifier = ">=1.26" },
     { name = "uvicorn", specifier = ">=0.36.0" },
+    { name = "websockets", specifier = ">=13.0" },
     { name = "werkzeug", marker = "extra == 'graph'", specifier = ">=2.0.0" },
     { name = "xmltodict", specifier = ">=1.0.0" },
 ]

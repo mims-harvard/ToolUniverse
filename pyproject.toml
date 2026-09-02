@@ -29,6 +29,18 @@ dependencies = [
     "huggingface_hub>=0.34.0",
     "jsonpath-ng>=1.6.0",
     "rcsb-api>=1.4.0",
+    # Imported at module scope by mcp_client_tool.py for the websocket
+    # transport. It reached installs only as a transitive of fastmcp's
+    # `fastmcp-slim[server]` extra, so a reshuffle upstream would have broken
+    # the client with no local change. No upper bound on purpose: the
+    # google-genai cap is what pushes downstream resolvers onto stale
+    # tooluniverse releases (issue #526), and that stays inside its extra.
+    "websockets>=13.0",
+    # `from urllib3.util.retry import Retry` in uspto_tool.py and
+    # `urllib3.disable_warnings` in euhealth/euhealth_live.py. requests already
+    # requires urllib3>=1.26,<3, so this adds no new constraint; it just stops
+    # a direct import from depending on another package's dependency.
+    "urllib3>=1.26",
     # Imported by dose_response, survival, nca, drug_synergy, metaboanalyst,
     # timer and two remote tools. It was previously reaching installs only as a
     # transitive of that `fitz` placeholder (which required nibabel, nipype,
