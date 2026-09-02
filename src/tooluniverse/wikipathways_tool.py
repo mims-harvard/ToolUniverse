@@ -86,6 +86,15 @@ class WikiPathwaysSearchTool:
         organism = arguments.get("organism")
         limit = int(arguments.get("limit", 20))
 
+        # Fix-11B-2: pathway titles in WikiPathways are typically unhyphenated
+        # gene/protein shorthand ("IL4 signaling"), but researchers naturally
+        # type the hyphenated form ("IL-4 signaling") -- confirmed live this
+        # returned zero results even though the pathway exists (WP395).
+        # Stripping hyphens from both sides of the CONTAINS comparison keeps
+        # the plain-substring search simple while absorbing this common
+        # notation mismatch.
+        query_norm = query.replace("-", "")
+
         organism_filter = (
             f'  FILTER(LCASE(STR(?organism)) = "{organism.lower()}")'
             if organism
@@ -98,7 +107,7 @@ SELECT DISTINCT ?pathway ?title ?organism WHERE {{
   ?pathway a wp:Pathway ;
            dc:title ?title ;
            wp:organismName ?organism .
-  FILTER(CONTAINS(LCASE(?title), "{query}"))
+  FILTER(CONTAINS(REPLACE(LCASE(?title), "-", ""), "{query_norm}"))
 {organism_filter}
 }} LIMIT {limit}
 """

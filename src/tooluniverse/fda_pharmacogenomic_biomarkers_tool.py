@@ -65,12 +65,12 @@ class FDAPharmacogenomicBiomarkersTool(BaseTool):
             # Apply limit
             limited_results = filtered_results[:limit]
 
-            return {
-                "status": "success",
+            payload = {
                 "count": len(filtered_results),
                 "shown": len(limited_results),
                 "results": limited_results,
             }
+            return {"status": "success", **payload, "data": payload}
 
         except Exception as e:
             return {

@@ -30,12 +30,23 @@ resources for cell-cell communication inference from single-cell RNA-Seq data."
 Nature Communications 13, 3224 (2022).
 """
 
+import json
 from typing import Any, Dict
 
 import scanpy as sc
 import liana as li
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_argument_validation import (
+    bounded_integer,
+    bounded_number,
+    bounded_text,
+    require_argument_object,
+)
+from tooluniverse.remote_data_path import load_remote_h5ad
+
+
+_MAX_CLUSTERS = 128
 
 
 @register_mcp_tool(
@@ -53,18 +64,24 @@ from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
             "properties": {
                 "adata_path": {
                     "type": "string",
-                    "description": "Server-accessible path or URL to an .h5ad AnnData of LOG1P-NORMALIZED expression.",
+                    "description": "An .h5ad file of log1p-normalized expression inside the provider-configured data directory.",
                 },
                 "cluster_key": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
                     "description": "obs column holding the cell-type / cluster labels to compute interactions between.",
                 },
                 "top_n": {
                     "type": "integer",
+                    "minimum": 1,
+                    "maximum": 200,
                     "description": "Number of top interactions to return, ranked by specificity then magnitude (default 50).",
                 },
                 "expr_prop": {
                     "type": "number",
+                    "minimum": 0,
+                    "maximum": 1,
                     "description": "Minimum fraction of cells in a group expressing a gene for it to be considered (default 0.1).",
                 },
             },
@@ -82,27 +99,45 @@ class LianaCellPhoneDBTool:
     """Run LIANA's CellPhoneDB method and return top ligand-receptor interactions."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        try:
+            arguments = require_argument_object(arguments)
+        except ValueError as exc:
+            return {"error": str(exc)}
         adata_path = arguments.get("adata_path")
         cluster_key = arguments.get("cluster_key")
         if not (adata_path and cluster_key):
             return {"error": "Missing required parameter(s): adata_path, cluster_key"}
-        top_n = arguments.get("top_n")
-        top_n = 50 if top_n is None else int(top_n)
-        expr_prop = arguments.get("expr_prop")
-        expr_prop = 0.1 if expr_prop is None else float(expr_prop)
+        try:
+            cluster_key = bounded_text(cluster_key, "cluster_key")
+            top_n = bounded_integer(
+                arguments.get("top_n"),
+                "top_n",
+                default=50,
+                minimum=1,
+                maximum=200,
+            )
+            expr_prop = bounded_number(
+                arguments.get("expr_prop"),
+                "expr_prop",
+                default=0.1,
+                minimum=0,
+                maximum=1,
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
 
         try:
-            adata = sc.read_h5ad(adata_path)
+            adata = load_remote_h5ad(adata_path, sc.read_h5ad)
         except Exception as exc:  # noqa: BLE001
-            return {"error": f"Failed to load AnnData from {adata_path}: {exc}"}
+            return {"error": f"Invalid adata_path: {exc}"}
 
         if cluster_key not in adata.obs.columns:
-            return {
-                "error": (
-                    f"cluster_key '{cluster_key}' not found in adata.obs. "
-                    f"Available columns: {list(adata.obs.columns)}"
-                )
-            }
+            return {"error": "cluster_key was not found in adata.obs."}
+        clusters = adata.obs[cluster_key].astype(str).unique().tolist()
+        if len(clusters) < 2 or len(clusters) > _MAX_CLUSTERS:
+            return {"error": f"cluster_key must contain between 2 and {_MAX_CLUSTERS} clusters."}
+        if any(not cluster or len(cluster) > 128 for cluster in clusters):
+            return {"error": "cluster_key contains an invalid cluster label."}
 
         try:
             li.mt.cellphonedb(
@@ -112,8 +147,8 @@ class LianaCellPhoneDBTool:
                 use_raw=False,
                 verbose=False,
             )
-        except Exception as exc:  # noqa: BLE001
-            return {"error": f"LIANA CellPhoneDB run failed: {exc}"}
+        except Exception:  # noqa: BLE001
+            return {"error": "LIANA CellPhoneDB failed on the provider."}
 
         res = adata.uns.get("liana_res")
         if res is None or len(res) == 0:
@@ -141,11 +176,9 @@ class LianaCellPhoneDBTool:
             )
             if c in res.columns
         ]
-        records = (
-            res[keep].to_dict(orient="records")
-            if keep
-            else res.to_dict(orient="records")
-        )
+        if not keep:
+            return {"error": "LIANA output did not contain recognized result columns."}
+        records = json.loads(res[keep].to_json(orient="records"))
 
         return {
             "method": "LIANA-CellPhoneDB",

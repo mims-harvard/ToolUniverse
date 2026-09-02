@@ -8,7 +8,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_sequence"
+          "const": "get_sequence",
+          "default": "get_sequence"
         },
         "accession": {
           "type": "string",
@@ -44,7 +45,10 @@
         "accession": "M12950",
         "format": "fasta"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_sequence"
+    }
   },
   {
     "name": "IMGT_get_germline_gene_fasta",
@@ -55,7 +59,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_germline_fasta"
+          "const": "get_germline_fasta",
+          "default": "get_germline_fasta"
         },
         "gene_type": {
           "type": "string",
@@ -133,7 +138,10 @@
         "gene_type": "TRBV",
         "species": "Homo sapiens"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_germline_fasta"
+    }
   },
   {
     "name": "IMGT_search_genes",
@@ -144,7 +152,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "search_genes"
+          "const": "search_genes",
+          "default": "search_genes"
         },
         "query": {
           "type": "string",
@@ -178,7 +187,10 @@
         "gene_type": "IGHV",
         "species": "Homo sapiens"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_genes"
+    }
   },
   {
     "name": "IMGT_get_gene_info",
@@ -189,7 +201,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_gene_info"
+          "const": "get_gene_info",
+          "default": "get_gene_info"
         }
       },
       "required": []
@@ -207,6 +220,9 @@
     },
     "test_examples": [
       {}
-    ]
+    ],
+    "fields": {
+      "operation": "get_gene_info"
+    }
   }
 ]

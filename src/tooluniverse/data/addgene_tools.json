@@ -11,7 +11,8 @@
           "enum": [
             "search_plasmids"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_plasmids"
         },
         "query": {
           "type": "string",
@@ -38,7 +39,6 @@
         }
       },
       "required": [
-        "operation",
         "query"
       ]
     },
@@ -129,6 +129,9 @@
         "purpose": "Look up plasmids and deposited constructs from the Addgene repository.",
         "without": "Addgene tools are blocked without it."
       }
+    },
+    "fields": {
+      "operation": "search_plasmids"
     }
   },
   {
@@ -143,7 +146,8 @@
           "enum": [
             "get_plasmid"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_plasmid"
         },
         "plasmid_id": {
           "type": "integer",
@@ -151,7 +155,6 @@
         }
       },
       "required": [
-        "operation",
         "plasmid_id"
       ]
     },
@@ -230,7 +233,10 @@
     ],
     "required_api_keys": [
       "ADDGENE_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_plasmid"
+    }
   },
   {
     "name": "Addgene_search_depositors",
@@ -244,7 +250,8 @@
           "enum": [
             "search_depositors"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_depositors"
         },
         "name": {
           "type": [
@@ -261,9 +268,7 @@
           "description": "Institution name to search (e.g., 'MIT', 'Broad Institute')"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -324,6 +329,9 @@
     ],
     "required_api_keys": [
       "ADDGENE_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "search_depositors"
+    }
   }
 ]

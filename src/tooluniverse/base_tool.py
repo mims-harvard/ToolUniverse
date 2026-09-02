@@ -16,6 +16,69 @@ import hashlib
 import inspect
 
 
+def request_url(sent: Any, endpoint: str) -> str:
+    """The URI actually sent, falling back to ``endpoint``.
+
+    A tool that puts its query in ``params=`` and then echoes the endpoint
+    constant publishes a URL identical for every call, which no caller can
+    replay -- so echo what the HTTP layer resolved instead. ``sent`` is a
+    Response or a PreparedRequest; both carry ``.url``. Stubbed responses in
+    tests carry a non-string there, which must never reach the payload.
+    """
+    resolved = getattr(sent, "url", None)
+    return resolved if isinstance(resolved, str) and resolved else endpoint
+
+
+def resolve_configured_operation(tool_config: Any) -> Optional[str]:
+    """Return the ``operation`` a tool's own config implies, if any.
+
+    Many multi-operation tool classes are registered once per operation and
+    still read ``arguments["operation"]``, so ToolUniverse fills that key in
+    from the tool's own config (``fields.operation``, else the schema default)
+    before the tool runs -- see
+    ``ToolUniverse._apply_operation_default``. Both the injection and the
+    validation-side recognition of the injected key resolve the value through
+    this single function, so the two cannot drift apart.
+    """
+    if not isinstance(tool_config, dict):
+        return None
+    operation = (tool_config.get("fields") or {}).get("operation")
+    if not operation:
+        schema = tool_config.get("parameter") or {}
+        prop = (schema.get("properties") or {}).get("operation")
+        if isinstance(prop, dict):
+            operation = prop.get("default")
+    return operation if isinstance(operation, str) and operation else None
+
+
+def null_result_error(tool_name: Any) -> Dict[str, Any]:
+    """The response for a tool that returned ``None``.
+
+    Fix-47-4: there is no tool for which ``None`` is a valid answer, but the
+    dispatch wrappers used to fall back on a generic ``{"result": <value>}``
+    envelope, so a ``None`` became ``{"result": None}`` -- a dict carrying
+    neither ``status`` nor ``error``, which the CLI prints as
+    ``{"result": null}`` and exits 0 on. Every one of those was a failed call
+    presented as a successful empty answer: for the openFDA label family
+    (157 tools) ``{"result": null}`` in reply to a boxed-warning question
+    reads as "this drug has no boxed warning".
+
+    The openFDA path that produced most of them is fixed at source in
+    ``openfda_tool.search_openfda``, but a ``None`` from ANY tool reaches the
+    caller through these wrappers, so the invariant is stated once here and
+    applied by each of them rather than re-worded per call site.
+    """
+    return {
+        "status": "error",
+        "error": (
+            f"Tool '{tool_name}' returned no result. This is a failure of the "
+            "call, not an answer: it does not mean the query matched nothing, "
+            "and no conclusion may be drawn from it. Retry, and if it "
+            "persists report the tool name and arguments."
+        ),
+    }
+
+
 class BaseTool:
     STATIC_CACHE_VERSION = "1"
 
@@ -233,6 +296,34 @@ class BaseTool:
         )
         return norm_to_key[match[0]] if match else None
 
+    @classmethod
+    def _best_property_match(
+        cls, supplied_key: str, unset_props: list
+    ) -> Optional[str]:
+        """The inverse of ``_find_misspelled_key``: given one supplied key
+        that isn't a schema property, find which *unset* property it was
+        probably meant to be. Used when there are few unknown keys but many
+        optional schema properties (a filter-heavy search endpoint), so the
+        fuzzy match runs once per supplied key instead of once per schema
+        property."""
+        if not unset_props:
+            return None
+        target = supplied_key.lower()
+        for prop in unset_props:
+            if prop.lower() == target:
+                return prop
+        target_norm = cls._normalize_key(supplied_key)
+        for prop in unset_props:
+            if cls._normalize_key(prop) == target_norm:
+                return prop
+        import difflib
+
+        norm_to_prop = {cls._normalize_key(p): p for p in unset_props}
+        match = difflib.get_close_matches(
+            target_norm, list(norm_to_prop), n=1, cutoff=0.8
+        )
+        return norm_to_prop[match[0]] if match else None
+
     def validate_parameters(self, arguments: Dict[str, Any]) -> Optional[ToolError]:
         """
         Validate parameters against tool schema.
@@ -267,7 +358,108 @@ class BaseTool:
                 k: v for k, v in arguments.items() if k not in internal_params
             }
 
+            # Feature-26A-8: ToolUniverse fills `operation` into `arguments`
+            # from the tool's own config before validation, for the tool
+            # classes that read it from there. The caller never sent it, so
+            # the unrecognized-parameter reporting below must not see it:
+            # `Pharos_get_target_expression {"target": "EGFR"}` was answered
+            # with "Unrecognized parameter(s): 'target', 'operation'", naming a
+            # parameter the caller did not pass and could not remove. Drop the
+            # key only when its value is exactly what the config would have
+            # supplied -- a caller-supplied `operation` that says anything else
+            # is a genuine mistake and stays in the report. Dropping it from
+            # `checked_arguments` (not just from the message) also keeps the
+            # total-mismatch guard honest in both directions: the injected key
+            # must not pad the "recognized" side for the 348 configs that do
+            # declare `operation`, nor pad the "unknown" side for the 235 that
+            # do not. jsonschema itself still sees the full argument set.
+            #
+            # Feature-34A-1: this must be computed *before* the
+            # `jsonschema.validate` call below, not after it. The caller-blame
+            # reporting in the `except jsonschema.ValidationError` handler
+            # needs `checked_arguments` too, and that handler runs precisely
+            # when `validate` raised -- so a binding created after the call
+            # would not exist there, and the handler fell back to the raw
+            # `filtered_arguments`, re-introducing the exact blame this drop
+            # exists to prevent: `ARCHS4_get_gene_expression
+            # {"gene_symbol": "ATM"}` was answered with "'gene' is a required
+            # property (unrecognized parameter(s): 'gene_symbol',
+            # 'operation')". Keep passing the *full* `filtered_arguments` to
+            # `jsonschema.validate` itself -- only the blame reporting uses
+            # the filtered view, so no accept/reject outcome changes.
+            checked_arguments = filtered_arguments
+            auto_operation = resolve_configured_operation(self.tool_config)
+            if auto_operation and filtered_arguments.get("operation") == auto_operation:
+                checked_arguments = {
+                    k: v for k, v in filtered_arguments.items() if k != "operation"
+                }
+
             jsonschema.validate(filtered_arguments, schema)
+
+            # Feature-14A-01 / Feature-14B-01: jsonschema only rejects an
+            # unknown key when it causes a *required* property to end up
+            # missing. A tool whose schema has no required properties (a
+            # common "all filters optional" search endpoint) silently drops
+            # a misnamed parameter and falls back to its unfiltered default
+            # result -- which still looks like a relevant "success"
+            # response. Confirmed live two ways:
+            #  - ChEMBL_search_drugs({"drug_name": "baricitinib"}) returned
+            #    status=success with 20 unrelated drugs (its default page)
+            #    because the schema's only search parameter is "query", not
+            #    "drug_name" -- every supplied key was unrecognized.
+            #  - OpenTargets_get_evidence_by_datasource({"efoId": ...,
+            #    "ensemblId": ..., "datasourceId": "bogus"}) silently
+            #    ignored the singular "datasourceId" (real param is plural
+            #    "datasourceIds") and returned unfiltered evidence rows,
+            #    even though efoId/ensemblId were valid and recognized.
+            # Two checks, in order of confidence:
+            #  1. A near-miss of an *unset* schema property (same fuzzy
+            #     logic as the required-property "did you mean?" hint below)
+            #     is flagged regardless of what else was supplied -- it's a
+            #     typo, not intentional extra context.
+            #  2. If nothing was recognized at all, the whole parameter set
+            #     is almost certainly wrong even without a fuzzy near-miss.
+            # A caller mixing one valid key with an unrelated extra key
+            # (no near-miss, not a total mismatch) is left alone -- lower
+            # risk of being a genuine mistake, and flagging it risks
+            # rejecting legitimate pass-through/forward-compatible callers.
+            properties = schema.get("properties", {})
+            if properties and checked_arguments:
+                unknown = self._unknown_keys(checked_arguments, properties)
+                if unknown:
+                    unset_props = [p for p in properties if p not in checked_arguments]
+                    # Match each *unknown supplied key* (typically 1-2) against
+                    # the unset schema properties (can be 30+ for a
+                    # filter-heavy endpoint), rather than the reverse -- same
+                    # result, but O(unknown) fuzzy-match calls instead of
+                    # O(unset schema properties).
+                    hints = [
+                        (key, match)
+                        for key in unknown
+                        if (match := self._best_property_match(key, unset_props))
+                        is not None
+                    ]
+                    if hints:
+                        hint_text = "; ".join(
+                            f"'{k}' — did you mean '{p}'?" for k, p in hints
+                        )
+                        return ToolValidationError(
+                            f"Unrecognized parameter(s): {hint_text}",
+                            details={
+                                "unknown_parameters": unknown,
+                                "valid_parameters": sorted(properties),
+                            },
+                        )
+                    if len(unknown) == len(checked_arguments):
+                        return ToolValidationError(
+                            f"Unrecognized parameter(s): "
+                            f"{', '.join(repr(k) for k in unknown)}. "
+                            f"This tool accepts: {', '.join(sorted(properties))}.",
+                            details={
+                                "unknown_parameters": unknown,
+                                "valid_parameters": sorted(properties),
+                            },
+                        )
             return None
         except jsonschema.ValidationError as e:
             # Create a more agent-friendly error message
@@ -303,7 +495,7 @@ class BaseTool:
                     missing_prop = _m.group(1)
                     wrong_key = self._find_misspelled_key(
                         missing_prop,
-                        filtered_arguments,
+                        checked_arguments,
                         properties=schema.get("properties", {}),
                     )
                     if wrong_key is not None:
@@ -313,13 +505,56 @@ class BaseTool:
                         )
                     else:
                         unknown = self._unknown_keys(
-                            filtered_arguments, schema.get("properties", {})
+                            checked_arguments, schema.get("properties", {})
                         )
                         if unknown:
                             error_msg += (
                                 f" (unrecognized parameter(s): "
                                 f"{', '.join(repr(k) for k in unknown)})"
                             )
+
+            # Feature-14B-02: a "oneOf: [{required: [a]}, {required: [b]}, ...]"
+            # schema (pick exactly one of several alternative search
+            # parameters) produces a bare, unhelpful "is not valid under any
+            # of the given schemas" when none of the alternatives are
+            # present -- unlike a plain "required" failure, e.path is empty
+            # and e.message names no specific property, so the typo-hint
+            # logic above never runs. Confirmed live:
+            # gwas_get_associations_for_trait({"trait": "narcolepsy"}) (the
+            # schema's alternatives are disease_trait/efo_uri/efo_id/
+            # efo_trait, not "trait") gave only "{'trait': 'narcolepsy'} is
+            # not valid under any of the given schemas" with no hint that
+            # "trait" isn't even a real parameter, let alone which
+            # alternative it was probably meant to be. Collect the
+            # alternative-required property names from the oneOf branches
+            # and reuse the same fuzzy "did you mean?" match.
+            if e.validator == "oneOf" and isinstance(filtered_arguments, dict):
+                alt_props = []
+                for branch in e.validator_value or []:
+                    alt_props.extend(branch.get("required", []))
+                for alt_prop in dict.fromkeys(alt_props):  # de-dup, keep order
+                    if alt_prop in filtered_arguments:
+                        continue
+                    wrong_key = self._find_misspelled_key(
+                        alt_prop,
+                        checked_arguments,
+                        properties=schema.get("properties", {}),
+                    )
+                    if wrong_key is not None:
+                        error_msg += (
+                            f" (you passed '{wrong_key}' — did you mean '{alt_prop}'?)"
+                        )
+                        break
+                else:
+                    unknown = self._unknown_keys(
+                        checked_arguments, schema.get("properties", {})
+                    )
+                    if unknown:
+                        error_msg += (
+                            f" (unrecognized parameter(s): "
+                            f"{', '.join(repr(k) for k in unknown)}; "
+                            f"provide one of: {', '.join(alt_props)})"
+                        )
 
             return ToolValidationError(
                 error_msg,

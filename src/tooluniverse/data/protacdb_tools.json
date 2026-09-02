@@ -11,7 +11,8 @@
           "enum": [
             "search_protacs"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_protacs"
         },
         "target": {
           "type": [
@@ -33,9 +34,7 @@
           "description": "Maximum number of compounds to return (default 50, max 100)"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -64,7 +63,10 @@
         "target": "BRD4",
         "e3_ligase": "CRBN"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_protacs"
+    }
   },
   {
     "name": "ProtacDB_get_protac",
@@ -78,7 +80,8 @@
           "enum": [
             "get_protac"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_protac"
         },
         "protac_id": {
           "type": "string",
@@ -86,7 +89,6 @@
         }
       },
       "required": [
-        "operation",
         "protac_id"
       ]
     },
@@ -116,7 +118,10 @@
         "operation": "get_protac",
         "protac_id": "1"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_protac"
+    }
   },
   {
     "name": "ProtacDB_search_targets",
@@ -130,7 +135,8 @@
           "enum": [
             "search_targets"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_targets"
         },
         "target_name": {
           "type": [
@@ -147,9 +153,7 @@
           "description": "UniProt accession ID (e.g., 'O60885' for BRD4). Mutually exclusive with target_name."
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -177,6 +181,9 @@
         "operation": "search_targets",
         "target_name": "BRD4"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_targets"
+    }
   }
 ]

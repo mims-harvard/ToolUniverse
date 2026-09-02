@@ -32,50 +32,120 @@
     },
     "return_schema": {
       "type": "object",
-      "oneOf": [
-        {
+      "description": "Unwrapped payload (result['data']) of a successful call.",
+      "properties": {
+        "query": {
+          "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "variant": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "query": {
-                  "type": "object"
-                },
-                "sources_queried": {
-                  "type": "array"
-                },
-                "sources_failed": {
-                  "type": "array"
-                },
-                "summary": {
-                  "type": "object"
-                },
-                "annotations": {
-                  "type": "object"
-                }
+            "gene": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "rsid": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
+        },
+        "sources_queried": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Subset of clinvar, gnomad, civic, uniprot that were actually queried (a source is skipped entirely if no gene could be resolved)."
+        },
+        "sources_failed": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "summary": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sources_with_data": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
+            },
+            "clinvar_classification": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Present when ClinVar returned gene-level variants; null when none matched the queried variant exactly."
+            },
+            "clinvar_classifications": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Present only when multiple distinct classifications matched (e.g. a multi-allelic rsid)."
+            },
+            "clinvar_note": {
+              "type": "string",
+              "description": "Present only to explain an ambiguous or missing exact ClinVar match."
+            },
+            "gnomad_gene_id": {
+              "type": "string",
+              "description": "Present only when gnomAD returned gene data."
+            },
+            "civic_variants_matched": {
+              "type": "integer",
+              "description": "Present only when CIViC matched at least one variant."
             }
           },
           "required": [
-            "data"
+            "query",
+            "sources_with_data"
           ]
         },
-        {
+        "annotations": {
+          "type": "object",
+          "description": "Per-source parsed results, keyed by source name (clinvar, gnomad, civic, uniprot); a source is present only if it was queried, and its inner shape differs per source (or may fall back to {\"raw\": \"<string>\"} on an unparseable response).",
           "properties": {
-            "status": {
-              "const": "error"
+            "clinvar": {
+              "type": "object",
+              "description": "Typically {total_gene_variants, matched, exact_match, variants: [{name, classification, review_status}]}."
             },
-            "error": {
-              "type": "string"
+            "gnomad": {
+              "type": "object",
+              "description": "Typically {gene_id, symbol, name, chromosome, canonical_transcript}, or {} if gnomAD had no record."
+            },
+            "civic": {
+              "type": "object",
+              "description": "Typically {total_gene_variants, matched, exact_match, variants: [{name, civic_id, feature}]}."
+            },
+            "uniprot": {
+              "type": "object",
+              "description": "Typically {accession, protein_name, gene_name, function}."
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
+      },
+      "required": [
+        "query",
+        "sources_queried",
+        "sources_failed",
+        "summary",
+        "annotations"
       ]
     },
     "test_examples": [

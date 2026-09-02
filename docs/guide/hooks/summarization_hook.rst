@@ -134,10 +134,10 @@ Examples
    tu.load_tools(['europepmc'])
 
    result = tu.run({
-       "name": "EuropePMC_search_publications",
+       "name": "EuropePMC_search_articles",
        "arguments": {
            "query": "CRISPR gene editing therapeutic applications",
-           "resultType": "core"
+           "limit": 25
        }
    })
 
@@ -190,7 +190,7 @@ Examples
    # Configure for compound analysis
    compound_config = {
        'tool_specific_hooks': {
-           'ChEMBL_search_compounds': {
+           'ChEMBL_search_molecules': {
                'enabled': True,
                'hooks': [{
                    'name': 'compound_summarization',
@@ -215,9 +215,9 @@ Examples
 
    # Execute compound search
    result = tu.run({
-       "name": "ChEMBL_search_compounds",
+       "name": "ChEMBL_search_molecules",
        "arguments": {
-           "compound_name": "aspirin",
+           "query": "aspirin",
            "limit": 100
        }
    })

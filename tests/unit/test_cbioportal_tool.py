@@ -57,3 +57,47 @@ def test_explicit_param_overrides_default():
 
     called_url = mock_get.call_args.args[0]
     assert "pageSize=5" in called_url
+
+
+class TestMolecularProfileIdResolution:
+    """Regression guard for Fix-Round3-003: a confirmed-nonexistent
+    study_id must be reported immediately, not deferred to a confusing
+    404 several steps later at the actual mutations/CNA fetch call.
+    Covers both _get_mutation_profile_id and _get_cna_profile_id, which
+    share this behavior via _resolve_molecular_profile_id."""
+
+    def test_mutation_profile_id_returns_none_for_unknown_study(self):
+        tool = _tool()
+        resp = MagicMock()
+        resp.status_code = 404
+        with patch.object(tool.session, "get", return_value=resp):
+            assert tool._get_mutation_profile_id("not-a-real-study") is None
+
+    def test_cna_profile_id_returns_none_for_unknown_study(self):
+        tool = _tool()
+        resp = MagicMock()
+        resp.status_code = 404
+        with patch.object(tool.session, "get", return_value=resp):
+            assert tool._get_cna_profile_id("not-a-real-study") is None
+
+    def test_mutation_profile_id_found_when_study_exists(self):
+        tool = _tool()
+        resp = MagicMock()
+        resp.status_code = 200
+        resp.json.return_value = [
+            {"molecularAlterationType": "MUTATION_EXTENDED", "molecularProfileId": "x_mutations"},
+        ]
+        with patch.object(tool.session, "get", return_value=resp):
+            assert tool._get_mutation_profile_id("real_study") == "x_mutations"
+
+    def test_mutation_profile_id_falls_back_to_guess_when_study_has_no_profile(self):
+        """Study exists (200) but has no MUTATION_EXTENDED profile listed --
+        keep the previous best-effort naming-convention guess rather than
+        failing, since this is a different (rarer) situation than a
+        nonexistent study."""
+        tool = _tool()
+        resp = MagicMock()
+        resp.status_code = 200
+        resp.json.return_value = [{"molecularAlterationType": "COPY_NUMBER_ALTERATION"}]
+        with patch.object(tool.session, "get", return_value=resp):
+            assert tool._get_mutation_profile_id("real_study") == "real_study_mutations"

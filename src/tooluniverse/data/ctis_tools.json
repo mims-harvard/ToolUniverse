@@ -70,7 +70,7 @@
     },
     {
         "name": "CTIS_search_trials_filtered",
-        "description": "Structured (filtered) search of the EU Clinical Trials Information System (CTIS) — the European clinical-trials register under the Clinical Trials Regulation. Unlike the free-text CTIS_search_trials, this narrows results with registry filters: medical condition, trial status code, trial phase code, age group code, gender code, has-results flag, sponsor name, therapeutic area, and country/member-state-concerned (MSC) or trial region. Combine filters to count and list precisely matching authorized EU/EEA trials. Status codes: 1=under evaluation, 2=authorised/not started, 3=ongoing/recruiting, 4=ended, 5=expired, etc. Phase codes are strings like '1','2','3','4'. Age group codes: '1'=in utero, '2'=preterm/newborn through children, '3'=adults, '4'=elderly (use the CTIS public portal facet for exact codes). No API key required.",
+        "description": "Structured (filtered) search of the EU Clinical Trials Information System (CTIS) — the European clinical-trials register under the Clinical Trials Regulation. Unlike the free-text CTIS_search_trials, this narrows results with registry filters: medical condition, trial status code, trial phase code, age group code, gender code, has-results flag, sponsor name, therapeutic area, and country/member-state-concerned (MSC) or trial region. Combine filters to count and list precisely matching authorized EU/EEA trials. 'status' takes CTIS numeric status codes only (free text such as 'ongoing' is rejected): 1=Under evaluation, 2/3/4/5=Authorised (CTIS reports all four as sub-states of 'Authorised'), 6=Halted, 7=Suspended, 8=Ended, 9=Expired, 10=Revoked, 11=Not authorised, 12=Cancelled. Phase codes are strings like '1','2','3','4'. Age group codes: '1'=in utero, '2'=preterm/newborn through children, '3'=adults, '4'=elderly (use the CTIS public portal facet for exact codes). No API key required.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -99,9 +99,35 @@
                         "type": [
                             "integer",
                             "string"
+                        ],
+                        "enum": [
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8,
+                            9,
+                            10,
+                            11,
+                            12,
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "5",
+                            "6",
+                            "7",
+                            "8",
+                            "9",
+                            "10",
+                            "11",
+                            "12"
                         ]
                     },
-                    "description": "Trial status code(s), e.g. [3] for ongoing. Accepts a single value or a list."
+                    "description": "CTIS numeric trial status code(s) -- NOT free text. Accepts a single code or a list. Valid codes: 1=Under evaluation, 2/3/4/5=Authorised (CTIS reports these four as sub-states of 'Authorised' and publishes no finer label), 6=Halted, 7=Suspended, 8=Ended, 9=Expired, 10=Revoked, 11=Not authorised, 12=Cancelled. Example: [3] or [3, 4]. Any other value is rejected with an error rather than silently returning zero trials."
                 },
                 "trial_phase_code": {
                     "type": [

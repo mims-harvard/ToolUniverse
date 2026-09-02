@@ -26,71 +26,57 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": ["string", "null"],
-                  "description": "PROSITE accession (e.g., PS00001)"
-                },
-                "entry_name": {
-                  "type": ["string", "null"],
-                  "description": "Entry name (e.g., ASN_GLYCOSYLATION)"
-                },
-                "entry_type": {
-                  "type": ["string", "null"],
-                  "description": "Entry type: PATTERN or MATRIX (profile)"
-                },
-                "description": {
-                  "type": ["string", "null"],
-                  "description": "Human-readable description of the motif/domain"
-                },
-                "pattern": {
-                  "type": ["string", "null"],
-                  "description": "Consensus pattern in PROSITE syntax (e.g., N-{P}-[ST]-{P} for glycosylation)"
-                },
-                "dates": {
-                  "type": ["string", "null"],
-                  "description": "Creation and update dates"
-                },
-                "comments": {
-                  "type": ["string", "null"],
-                  "description": "Additional annotations and site information"
-                },
-                "functional_sites": {
-                  "type": "array",
-                  "items": {"type": "string"},
-                  "description": "Functional site positions annotated in the pattern"
-                },
-                "skip_flag": {
-                  "type": ["boolean", "null"],
-                  "description": "If true, pattern matches frequent sites (may produce many hits)"
-                },
-                "prorule": {
-                  "type": ["string", "null"],
-                  "description": "ProRule reference ID"
-                },
-                "documentation": {
-                  "type": ["string", "null"],
-                  "description": "PDOC documentation reference"
-                },
-                "cross_references": {
-                  "type": "array",
-                  "items": {"type": "string"},
-                  "description": "UniProt protein cross-references (first 20)"
-                }
-              }
+            "accession": {
+              "type": ["string", "null"],
+              "description": "PROSITE accession (e.g., PS00001)"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "accession": {"type": "string"},
-                "url": {"type": "string"}
-              }
+            "entry_name": {
+              "type": ["string", "null"],
+              "description": "Entry name (e.g., ASN_GLYCOSYLATION)"
+            },
+            "entry_type": {
+              "type": ["string", "null"],
+              "description": "Entry type: PATTERN or MATRIX (profile)"
+            },
+            "description": {
+              "type": ["string", "null"],
+              "description": "Human-readable description of the motif/domain"
+            },
+            "pattern": {
+              "type": ["string", "null"],
+              "description": "Consensus pattern in PROSITE syntax (e.g., N-{P}-[ST]-{P} for glycosylation)"
+            },
+            "dates": {
+              "type": ["string", "null"],
+              "description": "Creation and update dates"
+            },
+            "comments": {
+              "type": ["string", "null"],
+              "description": "Additional annotations and site information"
+            },
+            "functional_sites": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "Functional site positions annotated in the pattern"
+            },
+            "skip_flag": {
+              "type": ["boolean", "null"],
+              "description": "If true, pattern matches frequent sites (may produce many hits)"
+            },
+            "prorule": {
+              "type": ["string", "null"],
+              "description": "ProRule reference ID"
+            },
+            "documentation": {
+              "type": ["string", "null"],
+              "description": "PDOC documentation reference"
+            },
+            "cross_references": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "UniProt protein cross-references (first 20)"
             }
-          },
-          "required": ["data"]
+          }
         },
         {
           "type": "object",
@@ -131,50 +117,37 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "accession": {
-                    "type": ["string", "null"],
-                    "description": "PROSITE accession (e.g., PS00028)"
-                  },
-                  "name": {
-                    "type": ["string", "null"],
-                    "description": "Full entry name"
-                  },
-                  "short_name": {
-                    "type": ["string", "null"],
-                    "description": "Short entry name identifier"
-                  },
-                  "type": {
-                    "type": ["string", "null"],
-                    "description": "Entry type (conserved_site, domain, active_site, etc.)"
-                  },
-                  "source_database": {
-                    "type": ["string", "null"],
-                    "description": "Source database (prosite)"
-                  },
-                  "integrated_into": {
-                    "type": ["string", "null"],
-                    "description": "InterPro entry this PROSITE pattern is integrated into"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "query": {"type": "string"},
-                "total_results": {"type": "integer"}
+          "type": "array",
+          "description": "Array of PROSITE entries matching the search query",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": ["string", "null"],
+                "description": "PROSITE accession (e.g., PS00028)"
+              },
+              "name": {
+                "type": ["string", "null"],
+                "description": "Full entry name"
+              },
+              "short_name": {
+                "type": ["string", "null"],
+                "description": "Short entry name identifier"
+              },
+              "type": {
+                "type": ["string", "null"],
+                "description": "Entry type (conserved_site, domain, active_site, etc.)"
+              },
+              "source_database": {
+                "type": ["string", "null"],
+                "description": "Source database (prosite)"
+              },
+              "integrated_into": {
+                "type": ["string", "null"],
+                "description": "InterPro entry this PROSITE pattern is integrated into"
               }
             }
-          },
-          "required": ["data"]
+          }
         },
         {
           "type": "object",
@@ -220,51 +193,37 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "signature_accession": {
-                    "type": ["string", "null"],
-                    "description": "PROSITE accession of the matched pattern (e.g., PS50862)"
-                  },
-                  "signature_name": {
-                    "type": ["string", "null"],
-                    "description": "PROSITE entry name of the matched pattern"
-                  },
-                  "start": {
-                    "type": ["integer", "null"],
-                    "description": "Start position of the match in the sequence"
-                  },
-                  "end": {
-                    "type": ["integer", "null"],
-                    "description": "End position of the match"
-                  },
-                  "score": {
-                    "type": ["number", "null"],
-                    "description": "Match score (for profiles; null for patterns)"
-                  },
-                  "level": {
-                    "type": ["integer", "null"],
-                    "description": "Confidence level (0 = strong match)"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "sequence_length": {"type": "integer"},
-                "total_matches": {"type": "integer"},
-                "skip_frequent_patterns": {"type": "boolean"}
+          "type": "array",
+          "description": "Array of PROSITE signature matches found in the scanned sequence",
+          "items": {
+            "type": "object",
+            "properties": {
+              "signature_accession": {
+                "type": ["string", "null"],
+                "description": "PROSITE accession of the matched pattern (e.g., PS50862)"
+              },
+              "signature_name": {
+                "type": ["string", "null"],
+                "description": "PROSITE entry name of the matched pattern"
+              },
+              "start": {
+                "type": ["integer", "null"],
+                "description": "Start position of the match in the sequence"
+              },
+              "end": {
+                "type": ["integer", "null"],
+                "description": "End position of the match"
+              },
+              "score": {
+                "type": ["number", "null"],
+                "description": "Match score (for profiles; null for patterns)"
+              },
+              "level": {
+                "type": ["integer", "null"],
+                "description": "Confidence level (0 = strong match)"
               }
             }
-          },
-          "required": ["data"]
+          }
         },
         {
           "type": "object",

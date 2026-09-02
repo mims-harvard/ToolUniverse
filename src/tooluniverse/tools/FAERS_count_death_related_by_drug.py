@@ -10,18 +10,21 @@ from ._shared_client import get_shared_client
 
 def FAERS_count_death_related_by_drug(
     medicinalproduct: str,
+    limit: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Count adverse events associated with patient death for a given drug. Only medicinalproduct is req...
+    Count reports for a given drug by the FAERS 'seriousnessdeath' seriousness criterion. Only medici...
 
     Parameters
     ----------
     medicinalproduct : str
         Drug name.
+    limit : int
+        Optional: maximum number of ranked terms to return (default 100, which is ope...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -31,13 +34,15 @@ def FAERS_count_death_related_by_drug(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"medicinalproduct": medicinalproduct}.items() if v is not None
+        k: v
+        for k, v in {"medicinalproduct": medicinalproduct, "limit": limit}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

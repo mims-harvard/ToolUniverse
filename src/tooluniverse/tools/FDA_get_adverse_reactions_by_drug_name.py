@@ -1,7 +1,7 @@
 """
 FDA_get_adverse_reactions_by_drug_name
 
-Retrieve adverse reactions information based on the drug name.
+Retrieve adverse reactions information based on the drug name. IMPORTANT -- FDA labels file safet...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def FDA_get_adverse_reactions_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve adverse reactions information based on the drug name.
+    Retrieve adverse reactions information based on the drug name. IMPORTANT -- FDA labels file safet...
 
     Parameters
     ----------

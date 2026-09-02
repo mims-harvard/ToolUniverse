@@ -12,6 +12,30 @@ import sys
 from .smcp import SMCP
 
 
+def _valid_port(value: str) -> int:
+    """Parse a TCP port and reject values outside the bindable range."""
+    port = int(value)
+    if not 1 <= port <= 65535:
+        raise argparse.ArgumentTypeError("port must be between 1 and 65535")
+    return port
+
+
+def _positive_int(value: str) -> int:
+    """Parse a strictly positive integer for worker-count arguments."""
+    number = int(value)
+    if number < 1:
+        raise argparse.ArgumentTypeError("value must be at least 1")
+    return number
+
+
+def _enforce_cli_bind_security(transport: str, host: str) -> None:
+    """Fail before server construction for unsafe network bind requests."""
+    if transport in {"http", "sse"}:
+        from .server_security import enforce_bind_security
+
+        enforce_bind_security(host)
+
+
 def _add_profile_args(parser: argparse.ArgumentParser) -> None:
     """Add the shared --load / --workspace / --global argument group to *parser*."""
     group = parser.add_argument_group("Profile Configuration")
@@ -111,7 +135,7 @@ Examples:
         "--host", default="127.0.0.1", help="Server host address (default: 127.0.0.1)"
     )
     server_group.add_argument(
-        "--port", type=int, default=8000, help="Server port (default: 8000)"
+        "--port", type=_valid_port, default=8000, help="Server port (default: 8000)"
     )
     server_group.add_argument(
         "--name",
@@ -132,6 +156,7 @@ Examples:
     args = parser.parse_args()
 
     try:
+        _enforce_cli_bind_security("http", args.host)
         print("🚀 Starting ToolUniverse SMCP Server...")
         print("📡 Transport: streamable-http")
         print(f"🌐 Address: http://{args.host}:{args.port}")
@@ -237,13 +262,13 @@ Examples:
   tooluniverse-smcp-stdio --hook-config-file /path/to/hook_config.json
 
   # Start with categories but exclude specific tools
-  tooluniverse-smcp-stdio --categories uniprot ChEMBL --exclude-tools "ChEMBL_get_molecule_by_chembl_id"
+  tooluniverse-smcp-stdio --categories uniprot ChEMBL --exclude-tools "ChEMBL_get_molecule"
 
   # Start with all tools but exclude entire categories
   tooluniverse-smcp-stdio --exclude-categories mcp_auto_loader_boltz mcp_auto_loader_expert_feedback
 
   # Load only specific tools by name
-  tooluniverse-smcp-stdio --include-tools "UniProt_get_entry_by_accession" "ChEMBL_get_molecule_by_chembl_id"
+  tooluniverse-smcp-stdio --include-tools "UniProt_get_entry_by_accession" "ChEMBL_get_molecule"
 
   # Load tools from a file
   tooluniverse-smcp-stdio --tools-file "/path/to/tool_names.txt"
@@ -355,7 +380,7 @@ Examples:
     )
     parser.add_argument(
         "--max-workers",
-        type=int,
+        type=_positive_int,
         default=5,
         help="Maximum worker threads for concurrent execution (default: 5)",
     )
@@ -655,13 +680,13 @@ Examples:
   tooluniverse-smcp --categories uniprot ChEMBL opentarget --port 8000
 
   # Start with categories but exclude specific tools
-  tooluniverse-smcp --categories uniprot ChEMBL --exclude-tools "ChEMBL_get_molecule_by_chembl_id" --port 8000
+  tooluniverse-smcp --categories uniprot ChEMBL --exclude-tools "ChEMBL_get_molecule" --port 8000
 
   # Start with all tools but exclude entire categories
   tooluniverse-smcp --exclude-categories mcp_auto_loader_boltz mcp_auto_loader_expert_feedback --port 8000
 
   # Load only specific tools by name
-  tooluniverse-smcp --include-tools "UniProt_get_entry_by_accession" "ChEMBL_get_molecule_by_chembl_id" --port 8000
+  tooluniverse-smcp --include-tools "UniProt_get_entry_by_accession" "ChEMBL_get_molecule" --port 8000
 
   # Load tools from a file
   tooluniverse-smcp --tools-file "/path/to/tool_names.txt" --port 8000
@@ -781,7 +806,7 @@ Examples:
     )
     parser.add_argument(
         "--port",
-        type=int,
+        type=_valid_port,
         default=7000,
         help="Port to bind to for HTTP/SSE transport (default: 7000)",
     )
@@ -797,7 +822,7 @@ Examples:
     )
     parser.add_argument(
         "--max-workers",
-        type=int,
+        type=_positive_int,
         default=5,
         help="Maximum worker threads for concurrent execution (default: 5)",
     )
@@ -902,8 +927,15 @@ Examples:
 
             print("Available tools (for this server configuration):")
             print("=" * 50)
-            for name in sorted(tool_names)[:200]:  # cap output for readability
+            display_limit = 200
+            displayed_names = sorted(tool_names)[:display_limit]
+            for name in displayed_names:  # cap output for readability
                 print(f"  {name}")
+            if len(tool_names) > len(displayed_names):
+                print(
+                    f"\nShowing first {len(displayed_names)} of "
+                    f"{len(tool_names)} tools."
+                )
             print(f"\nTotal: {len(tool_names)} tools available")
             print("\nNote: Use --exclude-tools to exclude specific tools by name")
             print("      Use --exclude-categories to exclude entire categories")
@@ -914,6 +946,7 @@ Examples:
         return
 
     try:
+        _enforce_cli_bind_security(args.transport, args.host)
         print(f"🚀 Starting {args.name}...")
         print(f"📡 Transport: {args.transport}")
         if args.transport in ["http", "sse"]:

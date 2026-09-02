@@ -1,7 +1,7 @@
 """
 OpenTargets_get_publications_by_drug_chemblId
 
-Retrieve publications related to a drug chemblId, including PubMed IDs and publication dates.
+Retrieve publications related to a drug chemblId, including PubMed IDs and publication dates. Onl...
 """
 
 from typing import Any, Optional, Callable
@@ -21,7 +21,7 @@ def OpenTargets_get_publications_by_drug_chemblId(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve publications related to a drug chemblId, including PubMed IDs and publication dates.
+    Retrieve publications related to a drug chemblId, including PubMed IDs and publication dates. Onl...
 
     Parameters
     ----------

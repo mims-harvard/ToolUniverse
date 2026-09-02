@@ -8,7 +8,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_info"
+          "const": "get_info",
+          "default": "get_info"
         },
         "hmdb_id": {
           "type": "string",
@@ -81,7 +82,10 @@
       {
         "pubchem_cid": 5793
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_info"
+    }
   },
   {
     "name": "Metabolite_search",
@@ -92,7 +96,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "search"
+          "const": "search",
+          "default": "search"
         },
         "query": {
           "type": "string",
@@ -130,7 +135,10 @@
         "query": "C6H12O6",
         "search_type": "formula"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search"
+    }
   },
   {
     "name": "Metabolite_get_diseases",
@@ -141,7 +149,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_diseases"
+          "const": "get_diseases",
+          "default": "get_diseases"
         },
         "hmdb_id": {
           "type": "string",
@@ -197,7 +206,10 @@
         "compound_name": "cholesterol",
         "limit": 10
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_diseases"
+    }
   },
   {
     "name": "HMDB_search",
@@ -208,14 +220,17 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "search"
+          "const": "search",
+          "default": "search"
         },
         "query": {
           "type": "string",
           "description": "Compound name or molecular formula to search"
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -289,7 +304,14 @@
         }
       ]
     },
-    "test_examples": [{"query": "glucose"}]
+    "test_examples": [
+      {
+        "query": "glucose"
+      }
+    ],
+    "fields": {
+      "operation": "search"
+    }
   },
   {
     "name": "HMDB_get_metabolite",
@@ -300,7 +322,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_info"
+          "const": "get_info",
+          "default": "get_info"
         },
         "hmdb_id": {
           "type": "string",
@@ -378,7 +401,14 @@
         }
       ]
     },
-    "test_examples": [{"hmdb_id": "HMDB0000122"}]
+    "test_examples": [
+      {
+        "hmdb_id": "HMDB0000122"
+      }
+    ],
+    "fields": {
+      "operation": "get_info"
+    }
   },
   {
     "name": "HMDB_get_diseases",
@@ -389,7 +419,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_diseases"
+          "const": "get_diseases",
+          "default": "get_diseases"
         },
         "hmdb_id": {
           "type": "string",
@@ -497,6 +528,14 @@
         }
       ]
     },
-    "test_examples": [{"hmdb_id": "HMDB0000122", "limit": 5}]
+    "test_examples": [
+      {
+        "hmdb_id": "HMDB0000122",
+        "limit": 5
+      }
+    ],
+    "fields": {
+      "operation": "get_diseases"
+    }
   }
 ]

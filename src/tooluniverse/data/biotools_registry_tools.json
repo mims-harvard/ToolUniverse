@@ -26,7 +26,9 @@
           "description": "Response format. Must be 'json'."
         }
       },
-      "required": ["q"]
+      "required": [
+        "q"
+      ]
     },
     "fields": {
       "endpoint": "https://bio.tools/api/t/",
@@ -38,24 +40,65 @@
           "type": "object",
           "description": "Search results containing a list of matching bioinformatics tools",
           "properties": {
-            "count": {"type": "integer", "description": "Total number of matching tools"},
-            "next": {"type": ["string", "null"], "description": "URL for next page of results"},
-            "previous": {"type": ["string", "null"], "description": "URL for previous page"},
+            "count": {
+              "type": "integer",
+              "description": "Total number of matching tools"
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL for next page of results"
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL for previous page"
+            },
             "list": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "name": {"type": "string"},
-                  "biotoolsID": {"type": "string"},
-                  "description": {"type": "string"},
-                  "homepage": {"type": "string"},
-                  "toolType": {"type": "array", "items": {"type": "string"}},
-                  "topic": {"type": "array"},
-                  "function": {"type": "array"},
-                  "language": {"type": "array"},
-                  "operatingSystem": {"type": "array"},
-                  "license": {"type": ["string", "null"]}
+                  "name": {
+                    "type": "string"
+                  },
+                  "biotoolsID": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "homepage": {
+                    "type": "string"
+                  },
+                  "toolType": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "topic": {
+                    "type": "array"
+                  },
+                  "function": {
+                    "type": "array"
+                  },
+                  "language": {
+                    "type": "array"
+                  },
+                  "operatingSystem": {
+                    "type": "array"
+                  },
+                  "license": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
               }
             }
@@ -63,14 +106,30 @@
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"q": "blast", "page": 1, "size": 5, "format": "json"},
-      {"q": "RNA-seq", "page": 1, "size": 5, "format": "json"}
+      {
+        "q": "blast",
+        "page": 1,
+        "size": 5,
+        "format": "json"
+      },
+      {
+        "q": "RNA-seq",
+        "page": 1,
+        "size": 5,
+        "format": "json"
+      }
     ]
   },
   {
@@ -90,7 +149,9 @@
           "description": "Response format. Must be 'json'."
         }
       },
-      "required": ["biotoolsID"]
+      "required": [
+        "biotoolsID"
+      ]
     },
     "fields": {
       "endpoint": "https://bio.tools/api/t/{biotoolsID}/",
@@ -102,36 +163,99 @@
           "type": "object",
           "description": "Detailed tool information from Bio.tools registry",
           "properties": {
-            "name": {"type": "string"},
-            "biotoolsID": {"type": "string"},
-            "biotoolsCURIE": {"type": "string"},
-            "description": {"type": "string"},
-            "homepage": {"type": "string"},
-            "version": {"type": "array"},
-            "toolType": {"type": "array", "items": {"type": "string"}},
-            "topic": {"type": "array"},
-            "function": {"type": "array"},
-            "language": {"type": "array", "items": {"type": "string"}},
-            "operatingSystem": {"type": "array", "items": {"type": "string"}},
-            "license": {"type": ["string", "null"]},
-            "maturity": {"type": ["string", "null"]},
-            "link": {"type": "array"},
-            "download": {"type": "array"},
-            "documentation": {"type": "array"},
-            "credit": {"type": "array"},
-            "collectionID": {"type": "array"}
+            "name": {
+              "type": "string"
+            },
+            "biotoolsID": {
+              "type": "string"
+            },
+            "biotoolsCURIE": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "homepage": {
+              "type": "string"
+            },
+            "version": {
+              "type": "array"
+            },
+            "toolType": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "topic": {
+              "type": "array"
+            },
+            "function": {
+              "type": "array"
+            },
+            "language": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "operatingSystem": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "license": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "maturity": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "link": {
+              "type": "array"
+            },
+            "download": {
+              "type": "array"
+            },
+            "documentation": {
+              "type": "array"
+            },
+            "credit": {
+              "type": "array"
+            },
+            "collectionID": {
+              "type": "array"
+            }
           }
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"biotoolsID": "samtools", "format": "json"},
-      {"biotoolsID": "blast", "format": "json"}
+      {
+        "biotoolsID": "samtools",
+        "format": "json"
+      },
+      {
+        "biotoolsID": "blast",
+        "format": "json"
+      }
     ]
   },
   {
@@ -161,7 +285,9 @@
           "description": "Response format. Must be 'json'."
         }
       },
-      "required": ["topic"]
+      "required": [
+        "topic"
+      ]
     },
     "fields": {
       "endpoint": "https://bio.tools/api/t/",
@@ -173,20 +299,44 @@
           "type": "object",
           "description": "Tools matching the specified scientific topic",
           "properties": {
-            "count": {"type": "integer"},
-            "next": {"type": ["string", "null"]},
-            "previous": {"type": ["string", "null"]},
+            "count": {
+              "type": "integer"
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "list": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "name": {"type": "string"},
-                  "biotoolsID": {"type": "string"},
-                  "description": {"type": "string"},
-                  "homepage": {"type": "string"},
-                  "toolType": {"type": "array"},
-                  "topic": {"type": "array"}
+                  "name": {
+                    "type": "string"
+                  },
+                  "biotoolsID": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "homepage": {
+                    "type": "string"
+                  },
+                  "toolType": {
+                    "type": "array"
+                  },
+                  "topic": {
+                    "type": "array"
+                  }
                 }
               }
             }
@@ -194,14 +344,30 @@
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"topic": "Proteomics", "page": 1, "size": 5, "format": "json"},
-      {"topic": "Structural biology", "page": 1, "size": 5, "format": "json"}
+      {
+        "topic": "Proteomics",
+        "page": 1,
+        "size": 5,
+        "format": "json"
+      },
+      {
+        "topic": "Structural biology",
+        "page": 1,
+        "size": 5,
+        "format": "json"
+      }
     ]
   },
   {
@@ -213,7 +379,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "description": "EDAM operation name describing what the tool does. Examples: 'Sequence alignment', 'Structure prediction', 'Variant calling', 'Molecular docking', 'Visualisation', 'Genome annotation'."
+          "description": "EDAM operation name describing what the tool does. Examples: 'Sequence alignment', 'Structure prediction', 'Variant calling', 'Molecular docking', 'Visualisation', 'Genome annotation'.",
+          "default": "Sequence alignment"
         },
         "page": {
           "type": "integer",
@@ -231,11 +398,12 @@
           "description": "Response format. Must be 'json'."
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "fields": {
       "endpoint": "https://bio.tools/api/t/",
-      "return_format": "JSON"
+      "return_format": "JSON",
+      "operation": "Sequence alignment"
     },
     "return_schema": {
       "oneOf": [
@@ -243,20 +411,44 @@
           "type": "object",
           "description": "Tools matching the specified computational operation",
           "properties": {
-            "count": {"type": "integer"},
-            "next": {"type": ["string", "null"]},
-            "previous": {"type": ["string", "null"]},
+            "count": {
+              "type": "integer"
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "list": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "name": {"type": "string"},
-                  "biotoolsID": {"type": "string"},
-                  "description": {"type": "string"},
-                  "homepage": {"type": "string"},
-                  "toolType": {"type": "array"},
-                  "function": {"type": "array"}
+                  "name": {
+                    "type": "string"
+                  },
+                  "biotoolsID": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "homepage": {
+                    "type": "string"
+                  },
+                  "toolType": {
+                    "type": "array"
+                  },
+                  "function": {
+                    "type": "array"
+                  }
                 }
               }
             }
@@ -264,14 +456,30 @@
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"operation": "Sequence alignment", "page": 1, "size": 5, "format": "json"},
-      {"operation": "Variant calling", "page": 1, "size": 5, "format": "json"}
+      {
+        "operation": "Sequence alignment",
+        "page": 1,
+        "size": 5,
+        "format": "json"
+      },
+      {
+        "operation": "Variant calling",
+        "page": 1,
+        "size": 5,
+        "format": "json"
+      }
     ]
   },
   {
@@ -286,7 +494,10 @@
           "description": "Bio.tools resource type. Examples: 'Command-line tool', 'Web application', 'Web API', 'Database portal', 'Library', 'Suite', 'Workflow'."
         },
         "q": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Optional free-text query to further filter results. Example: 'proteomics' to find only proteomics-related tools of the specified type."
         },
         "page": {
@@ -305,7 +516,9 @@
           "description": "Response format. Must be 'json'."
         }
       },
-      "required": ["toolType"]
+      "required": [
+        "toolType"
+      ]
     },
     "fields": {
       "endpoint": "https://bio.tools/api/t/",
@@ -317,19 +530,41 @@
           "type": "object",
           "description": "Tools matching the specified resource type",
           "properties": {
-            "count": {"type": "integer"},
-            "next": {"type": ["string", "null"]},
-            "previous": {"type": ["string", "null"]},
+            "count": {
+              "type": "integer"
+            },
+            "next": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "previous": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "list": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "name": {"type": "string"},
-                  "biotoolsID": {"type": "string"},
-                  "description": {"type": "string"},
-                  "homepage": {"type": "string"},
-                  "toolType": {"type": "array"}
+                  "name": {
+                    "type": "string"
+                  },
+                  "biotoolsID": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "homepage": {
+                    "type": "string"
+                  },
+                  "toolType": {
+                    "type": "array"
+                  }
                 }
               }
             }
@@ -337,14 +572,31 @@
         },
         {
           "type": "object",
-          "properties": {"error": {"type": "string"}},
-          "required": ["error"]
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
-      {"toolType": "Database portal", "page": 1, "size": 5, "format": "json"},
-      {"toolType": "Web API", "q": "genomics", "page": 1, "size": 5, "format": "json"}
+      {
+        "toolType": "Database portal",
+        "page": 1,
+        "size": 5,
+        "format": "json"
+      },
+      {
+        "toolType": "Web API",
+        "q": "genomics",
+        "page": 1,
+        "size": 5,
+        "format": "json"
+      }
     ]
   }
 ]

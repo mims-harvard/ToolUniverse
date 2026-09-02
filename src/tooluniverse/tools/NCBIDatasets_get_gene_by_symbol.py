@@ -11,6 +11,8 @@ from ._shared_client import get_shared_client
 def NCBIDatasets_get_gene_by_symbol(
     symbol: str,
     taxon: Optional[str] = None,
+    organism: Optional[str] = None,
+    species: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +27,10 @@ def NCBIDatasets_get_gene_by_symbol(
         Gene symbol. Examples: 'TP53', 'BRCA1', 'INS', 'EGFR'.
     taxon : str
         Organism as common name or taxonomy ID. Examples: 'human', 'mouse', 'rat', '9...
+    organism : str
+        Synonym for `taxon`. Used when `taxon` is not supplied.
+    species : str
+        Synonym for `taxon`. Used when neither `taxon` nor `organism` is supplied.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +46,14 @@ def NCBIDatasets_get_gene_by_symbol(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"symbol": symbol, "taxon": taxon}.items() if v is not None
+        k: v
+        for k, v in {
+            "symbol": symbol,
+            "taxon": taxon,
+            "organism": organism,
+            "species": species,
+        }.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

@@ -1,7 +1,7 @@
 """
 OpenTargets_get_drug_adverse_events_by_chemblId
 
-Retrieve significant adverse events reported for a specific drug chemblId.
+Retrieve significant adverse events reported for a specific drug chemblId, ranked by log-likeliho...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def OpenTargets_get_drug_adverse_events_by_chemblId(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve significant adverse events reported for a specific drug chemblId.
+    Retrieve significant adverse events reported for a specific drug chemblId, ranked by log-likeliho...
 
     Parameters
     ----------

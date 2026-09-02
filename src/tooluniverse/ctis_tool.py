@@ -46,6 +46,68 @@ _CTIS_SCALAR_FILTERS = {
     "sort_by": "sortBy",
 }
 
+# CTIS trial status codes, with the label CTIS itself reports for each.
+#
+# Established by probing the live API: for every code below, POST /search with
+# {"searchCriteria": {"status": [code]}} returns matching trials, and GET
+# /retrieve/{ctNumber} on one of them reports that ctStatus label alongside
+# ctPublicStatusCode == code. Codes 0 and 13+ match nothing at all.
+#
+# CTIS reports codes 2-5 with the single coarse label "Authorised"; the public
+# API exposes no finer wording for them, so none is invented here.
+_CTIS_STATUS_CODES = {
+    1: "Under evaluation",
+    2: "Authorised (sub-state 2)",
+    3: "Authorised (sub-state 3)",
+    4: "Authorised (sub-state 4)",
+    5: "Authorised (sub-state 5)",
+    6: "Halted",
+    7: "Suspended",
+    8: "Ended",
+    9: "Expired",
+    10: "Revoked",
+    11: "Not authorised",
+    12: "Cancelled",
+}
+
+
+def _status_code_help() -> str:
+    """Render the valid status codes and their CTIS labels for error messages."""
+    return ", ".join(f"{c}={label}" for c, label in sorted(_CTIS_STATUS_CODES.items()))
+
+
+def _validate_status(value: Any):
+    """Validate the ``status`` argument against the CTIS status code set.
+
+    Returns ``(codes, None)`` on success or ``(None, error_message)`` when any
+    supplied value is not a documented CTIS status code.
+
+    CTIS answers an unrecognized status value with an ordinary empty result set
+    rather than an error, so an unchecked typo or a natural-language word such as
+    "ongoing" would be reported to the caller as a confident, successful "there
+    are no such trials". Validating here turns that silent wrong answer into an
+    actionable one. Only the numeric codes are accepted: CTIS publishes no
+    word-to-code vocabulary, and a hand-written alias list would be a guess that
+    quietly grows stale, so words are rejected with the code list instead.
+    """
+    codes = []
+    for item in _coerce_list(value):
+        code = None
+        if isinstance(item, bool):
+            code = None
+        elif isinstance(item, int):
+            code = item
+        elif isinstance(item, str) and item.strip().lstrip("+-").isdigit():
+            code = int(item.strip())
+        if code not in _CTIS_STATUS_CODES:
+            return None, (
+                f"Invalid CTIS status value {item!r}. 'status' takes CTIS numeric "
+                f"trial status code(s), not free text. Valid codes: "
+                f"{_status_code_help()}. Example: status=[3] or status=[3, 4]."
+            )
+        codes.append(code)
+    return codes, None
+
 
 def _pagination(arguments: Dict[str, Any]) -> Dict[str, int]:
     """Build a CTIS pagination block from limit/page arguments (1<=size<=100)."""
@@ -69,8 +131,12 @@ def _coerce_list(value: Any) -> list:
     return [value]
 
 
-def _build_search_criteria(arguments: Dict[str, Any]) -> Dict[str, Any]:
-    """Assemble a CTIS searchCriteria dict from filtered-search arguments."""
+def _build_search_criteria(arguments: Dict[str, Any]):
+    """Assemble a CTIS searchCriteria dict from filtered-search arguments.
+
+    Returns ``(criteria, None)``, or ``(None, error_message)`` if an argument
+    fails validation.
+    """
     criteria: Dict[str, Any] = {}
     contain_all = (arguments.get("query") or arguments.get("contain_all") or "").strip()
     if contain_all:
@@ -90,18 +156,15 @@ def _build_search_criteria(arguments: Dict[str, Any]) -> Dict[str, Any]:
             continue
         # status codes are integers in the CTIS API; other filters are strings.
         if api_key == "status":
-            coerced = []
-            for it in items:
-                try:
-                    coerced.append(int(it))
-                except (TypeError, ValueError):
-                    coerced.append(it)
+            codes, error = _validate_status(items)
+            if error:
+                return None, error
             criteria.setdefault(api_key, [])
-            criteria[api_key].extend(coerced)
+            criteria[api_key].extend(codes)
         else:
             criteria.setdefault(api_key, [])
             criteria[api_key].extend(str(it) for it in items)
-    return criteria
+    return criteria, None
 
 
 @register_tool("CTISSearchTrialsTool")
@@ -126,7 +189,9 @@ class CTISSearchTrialsTool(BaseTool):
         return self._run_freetext(arguments)
 
     def _run_filtered(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        criteria = _build_search_criteria(arguments)
+        criteria, error = _build_search_criteria(arguments)
+        if error:
+            return {"status": "error", "error": error}
         if not criteria:
             return {
                 "status": "error",

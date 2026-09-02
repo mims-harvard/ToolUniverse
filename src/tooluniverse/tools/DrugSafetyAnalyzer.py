@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def DrugSafetyAnalyzer(
     drug_name: str,
-    patient_sex: str,
-    serious_events_only: bool,
+    patient_sex: Optional[str] = None,
+    serious_events_only: Optional[bool] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,7 +25,7 @@ def DrugSafetyAnalyzer(
     drug_name : str
         Name of the drug to analyze
     patient_sex : str
-        Filter by patient sex (optional)
+        Optional. Restricts the FAERS adverse-event counts to one sex. Omit it to ana...
     serious_events_only : bool
         Focus only on serious adverse events
     stream_callback : Callable, optional

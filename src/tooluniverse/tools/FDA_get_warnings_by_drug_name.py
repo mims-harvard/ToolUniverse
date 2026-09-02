@@ -1,7 +1,7 @@
 """
 FDA_get_warnings_by_drug_name
 
-Retrieve warning information based on the drug name.
+Retrieve warning information based on the drug name. IMPORTANT -- FDA labels file safety content ...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def FDA_get_warnings_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve warning information based on the drug name.
+    Retrieve warning information based on the drug name. IMPORTANT -- FDA labels file safety content ...
 
     Parameters
     ----------

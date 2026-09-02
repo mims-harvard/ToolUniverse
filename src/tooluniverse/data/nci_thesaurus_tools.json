@@ -37,56 +37,34 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string",
-                    "description": "NCI Thesaurus concept code (e.g., C3224)"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Preferred concept name"
-                  },
-                  "terminology": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Source terminology (ncit)"
-                  },
-                  "leaf": {
-                    "type": [
-                      "boolean",
-                      "null"
-                    ],
-                    "description": "Whether concept is a leaf node"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                },
-                "query": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "NCI Thesaurus concept code (e.g., C3224)"
+              },
+              "name": {
+                "type": "string",
+                "description": "Preferred concept name"
+              },
+              "terminology": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source terminology (ncit)"
+              },
+              "leaf": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether concept is a leaf node"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -134,82 +112,63 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "string",
-                  "description": "NCI concept code"
-                },
-                "name": {
-                  "type": "string",
-                  "description": "Preferred name"
-                },
-                "definition": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Full text definition"
-                },
-                "synonyms": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Synonym type (FULL_SYN, etc.)"
-                      },
-                      "source": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Source database"
-                      }
-                    }
-                  },
-                  "description": "Synonyms from various sources"
-                },
-                "properties": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string"
-                      },
-                      "value": {
-                        "type": "string"
-                      }
-                    }
-                  },
-                  "description": "Additional properties (semantic type, etc.)"
-                }
-              }
+            "code": {
+              "type": "string",
+              "description": "NCI concept code"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "terminology": {
-                  "type": "string"
+            "name": {
+              "type": "string",
+              "description": "Preferred name"
+            },
+            "definition": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Full text definition"
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Synonym type (FULL_SYN, etc.)"
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Source database"
+                  }
                 }
-              }
+              },
+              "description": "Synonyms from various sources"
+            },
+            "properties": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": "Additional properties (semantic type, etc.)"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -255,49 +214,27 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string",
-                    "description": "Child concept code"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Child concept name"
-                  },
-                  "leaf": {
-                    "type": [
-                      "boolean",
-                      "null"
-                    ],
-                    "description": "Whether this is a leaf node (no children)"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "parent_code": {
-                  "type": "string"
-                },
-                "total_children": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Child concept code"
+              },
+              "name": {
+                "type": "string",
+                "description": "Child concept name"
+              },
+              "leaf": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether this is a leaf node (no children)"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -343,49 +280,27 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string",
-                    "description": "Parent concept code"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "Parent concept name (broader category)"
-                  },
-                  "leaf": {
-                    "type": [
-                      "boolean",
-                      "null"
-                    ],
-                    "description": "Whether the parent is a leaf node"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "child_code": {
-                  "type": "string"
-                },
-                "total_parents": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Parent concept code"
+              },
+              "name": {
+                "type": "string",
+                "description": "Parent concept name (broader category)"
+              },
+              "leaf": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the parent is a leaf node"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -433,90 +348,65 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "string",
-                  "description": "NCI concept code"
-                },
-                "name": {
-                  "type": "string",
-                  "description": "Concept preferred name"
-                },
-                "maps": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Map relationship type (e.g., 'Has Synonym')"
-                      },
-                      "target_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Name of the mapped target term"
-                      },
-                      "target_code": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Code in the target terminology (e.g., MedDRA 10006187)"
-                      },
-                      "target_term_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Target term type (e.g., LLT, PT)"
-                      },
-                      "target_terminology": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Target terminology name (MedDRA, SNOMED, GDC, ICD)"
-                      },
-                      "target_terminology_version": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Version of the target terminology"
-                      }
-                    }
-                  }
-                }
-              }
+            "code": {
+              "type": "string",
+              "description": "NCI concept code"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_maps": {
-                  "type": "integer"
-                },
-                "target_terminologies": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+            "name": {
+              "type": "string",
+              "description": "Concept preferred name"
+            },
+            "maps": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Map relationship type (e.g., 'Has Synonym')"
+                  },
+                  "target_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Name of the mapped target term"
+                  },
+                  "target_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Code in the target terminology (e.g., MedDRA 10006187)"
+                  },
+                  "target_term_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Target term type (e.g., LLT, PT)"
+                  },
+                  "target_terminology": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Target terminology name (MedDRA, SNOMED, GDC, ICD)"
+                  },
+                  "target_terminology_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Version of the target terminology"
                   }
                 }
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

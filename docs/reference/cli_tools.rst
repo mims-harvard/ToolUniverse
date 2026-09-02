@@ -545,7 +545,7 @@ optional dependency groups that are not installed.
 .. note::
 
    ``[all]`` covers ``dev, docs, graph, visualization, space, embedding, ml,
-   bioinformatics``. It does **not** include ``singlecell``, ``smolagents``,
+   bioinformatics``. It does **not** include ``pdf``, ``singlecell``, ``smolagents``,
    ``client``, or ``build`` — install those by name, e.g.
    ``pip install 'tooluniverse[singlecell]'``.
 

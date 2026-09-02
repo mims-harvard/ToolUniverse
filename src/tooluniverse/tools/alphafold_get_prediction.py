@@ -12,6 +12,7 @@ def alphafold_get_prediction(
     qualifier: Optional[str] = None,
     uniprot_id: Optional[str] = None,
     uniprot_accession: Optional[str] = None,
+    accession: Optional[str] = None,
     sequence_checksum: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -29,6 +30,8 @@ def alphafold_get_prediction(
         Alias for qualifier: UniProt accession (e.g., 'P69905').
     uniprot_accession : str
         Alias for qualifier: UniProt accession (e.g., 'P69905').
+    accession : str
+        Alias for qualifier. UniProt accession (e.g., 'P04637') -- the...
     sequence_checksum : str
         Optional CRC64 checksum of the UniProt sequence.
     stream_callback : Callable, optional
@@ -51,6 +54,7 @@ def alphafold_get_prediction(
             "qualifier": qualifier,
             "uniprot_id": uniprot_id,
             "uniprot_accession": uniprot_accession,
+            "accession": accession,
             "sequence_checksum": sequence_checksum,
         }.items()
         if v is not None

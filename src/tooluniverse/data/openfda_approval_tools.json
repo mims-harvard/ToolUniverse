@@ -2,7 +2,7 @@
   {
     "name": "OpenFDA_search_drug_approvals",
     "type": "OpenFDAApprovalTool",
-    "description": "Search the FDA Drugs@FDA database for drug approval records by drug name, sponsor/manufacturer, or application number. Returns FDA application details including NDA/ANDA/BLA numbers, sponsor names, approved dosage forms and strengths, active ingredients, original approval dates, and submission counts. Use this to find FDA-approved drugs, check approval status, or look up generic vs brand drug registrations.",
+    "description": "Search the FDA Drugs@FDA database for drug approval records by drug name, sponsor/manufacturer, or application number. Returns FDA application details including NDA/ANDA/BLA numbers, sponsor names, approved dosage forms and strengths, active ingredients, original approval dates, and submission counts. Use this to find FDA-approved drugs, check approval status, or look up generic vs brand drug registrations. drug_name is matched against both the resolved openfda name fields and the authoritative per-product name fields, so applications whose openfda block is empty upstream are still findable by brand name. One brand name commonly covers several applications with different formulations and approval dates; check `total` and compare application numbers before assuming a single answer.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,7 +11,8 @@
           "enum": [
             "search_approvals"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_approvals"
         },
         "drug_name": {
           "type": [
@@ -42,9 +43,7 @@
           "description": "Maximum number of results (default: 5, max: 20)"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -81,14 +80,14 @@
                   "string",
                   "null"
                 ],
-                "description": "Brand name(s)"
+                "description": "All brand name(s), from openfda and products.brand_name"
               },
               "generic_name": {
                 "type": [
                   "string",
                   "null"
                 ],
-                "description": "Generic name(s)"
+                "description": "All generic/active-ingredient name(s), from openfda and products.active_ingredients.name"
               },
               "active_ingredients": {
                 "type": [
@@ -116,7 +115,11 @@
                   "array",
                   "null"
                 ],
-                "description": "Available strengths"
+                "description": "Every distinct strength across the application's products, ordered by leading dose. Complete and never truncated - `strength_count` is its length."
+              },
+              "strength_count": {
+                "type": "integer",
+                "description": "Number of distinct strengths, i.e. len(strengths). Not the same as product_count - several products commonly share one strength."
               },
               "original_approval_date": {
                 "type": [
@@ -168,6 +171,9 @@
         "purpose": "Query FDA drug labels, adverse-event reports (FAERS), and recalls.",
         "without": "Works at 240 requests/min without it; the key raises it to 120,000/day."
       }
+    },
+    "fields": {
+      "operation": "search_approvals"
     }
   },
   {
@@ -182,7 +188,8 @@
           "enum": [
             "get_approval_history"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_approval_history"
         },
         "drug_name": {
           "type": [
@@ -199,13 +206,30 @@
           "description": "FDA application number (e.g., 'NDA021457'). More specific than drug_name."
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
       "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query actually sent to openFDA"
+        },
+        "matching_applications": {
+          "type": "integer",
+          "description": "How many FDA applications matched. Greater than 1 means this response describes only one of them."
+        },
+        "other_matching_applications": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Application numbers that also matched the drug name but are not described here. A brand name commonly covers several applications with different formulations and different approval dates."
+        },
+        "other_matching_applications_truncated": {
+          "type": "boolean",
+          "description": "True when more applications matched than this list names; compare with matching_applications."
+        },
         "application_number": {
           "type": [
             "string",
@@ -225,14 +249,14 @@
             "string",
             "null"
           ],
-          "description": "Brand name(s)"
+          "description": "All brand name(s), from openfda and products.brand_name"
         },
         "generic_name": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Generic name(s)"
+          "description": "All generic/active-ingredient name(s), from openfda and products.active_ingredients.name"
         },
         "total_submissions": {
           "type": "integer",
@@ -345,7 +369,10 @@
     ],
     "optional_api_keys": [
       "FDA_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_approval_history"
+    }
   },
   {
     "name": "OpenFDA_get_approved_products",
@@ -359,7 +386,8 @@
           "enum": [
             "get_approved_products"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_approved_products"
         },
         "drug_name": {
           "type": [
@@ -376,13 +404,30 @@
           "description": "FDA application number (e.g., 'NDA020702')"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
       "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query actually sent to openFDA"
+        },
+        "matching_applications": {
+          "type": "integer",
+          "description": "How many FDA applications matched. Greater than 1 means this response describes only one of them."
+        },
+        "other_matching_applications": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Application numbers that also matched the drug name but are not described here. A brand name commonly covers several applications with different formulations and different approval dates."
+        },
+        "other_matching_applications_truncated": {
+          "type": "boolean",
+          "description": "True when more applications matched than this list names; compare with matching_applications."
+        },
         "application_number": {
           "type": [
             "string",
@@ -402,14 +447,14 @@
             "string",
             "null"
           ],
-          "description": "Brand name(s)"
+          "description": "All brand name(s), from openfda and products.brand_name"
         },
         "generic_name": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Generic name(s)"
+          "description": "All generic/active-ingredient name(s), from openfda and products.active_ingredients.name"
         },
         "total_products": {
           "type": "integer",
@@ -511,6 +556,9 @@
     ],
     "optional_api_keys": [
       "FDA_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_approved_products"
+    }
   }
 ]

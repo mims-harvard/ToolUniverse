@@ -1,0 +1,557 @@
+[
+  {
+    "name": "EBI_pairwise_align",
+    "type": "EBIPairwiseAlignTool",
+    "description": "Align exactly two sequences via EMBL-EBI EMBOSS and return the alignment with percent identity, similarity, gaps, and score. Choose algorithm='needle' for Needleman-Wunsch global alignment (default), 'stretcher' for memory-efficient global alignment of long sequences, or 'matcher' for Smith-Waterman local alignment. Use EBI_msa_align instead when aligning three or more sequences. Jobs are submitted and polled, so a call takes several seconds.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "sequence_a",
+        "sequence_b"
+      ],
+      "properties": {
+        "sequence_a": {
+          "type": "string",
+          "description": "First sequence, FASTA or raw."
+        },
+        "sequence_b": {
+          "type": "string",
+          "description": "Second sequence, FASTA or raw."
+        },
+        "algorithm": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'needle' (global, default), 'stretcher' (global, long sequences), or 'matcher' (local)."
+        },
+        "sequence_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'protein' (default) or 'dna'."
+        },
+        "matrix": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Scoring matrix, e.g. 'EBLOSUM62' for protein or 'EDNAFULL' for DNA."
+        },
+        "gap_open": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Gap opening penalty."
+        },
+        "gap_extend": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Gap extension penalty."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Pairwise alignment",
+          "properties": {
+            "algorithm": {
+              "type": "string",
+              "description": "Algorithm used"
+            },
+            "alignment": {
+              "type": "string",
+              "description": "Alignment in the service's native format"
+            },
+            "identity_percent": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Percent identical positions"
+            },
+            "similarity_percent": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Percent similar positions"
+            },
+            "gaps_percent": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Percent gapped positions"
+            },
+            "score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Alignment score"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "sequence_a": ">sp_P69905\nMVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR",
+        "sequence_b": ">sp_P68871\nMVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYH",
+        "algorithm": "needle"
+      },
+      {
+        "sequence_a": ">sp_P69905\nMVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR",
+        "sequence_b": ">sp_P68871\nMVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNVLVCVLAHHFGKEFTPPVQAAYQKVVAGVANALAHKYH",
+        "algorithm": "matcher"
+      }
+    ]
+  },
+  {
+    "name": "EBI_translate_sequence",
+    "type": "EBITranslateSequenceTool",
+    "description": "Translate nucleotide to protein, back-translate protein to nucleotide, or produce a six-frame translation with ORF detection, via EMBL-EBI EMBOSS. Set mode='dna_to_protein' (default, transeq), 'protein_to_dna' (backtranseq), or 'six_frame' (sixpack). Supports alternative genetic codes through codon_table. Complements the local DNA_* helpers by handling alternative codon tables and six-frame ORF calling server-side.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "sequence"
+      ],
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Input sequence, FASTA or raw."
+        },
+        "mode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'dna_to_protein' (default), 'protein_to_dna', or 'six_frame'."
+        },
+        "frame": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Reading frame for dna_to_protein: '1','2','3','-1','-2','-3', or '6' for all."
+        },
+        "codon_table": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Genetic code, e.g. '0' standard, '2' vertebrate mitochondrial, '11' bacterial."
+        },
+        "min_orf_size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Minimum ORF size in nucleotides for six_frame mode."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Translation result",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "description": "Mode used"
+            },
+            "result": {
+              "type": "string",
+              "description": "Translated sequence(s) in FASTA or EMBOSS format"
+            },
+            "record_count": {
+              "type": "integer",
+              "description": "Number of FASTA records returned"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "sequence": ">seq\nATGAAAACCGCATATATTGCGAAACAGCGCCAGATTAGCTTTGTGAAAAGCCATTTTAGC",
+        "mode": "dna_to_protein",
+        "frame": "1"
+      },
+      {
+        "sequence": ">seq\nATGAAAACCGCATATATTGCGAAACAGCGCCAGATTAGCTTTGTGAAAAGCCATTTTAGC",
+        "mode": "six_frame"
+      },
+      {
+        "sequence": ">sp_P69905\nMVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR",
+        "mode": "protein_to_dna"
+      }
+    ]
+  },
+  {
+    "name": "EBI_scan_pfam_domains",
+    "type": "EBIPfamScanTool",
+    "description": "Scan a protein sequence against Pfam HMMs via EMBL-EBI PfamScan and return each matched domain with its coordinates, Pfam accession, bit score, E-value, and significance flag. Faster and Pfam-specific compared with InterProScan_scan_sequence, which searches many member databases; use InterProScan when you need the full signature set. Jobs are submitted and polled, so a call takes several seconds.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "sequence"
+      ],
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Protein sequence, FASTA or raw."
+        },
+        "database": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'pfam-a' (default)."
+        },
+        "evalue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "E-value cutoff, e.g. 0.001."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Matched Pfam domains",
+          "items": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "start": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Domain start in the query sequence"
+              },
+              "end": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Domain end in the query sequence"
+              },
+              "hmm_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Pfam accession, e.g. PF00042.29"
+              },
+              "hmm_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Pfam domain name, e.g. Globin"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Domain description"
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Entry type, e.g. Domain or Family"
+              },
+              "clan": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Pfam clan accession, if assigned"
+              },
+              "bit_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "HMM bit score"
+              },
+              "evalue": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Domain E-value"
+              },
+              "significant": {
+                "type": "boolean",
+                "description": "Whether the match passes the Pfam threshold"
+              },
+              "hmm_start": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Match start within the HMM"
+              },
+              "hmm_end": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Match end within the HMM"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "sequence": ">sp_P69905\nMVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR"
+      },
+      {
+        "sequence": ">sp_P02699\nMNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIMLGFPINFLTLYVTVQHKKLRTPLNYILLNLAVADLFMVFGGFTTTLYTSLHGYFVFGPTGCNLEGFFATLGGEIALWSLVVLAIERYVVVCKPMSNFRFGENHAIMGVAFTWVMALACAAPPLVGWSRYIPEGMQCSCGIDYYTPHEETNNESFVIYMFVVHFIIPLIVIFFCYGQLVFTVKEAAAQQQESATTQKAEKEVTRMVIIMVIAFLICWLPYAGVAFYIFTHQGSDFGPIFMTIPAFFAKTSAVYNPVIYIMMNKQFRNCMVTTLCCGKNPLGDDEASTTVSKTETSQVAPA",
+        "evalue": 0.001
+      }
+    ]
+  },
+  {
+    "name": "EBI_predict_membrane_topology",
+    "type": "EBIPhobiusTool",
+    "description": "Predict transmembrane helices and signal peptides from a protein sequence using Phobius via EMBL-EBI. Returns the helix count, whether a signal peptide is predicted, and per-feature coordinates (TRANSMEM, SIGNAL, DOMAIN with inside/outside orientation). This is a sequence-based prediction; for experimentally derived topology of solved structures use structure resources instead. Jobs are submitted and polled, so a call takes several seconds.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "sequence"
+      ],
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Protein sequence, FASTA or raw."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Topology prediction",
+          "properties": {
+            "transmembrane_helix_count": {
+              "type": "integer",
+              "description": "Number of predicted transmembrane helices"
+            },
+            "has_signal_peptide": {
+              "type": "boolean",
+              "description": "Whether a signal peptide is predicted"
+            },
+            "features": {
+              "type": "array",
+              "description": "Per-feature predictions",
+              "items": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "feature": {
+                    "type": "string",
+                    "description": "Feature type: TRANSMEM, SIGNAL, DOMAIN"
+                  },
+                  "start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Feature start"
+                  },
+                  "end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Feature end"
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Orientation or annotation note"
+                  }
+                }
+              }
+            },
+            "raw_output": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Raw Phobius output when no features could be parsed"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "sequence": ">sp_P02699\nMNGTEGPNFYVPFSNKTGVVRSPFEAPQYYLAEPWQFSMLAAYMFLLIMLGFPINFLTLYVTVQHKKLRTPLNYILLNLAVADLFMVFGGFTTTLYTSLHGYFVFGPTGCNLEGFFATLGGEIALWSLVVLAIERYVVVCKPMSNFRFGENHAIMGVAFTWVMALACAAPPLVGWSRYIPEGMQCSCGIDYYTPHEETNNESFVIYMFVVHFIIPLIVIFFCYGQLVFTVKEAAAQQQESATTQKAEKEVTRMVIIMVIAFLICWLPYAGVAFYIFTHQGSDFGPIFMTIPAFFAKTSAVYNPVIYIMMNKQFRNCMVTTLCCGKNPLGDDEASTTVSKTETSQVAPA"
+      },
+      {
+        "sequence": ">sp_P69905\nMVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR"
+      }
+    ]
+  },
+  {
+    "name": "EBI_profile_search",
+    "type": "EBIProfileSearchTool",
+    "description": "Search a protein sequence against a sequence database using a profile method via EMBL-EBI: method='phmmer' (HMMER3, default) or 'psiblast' (iterative PSI-BLAST). Profile methods detect remote homologs that a single-pass BLAST misses. Valid databases differ by method: phmmer accepts swissprot, uniprotkb, uniprotrefprot, rp75, rp55, rp15; psiblast accepts uniprotkb, uniprotkb_swissprot, uniprotkb_reference_proteomes. Jobs are submitted and polled, so a call takes several seconds.",
+    "parameter": {
+      "type": "object",
+      "required": [
+        "sequence"
+      ],
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Protein sequence, FASTA or raw."
+        },
+        "method": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'phmmer' (default) or 'psiblast'."
+        },
+        "database": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Target database; valid values depend on method. Defaults to swissprot for phmmer, uniprotkb for psiblast."
+        },
+        "evalue": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "E-value threshold, e.g. 0.001."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Profile search result",
+          "properties": {
+            "method": {
+              "type": "string",
+              "description": "Method used"
+            },
+            "database": {
+              "type": "string",
+              "description": "Database searched"
+            },
+            "result": {
+              "type": "string",
+              "description": "Search report in the service's native format"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "sequence": ">sp_P69905\nMVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR",
+        "method": "phmmer",
+        "database": "swissprot"
+      },
+      {
+        "sequence": ">sp_P69905\nMVLSPADKTNVKAAWGKVGAHAGEYGAEALERMFLSFPTTKTYFPHFDLSHGSAQVKGHGKKVADALTNAVAHVDDMPNALSALSDLHAHKLRVDPVNFKLLSHCLLVTLAAHLPAEFTPAVHASLDKFLASVSTVLTSKYR",
+        "method": "phmmer",
+        "database": "swissprot",
+        "evalue": 0.001
+      }
+    ]
+  }
+]

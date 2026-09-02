@@ -12,6 +12,8 @@ def ReactomeContent_search(
     query: str,
     species: Optional[str] = "Homo sapiens",
     types: Optional[str] = "Pathway",
+    rows: Optional[int] = None,
+    start: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +30,10 @@ def ReactomeContent_search(
         Species name for filtering results. Default: 'Homo sapiens'. Other options: '...
     types : str
         Entity type to search. Options: 'Pathway', 'Reaction', 'Complex', 'Protein', ...
+    rows : int
+        Number of results to return per page (1-1000). Omit to use Reactome's default...
+    start : int
+        Zero-based offset of the first result to return, for paging through large res...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +50,13 @@ def ReactomeContent_search(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "species": species, "types": types}.items()
+        for k, v in {
+            "query": query,
+            "species": species,
+            "types": types,
+            "rows": rows,
+            "start": start,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

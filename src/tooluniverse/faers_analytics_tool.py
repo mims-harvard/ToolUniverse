@@ -1,12 +1,494 @@
 # faers_analytics_tool.py
 
+import os
 import requests
 import math
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, List, Tuple, Optional
 from .base_tool import BaseTool
+from .http_utils import request_with_retry
+from .openfda_adv_tool import (
+    COUNT_MAX_LIMIT,
+    COUNT_MAX_LIMIT_ANONYMOUS,
+    FAERS_REPORTED_NAME_FIELD,
+    _memoize_report_total,
+    _memoized_report_total,
+    faers_drug_name_clause,
+    faers_report_total_key,
+)
 from .tool_registry import register_tool
 
 FDA_BASE_URL = "https://api.fda.gov/drug/event.json"
+
+# The openFDA facet every reaction rollup in this module counts over.
+#
+# Fix-R38: `_rollup_meddra_hierarchy` sent this facet with no `limit`, took the
+# first 50 rows of openFDA's 100-row default page, and published
+# `len(that slice)` under the key `total_unique_PTs`. That number was therefore
+# the constant 50 for every drug -- measured live 2026-08-11, HYDROMORPHONE and
+# ONDANSETRON both reported `total_unique_PTs: 50` -- with no `truncated` flag
+# and no note, so a stable, plausible-looking page size was being read as "this
+# drug has 50 distinct reported reactions".
+#
+# How far off: the same query at the anonymous ceiling
+#   count=patient.reaction.reactionmeddrapt.exact&limit=999
+# returns 999 distinct PT buckets for HYDROMORPHONE and the 999th still carries
+# `count: 69`, i.e. the ranking is nowhere near exhausted and the true number of
+# distinct PTs is strictly greater than 999. The published figure understated it
+# by more than 20x.
+#
+# There is no honest total to publish instead: an openFDA `count=` response
+# carries NO grand total -- its `meta` block holds only
+# disclaimer/terms/license/last_updated -- so the number of distinct values is
+# genuinely unknowable from the response (same constraint documented at
+# openfda_adv_tool.COUNT_DEFAULT_LIMIT). The fix is to report what was returned
+# under a name that says so, flag truncation, and say plainly that a term's
+# absence from the list is not evidence it was never reported.
+PT_ANALYSED_FIELD = "patient.reaction.reactionmeddrapt"
+PT_COUNT_FIELD = PT_ANALYSED_FIELD + ".exact"
+
+# The openFDA field every reaction FILTER in this module searches on.
+#
+# Fix-R44: this module used to filter on `patient.reaction.reactionmeddrapt`,
+# openFDA's ANALYSED variant of the field, whose tokenizer splits on whitespace
+# and hyphens. A search for one Preferred Term therefore also matched every
+# other PT containing it as a token, and the swept-in reports were counted into
+# the 2x2 table as though they were reports of the requested PT.
+#
+# Measured live 2026-08-12 (`limit=1`, `meta.results.total`), reaction
+# "Thrombocytopenia":
+#
+#   drug         analysed field   .exact field   inflation
+#   heparin               6,805          2,778        2.45x
+#   bivalirudin             111             27        4.11x
+#
+# and `count=patient.reaction.reactionmeddrapt.exact` over heparin's analysed
+# match set names the contaminant outright: HEPARIN-INDUCED THROMBOCYTOPENIA,
+# 3,968 reports, against THROMBOCYTOPENIA's 2,778.
+#
+# The inflation is DIFFERENTIAL, which is what makes it a wrong answer rather
+# than a conservative one: the factor depends on which compound PTs happen to
+# contain the term, so `_compare_drugs` divided two differently-inflated RORs
+# and the verdict itself moved. Worse, the term swept into bivalirudin's arm is
+# heparin-induced thrombocytopenia -- bivalirudin's INDICATION, the thing it is
+# given to treat -- so the contamination inflates the comparator on the strength
+# of reports where the drug was the response to the event, not its suspected
+# cause.
+#
+# `.exact` is openFDA's un-analysed index variant and is what disproportionality
+# needs: a numerator that contains the PT the arm claims and nothing else. It
+# is case-insensitive on the query side (verified live: "Thrombocytopenia",
+# "THROMBOCYTOPENIA", "thrombocytopenia" and "ThRoMbOcYtOpEnIa" all return the
+# identical 110,034), so callers who send a PT in any capitalisation keep
+# working. Its one behavioural edge is that a string which is not a PT at all
+# 404s instead of silently matching a union of PTs -- `_not_a_preferred_term_error`
+# below turns that into a named error with real PTs to retry with.
+#
+# Retrieval tools are deliberately NOT changed to match. For "show me the
+# reports", a token match returns a superset and the caller can see what came
+# back; for a 2x2 table it corrupts a number nobody can inspect.
+PT_SEARCH_FIELD = PT_COUNT_FIELD
+
+# How many rows `_filter_serious_events` publishes under
+# "top_serious_reactions". Named because it also sizes that method's request:
+# it asks openFDA for exactly one row more than this, so the extra row's
+# presence proves the ranking continues past what is shown.
+_TOP_SERIOUS_REACTIONS = 20
+
+# How far apart two RORs must be before `_compare_drugs` calls one "stronger"
+# rather than "similar-strength".
+_SIMILAR_STRENGTH_RATIO = 1.5
+
+# Fix-R37: an arm only supports that call when its own 95% interval is narrower
+# than the band itself. On the log scale the ROR standard error is
+# sqrt(1/a + 1/b + 1/c + 1/d), and with b, c and d in the tens of thousands to
+# millions the 1/a term dominates outright, leaving SE ~= 1/sqrt(a). Requiring
+# exp(1.96 / sqrt(a)) < _SIMILAR_STRENGTH_RATIO gives
+# a > (1.96 / ln(1.5))^2 = 23.4, rounded up to a round 25. Kept as its own
+# literal rather than computed from the ratio, since ceil() of that expression
+# is 24 and would quietly move the threshold.
+_SMALL_CASE_COUNT_THRESHOLD = 25
+
+# openFDA report-level fields that the FAERS *count* tools accept as filters and
+# that no operation in this module implements.
+#
+# Fix-R48: every operation here read the two or three arguments it needed
+# straight out of `arguments` and never looked at the rest, so any other key was
+# accepted, dropped, and the unrestricted result returned as `status: success`.
+# Measured live 2026-08-13:
+#
+#   FAERS_calculate_disproportionality {"drug_name": "warfarin",
+#       "adverse_event": "Haemorrhage"}                      a = 4313
+#   ... the same call plus {"patientagegroup": "6",
+#       "concomitant_drug": "aspirin"}                       a = 4313
+#
+#   FAERS_filter_serious_events {"drug_name": "warfarin",
+#       "seriousness_type": "death"}          total_serious_events = 17327
+#   ... the same call plus {"patientsex": "1",
+#       "occurcountry": "US"}                 total_serious_events = 17327
+#
+# Byte-identical output, so a whole-database signal was returned to a caller who
+# had asked for an age-stratified or interaction-adjusted one and was told it
+# succeeded. Disproportionality is the worst place for this: `patientagegroup`
+# and `concomitant_drug` are exactly the restrictions an analyst adds when
+# probing confounding, and the unrestricted ROR is the number that confounding
+# would have moved.
+#
+# These names are not invented by callers -- they are what this tool family's
+# OWN sibling configs teach. `patientagegroup` appears 60 times in
+# fda_drug_adverse_event_tools.json, whose descriptions read "all other filters
+# (patientsex, patientagegroup, occurcountry, serious, seriousnessdeath) are
+# optional". A caller who learns the vocabulary from one FAERS tool and carries
+# it to another is following the documentation, so the names are listed here to
+# be answered specifically rather than lumped in with typos.
+_FAERS_RECORD_FILTERS = frozenset(
+    {
+        "patientagegroup",
+        "patientsex",
+        "patientweight",
+        "occurcountry",
+        "serious",
+        "seriousnessdeath",
+        "seriousnesshospitalization",
+        "seriousnessdisabling",
+        "seriousnesslifethreatening",
+        "receivedate",
+        "drugcharacterization",
+    }
+)
+# Every name above was checked to appear in a shipped config under data/ --
+# the message this list drives claims the FAERS_count_* tools filter on them,
+# and that claim has to be true. `concomitant_drug` and `reactionmeddraversepa`
+# were dropped for failing exactly that check: they appear in no config, so
+# they are refused with the generic message instead of a false referral.
+
+
+# Every argument name any operation in this module reads, including the aliases
+# run() normalises. The union across all six configs plus run()'s alias map.
+#
+# The guard consults this in ADDITION to the calling tool's declared schema
+# because a schema can be partial. Trusting `parameter.properties` alone as a
+# complete allow-list was the first version of Fix-R48 and it regressed a
+# sibling test: tests/unit/test_faers_rollup_pt_truncation.py builds this tool
+# from a stub declaring only `operation` and `drug_name`, so a perfectly valid
+# `stratify_by="country"` was refused. Rejecting an argument the module does
+# understand is a worse failure than ignoring one it does not -- it breaks a
+# working call rather than mis-scoping a number -- so the vocabulary is stated
+# here and a name in it is never refused.
+_KNOWN_ARGUMENTS = frozenset(
+    {
+        "operation",
+        "drug_name",
+        "drug",
+        "drug1",
+        "drug2",
+        "drugs",
+        "adverse_event",
+        "reaction",
+        "stratify_by",
+        "demographic",
+        "seriousness_type",
+        "event_type",
+    }
+)
+
+
+def _unsupported_arguments_error(
+    tool_name: str, unsupported: List[str], accepted: List[str]
+) -> Dict[str, Any]:
+    """Refuse arguments this operation cannot honour, rather than dropping them.
+
+    Silently ignoring them is the failure being prevented: the caller gets a
+    plausible number computed over a population they did not ask for, with no
+    field anywhere in the response recording that the restriction was skipped.
+    An error is recoverable; a wrong ROR presented as a success is not.
+
+    Restrictions that ARE available are named, because for the record filters
+    above the answer is usually "another tool in this family does that" rather
+    than "this cannot be done".
+    """
+    record_filters = sorted(set(unsupported) & _FAERS_RECORD_FILTERS)
+    message = (
+        f"{tool_name} does not support: {', '.join(sorted(unsupported))}. "
+        f"It accepts: {', '.join(sorted(accepted))}. "
+        "Passing it changes nothing about the population analysed, so it is "
+        "refused rather than ignored."
+    )
+    if record_filters:
+        message += (
+            f" Note that the FAERS_count_* tools DO filter on "
+            f"{', '.join(record_filters)}, which is where the spelling comes "
+            "from -- but this analysis is computed from whole-database counts "
+            "and cannot restrict them. For a breakdown by age, sex or country "
+            "use FAERS_stratify_by_demographics; for filtered report counts "
+            "use the FAERS_count_* tools."
+        )
+    return {"status": "error", "error": message}
+
+
+def _comparison_arm(name: str, result: Dict[str, Any]) -> Dict[str, Any]:
+    """One drug's side of a comparison, built from its disproportionality run.
+
+    Fix-R37: `contingency_table` is passed through verbatim rather than rebuilt,
+    so an arm can never disagree with FAERS_calculate_disproportionality about
+    the same drug/event pair, and both tools name the cells identically.
+
+    `cohort_scope` rides along for the same reason, and because a comparison is
+    where it matters most: the verdict is a ratio of two arms, so one arm being
+    an active-ingredient population and the other being a single product moves
+    the comparison itself, not just one number. The arm's run has already paid
+    for the probes -- dropping the result here would have spent 2-4 openFDA
+    requests per comparison on output nobody could see.
+    """
+    return {
+        "name": name,
+        "contingency_table": result.get("contingency_table"),
+        "metrics": result.get("metrics"),
+        "signal_detection": result.get("signal_detection"),
+        "cohort_scope": result.get("cohort_scope"),
+    }
+
+
+def _small_count_caveat(arms: List[Dict[str, Any]]) -> Optional[str]:
+    """Qualify a two-drug verdict whose arms rest on too few co-reported cases.
+
+    Returns None when every arm clears `_SMALL_CASE_COUNT_THRESHOLD` -- and also
+    when an arm's count is simply unavailable, since there is then nothing to
+    qualify it with.
+    """
+    small = []
+    for arm in arms:
+        a = (arm.get("contingency_table") or {}).get("a_drug_and_event")
+        if isinstance(a, int) and a < _SMALL_CASE_COUNT_THRESHOLD:
+            small.append((arm.get("name"), a))
+
+    if not small:
+        return None
+
+    counts = "; ".join(
+        f"{name} rests on {a} co-reported case{'' if a == 1 else 's'}"
+        for name, a in small
+    )
+    return (
+        f"{counts} -- fewer than the {_SMALL_CASE_COUNT_THRESHOLD} needed for an "
+        "arm's own 95% ROR interval to be narrower than the "
+        f"{_SIMILAR_STRENGTH_RATIO}x ratio this comparison uses to separate "
+        "'similar-strength' from 'stronger'. Read `comparison` as provisional "
+        "rather than an equal-confidence statement, and check each arm's "
+        "`contingency_table` before acting on it."
+    )
+
+
+def _drug_clause(drug_name: str) -> str:
+    """openFDA search clause matching a drug across every field that names it.
+
+    Matching only `generic_name` makes every brand name look like a drug with
+    zero reports, which for the disproportionality math is indistinguishable
+    from a genuinely unreported drug (confirmed live: "XELJANZ" yielded
+    a=0, b=0 and an "Insufficient data" error while its generic "tofacitinib"
+    returned a real ROR; the generic-or-brand form returns 183,405 reports for
+    the same brand name). Brand names are what prescribers and labels use, so
+    they must resolve to the same reports as the generic.
+
+    `patient.drug.medicinalproduct` is required for the same reason in the
+    opposite direction. The openFDA name fields are populated only when the
+    reporter's free text resolved to an SPL, so for anything that did not
+    resolve they are sparse or empty and generic-or-brand alone silently shrinks
+    the contingency table. Measured live 2026-08-11 (`limit=0`,
+    `meta.results.total`): MEFLOQUINE has 751 reports under medicinalproduct but
+    only 156 under generic-or-brand, so this tool was computing ROR/PRR from 21%
+    of the drug's reports; YELLOW FEVER VACCINE has 111 under medicinalproduct
+    and 0 under generic-or-brand, making vaccines entirely invisible to
+    disproportionality analysis while looking like a legitimate "no reports"
+    answer.
+
+    The field list and the rendering both live in openfda_adv_tool so this
+    tool's numerator stays comparable with the FAERS count/detail tools' -- see
+    FAERS_DRUG_NAME_FIELDS there for the full measured table.
+    """
+    return faers_drug_name_clause(drug_name)
+
+
+def _reported_name_clause(drug_name: str) -> str:
+    """Search clause restricted to the product name the reporter actually wrote.
+
+    `_drug_clause`'s union also searches openFDA's SPL annotation, which tags a
+    report with EVERY brand and generic name registered for the active
+    ingredient of a product the report did name. That is right for a generic
+    query and wrong for a brand query whose ingredient has other products, and
+    -- this is the part that matters for choosing a cohort automatically -- the
+    size of the gap does not tell the two apart. Measured live 2026-08-12
+    (`limit=0`, `meta.results.total`):
+
+        TOFACITINIB  186,783 union / 13,075 reported-name  (93.0% non-naming)
+        CYANOKIT       4,119 union /    238 reported-name  (94.2% non-naming)
+
+    Both are ~93%, and they mean opposite things. Tofacitinib's 173,708
+    extra reports overwhelmingly named XELJANZ, which IS tofacitinib exposure,
+    so the union is the right cohort. CYANOKIT's 3,881 extra reports are
+    vitamin B12 supplementation and its patients' polypharmacy -- the top
+    reported names in that union are HYDROXOCOBALAMIN 3,882, ATORVASTATIN 775,
+    BISOPROLOL 538, PARACETAMOL 536 -- because CYANOKIT is one brand of
+    hydroxocobalamin among many with an entirely different indication.
+
+    So neither field is right on its own and no threshold can pick between
+    them. The union therefore stays the analysed cohort, and this clause exists
+    to MEASURE how much of it named the queried product, so the caller can see
+    which of those two situations they are in. See `_cohort_scope`.
+    """
+    return f'{FAERS_REPORTED_NAME_FIELD}:"{drug_name}"'
+
+
+def _ranked_terms_truncation_note(label: str, returned: int, observed: bool) -> str:
+    """Disclosure for a ranked `count=` list that does not show every term.
+
+    Deliberately mirrors openfda_adv_tool._build_count_envelope's
+    `truncation_note` so both FAERS families make the same promise about the
+    same openFDA behaviour: the rows are the most-reported terms in descending
+    order, the size of the remainder is unknowable, and absence from the list is
+    not absence from FAERS.
+
+    `observed` is True when a row beyond the published list actually came back,
+    which proves more terms exist; False when the page merely filled exactly,
+    which only makes it likely. The distinction is the same one
+    `_build_count_envelope` draws with its `probed` flag.
+
+    Takes only the count actually published, never the page size that produced
+    it. The two differ whenever a caller fetches a probe row it does not show,
+    and quoting the request's `limit` here would then describe a page the reader
+    never received; callers that want to expose the page size publish it as its
+    own key instead.
+    """
+    certainty = (
+        "more terms exist beyond it"
+        if observed
+        else "openFDA filled the page exactly, so more terms may exist beyond it"
+    )
+    return (
+        f"openFDA returned only the {returned} most-reported {label} for this "
+        f"query, ranked by descending report count; {certainty}. "
+        "openFDA's count endpoint does not report how many distinct terms there "
+        "are in total -- its `meta` block carries only "
+        "disclaimer/terms/license/last_updated -- so the size of the remainder is "
+        f"unknown and no total number of distinct {label} can be given. A term "
+        "missing from this list is NOT evidence that it was never reported for "
+        "this query -- query the term directly to check."
+    )
+
+
+def _faers_search_query(
+    drug_name: Optional[str] = None,
+    adverse_event: Optional[str] = None,
+    reported_name_only: bool = False,
+) -> str:
+    """openFDA `search=` clause for a drug, optionally narrowed to one reaction.
+
+    Shared so a `count=` facet and the `meta.results.total` request that supplies
+    its denominator cannot drift apart -- the two numbers are only comparable if
+    they came from the identical query. Returns "" when neither is given, which
+    callers use to mean "the whole database".
+    """
+    parts = []
+    if drug_name:
+        parts.append(
+            _reported_name_clause(drug_name)
+            if reported_name_only
+            else _drug_clause(drug_name)
+        )
+    if adverse_event:
+        parts.append(f'{PT_SEARCH_FIELD}:"{adverse_event}"')
+    return "+AND+".join(parts)
+
+
+def _api_request_failed_error(exc: Exception) -> Dict[str, Any]:
+    """An openFDA transport failure, with the request URL stripped out.
+
+    `requests` renders an HTTP error as "<status> ... for url: <full URL>", and
+    every URL this module builds has been through `_with_api_key`, which appends
+    `&api_key=<FDA_API_KEY>`. Returning `str(e)` therefore puts the caller's
+    secret into a value that gets logged, cached and shown to an agent.
+    Reproduced with FDA_API_KEY set:
+
+        API request failed: 403 Client Error: Forbidden for url:
+        https://api.fda.gov/drug/event.json?search=(...)&count=patient.patientsex
+        &limit=1000&api_key=SECRETKEY123
+
+    The status and reason are the actionable part and are kept; the URL is not,
+    since the caller supplied the parameters that built it. Truncating at
+    " for url:" rather than regex-scrubbing `api_key=` keeps this correct if a
+    future URL gains another sensitive parameter.
+    """
+    message = str(exc)
+    marker = " for url:"
+    if marker in message:
+        message = message.split(marker, 1)[0].rstrip()
+    return {
+        "status": "error",
+        "error": (
+            f"openFDA request failed: {message}. Retry in a moment; if this "
+            f"persists, set the FDA_API_KEY environment variable to raise the "
+            f"rate limit (https://open.fda.gov/apis/authentication/)."
+        ),
+    }
+
+
+def _count_query_failed_error() -> Dict[str, Any]:
+    """A failed count request is not a zero count -- see `_get_faers_count`."""
+    return {
+        "status": "error",
+        "error": (
+            "One or more openFDA FAERS count queries failed "
+            "(commonly HTTP 429 rate limiting on the anonymous "
+            "tier), so a disproportionality analysis cannot be "
+            "computed right now. Retry in a moment, or set the "
+            "FDA_API_KEY environment variable to raise the rate "
+            "limit (https://open.fda.gov/apis/authentication/)."
+        ),
+    }
+
+
+def _not_a_preferred_term_error(
+    adverse_event: str, suggestions: List[Tuple[str, int]]
+) -> Dict[str, Any]:
+    """Error for a reaction string that is not a MedDRA PT as stored in FAERS.
+
+    This is the one caller-visible edge of searching `.exact` rather than the
+    analysed reaction field (see PT_SEARCH_FIELD). The analysed field answered
+    a colloquial term like "bleeding" with 34,436 reports -- the union of every
+    PT containing that token, from GINGIVAL BLEEDING to BLEEDING TIME PROLONGED
+    -- and fed that union into the 2x2 table as if it were one event. The
+    `.exact` field 404s instead, which is the honest answer but a useless one on
+    its own.
+
+    So the miss is reported as what it is, a term that is not a Preferred Term,
+    and carries the real PTs to retry with rather than leaving the caller to
+    guess MedDRA's spelling. Separating "your query names nothing" from "this
+    combination genuinely has no reports" is the whole point: both used to
+    surface as an "Insufficient data: a=0" arithmetic complaint.
+    """
+    if suggestions:
+        listed = "; ".join(
+            f'"{term}" ({count:,} reports)' for term, count in suggestions
+        )
+        guidance = (
+            f" FAERS records these Preferred Terms containing it: {listed}. "
+            "Re-run with one of them."
+        )
+    else:
+        guidance = (
+            " No FAERS Preferred Term contains it either, so check the spelling "
+            "against MedDRA -- FAERS uses British spellings for many terms "
+            '(e.g. "Haemorrhage", not "Hemorrhage").'
+        )
+    return {
+        "status": "error",
+        "error": (
+            f'"{adverse_event}" is not a MedDRA Preferred Term in FAERS, so no '
+            f"report can match it and this query cannot be answered."
+            f"{guidance}"
+        ),
+        "adverse_event": adverse_event,
+        "suggested_preferred_terms": [term for term, _ in suggestions],
+    }
 
 
 @register_tool("FAERSAnalyticsTool")
@@ -27,6 +509,7 @@ class FAERSAnalyticsTool(BaseTool):
         super().__init__(tool_config)
         self.parameter = tool_config.get("parameter", {})
         self.required = self.parameter.get("required", [])
+        self.api_key = os.getenv("FDA_API_KEY")
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to analytics operation."""
@@ -45,10 +528,41 @@ class FAERSAnalyticsTool(BaseTool):
         if arguments.get("drugs") and not arguments.get("drug1"):
             drugs_list = arguments["drugs"]
             if isinstance(drugs_list, list) and len(drugs_list) >= 2:
+                # Fix-R44: this used to take drugs[0] and drugs[1] and drop the
+                # rest without a word. `{"drugs": ["heparin", "argatroban",
+                # "bivalirudin"]}` returned status "success", a confident
+                # two-drug verdict and comparison_caveat null, with "bivalirudin"
+                # appearing nowhere in the response -- so the answer looked like
+                # an answer to the question that was asked. The analysis is 2x2
+                # by construction and cannot be widened here, so the extra input
+                # is refused rather than discarded.
+                if len(drugs_list) > 2:
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"`drugs` takes exactly two drug names; received "
+                            f"{len(drugs_list)} ({', '.join(map(str, drugs_list))}). "
+                            "This comparison is pairwise -- it builds one 2x2 "
+                            "contingency table per drug and compares the two. "
+                            "Issue one call per pair (e.g. "
+                            f'["{drugs_list[0]}", "{drugs_list[1]}"] then '
+                            f'["{drugs_list[0]}", "{drugs_list[2]}"]) and compare '
+                            "the resulting RORs across calls."
+                        ),
+                    }
                 arguments = dict(arguments, drug1=drugs_list[0], drug2=drugs_list[1])
         # Normalize stratify_by: 'age_group' → 'age'
         if arguments.get("stratify_by") == "age_group":
             arguments = dict(arguments, stratify_by="age")
+        # Checked AFTER alias normalisation so the aliases above (`reaction`,
+        # `drug`, `drugs`, ...) are judged by the schema that declares them, and
+        # BEFORE dispatch so no request is spent on a query that would answer a
+        # different question than the one asked. See
+        # _unsupported_arguments_error.
+        unsupported_error = self._unsupported_arguments(arguments)
+        if unsupported_error:
+            return unsupported_error
+
         operation = arguments.get("operation")
         # Auto-fill operation from tool config const if not provided by user
         if not operation:
@@ -74,6 +588,158 @@ class FAERSAnalyticsTool(BaseTool):
 
         return self._with_data_payload(operation_result)
 
+    def _unsupported_arguments(
+        self, arguments: Dict[str, Any]
+    ) -> Optional[Dict[str, Any]]:
+        """Error for arguments this tool's schema does not declare, else None.
+
+        An argument is refused only when the calling tool's schema does not
+        declare it AND it is not in `_KNOWN_ARGUMENTS`, the vocabulary every
+        operation in this module shares. Both checks are needed and neither is
+        sufficient alone:
+
+        * the schema alone is not enough, because it can be partial -- see
+          `_KNOWN_ARGUMENTS` for the sibling test that a schema-only version of
+          this guard broke;
+        * the vocabulary alone is not enough, because a config that declares an
+          argument this module does not otherwise know still means it.
+
+        The cost of the union is that an argument belonging to a DIFFERENT
+        operation in the family (`stratify_by` sent to disproportionality) is
+        still accepted and ignored. That is the same class of defect, left in
+        place deliberately: closing it needs a per-operation map that the
+        partial-schema case has just shown cannot be derived reliably from the
+        config, and a false rejection breaks a working call whereas this
+        mis-scopes an argument nobody supplied on purpose. The verified defect
+        -- openFDA record filters silently dropped -- is fully closed either
+        way, since none of those names appear in the vocabulary.
+
+        `None` values are skipped so that explicitly passing a null optional
+        stays equivalent to omitting it.
+        """
+        declared = self.parameter.get("properties") or {}
+        unsupported = [
+            key
+            for key, value in arguments.items()
+            if key not in declared and key not in _KNOWN_ARGUMENTS and value is not None
+        ]
+        if not unsupported:
+            return None
+        # The advertised list is THIS operation's declared parameters, not the
+        # module vocabulary. Naming the union would list `drug1`, `drugs`,
+        # `stratify_by` and friends as accepted by disproportionality, where
+        # they are in fact accepted-and-ignored -- the error would advertise
+        # the very failure mode it exists to close. The vocabulary still widens
+        # what is *tolerated* (see the docstring), it just is not advertised.
+        return _unsupported_arguments_error(
+            self.tool_config.get("name", type(self).__name__),
+            unsupported,
+            sorted(declared) or sorted(_KNOWN_ARGUMENTS),
+        )
+
+    def _with_api_key(self, url: str) -> str:
+        """Append FDA_API_KEY (if set) to an openFDA request URL -- reduces
+        how often the anonymous tier's low rate limit is hit (see
+        _get_faers_count)."""
+        if self.api_key:
+            separator = "&" if "?" in url else "?"
+            return f"{url}{separator}api_key={self.api_key}"
+        return url
+
+    def _count_limit(self) -> int:
+        """Highest `limit` this caller may send to an openFDA `count=` query.
+
+        Measured live 2026-08-11 against
+        `count=patient.reaction.reactionmeddrapt.exact` for HYDROMORPHONE:
+        limit=1000 answers HTTP 403 {"code": "API_KEY_MISSING"} for an anonymous
+        caller while limit=999 succeeds, so the anonymous ceiling sits one below
+        openFDA's documented maximum of 1000. The constants live in
+        openfda_adv_tool and are imported rather than restated so this module's
+        facets cannot page differently from the FAERS count tools there.
+        """
+        return COUNT_MAX_LIMIT if self.api_key else COUNT_MAX_LIMIT_ANONYMOUS
+
+    def _reaction_query_missed(
+        self, adverse_event: Optional[str], drug_name: Optional[str]
+    ) -> Dict[str, Any]:
+        """Explain an openFDA 404 on a query that filtered by reaction.
+
+        openFDA answers a query with no matches with a 404 rather than an empty
+        200, so every operation filtering on a reaction has to tell two
+        different things apart, and they need opposite advice:
+
+        * the string is not a MedDRA Preferred Term at all -- fixable by
+          spelling it the way MedDRA does, and worth naming real terms for;
+        * it IS a Preferred Term, and this drug simply has no reports of it --
+          nothing to fix, and suggesting alternative spellings would be wrong.
+
+        The distinguishing question is whether the term matches anything
+        anywhere in FAERS, which is one count query.
+
+        Before Fix-R44 these operations searched openFDA's ANALYSED reaction
+        field, which matched loosely enough that a colloquial term still hit
+        something, so the 404 was rare and `raise_for_status()` was survivable.
+        Searching `.exact` makes the miss routine, and a raw
+        "404 Client Error ... for url: <full openFDA URL>" is both unhelpful and
+        a place an FDA_API_KEY can end up in a returned string.
+        """
+        if adverse_event and self._get_faers_count(None, adverse_event) == 0:
+            return _not_a_preferred_term_error(
+                adverse_event, self._suggest_preferred_terms(adverse_event)
+            )
+        return {
+            "status": "error",
+            "error": (
+                f"No FAERS reports match drug '{drug_name}' with reaction "
+                f"'{adverse_event}'. '{adverse_event}' is a recognised MedDRA "
+                f"Preferred Term, so this is a genuine absence of reports for "
+                f"this drug/event pair rather than a naming problem -- check "
+                f"the drug name, or query the drug without a reaction filter "
+                f"to see which reactions it does have."
+            ),
+        }
+
+    def _suggest_preferred_terms(
+        self, adverse_event: str, limit: int = 5
+    ) -> List[Tuple[str, int]]:
+        """Real FAERS Preferred Terms containing `adverse_event`, most-reported first.
+
+        Runs only on the failure path, so the happy path costs no extra request.
+        Uses the ANALYSED reaction field on purpose -- the loose token matching
+        that makes it wrong for counting is exactly what makes it right for
+        "what did you mean?" -- and rolls the matched reports up over the
+        `.exact` facet to recover the true PT spellings. The facet counts every
+        reaction on a matched report, including co-reported ones that have
+        nothing to do with the query, so rows are kept only when they contain
+        all of the query's tokens.
+
+        Returns [] on any failure: this decorates an error message and must
+        never replace one.
+        """
+        tokens = [t for t in adverse_event.lower().replace("-", " ").split() if t]
+        if not tokens:
+            return []
+
+        try:
+            url = self._with_api_key(
+                f'{FDA_BASE_URL}?search={PT_ANALYSED_FIELD}:"{adverse_event}"'
+                f"&count={PT_COUNT_FIELD}&limit={min(50, self._count_limit())}"
+            )
+            response = request_with_retry(requests, "GET", url, timeout=30)
+            if response.status_code != 200:
+                return []
+            rows = response.json().get("results", [])
+        except Exception:
+            return []
+
+        matched = [
+            (row["term"], row.get("count", 0))
+            for row in rows
+            if isinstance(row.get("term"), str)
+            and all(tok in row["term"].lower() for tok in tokens)
+        ]
+        return matched[:limit]
+
     def _with_data_payload(self, result: Dict[str, Any]) -> Dict[str, Any]:
         """Ensure successful operation responses include a standardized data wrapper."""
         if not isinstance(result, dict):
@@ -89,6 +755,255 @@ class FAERSAnalyticsTool(BaseTool):
         # every field at both the top level and inside data.
         data = {k: v for k, v in result.items() if k != "status"}
         return {"status": "success", "data": data}
+
+    def _cohort_scope(
+        self,
+        drug_name: str,
+        adverse_event: str,
+        drug_total: int,
+        event_total: int,
+        total: int,
+    ) -> Optional[Dict[str, Any]]:
+        """How much of the analysed cohort actually named the queried product.
+
+        The count tools in this family already disclose this split; the
+        inferential path did not, which is the worse omission of the two. A
+        descriptive count that is 94% some other product is wrong; a
+        disproportionality signal computed from it is a safety INFERENCE, and it
+        arrives with a confidence interval that makes it look settled.
+
+        Measured live 2026-08-12, CYANOKIT (a cyanide antidote) against DEATH:
+
+            union cohort:         a=50 b=4,069  ROR 0.287 [0.217, 0.379]
+            reported-name cohort: a=12 b=226    ROR 1.24  [0.694, 2.216]
+
+        The union interval lies entirely below 1, so the tool told a poison
+        control physician that death is reported disproportionately LESS often
+        for a cyanide antidote -- a confident negative produced by 3,881 vitamin
+        B12 supplement reports. Restricted to the 238 reports that actually
+        named CYANOKIT the answer is "inconclusive". Not a small difference in a
+        number: a different verdict.
+
+        The union stays the analysed cohort because no rule can tell brand
+        contamination from a generic correctly collecting its own brands -- see
+        `_reported_name_clause` for the measurement that rules that out. What
+        changes is that the caller can now see the split, and, when it is
+        non-zero, the ROR restricted to reports naming the drug.
+
+        Cost: ONE extra openFDA request when the cohorts turn out identical
+        (OZEMPIC, MEFLOQUINE, YELLOW FEVER VACCINE all measured at 0.0%
+        non-naming, so they stop after the first probe), TWO when they differ.
+        Against a base of four, that is 5-6 requests per analysis. What pays
+        for them, measured live 2026-08-13 on CYANOKIT/DEATH: asking with
+        `limit=0` instead of `limit=1` cut the bytes one analysis moves from
+        212,426 to 3,157 even at six requests, and the two probes added here
+        account for 1,049 of that. A repeat analysis of the same drug then
+        costs 3 requests rather than 6, because `_get_faers_count` memoises.
+        The request COUNT does go up for a first call, and that is the honest
+        cost; the payload and every subsequent call go down.
+
+        Fails soft throughout: every probe returning None leaves the existing
+        output untouched rather than failing the analysis.
+        """
+        scope = self._cohort_split(
+            drug_name,
+            drug_total,
+            metrics_phrase="The ROR/PRR/IC above therefore describe",
+            cohort_label="the metrics above were computed from",
+            closing=(
+                "The percentage alone cannot tell those apart -- compare "
+                "'reported_name_only_analysis' below, which repeats the "
+                "analysis over the reports that named the drug."
+            ),
+        )
+        named_total = (scope or {}).get("reports_naming_queried_drug")
+        # No second arm when the probe failed, when the split is impossible, or
+        # when the two cohorts are identical -- in the last case the restricted
+        # analysis would be a copy of the headline. `is None` rather than
+        # falsiness: a drug that NO report named is 100% resolution-matched and
+        # is exactly the case the restricted arm exists to expose.
+        if not scope or "percent_matched_by_name_resolution_only" not in scope:
+            return scope
+
+        restricted = self._reported_name_analysis(
+            drug_name, adverse_event, named_total, event_total, total
+        )
+        if restricted is not None:
+            scope["reported_name_only_analysis"] = restricted
+        return scope
+
+    def _cohort_split(
+        self,
+        drug_name: str,
+        cohort_total: int,
+        metrics_phrase: str,
+        closing: str,
+        adverse_event: Optional[str] = None,
+        cohort_label: str = "in this analysis",
+    ) -> Optional[Dict[str, Any]]:
+        """The naming split alone, for any operation that builds a drug cohort.
+
+        Fix-R53-2: this was `_cohort_scope`'s private first half, reachable only
+        from the two inferential operations. Every operation in this module
+        builds its cohort from the same `_drug_clause`, so every one of them
+        carries the same contamination -- but `_stratify_by_demographics`,
+        `_filter_serious_events`, `_analyze_temporal_trends` and
+        `_rollup_meddra_hierarchy` published their results with no disclosure at
+        all. `_analyze_temporal_trends` is the sharpest case: it emits a verdict
+        ("Increasing" / "Decreasing") with a percent change, so for CYANOKIT it
+        was reporting the trend in vitamin B12 supplementation reports under the
+        name of a cyanide antidote.
+
+        `metrics_phrase` and `closing` name what the caller is actually looking
+        at, so the same measurement does not tell a stratification that its
+        ROR is in question.
+
+        COST, counted per operation on a cold memo rather than asserted. This
+        helper itself issues exactly one probe -- the reported-name total, at
+        `limit=0`, ~525 bytes, no report bodies. What differs is whether the
+        caller already held the union total to compare it against:
+
+            _stratify_by_demographics   +1  (reuses the `query_total` it had)
+            _analyze_temporal_trends    +1  (denominator is the receivedate
+                                             facet sum, already computed)
+            _rollup_meddra_hierarchy    +2  (a `count=` response carries no
+                                             meta.results.total, and the facet
+                                             sums reaction TERMS, not reports)
+            _filter_serious_events      +2  (its existing total is over
+                                             `serious:1`, a different cohort)
+            _calculate_disproportionality/_compare_drugs
+                                        +0  (unchanged: they already probed)
+
+        Six added requests in total, and both the union and the reported-name
+        totals are memoised by `_get_faers_count`, so a sequential workup pays
+        for far fewer. Measured live 2026-08-13 by counting requests across all
+        six operations in one process: on CYANOKIT + DEATH, HEAD issues 11 and
+        the unchanged code 11 -- the four descriptive operations add 3 between
+        them, and disproportionality then drops from 6 to 2 because they have
+        already answered its probes. On a drug-only workup the net is +1 (7 vs
+        6). Three is the worst case, not the typical one, and a second call to
+        any of these on the same drug and reaction pays nothing. The memo is
+        not single-flight, so concurrent calls do not get that saving.
+
+        Fails soft throughout: any probe returning None leaves the operation's
+        own output intact and says the split is unknown rather than zero. A
+        falsy `cohort_total` -- no denominator to divide by -- returns None
+        here rather than at four call sites, so every caller emits the key with
+        a null value instead of some omitting it.
+        """
+        if not cohort_total:
+            return None
+        named_total = self._get_faers_count(
+            drug_name, adverse_event, reported_name_only=True
+        )
+        if named_total is None:
+            return {
+                "reports_naming_queried_drug": None,
+                "note": (
+                    f"How much of this cohort named '{drug_name}' as the product "
+                    "could not be measured -- the openFDA probe failed. Treat "
+                    "the split as unknown, not as zero."
+                ),
+            }
+        if named_total > cohort_total:
+            # A strict subset cannot exceed its superset, so this can only be
+            # the two counts landing either side of an openFDA refresh. Return
+            # BEFORE any key is set: publishing named_total here would ship
+            # exactly the impossible figure -- a subset larger than the cohort
+            # it is drawn from -- that this guard exists to suppress.
+            return None
+
+        matched_only = cohort_total - named_total
+        scope: Dict[str, Any] = {
+            "reports_naming_queried_drug": named_total,
+            "reports_matched_by_name_resolution_only": matched_only,
+        }
+        if matched_only == 0:
+            scope["note"] = (
+                f"All {cohort_total:,} reports {cohort_label} named "
+                f"'{drug_name}' as the product, so the metrics above are "
+                "specific to it."
+            )
+            return scope
+
+        share = 100.0 * matched_only / cohort_total
+        scope["percent_matched_by_name_resolution_only"] = round(share, 1)
+        scope["note"] = (
+            f"Of the {cohort_total:,} reports {cohort_label}, only "
+            f"{named_total:,} named '{drug_name}' as the product. "
+            f"The other {matched_only:,} ({share:.1f}%) matched through "
+            "openFDA's SPL annotation, which tags a report with every brand and "
+            "generic name registered for the active ingredient of a product the "
+            f"report did name. {metrics_phrase} that "
+            f"whole active-ingredient population, not '{drug_name}' "
+            "specifically. That is the right cohort when the query is a generic "
+            "name and the extra reports are its own brands; it is the wrong one "
+            "when the query is a brand whose ingredient has unrelated products. "
+            f"{closing}"
+        )
+        return scope
+
+    def _reported_name_analysis(
+        self,
+        drug_name: str,
+        adverse_event: str,
+        named_total: int,
+        event_total: int,
+        total: int,
+    ) -> Optional[Dict[str, Any]]:
+        """The same 2x2, over reports that named the drug rather than the union.
+
+        Only ROR is published, not PRR and IC. ROR is the measure
+        `signal_detection` is defined on ("ROR lower CI > 1.0 and case count
+        >= 3"), so it is the one that decides the verdict, and publishing the
+        single figure that can flip the conclusion is what this block is for.
+
+        `c` and `d` are rebuilt from this arm's own `a`, not reused from the
+        union arm, so the four cells sum to the database total exactly as they
+        do above; mixing cells from two different drug cohorts would produce a
+        table that is not a partition of anything.
+        """
+        a = self._get_faers_count(drug_name, adverse_event, reported_name_only=True)
+        if a is None:
+            return None
+        b = named_total - a
+        c = event_total - a
+        d = total - a - b - c
+        table = {
+            "a_drug_and_event": a,
+            "b_drug_no_event": b,
+            "c_no_drug_event": c,
+            "d_no_drug_no_event": d,
+        }
+        if min(a, b, c, d) <= 0:
+            return {
+                "contingency_table": table,
+                "note": (
+                    "No ROR can be computed over the reports naming "
+                    f"'{drug_name}': that requires all four cells above to be "
+                    "greater than zero. The cell counts are still shown because "
+                    "they say how much of the analysis above rests on reports "
+                    "that named the drug."
+                ),
+            }
+        ror = (a / b) / (c / d)
+        ci = self._calculate_ror_ci(a, b, c, d)
+        return {
+            "contingency_table": table,
+            "ROR": {
+                "value": round(ror, 3),
+                "ci_95_lower": round(ci["lower"], 3),
+                "ci_95_upper": round(ci["upper"], 3),
+            },
+            "signal_detected": bool(ci["lower"] > 1.0 and a >= 3),
+            "note": (
+                "ROR over the reports that named "
+                f"'{drug_name}' as the product, by the same criteria as "
+                "'signal_detection' above. Where this disagrees with the "
+                "headline result, the headline is describing the active "
+                "ingredient and this is describing the product."
+            ),
+        }
 
     def _calculate_disproportionality(
         self, arguments: Dict[str, Any]
@@ -111,18 +1026,43 @@ class FAERSAnalyticsTool(BaseTool):
                     "error": "Must provide drug_name and adverse_event",
                 }
 
-            # Get counts for 2x2 table
-            # a = drug + event
+            # Get counts for 2x2 table. Each call is Optional[int]: None means
+            # the openFDA request itself failed (e.g. rate limited), which
+            # must not be treated as a genuine zero count -- see
+            # _get_faers_count.
             a = self._get_faers_count(drug_name, adverse_event)
+            drug_total = self._get_faers_count(drug_name, None)
+            event_total = self._get_faers_count(None, adverse_event)
+
+            if None in (a, drug_total, event_total):
+                return _count_query_failed_error()
+
+            # A reaction string that matches no report ANYWHERE in FAERS is not
+            # a rare drug/event pair, it is a query that names nothing -- the
+            # `.exact` field only matches whole Preferred Terms (see
+            # PT_SEARCH_FIELD). Caught here rather than in the a/b/c/d guard
+            # below because the two failures need different answers: this one is
+            # fixed by spelling the PT the way MedDRA does, and the caller
+            # cannot infer that from "Insufficient data: a=0, b=0, c=0".
+            #
+            # Checked BEFORE the whole-database total is fetched: that request
+            # only feeds `d`, which this path never computes. Switching to
+            # `.exact` made a rejected term a routine outcome rather than a rare
+            # one, so paying for a request nobody uses is now a per-call cost.
+            if event_total == 0:
+                return _not_a_preferred_term_error(
+                    adverse_event, self._suggest_preferred_terms(adverse_event)
+                )
+
+            total = self._get_faers_total_count()
+            if total is None:
+                return _count_query_failed_error()
 
             # b = drug + no event (all drug reports - drug+event)
-            b = self._get_faers_count(drug_name, None) - a
-
+            b = drug_total - a
             # c = no drug + event (all event reports - drug+event)
-            c = self._get_faers_count(None, adverse_event) - a
-
+            c = event_total - a
             # d = no drug + no event (total - a - b - c)
-            total = self._get_faers_total_count()
             d = total - a - b - c
 
             # Check for valid counts
@@ -159,6 +1099,63 @@ class FAERSAnalyticsTool(BaseTool):
                     else:
                         signal_strength = "Weak signal"
 
+            # The note must agree with signal_detection above. It used to assert a
+            # potential signal unconditionally, so a result whose own verdict was
+            # "No signal" still read as though a signal had been found.
+            if signal_detected:
+                verdict = (
+                    "Disproportionality analysis indicates a potential safety signal "
+                    f"({signal_strength})."
+                )
+            elif ror_ci and ror_ci["upper"] < 1.0:
+                verdict = (
+                    "No safety signal: this event is reported disproportionately LESS "
+                    "often for this drug than across all other drugs. This is not "
+                    "evidence of a protective effect."
+                )
+            else:
+                verdict = (
+                    "No safety signal by the stated criteria (ROR lower CI > 1.0 and "
+                    "case count >= 3). Absence of a signal does NOT establish absence "
+                    "of risk, particularly where case counts are small."
+                )
+
+            note = (
+                f"{verdict} Disproportionality measures reporting patterns, not risk, "
+                "and does NOT prove causation. Requires clinical evaluation."
+            )
+
+            # Measured after the verdict so the disclosure can name the cohort
+            # the verdict was actually reached over. Appends to `note` rather
+            # than rewriting it: every sentence a caller already parses stays
+            # where it was, and the qualification is added after it.
+            #
+            # Guarded by its own try/except, not just by the method's None
+            # returns. This block is additive, so it must never be able to cost
+            # the caller an analysis that already succeeded -- and without this
+            # it could: the enclosing `except Exception` would turn any
+            # unexpected error raised while measuring the split into a failed
+            # disproportionality result, discarding four completed openFDA
+            # requests and a correct ROR. Caught during this round's own
+            # retest, where the extra probe raised StopIteration inside a test
+            # double and the entire result came back as an error.
+            try:
+                cohort_scope = self._cohort_scope(
+                    drug_name, adverse_event, drug_total, event_total, total
+                )
+            except Exception:
+                cohort_scope = None
+            if cohort_scope and cohort_scope.get(
+                "reports_matched_by_name_resolution_only"
+            ):
+                note = (
+                    f"{note} COHORT: only "
+                    f"{cohort_scope['reports_naming_queried_drug']:,} of the "
+                    f"{drug_total:,} reports analysed named '{drug_name}' -- the "
+                    "verdict above describes the whole active-ingredient "
+                    "population. See 'cohort_scope'."
+                )
+
             return {
                 "status": "success",
                 "drug_name": drug_name,
@@ -194,7 +1191,8 @@ class FAERSAnalyticsTool(BaseTool):
                     "signal_strength": signal_strength,
                     "criteria": "ROR lower CI > 1.0 and case count >= 3",
                 },
-                "note": "Disproportionality analysis indicates potential safety signal. Does NOT prove causation. Requires clinical evaluation.",
+                "cohort_scope": cohort_scope,
+                "note": note,
             }
 
         except Exception as e:
@@ -222,32 +1220,72 @@ class FAERSAnalyticsTool(BaseTool):
                     "error": "stratify_by must be 'sex', 'age', or 'country'",
                 }
 
-            # Map stratification to FAERS fields
+            # Map stratification to FAERS fields.
+            #
+            # Fix-R38: "country" counted the analysed `occurcountry` field, which
+            # openFDA cannot aggregate at all -- measured live 2026-08-11, that
+            # request answers HTTP 500 "[illegal_argument_exception] Text fields
+            # are not optimised for operations that require per-document field
+            # data", so stratify_by="country" failed for every drug and surfaced
+            # only as "API request failed: 500 Server Error". The `.exact`
+            # (un-analysed) variant aggregates normally: 43 country buckets for
+            # HYDROMORPHONE. The two numeric fields need no `.exact` because they
+            # are not text.
             field_map = {
                 "sex": "patient.patientsex",
                 "age": "patient.patientagegroup",
-                "country": "occurcountry",
+                "country": "occurcountry.exact",
             }
 
             count_field = field_map[stratify_by]
+            # `.exact` selects openFDA's un-analysed index variant; it is a query
+            # detail, not part of the field's name in the FAERS record layout, so
+            # it is stripped everywhere the field is named in prose.
+            field_label = count_field.removesuffix(".exact")
 
             # Feature-121A-003: adverse_event is optional — filter by drug alone if omitted
-            if adverse_event:
-                base_query = f'patient.drug.openfda.generic_name:"{drug_name}"+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
-            else:
-                base_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
+            base_query = _faers_search_query(drug_name, adverse_event)
 
-            url = f"{FDA_BASE_URL}?search={base_query}&count={count_field}"
+            # Ask for the full page this caller is entitled to. These facets are
+            # short -- 3 sex buckets, 6 age-group buckets and 43 country buckets
+            # for HYDROMORPHONE, against ~250 ISO country codes in the worst case
+            # -- so the ceiling guarantees the facet is exhausted and the
+            # percentages below really are shares of the whole stratifiable
+            # subset. openFDA's 100-row default would not guarantee that for
+            # country.
+            limit = self._count_limit()
+            url = self._with_api_key(
+                f"{FDA_BASE_URL}?search={base_query}&count={count_field}&limit={limit}"
+            )
 
-            response = requests.get(url, timeout=30)
+            response = request_with_retry(requests, "GET", url, timeout=30)
+            if response.status_code == 404 and adverse_event:
+                return self._reaction_query_missed(adverse_event, drug_name)
             response.raise_for_status()
 
             data = response.json()
             results = data.get("results", [])
 
-            # Format stratified data
+            # Format stratified data.
+            #
+            # Fix-R33: this sum is the STRATIFIABLE SUBSET, not the total number
+            # of reports. An openFDA `count=` facet is computed only over records
+            # where the counted field is populated -- records missing
+            # patient.patientagegroup / patient.patientsex / occurcountry are
+            # silently dropped from the facet rather than bucketed as unknown.
+            # Demographic coverage in FAERS is partial (age group is recorded on
+            # well under a fifth of ondansetron reports), so emitting this sum as
+            # "total_reports" understated the drug's report count more than
+            # fivefold. The percentages below are still correct -- a share of the
+            # stratifiable subset is the right denominator for a stratification --
+            # but the true total has to be fetched separately and reported next
+            # to it so neither number can be mistaken for the other.
+            #
+            # _get_faers_count builds its URL from the same _faers_search_query,
+            # so the total is always the total for the query the facet ran on.
             stratified_data = []
             total_count = sum(r.get("count", 0) for r in results)
+            query_total = self._get_faers_count(drug_name, adverse_event)
 
             for result in results:
                 term = result.get("term", "Unknown")
@@ -275,19 +1313,74 @@ class FAERSAnalyticsTool(BaseTool):
                     {"group": term, "count": count, "percentage": round(percentage, 2)}
                 )
 
+            if query_total is None:
+                coverage_note = (
+                    "The total number of reports matching this query could not be "
+                    "retrieved (the extra openFDA request failed, commonly HTTP 429 "
+                    "rate limiting on the anonymous tier), so "
+                    "total_reports_matching_query is null. "
+                    f"stratified_report_count ({total_count:,}) counts only reports "
+                    f"where {field_label} is recorded and is therefore a LOWER BOUND "
+                    "on the drug's report count -- do not read it as the total. "
+                    "Retry for the total, or set the FDA_API_KEY environment "
+                    "variable to raise the rate limit "
+                    "(https://open.fda.gov/apis/authentication/)."
+                )
+            else:
+                coverage = (total_count / query_total * 100) if query_total else 0.0
+                coverage_note = (
+                    f"total_reports_matching_query ({query_total:,}) is every report "
+                    f"matching this query; stratified_report_count ({total_count:,}, "
+                    f"{coverage:.1f}% of them) is the subset where {field_label} is "
+                    "recorded, and only that subset is stratified below. openFDA "
+                    "computes a count facet solely over records that populate the "
+                    "counted field, so reports missing this demographic are absent "
+                    "from the groups entirely rather than bucketed as unknown. Each "
+                    "percentage is a share of stratified_report_count, not of the "
+                    "full total. total_reports repeats stratified_report_count for "
+                    "backward compatibility -- it is NOT the drug's report count."
+                )
+
+            # Fix-R53-2: measured against `query_total`, the union cohort the
+            # facet was drawn from -- NOT against `total_count`, which is the
+            # stratifiable subset the group percentages are shares of. The
+            # split is a property of the drug clause, so it qualifies both.
+            cohort_scope = self._cohort_split(
+                drug_name,
+                query_total,
+                metrics_phrase="The stratification above therefore describes",
+                closing=(
+                    "For a demographic profile of the product alone, there is "
+                    "no restricted form of this operation -- read the split "
+                    "above as the limit on how product-specific these groups "
+                    "are."
+                ),
+                adverse_event=adverse_event,
+            )
+
+            # No truncation disclosure is owed here, unlike the PT facets in this
+            # module: requesting the ceiling makes these facets provably whole.
+            # Their value sets are bounded and tiny -- 3 sex codes, 6 age-group
+            # codes, and ~250 ISO country codes against a 999-row page -- so
+            # `results` always holds every bucket and every percentage above
+            # really is a share of the complete stratifiable subset.
             return {
                 "status": "success",
                 "drug_name": drug_name,
                 "adverse_event": adverse_event,
                 "stratified_by": stratify_by,
                 "total_reports": total_count,
+                "stratified_report_count": total_count,
+                "total_reports_matching_query": query_total,
                 "stratification": sorted(
                     stratified_data, key=lambda x: x["count"], reverse=True
                 ),
+                "coverage_note": coverage_note,
+                "cohort_scope": cohort_scope,
             }
 
         except requests.exceptions.RequestException as e:
-            return {"status": "error", "error": f"API request failed: {str(e)}"}
+            return _api_request_failed_error(e)
         except Exception as e:
             return {"status": "error", "error": f"Stratification failed: {str(e)}"}
 
@@ -303,14 +1396,11 @@ class FAERSAnalyticsTool(BaseTool):
             if not drug_name:
                 return {"status": "error", "error": "Must provide drug_name"}
 
-            # Build query for serious events
-            base_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
-
-            # Add specific reaction filter if provided
-            if adverse_event:
-                base_query += (
-                    f'+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
-                )
+            # Build query for serious events. Shared with every other reaction
+            # filter in this module so no operation can search a different
+            # variant of the reaction field than its siblings (see
+            # PT_SEARCH_FIELD).
+            base_query = _faers_search_query(drug_name, adverse_event)
 
             # Add seriousness filter
             seriousness_map = {
@@ -329,43 +1419,125 @@ class FAERSAnalyticsTool(BaseTool):
 
             search_query = base_query + seriousness_map[seriousness_type]
 
-            # Get top reactions for serious events
-            url = f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+            # Get top reactions for serious events. Ask for exactly one row past
+            # what gets published: the probe row's presence settles truncation as
+            # a fact rather than an inference, and anything beyond it would be
+            # parsed only to be discarded. Same idiom as
+            # openfda_adv_tool._fetch_limit. Without this the request fell back
+            # to openFDA's 100-row default page and threw 80 rows away.
+            facet_limit = min(_TOP_SERIOUS_REACTIONS + 1, self._count_limit())
+            url = self._with_api_key(
+                f"{FDA_BASE_URL}?search={search_query}"
+                f"&count={PT_COUNT_FIELD}&limit={facet_limit}"
+            )
 
-            response = requests.get(url, timeout=30)
+            response = request_with_retry(requests, "GET", url, timeout=30)
+            if response.status_code == 404 and adverse_event:
+                return self._reaction_query_missed(adverse_event, drug_name)
             response.raise_for_status()
 
             data = response.json()
             results = data.get("results", [])
 
             # Get total serious event count
-            total_url = f"{FDA_BASE_URL}?search={search_query}&limit=1"
-            total_response = requests.get(total_url, timeout=30)
+            # `limit=0` for the same reason as `_get_faers_count`: this reads
+            # only `meta.results.total`, and `limit=1` pays for a whole FAERS
+            # report body to deliver it.
+            total_url = self._with_api_key(
+                f"{FDA_BASE_URL}?search={search_query}&limit=0"
+            )
+            total_response = request_with_retry(requests, "GET", total_url, timeout=30)
             total_data = total_response.json()
             total_serious = (
                 total_data.get("meta", {}).get("results", {}).get("total", 0)
             )
 
             # Format results
-            serious_reactions = []
-            for result in results[:20]:  # Top 20
-                serious_reactions.append(
-                    {"reaction": result.get("term"), "count": result.get("count")}
-                )
+            serious_reactions = [
+                {"reaction": r.get("term"), "count": r.get("count")}
+                for r in results[:_TOP_SERIOUS_REACTIONS]
+            ]
 
+            # Fix-R38: `total_serious_events` is honest -- it is
+            # `meta.results.total` from a plain search, which openFDA does
+            # report. `top_serious_reactions` is not a total of anything and is
+            # named accordingly, but it silently dropped the rest of a ranking
+            # whose length is unknowable (the same facet returns 999 rows and is
+            # still not exhausted for HYDROMORPHONE + serious:1, the 999th
+            # bucket carrying count 69). Rows beyond the slice were directly
+            # observed in `results`, so the truncation is a fact here rather than
+            # an inference.
+            truncated = len(results) > len(serious_reactions)
+
+            # Fix-R50: the two numbers below count different things, and read
+            # side by side without saying so they look like a contradiction.
+            # `total_serious_events` counts REPORTS; each row of
+            # `top_serious_reactions` counts a reaction TERM, and one report
+            # carries several -- confirmed live that a single warfarin death
+            # report (10037626) lists four. So the rows routinely sum past the
+            # total, and PRUSSIAN BLUE + death publishes `total: 1` above four
+            # rows of count 1, which reads as four fatalities instead of one
+            # report with four reactions. The sibling stratification operation
+            # in this module already spells this out; saying nothing here left
+            # the identical hazard undisclosed in the same family, and readers
+            # have repeatedly filed the arithmetic as a defect in the count.
             result: Dict[str, Any] = {
                 "drug_name": drug_name,
                 "seriousness_type": seriousness_type,
                 "total_serious_events": total_serious,
                 "top_serious_reactions": serious_reactions,
+                "top_serious_reactions_truncated": truncated,
                 "note": f"Serious events: {'All' if seriousness_type == 'all' else seriousness_type.replace('_', ' ')}",
+                "coverage_note": (
+                    f"total_serious_events ({total_serious:,}) counts REPORTS. "
+                    "Each row of top_serious_reactions counts how many reports "
+                    "list that reaction term, and one report usually lists "
+                    "several, so the row counts overlap and will often sum to "
+                    "more than total_serious_events. Do NOT read the rows as a "
+                    "breakdown of the total or use their sum as a denominator; "
+                    "a term's count is its own report count, nothing more."
+                ),
             }
+            if truncated:
+                result["top_serious_reactions_truncation_note"] = (
+                    _ranked_terms_truncation_note(
+                        "serious reactions", len(serious_reactions), observed=True
+                    )
+                )
+            # Fix-R53-2: measured over the drug (and reaction) cohort this
+            # operation filters, NOT over the serious subset. `serious:1` is
+            # orthogonal to which product a report named, so the split is the
+            # same either way -- and this is the more USEFUL of the two, not
+            # the cheaper one. Measuring over the serious subset would cost one
+            # added request (the numerator; `total_serious` above is already
+            # its denominator) against the two spent here. The two are bought
+            # because `_get_faers_count` memoises them per process and the
+            # sibling operations ask for the identical pair, so in a workup
+            # they are usually already answered, while a serious-filtered probe
+            # would be reused by nothing. The note names the cohort it
+            # measured, so it cannot be mistaken for total_serious_events.
+            result["cohort_scope"] = self._cohort_split(
+                drug_name,
+                self._get_faers_count(drug_name, adverse_event),
+                metrics_phrase="The serious-event counts above therefore describe",
+                closing=(
+                    "The seriousness filter is orthogonal to which product a "
+                    "report named, so this split describes the serious subset "
+                    "as well as the cohort it was measured over."
+                ),
+                adverse_event=adverse_event,
+                cohort_label=(
+                    "matching the drug"
+                    f"{' and reaction' if adverse_event else ''} before the "
+                    "seriousness filter"
+                ),
+            )
             if adverse_event:
                 result["adverse_event_filter"] = adverse_event.upper()
             return {"status": "success", "data": result}
 
         except requests.exceptions.RequestException as e:
-            return {"status": "error", "error": f"API request failed: {str(e)}"}
+            return _api_request_failed_error(e)
         except Exception as e:
             return {
                 "status": "error",
@@ -373,7 +1545,14 @@ class FAERSAnalyticsTool(BaseTool):
             }
 
     def _compare_drugs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Compare safety profiles of two drugs for the same adverse event."""
+        """Compare safety profiles of two drugs for the same adverse event.
+
+        Fix-R38 audit: this method issues no `count=` facet of its own. Both arms
+        come from `_calculate_disproportionality`, whose counts are
+        `meta.results.total` on plain `limit=1` searches -- a figure openFDA does
+        report -- so there is no page size here that could be mistaken for a
+        total.
+        """
         try:
             drug1 = arguments.get("drug1")
             drug2 = arguments.get("drug2")
@@ -394,6 +1573,34 @@ class FAERSAnalyticsTool(BaseTool):
                 }
             )
 
+            # Arm 2 is only worth fetching if arm 1 succeeded. Both arms share
+            # one `adverse_event`, so the most common failure -- a reaction
+            # string that is not a Preferred Term -- is guaranteed to fail both
+            # identically; running the second arm anyway spent five further
+            # openFDA requests (four counts plus the suggestion facet) to
+            # rediscover the same thing and then discard it. `.exact` matching
+            # makes that failure routine rather than rare, so the second arm now
+            # waits until the first has earned it.
+            if result1.get("status") != "success":
+                # Carry the arm's own explanation up to the top level. A caller
+                # reading `error` -- which is all the CLI prints -- otherwise saw
+                # "Failed to calculate metrics for heparin" while the actual
+                # reason, and the Preferred Terms to retry with, sat nested in
+                # `drug1_result.error`. The tool's description promises the
+                # naming, so it has to be where the caller looks.
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Cannot compare: {result1.get('error')} "
+                        f"({drug2} was not queried.)"
+                    ),
+                    "suggested_preferred_terms": result1.get(
+                        "suggested_preferred_terms"
+                    ),
+                    "drug1_result": result1,
+                    "drug2_result": None,
+                }
+
             result2 = self._calculate_disproportionality(
                 {
                     "operation": "calculate_disproportionality",
@@ -402,10 +1609,13 @@ class FAERSAnalyticsTool(BaseTool):
                 }
             )
 
-            if result1.get("status") != "success" or result2.get("status") != "success":
+            if result2.get("status") != "success":
                 return {
                     "status": "error",
-                    "error": "Failed to calculate metrics for one or both drugs",
+                    "error": f"Cannot compare: {result2.get('error')}",
+                    "suggested_preferred_terms": result2.get(
+                        "suggested_preferred_terms"
+                    ),
                     "drug1_result": result1,
                     "drug2_result": result2,
                 }
@@ -414,30 +1624,66 @@ class FAERSAnalyticsTool(BaseTool):
             ror1 = result1.get("metrics", {}).get("ROR", {}).get("value")
             ror2 = result2.get("metrics", {}).get("ROR", {}).get("value")
 
-            # Determine which drug has stronger signal
+            # Fix-19B-2: comparison text used to rank drugs purely by raw ROR
+            # magnitude ("X shows stronger signal than Y") even when NEITHER
+            # drug actually crossed this tool's own signal-detection
+            # threshold (signal_detection.signal_detected, from ROR lower CI
+            # > 1.0 and case count >= 3) -- confirmed live with
+            # nirsevimab/palivizumab + anaphylactic reaction, where both
+            # drugs had signal_detected=False (ROR < 1, i.e. no elevated-risk
+            # association) but the narrative still said one showed a
+            # "stronger signal" than the other. Ground the wording in
+            # signal_detected so "signal" language only appears when a
+            # signal was actually detected.
+            sig1 = result1.get("signal_detection", {}).get("signal_detected", False)
+            sig2 = result2.get("signal_detection", {}).get("signal_detected", False)
+
             comparison = "Inconclusive"
             if ror1 and ror2:
-                if ror1 > ror2 * 1.5:
-                    comparison = f"{drug1} shows stronger signal than {drug2}"
-                elif ror2 > ror1 * 1.5:
-                    comparison = f"{drug2} shows stronger signal than {drug1}"
+                if not sig1 and not sig2:
+                    comparison = (
+                        f"Neither {drug1} nor {drug2} shows a detected safety signal "
+                        f"for {adverse_event} (ROR does not meet the signal-detection "
+                        "threshold for either drug); the higher raw ROR is not a "
+                        "meaningful difference."
+                    )
+                elif sig1 and not sig2:
+                    comparison = (
+                        f"{drug1} shows a detected safety signal for {adverse_event}; "
+                        f"{drug2} does not."
+                    )
+                elif sig2 and not sig1:
+                    comparison = (
+                        f"{drug2} shows a detected safety signal for {adverse_event}; "
+                        f"{drug1} does not."
+                    )
+                elif ror1 > ror2 * _SIMILAR_STRENGTH_RATIO:
+                    comparison = f"Both show a detected signal; {drug1}'s is stronger than {drug2}'s"
+                elif ror2 > ror1 * _SIMILAR_STRENGTH_RATIO:
+                    comparison = f"Both show a detected signal; {drug2}'s is stronger than {drug1}'s"
                 else:
-                    comparison = f"{drug1} and {drug2} show similar signals"
+                    comparison = (
+                        f"{drug1} and {drug2} show similar-strength detected signals"
+                    )
+
+            # Fix-R37: each arm now carries the 2x2 case counts its metrics were
+            # computed from. _calculate_disproportionality had already built
+            # them above and this method discarded them, so a reader could not
+            # tell a verdict backed by thousands of co-reported cases from one
+            # backed by a handful without issuing two more calls -- and nothing
+            # in the output prompted them to.
+            arms = [
+                _comparison_arm(drug1, result1),
+                _comparison_arm(drug2, result2),
+            ]
 
             return {
                 "status": "success",
                 "adverse_event": adverse_event,
-                "drug1": {
-                    "name": drug1,
-                    "metrics": result1.get("metrics"),
-                    "signal_detection": result1.get("signal_detection"),
-                },
-                "drug2": {
-                    "name": drug2,
-                    "metrics": result2.get("metrics"),
-                    "signal_detection": result2.get("signal_detection"),
-                },
+                "drug1": arms[0],
+                "drug2": arms[1],
                 "comparison": comparison,
+                "comparison_caveat": _small_count_caveat(arms),
                 "note": "Direct comparison of safety signals. Both drugs may show signals due to different baseline risks.",
             }
 
@@ -453,16 +1699,26 @@ class FAERSAnalyticsTool(BaseTool):
             if not drug_name:
                 return {"status": "error", "error": "Must provide drug_name"}
 
-            # Build base query
-            if adverse_event:
-                search_query = f'patient.drug.openfda.generic_name:"{drug_name}"+AND+patient.reaction.reactionmeddrapt:"{adverse_event}"'
-            else:
-                search_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
+            # Build base query (see PT_SEARCH_FIELD for why the reaction clause
+            # is shared rather than restated).
+            search_query = _faers_search_query(drug_name, adverse_event)
 
-            # Get counts by receive date (year)
-            url = f"{FDA_BASE_URL}?search={search_query}&count=receivedate"
+            # Get counts by receive date (year).
+            #
+            # Fix-R38 audit: unlike a term facet, a DATE facet is not paged --
+            # openFDA returns the whole series and ignores `limit`. Measured live
+            # 2026-08-11 for HYDROMORPHONE: count=receivedate returns 6,557 daily
+            # buckets with no `limit` and the identical 6,557 with `limit=999`.
+            # So no truncation disclosure is owed here and the year totals below
+            # are complete. Do NOT "fix" this by adding a limit -- that would cap
+            # the series rather than extend it.
+            url = self._with_api_key(
+                f"{FDA_BASE_URL}?search={search_query}&count=receivedate"
+            )
 
-            response = requests.get(url, timeout=30)
+            response = request_with_retry(requests, "GET", url, timeout=30)
+            if response.status_code == 404 and adverse_event:
+                return self._reaction_query_missed(adverse_event, drug_name)
             response.raise_for_status()
 
             data = response.json()
@@ -477,6 +1733,19 @@ class FAERSAnalyticsTool(BaseTool):
                     year = date_str[:4]
                     count = result.get("count", 0)
                     yearly_counts[year] = yearly_counts.get(year, 0) + count
+
+            # Fix-R53-2: the denominator for the naming split is the series'
+            # OWN total, summed from the facet already in hand -- no second
+            # openFDA request. That is both free and the more faithful figure:
+            # it is exactly the set of reports the trend below was computed
+            # over, where `meta.results.total` would be the query's total
+            # whether or not every report reached the date facet. Measured live
+            # 2026-08-13, the two are identical because `receivedate` is
+            # populated on every report -- CYANOKIT 4,119/4,119, IVERMECTIN
+            # 6,367/6,367, RIFAPENTINE 521/521, OZEMPIC 66,161/66,161,
+            # HYDROMORPHONE 130,429/130,429 -- so nothing is lost by preferring
+            # the one that costs nothing.
+            cohort_total = sum(yearly_counts.values())
 
             # Format temporal data
             temporal_data = [
@@ -502,6 +1771,21 @@ class FAERSAnalyticsTool(BaseTool):
                 percent_change = 0
                 trend = "Insufficient data"
 
+            # Fix-R53-2: `trend` is a verdict, and it is the verdict most
+            # exposed to a contaminated cohort in this module -- for a brand
+            # whose ingredient has unrelated products the series being trended
+            # is mostly the other products'.
+            cohort_scope = self._cohort_split(
+                drug_name,
+                cohort_total,
+                metrics_phrase="The series and trend above describe",
+                closing=(
+                    "A trend over that population is not the trend for "
+                    f"'{drug_name}' unless the two cohorts coincide."
+                ),
+                adverse_event=adverse_event,
+            )
+
             return {
                 "status": "success",
                 "drug_name": drug_name,
@@ -513,10 +1797,11 @@ class FAERSAnalyticsTool(BaseTool):
                     "years_analyzed": len(temporal_data),
                 },
                 "note": "Temporal trends may reflect increased awareness, reporting, or actual incidence changes",
+                "cohort_scope": cohort_scope,
             }
 
         except requests.exceptions.RequestException as e:
-            return {"status": "error", "error": f"API request failed: {str(e)}"}
+            return _api_request_failed_error(e)
         except Exception as e:
             return {"status": "error", "error": f"Temporal analysis failed: {str(e)}"}
 
@@ -528,73 +1813,188 @@ class FAERSAnalyticsTool(BaseTool):
             if not drug_name:
                 return {"status": "error", "error": "Must provide drug_name"}
 
-            # Get preferred term (PT) level reactions
-            search_query = f'patient.drug.openfda.generic_name:"{drug_name}"'
-            url = f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+            # Get preferred term (PT) level reactions. Ask for the whole page
+            # this caller is entitled to rather than openFDA's 100-row default:
+            # the ranking is far longer than either (>999 distinct PTs for
+            # HYDROMORPHONE, see PT_COUNT_FIELD), so every extra row is a real
+            # reaction that would otherwise be silently absent.
+            search_query = _drug_clause(drug_name)
+            limit = self._count_limit()
+            url = self._with_api_key(
+                f"{FDA_BASE_URL}?search={search_query}"
+                f"&count={PT_COUNT_FIELD}&limit={limit}"
+            )
 
-            response = requests.get(url, timeout=30)
+            response = request_with_retry(requests, "GET", url, timeout=30)
             response.raise_for_status()
 
             data = response.json()
             pt_results = data.get("results", [])
 
-            # Format PT level
+            # Fix-R53-2: the PT ranking is a safety profile, read as "what this
+            # drug does". For a brand whose ingredient has unrelated products,
+            # the top terms can belong to those.
+            #
+            # Unlike the temporal facet, the ranking above cannot supply its own
+            # denominator: a `count=` response carries no meta.results.total,
+            # and summing the rows would count reaction TERMS, not reports --
+            # one report lists several. So this operation genuinely pays for the
+            # union total as well as the reported-name one.
+            cohort_scope = self._cohort_split(
+                drug_name,
+                self._get_faers_count(drug_name),
+                metrics_phrase="The reaction ranking above therefore describes",
+                closing=(
+                    "Terms driven by the other products cannot be separated "
+                    "out from this ranking."
+                ),
+            )
+
+            # Format PT level. Every returned row is kept -- slicing here is what
+            # produced the constant "total" this fix removes.
             pt_level = [
                 {"preferred_term": r.get("term"), "count": r.get("count")}
-                for r in pt_results[:50]  # Top 50 PTs
+                for r in pt_results
             ]
 
-            # Note: Full MedDRA hierarchy requires MedDRA license
-            # FAERS API doesn't provide HLT/SOC directly
+            # `limit` is already the ceiling, so there is no row past it to probe
+            # with: a full page is all that can be observed and the honest reading
+            # is "possibly incomplete", never "complete". A short page, by
+            # contrast, exhausted the facet, so unique_PTs_returned is then the
+            # true number of distinct PTs.
+            truncated = len(pt_level) >= limit
+
+            # Note: Full MedDRA hierarchy requires MedDRA license and the FAERS
+            # API doesn't provide HLT/SOC directly, so nothing here is rolled up
+            # above PT -- there is no derived SOC/HLT total that could inherit
+            # the truncation described above.
+            hierarchy: Dict[str, Any] = {
+                "PT_level": pt_level,
+                "unique_PTs_returned": len(pt_level),
+                "limit": limit,
+                "truncated": truncated,
+            }
+            if truncated:
+                hierarchy["truncation_note"] = _ranked_terms_truncation_note(
+                    "preferred terms (PTs)", len(pt_level), observed=False
+                )
 
             return {
                 "status": "success",
                 "data": {
                     "drug_name": drug_name,
-                    "meddra_hierarchy": {
-                        "PT_level": pt_level,
-                        "total_unique_PTs": len(pt_level),
-                    },
+                    "meddra_hierarchy": hierarchy,
                     "note": "Full MedDRA hierarchy (HLT, SOC) requires MedDRA license. Showing Preferred Term (PT) level only.",
                     "recommendation": "Use MedDRA dictionary to map PTs to higher-level terms for system organ class analysis",
+                    "cohort_scope": cohort_scope,
                 },
             }
 
         except requests.exceptions.RequestException as e:
-            return {"status": "error", "error": f"API request failed: {str(e)}"}
+            return _api_request_failed_error(e)
         except Exception as e:
             return {"status": "error", "error": f"MedDRA rollup failed: {str(e)}"}
 
     # Helper methods for statistical calculations
 
-    def _get_faers_count(self, drug_name: str = None, adverse_event: str = None) -> int:
-        """Get count of FAERS reports matching criteria."""
+    def _get_faers_count(
+        self,
+        drug_name: str = None,
+        adverse_event: str = None,
+        reported_name_only: bool = False,
+    ) -> Optional[int]:
+        """Get count of FAERS reports matching criteria.
+
+        Returns None (not 0) if the request fails (e.g. rate limited or a
+        network error), so a failure isn't mistaken for a genuine zero
+        count -- a failed fetch used to be silently treated as a genuine
+        zero-count result, so `_calculate_disproportionality` reported
+        "Insufficient data: a=0, b=0, c=0, d=0" for well-known drug/event
+        pairs during a rate-limit window, indistinguishable from "this
+        combination truly has no FAERS reports" (confirmed live: retrying
+        the exact same query after the rate limit cleared returned correct
+        nonzero counts and a real ROR/PRR/IC signal). Callers must check
+        for None before doing arithmetic.
+        """
         try:
-            query_parts = []
-            if drug_name:
-                query_parts.append(f'patient.drug.openfda.generic_name:"{drug_name}"')
-            if adverse_event:
-                query_parts.append(
-                    f'patient.reaction.reactionmeddrapt:"{adverse_event}"'
-                )
+            search_query = _faers_search_query(
+                drug_name, adverse_event, reported_name_only=reported_name_only
+            )
+            # The memo the FAERS count tools use, keyed on the search rather
+            # than the built URL so `limit` and the api_key cannot fragment it.
+            #
+            # What this actually buys, measured rather than assumed: repeat
+            # calls WITHIN this module. A second disproportionality analysis of
+            # the same drug costs 3 openFDA requests instead of 6, because the
+            # drug's own total, its reported-name total and the whole-database
+            # total are all already answered. The whole-database probe is the
+            # same request on every call in the process.
+            #
+            # It now shares with the count tools, which also write here. This
+            # comment used to say the opposite -- that the keys "coincide only
+            # for multi-word names" because `faers_drug_name_clause` always
+            # quotes the drug name while the count tools' `_render_clause`
+            # quoted only when the value contained a space, and that
+            # "normalising the quoting in the key would be wrong".
+            #
+            # Fix-54B-1: normalising was right. Quoted and unquoted really are
+            # different openFDA queries for a hyphenated name -- a bare hyphen
+            # is a Lucene operator -- and the unquoted spelling was simply
+            # WRONG, silently querying a union of different drugs.
+            # `_render_clause` now quotes too, so both modules spell the same
+            # question identically and a single-token name costs one memo entry
+            # and one probe across the process instead of two of each.
+            #
+            # Quoting still has to stay in the key: it changes the query, so if
+            # either path ever stopped quoting the two spellings would again
+            # return different totals and must not share an entry.
+            memo_key = faers_report_total_key(FDA_BASE_URL, search_query)
+            cached = _memoized_report_total(memo_key)
+            if cached is not None:
+                return cached
 
-            if not query_parts:
-                # Get total count
-                url = f"{FDA_BASE_URL}?limit=1"
+            # `limit=0` returns the same `meta.results.total` without any report
+            # bodies. These probes read one integer and discard the rest, and at
+            # `limit=1` "the rest" is a whole FAERS report -- measured live
+            # 2026-08-13 on CYANOKIT/DEATH, the four base probes of one
+            # disproportionality call moved 212,426 bytes at `limit=1` versus
+            # ~2,100 at `limit=0`, with the union drug-total request alone
+            # accounting for 117,841 of them (the `openfda` annotation arrays a
+            # union query matches on are the bulk of a report). Both forms
+            # return the identical total, and an empty search still answers HTTP
+            # 404 either way, so the branch below is unaffected.
+            if search_query:
+                url = f"{FDA_BASE_URL}?search={search_query}&limit=0"
             else:
-                search_query = "+AND+".join(query_parts)
-                url = f"{FDA_BASE_URL}?search={search_query}&limit=1"
+                # No filters: the whole-database total.
+                url = f"{FDA_BASE_URL}?limit=0"
 
-            response = requests.get(url, timeout=30)
+            url = self._with_api_key(url)
+
+            response = request_with_retry(requests, "GET", url, timeout=30)
+            if response.status_code == 404:
+                # openFDA returns 404 (not an empty 200) for a query with no matches.
+                _memoize_report_total(memo_key, 0)
+                return 0
             response.raise_for_status()
 
             data = response.json()
-            return data.get("meta", {}).get("results", {}).get("total", 0)
+            total = data.get("meta", {}).get("results", {}).get("total")
+            if not isinstance(total, int):
+                # A 200 whose body carries no `meta.results.total` is a failure
+                # to measure, not a count of zero. This used to default to 0,
+                # which was already wrong; memoising it would have made the
+                # fabricated zero sticky for the TTL and shared it with every
+                # later caller. Returning None routes it into the same
+                # "count query failed" path as a transport error.
+                return None
+            _memoize_report_total(memo_key, total)
+            return total
 
         except Exception:
-            return 0
+            return None
 
-    def _get_faers_total_count(self) -> int:
+    def _get_faers_total_count(self) -> Optional[int]:
         """Get total number of reports in FAERS database."""
         return self._get_faers_count(None, None)
 

@@ -26,6 +26,9 @@ from pathlib import Path
 # (dev, docs, build) and the aggregate ``all`` extra are intentionally absent —
 # missing them says nothing about whether a tool can run.
 EXTRA_PACKAGES: dict[str, dict[str, str]] = {
+    "pdf": {
+        "pymupdf": "pymupdf",
+    },
     "ml": {
         "admet_ai": "admet-ai",
         "sentence_transformers": "sentence-transformers",
@@ -68,11 +71,20 @@ EXTRA_PACKAGES: dict[str, dict[str, str]] = {
         "smolagents": "smolagents",
         "gradio": "gradio",
     },
+    # LLM provider SDKs. Lazily imported by the llm_clients.py client
+    # constructors, so a missing one loads fine and only fails when an agentic
+    # tool actually calls that provider -- exactly the gap this module reports.
+    "openai": {
+        "openai": "openai",
+    },
+    "gemini": {
+        "google.genai": "google-genai",
+    },
 }
 
 # Extras NOT covered by ``tooluniverse[all]`` — worth telling users about,
 # because "all" reads like it means all.
-EXTRAS_NOT_IN_ALL = ("singlecell", "smolagents", "client", "build")
+EXTRAS_NOT_IN_ALL = ("pdf", "singlecell", "smolagents", "client", "build")
 
 
 def _is_importable(import_name: str) -> bool:

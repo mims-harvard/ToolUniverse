@@ -17,12 +17,63 @@ Reference: Kuhn et al., Nucleic Acids Res. 2016; 44(D1): D1075-D1079
 
 import re
 import requests
+from html import unescape
 from typing import Dict, Any, Optional, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 
 SIDER_BASE_URL = "http://sideeffects.embl.de"
+
+# Column layout of the side-effect table on a SIDER drug page
+# (http://sideeffects.embl.de/drugs/<id>/). Verified against the live page:
+# the header row is
+#   <th>Side effect</th> <th>Data for drug</th> <th>Placebo</th>
+#   <th colspan="N">Labels</th>
+# so every data row starts with these three fixed cells, followed by one cell
+# per source label. The trailing label cells carry per-label tooltips such as
+# title="<b>Acitretin</b> : 65%", so percentages MUST be read from their own
+# <td> and never by scanning the whole <tr>.
+SE_NAME_COL = 0
+DRUG_FREQUENCY_COL = 1
+PLACEBO_FREQUENCY_COL = 2
+
+_TD_RE = re.compile(r"<td\b[^>]*>(.*?)</td>", re.DOTALL | re.IGNORECASE)
+_TAG_RE = re.compile(r"<[^>]+>")
+
+
+def _split_row_cells(row_html: str) -> List[str]:
+    """Split a table row's inner HTML into the inner HTML of its <td> cells."""
+    return _TD_RE.findall(row_html)
+
+
+def _cell_text(cell_html: str) -> Optional[str]:
+    """
+    Return the visible text of a single <td>, or None when the cell is empty.
+
+    SIDER renders "no data" as a physically empty cell (e.g. no placebo arm in
+    the label), so an empty cell must map to None rather than being back-filled
+    from anywhere else in the row.
+    """
+    text = unescape(_TAG_RE.sub(" ", cell_html))
+    text = re.sub(r"\s+", " ", text).strip()
+    return text or None
+
+
+class SiderUpstreamError(Exception):
+    """
+    SIDER answered with an unexpected HTTP status that is not a genuine 404.
+
+    Kept distinct from "the record does not exist" so that a temporary outage of
+    the SIDER website (which answers 5xx with a "Page unavailable" body) is not
+    reported to callers as a stable absence of the drug.
+    """
+
+    def __init__(self, url: str, status_code: int, message: str):
+        self.url = url
+        self.status_code = status_code
+        self.retryable = status_code >= 500
+        super().__init__(message)
 
 
 @register_tool("SiderTool")
@@ -76,6 +127,13 @@ class SiderTool(BaseTool):
 
         try:
             return handler(arguments)
+        except SiderUpstreamError as e:
+            return {
+                "status": "error",
+                "error": str(e),
+                "http_status": e.status_code,
+                "retryable": e.retryable,
+            }
         except requests.exceptions.Timeout:
             return {"status": "error", "error": "SIDER request timed out"}
         except requests.exceptions.ConnectionError:
@@ -87,12 +145,35 @@ class SiderTool(BaseTool):
             }
 
     def _fetch_page(self, path: str) -> Optional[str]:
-        """Fetch an HTML page from SIDER."""
+        """
+        Fetch an HTML page from SIDER.
+
+        Returns the page body on HTTP 200 and None on a genuine HTTP 404 (the
+        record really is absent). Any other status raises SiderUpstreamError so
+        that a server-side failure is never mistaken for a missing record.
+        """
         url = "{}/{}".format(SIDER_BASE_URL, path.lstrip("/"))
         response = self.session.get(url, timeout=self.timeout)
-        if response.status_code == 200:
+        status = response.status_code
+        if status == 200:
             return response.text
-        return None
+        if status == 404:
+            return None
+        if status >= 500:
+            raise SiderUpstreamError(
+                url,
+                status,
+                (
+                    "SIDER server error (HTTP {}) from {}. The SIDER website is "
+                    "temporarily unavailable; this is a transient upstream "
+                    "failure and the request should be retried later."
+                ).format(status, url),
+            )
+        raise SiderUpstreamError(
+            url,
+            status,
+            "SIDER returned unexpected HTTP {} from {}".format(status, url),
+        )
 
     def _search_drug(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for a drug by name using SIDER's search endpoint."""
@@ -193,12 +274,22 @@ class SiderTool(BaseTool):
 
         side_effects = []
         for row in se_rows:
-            # Extract MedDRA code and name
+            # Parse the row into its cells. Every value below is read from the
+            # cell that actually holds it: a row-wide regex would also match the
+            # per-label tooltips ("<b>Acitretin</b> : 65%") and percentages that
+            # occur inside the MedDRA concept description prose, and would
+            # attribute those numbers to the drug or to placebo.
+            cells = _split_row_cells(row)
+            name_cell = cells[SE_NAME_COL] if cells else row
+
+            # Extract MedDRA code and name from the "Side effect" cell
             se_match = re.search(
-                r'href="/se/(C\d+)/"[^>]*title="([^"]*)"[^>]*>([^<]+)', row
+                r'href="/se/(C\d+)/"[^>]*title="([^"]*)"[^>]*>([^<]+)', name_cell
             )
             if not se_match:
-                se_match_simple = re.search(r'href="/se/(C\d+)/"[^>]*>([^<]+)', row)
+                se_match_simple = re.search(
+                    r'href="/se/(C\d+)/"[^>]*>([^<]+)', name_cell
+                )
                 if not se_match_simple:
                     continue
                 code = se_match_simple.group(1)
@@ -209,10 +300,20 @@ class SiderTool(BaseTool):
                 description = se_match.group(2)
                 name = se_match.group(3).strip()
 
-            # Extract frequency percentages
-            pct_matches = re.findall(r"([\d.]+%\s*-\s*[\d.]+%|[\d.]+%)", row)
-            frequency = pct_matches[0] if pct_matches else None
-            placebo_frequency = pct_matches[1] if len(pct_matches) > 1 else None
+            # Read each frequency from its own column. SIDER leaves the placebo
+            # cell physically empty whenever the label reports no placebo arm,
+            # which is the common case; that must surface as null and never as a
+            # copy of the drug's own rate.
+            frequency = (
+                _cell_text(cells[DRUG_FREQUENCY_COL])
+                if len(cells) > DRUG_FREQUENCY_COL
+                else None
+            )
+            placebo_frequency = (
+                _cell_text(cells[PLACEBO_FREQUENCY_COL])
+                if len(cells) > PLACEBO_FREQUENCY_COL
+                else None
+            )
 
             entry = {
                 "meddra_code": code,

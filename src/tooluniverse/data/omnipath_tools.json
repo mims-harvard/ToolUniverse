@@ -68,84 +68,73 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "source_uniprot": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Source protein UniProt accession"
-                  },
-                  "target_uniprot": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Target protein UniProt accession"
-                  },
-                  "source_genesymbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Source protein gene symbol"
-                  },
-                  "target_genesymbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Target protein gene symbol"
-                  },
-                  "is_directed": {
-                    "type": "boolean",
-                    "description": "Whether the interaction has a known direction"
-                  },
-                  "is_stimulation": {
-                    "type": "boolean",
-                    "description": "Whether the interaction is stimulatory/activating"
-                  },
-                  "is_inhibition": {
-                    "type": "boolean",
-                    "description": "Whether the interaction is inhibitory"
-                  },
-                  "sources": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "List of supporting databases/resources"
-                  },
-                  "curation_effort": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Number of curated references supporting this interaction"
-                  },
-                  "type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Interaction type: post_translational, transcriptional, etc."
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source protein UniProt accession"
+              },
+              "target_uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Target protein UniProt accession"
+              },
+              "source_genesymbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source protein gene symbol"
+              },
+              "target_genesymbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Target protein gene symbol"
+              },
+              "is_directed": {
+                "type": "boolean",
+                "description": "Whether the interaction has a known direction"
+              },
+              "is_stimulation": {
+                "type": "boolean",
+                "description": "Whether the interaction is stimulatory/activating"
+              },
+              "is_inhibition": {
+                "type": "boolean",
+                "description": "Whether the interaction is inhibitory"
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of supporting databases/resources"
+              },
+              "curation_effort": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of curated references supporting this interaction"
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Interaction type: post_translational, transcriptional, etc."
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -240,95 +229,84 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "uniprot": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "UniProt accession"
-                  },
-                  "genesymbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Gene symbol"
-                  },
-                  "category": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Intercellular role category (ligand, receptor, adhesion, etc.)"
-                  },
-                  "parent": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Parent category"
-                  },
-                  "database": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Source database for this annotation"
-                  },
-                  "scope": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "generic or specific"
-                  },
-                  "aspect": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "functional or locational"
-                  },
-                  "consensus_score": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Consensus score across databases (higher = more confident)"
-                  },
-                  "transmitter": {
-                    "type": "boolean",
-                    "description": "Whether protein acts as signal transmitter/sender"
-                  },
-                  "receiver": {
-                    "type": "boolean",
-                    "description": "Whether protein acts as signal receiver"
-                  },
-                  "secreted": {
-                    "type": "boolean",
-                    "description": "Whether protein is secreted"
-                  },
-                  "plasma_membrane_transmembrane": {
-                    "type": "boolean",
-                    "description": "Whether protein is plasma membrane transmembrane"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession"
+              },
+              "genesymbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Gene symbol"
+              },
+              "category": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Intercellular role category (ligand, receptor, adhesion, etc.)"
+              },
+              "parent": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Parent category"
+              },
+              "database": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source database for this annotation"
+              },
+              "scope": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "generic or specific"
+              },
+              "aspect": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "functional or locational"
+              },
+              "consensus_score": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Consensus score across databases (higher = more confident)"
+              },
+              "transmitter": {
+                "type": "boolean",
+                "description": "Whether protein acts as signal transmitter/sender"
+              },
+              "receiver": {
+                "type": "boolean",
+                "description": "Whether protein acts as signal receiver"
+              },
+              "secreted": {
+                "type": "boolean",
+                "description": "Whether protein is secreted"
+              },
+              "plasma_membrane_transmembrane": {
+                "type": "boolean",
+                "description": "Whether protein is plasma membrane transmembrane"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -431,96 +409,85 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "source_uniprot": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Source protein UniProt accession"
-                  },
-                  "target_uniprot": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Target protein UniProt accession"
-                  },
-                  "source_genesymbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Source protein gene symbol"
-                  },
-                  "target_genesymbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Target protein gene symbol"
-                  },
-                  "is_directed": {
-                    "type": "boolean",
-                    "description": "Whether the interaction direction is known"
-                  },
-                  "is_stimulation": {
-                    "type": "boolean",
-                    "description": "Whether the interaction is stimulatory"
-                  },
-                  "is_inhibition": {
-                    "type": "boolean",
-                    "description": "Whether the interaction is inhibitory"
-                  },
-                  "consensus_direction": {
-                    "type": "boolean",
-                    "description": "Whether multiple databases agree on direction"
-                  },
-                  "consensus_stimulation": {
-                    "type": "boolean",
-                    "description": "Whether multiple databases agree on stimulation"
-                  },
-                  "consensus_inhibition": {
-                    "type": "boolean",
-                    "description": "Whether multiple databases agree on inhibition"
-                  },
-                  "sources": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "List of supporting databases"
-                  },
-                  "curation_effort": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Number of curated references"
-                  },
-                  "type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Interaction type"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source protein UniProt accession"
+              },
+              "target_uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Target protein UniProt accession"
+              },
+              "source_genesymbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source protein gene symbol"
+              },
+              "target_genesymbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Target protein gene symbol"
+              },
+              "is_directed": {
+                "type": "boolean",
+                "description": "Whether the interaction direction is known"
+              },
+              "is_stimulation": {
+                "type": "boolean",
+                "description": "Whether the interaction is stimulatory"
+              },
+              "is_inhibition": {
+                "type": "boolean",
+                "description": "Whether the interaction is inhibitory"
+              },
+              "consensus_direction": {
+                "type": "boolean",
+                "description": "Whether multiple databases agree on direction"
+              },
+              "consensus_stimulation": {
+                "type": "boolean",
+                "description": "Whether multiple databases agree on stimulation"
+              },
+              "consensus_inhibition": {
+                "type": "boolean",
+                "description": "Whether multiple databases agree on inhibition"
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of supporting databases"
+              },
+              "curation_effort": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of curated references"
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Interaction type"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -577,80 +544,69 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Complex name"
-                  },
-                  "components": {
-                    "type": [
-                      "array",
-                      "string",
-                      "null"
-                    ],
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "UniProt accessions of complex components"
-                  },
-                  "components_genesymbols": {
-                    "type": [
-                      "array",
-                      "string",
-                      "null"
-                    ],
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Gene symbols of complex components"
-                  },
-                  "stoichiometry": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Component stoichiometry (e.g., '1:1:1')"
-                  },
-                  "sources": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Source databases for this complex"
-                  },
-                  "references": {
-                    "type": [
-                      "array",
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "identifiers": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Database-specific complex IDs (e.g., CORUM:2342)"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Complex name"
+              },
+              "components": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "UniProt accessions of complex components"
+              },
+              "components_genesymbols": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Gene symbols of complex components"
+              },
+              "stoichiometry": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Component stoichiometry (e.g., '1:1:1')"
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Source databases for this complex"
+              },
+              "references": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ]
+              },
+              "identifiers": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Database-specific complex IDs (e.g., CORUM:2342)"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -715,72 +671,61 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "uniprot": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "UniProt accession"
-                  },
-                  "genesymbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Gene symbol"
-                  },
-                  "entity_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Entity type (protein, complex, etc.)"
-                  },
-                  "source": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Source database name"
-                  },
-                  "label": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Annotation label/key (role, pathway, category, etc.)"
-                  },
-                  "value": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Annotation value (ligand, receptor, TGFb, Secreted Signaling, etc.)"
-                  },
-                  "record_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Record identifier within the source database"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession"
+              },
+              "genesymbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Gene symbol"
+              },
+              "entity_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Entity type (protein, complex, etc.)"
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source database name"
+              },
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Annotation label/key (role, pathway, category, etc.)"
+              },
+              "value": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Annotation value (ligand, receptor, TGFb, Secreted Signaling, etc.)"
+              },
+              "record_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Record identifier within the source database"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -862,79 +807,68 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "enzyme_uniprot": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Enzyme UniProt accession"
-                  },
-                  "substrate_uniprot": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Substrate UniProt accession"
-                  },
-                  "enzyme_genesymbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Enzyme gene symbol"
-                  },
-                  "substrate_genesymbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Substrate gene symbol"
-                  },
-                  "residue_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Modified residue type (Y, S, T, K, etc.)"
-                  },
-                  "residue_offset": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Position of modified residue in substrate sequence"
-                  },
-                  "modification": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Type of modification (phosphorylation, ubiquitination, etc.)"
-                  },
-                  "sources": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Supporting databases"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "enzyme_uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Enzyme UniProt accession"
+              },
+              "substrate_uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Substrate UniProt accession"
+              },
+              "enzyme_genesymbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Enzyme gene symbol"
+              },
+              "substrate_genesymbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Substrate gene symbol"
+              },
+              "residue_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Modified residue type (Y, S, T, K, etc.)"
+              },
+              "residue_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Position of modified residue in substrate sequence"
+              },
+              "modification": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Type of modification (phosphorylation, ubiquitination, etc.)"
+              },
+              "sources": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Supporting databases"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -995,43 +929,31 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "data",
-            "metadata"
-          ],
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "tf_genesymbol": {
-                    "type": "string"
-                  },
-                  "target_genesymbol": {
-                    "type": "string"
-                  },
-                  "is_stimulation": {
-                    "type": "boolean"
-                  },
-                  "is_inhibition": {
-                    "type": "boolean"
-                  },
-                  "dorothea_level": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "curation_effort": {
-                    "type": "integer"
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tf_genesymbol": {
+                "type": "string"
+              },
+              "target_genesymbol": {
+                "type": "string"
+              },
+              "is_stimulation": {
+                "type": "boolean"
+              },
+              "is_inhibition": {
+                "type": "boolean"
+              },
+              "dorothea_level": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "curation_effort": {
+                "type": "integer"
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
@@ -1084,40 +1006,32 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "data",
-            "metadata"
-          ],
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "tf_genesymbol": {
-                    "type": "string"
-                  },
-                  "target_genesymbol": {
-                    "type": "string"
-                  },
-                  "mor": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "dorothea_level": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tf_genesymbol": {
+                "type": "string"
+              },
+              "target_genesymbol": {
+                "type": "string"
+              },
+              "mor": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "dorothea_level": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Confidence-level codes (A-E) this interaction is curated at; an interaction can carry more than one level."
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },
@@ -1136,7 +1050,6 @@
     },
     "test_examples": [
       {
-        "operation": "get_dorothea_regulon",
         "tf_gene": "TP53"
       }
     ]
@@ -1181,47 +1094,35 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "required": [
-            "data",
-            "metadata"
-          ],
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession of the resource member"
+              },
+              "genesymbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Gene symbol of the resource member"
+              },
+              "entity_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Entity type (protein, complex, mirna)"
+              },
+              "annotations": {
                 "type": "object",
-                "properties": {
-                  "uniprot": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "UniProt accession of the resource member"
-                  },
-                  "genesymbol": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Gene symbol of the resource member"
-                  },
-                  "entity_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Entity type (protein, complex, mirna)"
-                  },
-                  "annotations": {
-                    "type": "object",
-                    "description": "Label/value annotation pairs for this member from the resource (e.g., {\"tier\": \"1\", \"hallmark\": \"True\"} for CancerGeneCensus; {\"mainclass\": \"Transporters\"} for Surfaceome; {\"group\": \"AGC\"} for kinase.com)."
-                  }
-                }
+                "description": "Label/value annotation pairs for this member from the resource (e.g., {\"tier\": \"1\", \"hallmark\": \"True\"} for CancerGeneCensus; {\"mainclass\": \"Transporters\"} for Surfaceome; {\"group\": \"AGC\"} for kinase.com)."
               }
-            },
-            "metadata": {
-              "type": "object"
             }
           }
         },

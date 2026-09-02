@@ -10,13 +10,28 @@ API Documentation: https://www.metabolomicsworkbench.org/tools/mw_rest.php
 """
 
 import requests
-from typing import Dict, Any
+from typing import Any, Dict, Optional
 from urllib.parse import quote
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 # Base URL for Metabolomics Workbench REST API
 MWBENCH_BASE_URL = "https://www.metabolomicsworkbench.org/rest"
+
+
+def _add_leading_zero(value: str) -> str:
+    """Prepend the '0' Metabolomics Workbench's own API omits from deltas.
+
+    Their moverz endpoint renders a fractional delta like 0.0019 as ".0019"
+    and -0.0082 as "-.0082" -- valid enough for their own display code but
+    not standalone-parseable numeric-string syntax. Leave anything else
+    (including already-valid numbers) untouched.
+    """
+    if value.startswith("."):
+        return "0" + value
+    if value.startswith("-."):
+        return "-0" + value[1:]
+    return value
 
 
 @register_tool("MetabolomicsWorkbenchTool")
@@ -75,8 +90,16 @@ class MetabolomicsWorkbenchTool(BaseTool):
         except Exception as e:
             raise self.handle_error(e)
 
-    def _make_request(self, sub_path: str) -> Dict[str, Any]:
-        """Central method to handle API requests and response validation."""
+    def _make_request(self, sub_path: str, text_shape: str = "table") -> Dict[str, Any]:
+        """Central method to handle API requests and response validation.
+
+        `text_shape` picks how to parse a non-JSON plain-text fallback body
+        (see `_parse_tsv_text` vs `_parse_keyvalue_blocks` docstrings for the
+        two shapes Metabolomics Workbench actually sends): "table" for a
+        shared-header, many-rows response (moverz searches); "keyvalue_blocks"
+        for one-or-more blank-line-separated "field\\tvalue" stanzas (every
+        study/{summary,factors,analysis,metabolites} response).
+        """
         # Ensure /json is appended to the URL
         if not sub_path.endswith("/json"):
             url = f"{MWBENCH_BASE_URL}/{sub_path.strip('/')}/json"
@@ -94,7 +117,9 @@ class MetabolomicsWorkbenchTool(BaseTool):
                     "status": "success",
                     "data": [],
                     "message": "No results found. RefMet requires exact metabolite names "
-                    "(e.g., 'Cholic acid' not 'bile acid', 'Cer(d18:1/16:0)' not 'ceramide'). "
+                    "(e.g., 'Cholic acid' not 'bile acid', 'Cer 18:1;O2/16:0' -- RefMet's "
+                    "own space-delimited shorthand, not the 'Cer(d18:1/16:0)' isoform "
+                    "notation -- not 'ceramide'). "
                     "Try a specific compound name or use ChEBI_search for class-level terms.",
                 }
 
@@ -116,23 +141,32 @@ class MetabolomicsWorkbenchTool(BaseTool):
                         "status": "success",
                         "data": [],
                         "message": "No results found. RefMet requires exact metabolite names "
-                        "(e.g., 'Cholic acid' not 'bile acid', 'Cer(d18:1/16:0)' not 'ceramide'). "
+                        "(e.g., 'Cholic acid' not 'bile acid', 'Cer 18:1;O2/16:0' -- RefMet's "
+                        "own space-delimited shorthand, not the 'Cer(d18:1/16:0)' isoform "
+                        "notation -- not 'ceramide'). "
                         "Try a specific compound name or use ChEBI_search for class-level terms.",
                     }
 
                 return {"status": "success", "data": data}
             except ValueError:
                 # Some endpoints (confirmed live: moverz/REFMET exact-mass
-                # search, and study "metabolites" output) ignore the
-                # requested "/json" suffix and return plain tab-separated
-                # text instead. Parse that into structured rows rather
-                # than handing back one giant string with literal \t/\n
-                # characters embedded -- harder for any downstream
-                # consumer to use than the JSON every sibling endpoint
-                # returns.
-                parsed = self._parse_tsv_text(response.text)
+                # search, and every study/* output) ignore the requested
+                # "/json" suffix and return plain text instead. Parse that
+                # into structured data rather than handing back one giant
+                # string with literal \t/\n characters embedded -- harder
+                # for any downstream consumer to use than the JSON every
+                # JSON-native endpoint returns.
+                parser = (
+                    self._parse_keyvalue_blocks
+                    if text_shape == "keyvalue_blocks"
+                    else self._parse_tsv_text
+                )
+                parsed = parser(response.text)
                 if parsed is not None:
-                    return {"status": "success", "data": parsed}
+                    return {
+                        "status": "success",
+                        "data": self._normalize_numeric_fields(parsed),
+                    }
                 return {"status": "success", "data": response.text}
 
         except requests.RequestException as e:
@@ -157,6 +191,36 @@ class MetabolomicsWorkbenchTool(BaseTool):
             )
         return rows
 
+    @staticmethod
+    def _parse_keyvalue_blocks(text: str):
+        """Parse Metabolomics Workbench's study/* text format.
+
+        Unlike moverz's shared-header table, every study/{summary,factors,
+        analysis,metabolites} response is one or more blank-line-separated
+        stanzas, each just a run of "field\\tvalue" lines (confirmed live for
+        all four output_items -- there is no shared header row at all, so
+        `_parse_tsv_text`'s "first line is headers" assumption silently
+        transposed field names into data: {"study_id": "study_title",
+        "ST003897": "Postprandial ..."} instead of {"study_title":
+        "Postprandial ..."}). Returns a single flat dict for a one-stanza
+        response (summary, analysis) or a list of dicts for a multi-stanza
+        one (factors, metabolites) -- matching whether MW itself is
+        describing one record or several.
+        """
+        blocks = [b for b in text.strip().split("\n\n") if b.strip()]
+        if not blocks or "\t" not in blocks[0]:
+            return None
+        parsed_blocks = []
+        for block in blocks:
+            record = {}
+            for line in block.strip("\n").split("\n"):
+                if "\t" not in line:
+                    return None
+                key, _, value = line.partition("\t")
+                record[key] = value
+            parsed_blocks.append(record)
+        return parsed_blocks[0] if len(parsed_blocks) == 1 else parsed_blocks
+
     def _normalize_numeric_fields(self, data: Any) -> Any:
         """Convert numeric string fields to actual numbers."""
         if isinstance(data, dict):
@@ -166,6 +230,14 @@ class MetabolomicsWorkbenchTool(BaseTool):
                     data["exactmass"] = float(data["exactmass"])
                 except (ValueError, TypeError):
                     pass
+            # Metabolomics Workbench's moverz endpoint itself omits the
+            # leading zero on this field (e.g. ".0000", "-.0082"), which
+            # isn't valid standalone numeric-string syntax in most parsers.
+            # Reformat it here rather than passing the upstream quirk
+            # through unmodified.
+            for key in ("Delta", "delta"):
+                if key in data and isinstance(data[key], str):
+                    data[key] = _add_leading_zero(data[key])
             # Recursively process nested dicts
             return {k: self._normalize_numeric_fields(v) for k, v in data.items()}
         elif isinstance(data, list):
@@ -178,7 +250,9 @@ class MetabolomicsWorkbenchTool(BaseTool):
         output_item = arguments.get("output_item", "summary")
         if not study_id:
             return {"status": "error", "error": "study_id parameter is required"}
-        return self._make_request(f"study/study_id/{study_id}/{output_item}")
+        return self._make_request(
+            f"study/study_id/{study_id}/{output_item}", text_shape="keyvalue_blocks"
+        )
 
     def _query_compound(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Query compound information."""
@@ -196,7 +270,49 @@ class MetabolomicsWorkbenchTool(BaseTool):
         output_item = arguments.get("output_item", "all")
         if not input_value:
             return {"status": "error", "error": "input_value parameter is required"}
-        return self._make_request(f"refmet/{input_item}/{input_value}/{output_item}")
+        result = self._make_request(f"refmet/{input_item}/{input_value}/{output_item}")
+
+        # `refmet/name/` is exact-match only, so standard clinical/HMDB names
+        # ("Octanoylcarnitine") return an empty success even though RefMet knows
+        # the compound under its own shorthand ("CAR 8:0"). RefMet's separate
+        # `refmet/match/` endpoint resolves synonyms -- use it to recover the
+        # canonical name, then re-run the original query with it.
+        if input_item == "name" and not result.get("data"):
+            canonical = self._resolve_refmet_name(input_value)
+            if canonical and canonical.lower() != str(input_value).lower():
+                retried = self._make_request(
+                    f"refmet/{input_item}/{canonical}/{output_item}"
+                )
+                if retried.get("data"):
+                    retried["name_resolution_note"] = (
+                        f"'{input_value}' is not a RefMet name; resolved to the "
+                        f"canonical RefMet name '{canonical}' via RefMet's synonym "
+                        "match endpoint."
+                    )
+                    return retried
+        return result
+
+    def _resolve_refmet_name(self, name: str) -> Optional[str]:
+        """Resolve a metabolite synonym to its canonical RefMet name.
+
+        Returns None when RefMet has no match -- the endpoint signals that with
+        a record whose every field is the literal string "-", not with an error.
+        """
+        try:
+            response = requests.get(
+                f"{MWBENCH_BASE_URL}/refmet/match/{quote(str(name), safe='')}/name/json",
+                timeout=self.timeout,
+            )
+            response.raise_for_status()
+            payload = response.json()
+        except (requests.RequestException, ValueError):
+            return None
+        if isinstance(payload, list):
+            payload = payload[0] if payload else None
+        if not isinstance(payload, dict):
+            return None
+        refmet_name = str(payload.get("refmet_name", "")).strip()
+        return None if refmet_name in ("", "-") else refmet_name
 
     def _search_moverz(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search by m/z value. Requires database as first URL path segment."""
@@ -248,6 +364,29 @@ class MetabolomicsWorkbenchTool(BaseTool):
                 "error": (
                     "At least one filter is required for METSTAT. Provide one or more of: "
                     + ", ".join(self._METSTAT_SLOTS)
+                ),
+            }
+        # A '/' in any slot -- most commonly refmet_name values like
+        # 'PC 16:0/18:1' -- 404s even when percent-encoded, because
+        # Metabolomics Workbench's router splits on a literal slash before
+        # decoding the path segment. Confirmed live: the encoded form still
+        # produces a raw upstream 404/HTML response, not a clean "no match".
+        # Reject upfront with actionable guidance instead of leaking that
+        # HTML error page to the caller.
+        bad_slots = [
+            name
+            for name, value in zip(self._METSTAT_SLOTS, slots)
+            if "/" in value
+        ]
+        if bad_slots:
+            return {
+                "status": "error",
+                "error": (
+                    f"METSTAT filter(s) {', '.join(bad_slots)} contain '/', which "
+                    "Metabolomics Workbench's REST router cannot route correctly "
+                    "even when percent-encoded. For refmet_name, use RefMet's "
+                    "sum-composition form without the acyl-chain slash (e.g. "
+                    "'PC 34:1' instead of 'PC 16:0/18:1')."
                 ),
             }
         # URL-encode each slot value (e.g. spaces) but keep the ';' separators literal.

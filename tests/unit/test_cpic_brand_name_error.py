@@ -121,7 +121,7 @@ class TestEmptyRecommendationNoteAccuracy:
 
         def fake_get(url, params=None, **kwargs):
             if url.endswith("/drug"):
-                return _resp([{"guidelineid": 100416, "rxnormid": "6813"}])
+                return _resp([{"guidelineid": 100416, "drugid": "RxNorm:6813"}])
             if "drugid" in (params or {}):
                 return _resp([])  # filtered to this drug: no rows
             return _resp([{"guidelineid": 100416}])  # unfiltered: guideline has rows
@@ -140,7 +140,7 @@ class TestEmptyRecommendationNoteAccuracy:
 
         def fake_get(url, params=None, **kwargs):
             if url.endswith("/drug"):
-                return _resp([{"guidelineid": 100425, "rxnormid": "11289"}])
+                return _resp([{"guidelineid": 100425, "drugid": "RxNorm:11289"}])
             return _resp([])  # both the drug-filtered AND unfiltered checks are empty
 
         with patch(
@@ -166,8 +166,8 @@ class TestExactMatchPreferredOverSubstring:
         # escitalopram sorts before citalopram in the fuzzy result set, but
         # querying "citalopram" must resolve to citalopram's own record.
         rows = [
-            {"name": "escitalopram", "guidelineid": 100413, "rxnormid": "321988"},
-            {"name": "citalopram", "guidelineid": 100413, "rxnormid": "2556"},
+            {"name": "escitalopram", "guidelineid": 100413, "drugid": "RxNorm:321988"},
+            {"name": "citalopram", "guidelineid": 100413, "drugid": "RxNorm:2556"},
         ]
         resp = MagicMock()
         resp.json.return_value = rows
@@ -176,13 +176,15 @@ class TestExactMatchPreferredOverSubstring:
         with patch(
             "tooluniverse.cpic_search_pairs_tool.requests.get", return_value=resp
         ):
-            guideline_id, rxnorm_id = _resolve_drug_to_guideline_id("citalopram")
+            guideline_id, drug_id = _resolve_drug_to_guideline_id("citalopram")
 
         assert guideline_id == 100413
-        assert rxnorm_id == "2556"
+        assert drug_id == "RxNorm:2556"
 
     def test_no_exact_match_falls_back_to_first_fuzzy_hit(self):
-        rows = [{"name": "escitalopram", "guidelineid": 100413, "rxnormid": "321988"}]
+        rows = [
+            {"name": "escitalopram", "guidelineid": 100413, "drugid": "RxNorm:321988"}
+        ]
         resp = MagicMock()
         resp.json.return_value = rows
         resp.raise_for_status.return_value = None
@@ -190,10 +192,10 @@ class TestExactMatchPreferredOverSubstring:
         with patch(
             "tooluniverse.cpic_search_pairs_tool.requests.get", return_value=resp
         ):
-            guideline_id, rxnorm_id = _resolve_drug_to_guideline_id("citalop")
+            guideline_id, drug_id = _resolve_drug_to_guideline_id("citalop")
 
         assert guideline_id == 100413
-        assert rxnorm_id == "321988"
+        assert drug_id == "RxNorm:321988"
 
     def test_end_to_end_recommendations_use_the_exact_drug(self):
         tool = CPICGetRecommendationsTool({"name": "CPIC_get_recommendations"})
@@ -205,12 +207,12 @@ class TestExactMatchPreferredOverSubstring:
                         {
                             "name": "fosphenytoin",
                             "guidelineid": 100412,
-                            "rxnormid": "72236",
+                            "drugid": "RxNorm:72236",
                         },
                         {
                             "name": "phenytoin",
                             "guidelineid": 100412,
-                            "rxnormid": "8183",
+                            "drugid": "RxNorm:8183",
                         },
                     ]
                 )

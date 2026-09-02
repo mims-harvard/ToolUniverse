@@ -97,6 +97,29 @@ class ReactomeContentTool(BaseTool):
         types = arguments.get("types", "Pathway")
         cluster = arguments.get("cluster", True)
 
+        # Fix-R19-1: Reactome pages its search results and, when `rows` is not
+        # sent, returns only its own default page of 10 -- so the tool could
+        # never reach result 11 of a 455-hit query. Expose upstream's paging
+        # controls. NOTE the offset parameter is literally named "Start row"
+        # (with a space), confirmed in Reactome's own OpenAPI document
+        # (https://reactome.org/ContentService/v3/api-docs -> /search/query ->
+        # 'param: Start row integer - Start row') and confirmed live: sending
+        # `start=5` is silently ignored and re-serves page 0, while
+        # `Start row=5` serves entries 6-10. Anything that "looks right" here
+        # fails silently, so keep the odd upstream spelling.
+        rows = arguments.get("rows")
+        start = arguments.get("start")
+        if rows is not None and not (1 <= int(rows) <= 1000):
+            return {
+                "status": "error",
+                "error": f"rows must be between 1 and 1000 (got {rows}); Reactome rejects larger pages",
+            }
+        if start is not None and int(start) < 0:
+            return {
+                "status": "error",
+                "error": f"start must be >= 0 (got {start})",
+            }
+
         url = f"{REACTOME_CS_BASE_URL}/search/query"
         params = {
             "query": query,
@@ -104,6 +127,10 @@ class ReactomeContentTool(BaseTool):
             "types": types,
             "cluster": str(cluster).lower(),
         }
+        if rows is not None:
+            params["rows"] = int(rows)
+        if start is not None:
+            params["Start row"] = int(start)
         response = requests.get(
             url,
             params=params,
@@ -130,20 +157,50 @@ class ReactomeContentTool(BaseTool):
                     }
                 )
 
-        return {
+        # Fix-R19-1: `total_results` is documented in this tool's return_schema
+        # as "Total number of results", but was computed as len(all_entries)
+        # over a single unpaginated upstream page -- i.e. it reported Reactome's
+        # default page size of 10 for every query, no matter how many actually
+        # matched. Reactome reports the real figure as `numberOfMatches` in
+        # every search response (confirmed live: query='DNA repair',
+        # species='Homo sapiens', types='Pathway' -> numberOfMatches 455 while
+        # only 10 entries come back); it was parsed into `data` and thrown away.
+        # Report the documented quantity, and say plainly how much of it the
+        # caller is actually holding.
+        limit = int(rows) if rows is not None else 30
+        results = all_entries[:limit]
+        offset = int(start) if start is not None else 0
+        total_matches = data.get("numberOfMatches")
+        if not isinstance(total_matches, int):
+            total_matches = len(all_entries)
+
+        result = {
             "status": "success",
             "data": {
                 "query": query,
                 "species": species,
                 "types_searched": types,
-                "total_results": len(all_entries),
-                "results": all_entries[:30],
+                "count": len(results),
+                "total_results": total_matches,
+                "start": offset,
+                "has_more": (offset + len(results)) < total_matches,
+                "results": results,
             },
             "metadata": {
                 "source": "Reactome Content Service - Search",
                 "query": query,
             },
         }
+
+        if result["data"]["has_more"]:
+            result["truncated"] = True
+            result["truncation_note"] = (
+                f"Returned {len(results)} of {total_matches} Reactome entries matching "
+                f"this query (starting at result {offset + 1}). This is a ranked slice, "
+                f"not the full result set -- an entry absent here may still match. Pass "
+                f"`rows` (up to 1000) to widen the page and `start` to move through it."
+            )
+        return result
 
     def _get_contained_events(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get all events (sub-pathways and reactions) contained in a pathway."""

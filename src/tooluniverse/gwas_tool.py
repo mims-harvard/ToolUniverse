@@ -1,10 +1,81 @@
 import re
 import requests
-from typing import Dict, Any, Optional
+from typing import Dict, Any, List, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 _EFO_ID_RE = re.compile(r"^[A-Z]+[_:]\d+")
+
+# Fix-R31-1: the GWAS Catalog REST API v2 has NO server-side p-value filter.
+# Verified against the published OpenAPI document
+#   https://www.ebi.ac.uk/gwas/rest/api/v2/rest-api-doc.yaml
+# (linked from https://www.ebi.ac.uk/gwas/rest/api/v2/swagger-ui/index.html):
+# GET /v2/associations declares exactly these query parameters --
+_V2_ASSOCIATION_QUERY_PARAMS = (
+    "pubmed_id, rs_id, full_pvalue_set, accession_id, efo_trait, efo_id, "
+    "show_child_trait, mapped_gene, extended_geneset, sort, direction, page, size"
+)
+# -- and nothing else. A `p_upper=` parameter looks supported because the API
+# echoes unknown query parameters back inside the HAL `_links` hrefs, but it is
+# silently ignored: confirmed live that
+#   /v2/associations?efo_id=EFO_0009184&size=100&sort=p_value&direction=asc&p_upper=1e-300
+# still returns all 68 associations (p-values down to 3e-30), identical to the
+# unfiltered call. The same is true of p_value, pvalue_upper, p_value_max,
+# pUpper, p_value_lte, ... -- every candidate returns the full 68 rows.
+# The threshold therefore has to stay CLIENT-SIDE, and that fact plus its
+# consequences must be disclosed to the caller rather than silently mistaken
+# for a property of the trait.
+_CLIENT_SIDE_FILTER_NOTE = (
+    "The p_value threshold is applied CLIENT-SIDE, to the page of associations "
+    "fetched from GWAS Catalog -- not by the API. The GWAS Catalog REST API v2 "
+    "exposes no server-side p-value filter: its OpenAPI document "
+    "(https://www.ebi.ac.uk/gwas/rest/api/v2/rest-api-doc.yaml) declares only "
+    f"[{_V2_ASSOCIATION_QUERY_PARAMS}] on GET /v2/associations, and unknown "
+    "parameters such as 'p_upper' are echoed back in _links but do not filter "
+    "anything. To make the client-side threshold meaningful this tool fetches "
+    "the page in p_value-ascending (most-significant-first) order, so the rows "
+    "it filters are the ones that can actually pass."
+)
+
+
+def _order_ci_bounds(record: Dict[str, Any]) -> Dict[str, Any]:
+    """Swap ``ci_lower``/``ci_upper`` when the upstream record has them inverted.
+
+    GWAS Catalog derives these two numbers by splitting its own ``range``
+    string, and sometimes writes that string high-bound-first, so the values
+    arrive under field names that assert the opposite ordering. Measured live on
+    2026-08-11 over 1,172 associations (periodontitis MONDO_0005076, asthma
+    MONDO_0004979, BMI EFO_0004340), 4 were inverted -- all 4 in periodontitis,
+    where they are 4 of its 172 rows:
+
+        range=[0.07-0.03]  ci_lower=0.07  ci_upper=0.03  rs75933965 TCF7L2 p=6e-13
+        range=[0.06-0.02]  ci_lower=0.06  ci_upper=0.02  rs149290349 ZFP36L2
+        range=[0.1-0.06]   ci_lower=0.1   ci_upper=0.06  rs76895963 CCND2
+        range=[0.05-0.01]  ci_lower=0.05  ci_upper=0.01  rs77464186 ARAP1
+
+    The first is the TCF7L2 locus, a top periodontitis hit, so it lands in any
+    results table. Confirmed at
+    https://www.ebi.ac.uk/gwas/rest/api/v2/associations/105855749.
+
+    The bounds are ordered from the two NUMERIC fields; ``range`` is deliberately
+    never re-parsed. Its bounds are joined by a bare "-" that is also the minus
+    sign of a negative bound, so a ``split("-")`` would corrupt exactly the rows
+    it looks safe on: the same sweep found 3 genuinely negative ranges, e.g.
+    "[-0.00131-0.00151]", whose upstream ci_lower/ci_upper (-0.00131, 0.00151)
+    are already correct and already correctly ordered. ``range`` is therefore
+    passed through verbatim, and remains the record of what upstream sent.
+    """
+    lower, upper = record.get("ci_lower"), record.get("ci_upper")
+    # 15 of the 172 periodontitis rows have no bounds at all -- upstream sends
+    # range "-" or "[NR]" and ci_lower/ci_upper null -- so both must be numbers
+    # before they can be compared.
+    if (
+        isinstance(lower, (int, float))
+        and isinstance(upper, (int, float))
+        and lower > upper
+    ):
+        return {**record, "ci_lower": upper, "ci_upper": lower}
+    return record
 
 
 class GWASRESTTool(BaseTool):
@@ -42,6 +113,15 @@ class GWASRESTTool(BaseTool):
         except (TypeError, ValueError):
             return None
 
+    @staticmethod
+    def _coerce_float(value: Any) -> Optional[float]:
+        if value is None or isinstance(value, bool):
+            return None
+        try:
+            return float(value)
+        except (TypeError, ValueError):
+            return None
+
     def _efo_id_from_uri_or_id(self, value: Any) -> Optional[str]:
         """
         Best-effort normalize an EFO/OBA/etc identifier.
@@ -67,12 +147,25 @@ class GWASRESTTool(BaseTool):
         s = s.strip()
         return s or None
 
-    def _resolve_trait_to_efo_id(self, disease_trait: str) -> Optional[str]:
-        """Resolve a disease trait name to an EFO ID.
+    def _resolve_trait_to_efo(self, disease_trait: str) -> Optional[Dict[str, Any]]:
+        """Resolve a disease trait name to an EFO term.
+
+        Returns ``{"efo_id": ..., "efo_label": ..., "source": ...}`` or None.
 
         Tries the GWAS Catalog efoTraits endpoint first, then falls back to
         a study-based resolution. The /v2/associations endpoint ignores the
         disease_trait query parameter, so we must resolve to an EFO ID.
+
+        Fix-R31-2: this used to return the bare ID, so callers could only
+        surface ``resolved_efo_id`` with no label -- and a *substitution* was
+        indistinguishable from an exact hit. Confirmed live:
+        disease_trait="cardiorespiratory fitness" finds nothing in efoTraits
+        and falls through to /v2/studies, whose single matching study
+        (GCST90310239, disease_trait "Cardiorespiratory fitness") is tagged
+        EFO_0009184 = "heart rate response to exercise" -- a different
+        physiological construct from VO2max (EFO_0004887, "maximal oxygen
+        uptake measurement"). The label travels with the ID now so callers
+        can see the substitution instead of trusting a bare accession.
         """
         # Primary: GWAS Catalog efoTraits endpoint (v1)
         try:
@@ -86,7 +179,11 @@ class GWASRESTTool(BaseTool):
                 if traits:
                     short_name = traits[0].get("shortForm")
                     if short_name:
-                        return short_name
+                        return {
+                            "efo_id": short_name,
+                            "efo_label": self._coerce_str(traits[0].get("trait")),
+                            "source": "GWAS Catalog efoTraits trait-label lookup",
+                        }
         except Exception:
             pass
 
@@ -104,25 +201,186 @@ class GWASRESTTool(BaseTool):
                     if efo_traits:
                         efo_id = efo_traits[0].get("efo_id")
                         if efo_id:
-                            return efo_id
+                            return {
+                                "efo_id": efo_id,
+                                "efo_label": self._coerce_str(
+                                    efo_traits[0].get("efo_trait")
+                                ),
+                                "source": (
+                                    "EFO term tagged on GWAS Catalog study "
+                                    f"{studies[0].get('accession_id')} "
+                                    f"(reported trait: "
+                                    f"{studies[0].get('disease_trait')!r})"
+                                ),
+                            }
         except Exception:
             pass
 
         return None
+
+    def _resolve_trait_to_efo_id(self, disease_trait: str) -> Optional[str]:
+        """Backwards-compatible wrapper returning only the EFO ID."""
+        resolved = self._resolve_trait_to_efo(disease_trait)
+        return resolved.get("efo_id") if resolved else None
+
+    def _trait_candidates_from_free_text_search(
+        self, disease_trait: str, max_studies: int = 3
+    ) -> List[Dict[str, str]]:
+        """Look up candidate EFO terms via GWAS Catalog's own free-text search.
+
+        Fix-R31-2 (additive): both resolver tiers above are exact-ish label
+        matches, so a common informal name hard-errors even when the Catalog
+        plainly holds the data -- e.g. 'VO2max' and 'maximal oxygen uptake'
+        both fail, yet https://www.ebi.ac.uk/gwas/api/search?q=VO2max finds
+        study GCST90296672 tagged EFO_0004887 "maximal oxygen uptake
+        measurement".
+
+        This deliberately does NOT auto-select a term: the top study for
+        'VO2max' is tagged both EFO_0007768 ("response to exercise", a broad
+        parent) and EFO_0004887, and picking one would be exactly the kind of
+        silent substitution Fix-R31-2 exists to prevent. The candidates are
+        only used to turn an unhelpful hard error into an actionable one.
+        """
+        candidates: List[Dict[str, str]] = []
+        seen = set()
+        try:
+            resp = requests.get(
+                "https://www.ebi.ac.uk/gwas/api/search",
+                params={"q": disease_trait, "max": 10},
+                timeout=15,
+            )
+            if resp.status_code != 200:
+                return []
+            docs = resp.json().get("response", {}).get("docs", []) or []
+        except Exception:
+            return []
+
+        accessions = []
+        for doc in docs:
+            if not isinstance(doc, dict):
+                continue
+            acc = doc.get("accessionId")
+            if acc and acc not in accessions:
+                accessions.append(acc)
+            if len(accessions) >= max_studies:
+                break
+
+        for acc in accessions:
+            study = self._fetch_study(acc)
+            if not study:
+                continue
+            for term in study.get("efo_traits", []) or []:
+                efo_id = term.get("efo_id")
+                if not efo_id or efo_id in seen:
+                    continue
+                seen.add(efo_id)
+                candidates.append(
+                    {
+                        "efo_id": efo_id,
+                        "efo_label": term.get("efo_trait") or "",
+                        "study_accession": acc,
+                        "study_reported_trait": study.get("disease_trait") or "",
+                    }
+                )
+        return candidates
+
+    def _fetch_study(self, accession_id: str) -> Optional[Dict[str, Any]]:
+        """Fetch one study record, or None if it cannot be retrieved."""
+        try:
+            resp = requests.get(
+                f"{self.base_url}/v2/studies/{accession_id}", timeout=15
+            )
+            if resp.status_code == 200:
+                study = resp.json()
+                return study if isinstance(study, dict) else None
+        except Exception:
+            pass
+        return None
+
+    def _unresolved_trait_hint(self, disease_trait: str) -> str:
+        """Suffix listing candidate EFO terms found by free-text search."""
+        candidates = self._trait_candidates_from_free_text_search(disease_trait)
+        if not candidates:
+            return ""
+        rendered = "; ".join(
+            f"{c['efo_id']} ({c['efo_label']}) -- from study "
+            f"{c['study_accession']} '{c['study_reported_trait']}'"
+            for c in candidates
+        )
+        return (
+            " GWAS Catalog's own free-text search DOES find studies matching "
+            f"'{disease_trait}'. Candidate EFO terms tagged on them: {rendered}. "
+            "Re-run with efo_id set to whichever of those is the phenotype you "
+            "mean -- this tool will not guess between them for you."
+        )
+
+    @staticmethod
+    def _trait_substitution_note(
+        disease_trait: str, efo_id: str, efo_label: Optional[str], source: str
+    ) -> Optional[str]:
+        """Warn when the resolved EFO label is not the submitted trait."""
+        if not efo_label:
+            return (
+                f"Your trait query '{disease_trait}' was resolved to EFO term "
+                f"'{efo_id}' ({source}); GWAS Catalog returned no label for that "
+                "term, so the substitution could not be verified. Results below "
+                f"describe '{efo_id}', not necessarily '{disease_trait}'."
+            )
+        if efo_label.strip().casefold() == disease_trait.strip().casefold():
+            return None
+        return (
+            f"TRAIT SUBSTITUTION: your query '{disease_trait}' was resolved to "
+            f"EFO term '{efo_id}' whose label is '{efo_label}', which is NOT an "
+            f"exact match for what you asked for ({source}). Every result below "
+            f"describes '{efo_label}'. Confirm that is the phenotype you meant "
+            "before using these associations; if it is not, pass efo_id "
+            "explicitly."
+        )
+
+    def _annotate_trait_resolution(
+        self, result: Dict[str, Any], disease_trait: Optional[str], resolution: Any
+    ) -> None:
+        """Attach resolved EFO id + label + original query to a result."""
+        if not disease_trait or not isinstance(result, dict):
+            return
+        if isinstance(resolution, dict):
+            efo_id = resolution.get("efo_id")
+            efo_label = resolution.get("efo_label")
+            source = resolution.get("source")
+        else:
+            efo_id, efo_label, source = resolution, None, None
+        if not efo_id:
+            return
+        result["query_trait"] = disease_trait
+        result["resolved_efo_id"] = efo_id
+        if not source:
+            # The caller supplied efo_id explicitly; no lookup happened, so
+            # there is no substitution to disclose.
+            result["trait_resolution_source"] = (
+                "efo_id supplied by the caller (the trait text was not used "
+                "to look anything up)"
+            )
+            return
+        result["resolved_efo_label"] = efo_label
+        result["trait_resolution_source"] = source
+        note = self._trait_substitution_note(disease_trait, efo_id, efo_label, source)
+        if note:
+            result["trait_resolution_note"] = note
 
     def _resolve_trait_or_error(
         self, disease_trait: Optional[str], efo_id: Optional[str]
     ) -> Dict[str, Any]:
         """Resolve disease_trait to efo_id if needed.
 
-        Returns {"efo_id": <str>} on success, or {"error": <dict>} when
-        resolution fails and would produce an unfiltered query.
+        Returns {"efo_id": <str>, "efo_label": <str|None>, "source": <str|None>}
+        on success, or {"error": <dict>} when resolution fails and would produce
+        an unfiltered query.
         Callers check ``"error" in result`` and return ``result["error"]``.
         """
         if disease_trait and not efo_id:
-            resolved = self._resolve_trait_to_efo_id(disease_trait)
+            resolved = self._resolve_trait_to_efo(disease_trait)
             if resolved:
-                return {"efo_id": resolved}
+                return dict(resolved)
             return {
                 "error": {
                     "status": "error",
@@ -134,10 +392,11 @@ class GWASRESTTool(BaseTool):
                         "'antidepressant response'). Or provide efo_id directly "
                         "(e.g., 'MONDO_0002009' for major depressive disorder, "
                         "'EFO_0000305' for breast carcinoma)."
+                        + self._unresolved_trait_hint(disease_trait)
                     ),
                 },
             }
-        return {"efo_id": efo_id}
+        return {"efo_id": efo_id, "efo_label": None, "source": None}
 
     @staticmethod
     def _empty_result_note(efo_id: str) -> str:
@@ -152,21 +411,107 @@ class GWASRESTTool(BaseTool):
         # them was GWAS_search_associations_by_gene/gwas_get_snps_for_gene
         # (gene-based lookup), not a reworded trait string. Point to that
         # real fallback instead of a generic, non-adaptive example.
+        #
+        # Fix-R13C-1: GWAS Catalog's own trait-label search (used to
+        # resolve a plain-text disease_trait) isn't restricted to EFO --
+        # it also returns HPO/Orphanet/MONDO terms, and does no synonym
+        # expansion, so the exact current clinical term for a disease can
+        # resolve to a real-but-disconnected ontology term with zero
+        # tagged associations while an older/alternate synonym resolves
+        # to a term with real data. Confirmed live: "premature ovarian
+        # insufficiency" resolves to HP_0008209 (0 associations), but the
+        # older synonym "premature ovarian failure" resolves to
+        # MONDO_0005387 (9 real associations, e.g. PMID 21989058).
+        non_efo = not efo_id.upper().startswith("EFO")
+        ontology_hint = (
+            f" '{efo_id}' is not an EFO term (GWAS Catalog's trait search "
+            "also returns HPO/Orphanet/MONDO terms), and this ontology "
+            "does no synonym expansion, so it may resolve a current "
+            "clinical term to a real-but-disconnected entry."
+            if non_efo
+            else ""
+        )
         return (
-            f"No associations found for EFO ID '{efo_id}'. "
+            f"No associations found for EFO ID '{efo_id}'.{ontology_hint} "
             "GWAS Catalog may tag related associations under a different "
             "EFO/MONDO term, or under pleiotropic traits rather than this "
-            "specific one. If you know the gene of interest, try "
+            "specific one -- try an older/alternate clinical synonym of "
+            "the trait (e.g. an outdated but still-indexed name) if one "
+            "exists. If you know the gene of interest, try "
             "GWAS_search_associations_by_gene or gwas_get_snps_for_gene "
             "instead, which search by gene rather than by trait term."
         )
 
+    @staticmethod
+    def _filtered_to_empty_note(
+        efo_id: Optional[str],
+        removed: int,
+        threshold: Any,
+        total_elements: Any,
+    ) -> str:
+        """Note for 'empty because a CLIENT-SIDE filter removed every row'.
+
+        Fix-R31-1: this case used to fall through to _empty_result_note, which
+        blames the trait term and tells the caller to try a synonym or a
+        gene-based tool -- advice that is guaranteed useless, because the trait
+        was never the problem. Confirmed live: efo_id=EFO_0004340 (BMI) with
+        p_value=5e-08 returned data=[] together with, in the same payload,
+        pagination.totalElements=23608. The message must name the filter.
+        """
+        subject = f"EFO ID '{efo_id}'" if efo_id else "this query"
+        catalog_total = ""
+        if isinstance(total_elements, int):
+            catalog_total = (
+                f" GWAS Catalog holds {total_elements} association(s) for "
+                f"{subject} in total (see metadata.pagination.totalElements, "
+                "which counts the UNFILTERED set)."
+            )
+        return (
+            f"0 associations returned because the client-side p_value <= "
+            f"{threshold} filter removed all {removed} association(s) fetched "
+            f"for {subject}. The filter removed them -- the trait term is NOT "
+            f"the problem.{catalog_total} Re-run without p_value, or with a "
+            "less strict threshold, to see the associations that do exist. "
+            + _CLIENT_SIDE_FILTER_NOTE
+        )
+
     def _add_empty_result_note(
-        self, result: Dict[str, Any], efo_id: Optional[str]
+        self,
+        result: Dict[str, Any],
+        efo_id: Optional[str],
+        filter_removed: int = 0,
+        filter_threshold: Any = None,
     ) -> None:
-        """Add a suggestion note to result if the data list is empty."""
-        if efo_id and isinstance(result.get("data"), list) and not result["data"]:
+        """Add a suggestion note to result if the data list is empty.
+
+        ``filter_removed`` is the number of rows a client-side filter deleted.
+        When it is non-zero the emptiness is attributed to the filter, not to
+        the trait term (Fix-R31-1).
+        """
+        if not (isinstance(result.get("data"), list) and not result["data"]):
+            return
+        if filter_removed:
+            total_elements = (
+                (result.get("metadata") or {}).get("pagination") or {}
+            ).get("totalElements")
+            result["note"] = self._filtered_to_empty_note(
+                efo_id, filter_removed, filter_threshold, total_elements
+            )
+            return
+        if efo_id:
             result["note"] = self._empty_result_note(efo_id)
+
+    def _get_one(self, record_id: Any) -> Dict[str, Any]:
+        """Fetch one record by ID, with the same row repair the list path applies.
+
+        The three ``*ByID`` tools all fetch ``{endpoint}/{id}`` and return the
+        record verbatim, bypassing ``_extract_embedded_data`` -- so without a
+        shared seam here each of them has to remember ``_order_ci_bounds``
+        separately, and a fourth one added later would silently forget. Only
+        associations carry confidence bounds today; the repair is keyed on the
+        field pair, so it is a no-op for studies and SNPs.
+        """
+        return _order_ci_bounds(self._make_request(f"{self.endpoint}/{record_id}"))
 
     def _extract_embedded_data(
         self, data: Dict[str, Any], data_type: str
@@ -182,7 +527,9 @@ class GWASRESTTool(BaseTool):
 
         # Extract the main data from _embedded
         if "_embedded" in data and data_type in data["_embedded"]:
-            result["data"] = data["_embedded"][data_type]
+            result["data"] = [
+                _order_ci_bounds(row) for row in data["_embedded"][data_type]
+            ]
 
         # Extract pagination metadata
         if "page" in data:
@@ -239,10 +586,11 @@ class GWASAssociationSearch(GWASRESTTool):
         # Auto-resolve trait name to efo_id for reliable filtering.
         # Feature-81B-008: if resolution fails, return error instead of silently
         # running an unfiltered search that returns 1M+ unrelated associations.
+        resolution: Optional[Dict[str, Any]] = None
         if disease_trait and not efo_id:
-            resolved = self._resolve_trait_to_efo_id(disease_trait)
-            if resolved:
-                efo_id = resolved
+            resolution = self._resolve_trait_to_efo(disease_trait)
+            if resolution:
+                efo_id = resolution["efo_id"]
             else:
                 return {
                     "status": "error",
@@ -254,6 +602,7 @@ class GWASAssociationSearch(GWASRESTTool):
                         "'coronary artery disease' instead of 'statin response'). "
                         "Or provide efo_id directly (e.g., 'MONDO_0002009' for "
                         "major depressive disorder, 'EFO_0001645' for myocardial infarction)."
+                        + self._unresolved_trait_hint(disease_trait)
                     ),
                 }
 
@@ -272,26 +621,64 @@ class GWASAssociationSearch(GWASRESTTool):
         if accession_id:
             params["accession_id"] = accession_id
 
+        p_threshold = self._coerce_float(
+            arguments.get("p_value")
+            if arguments.get("p_value") is not None
+            else arguments.get("p_value_threshold")
+        )
+
         sort = self._coerce_str(arguments.get("sort"))
         direction = self._coerce_str(arguments.get("direction"))
-        # A p_value threshold is applied CLIENT-SIDE to the fetched page (the API
-        # has no server-side p-value filter), but the API returns associations
-        # UNSORTED -- so without sorting by significance the fetched window omits
-        # the strongest loci and a strict threshold falsely returns 0 (SLE
-        # p<=1e-100 -> 0 even though hits exist at p=2e-298). When a p-value
-        # filter is requested and the caller gave no explicit sort, fetch
-        # most-significant-first so the threshold actually sees the top hits.
-        if not sort and (
-            arguments.get("p_value") is not None
-            or arguments.get("p_value_threshold") is not None
-        ):
+        # The API returns associations UNSORTED by default, so a plain
+        # discovery call with no explicit sort (e.g. just disease_trait+size)
+        # returns whichever page the API happens to store first -- which can
+        # be a low-information niche study with empty mapped_genes/locations,
+        # while the near-identical gwas_get_associations_for_trait tool
+        # defaults to sort=p_value and returns the expected top hit
+        # (Feature-4B-2). Default to most-significant-first here too, for
+        # consistency and so a p-value threshold (applied CLIENT-SIDE below,
+        # since the API has no server-side p-value filter) actually sees the
+        # top hits instead of missing them (SLE p<=1e-100 -> 0 even though
+        # hits exist at p=2e-298).
+        if not sort:
             sort = "p_value"
             if not direction:
                 direction = "asc"
-        if sort:
-            params["sort"] = sort
-        if direction:
-            params["direction"] = direction
+
+        # Fix-R31-1: defaulting the sort is not enough. When the caller asks
+        # for direction=desc AND a p_value threshold, page 0 holds the LEAST
+        # significant rows, so the client-side filter deletes every one of
+        # them and the tool reports "no associations for this trait" for a
+        # trait with tens of thousands of them (EFO_0004340 / BMI: data=[]
+        # alongside pagination.totalElements=23608). Since the API cannot do
+        # the filtering (see _CLIENT_SIDE_FILTER_NOTE), fetch the page in
+        # p_value-ascending order whenever a threshold is present and the
+        # caller is sorting by p_value, then present the surviving rows in
+        # the direction the caller actually asked for. Any other sort field
+        # (or_value, beta_num, ...) is left exactly as requested.
+        fetch_sort, fetch_direction = sort, direction
+        sort_override: Optional[Dict[str, Any]] = None
+        if p_threshold is not None and sort == "p_value":
+            fetch_sort = "p_value"
+            if direction and direction != "asc":
+                sort_override = {
+                    "requested_sort": sort,
+                    "requested_direction": direction,
+                    "fetched_sort": "p_value",
+                    "fetched_direction": "asc",
+                    "reason": (
+                        "A p_value threshold can only be honoured by scanning "
+                        "the most-significant end of the result set; the page "
+                        "was fetched p_value-ascending and the surviving rows "
+                        f"were re-ordered '{direction}' for you."
+                    ),
+                }
+            fetch_direction = "asc"
+
+        if fetch_sort:
+            params["sort"] = fetch_sort
+        if fetch_direction:
+            params["direction"] = fetch_direction
 
         size = self._coerce_int(arguments.get("size") or arguments.get("limit"))
         if size is not None:
@@ -315,28 +702,121 @@ class GWASAssociationSearch(GWASRESTTool):
         data = self._make_request(self.endpoint, params)
         result = self._extract_embedded_data(data, "associations")
 
-        # Client-side p_value filter (GWAS Catalog API does not support server-side p-value filtering)
-        p_threshold = arguments.get("p_value") or arguments.get("p_value_threshold")
+        removed = 0
         if p_threshold is not None and result.get("status") == "success":
-            try:
-                p_threshold = float(p_threshold)
-                assocs = result.get("data", [])
-                if isinstance(assocs, list):
-                    filtered = [
-                        a
-                        for a in assocs
-                        if a.get("p_value") is not None
-                        and float(a["p_value"]) <= p_threshold
-                    ]
-                    result["data"] = filtered
-                    result.setdefault("metadata", {})["p_value_filter"] = p_threshold
-                    result["metadata"]["filtered_count"] = len(filtered)
-                    result["metadata"]["total_before_filter"] = len(assocs)
-            except (ValueError, TypeError):
-                pass
+            removed = self._apply_client_side_p_value_filter(
+                result,
+                p_threshold=p_threshold,
+                params=params,
+                prefix_scan=(fetch_sort == "p_value" and fetch_direction == "asc"),
+                sort_override=sort_override,
+            )
 
-        self._add_empty_result_note(result, efo_id)
+        self._add_empty_result_note(
+            result, efo_id, filter_removed=removed, filter_threshold=p_threshold
+        )
+        # Fix-R31-2: surface the resolved EFO term's label and the caller's
+        # original query string so a trait substitution is visible.
+        self._annotate_trait_resolution(result, disease_trait, resolution)
         return result
+
+    def _apply_client_side_p_value_filter(
+        self,
+        result: Dict[str, Any],
+        p_threshold: float,
+        params: Dict[str, Any],
+        prefix_scan: bool,
+        sort_override: Optional[Dict[str, Any]],
+    ) -> int:
+        """Apply the p_value threshold client-side and disclose that it was.
+
+        Returns the number of rows removed. Also records, in ``metadata``:
+
+        * ``p_value_filter_scope`` / ``p_value_filter_note`` -- the filter is
+          client-side, so its result is a property of *this page*, not of the
+          trait (Fix-R31-1).
+        * ``pagination_totals_are_prefilter`` -- ``pagination.totalElements``
+          and ``pagination.totalPages`` keep their existing (UNFILTERED)
+          meaning; this flag plus ``filtered_total`` say so explicitly rather
+          than re-meaning an established key.
+        * ``filtered_total`` / ``filtered_total_is_exact`` -- how many rows in
+          the whole result set pass the threshold, when that is knowable.
+        """
+        assocs = result.get("data")
+        if not isinstance(assocs, list):
+            return 0
+
+        kept: List[Any] = []
+        removed_over_threshold = 0
+        removed_missing_p = 0
+        for assoc in assocs:
+            p_value = (
+                self._coerce_float(assoc.get("p_value"))
+                if isinstance(assoc, dict)
+                else None
+            )
+            if p_value is None:
+                removed_missing_p += 1
+                continue
+            if p_value <= p_threshold:
+                kept.append(assoc)
+            else:
+                removed_over_threshold += 1
+
+        if sort_override:
+            # Present the surviving rows in the direction the caller asked for.
+            kept.sort(
+                key=lambda a: self._coerce_float(a.get("p_value")) or 0.0,
+                reverse=True,
+            )
+
+        result["data"] = kept
+        metadata = result.setdefault("metadata", {})
+        metadata["p_value_filter"] = p_threshold
+        metadata["filtered_count"] = len(kept)
+        metadata["total_before_filter"] = len(assocs)
+        metadata["p_value_filter_scope"] = "client-side (applied to the fetched page)"
+        metadata["p_value_filter_note"] = _CLIENT_SIDE_FILTER_NOTE
+        metadata["pagination_totals_are_prefilter"] = True
+        if sort_override:
+            metadata["sort_override"] = sort_override
+
+        pagination = metadata.get("pagination") or {}
+        page_size = self._coerce_int(pagination.get("size")) or self._coerce_int(
+            params.get("size")
+        )
+        page_number = self._coerce_int(pagination.get("number"))
+        if page_number is None:
+            page_number = self._coerce_int(params.get("page")) or 0
+        rows_before_this_page = (page_size or 0) * page_number
+
+        # With the page fetched p_value-ascending, the rows that pass the
+        # threshold are a PREFIX of the full ordering. So if this page contains
+        # the crossover (i.e. some row failed), everything after it fails too
+        # and the filtered total is known exactly.
+        if prefix_scan and removed_over_threshold > 0 and removed_missing_p == 0:
+            metadata["filtered_total"] = rows_before_this_page + len(kept)
+            metadata["filtered_total_is_exact"] = True
+            metadata["filtered_total_note"] = (
+                f"{metadata['filtered_total']} association(s) in the whole "
+                f"result set pass p_value <= {p_threshold}. "
+                "pagination.totalElements / totalPages below keep their "
+                "original meaning and describe the UNFILTERED set "
+                f"({pagination.get('totalElements')} element(s)), so they will "
+                "not match the number of rows returned."
+            )
+        else:
+            metadata["filtered_total"] = None
+            metadata["filtered_total_is_exact"] = False
+            if prefix_scan:
+                metadata["filtered_total_at_least"] = rows_before_this_page + len(kept)
+            metadata["filtered_total_note"] = (
+                "The number of associations passing the threshold across the "
+                "WHOLE result set is not known from this single page. "
+                "pagination.totalElements / totalPages below describe the "
+                "UNFILTERED set and are unaffected by p_value."
+            )
+        return removed_over_threshold + removed_missing_p
 
 
 @register_tool("GWASStudySearch")
@@ -425,8 +905,7 @@ class GWASAssociationByID(GWASRESTTool):
         if "association_id" not in arguments:
             return {"status": "error", "error": "association_id is required"}
 
-        association_id = arguments["association_id"]
-        return self._make_request(f"{self.endpoint}/{association_id}")
+        return self._get_one(arguments["association_id"])
 
 
 @register_tool("GWASStudyByID")
@@ -439,11 +918,16 @@ class GWASStudyByID(GWASRESTTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get study by ID."""
-        if "study_id" not in arguments:
+        # Feature-4B-4: sibling tools (e.g. GWASAssociationsForStudy, and the
+        # "accession_id" field on every association record) use "accession_id"
+        # for this same GCST identifier, so accept it as an alias to avoid a
+        # natural chaining mistake when passing an ID straight from one tool
+        # to another.
+        study_id = arguments.get("study_id") or arguments.get("accession_id")
+        if not study_id:
             return {"status": "error", "error": "study_id is required"}
 
-        study_id = arguments["study_id"]
-        return self._make_request(f"{self.endpoint}/{study_id}")
+        return self._get_one(study_id)
 
 
 @register_tool("GWASSNPByID")
@@ -459,8 +943,7 @@ class GWASSNPByID(GWASRESTTool):
         if "rs_id" not in arguments:
             return {"status": "error", "error": "rs_id is required"}
 
-        rs_id = arguments["rs_id"]
-        return self._make_request(f"{self.endpoint}/{rs_id}")
+        return self._get_one(arguments["rs_id"])
 
 
 # Specialized search tools based on common use cases from examples
@@ -524,9 +1007,9 @@ class GWASVariantsForTrait(GWASRESTTool):
 
         data = self._make_request(self.endpoint, params)
         result = self._extract_embedded_data(data, "associations")
-        if efo_id and disease_trait:
-            result["resolved_efo_id"] = efo_id
         self._add_empty_result_note(result, efo_id)
+        if efo_id and disease_trait:
+            self._annotate_trait_resolution(result, disease_trait, resolution)
         return result
 
 
@@ -577,9 +1060,9 @@ class GWASAssociationsForTrait(GWASRESTTool):
 
         data = self._make_request(self.endpoint, params)
         result = self._extract_embedded_data(data, "associations")
-        if efo_id and disease_trait:
-            result["resolved_efo_id"] = efo_id
         self._add_empty_result_note(result, efo_id)
+        if efo_id and disease_trait:
+            self._annotate_trait_resolution(result, disease_trait, resolution)
         return result
 
 
@@ -688,7 +1171,28 @@ class GWASSNPsForGene(GWASRESTTool):
 
         data = self._make_request(self.endpoint, params)
         # v1 endpoint returns key "singleNucleotidePolymorphisms", not "snps"
-        return self._extract_embedded_data(data, "singleNucleotidePolymorphisms")
+        result = self._extract_embedded_data(data, "singleNucleotidePolymorphisms")
+
+        # Feature-4B-3: the v1 findByGene endpoint repeats identical SNP
+        # records (verified: byte-for-byte duplicate objects for the same
+        # rsId), inflating apparent SNP counts. Dedupe by rsId.
+        if result.get("status") == "success" and isinstance(result.get("data"), list):
+            seen: set = set()
+            deduped = []
+            for snp in result["data"]:
+                rs_id = snp.get("rsId") if isinstance(snp, dict) else None
+                if rs_id:
+                    if rs_id in seen:
+                        continue
+                    seen.add(rs_id)
+                deduped.append(snp)
+            if len(deduped) != len(result["data"]):
+                result.setdefault("metadata", {})["duplicates_removed"] = len(
+                    result["data"]
+                ) - len(deduped)
+            result["data"] = deduped
+
+        return result
 
 
 @register_tool("GWASAssociationsForStudy")

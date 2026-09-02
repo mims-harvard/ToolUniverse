@@ -105,6 +105,16 @@ class ToolUniverseManager:
                     self._instance = ToolUniverse(**self._init_kwargs)
         return self._instance
 
+    def status_snapshot(self) -> tuple[bool, int]:
+        """Read initialization state without starting or waiting for the SDK.
+
+        Assignment to ``_instance`` occurs only after construction completes, so
+        this lock-free snapshot is safe for a liveness endpoint.  In particular,
+        it must not wait on the initialization lock held by a slow first request.
+        """
+        instance = self._instance
+        return (instance is not None, len(instance.all_tools) if instance else 0)
+
     def reset(self, **kwargs):
         """Reset the ToolUniverse instance with new configuration"""
         with self._lock:
@@ -231,18 +241,13 @@ async def root():
 
 @app.get("/health", tags=["Health"])
 async def health_check():
-    """Health check endpoint"""
-    try:
-        tu = _tu_manager.get_instance()
-        return {
-            "status": "healthy",
-            "tooluniverse_initialized": tu is not None,
-            "loaded_tools_count": len(tu.all_tools) if tu else 0,
-        }
-    except Exception as e:
-        return JSONResponse(
-            status_code=503, content={"status": "unhealthy", "error": str(e)}
-        )
+    """Return liveness without triggering expensive ToolUniverse initialization."""
+    initialized, loaded_tools_count = _tu_manager.status_snapshot()
+    return {
+        "status": "healthy",
+        "tooluniverse_initialized": initialized,
+        "loaded_tools_count": loaded_tools_count,
+    }
 
 
 @app.get("/api/methods", response_model=MethodsListResponse, tags=["Discovery"])

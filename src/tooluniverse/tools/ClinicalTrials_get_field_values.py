@@ -1,7 +1,7 @@
 """
 ClinicalTrials_get_field_values
 
-Get value distribution for a specific field across ClinicalTrials.gov studies. Returns all unique...
+Get the registry-wide value distribution for one ClinicalTrials.gov field: each distinct value wi...
 """
 
 from typing import Any, Optional, Callable
@@ -18,16 +18,16 @@ def ClinicalTrials_get_field_values(
     validate: bool = True,
 ) -> Any:
     """
-    Get value distribution for a specific field across ClinicalTrials.gov studies. Returns all unique...
+    Get the registry-wide value distribution for one ClinicalTrials.gov field: each distinct value wi...
 
     Parameters
     ----------
     field : str
         Field name to get value counts for. Common fields: 'OverallStatus' (trial sta...
     query_cond : str | Any
-        Optional condition filter to restrict value counts to a specific disease area.
+        NOT SUPPORTED - passing this returns an error. ClinicalTrials.gov's field-val...
     page_size : int
-        Number of field values to return (default 50).
+        Maximum number of value rows to return, highest study count first (default 50...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

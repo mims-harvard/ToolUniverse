@@ -8,7 +8,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "search_pathways"
+          "const": "search_pathways",
+          "default": "search_pathways"
         },
         "query": {
           "type": "string",
@@ -44,16 +45,19 @@
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account email — unlocks MetaCyc pathway/compound/reaction web services.",
+        "purpose": "BioCyc account email \u2014 unlocks MetaCyc pathway/compound/reaction web services.",
         "without": "MetaCyc tools are blocked without an account (paired with the password)."
       },
       "BIOCYC_PASSWORD": {
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account password — authenticates the MetaCyc web-service session.",
+        "purpose": "BioCyc account password \u2014 authenticates the MetaCyc web-service session.",
         "without": "Required together with the BioCyc email."
       }
+    },
+    "fields": {
+      "operation": "search_pathways"
     }
   },
   {
@@ -65,7 +69,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_pathway"
+          "const": "get_pathway",
+          "default": "get_pathway"
         },
         "pathway_id": {
           "type": "string",
@@ -101,16 +106,19 @@
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account email — unlocks MetaCyc pathway/compound/reaction web services.",
+        "purpose": "BioCyc account email \u2014 unlocks MetaCyc pathway/compound/reaction web services.",
         "without": "MetaCyc tools are blocked without an account (paired with the password)."
       },
       "BIOCYC_PASSWORD": {
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account password — authenticates the MetaCyc web-service session.",
+        "purpose": "BioCyc account password \u2014 authenticates the MetaCyc web-service session.",
         "without": "Required together with the BioCyc email."
       }
+    },
+    "fields": {
+      "operation": "get_pathway"
     }
   },
   {
@@ -122,7 +130,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_compound"
+          "const": "get_compound",
+          "default": "get_compound"
         },
         "compound_id": {
           "type": "string",
@@ -158,16 +167,19 @@
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account email — unlocks MetaCyc pathway/compound/reaction web services.",
+        "purpose": "BioCyc account email \u2014 unlocks MetaCyc pathway/compound/reaction web services.",
         "without": "MetaCyc tools are blocked without an account (paired with the password)."
       },
       "BIOCYC_PASSWORD": {
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account password — authenticates the MetaCyc web-service session.",
+        "purpose": "BioCyc account password \u2014 authenticates the MetaCyc web-service session.",
         "without": "Required together with the BioCyc email."
       }
+    },
+    "fields": {
+      "operation": "get_compound"
     }
   },
   {
@@ -179,7 +191,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_reaction"
+          "const": "get_reaction",
+          "default": "get_reaction"
         },
         "reaction_id": {
           "type": "string",
@@ -215,16 +228,19 @@
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account email — unlocks MetaCyc pathway/compound/reaction web services.",
+        "purpose": "BioCyc account email \u2014 unlocks MetaCyc pathway/compound/reaction web services.",
         "without": "MetaCyc tools are blocked without an account (paired with the password)."
       },
       "BIOCYC_PASSWORD": {
         "domain": "Biological Pathways",
         "type": "secret",
         "register_url": "https://biocyc.org/signup.shtml",
-        "purpose": "BioCyc account password — authenticates the MetaCyc web-service session.",
+        "purpose": "BioCyc account password \u2014 authenticates the MetaCyc web-service session.",
         "without": "Required together with the BioCyc email."
       }
+    },
+    "fields": {
+      "operation": "get_reaction"
     }
   }
 ]

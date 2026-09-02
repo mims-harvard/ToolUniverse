@@ -1,7 +1,7 @@
 """
 FAERS_rollup_meddra_hierarchy
 
-Aggregate adverse events by MedDRA hierarchy (Preferred Term level). Returns top 50 PTs with coun...
+Aggregate adverse events by MedDRA hierarchy (Preferred Term level). Returns the most-reported pr...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def FAERS_rollup_meddra_hierarchy(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Aggregate adverse events by MedDRA hierarchy (Preferred Term level). Returns top 50 PTs with coun...
+    Aggregate adverse events by MedDRA hierarchy (Preferred Term level). Returns the most-reported pr...
 
     Parameters
     ----------

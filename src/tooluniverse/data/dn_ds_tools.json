@@ -15,10 +15,21 @@
     },
     "return_schema": {
       "type": "object",
-      "oneOf": [
-        {"properties": {"status": {"const": "success"}, "data": {"type": "object"}}, "required": ["data"]},
-        {"properties": {"status": {"const": "error"}, "error": {"type": "string"}}, "required": ["error"]}
-      ]
+      "description": "Nei-Gojobori (1986) dN/dS estimate between two coding sequences.",
+      "properties": {
+        "dN_dS": {"type": "number", "description": "dN/dS (Ka/Ks) ratio."},
+        "dN": {"type": "number", "description": "Nonsynonymous substitution rate."},
+        "dS": {"type": "number", "description": "Synonymous substitution rate."},
+        "pN": {"type": "number", "description": "Proportion of nonsynonymous differences."},
+        "pS": {"type": "number", "description": "Proportion of synonymous differences."},
+        "N_sites": {"type": "number", "description": "Number of nonsynonymous sites."},
+        "S_sites": {"type": "number", "description": "Number of synonymous sites."},
+        "Nd": {"type": "number", "description": "Observed number of nonsynonymous differences."},
+        "Sd": {"type": "number", "description": "Observed number of synonymous differences."},
+        "codons_compared": {"type": "integer", "description": "Number of codons compared."},
+        "interpretation": {"type": "string", "description": "Human-readable interpretation of the selection signal."}
+      },
+      "required": ["dN_dS", "dN", "dS", "codons_compared"]
     },
     "test_examples": [
       {"seq1": "ATGGCCAAATTTGAAGATCTGAGCACCGTGCGTGGC", "seq2": "ATGGCCAAGTTCGAAAATCTGAGCACCGTACGTGGC"}

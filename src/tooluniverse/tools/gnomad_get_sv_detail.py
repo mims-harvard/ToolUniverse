@@ -1,7 +1,7 @@
 """
 gnomad_get_sv_detail
 
-Get detailed information for a specific gnomAD structural variant by its ID (e.g., DEL_chr17_24e4...
+Get detailed information for a specific gnomAD structural variant by its ID. Resolves IDs from bo...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,21 @@ from ._shared_client import get_shared_client
 
 def gnomad_get_sv_detail(
     variant_id: str,
+    dataset: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get detailed information for a specific gnomAD structural variant by its ID (e.g., DEL_chr17_24e4...
+    Get detailed information for a specific gnomAD structural variant by its ID. Resolves IDs from bo...
 
     Parameters
     ----------
     variant_id : str
-        gnomAD structural variant ID (e.g., 'DEL_chr17_24e4872b', 'DUP_chr22_abc12345').
+        gnomAD structural variant ID. GRCh38/v4 IDs look like 'DEL_chr17_24e4872b'; G...
+    dataset : str
+        Optional SV callset override. Defaults to the callset auto-detected from the ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +39,14 @@ def gnomad_get_sv_detail(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"variant_id": variant_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "variant_id": variant_id,
+            "dataset": dataset,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "gnomad_get_sv_detail",

@@ -33,10 +33,23 @@ has_clusters <- file.exists(clusters_path)
 if (has_clusters) cell_meta$input_cluster <- readLines(clusters_path)
 
 cds <- new_cell_data_set(expr, cell_metadata = cell_meta, gene_metadata = gene_meta)
+# UMAP and graph learning are stochastic.  Pin their RNG so identical provider
+# inputs cannot intermittently produce a different (or malformed) graph.
+set.seed(42)
 cds <- preprocess_cds(cds, num_dim = min(cfg$num_dim, ncol(expr) - 1))
 cds <- reduce_dimension(cds)
 cds <- cluster_cells(cds)
-cds <- learn_graph(cds)
+graph_learning <- "default"
+cds <- tryCatch(
+  learn_graph(cds),
+  error = function(err) {
+    # Some disconnected embeddings trigger an upstream Monocle3 connect_tips
+    # dimensionality error while closing loops.  An acyclic principal graph is
+    # still a valid trajectory result; report the fallback explicitly.
+    graph_learning <<- "close_loop_false_fallback"
+    learn_graph(cds, close_loop = FALSE)
+  }
+)
 
 # Root selection: explicit cells, else all cells of a named input cluster.
 root_cells <- NULL
@@ -59,7 +72,8 @@ result <- list(
   cell_ids = names(pt),
   n_cells = length(pt),
   n_unreachable = n_unreachable,
-  monocle_partitions = as.character(partitions(cds))
+  monocle_partitions = as.character(partitions(cds)),
+  graph_learning = graph_learning
 )
 
 if (has_clusters) {

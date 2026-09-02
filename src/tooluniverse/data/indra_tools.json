@@ -9,7 +9,8 @@
         "operation": {
           "type": "string",
           "const": "get_statements",
-          "description": "Operation type (fixed: get_statements)"
+          "description": "Operation type (fixed: get_statements)",
+          "default": "get_statements"
         },
         "agent": {
           "type": "string",
@@ -34,7 +35,9 @@
           "default": 2
         }
       },
-      "required": ["agent"]
+      "required": [
+        "agent"
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -49,7 +52,10 @@
               "type": "string"
             },
             "type_filter": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "statements": {
               "type": "array",
@@ -95,7 +101,10 @@
         "type": "Inhibition",
         "limit": 3
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_statements"
+    }
   },
   {
     "name": "INDRA_get_evidence_count",
@@ -107,7 +116,8 @@
         "operation": {
           "type": "string",
           "const": "get_evidence_count",
-          "description": "Operation type (fixed: get_evidence_count)"
+          "description": "Operation type (fixed: get_evidence_count)",
+          "default": "get_evidence_count"
         },
         "agent": {
           "type": "string",
@@ -118,7 +128,9 @@
           "description": "Optional: filter by statement type (e.g., 'Activation', 'Inhibition', 'Phosphorylation')"
         }
       },
-      "required": ["agent"]
+      "required": [
+        "agent"
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -133,7 +145,10 @@
               "type": "string"
             },
             "type_filter": {
-              "type": ["string", "null"]
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "total_evidence": {
               "type": "integer"
@@ -153,7 +168,10 @@
         "agent": "EGFR",
         "type": "Inhibition"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_evidence_count"
+    }
   },
   {
     "name": "INDRA_get_statement_by_hash",
@@ -165,7 +183,8 @@
         "operation": {
           "type": "string",
           "const": "get_statement_by_hash",
-          "description": "Operation type (fixed: get_statement_by_hash)"
+          "description": "Operation type (fixed: get_statement_by_hash)",
+          "default": "get_statement_by_hash"
         },
         "hash": {
           "type": "string",
@@ -177,7 +196,9 @@
           "default": 10
         }
       },
-      "required": ["hash"]
+      "required": [
+        "hash"
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -215,6 +236,9 @@
         "hash": "-35357180905875939",
         "ev_limit": 3
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_statement_by_hash"
+    }
   }
 ]

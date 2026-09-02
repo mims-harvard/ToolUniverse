@@ -1,0 +1,159 @@
+[
+  {
+    "name": "OSDR_search_studies",
+    "type": "NASAOSDRTool",
+    "description": "Full-text search NASA's Open Science Data Repository (OSDR, formerly GeneLab): ~1,000 space biology studies on how spaceflight and microgravity affect organisms, across transcriptomics, proteomics, microscopy, and physiology assays. Optionally filter by organism. Example: query='microgravity bone loss', organism='Mus musculus'. Results also include cross-referenced external datasets (e.g. GEO); only rows with usable_with_get_study true work with OSDR_get_study and OSDR_list_files.",
+    "fields": {
+      "operation": "search_studies"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Free-text search, e.g. 'microgravity bone loss', 'radiation Drosophila'."
+        },
+        "organism": {
+          "type": ["string", "null"],
+          "description": "Optional organism filter, e.g. 'Mus musculus', 'Homo sapiens', 'Arabidopsis thaliana'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max studies to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {"type": ["string", "null"]},
+              "title": {"type": ["string", "null"]},
+              "organism": {"type": ["string", "null"]},
+              "mission": {"type": ["string", "null"]},
+              "flight_program": {"type": ["string", "null"]},
+              "assay_measurement_type": {"type": ["string", "null"]},
+              "assay_technology_type": {"type": ["string", "null"]},
+              "factor_name": {"type": ["string", "null"]},
+              "release_date": {"type": ["number", "null"]},
+              "usable_with_get_study": {"type": "boolean"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "microgravity bone loss", "organism": "Mus musculus", "limit": 5},
+      {"query": "radiation Drosophila", "limit": 5}
+    ]
+  },
+  {
+    "name": "OSDR_get_study",
+    "type": "NASAOSDRTool",
+    "description": "Retrieve full metadata for one NASA OSDR space biology study: title, description, organism, spaceflight mission, experimental factors, assay type, and publication details. Example: study_id='OSD-1' (Drosophila immune response aboard the Space Shuttle). Use OSDR_search_studies to find a study_id.",
+    "fields": {
+      "operation": "get_study"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["study_id"],
+      "properties": {
+        "study_id": {
+          "type": "string",
+          "description": "OSDR study accession, e.g. 'OSD-1' or '1'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "accession": {"type": ["string", "null"]},
+            "title": {"type": ["string", "null"]},
+            "description": {"type": ["string", "null"]},
+            "organism": {"type": ["string", "null"]},
+            "material_type": {"type": ["string", "null"]},
+            "mission": {},
+            "flight_program": {"type": ["string", "null"]},
+            "project_title": {"type": ["string", "null"]},
+            "factor_name": {},
+            "factor_type": {},
+            "assay_measurement_type": {},
+            "assay_technology_type": {},
+            "publication_title": {},
+            "publication_authors": {},
+            "release_date": {}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"study_id": "OSD-1"},
+      {"study_id": "486"}
+    ]
+  },
+  {
+    "name": "OSDR_list_files",
+    "type": "NASAOSDRTool",
+    "description": "List the downloadable data files for one NASA OSDR study: raw and processed files across assay types, with category, size, and download path. Example: study_id='OSD-1' returns 73 files including microarray differential expression tables. Use OSDR_search_studies to find a study_id.",
+    "fields": {
+      "operation": "list_files"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["study_id"],
+      "properties": {
+        "study_id": {
+          "type": "string",
+          "description": "OSDR study accession, e.g. 'OSD-1' or '1'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max files to return, 1-200. Default 50."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "file_name": {"type": ["string", "null"]},
+              "category": {"type": ["string", "null"]},
+              "subcategory": {"type": ["string", "null"]},
+              "file_size_bytes": {"type": ["integer", "null"]},
+              "restricted": {"type": "boolean"},
+              "download_path": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"study_id": "OSD-1", "limit": 10},
+      {"study_id": "1"}
+    ]
+  }
+]

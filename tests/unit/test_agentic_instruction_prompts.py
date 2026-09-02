@@ -106,17 +106,17 @@ def test_smcp_exposes_agentic_config_as_prompt_without_llm_credentials(
     )
 
     async def exercise_prompt():
-        prompts = await server.get_prompts()
-        assert set(prompts) == {"HostReview"}
-        prompt = prompts["HostReview"]
+        prompts = await server.list_prompts()
+        assert {p.name for p in prompts} == {"HostReview"}
+        prompt = next(p for p in prompts if p.name == "HostReview")
         assert prompt.meta["tooluniverse"] == {
             "source_type": "AgenticTool",
             "execution": "host",
         }
-        messages = await prompt.render(
+        result = await prompt.render(
             {"text": "A result", "labels": '["major", "minor"]'}
         )
-        return messages[0].content.text
+        return result.messages[0].content.text
 
     try:
         rendered = asyncio.run(exercise_prompt())
@@ -136,7 +136,7 @@ def test_agentic_prompt_exposure_is_opt_in_and_respects_filters(tmp_path, monkey
     configs = [_agentic_config("IncludedReview"), _agentic_config("ExcludedReview")]
     disabled, _ = _make_server(tmp_path, monkeypatch, configs)
     try:
-        assert asyncio.run(disabled.get_prompts()) == {}
+        assert asyncio.run(disabled.list_prompts()) == []
     finally:
         asyncio.run(disabled.close())
 
@@ -148,6 +148,7 @@ def test_agentic_prompt_exposure_is_opt_in_and_respects_filters(tmp_path, monkey
         include_tools=["IncludedReview"],
     )
     try:
-        assert set(asyncio.run(enabled.get_prompts())) == {"IncludedReview"}
+        prompts = asyncio.run(enabled.list_prompts())
+        assert {p.name for p in prompts} == {"IncludedReview"}
     finally:
         asyncio.run(enabled.close())

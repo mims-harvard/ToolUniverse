@@ -199,44 +199,33 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "experiments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "assay_title": {
-                        "type": "string"
-                      },
-                      "biosample_summary": {
-                        "type": "string"
-                      },
-                      "status": {
-                        "type": "string"
-                      },
-                      "lab": {
-                        "type": "string"
-                      }
-                    }
+            "total": {
+              "type": "integer"
+            },
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "assay_title": {
+                    "type": "string"
+                  },
+                  "biosample_summary": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "lab": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -322,44 +311,33 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "experiments": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "assay_title": {
-                        "type": "string"
-                      },
-                      "biosample_summary": {
-                        "type": "string"
-                      },
-                      "status": {
-                        "type": "string"
-                      },
-                      "lab": {
-                        "type": "string"
-                      }
-                    }
+            "total": {
+              "type": "integer"
+            },
+            "experiments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "assay_title": {
+                    "type": "string"
+                  },
+                  "biosample_summary": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "lab": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -452,50 +430,39 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "annotations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "annotation_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "biosample_summary": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "status": {
-                        "type": "string"
-                      }
-                    }
+            "total": {
+              "type": "integer"
+            },
+            "annotations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "annotation_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "biosample_summary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -580,65 +547,54 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "genome": {
-                  "type": "string"
-                },
-                "region": {
-                  "type": "string"
-                },
-                "cpg_island_count": {
-                  "type": "integer"
-                },
-                "cpg_islands": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "chrom": {
-                        "type": "string"
-                      },
-                      "chromStart": {
-                        "type": "integer"
-                      },
-                      "chromEnd": {
-                        "type": "integer"
-                      },
-                      "name": {
-                        "type": "string"
-                      },
-                      "length": {
-                        "type": "integer"
-                      },
-                      "cpgNum": {
-                        "type": "integer"
-                      },
-                      "gcNum": {
-                        "type": "integer"
-                      },
-                      "perCpg": {
-                        "type": "number"
-                      },
-                      "perGc": {
-                        "type": "number"
-                      },
-                      "obsExp": {
-                        "type": "number"
-                      }
-                    }
+            "genome": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            },
+            "cpg_island_count": {
+              "type": "integer"
+            },
+            "cpg_islands": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chrom": {
+                    "type": "string"
+                  },
+                  "chromStart": {
+                    "type": "integer"
+                  },
+                  "chromEnd": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "length": {
+                    "type": "integer"
+                  },
+                  "cpgNum": {
+                    "type": "integer"
+                  },
+                  "gcNum": {
+                    "type": "integer"
+                  },
+                  "perCpg": {
+                    "type": "number"
+                  },
+                  "perGc": {
+                    "type": "number"
+                  },
+                  "obsExp": {
+                    "type": "number"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -725,62 +681,51 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "genome": {
-                  "type": "string"
-                },
-                "region": {
-                  "type": "string"
-                },
-                "ccre_count": {
-                  "type": "integer"
-                },
-                "ccres": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "chrom": {
-                        "type": "string"
-                      },
-                      "chromStart": {
-                        "type": "integer"
-                      },
-                      "chromEnd": {
-                        "type": "integer"
-                      },
-                      "cCRE_class": {
-                        "type": "string"
-                      },
-                      "DNase_maxZ": {
-                        "type": "number"
-                      },
-                      "H3K4me3_maxZ": {
-                        "type": "number"
-                      },
-                      "H3K27ac_maxZ": {
-                        "type": "number"
-                      },
-                      "CTCF_maxZ": {
-                        "type": "number"
-                      }
-                    }
+            "genome": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            },
+            "ccre_count": {
+              "type": "integer"
+            },
+            "ccres": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "chrom": {
+                    "type": "string"
+                  },
+                  "chromStart": {
+                    "type": "integer"
+                  },
+                  "chromEnd": {
+                    "type": "integer"
+                  },
+                  "cCRE_class": {
+                    "type": "string"
+                  },
+                  "DNase_maxZ": {
+                    "type": "number"
+                  },
+                  "H3K4me3_maxZ": {
+                    "type": "number"
+                  },
+                  "H3K27ac_maxZ": {
+                    "type": "number"
+                  },
+                  "CTCF_maxZ": {
+                    "type": "number"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -870,53 +815,42 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "genome": {
-                  "type": "string"
-                },
-                "region": {
-                  "type": "string"
-                },
-                "tf_cluster_count": {
-                  "type": "integer"
-                },
-                "tf_clusters": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string"
-                      },
-                      "chrom": {
-                        "type": "string"
-                      },
-                      "chromStart": {
-                        "type": "integer"
-                      },
-                      "chromEnd": {
-                        "type": "integer"
-                      },
-                      "score": {
-                        "type": "integer"
-                      },
-                      "sourceCount": {
-                        "type": "integer"
-                      }
-                    }
+            "genome": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            },
+            "tf_cluster_count": {
+              "type": "integer"
+            },
+            "tf_clusters": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "chrom": {
+                    "type": "string"
+                  },
+                  "chromStart": {
+                    "type": "integer"
+                  },
+                  "chromEnd": {
+                    "type": "integer"
+                  },
+                  "score": {
+                    "type": "integer"
+                  },
+                  "sourceCount": {
+                    "type": "integer"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -1001,56 +935,45 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "datasets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "title": {
-                        "type": "string"
-                      },
-                      "summary": {
-                        "type": "string"
-                      },
-                      "platform": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "organism": {
-                        "type": "string"
-                      },
-                      "n_samples": {
-                        "type": "integer"
-                      },
-                      "date_published": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "total": {
+              "type": "integer"
+            },
+            "datasets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "platform": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "organism": {
+                    "type": "string"
+                  },
+                  "n_samples": {
+                    "type": "integer"
+                  },
+                  "date_published": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -1132,50 +1055,39 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "datasets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "title": {
-                        "type": "string"
-                      },
-                      "summary": {
-                        "type": "string"
-                      },
-                      "organism": {
-                        "type": "string"
-                      },
-                      "n_samples": {
-                        "type": "integer"
-                      },
-                      "date_published": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "total": {
+              "type": "integer"
+            },
+            "datasets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "summary": {
+                    "type": "string"
+                  },
+                  "organism": {
+                    "type": "string"
+                  },
+                  "n_samples": {
+                    "type": "integer"
+                  },
+                  "date_published": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -1243,57 +1155,46 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": "string"
-                },
-                "title": {
-                  "type": "string"
-                },
-                "summary": {
-                  "type": "string"
-                },
-                "experiment_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "platform": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "organism": {
-                  "type": "string"
-                },
-                "n_samples": {
-                  "type": "integer"
-                },
-                "date_published": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "supplementary_data": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
-                }
-              }
+            "accession": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object"
+            "title": {
+              "type": "string"
+            },
+            "summary": {
+              "type": "string"
+            },
+            "experiment_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "platform": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "organism": {
+              "type": "string"
+            },
+            "n_samples": {
+              "type": "integer"
+            },
+            "date_published": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "supplementary_data": {
+              "type": [
+                "array",
+                "null"
+              ]
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -1373,56 +1274,45 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "species": {
-                  "type": "string"
-                },
-                "region": {
-                  "type": "string"
-                },
-                "feature_count": {
-                  "type": "integer"
-                },
-                "regulatory_features": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "feature_type": {
-                        "type": "string"
-                      },
-                      "start": {
-                        "type": "integer"
-                      },
-                      "end": {
-                        "type": "integer"
-                      },
-                      "strand": {
-                        "type": "integer"
-                      },
-                      "seq_region_name": {
-                        "type": "string"
-                      }
-                    }
+            "species": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            },
+            "feature_count": {
+              "type": "integer"
+            },
+            "regulatory_features": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "feature_type": {
+                    "type": "string"
+                  },
+                  "start": {
+                    "type": "integer"
+                  },
+                  "end": {
+                    "type": "integer"
+                  },
+                  "strand": {
+                    "type": "integer"
+                  },
+                  "seq_region_name": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -1508,50 +1398,39 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total": {
-                  "type": "integer"
-                },
-                "annotations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
-                      },
-                      "annotation_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "biosample_summary": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "status": {
-                        "type": "string"
-                      }
-                    }
+            "total": {
+              "type": "integer"
+            },
+            "annotations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string"
+                  },
+                  "annotation_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "biosample_summary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

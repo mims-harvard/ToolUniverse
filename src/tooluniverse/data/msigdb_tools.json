@@ -1,13 +1,23 @@
 [
   {
     "name": "MSigDB_get_geneset",
-    "description": "Retrieve a specific gene set from MSigDB (Molecular Signatures Database) by its exact name. MSigDB is the definitive database for gene sets used in Gene Set Enrichment Analysis (GSEA), containing 33,000+ gene sets organized into 9 major collections: H (hallmark), C1 (positional), C2 (curated pathways from KEGG/Reactome/BioCarta/WikiPathways), C3 (regulatory motifs), C4 (computational cancer), C5 (Gene Ontology), C6 (oncogenic signatures), C7 (immunologic signatures), C8 (cell type signatures). Returns the gene symbols in the set, systematic name, PMID, collection, and URLs.",
+    "description": "Retrieve a specific gene set from MSigDB (Molecular Signatures Database) by its exact name. MSigDB is the definitive database for gene sets used in Gene Set Enrichment Analysis (GSEA), containing 33,000+ gene sets organized into 9 major collections: H (hallmark), C1 (positional), C2 (curated pathways from KEGG/Reactome/BioCarta/WikiPathways), C3 (regulatory motifs), C4 (computational cancer), C5 (Gene Ontology), C6 (oncogenic signatures), C7 (immunologic signatures), C8 (cell type signatures). Returns the gene symbols in the set, systematic name, PMID, collection, and URLs. Supports human and mouse collections (species parameter).",
     "parameter": {
       "type": "object",
       "properties": {
         "geneSetName": {
           "type": "string",
           "description": "Exact MSigDB gene set name (case-sensitive). Examples: 'HALLMARK_APOPTOSIS', 'KEGG_P53_SIGNALING_PATHWAY', 'GOBP_APOPTOTIC_PROCESS', 'HALLMARK_HYPOXIA', 'KRAS.LUNG_UP.V1_UP'. Find names at https://www.gsea-msigdb.org/gsea/msigdb/"
+        },
+        "species": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "human",
+            "mouse"
+          ],
+          "default": "auto",
+          "description": "MSigDB collection to query. 'auto' (default) tries human then mouse. Use 'mouse' for mouse-only sets such as the MP_* mammalian-phenotype sets and other MH/M1-M8 collections."
         }
       },
       "required": [
@@ -100,13 +110,23 @@
   },
   {
     "name": "MSigDB_get_hallmark_geneset",
-    "description": "Retrieve a Hallmark gene set from MSigDB. The Hallmark collection (H) contains 50 gene sets representing well-defined biological states and processes with coherent expression, distilled from multiple founder sets. These are the most commonly used gene sets for pathway analysis and GSEA. Hallmark gene set names are prefixed with 'HALLMARK_' followed by the pathway name in uppercase with underscores (e.g., HALLMARK_APOPTOSIS, HALLMARK_HYPOXIA, HALLMARK_P53_PATHWAY, HALLMARK_INFLAMMATORY_RESPONSE, HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION).",
+    "description": "Retrieve a Hallmark gene set from MSigDB. The Hallmark collection (H) contains 50 gene sets representing well-defined biological states and processes with coherent expression, distilled from multiple founder sets. These are the most commonly used gene sets for pathway analysis and GSEA. Hallmark gene set names are prefixed with 'HALLMARK_' followed by the pathway name in uppercase with underscores (e.g., HALLMARK_APOPTOSIS, HALLMARK_HYPOXIA, HALLMARK_P53_PATHWAY, HALLMARK_INFLAMMATORY_RESPONSE, HALLMARK_EPITHELIAL_MESENCHYMAL_TRANSITION). Supports human and mouse collections (species parameter).",
     "parameter": {
       "type": "object",
       "properties": {
         "pathway_name": {
           "type": "string",
           "description": "Hallmark pathway name without the 'HALLMARK_' prefix (will be auto-prepended). Examples: 'APOPTOSIS', 'P53_PATHWAY', 'HYPOXIA', 'DNA_REPAIR', 'INFLAMMATORY_RESPONSE', 'EPITHELIAL_MESENCHYMAL_TRANSITION', 'TNFA_SIGNALING_VIA_NFKB', 'KRAS_SIGNALING_UP', 'OXIDATIVE_PHOSPHORYLATION', 'GLYCOLYSIS', 'MYC_TARGETS_V1'"
+        },
+        "species": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "human",
+            "mouse"
+          ],
+          "default": "auto",
+          "description": "MSigDB collection to query. 'auto' (default) tries human then mouse. Use 'mouse' for mouse-only sets such as the MP_* mammalian-phenotype sets and other MH/M1-M8 collections."
         }
       },
       "required": [
@@ -178,7 +198,7 @@
   {
     "type": "MSigDBTool",
     "name": "MSigDB_check_gene_in_set",
-    "description": "Check if a specific gene is a member of an MSigDB gene set. Covers GTRD transcription factor targets (e.g., ZNF549_TARGET_GENES), miRDB miRNA targets, oncogenic signatures (C6), hallmark sets (H), and 33,000+ other sets. Use to verify gene membership in TF target lists, miRNA target lists, or any MSigDB collection.",
+    "description": "Check if a specific gene is a member of an MSigDB gene set. Covers GTRD transcription factor targets (e.g., ZNF549_TARGET_GENES), miRDB miRNA targets, oncogenic signatures (C6), hallmark sets (H), and 33,000+ other sets. Use to verify gene membership in TF target lists, miRNA target lists, or any MSigDB collection. Supports human and mouse collections (species parameter).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -192,6 +212,16 @@
         "gene": {
           "type": "string",
           "description": "Gene symbol to check (e.g., 'SELENOP', 'TP53', 'CD37')"
+        },
+        "species": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "human",
+            "mouse"
+          ],
+          "default": "auto",
+          "description": "MSigDB collection to query. 'auto' (default) tries human then mouse. Use 'mouse' for mouse-only sets such as the MP_* mammalian-phenotype sets and other MH/M1-M8 collections."
         }
       },
       "required": [
@@ -207,30 +237,19 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "gene_set_name": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_set_name": {
-                  "type": "string"
-                },
-                "gene": {
-                  "type": "string"
-                },
-                "is_member": {
-                  "type": "boolean"
-                },
-                "total_genes_in_set": {
-                  "type": "integer"
-                }
-              }
+            "gene": {
+              "type": "string"
+            },
+            "is_member": {
+              "type": "boolean"
+            },
+            "total_genes_in_set": {
+              "type": "integer"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -266,7 +285,7 @@
   {
     "type": "MSigDBTool",
     "name": "MSigDB_get_gene_set_members",
-    "description": "Get all gene members of an MSigDB gene set by exact name. Returns parsed gene list (unlike MSigDB_get_geneset which returns raw API response). Covers 33,000+ gene sets including GTRD TF targets, miRDB miRNA targets, oncogenic signatures, hallmark sets, GO terms, and pathway gene sets.",
+    "description": "Get all gene members of an MSigDB gene set by exact name. Returns parsed gene list (unlike MSigDB_get_geneset which returns raw API response). Covers 33,000+ gene sets including GTRD TF targets, miRDB miRNA targets, oncogenic signatures, hallmark sets, GO terms, and pathway gene sets. Supports human and mouse collections (species parameter).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -276,6 +295,16 @@
         "gene_set_name": {
           "type": "string",
           "description": "Exact MSigDB gene set name (e.g., 'ZNF549_TARGET_GENES', 'MIR675_3P_TARGET_GENES', 'ESC_V6.5_UP_EARLY.V1_DN')"
+        },
+        "species": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "human",
+            "mouse"
+          ],
+          "default": "auto",
+          "description": "MSigDB collection to query. 'auto' (default) tries human then mouse. Use 'mouse' for mouse-only sets such as the MP_* mammalian-phenotype sets and other MH/M1-M8 collections."
         }
       },
       "required": [
@@ -290,30 +319,19 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "gene_set_name": {
+              "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_set_name": {
-                  "type": "string"
-                },
-                "num_genes": {
-                  "type": "integer"
-                },
-                "genes": {
-                  "type": "array"
-                },
-                "collection": {
-                  "type": "string"
-                }
-              }
+            "num_genes": {
+              "type": "integer"
+            },
+            "genes": {
+              "type": "array"
+            },
+            "collection": {
+              "type": "string"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

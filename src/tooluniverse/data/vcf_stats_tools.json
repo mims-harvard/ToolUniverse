@@ -6,26 +6,76 @@
     "requires_local_input": true,
     "parameter": {
       "type": "object",
-      "required": ["operation", "vcf_path"],
+      "required": [
+        "vcf_path"
+      ],
       "properties": {
-        "operation": {"const": "summary_stats", "description": "Operation (fixed)"},
-        "vcf_path": {"type": "string", "description": "Path to a local .vcf, .vcf.gz, or .bcf file"},
-        "pass_only": {"type": ["boolean", "null"], "description": "If true, count only FILTER=PASS or '.' records"},
-        "regions": {"type": ["string", "null"], "description": "Restrict to a region, e.g. 'chr1' or 'chr1:1-1000000' (streamed, no index needed)"},
-        "min_qual": {"type": ["number", "null"], "description": "Keep only records with QUAL >= this value"},
-        "include_expr": {"type": ["string", "null"], "description": "Extra bcftools -i include expression, e.g. 'INFO/DP>10'"}
+        "operation": {
+          "const": "summary_stats",
+          "description": "Operation (fixed)"
+        },
+        "vcf_path": {
+          "type": "string",
+          "description": "Path to a local .vcf, .vcf.gz, or .bcf file"
+        },
+        "pass_only": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, count only FILTER=PASS or '.' records"
+        },
+        "regions": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Restrict to a region, e.g. 'chr1' or 'chr1:1-1000000' (streamed, no index needed)"
+        },
+        "min_qual": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Keep only records with QUAL >= this value"
+        },
+        "include_expr": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Extra bcftools -i include expression, e.g. 'INFO/DP>10'"
+        }
       }
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
-        {"properties": {"status": {"const": "success"}, "data": {"type": "object"}}, "required": ["data"]},
-        {"properties": {"status": {"const": "error"}, "error": {"type": "string"}}, "required": ["error"]}
+        {
+          "type": "object"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
       ]
     },
     "test_examples": [
-      {"operation": "summary_stats", "vcf_path": "/tmp/sample.vcf.gz", "pass_only": true}
-    ]
+      {
+        "operation": "summary_stats",
+        "vcf_path": "/tmp/sample.vcf.gz",
+        "pass_only": true
+      }
+    ],
+    "fields": {
+      "operation": "summary_stats"
+    }
   },
   {
     "name": "VCF_count_variants",
@@ -34,26 +84,76 @@
     "requires_local_input": true,
     "parameter": {
       "type": "object",
-      "required": ["operation", "vcf_path"],
+      "required": [
+        "vcf_path"
+      ],
       "properties": {
-        "operation": {"const": "count_variants", "description": "Operation (fixed)"},
-        "vcf_path": {"type": "string", "description": "Path to a local .vcf, .vcf.gz, or .bcf file"},
-        "pass_only": {"type": ["boolean", "null"], "description": "If true, count only FILTER=PASS or '.' records"},
-        "regions": {"type": ["string", "null"], "description": "Restrict to a region, e.g. 'chr1' or 'chr1:1-1000000'"},
-        "min_qual": {"type": ["number", "null"], "description": "Keep only records with QUAL >= this value"},
-        "include_expr": {"type": ["string", "null"], "description": "Extra bcftools -i include expression, e.g. 'INFO/AF>0.01'"}
+        "operation": {
+          "const": "count_variants",
+          "description": "Operation (fixed)"
+        },
+        "vcf_path": {
+          "type": "string",
+          "description": "Path to a local .vcf, .vcf.gz, or .bcf file"
+        },
+        "pass_only": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, count only FILTER=PASS or '.' records"
+        },
+        "regions": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Restrict to a region, e.g. 'chr1' or 'chr1:1-1000000'"
+        },
+        "min_qual": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Keep only records with QUAL >= this value"
+        },
+        "include_expr": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Extra bcftools -i include expression, e.g. 'INFO/AF>0.01'"
+        }
       }
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
-        {"properties": {"status": {"const": "success"}, "data": {"type": "object"}}, "required": ["data"]},
-        {"properties": {"status": {"const": "error"}, "error": {"type": "string"}}, "required": ["error"]}
+        {
+          "type": "object"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
       ]
     },
     "test_examples": [
-      {"operation": "count_variants", "vcf_path": "/tmp/sample.vcf.gz", "min_qual": 30}
-    ]
+      {
+        "operation": "count_variants",
+        "vcf_path": "/tmp/sample.vcf.gz",
+        "min_qual": 30
+      }
+    ],
+    "fields": {
+      "operation": "count_variants"
+    }
   },
   {
     "name": "VCF_normalize",
@@ -62,23 +162,67 @@
     "requires_local_input": true,
     "parameter": {
       "type": "object",
-      "required": ["operation", "vcf_path"],
+      "required": [
+        "vcf_path"
+      ],
       "properties": {
-        "operation": {"const": "normalize", "description": "Operation (fixed)"},
-        "vcf_path": {"type": "string", "description": "Path to a local .vcf, .vcf.gz, or .bcf file"},
-        "multiallelics": {"type": ["string", "null"], "enum": ["split", "join", "none", null], "description": "'split' (default) breaks multiallelic records into biallelic; 'join' merges; 'none' leaves as-is"},
-        "reference_fasta": {"type": ["string", "null"], "description": "Optional reference FASTA path; enables indel left-alignment (-f)"}
+        "operation": {
+          "const": "normalize",
+          "description": "Operation (fixed)"
+        },
+        "vcf_path": {
+          "type": "string",
+          "description": "Path to a local .vcf, .vcf.gz, or .bcf file"
+        },
+        "multiallelics": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "split",
+            "join",
+            "none",
+            null
+          ],
+          "description": "'split' (default) breaks multiallelic records into biallelic; 'join' merges; 'none' leaves as-is"
+        },
+        "reference_fasta": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional reference FASTA path; enables indel left-alignment (-f)"
+        }
       }
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
-        {"properties": {"status": {"const": "success"}, "data": {"type": "object"}}, "required": ["data"]},
-        {"properties": {"status": {"const": "error"}, "error": {"type": "string"}}, "required": ["error"]}
+        {
+          "type": "object"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
       ]
     },
     "test_examples": [
-      {"operation": "normalize", "vcf_path": "/tmp/sample.vcf.gz", "multiallelics": "split"}
-    ]
+      {
+        "operation": "normalize",
+        "vcf_path": "/tmp/sample.vcf.gz",
+        "multiallelics": "split"
+      }
+    ],
+    "fields": {
+      "operation": "normalize"
+    }
   }
 ]

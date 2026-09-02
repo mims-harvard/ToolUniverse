@@ -31,79 +31,57 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "usi": {
-                  "type": "string"
-                },
-                "precursor_mz": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "precursor_charge": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "n_peaks": {
-                  "type": "integer"
-                },
-                "mz_range": {
-                  "type": "array",
-                  "items": {
+            "usi": {
+              "type": "string"
+            },
+            "precursor_mz": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "precursor_charge": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "n_peaks": {
+              "type": "integer"
+            },
+            "mz_range": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "top_20_peaks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "mz": {
+                    "type": "number"
+                  },
+                  "intensity": {
                     "type": "number"
                   }
-                },
-                "top_20_peaks": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "mz": {
-                        "type": "number"
-                      },
-                      "intensity": {
-                        "type": "number"
-                      }
-                    }
-                  }
-                },
-                "spectrum_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "splash": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "spectrum_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "splash": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -154,69 +132,50 @@
         {
           "type": "object",
           "properties": {
-            "data": {
+            "spectrum_1": {
               "type": "object",
               "properties": {
-                "spectrum_1": {
-                  "type": "object",
-                  "properties": {
-                    "usi": {
-                      "type": "string"
-                    },
-                    "precursor_mz": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "n_peaks": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    }
-                  }
-                },
-                "spectrum_2": {
-                  "type": "object",
-                  "properties": {
-                    "usi": {
-                      "type": "string"
-                    },
-                    "precursor_mz": {
-                      "type": [
-                        "number",
-                        "null"
-                      ]
-                    },
-                    "n_peaks": {
-                      "type": [
-                        "integer",
-                        "null"
-                      ]
-                    }
-                  }
-                },
-                "mirror_plot_url": {
+                "usi": {
                   "type": "string"
+                },
+                "precursor_mz": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "n_peaks": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               }
             },
-            "metadata": {
+            "spectrum_2": {
               "type": "object",
               "properties": {
-                "source": {
+                "usi": {
                   "type": "string"
                 },
-                "endpoint": {
-                  "type": "string"
+                "precursor_mz": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "n_peaks": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               }
+            },
+            "mirror_plot_url": {
+              "type": "string"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

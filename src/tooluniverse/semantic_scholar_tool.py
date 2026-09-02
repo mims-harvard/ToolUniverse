@@ -17,6 +17,27 @@ except ImportError:
     MARKITDOWN_AVAILABLE = False
 
 
+def _coerce_total(value):
+    """Normalize the upstream ``total`` field to a non-negative int or None.
+
+    Fix-R30: Semantic Scholar's OpenAPI spec declares ``total`` on
+    ``PaperRelevanceSearchBatch``/``PaperBulkSearchBatch`` as a *string*
+    ("Approximate number of matching search results.") while the live API
+    returns a JSON integer, so accept both. Anything else -- including a
+    missing key -- yields None, which callers must render as "unknown"
+    rather than substituting the page size.
+    """
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value if value >= 0 else None
+    if isinstance(value, str):
+        text = value.strip()
+        if text.isdigit():
+            return int(text)
+    return None
+
+
 @register_tool("SemanticScholarTool")
 class SemanticScholarTool(BaseTool):
     """
@@ -54,9 +75,29 @@ class SemanticScholarTool(BaseTool):
         if not query:
             return {"status": "error", "error": "`query` parameter is required."}
         if limit <= 0:
-            return {"status": "success", "data": [], "metadata": {"total": 0}}
+            # No upstream request is issued when the caller asks for zero rows,
+            # so there is no corpus total to report. `total` is 0 here purely
+            # because nothing was requested -- `total_source` says so explicitly
+            # so this is never mistaken for "the corpus has no matches".
+            return {
+                "status": "success",
+                "data": [],
+                "metadata": {
+                    "query": query,
+                    "returned": 0,
+                    "total": 0,
+                    "total_source": "not_queried",
+                },
+                "truncated": False,
+            }
+        upstream_meta = {}
         papers = self._search(
-            query, limit, year=year, sort=sort, include_abstract=include_abstract
+            query,
+            limit,
+            year=year,
+            sort=sort,
+            include_abstract=include_abstract,
+            upstream_meta=upstream_meta,
         )
         # Check if _search returned an error list
         if papers and isinstance(papers[0], dict) and "error" in papers[0]:
@@ -66,11 +107,34 @@ class SemanticScholarTool(BaseTool):
                 "error": err.get("error", "Unknown error"),
                 "retryable": err.get("retryable", False),
             }
-        return {
-            "status": "success",
-            "data": papers,
-            "metadata": {"total": len(papers), "query": query},
+        # Fix-R30: `total` used to be len(papers), i.e. the size of the single
+        # page just fetched, so it always equalled `limit` (limit=10/5/3 ->
+        # total=10/5/3 for the same query) and a caller could not tell a
+        # 3-paper literature base from a 3000-paper one. Report the corpus
+        # match count the API actually sends back, keep the page size in its
+        # own field, and flag truncation at the top level.
+        returned = len(papers)
+        total = upstream_meta.get("total")
+        metadata = {
+            "query": query,
+            "returned": returned,
+            "total": total,
+            "total_source": (
+                "semantic_scholar" if total is not None else "unavailable"
+            ),
         }
+        response = {"status": "success", "data": papers, "metadata": metadata}
+        if total is not None and total > returned:
+            response["truncated"] = True
+            response["truncation_note"] = (
+                f"Returning {returned} of approximately {total} Semantic Scholar "
+                f"papers matching this query. Raise `limit` (max 100 per request) "
+                f"or narrow the query with `year`/more specific keywords to see more. "
+                f"`total` is the API's approximate match count, not an exact figure."
+            )
+        else:
+            response["truncated"] = False
+        return response
 
     def _enforce_rate_limit(self, has_api_key: bool) -> None:
         # Keep anonymous usage below 1 req/sec to reduce 429s.
@@ -109,8 +173,24 @@ class SemanticScholarTool(BaseTool):
         return payload if isinstance(payload, dict) else None
 
     def _search(
-        self, query, limit, *, year=None, sort=None, include_abstract: bool = False
+        self,
+        query,
+        limit,
+        *,
+        year=None,
+        sort=None,
+        include_abstract: bool = False,
+        upstream_meta: dict | None = None,
     ):
+        """Return the page of papers as a list.
+
+        `upstream_meta`, when a dict is passed in, is populated in place with
+        response-level (non-row) facts from the upstream payload -- currently
+        just `total`, the API's approximate corpus match count. It is an
+        out-parameter rather than a second return value so that the existing
+        callers/tests that treat `_search` as "list of papers or a
+        single-element error list" keep working unchanged.
+        """
         # Include identifiers and lightweight impact signals for better downstream utility.
         fields = [
             "paperId",
@@ -183,6 +263,17 @@ class SemanticScholarTool(BaseTool):
             ]
 
         results = payload.get("data", []) if isinstance(payload, dict) else []
+        # Fix-R30: capture the corpus-level match count that sits alongside
+        # `data`. Both /paper/search (PaperRelevanceSearchBatch) and
+        # /paper/search/bulk (PaperBulkSearchBatch) document a `total` field:
+        # "Approximate number of matching search results." Absent/garbage stays
+        # None -- never backfilled from len(results).
+        if isinstance(upstream_meta, dict):
+            upstream_meta["total"] = (
+                _coerce_total(payload.get("total"))
+                if isinstance(payload, dict)
+                else None
+            )
         if sort:
             # /paper/search/bulk has no `limit` concept of its own (only
             # token-based pagination over its full result set), so the
@@ -491,10 +582,10 @@ class SemanticScholarPDFSnippetsTool(BaseTool):
                 total_chars += len(snippet)
                 found += 1
 
-        return {
-            "status": "success",
+        payload = {
             "pdf_url": pdf_url,
             "snippets": snippets,
             "snippets_count": len(snippets),
             "truncated": total_chars >= max_total_chars,
         }
+        return {"status": "success", **payload, "data": payload}

@@ -46,62 +46,48 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "datasets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "description": "Dataset name"
-                      },
-                      "year": {
-                        "type": "string",
-                        "description": "NHANES cycle"
-                      },
-                      "component": {
-                        "type": "string"
-                      },
-                      "download_url": {
-                        "type": "string",
-                        "description": "CDC listing page for this component and cycle"
-                      },
-                      "description": {
-                        "type": "string"
-                      }
-                    }
-                  }
-                },
-                "count": {
-                  "type": "integer",
-                  "description": "Number of component/cycle entries returned"
-                },
-                "cycles_covered": {
-                  "type": "array",
-                  "items": {
+            "datasets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Dataset name"
+                  },
+                  "year": {
+                    "type": "string",
+                    "description": "NHANES cycle"
+                  },
+                  "component": {
                     "type": "string"
                   },
-                  "description": "The NHANES cycles these entries describe"
-                },
-                "note": {
-                  "type": "string",
-                  "description": "Information about data format and access"
+                  "download_url": {
+                    "type": "string",
+                    "description": "CDC listing page for this component and cycle"
+                  },
+                  "description": {
+                    "type": "string"
+                  }
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "count": {
+              "type": "integer",
+              "description": "Number of component/cycle entries returned"
+            },
+            "cycles_covered": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The NHANES cycles these entries describe"
+            },
+            "note": {
+              "type": "string",
+              "description": "Information about data format and access"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -144,7 +130,7 @@
         },
         "year": {
           "type": "string",
-          "description": "Optional NHANES cycle to filter (e.g., '2017-2018')"
+          "description": "Optional NHANES cycle to filter (e.g., '2017-2018'). If omitted, searches the two most recent cycles (matching nhanes_get_dataset_info's default) rather than a single fixed cycle -- a dataset renamed or dropped in one cycle can still be found via the other."
         },
         "limit": {
           "type": "integer",
@@ -166,10 +152,10 @@
           "items": {
             "type": "object",
             "properties": {
-              "name": {
+              "file_name": {
                 "type": "string"
               },
-              "year": {
+              "cycle": {
                 "type": "string"
               },
               "download_url": {
@@ -177,6 +163,13 @@
               }
             }
           }
+        },
+        "cycles_searched": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Which NHANES cycles were actually searched"
         }
       }
     },

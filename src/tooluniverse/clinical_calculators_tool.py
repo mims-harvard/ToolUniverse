@@ -12,7 +12,7 @@ clinical judgement.
 """
 
 import math
-from typing import Dict, Any, Callable
+from typing import Dict, Any, Callable, Optional
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -27,14 +27,198 @@ def _truthy(v: Any) -> bool:
     return str(v).strip().lower() in ("true", "yes", "y", "1", "present", "positive")
 
 
-def _req_number(args: Dict[str, Any], key: str) -> float:
+# Fix-R49: Fix-R48 (below) closed the bottom of the range and left the top
+# open, so the same class survived at the other end -- MELD-Na with sodium
+# 134000 mmol/L answered "moderate 90-day mortality risk", and Child-Pugh with
+# albumin 1000 g/dL answered "Class A (score 5): well-compensated disease".
+# Both are roughly two hundred times a living value, both were reported with
+# status success and no qualification.
+#
+# The bound belongs to the quantity rather than to the call site: `bilirubin`
+# means the same thing in Child-Pugh and in MELD-Na, and four of the nine
+# entries here are read by more than one calculator, so a per-call argument
+# would have to be repeated identically and would drift. Looking the bound up
+# by parameter name also means a calculator added later inherits it by naming
+# its input, which is how Fix-R48's own reasoning about the shared helper runs.
+#
+# Each maximum is set an order of magnitude beyond the most extreme value
+# reported in a living patient, so it refuses arithmetic nonsense without
+# refusing a real crisis: the highest recorded total bilirubin is around
+# 80 mg/dL against a 1000 mg/dL bound here, and the oldest verified human age
+# is 122 years against 200. The cost of the choice is the mirror of Fix-R48's:
+# a value beyond the bound now hard-errors instead of being scored, so a
+# genuine unit mix-up (albumin in g/L rather than g/dL, say) is refused rather
+# than silently mis-scored -- which is the intent -- but so is any future
+# quantity whose real range exceeds these numbers, and that would show up as a
+# refusal rather than as a wrong answer.
+#
+# `minimum` is None wherever Fix-R48's "must be greater than zero" is already
+# the tightest honest floor. Sodium is the exception: it is a concentration
+# with a narrow window either side of which the patient is not alive, so zero
+# is not a floor at all, and sodium 5 mmol/L was being clamped into the MELD-Na
+# formula and reported as a confident risk band.
+#
+# Its floor is the one bound not an order of magnitude clear of reality --
+# survivable hyponatremia is reported into the high 70s mmol/L, so an 80 floor
+# sat on top of real values and would have refused a patient who exists. 50 is
+# below any case report while still refusing the arithmetic nonsense this is
+# for. Sodium is also the one quantity whose clamp MELD-Na now discloses, so
+# unlike albumin it had a second line of defence; the floor is kept because
+# disclosure of a clamp is not the same as refusing an impossible input, and a
+# sodium of 5 clamped to 125 is a fabricated score either way.
+#
+# `creatinine` is deliberately absent. Refusal is the right protection only
+# where the calculator has no way to disclose, and both calculators that take
+# a creatinine already disclose an implausible one: Fix-R46 gave CKD-EPI a
+# caveat naming units (creatinine 1000 mg/dL is what a value handed over in
+# umol/L looks like, and the caveat says so, which is more use to the caller
+# than a refusal), and MELD-Na bounds creatinine to [1, 4] per UNOS and reports
+# the bounded value in `creatinine_used`. Adding a maximum here would have
+# silently reversed a shipped, tested decision from another round -- its test
+# is what caught this -- for no gain.
+_PHYSIOLOGIC_BOUNDS: Dict[str, "tuple[Optional[float], float]"] = {
+    "age": (None, 200),  # years
+    "albumin": (None, 30.0),  # g/dL
+    "bilirubin": (None, 1000.0),  # mg/dL
+    "hdl_cholesterol": (None, 500.0),  # mg/dL
+    "inr": (None, 100.0),
+    "sodium": (50.0, 250.0),  # mmol/L
+    "systolic_bp": (None, 400.0),  # mmHg
+    "total_cholesterol": (None, 3000.0),  # mg/dL
+}
+
+
+# Shared by all three out-of-range branches of `_req_number`.
+_IMPOSSIBLE = (
+    "This is not a physiologically possible value, so no score is "
+    "reported for it -- check the value and its units."
+)
+
+
+def _req_number(
+    args: Dict[str, Any], key: str, *, must_exceed: Optional[float] = None
+) -> float:
+    """A required numeric argument, optionally constrained to exceed a bound.
+
+    Fix-R48: `must_exceed` exists because a physiologically impossible value
+    was never rejected here, and each calculator then failed in its own way --
+    all of them badly, and none of them naming the parameter at fault:
+
+      * ClinicalCalc_ASCVD_risk with total_cholesterol=0 took math.log(0) and
+        answered the raw text "math domain error";
+      * ClinicalCalc_Child_Pugh with albumin=-1 scored the albumin component 3
+        (its worst band, since -1 < 2.8) and returned status success with
+        "Class B (score 7): significant functional compromise" -- an impossible
+        input presented as a confident severity class;
+      * ClinicalCalc_MELD_Na floors creatinine, bilirubin and INR at 1.0 per
+        the UNOS specification, so a negative value is absorbed into the floor
+        and contributes as though it were normal;
+      * ClinicalCalc_CHA2DS2_VASc with a negative age scores both age buckets 0
+        and reports a confident low-risk total.
+
+    This is the same class Fix-R46 closed for CKD-EPI, whose non-positive
+    creatinine produced a complex number and answered with "type complex
+    doesn't define __round__ method". That fix guarded one equation from
+    inside itself; the constraint belongs on the shared input helper instead,
+    so a calculator added later gets it by declaring the bound rather than by
+    remembering to re-derive it.
+
+    Bound is exclusive: these are quantities for which zero is as impossible as
+    a negative, so `must_exceed=0` is the common case rather than a minimum.
+
+    Fix-R49: the plausible range for `key` is additionally enforced from
+    `_PHYSIOLOGIC_BOUNDS`, so no call site has to remember to ask for it.
+    """
     val = args.get(key)
     if val is None or val == "":
         raise ValueError(f"'{key}' is required")
     try:
-        return float(val)
+        value = float(val)
     except (TypeError, ValueError):
         raise ValueError(f"'{key}' must be a number, got {val!r}")
+
+    # The bound is formatted with %g because it is a round number written here;
+    # the offending value is not, and %g rounds it to 6 significant digits. A
+    # sodium of 79.999999999 formatted that way produced "'sodium' must be at
+    # least 80, got 80." -- a refusal that reads as a contradiction, and the
+    # opposite of the actionable message these bounds exist to give.
+    if must_exceed is not None and value <= must_exceed:
+        raise ValueError(
+            f"'{key}' must be greater than {must_exceed:g}, got {value}. " + _IMPOSSIBLE
+        )
+
+    minimum, maximum = _PHYSIOLOGIC_BOUNDS.get(key, (None, None))
+    if minimum is not None and value < minimum:
+        raise ValueError(
+            f"'{key}' must be at least {minimum:g}, got {value}. " + _IMPOSSIBLE
+        )
+    if maximum is not None and value > maximum:
+        raise ValueError(
+            f"'{key}' must be at most {maximum:g}, got {value}. " + _IMPOSSIBLE
+        )
+    return value
+
+
+# Accepted string values for the `sex` parameter (case-insensitive).
+_SEX_STRING_MAP = {"female": True, "f": True, "male": False, "m": False}
+
+
+def _resolve_sex(a: Dict[str, Any]) -> "tuple[bool, Any]":
+    """Resolve biological sex from the `female` boolean and/or `sex` string args.
+
+    Both are accepted for backward compatibility: `female` is the original
+    parameter, `sex` is the natural-language clinical term this tool's own
+    output already speaks in terms of ("components": {"sex": ...}). Accepting
+    it as input too makes the interface symmetric.
+
+    Returns (is_female, assumption_note). `assumption_note` is None unless
+    neither `female` nor `sex` was supplied, in which case the *existing*
+    default (male) is still used, but a note is returned so the caller can
+    disclose that the default was silently assumed.
+
+    Raises ValueError if:
+      - `sex` is supplied but is not a recognised value (female/f/male/m,
+        case-insensitive), or
+      - both `female` and `sex` are supplied and they disagree.
+    """
+    has_female = "female" in a and a.get("female") is not None
+    has_sex = "sex" in a and a.get("sex") is not None
+
+    sex_is_female = None
+    if has_sex:
+        raw = str(a["sex"]).strip().lower()
+        if raw not in _SEX_STRING_MAP:
+            raise ValueError(
+                "'sex' must be one of "
+                f"{sorted(_SEX_STRING_MAP)} (case-insensitive), got {a['sex']!r}"
+            )
+        sex_is_female = _SEX_STRING_MAP[raw]
+
+    female_is_female = _truthy(a["female"]) if has_female else None
+
+    if has_sex and has_female:
+        if sex_is_female != female_is_female:
+            raise ValueError(
+                "conflicting sex inputs: "
+                f"'female'={a['female']!r} implies "
+                f"{'female' if female_is_female else 'male'}, but "
+                f"'sex'={a['sex']!r} implies "
+                f"{'female' if sex_is_female else 'male'}. "
+                "Provide consistent values (or only one of the two)."
+            )
+        return female_is_female, None
+
+    if has_sex:
+        return sex_is_female, None
+    if has_female:
+        return female_is_female, None
+
+    return False, (
+        "Neither 'female' nor 'sex' was supplied; male coefficients/points "
+        "were assumed by default. This choice materially changes the "
+        "result — supply 'sex' (or 'female') explicitly for an accurate "
+        "calculation."
+    )
 
 
 def _ok(score, interpretation, components, **extra) -> Dict[str, Any]:
@@ -52,7 +236,8 @@ def _ok(score, interpretation, components, **extra) -> Dict[str, Any]:
 # --------------------------------------------------------------------------- #
 def _cha2ds2_vasc(a: Dict[str, Any]) -> Dict[str, Any]:
     """CHA2DS2-VASc stroke risk in atrial fibrillation (Lip 2010)."""
-    age = _req_number(a, "age")
+    age = _req_number(a, "age", must_exceed=0)
+    female, sex_note = _resolve_sex(a)
     comp = {
         "CHF": int(_truthy(a.get("chf"))),
         "Hypertension": int(_truthy(a.get("hypertension"))),
@@ -62,7 +247,7 @@ def _cha2ds2_vasc(a: Dict[str, Any]) -> Dict[str, Any]:
         "Stroke/TIA/thromboembolism": 2 if _truthy(a.get("stroke_history")) else 0,
         "Vascular_disease": int(_truthy(a.get("vascular_disease"))),
         "Age_65-74": 1 if 65 <= age < 75 else 0,
-        "Female": int(_truthy(a.get("female"))),
+        "Female": int(female),
     }
     score = sum(comp.values())
     if score == 0:
@@ -71,7 +256,10 @@ def _cha2ds2_vasc(a: Dict[str, Any]) -> Dict[str, Any]:
         interp = "Low-moderate risk (1) — consider anticoagulation"
     else:
         interp = f"Elevated risk ({score}) — oral anticoagulation recommended"
-    return _ok(score, interp, comp, max_score=9)
+    extra = {"max_score": 9}
+    if sex_note:
+        extra["assumptions"] = [sex_note]
+    return _ok(score, interp, comp, **extra)
 
 
 def _has_bled(a: Dict[str, Any]) -> Dict[str, Any]:
@@ -83,7 +271,7 @@ def _has_bled(a: Dict[str, Any]) -> Dict[str, Any]:
         "Stroke": int(_truthy(a.get("stroke_history"))),
         "Bleeding_history": int(_truthy(a.get("bleeding_history"))),
         "Labile_INR": int(_truthy(a.get("labile_inr"))),
-        "Elderly_>65": 1 if _req_number(a, "age") > 65 else 0,
+        "Elderly_>65": 1 if _req_number(a, "age", must_exceed=0) > 65 else 0,
         "Drugs_antiplatelet_NSAID": int(_truthy(a.get("drugs"))),
         "Alcohol": int(_truthy(a.get("alcohol"))),
     }
@@ -103,7 +291,7 @@ def _curb_65(a: Dict[str, Any]) -> Dict[str, Any]:
         "Urea>7mmol/L": int(_truthy(a.get("elevated_urea"))),
         "RR>=30": int(_truthy(a.get("high_resp_rate"))),
         "Low_BP(SBP<90 or DBP<=60)": int(_truthy(a.get("low_bp"))),
-        "Age>=65": 1 if _req_number(a, "age") >= 65 else 0,
+        "Age>=65": 1 if _req_number(a, "age", must_exceed=0) >= 65 else 0,
     }
     score = sum(comp.values())
     if score <= 1:
@@ -133,9 +321,9 @@ def _qsofa(a: Dict[str, Any]) -> Dict[str, Any]:
 
 def _child_pugh(a: Dict[str, Any]) -> Dict[str, Any]:
     """Child-Pugh cirrhosis severity (Pugh 1973)."""
-    bili = _req_number(a, "bilirubin")  # mg/dL
-    alb = _req_number(a, "albumin")  # g/dL
-    inr = _req_number(a, "inr")
+    bili = _req_number(a, "bilirubin", must_exceed=0)  # mg/dL
+    alb = _req_number(a, "albumin", must_exceed=0)  # g/dL
+    inr = _req_number(a, "inr", must_exceed=0)
     ascites = str(a.get("ascites", "none")).strip().lower()
     enceph = str(a.get("encephalopathy", "none")).strip().lower()
 
@@ -258,10 +446,12 @@ def _wells_pe(a: Dict[str, Any]) -> Dict[str, Any]:
 # --------------------------------------------------------------------------- #
 def _meld_na(a: Dict[str, Any]) -> Dict[str, Any]:
     """MELD-Na for liver disease severity (UNOS/OPTN 2016)."""
-    creat = _req_number(a, "creatinine")  # mg/dL
-    bili = _req_number(a, "bilirubin")  # mg/dL
-    inr = _req_number(a, "inr")
-    na = _req_number(a, "sodium")  # mmol/L
+    # The UNOS floors below (max(x, 1.0)) would otherwise absorb a negative
+    # value and let it contribute as though it were normal.
+    creat = _req_number(a, "creatinine", must_exceed=0)  # mg/dL
+    bili = _req_number(a, "bilirubin", must_exceed=0)  # mg/dL
+    inr = _req_number(a, "inr", must_exceed=0)
+    na = _req_number(a, "sodium", must_exceed=0)  # mmol/L
     dialysis = _truthy(a.get("dialysis"))
 
     # Lower bounds of 1.0; creatinine capped at 4.0 (and set to 4.0 if dialysis).
@@ -273,9 +463,17 @@ def _meld_na(a: Dict[str, Any]) -> Dict[str, Any]:
 
     meld = 0.957 * math.log(c) + 0.378 * math.log(b) + 1.120 * math.log(i) + 0.643
     meld = round(meld * 10)
+    # Fix-R49: the sodium term applies only above 11, and the value it applies
+    # is bounded to [125, 137]. `sodium_used` reported the raw argument in both
+    # cases, so a patient with sodium 118 was told the score used 118 when the
+    # formula used 125 -- and a patient below the 11 threshold was told a
+    # sodium was used when none was. Its three siblings already report the
+    # bounded value they used, and the component breakdown exists to make the
+    # score auditable, which this one entry defeated.
+    na_used = None
     if meld > 11:
-        na_b = min(max(na, 125.0), 137.0)
-        meld = meld + 1.32 * (137 - na_b) - (0.033 * meld * (137 - na_b))
+        na_used = min(max(na, 125.0), 137.0)
+        meld = meld + 1.32 * (137 - na_used) - (0.033 * meld * (137 - na_used))
     score = int(min(round(meld), 40))
     if score <= 9:
         band = "low (~1.9% 90-day mortality)"
@@ -285,13 +483,48 @@ def _meld_na(a: Dict[str, Any]) -> Dict[str, Any]:
         band = "high"
     else:
         band = "very high (>50% 90-day mortality at >=40)"
+    # Every clamped input is disclosed the same way, not just sodium. Reporting
+    # only the post-clamp value is what let creatinine 900 mg/dL return
+    # creatinine_used 4.0 with status success and nothing anywhere saying 900
+    # had been clamped -- the same defect this round called unacceptable for
+    # sodium. Two disclosure conventions in one breakdown is worse than either.
     comp = {
         "creatinine_used": c,
+        "creatinine_reported": creat,
         "bilirubin_used": b,
+        "bilirubin_reported": bili,
         "inr_used": i,
-        "sodium_used": na,
+        "inr_reported": inr,
+        "sodium_used": na_used,
+        "sodium_reported": na,
         "dialysis": dialysis,
     }
+
+    clamped = [
+        f"{name} {reported:g} entered the formula as {used:g}"
+        for name, reported, used in (
+            ("creatinine", creat, c),
+            ("bilirubin", bili, b),
+            ("inr", inr, i),
+            # Only when the sodium term ran at all; the None case has its own
+            # note below, since "not applied" is not the same as "bounded".
+            ("sodium", na, na if na_used is None else na_used),
+        )
+        if reported != used
+    ]
+    if clamped:
+        comp["bounded_inputs_note"] = (
+            "MELD-Na bounds its inputs per the UNOS specification before use "
+            "(creatinine to [1, 4] or 4 on dialysis, bilirubin and INR to a "
+            "floor of 1, sodium to [125, 137]), so these differ from what you "
+            "supplied: " + "; ".join(clamped) + "."
+        )
+    if na_used is None:
+        comp["sodium_note"] = (
+            "MELD-Na applies its sodium term only when the MELD component "
+            "exceeds 11, which it does not here, so sodium did not affect this "
+            "score."
+        )
     return _ok(
         score, f"MELD-Na {score}: {band} 90-day mortality risk", comp, max_score=40
     )
@@ -299,9 +532,16 @@ def _meld_na(a: Dict[str, Any]) -> Dict[str, Any]:
 
 def _ckd_epi(a: Dict[str, Any]) -> Dict[str, Any]:
     """eGFR by CKD-EPI 2021 creatinine equation, race-free (Inker 2021)."""
-    scr = _req_number(a, "creatinine")  # mg/dL
-    age = _req_number(a, "age")
-    female = _truthy(a.get("female"))
+    # Fix-R48: these two bounds were hand-written here by Fix-R46 (the equation
+    # raises scr/kappa to a fractional power, so a non-positive creatinine gave
+    # a complex number and the tool answered "type complex doesn't define
+    # __round__ method"; a negative age returned a confident "CKD stage G1
+    # (normal)"). They now come from the shared helper that enforces the same
+    # constraint for every other calculator, so the wording cannot drift
+    # between equations.
+    scr = _req_number(a, "creatinine", must_exceed=0)  # mg/dL
+    age = _req_number(a, "age", must_exceed=0)
+    female, sex_note = _resolve_sex(a)
     kappa = 0.7 if female else 0.9
     alpha = -0.241 if female else -0.302
     egfr = (
@@ -312,7 +552,17 @@ def _ckd_epi(a: Dict[str, Any]) -> Dict[str, Any]:
         * (1.012 if female else 1.0)
     )
     egfr = round(egfr, 1)
-    if egfr >= 90:
+    # A GFR above ~150 is not a human physiological value; it means the inputs
+    # are wrong, not that the kidneys are normal. Reporting "CKD stage G1
+    # (normal)" for an eGFR of 240 -- which creatinine 0.01 mg/dL produces --
+    # is affirmatively wrong rather than merely unqualified, so the band is
+    # named for what it is instead of being folded into G1.
+    if egfr > 150:
+        stage = (
+            "not stageable (above the physiological range; "
+            "check the creatinine value and units)"
+        )
+    elif egfr >= 90:
         stage = "G1 (normal, >=90)"
     elif egfr >= 60:
         stage = "G2 (mild, 60-89)"
@@ -325,11 +575,54 @@ def _ckd_epi(a: Dict[str, Any]) -> Dict[str, Any]:
     else:
         stage = "G5 (kidney failure, <15)"
     comp = {"creatinine_mg_dL": scr, "age": age, "sex": "female" if female else "male"}
+    extra = {"unit": "mL/min/1.73m^2"}
+    if sex_note:
+        extra["assumptions"] = [sex_note]
+    # Conditions under which the number is computable but should not be read as
+    # a measurement of this patient's kidney function. Each is silent today, and
+    # each pushes eGFR in the direction that causes renally-cleared drugs to be
+    # overdosed.
+    caveats = []
+    if age < 18:
+        caveats.append(
+            f"Age {age:g} is outside CKD-EPI's adult derivation population; the "
+            "equation is not valid in paediatrics -- use a paediatric estimate "
+            "(e.g. the CKiD/Schwartz bedside equation) instead."
+        )
+    elif age > 100:
+        caveats.append(
+            f"Age {age:g} is beyond the ages CKD-EPI 2021 was derived in; the "
+            "age term extrapolates and the result is not validated."
+        )
+    if scr < 0.2:
+        caveats.append(
+            f"Serum creatinine {scr:g} mg/dL is below the lower limit of "
+            "quantitation of routine assays; the result is driven by a value "
+            "no laboratory reports."
+        )
+    elif scr > 20:
+        # The low end was disclosed and the high end was not, so an impossible
+        # creatinine came back as a confident "kidney failure" stage with
+        # nothing said -- the same silence, in the other direction.
+        caveats.append(
+            f"Serum creatinine {scr:g} mg/dL is far above the range seen even "
+            "in dialysis-dependent kidney failure; check the value and its "
+            "units (umol/L is ~88x mg/dL)."
+        )
+    elif scr < 0.6 and age >= 65:
+        caveats.append(
+            "Creatinine-based eGFR overestimates true GFR when muscle mass is "
+            "low, which is common in the elderly, so this value is likely an "
+            "overestimate -- consider cystatin C before dosing renally-cleared "
+            "drugs."
+        )
+    if caveats:
+        extra["caveats"] = caveats
     return _ok(
         egfr,
         f"eGFR {egfr} mL/min/1.73m^2 — CKD stage {stage}",
         comp,
-        unit="mL/min/1.73m^2",
+        **extra,
     )
 
 
@@ -404,18 +697,33 @@ def _ascvd(a: Dict[str, Any]) -> Dict[str, Any]:
             "status": "error",
             "error": "ASCVD PCE is validated only for ages 40-79",
         }
-    tc = _req_number(a, "total_cholesterol")  # mg/dL
-    hdl = _req_number(a, "hdl_cholesterol")  # mg/dL
-    sbp = _req_number(a, "systolic_bp")  # mmHg
+    # All three enter the equation through math.log, so a non-positive value is
+    # a domain error rather than an extreme reading.
+    tc = _req_number(a, "total_cholesterol", must_exceed=0)  # mg/dL
+    hdl = _req_number(a, "hdl_cholesterol", must_exceed=0)  # mg/dL
+    sbp = _req_number(a, "systolic_bp", must_exceed=0)  # mmHg
     treated = _truthy(a.get("bp_treated"))
     smoker = _truthy(a.get("smoker"))
     diabetes = _truthy(a.get("diabetes"))
-    female = _truthy(a.get("female"))
-    black = str(a.get("race", "")).strip().lower() in (
+    female, sex_note = _resolve_sex(a)
+    race_raw = a.get("race")
+    black = str(race_raw or "").strip().lower() in (
         "black",
         "african american",
         "aa",
     )
+    assumptions = []
+    if sex_note:
+        assumptions.append(sex_note)
+    if race_raw is None or str(race_raw).strip() == "":
+        assumptions.append(
+            "'race' was not supplied; White/other coefficients were assumed "
+            "by default (per the Pooled Cohort Equations guideline, which "
+            "uses White coefficients for race/ethnicities other than "
+            "non-Hispanic Black). This choice materially changes the result "
+            "for Black patients — supply 'race' explicitly for an accurate "
+            "calculation."
+        )
 
     key = f"{'black' if black else 'white'}_{'female' if female else 'male'}"
     c = _ASCVD_COEFF[key]
@@ -466,7 +774,10 @@ def _ascvd(a: Dict[str, Any]) -> Dict[str, Any]:
         "smoker": smoker,
         "diabetes": diabetes,
     }
-    return _ok(risk, f"10-year ASCVD risk {risk}% — {band} risk", comp, unit="percent")
+    extra = {"unit": "percent"}
+    if assumptions:
+        extra["assumptions"] = assumptions
+    return _ok(risk, f"10-year ASCVD risk {risk}% — {band} risk", comp, **extra)
 
 
 _DISPATCH: Dict[str, Callable[[Dict[str, Any]], Dict[str, Any]]] = {

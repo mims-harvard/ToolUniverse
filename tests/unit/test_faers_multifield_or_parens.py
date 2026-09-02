@@ -73,8 +73,8 @@ def test_multifield_or_group_is_parenthesized_and_anded():
     )
     # Each multi-field OR group must be wrapped in parentheses...
     assert (
-        "(patient.drug.medicinalproduct:colistin+OR+"
-        "patient.drug.openfda.generic_name:colistin)"
+        '(patient.drug.medicinalproduct:"colistin"+OR+'
+        'patient.drug.openfda.generic_name:"colistin")'
     ) in query
     assert (
         '(patient.reaction.reactionmeddrapt:"acute kidney injury"+OR+'
@@ -88,8 +88,8 @@ def test_multifield_or_group_is_parenthesized_and_anded():
 def test_single_field_param_still_unparenthesized_but_valid():
     query = _captured_query({"medicinalproduct": "colistin"})
     assert (
-        "(patient.drug.medicinalproduct:colistin+OR+"
-        "patient.drug.openfda.generic_name:colistin)"
+        '(patient.drug.medicinalproduct:"colistin"+OR+'
+        'patient.drug.openfda.generic_name:"colistin")'
     ) in query
     # No stray AND when only one parameter is supplied.
     assert "+AND+" not in query

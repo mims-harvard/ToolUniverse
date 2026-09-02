@@ -70,33 +70,91 @@
     },
     "return_schema": {
       "type": "object",
-      "oneOf": [
-        {
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "data"
-          ]
+      "description": "ROC/AUC diagnostic-accuracy analysis results.",
+      "properties": {
+        "auc": {
+          "type": "number",
+          "description": "Area under the ROC curve."
         },
-        {
-          "properties": {
-            "status": {
-              "const": "error"
-            },
-            "error": {
-              "type": "string"
-            }
+        "auc_ci95": {
+          "type": "array",
+          "items": {
+            "type": "number"
           },
-          "required": [
-            "error"
-          ]
+          "description": "Bootstrap 95% confidence interval for AUC as [low, high]."
+        },
+        "n": {
+          "type": "integer",
+          "description": "Total number of samples."
+        },
+        "n_positive": {
+          "type": "integer",
+          "description": "Number of positive-class samples."
+        },
+        "n_negative": {
+          "type": "integer",
+          "description": "Number of negative-class samples."
+        },
+        "youden_optimal": {
+          "type": "object",
+          "description": "Cutoff maximizing Youden's J statistic (sensitivity + specificity - 1).",
+          "properties": {
+            "cutoff": {
+              "type": "number"
+            },
+            "sensitivity": {
+              "type": "number"
+            },
+            "specificity": {
+              "type": "number"
+            }
+          }
+        },
+        "roc_curve": {
+          "type": "object",
+          "description": "Downsampled ROC curve points.",
+          "properties": {
+            "fpr": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "tpr": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "thresholds": {
+              "type": "array",
+              "items": {
+                "type": ["number", "null"]
+              }
+            }
+          }
+        },
+        "at_cutoff": {
+          "type": "object",
+          "description": "Sensitivity/specificity at the user-specified fixed cutoff (present only when 'cutoff' parameter is given).",
+          "properties": {
+            "cutoff": {
+              "type": "number"
+            },
+            "sensitivity": {
+              "type": "number"
+            },
+            "specificity": {
+              "type": "number"
+            }
+          }
         }
+      },
+      "required": [
+        "auc",
+        "n",
+        "youden_optimal",
+        "roc_curve"
       ]
     },
     "test_examples": [

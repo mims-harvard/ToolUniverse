@@ -708,6 +708,22 @@ class GDCMutationFreqByProjectTool:
     def __init__(self, tool_config=None):
         self.tool_config = tool_config or {}
 
+    # Fix-Round3-001: the /analysis/mutated_cases_count_by_project endpoint's
+    # bucket `doc_count` (and its identical sibling
+    # `case_summary.case_with_ssm.doc_count`) counts SSM-*occurrence* records,
+    # not distinct cases. A case with more than one sequenced sample/aliquot
+    # (or more than one distinct SSM in the gene) is counted once per
+    # occurrence record, so `doc_count` can wildly overstate the number of
+    # mutated cases. Confirmed against ground truth: for gene_symbol=KRAS in
+    # project TCGA-TGCT, the old endpoint reported mutated=255/total=263
+    # (97%), but a per-case dedup against /ssm_occurrences shows only 13
+    # distinct cases (~5%) — a ~20x inflation. We now derive the numerator
+    # ourselves by paginating raw occurrence records and counting distinct
+    # `case.case_id` values per project, instead of trusting GDC's
+    # pre-aggregated (and here, mislabeled) bucket count.
+    _MAX_OCCURRENCES = 50000  # safety cap for extremely high-mutation-burden genes
+    _PAGE_SIZE = 10000
+
     def run(self, arguments: Dict[str, Any]):
         base = self.tool_config.get("settings", {}).get(
             "base_url", "https://api.gdc.cancer.gov"
@@ -728,40 +744,64 @@ class GDCMutationFreqByProjectTool:
         except (TypeError, ValueError):
             size = 100
 
-        filters = json.dumps(
+        occ_filters = json.dumps(
             {
                 "op": "in",
                 "content": {"field": "genes.symbol", "value": [gene_symbol]},
             }
         )
-        query = {"size": 0, "filters": filters}
-        url = f"{base}/analysis/mutated_cases_count_by_project?{urlencode(query)}"
 
-        try:
-            raw = _http_get(
-                url, headers={"Accept": "application/json"}, timeout=timeout
-            )
-        except Exception as e:
-            return {
-                "status": "error",
-                "error": str(e),
-                "source": "GDC",
-                "endpoint": "mutated_cases_count_by_project",
+        cases_by_project: Dict[str, set] = {}
+        fetched = 0
+        total_available = 0
+        while True:
+            occ_query = {
+                "filters": occ_filters,
+                "fields": "case.case_id,case.project.project_id",
+                "size": self._PAGE_SIZE,
+                "from": fetched,
             }
+            occ_url = f"{base}/ssm_occurrences?{urlencode(occ_query)}"
+            try:
+                occ_raw = _http_get(
+                    occ_url, headers={"Accept": "application/json"}, timeout=timeout
+                )
+            except Exception as e:
+                return {
+                    "status": "error",
+                    "error": str(e),
+                    "source": "GDC",
+                    "endpoint": "ssm_occurrences",
+                }
 
-        buckets = (
-            raw.get("aggregations", {}).get("projects", {}).get("buckets", []) or []
-        )
+            hits = occ_raw.get("data", {}).get("hits", []) or []
+            if fetched == 0:
+                total_available = occ_raw.get("data", {}).get("pagination", {}).get(
+                    "total", len(hits)
+                )
 
-        # Fix-R4A-002: the analysis endpoint's nested `case_summary.doc_count`
-        # is NOT the project's total case count (confirmed against the raw
-        # API and cross-checked with GDC_search_cases/GDC_list_projects,
-        # e.g. it reports 2282 for TCGA-COAD when the real total is 461) —
-        # its sibling `case_summary.case_with_ssm.doc_count` is simply a
-        # duplicate of the mutated count. Fetch true per-project totals from
-        # the /projects endpoint's `summary.case_count` field instead, the
-        # same field GDC_list_projects uses.
-        project_ids = [b.get("key") for b in buckets if b.get("key")]
+            for hit in hits:
+                case = hit.get("case", {}) or {}
+                case_id = case.get("case_id")
+                project_id = (case.get("project", {}) or {}).get("project_id")
+                if not case_id or not project_id:
+                    continue
+                cases_by_project.setdefault(project_id, set()).add(case_id)
+
+            fetched += len(hits)
+            if not hits or fetched >= total_available or fetched >= self._MAX_OCCURRENCES:
+                break
+
+        truncated = fetched < total_available
+
+        # Fix-R4A-002 (still valid): the analysis endpoint's nested
+        # `case_summary.doc_count` is NOT the project's total case count
+        # (confirmed against the raw API and cross-checked with
+        # GDC_search_cases/GDC_list_projects, e.g. it reports 2282 for
+        # TCGA-COAD when the real total is 461). Fetch true per-project
+        # totals from the /projects endpoint's `summary.case_count` field
+        # instead, the same field GDC_list_projects uses.
+        project_ids = list(cases_by_project.keys())
         true_totals: Dict[str, int] = {}
         if project_ids:
             proj_filters = json.dumps(
@@ -786,17 +826,15 @@ class GDCMutationFreqByProjectTool:
                     if pid and count is not None:
                         true_totals[pid] = count
             except Exception:
-                pass  # fall back to the (less reliable) case_summary field below
+                pass  # projects with no entry in true_totals are dropped below
 
         projects = []
-        for b in buckets:
-            mutated = b.get("doc_count", 0) or 0
-            project_id = b.get("key")
-            case_summary = b.get("case_summary", {}) or {}
+        for project_id, case_ids in cases_by_project.items():
             total = true_totals.get(project_id)
-            if total is None:
-                total = case_summary.get("doc_count", 0) or 0
-            freq = round(mutated / total, 4) if total else None
+            mutated = len(case_ids)
+            if not total:
+                continue  # can't compute a meaningful frequency without a real denominator
+            freq = round(mutated / total, 4)
             projects.append(
                 {
                     "project_id": project_id,
@@ -818,10 +856,10 @@ class GDCMutationFreqByProjectTool:
         total_mutated = sum(p["mutated_case_count"] for p in projects)
         total_cases = sum(p["total_case_count"] for p in projects)
 
-        return {
+        result = {
             "status": "success",
             "source": "GDC",
-            "endpoint": "mutated_cases_count_by_project",
+            "endpoint": "ssm_occurrences",
             "data": {
                 "gene": gene_symbol,
                 "project_count": len(projects),
@@ -830,6 +868,14 @@ class GDCMutationFreqByProjectTool:
                 "projects": projects[:size],
             },
         }
+        if truncated:
+            result["data"]["note"] = (
+                f"gene has more than {self._MAX_OCCURRENCES} SSM occurrence "
+                "records; results are based on the first "
+                f"{self._MAX_OCCURRENCES} fetched and may undercount "
+                "high-mutation-burden projects."
+            )
+        return result
 
 
 @register_tool(

@@ -16,6 +16,17 @@ from .tool_registry import register_tool
 
 CLINGEN_REG_BASE = "https://reg.clinicalgenome.org"
 
+# The registry reports every coordinate in interbase (0-based, half-open) form:
+# for NM_000059.3:c.1234C>G the GRCh38 row is start=32332711 / end=32332712,
+# while the same record's own MyVariantInfo_hg38 cross-reference is
+# chr13:g.32332712C>G. Reading `start` as a genomic position is therefore off by
+# one. Emit this label on every row that carries start/end so the convention
+# travels with the numbers instead of living only in documentation.
+COORDINATE_SYSTEM = (
+    "0-based interbase (half-open); start is 0-based, end is exclusive - "
+    "the 1-based genomic position is start+1"
+)
+
 
 @register_tool("ClinGenAlleleTool")
 class ClinGenAlleleTool(BaseTool):
@@ -103,6 +114,9 @@ class ClinGenAlleleTool(BaseTool):
         # Extract genomic coordinates
         genomic = []
         for ga in data.get("genomicAlleles") or []:
+            # `referenceGenome`, `chromosome` and `referenceSequence` live on the
+            # parent genomicAlleles[i] object, not on the inner coordinates[j]
+            # dict -- the inner dict only has start/end/allele/referenceAllele.
             for coord in ga.get("coordinates") or []:
                 genomic.append(
                     {
@@ -111,11 +125,19 @@ class ClinGenAlleleTool(BaseTool):
                         "end": coord.get("end"),
                         "allele": coord.get("allele"),
                         "reference_allele": coord.get("referenceAllele"),
-                        "reference_genome": coord.get("referenceGenome"),
+                        "reference_genome": ga.get("referenceGenome"),
+                        # RefSeqGene/LRG rows carry no referenceGenome and no
+                        # chromosome, so referenceSequence is the only thing that
+                        # identifies the frame these coordinates are counted in.
+                        "reference_sequence": ga.get("referenceSequence"),
+                        "coordinate_system": COORDINATE_SYSTEM,
                     }
                 )
 
-        # Extract transcript alleles
+        # Extract transcript alleles. These rows expose no start/end, so they
+        # need no coordinate-system label -- but upstream does carry a
+        # `referenceSequence` per transcript, which pins the RS accession the
+        # HGVS is expressed against.
         transcripts = []
         for ta in (data.get("transcriptAlleles") or [])[:10]:
             hgvs_list = ta.get("hgvs") or []
@@ -126,6 +148,7 @@ class ClinGenAlleleTool(BaseTool):
                     "protein_effect": ta.get("proteinEffect", {}).get("hgvs")
                     if ta.get("proteinEffect")
                     else None,
+                    "reference_sequence": ta.get("referenceSequence"),
                 }
             )
 

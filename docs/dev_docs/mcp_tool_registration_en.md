@@ -49,7 +49,7 @@ result = tu.tools.mcp_my_analyzer(
    operation="call_tool",
    tool_name="my_analyzer",
    tool_arguments={"data": "test data"}
-})
+)
 print(result)
 ```
 
@@ -118,10 +118,13 @@ class DataProcessor:
    },
    mcp_config={"port": 8001}
 )
+class SimpleTool:
+   def run(self, arguments):
+       return {"result": arguments["param"]}
 ```
 
 ### Multi-Server Setup
-```python
+```text
 # Text tools on port 8001
 @register_mcp_tool(..., mcp_config={"port": 8001})
 
@@ -135,7 +138,7 @@ class DataProcessor:
 ##  Common Mistakes
 
 ###  Wrong: Old parameter format
-```python
+```text
 @register_mcp_tool(
    name="tool_name",  # Wrong!
    description="Tool description",  # Wrong!
@@ -149,10 +152,13 @@ class DataProcessor:
    tool_type_name="tool_name",  # Correct!
    config={
        "description": "Tool description",  # Correct!
-       "parameter_schema": {...}
+       "parameter_schema": {}
    },
    mcp_config={"port": 8001}
 )
+class CorrectlyRegisteredTool:
+   def run(self, arguments):
+       return {"result": "success"}
 ```
 
 ###  Wrong: Missing run method
@@ -192,7 +198,7 @@ result = tu.tools.mcp_my_tool(
    operation="call_tool",
    tool_name="my_tool",
    tool_arguments={"param": "test"}
-})
+)
 print(result)
 ```
 
@@ -316,7 +322,7 @@ protein_result = tu.tools.mcp_protein_analyzer(
        "sequence": "MKWVTFISLLFLFSSAYSRGVFRRDAHKSEVAHRFKDLGEENFKALVLIAFAQYLQQCPFEDHVKLVNEVTEFAKTCVADESAENCDKSLHTLFGDKLCTVATLRETYGEMADCCAKQEPERNECFLQHKDDNPNLPRLVRPEVDVMCTAFHDNEETFLKKYLYEIARRHPYFYAPELLFFAKRYKAAFTECCQAADKAACLLPKLDELRDEGKASSAKQRLKCASLQKFGERAFKAWAVARLSQRFPKAEFAEVSKLVTDLTKVHTECCHGDLLECADDRADLAKYICENQDSISSKLKECCEKPLLEKSHCIAEVENDEMPADLPSLAADFVESKDVCKNYAEAKDVFLGMFLYEYARRHPDYSVVLLLRLAKTYETTLEKCCAAADPHECYAKVFDEFKPLVEEPQNLIKQNCELFEQLGEYKFQNALLVRYTKKVPQVSTPTLVEVSRNLGKVGSKCCKHPEAKRMPCAEDYLSVVLNQLCVLHEKTPVSDRVTKCCTESLVNRRPCFSALEVDETYVPKEFNAETFTFHADICTLSEKERQIKKQTALVELVKHKPKATKEQLKAVMDDFAAFVEKCCKADDKETCFAEEGKKLVAASQAALGL",
        "analysis_type": "detailed"
    }
-})
+)
 
 print("🧬 Protein Analysis Result:")
 print(protein_result)
@@ -474,7 +480,7 @@ def main():
        tool_arguments={
            "text": "This tool is amazing! The functionality is excellent and I think it's wonderful."
        }
-   })
+   )
    print(f"📝 Sentiment Analysis: {sentiment_result}")
 
    # Data statistics
@@ -484,7 +490,7 @@ def main():
        tool_arguments={
            "data": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
        }
-   })
+   )
    print(f"📊 Data Statistics: {stats_result}")
 
    # File analysis
@@ -494,7 +500,7 @@ def main():
        tool_arguments={
            "filepath": __file__  # Analyze current file
        }
-   })
+   )
    print(f"📁 File Analysis: {file_result}")
 
    # 4. Show connection status

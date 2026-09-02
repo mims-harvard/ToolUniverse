@@ -5,6 +5,7 @@ paginates client-side over all of them; without a wall-clock bound the
 loop issues hundreds of sequential requests and can run for minutes.
 These tests pin the time-budget guard without touching the live API.
 """
+
 from unittest.mock import patch
 
 import pytest
@@ -20,12 +21,12 @@ def make_tool():
             "type": "DiseaseTargetScoreTool",
             "query_schema": "query { disease { id } }",
             "parameter": {"type": "object", "properties": {}},
-            "datasource_id": "chembl",
+            "datasource_id": "clinical_precedence",
         }
     )
 
 
-def _page(index, page_size, total, datasource="chembl"):
+def _page(index, page_size, total, datasource="clinical_precedence"):
     """Build one associatedTargets page that always reports a huge total."""
     rows = [
         {
@@ -61,7 +62,11 @@ def test_pagination_stops_at_time_budget(monkeypatch):
 
     with patch.object(gqt, "execute_query", side_effect=fake_execute):
         result = make_tool().run(
-            {"efoId": "EFO_0000339", "datasourceId": "chembl", "pageSize": 5}
+            {
+                "efoId": "EFO_0000339",
+                "datasourceId": "clinical_precedence",
+                "pageSize": 5,
+            }
         )
 
     assert result["status"] == "success"
@@ -82,7 +87,11 @@ def test_pagination_completes_without_truncation(monkeypatch):
 
     with patch.object(gqt, "execute_query", side_effect=fake_execute):
         result = make_tool().run(
-            {"efoId": "EFO_0000339", "datasourceId": "chembl", "pageSize": 5}
+            {
+                "efoId": "EFO_0000339",
+                "datasourceId": "clinical_precedence",
+                "pageSize": 5,
+            }
         )
 
     assert result["status"] == "success"
@@ -107,7 +116,90 @@ def test_omitted_page_size_falls_back_to_100(monkeypatch):
         return _page(variables["index"], variables["size"], total=variables["size"])
 
     with patch.object(gqt, "execute_query", side_effect=fake_execute):
-        result = make_tool().run({"efoId": "EFO_0000339", "datasourceId": "chembl"})
+        result = make_tool().run(
+            {"efoId": "EFO_0000339", "datasourceId": "clinical_precedence"}
+        )
 
     assert result["status"] == "success"
     assert captured["size"] == 100
+
+
+@pytest.mark.unit
+def test_retired_datasource_id_is_remapped(monkeypatch):
+    """A retired datasource ID must not silently return zero scores.
+
+    Open Targets renamed 'ot_genetics_portal' to 'gwas_credible_sets' without
+    keeping the old name as an alias, so the stale ID matched nothing and the
+    tool returned a successful empty result that read as "no genetic evidence".
+    """
+    monkeypatch.setattr(gqt.time, "monotonic", lambda: 0.0)
+
+    def fake_execute(endpoint, query, variables):
+        return _page(
+            variables["index"],
+            variables["size"],
+            total=variables["size"],
+            datasource="gwas_credible_sets",
+        )
+
+    with patch.object(gqt, "execute_query", side_effect=fake_execute):
+        result = make_tool().run(
+            {
+                "efoId": "EFO_0000339",
+                "datasourceId": "ot_genetics_portal",
+                "pageSize": 5,
+            }
+        )
+
+    assert result["status"] == "success"
+    assert result["data"]["datasource"] == "gwas_credible_sets"
+    assert result["data"]["total_targets_with_scores"] == 5
+    assert "ot_genetics_portal" in result["data"]["datasource_rename_note"]
+
+
+@pytest.mark.unit
+def test_scores_are_sorted_strongest_first(monkeypatch):
+    """Truncated runs must still surface the strongest associations first."""
+    monkeypatch.setattr(gqt.time, "monotonic", lambda: 0.0)
+
+    def fake_execute(endpoint, query, variables):
+        page = _page(variables["index"], variables["size"], total=variables["size"])
+        rows = page["data"]["disease"]["associatedTargets"]["rows"]
+        for i, row in enumerate(rows):
+            row["datasourceScores"][0]["score"] = i / 10.0
+        return page
+
+    with patch.object(gqt, "execute_query", side_effect=fake_execute):
+        result = make_tool().run(
+            {
+                "efoId": "EFO_0000339",
+                "datasourceId": "clinical_precedence",
+                "pageSize": 5,
+            }
+        )
+
+    scores = [r["score"] for r in result["data"]["target_scores"]]
+    assert scores == sorted(scores, reverse=True)
+
+
+@pytest.mark.unit
+def test_unknown_datasource_reports_available_ids(monkeypatch):
+    """An empty result must say which datasource IDs the disease actually has."""
+    monkeypatch.setattr(gqt.time, "monotonic", lambda: 0.0)
+
+    def fake_execute(endpoint, query, variables):
+        return _page(
+            variables["index"],
+            variables["size"],
+            total=variables["size"],
+            datasource="europepmc",
+        )
+
+    with patch.object(gqt, "execute_query", side_effect=fake_execute):
+        result = make_tool().run(
+            {"efoId": "EFO_0000339", "datasourceId": "not_a_source", "pageSize": 5}
+        )
+
+    assert result["status"] == "success"
+    assert result["data"]["total_targets_with_scores"] == 0
+    assert result["data"]["available_datasources"] == ["europepmc"]

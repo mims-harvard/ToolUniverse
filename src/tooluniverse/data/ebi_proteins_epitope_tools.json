@@ -29,107 +29,96 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt accession"
-                },
-                "entry_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "UniProt entry name"
-                },
-                "taxid": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "NCBI taxonomy ID"
-                },
-                "total_epitopes": {
-                  "type": "integer",
-                  "description": "Total number of epitope regions"
-                },
-                "epitopes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Feature type (EPITOPE)"
-                      },
-                      "begin": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ],
-                        "description": "Start position on protein sequence"
-                      },
-                      "end": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ],
-                        "description": "End position on protein sequence"
-                      },
-                      "sequence": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Epitope amino acid sequence"
-                      },
-                      "match_score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ],
-                        "description": "Epitope match score"
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Additional description"
-                      },
-                      "pmids": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        },
-                        "description": "PubMed IDs of supporting publications"
-                      },
-                      "iedb_ids": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        },
-                        "description": "IEDB epitope identifiers"
-                      }
-                    }
+            "accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UniProt accession"
+            },
+            "entry_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UniProt entry name"
+            },
+            "taxid": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "NCBI taxonomy ID"
+            },
+            "total_epitopes": {
+              "type": "integer",
+              "description": "Total number of epitope regions"
+            },
+            "epitopes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Feature type (EPITOPE)"
+                  },
+                  "begin": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Start position on protein sequence"
+                  },
+                  "end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "End position on protein sequence"
+                  },
+                  "sequence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Epitope amino acid sequence"
+                  },
+                  "match_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Epitope match score"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Additional description"
+                  },
+                  "pmids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "PubMed IDs of supporting publications"
+                  },
+                  "iedb_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "IEDB epitope identifiers"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

@@ -207,6 +207,12 @@ class IntActRESTTool(BaseTool):
                 "intact_get_interactions_by_experiment": ("experiment_id", 25),
                 "intact_get_interaction_network": ("identifier", 50),
                 "intact_get_interactions_by_organism": ("taxid", 25),
+                # Feature-4C-3: this tool was missing here entirely, so it fell
+                # back from the (permanently 404ing) direct IntAct endpoint to
+                # this EBI Search fallback with no "query" param ever set --
+                # every call silently returned an empty result, including the
+                # tool's own documented example.
+                "intact_get_interaction_details": ("interaction_id", 5),
             }
 
             if tool_name == "intact_search_interactions":
@@ -261,6 +267,20 @@ class IntActRESTTool(BaseTool):
                         "hitCount": data.get("hitCount", len(entries)),
                         "interaction_ids": interaction_ids[:10],
                         "note": "Data retrieved via EBI Search API (IntAct domain). For detailed interactor info, use IntAct website.",
+                    },
+                }
+
+            # For a single interaction_id lookup, return the matching record
+            # directly rather than a one-item list (Feature-4C-3).
+            if tool_name == "intact_get_interaction_details":
+                return {
+                    "status": "success",
+                    "data": entries[0] if entries else {},
+                    "metadata": {
+                        "url": response.url,
+                        "count": len(entries),
+                        "hitCount": data.get("hitCount", len(entries)),
+                        "note": "Data retrieved via EBI Search API (IntAct domain).",
                     },
                 }
 

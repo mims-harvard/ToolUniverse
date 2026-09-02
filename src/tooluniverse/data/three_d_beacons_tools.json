@@ -31,36 +31,27 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "accession": {
-                                    "type": "string",
-                                    "description": "UniProt accession queried"
-                                },
-                                "sequence_length": {
-                                    "type": ["integer", "null"],
-                                    "description": "Full protein sequence length"
-                                },
-                                "total_structures": {
-                                    "type": "integer",
-                                    "description": "Total number of 3D structures/models available"
-                                },
-                                "by_provider": {
-                                    "type": "object",
-                                    "description": "Structure counts by data provider (PDBe, AlphaFold DB, SWISS-MODEL, PED, AlphaFill, isoform.io)"
-                                },
-                                "by_category": {
-                                    "type": "object",
-                                    "description": "Structure counts by model category (EXPERIMENTALLY DETERMINED, TEMPLATE-BASED, AB-INITIO, CONFORMATIONAL ENSEMBLE)"
-                                }
-                            }
+                        "accession": {
+                            "type": "string",
+                            "description": "UniProt accession queried"
                         },
-                        "metadata": {
-                            "type": "object"
+                        "sequence_length": {
+                            "type": ["integer", "null"],
+                            "description": "Full protein sequence length"
+                        },
+                        "total_structures": {
+                            "type": "integer",
+                            "description": "Total number of 3D structures/models available"
+                        },
+                        "by_provider": {
+                            "type": "object",
+                            "description": "Structure counts by data provider (PDBe, AlphaFold DB, SWISS-MODEL, PED, AlphaFill, isoform.io)"
+                        },
+                        "by_category": {
+                            "type": "object",
+                            "description": "Structure counts by model category (EXPERIMENTALLY DETERMINED, TEMPLATE-BASED, AB-INITIO, CONFORMATIONAL ENSEMBLE)"
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -121,68 +112,59 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "accession": {
-                                    "type": "string",
-                                    "description": "UniProt accession queried"
-                                },
-                                "sequence_length": {
-                                    "type": ["integer", "null"],
-                                    "description": "Full protein sequence length"
-                                },
-                                "total_matched": {
-                                    "type": "integer",
-                                    "description": "Total structures matching filters"
-                                },
-                                "returned": {
-                                    "type": "integer",
-                                    "description": "Number of structures returned"
-                                },
-                                "structures": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "model_identifier": {
-                                                "type": ["string", "null"],
-                                                "description": "Structure/model identifier (PDB ID or model ID)"
-                                            },
-                                            "model_category": {
-                                                "type": ["string", "null"],
-                                                "description": "Model category"
-                                            },
-                                            "provider": {
-                                                "type": ["string", "null"],
-                                                "description": "Data provider name"
-                                            },
-                                            "coverage": {
-                                                "type": ["number", "null"],
-                                                "description": "Fraction of protein covered (0-1)"
-                                            },
-                                            "resolution": {
-                                                "type": ["number", "null"],
-                                                "description": "Resolution in Angstroms (experimental only)"
-                                            },
-                                            "experimental_method": {
-                                                "type": ["string", "null"],
-                                                "description": "Experimental method (e.g., X-ray diffraction)"
-                                            },
-                                            "model_url": {
-                                                "type": ["string", "null"],
-                                                "description": "URL to download the model"
-                                            }
-                                        }
+                        "accession": {
+                            "type": "string",
+                            "description": "UniProt accession queried"
+                        },
+                        "sequence_length": {
+                            "type": ["integer", "null"],
+                            "description": "Full protein sequence length"
+                        },
+                        "total_matched": {
+                            "type": "integer",
+                            "description": "Total structures matching filters"
+                        },
+                        "returned": {
+                            "type": "integer",
+                            "description": "Number of structures returned"
+                        },
+                        "structures": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "model_identifier": {
+                                        "type": ["string", "null"],
+                                        "description": "Structure/model identifier (PDB ID or model ID)"
+                                    },
+                                    "model_category": {
+                                        "type": ["string", "null"],
+                                        "description": "Model category"
+                                    },
+                                    "provider": {
+                                        "type": ["string", "null"],
+                                        "description": "Data provider name"
+                                    },
+                                    "coverage": {
+                                        "type": ["number", "null"],
+                                        "description": "Fraction of protein covered (0-1)"
+                                    },
+                                    "resolution": {
+                                        "type": ["number", "null"],
+                                        "description": "Resolution in Angstroms (experimental only)"
+                                    },
+                                    "experimental_method": {
+                                        "type": ["string", "null"],
+                                        "description": "Experimental method (e.g., X-ray diffraction)"
+                                    },
+                                    "model_url": {
+                                        "type": ["string", "null"],
+                                        "description": "URL to download the model"
                                     }
                                 }
                             }
-                        },
-                        "metadata": {
-                            "type": "object"
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -239,68 +221,59 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "accession": {
-                                    "type": "string",
-                                    "description": "UniProt accession queried"
-                                },
-                                "id": {
-                                    "type": ["string", "null"],
-                                    "description": "3D Beacons annotation record identifier"
-                                },
-                                "sequence_length": {
-                                    "type": ["integer", "null"],
-                                    "description": "Length of the annotated sequence"
-                                },
-                                "type_filter": {
-                                    "type": ["string", "null"],
-                                    "description": "Annotation type filter applied, if any"
-                                },
-                                "annotation_count": {
-                                    "type": "integer",
-                                    "description": "Number of annotation entries returned"
-                                },
-                                "annotations": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "type": {
-                                                "type": ["string", "null"],
-                                                "description": "Annotation type (DOMAIN, BINDING, ACT_SITE, etc.)"
-                                            },
-                                            "description": {
-                                                "type": ["string", "null"],
-                                                "description": "Human-readable description (may include InterPro IDs)"
-                                            },
-                                            "source_name": {
-                                                "type": ["string", "null"],
-                                                "description": "Annotation source (e.g. InterPro, UniProt)"
-                                            },
-                                            "evidence": {
-                                                "type": ["string", "null"],
-                                                "description": "Evidence level (e.g. COMPUTATIONAL/PREDICTED, EXPERIMENTAL)"
-                                            },
-                                            "residues": {
-                                                "type": ["array", "null"],
-                                                "description": "List of residue numbers covered by the annotation"
-                                            },
-                                            "regions": {
-                                                "type": ["array", "null"],
-                                                "description": "List of {start, end} region objects"
-                                            }
-                                        }
+                        "accession": {
+                            "type": "string",
+                            "description": "UniProt accession queried"
+                        },
+                        "id": {
+                            "type": ["string", "null"],
+                            "description": "3D Beacons annotation record identifier"
+                        },
+                        "sequence_length": {
+                            "type": ["integer", "null"],
+                            "description": "Length of the annotated sequence"
+                        },
+                        "type_filter": {
+                            "type": ["string", "null"],
+                            "description": "Annotation type filter applied, if any"
+                        },
+                        "annotation_count": {
+                            "type": "integer",
+                            "description": "Number of annotation entries returned"
+                        },
+                        "annotations": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": ["string", "null"],
+                                        "description": "Annotation type (DOMAIN, BINDING, ACT_SITE, etc.)"
+                                    },
+                                    "description": {
+                                        "type": ["string", "null"],
+                                        "description": "Human-readable description (may include InterPro IDs)"
+                                    },
+                                    "source_name": {
+                                        "type": ["string", "null"],
+                                        "description": "Annotation source (e.g. InterPro, UniProt)"
+                                    },
+                                    "evidence": {
+                                        "type": ["string", "null"],
+                                        "description": "Evidence level (e.g. COMPUTATIONAL/PREDICTED, EXPERIMENTAL)"
+                                    },
+                                    "residues": {
+                                        "type": ["array", "null"],
+                                        "description": "List of residue numbers covered by the annotation"
+                                    },
+                                    "regions": {
+                                        "type": ["array", "null"],
+                                        "description": "List of {start, end} region objects"
                                     }
                                 }
                             }
-                        },
-                        "metadata": {
-                            "type": "object"
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",

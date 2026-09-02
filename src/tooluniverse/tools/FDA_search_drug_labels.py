@@ -12,6 +12,7 @@ def FDA_search_drug_labels(
     limit: int,
     drug_name: Optional[str | Any] = None,
     indication: Optional[str | Any] = None,
+    max_section_chars: Optional[int | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +29,8 @@ def FDA_search_drug_labels(
         Medical condition to search in indications sections (e.g., 'hypertension', 't...
     limit : int
         Maximum number of results to return (default: 5, max: 20)
+    max_section_chars : int | Any
+        Maximum characters returned per clinical section (default: 2000, 0 = no limit...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def FDA_search_drug_labels(
             "drug_name": drug_name,
             "indication": indication,
             "limit": limit,
+            "max_section_chars": max_section_chars,
         }.items()
         if v is not None
     }

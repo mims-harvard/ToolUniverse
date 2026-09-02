@@ -50,6 +50,18 @@ class EnsemblRESTTool(BaseTool):
     def run(self, arguments: dict):
         # 0. Apply schema defaults and parameter aliases for path params
         schema_props = self.tool_config.get("parameter", {}).get("properties", {})
+        # Fix-R15C-4: remember which params the caller actually supplied
+        # (before default-injection below) so the stable-ID branch can tell
+        # "user explicitly asked for homo_sapiens" apart from "species was
+        # silently defaulted to homo_sapiens because it's a path placeholder
+        # for the /lookup/symbol/{species}/{gene_id} route". Ensembl stable
+        # IDs (ENSG.../ENSBTAG.../etc.) are already species-specific, so
+        # /lookup/id/{gene_id} needs no species filter -- but forwarding an
+        # auto-defaulted species=homo_sapiens there makes Ensembl reject any
+        # non-human stable ID with a misleading "ID not found" (confirmed
+        # live for bovine ENSBTAG00000026356: works with no species param or
+        # species=cow, HTTP 400 "not found" with species=homo_sapiens).
+        explicitly_provided = set(arguments.keys())
         arguments = dict(arguments)
         # Inject schema defaults for any missing path parameters
         for path_key in re.findall(r"\{([^{}]+)\}", self.endpoint_template):
@@ -83,6 +95,19 @@ class EnsemblRESTTool(BaseTool):
             if k not in path_keys and v is not None:
                 query_params[k] = v
 
+        # Ensembl's /sequence/id endpoint calls its protein-sequence option
+        # "protein", not "peptide" -- confirmed live: type=peptide -> HTTP
+        # 400 "The type 'peptide' is not understood by this service" for
+        # every input, making protein sequence retrieval impossible via this
+        # tool. "peptide" is kept as an accepted schema value (it's the
+        # intuitive guess) and silently normalized here rather than removed,
+        # so existing callers using either name both work.
+        if (
+            "/sequence/id" in self.endpoint_template
+            and query_params.get("type") == "peptide"
+        ):
+            query_params["type"] = "protein"
+
         # 4. Special handling for certain endpoints
         # Lookup by symbol needs special routing - handle both stable IDs
         # and symbols.
@@ -97,7 +122,10 @@ class EnsemblRESTTool(BaseTool):
                     url = f"{ENSEMBL_BASE_URL}/lookup/id/{gene_id}"
                     # Don't use expand=1 by default to avoid timeouts
                     query_params = {}
-                    if "species" in arguments:
+                    # Only forward species if the caller explicitly passed
+                    # it -- not when it was auto-defaulted for the (unused,
+                    # for stable IDs) /lookup/symbol/{species}/... route.
+                    if "species" in arguments and "species" in explicitly_provided:
                         query_params["species"] = arguments["species"]
                     if "expand" in arguments:
                         query_params["expand"] = arguments["expand"]
@@ -110,14 +138,19 @@ class EnsemblRESTTool(BaseTool):
                     if "expand" in arguments:
                         query_params["expand"] = arguments["expand"]
 
-        # Handle overlap/region endpoint - ensure feature parameter is passed
-        if "/overlap/region" in self.endpoint_template:
-            # Feature parameter is required for overlap endpoints
-            if "feature" not in query_params and "feature" in arguments:
-                query_params["feature"] = arguments["feature"]
-            elif "feature" not in query_params:
-                # Default to variation if not specified
-                query_params["feature"] = "variation"
+        # Handle overlap/region endpoint - ensure feature parameter is passed.
+        # Different overlap/region tools mean different things by "default"
+        # (e.g. ensembl_get_structural_variants defaults to
+        # "structural_variation", ensembl_get_overlap_features defaults to
+        # "gene") — use each tool's own schema default instead of hardcoding
+        # "variation" for all of them, which silently returned SNP data from
+        # tools that promise structural variants or genes.
+        if (
+            "/overlap/region" in self.endpoint_template
+            and "feature" not in query_params
+        ):
+            schema_default = schema_props.get("feature", {}).get("default")
+            query_params["feature"] = schema_default or "variation"
 
         # 5. Make HTTP request (with small retry for transient failures)
         try:

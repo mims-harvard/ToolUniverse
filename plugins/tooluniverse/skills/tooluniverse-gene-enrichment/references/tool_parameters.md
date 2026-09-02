@@ -224,11 +224,12 @@ kegg = [d for d in data if d.get('category') == 'KEGG']
 - `is_lowest_level`: Boolean (leaf pathway or parent)
 - `entities_found`: Count in your gene list
 - `entities_total`: Total entities in pathway
-- `entities_ratio`: Found/Total ratio
-- `p_value`: Raw p-value
+- `entities_coverage`: `entities_found / entities_total` — the coverage figure
+- `p_value`: Raw p-value (rank pathways by this or `fdr`)
 - `fdr`: FDR-corrected p-value
 - `reactions_found`: Reactions with your genes
 - `reactions_total`: Total reactions
+- `pathway_size_fraction_of_reactome`: pathway size divided by Reactome's entity universe for the species. Depends only on the pathway, not on the identifiers you submitted, so never rank by it. Deprecated alias `entities_ratio` carries the same value — despite its name it is not found/total
 
 **Example**:
 ```python

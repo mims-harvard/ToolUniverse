@@ -100,7 +100,11 @@ class PDBECompoundTool(BaseTool):
 
         # Extract SMILES
         smiles = []
-        for s in compound.get("smiles", []):
+        # PDBe returns these fields as JSON null (not absent) for some
+        # compounds (e.g. HEM has cross_links: null), so `.get(key, [])`
+        # doesn't apply its default -- it returns None, and iterating that
+        # raises TypeError. `.get(key) or []` catches both cases.
+        for s in compound.get("smiles") or []:
             smiles.append(
                 {
                     "program": s.get("program"),
@@ -110,7 +114,7 @@ class PDBECompoundTool(BaseTool):
 
         # Extract cross-references
         cross_links = []
-        for cl in compound.get("cross_links", []):
+        for cl in compound.get("cross_links") or []:
             cross_links.append(
                 {
                     "resource": cl.get("resource"),
@@ -120,7 +124,7 @@ class PDBECompoundTool(BaseTool):
 
         # Extract systematic names
         sys_names = []
-        for sn in compound.get("systematic_names", []):
+        for sn in compound.get("systematic_names") or []:
             sys_names.append(
                 {
                     "program": sn.get("program"),
@@ -142,7 +146,7 @@ class PDBECompoundTool(BaseTool):
                 "smiles": smiles[:3],
                 "systematic_names": sys_names[:3],
                 "cross_references": cross_links[:15],
-                "first_observed_in": compound.get("first_observed_in", []),
+                "first_observed_in": compound.get("first_observed_in") or [],
                 "release_status": compound.get("release_status"),
                 "creation_date": compound.get("creation_date"),
             },
@@ -178,7 +182,7 @@ class PDBECompoundTool(BaseTool):
             return {"status": "error", "error": f"No data for compound '{comp_id}'."}
 
         compound = compound_list[0]
-        first_seen = compound.get("first_observed_in", [])
+        first_seen = compound.get("first_observed_in") or []
 
         # Also get compound in_pdb data from the regular PDBe API
         pdb_url = f"https://www.ebi.ac.uk/pdbe/api/pdb/compound/summary/{comp_id}"

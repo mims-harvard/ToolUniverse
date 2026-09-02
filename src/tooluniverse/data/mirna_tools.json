@@ -46,59 +46,48 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total_hits": {
-                  "type": "integer",
-                  "description": "Total number of matching miRNA entries"
-                },
-                "returned": {
-                  "type": "integer",
-                  "description": "Number of entries returned in this response"
-                },
-                "entries": {
-                  "type": "array",
-                  "description": "List of miRNA entries with IDs, descriptions, and metadata",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "rnacentral_id": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "rna_type": {
-                        "type": "string"
-                      },
-                      "length": {
-                        "type": "integer"
-                      },
-                      "expert_databases": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "has_secondary_structure": {
-                        "type": "boolean"
-                      },
-                      "has_genomic_coordinates": {
-                        "type": "boolean"
-                      }
+            "total_hits": {
+              "type": "integer",
+              "description": "Total number of matching miRNA entries"
+            },
+            "returned": {
+              "type": "integer",
+              "description": "Number of entries returned in this response"
+            },
+            "entries": {
+              "type": "array",
+              "description": "List of miRNA entries with IDs, descriptions, and metadata",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rnacentral_id": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "rna_type": {
+                    "type": "string"
+                  },
+                  "length": {
+                    "type": "integer"
+                  },
+                  "expert_databases": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
+                  },
+                  "has_secondary_structure": {
+                    "type": "boolean"
+                  },
+                  "has_genomic_coordinates": {
+                    "type": "boolean"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -170,64 +159,53 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "rnacentral_id": {
-                  "type": "string"
-                },
-                "description": {
-                  "type": "string"
-                },
-                "short_description": {
-                  "type": "string"
-                },
-                "sequence": {
-                  "type": "string"
-                },
-                "length": {
-                  "type": "integer"
-                },
-                "rna_type": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "taxid": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "genes": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "publications_count": {
-                  "type": "integer"
-                },
-                "is_active": {
-                  "type": "boolean"
-                },
-                "distinct_databases": {
-                  "type": [
-                    "string",
-                    "array",
-                    "null"
-                  ]
-                }
+            "rnacentral_id": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "short_description": {
+              "type": "string"
+            },
+            "sequence": {
+              "type": "string"
+            },
+            "length": {
+              "type": "integer"
+            },
+            "rna_type": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "taxid": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "genes": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             },
-            "metadata": {
-              "type": "object"
+            "publications_count": {
+              "type": "integer"
+            },
+            "is_active": {
+              "type": "boolean"
+            },
+            "distinct_databases": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ]
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -299,58 +277,47 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total_publications": {
-                  "type": "integer",
-                  "description": "Total number of publications for this RNA"
-                },
-                "returned": {
-                  "type": "integer",
-                  "description": "Number returned in this page"
-                },
-                "publications": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "title": {
-                        "type": "string"
-                      },
-                      "authors": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "publication": {
-                        "type": "string"
-                      },
-                      "pubmed_id": {
-                        "type": "string"
-                      },
-                      "doi": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "expert_db": {
-                        "type": "boolean"
-                      }
+            "total_publications": {
+              "type": "integer",
+              "description": "Total number of publications for this RNA"
+            },
+            "returned": {
+              "type": "integer",
+              "description": "Number returned in this page"
+            },
+            "publications": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "authors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
+                  },
+                  "publication": {
+                    "type": "string"
+                  },
+                  "pubmed_id": {
+                    "type": "string"
+                  },
+                  "doi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "expert_db": {
+                    "type": "boolean"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -421,82 +388,71 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total_xrefs": {
-                  "type": "integer",
-                  "description": "Total number of cross-references"
-                },
-                "returned": {
-                  "type": "integer",
-                  "description": "Number returned in this page"
-                },
-                "cross_references": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "database": {
-                        "type": "string"
-                      },
-                      "accession_id": {
-                        "type": "string"
-                      },
-                      "external_id": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "species": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "rna_type": {
-                        "type": "string"
-                      },
-                      "gene": {
-                        "type": "string"
-                      },
-                      "taxid": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "is_active": {
-                        "type": "boolean"
-                      },
-                      "expert_db_url": {
-                        "type": "string"
-                      },
-                      "mirbase_mature_products": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "mirbase_precursor": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "total_xrefs": {
+              "type": "integer",
+              "description": "Total number of cross-references"
+            },
+            "returned": {
+              "type": "integer",
+              "description": "Number returned in this page"
+            },
+            "cross_references": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "database": {
+                    "type": "string"
+                  },
+                  "accession_id": {
+                    "type": "string"
+                  },
+                  "external_id": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "rna_type": {
+                    "type": "string"
+                  },
+                  "gene": {
+                    "type": "string"
+                  },
+                  "taxid": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "is_active": {
+                    "type": "boolean"
+                  },
+                  "expert_db_url": {
+                    "type": ["string", "null"]
+                  },
+                  "mirbase_mature_products": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mirbase_precursor": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

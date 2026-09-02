@@ -41,7 +41,7 @@
   {
     "name": "KEGG_get_network",
     "type": "KEGGExtTool",
-    "description": "Get detailed KEGG network information including signaling pathway definition (e.g., EGF -> EGFR -> RAS -> RAF -> MEK -> ERK), associated disease classes, linked diseases, drug targets, and pathway elements. KEGG networks model specific molecular interaction cascades perturbed in disease. Example: N00001 returns EGF-EGFR-RAS-ERK signaling pathway linked to colorectal cancer, melanoma, breast cancer, and 7+ other cancer types.",
+    "description": "Get detailed KEGG network information including signaling pathway definition (e.g., EGF -> EGFR -> RAS -> RAF -> MEK -> ERK), associated disease classes, linked diseases, drug targets, and pathway elements. KEGG networks model specific molecular interaction cascades perturbed in disease. Example: N00001 returns EGF-EGFR-RAS-ERK signaling pathway linked to colorectal cancer, melanoma, breast cancer, and 7+ other cancer types. For N#####-style perturbed-network IDs, `genes` gives the gene symbols (with Entrez IDs and descriptions) that map the numeric IDs in `expanded`, and `pathways` cross-references the canonical KEGG PATHWAY map(s) (e.g. hsa04668) the network belongs to. For nt######-style disease/map-class network IDs, `elements` instead lists the child N##### networks that compose it (`genes`/`pathways` are empty for that ID family).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -65,7 +65,30 @@
         "classes": {"type": "array", "items": {"type": "string"}},
         "diseases": {"type": "array", "items": {"type": "string"}},
         "drugs": {"type": "array", "items": {"type": "string"}},
-        "elements": {"type": "array", "items": {"type": "string"}}
+        "elements": {"type": "array", "items": {"type": "string"}},
+        "genes": {
+          "type": "array",
+          "description": "Gene symbols driving an N#####-style network, with Entrez IDs and descriptions. Empty for nt######-style (Map-class) network IDs.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entrez_id": {"type": "string"},
+              "symbol": {"type": "string"},
+              "description": {"type": "string"}
+            }
+          }
+        },
+        "pathways": {
+          "type": "array",
+          "description": "KEGG PATHWAY map(s) this network belongs to. Empty for nt######-style (Map-class) network IDs.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pathway_id": {"type": "string"},
+              "name": {"type": "string"}
+            }
+          }
+        }
       }
     },
     "test_examples": [

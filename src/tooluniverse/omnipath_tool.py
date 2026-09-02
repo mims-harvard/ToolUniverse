@@ -631,7 +631,10 @@ class OmniPathTool(BaseTool):
 
         params = {
             "genesymbols": "yes",
-            "fields": "sources,references,curation_effort,type",
+            # dorothea_level must be explicitly requested or OmniPath omits it,
+            # which previously made every confidence_levels filter match nothing
+            # (Feature-4C-2).
+            "fields": "sources,references,curation_effort,type,dorothea_level",
             "datasets": "dorothea",
             "sources": tf_gene,
         }
@@ -646,11 +649,22 @@ class OmniPathTool(BaseTool):
 
         interactions = []
         for item in data:
-            dorothea_level = item.get("dorothea_level")
+            # OmniPath returns dorothea_level as a list of confidence-level codes
+            # (an interaction can be tagged at multiple levels, e.g. ["A", "D"]),
+            # not a single scalar string.
+            raw_level = item.get("dorothea_level")
+            if isinstance(raw_level, list):
+                level_set = {lvl for lvl in raw_level if lvl}
+            elif raw_level:
+                level_set = {raw_level}
+            else:
+                level_set = set()
 
             if confidence_levels:
-                levels = [level.strip() for level in confidence_levels.split(",")]
-                if dorothea_level not in levels:
+                requested = {
+                    level.strip() for level in confidence_levels.split(",") if level.strip()
+                }
+                if not level_set & requested:
                     continue
 
             interactions.append(
@@ -663,7 +677,7 @@ class OmniPathTool(BaseTool):
                     else (-1 if item.get("is_inhibition") else 0),
                     "is_stimulation": bool(item.get("is_stimulation", 0)),
                     "is_inhibition": bool(item.get("is_inhibition", 0)),
-                    "dorothea_level": dorothea_level,
+                    "dorothea_level": sorted(level_set) if level_set else None,
                     "sources": item.get("sources", []),
                     "curation_effort": item.get("curation_effort"),
                 }
@@ -673,8 +687,9 @@ class OmniPathTool(BaseTool):
 
         by_level = {}
         for i in interactions:
-            lvl = i.get("dorothea_level") or "unknown"
-            by_level.setdefault(lvl, []).append(i)
+            levels = i.get("dorothea_level") or ["unknown"]
+            for lvl in levels:
+                by_level.setdefault(lvl, []).append(i)
 
         return {
             "status": "success",

@@ -104,6 +104,37 @@ def test_openai_compatible_default_max_tokens_from_env(monkeypatch):
     assert FakeOpenAIClient.instances[0].completions.calls[0]["max_tokens"] == 123
 
 
+def test_openai_gpt5_model_drops_unsupported_temperature(monkeypatch):
+    """Regression guard for Fix Round 12 / Feature-12A-2: "gpt-5" is the
+    default model_id (see AgenticTool), and the real API rejects any
+    non-default temperature for this family with a 400 error ("Unsupported
+    value: 'temperature' does not support 0.2 with this model"). This was
+    already handled correctly for max-token routing
+    (_uses_max_completion_tokens already lists "gpt-5"), but
+    _normalize_temperature had fallen out of sync and still sent the
+    caller's temperature straight through, crashing every default-
+    configured LLM call site (e.g. BiomarkerDiscoveryWorkflow's literature
+    step) with 0 < temperature < 1.
+    """
+    client = OpenAICompatibleClient(
+        "gpt-5",
+        logger=SimpleNamespace(warning=lambda *_: None, error=lambda *_: None),
+    )
+
+    result = client.infer(
+        messages=[{"role": "user", "content": "ping"}],
+        temperature=0.2,
+        max_tokens=None,
+        return_json=False,
+        max_retries=1,
+        retry_delay=0,
+    )
+
+    assert result == "ok"
+    call = FakeOpenAIClient.instances[0].completions.calls[0]
+    assert "temperature" not in call
+
+
 def test_openai_reasoning_model_uses_completion_tokens(monkeypatch):
     monkeypatch.setenv("OPENAI_MAX_TOKENS_BY_MODEL", '{"o4-mini": 321}')
     client = OpenAICompatibleClient(

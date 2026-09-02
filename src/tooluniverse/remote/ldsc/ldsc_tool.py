@@ -42,23 +42,27 @@ import tempfile
 from typing import Any, Dict, Optional
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_data_path import (
+    resolve_remote_data_directory,
+    resolve_remote_data_path,
+)
 
 LDSC_DIR = os.environ.get("LDSC_DIR", "/opt/ldsc")
-LDSC_REF_DIR = os.environ.get("LDSC_REF_DIR", "/data/ldsc")
 _TIMEOUT = 1800
 
 
 def _ref(path_or_name: Optional[str], default: str) -> str:
-    """Resolve a reference-panel argument relative to LDSC_REF_DIR when not absolute."""
+    """Resolve a reference-panel directory under the configured reference root."""
     name = path_or_name or default
-    return name if os.path.isabs(name) else os.path.join(LDSC_REF_DIR, name)
+    resolved = resolve_remote_data_directory(name, root_env="LDSC_REF_DIR")
+    return f"{resolved}{os.sep}"
 
 
 def _run_ldsc(args: list) -> Dict[str, Any]:
     """Run ldsc.py with a temp --out prefix; return parsed log text or an error."""
     ldsc_py = os.path.join(LDSC_DIR, "ldsc.py")
     if not os.path.exists(ldsc_py):
-        return {"error": f"ldsc.py not found at {ldsc_py}; set LDSC_DIR to the clone."}
+        return {"error": "The provider's LDSC engine is unavailable."}
     with tempfile.TemporaryDirectory() as tmp:
         out_prefix = os.path.join(tmp, "ldsc_out")
         cmd = ["python", ldsc_py, *args, "--out", out_prefix]
@@ -66,6 +70,8 @@ def _run_ldsc(args: list) -> Dict[str, Any]:
             proc = subprocess.run(cmd, capture_output=True, text=True, timeout=_TIMEOUT)
         except subprocess.TimeoutExpired:
             return {"error": f"LDSC timed out after {_TIMEOUT}s."}
+        except OSError:
+            return {"error": "The provider could not start the LDSC engine."}
         log_path = out_prefix + ".log"
         if os.path.exists(log_path):
             with open(log_path) as fh:
@@ -73,7 +79,7 @@ def _run_ldsc(args: list) -> Dict[str, Any]:
         else:
             log = proc.stdout
         if proc.returncode != 0:
-            return {"error": f"LDSC failed: {proc.stderr[-500:] or log[-500:]}"}
+            return {"error": f"LDSC failed on the provider (returncode {proc.returncode})."}
         return {"log": log}
 
 
@@ -96,7 +102,7 @@ def _search(pattern: str, text: str):
             "properties": {
                 "sumstats_path": {
                     "type": "string",
-                    "description": "Server-accessible path to a munged .sumstats.gz file (output of munge_sumstats.py).",
+                    "description": "A munged .sumstats.gz file inside the provider-configured data directory.",
                 },
                 "ref_ld_chr": {
                     "type": "string",
@@ -124,10 +130,19 @@ class LdscHeritabilityTool:
         sumstats = arguments.get("sumstats_path")
         if not sumstats:
             return {"error": "Missing required parameter: sumstats_path"}
-        ref = _ref(arguments.get("ref_ld_chr"), "eur_w_ld_chr/")
-        w = _ref(
-            arguments.get("w_ld_chr") or arguments.get("ref_ld_chr"), "eur_w_ld_chr/"
-        )
+        try:
+            sumstats = str(
+                resolve_remote_data_path(
+                    sumstats, allowed_suffixes={".sumstats", ".sumstats.gz"}
+                )
+            )
+            ref = _ref(arguments.get("ref_ld_chr"), "eur_w_ld_chr/")
+            w = _ref(
+                arguments.get("w_ld_chr") or arguments.get("ref_ld_chr"),
+                "eur_w_ld_chr/",
+            )
+        except ValueError as exc:
+            return {"error": f"Invalid LDSC input: {exc}"}
 
         res = _run_ldsc(["--h2", sumstats, "--ref-ld-chr", ref, "--w-ld-chr", w])
         if "error" in res:
@@ -141,7 +156,6 @@ class LdscHeritabilityTool:
             "h2_se": float(h2.group(2)) if h2 else None,
             "intercept": _search(r"Intercept:\s*([\-0-9.]+)", log),
             "ratio": _search(r"Ratio:\s*([\-0-9.]+)", log),
-            "log_tail": log[-800:],
         }
 
 
@@ -194,10 +208,24 @@ class LdscGeneticCorrelationTool:
             return {
                 "error": "Missing required parameter(s): sumstats_path_1, sumstats_path_2"
             }
-        ref = _ref(arguments.get("ref_ld_chr"), "eur_w_ld_chr/")
-        w = _ref(
-            arguments.get("w_ld_chr") or arguments.get("ref_ld_chr"), "eur_w_ld_chr/"
-        )
+        try:
+            s1 = str(
+                resolve_remote_data_path(
+                    s1, allowed_suffixes={".sumstats", ".sumstats.gz"}
+                )
+            )
+            s2 = str(
+                resolve_remote_data_path(
+                    s2, allowed_suffixes={".sumstats", ".sumstats.gz"}
+                )
+            )
+            ref = _ref(arguments.get("ref_ld_chr"), "eur_w_ld_chr/")
+            w = _ref(
+                arguments.get("w_ld_chr") or arguments.get("ref_ld_chr"),
+                "eur_w_ld_chr/",
+            )
+        except ValueError as exc:
+            return {"error": f"Invalid LDSC input: {exc}"}
 
         res = _run_ldsc(["--rg", f"{s1},{s2}", "--ref-ld-chr", ref, "--w-ld-chr", w])
         if "error" in res:
@@ -211,7 +239,6 @@ class LdscGeneticCorrelationTool:
                 r"Genetic Correlation:\s*[\-0-9.]+\s*\(([\-0-9.]+)\)", log
             ),
             "p_value": _search(r"P:\s*([\-0-9.eE]+)", log),
-            "log_tail": log[-800:],
         }
 
 

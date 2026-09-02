@@ -42,35 +42,26 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "gene_id": {
-                                    "type": "string",
-                                    "description": "Queried KEGG gene ID"
-                                },
-                                "pathway_count": {
-                                    "type": "integer",
-                                    "description": "Number of pathways the gene participates in"
-                                },
-                                "pathways": {
-                                    "type": "array",
-                                    "description": "List of KEGG pathways with IDs and names",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "pathway_id": {"type": "string"},
-                                            "pathway_name": {"type": "string"}
-                                        }
-                                    }
+                        "gene_id": {
+                            "type": "string",
+                            "description": "Queried KEGG gene ID"
+                        },
+                        "pathway_count": {
+                            "type": "integer",
+                            "description": "Number of pathways the gene participates in"
+                        },
+                        "pathways": {
+                            "type": "array",
+                            "description": "List of KEGG pathways with IDs and names",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "pathway_id": {"type": "string"},
+                                    "pathway_name": {"type": "string"}
                                 }
                             }
-                        },
-                        "metadata": {
-                            "type": "object"
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -114,33 +105,24 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "pathway_id": {
-                                    "type": "string",
-                                    "description": "KEGG pathway ID"
-                                },
-                                "pathway_name": {
-                                    "type": "string",
-                                    "description": "Pathway name and species"
-                                },
-                                "gene_count": {
-                                    "type": "integer",
-                                    "description": "Number of genes in the pathway"
-                                },
-                                "genes": {
-                                    "type": "array",
-                                    "description": "List of KEGG gene IDs in the pathway",
-                                    "items": {"type": "string"}
-                                }
-                            }
+                        "pathway_id": {
+                            "type": "string",
+                            "description": "KEGG pathway ID"
                         },
-                        "metadata": {
-                            "type": "object"
+                        "pathway_name": {
+                            "type": "string",
+                            "description": "Pathway name and species"
+                        },
+                        "gene_count": {
+                            "type": "integer",
+                            "description": "Number of genes in the pathway"
+                        },
+                        "genes": {
+                            "type": "array",
+                            "description": "List of KEGG gene IDs in the pathway",
+                            "items": {"type": "string"}
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -184,50 +166,41 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "compound_id": {
-                                    "type": "string",
-                                    "description": "KEGG compound ID"
-                                },
-                                "names": {
-                                    "type": "array",
-                                    "description": "Compound names (common and systematic)",
-                                    "items": {"type": "string"}
-                                },
-                                "formula": {
-                                    "type": ["string", "null"],
-                                    "description": "Chemical formula"
-                                },
-                                "exact_mass": {
-                                    "type": ["number", "null"],
-                                    "description": "Exact mass in Da"
-                                },
-                                "mol_weight": {
-                                    "type": ["number", "null"],
-                                    "description": "Molecular weight in Da"
-                                },
-                                "pathways": {
-                                    "type": "object",
-                                    "description": "Map of pathway IDs to names"
-                                },
-                                "enzymes": {
-                                    "type": "array",
-                                    "description": "EC numbers of enzymes using this compound",
-                                    "items": {"type": "string"}
-                                },
-                                "dblinks": {
-                                    "type": "object",
-                                    "description": "Cross-references to other databases (PubChem, ChEBI, DrugBank, etc.)"
-                                }
-                            }
+                        "compound_id": {
+                            "type": "string",
+                            "description": "KEGG compound ID"
                         },
-                        "metadata": {
-                            "type": "object"
+                        "names": {
+                            "type": "array",
+                            "description": "Compound names (common and systematic)",
+                            "items": {"type": "string"}
+                        },
+                        "formula": {
+                            "type": ["string", "null"],
+                            "description": "Chemical formula"
+                        },
+                        "exact_mass": {
+                            "type": ["number", "null"],
+                            "description": "Exact mass in Da"
+                        },
+                        "mol_weight": {
+                            "type": ["number", "null"],
+                            "description": "Molecular weight in Da"
+                        },
+                        "pathways": {
+                            "type": "object",
+                            "description": "Map of pathway IDs to names"
+                        },
+                        "enzymes": {
+                            "type": "array",
+                            "description": "EC numbers of enzymes using this compound",
+                            "items": {"type": "string"}
+                        },
+                        "dblinks": {
+                            "type": "object",
+                            "description": "Cross-references to other databases (ChEBI, DrugBank, CAS, LIPIDMAPS, etc.). KEGG's PubChem cross-reference is a PubChem *substance* ID and is therefore returned as 'PubChem_SID' -- it is not a CID and must not be passed to CID-based tools. Resolve it first, e.g. PubChem PUG-REST /substance/sid/{sid}/cids."
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -294,39 +267,30 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "search_field": {
-                                    "type": "string",
-                                    "description": "Which field was searched: exact_mass, mol_weight, formula, or name"
-                                },
-                                "query": {
-                                    "type": "string",
-                                    "description": "The submitted query value"
-                                },
-                                "count": {
-                                    "type": "integer",
-                                    "description": "Number of candidate compounds returned"
-                                },
-                                "compounds": {
-                                    "type": "array",
-                                    "description": "Candidate KEGG compounds",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "compound_id": {"type": "string"},
-                                            "description": {"type": "string"}
-                                        }
-                                    }
+                        "search_field": {
+                            "type": "string",
+                            "description": "Which field was searched: exact_mass, mol_weight, formula, or name"
+                        },
+                        "query": {
+                            "type": "string",
+                            "description": "The submitted query value"
+                        },
+                        "count": {
+                            "type": "integer",
+                            "description": "Number of candidate compounds returned"
+                        },
+                        "compounds": {
+                            "type": "array",
+                            "description": "Candidate KEGG compounds",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "compound_id": {"type": "string"},
+                                    "description": {"type": "string"}
                                 }
                             }
-                        },
-                        "metadata": {
-                            "type": "object"
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -374,48 +338,41 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "module_id": {"type": "string"},
-                                "name": {"type": "string", "description": "Module name"},
-                                "definition": {"type": "string", "description": "Boolean K-number reaction-step expression"},
-                                "class": {"type": "string", "description": "CLASS hierarchy string"},
-                                "reactions": {
-                                    "type": "array",
-                                    "description": "Member reactions with their definitions",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "reaction_id": {"type": "string"},
-                                            "definition": {"type": "string"}
-                                        }
-                                    }
-                                },
-                                "compounds": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "compound_id": {"type": "string"},
-                                            "name": {"type": "string"}
-                                        }
-                                    }
-                                },
-                                "orthology": {
-                                    "type": "array",
-                                    "description": "ORTHOLOGY lines (KO groups with EC/RN annotations)",
-                                    "items": {"type": "string"}
-                                },
-                                "pathways": {
-                                    "type": "object",
-                                    "description": "Parent pathway IDs to names"
+                        "module_id": {"type": "string"},
+                        "name": {"type": "string", "description": "Module name"},
+                        "definition": {"type": "string", "description": "Boolean K-number reaction-step expression"},
+                        "class": {"type": "string", "description": "CLASS hierarchy string"},
+                        "reactions": {
+                            "type": "array",
+                            "description": "Member reactions with their definitions",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "reaction_id": {"type": "string"},
+                                    "definition": {"type": "string"}
                                 }
                             }
                         },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["data"]
+                        "compounds": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "compound_id": {"type": "string"},
+                                    "name": {"type": "string"}
+                                }
+                            }
+                        },
+                        "orthology": {
+                            "type": "array",
+                            "description": "ORTHOLOGY lines (KO groups with EC/RN annotations)",
+                            "items": {"type": "string"}
+                        },
+                        "pathways": {
+                            "type": "object",
+                            "description": "Parent pathway IDs to names"
+                        }
+                    }
                 },
                 {
                     "type": "object",
@@ -461,36 +418,29 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "reaction_id": {"type": "string"},
-                                "name": {"type": "string"},
-                                "definition": {"type": "string", "description": "Human-readable reaction equation"},
-                                "equation": {"type": "string", "description": "Balanced equation with KEGG C-number stoichiometry"},
-                                "enzymes": {
-                                    "type": "array",
-                                    "description": "Catalyzing EC numbers",
-                                    "items": {"type": "string"}
-                                },
-                                "rclass": {
-                                    "type": "array",
-                                    "description": "Reaction class (RCLASS) codes",
-                                    "items": {"type": "string"}
-                                },
-                                "pathways": {
-                                    "type": "object",
-                                    "description": "Parent pathway IDs to names"
-                                },
-                                "modules": {
-                                    "type": "object",
-                                    "description": "Parent module IDs to names"
-                                }
-                            }
+                        "reaction_id": {"type": "string"},
+                        "name": {"type": "string"},
+                        "definition": {"type": "string", "description": "Human-readable reaction equation"},
+                        "equation": {"type": "string", "description": "Balanced equation with KEGG C-number stoichiometry"},
+                        "enzymes": {
+                            "type": "array",
+                            "description": "Catalyzing EC numbers",
+                            "items": {"type": "string"}
                         },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["data"]
+                        "rclass": {
+                            "type": "array",
+                            "description": "Reaction class (RCLASS) codes",
+                            "items": {"type": "string"}
+                        },
+                        "pathways": {
+                            "type": "object",
+                            "description": "Parent pathway IDs to names"
+                        },
+                        "modules": {
+                            "type": "object",
+                            "description": "Parent module IDs to names"
+                        }
+                    }
                 },
                 {
                     "type": "object",
@@ -540,39 +490,32 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "ec_number": {"type": "string"},
-                                "names": {
-                                    "type": "array",
-                                    "description": "Accepted name and synonyms",
-                                    "items": {"type": "string"}
-                                },
-                                "class": {
-                                    "type": "array",
-                                    "description": "3-level EC CLASS hierarchy lines",
-                                    "items": {"type": "string"}
-                                },
-                                "sysname": {"type": "string", "description": "Systematic name"},
-                                "reaction": {"type": "string", "description": "Catalyzed reaction"},
-                                "substrates": {
-                                    "type": "array",
-                                    "items": {"type": "string"}
-                                },
-                                "products": {
-                                    "type": "array",
-                                    "items": {"type": "string"}
-                                },
-                                "orthology": {
-                                    "type": "object",
-                                    "description": "KO ortholog IDs to descriptions"
-                                }
-                            }
+                        "ec_number": {"type": "string"},
+                        "names": {
+                            "type": "array",
+                            "description": "Accepted name and synonyms",
+                            "items": {"type": "string"}
                         },
-                        "metadata": {"type": "object"}
-                    },
-                    "required": ["data"]
+                        "class": {
+                            "type": "array",
+                            "description": "3-level EC CLASS hierarchy lines",
+                            "items": {"type": "string"}
+                        },
+                        "sysname": {"type": "string", "description": "Systematic name"},
+                        "reaction": {"type": "string", "description": "Catalyzed reaction"},
+                        "substrates": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "products": {
+                            "type": "array",
+                            "items": {"type": "string"}
+                        },
+                        "orthology": {
+                            "type": "object",
+                            "description": "KO ortholog IDs to descriptions"
+                        }
+                    }
                 },
                 {
                     "type": "object",

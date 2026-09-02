@@ -8,7 +8,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search"],
+          "enum": [
+            "search"
+          ],
           "default": "search"
         },
         "query": {
@@ -19,7 +21,11 @@
         "item_type": {
           "type": "string",
           "description": "Type of item to search",
-          "enum": ["File", "Experiment", "Biosource"],
+          "enum": [
+            "File",
+            "Experiment",
+            "Biosource"
+          ],
           "default": "File"
         },
         "file_type": {
@@ -47,12 +53,24 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "num_results": {"type": "integer"},
-        "total": {"type": "integer"},
-        "results": {"type": "array"},
-        "search_url": {"type": "string"},
-        "error": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "num_results": {
+          "type": "integer"
+        },
+        "total": {
+          "type": "integer"
+        },
+        "results": {
+          "type": "array"
+        },
+        "search_url": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
@@ -63,7 +81,10 @@
         "item_type": "File",
         "limit": 10
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search"
+    }
   },
   {
     "name": "FourDN_get_file_metadata",
@@ -74,7 +95,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_file_metadata"],
+          "enum": [
+            "get_file_metadata"
+          ],
           "default": "get_file_metadata"
         },
         "file_accession": {
@@ -87,20 +110,55 @@
           "default": false
         }
       },
-      "required": ["file_accession"]
+      "required": [
+        "file_accession"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "accession": {"type": "string"},
-        "file_type": {"type": ["string", "null"]},
-        "file_format": {"type": ["string", "null"]},
-        "file_size": {"type": ["integer", "null"]},
-        "description": {"type": ["string", "null"]},
-        "download_url": {"type": "string"},
-        "metadata": {"type": ["object", "null"]},
-        "error": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "accession": {
+          "type": "string"
+        },
+        "file_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "file_format": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "file_size": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "download_url": {
+          "type": "string"
+        },
+        "metadata": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "error": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
@@ -109,7 +167,10 @@
         "operation": "get_file_metadata",
         "file_accession": "4DNFIIA7E3HL"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_file_metadata"
+    }
   },
   {
     "name": "FourDN_get_experiment_metadata",
@@ -120,7 +181,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_experiment_metadata"],
+          "enum": [
+            "get_experiment_metadata"
+          ],
           "default": "get_experiment_metadata"
         },
         "experiment_accession": {
@@ -133,22 +196,55 @@
           "default": false
         }
       },
-      "required": ["experiment_accession"]
+      "required": [
+        "experiment_accession"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "accession": {"type": "string"},
-        "experiment_type": {"type": ["string", "null"]},
-        "biosample": {"type": "object"},
-        "biosource": {"type": "array"},
-        "biosource_summary": {"type": "string"},
-        "description": {"type": ["string", "null"]},
-        "data_status": {"type": "string"},
-        "files": {"type": "array"},
-        "metadata": {"type": ["object", "null"]},
-        "error": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "accession": {
+          "type": "string"
+        },
+        "experiment_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "biosample": {
+          "type": "object"
+        },
+        "biosource": {
+          "type": "array"
+        },
+        "biosource_summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "data_status": {
+          "type": "string"
+        },
+        "files": {
+          "type": "array"
+        },
+        "metadata": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "error": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
@@ -157,7 +253,10 @@
         "operation": "get_experiment_metadata",
         "experiment_accession": "4DNEXHVF8WA9"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_experiment_metadata"
+    }
   },
   {
     "name": "FourDN_get_download_url",
@@ -168,7 +267,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["download_file_url"],
+          "enum": [
+            "download_file_url"
+          ],
           "default": "download_file_url"
         },
         "file_accession": {
@@ -176,18 +277,34 @@
           "description": "4DN file accession (e.g., '4DNFIIA7E3HL'). Obtain by searching with FourDN_search_data (item_type='File')."
         }
       },
-      "required": ["file_accession"]
+      "required": [
+        "file_accession"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "accession": {"type": "string"},
-        "download_url": {"type": "string"},
-        "drs_url": {"type": "string"},
-        "note": {"type": "string"},
-        "instruction": {"type": "string"},
-        "error": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "accession": {
+          "type": "string"
+        },
+        "download_url": {
+          "type": "string"
+        },
+        "drs_url": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "instruction": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       },
       "additionalProperties": true
     },
@@ -196,6 +313,9 @@
         "operation": "download_file_url",
         "file_accession": "4DNFIIA7E3HL"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "download_file_url"
+    }
   }
 ]

@@ -1,7 +1,7 @@
 [
     {
         "name": "Pharos_get_target",
-        "description": "Get detailed drug target information from Pharos/TCRD by gene symbol or UniProt ID. Returns Target Development Level (Tdark/Tbio/Tchem/Tclin), protein family, diseases, ligands, and druggability data. Essential for identifying understudied proteins.",
+        "description": "Get detailed drug target information from Pharos/TCRD by gene symbol or UniProt ID. Returns Target Development Level (Tdark/Tbio/Tchem/Tclin -- Pharos' druggability classification), protein family, novelty score, publication count, associated diseases (full per-disease association counts plus the top 10 diseases with MONDO IDs), and ligand/drug counts plus the top 10 ligands. Essential for identifying understudied proteins. For ligand bioactivity values use Pharos_get_target_ligands.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -32,18 +32,68 @@
             "properties": {
                 "status": {"type": "string", "enum": ["success", "error"]},
                 "data": {
-                    "type": "object",
+                    "type": ["object", "null"],
+                    "description": "Target record, or null when no target matches (see 'message').",
                     "properties": {
-                        "name": {"type": "string"},
-                        "gene": {"type": "string"},
-                        "accession": {"type": "string"},
-                        "idgFamily": {"type": "string"},
-                        "idgTDL": {"type": "string"},
-                        "novelty": {"type": "number"},
-                        "diseases": {"type": "array"},
-                        "ligands": {"type": "array"}
+                        "name": {"type": "string", "description": "Protein name."},
+                        "sym": {"type": "string", "description": "HGNC gene symbol."},
+                        "uniprot": {"type": "string", "description": "UniProt accession."},
+                        "tdl": {"type": "string", "description": "Target Development Level: Tclin/Tchem/Tbio/Tdark. Pharos' druggability classification."},
+                        "fam": {"type": "string", "description": "Pharos protein family (e.g. 'Enzyme', 'GPCR', 'Kinase')."},
+                        "novelty": {"type": "number", "description": "Pharos novelty score."},
+                        "description": {"type": "string", "description": "Gene/protein summary text."},
+                        "publicationCount": {"type": "integer"},
+                        "diseaseCounts": {
+                            "type": "array",
+                            "description": "One entry per associated disease: {name, value} where value is the association count. This is the complete list.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {"type": "string"},
+                                    "value": {"type": "integer"}
+                                }
+                            }
+                        },
+                        "disease_count": {"type": "integer", "description": "Number of entries in diseaseCounts."},
+                        "diseases": {
+                            "type": "array",
+                            "description": "Top 10 associated diseases only (not the full set -- see diseaseCounts).",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {"type": "string"},
+                                    "associationCount": {"type": "integer"},
+                                    "mondoID": {"type": ["string", "null"]}
+                                }
+                            }
+                        },
+                        "ligandCounts": {
+                            "type": "array",
+                            "description": "Totals for this target: {name: 'ligand'|'drug', value: count}.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {"type": "string"},
+                                    "value": {"type": "integer"}
+                                }
+                            }
+                        },
+                        "ligands": {
+                            "type": "array",
+                            "description": "Top 10 ligands only (not the full set -- see ligandCounts). Bioactivity values are not included here; use Pharos_get_target_ligands.",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "ligid": {"type": "string"},
+                                    "name": {"type": "string"},
+                                    "isdrug": {"type": "boolean"}
+                                }
+                            }
+                        },
+                        "ligands_note": {"type": "string", "description": "States that 'diseases'/'ligands' are truncated samples."}
                     }
                 },
+                "message": {"type": "string", "description": "Present with data=null when no target matched."},
                 "error": {"type": "string"}
             }
         },
@@ -341,7 +391,7 @@
     },
     {
         "name": "Pharos_get_ligand_targets",
-        "description": "Get all protein targets for a drug or ligand from Pharos/TCRD (reverse polypharmacology). Given one drug/ligand (by name or Pharos ligand ID), returns its SMILES, total targetCount, and every recorded bioactivity with the target (gene symbol, Target Development Level Tclin/Tchem/Tbio/Tdark, protein family), activity type, value, and mechanism of action. Use to map a drug's full target landscape and off-targets.",
+        "description": "Get all protein targets for a drug or ligand from Pharos/TCRD (reverse polypharmacology). Given one drug/ligand (by name or Pharos ligand ID), returns its SMILES, total targetCount, and every recorded bioactivity with the target (gene symbol, Target Development Level Tclin/Tchem/Tbio/Tdark, protein family), activity type (IC50/Ki/EC50/Kd), value (typically -log10 molar / pActivity), and mechanism of action. Note the value is a pActivity, NOT nanomolar: a Ki of 9.46 means pKi 9.46 = 0.35 nM. Use to map a drug's full target landscape and off-targets.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -410,13 +460,15 @@
                         "type": [
                           "string",
                           "null"
-                        ]
+                        ],
+                        "description": "Bioactivity measure: IC50, Ki, EC50 or Kd."
                       },
                       "value": {
                         "type": [
                           "number",
                           "null"
-                        ]
+                        ],
+                        "description": "Activity value, typically -log10 molar / pActivity -- NOT nanomolar. A Ki of 9.46 means pKi 9.46, i.e. 0.35 nM. Convert with nM = 10^(9 - value)."
                       },
                       "moa": {
                         "type": [

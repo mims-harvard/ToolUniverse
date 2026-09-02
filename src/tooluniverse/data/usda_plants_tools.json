@@ -1,7 +1,7 @@
 [
     {
         "name": "USDA_plants_get_profile",
-        "description": "Get a USDA PLANTS Database profile for a plant by its PLANTS symbol (e.g. 'ABBA' = balsam fir): scientific name, common name, taxonomic group/rank, duration (annual/perennial), growth habits (tree/shrub/forb), native status, synonyms, and US distribution FIPS codes. Authoritative US plant taxonomy. No API key required.",
+        "description": "Get a USDA PLANTS Database profile for a plant by its PLANTS symbol (e.g. 'ABBA' = balsam fir): scientific name, common name, taxonomic group/rank, duration (annual/perennial), growth habits (tree/shrub/forb), and synonyms. 'native_statuses' gives region-level (e.g. 'L48', 'CAN') native/introduced status; fine-grained per-state/county FIPS distribution codes are not returned by this endpoint (fips_distribution is included for forward-compatibility but is null in the current USDA API response). Authoritative US plant taxonomy. No API key required.",
         "parameter": {"type": "object", "properties": {
             "symbol": {"type": "string", "description": "USDA PLANTS symbol, e.g. 'ABBA' (balsam fir), 'ACRU' (red maple), 'QUAL' (white oak)."}
         }, "required": ["symbol"]},

@@ -37,76 +37,57 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "region": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "motif_count": {
-                  "type": "integer"
-                },
-                "motif_features": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "stable_id": {
-                        "type": "string"
-                      },
-                      "transcription_factor_complex": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "binding_matrix_stable_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "score": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "start": {
-                        "type": "integer"
-                      },
-                      "end": {
-                        "type": "integer"
-                      },
-                      "strand": {
-                        "type": "integer"
-                      },
-                      "seq_region_name": {
-                        "type": "string"
-                      }
-                    }
+            "region": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "motif_count": {
+              "type": "integer"
+            },
+            "motif_features": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stable_id": {
+                    "type": "string"
+                  },
+                  "transcription_factor_complex": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "binding_matrix_stable_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "start": {
+                    "type": "integer"
+                  },
+                  "end": {
+                    "type": "integer"
+                  },
+                  "strand": {
+                    "type": "integer"
+                  },
+                  "seq_region_name": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -160,64 +141,45 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "region": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "element_count": {
-                  "type": "integer"
-                },
-                "constrained_elements": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "start": {
-                        "type": "integer"
-                      },
-                      "end": {
-                        "type": "integer"
-                      },
-                      "score": {
-                        "type": "number"
-                      },
-                      "strand": {
-                        "type": "integer"
-                      },
-                      "seq_region_name": {
-                        "type": "string"
-                      }
-                    }
+            "region": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "element_count": {
+              "type": "integer"
+            },
+            "constrained_elements": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "start": {
+                    "type": "integer"
+                  },
+                  "end": {
+                    "type": "integer"
+                  },
+                  "score": {
+                    "type": "number"
+                  },
+                  "strand": {
+                    "type": "integer"
+                  },
+                  "seq_region_name": {
+                    "type": "string"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -271,78 +233,59 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "stable_id": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "source": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "length": {
-                  "type": "integer"
-                },
-                "threshold": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "unit": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "max_position_sum": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "elements_string": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "associated_tfs": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "matrix": {
-                  "type": "object",
-                  "description": "Position weight matrix: position -> {A, C, G, T} counts"
-                }
+            "stable_id": {
+              "type": "string"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "length": {
+              "type": "integer"
+            },
+            "threshold": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "unit": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "max_position_sum": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "elements_string": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "associated_tfs": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             },
-            "metadata": {
+            "matrix": {
               "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+              "description": "Position weight matrix: position -> {A, C, G, T} counts"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

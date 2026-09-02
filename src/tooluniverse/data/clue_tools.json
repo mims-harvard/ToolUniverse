@@ -11,7 +11,8 @@
           "enum": [
             "search_signatures"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_signatures"
         },
         "pert_type": {
           "type": "string",
@@ -29,9 +30,7 @@
           "description": "Maximum number of results to return"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "array",
@@ -54,9 +53,12 @@
         "domain": "Drugs & Chemistry",
         "type": "secret",
         "register_url": "https://clue.io",
-        "purpose": "Query Connectivity Map drug–gene perturbation signatures for repurposing.",
+        "purpose": "Query Connectivity Map drug\u2013gene perturbation signatures for repurposing.",
         "without": "CLUE tools are blocked without it. The key is free."
       }
+    },
+    "fields": {
+      "operation": "search_signatures"
     }
   },
   {
@@ -71,7 +73,8 @@
           "enum": [
             "get_perturbation"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_perturbation"
         },
         "pert_id": {
           "type": [
@@ -88,9 +91,7 @@
           "description": "Perturbagen name (e.g., 'imatinib'). Mutually exclusive with pert_id."
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "array",
@@ -106,7 +107,10 @@
     ],
     "required_api_keys": [
       "CLUE_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_perturbation"
+    }
   },
   {
     "name": "CLUE_get_gene_expression",
@@ -120,7 +124,8 @@
           "enum": [
             "get_gene_expression"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_gene_expression"
         },
         "gene_symbol": {
           "type": "string",
@@ -134,9 +139,7 @@
           "description": "Maximum number of results"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "array",
@@ -152,7 +155,10 @@
     ],
     "required_api_keys": [
       "CLUE_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_gene_expression"
+    }
   },
   {
     "name": "CLUE_get_cell_lines",
@@ -166,7 +172,8 @@
           "enum": [
             "get_cell_lines"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_cell_lines"
         },
         "cell_id": {
           "type": [
@@ -183,9 +190,7 @@
           "description": "Maximum number of results"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "array",
@@ -201,7 +206,10 @@
     ],
     "required_api_keys": [
       "CLUE_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_cell_lines"
+    }
   },
   {
     "name": "CLUE_search_compounds",
@@ -215,7 +223,8 @@
           "enum": [
             "search_compounds"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_compounds"
         },
         "pert_iname": {
           "type": "string",
@@ -233,9 +242,7 @@
           "description": "Maximum number of results"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "array",
@@ -251,6 +258,9 @@
     ],
     "required_api_keys": [
       "CLUE_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "search_compounds"
+    }
   }
 ]

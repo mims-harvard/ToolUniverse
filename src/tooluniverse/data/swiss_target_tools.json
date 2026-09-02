@@ -11,7 +11,8 @@
           "enum": [
             "predict"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "predict"
         },
         "smiles": {
           "type": "string",
@@ -34,7 +35,6 @@
         }
       },
       "required": [
-        "operation",
         "smiles"
       ]
     },
@@ -129,7 +129,10 @@
         }
       ]
     },
-    "test_examples": []
+    "test_examples": [],
+    "fields": {
+      "operation": "predict"
+    }
   },
   {
     "name": "SwissTargetPrediction_organisms",
@@ -143,12 +146,11 @@
           "enum": [
             "get_organisms"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_organisms"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -200,6 +202,9 @@
       {
         "operation": "get_organisms"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_organisms"
+    }
   }
 ]

@@ -101,7 +101,11 @@ class EnsemblVariationExtTool(BaseTool):
                 "assembly": m.get("assembly_name"),
             }
 
-        # Process population data
+        # No `count` key here: Ensembl publishes no sample size or allele-number
+        # denominator, so the one this used to emit was null on every row and
+        # read as "measured, size unknown" beside a populated `allele_count`.
+        # (rs4244285 probe: 148 entries, `count` present in 0.) `allele_count`
+        # stays nullable -- the 2 TOPMed rows that omit it are real missing data.
         populations = []
         for pop in data.get("populations", []):
             populations.append(
@@ -110,7 +114,6 @@ class EnsemblVariationExtTool(BaseTool):
                     "allele": pop.get("allele"),
                     "frequency": pop.get("frequency"),
                     "allele_count": pop.get("allele_count"),
-                    "count": pop.get("count"),
                 }
             )
 

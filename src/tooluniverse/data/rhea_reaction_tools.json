@@ -2,7 +2,7 @@
   {
     "type": "RheaReactionTool",
     "name": "Rhea_get_reaction",
-    "description": "Fetch the full structured detail of a single Rhea biochemical reaction by its Rhea identifier. Rhea (SIB Swiss Institute of Bioinformatics) is an expert-curated knowledgebase of chemical and transport reactions, all linked to ChEBI compounds and EC numbers. Given a Rhea id (e.g. '10280' or 'RHEA:10280'), returns the chemical equation, the parsed ChEBI participants split into reactants and products (each with ChEBI id + compound name), the list of EC enzyme numbers, the count of curated enzymes, PubMed reference IDs, KEGG and MetaCyc cross-references, and the curation status plus balanced and transport flags. Use this to retrieve mechanistic detail for one reaction after finding it with Rhea_search_reactions / Rhea_search_by_ec / Rhea_search_by_chebi. No API key required.",
+    "description": "Fetch the full structured detail of a single Rhea biochemical reaction by its Rhea identifier. Rhea (SIB Swiss Institute of Bioinformatics) is an expert-curated knowledgebase of chemical and transport reactions, all linked to ChEBI compounds and EC numbers. Given a Rhea id (e.g. '10280' or 'RHEA:10280'), returns the chemical equation; reactants and products with identifiers, stoichiometric coefficients, and transport compartments; EC enzyme numbers; the count of curated enzymes; PubMed references; KEGG and MetaCyc cross-references; and curation, balance, and transport flags. Use this to retrieve mechanistic detail for one reaction after finding it with Rhea_search_reactions / Rhea_search_by_ec / Rhea_search_by_chebi. No API key required.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -63,6 +63,17 @@
                     "type": "boolean",
                     "description": "True if this participant is a generic/polymer reactive part (e.g. a protein residue like \"L-tyrosyl-[protein]\") rather than a discrete ChEBI compound."
                   },
+                  "stoichiometry": {
+                    "type": "string",
+                    "description": "Stoichiometric coefficient as represented by Rhea, including symbolic values such as n or 2n. A participant with no displayed coefficient is returned as \"1\"."
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Transport compartment such as \"in\" or \"out\"; null when Rhea specifies no compartment."
+                  },
                   "rhea_comp_id": {
                     "type": "string",
                     "description": "Rhea generic-compound id, e.g. \"RHEA-COMP:10136\". Present only when is_generic is true."
@@ -88,6 +99,17 @@
                   "is_generic": {
                     "type": "boolean",
                     "description": "True if this participant is a generic/polymer reactive part (e.g. a protein residue like \"L-tyrosyl-[protein]\") rather than a discrete ChEBI compound."
+                  },
+                  "stoichiometry": {
+                    "type": "string",
+                    "description": "Stoichiometric coefficient as represented by Rhea, including symbolic values such as n or 2n. A participant with no displayed coefficient is returned as \"1\"."
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Transport compartment such as \"in\" or \"out\"; null when Rhea specifies no compartment."
                   },
                   "rhea_comp_id": {
                     "type": "string",
@@ -154,13 +176,19 @@
       },
       {
         "rhea_id": "29467"
+      },
+      {
+        "rhea_id": "RHEA:18353"
+      },
+      {
+        "rhea_id": "10256"
       }
     ]
   },
   {
     "type": "RheaReactionTool",
     "name": "Rhea_get_reaction_participants",
-    "description": "Return just the structured ChEBI participants (reactants and products) of a single Rhea biochemical reaction, given its Rhea identifier (e.g. '16505' or 'RHEA:16505'). Each participant carries its ChEBI compound id and name. Lightweight alternative to Rhea_get_reaction when only the substrate/product compound lists are needed, for example when building or annotating a metabolic network. No API key required.",
+    "description": "Return the structured reactants and products of one Rhea biochemical reaction, including each participant's identifier, name, stoichiometric coefficient, and transport compartment. This is a lightweight alternative to Rhea_get_reaction when building or annotating a metabolic network. No API key required.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -206,6 +234,17 @@
                     "type": "boolean",
                     "description": "True if this participant is a generic/polymer reactive part (e.g. a protein residue like \"L-tyrosyl-[protein]\") rather than a discrete ChEBI compound."
                   },
+                  "stoichiometry": {
+                    "type": "string",
+                    "description": "Stoichiometric coefficient as represented by Rhea, including symbolic values such as n or 2n. A participant with no displayed coefficient is returned as \"1\"."
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Transport compartment such as \"in\" or \"out\"; null when Rhea specifies no compartment."
+                  },
                   "rhea_comp_id": {
                     "type": "string",
                     "description": "Rhea generic-compound id, e.g. \"RHEA-COMP:10136\". Present only when is_generic is true."
@@ -231,6 +270,17 @@
                   "is_generic": {
                     "type": "boolean",
                     "description": "True if this participant is a generic/polymer reactive part (e.g. a protein residue like \"L-tyrosyl-[protein]\") rather than a discrete ChEBI compound."
+                  },
+                  "stoichiometry": {
+                    "type": "string",
+                    "description": "Stoichiometric coefficient as represented by Rhea, including symbolic values such as n or 2n. A participant with no displayed coefficient is returned as \"1\"."
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Transport compartment such as \"in\" or \"out\"; null when Rhea specifies no compartment."
                   },
                   "rhea_comp_id": {
                     "type": "string",
@@ -271,6 +321,12 @@
       },
       {
         "rhea_id": "RHEA:10280"
+      },
+      {
+        "rhea_id": "RHEA:18353"
+      },
+      {
+        "rhea_id": "10256"
       }
     ]
   }
