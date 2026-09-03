@@ -1,18 +1,28 @@
-import requests
-import easyocr
 import re
 import zipfile
 from io import BytesIO
-from docx import Document
-from PIL import Image
 from urllib.parse import urljoin, urlparse
-from tooluniverse.uspto_tool import USPTOOpenDataPortalTool
+
+import requests
+from PIL import Image
+
 from tooluniverse.tool_registry import register_tool
+from tooluniverse.uspto_tool import USPTOOpenDataPortalTool
 
 try:
     import pymupdf as fitz
 except ImportError:  # PyMuPDF is an explicit, AGPL/commercial opt-in dependency.
     fitz = None
+
+try:
+    import easyocr
+except ImportError:  # EasyOCR pulls in PyTorch; explicit opt-in, not a base dep.
+    easyocr = None
+
+try:
+    from docx import Document
+except ImportError:  # python-docx is an explicit opt-in, not a base dependency.
+    Document = None
 
 
 _APPLICATION_NUMBER_PATTERN = re.compile(r"^[0-9]{8,16}$")
@@ -26,16 +36,47 @@ _MAX_OCR_PIXELS_PER_PAGE = 25_000_000
 _MAX_OCR_TOTAL_PIXELS = 250_000_000
 
 
-class _MissingPdfDependencyError(RuntimeError):
+class _MissingProviderDependencyError(RuntimeError):
+    """A required optional dependency for USPTO document extraction is missing."""
+
+
+class _MissingPdfDependencyError(_MissingProviderDependencyError):
+    pass
+
+
+class _MissingOcrDependencyError(_MissingProviderDependencyError):
+    pass
+
+
+class _MissingDocxDependencyError(_MissingProviderDependencyError):
     pass
 
 
 def _pdf_backend():
     if fitz is None:
         raise _MissingPdfDependencyError(
-            "PDF extraction requires the optional PyMuPDF dependency."
+            "PDF extraction requires the optional PyMuPDF dependency. "
+            "Install it with `pip install tooluniverse[pdf]`."
         )
     return fitz
+
+
+def _ocr_reader():
+    if easyocr is None:
+        raise _MissingOcrDependencyError(
+            "Scanned-PDF OCR requires the optional EasyOCR dependency. "
+            "Install it with `pip install tooluniverse[ocr]`."
+        )
+    return easyocr
+
+
+def _docx_backend():
+    if Document is None:
+        raise _MissingDocxDependencyError(
+            "MS_WORD document extraction requires the optional python-docx "
+            "dependency. Install it with `pip install tooluniverse[ocr]`."
+        )
+    return Document
 
 
 def _validate_uspto_download_url(url):
@@ -102,8 +143,13 @@ def _validate_docx_archive(document_bytes):
         with zipfile.ZipFile(BytesIO(document_bytes)) as archive:
             members = archive.infolist()
             if len(members) > _MAX_DOCX_MEMBERS:
-                raise ValueError("USPTO Word document contains too many archive members.")
-            if sum(member.file_size for member in members) > _MAX_DOCX_UNCOMPRESSED_BYTES:
+                raise ValueError(
+                    "USPTO Word document contains too many archive members."
+                )
+            if (
+                sum(member.file_size for member in members)
+                > _MAX_DOCX_UNCOMPRESSED_BYTES
+            ):
                 raise ValueError("USPTO Word document exceeds the expansion limit.")
             if any(member.flag_bits & 0x1 for member in members):
                 raise ValueError("USPTO Word document must not be encrypted.")
@@ -152,19 +198,18 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
         if not isinstance(arguments, dict):
             return {"error": "Arguments must be an object."}
         application_number = arguments.get("applicationNumberText")
-        if (
-            not isinstance(application_number, str)
-            or not _APPLICATION_NUMBER_PATTERN.fullmatch(application_number.strip())
-        ):
+        if not isinstance(
+            application_number, str
+        ) or not _APPLICATION_NUMBER_PATTERN.fullmatch(application_number.strip()):
             return {"error": "applicationNumberText must contain 8 to 16 digits."}
         try:
             result = self._run_provider(
                 {"applicationNumberText": application_number.strip()}
             )
-        except _MissingPdfDependencyError:
+        except _MissingProviderDependencyError as exc:
             return {
-                "error": "USPTO PDF extraction dependency is not installed.",
-                "hint": "Install the provider setup dependencies, including PyMuPDF, and retry.",
+                "error": "USPTO document extraction dependency is not installed.",
+                "hint": str(exc),
             }
         except (requests.RequestException, ValueError):
             return {"error": "USPTO document retrieval failed on the provider."}
@@ -191,7 +236,7 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
                 if doc.page_count > _MAX_OCR_PAGES:
                     raise ValueError("USPTO image-only PDF exceeds the OCR page limit.")
 
-                reader = easyocr.Reader(["en"], gpu=False)
+                reader = _ocr_reader().Reader(["en"], gpu=False)
                 pages_text = []
                 total_pixels = 0
                 for page in doc:
@@ -203,9 +248,7 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
                         or total_pixels > _MAX_OCR_TOTAL_PIXELS
                     ):
                         raise ValueError("USPTO PDF exceeds the OCR image limit.")
-                    img = Image.frombytes(
-                        "RGB", [pix.width, pix.height], pix.samples
-                    )
+                    img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
                     img_bytes = BytesIO()
                     img.save(img_bytes, format="PNG")
                     results = reader.readtext(img_bytes.getvalue(), detail=0)
@@ -258,7 +301,7 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
                 )
                 _validate_docx_archive(document_bytes)
                 buf = BytesIO(document_bytes)
-                docx = Document(buf)
+                docx = _docx_backend()(buf)
                 plain_text, extraction_truncated = _bounded_join_text(
                     p.text for p in docx.paragraphs
                 )
