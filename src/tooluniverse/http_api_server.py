@@ -35,7 +35,14 @@ from pydantic import BaseModel, Field
 
 from .execute_function import ToolUniverse
 from .logging_config import get_logger
-from .server_security import enforce_bind_security, get_api_token, token_matches
+from .server_security import (
+    enforce_bind_security,
+    get_api_token,
+    is_loopback_authority,
+    is_loopback_host,
+    is_loopback_origin,
+    token_matches,
+)
 
 logger = get_logger("HTTPAPIServer")
 
@@ -219,6 +226,38 @@ async def require_bearer_token(request, call_next):
                     "error": "Unauthorized: a valid Bearer token is required",
                     "error_type": "AuthenticationError",
                 },
+            )
+    return await call_next(request)
+
+
+@app.middleware("http")
+async def guard_host_and_origin(request, call_next):
+    """Reject requests whose Host/Origin do not name loopback, on loopback binds.
+
+    A server bound to 127.0.0.1 is not automatically safe from remote callers:
+    DNS rebinding lets a malicious webpage resolve its own origin to the
+    loopback address and become an in-browser client of this server, with a
+    ``Host`` header naming the attacker's domain rather than "localhost" and
+    (when the request is a fetch/XHR) an ``Origin`` header to match. This closes
+    that gap independent of whether a Bearer token is configured.
+
+    Skipped once the server is actually bound to a non-loopback interface:
+    that's an explicit operator opt-in that ``enforce_bind_security`` already
+    gates on a Bearer token, and the Host/Origin a legitimate remote caller
+    sends there is not expected to be loopback.
+    """
+    server = request.scope.get("server")
+    if server and is_loopback_host(server[0]):
+        if not is_loopback_authority(request.headers.get("host", "")):
+            return JSONResponse(
+                status_code=421,
+                content={"success": False, "error": "Misdirected Request"},
+            )
+        origin = request.headers.get("origin")
+        if origin and not is_loopback_origin(origin):
+            return JSONResponse(
+                status_code=403,
+                content={"success": False, "error": "Forbidden Origin"},
             )
     return await call_next(request)
 
