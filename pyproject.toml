@@ -68,6 +68,13 @@ pdf = [
     # it in implicitly.
     "pymupdf>=1.24.3",
 ]
+ocr = [
+    # Scanned-PDF text extraction for the USPTO downloader. EasyOCR pulls in
+    # PyTorch, a very large addition none of the other 600+ tools need, so keep
+    # it opt-in like `pdf` and out of the aggregate `all` extra.
+    "easyocr>=1.7",
+    "python-docx>=1.1",
+]
 # LLM provider SDKs. Both are imported lazily inside the client constructors in
 # llm_clients.py (AzureOpenAIClient, OpenAICompatibleClient, OpenRouterClient,
 # VLLMClient, GeminiClient) and in database_setup/embedder.py — never at module
