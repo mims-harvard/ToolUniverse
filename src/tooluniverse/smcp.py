@@ -1468,6 +1468,13 @@ class SMCP(FastMCP):
 
             enforce_bind_security(host)
 
+            # Binding to loopback is not, by itself, safe from remote browsers:
+            # DNS rebinding lets a malicious webpage resolve its own origin to
+            # 127.0.0.1 and reach this MCP endpoint as an in-browser client,
+            # with no Bearer token required. FastMCP validates Host/Origin
+            # itself once told to; ToolUniverse just needs to opt in.
+            kwargs.setdefault("host_origin_protection", "auto")
+
         # Build server URL based on transport
         if transport == "streamable-http" or transport == "http":
             self._server_url = f"http://{host}:{port}/mcp"
