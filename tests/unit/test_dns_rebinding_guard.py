@@ -8,7 +8,7 @@ matching Origin header. The prior bind-time-only guard
 (``enforce_bind_security``) did not defend against this because it only ever
 inspects the *configured bind address*, never the *inbound request*.
 
-Covers three independent wirings of the same fix:
+Covers four independent wirings of the same fix:
 
 1. ``server_security.is_loopback_authority`` / ``is_loopback_origin`` — the
    request-time helpers.
@@ -17,6 +17,11 @@ Covers three independent wirings of the same fix:
 3. FastMCP-based servers (the main SMCP server and every standalone
    ``remote/*`` MCP tool server) opting in to FastMCP's own
    ``host_origin_protection="auto"`` via ``run()`` / ``run_fastmcp_server``.
+4. ``ToolGraphWebUI``'s Flask ``before_request`` hook, which reuses the same
+   helpers directly (Flask has no FastMCP-equivalent built-in) — found while
+   verifying the fix for #531 and tracked separately as #557, since
+   ``POST /api/load_graph`` deserializes a caller-supplied pickle path and was
+   reachable with a spoofed Host/Origin exactly like the original report.
 """
 
 import pytest
@@ -210,3 +215,71 @@ def test_smcp_run_stdio_does_not_set_host_origin_protection(monkeypatch):
     server.run(transport="stdio")
 
     assert "host_origin_protection" not in captured
+
+
+# --------------------------------------------------------------------------- #
+# ToolGraphWebUI: Flask before_request guard (#557)
+# --------------------------------------------------------------------------- #
+
+
+def _graph_ui_client():
+    pytest.importorskip("flask")
+    from tooluniverse.tool_graph_web_ui import ToolGraphWebUI
+
+    ui = ToolGraphWebUI(graph_data_path=None)
+    return ui, ui.app.test_client()
+
+
+def test_graph_ui_rejects_dns_rebinding_host():
+    """Default-constructed UI defaults to loopback (matching run()'s default),
+    so the guard is active without needing to actually start the server."""
+    _, client = _graph_ui_client()
+    resp = client.get("/api/stats", headers={"Host": "evil.example"})
+    assert resp.status_code == 421
+
+
+def test_graph_ui_allows_loopback_host():
+    _, client = _graph_ui_client()
+    resp = client.get("/api/stats")
+    assert resp.status_code == 404  # no graph loaded; guard let it through
+
+
+def test_graph_ui_rejects_cross_origin_browser_request():
+    _, client = _graph_ui_client()
+    resp = client.get("/api/stats", headers={"Origin": "http://evil.example"})
+    assert resp.status_code == 403
+
+
+def test_graph_ui_allows_loopback_origin():
+    _, client = _graph_ui_client()
+    resp = client.get("/api/stats", headers={"Origin": "http://127.0.0.1:5000"})
+    assert resp.status_code == 404
+
+
+def test_graph_ui_dangerous_load_graph_endpoint_is_also_guarded():
+    """POST /api/load_graph deserializes a caller-supplied pickle path — the
+    endpoint the original finding centered on."""
+    _, client = _graph_ui_client()
+    resp = client.post(
+        "/api/load_graph",
+        json={"path": "/tmp/anything.pkl"},
+        headers={"Host": "evil.example"},
+    )
+    assert resp.status_code == 421
+
+
+def test_graph_ui_skipped_on_explicit_non_loopback_bind():
+    ui, client = _graph_ui_client()
+    ui._bind_host = "0.0.0.0"  # what run() would set for an explicit remote bind
+    resp = client.get("/api/stats", headers={"Host": "evil.example"})
+    assert resp.status_code == 404  # guard is a no-op; not what rejected it
+
+
+def test_graph_ui_run_sets_bind_host(monkeypatch):
+    pytest.importorskip("flask")
+    from tooluniverse.tool_graph_web_ui import ToolGraphWebUI
+
+    ui = ToolGraphWebUI(graph_data_path=None)
+    monkeypatch.setattr(ui.app, "run", lambda **kw: None)  # don't actually bind
+    ui.run(host="127.0.0.1", port=5000)
+    assert ui._bind_host == "127.0.0.1"
