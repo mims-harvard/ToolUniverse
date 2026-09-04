@@ -1282,7 +1282,11 @@ default_tool_files = {
     # ADA/AHA/ACC/NCCN - Clinical society guidelines (diabetes, cardiology, oncology)
     "ada_aha_nccn": os.path.join(current_dir, "data", "ada_aha_nccn_tools.json"),
     # CLUE.io - L1000 Connectivity Map perturbation signatures
-    "clue": os.path.join(current_dir, "data", "clue_tools.json"),
+    # Archived at: src/tooluniverse/data/broken_apis/clue_tools.json
+    # clue.io retired the site and its tools (effective 2026-01-31, financial
+    # constraints, no new API keys issued); use geo_* tools for the underlying
+    # public data instead.
+    # "clue": os.path.join(current_dir, "data", "clue_tools.json"),
     # TIMER2.0 - Tumor immune estimation and gene-immune correlations
     "timer": os.path.join(current_dir, "data", "timer_tools.json"),
     # PROTAC-DB - PROTAC compound database
