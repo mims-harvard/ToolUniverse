@@ -11,6 +11,8 @@ from flask import Flask, render_template, jsonify, request
 import pickle
 from typing import Dict, Any, List, Optional
 
+from .server_security import is_loopback_authority, is_loopback_host, is_loopback_origin
+
 
 class ToolGraphWebUI:
     """Web interface for visualizing tool composition graphs."""
@@ -19,12 +21,37 @@ class ToolGraphWebUI:
         self.app = Flask(__name__, template_folder="templates", static_folder="static")
         self.graph_data: Optional[Dict[str, Any]] = None
         self.graph_data_path = graph_data_path
+        # The bind host run() will actually use; loopback until told otherwise,
+        # so the request guard below defaults to protecting the common case.
+        self._bind_host = "127.0.0.1"
 
         self._setup_routes()
         self._load_graph_data()
 
     def _setup_routes(self):
         """Setup Flask routes."""
+
+        @self.app.before_request
+        def _guard_host_and_origin():
+            """Reject requests whose Host/Origin do not name loopback, on loopback binds.
+
+            A server bound to 127.0.0.1 is not automatically safe from remote
+            callers: DNS rebinding lets a malicious webpage resolve its own origin
+            to the loopback address and become an in-browser client of this
+            server, with a Host header naming the attacker's domain rather than
+            "localhost" — reaching routes like POST /api/load_graph (which
+            deserializes a caller-supplied pickle path) with no authentication.
+            Skipped once bound to a non-loopback interface, which
+            enforce_bind_security already gates on a Bearer token.
+            """
+            if not is_loopback_host(self._bind_host):
+                return None
+            if not is_loopback_authority(request.host):
+                return jsonify({"error": "Misdirected Request"}), 421
+            origin = request.headers.get("Origin")
+            if origin and not is_loopback_origin(origin):
+                return jsonify({"error": "Forbidden Origin"}), 403
+            return None
 
         @self.app.route("/")
         def index():
@@ -245,8 +272,9 @@ class ToolGraphWebUI:
         never be enabled on a network-reachable bind. Binding to a non-loopback
         host without TOOLUNIVERSE_API_TOKEN is refused.
         """
-        from .server_security import enforce_bind_security, is_loopback_host
+        from .server_security import enforce_bind_security
 
+        self._bind_host = host
         enforce_bind_security(host)
         if debug and not is_loopback_host(host):
             raise RuntimeError(
