@@ -29,6 +29,18 @@ dependencies = [
     "huggingface_hub>=0.34.0",
     "jsonpath-ng>=1.6.0",
     "rcsb-api>=1.4.0",
+    # Imported at module scope by mcp_client_tool.py for the websocket
+    # transport. It reached installs only as a transitive of fastmcp's
+    # `fastmcp-slim[server]` extra, so a reshuffle upstream would have broken
+    # the client with no local change. No upper bound on purpose: the
+    # google-genai cap is what pushes downstream resolvers onto stale
+    # tooluniverse releases (issue #526), and that stays inside its extra.
+    "websockets>=13.0",
+    # `from urllib3.util.retry import Retry` in uspto_tool.py and
+    # `urllib3.disable_warnings` in euhealth/euhealth_live.py. requests already
+    # requires urllib3>=1.26,<3, so this adds no new constraint; it just stops
+    # a direct import from depending on another package's dependency.
+    "urllib3>=1.26",
     # Imported by dose_response, survival, nca, drug_synergy, metaboanalyst,
     # timer and two remote tools. It was previously reaching installs only as a
     # transitive of that `fitz` placeholder (which required nibabel, nipype,
@@ -45,14 +57,25 @@ dependencies = [
     "aiohttp",
     "beautifulsoup4>=4.12.0",
     "python-dotenv>=1.0.0",
-    # markitdown[all] (~32 MB: SpeechRecognition, youtube-transcript-api, pydub,
-    # azure-ai-documentintelligence). The broad converter set is deliberate: the
-    # convert_to_markdown tool accepts arbitrary supported resources. Upstream
-    # youtube-transcript-api currently declares Python <3.14, so Python 3.14+
-    # receives every MarkItDown converter except YouTube transcription. Keeping
-    # that one incompatible converter must not make the whole SDK inconsistent.
-    "markitdown[all]>=0.1.0; python_version < '3.14'",
-    "markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx]>=0.1.0; python_version >= '3.14'",
+    # MarkItDown (~32 MB: SpeechRecognition, youtube-transcript-api, pydub,
+    # azure-ai-documentintelligence). The broad converter set is deliberate:
+    # unified_guideline_tools.py imports markitdown at module scope and
+    # convert_to_markdown takes an unconstrained URI with no format allowlist.
+    #
+    # These are MarkItDown's own converter extras listed one by one instead of
+    # its `all` extra, and that difference is load-bearing (issue #527):
+    #   * `all` pins youtube-transcript-api~=1.0.0, and every 1.0.x release
+    #     declares Requires-Python <3.14, which transitively capped the Python
+    #     versions tooluniverse could be installed on. The `youtube-transcription`
+    #     extra leaves that dependency unpinned, so 1.2.3+ (Requires-Python
+    #     <3.15) resolves and the cap is gone.
+    #   * Since markitdown 0.1.6 `all` also requires
+    #     azure-ai-contentunderstanding>=1.2.0b1, which has no stable release on
+    #     PyPI, so default resolvers silently backtrack `markitdown[all]` to
+    #     0.1.5. Naming the extras keeps installs on current MarkItDown.
+    # Add `az-content-understanding` back once that dependency ships a stable
+    # release; adding it today makes the whole requirement unresolvable.
+    "markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx,youtube-transcription]>=0.1.0",
     "psutil>=5.9.0",
     "ddgs>=9.0.0",
     "pip>=25.3",

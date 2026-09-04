@@ -22,8 +22,10 @@ the root one, and keep every version marker moving together so a fix actually
 reaches PyPI.
 """
 
+import ast
 import json
 import re
+import sys
 from importlib.metadata import packages_distributions
 from pathlib import Path
 
@@ -46,6 +48,13 @@ SRC_ROOT = REPO_ROOT / "src" / "tooluniverse"
 FORBIDDEN_DISTRIBUTIONS = {
     "fitz": "pymupdf",
 }
+
+# `src/tooluniverse/remote/` holds provider-side services that are deployed
+# separately, each with its own dependency manifest. Their heavy imports (torch,
+# scanpy, tensorflow, easyocr, ...) are deliberately absent from the SDK's
+# dependency list, so the module-scope import audit below stops at that boundary.
+# Undeclared imports inside those services are tracked in issue #521 instead.
+SEPARATELY_DEPLOYED = "remote"
 
 # Dependencies the bundle declares on purpose that the root list leaves to an
 # extra. The bundle is a sealed Claude Desktop runtime: the end user cannot
@@ -72,6 +81,17 @@ def _distribution_name(requirement):
     """Extract the normalized distribution name from a PEP 508 requirement."""
     name = re.split(r"[<>=!~\[;\s]", requirement.strip(), maxsplit=1)[0]
     return name.lower().replace("_", "-")
+
+
+def _canonical(name):
+    """PEP 503 name normalization.
+
+    `_distribution_name` leaves dots alone, which is fine while it only ever
+    compares requirement strings with each other. Comparing against
+    `packages_distributions()` needs the real rule, or the declared
+    `epam.indigo` never matches the installed `epam-indigo`.
+    """
+    return re.sub(r"[-_.]+", "-", _distribution_name(name))
 
 
 def _names(pyproject_path):
@@ -166,6 +186,153 @@ def test_mcpb_dependencies_mirror_root():
     assert not mismatched, (
         "mcpb/pyproject.toml has dependency constraints that differ from the "
         f"root pyproject.toml: {mismatched}."
+    )
+
+
+def _markitdown_requirements():
+    """Every declared markitdown requirement, keyed by the file that declares it."""
+    found = {}
+    for pyproject in (ROOT_PYPROJECT, MCPB_PYPROJECT):
+        for requirement in _load_dependencies(pyproject):
+            if _distribution_name(requirement) == "markitdown":
+                found.setdefault(pyproject, []).append(requirement)
+    return found
+
+
+def test_markitdown_extras_do_not_cap_supported_python():
+    """MarkItDown must be requested by converter extra, never through `all`.
+
+    `markitdown[all]` pins ``youtube-transcript-api~=1.0.0``, and every 1.0.x
+    release of that project declares ``Requires-Python <3.14``. Because the
+    requirement is unconditional, that cap propagated to tooluniverse and made
+    it uninstallable on Python 3.14 without a downstream override (issue #527).
+    MarkItDown's own ``youtube-transcription`` extra leaves the dependency
+    unpinned, so 1.2.3+ (``Requires-Python <3.15``) resolves instead.
+
+    Naming the extras also keeps installs on current MarkItDown: since 0.1.6 the
+    `all` extra requires ``azure-ai-contentunderstanding>=1.2.0b1``, which has no
+    stable release, so a default resolver silently backtracks `markitdown[all]`
+    to 0.1.5.
+    """
+    declared = _markitdown_requirements()
+    assert declared, "no markitdown requirement is declared any more"
+
+    for pyproject, requirements in declared.items():
+        location = pyproject.relative_to(REPO_ROOT)
+        for requirement in requirements:
+            extras = re.search(r"\[([^\]]*)\]", requirement)
+            assert extras, (
+                f"{location}: markitdown must request converter extras: {requirement}"
+            )
+            names = {extra.strip() for extra in extras.group(1).split(",")}
+
+            assert "all" not in names, (
+                f"{location} requests `markitdown[all]`, which pins "
+                f"youtube-transcript-api~=1.0.0 (Requires-Python <3.14) and caps "
+                f"the Python versions tooluniverse can be installed on. List the "
+                f"converter extras individually instead (issue #527)."
+            )
+            assert "youtube-transcription" in names, (
+                f"{location} drops MarkItDown's `youtube-transcription` extra, so "
+                f"YouTube transcription silently stops working. Keep the extra: it "
+                f"leaves youtube-transcript-api unpinned, which is what lifts the "
+                f"Python cap."
+            )
+            assert "az-content-understanding" not in names, (
+                f"{location} requests `az-content-understanding`, whose "
+                f"azure-ai-contentunderstanding>=1.2.0b1 dependency has no stable "
+                f"release; the requirement becomes unresolvable. Add it back only "
+                f"once that project ships a final version."
+            )
+
+
+def test_markitdown_requirement_is_unconditional():
+    """One requirement, no environment markers, in both dependency lists.
+
+    The Python-version split that worked around issue #527 left the bundle with
+    a dead branch (it caps itself at Python <3.14) and hid a real drift risk:
+    `test_mcpb_dependencies_mirror_root` keys requirements by distribution name,
+    so only the last of two `markitdown` lines was ever compared.
+    """
+    for pyproject, requirements in _markitdown_requirements().items():
+        location = pyproject.relative_to(REPO_ROOT)
+        assert len(requirements) == 1, (
+            f"{location} declares markitdown {len(requirements)} times: "
+            f"{requirements}. A single unconditional requirement now covers every "
+            f"supported Python version."
+        )
+        assert ";" not in requirements[0], (
+            f"{location} still guards markitdown with an environment marker: "
+            f"{requirements[0]}."
+        )
+
+
+def _module_scope_imports(path):
+    """Top-level import statements only.
+
+    Imports nested in a try/except or an `if` are already guarded by the module
+    itself and are not the pattern this audit is looking for.
+    """
+    try:
+        tree = ast.parse(path.read_text(encoding="utf-8", errors="ignore"))
+    except SyntaxError:  # pragma: no cover - generated sources are valid
+        return
+    for node in tree.body:
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                yield alias.name.split(".")[0], node.lineno
+        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+            yield node.module.split(".")[0], node.lineno
+
+
+def test_core_module_scope_imports_come_from_declared_distributions():
+    """A module the SDK imports at import time must be a dependency we declare.
+
+    `websockets` and `urllib3` both used to fail this. `websockets` reached
+    installs only through fastmcp's `fastmcp-slim[server]` extra, so an upstream
+    reshuffle would have broken `mcp_client_tool` with no local change;
+    `urllib3` rode in on requests. Relying on another package's dependency is
+    how `PIL` stayed invisible in the USPTO downloader until issue #521.
+    """
+    declared = {
+        _canonical(requirement) for requirement in _load_dependencies(ROOT_PYPROJECT)
+    }
+    declared |= {
+        _canonical(requirement)
+        for requirements in _load_pyproject(ROOT_PYPROJECT)[
+            "optional-dependencies"
+        ].values()
+        for requirement in requirements
+    }
+    providers = packages_distributions()
+    first_party = {"tooluniverse"} | {
+        path.stem for path in (REPO_ROOT / "src").iterdir()
+    }
+
+    offenders = []
+    for path in sorted(SRC_ROOT.rglob("*.py")):
+        if SEPARATELY_DEPLOYED in path.relative_to(SRC_ROOT).parts:
+            continue
+        for module, lineno in _module_scope_imports(path):
+            if module in sys.stdlib_module_names or module in first_party:
+                continue
+            # A distribution may publish a module under its own name (`requests`)
+            # or under another one (`pyyaml` -> `yaml`), and a metapackage
+            # publishes neither itself (`fastmcp` -> `fastmcp-slim`). Accept any
+            # of those spellings.
+            candidates = {_canonical(module)}
+            candidates |= {_canonical(dist) for dist in providers.get(module, [])}
+            if candidates & declared:
+                continue
+            offenders.append(
+                f"{path.relative_to(REPO_ROOT)}:{lineno}: `{module}` "
+                f"(installed from {sorted(providers.get(module, [])) or 'nothing'})"
+            )
+
+    assert not offenders, (
+        "These modules are imported at module scope in the core package but no "
+        "declared dependency provides them, so they only work while some other "
+        "package happens to pull them in:\n" + "\n".join(offenders)
     )
 
 
