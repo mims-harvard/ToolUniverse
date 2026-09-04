@@ -54,7 +54,6 @@ Apply for: cell line selection by cancer type/gene, cell line profiling, gene de
 | `CellMarker_search_cancer_markers` | `operation="search_cancer_markers"`, `cancer_type`, `gene_symbol`, `cell_type` | Cancer cell markers |
 | `CellMarker_search_by_gene` | `operation="search_by_gene"`, `gene_symbol` (required), `species` | Cell types expressing a gene |
 | `HPA_get_comparative_expression_by_gene_and_cellline` | `gene_name` (required), `cell_line` (required) | Supported lines: ishikawa, hela, mcf7, a549, hepg2, jurkat, pc3, rh30, siha, u251 |
-| `CLUE_get_cell_lines` | `operation="get_cell_lines"`, `cell_id` | L1000 CMap cell line info (requires CLUE_API_KEY) |
 | `SYNERGxDB_search_combos` | `drug_name_1`, `drug_name_2`, `sample` (tissue or cell ID) | Drug combination synergy (ZIP, Bliss, Loewe) |
 | `SYNERGxDB_list_cell_lines` | - | All cell lines in SYNERGxDB |
 | `DGIdb_get_drug_gene_interactions` | `genes: list[str]` | Druggable gene interactions |
@@ -157,8 +156,6 @@ Output: cell line, lineage, primary disease, Chronos score (most negative = most
 
 **4B SYNERGxDB**: `SYNERGxDB_search_combos(drug_name_1="gemcitabine", drug_name_2="erlotinib", sample="lung")`. Positive ZIP = synergy. Covers cytotoxic agents only (not targeted therapies/biologics).
 
-**4C CLUE**: `CLUE_get_cell_lines(operation="get_cell_lines", cell_id="MCF7")` — requires CLUE_API_KEY.
-
 **OUTPUT**: Drug sensitivity table (drug, IC50, AAC, dataset) + synergy data if available.
 
 ---
@@ -257,7 +254,6 @@ Use cell line NAME as common key across databases. IDs: DepMap=SIDM, Cellosaurus
 | cBioPortal CCLE study ID unknown | Use `ccle_broad_2019` as default CCLE study |
 | PharmacoDB cell line name mismatch | Use `PharmacoDB_search(operation="search", query="<name>")` to find the canonical name |
 | HPA cell line not supported | Only 10 lines supported (hela, mcf7, a549, hepg2, jurkat, pc3, rh30, siha, u251, ishikawa). Skip HPA for other lines |
-| CLUE requires API key | Skip CLUE tools if CLUE_API_KEY not set; note in report |
 | Gene symbol not found in DepMap | Use `DepMap_search_genes(query="<symbol>")` to check aliases |
 | Cellosaurus accession pattern | Must be CVCL_XXXX format; search first if you only have a name |
 | SYNERGxDB no results for drug combo | Drug may not be in database; SYNERGxDB covers cytotoxic agents, not most targeted therapies |

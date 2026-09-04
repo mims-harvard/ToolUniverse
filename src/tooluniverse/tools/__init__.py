@@ -208,11 +208,6 @@ from .CELLxGENE_get_embeddings import CELLxGENE_get_embeddings
 from .CELLxGENE_get_expression_data import CELLxGENE_get_expression_data
 from .CELLxGENE_get_gene_metadata import CELLxGENE_get_gene_metadata
 from .CELLxGENE_get_presence_matrix import CELLxGENE_get_presence_matrix
-from .CLUE_get_cell_lines import CLUE_get_cell_lines
-from .CLUE_get_gene_expression import CLUE_get_gene_expression
-from .CLUE_get_perturbation import CLUE_get_perturbation
-from .CLUE_search_compounds import CLUE_search_compounds
-from .CLUE_search_signatures import CLUE_search_signatures
 from .CMA_Guidelines_Search import CMA_Guidelines_Search
 from .COD_get_structure import COD_get_structure
 from .COD_search_structures import COD_search_structures
@@ -3472,11 +3467,6 @@ __all__ = [
     "CELLxGENE_get_expression_data",
     "CELLxGENE_get_gene_metadata",
     "CELLxGENE_get_presence_matrix",
-    "CLUE_get_cell_lines",
-    "CLUE_get_gene_expression",
-    "CLUE_get_perturbation",
-    "CLUE_search_compounds",
-    "CLUE_search_signatures",
     "CMA_Guidelines_Search",
     "COD_get_structure",
     "COD_search_structures",
