@@ -155,16 +155,27 @@ Read https://aiscientist.tools/setup.md and set up ToolUniverse for me.
 
 The agent handles config, keys, skills, and validation. No terminal, no JSON.
 
-**Path B — Claude Code users: one-liner, no config file at all.**
+**Path B — Claude Code or Codex users: one-liner, no config file at all.**
 
+Claude Code:
 ```bash
 claude plugin marketplace add mims-harvard/ToolUniverse
 claude plugin install tooluniverse@tooluniverse
 ```
+See the `tooluniverse-claude-code-plugin` skill's "Recommended: turn on
+auto-update" step so future releases apply without manual `claude plugin update`.
 
-Installs MCP server + 115 skills + slash commands in one step. Then see the
-`tooluniverse-claude-code-plugin` skill's "Recommended: turn on auto-update"
-step so future releases apply without manual `claude plugin update`.
+Codex:
+```bash
+codex plugin marketplace add mims-harvard/ToolUniverse
+codex plugin add tooluniverse -m tooluniverse
+```
+See the `tooluniverse-codex-plugin` skill for verification, updates, and
+troubleshooting.
+
+Both install the MCP server plus 100+ skills in one step. Google Antigravity
+users: see the `tooluniverse-antigravity-plugin` skill instead — its install
+flow differs (`agy plugin install`, not a marketplace add).
 
 ### Manual config (fallback)
 
