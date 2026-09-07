@@ -684,7 +684,20 @@ class ToolFinderKeyword(BaseTool):
                 # Force full load by clearing filters and loading everything
                 self.tooluniverse.load_tools(include_tools=None, tool_type=None)
 
-            all_tools = self.tooluniverse.return_all_loaded_tools()
+            all_tools = list(self.tooluniverse.return_all_loaded_tools())
+
+            # Tools with unmet ``required_api_keys`` are deliberately excluded
+            # from execution, but they must remain discoverable. Merge the
+            # loader's discovery-only copies without changing ``all_tool_dict``.
+            gated_configs = getattr(
+                self.tooluniverse, "_excluded_api_key_tool_configs", {}
+            )
+            loaded_names = {tool.get("name", "") for tool in all_tools}
+            all_tools.extend(
+                config
+                for name, config in gated_configs.items()
+                if name not in loaded_names
+            )
 
             # Filter by categories if specified
             if categories:
@@ -784,6 +797,12 @@ class ToolFinderKeyword(BaseTool):
                         "tfidf_score": round(tfidf_score, 4),
                         "exact_match_bonus": round(exact_bonus, 4),
                     }
+                    missing_keys = getattr(
+                        self.tooluniverse, "_excluded_api_key_tools", {}
+                    ).get(tool_name)
+                    if missing_keys:
+                        tool_info["available"] = False
+                        tool_info["missing_api_keys"] = list(missing_keys)
                     tool_scores.append(tool_info)
 
             # Sort by relevance score (highest first) and limit results
@@ -822,6 +841,7 @@ class ToolFinderKeyword(BaseTool):
                         "query_tokens": len(query_tokens),
                         "query_phrases": len(query_phrases),
                         "indexed_tools": self._total_documents,
+                        "gated_tools_indexed": len(gated_configs),
                         # Feature-R15B-02: expose original vs normalized query when underscore
                         # normalization was applied, so callers can detect the transformation.
                         **(

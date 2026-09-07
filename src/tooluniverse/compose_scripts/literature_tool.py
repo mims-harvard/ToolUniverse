@@ -19,8 +19,27 @@ def compose(arguments, tooluniverse, call_tool):
         "PubTator3_LiteratureSearch", {"query": topic, "page_size": 5}
     )
 
+    # MedicalLiteratureReviewer is an AgenticTool, so it is skipped at load time when
+    # no LLM API key is configured. Calling it anyway returns the string
+    # "Invalid function call: ..." which the caller cannot distinguish from a real
+    # review -- the tool reported success while producing nothing. Check first and
+    # return the literature that was actually retrieved instead of discarding it.
+    reviewer = "MedicalLiteratureReviewer"
+    if reviewer not in tooluniverse.all_tool_dict:
+        return {
+            "success": False,
+            "error": (
+                f"Summarization step unavailable: '{reviewer}' is not loaded. It is an "
+                "AgenticTool and requires an LLM API key (AZURE_OPENAI_API_KEY, "
+                "OPENAI_API_KEY, OPENROUTER_API_KEY, GEMINI_API_KEY, or VLLM_SERVER_URL). "
+                "The raw literature retrieved from EuropePMC, OpenAlex and PubTator is "
+                "returned under 'literature' so the search results are not lost."
+            ),
+            "literature": literature,
+        }
+
     summary = call_tool(
-        "MedicalLiteratureReviewer",
+        reviewer,
         {
             "research_topic": topic,
             "literature_content": str(literature),

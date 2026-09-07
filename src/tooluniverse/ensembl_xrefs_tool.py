@@ -56,7 +56,22 @@ class EnsemblXrefsTool(BaseTool):
                     "status": "error",
                     "error": "Ensembl ID not found. Provide a valid Ensembl stable ID.",
                 }
-            return {"status": "error", "error": f"Ensembl REST API HTTP {status}"}
+            # Fix-18B-1: swallowing the response body dropped Ensembl's own
+            # actionable message -- e.g. a bad `species` value (common for
+            # xrefs_by_symbol, which takes species as free text like "canine"
+            # instead of the required internal name "canis_lupus_familiaris")
+            # returns HTTP 400 with body {"error": "Can not find internal
+            # name for species 'canine'"}, but callers only ever saw the bare
+            # "Ensembl REST API HTTP 400". The sibling ensembl_tool.py already
+            # includes response text for this reason; do the same here.
+            detail = ""
+            if e.response is not None:
+                detail = (e.response.text or "").strip()[:200]
+            return {
+                "status": "error",
+                "error": f"Ensembl REST API HTTP {status}"
+                + (f": {detail}" if detail else ""),
+            }
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 

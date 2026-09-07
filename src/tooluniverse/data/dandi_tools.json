@@ -1,0 +1,147 @@
+[
+  {
+    "name": "DANDI_search_datasets",
+    "type": "DANDITool",
+    "description": "Search the DANDI Archive for neurophysiology datasets in the NWB (Neurodata Without Borders) standard: electrophysiology, optical physiology, and behavior recordings, mostly from the Allen Institute and BRAIN Initiative labs. Example: query='mouse visual cortex' or query='patch-seq'. Returns each dataset's dandiset_id for use with DANDI_get_dataset and DANDI_list_assets.",
+    "fields": {
+      "operation": "search_datasets"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Free-text search, e.g. 'mouse visual cortex', 'patch-seq', 'calcium imaging'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max dandisets to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "dandiset_id": {"type": ["string", "null"]},
+              "name": {"type": ["string", "null"]},
+              "asset_count": {"type": ["integer", "null"]},
+              "size_bytes": {"type": ["integer", "null"]},
+              "status": {"type": ["string", "null"]},
+              "contact_person": {"type": ["string", "null"]},
+              "star_count": {"type": ["integer", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "mouse visual cortex", "limit": 5},
+      {"query": "patch-seq", "limit": 5}
+    ]
+  },
+  {
+    "name": "DANDI_get_dataset",
+    "type": "DANDITool",
+    "description": "Retrieve full metadata for one DANDI dandiset: description, species, data standard, license, and subject/file counts. Example: dandiset_id='000020' returns 'Patch-seq recordings from mouse visual cortex', House mouse, 1040 subjects, NWB standard. Use DANDI_search_datasets to find a dandiset_id.",
+    "fields": {
+      "operation": "get_dataset"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["dandiset_id"],
+      "properties": {
+        "dandiset_id": {
+          "type": "string",
+          "description": "DANDI dataset identifier, e.g. '000020'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "dandiset_id": {"type": ["string", "null"]},
+            "name": {"type": ["string", "null"]},
+            "description": {"type": ["string", "null"]},
+            "license": {"type": "array", "items": {"type": "string"}},
+            "keywords": {"type": "array", "items": {"type": "string"}},
+            "species": {"type": "array", "items": {"type": "string"}},
+            "data_standard": {"type": "array", "items": {"type": "string"}},
+            "number_of_subjects": {"type": ["integer", "null"]},
+            "number_of_files": {"type": ["integer", "null"]},
+            "size_bytes": {"type": ["integer", "null"]},
+            "date_created": {"type": ["string", "null"]},
+            "citation": {"type": ["string", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"dandiset_id": "000020"},
+      {"dandiset_id": "000037"}
+    ]
+  },
+  {
+    "name": "DANDI_list_assets",
+    "type": "DANDITool",
+    "description": "List the data files (assets) in one DANDI dandiset: file path, size, and asset id. Example: dandiset_id='000020' returns NWB files such as 'sub-1001658958/sub-1001658958_ses-1003321768_icephys.nwb'. Use DANDI_search_datasets to find a dandiset_id.",
+    "fields": {
+      "operation": "list_assets"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["dandiset_id"],
+      "properties": {
+        "dandiset_id": {
+          "type": "string",
+          "description": "DANDI dataset identifier, e.g. '000020'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max assets to return, 1-200. Default 50."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "path": {"type": ["string", "null"]},
+              "size_bytes": {"type": ["integer", "null"]},
+              "asset_id": {"type": ["string", "null"]},
+              "created": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"dandiset_id": "000020", "limit": 5},
+      {"dandiset_id": "000037", "limit": 5}
+    ]
+  }
+]

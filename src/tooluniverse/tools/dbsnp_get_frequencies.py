@@ -1,7 +1,7 @@
 """
 dbsnp_get_frequencies
 
-Get allele frequencies for a variant from dbSNP. Returns population-specific allele frequency data.
+Get allele frequencies for a variant from dbSNP. Returns population-specific allele frequency dat...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def dbsnp_get_frequencies(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get allele frequencies for a variant from dbSNP. Returns population-specific allele frequency data.
+    Get allele frequencies for a variant from dbSNP. Returns population-specific allele frequency dat...
 
     Parameters
     ----------

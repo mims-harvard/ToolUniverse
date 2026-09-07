@@ -5,8 +5,9 @@
     "description": "Estimate SNP-heritability from GWAS summary statistics with LD Score regression (Bulik-Sullivan 2015), using the maintained Python-3 engine (NCI CBIIT/ldsc). Input a munged .sumstats(.gz) file; returns observed-scale h2 with SE, the LD-score-regression intercept (confounding/inflation diagnostic), and the ratio. Requires multi-GB LD-score reference panels staged on the server; hosted alternative: https://ldlink.nih.gov/ldscore.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "sumstats_path": {"type": "string", "description": "Server-accessible path to a munged .sumstats.gz file (output of munge_sumstats.py)."},
+        "sumstats_path": {"type": "string", "description": "A munged .sumstats.gz file inside the provider-configured data directory."},
         "ref_ld_chr": {"type": "string", "description": "Reference LD-score prefix/dir (default 'eur_w_ld_chr/', resolved under LDSC_REF_DIR)."},
         "w_ld_chr": {"type": "string", "description": "Regression-weight LD-score prefix/dir (default same as ref_ld_chr)."}
       },
@@ -40,6 +41,7 @@
     "description": "Estimate the genetic correlation (rg) between two traits from their GWAS summary statistics with cross-trait LD Score regression (Bulik-Sullivan 2015), using the Python-3 engine (NCI CBIIT/ldsc). Input two munged .sumstats(.gz) files; returns rg with SE and p-value. Requires multi-GB LD-score reference panels staged on the server; hosted alternative: https://ldlink.nih.gov/ldscore.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "sumstats_path_1": {"type": "string", "description": "Munged .sumstats.gz for trait 1."},
         "sumstats_path_2": {"type": "string", "description": "Munged .sumstats.gz for trait 2."},

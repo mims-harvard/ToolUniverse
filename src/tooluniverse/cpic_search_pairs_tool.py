@@ -16,12 +16,41 @@ from .tool_registry import register_tool
 _CPIC_API = "https://api.cpicpgx.org/v1"
 
 
+def _total_from_content_range(header: Optional[str]) -> Optional[int]:
+    """Parse the unpaged total out of a PostgREST Content-Range header.
+
+    PostgREST answers ``Prefer: count=exact`` with e.g. ``0-49/208``, which is
+    the only route to "how many rows exist beyond this page". Module-level
+    because both the recommendations and the alleles tool now need it.
+    """
+    if not header or "/" not in header:
+        return None
+    total = header.rsplit("/", 1)[1].strip()
+    return int(total) if total.isdigit() else None
+
+
+def _paging_note(
+    kind: str, offset: int, shown: int, total: int, subject: str, limit_hint: str = ""
+) -> Optional[str]:
+    """The "you are seeing part of a larger set" sentence, or None if you aren't.
+
+    Shared by the two paged CPIC tools so the paging contract is worded once.
+    """
+    end = offset + shown
+    if not shown or end >= total:
+        return None
+    return (
+        f"Showing {kind} {offset + 1}-{end} of {total} {subject}. "
+        f"Re-run with offset={end} for the next page, or raise 'limit'{limit_hint}."
+    )
+
+
 def _resolve_drug_to_guideline_id(
     drug_name: str,
 ) -> Optional[Tuple[int, Optional[str]]]:
-    """Look up CPIC guideline ID and RxNorm ID for a drug name via CPIC API.
+    """Look up CPIC guideline ID and CPIC drug identifier for a drug name.
 
-    Returns (guideline_id, rxnorm_id) tuple, or None if genuinely not found
+    Returns (guideline_id, drugid) tuple, or None if genuinely not found
     (the request succeeded but no matching drug/guideline exists). Raises
     requests.exceptions.RequestException on a request failure (network
     error, timeout, HTTP error) -- Fix-R56A-1: this used to swallow those
@@ -34,11 +63,19 @@ def _resolve_drug_to_guideline_id(
     file already distinguishes RequestException from a genuine empty result
     (see CPICGetRecommendationsTool.run's own /recommendation call below);
     this makes the /drug lookup consistent with that same pattern instead
-    of being the one place that still conflates them."""
+    of being the one place that still conflates them.
+
+    Fix-R81A-1: this used to select `rxnormid` and the caller then filtered
+    /recommendation with a hardcoded `eq.RxNorm:{rxnormid}`. CPIC's
+    /recommendation.drugid is a *namespaced* identifier that is NOT always
+    in the RxNorm namespace, so that assumption silently broke two ways
+    (see CPICGetRecommendationsTool.run). CPIC's /drug table already
+    publishes the authoritative `drugid` column -- select it directly
+    instead of reconstructing it from a different column."""
     r = requests.get(
         f"{_CPIC_API}/drug",
         params={
-            "select": "name,guidelineid,rxnormid",
+            "select": "name,guidelineid,drugid",
             "name": f"ilike.*{drug_name}*",
         },
         timeout=15,
@@ -63,7 +100,7 @@ def _resolve_drug_to_guideline_id(
     )
     row = exact or rows[0]
     if row.get("guidelineid"):
-        return row["guidelineid"], row.get("rxnormid")
+        return row["guidelineid"], row.get("drugid")
     return None
 
 
@@ -78,7 +115,11 @@ class CPICGetRecommendationsTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         guideline_id = arguments.get("guideline_id")
-        rxnorm_id: Optional[str] = None
+        # Fix-R81A-1: the CPIC drug identifier used by /recommendation.drugid.
+        # `drug` is defined here too so the note-building code below can never
+        # NameError when the caller passed guideline_id directly.
+        drug_id: Optional[str] = None
+        drug: Optional[str] = None
 
         if guideline_id is None:
             drug = arguments.get("drug") or arguments.get("drug_name")
@@ -113,7 +154,7 @@ class CPICGetRecommendationsTool(BaseTool):
                         "available guidelines."
                     ),
                 }
-            guideline_id, rxnorm_id = result
+            guideline_id, drug_id = result
 
         limit = arguments.get("limit", 50) or 50
         offset = arguments.get("offset", 0) or 0
@@ -149,9 +190,62 @@ class CPICGetRecommendationsTool(BaseTool):
             }
             # Filter by specific drug within multi-drug guidelines (e.g., CYP2D6/Opioids
             # covers codeine, tramadol, hydrocodone — filter to the requested drug).
-            if rxnorm_id:
-                params["drugid"] = f"eq.RxNorm:{rxnorm_id}"
-            r = requests.get(url, params=params, timeout=30)
+            #
+            # Fix-R81A-1: this used to build the filter as
+            # `eq.RxNorm:{rxnormid}`, hardcoding the RxNorm namespace. CPIC's
+            # drugid is namespaced and 3 of the 170 CPIC drugs that carry a
+            # guideline are NOT in the RxNorm namespace (census re-derived
+            # live from api.cpicpgx.org: 167 RxNorm, 2 ATC, 1 Drugbank), which
+            # broke in two opposite and equally silent directions:
+            #
+            #  (a) FALSE NEGATIVE -- gentamicin has an rxnormid (1596450) but
+            #      its drugid is `ATC:D06AX07`, so `eq.RxNorm:1596450` matched
+            #      0 of the 33 rows on the MT-RNR1 aminoglycoside guideline
+            #      (826283). The tool then emitted "...none specifically for
+            #      'gentamicin'", asserting an absence that is not real: the 3
+            #      rows exist and carry the "Avoid aminoglycoside antibiotics"
+            #      recommendation for the m.1555A>G high-risk genotype. An
+            #      audiologist checking before dosing got a confident no-data
+            #      answer for the archetypal ototoxic aminoglycoside.
+            #
+            #  (b) FALSE POSITIVE -- lumiracoxib and ramosetron have a NULL
+            #      rxnormid, so `if rxnorm_id:` was falsy and NO drug filter
+            #      was applied at all. `{"drug": "lumiracoxib"}` returned all
+            #      42 rows of NSAID guideline 110058 -- every one of which
+            #      belongs to celecoxib/ibuprofen/meloxicam/piroxicam/
+            #      flurbiprofen/lornoxicam/tenoxicam, and none to lumiracoxib
+            #      -- presented as that drug's own recommendations.
+            #
+            # Filtering on the drugid CPIC itself publishes fixes both. For
+            # every RxNorm-namespaced drug the built string is byte-identical
+            # to the old one (drugid == "RxNorm:" + rxnormid holds for all 167
+            # of them), so those queries are unchanged. All 324 CPIC drugids
+            # are alphanumerics plus ':' only, so no PostgREST quoting is
+            # needed for the eq. value.
+            if drug_id:
+                params["drugid"] = f"eq.{drug_id}"
+            # Fix-R59-1: ask PostgREST for the unpaged total. Without it the
+            # only number in the response was `count`, which reports the size
+            # of the returned page -- the exact defect this file already fixed
+            # for CPICGetAllelesTool (see its class docstring), still present
+            # here 300 lines up. Confirmed live: guideline 100416 (CYP2D6 and
+            # opioids) has 66 recommendation rows, but the documented default
+            # `limit` of 50 returned `count: 50` with no note and no total, so
+            # 16 rows were dropped indistinguishably from the guideline having
+            # exactly 50. Codeine, tramadol and hydrocodone recommendations
+            # all live on that guideline.
+            #
+            # Only the unfiltered path needs it: when filtering, the request
+            # already pulls limit=1000 and the total that matters is the number
+            # of rows matching the caller's filter, which is counted locally --
+            # so asking PostgREST for an exact server-side COUNT there would be
+            # work whose result is thrown away.
+            r = requests.get(
+                url,
+                params=params,
+                headers=None if filtering else {"Prefer": "count=exact"},
+                timeout=30,
+            )
             r.raise_for_status()
             data = r.json()
 
@@ -187,13 +281,33 @@ class CPICGetRecommendationsTool(BaseTool):
                     )
 
                 data = [row for row in data if _row_matches(row)]
+                # The total that matters to a caller who filtered is the number
+                # of rows matching their filter, not the guideline's row count.
+                unpaged_total = len(data)
                 data = data[offset : offset + limit]
+            else:
+                unpaged_total = _total_from_content_range(
+                    r.headers.get("Content-Range")
+                )
+                if unpaged_total is None:
+                    unpaged_total = offset + len(data)
 
             result: Dict[str, Any] = {
                 "guideline_id": guideline_id,
                 "recommendations": data,
                 "count": len(data),
+                "total_count": unpaged_total,
+                "offset": offset,
             }
+            truncation_note = _paging_note(
+                "recommendations",
+                offset,
+                len(data),
+                unpaged_total,
+                f"for guideline {guideline_id}" + (" (filtered)" if filtering else ""),
+            )
+            if truncation_note:
+                result["note"] = truncation_note
             if filtering and not data:
                 result["note"] = (
                     f"No recommendations matched gene={gene_filter!r} "
@@ -213,9 +327,25 @@ class CPICGetRecommendationsTool(BaseTool):
             # checking whether the guideline has any rows once the drug
             # filter is dropped. Skip when a gene/phenotype filter caused the
             # emptiness -- the more specific note above already explains why.
+            # Fix-R81A-1: when a drug name was given but CPIC publishes no
+            # drugid for it, no drug filter could be applied, so these rows are
+            # the WHOLE guideline and may belong to other drugs it covers. Say
+            # so instead of letting the caller read them as this drug's own
+            # recommendations. (No CPIC drug currently hits this -- all 324
+            # have a drugid -- but the old code reached exactly this state via
+            # the null-rxnormid path, so the response must be honest about it
+            # rather than silently mislabeling another drug's guidance.)
+            if data and drug and not drug_id:
+                result["note"] = (
+                    f"CPIC publishes no drug identifier for '{drug}', so these "
+                    f"rows could NOT be filtered to it -- they are all "
+                    f"recommendation rows in guideline {guideline_id} and may "
+                    f"cover other drugs. Check each row's 'drug' field before "
+                    "applying any of this guidance."
+                )
             if not data and not filtering:
                 guideline_has_other_rows = False
-                if rxnorm_id:
+                if drug_id:
                     try:
                         check = requests.get(
                             url,
@@ -227,11 +357,19 @@ class CPICGetRecommendationsTool(BaseTool):
                     except requests.exceptions.RequestException:
                         pass
                 if guideline_has_other_rows:
+                    # Fix-R81A-1: name the identifier the absence was actually
+                    # established against. This claim is only trustworthy
+                    # because the filter now uses CPIC's own drugid; when it
+                    # was a reconstructed `RxNorm:{rxnormid}` guess the same
+                    # sentence asserted a false absence for gentamicin. Quoting
+                    # the drugid makes the assertion auditable against
+                    # /recommendation?drugid=eq.<id> rather than unfalsifiable.
                     result["note"] = (
                         f"Guideline {guideline_id} has recommendation rows for "
                         f"other drugs it covers, but none specifically for "
-                        f"'{drug}'. See https://cpicpgx.org/guidelines/ for the "
-                        "full guideline document."
+                        f"'{drug}' (CPIC drug identifier {drug_id}). See "
+                        "https://cpicpgx.org/guidelines/ for the full "
+                        "guideline document."
                     )
                 else:
                     result["note"] = (
@@ -359,6 +497,34 @@ class CPICSearchPairsTool(BaseRESTTool):
     def _build_url(self, args: Dict[str, Any]) -> str:
         return super()._build_url(self._resolve_aliases(args))
 
+    def _process_response(
+        self, response: requests.Response, url: str
+    ) -> Dict[str, Any]:
+        """Report the URL that was actually requested, filters included.
+
+        Feature-26C-4: the base class reports the endpoint *template* as the
+        response's `url`, while the PostgREST filter clauses this tool builds
+        (``genesymbol=eq.HLA-B``, ``cpiclevel=eq.A``, ``limit=...``) travel
+        separately in the request's query params. Confirmed live that the two
+        answers `{"gene": "HLA-B"}` (13 rows) and `{}` (635 rows) advertised a
+        byte-identical url --
+        `.../pair?select=genesymbol,drugid,cpiclevel,guidelineid,usedforrecommendation,clinpgxlevel,pgxtesting,drug(name)`
+        -- which returns all 635 rows when pasted, so a caller spot-checking
+        provenance concludes the gene filter was ignored (it was not; only the
+        reported url was wrong). `response.url` is the URL requests actually
+        sent, assembled from the very params object used for the request, so
+        the advertised and requested URLs cannot drift apart again. This is the
+        same shape CPICGetAllelesTool in this module already reports.
+        """
+        result = super()._process_response(response, url)
+        if (
+            isinstance(result, dict)
+            and "url" in result
+            and isinstance(response.url, str)
+        ):
+            result["url"] = response.url
+        return result
+
 
 @register_tool("CPICGetAllelesTool")
 class CPICGetAllelesTool(BaseTool):
@@ -374,10 +540,38 @@ class CPICGetAllelesTool(BaseTool):
     star alleles from that page silently loses 158 of them, and there was no
     `offset` to walk the rest. Ask PostgREST for the exact count, report it,
     and page explicitly.
+
+    Feature-33-2: the `select` clause also dropped CPIC's `frequency` object --
+    the per-biogeographic-group star-allele frequencies -- so every row came
+    back as just name/functionalstatus/activityvalue/clinicalfunctionalstatus.
+    CPIC populates frequency on most but not all alleles (measured: 36 of 49
+    for CYP2C19, 183 of 208 for CYP2D6), and it is the one field a
+    pharmacogenomics counselling note needs; there is no other route to it in
+    this tool. See `_SELECT_FIELDS` for what is now requested and why.
     """
 
     _DEFAULT_LIMIT = 50
     _MAX_LIMIT = 1000
+
+    # `findings` is deliberately NOT selected: it is narrative prose restating
+    # `strength`, and measured 78,541 bytes across CYP2D6's 208 alleles versus
+    # 9,621 for `citations`, which grounds the same claim by PMID.
+    _SELECT_FIELDS = (
+        "name",
+        "functionalstatus",
+        "activityvalue",
+        "clinicalfunctionalstatus",
+        # CPIC's own biogeographic-group labels ("Sub-Saharan African",
+        # "Central/South Asian", ...) are passed through verbatim -- remapping
+        # them onto gnomAD population codes would relabel an ancestry group.
+        # CPIC returns null (never {}) where it publishes no frequency, and a
+        # published 0.0 for a group is real data: 16 of CYP2C19's 49 alleles
+        # carry at least one 0.0, so null must never be collapsed to zero.
+        "frequency",
+        "inferredfrequency",
+        "strength",
+        "citations",
+    )
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Fetch one page of alleles plus the gene's true allele count."""
@@ -393,7 +587,7 @@ class CPICGetAllelesTool(BaseTool):
 
         params = {
             "genesymbol": f"eq.{gene}",
-            "select": "name,functionalstatus,activityvalue,clinicalfunctionalstatus",
+            "select": ",".join(self._SELECT_FIELDS),
             "limit": limit,
             "offset": offset,
         }
@@ -411,7 +605,7 @@ class CPICGetAllelesTool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"CPIC API error: {e}"}
 
-        total = self._total_from_content_range(response.headers.get("Content-Range"))
+        total = _total_from_content_range(response.headers.get("Content-Range"))
         if total is None:
             total = offset + len(data)
 
@@ -423,22 +617,18 @@ class CPICGetAllelesTool(BaseTool):
             "total_count": total,
             "offset": offset,
         }
-        if data and offset + len(data) < total:
-            result["note"] = (
-                f"Showing alleles {offset + 1}-{offset + len(data)} of {total} curated "
-                f"by CPIC for {gene}. Re-run with offset={offset + len(data)} for the "
-                f"next page, or raise 'limit' (max {self._MAX_LIMIT})."
-            )
+        truncation_note = _paging_note(
+            "alleles",
+            offset,
+            len(data),
+            total,
+            f"curated by CPIC for {gene}",
+            f" (max {self._MAX_LIMIT})",
+        )
+        if truncation_note:
+            result["note"] = truncation_note
         elif not data and total:
             result["note"] = (
                 f"No alleles at offset={offset}; {gene} has {total} alleles in CPIC."
             )
         return result
-
-    @staticmethod
-    def _total_from_content_range(header: Optional[str]) -> Optional[int]:
-        """Parse the unpaged total out of a PostgREST Content-Range header."""
-        if not header or "/" not in header:
-            return None
-        total = header.rsplit("/", 1)[1].strip()
-        return int(total) if total.isdigit() else None

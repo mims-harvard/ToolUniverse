@@ -22,6 +22,202 @@ _CLINSIG_PROP_ALIASES = {
     "uncertain significance": "vus",
 }
 
+# The clinical-significance classes ClinVar's Entrez index ACTUALLY accepts.
+# Enumerated by live-probing every documented germline/oncogenicity class
+# through the exact clause this module builds
+# (`"clinsig <v>"[Filter] OR clinsig_<v>[prop]`, plus the alias above) against
+# db=clinvar with no other term, 2026-08. Only these returned a non-zero,
+# non-parenthesised (i.e. index-recognised) translation:
+#   pathogenic 256608 | likely pathogenic 165559 | uncertain significance
+#   2367938 | vus 2368057 | likely benign 1165994 | benign 281217 |
+#   established risk allele 6 | likely risk allele 119 | uncertain risk allele
+#   180 | drug response 2612 | not provided 7616 | other 2209 |
+#   risk factor 520
+# Documented-but-unindexed spellings ("Affects", "association", "protective",
+# "confers sensitivity", "Conflicting classifications of pathogenicity",
+# "Oncogenic", "Likely oncogenic", "Pathogenic, low penetrance", ...) all came
+# back 0 with Entrez wrapping the term in parentheses -- its signal for "this
+# term is not in the index". Accepting them would paste an unmatchable token
+# into the query and return a silent, filtered-to-nothing success, which is
+# exactly the failure this list exists to prevent.
+_CLINSIG_ACCEPTED = (
+    "Pathogenic",
+    "Likely pathogenic",
+    "Uncertain significance",
+    "VUS",
+    "Likely benign",
+    "Benign",
+    "Established risk allele",
+    "Likely risk allele",
+    "Uncertain risk allele",
+    "drug response",
+    "risk factor",
+    "not provided",
+    "other",
+)
+_CLINSIG_ACCEPTED_NORMALIZED = {v.lower() for v in _CLINSIG_ACCEPTED}
+
+
+def _normalize_clinsig(value: Any) -> list:
+    """Split a clinical-significance value on '/' and normalize each component
+    exactly the way the query builder does (lowercase, underscores/hyphens ->
+    spaces), so validation can never accept a spelling the builder would then
+    mangle. No accepted class contains a hyphen, and sibling variant tools emit
+    hyphenated spellings (dbSNP reports "risk-factor"), so folding them keeps a
+    chained call working instead of silently filtering to nothing."""
+    return [
+        re.sub(r"\s+", " ", re.sub(r"[_-]", " ", comp.strip().lower()))
+        for comp in str(value).split("/")
+        if comp.strip()
+    ]
+
+
+def _clinsig_query_clause(components: list) -> str:
+    """Build the Entrez clause for already-normalized clinsig components.
+
+    Single-word values are indexed under `"clinsig <v>"[Filter]`, compound ones
+    under `clinsig_<v_with_underscores>[prop]`, and a few classes under a
+    different NCBI token entirely (VUS); OR all applicable forms so a valid
+    class is never a silent false-empty. Multiple components (from a '/'
+    aggregate class) are OR'd into their union.
+    """
+    clauses = []
+    for comp in components:
+        forms = f'"clinsig {comp}"[Filter] OR clinsig_{comp.replace(" ", "_")}[prop]'
+        alias = _CLINSIG_PROP_ALIASES.get(comp)
+        if alias:
+            forms += f" OR clinsig_{alias}[prop]"
+        clauses.append(f"({forms})")
+    if not clauses:
+        return ""
+    return "(" + " OR ".join(clauses) + ")" if len(clauses) > 1 else clauses[0]
+
+
+def _invalid_clinsig_error(param_name: str, raw_value: Any, invalid: list) -> dict:
+    """Reject an unrecognised clinical-significance value at the input, naming
+    the offending PARAMETER.
+
+    Previously such a value was pasted straight into the Entrez term, matched
+    nothing, and the zero-result response then blamed the *gene* symbol -- so
+    `{"gene": "TP53", "clinical_significance": "Banana"}` told the caller to
+    go re-verify TP53, the one input that was never wrong.
+    """
+    return {
+        "status": "error",
+        "error": (
+            f"Unrecognized {param_name} value(s): "
+            + ", ".join(repr(i) for i in invalid)
+            + f" (from {str(raw_value)!r}). No filter was applied and no search "
+            "was run -- an unrecognized class matches nothing in ClinVar's "
+            "index, which would look like 'this gene has no such variants'. "
+            "ClinVar's clinical-significance index accepts only: "
+            + ", ".join(_CLINSIG_ACCEPTED)
+            + ". Case-insensitive; underscores are treated as spaces "
+            "(e.g. 'likely_pathogenic'). Combine two classes with '/' to search "
+            "their union (e.g. 'Pathogenic/Likely pathogenic')."
+        ),
+        "parameter": param_name,
+        "invalid_values": invalid,
+        "valid_values": list(_CLINSIG_ACCEPTED),
+    }
+
+
+# One term of an Entrez query translation together with the field tag Entrez
+# actually applied to it: either a quoted phrase or a bare token, followed by
+# "[<field>]". Entrez echoes its translation verbatim in `querytranslation`
+# (confirmed live: 'RB1[gene] AND retinoblastoma[dis]' comes back unchanged),
+# which is how a term's real search field can be read off a response that has
+# already been fetched, with no extra request.
+_TRANSLATED_TERM_RE = re.compile(r'("[^"]*"|[^\s()\[\]]+)\s*\[([^\]]+)\]')
+
+
+def _normalize_translated_term(text: Any) -> str:
+    """Fold a query term to a comparable form (unquoted, lowercase, single
+    spaces) so a term this module emitted can be located in Entrez's echo of
+    it regardless of quoting or case."""
+    return re.sub(r"\s+", " ", str(text).replace('"', "").strip().lower())
+
+
+def _field_tags_for_term(query_translation: str, term: str) -> list:
+    """The field tag(s) Entrez actually attached to `term` in the translation
+    it returned. Empty when the term is absent or carries no tag at all."""
+    wanted = _normalize_translated_term(term)
+    if not wanted or not query_translation:
+        return []
+    return [
+        tag.strip()
+        for raw, tag in _TRANSLATED_TERM_RE.findall(query_translation)
+        if _normalize_translated_term(raw) == wanted
+    ]
+
+
+# ClinVar's [dis] index carries MedGen's concept names, not free clinical
+# phrasing, and it has no fuzzy matching: confirmed live via raw E-utils that
+# '"Leber congenital amaurosis"[dis]' returns 996 RPE65 records while the
+# one-letter-different '"Lebers congenital amaurosis"[dis]' and the locus name
+# 'RP20[dis]' each return 0. Any disclosure about a condition term points the
+# caller at the index that decides the answer.
+_CONDITION_INDEX_GUIDANCE = (
+    "ClinVar's disease index carries MedGen's own condition names, matched "
+    "exactly -- a synonym, a locus name or a one-letter misspelling matches "
+    "nothing there. Look the condition up (e.g. via MedGen_search_conditions) "
+    "and re-run with the indexed name to get a disease-filtered answer."
+)
+
+
+def _condition_filter_disclosure(
+    condition: Any,
+    condition_term: str,
+    query_translation: str,
+    freetext_retry: bool,
+) -> Dict[str, Any]:
+    """State, at the top level of the response, whether the caller's
+    `condition` actually acted as a DISEASE filter on the count being returned.
+
+    A disease-filtered count and a free-text count are indistinguishable in the
+    payload but mean entirely different things -- "996 RPE65 records classified
+    for Leber congenital amaurosis" versus "1 RPE65 record that happens to
+    contain this text somewhere". Either the tool's own untagged retry below or
+    an Entrez rewrite of the field tag can turn one into the other, and both
+    are visible in the `querytranslation` Entrez already returned, so the
+    distinction is disclosed without a second request.
+    """
+    fields = _field_tags_for_term(query_translation, condition_term)
+    if any(f.lower() == "dis" for f in fields):
+        return {"condition_filter_applied": True}
+    if freetext_retry:
+        field = fields[0] if fields else "All Fields"
+        return {
+            "condition_filter_applied": False,
+            "condition_search_field": field,
+            "condition_filter_warning": (
+                f"total_count is NOT disease-filtered. The disease-restricted "
+                f"search for condition '{condition}' returned no records, so the "
+                f"term was automatically retried unrestricted (Entrez searched it "
+                f"as [{field}]) and that free-text count is what is reported here: "
+                "it counts records merely mentioning this text anywhere -- variant "
+                "names, submitter comments, other linked conditions -- rather than "
+                "records classified for this condition. " + _CONDITION_INDEX_GUIDANCE
+            ),
+        }
+    if fields:
+        field = fields[0]
+        return {
+            "condition_filter_applied": False,
+            "condition_search_field": field,
+            "condition_filter_warning": (
+                f"total_count is NOT disease-filtered. Entrez did not keep the "
+                f"[dis] field tag for condition '{condition}' -- it searched the "
+                f"term as [{field}] instead (see query_translation), which matches "
+                "the text anywhere in a record rather than restricting to records "
+                "classified for this condition. " + _CONDITION_INDEX_GUIDANCE
+            ),
+        }
+    # No translation echoed back (or the term is unrecognisable in it): there
+    # is no evidence either way, and inventing a warning would be as misleading
+    # as omitting a real one.
+    return {}
+
 
 class ClinVarRESTTool(BaseTool):
     """Base class for ClinVar REST API tools."""
@@ -64,7 +260,7 @@ class ClinVarRESTTool(BaseTool):
                         return {
                             "status": "error",
                             "error": f"Rate limited after {max_retries} retries. Please wait before making more requests.",
-                            "url": url,
+                            "url": response.url,
                             "retry_after": retry_after,
                         }
 
@@ -80,7 +276,9 @@ class ClinVarRESTTool(BaseTool):
                 return {
                     "status": "success",
                     "data": data,
-                    "url": url,
+                    # response.url includes the query string that params=
+                    # adds; the pre-request url does not.
+                    "url": response.url,
                     "content_type": response.headers.get(
                         "content-type", "application/xml"
                     ),
@@ -184,8 +382,26 @@ class ClinVarSearchVariants(ClinVarRESTTool):
         # Normalize aliases before dispatch
         if not arguments.get("gene") and arguments.get("gene_symbol"):
             arguments = dict(arguments, gene=arguments["gene_symbol"])
+        _clnsig_param = "clinical_significance"
         if not arguments.get("clinical_significance") and arguments.get("significance"):
             arguments = dict(arguments, clinical_significance=arguments["significance"])
+            _clnsig_param = "significance"
+        # Validate the clinical-significance filter BEFORE anything is queried:
+        # an unrecognized class used to be pasted into the Entrez term, match
+        # nothing, and come back as a `status: success` with 0 results whose
+        # hint blamed the (perfectly valid) gene symbol instead.
+        clnsig_components = []
+        if str(arguments.get("clinical_significance") or "").strip():
+            clnsig_components = _normalize_clinsig(arguments["clinical_significance"])
+            invalid_clnsig = [
+                c for c in clnsig_components if c not in _CLINSIG_ACCEPTED_NORMALIZED
+            ]
+            if invalid_clnsig:
+                return _invalid_clinsig_error(
+                    _clnsig_param,
+                    arguments["clinical_significance"],
+                    invalid_clnsig,
+                )
         # An rsID (e.g. rs4244285) passed as `query` was aliased to `condition`
         # and searched as a DISEASE term ('rs4244285[dis]'), silently returning
         # 0 -- but ClinVar's free-text index DOES match a bare rsID (confirmed
@@ -199,6 +415,13 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             and re.fullmatch(r"rs\d+", _rsid_src.strip(), re.IGNORECASE)
         ):
             arguments = dict(arguments, rsid=_rsid_src.strip())
+            arguments.pop("query", None)
+        # A `query` carrying Entrez field tags ("7[chr] AND 1000:2000[chrpos37]")
+        # is a search expression, not a disease name. Aliasing it to `condition`
+        # wrapped the whole string in [dis] and returned 0 with no hint why.
+        _q = arguments.get("query")
+        if isinstance(_q, str) and re.search(r"\[[a-z0-9]+\]", _q, re.IGNORECASE):
+            arguments = dict(arguments, raw_term=_q)
             arguments.pop("query", None)
         if not arguments.get("condition") and arguments.get("query"):
             arguments = dict(arguments, condition=arguments["query"])
@@ -221,6 +444,11 @@ class ClinVarSearchVariants(ClinVarRESTTool):
         query_parts = []
         compound_clnsig = False
 
+        # An expression the caller wrote themselves goes to Entrez untouched.
+        if arguments.get("raw_term"):
+            query_parts.append(str(arguments["raw_term"]))
+
+        gene = None
         gene_hyphen_variant = None
         if "gene" in arguments:
             # Fix-R10D-1: ClinVar's [gene] index only matches a bare HGNC
@@ -259,6 +487,9 @@ class ClinVarSearchVariants(ClinVarRESTTool):
                 gene_hyphen_variant = gene.replace("-", "")
             query_parts.append(f"{gene}[gene]")
 
+        condition_dis_index = None
+        condition_query_term = None
+        condition_freetext_retry = False
         if "condition" in arguments:
             # Feature-70B-005: [disease/phenotype] is not a valid ClinVar eSearch field.
             # Use [dis] (disease/phenotype) field tag for condition searches.
@@ -266,6 +497,8 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             condition = arguments["condition"].strip()
             if " " in condition and not condition.startswith('"'):
                 condition = f'"{condition}"'
+            condition_query_term = condition
+            condition_dis_index = len(query_parts)
             query_parts.append(f"{condition}[dis]")
 
         if arguments.get("rsid"):
@@ -360,26 +593,13 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             # value. Treat "/" as OR and expand to the individual clinsig classes
             # (the clinically-actionable union), each via the proven
             # [Filter]-OR-[prop] path.
-            _raw_clnsig = str(arguments["clinical_significance"])
-            _components = [c.strip() for c in _raw_clnsig.split("/") if c.strip()]
-            compound_clnsig = len(_components) > 1
-            _clauses = []
-            for _comp in _components:
-                _c = _comp.lower().replace("_", " ")
-                _c_prop = _c.replace(" ", "_")
-                _forms = f'"clinsig {_c}"[Filter] OR clinsig_{_c_prop}[prop]'
-                # Some classes index under a different NCBI token (e.g. VUS);
-                # OR it in so a valid class is never a silent false-empty.
-                _alias = _CLINSIG_PROP_ALIASES.get(_c)
-                if _alias:
-                    _forms += f" OR clinsig_{_alias}[prop]"
-                _clauses.append(f"({_forms})")
-            if _clauses:
-                query_parts.append(
-                    "(" + " OR ".join(_clauses) + ")"
-                    if len(_clauses) > 1
-                    else _clauses[0]
-                )
+            # Values were normalized and validated against the live-verified
+            # accepted set up front (see _CLINSIG_ACCEPTED), so every component
+            # reaching here is known to exist in ClinVar's index.
+            compound_clnsig = len(clnsig_components) > 1
+            _clause = _clinsig_query_clause(clnsig_components)
+            if _clause:
+                query_parts.append(_clause)
 
         # Fix-R5D-1/R8C-1: a caller-supplied param that doesn't match any
         # recognized name/alias (e.g. "gene_name" instead of "gene") was
@@ -478,6 +698,45 @@ class ClinVarSearchVariants(ClinVarRESTTool):
                     result = resolved_result
                     data = result["data"]
 
+        # Fix-R9B-1: the [dis] field only matches ClinVar's own indexed
+        # disease/phenotype name for a record, which frequently differs from
+        # the name clinicians actually use -- confirmed live that
+        # "MECP2 duplication syndrome"[dis] (arguably the most natural way to
+        # refer to this exact condition) returns 0 even though ClinVar has
+        # 101+ MECP2 records that reference that phrase in free text (under
+        # its indexed name "Xq28 duplication syndrome" instead). Retry once
+        # with the condition term unrestricted to any field ([All Fields])
+        # when the [dis]-restricted search comes back empty -- this can only
+        # add matches the strict query missed, never drop ones it found.
+        #
+        # ...but the count it produces is a free-text count, not a
+        # disease-filtered one, and the two used to be reported identically:
+        # `{"gene":"RPE65","condition":"Lebers congenital amaurosis"}` (one
+        # letter off the indexed name) came back a plain success with
+        # total_count 1 next to the 996 of the correctly-spelled query, with
+        # nothing saying the second number was a substring match. Record that
+        # this retry happened so the response can say so.
+        if (
+            condition_dis_index is not None
+            and int(data["esearchresult"].get("count", 0)) == 0
+        ):
+            freetext_query_parts = list(query_parts)
+            # The stored term is "<condition>[dis]" -- drop the field tag to
+            # search it unrestricted instead.
+            freetext_query_parts[condition_dis_index] = query_parts[
+                condition_dis_index
+            ][: -len("[dis]")]
+            freetext_params = dict(params, term=" AND ".join(freetext_query_parts))
+            freetext_result = self._make_request(self.endpoint, freetext_params)
+            if (
+                freetext_result.get("status") == "success"
+                and "esearchresult" in freetext_result.get("data", {})
+                and int(freetext_result["data"]["esearchresult"].get("count", 0)) > 0
+            ):
+                result = freetext_result
+                data = result["data"]
+                condition_freetext_retry = True
+
         esearch = data["esearchresult"]
         ids = esearch.get("idlist", [])
         count = int(esearch.get("count", 0))
@@ -507,13 +766,38 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             }.items()
             if v is not None
         }
+        query_translation = esearch.get("querytranslation", "")
         response_data = {
             "total_count": count,
             "variant_ids": ids,
             "variants": variants,
-            "query_translation": esearch.get("querytranslation", ""),
+            "query_translation": query_translation,
             "search_params": search_params,
         }
+        # Whether `condition` acted as a disease filter on the count above is
+        # part of what the count MEANS, so it belongs beside it at the top
+        # level rather than inside a note the caller has to read to notice.
+        condition_applied = None
+        if condition_query_term is not None:
+            disclosure = _condition_filter_disclosure(
+                arguments.get("condition"),
+                condition_query_term,
+                query_translation,
+                condition_freetext_retry,
+            )
+            response_data.update(disclosure)
+            condition_applied = disclosure.get("condition_filter_applied")
+        if count == 0:
+            response_data.update(
+                self._explain_empty_result(
+                    arguments=arguments,
+                    gene=gene,
+                    condition_term=condition_query_term,
+                    condition_applied=condition_applied,
+                    clnsig_param=_clnsig_param,
+                    clnsig_components=clnsig_components,
+                )
+            )
         if unrecognized:
             response_data["ignored_parameters"] = unrecognized
         if compound_clnsig:
@@ -524,6 +808,178 @@ class ClinVarSearchVariants(ClinVarRESTTool):
                 "'Pathogenic/Likely pathogenic' review class."
             )
         return {"status": "success", "data": response_data}
+
+    def _explain_empty_result(
+        self,
+        *,
+        arguments: Dict[str, Any],
+        gene: Optional[str],
+        condition_term: Optional[str],
+        condition_applied: Optional[bool],
+        clnsig_param: str,
+        clnsig_components: list,
+    ) -> Dict[str, Any]:
+        """Attribute an empty result to the input that actually caused it.
+
+        A 0-count is only usable if the caller can tell "ClinVar holds no such
+        record" from "one of my inputs is not something ClinVar indexes", so
+        the evidence is established with count-only queries (retmax=0) on a
+        path that has already come back empty, rather than assumed. Both the
+        gene symbol and -- since a disease NAME missing from ClinVar's index
+        empties a result exactly as silently as a wrong symbol does -- the
+        condition are checked on their own before anything is blamed.
+        """
+        extras: Dict[str, Any] = {}
+        condition = arguments.get("condition")
+        has_gene = "gene" in arguments
+
+        # Fix-R9B-2: a 0-count response for a `gene` filter is
+        # indistinguishable from "this gene truly has no ClinVar
+        # entries" whether the symbol was a typo (e.g. "MEPC2"), a
+        # protein/full name instead of the HGNC gene symbol (e.g.
+        # "dystrophin" instead of "DMD"), or a species mismatch --
+        # confirmed live that ClinVar's [gene] index only matches an
+        # exact current HGNC symbol and has no fuzzy/synonym fallback of
+        # its own. Automatically retrying with an unrestricted free-text
+        # search was tried and rejected: "dystrophin[All Fields]"
+        # matches 12,000+ unrelated ClinVar records that merely mention
+        # the word, which would silently swap a false-empty for a
+        # false-positive result set -- worse than reporting nothing.
+        # Surface the ambiguity instead of guessing.
+        #
+        # ...but only blame the GENE when the gene is actually what failed.
+        # When other filters narrowed the query, a 0 count says nothing
+        # about the symbol, and the hint used to send callers off to
+        # re-verify a symbol that was never the problem. Establish the
+        # facts with one cheap count-only query on the bare gene term
+        # before attributing the empty result to anything.
+        other_filters = [
+            name
+            for name, present in (
+                ("condition", bool(condition)),
+                ("variant_id", "variant_id" in arguments),
+                ("variant_name", bool(arguments.get("variant_name"))),
+                ("rsid", bool(arguments.get("rsid"))),
+                ("raw_term", bool(arguments.get("raw_term"))),
+                (clnsig_param, bool(clnsig_components)),
+            )
+            if present
+        ]
+        gene_only_count = (
+            self._count_for_term(f"{gene}[gene]")
+            if has_gene and other_filters
+            else None
+        )
+        if gene_only_count is not None:
+            extras["gene_only_match_count"] = gene_only_count
+        # The same evidence, for the condition: `condition` is the only other
+        # input whose value has to exist in an NCBI-curated index to match
+        # anything, and a name that index does not carry (a synonym, a locus
+        # name, a misspelling) empties the result just as silently as a wrong
+        # gene symbol -- yet it used to go unmentioned while the hint sent the
+        # caller off to re-verify the symbol.
+        condition_only_count = (
+            self._count_for_term(f"{condition_term}[dis]")
+            if condition_term is not None
+            else None
+        )
+        if condition_only_count is not None:
+            extras["condition_only_match_count"] = condition_only_count
+
+        gene_verdict = ""
+        if has_gene and gene_only_count:
+            gene_verdict = (
+                f" The gene symbol '{arguments['gene']}' is not the problem: it "
+                f"matches {gene_only_count} ClinVar record(s) on its own."
+            )
+
+        # 1. The condition never acted as a disease filter at all -- whatever
+        #    else is true, this result is not the disease-filtered answer the
+        #    caller asked for.
+        if condition_term is not None and condition_applied is False:
+            extras["zero_result_hint"] = (
+                f"No ClinVar records matched, and the condition '{condition}' was "
+                "not applied as a disease filter: Entrez did not keep the [dis] "
+                "field tag for it (see query_translation), so this empty result "
+                "says nothing about whether ClinVar holds records for this "
+                f"condition.{gene_verdict} " + _CONDITION_INDEX_GUIDANCE
+            )
+            return extras
+        # 2. The condition name matches nothing in ClinVar's disease index at
+        #    all, so it -- not the gene, not the other filters -- is what
+        #    emptied the result.
+        if condition_term is not None and condition_only_count == 0:
+            extras["zero_result_hint"] = (
+                f"The condition '{condition}' matches no ClinVar records at all on "
+                f"its own ({condition_term}[dis] returns 0 across every gene), so "
+                "the empty result is attributable to the condition name rather "
+                f"than to the other search inputs.{gene_verdict} "
+                + _CONDITION_INDEX_GUIDANCE
+            )
+            return extras
+
+        if has_gene and other_filters and gene_only_count is None:
+            extras["zero_result_hint"] = (
+                f"No ClinVar records matched gene '{arguments['gene']}' "
+                f"combined with {', '.join(other_filters)}. The gene symbol "
+                "could not be checked on its own (follow-up query failed), "
+                "so it is unknown whether the symbol or the other filter(s) "
+                "produced the empty result -- retry with the filters removed "
+                "to tell them apart."
+            )
+        elif has_gene and gene_only_count:
+            hint = (
+                f"The gene symbol '{arguments['gene']}' is fine: it matches "
+                f"{gene_only_count} ClinVar record(s) on its own. The empty "
+                f"result comes from the other filter(s) -- "
+                f"{', '.join(other_filters)} -- which no record for this gene "
+                "satisfies. Relax or correct them (or drop them to see the "
+                "gene's full record set) rather than re-checking the symbol."
+            )
+            if condition_only_count:
+                hint += (
+                    f" The condition '{condition}' is itself a recognized ClinVar "
+                    f"disease term ({condition_only_count} record(s) across all "
+                    "genes), so this gene and this condition simply have no record "
+                    "in common."
+                )
+            extras["zero_result_hint"] = hint
+        elif has_gene:
+            extras["zero_result_hint"] = (
+                f"No ClinVar records matched gene '{arguments['gene']}'. "
+                "ClinVar's gene index only recognizes the current official "
+                "HGNC symbol (e.g. 'DMD', not the protein name 'dystrophin' "
+                "or an outdated/misspelled symbol) -- verify the symbol "
+                "(e.g. via HGNC_search_genes or NCBIDatasets_get_gene) "
+                "before concluding this gene has no reported variants."
+            )
+        elif condition_term is not None:
+            remaining = [f for f in other_filters if f != "condition"]
+            extras["zero_result_hint"] = (
+                f"The condition '{condition}' is a recognized ClinVar disease term "
+                f"({condition_only_count} record(s) on its own), so the empty "
+                "result comes from the other filter(s)"
+                + (f" -- {', '.join(remaining)} -- " if remaining else " ")
+                + "rather than from the condition name."
+            )
+        return extras
+
+    def _count_for_term(self, term: str) -> "int | None":
+        """Count-only eSearch for `term` (retmax=0, no summaries fetched).
+
+        Used to establish, rather than assume, which input caused an empty
+        result. Best-effort: returns None on any failure, never raises.
+        """
+        try:
+            result = self._make_request(
+                self.endpoint,
+                {"db": "clinvar", "term": term, "retmode": "json", "retmax": 0},
+            )
+            if result.get("status") != "success":
+                return None
+            return int(result["data"]["esearchresult"]["count"])
+        except (KeyError, TypeError, ValueError, AttributeError):
+            return None
 
     def _resolve_deprecated_gene_symbol(self, gene: str) -> Optional[str]:
         """Look up `gene` in NCBI's own gene database (which tracks
@@ -663,3 +1119,279 @@ class ClinVarGetClinicalSignificance(ClinVarRESTTool):
         }
 
         return result
+
+
+# How many matching records one call fetches summaries for (500 ids = 3
+# esummary requests). Entrez returns ids in Variation-ID order and db=clinvar
+# has no sort field, so whatever falls off this cap is arbitrary with respect to
+# span -- hence the cap is disclosed rather than silently applied.
+_CANDIDATE_CAP = 500
+
+# Bases immediately upstream of the region searched with NO length filter.
+# Entrez's VLEN is "the difference between reference and alternate, except when
+# there is no length difference (then the length of the allele itself)" (einfo,
+# db=clinvar), so a 1 nt insertion recorded between two bases can be VLEN=1 even
+# though ClinVar's own start/stop span two. This pad keeps such records out of
+# the filtered part of the query, so the filter can never cost a real overlap.
+_EDGE_PAD = 10
+
+
+def _overlap_search_term(chrom, start, end, tag, margin):
+    """The Entrez term for records that could overlap [start, end].
+
+    One flat window widened by `margin` matches every record that merely STARTS
+    in it -- 15,327 for a 4 Mb window on chr11:47332696, ~97% single-base
+    substitutions that stop long before the region. A record starting upstream
+    can only reach the region by occupying more than one base, so the upstream
+    part of the window carries `NOT 1:1[VLEN]`, which drops the candidate set to
+    245 in the same single esearch request.
+
+    Written as a NOT rather than a positive `2:...[VLEN]` range on purpose:
+    records with no VLEN indexed at all exist, and this tool's flagship example
+    is one -- `1703527[VID] AND 0:1000000000[VLEN]` (the 1.5 Mb copy-number loss
+    over chr7:155593770) returns 0 hits. A positive range would drop exactly the
+    variant class this tool was built for.
+    """
+    edge_lo = max(1, int(start) - _EDGE_PAD)
+    parts = [f"{chrom}[chr] AND {edge_lo}:{int(end)}[{tag}]"]
+    upstream_lo = max(1, int(start) - int(margin))
+    upstream_hi = edge_lo - 1
+    if upstream_hi >= upstream_lo:
+        parts.append(
+            f"{chrom}[chr] AND {upstream_lo}:{upstream_hi}[{tag}] NOT 1:1[VLEN]"
+        )
+    return " OR ".join(f"({p})" for p in parts)
+
+
+_OVERLAP_NOTE = (
+    "Entrez matches a variant's START position, so this searches a window widened "
+    "upstream by `margin` and keeps only variants whose span actually overlaps the "
+    "region. Single-base records (VLEN=1) are excluded from the upstream part of "
+    "that window -- occupying one base, they cannot reach the region from outside "
+    "it -- which is what keeps widening `margin` cheap. Sorted smallest span first; "
+    "`variants` is capped at `max_results`, `n_overlapping` is how many were found."
+)
+
+_OVERLAP_REMEDY = (
+    "Narrow the region, or lower `margin`, to bring the match set under "
+    f"{_CANDIDATE_CAP}; widening either makes the truncation worse."
+)
+
+
+def _truncation_disclosure(total, inspected, how_to_get_more):
+    """The keys that tell a partial scan apart from a complete one.
+
+    A dict fragment the caller merges, like `_condition_filter_disclosure`
+    above, so any capped path here can disclose the same way. Field names follow
+    the repo-wide convention (`total_available` / `truncated` /
+    `truncation_note`; see cbioportal_tool._truncation_fields).
+    """
+    if total is None:
+        return {
+            "total_available": None,
+            "truncated": True,
+            "truncation_note": (
+                f"Only the first {inspected} matching records were fetched and "
+                "checked for overlap, and Entrez did not report how many matched "
+                f"in total, so this may be a partial answer. {how_to_get_more}"
+            ),
+        }
+    if inspected >= total:
+        return {"total_available": total, "truncated": False}
+    return {
+        "total_available": total,
+        "truncated": True,
+        "truncation_note": (
+            f"INCOMPLETE SCAN: {inspected} of {total} matching records "
+            f"({100.0 * inspected / total:.1f}%) were fetched and checked for "
+            "overlap. Entrez returns records in Variation-ID order and db=clinvar "
+            "has no sort field, so the rest are arbitrary with respect to span -- a "
+            "short or empty `variants` list is NOT evidence that nothing overlaps "
+            f"this region. {how_to_get_more}"
+        ),
+    }
+
+
+def clinvar_variants_overlapping(
+    session,
+    chrom,
+    start,
+    end,
+    assembly="GRCh37",
+    margin=2_000_000,
+    significance=None,
+    max_results=50,
+    timeout=60,
+):
+    """ClinVar variants whose span OVERLAPS a region.
+
+    Entrez `chrpos37`/`chrpos38` match a variant's START position, so a narrow
+    window finds nothing that begins upstream of it -- and a pathogenic CNV can
+    begin megabases away while still covering the region asked about. Searching
+    an 11 bp window for chr7:155593770-155593780 returns 0 hits even though a
+    1.5 Mb copy-number loss (Variation 1703527, chr7:154831466-156356088)
+    covers it.
+
+    So: search a window widened by `margin` (`_overlap_search_term` builds the
+    query), then keep only records whose [start, stop] genuinely overlaps.
+
+    Only the first `_CANDIDATE_CAP` matching records are inspected, so the
+    envelope reports `total_available` beside `n_candidates` and flags any
+    shortfall: a caller concluding "no pathogenic deletion overlaps this locus"
+    needs to know when that rests on a partial scan.
+    """
+    tag = "chrpos38" if str(assembly).upper() in ("GRCH38", "HG38") else "chrpos37"
+    term = _overlap_search_term(chrom, start, end, tag, margin)
+    if significance:
+        # [clinsig] is not a ClinVar eSearch field -- Entrez silently degraded
+        # it to [All Fields] (confirmed live: chr17 BRCA1 window, 15508 hits
+        # unfiltered vs 13782 with '"Pathogenic"[clinsig]', i.e. a free-text
+        # match that also keeps "Likely pathogenic" and "Conflicting
+        # classifications of pathogenicity" records). Use the same verified
+        # [Filter]/[prop] clause the gene search uses. Values are validated by
+        # the caller against _CLINSIG_ACCEPTED.
+        components = (
+            significance
+            if isinstance(significance, list)
+            else _normalize_clinsig(significance)
+        )
+        clause = _clinsig_query_clause(components)
+        if clause:
+            term = f"({term}) AND {clause}"
+
+    es = session.get(
+        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+        params={
+            "db": "clinvar",
+            "term": term,
+            "retmax": _CANDIDATE_CAP,
+            "retmode": "json",
+        },
+        timeout=timeout,
+    ).json()
+    esearchresult = es.get("esearchresult") or {}
+    ids = esearchresult.get("idlist") or []
+    # esearch reports the size of the whole match set in `count` whatever retmax
+    # is, so the honest denominator costs no extra request.
+    try:
+        total_available = int(esearchresult.get("count"))
+    except (TypeError, ValueError):
+        total_available = None
+
+    out = []
+    for chunk_start in range(0, len(ids), 200):
+        chunk = ids[chunk_start : chunk_start + 200]
+        summ = (
+            session.get(
+                "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi",
+                params={"db": "clinvar", "id": ",".join(chunk), "retmode": "json"},
+                timeout=timeout,
+            )
+            .json()
+            .get("result", {})
+        )
+        for vid in chunk:
+            rec = summ.get(vid) or {}
+            for vset in rec.get("variation_set") or []:
+                for loc in vset.get("variation_loc") or []:
+                    if (
+                        str(loc.get("assembly_name", "")).upper()
+                        != str(assembly).upper()
+                    ):
+                        continue
+                    try:
+                        v_start, v_stop = int(loc.get("start")), int(loc.get("stop"))
+                    except (TypeError, ValueError):
+                        continue
+                    if v_start <= int(end) and v_stop >= int(start):
+                        out.append(
+                            {
+                                "variation_id": vid,
+                                "title": rec.get("title"),
+                                "obj_type": rec.get("obj_type"),
+                                "chr": loc.get("chr"),
+                                "start": v_start,
+                                "stop": v_stop,
+                                "span": v_stop - v_start + 1,
+                                "classification": (
+                                    rec.get("germline_classification") or {}
+                                ).get("description"),
+                            }
+                        )
+                    break
+    # Smallest span first: the most specific variant covering the region.
+    out.sort(key=lambda v: v["span"])
+    return {
+        "term": term,
+        **_truncation_disclosure(total_available, len(ids), _OVERLAP_REMEDY),
+        "n_candidates": len(ids),
+        "n_overlapping": len(out),
+        "variants": out[:max_results],
+        "note": _OVERLAP_NOTE,
+    }
+
+
+@register_tool("ClinVarSearchByRegion")
+class ClinVarSearchByRegion(ClinVarRESTTool):
+    """ClinVar variants overlapping a genomic region, including spanning CNVs."""
+
+    def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        chrom = (
+            str(arguments.get("chrom") or arguments.get("chromosome") or "")
+            .replace("chr", "")
+            .strip()
+        )
+        start, end = arguments.get("start"), arguments.get("end")
+        region = arguments.get("region")
+        if region and (start is None or end is None):
+            m = re.match(
+                r"^\s*chr?([\w]+)\s*[:\s]\s*([\d,]+)\s*[-.]+\s*([\d,]+)", str(region)
+            )
+            if m:
+                chrom = chrom or m.group(1)
+                start, end = (
+                    int(m.group(2).replace(",", "")),
+                    int(m.group(3).replace(",", "")),
+                )
+        if not chrom or start is None or end is None:
+            return {
+                "status": "error",
+                "error": "Provide chrom/start/end, or region like 'chr7:155593770-155593780'.",
+            }
+        # Same input validation as ClinVar_search_variants: an unrecognized
+        # class must not reach the query, where it would silently filter the
+        # region's variants down to nothing under a `status: success`.
+        clnsig_param = (
+            "clinical_significance"
+            if arguments.get("clinical_significance")
+            else "significance"
+        )
+        raw_clnsig = arguments.get("clinical_significance") or arguments.get(
+            "significance"
+        )
+        clnsig_components = []
+        if str(raw_clnsig or "").strip():
+            clnsig_components = _normalize_clinsig(raw_clnsig)
+            invalid_clnsig = [
+                c for c in clnsig_components if c not in _CLINSIG_ACCEPTED_NORMALIZED
+            ]
+            if invalid_clnsig:
+                return _invalid_clinsig_error(clnsig_param, raw_clnsig, invalid_clnsig)
+        try:
+            result = clinvar_variants_overlapping(
+                self.session,
+                chrom,
+                int(start),
+                int(end),
+                assembly=arguments.get("assembly", "GRCh37"),
+                margin=int(arguments.get("margin", 2_000_000)),
+                significance=clnsig_components or None,
+                max_results=int(arguments.get("max_results", 50)),
+                timeout=self.timeout,
+            )
+        except Exception as e:
+            return {
+                "status": "error",
+                "error": f"ClinVar region search failed: {str(e)[:200]}",
+            }
+        return {"status": "success", "data": result}

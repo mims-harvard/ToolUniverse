@@ -31,6 +31,8 @@ class ReMapRESTTool(BaseTool):
         # everything else preserves the legacy ENCODE experiment search so the
         # existing ReMap_get_transcription_factor_binding tool is unchanged.
         operation = arguments.get("operation", self.operation)
+        if operation == "list_datasets_for_target":
+            return self._list_datasets_for_target(arguments)
         if operation == "get_peaks_in_region":
             return self._get_peaks_in_region(arguments)
         return self._encode_tf_binding(arguments)
@@ -182,3 +184,91 @@ class ReMapRESTTool(BaseTool):
             }
         except Exception as e:
             return {"status": "error", "error": f"ReMap API error: {str(e)}"}
+
+    def _list_datasets_for_target(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """ReMap datasets for a transcription factor, one row per dataset.
+
+        A GEO series is not one dataset. GSE23852 for FOXA1 is two --
+        MCF-7_ETOH and MCF-7_E2 -- with 60,158 and 67,736 peaks. Asking "how
+        many peaks in GSE23852" has no single answer, and silently summing to
+        127,894 hides that. This returns the datasets separately, with the sum
+        alongside, so the split is visible rather than assumed away.
+        """
+        import gzip
+        import io
+
+        target = str(
+            arguments.get("target") or arguments.get("gene_name") or ""
+        ).strip()
+        if not target:
+            return {"status": "error", "error": "target is required (e.g. 'FOXA1')"}
+        taxid = arguments.get("taxid") or 9606
+        experiment = str(arguments.get("experiment") or "").strip()
+        count_peaks = bool(arguments.get("count_peaks"))
+
+        url = (
+            f"https://remap.univ-amu.fr/api/v1/datasets/findByTarget/"
+            f"target={target}&taxid={taxid}"
+        )
+        try:
+            resp = self.session.get(url, timeout=self.timeout)
+            resp.raise_for_status()
+            payload = resp.json()
+        except Exception as e:
+            return {"status": "error", "error": f"ReMap API error: {str(e)[:200]}"}
+
+        entry = payload.get(target) or (list(payload.values())[0] if payload else {})
+        datasets = entry.get("datasets") or []
+        if experiment:
+            datasets = [
+                d
+                for d in datasets
+                if str(d.get("dataset_name", "")).upper().startswith(experiment.upper())
+            ]
+            if not datasets:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"No ReMap dataset for target '{target}' under experiment "
+                        f"'{experiment}'. Dataset names look like "
+                        "'GSE23852.FOXA1.MCF-7_ETOH'."
+                    ),
+                }
+
+        rows = []
+        total = 0
+        for d in datasets:
+            row = {
+                "dataset_name": d.get("dataset_name"),
+                "biotype": d.get("biotype_name"),
+                "biotype_modification": d.get("biotype_modification"),
+                "source": d.get("dataset_source"),
+                "bed_url": d.get("bed_url"),
+            }
+            if count_peaks and d.get("bed_url"):
+                try:
+                    bed = self.session.get(d["bed_url"], timeout=self.timeout)
+                    bed.raise_for_status()
+                    n = sum(1 for _ in gzip.open(io.BytesIO(bed.content), "rt"))
+                    row["peak_count"] = n
+                    total += n
+                except Exception as e:
+                    row["peak_count"] = None
+                    row["peak_count_error"] = str(e)[:120]
+            rows.append(row)
+
+        data = {
+            "target": target,
+            "taxid": taxid,
+            "experiment_filter": experiment or None,
+            "n_datasets": len(rows),
+            "datasets": rows,
+        }
+        if count_peaks:
+            data["total_peaks_across_datasets"] = total
+            data["peak_count_note"] = (
+                "peak_count is per dataset. One GEO series can hold several "
+                "datasets (different treatments or cell lines), so report them "
+                "separately unless the question asks for a total."
+            )
+        return {"status": "success", "data": data}

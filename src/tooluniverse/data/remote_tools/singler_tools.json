@@ -5,12 +5,13 @@
     "description": "Annotate single cells with SingleR (Aran 2019): correlate each cell against a labeled reference transcriptome and assign the best-matching cell-type label, per cell (not per cluster) — the standard reference-based alternative to manual marker annotation. Reference is either a built-in celldex panel (HumanPrimaryCellAtlasData, BlueprintEncodeData, MonacoImmuneData, ...) or your own labeled .h5ad (ref_adata_path + ref_labels_key). Returns a label for every cell plus label counts. Input is a server-accessible query .h5ad of log-normalized expression.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "adata_path": {"type": "string", "description": "Server-accessible path to the query .h5ad (log-normalized expression in .X)."},
-        "celldex_ref": {"type": "string", "description": "Built-in reference name: HumanPrimaryCellAtlasData, BlueprintEncodeData, MonacoImmuneData, DatabaseImmuneCellExpressionData, NovershternHematopoieticData, ImmGenData, or MouseRNAseqData. Omit when using a bring-your-own reference."},
-        "ref_label_field": {"type": "string", "description": "celldex label granularity: 'label.main' (default) or 'label.fine'."},
-        "ref_adata_path": {"type": "string", "description": "Bring-your-own reference .h5ad (log-normalized); used when celldex_ref is omitted."},
-        "ref_labels_key": {"type": "string", "description": "obs column in ref_adata_path holding the reference cell-type labels."}
+        "adata_path": {"type": "string", "description": "A query .h5ad file inside the provider-configured data directory (log-normalized expression in .X)."},
+        "celldex_ref": {"type": "string", "enum": ["BlueprintEncodeData", "DatabaseImmuneCellExpressionData", "HumanPrimaryCellAtlasData", "ImmGenData", "MonacoImmuneData", "MouseRNAseqData", "NovershternHematopoieticData"], "description": "Built-in reference name: HumanPrimaryCellAtlasData, BlueprintEncodeData, MonacoImmuneData, DatabaseImmuneCellExpressionData, NovershternHematopoieticData, ImmGenData, or MouseRNAseqData. Omit when using a bring-your-own reference."},
+        "ref_label_field": {"type": "string", "enum": ["label.main", "label.fine"], "description": "celldex label granularity: 'label.main' (default) or 'label.fine'."},
+        "ref_adata_path": {"type": "string", "description": "A bring-your-own reference .h5ad file inside the provider-configured data directory; used when celldex_ref is omitted."},
+        "ref_labels_key": {"type": "string", "minLength": 1, "maxLength": 128, "description": "obs column in ref_adata_path holding the reference cell-type labels."}
       },
       "required": ["adata_path"]
     },

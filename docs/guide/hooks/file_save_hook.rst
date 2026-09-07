@@ -183,8 +183,8 @@ Examples
    tu.load_tools(['europepmc'])
 
    result = tu.run({
-       "name": "EuropePMC_search_publications",
-       "arguments": {"query": "machine learning drug discovery"}
+       "name": "EuropePMC_search_articles",
+       "arguments": {"query": "machine learning drug discovery", "limit": 25}
    })
 
    # Process with external analysis tool

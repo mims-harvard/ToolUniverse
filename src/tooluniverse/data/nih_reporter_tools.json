@@ -1,0 +1,114 @@
+[
+  {
+    "name": "NIHReporter_search_projects",
+    "type": "NIHReporterTool",
+    "description": "Full-text search NIH RePORTER, NIH's public database of ~3 million funded research projects since 1985, across project title, terms, and abstract. Optionally filter by fiscal year and organization. Example: query='CRISPR gene editing', fiscal_year=2024. Returns each project's project_num and appl_id for use with NIHReporter_get_project.",
+    "fields": {
+      "operation": "search_projects"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Free-text search over title, terms, and abstract, e.g. 'CRISPR gene editing'."
+        },
+        "fiscal_year": {
+          "type": ["integer", "null"],
+          "description": "Optional NIH fiscal year filter, e.g. 2024."
+        },
+        "organization": {
+          "type": ["string", "null"],
+          "description": "Optional grantee institution filter, e.g. 'Broad Institute'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max projects to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "project_num": {"type": ["string", "null"]},
+              "appl_id": {"type": ["integer", "null"]},
+              "title": {"type": ["string", "null"]},
+              "principal_investigator": {"type": ["string", "null"]},
+              "organization": {"type": ["string", "null"]},
+              "funding_institute": {"type": ["string", "null"]},
+              "fiscal_year": {"type": ["integer", "null"]},
+              "award_amount": {"type": ["number", "null"]},
+              "project_start_date": {"type": ["string", "null"]},
+              "project_end_date": {"type": ["string", "null"]},
+              "abstract": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "CRISPR gene editing", "fiscal_year": 2024, "limit": 5},
+      {"query": "single cell RNA sequencing", "limit": 5}
+    ]
+  },
+  {
+    "name": "NIHReporter_get_project",
+    "type": "NIHReporterTool",
+    "description": "Retrieve one NIH-funded project by its project number or application id from NIH RePORTER: title, abstract, PI, institution, funding institute, award amount, and project dates. Example: project_num='5R21EB036298-03' or appl_id=11326711. Use NIHReporter_search_projects to find one.",
+    "fields": {
+      "operation": "get_project"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "project_num": {
+          "type": ["string", "null"],
+          "description": "NIH project number, e.g. '5R21EB036298-03'."
+        },
+        "appl_id": {
+          "type": ["integer", "null"],
+          "description": "NIH application id, e.g. 11326711. Alternative to project_num."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "project_num": {"type": ["string", "null"]},
+            "appl_id": {"type": ["integer", "null"]},
+            "title": {"type": ["string", "null"]},
+            "principal_investigator": {"type": ["string", "null"]},
+            "organization": {"type": ["string", "null"]},
+            "funding_institute": {"type": ["string", "null"]},
+            "fiscal_year": {"type": ["integer", "null"]},
+            "award_amount": {"type": ["number", "null"]},
+            "project_start_date": {"type": ["string", "null"]},
+            "project_end_date": {"type": ["string", "null"]},
+            "abstract": {"type": ["string", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"project_num": "5R21EB036298-03"},
+      {"appl_id": 11326711}
+    ]
+  }
+]

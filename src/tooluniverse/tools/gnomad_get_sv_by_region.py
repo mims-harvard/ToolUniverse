@@ -1,7 +1,7 @@
 """
 gnomad_get_sv_by_region
 
-Get structural variants (SVs) from gnomAD v4 overlapping a genomic region. Returns DEL/DUP/INV/BN...
+Get structural variants (SVs) from gnomAD overlapping a genomic region. The SV callset follows th...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def gnomad_get_sv_by_region(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get structural variants (SVs) from gnomAD v4 overlapping a genomic region. Returns DEL/DUP/INV/BN...
+    Get structural variants (SVs) from gnomAD overlapping a genomic region. The SV callset follows th...
 
     Parameters
     ----------

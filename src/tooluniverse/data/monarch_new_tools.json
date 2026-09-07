@@ -33,7 +33,8 @@
         "xrefs": {"type": "array", "items": {"type": "string"}},
         "taxon": {"type": ["string", "null"]},
         "taxon_label": {"type": ["string", "null"]},
-        "provided_by": {"type": ["string", "null"]}
+        "provided_by": {"type": ["string", "null"]},
+        "deprecated": {"type": "boolean", "description": "True if this ontology term is obsolete. Obsolete terms remain queryable but carry no annotations."}
       }
     }
   },
@@ -128,7 +129,8 @@
           "symbol": {"type": ["string", "null"]},
           "description": {"type": ["string", "null"]},
           "taxon": {"type": ["string", "null"]},
-          "taxon_label": {"type": ["string", "null"]}
+          "taxon_label": {"type": ["string", "null"]},
+          "deprecated": {"type": "boolean", "description": "True if this ontology term is obsolete. Obsolete terms remain queryable but carry no annotations."}
         }
       }
     }

@@ -314,12 +314,24 @@ class CTGovAPITool(BaseRESTTool):
         resp.raise_for_status()
         data = resp.json()
 
+        # Fix-R19-2: `averageByteSize` is not a key ClinicalTrials.gov returns --
+        # /api/v2/stats/size reports the mean as `averageSizeBytes` (confirmed
+        # live alongside totalStudies, percentiles, ranges, largestStudies), so
+        # this field was silently null on every call. `totalStudies` above was
+        # already correct, which is why the two ClinicalTrials implementations
+        # in this codebase disagreed. `ranges` is the size histogram and was
+        # parsed and discarded; surface it next to the percentiles.
+        average_byte_size = data.get("averageSizeBytes")
+        if average_byte_size is None:
+            average_byte_size = data.get("averageByteSize")
+
         return {
             "status": "success",
             "data": {
                 "total_studies": data.get("totalStudies") or data.get("studiesCount"),
-                "average_byte_size": data.get("averageByteSize"),
+                "average_byte_size": average_byte_size,
                 "byte_size_percentiles": data.get("percentiles", {}),
+                "size_ranges": data.get("ranges", []),
                 "largest_studies": data.get("largestStudies", [])[:5],
             },
             "metadata": {

@@ -474,7 +474,8 @@
         "operation": {
           "type": "string",
           "const": "annotate_variant",
-          "description": "Operation type (fixed: annotate_variant)"
+          "description": "Operation type (fixed: annotate_variant)",
+          "default": "annotate_variant"
         },
         "gene": {
           "type": "string",
@@ -948,6 +949,9 @@
         "purpose": "Annotate cancer variants with oncogenicity and matched therapy implications.",
         "without": "Runs in demo mode (BRAF, TP53, ROS1 only) without a token."
       }
+    },
+    "fields": {
+      "operation": "annotate_variant"
     }
   },
   {
@@ -960,7 +964,8 @@
         "operation": {
           "type": "string",
           "const": "get_gene_info",
-          "description": "Operation type (fixed: get_gene_info)"
+          "description": "Operation type (fixed: get_gene_info)",
+          "default": "get_gene_info"
         },
         "gene": {
           "type": "string",
@@ -1045,7 +1050,10 @@
     ],
     "optional_api_keys": [
       "ONCOKB_API_TOKEN"
-    ]
+    ],
+    "fields": {
+      "operation": "get_gene_info"
+    }
   },
   {
     "name": "OncoKB_get_cancer_genes",
@@ -1057,7 +1065,8 @@
         "operation": {
           "type": "string",
           "const": "get_cancer_genes",
-          "description": "Operation type (fixed: get_cancer_genes)"
+          "description": "Operation type (fixed: get_cancer_genes)",
+          "default": "get_cancer_genes"
         }
       },
       "required": []
@@ -1143,7 +1152,10 @@
     ],
     "optional_api_keys": [
       "ONCOKB_API_TOKEN"
-    ]
+    ],
+    "fields": {
+      "operation": "get_cancer_genes"
+    }
   },
   {
     "name": "OncoKB_get_levels",
@@ -1155,7 +1167,8 @@
         "operation": {
           "type": "string",
           "const": "get_levels",
-          "description": "Operation type (fixed: get_levels)"
+          "description": "Operation type (fixed: get_levels)",
+          "default": "get_levels"
         }
       },
       "required": []
@@ -1236,7 +1249,10 @@
     ],
     "optional_api_keys": [
       "ONCOKB_API_TOKEN"
-    ]
+    ],
+    "fields": {
+      "operation": "get_levels"
+    }
   },
   {
     "name": "OncoKB_annotate_copy_number",
@@ -1248,7 +1264,8 @@
         "operation": {
           "type": "string",
           "const": "annotate_copy_number",
-          "description": "Operation type (fixed: annotate_copy_number)"
+          "description": "Operation type (fixed: annotate_copy_number)",
+          "default": "annotate_copy_number"
         },
         "gene": {
           "type": "string",
@@ -1457,6 +1474,9 @@
     ],
     "optional_api_keys": [
       "ONCOKB_API_TOKEN"
-    ]
+    ],
+    "fields": {
+      "operation": "annotate_copy_number"
+    }
   }
 ]

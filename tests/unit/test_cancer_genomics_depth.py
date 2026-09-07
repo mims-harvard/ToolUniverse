@@ -34,28 +34,31 @@ def _gdc_tool():
     )
 
 
-_GDC_FAKE = {
-    "aggregations": {
-        "projects": {
-            "buckets": [
-                {
-                    "key": "CPTAC-3",
-                    "doc_count": 510,
-                    "case_summary": {
-                        "doc_count": 3521,
-                        "case_with_ssm": {"doc_count": 510},
-                    },
-                },
-                {
-                    "key": "TINY-PROJ",
-                    "doc_count": 6,
-                    "case_summary": {
-                        "doc_count": 10,
-                        "case_with_ssm": {"doc_count": 6},
-                    },
-                },
-            ]
-        }
+def _occurrence_hit(case_id: str, project_id: str) -> dict:
+    return {"case": {"case_id": case_id, "project": {"project_id": project_id}}}
+
+
+# Fix-Round3-001: the numerator now comes from distinct case_ids seen across
+# paginated /ssm_occurrences records (not the old, occurrence-inflated
+# /analysis/mutated_cases_count_by_project bucket doc_count -- see
+# test_gdc_mutation_frequency.py for the dedup regression guard). 510 CPTAC-3
+# cases + 6 TINY-PROJ cases, one occurrence record each.
+_OCCURRENCES_FAKE = {
+    "data": {
+        "hits": (
+            [_occurrence_hit(f"cptac3-case-{i}", "CPTAC-3") for i in range(510)]
+            + [_occurrence_hit(f"tiny-case-{i}", "TINY-PROJ") for i in range(6)]
+        ),
+        "pagination": {"total": 516},
+    }
+}
+
+_PROJECTS_FAKE = {
+    "data": {
+        "hits": [
+            {"project_id": "CPTAC-3", "summary": {"case_count": 3521}},
+            {"project_id": "TINY-PROJ", "summary": {"case_count": 10}},
+        ]
     }
 }
 
@@ -65,7 +68,7 @@ class TestGDCMutationFreqByProject(unittest.TestCase):
         """Per-project numerator/denominator are preserved and frequency computed."""
         tool = _gdc_tool()
         with patch("tooluniverse.gdc_tool._http_get") as http:
-            http.return_value = _GDC_FAKE
+            http.side_effect = [_OCCURRENCES_FAKE, _PROJECTS_FAKE]
             result = tool.run({"gene_symbol": "KRAS"})
 
         self.assertEqual(result["status"], "success")
@@ -86,7 +89,7 @@ class TestGDCMutationFreqByProject(unittest.TestCase):
         """Projects are ranked by mutation frequency, highest first."""
         tool = _gdc_tool()
         with patch("tooluniverse.gdc_tool._http_get") as http:
-            http.return_value = _GDC_FAKE
+            http.side_effect = [_OCCURRENCES_FAKE, _PROJECTS_FAKE]
             result = tool.run({"gene": "KRAS"})  # exercise the `gene` alias too
         projects = result["data"]["projects"]
         # TINY-PROJ (6/10 = 0.6) ranks above CPTAC-3 (510/3521 ~= 0.145).

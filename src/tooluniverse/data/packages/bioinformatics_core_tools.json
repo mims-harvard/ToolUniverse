@@ -12,9 +12,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "biopython",
     "local_info": {
@@ -145,9 +143,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "scikit-bio",
     "local_info": {
@@ -278,9 +274,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "biotite",
     "local_info": {
@@ -411,9 +405,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "gget",
     "local_info": {
@@ -540,6 +532,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -549,9 +542,7 @@
           "description": "Type of information to retrieve about trackpy"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "trackpy",
     "local_info": {
@@ -679,6 +670,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -688,9 +680,7 @@
           "description": "Type of information to retrieve about Numba"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "numba",
     "local_info": {
@@ -822,9 +812,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "flask",
     "local_info": {
@@ -951,6 +939,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -960,9 +949,7 @@
           "description": "Type of information to retrieve about googlesearch-python"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "googlesearch-python",
     "local_info": {
@@ -1089,6 +1076,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1098,9 +1086,7 @@
           "description": "Type of information to retrieve about cryosparc-tools"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "cryosparc-tools",
     "local_info": {
@@ -1228,6 +1214,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1237,9 +1224,7 @@
           "description": "Type of information to retrieve about tskit"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "tskit",
     "local_info": {
@@ -1367,6 +1352,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1376,9 +1362,7 @@
           "description": "Type of information to retrieve about FAN-C"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "fanc",
     "local_info": {
@@ -1506,6 +1490,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1515,9 +1500,7 @@
           "description": "Type of information to retrieve about pyBigWig"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "pyBigWig",
     "local_info": {
@@ -1650,9 +1633,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "arxiv",
     "local_info": {
@@ -1779,6 +1760,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1788,9 +1770,7 @@
           "description": "Type of information to retrieve about PLIP"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "plip",
     "local_info": {
@@ -1918,6 +1898,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1927,9 +1908,7 @@
           "description": "Type of information to retrieve about PDBFixer"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "pdbfixer",
     "local_info": {
@@ -2057,6 +2036,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -2066,9 +2046,7 @@
           "description": "Type of information to retrieve about ProDy"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "prody",
     "local_info": {
@@ -2196,6 +2174,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -2205,9 +2184,7 @@
           "description": "Type of information to retrieve about MAGeCK"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "mageck",
     "local_info": {
@@ -2335,6 +2312,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -2344,9 +2322,7 @@
           "description": "Type of information to retrieve about FlowKit"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "flowkit",
     "local_info": {
@@ -2475,6 +2451,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -2484,9 +2461,7 @@
           "description": "Type of information to retrieve about poliastro"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "poliastro",
     "local_info": {
@@ -2614,6 +2589,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -2623,9 +2599,7 @@
           "description": "Type of information to retrieve about scholarly"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "scholarly",
     "local_info": {
@@ -2753,6 +2727,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -2762,9 +2737,7 @@
           "description": "Type of information to retrieve about FlowIO"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "FlowIO",
     "local_info": {
@@ -2892,6 +2865,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -2901,9 +2875,7 @@
           "description": "Type of information to retrieve about ruptures"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "ruptures",
     "local_info": {
@@ -3031,6 +3003,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -3040,9 +3013,7 @@
           "description": "Type of information to retrieve about loompy"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "loompy",
     "local_info": {
@@ -3174,9 +3145,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "requests",
     "local_info": {
@@ -3303,6 +3272,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -3312,9 +3282,7 @@
           "description": "Type of information to retrieve about PyScreener"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "pyscreener",
     "local_info": {
@@ -3442,6 +3410,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -3451,9 +3420,7 @@
           "description": "Type of information to retrieve about PyKalman"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "pykalman",
     "local_info": {
@@ -3582,6 +3549,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -3591,9 +3559,7 @@
           "description": "Type of information to retrieve about khmer"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "khmer",
     "local_info": {
@@ -3726,9 +3692,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "pymed",
     "local_info": {
@@ -3855,6 +3819,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -3864,9 +3829,7 @@
           "description": "Type of information to retrieve about NetworkX"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "networkx",
     "local_info": {
@@ -3998,9 +3961,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "msprime",
     "local_info": {
@@ -4127,6 +4088,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -4136,9 +4098,7 @@
           "description": "Type of information to retrieve about PyMassSpec"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "PyMassSpec",
     "local_info": {
@@ -4266,6 +4226,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -4275,9 +4236,7 @@
           "description": "Type of information to retrieve about PyPDF2"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "PyPDF2",
     "local_info": {
@@ -4406,6 +4365,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -4416,9 +4376,7 @@
           "description": "Type of information to retrieve about PyTDC"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "pytdc",
     "local_info": {
@@ -4551,9 +4509,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "lifelines",
     "local_info": {

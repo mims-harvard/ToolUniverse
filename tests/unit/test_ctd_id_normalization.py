@@ -1,13 +1,12 @@
-"""Regression guard for Fix-R18C-2/4: CTD's own tool descriptions promise
-bare CAS RN, bare MeSH ID, and bare NCBI Gene ID as valid input_terms
-formats, but the RENCI Automat mirror's equivalent_identifiers only ever
-store the CURIE-prefixed form -- confirmed live that "D000082" (bare MeSH
-descriptor ID), "C006780" (bare MeSH supplementary-concept ID), "80-05-7"
-(bare CAS RN), and "7157" (bare NCBI Gene ID) all failed to resolve while
-their "MESH:"/"CAS:"/"NCBIGene:"-prefixed forms succeeded.
-_candidate_curies() now tries the correctly-prefixed form first for
-recognizable ID patterns, always falling back to the original string so a
-name or already-prefixed CURIE keeps working unchanged.
+"""Regression guard for the mydisease.info-backed CTD tool's term routing.
+
+mydisease.info indexes CTD's chemical-disease curation under distinct nested
+fields per identifier type (mesh_chemical_id, cas_registry_number,
+chemical_name) with no fuzzy cross-matching between them, so a chemical term
+must be routed to the right field before querying. `_chemical_match_field`
+picks that field from a bare term's shape (MeSH ID pattern, CAS RN pattern,
+or an explicit 'PREFIX:value' CURIE); `_term_and_prefix` does the CURIE
+splitting it relies on.
 """
 
 import sys
@@ -17,46 +16,44 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from tooluniverse.ctd_tool import _candidate_curies
+from tooluniverse.ctd_tool import _chemical_match_field, _term_and_prefix
 
 pytestmark = pytest.mark.unit
 
 
-def test_bare_mesh_descriptor_id_gets_prefixed_for_chem():
-    assert _candidate_curies("D000082", "chem") == ["MESH:D000082", "D000082"]
+def test_bare_mesh_supplementary_concept_id_matches_mesh_field():
+    assert _chemical_match_field("C006780") == ("mesh_chemical_id", "C006780")
 
 
-def test_bare_mesh_supplementary_concept_id_gets_prefixed_for_chem():
-    assert _candidate_curies("C006780", "chem") == ["MESH:C006780", "C006780"]
+def test_bare_mesh_descriptor_id_matches_mesh_field():
+    assert _chemical_match_field("D016729") == ("mesh_chemical_id", "D016729")
 
 
-def test_bare_cas_rn_gets_prefixed_for_chem():
-    assert _candidate_curies("80-05-7", "chem") == ["CAS:80-05-7", "80-05-7"]
+def test_bare_cas_rn_matches_cas_field():
+    assert _chemical_match_field("80-05-7") == ("cas_registry_number", "80-05-7")
 
 
-def test_bare_ncbi_gene_id_gets_prefixed_for_gene():
-    assert _candidate_curies("7157", "gene") == ["NCBIGene:7157", "7157"]
+def test_plain_name_matches_chemical_name_field():
+    assert _chemical_match_field("bisphenol A") == ("chemical_name", "bisphenol A")
+    assert _chemical_match_field("paracetamol") == ("chemical_name", "paracetamol")
 
 
-def test_bare_mesh_id_gets_prefixed_for_disease():
-    assert _candidate_curies("D001943", "disease") == ["MESH:D001943", "D001943"]
+def test_explicit_mesh_curie_matches_mesh_field_by_value():
+    assert _chemical_match_field("MESH:C006780") == ("mesh_chemical_id", "C006780")
 
 
-def test_already_prefixed_curie_is_passed_through_unchanged():
-    assert _candidate_curies("MESH:D000082", "chem") == ["MESH:D000082"]
-    assert _candidate_curies("CAS:80-05-7", "chem") == ["CAS:80-05-7"]
+def test_explicit_cas_curie_matches_cas_field_by_value():
+    assert _chemical_match_field("CAS:80-05-7") == ("cas_registry_number", "80-05-7")
 
 
-def test_plain_name_has_no_id_candidates_generated():
-    assert _candidate_curies("bisphenol A", "chem") == ["bisphenol A"]
-    assert _candidate_curies("paracetamol", "chem") == ["paracetamol"]
+def test_unrecognized_curie_prefix_falls_back_to_name_field():
+    # CHEBI/PubChem/etc. CURIEs aren't stored in mydisease.info's CTD cache,
+    # so they can't be routed to a specific field -- the whole term
+    # (including prefix) is matched as a literal name, which will correctly
+    # find nothing rather than silently guessing a field.
+    assert _chemical_match_field("CHEBI:27563") == ("chemical_name", "CHEBI:27563")
 
 
-def test_gene_symbol_is_not_treated_as_a_gene_id():
-    assert _candidate_curies("TP53", "gene") == ["TP53"]
-
-
-def test_all_digit_string_is_not_treated_as_gene_id_for_chem_type():
-    # A bare numeric string only means "NCBI Gene ID" when input_type is
-    # "gene" -- for chemical tools it's not auto-prefixed as anything.
-    assert _candidate_curies("7157", "chem") == ["7157"]
+def test_term_and_prefix_splits_on_first_colon():
+    assert _term_and_prefix("MESH:C006780") == ("MESH", "C006780")
+    assert _term_and_prefix("bisphenol A") == (None, "bisphenol A")

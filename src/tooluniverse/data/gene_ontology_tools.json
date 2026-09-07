@@ -429,7 +429,7 @@
   },
   {
     "name": "GO_get_annotations_for_gene",
-    "description": "Finds all GO annotations for a specific gene/protein using GOlr search.",
+    "description": "Finds GO annotations for a specific gene/protein using GOlr search. Returns one row per annotation, so a gene with several evidence codes for the same GO term appears several times. This returns a PAGE, not the complete set: heavily annotated genes have far more annotations than the default page holds (measured: 'TP53' matches 1812 annotation rows), and the response carries no total, so a short list is NOT evidence the gene has no further annotations -- raise 'rows' if completeness matters.",
     "type": "GeneOntologyTool",
     "parameter": {
       "type": "object",
@@ -440,7 +440,8 @@
         },
         "rows": {
           "type": "integer",
-          "description": "Maximum number of annotations to return. Default: 100. Use a lower value (e.g., 25) for genes with many annotations like TP53.",
+          "description": "Maximum number of annotation rows to return. Default: 100. Raise it (e.g. 2000) for a heavily annotated gene such as TP53, which has 1812 annotation rows; lower it to keep responses small.",
+          "minimum": 1,
           "default": 100
         }
       },
@@ -449,7 +450,7 @@
       ]
     },
     "fields": {
-      "endpoint": "http://golr-aux.geneontology.io/solr/select?fq=document_category:\"annotation\"&q=*:*&fq=bioentity_label:\"{gene_id}\"&wt=json&rows=50",
+      "endpoint": "http://golr-aux.geneontology.io/solr/select?fq=document_category:\"annotation\"&q=*:*&fq=bioentity_label:\"{gene_id}\"&wt=json&rows={rows}",
       "extract_path": "response.docs",
       "input_description": "Input gene identifier, e.g., 'TP53'.",
       "output_description": "Returns a list of GO annotations for the gene."

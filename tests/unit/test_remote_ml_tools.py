@@ -135,14 +135,14 @@ def test_enformer_run_predict_errors():
 @requires_torch
 def test_enformer_variant_effect_delta_sign(monkeypatch):
     def fake_predict(seq, org):
-        return torch.full((ef.N_BINS, 3), 1.0 if seq == "ALT" else 0.0)
+        return torch.full((ef.N_BINS, 3), 1.0 if seq == "AAC" else 0.0)
 
     monkeypatch.setattr(ef, "_predict", fake_predict)
     out = ef.EnformerVariantEffectTool().run(
-        {"ref_sequence": "REF", "alt_sequence": "ALT"}
+        {"ref_sequence": "AAA", "alt_sequence": "AAC"}
     )
     assert out["tracks"][0]["delta"] == pytest.approx(1.0)  # alt - ref
-    assert ef.EnformerVariantEffectTool().run({"ref_sequence": "REF"})["error"]
+    assert ef.EnformerVariantEffectTool().run({"ref_sequence": "AAA"})["error"]
 
 
 # ------------------------------------------------------------------- Borzoi
@@ -185,13 +185,26 @@ P: 0.000657
 """
 
 
-def test_ldsc_ref_resolution():
-    assert ld._ref("/abs/panel", "x").startswith("/abs/panel")  # absolute kept
+def _configure_ldsc_roots(monkeypatch, tmp_path):
+    data_root = tmp_path / "data"
+    data_root.mkdir()
+    monkeypatch.setenv("TOOLUNIVERSE_REMOTE_DATA_ROOT", str(data_root))
+    monkeypatch.setenv("LDSC_REF_DIR", str(data_root))
+    (data_root / "eur_w_ld_chr").mkdir()
+    return data_root
+
+
+def test_ldsc_ref_resolution(monkeypatch, tmp_path):
+    data_root = _configure_ldsc_roots(monkeypatch, tmp_path)
+    (data_root / "panel").mkdir()
+    assert ld._ref("panel", "x") == f"{data_root / 'panel'}{os.sep}"
     rel = ld._ref(None, "eur_w_ld_chr/")
-    assert rel.endswith("eur_w_ld_chr/") and ld.LDSC_REF_DIR in rel
+    assert rel == f"{data_root / 'eur_w_ld_chr'}{os.sep}"
 
 
-def test_ldsc_heritability_parsing(monkeypatch):
+def test_ldsc_heritability_parsing(monkeypatch, tmp_path):
+    data_root = _configure_ldsc_roots(monkeypatch, tmp_path)
+    (data_root / "trait.sumstats.gz").touch()
     monkeypatch.setattr(ld, "_run_ldsc", lambda args: {"log": H2_LOG})
     out = ld.LdscHeritabilityTool().run({"sumstats_path": "trait.sumstats.gz"})
     assert out["h2"] == pytest.approx(0.2106)
@@ -200,7 +213,10 @@ def test_ldsc_heritability_parsing(monkeypatch):
     assert out["ratio"] == pytest.approx(0.1016)
 
 
-def test_ldsc_genetic_correlation_parsing(monkeypatch):
+def test_ldsc_genetic_correlation_parsing(monkeypatch, tmp_path):
+    data_root = _configure_ldsc_roots(monkeypatch, tmp_path)
+    (data_root / "a.sumstats.gz").touch()
+    (data_root / "b.sumstats.gz").touch()
     monkeypatch.setattr(ld, "_run_ldsc", lambda args: {"log": RG_LOG})
     out = ld.LdscGeneticCorrelationTool().run(
         {"sumstats_path_1": "a.sumstats.gz", "sumstats_path_2": "b.sumstats.gz"}
@@ -210,7 +226,9 @@ def test_ldsc_genetic_correlation_parsing(monkeypatch):
     assert out["p_value"] == pytest.approx(0.000657)
 
 
-def test_ldsc_propagates_engine_error(monkeypatch):
+def test_ldsc_propagates_engine_error(monkeypatch, tmp_path):
+    data_root = _configure_ldsc_roots(monkeypatch, tmp_path)
+    (data_root / "x.sumstats.gz").touch()
     monkeypatch.setattr(ld, "_run_ldsc", lambda args: {"error": "ldsc.py not found"})
     out = ld.LdscHeritabilityTool().run({"sumstats_path": "x.sumstats.gz"})
     assert out["error"] == "ldsc.py not found"
@@ -230,6 +248,8 @@ def test_scvi_integration_envelope(monkeypatch):
 
     class _FakeAdata:
         obs_names = np.array(["c1", "c2", "c3"])
+        obs = {"sample": np.array(["a", "a", "b"])}
+        n_obs = 3
 
     monkeypatch.setattr(sv, "_prepare_adata", lambda *a, **k: _FakeAdata())
     monkeypatch.setattr(sv, "_train_scvi", lambda *a, **k: _FakeModel())

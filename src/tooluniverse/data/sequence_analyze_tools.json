@@ -8,8 +8,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["count_residues"],
-          "description": "Operation type"
+          "enum": [
+            "count_residues"
+          ],
+          "description": "Operation type",
+          "default": "count_residues"
         },
         "sequence": {
           "type": "string",
@@ -24,7 +27,9 @@
           "description": "Single character residue to count (e.g., 'C' for cysteine)"
         }
       },
-      "required": ["operation", "residue"]
+      "required": [
+        "residue"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -34,11 +39,21 @@
             "data": {
               "type": "object",
               "properties": {
-                "count": {"type": "integer"},
-                "sequence_length": {"type": "integer"},
-                "fraction": {"type": "number"},
-                "percent": {"type": "number"},
-                "positions_1based": {"type": "array"}
+                "count": {
+                  "type": "integer"
+                },
+                "sequence_length": {
+                  "type": "integer"
+                },
+                "fraction": {
+                  "type": "number"
+                },
+                "percent": {
+                  "type": "number"
+                },
+                "positions_1based": {
+                  "type": "array"
+                }
               }
             }
           }
@@ -46,9 +61,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -58,7 +77,10 @@
         "uniprot_id": "P00533",
         "residue": "C"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "count_residues"
+    }
   },
   {
     "name": "Sequence_gc_content",
@@ -69,15 +91,20 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["gc_content"],
-          "description": "Operation type"
+          "enum": [
+            "gc_content"
+          ],
+          "description": "Operation type",
+          "default": "gc_content"
         },
         "sequence": {
           "type": "string",
           "description": "DNA or RNA sequence string"
         }
       },
-      "required": ["operation", "sequence"]
+      "required": [
+        "sequence"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -87,10 +114,18 @@
             "data": {
               "type": "object",
               "properties": {
-                "gc_fraction": {"type": "number"},
-                "gc_percent": {"type": "number"},
-                "length": {"type": "integer"},
-                "composition": {"type": "object"}
+                "gc_fraction": {
+                  "type": "number"
+                },
+                "gc_percent": {
+                  "type": "number"
+                },
+                "length": {
+                  "type": "integer"
+                },
+                "composition": {
+                  "type": "object"
+                }
               }
             }
           }
@@ -98,9 +133,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -109,7 +148,10 @@
         "operation": "gc_content",
         "sequence": "ATGCGATCGATCGATCGATCG"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "gc_content"
+    }
   },
   {
     "name": "Sequence_reverse_complement",
@@ -120,15 +162,20 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["reverse_complement"],
-          "description": "Operation type"
+          "enum": [
+            "reverse_complement"
+          ],
+          "description": "Operation type",
+          "default": "reverse_complement"
         },
         "sequence": {
           "type": "string",
           "description": "DNA sequence (A/T/C/G/N only)"
         }
       },
-      "required": ["operation", "sequence"]
+      "required": [
+        "sequence"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -138,9 +185,15 @@
             "data": {
               "type": "object",
               "properties": {
-                "original": {"type": "string"},
-                "reverse_complement": {"type": "string"},
-                "length": {"type": "integer"}
+                "original": {
+                  "type": "string"
+                },
+                "reverse_complement": {
+                  "type": "string"
+                },
+                "length": {
+                  "type": "integer"
+                }
               }
             }
           }
@@ -148,9 +201,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -159,7 +216,10 @@
         "operation": "reverse_complement",
         "sequence": "ATGCGATCG"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "reverse_complement"
+    }
   },
   {
     "name": "Sequence_stats",
@@ -170,8 +230,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["stats"],
-          "description": "Operation type"
+          "enum": [
+            "stats"
+          ],
+          "description": "Operation type",
+          "default": "stats"
         },
         "sequence": {
           "type": "string",
@@ -182,7 +245,7 @@
           "description": "UniProt accession to fetch protein sequence from. Optional if sequence is provided."
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -192,9 +255,15 @@
             "data": {
               "type": "object",
               "properties": {
-                "sequence_type": {"type": "string"},
-                "length": {"type": "integer"},
-                "composition": {"type": "object"}
+                "sequence_type": {
+                  "type": "string"
+                },
+                "length": {
+                  "type": "integer"
+                },
+                "composition": {
+                  "type": "object"
+                }
               }
             }
           }
@@ -202,9 +271,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -213,6 +286,9 @@
         "operation": "stats",
         "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQAPILSRVGDGTQDNLSGAEKAVQVKVKALPDAQFEVVHSLAK"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "stats"
+    }
   }
 ]

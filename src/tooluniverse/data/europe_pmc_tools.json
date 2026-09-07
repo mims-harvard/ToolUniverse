@@ -2,7 +2,7 @@
   {
     "type": "EuropePMCTool",
     "name": "EuropePMC_search_articles",
-    "description": "Search for articles on Europe PMC including abstracts and metadata. Europe PMC supports fielded queries for indexed full text (e.g., BODY:\"term\") but only for records where Europe PMC has full text indexed (HAS_FT:Y). Use require_has_ft/fulltext_terms to avoid confusing 'has a full-text link somewhere' with 'full text searchable in Europe PMC'.",
+    "description": "Search for articles on Europe PMC including abstracts and metadata. Returns the top `limit` results ranked by relevance, which is normally a SLICE of the matches: `metadata.total_results` carries Europe PMC's own hitCount (every article matching the query) while `metadata.count` is only how many were returned, and a top-level `truncated: true` plus `truncation_note` appear whenever matches were left behind. Do not read a small `count` as 'few articles exist' — check `total_results`. Europe PMC supports fielded queries for indexed full text (e.g., BODY:\"term\") but only for records where Europe PMC has full text indexed (HAS_FT:Y). Use require_has_ft/fulltext_terms to avoid confusing 'has a full-text link somewhere' with 'full text searchable in Europe PMC'.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12,7 +12,7 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Number of articles to return. This sets the maximum number of articles retrieved from Europe PMC.",
+          "description": "Number of articles to return. This sets the maximum number of articles retrieved from Europe PMC; anything beyond it is silently left behind, so compare it against `metadata.total_results` in the response (Europe PMC's hitCount) before treating the returned set as complete. Europe PMC accepts up to 1000 per request.",
           "default": 5
         },
         "require_has_ft": {

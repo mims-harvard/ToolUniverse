@@ -3,6 +3,8 @@ Drug Safety Analysis Pipeline
 Comprehensive drug safety analysis combining adverse event data, literature review, and molecular information
 """
 
+from tooluniverse.compose_scripts import payload
+
 
 def compose(arguments, tooluniverse, call_tool):
     """
@@ -38,8 +40,8 @@ def compose(arguments, tooluniverse, call_tool):
     # Step 2: Get molecular information from PubChem
     molecular_info = None
     try:
-        pubchem_cid_result = call_tool(
-            "PubChem_get_CID_by_compound_name", {"name": drug_name}
+        pubchem_cid_result = payload(
+            call_tool("PubChem_get_CID_by_compound_name", {"name": drug_name})
         )
         if (
             isinstance(pubchem_cid_result, dict)
@@ -48,8 +50,10 @@ def compose(arguments, tooluniverse, call_tool):
             cid_list = pubchem_cid_result["IdentifierList"].get("CID", [])
             if cid_list:
                 first_cid = cid_list[0]
-                molecular_info = call_tool(
-                    "PubChem_get_compound_properties_by_CID", {"cid": first_cid}
+                molecular_info = payload(
+                    call_tool(
+                        "PubChem_get_compound_properties_by_CID", {"cid": first_cid}
+                    )
                 )
     except Exception as e:
         print(f"PubChem query failed: {e}")
@@ -75,13 +79,9 @@ def compose(arguments, tooluniverse, call_tool):
         "molecular_properties": molecular_info,
         "safety_literature": literature_result,
         "analysis_summary": {
-            "has_adverse_events": bool(faers_result),
+            "has_adverse_events": bool(payload(faers_result)),
             "has_molecular_data": bool(molecular_info),
-            "literature_papers_found": (
-                len(literature_result.get("resultList", {}).get("result", []))
-                if literature_result and isinstance(literature_result, dict)
-                else 0
-            ),
+            "literature_papers_found": len(payload(literature_result) or []),
         },
     }
 

@@ -129,3 +129,12 @@ def test_empty_result_stays_empty():
 
 def test_missing_pathway_id_is_an_error():
     assert _make().run({})["status"] == "error"
+
+
+def test_wpid_is_accepted_as_an_alias_for_pathway_id():
+    # WikiPathways_get_pathway (the sibling tool) names this parameter `wpid`;
+    # a caller switching tools should not have to know the two use different
+    # names for the same identifier.
+    result, _ = _run({"wpid": "WP254"})
+    assert result["status"] == "success"
+    assert result["data"]["pathway_id"] == "WP254"

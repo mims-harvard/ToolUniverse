@@ -24,6 +24,9 @@
       },
       {
         "term_id": "HP:0001263"
+      },
+      {
+        "term_id": "HP:0006887"
       }
     ],
     "return_schema": {
@@ -31,82 +34,63 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "HPO term ID (e.g., HP:0001250)"
-                },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Term name"
-                },
-                "definition": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Full term definition"
-                },
-                "comment": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Additional comments or notes"
-                },
-                "synonyms": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Alternative names for the term"
-                },
-                "descendant_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of more specific child terms"
-                },
-                "xrefs": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Cross-references (UMLS, SNOMED-CT, etc.)"
-                },
-                "translations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  },
-                  "description": "Translations in other languages"
-                }
-              }
+            "id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "HPO term ID (e.g., HP:0001250)"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "term_id": {
-                  "type": "string"
-                }
-              }
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Term name"
+            },
+            "definition": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Full term definition"
+            },
+            "comment": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Additional comments or notes"
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Alternative names for the term"
+            },
+            "descendant_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of more specific child terms"
+            },
+            "xrefs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Cross-references (UMLS, SNOMED-CT, etc.)"
+            },
+            "translations": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Translations in other languages"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -160,69 +144,47 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "HPO term ID"
-                  },
-                  "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Term name"
-                  },
-                  "definition": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Term definition"
-                  },
-                  "descendant_count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Number of child terms"
-                  },
-                  "synonyms": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "First 5 synonyms"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "HPO term ID"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Term name"
+              },
+              "definition": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Term definition"
+              },
+              "descendant_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of child terms"
+              },
+              "synonyms": {
+                "type": "array",
+                "items": {
                   "type": "string"
                 },
-                "query": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+                "description": "First 5 synonyms"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -277,51 +239,26 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "HPO term ID"
-                  },
-                  "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Term name"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "term_id": {
-                  "type": "string"
-                },
-                "direction": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "HPO term ID"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Term name"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -339,7 +276,7 @@
   },
   {
     "name": "HPO_get_genes_by_phenotype",
-    "description": "Get the genes associated with an HPO phenotype term (genes in which variants cause this phenotype), from the JAX HPO network annotations. Returns NCBI gene IDs and symbols. Example: HP:0001250 (Seizure) is linked to genes such as RELN, SCN1A, and ~2000 others. Use to go from an observed patient phenotype to candidate disease genes for variant prioritization.",
+    "description": "Get the genes associated with an HPO phenotype term (genes in which variants cause this phenotype), from the JAX HPO network annotations. Returns NCBI gene IDs and symbols. Example: HP:0001250 (Seizure) is linked to genes such as RELN, SCN1A, and ~2000 others. Use to go from an observed patient phenotype to candidate disease genes for variant prioritization. A phenotype term can be linked to thousands of genes but 'limit' caps a single response at 500 -- check metadata.has_more in the response and pass 'offset' to page through the rest; a well-known gene for a common phenotype may not appear in the first page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -353,6 +290,13 @@
             "null"
           ],
           "description": "Maximum number of results to return (1-500, default 50). Phenotype terms can be linked to thousands of genes."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results to skip before returning 'limit' results (default 0). Use with the response's metadata.has_more/metadata.total to page through phenotypes with more genes than fit in one call."
         }
       },
       "required": [
@@ -374,54 +318,29 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "genes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Identifier (e.g. 'NCBIGene:5649' for genes, 'ORPHA:..'/'OMIM:..' for diseases)"
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Name"
-                      }
-                    }
+            "genes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Identifier (e.g. 'NCBIGene:5649' for genes, 'ORPHA:..'/'OMIM:..' for diseases)"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Name"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "term_id": {
-                  "type": "string"
-                },
-                "total": {
-                  "type": "integer"
-                },
-                "returned": {
-                  "type": "integer"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -439,7 +358,7 @@
   },
   {
     "name": "HPO_get_diseases_by_phenotype",
-    "description": "Get the diseases that present with an HPO phenotype term, from the JAX HPO network annotations. Returns disease IDs (ORPHA/OMIM/DECIPHER), names, and the cross-referenced MONDO ID. Example: HP:0001250 (Seizure) is a feature of thousands of diseases. Use to build a differential diagnosis from a set of observed phenotypes.",
+    "description": "Get the diseases that present with an HPO phenotype term, from the JAX HPO network annotations. Returns disease IDs (ORPHA/OMIM/DECIPHER), names, and the cross-referenced MONDO ID. Example: HP:0001250 (Seizure) is a feature of thousands of diseases. Use to build a differential diagnosis from a set of observed phenotypes. A phenotype term can be linked to thousands of diseases but 'limit' caps a single response at 500 -- check metadata.has_more in the response and pass 'offset' to page through the rest; a well-known disease for a common phenotype may not appear in the first page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -453,6 +372,13 @@
             "null"
           ],
           "description": "Maximum number of results to return (1-500, default 50). Phenotype terms can be linked to thousands of diseases."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of results to skip before returning 'limit' results (default 0). Use with the response's metadata.has_more/metadata.total to page through phenotypes with more diseases than fit in one call."
         }
       },
       "required": [
@@ -474,61 +400,36 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "diseases": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Identifier (e.g. 'NCBIGene:5649' for genes, 'ORPHA:..'/'OMIM:..' for diseases)"
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Name"
-                      },
-                      "mondo_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Cross-referenced MONDO disease ID"
-                      }
-                    }
+            "diseases": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Identifier (e.g. 'NCBIGene:5649' for genes, 'ORPHA:..'/'OMIM:..' for diseases)"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Name"
+                  },
+                  "mondo_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Cross-referenced MONDO disease ID"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "term_id": {
-                  "type": "string"
-                },
-                "total": {
-                  "type": "integer"
-                },
-                "returned": {
-                  "type": "integer"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -573,185 +474,154 @@
         {
           "type": "object",
           "properties": {
-            "data": {
+            "disease": {
               "type": "object",
               "properties": {
-                "disease": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "name": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "mondo_id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    },
-                    "description": {
-                      "type": [
-                        "string",
-                        "null"
-                      ]
-                    }
-                  }
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
-                "medical_actions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "MAxO action CURIE (e.g., 'MAXO:0000653')."
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "relations": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        },
-                        "description": "Action relations, e.g. ['PREVENTS', 'TREATS']."
-                      },
-                      "targets": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "name": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            }
-                          }
-                        },
-                        "description": "Targeted HPO phenotypes."
-                      }
-                    }
-                  }
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
-                "categories": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "body_system": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "phenotype_count": {
-                        "type": "integer"
-                      },
-                      "phenotypes": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "name": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "frequency": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "onset": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            }
-                          }
+                "mondo_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "medical_actions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MAxO action CURIE (e.g., 'MAXO:0000653')."
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "relations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Action relations, e.g. ['PREVENTS', 'TREATS']."
+                  },
+                  "targets": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       }
-                    }
+                    },
+                    "description": "Targeted HPO phenotypes."
                   }
-                },
-                "genes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
+                }
+              }
+            },
+            "categories": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "body_system": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "phenotype_count": {
+                    "type": "integer"
+                  },
+                  "phenotypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "frequency": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "onset": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
                       }
                     }
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "disease_id": {
-                  "type": "string"
-                },
-                "total_medical_actions": {
-                  "type": "integer"
-                },
-                "total_body_systems": {
-                  "type": "integer"
-                },
-                "total_phenotypes": {
-                  "type": "integer"
-                },
-                "total_genes": {
-                  "type": "integer"
+            "genes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

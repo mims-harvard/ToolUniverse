@@ -13,8 +13,12 @@ from pathlib import Path
 import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+# `helpers` also comes from pytest.ini's `pythonpath`, but that does not apply
+# when this file is run as a bare script via the __main__ block below.
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from tooluniverse import ToolUniverse
+from helpers.threads import join_all
 
 
 def _assert_finder_result(result, test_label=""):
@@ -179,11 +183,13 @@ class TestToolFinderEdgeCases(unittest.TestCase):
             with lock:
                 results.append(result)
 
-        threads = [threading.Thread(target=make_call, args=(i,)) for i in range(3)]
+        threads = [
+            threading.Thread(target=make_call, args=(i,), name=f"finder-call-{i}")
+            for i in range(3)
+        ]
         for t in threads:
             t.start()
-        for t in threads:
-            t.join(timeout=15)
+        join_all(threads)
 
         self.assertEqual(len(results), 3, f"Expected 3 results, got {len(results)}")
         for i, r in enumerate(results):

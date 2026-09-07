@@ -43,15 +43,15 @@ def _tool():
 
 
 PRIMARY_NODE_RESPONSE = {
-    "taxonomy_nodes": [
+    "reports": [
         {
             "taxonomy": {
                 "tax_id": 9601,
-                "organism_name": "Pongo abelii",
-                "genbank_common_name": "Sumatran orangutan",
+                "current_scientific_name": {"name": "Pongo abelii"},
+                "curator_common_name": "Sumatran orangutan",
                 "rank": "SPECIES",
-                "blast_name": "primates",
-                "lineage": [9604, 9599],
+                "group_name": "primates",
+                "parents": [9604, 9599],
                 "children": [],
                 "counts": [],
             }
@@ -60,9 +60,21 @@ PRIMARY_NODE_RESPONSE = {
 }
 
 LINEAGE_ENRICHMENT_RESPONSE = {
-    "taxonomy_nodes": [
-        {"taxonomy": {"tax_id": 9604, "organism_name": "Hominidae", "rank": "FAMILY"}},
-        {"taxonomy": {"tax_id": 9599, "organism_name": "Pongo", "rank": "GENUS"}},
+    "reports": [
+        {
+            "taxonomy": {
+                "tax_id": 9604,
+                "current_scientific_name": {"name": "Hominidae"},
+                "rank": "FAMILY",
+            }
+        },
+        {
+            "taxonomy": {
+                "tax_id": 9599,
+                "current_scientific_name": {"name": "Pongo"},
+                "rank": "GENUS",
+            }
+        },
     ]
 }
 
@@ -82,6 +94,9 @@ def test_lineage_names_enriched_in_root_first_order(monkeypatch):
     result = tool.run({"tax_id": "9601"})
 
     assert result["status"] == "success"
+    assert result["data"]["organism_name"] == "Pongo abelii"
+    assert result["data"]["genbank_common_name"] == "Sumatran orangutan"
+    assert result["data"]["blast_name"] == "primates"
     assert result["data"]["lineage"] == [9604, 9599]
     assert result["data"]["lineage_names"] == [
         {"tax_id": 9604, "organism_name": "Hominidae", "rank": "FAMILY"},
@@ -89,18 +104,20 @@ def test_lineage_names_enriched_in_root_first_order(monkeypatch):
     ]
     # Enrichment call batches all ancestor tax_ids into one comma-joined request.
     assert "9604,9599" in calls[1]
+    assert calls[0].endswith("/taxonomy/taxon/9601/dataset_report")
+    assert calls[1].endswith("/taxonomy/taxon/9604,9599/dataset_report")
 
 
 def test_lineage_names_empty_for_root_with_no_ancestors(monkeypatch):
     tool = _tool()
     root_response = {
-        "taxonomy_nodes": [
+        "reports": [
             {
                 "taxonomy": {
                     "tax_id": 1,
-                    "organism_name": "root",
+                    "current_scientific_name": {"name": "root"},
                     "rank": "NO RANK",
-                    "lineage": [],
+                    "parents": [],
                 }
             }
         ]
@@ -141,8 +158,14 @@ def test_lineage_names_falls_back_per_id_when_partially_resolved(monkeypatch):
     tool = _tool()
     calls = []
     partial_response = {
-        "taxonomy_nodes": [
-            {"taxonomy": {"tax_id": 9604, "organism_name": "Hominidae", "rank": "FAMILY"}}
+        "reports": [
+            {
+                "taxonomy": {
+                    "tax_id": 9604,
+                    "current_scientific_name": {"name": "Hominidae"},
+                    "rank": "FAMILY",
+                }
+            }
         ]
     }
 

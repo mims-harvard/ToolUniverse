@@ -8,41 +8,107 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_instances"],
-          "description": "Operation type"
+          "enum": [
+            "get_instances"
+          ],
+          "description": "Operation type",
+          "default": "get_instances"
         },
         "uniprot_id": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "UniProt accession, e.g., P04637 (TP53), P00533 (EGFR), P38398 (BRCA1), P42336 (PIK3CA)"
         },
         "uniprot_acc": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Alias for uniprot_id. UniProt accession, e.g., P04637 (TP53)"
         },
         "motif_type": {
-          "type": ["string", "null"],
-          "enum": ["CLV", "DEG", "DOC", "LIG", "MOD", "TRG", null],
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "CLV",
+            "DEG",
+            "DOC",
+            "LIG",
+            "MOD",
+            "TRG",
+            null
+          ],
           "description": "Filter by motif functional type. CLV=cleavage sites, DEG=degradation motifs, DOC=docking sites, LIG=ligand binding, MOD=modification sites, TRG=targeting signals. Omit for all types."
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "accession": {"type": "string", "description": "ELM instance accession (e.g., ELMI002838)"},
-          "elm_identifier": {"type": "string", "description": "ELM class identifier (e.g., DEG_MDM2_SWIB_1)"},
-          "elm_type": {"type": "string", "description": "Functional class (CLV/DEG/DOC/LIG/MOD/TRG)"},
-          "protein_name": {"type": "string"},
-          "start": {"type": ["integer", "null"], "description": "Start residue position"},
-          "end": {"type": ["integer", "null"], "description": "End residue position"},
-          "references": {"type": "array", "items": {"type": "string"}, "description": "PubMed IDs"},
-          "methods": {"type": "array", "items": {"type": "string"}, "description": "Experimental methods"},
-          "instance_logic": {"type": "string", "description": "Validation status (true positive, etc.)"},
-          "pdb_ids": {"type": "array", "items": {"type": "string"}, "description": "PDB structure IDs"},
-          "organism": {"type": "string"}
+          "accession": {
+            "type": "string",
+            "description": "ELM instance accession (e.g., ELMI002838)"
+          },
+          "elm_identifier": {
+            "type": "string",
+            "description": "ELM class identifier (e.g., DEG_MDM2_SWIB_1)"
+          },
+          "elm_type": {
+            "type": "string",
+            "description": "Functional class (CLV/DEG/DOC/LIG/MOD/TRG)"
+          },
+          "protein_name": {
+            "type": "string"
+          },
+          "start": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Start residue position"
+          },
+          "end": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "End residue position"
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "PubMed IDs"
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Experimental methods"
+          },
+          "instance_logic": {
+            "type": "string",
+            "description": "Validation status (true positive, etc.)"
+          },
+          "pdb_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "PDB structure IDs"
+          },
+          "organism": {
+            "type": "string"
+          }
         }
       }
     },
@@ -56,7 +122,10 @@
         "uniprot_id": "P04637",
         "motif_type": "MOD"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_instances"
+    }
   },
   {
     "name": "ELM_list_classes",
@@ -67,16 +136,33 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["list_classes"],
-          "description": "Operation type"
+          "enum": [
+            "list_classes"
+          ],
+          "description": "Operation type",
+          "default": "list_classes"
         },
         "motif_type": {
-          "type": ["string", "null"],
-          "enum": ["CLV", "DEG", "DOC", "LIG", "MOD", "TRG", null],
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "CLV",
+            "DEG",
+            "DOC",
+            "LIG",
+            "MOD",
+            "TRG",
+            null
+          ],
           "description": "Filter by motif functional type. CLV=cleavage, DEG=degradation, DOC=docking, LIG=ligand binding, MOD=modification, TRG=targeting. Omit for all types."
         },
         "query": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Search keyword to filter by name, identifier, or description. E.g., 'caspase', 'kinase', 'ubiquitin', 'nuclear'"
         },
         "max_results": {
@@ -87,21 +173,45 @@
           "description": "Maximum results to return (default: 50, max: 400 covers all classes)"
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
-          "accession": {"type": "string", "description": "ELM class accession (e.g., ELME000321)"},
-          "elm_identifier": {"type": "string", "description": "ELM class name (e.g., CLV_C14_Caspase3-7)"},
-          "functional_site_name": {"type": "string", "description": "Human-readable name"},
-          "description": {"type": "string", "description": "Detailed description"},
-          "regex": {"type": "string", "description": "Regular expression pattern for the motif"},
-          "probability": {"type": "number", "description": "Random occurrence probability"},
-          "num_instances": {"type": "integer", "description": "Number of validated instances"},
-          "num_pdb_instances": {"type": "integer", "description": "Number of instances with PDB structures"}
+          "accession": {
+            "type": "string",
+            "description": "ELM class accession (e.g., ELME000321)"
+          },
+          "elm_identifier": {
+            "type": "string",
+            "description": "ELM class name (e.g., CLV_C14_Caspase3-7)"
+          },
+          "functional_site_name": {
+            "type": "string",
+            "description": "Human-readable name"
+          },
+          "description": {
+            "type": "string",
+            "description": "Detailed description"
+          },
+          "regex": {
+            "type": "string",
+            "description": "Regular expression pattern for the motif"
+          },
+          "probability": {
+            "type": "number",
+            "description": "Random occurrence probability"
+          },
+          "num_instances": {
+            "type": "integer",
+            "description": "Number of validated instances"
+          },
+          "num_pdb_instances": {
+            "type": "integer",
+            "description": "Number of instances with PDB structures"
+          }
         }
       }
     },
@@ -116,7 +226,10 @@
         "query": "caspase",
         "max_results": 10
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_classes"
+    }
   },
   {
     "name": "ELM_get_interaction_domains",
@@ -127,15 +240,24 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_interaction_domains"],
-          "description": "Operation type"
+          "enum": [
+            "get_interaction_domains"
+          ],
+          "description": "Operation type",
+          "default": "get_interaction_domains"
         },
         "elm_identifier": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Filter to a single ELM class identifier (e.g., 'CLV_NRD_NRD_1', 'LIG_SH3_1'). Omit to return all mappings."
         },
         "query": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Free-text filter matched against ELM identifier, Pfam accession, domain name, and description (e.g., 'WD40', 'PF00082', 'kinase', 'SH3')."
         },
         "max_results": {
@@ -146,7 +268,7 @@
           "description": "Maximum mappings to return (default: 100, max: 500 covers all 427 mappings)"
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -195,6 +317,9 @@
         "operation": "get_interaction_domains",
         "elm_identifier": "CLV_NRD_NRD_1"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_interaction_domains"
+    }
   }
 ]

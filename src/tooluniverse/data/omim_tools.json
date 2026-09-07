@@ -9,7 +9,8 @@
         "operation": {
           "type": "string",
           "const": "search",
-          "description": "Operation type (fixed: search)"
+          "description": "Operation type (fixed: search)",
+          "default": "search"
         },
         "query": {
           "type": "string",
@@ -81,6 +82,9 @@
         "purpose": "Look up Mendelian disease\u2013gene relationships and clinical variant records for interpretation.",
         "without": "OMIM tools return no data without it. Free for academic use."
       }
+    },
+    "fields": {
+      "operation": "search"
     }
   },
   {
@@ -93,7 +97,8 @@
         "operation": {
           "type": "string",
           "const": "get_entry",
-          "description": "Operation type (fixed: get_entry)"
+          "description": "Operation type (fixed: get_entry)",
+          "default": "get_entry"
         },
         "mim_number": {
           "type": "string",
@@ -144,7 +149,10 @@
     ],
     "required_api_keys": [
       "OMIM_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_entry"
+    }
   },
   {
     "name": "OMIM_get_gene_map",
@@ -156,7 +164,8 @@
         "operation": {
           "type": "string",
           "const": "get_gene_map",
-          "description": "Operation type (fixed: get_gene_map)"
+          "description": "Operation type (fixed: get_gene_map)",
+          "default": "get_gene_map"
         },
         "mim_number": {
           "type": "string",
@@ -205,7 +214,10 @@
     ],
     "required_api_keys": [
       "OMIM_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_gene_map"
+    }
   },
   {
     "name": "OMIM_get_clinical_synopsis",
@@ -217,7 +229,8 @@
         "operation": {
           "type": "string",
           "const": "get_clinical_synopsis",
-          "description": "Operation type (fixed: get_clinical_synopsis)"
+          "description": "Operation type (fixed: get_clinical_synopsis)",
+          "default": "get_clinical_synopsis"
         },
         "mim_number": {
           "type": "string",
@@ -264,6 +277,9 @@
     ],
     "required_api_keys": [
       "OMIM_API_KEY"
-    ]
+    ],
+    "fields": {
+      "operation": "get_clinical_synopsis"
+    }
   }
 ]

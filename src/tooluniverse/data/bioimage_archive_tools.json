@@ -45,86 +45,58 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "accession": {
-                    "type": "string",
-                    "description": "Study accession (e.g., S-BIAD634)"
-                  },
-                  "title": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Study title"
-                  },
-                  "author": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Author(s)"
-                  },
-                  "release_date": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Release date"
-                  },
-                  "type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Study type"
-                  },
-                  "links": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Number of linked resources"
-                  },
-                  "files": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Number of files"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_hits": {
-                  "type": "integer"
-                },
-                "page": {
-                  "type": "integer"
-                },
-                "page_size": {
-                  "type": "integer"
-                },
-                "query": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string",
+                "description": "Study accession (e.g., S-BIAD634)"
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Study title"
+              },
+              "author": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Author(s)"
+              },
+              "release_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Release date"
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Study type"
+              },
+              "links": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of linked resources"
+              },
+              "files": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of files"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -172,77 +144,58 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": "string"
-                },
-                "type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "title": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "release_date": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "description": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "organism": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "imaging_method": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "attributes": {
-                  "type": [
-                    "array",
-                    "null"
-                  ]
-                },
-                "section_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
-              }
+            "accession": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "accession": {
-                  "type": "string"
-                }
-              }
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "release_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "organism": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "imaging_method": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "attributes": {
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "section_type": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -297,61 +250,39 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "accession": {
-                    "type": "string"
-                  },
-                  "title": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "author": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "release_date": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_hits": {
-                  "type": "integer"
-                },
-                "query": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string"
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "author": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "release_date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

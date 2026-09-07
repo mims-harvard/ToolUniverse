@@ -35,6 +35,42 @@ MAX_JSON_LENGTH = 5000  # Max characters per report in JSON output
 # extract_essential config in tool_config['fields']
 
 
+def print_result(result, title):
+    """Print one page of FAERS case reports plus the size of the whole set.
+
+    These tools return an envelope, not a bare list: `reports` is the page,
+    `total_available` is every report matching the search. Printing only
+    `len(reports)` is what made a 10-report page look like the complete
+    answer when openFDA had 5941 matching reports.
+    """
+    print(f"\n{'='*80}")
+    print(title)
+    print(f"{'='*80}")
+
+    if not isinstance(result, dict) or result.get("status") != "success":
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+        return result
+
+    reports = result.get("reports", [])
+    total = result.get("total_available")
+    total_text = "unreported by openFDA" if total is None else total
+    print(f"Showing {len(reports)} of {total_text} matching reports")
+    if result.get("truncation_note"):
+        print(result["truncation_note"])
+
+    for i, report in enumerate(reports[:MAX_REPORTS_TO_SHOW]):
+        report_json = json.dumps(report, indent=2, ensure_ascii=False)
+        if len(report_json) > MAX_JSON_LENGTH:
+            report_json = report_json[:MAX_JSON_LENGTH] + "\n... (truncated)"
+        print(f"\n--- Report {i+1} ---")
+        print(report_json)
+    if len(reports) > MAX_REPORTS_TO_SHOW:
+        remaining = len(reports) - MAX_REPORTS_TO_SHOW
+        print(f"\n... and {remaining} more in this page "
+              f"(showing first {MAX_REPORTS_TO_SHOW} only)")
+    return result
+
+
 def example_search_basic_reports():
     """Example: Search for basic adverse event reports for a drug"""
     tu = ToolUniverse()
@@ -48,28 +84,7 @@ def example_search_basic_reports():
         }
     }, use_cache=False)
 
-    print(f"\n{'='*80}")
-    print("Example 1: Basic Adverse Event Reports Search")
-    print(f"{'='*80}")
-    print(f"Found {len(result) if isinstance(result, list) else 0} reports")
-
-    if isinstance(result, list) and len(result) > 0:
-        # Show limited number of reports
-        reports_to_show = result[:MAX_REPORTS_TO_SHOW]
-        for i, report in enumerate(reports_to_show):
-            report_json = json.dumps(report, indent=2, ensure_ascii=False)
-            if len(report_json) > MAX_JSON_LENGTH:
-                report_json = (report_json[:MAX_JSON_LENGTH] +
-                               "\n... (truncated)")
-            print(f"\n--- Report {i+1} of {len(reports_to_show)} ---")
-            print(report_json)
-        if len(result) > MAX_REPORTS_TO_SHOW:
-            remaining = len(result) - MAX_REPORTS_TO_SHOW
-            print(f"\n... and {remaining} more reports "
-                  f"(showing first {MAX_REPORTS_TO_SHOW} only)")
-    else:
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-    return result
+    return print_result(result, "Example 1: Basic Adverse Event Reports Search")
 
 
 def example_search_by_reaction():
@@ -86,27 +101,7 @@ def example_search_by_reaction():
         }
     }, use_cache=False)
 
-    print(f"\n{'='*80}")
-    print("Example 2: Search by Drug and Specific Reaction")
-    print(f"{'='*80}")
-    print(f"Found {len(result) if isinstance(result, list) else 0} reports")
-
-    if isinstance(result, list) and len(result) > 0:
-        reports_to_show = result[:MAX_REPORTS_TO_SHOW]
-        for i, report in enumerate(reports_to_show):
-            report_json = json.dumps(report, indent=2, ensure_ascii=False)
-            if len(report_json) > MAX_JSON_LENGTH:
-                report_json = (report_json[:MAX_JSON_LENGTH] +
-                               "\n... (truncated)")
-            print(f"\n--- Report {i+1} of {len(reports_to_show)} ---")
-            print(report_json)
-        if len(result) > MAX_REPORTS_TO_SHOW:
-            remaining = len(result) - MAX_REPORTS_TO_SHOW
-            print(f"\n... and {remaining} more reports "
-                  f"(showing first {MAX_REPORTS_TO_SHOW} only)")
-    else:
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-    return result
+    return print_result(result, "Example 2: Search by Drug and Specific Reaction")
 
 
 def example_search_serious_reports():
@@ -123,27 +118,9 @@ def example_search_serious_reports():
         }
     }, use_cache=False)
 
-    print(f"\n{'='*80}")
-    print("Example 3: Search for Serious Adverse Events (Fatal Cases)")
-    print(f"{'='*80}")
-    print(f"Found {len(result) if isinstance(result, list) else 0} reports")
-
-    if isinstance(result, list) and len(result) > 0:
-        reports_to_show = result[:MAX_REPORTS_TO_SHOW]
-        for i, report in enumerate(reports_to_show):
-            report_json = json.dumps(report, indent=2, ensure_ascii=False)
-            if len(report_json) > MAX_JSON_LENGTH:
-                report_json = (report_json[:MAX_JSON_LENGTH] +
-                               "\n... (truncated)")
-            print(f"\n--- Report {i+1} of {len(reports_to_show)} ---")
-            print(report_json)
-        if len(result) > MAX_REPORTS_TO_SHOW:
-            remaining = len(result) - MAX_REPORTS_TO_SHOW
-            print(f"\n... and {remaining} more reports "
-                  f"(showing first {MAX_REPORTS_TO_SHOW} only)")
-    else:
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-    return result
+    return print_result(
+        result, "Example 3: Search for Serious Adverse Events (Fatal Cases)"
+    )
 
 
 def example_search_by_indication():
@@ -160,27 +137,7 @@ def example_search_by_indication():
         }
     }, use_cache=False)
 
-    print(f"\n{'='*80}")
-    print("Example 4: Search by Drug and Indication")
-    print(f"{'='*80}")
-    print(f"Found {len(result) if isinstance(result, list) else 0} reports")
-
-    if isinstance(result, list) and len(result) > 0:
-        reports_to_show = result[:MAX_REPORTS_TO_SHOW]
-        for i, report in enumerate(reports_to_show):
-            report_json = json.dumps(report, indent=2, ensure_ascii=False)
-            if len(report_json) > MAX_JSON_LENGTH:
-                report_json = (report_json[:MAX_JSON_LENGTH] +
-                               "\n... (truncated)")
-            print(f"\n--- Report {i+1} of {len(reports_to_show)} ---")
-            print(report_json)
-        if len(result) > MAX_REPORTS_TO_SHOW:
-            remaining = len(result) - MAX_REPORTS_TO_SHOW
-            print(f"\n... and {remaining} more reports "
-                  f"(showing first {MAX_REPORTS_TO_SHOW} only)")
-    else:
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-    return result
+    return print_result(result, "Example 4: Search by Drug and Indication")
 
 
 def example_search_by_outcome():
@@ -197,27 +154,7 @@ def example_search_by_outcome():
         }
     }, use_cache=False)
 
-    print(f"\n{'='*80}")
-    print("Example 5: Search by Reaction Outcome")
-    print(f"{'='*80}")
-    print(f"Found {len(result) if isinstance(result, list) else 0} reports")
-
-    if isinstance(result, list) and len(result) > 0:
-        reports_to_show = result[:MAX_REPORTS_TO_SHOW]
-        for i, report in enumerate(reports_to_show):
-            report_json = json.dumps(report, indent=2, ensure_ascii=False)
-            if len(report_json) > MAX_JSON_LENGTH:
-                report_json = (report_json[:MAX_JSON_LENGTH] +
-                               "\n... (truncated)")
-            print(f"\n--- Report {i+1} of {len(reports_to_show)} ---")
-            print(report_json)
-        if len(result) > MAX_REPORTS_TO_SHOW:
-            remaining = len(result) - MAX_REPORTS_TO_SHOW
-            print(f"\n... and {remaining} more reports "
-                  f"(showing first {MAX_REPORTS_TO_SHOW} only)")
-    else:
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-    return result
+    return print_result(result, "Example 5: Search by Reaction Outcome")
 
 
 def example_search_drug_interactions():
@@ -233,27 +170,7 @@ def example_search_drug_interactions():
         }
     }, use_cache=False)
 
-    print(f"\n{'='*80}")
-    print("Example 6: Search for Drug Interaction Reports")
-    print(f"{'='*80}")
-    print(f"Found {len(result) if isinstance(result, list) else 0} reports")
-
-    if isinstance(result, list) and len(result) > 0:
-        reports_to_show = result[:MAX_REPORTS_TO_SHOW]
-        for i, report in enumerate(reports_to_show):
-            report_json = json.dumps(report, indent=2, ensure_ascii=False)
-            if len(report_json) > MAX_JSON_LENGTH:
-                report_json = (report_json[:MAX_JSON_LENGTH] +
-                               "\n... (truncated)")
-            print(f"\n--- Report {i+1} of {len(reports_to_show)} ---")
-            print(report_json)
-        if len(result) > MAX_REPORTS_TO_SHOW:
-            remaining = len(result) - MAX_REPORTS_TO_SHOW
-            print(f"\n... and {remaining} more reports "
-                  f"(showing first {MAX_REPORTS_TO_SHOW} only)")
-    else:
-        print(json.dumps(result, indent=2, ensure_ascii=False))
-    return result
+    return print_result(result, "Example 6: Search for Drug Interaction Reports")
 
 
 def main():

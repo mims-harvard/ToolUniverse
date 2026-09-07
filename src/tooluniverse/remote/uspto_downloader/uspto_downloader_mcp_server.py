@@ -1,7 +1,12 @@
 from fastmcp import FastMCP
-import sys
 import os
-from .uspto_downloader_tool import USPTOPatentDocumentDownloader
+from tooluniverse.remote.uspto_downloader.uspto_downloader_tool import (
+    USPTOPatentDocumentDownloader,
+)
+from tooluniverse.server_security import (
+    get_fastmcp_token_auth,
+    run_fastmcp_server,
+)
 import json
 
 # Read the tool config dicts from the JSON file
@@ -11,73 +16,59 @@ try:
         "r",
     ) as f:
         uspto_downloader_tools = json.load(f)
-except FileNotFoundError as e:
-    print(f"\033[91mError: {e}\033[0m")
-    print(
-        f"\033[91mIs uspto_downloader_client_tools.json in the parent directory of {__file__}?\033[0m"
-    )
-    sys.exit(1)
+except FileNotFoundError as exc:
+    raise RuntimeError("USPTO downloader tool configuration is missing.") from exc
 
 
-def _optional_token_auth():
-    """Require a Bearer token only when TOOLUNIVERSE_API_TOKEN is set.
-
-    Returns None (no authentication, unchanged behavior) when the variable is
-    not set, so existing deployments are unaffected.
-    """
-    token = os.getenv("TOOLUNIVERSE_API_TOKEN")
-    if not token:
-        return None
-    try:
-        from fastmcp.server.auth import StaticTokenVerifier
-
-        return StaticTokenVerifier(
-            tokens={token: {"client_id": "tooluniverse", "scopes": []}}
-        )
-    except Exception:
-        return None
-
-
-server = FastMCP("Your MCP Server", auth=_optional_token_auth())
+server = FastMCP("USPTO Document MCP Server", auth=get_fastmcp_token_auth())
 agents = {}
 for tool_config in uspto_downloader_tools:
     agents[tool_config["name"]] = USPTOPatentDocumentDownloader(tool_config=tool_config)
 
 
 @server.tool()
-def download_abst(query: dict):
+def get_abstract_from_patent_app_number(applicationNumberText: str):
     """Retrieve the abstract of a patent application by its application number.
     Args:
-        "query" dict: A dictionary containing the application number under the key "applicationNumberText".
+        applicationNumberText: An 8- to 16-digit USPTO application number.
     Returns
         dict: A dictionary containing the abstract text under the 'result' key or an error message under the 'error' key if the document could not be retrieved.
     """
-    return agents["get_abstract_from_patent_app_number"].run(query)
+    return agents["get_abstract_from_patent_app_number"].run(
+        {"applicationNumberText": applicationNumberText}
+    )
 
 
 @server.tool()
-def download_claims(query: dict):
+def get_claims_from_patent_app_number(applicationNumberText: str):
     """Retrieve the claims of a patent application by its application number.
     Args:
-        "query" dict: A dictionary containing the application number under the key "applicationNumberText".
+        applicationNumberText: An 8- to 16-digit USPTO application number.
     Returns
         dict: A dictionary containing the claims text under the 'result' key or an error message under the 'error' key if the document could not be retrieved.
     """
-    return agents["get_claims_from_patent_app_number"].run(query)
+    return agents["get_claims_from_patent_app_number"].run(
+        {"applicationNumberText": applicationNumberText}
+    )
 
 
 @server.tool()
-def download_full_text(query: dict):
+def get_full_text_from_patent_app_number(applicationNumberText: str):
     """Retrieve the full text of a patent application by its application number.
     Args:
-        "query" dict: A dictionary containing the application number under the key "applicationNumberText".
+        applicationNumberText: An 8- to 16-digit USPTO application number.
     Returns
         dict: A dictionary containing the full text under the 'result' key or an error message under the 'error' key if the document could not be retrieved.
     """
-    return agents["get_full_text_from_patent_app_number"].run(query)
+    return agents["get_full_text_from_patent_app_number"].run(
+        {"applicationNumberText": applicationNumberText}
+    )
 
 
 if __name__ == "__main__":
-    server.run(
-        transport="streamable-http", host="0.0.0.0", port=8081, stateless_http=True
+    run_fastmcp_server(
+        server,
+        host=os.getenv("TOOLUNIVERSE_MCP_HOST", "127.0.0.1"),
+        port=8081,
+        stateless_http=True,
     )

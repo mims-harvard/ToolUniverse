@@ -1,16 +1,9 @@
 import os
 
-# Force CPU before torch is imported anywhere — prevents MPS (Metal) segfaults
-# in forked subprocesses (uvx MCP server, tu CLI, Claude Code plugin).
+# ADMET-AI explicitly selects CUDA when available and CPU otherwise. Keep the
+# MPS safeguards without changing PyTorch's process-wide default device.
 os.environ["PYTORCH_MPS_HIGH_WATERMARK_RATIO"] = "0.0"
 os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
-try:
-    import torch
-
-    if hasattr(torch, "set_default_device"):
-        torch.set_default_device("cpu")
-except ImportError:
-    pass
 
 import numpy
 from .base_tool import BaseTool
@@ -25,15 +18,9 @@ if not hasattr(numpy, "VisibleDeprecationWarning"):
 
 
 def _patch_torch_load():
-    """Lazy patch for torch.load to set weights_only=False by default,
-    and force CPU device to avoid MPS segfaults in subprocess."""
+    """Lazy patch for torch.load to set weights_only=False by default."""
     try:
         import torch
-
-        # Force CPU to prevent MPS (Metal) segfaults when running in
-        # forked subprocesses (e.g., uvx MCP server, tu CLI).
-        if hasattr(torch, "set_default_device"):
-            torch.set_default_device("cpu")
 
         if not hasattr(torch.load, "_patched_by_tooluniverse"):
             _original_torch_load = torch.load

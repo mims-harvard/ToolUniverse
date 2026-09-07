@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def ChEMBL_get_molecule_targets(
     molecule_chembl_id__exact: Optional[str] = None,
     molecule_chembl_id: Optional[str] = None,
+    chembl_id: Optional[str] = None,
     limit: Optional[int] = 500,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -26,6 +27,8 @@ def ChEMBL_get_molecule_targets(
         ChEMBL molecule ID (e.g., 'CHEMBL25' for aspirin). To find a molecule ID, use...
     molecule_chembl_id : str
         Alias for molecule_chembl_id__exact. ChEMBL molecule ID.
+    chembl_id : str
+        Alias for molecule_chembl_id__exact. Accepts the same name...
     limit : int
         Maximum number of activity records to fetch for target deduplication (default...
     stream_callback : Callable, optional
@@ -47,6 +50,7 @@ def ChEMBL_get_molecule_targets(
         for k, v in {
             "molecule_chembl_id__exact": molecule_chembl_id__exact,
             "molecule_chembl_id": molecule_chembl_id,
+            "chembl_id": chembl_id,
             "limit": limit,
         }.items()
         if v is not None

@@ -31,103 +31,81 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "systematic_id": {
-                  "type": "string"
-                },
-                "gene_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "product": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "taxon_id": {
-                  "type": "integer"
-                },
-                "uniprot_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "deletion_viability": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "biogrid_id": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "interpro_domains": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "db": {
-                        "type": "string"
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "interpro_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "start": {
-                        "type": "integer"
-                      },
-                      "end": {
-                        "type": "integer"
-                      }
-                    }
+            "systematic_id": {
+              "type": "string"
+            },
+            "gene_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "product": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "taxon_id": {
+              "type": "integer"
+            },
+            "uniprot_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "deletion_viability": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "biogrid_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "interpro_domains": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "db": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interpro_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "start": {
+                    "type": "integer"
+                  },
+                  "end": {
+                    "type": "integer"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -182,61 +160,33 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "systematic_id": {
-                    "type": "string"
-                  },
-                  "gene_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "product": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "uniprot_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_genes": {
-                  "type": "integer"
-                },
-                "returned": {
-                  "type": "integer"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "systematic_id": {
+                "type": "string"
+              },
+              "gene_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "product": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "uniprot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -284,79 +234,57 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "systematic_id": {
-                  "type": "string"
-                },
-                "gene_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "deletion_viability": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "phenotype_count": {
-                  "type": "integer"
-                },
-                "phenotypes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "term_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "term_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "evidence": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "cv_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "systematic_id": {
+              "type": "string"
+            },
+            "gene_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "deletion_viability": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "phenotype_count": {
+              "type": "integer"
+            },
+            "phenotypes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "term_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "term_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "evidence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cv_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -402,70 +330,48 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "systematic_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "gene_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "ortholog_count": {
-                  "type": "integer"
-                },
-                "orthologs": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "ortholog_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "ortholog_taxon_id": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "ortholog_species": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "systematic_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "gene_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ortholog_count": {
+              "type": "integer"
+            },
+            "orthologs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ortholog_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ortholog_taxon_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "ortholog_species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -511,135 +417,113 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "systematic_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "gene_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "physical_interaction_count": {
-                  "type": "integer"
-                },
-                "physical_interactions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "interactor_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "interactor_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "evidence": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "reference": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "throughput": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "source_database": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  }
-                },
-                "genetic_interaction_count": {
-                  "type": "integer"
-                },
-                "genetic_interactions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "interactor_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "interactor_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "interaction_type": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "reference": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "throughput": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "source_database": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "systematic_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "gene_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "physical_interaction_count": {
+              "type": "integer"
+            },
+            "physical_interactions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "interactor_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "evidence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "throughput": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source_database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
+            "genetic_interaction_count": {
+              "type": "integer"
+            },
+            "genetic_interactions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "interactor_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interactor_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "interaction_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "throughput": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source_database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -685,82 +569,60 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "systematic_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "gene_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "aspect_counts": {
-                  "type": "object"
-                },
-                "go_term_count": {
-                  "type": "integer"
-                },
-                "go_terms": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "term_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "term_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "aspect": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "aspect_code": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "is_not": {
-                        "type": "boolean"
-                      }
-                    }
+            "systematic_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "gene_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "aspect_counts": {
+              "type": "object"
+            },
+            "go_term_count": {
+              "type": "integer"
+            },
+            "go_terms": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "term_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "term_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "aspect": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "aspect_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_not": {
+                    "type": "boolean"
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

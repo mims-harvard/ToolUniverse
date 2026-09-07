@@ -407,8 +407,8 @@ Environment Variables
 
 .. code-block:: bash
 
-   # Default LLM provider (CHATGPT, OPENROUTER, GEMINI, VLLM, BEDROCK)
-   TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=OPENROUTER
+   # Default LLM provider (CHATGPT, OPENAI, OPENROUTER, GEMINI, VLLM, BEDROCK)
+   TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=OPENAI
 
    # Model configuration per task
    TOOLUNIVERSE_LLM_MODEL_DEFAULT=openai/gpt-4o-mini
@@ -422,7 +422,7 @@ Environment Variables
    TOOLUNIVERSE_LLM_CONFIG_MODE=default
 
    # Custom fallback chain (JSON array of {api_type, model_id} objects)
-   AGENTIC_TOOL_FALLBACK_CHAIN='[{"api_type":"OPENROUTER","model_id":"openai/gpt-4o-mini"},{"api_type":"GEMINI","model_id":"gemini-3.6-flash"}]'
+   AGENTIC_TOOL_FALLBACK_CHAIN='[{"api_type":"OPENAI","model_id":"gpt-4o-mini"},{"api_type":"GEMINI","model_id":"gemini-pro"}]'
 
 Configuration Modes
 ~~~~~~~~~~~~~~~~~~~

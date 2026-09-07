@@ -10,6 +10,7 @@ API: https://www.ebi.ac.uk/ena/taxonomy/rest
 No authentication required.
 """
 
+import re
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
@@ -121,6 +122,28 @@ class EBITaxonomyTool(BaseTool):
         name = arguments.get("scientific_name", "")
         if not name:
             return {"status": "error", "error": "scientific_name parameter is required"}
+
+        # ENA indexes full binomials only, so the abbreviated genus form
+        # clinicians write ("K. pneumoniae") returns an ordinary empty
+        # success -- identical to a species that genuinely is not in the
+        # database. The genus letter cannot be expanded unambiguously
+        # ("K." is Klebsiella, Klebsormidium, Kluyveromyces, ...), so reject
+        # it rather than guess.
+        abbreviated = re.match(r"^([A-Z])\.\s*(\S.*)$", str(name).strip())
+        if abbreviated:
+            return {
+                "status": "error",
+                "error": (
+                    f"'{name}' abbreviates the genus to "
+                    f"'{abbreviated.group(1)}.'. ENA taxonomy indexes full "
+                    f"binomials only, so this matches nothing — re-send it "
+                    f"with the genus spelled out (e.g. 'Klebsiella pneumoniae' "
+                    f"rather than 'K. pneumoniae'). If you do not know which "
+                    f"genus '{abbreviated.group(1)}.' stands for, search on "
+                    f"'{abbreviated.group(2)}' with EBITaxonomy_search_by_name "
+                    f"or EBITaxonomy_suggest."
+                ),
+            }
 
         url = f"{EBI_TAXONOMY_BASE}/scientific-name/{name}"
         response = requests.get(

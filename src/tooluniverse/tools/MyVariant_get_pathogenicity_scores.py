@@ -13,6 +13,7 @@ def MyVariant_get_pathogenicity_scores(
     fields: Optional[
         str
     ] = "dbnsfp.revel.score,dbnsfp.cadd.phred,dbnsfp.alphamissense.score,dbnsfp.alphamissense.pred,dbnsfp.sift.score,dbnsfp.sift.pred,dbnsfp.polyphen2_hdiv.score,dbnsfp.polyphen2_hdiv.pred,dbnsfp.metarnn.score,dbnsfp.metarnn.pred,dbnsfp.gerp_rs,dbnsfp.phylop100way_vertebrate.rankscore,dbnsfp.phastcons100way_vertebrate.rankscore,dbnsfp.vest4.score,dbnsfp.mutationtaster.pred,clinvar.rcv.clinical_significance,dbsnp.rsid",
+    assembly: Optional[str] = "hg19",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,6 +28,8 @@ def MyVariant_get_pathogenicity_scores(
         Variant ID: rsID (e.g., rs45478192) or HGVS genomic (e.g., chr16:g.23635348A>...
     fields : str
         Fields to return (pre-configured for pathogenicity scores)
+    assembly : str
+        Reference genome assembly for both the HGVS variant_id and the returned coord...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -43,7 +46,11 @@ def MyVariant_get_pathogenicity_scores(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"variant_id": variant_id, "fields": fields}.items()
+        for k, v in {
+            "variant_id": variant_id,
+            "fields": fields,
+            "assembly": assembly,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

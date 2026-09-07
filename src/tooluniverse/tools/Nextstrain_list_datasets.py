@@ -10,6 +10,7 @@ from ._shared_client import get_shared_client
 
 def Nextstrain_list_datasets(
     pathogen: Optional[str | Any] = None,
+    datasets_per_pathogen: Optional[int | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +23,8 @@ def Nextstrain_list_datasets(
     ----------
     pathogen : str | Any
         Optional pathogen name filter. Examples: 'flu', 'ebola', 'zika', 'dengue', 'm...
+    datasets_per_pathogen : int | Any
+        Maximum dataset paths listed per pathogen (default 10; 0 lists every da...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +39,14 @@ def Nextstrain_list_datasets(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"pathogen": pathogen}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "pathogen": pathogen,
+            "datasets_per_pathogen": datasets_per_pathogen,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "Nextstrain_list_datasets",

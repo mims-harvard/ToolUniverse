@@ -5,69 +5,97 @@
         "description": "Perform protein-ligand docking via Boltz-2: input a protein sequence plus one or more ligands (SMILES), get back predicted structures and confidence scores.",
         "parameter": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
                 "sequence": {
                     "type": "string",
-                    "description": "One-letter amino acid sequence of the target protein (FASTA format, without header)."
+                    "description": "One-letter amino acid sequence of the target protein (FASTA format, without header).",
+                    "minLength": 1,
+                    "maxLength": 4096,
+                    "pattern": "^[ACDEFGHIKLMNPQRSTVWYacdefghiklmnpqrstvwy]+$"
                 },
                 "ligands": {
                     "type": "array",
                     "description": "List of ligand definitions to dock against the protein.",
+                    "minItems": 1,
+                    "maxItems": 8,
                     "items": {
                         "type": "object",
                         "properties": {
                             "id": {
                                 "type": "string",
-                                "description": "Arbitrary ligand identifier (e.g. \"L1\")."
+                                "description": "Arbitrary ligand identifier (e.g. \"L1\").",
+                                "minLength": 1,
+                                "maxLength": 64
                             },
                             "smiles": {
                                 "type": "string",
-                                "description": "Ligand SMILES string."
+                                "description": "Ligand SMILES string.",
+                                "minLength": 1,
+                                "maxLength": 4096
                             }
                         },
-                        "required": ["id", "smiles"]
+                        "required": ["id", "smiles"],
+                        "additionalProperties": false
                     }
                 },
                 "recycling_steps": {
                     "type": "integer",
                     "description": "Number of recycling steps (overfold iterations).",
                     "default": 3,
-                    "minimum": 0
+                    "minimum": 0,
+                    "maximum": 20
                 },
                 "sampling_steps": {
                     "type": "integer",
                     "description": "Number of sampling steps for diffusion process.",
                     "default": 200,
-                    "minimum": 1
+                    "minimum": 1,
+                    "maximum": 2000
                 },
                 "diffusion_samples": {
                     "type": "integer",
                     "description": "How many diffusion-sampled structures to generate.",
                     "default": 1,
-                    "minimum": 1
+                    "minimum": 1,
+                    "maximum": 16
                 },
                 "step_scale": {
                     "type": "number",
                     "description": "Scaling factor for diffusion step size.",
-                    "default": 1.638
+                    "default": 1.638,
+                    "exclusiveMinimum": 0,
+                    "maximum": 10
                 },
                 "use_potentials": {
                     "type": "boolean",
-                    "description": "If true, omit external force-field potentials from the diffusion process.",
+                    "description": "If true, enable external force-field potentials during diffusion.",
                     "default": false
                 },
                 "return_structure": {
                     "type": "boolean",
                     "description": "If false, the predicted structure will not be read or returned. Defaults to false.",
                     "default": false
+                },
+                "use_msa_server": {
+                    "type": "boolean",
+                    "description": "If true, request an MSA from the configured external server. Set false only for explicit single-sequence mode, which is less accurate but has no MSA-service dependency.",
+                    "default": true
                 }
             },
             "required": ["sequence", "ligands"]
         },
-        "required_api_keys": ["NVIDIA_API_KEY"],
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                    "type": "string",
+                    "description": "Present with value error when validation or provider execution fails."
+                },
+                "error": {
+                    "type": "string",
+                    "description": "Sanitized validation or provider error."
+                },
                 "predicted_structure": {
                     "type": "string",
                     "description": "The predicted protein-ligand complex structure in CIF format."
@@ -84,9 +112,10 @@
                     "type": "object",
                     "description": "JSON object containing affinity predictions and related data."
                 },
-                "affinity_error": {
+                "msa_mode": {
                     "type": "string",
-                    "description": "Error message if affinity file is missing."
+                    "enum": ["server", "single_sequence"],
+                    "description": "Discloses whether the run used the external MSA service or explicit single-sequence mode."
                 }
             }
         }

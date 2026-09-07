@@ -1,0 +1,456 @@
+[
+  {
+    "name": "SKEMPI_search_by_structure",
+    "type": "SKEMPITool",
+    "description": "List every experimentally measured binding-affinity mutation for a protein-protein complex in SKEMPI 2.0, with wild-type and mutant dissociation constants and a derived ddG in kcal/mol. Positive ddG means the mutation weakens binding. Use this to obtain measured ground truth for comparison against predicted effects from DynaMut2 or sequence-model scores. Example: pdb_id='1CSE'. SKEMPI covers roughly 350 complexes, so many PDB entries have no measurements.",
+    "fields": {
+      "operation": "search_by_structure"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "pdb_id"
+      ],
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry of the complex, e.g. '1CSE' or '1VFB'."
+        },
+        "only_single_mutants": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, exclude records carrying more than one substitution."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum records to return (default 50, max 500)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Measured mutations for the complex",
+          "items": {
+            "type": "object",
+            "description": "A measured mutation",
+            "properties": {
+              "pdb_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PDB entry of the complex"
+              },
+              "partner_chains": {
+                "type": "array",
+                "description": "Chains forming the two partners",
+                "items": {
+                  "type": "string",
+                  "description": "Chain identifier"
+                }
+              },
+              "mutations": {
+                "type": "array",
+                "description": "Substitutions in this measurement",
+                "items": {
+                  "type": "string",
+                  "description": "Mutation in SKEMPI cleaned notation"
+                }
+              },
+              "mutation_count": {
+                "type": "integer",
+                "description": "Number of substitutions"
+              },
+              "location": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Interface location code, e.g. COR (core), RIM, SUP, INT, SUR"
+              },
+              "protein_1": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "First binding partner"
+              },
+              "protein_2": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Second binding partner"
+              },
+              "kd_wildtype_M": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Wild-type dissociation constant in molar"
+              },
+              "kd_mutant_M": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Mutant dissociation constant in molar"
+              },
+              "temperature_K": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Measurement temperature in kelvin"
+              },
+              "ddg_kcal_per_mol": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Derived binding ddG; positive means the mutation weakens binding"
+              },
+              "pubmed_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PubMed ID of the source measurement"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CSE"
+      },
+      {
+        "pdb_id": "1VFB",
+        "only_single_mutants": true,
+        "limit": 10
+      },
+      {
+        "pdb_id": "1DVF",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "SKEMPI_get_mutation",
+    "type": "SKEMPITool",
+    "description": "Retrieve the measured binding effect of one specific substitution in a protein-protein complex. Mutations use SKEMPI's cleaned notation of wild-type residue, chain, position, mutant residue, e.g. 'LI38G' for Leu38 to Gly on chain I. Returns the wild-type and mutant Kd and the derived ddG in kcal/mol. Use SKEMPI_search_by_structure first to see which substitutions were measured. Example: pdb_id='1CSE', mutation='LI38G'.",
+    "fields": {
+      "operation": "get_mutation"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "pdb_id",
+        "mutation"
+      ],
+      "properties": {
+        "pdb_id": {
+          "type": "string",
+          "description": "PDB entry of the complex, e.g. '1CSE'."
+        },
+        "mutation": {
+          "type": "string",
+          "description": "Substitution in SKEMPI cleaned notation, e.g. 'LI38G'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Measurements for this substitution",
+          "items": {
+            "type": "object",
+            "description": "A measured mutation",
+            "properties": {
+              "pdb_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PDB entry of the complex"
+              },
+              "partner_chains": {
+                "type": "array",
+                "description": "Chains forming the two partners",
+                "items": {
+                  "type": "string",
+                  "description": "Chain identifier"
+                }
+              },
+              "mutations": {
+                "type": "array",
+                "description": "Substitutions in this measurement",
+                "items": {
+                  "type": "string",
+                  "description": "Mutation in SKEMPI cleaned notation"
+                }
+              },
+              "mutation_count": {
+                "type": "integer",
+                "description": "Number of substitutions"
+              },
+              "location": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Interface location code, e.g. COR (core), RIM, SUP, INT, SUR"
+              },
+              "protein_1": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "First binding partner"
+              },
+              "protein_2": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Second binding partner"
+              },
+              "kd_wildtype_M": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Wild-type dissociation constant in molar"
+              },
+              "kd_mutant_M": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Mutant dissociation constant in molar"
+              },
+              "temperature_K": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Measurement temperature in kelvin"
+              },
+              "ddg_kcal_per_mol": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Derived binding ddG; positive means the mutation weakens binding"
+              },
+              "pubmed_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PubMed ID of the source measurement"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1CSE",
+        "mutation": "LI38G"
+      },
+      {
+        "pdb_id": "1CSE",
+        "mutation": "LI38P"
+      },
+      {
+        "pdb_id": "1VFB",
+        "mutation": "WA92A"
+      }
+    ]
+  },
+  {
+    "name": "SKEMPI_search_by_protein",
+    "type": "SKEMPITool",
+    "description": "Find SKEMPI complexes and measurements involving a named protein, matched case-insensitively against both binding partners. Returns the measurements plus a summary of the ddG distribution and the list of PDB structures involved. Useful for assembling a benchmark set for one protein family. Example: name='lysozyme'.",
+    "fields": {
+      "operation": "search_by_protein"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Protein name or fragment, e.g. 'lysozyme', 'barnase', 'trypsin'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum records to return (default 50, max 500)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Measurements involving the protein",
+          "items": {
+            "type": "object",
+            "description": "A measured mutation",
+            "properties": {
+              "pdb_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PDB entry of the complex"
+              },
+              "partner_chains": {
+                "type": "array",
+                "description": "Chains forming the two partners",
+                "items": {
+                  "type": "string",
+                  "description": "Chain identifier"
+                }
+              },
+              "mutations": {
+                "type": "array",
+                "description": "Substitutions in this measurement",
+                "items": {
+                  "type": "string",
+                  "description": "Mutation in SKEMPI cleaned notation"
+                }
+              },
+              "mutation_count": {
+                "type": "integer",
+                "description": "Number of substitutions"
+              },
+              "location": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Interface location code, e.g. COR (core), RIM, SUP, INT, SUR"
+              },
+              "protein_1": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "First binding partner"
+              },
+              "protein_2": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Second binding partner"
+              },
+              "kd_wildtype_M": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Wild-type dissociation constant in molar"
+              },
+              "kd_mutant_M": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Mutant dissociation constant in molar"
+              },
+              "temperature_K": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Measurement temperature in kelvin"
+              },
+              "ddg_kcal_per_mol": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Derived binding ddG; positive means the mutation weakens binding"
+              },
+              "pubmed_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PubMed ID of the source measurement"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "name": "lysozyme",
+        "limit": 10
+      },
+      {
+        "name": "barnase",
+        "limit": 10
+      }
+    ]
+  }
+]

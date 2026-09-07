@@ -1,0 +1,402 @@
+[
+  {
+    "name": "UCSCCellBrowser_search_datasets",
+    "type": "UCSCCellBrowserTool",
+    "description": "Search the UCSC Cell Browser catalog of 300+ curated single-cell datasets, filtering by organism, body part, disease, or keyword. Each dataset is consistently annotated, so filters are reliable across studies. Example: organism='Human', body_part='brain'. Returns dataset name, label, organisms, body parts, diseases, and browser URL. Use UCSCCellBrowser_list_facets first to see valid filter values.",
+    "fields": {
+      "operation": "search_datasets"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "organism": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Substring match on organism, e.g. 'Human', 'Mouse', 'Zebrafish'."
+        },
+        "body_part": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Substring match on body part, e.g. 'brain', 'lung', 'retina', 'blood'."
+        },
+        "disease": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Substring match on disease, e.g. 'cancer', 'COVID-19', 'Healthy'."
+        },
+        "keyword": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Substring match on dataset name or display label, e.g. 'organoid'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum datasets to return (default 25, max 100)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Matching datasets",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Dataset identifier"
+              },
+              "label": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable title"
+              },
+              "organisms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Organisms profiled"
+              },
+              "body_parts": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Tissues or body parts"
+              },
+              "diseases": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Disease states"
+              },
+              "is_collection": {
+                "type": "boolean",
+                "description": "True if this groups child datasets"
+              },
+              "dataset_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Child dataset count if a collection"
+              },
+              "browser_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Interactive Cell Browser URL"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "organism": "Human",
+        "body_part": "brain",
+        "limit": 5
+      },
+      {
+        "disease": "cancer",
+        "limit": 5
+      },
+      {
+        "keyword": "organoid",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "UCSCCellBrowser_get_dataset",
+    "type": "UCSCCellBrowserTool",
+    "description": "Get detail for one UCSC Cell Browser dataset by name, including its abstract, organisms, body parts, diseases, parent collections, and any child datasets. Dataset names look like 'organoid-22q11' and come from UCSCCellBrowser_search_datasets. For collection entries, the child_datasets array lists the individual datasets inside.",
+    "fields": {
+      "operation": "get_dataset"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Dataset identifier, e.g. 'organoid-22q11'. Returned by UCSCCellBrowser_search_datasets."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Dataset identifier"
+            },
+            "label": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Human-readable title"
+            },
+            "organisms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Organisms profiled"
+            },
+            "body_parts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Tissues or body parts"
+            },
+            "diseases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Disease states"
+            },
+            "is_collection": {
+              "type": "boolean",
+              "description": "True if this groups child datasets"
+            },
+            "dataset_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Child dataset count if a collection"
+            },
+            "browser_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Interactive Cell Browser URL"
+            },
+            "abstract": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Dataset abstract if provided"
+            },
+            "parents": {
+              "type": "array",
+              "description": "Parent collections, root first",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Parent dataset identifier; null for the catalog root"
+                  },
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Parent display label"
+                  }
+                }
+              }
+            },
+            "child_datasets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Dataset identifier"
+                  },
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Human-readable title"
+                  },
+                  "organisms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Organisms profiled"
+                  },
+                  "body_parts": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Tissues or body parts"
+                  },
+                  "diseases": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Disease states"
+                  },
+                  "is_collection": {
+                    "type": "boolean",
+                    "description": "True if this groups child datasets"
+                  },
+                  "dataset_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Child dataset count if a collection"
+                  },
+                  "browser_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Interactive Cell Browser URL"
+                  }
+                }
+              },
+              "description": "Child datasets if a collection"
+            }
+          },
+          "description": "Dataset detail"
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "name": "organoid-22q11"
+      },
+      {
+        "name": "cortex-dev"
+      }
+    ]
+  },
+  {
+    "name": "UCSCCellBrowser_list_facets",
+    "type": "UCSCCellBrowserTool",
+    "description": "List the distinct values available for a UCSC Cell Browser filter facet, with the number of datasets carrying each value. Valid facets are 'organisms', 'body_parts', and 'diseases'. Call this before UCSCCellBrowser_search_datasets to discover exact filter values, since the catalog uses controlled vocabulary like 'Human (H. sapiens)'.",
+    "fields": {
+      "operation": "list_facets"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "facet"
+      ],
+      "properties": {
+        "facet": {
+          "type": "string",
+          "enum": [
+            "organisms",
+            "body_parts",
+            "diseases"
+          ],
+          "description": "Which facet to enumerate."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Facet values sorted by dataset count descending",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string",
+                "description": "Facet value as used by the catalog"
+              },
+              "dataset_count": {
+                "type": "integer",
+                "description": "Datasets carrying this value"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "facet": "body_parts"
+      },
+      {
+        "facet": "organisms"
+      },
+      {
+        "facet": "diseases"
+      }
+    ]
+  }
+]

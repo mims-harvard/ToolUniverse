@@ -31,22 +31,15 @@
         {
           "type": "object",
           "properties": {
-            "status": {"const": "success"},
-            "data": {
-              "type": "object",
-              "properties": {
-                "delta_loglik": {"type": "number"},
-                "ref_loglik": {"type": "number"},
-                "alt_loglik": {"type": "number"},
-                "direction": {"type": "string"}
-              }
-            }
-          },
-          "required": ["data"]
+            "delta_loglik": {"type": "number"},
+            "ref_loglik": {"type": "number"},
+            "alt_loglik": {"type": "number"},
+            "direction": {"type": "string"}
+          }
         },
         {
           "type": "object",
-          "properties": {"status": {"const": "error"}, "error": {"type": "string"}},
+          "properties": {"error": {"type": "string"}},
           "required": ["error"]
         }
       ]

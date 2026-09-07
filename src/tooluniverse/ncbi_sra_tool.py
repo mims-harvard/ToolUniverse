@@ -3,7 +3,7 @@
 import xml.etree.ElementTree as ET
 from typing import Any, Dict
 import requests
-from .ncbi_eutils_tool import NCBIEUtilsTool
+from .ncbi_eutils_tool import NCBIEUtilsTool, esearch_query_disclosure
 from .tool_registry import register_tool
 
 
@@ -108,14 +108,23 @@ class NCBISRATool(NCBIEUtilsTool):
                 uids = esearch_result.get("idlist", [])
                 count = int(esearch_result.get("count", 0))
 
+                payload = {
+                    "uids": uids,
+                    "count": count,
+                    "returned": len(uids),
+                    "search_term": search_term,
+                }
+                # Fix-54A-1: ``search_term`` echoed the term as SUBMITTED, not
+                # the one SRA ran. Measured: "RNA-seq zzzqqqxyz
+                # nonexistentterm12345" returned count 7209038 -- identical to
+                # "RNA-seq" alone -- with both nonsense phrases reported in
+                # errorlist.phrasesnotfound and discarded here.
+                disclosure = esearch_query_disclosure(esearch_result, source="SRA")
+                if disclosure:
+                    payload["query_disclosure"] = disclosure
                 return {
                     "status": "success",
-                    "data": {
-                        "uids": uids,
-                        "count": count,
-                        "returned": len(uids),
-                        "search_term": search_term,
-                    },
+                    "data": payload,
                     "total_count": count,
                     "url": result.get("url"),
                 }

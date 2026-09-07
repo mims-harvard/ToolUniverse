@@ -1,7 +1,7 @@
 [
   {
     "name": "ReactomeAnalysis_pathway_enrichment",
-    "description": "Perform pathway overrepresentation (enrichment) analysis using the Reactome Analysis Service. Submit a list of gene symbols, UniProt IDs, or Ensembl IDs and identify which Reactome pathways are statistically enriched. Returns pathways ranked by p-value with FDR correction, entity counts, and reaction coverage. Supports projection to human pathways for cross-species analysis. Example: submitting TP53, BRCA1, CDH1, EGFR, KRAS returns 394 enriched pathways including 'Developmental Lineage of Mammary Gland Myoepithelial Cells' (p=3.94e-08) and 'Signaling by ERBB2 KD Mutants'.",
+    "description": "Perform pathway overrepresentation (enrichment) analysis using the Reactome Analysis Service. Submit a list of gene symbols, UniProt IDs, or Ensembl IDs and identify which Reactome pathways are statistically enriched. Returns pathways ranked by p-value with FDR (False Discovery Rate) correction, entity counts, and reaction coverage. Supports projection to human pathways for cross-species analysis. INTERPRETING RESULTS: rank pathways by 'fdr' or 'p_value' - those are the enrichment statistics. 'entities_coverage' (= entities_found / entities_total) is the fraction of a pathway your identifiers cover. 'pathway_size_fraction_of_reactome' (deprecated alias 'entities_ratio') is Reactome's raw 'ratio': pathway size over Reactome's entity universe for the species, independent of the identifiers you submit - never rank by it. Example: submitting TP53, BRCA1, CDH1, EGFR, KRAS returns 394 enriched pathways including 'Developmental Lineage of Mammary Gland Myoepithelial Cells' (p=3.94e-08) and 'Signaling by ERBB2 KD Mutants'.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -53,138 +53,135 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "token": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Analysis token for retrieving results later"
-                },
-                "analysis_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "OVERREPRESENTATION or EXPRESSION"
-                },
-                "projection": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ],
-                  "description": "Whether projection was applied"
-                },
-                "identifiers_not_found": {
-                  "type": "integer",
-                  "description": "Count of unmatched identifiers"
-                },
-                "pathways_found": {
-                  "type": "integer",
-                  "description": "Total enriched pathways"
-                },
-                "pathways": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "pathway_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "species": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "is_disease": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
-                      },
-                      "is_lowest_level": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
-                      },
-                      "entities_found": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "entities_total": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "entities_ratio": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "p_value": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "fdr": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "reactions_found": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "reactions_total": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
+            "token": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Analysis token for retrieving results later"
+            },
+            "analysis_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "OVERREPRESENTATION or EXPRESSION"
+            },
+            "projection": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether projection was applied"
+            },
+            "identifiers_not_found": {
+              "type": "integer",
+              "description": "Count of unmatched identifiers"
+            },
+            "pathways_found": {
+              "type": "integer",
+              "description": "Total enriched pathways"
+            },
+            "pathways": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pathway_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_disease": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "is_lowest_level": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "entities_found": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of submitted identifiers that mapped into this pathway."
+                  },
+                  "entities_total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Total number of Reactome entities in this pathway, i.e. the pathway's size."
+                  },
+                  "entities_coverage": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "entities_found / entities_total: the fraction of this pathway covered by your submitted identifiers. Null when entities_total is 0 or unavailable."
+                  },
+                  "p_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Overrepresentation p-value for this pathway. One of the two enrichment statistics - rank pathways by this or by fdr."
+                  },
+                  "fdr": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Benjamini-Hochberg FDR-corrected p-value. Preferred statistic for ranking enriched pathways."
+                  },
+                  "reactions_found": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "reactions_total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "pathway_size_fraction_of_reactome": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Reactome's raw 'ratio' field: entities_total divided by the total entity count of Reactome for this pathway's species (measured at 16251 entities for Homo sapiens in Reactome release 97; the divisor differs per species - e.g. 8896 for Gallus gallus, 10752 for Bos taurus - and changes between releases, so never hard-code it). It measures pathway SIZE only and is completely independent of the submitted identifiers: the same pathway returns the same value for any gene list. It is NOT entities_found/entities_total - use entities_coverage for that - and it must not be used to rank pathways by enrichment."
+                  },
+                  "entities_ratio": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "DEPRECATED alias of pathway_size_fraction_of_reactome, kept for backward compatibility and carrying an identical value. Despite its name it is NOT entities_found/entities_total; use entities_coverage for pathway coverage and p_value/fdr for enrichment."
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_pathways": {
-                  "type": "integer"
-                },
-                "returned": {
-                  "type": "integer"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -202,7 +199,7 @@
   },
   {
     "name": "ReactomeAnalysis_species_comparison",
-    "description": "Perform Reactome pathway analysis with cross-species projection. Submit protein/gene identifiers from any supported species and Reactome will project them to human pathways, enabling comparison of pathway enrichment across species. This uses the same overrepresentation analysis but ensures identifiers are mapped via orthology to human pathways. Example: submitting mouse protein IDs returns enriched human Reactome pathways with mapping statistics.",
+    "description": "Perform Reactome pathway analysis with cross-species projection. Submit protein/gene identifiers from any supported species and Reactome will project them to human pathways, enabling comparison of pathway enrichment across species. This uses the same overrepresentation analysis but ensures identifiers are mapped via orthology to human pathways. Example: submitting mouse protein IDs returns enriched human Reactome pathways with mapping statistics. INTERPRETING RESULTS: rank pathways by 'fdr' or 'p_value' - those are the enrichment statistics. 'entities_coverage' (= entities_found / entities_total) is the fraction of a pathway your identifiers cover. 'pathway_size_fraction_of_reactome' (deprecated alias 'entities_ratio') is Reactome's raw 'ratio': pathway size over Reactome's entity universe for the species, independent of the identifiers you submit - never rank by it.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -247,121 +244,130 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "token": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "analysis_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "projection": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
-                },
-                "identifiers_not_found": {
-                  "type": "integer"
-                },
-                "pathways_found": {
-                  "type": "integer"
-                },
-                "pathways": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "pathway_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "species": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "is_disease": {
-                        "type": [
-                          "boolean",
-                          "null"
-                        ]
-                      },
-                      "entities_found": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "entities_total": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "p_value": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "fdr": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "reactions_found": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "reactions_total": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
+            "token": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "analysis_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "projection": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "identifiers_not_found": {
+              "type": "integer"
+            },
+            "pathways_found": {
+              "type": "integer"
+            },
+            "pathways": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pathway_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_disease": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "is_lowest_level": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "entities_found": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of submitted identifiers that mapped into this pathway."
+                  },
+                  "entities_total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Total number of Reactome entities in this pathway, i.e. the pathway's size."
+                  },
+                  "entities_coverage": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "entities_found / entities_total: the fraction of this pathway covered by your submitted identifiers. Null when entities_total is 0 or unavailable."
+                  },
+                  "p_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Overrepresentation p-value. One of the two enrichment statistics - rank pathways by this or by fdr."
+                  },
+                  "fdr": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Benjamini-Hochberg FDR-corrected p-value. Preferred statistic for ranking enriched pathways."
+                  },
+                  "reactions_found": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "reactions_total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "pathway_size_fraction_of_reactome": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Reactome's raw 'ratio' field: entities_total divided by the total entity count of Reactome for this pathway's species. It measures pathway SIZE only and is independent of the submitted identifiers. It is NOT entities_found/entities_total - use entities_coverage for that."
+                  },
+                  "entities_ratio": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "DEPRECATED alias of pathway_size_fraction_of_reactome with an identical value. Despite its name it is NOT entities_found/entities_total."
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_pathways": {
-                  "type": "integer"
-                },
-                "returned": {
-                  "type": "integer"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -379,7 +385,7 @@
   },
   {
     "name": "ReactomeAnalysis_expression_analysis",
-    "description": "Quantitative EXPRESSION analysis: map fold-change or numeric expression values onto Reactome pathways (analysis type=EXPRESSION). Unlike ReactomeAnalysis_pathway_enrichment (which only accepts a plain newline-separated identifier list and runs overrepresentation), this tool submits TAB-DELIMITED 'GENE\\tVALUE' rows so Reactome treats the input as an expression matrix and overlays each value per pathway. Each returned pathway carries 'entities_exp' (the matched expression values for that pathway) and the result reports the expression column names plus the min/max of the submitted values. Example: submitting 'PTEN\\t2.5\\nTP53\\t-1.8\\nEGFR\\t3.1' returns analysis_type=EXPRESSION with pathways such as 'Regulation of TP53 Expression' carrying entities_exp=[-1.8].",
+    "description": "Quantitative EXPRESSION analysis: map fold-change or numeric expression values onto Reactome pathways (analysis type=EXPRESSION). Unlike ReactomeAnalysis_pathway_enrichment (which only accepts a plain newline-separated identifier list and runs overrepresentation), this tool submits TAB-DELIMITED 'GENE\\tVALUE' rows so Reactome treats the input as an expression matrix and overlays each value per pathway. Each returned pathway carries 'entities_exp' (the matched expression values for that pathway) and the result reports the expression column names plus the min/max of the submitted values. Example: submitting 'PTEN\\t2.5\\nTP53\\t-1.8\\nEGFR\\t3.1' returns analysis_type=EXPRESSION with pathways such as 'Regulation of TP53 Expression' carrying entities_exp=[-1.8]. INTERPRETING RESULTS: rank pathways by 'fdr' or 'p_value' - those are the enrichment statistics. 'entities_coverage' (= entities_found / entities_total) is the fraction of a pathway your identifiers cover. 'pathway_size_fraction_of_reactome' (deprecated alias 'entities_ratio') is Reactome's raw 'ratio': pathway size over Reactome's entity universe for the species, independent of the identifiers you submit - never rank by it.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -432,104 +438,152 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "token": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "analysis_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Expected to be EXPRESSION"
-                },
-                "expression_column_names": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+            "token": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "analysis_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Expected to be EXPRESSION"
+            },
+            "expression_column_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Names of the submitted expression value columns"
+            },
+            "expression_min": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "expression_max": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "identifiers_not_found": {
+              "type": "integer"
+            },
+            "pathways_found": {
+              "type": "integer"
+            },
+            "pathways": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pathway_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
-                  "description": "Names of the submitted expression value columns"
-                },
-                "expression_min": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "expression_max": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "identifiers_not_found": {
-                  "type": "integer"
-                },
-                "pathways_found": {
-                  "type": "integer"
-                },
-                "pathways": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "pathway_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "entities_found": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "entities_exp": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
-                        "items": {
-                          "type": "number"
-                        },
-                        "description": "Matched expression values overlaid on this pathway"
-                      },
-                      "p_value": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "fdr": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_disease": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "is_lowest_level": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "entities_found": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of submitted identifiers that mapped into this pathway."
+                  },
+                  "entities_total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Total number of Reactome entities in this pathway, i.e. the pathway's size."
+                  },
+                  "entities_coverage": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "entities_found / entities_total: the fraction of this pathway covered by your submitted identifiers. Null when entities_total is 0 or unavailable."
+                  },
+                  "reactions_found": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "reactions_total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "pathway_size_fraction_of_reactome": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Reactome's raw 'ratio' field: entities_total divided by the total entity count of Reactome for this pathway's species. It measures pathway SIZE only and is independent of the submitted identifiers. It is NOT entities_found/entities_total - use entities_coverage for that."
+                  },
+                  "entities_ratio": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "DEPRECATED alias of pathway_size_fraction_of_reactome with an identical value. Despite its name it is NOT entities_found/entities_total."
+                  },
+                  "entities_exp": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "Matched expression values overlaid on this pathway"
+                  },
+                  "p_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "fdr": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -547,7 +601,7 @@
   },
   {
     "name": "ReactomeAnalysis_species_comparison_v2",
-    "description": "True cross-species pathway comparison (analysis type=SPECIES_COMPARISON). Compares one species' pathways against another species by orthology projection using Reactome's genuine /species/{source}/{target} endpoint. This differs from ReactomeAnalysis_species_comparison (which actually runs overrepresentation on a submitted identifier list and ignores its species argument): this tool takes NO identifier list - it compares the ENTIRE pathway set of the source species against the target species given by its Reactome species dbId. Returns analysis_type=SPECIES_COMPARISON, total pathways found, and the count of identifiers not found (orthology gaps). Example: species=48892 (Mus musculus dbId), source_species=homoSapiens compares human vs mouse and returns pathwaysFound=2709 with identifiers_not_found=510.",
+    "description": "True cross-species pathway comparison (analysis type=SPECIES_COMPARISON). Compares one species' pathways against another species by orthology projection using Reactome's genuine /species/{source}/{target} endpoint. This differs from ReactomeAnalysis_species_comparison (which actually runs overrepresentation on a submitted identifier list and ignores its species argument): this tool takes NO identifier list - it compares the ENTIRE pathway set of the source species against the target species given by its Reactome species dbId. Returns analysis_type=SPECIES_COMPARISON, total pathways found, and the count of identifiers not found (orthology gaps). Example: species=48892 (Mus musculus dbId), source_species=homoSapiens compares human vs mouse and returns pathwaysFound=2709 with identifiers_not_found=510. INTERPRETING RESULTS: rank pathways by 'fdr' or 'p_value' - those are the enrichment statistics. 'entities_coverage' (= entities_found / entities_total) is the fraction of a pathway that mapped across. 'pathway_size_fraction_of_reactome' (deprecated alias 'entities_ratio') is Reactome's raw 'ratio': pathway size over Reactome's entity universe for the species - never rank by it.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -594,75 +648,123 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "token": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "analysis_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Expected to be SPECIES_COMPARISON"
-                },
-                "identifiers_not_found": {
-                  "type": "integer"
-                },
-                "pathways_found": {
-                  "type": "integer"
-                },
-                "pathways": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "pathway_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "entities_found": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "p_value": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      },
-                      "fdr": {
-                        "type": [
-                          "number",
-                          "null"
-                        ]
-                      }
-                    }
+            "token": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "analysis_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Expected to be SPECIES_COMPARISON"
+            },
+            "identifiers_not_found": {
+              "type": "integer"
+            },
+            "pathways_found": {
+              "type": "integer"
+            },
+            "pathways": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pathway_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_disease": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "is_lowest_level": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "entities_found": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of source-species entities that mapped into this pathway."
+                  },
+                  "entities_total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Total number of Reactome entities in this pathway, i.e. the pathway's size."
+                  },
+                  "entities_coverage": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "entities_found / entities_total: the fraction of this pathway that mapped across. Null when entities_total is 0 or unavailable."
+                  },
+                  "p_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "fdr": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "reactions_found": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "reactions_total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "pathway_size_fraction_of_reactome": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Reactome's raw 'ratio' field: entities_total divided by the total entity count of Reactome for this pathway's species. It measures pathway SIZE only. It is NOT entities_found/entities_total - use entities_coverage for that."
+                  },
+                  "entities_ratio": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "DEPRECATED alias of pathway_size_fraction_of_reactome with an identical value. Despite its name it is NOT entities_found/entities_total."
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -715,58 +817,53 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "pathway": {
-                  "type": "string"
-                },
-                "found": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "total_entities_count": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "resources": {
-                  "type": "array"
-                },
-                "identifiers": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "exp": {
-                        "type": "array"
-                      },
-                      "mapsTo": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "resource": {
-                              "type": [
-                                "string",
-                                "null"
-                              ]
-                            },
-                            "ids": {
-                              "type": "array",
-                              "items": {
-                                "type": "string"
-                              }
-                            }
+            "pathway": {
+              "type": "string"
+            },
+            "found": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "total_entities_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "resources": {
+              "type": "array"
+            },
+            "identifiers": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "exp": {
+                    "type": "array"
+                  },
+                  "mapsTo": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "resource": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "ids": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
                           }
                         }
                       }
@@ -774,14 +871,8 @@
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -822,33 +913,22 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "token": {
-                  "type": "string"
-                },
-                "not_found_count": {
-                  "type": "integer"
-                },
-                "not_found": {
-                  "type": "array",
-                  "items": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  }
-                }
-              }
+            "token": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object"
+            "not_found_count": {
+              "type": "integer"
+            },
+            "not_found": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -866,7 +946,7 @@
   },
   {
     "name": "ReactomeAnalysis_token_result",
-    "description": "Retrieve previously computed Reactome pathway analysis results using an analysis token. Tokens are returned from pathway_enrichment or species_comparison analyses and can be used to access results without rerunning the analysis. Useful for paginating through large result sets or sharing analysis results. The token contains the full analysis result and is valid for a limited time.",
+    "description": "Retrieve previously computed Reactome pathway analysis results using an analysis token. Tokens are returned from pathway_enrichment or species_comparison analyses and can be used to access results without rerunning the analysis. Useful for paginating through large result sets or sharing analysis results. The token contains the full analysis result and is valid for a limited time. INTERPRETING RESULTS: rank pathways by 'fdr' or 'p_value' - those are the enrichment statistics. 'entities_coverage' (= entities_found / entities_total) is the fraction of a pathway your identifiers cover. 'pathway_size_fraction_of_reactome' (deprecated alias 'entities_ratio') is Reactome's raw 'ratio': pathway size over Reactome's entity universe for the species, independent of the identifiers you submit - never rank by it.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -896,45 +976,130 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "token": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "analysis_type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "projection": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ]
-                },
-                "identifiers_not_found": {
-                  "type": "integer"
-                },
-                "pathways_found": {
-                  "type": "integer"
-                },
-                "pathways": {
-                  "type": "array"
+            "token": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "analysis_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "projection": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "identifiers_not_found": {
+              "type": "integer"
+            },
+            "pathways_found": {
+              "type": "integer"
+            },
+            "pathways": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "pathway_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_disease": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "is_lowest_level": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "entities_found": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of submitted identifiers that mapped into this pathway."
+                  },
+                  "entities_total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Total number of Reactome entities in this pathway, i.e. the pathway's size."
+                  },
+                  "entities_coverage": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "entities_found / entities_total: the fraction of this pathway covered by the identifiers of the original analysis. Null when entities_total is 0 or unavailable."
+                  },
+                  "p_value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Overrepresentation p-value. One of the two enrichment statistics - rank pathways by this or by fdr."
+                  },
+                  "fdr": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Benjamini-Hochberg FDR-corrected p-value. Preferred statistic for ranking enriched pathways."
+                  },
+                  "reactions_found": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "reactions_total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "pathway_size_fraction_of_reactome": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Reactome's raw 'ratio' field: entities_total divided by the total entity count of Reactome for this pathway's species. It measures pathway SIZE only and is independent of the submitted identifiers. It is NOT entities_found/entities_total - use entities_coverage for that."
+                  },
+                  "entities_ratio": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "DEPRECATED alias of pathway_size_fraction_of_reactome with an identical value. Despite its name it is NOT entities_found/entities_total."
+                  }
                 }
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

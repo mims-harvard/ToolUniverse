@@ -1,0 +1,202 @@
+[
+  {
+    "name": "CodonUsage_get_table",
+    "type": "CodonUsageTool",
+    "description": "Retrieve the codon usage table for an organism from the Codon Usage Database, indexed by NCBI taxonomy identifier. Returns all 64 codons with their raw count, frequency per thousand codons, and the fraction of their amino acid's usage they account for. DNA_codon_optimize carries hardcoded tables for only four species; this supplies the reference data for any sequenced organism. Example: taxid=9606 for human, or taxid=9606 with amino_acid='Leu' for just the leucine codons.",
+    "fields": {
+      "operation": "get_table"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "taxid"
+      ],
+      "properties": {
+        "taxid": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "NCBI taxonomy identifier, e.g. 9606 (human), 83333 (E. coli K-12), 4932 (yeast), 7227 (fruit fly), 3702 (Arabidopsis). Tables are often held at strain level, so 562 for E. coli has no table but 83333 does."
+        },
+        "amino_acid": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Restrict to one amino acid using its three-letter code, e.g. 'Leu', 'Ala', or 'End' for stop codons."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Codon usage rows, grouped by amino acid and ordered by usage",
+          "items": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "codon": {
+                "type": "string",
+                "description": "Codon in DNA alphabet"
+              },
+              "amino_acid": {
+                "type": "string",
+                "description": "Three-letter amino acid code, or End for stop"
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Occurrences in the source coding sequences"
+              },
+              "per_thousand": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Frequency per thousand codons across all codons"
+              },
+              "fraction": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Share of this amino acid's total usage, 0 to 1"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "taxid": 9606
+      },
+      {
+        "taxid": 9606,
+        "amino_acid": "Leu"
+      },
+      {
+        "taxid": 83333
+      },
+      {
+        "taxid": 4932,
+        "amino_acid": "Ala"
+      }
+    ]
+  },
+  {
+    "name": "CodonUsage_get_optimal_codons",
+    "type": "CodonUsageTool",
+    "description": "Return the most-used codon for each amino acid in an organism, which is the reference table needed to codon-optimize a sequence for expression in that host. Example: taxid=83333 gives the preferred codons for E. coli K-12, which differ from human at ten amino acids. Use with DNA_codon_optimize when the target host is outside its four built-in species. Optimizing every position to the single best codon maximizes adaptation but can deplete tRNA pools, so the returned fraction supports proportional sampling instead.",
+    "fields": {
+      "operation": "get_optimal_codons"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "taxid"
+      ],
+      "properties": {
+        "taxid": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "NCBI taxonomy identifier, e.g. 9606 (human) or 83333 (E. coli K-12)."
+        },
+        "include_stop_codons": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Include the stop codon group (reported as 'End'). Default false."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Preferred codon per amino acid",
+          "items": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "amino_acid": {
+                "type": "string",
+                "description": "Three-letter amino acid code"
+              },
+              "preferred_codon": {
+                "type": "string",
+                "description": "Most-used codon"
+              },
+              "fraction": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Share of this amino acid's usage taken by the preferred codon"
+              },
+              "per_thousand": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Frequency per thousand codons"
+              },
+              "count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Raw occurrence count"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "taxid": 9606
+      },
+      {
+        "taxid": 83333
+      },
+      {
+        "taxid": 4932,
+        "include_stop_codons": true
+      }
+    ]
+  }
+]

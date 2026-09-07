@@ -9,7 +9,8 @@
         "operation": {
           "type": "string",
           "const": "search_gene",
-          "description": "Operation type (fixed: search_gene)"
+          "description": "Operation type (fixed: search_gene)",
+          "default": "search_gene"
         },
         "gene_symbol": {
           "type": "string",
@@ -90,7 +91,10 @@
     ],
     "aliases": [
       "GenCC_search_gene_disease"
-    ]
+    ],
+    "fields": {
+      "operation": "search_gene"
+    }
   },
   {
     "name": "GenCC_search_disease",
@@ -102,7 +106,8 @@
         "operation": {
           "type": "string",
           "const": "search_disease",
-          "description": "Operation type (fixed: search_disease)"
+          "description": "Operation type (fixed: search_disease)",
+          "default": "search_disease"
         },
         "disease": {
           "type": "string",
@@ -182,7 +187,10 @@
         "disease": "Huntington disease",
         "classification": "Definitive"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_disease"
+    }
   },
   {
     "name": "GenCC_get_classifications",
@@ -194,7 +202,8 @@
         "operation": {
           "type": "string",
           "const": "get_classifications",
-          "description": "Operation type (fixed: get_classifications)"
+          "description": "Operation type (fixed: get_classifications)",
+          "default": "get_classifications"
         },
         "gene_symbol": {
           "type": "string",
@@ -270,6 +279,9 @@
       {
         "submitter": "ClinGen"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_classifications"
+    }
   }
 ]

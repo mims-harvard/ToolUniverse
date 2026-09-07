@@ -1,0 +1,365 @@
+[
+  {
+    "name": "REBASE_get_enzyme",
+    "type": "REBASETool",
+    "description": "Look up a restriction enzyme in REBASE, the reference catalogue of ~6,000 enzymes from New England Biolabs. Returns the recognition sequence with its cut point, whether the cut leaves blunt or sticky ends, the source organism, methylation sensitivity, commercial availability, and isoschizomers. Example: name='EcoRI' returns G^AATTC. The DNA_find_restriction_sites and DNA_virtual_digest calculators work from 25 curated enzymes; use this to look up anything outside that set.",
+    "fields": {
+      "operation": "get_enzyme"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Enzyme name, e.g. 'EcoRI', 'BamHI', 'SmaI'. Matched case-insensitively."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Enzyme record",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Enzyme name, e.g. EcoRI"
+            },
+            "prototype": {
+              "type": "string",
+              "description": "First enzyme discovered with this specificity"
+            },
+            "recognition_site": {
+              "type": "string",
+              "description": "Recognition sequence, with ^ marking the cut point where known"
+            },
+            "blunt_or_sticky": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "'blunt', 'sticky', or null when the cut position is unknown or offset"
+            },
+            "organism": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Source organism"
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Depositor or culture collection"
+            },
+            "methylation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Methylation sensitivity notes"
+            },
+            "commercially_available": {
+              "type": "boolean",
+              "description": "Whether any supplier sells it"
+            },
+            "supplier_codes": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "REBASE single-letter supplier codes"
+            },
+            "isoschizomer_count": {
+              "type": "integer",
+              "description": "Number of enzymes sharing this specificity"
+            },
+            "isoschizomers": {
+              "type": "array",
+              "description": "Isoschizomer names, up to 25",
+              "items": {
+                "type": "string",
+                "description": "Enzyme name"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "name": "EcoRI"
+      },
+      {
+        "name": "BamHI"
+      },
+      {
+        "name": "SmaI"
+      }
+    ]
+  },
+  {
+    "name": "REBASE_search_by_site",
+    "type": "REBASETool",
+    "description": "Find restriction enzymes by what they recognize. Give site to find every enzyme reading an exact recognition sequence (site='GAATTC'), or give sequence to find every enzyme that would cut a DNA sequence, with the number of cut sites each produces. IUPAC ambiguity codes in enzyme sites are expanded, so degenerate recognition sequences match correctly. Set only_commercial=true to restrict to enzymes you can buy.",
+    "fields": {
+      "operation": "search_by_site"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "site": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact recognition sequence to match, e.g. 'GAATTC'. Mutually exclusive with sequence."
+        },
+        "sequence": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "DNA sequence to find cutters for, e.g. a plasmid region. Mutually exclusive with site."
+        },
+        "only_commercial": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, return only commercially available enzymes."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum enzymes to return (default 25, max 200)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Matching enzymes, sorted by name",
+          "items": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Enzyme name, e.g. EcoRI"
+              },
+              "prototype": {
+                "type": "string",
+                "description": "First enzyme discovered with this specificity"
+              },
+              "recognition_site": {
+                "type": "string",
+                "description": "Recognition sequence, with ^ marking the cut point where known"
+              },
+              "blunt_or_sticky": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "'blunt', 'sticky', or null when the cut position is unknown or offset"
+              },
+              "organism": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source organism"
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Depositor or culture collection"
+              },
+              "methylation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Methylation sensitivity notes"
+              },
+              "commercially_available": {
+                "type": "boolean",
+                "description": "Whether any supplier sells it"
+              },
+              "supplier_codes": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "REBASE single-letter supplier codes"
+              },
+              "cut_site_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of cut sites in the query sequence, when searching by sequence"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "site": "GAATTC"
+      },
+      {
+        "site": "GGATCC",
+        "only_commercial": true
+      },
+      {
+        "sequence": "GGATCCAAGCTTGAATTCGTCGAC",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "REBASE_list_isoschizomers",
+    "type": "REBASETool",
+    "description": "List every restriction enzyme sharing a prototype with the named enzyme, i.e. all enzymes with the same recognition specificity. Commercially available enzymes are listed first, so this answers 'which enzyme can I actually buy that cuts like this one'. Example: name='EcoRI'.",
+    "fields": {
+      "operation": "list_isoschizomers"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Enzyme name to find isoschizomers of, e.g. 'EcoRI'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Enzymes sharing the prototype, commercially available first",
+          "items": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Enzyme name, e.g. EcoRI"
+              },
+              "prototype": {
+                "type": "string",
+                "description": "First enzyme discovered with this specificity"
+              },
+              "recognition_site": {
+                "type": "string",
+                "description": "Recognition sequence, with ^ marking the cut point where known"
+              },
+              "blunt_or_sticky": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "'blunt', 'sticky', or null when the cut position is unknown or offset"
+              },
+              "organism": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source organism"
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Depositor or culture collection"
+              },
+              "methylation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Methylation sensitivity notes"
+              },
+              "commercially_available": {
+                "type": "boolean",
+                "description": "Whether any supplier sells it"
+              },
+              "supplier_codes": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "REBASE single-letter supplier codes"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "name": "EcoRI"
+      },
+      {
+        "name": "HindIII"
+      }
+    ]
+  }
+]

@@ -55,6 +55,31 @@ class TestGraphQLEmptyGuard:
         assert result["status"] == "success"
         assert result["data"] == {"search": {}}
 
+    def test_zero_hit_search_query_gets_explanatory_note(self):
+        # Fix Round 17: a query whose schema actually declares a "hits" field
+        # (a real search(...) { hits {...} } shape, unlike the generic dummy
+        # config above) collapses to the same opaque {"search": {}} on zero
+        # hits. Confirmed live: OpenTargets_get_disease_ids_by_name with
+        # "high-risk prostate cancer" returned status=success, data=
+        # {"search": {}}, with nothing indicating that means zero matches.
+        # Attach a note so the caller isn't left guessing whether this is a
+        # real zero-hit result or something broke.
+        from tooluniverse.graphql_tool import GraphQLTool
+
+        search_cfg = dict(MINIMAL_CFG)
+        search_cfg["query_schema"] = (
+            "query($q: String!) { search(queryString: $q) { hits { id name } } }"
+        )
+        tool = GraphQLTool(search_cfg, "https://example.org/graphql")
+        with patch(
+            "tooluniverse.graphql_tool.execute_query",
+            return_value={"data": {"search": {}}},
+        ):
+            result = tool.run({"id": "anything"})
+        assert result["status"] == "success"
+        assert result["data"] == {"search": {}}
+        assert "0 matches found" in result["metadata"]["note"]
+
     def test_real_data_succeeds(self):
         tool = _base_tool()
         with patch(

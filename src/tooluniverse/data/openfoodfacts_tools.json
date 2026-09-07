@@ -14,7 +14,8 @@
             "integer",
             "null"
           ],
-          "description": "Number of results per page (1-100). Default: 10"
+          "description": "Number of results per page (1-100). Defaults to 50, which is what an unparameterised call has always returned from this endpoint -- pass a smaller number for a lighter response.",
+          "default": 50
         },
         "page": {
           "type": [

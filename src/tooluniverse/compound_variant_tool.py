@@ -50,6 +50,19 @@ _AA_3TO1 = {v.upper(): k for k, v in _AA_1TO3.items()}
 _MATURE_PROTEIN_OFFSET_GENES = {"HBB"}
 
 
+def _truncate_msg(msg: str, limit: int = 240) -> str:
+    """Truncate an error message on a word boundary, never mid-word.
+
+    Sub-tool error messages are the only actionable guidance a caller gets
+    on a failed source; cutting them off mid-word at a fixed character
+    count silently drops that guidance.
+    """
+    if len(msg) <= limit:
+        return msg
+    head = msg[:limit].rsplit(" ", 1)[0]
+    return head + "..."
+
+
 # ClinVar clinical-significance terms ranked most→least clinically significant.
 # Used to pick the headline classification when a query matches several ClinVar
 # variants (e.g. a multi-allelic rsid whose alleles carry different
@@ -245,13 +258,13 @@ class CompoundVariantAnnotationTool(BaseTool):
                     r, error = None, None
 
                 if error:
-                    sources_failed.append(f"ClinVar: {error[:100]}")
+                    sources_failed.append(f"ClinVar: {_truncate_msg(error)}")
                 elif parsed is not None:
                     annotations["clinvar"] = parsed
                 else:
                     annotations["clinvar"] = self._parse_clinvar(r, variant_token)
             except Exception as e:
-                sources_failed.append(f"ClinVar: {str(e)[:100]}")
+                sources_failed.append(f"ClinVar: {_truncate_msg(str(e))}")
 
         # 2. gnomAD
         if gene_for_gnomad:
@@ -264,11 +277,11 @@ class CompoundVariantAnnotationTool(BaseTool):
                 )
                 error = self._sub_call_error(r)
                 if error:
-                    sources_failed.append(f"gnomAD: {error[:100]}")
+                    sources_failed.append(f"gnomAD: {_truncate_msg(error)}")
                 else:
                     annotations["gnomad"] = self._parse_gnomad(r)
             except Exception as e:
-                sources_failed.append(f"gnomAD: {str(e)[:100]}")
+                sources_failed.append(f"gnomAD: {_truncate_msg(str(e))}")
 
         # 3. CIViC
         if gene_for_gnomad:
@@ -281,11 +294,11 @@ class CompoundVariantAnnotationTool(BaseTool):
                 )
                 error = self._sub_call_error(r)
                 if error:
-                    sources_failed.append(f"CIViC: {error[:100]}")
+                    sources_failed.append(f"CIViC: {_truncate_msg(error)}")
                 else:
                     annotations["civic"] = self._parse_civic(r, variant_token)
             except Exception as e:
-                sources_failed.append(f"CIViC: {str(e)[:100]}")
+                sources_failed.append(f"CIViC: {_truncate_msg(str(e))}")
 
         # 4. UniProt
         if gene_for_gnomad:
@@ -306,11 +319,38 @@ class CompoundVariantAnnotationTool(BaseTool):
                 )
                 error = self._sub_call_error(r)
                 if error:
-                    sources_failed.append(f"UniProt: {error[:100]}")
+                    sources_failed.append(f"UniProt: {_truncate_msg(error)}")
                 else:
-                    annotations["uniprot"] = self._parse_uniprot(r, gene_for_gnomad)
+                    parsed = self._parse_uniprot(r, gene_for_gnomad)
+                    # Fix-11B-1: UniProt_search's entries never carry a
+                    # "function" field (confirmed live -- only accession,
+                    # id, protein_name, gene_names, organism, length), so
+                    # _parse_uniprot's function lookup silently always
+                    # returned "". Look up the real function comment with a
+                    # follow-up call keyed on the accession we just picked.
+                    accession = parsed.get("accession")
+                    if accession:
+                        try:
+                            fr = tu.run_one_function(
+                                {
+                                    "name": "UniProt_get_function_by_accession",
+                                    "arguments": {"accession": accession},
+                                }
+                            )
+                            fn_error = self._sub_call_error(fr)
+                            # run_one_function returns this tool's raw
+                            # result -- a bare list of function-comment
+                            # strings -- not wrapped in a dict.
+                            fn_list = fr if isinstance(fr, list) else None
+                            if fn_list is None and isinstance(fr, dict):
+                                fn_list = fr.get("result")
+                            if not fn_error and fn_list:
+                                parsed["function"] = str(fn_list[0])[:300]
+                        except Exception:
+                            pass  # keep parsed["function"] == "" (no data)
+                    annotations["uniprot"] = parsed
             except Exception as e:
-                sources_failed.append(f"UniProt: {str(e)[:100]}")
+                sources_failed.append(f"UniProt: {_truncate_msg(str(e))}")
 
         # Build summary
         summary = self._build_summary(annotations, variant, gene_for_gnomad, rsid)
@@ -366,7 +406,7 @@ class CompoundVariantAnnotationTool(BaseTool):
             )
             error = self._sub_call_error(r)
             if error:
-                sources_failed.append(f"dbSNP (rsid->gene): {error[:100]}")
+                sources_failed.append(f"dbSNP (rsid->gene): {_truncate_msg(error)}")
                 return None, None
             hgvs = str((r.get("data") or {}).get("hgvs_notation", ""))
             m = re.search(r"GENE=([A-Za-z0-9\-]+):", hgvs)
@@ -386,7 +426,7 @@ class CompoundVariantAnnotationTool(BaseTool):
             variant_tokens = _offset_protein_tokens(variant_tokens, gene)
             return gene, (variant_tokens or None)
         except Exception as e:
-            sources_failed.append(f"dbSNP (rsid->gene): {str(e)[:100]}")
+            sources_failed.append(f"dbSNP (rsid->gene): {_truncate_msg(str(e))}")
             return None, None
 
     def _parse_clinvar(self, result: Any, variant_token: str = None) -> Dict[str, Any]:

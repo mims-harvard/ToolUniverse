@@ -5,11 +5,12 @@
     "description": "Run MOFA+ (Multi-Omics Factor Analysis v2; Argelaguet et al., Genome Biology 2020) to integrate multiple omics 'views' measured on the SAME samples into a small set of unsupervised latent factors (analogous to principal components shared across views). Returns the per-sample factor matrix and the fraction of variance each factor explains in each view. Input views are inlined as {view_name: {feature: [value_per_sample]}}; every feature list must have one value per sample, in the same sample order.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "views": {"type": "object", "description": "Omics views over the SAME samples: {view_name: {feature: [value_per_sample]}}. Every feature list across all views must have the same length = number of samples, in the same sample order."},
-        "samples": {"type": "array", "items": {"type": "string"}, "description": "Optional sample names; length must match the per-feature value-list length. Defaults to sample_0..sample_{N-1}."},
-        "n_factors": {"type": "integer", "description": "Number of latent factors to infer (default 10)."},
-        "n_iter": {"type": "integer", "description": "Maximum training iterations (default 1000)."}
+        "views": {"type": "object", "description": "Omics views over the SAME samples: {view_name: {feature: [value_per_sample]}}. Every feature list across all views must have the same length = number of samples, in the same sample order.", "minProperties": 1, "maxProperties": 16, "additionalProperties": {"type": "object", "minProperties": 1, "maxProperties": 10000, "additionalProperties": {"type": "array", "minItems": 1, "maxItems": 5000, "items": {"type": "number"}}}},
+        "samples": {"type": "array", "items": {"type": "string", "minLength": 1, "maxLength": 256}, "minItems": 1, "maxItems": 5000, "uniqueItems": true, "description": "Optional sample names; length must match the per-feature value-list length. Defaults to sample_0..sample_{N-1}."},
+        "n_factors": {"type": "integer", "description": "Number of latent factors to infer (default 10).", "default": 10, "minimum": 1, "maximum": 100},
+        "n_iter": {"type": "integer", "description": "Maximum training iterations (default 1000).", "default": 1000, "minimum": 1, "maximum": 10000}
       },
       "required": ["views"]
     },

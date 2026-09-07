@@ -1,0 +1,104 @@
+[
+  {
+    "name": "FHIRTerminology_lookup_code",
+    "type": "FHIRTerminologyTool",
+    "description": "Resolve a code to its display name and synonyms via HL7's public FHIR Terminology Service. Its main value is SNOMED CT, which ToolUniverse otherwise only reaches via fuzzy keyword search (OLS): this does proper code-based lookup. Example: system='snomed', code='22298006' returns 'Myocardial infarction' with its clinical synonyms. LOINC/RxNorm/ICD-10-CM are also accepted (system='loinc'/'rxnorm'/'icd10cm') but already have dedicated, richer ToolUniverse tools -- prefer those three.",
+    "fields": {
+      "operation": "lookup_code"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["system", "code"],
+      "properties": {
+        "system": {
+          "type": "string",
+          "description": "'snomed', or a full FHIR code system URI, e.g. 'http://snomed.info/sct'."
+        },
+        "code": {
+          "type": "string",
+          "description": "Code within that system, e.g. '22298006' (SNOMED CT: Myocardial infarction)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "code": {"type": ["string", "null"]},
+            "display": {"type": ["string", "null"]},
+            "system": {"type": ["string", "null"]},
+            "system_version": {"type": ["string", "null"]},
+            "code_system_name": {"type": ["string", "null"]},
+            "inactive": {"type": ["boolean", "null"]},
+            "alternate_names": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "value": {"type": ["string", "null"]},
+                  "use": {"type": ["string", "null"]}
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"system": "snomed", "code": "22298006"},
+      {"system": "http://snomed.info/sct", "code": "73211009"}
+    ]
+  },
+  {
+    "name": "FHIRTerminology_expand_valueset",
+    "type": "FHIRTerminologyTool",
+    "description": "Expand a FHIR value set to its member codes via HL7's public FHIR Terminology Service. Its standout use is SNOMED CT's implicit subsumption value sets: value_set_url='http://snomed.info/sct?fhir_vs=isa/<code>' returns every descendant/subtype of a concept, a hierarchy traversal nothing else in ToolUniverse provides. Example: 'isa/22298006' (Myocardial infarction) returns all 124 of its clinical subtypes, from 'Old myocardial infarction' to 'Microinfarct of heart'.",
+    "fields": {
+      "operation": "expand_valueset"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["value_set_url"],
+      "properties": {
+        "value_set_url": {
+          "type": "string",
+          "description": "FHIR value set URL, e.g. 'http://snomed.info/sct?fhir_vs=isa/22298006' for every descendant of a SNOMED concept."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max concepts to return, 1-500. Default 50."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "system": {"type": ["string", "null"]},
+              "code": {"type": ["string", "null"]},
+              "display": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"value_set_url": "http://snomed.info/sct?fhir_vs=isa/22298006", "limit": 10},
+      {"value_set_url": "http://snomed.info/sct?fhir_vs=isa/73211009", "limit": 10}
+    ]
+  }
+]

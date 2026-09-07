@@ -1,7 +1,7 @@
 """
 ChEMBL_search_binding_sites
 
-Search binding sites by target, site name, or other criteria.
+Search binding sites by site name. ChEMBL's /binding_site resource filters only on site_id, site_...
 """
 
 from typing import Any, Optional, Callable
@@ -9,7 +9,6 @@ from ._shared_client import get_shared_client
 
 
 def ChEMBL_search_binding_sites(
-    target_chembl_id: Optional[str] = None,
     site_name__contains: Optional[str] = None,
     limit: Optional[int] = 20,
     offset: Optional[int] = 0,
@@ -19,12 +18,10 @@ def ChEMBL_search_binding_sites(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search binding sites by target, site name, or other criteria.
+    Search binding sites by site name. ChEMBL's /binding_site resource filters only on site_id, site_...
 
     Parameters
     ----------
-    target_chembl_id : str
-        Filter by target ChEMBL ID
     site_name__contains : str
         Filter by site name (contains)
     limit : int
@@ -48,7 +45,6 @@ def ChEMBL_search_binding_sites(
     _args = {
         k: v
         for k, v in {
-            "target_chembl_id": target_chembl_id,
             "site_name__contains": site_name__contains,
             "limit": limit,
             "offset": offset,

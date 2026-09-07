@@ -7,17 +7,20 @@
     "response_format_key": null,
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "applicationNumberText": {
           "type": "string",
           "description": "The USPTO application number (e.g. \"19113417\").",
-          "required": true
+          "minLength": 8,
+          "maxLength": 16,
+          "pattern": "^[0-9]{8,16}$"
         }
-      }
+      },
+      "required": [
+        "applicationNumberText"
+      ]
     },
-    "required": [
-      "applicationNumberText"
-    ],
     "document": "ABST",
     "required_api_keys": ["USPTO_API_KEY"]
   },
@@ -29,17 +32,20 @@
     "response_format_key": null,
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "applicationNumberText": {
           "type": "string",
           "description": "The USPTO application number (e.g. \"19113417\").",
-          "required": true
+          "minLength": 8,
+          "maxLength": 16,
+          "pattern": "^[0-9]{8,16}$"
         }
-      }
+      },
+      "required": [
+        "applicationNumberText"
+      ]
     },
-    "required": [
-      "applicationNumberText"
-    ],
     "document": "CLM",
     "required_api_keys": ["USPTO_API_KEY"]
   },
@@ -51,17 +57,20 @@
     "response_format_key": null,
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "applicationNumberText": {
           "type": "string",
           "description": "The USPTO application number (e.g. \"19113417\").",
-          "required": true
+          "minLength": 8,
+          "maxLength": 16,
+          "pattern": "^[0-9]{8,16}$"
         }
-      }
+      },
+      "required": [
+        "applicationNumberText"
+      ]
     },
-    "required": [
-      "applicationNumberText"
-    ],
     "document": "APP.TEXT",
     "required_api_keys": ["USPTO_API_KEY"]
   }

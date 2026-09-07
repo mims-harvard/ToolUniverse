@@ -8,17 +8,24 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["sig_search"],
-          "description": "Operation type"
+          "enum": [
+            "sig_search"
+          ],
+          "description": "Operation type",
+          "default": "sig_search"
         },
         "up_genes": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "List of up-regulated gene symbols (e.g., ['MYC', 'TP53'])"
         },
         "down_genes": {
           "type": "array",
-          "items": {"type": "string"},
+          "items": {
+            "type": "string"
+          },
           "description": "List of down-regulated gene symbols (e.g., ['CDKN1A', 'RB1'])"
         },
         "n_results": {
@@ -30,12 +37,18 @@
         },
         "mode": {
           "type": "string",
-          "enum": ["similar", "opposite"],
+          "enum": [
+            "similar",
+            "opposite"
+          ],
           "default": "similar",
           "description": "Return signatures 'similar' to or 'opposite' of the query signature (default: 'similar')"
         }
       },
-      "required": ["operation", "up_genes", "down_genes"]
+      "required": [
+        "up_genes",
+        "down_genes"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -53,18 +66,28 @@
               "type": "string"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
       {
         "operation": "sig_search",
-        "up_genes": ["MYC", "TP53"],
-        "down_genes": ["CDKN1A"],
+        "up_genes": [
+          "MYC",
+          "TP53"
+        ],
+        "down_genes": [
+          "CDKN1A"
+        ],
         "n_results": 5,
         "mode": "similar"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "sig_search"
+    }
   }
 ]

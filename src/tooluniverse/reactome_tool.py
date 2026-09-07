@@ -86,6 +86,35 @@ class ReactomeRESTTool(BaseTool):
             if k not in path_keys:
                 query_params[k] = v
 
+        # 3b. The /data/query/ids endpoint performs no server-side filtering:
+        # Reactome returns a byte-identical payload for every species/types
+        # value (including ones that should have excluded every record), so a
+        # filter passed here could only ever be silently ignored. Reject it at
+        # input instead of returning unfiltered results that look filtered.
+        # Scoped to this endpoint only -- other Reactome tools take species as
+        # a genuine path parameter.
+        if self.endpoint_template == "/data/query/ids":
+            unsupported = [
+                k for k in ("species", "types") if query_params.get(k) is not None
+            ]
+            if unsupported:
+                return {
+                    "status": "error",
+                    "error": (
+                        "Unsupported parameter(s): "
+                        f"{', '.join(repr(k) for k in unsupported)}. The Reactome "
+                        "/data/query/ids endpoint has no server-side filtering "
+                        "and returns every requested ID regardless of species or "
+                        "type. Re-run without them and filter the returned array "
+                        "client-side -- each record carries 'speciesName' (e.g. "
+                        "'Homo sapiens') and 'schemaClass' (e.g. 'Pathway', "
+                        "'Reaction'). For species-scoped results retrieved "
+                        "server-side, use Reactome_list_top_pathways or "
+                        "Reactome_get_events_hierarchy, which take species as a "
+                        "path parameter."
+                    ),
+                }
+
         # 4. Make HTTP request
         try:
             # Check if this is an attribute query endpoint (returns TSV, not JSON)
@@ -176,6 +205,35 @@ class ReactomeRESTTool(BaseTool):
 
         # 5. Check HTTP status code
         if resp.status_code != 200:
+            # Fix-R15C-3: for the /data/mapping/... "list everything linked
+            # to this identifier" endpoints, Reactome signals a genuine
+            # empty result (identifier exists but has no entries of the
+            # requested kind -- e.g. a non-human ortholog with no directly
+            # curated pathways) as HTTP 404 with reason=NOT_FOUND and a
+            # "No <things> found for <id>" message, not as a real error.
+            # Confirmed live for bovine DGAT1 (Q8MK44): mapping/pathways and
+            # mapping/reactions both 404 this way, while the human ortholog
+            # (O75907) succeeds with real data via the same endpoint. Treat
+            # that specific shape as an empty list so batch/automated
+            # pipelines get a normal empty result instead of a hard
+            # exception. Scoped to /data/mapping/ only -- single-entity
+            # lookups (e.g. /data/pathway/{stId}) should keep erroring on a
+            # bad ID rather than silently returning nothing.
+            if resp.status_code == 404 and "/data/mapping/" in self.endpoint_template:
+                try:
+                    body = resp.json()
+                except ValueError:
+                    body = {}
+                if body.get("reason") == "NOT_FOUND":
+                    return {
+                        "status": "success",
+                        "data": [],
+                        "metadata": {
+                            "note": (body.get("messages") or [None])[0]
+                            or "No results found.",
+                            "source": "Reactome Content Service",
+                        },
+                    }
             return {
                 "status": "error",
                 "error": f"Reactome API returned HTTP {resp.status_code}",

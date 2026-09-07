@@ -132,7 +132,7 @@
   {
     "type": "CorePDFSnippetsTool",
     "name": "CORE_get_fulltext_snippets",
-    "description": "Fetch an open-access PDF (commonly returned by CORE_search_papers) and return bounded text snippets around provided terms. This is a local (download + scan) full-text search fallback when index-based search misses body-only keywords. Extraction backends: PyMuPDF (fitz), pypdf, or markitdown (auto-selects fastest available unless `extractor` is set).",
+    "description": "Fetch an open-access PDF (commonly returned by CORE_search_papers) and return bounded text snippets around provided terms. This is a local (download + scan) full-text search fallback when index-based search misses body-only keywords. Extraction backends: markitdown, pypdf, or the opt-in PyMuPDF (fitz) backend; auto selects the fastest installed backend. PyMuPDF requires `tooluniverse[pdf]` and is AGPL-3.0 or commercially licensed.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -172,7 +172,7 @@
         },
         "extractor": {
           "type": "string",
-          "description": "PDF text extraction backend: auto (default), fitz (PyMuPDF), pypdf, or markitdown.",
+          "description": "PDF text extraction backend: auto (default), fitz (PyMuPDF), pypdf, or markitdown. The fitz backend requires the opt-in `tooluniverse[pdf]` extra; PyMuPDF is AGPL-3.0 or commercially licensed.",
           "enum": ["auto", "fitz", "pypdf", "markitdown"],
           "default": "auto"
         },

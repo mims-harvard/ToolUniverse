@@ -109,50 +109,30 @@ class PANTHERTool(BaseTool):
         mapped = search.get("mapped_genes", {})
         gene_data = mapped.get("gene", {})
 
-        # Handle both single gene (dict) and multiple genes (list)
-        if isinstance(gene_data, list):
-            gene_data = gene_data[0] if gene_data else {}
+        # `geneInputList` accepts several identifiers, and PANTHER answers with
+        # a bare object for one match and a list for several. Keeping only
+        # `gene_data[0]` published one gene's family and annotations under
+        # whatever was asked for -- confirmed live that gene_id "TP53,BRCA1"
+        # echoed both names while returning BRCA1's PTHR13763 alone, with
+        # nothing to show a gene had been dropped. Same collapse as `_ortholog`
+        # further down this file.
+        genes = [
+            self._parse_gene_entry(entry)
+            for entry in (gene_data if isinstance(gene_data, list) else [gene_data])
+            if entry
+        ]
 
-        family_id = gene_data.get("family_id", None)
-        sf_id = gene_data.get("sf_id", None)
-
-        # Extract annotations by category
-        annotations = []
-        ann_type_list = gene_data.get("annotation_type_list", {}).get(
-            "annotation_data_type", []
-        )
-        if isinstance(ann_type_list, dict):
-            ann_type_list = [ann_type_list]
-
-        for ann_type in ann_type_list:
-            category = ann_type.get("content", "")
-            ann_list = ann_type.get("annotation_list", {}).get("annotation", [])
-            if isinstance(ann_list, dict):
-                ann_list = [ann_list]
-
-            terms = []
-            for ann in ann_list:
-                terms.append(
-                    {
-                        "id": ann.get("id", ""),
-                        "name": ann.get("name", ""),
-                    }
-                )
-
-            if terms:
-                annotations.append(
-                    {
-                        "category": category,
-                        "terms": terms,
-                    }
-                )
-
+        first = genes[0] if genes else {}
         result = {
             "gene_id": gene_id,
             "organism": organism,
-            "family_id": family_id,
-            "subfamily_id": sf_id,
-            "annotations": annotations,
+            # These three predate `genes` and stay as the first match so
+            # existing callers keep working; they are not the whole answer.
+            "family_id": first.get("family_id"),
+            "subfamily_id": first.get("subfamily_id"),
+            "annotations": first.get("annotations", []),
+            "genes": genes,
+            "total_genes": len(genes),
         }
 
         return {
@@ -163,6 +143,53 @@ class PANTHERTool(BaseTool):
                 "query": gene_id,
                 "endpoint": "geneinfo",
             },
+        }
+
+    @staticmethod
+    def _parse_gene_entry(entry: Dict[str, Any]) -> Dict[str, Any]:
+        """Pull one mapped gene's family and GO-slim annotations out of PANTHER."""
+        ann_type_list = entry.get("annotation_type_list", {}).get(
+            "annotation_data_type", []
+        )
+        if isinstance(ann_type_list, dict):
+            ann_type_list = [ann_type_list]
+
+        annotations = []
+        for ann_type in ann_type_list:
+            ann_list = ann_type.get("annotation_list", {}).get("annotation", [])
+            if isinstance(ann_list, dict):
+                ann_list = [ann_list]
+
+            terms = [
+                {"id": ann.get("id", ""), "name": ann.get("name", "")}
+                for ann in ann_list
+            ]
+            if terms:
+                annotations.append(
+                    {"category": ann_type.get("content", ""), "terms": terms}
+                )
+
+        # `geneinfo` entries carry no `gene_symbol` -- their keys are
+        # accession, mapped_id_list, family_id/family_name, sf_id/sf_name and
+        # annotation_type_list. `mapped_id_list` holds the identifier the
+        # caller actually typed ("BRCA1"), which is the only field that says
+        # which input a row answers for; PANTHER does not preserve input order,
+        # so without it a multi-gene query is rows the caller cannot attribute
+        # without decoding "HUMAN|HGNC=1100|UniProtKB=P38398".
+        mapped_id = entry.get("mapped_id_list")
+        if isinstance(mapped_id, dict):
+            mapped_id = mapped_id.get("mapped_id")
+        if isinstance(mapped_id, list):
+            mapped_id = mapped_id[0] if mapped_id else None
+
+        return {
+            "input_id": mapped_id,
+            "accession": entry.get("accession"),
+            "family_id": entry.get("family_id"),
+            "family_name": entry.get("family_name"),
+            "subfamily_id": entry.get("sf_id"),
+            "subfamily_name": entry.get("sf_name"),
+            "annotations": annotations,
         }
 
     def _enrichment(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -292,27 +319,35 @@ class PANTHERTool(BaseTool):
         mapping_data = search.get("mapping", {})
         mapped = mapping_data.get("mapped", {})
 
-        mapping = None
-        if mapped:
-            # Handle single mapping (dict) or multiple (list)
-            if isinstance(mapped, list):
-                mapped = mapped[0] if mapped else {}
-
-            mapping = {
-                "source_gene": mapped.get("gene", ""),
-                "target_gene": mapped.get("target_gene", ""),
-                "target_gene_symbol": mapped.get("target_gene_symbol", None),
-                "ortholog_type": mapped.get("ortholog", ""),
-                "persistent_id": mapped.get("persistent_id", None),
-                "target_persistent_id": mapped.get("target_persistent_id", None),
+        # PANTHER returns a bare object when one ortholog matches and a list
+        # when several do. Keeping only `mapped[0]` silently discarded every
+        # ortholog past the first, including under `ortholog_type='O'`, whose
+        # own parameter description promises "all orthologs" -- confirmed live
+        # that human ABCB1 -> mouse returns two rows (Abcb1b as O, Abcb1a as
+        # LDO) and the tool published only Abcb1b. Publish all of them.
+        mappings = [
+            {
+                "source_gene": item.get("gene", ""),
+                "target_gene": item.get("target_gene", ""),
+                "target_gene_symbol": item.get("target_gene_symbol", None),
+                "ortholog_type": item.get("ortholog", ""),
+                "persistent_id": item.get("persistent_id", None),
+                "target_persistent_id": item.get("target_persistent_id", None),
             }
+            for item in (mapped if isinstance(mapped, list) else [mapped])
+            if item
+        ]
 
         result = {
             "gene_id": gene_id,
             "source_organism": organism,
             "target_organism": target_organism,
             "ortholog_type": ortholog_type,
-            "mapping": mapping,
+            # `mapping` predates `mappings` and stays as the first match so
+            # existing callers keep working; it is not the whole answer.
+            "mapping": mappings[0] if mappings else None,
+            "mappings": mappings,
+            "total_mappings": len(mappings),
         }
 
         return {

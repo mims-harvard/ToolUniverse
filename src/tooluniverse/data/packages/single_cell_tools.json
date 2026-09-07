@@ -12,9 +12,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "scanpy",
     "local_info": {
@@ -145,9 +143,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "anndata",
     "local_info": {
@@ -278,9 +274,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "mudata",
     "local_info": {
@@ -411,9 +405,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "scvelo",
     "local_info": {
@@ -544,9 +536,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "scrublet",
     "local_info": {
@@ -673,6 +663,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -682,9 +673,7 @@
           "description": "Type of information to retrieve about souporcell"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "souporcell",
     "local_info": {
@@ -812,6 +801,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -821,9 +811,7 @@
           "description": "Type of information to retrieve about pySCENIC"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "pyscenic",
     "local_info": {
@@ -951,6 +939,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -960,9 +949,7 @@
           "description": "Type of information to retrieve about TileDB-SOMA"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "tiledbsoma",
     "local_info": {

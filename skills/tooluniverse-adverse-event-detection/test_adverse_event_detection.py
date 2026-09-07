@@ -689,13 +689,17 @@ def test_40_individual_case_reports():
         medicinalproduct="atorvastatin",
         limit=3
     )
-    assert isinstance(result, list), f"Expected list, got {type(result)}"
-    assert len(result) > 0, "Should have at least 1 report"
-    report = result[0]
+    assert isinstance(result, dict), f"Expected dict, got {type(result)}"
+    reports = result["reports"]
+    assert len(reports) > 0, "Should have at least 1 report"
+    # The page is not the answer: total_available is the size of the whole set.
+    assert result["total_available"] > len(reports), "atorvastatin has many reports"
+    assert result["truncated"] is True
+    report = reports[0]
     assert "safetyreportid" in report, "Missing safetyreportid"
     assert "patient" in report, "Missing patient data"
     assert "reaction" in report["patient"], "Missing reaction data"
-    print(f"  Reports: {len(result)}")
+    print(f"  Reports: {len(reports)} of {result['total_available']}")
     print(f"  Report ID: {report['safetyreportid']}")
     print(f"  Reactions: {len(report['patient']['reaction'])}")
 
@@ -707,12 +711,16 @@ def test_41_search_by_drug_and_reaction():
         reactionmeddrapt="Rhabdomyolysis",
         limit=3
     )
-    assert isinstance(result, list), f"Expected list, got {type(result)}"
-    assert len(result) > 0, "Should have rhabdomyolysis reports for atorvastatin"
-    for report in result:
+    assert isinstance(result, dict), f"Expected dict, got {type(result)}"
+    reports = result["reports"]
+    assert len(reports) > 0, "Should have rhabdomyolysis reports for atorvastatin"
+    for report in reports:
         reactions = [r["reactionmeddrapt"] for r in report["patient"]["reaction"]]
-        assert "Rhabdomyolysis" in reactions, f"Expected Rhabdomyolysis in reactions"
-    print(f"  Reports with rhabdomyolysis: {len(result)}")
+        assert "Rhabdomyolysis" in reactions, "Expected Rhabdomyolysis in reactions"
+    print(
+        f"  Reports with rhabdomyolysis: {len(reports)} "
+        f"of {result['total_available']}"
+    )
 
 
 def test_42_temporal_trends():

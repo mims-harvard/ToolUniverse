@@ -1,0 +1,92 @@
+[
+  {
+    "name": "MolGlueDB_search_compounds",
+    "type": "MolGlueDBTool",
+    "description": "Full-text search MolGlueDB for molecular glue degrader (MGD) compounds -- small molecules that induce targeted protein degradation without a PROTAC's warhead-linker architecture. Matches target protein, recruiting protein (e.g. E3 ligase), compound name, or other indexed fields. Example: keyword='IKZF2' returns glues degrading IKZF2, each with SMILES, pharmacophore/scaffold class, degradation potency, and recruiting protein. Distinct from ToolUniverse's PROTAC-DB tools, which cover the separate bifunctional-degrader modality.",
+    "fields": {
+      "operation": "search_compounds"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["keyword"],
+      "properties": {
+        "keyword": {
+          "type": "string",
+          "description": "Search term: target protein ('IKZF2'), recruiting protein ('CRBN'), or compound name ('Lenalidomide')."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max compounds to return, 1-200. Default 30."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": ["integer", "null"]},
+              "Name": {"type": ["string", "null"]},
+              "SMILES": {"type": ["string", "null"]},
+              "Pharmacophore": {"type": ["string", "null"]},
+              "PrimaryTarget": {"type": ["string", "null"]},
+              "RecruitingProtein": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"keyword": "IKZF2", "limit": 5},
+      {"keyword": "Lenalidomide", "limit": 5}
+    ]
+  },
+  {
+    "name": "MolGlueDB_get_compound",
+    "type": "MolGlueDBTool",
+    "description": "Retrieve a single MolGlueDB molecular glue degrader compound by its numeric compound_id (from MolGlueDB_search_compounds results). Returns full structural (SMILES/InChIKey/formula), pharmacophore/scaffold classification, degradation potency, and source-publication data.",
+    "fields": {
+      "operation": "get_compound"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["compound_id"],
+      "properties": {
+        "compound_id": {
+          "type": "integer",
+          "description": "MolGlueDB numeric compound id, e.g. 1."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {"type": ["integer", "null"]},
+            "Name": {"type": ["string", "null"]},
+            "SMILES": {"type": ["string", "null"]},
+            "PrimaryTarget": {"type": ["string", "null"]},
+            "RecruitingProtein": {"type": ["string", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"compound_id": 1},
+      {"compound_id": 2}
+    ]
+  }
+]

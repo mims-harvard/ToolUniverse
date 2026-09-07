@@ -188,6 +188,26 @@ class VDJDBTool(BaseTool):
         if not cdr3:
             return {"status": "error", "error": "cdr3 parameter is required"}
 
+        # Fix-R8A-3: VDJdb's API 500s on a CDR3 containing a character
+        # outside the 20 standard amino acid one-letter codes (confirmed
+        # live with 'X', a common placeholder for an unresolved residue in
+        # real sequencing-derived CDR3 calls) instead of a clean 4xx/empty
+        # result. Reject it client-side with an actionable message rather
+        # than passing the raw upstream 500 through.
+        invalid_chars = sorted(set(cdr3.upper()) - set("ACDEFGHIKLMNPQRSTVWY"))
+        if invalid_chars:
+            return {
+                "status": "error",
+                "error": (
+                    f"cdr3 contains character(s) not in the 20 standard "
+                    f"amino acid one-letter codes: {invalid_chars}. VDJdb's "
+                    "API does not accept ambiguous codes (e.g. 'X' for an "
+                    "unresolved residue) and returns a server error rather "
+                    "than a normal empty result. Remove or resolve these "
+                    "positions before searching."
+                ),
+            }
+
         species = _normalize_species(arguments.get("species"))
         gene = arguments.get("gene")
         match_type = arguments.get("match_type", "exact")

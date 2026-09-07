@@ -5,11 +5,12 @@
     "description": "Deconvolve a spatial-transcriptomics assay into per-spot cell-type proportions using Tangram (Biancalani 2021). Maps cell-type clusters from a single-cell reference AnnData onto a spatial AnnData (clusters mode, rna_count_based density prior) and projects the cell-type annotations to space, returning each spot's cell-type composition and the dataset-wide mean proportions. Inputs are server-accessible .h5ad files; the single-cell reference obs must contain the cluster_label column.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "sc_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad single-cell REFERENCE AnnData; obs must contain `cluster_label`."},
-        "sp_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad SPATIAL AnnData (spots x genes) to deconvolve."},
-        "cluster_label": {"type": "string", "description": "obs column in the single-cell reference naming the cell type/cluster (e.g. 'cell_type')."},
-        "num_epochs": {"type": "integer", "description": "Tangram mapping epochs (default 500)."}
+        "sc_path": {"type": "string", "description": "A single-cell reference .h5ad file inside the provider-configured data directory; obs must contain `cluster_label`."},
+        "sp_path": {"type": "string", "description": "A spatial .h5ad file inside the provider-configured data directory (spots x genes) to deconvolve."},
+        "cluster_label": {"type": "string", "minLength": 1, "maxLength": 128, "description": "obs column in the single-cell reference naming the cell type/cluster (e.g. 'cell_type')."},
+        "num_epochs": {"type": "integer", "minimum": 1, "maximum": 5000, "description": "Tangram mapping epochs (default 500)."}
       },
       "required": ["sc_path", "sp_path", "cluster_label"]
     },

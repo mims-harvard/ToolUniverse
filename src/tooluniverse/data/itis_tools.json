@@ -29,59 +29,37 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "tsn": {
-                    "type": "string",
-                    "description": "Taxonomic Serial Number (unique ITIS identifier)"
-                  },
-                  "combined_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Full scientific name"
-                  },
-                  "author": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Taxonomic authority (author, year)"
-                  },
-                  "kingdom": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Kingdom classification"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tsn": {
+                "type": "string",
+                "description": "Taxonomic Serial Number (unique ITIS identifier)"
+              },
+              "combined_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Full scientific name"
+              },
+              "author": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Taxonomic authority (author, year)"
+              },
+              "kingdom": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Kingdom classification"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -127,52 +105,30 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "tsn": {
-                    "type": "string",
-                    "description": "Taxonomic Serial Number"
-                  },
-                  "common_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Common name found"
-                  },
-                  "language": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Language of the common name"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tsn": {
+                "type": "string",
+                "description": "Taxonomic Serial Number"
+              },
+              "common_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Common name found"
+              },
+              "language": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Language of the common name"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -218,62 +174,40 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "tsn": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "TSN of this rank"
-                  },
-                  "taxon_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Taxon name at this rank"
-                  },
-                  "rank_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Taxonomic rank (Kingdom, Phylum, Class, etc.)"
-                  },
-                  "parent_tsn": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Parent TSN"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query_tsn": {
-                  "type": "string"
-                },
-                "hierarchy_depth": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tsn": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "TSN of this rank"
+              },
+              "taxon_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Taxon name at this rank"
+              },
+              "rank_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Taxonomic rank (Kingdom, Phylum, Class, etc.)"
+              },
+              "parent_tsn": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Parent TSN"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -321,93 +255,74 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "tsn": {
-                  "type": "string",
-                  "description": "Taxonomic Serial Number"
-                },
-                "scientific_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Full scientific name"
-                },
-                "kingdom": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Kingdom"
-                },
-                "author": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Taxonomic authority"
-                },
-                "usage_rating": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Usage status (valid/invalid/accepted)"
-                },
-                "common_names": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "language": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
-                  },
-                  "description": "Common names in various languages"
-                },
-                "parent_tsn": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Parent taxon TSN"
-                },
-                "rank": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Taxonomic rank"
-                }
-              }
+            "tsn": {
+              "type": "string",
+              "description": "Taxonomic Serial Number"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query_tsn": {
-                  "type": "string"
+            "scientific_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Full scientific name"
+            },
+            "kingdom": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Kingdom"
+            },
+            "author": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Taxonomic authority"
+            },
+            "usage_rating": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Usage status (valid/invalid/accepted)"
+            },
+            "common_names": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "language": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
-              }
+              },
+              "description": "Common names in various languages"
+            },
+            "parent_tsn": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Parent taxon TSN"
+            },
+            "rank": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Taxonomic rank"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

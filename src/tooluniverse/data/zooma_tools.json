@@ -47,87 +47,75 @@
       "operation": "annotate"
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "property_value": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "property_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "semantic_tags": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Ontology term IRIs (OBO/EFO PURLs) this text maps to."
-                  },
-                  "curies": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "Compact CURIEs derived from the semantic-tag IRIs, e.g. 'MONDO:0004979', 'UBERON:0002371', 'EFO:0006842'."
-                  },
-                  "confidence": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "HIGH, GOOD, MEDIUM, or LOW."
-                  },
-                  "source": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Annotation source name, e.g. 'zooma', 'uberon', 'efo'."
-                  },
-                  "source_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "ONTOLOGY or DATABASE."
-                  },
-                  "evidence": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Evidence type, e.g. ZOOMA_INFERRED_FROM_CURATED, OLS_TEXT_TAGGER, OLS_EMBEDDING."
-                  },
-                  "ols_links": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "OLS API URLs for each semantic tag."
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "property_value": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "property_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "semantic_tags": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Ontology term IRIs (OBO/EFO PURLs) this text maps to."
+              },
+              "curies": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Compact CURIEs derived from the semantic-tag IRIs, e.g. 'MONDO:0004979', 'UBERON:0002371', 'EFO:0006842'."
+              },
+              "confidence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "HIGH, GOOD, MEDIUM, or LOW."
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Annotation source name, e.g. 'zooma', 'uberon', 'efo'."
+              },
+              "source_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ONTOLOGY or DATABASE."
+              },
+              "evidence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Evidence type, e.g. ZOOMA_INFERRED_FROM_CURATED, OLS_TEXT_TAGGER, OLS_EMBEDDING."
+              },
+              "ols_links": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "OLS API URLs for each semantic tag."
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -180,47 +168,35 @@
       "operation": "list_datasources"
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Short datasource identifier, e.g. 'uniprot', 'eva-clinvar', 'atlas'."
-                  },
-                  "type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Datasource type: 'DATABASE' or 'ONTOLOGY'."
-                  },
-                  "uri": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Home URI of the datasource."
-                  }
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Short datasource identifier, e.g. 'uniprot', 'eva-clinvar', 'atlas'."
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Datasource type: 'DATABASE' or 'ONTOLOGY'."
+              },
+              "uri": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Home URI of the datasource."
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

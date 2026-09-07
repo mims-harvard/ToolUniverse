@@ -1,7 +1,7 @@
 [
   {
     "name": "DrugProps_lipinski_filter",
-    "description": "Check drug-likeness of a compound using Lipinski Rule of Five (Ro5), Veber, Pfizer 3/75, Egan, and Ghose filters. Returns MW, cLogP, HBD, HBA, TPSA, RotBonds, Csp3 fraction, and pass/fail status for each filter. Essential first step in hit-to-lead optimization. Lipinski Ro5 (pass = drug-like): MW≤500, cLogP≤5, HBD≤5, HBA≤10 (max 1 violation). Veber (oral bioavailability): RotBonds≤10, TPSA≤140. Pfizer 3/75 (reduces promiscuity): cLogP≤3, TPSA≥75. Examples: aspirin ('CC(=O)Oc1ccccc1C(=O)O') passes all filters; venetoclax fails Ro5 due to MW>900 (beyond-Ro5 territory).",
+    "description": "Check drug-likeness of a compound using Lipinski Rule of Five (Ro5), Veber, Pfizer 3/75, Egan, and Ghose filters. Returns MW, cLogP, HBD, HBA, TPSA, RotBonds, Csp3 fraction, and pass/fail status for each filter. Essential first step in hit-to-lead optimization. Lipinski Ro5 (pass = drug-like): MW\u2264500, cLogP\u22645, HBD\u22645, HBA\u226410 (max 1 violation). Veber (oral bioavailability): RotBonds\u226410, TPSA\u2264140. Pfizer 3/75 (reduces promiscuity): cLogP\u22643, TPSA\u226575. Examples: aspirin ('CC(=O)Oc1ccccc1C(=O)O') passes all filters; venetoclax fails Ro5 due to MW>900 (beyond-Ro5 territory).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -10,85 +10,124 @@
           "description": "SMILES string of the molecule. Examples: 'CC(=O)Oc1ccccc1C(=O)O' (aspirin), 'CC(C)Cc1ccc(cc1)C(C)C(=O)O' (ibuprofen), 'c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34' (pyrene, non-drug-like)."
         }
       },
-      "required": ["smiles"]
+      "required": [
+        "smiles"
+      ]
     },
     "fields": {
       "endpoint": "lipinski_filter"
     },
     "type": "DrugPropertiesTool",
     "test_examples": [
-      {"smiles": "CC(=O)Oc1ccccc1C(=O)O"},
-      {"smiles": "CC(C)Cc1ccc(cc1)C(C)C(=O)O"},
-      {"smiles": "CN1CCC[C@H]1c2cccnc2"}
+      {
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      {
+        "smiles": "CC(C)Cc1ccc(cc1)C(C)C(=O)O"
+      },
+      {
+        "smiles": "CN1CCC[C@H]1c2cccnc2"
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "data": {
+            "smiles": {
+              "type": "string"
+            },
+            "descriptors": {
               "type": "object",
               "properties": {
-                "smiles": {"type": "string"},
-                "descriptors": {
-                  "type": "object",
-                  "properties": {
-                    "molecular_weight_Da": {"type": "number"},
-                    "cLogP": {"type": "number"},
-                    "HBD": {"type": "integer"},
-                    "HBA": {"type": "integer"},
-                    "rotatable_bonds": {"type": "integer"},
-                    "TPSA_A2": {"type": "number"},
-                    "aromatic_rings": {"type": "integer"},
-                    "heavy_atoms": {"type": "integer"},
-                    "molar_refractivity": {"type": "number"},
-                    "Csp3_fraction": {"type": "number"}
-                  }
+                "molecular_weight_Da": {
+                  "type": "number"
                 },
-                "filters": {
-                  "type": "object",
-                  "properties": {
-                    "lipinski_ro5": {
-                      "type": "object",
-                      "properties": {
-                        "pass": {"type": "boolean"},
-                        "violations": {"type": "integer"},
-                        "rule": {"type": "string"}
-                      }
-                    },
-                    "veber": {"type": "object"},
-                    "pfizer_3_75": {"type": "object"},
-                    "egan": {"type": "object"},
-                    "ghose": {"type": "object"},
-                    "beyond_ro5_territory": {"type": "object"}
-                  }
+                "cLogP": {
+                  "type": "number"
                 },
-                "overall_drug_likeness": {"type": "string"}
+                "HBD": {
+                  "type": "integer"
+                },
+                "HBA": {
+                  "type": "integer"
+                },
+                "rotatable_bonds": {
+                  "type": "integer"
+                },
+                "TPSA_A2": {
+                  "type": "number"
+                },
+                "aromatic_rings": {
+                  "type": "integer"
+                },
+                "heavy_atoms": {
+                  "type": "integer"
+                },
+                "molar_refractivity": {
+                  "type": "number"
+                },
+                "Csp3_fraction": {
+                  "type": "number"
+                }
               }
             },
-            "metadata": {
+            "filters": {
               "type": "object",
               "properties": {
-                "source": {"type": "string"},
-                "filters_applied": {"type": "string"}
+                "lipinski_ro5": {
+                  "type": "object",
+                  "properties": {
+                    "pass": {
+                      "type": "boolean"
+                    },
+                    "violations": {
+                      "type": "integer"
+                    },
+                    "rule": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "veber": {
+                  "type": "object"
+                },
+                "pfizer_3_75": {
+                  "type": "object"
+                },
+                "egan": {
+                  "type": "object"
+                },
+                "ghose": {
+                  "type": "object"
+                },
+                "beyond_ro5_territory": {
+                  "type": "object"
+                }
               }
+            },
+            "overall_drug_likeness": {
+              "type": "string"
             }
-          },
-          "required": ["data"]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
   },
   {
     "name": "DrugProps_calculate_qed",
-    "description": "Calculate Quantitative Estimate of Drug-likeness (QED) score for a compound using the Bickerton et al. (2012) method. QED integrates 8 molecular descriptors (MW, AlogP, HBA, HBD, PSA, rotatable bonds, aromatic rings, structural alerts) into a single score from 0 (non-drug-like) to 1 (most drug-like). Median QED of approved oral drugs is ~0.49. High QED (≥0.67) = drug-like; Medium (0.34–0.67) = borderline; Low (<0.34) = non-drug-like. Use after DrugProps_lipinski_filter for a more nuanced drug-likeness assessment.",
+    "description": "Calculate Quantitative Estimate of Drug-likeness (QED) score for a compound using the Bickerton et al. (2012) method. QED integrates 8 molecular descriptors (MW, AlogP, HBA, HBD, PSA, rotatable bonds, aromatic rings, structural alerts) into a single score from 0 (non-drug-like) to 1 (most drug-like). Median QED of approved oral drugs is ~0.49. High QED (\u22650.67) = drug-like; Medium (0.34\u20130.67) = borderline; Low (<0.34) = non-drug-like. Use after DrugProps_lipinski_filter for a more nuanced drug-likeness assessment.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -97,61 +136,87 @@
           "description": "SMILES string of the molecule. Examples: 'CC(=O)Oc1ccccc1C(=O)O' (aspirin, QED~0.55), 'c1ccc2c(c1)cc1ccc3cccc4ccc2c1c34' (pyrene, low QED)."
         }
       },
-      "required": ["smiles"]
+      "required": [
+        "smiles"
+      ]
     },
     "fields": {
       "endpoint": "calculate_qed"
     },
     "type": "DrugPropertiesTool",
     "test_examples": [
-      {"smiles": "CC(=O)Oc1ccccc1C(=O)O"},
-      {"smiles": "Clc1ccc2[nH]c(=O)/C(=C/c3ccco3)c2c1"},
-      {"smiles": "CN1CCC[C@H]1c2cccnc2"}
+      {
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      {
+        "smiles": "Clc1ccc2[nH]c(=O)/C(=C/c3ccco3)c2c1"
+      },
+      {
+        "smiles": "CN1CCC[C@H]1c2cccnc2"
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "data": {
+            "smiles": {
+              "type": "string"
+            },
+            "qed_score": {
+              "type": "number",
+              "description": "QED score 0-1"
+            },
+            "qed_category": {
+              "type": "string"
+            },
+            "qed_components": {
               "type": "object",
               "properties": {
-                "smiles": {"type": "string"},
-                "qed_score": {"type": "number", "description": "QED score 0-1"},
-                "qed_category": {"type": "string"},
-                "qed_components": {
-                  "type": "object",
-                  "properties": {
-                    "MW": {"type": "number"},
-                    "ALOGP": {"type": "number"},
-                    "HBA": {"type": "integer"},
-                    "HBD": {"type": "integer"},
-                    "PSA": {"type": "number"},
-                    "ROTB": {"type": "integer"},
-                    "AROM": {"type": "integer"},
-                    "ALERTS": {"type": "integer"}
-                  }
+                "MW": {
+                  "type": "number"
                 },
-                "additional_descriptors": {"type": "object"},
-                "interpretation": {"type": "string"}
+                "ALOGP": {
+                  "type": "number"
+                },
+                "HBA": {
+                  "type": "integer"
+                },
+                "HBD": {
+                  "type": "integer"
+                },
+                "PSA": {
+                  "type": "number"
+                },
+                "ROTB": {
+                  "type": "integer"
+                },
+                "AROM": {
+                  "type": "integer"
+                },
+                "ALERTS": {
+                  "type": "integer"
+                }
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {"type": "string"},
-                "reference": {"type": "string"}
-              }
+            "additional_descriptors": {
+              "type": "object"
+            },
+            "interpretation": {
+              "type": "string"
             }
-          },
-          "required": ["data"]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -167,70 +232,103 @@
           "description": "SMILES string of the molecule to screen. Examples: 'O=C1CSC(=S)N1' (rhodanine PAINS), 'O=C1C=CC(=O)c2ccccc21' (quinone PAINS), 'CC(=O)Oc1ccccc1C(=O)O' (aspirin, clean)."
         }
       },
-      "required": ["smiles"]
+      "required": [
+        "smiles"
+      ]
     },
     "fields": {
       "endpoint": "pains_filter"
     },
     "type": "DrugPropertiesTool",
     "test_examples": [
-      {"smiles": "CC(=O)Oc1ccccc1C(=O)O"},
-      {"smiles": "O=C1CSC(=S)N1"},
-      {"smiles": "Oc1ccc(O)cc1"}
+      {
+        "smiles": "CC(=O)Oc1ccccc1C(=O)O"
+      },
+      {
+        "smiles": "O=C1CSC(=S)N1"
+      },
+      {
+        "smiles": "Oc1ccc(O)cc1"
+      }
     ],
     "return_schema": {
       "oneOf": [
         {
           "type": "object",
           "properties": {
-            "data": {
+            "smiles": {
+              "type": "string"
+            },
+            "is_clean": {
+              "type": "boolean",
+              "description": "True if no PAINS or Brenk alerts"
+            },
+            "pains": {
               "type": "object",
               "properties": {
-                "smiles": {"type": "string"},
-                "is_clean": {"type": "boolean", "description": "True if no PAINS or Brenk alerts"},
-                "pains": {
-                  "type": "object",
-                  "properties": {
-                    "pass": {"type": "boolean"},
-                    "matches": {"type": "array", "items": {"type": "object"}},
-                    "count": {"type": "integer"}
+                "pass": {
+                  "type": "boolean"
+                },
+                "matches": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
                   }
                 },
-                "brenk": {
-                  "type": "object",
-                  "properties": {
-                    "pass": {"type": "boolean"},
-                    "matches": {"type": "array", "items": {"type": "string"}},
-                    "count": {"type": "integer"}
-                  }
-                },
-                "nih": {
-                  "type": "object",
-                  "properties": {
-                    "pass": {"type": "boolean"},
-                    "matches": {"type": "array", "items": {"type": "string"}},
-                    "count": {"type": "integer"}
-                  }
-                },
-                "recommendation": {"type": "string"}
+                "count": {
+                  "type": "integer"
+                }
               }
             },
-            "metadata": {
+            "brenk": {
               "type": "object",
               "properties": {
-                "source": {"type": "string"},
-                "filters": {"type": "string"}
+                "pass": {
+                  "type": "boolean"
+                },
+                "matches": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "count": {
+                  "type": "integer"
+                }
               }
+            },
+            "nih": {
+              "type": "object",
+              "properties": {
+                "pass": {
+                  "type": "boolean"
+                },
+                "matches": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "count": {
+                  "type": "integer"
+                }
+              }
+            },
+            "recommendation": {
+              "type": "string"
             }
-          },
-          "required": ["data"]
+          }
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

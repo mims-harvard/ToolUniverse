@@ -1,7 +1,7 @@
 [
   {
     "name": "Nextstrain_list_datasets",
-    "description": "List available pathogen phylogenetic datasets from Nextstrain. Returns datasets grouped by pathogen (e.g., avian-flu, dengue, ebola, flu, measles, mpox, SARS-CoV-2, zika). Optionally filter by pathogen name. Nextstrain provides real-time molecular epidemiology for public health, tracking how pathogens evolve and spread worldwide.",
+    "description": "List available pathogen phylogenetic datasets from Nextstrain. Returns datasets grouped by pathogen (e.g., avian-flu, dengue, ebola, flu, measles, mpox, SARS-CoV-2, zika), each with its true 'dataset_count'. By default only the first 10 dataset paths per pathogen are listed; when that hides entries the response sets 'truncated': true with a 'truncation_note', and 'metadata.total_datasets' always reports the full catalogue size (not the number listed). Pass datasets_per_pathogen=0 to list every dataset. Optionally filter by pathogen name. Nextstrain provides real-time molecular epidemiology for public health, tracking how pathogens evolve and spread worldwide.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,6 +11,14 @@
             "null"
           ],
           "description": "Optional pathogen name filter. Examples: 'flu', 'ebola', 'zika', 'dengue', 'mpox'. Leave empty for all pathogens."
+        },
+        "datasets_per_pathogen": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Maximum number of dataset paths listed per pathogen (default 10). Set to 0 to list every dataset with no cap, or to a larger number (e.g. 100) to cover the biggest pathogens such as ncov and avian-flu."
         }
       },
       "required": []
@@ -30,52 +38,34 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "pathogen": {
-                    "type": "string"
-                  },
-                  "dataset_count": {
-                    "type": "integer"
-                  },
-                  "datasets": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pathogen": {
+                "type": "string"
+              },
+              "dataset_count": {
+                "type": "integer",
+                "description": "True number of datasets available for this pathogen, regardless of how many are listed below."
+              },
+              "datasets": {
+                "type": "array",
+                "items": {
                   "type": "string"
                 },
-                "total_pathogens": {
-                  "type": "integer"
-                },
-                "total_datasets": {
-                  "type": "integer"
-                },
-                "filter": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
+                "description": "Dataset paths, capped by the datasets_per_pathogen argument (default 10)."
+              },
+              "datasets_listed": {
+                "type": "integer",
+                "description": "Number of entries actually present in 'datasets'."
+              },
+              "datasets_truncated": {
+                "type": "boolean",
+                "description": "Present and true when 'datasets' lists fewer paths than 'dataset_count'."
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -123,77 +113,55 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "dataset": {
-                  "type": "string"
-                },
-                "title": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "updated": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "build_url": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "num_sequences": {
-                  "type": "integer"
-                },
-                "data_provenance": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "maintainers": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "root_attributes": {
-                  "type": "object"
-                },
-                "available_colorings": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+            "dataset": {
+              "type": "string"
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "updated": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "build_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "num_sequences": {
+              "type": "integer"
+            },
+            "data_provenance": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "version": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
+            "maintainers": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
+            },
+            "root_attributes": {
+              "type": "object"
+            },
+            "available_colorings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "available_colorings_count": {
+              "type": "integer"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

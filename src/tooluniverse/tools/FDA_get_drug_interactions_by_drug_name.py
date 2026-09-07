@@ -1,7 +1,7 @@
 """
 FDA_get_drug_interactions_by_drug_name
 
-Retrieve drug interactions based on the specified drug name.
+Retrieve drug interactions based on the specified drug name. IMPORTANT -- FDA labels file safety ...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def FDA_get_drug_interactions_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve drug interactions based on the specified drug name.
+    Retrieve drug interactions based on the specified drug name. IMPORTANT -- FDA labels file safety ...
 
     Parameters
     ----------

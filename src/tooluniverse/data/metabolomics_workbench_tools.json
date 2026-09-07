@@ -36,7 +36,7 @@
         "study_id": "ST000001"
       },
       {
-        "study_id": "ST000100",
+        "study_id": "ST000001",
         "output_item": "metabolites"
       }
     ],
@@ -58,6 +58,15 @@
           "required": [
             "error"
           ]
+        },
+        {
+          "type": "object",
+          "description": "A single study record for single-stanza output_items (summary, analysis) -- field names vary by output_item, so no fixed property list is enforced beyond 'not also carrying an error key'.",
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
         }
       ]
     }

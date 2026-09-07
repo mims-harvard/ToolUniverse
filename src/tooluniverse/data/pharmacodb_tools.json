@@ -8,32 +8,50 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search"],
-          "description": "Operation type"
+          "enum": [
+            "search"
+          ],
+          "description": "Operation type",
+          "default": "search"
         },
         "query": {
           "type": "string",
           "description": "Text query to search across compounds, cell lines, tissues, and genes. Examples: 'paclitaxel', 'MCF-7', 'Breast', 'TP53'"
         }
       },
-      "required": ["operation", "query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "query": {"type": "string"},
+        "query": {
+          "type": "string"
+        },
         "results": {
           "type": "array",
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": "string", "description": "PharmacoDB UID (e.g., PDBC00058)"},
-              "value": {"type": "string", "description": "Entity name"},
-              "type": {"type": "string", "description": "Entity type: compound, cell_line, tissue, or gene"}
+              "id": {
+                "type": "string",
+                "description": "PharmacoDB UID (e.g., PDBC00058)"
+              },
+              "value": {
+                "type": "string",
+                "description": "Entity name"
+              },
+              "type": {
+                "type": "string",
+                "description": "Entity type: compound, cell_line, tissue, or gene"
+              }
             }
           }
         },
-        "num_results": {"type": "integer"}
+        "num_results": {
+          "type": "integer"
+        }
       }
     },
     "test_examples": [
@@ -41,7 +59,10 @@
         "operation": "search",
         "query": "paclitaxel"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search"
+    }
   },
   {
     "name": "PharmacoDB_get_compound",
@@ -52,19 +73,28 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_compound"],
-          "description": "Operation type"
+          "enum": [
+            "get_compound"
+          ],
+          "description": "Operation type",
+          "default": "get_compound"
         },
         "compound_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Compound name (e.g., 'Paclitaxel', 'Erlotinib'). Mutually exclusive with compound_id."
         },
         "compound_id": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "PharmacoDB compound database ID (e.g., 49658 for Paclitaxel). Mutually exclusive with compound_name."
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -72,21 +102,62 @@
         "compound": {
           "type": "object",
           "properties": {
-            "id": {"type": "integer"},
-            "name": {"type": "string"},
-            "uid": {"type": "string"},
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            },
+            "uid": {
+              "type": "string"
+            },
             "annotation": {
               "type": "object",
               "properties": {
-                "smiles": {"type": ["string", "null"]},
-                "inchikey": {"type": ["string", "null"]},
-                "pubchem": {"type": ["string", "null"]},
-                "fda_status": {"type": ["string", "null"]},
-                "chembl": {"type": ["string", "null"]},
-                "reactome": {"type": ["string", "null"]}
+                "smiles": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "inchikey": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "pubchem": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "fda_status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "chembl": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "reactome": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
               }
             },
-            "datasets": {"type": "array", "items": {"type": "object"}}
+            "datasets": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            }
           }
         },
         "targets": {
@@ -94,9 +165,15 @@
           "items": {
             "type": "object",
             "properties": {
-              "target_id": {"type": "integer"},
-              "target_name": {"type": "string"},
-              "genes": {"type": "array"}
+              "target_id": {
+                "type": "integer"
+              },
+              "target_name": {
+                "type": "string"
+              },
+              "genes": {
+                "type": "array"
+              }
             }
           }
         }
@@ -107,7 +184,10 @@
         "operation": "get_compound",
         "compound_name": "Paclitaxel"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_compound"
+    }
   },
   {
     "name": "PharmacoDB_get_cell_line",
@@ -118,36 +198,67 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_cell_line"],
-          "description": "Operation type"
+          "enum": [
+            "get_cell_line"
+          ],
+          "description": "Operation type",
+          "default": "get_cell_line"
         },
         "cell_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Cell line name (e.g., 'MCF-7', 'A549', 'HeLa'). Mutually exclusive with cell_id."
         },
         "cell_id": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "PharmacoDB cell line database ID (e.g., 273 for MCF-7). Mutually exclusive with cell_name."
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "id": {"type": "integer"},
-        "name": {"type": "string"},
-        "uid": {"type": "string"},
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "uid": {
+          "type": "string"
+        },
         "tissue": {
           "type": "object",
           "properties": {
-            "id": {"type": "integer"},
-            "name": {"type": "string"}
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string"
+            }
           }
         },
-        "synonyms": {"type": "array"},
-        "diseases": {"type": "array", "items": {"type": "string"}},
-        "accession_id": {"type": ["string", "null"]}
+        "synonyms": {
+          "type": "array"
+        },
+        "diseases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "accession_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
       }
     },
     "test_examples": [
@@ -155,7 +266,10 @@
         "operation": "get_cell_line",
         "cell_name": "MCF-7"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_cell_line"
+    }
   },
   {
     "name": "PharmacoDB_get_experiments",
@@ -166,19 +280,31 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_experiments"],
-          "description": "Operation type"
+          "enum": [
+            "get_experiments"
+          ],
+          "description": "Operation type",
+          "default": "get_experiments"
         },
         "compound_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Compound/drug name to filter experiments (e.g., 'Paclitaxel', 'Erlotinib')"
         },
         "cell_line_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Cell line name to filter experiments (e.g., 'MCF-7', 'A549')"
         },
         "dataset_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Dataset name to filter (e.g., 'GDSC1', 'CCLE', 'CTRPv2', 'PRISM')"
         },
         "per_page": {
@@ -189,7 +315,7 @@
           "description": "Number of experiments to return per page (default 10, max 100)"
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -199,22 +325,72 @@
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": "integer"},
-              "cell_line": {"type": "object"},
-              "tissue": {"type": "object"},
-              "compound": {"type": "object"},
-              "dataset": {"type": "object"},
+              "id": {
+                "type": "integer"
+              },
+              "cell_line": {
+                "type": "object"
+              },
+              "tissue": {
+                "type": "object"
+              },
+              "compound": {
+                "type": "object"
+              },
+              "dataset": {
+                "type": "object"
+              },
               "profile": {
                 "type": "object",
                 "properties": {
-                  "IC50": {"type": ["number", "null"]},
-                  "EC50": {"type": ["number", "null"]},
-                  "AAC": {"type": ["number", "null"]},
-                  "HS": {"type": ["number", "null"]},
-                  "Einf": {"type": ["number", "null"]},
-                  "DSS1": {"type": ["number", "null"]},
-                  "DSS2": {"type": ["number", "null"]},
-                  "DSS3": {"type": ["number", "null"]}
+                  "IC50": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "EC50": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "AAC": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "HS": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "Einf": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "DSS1": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "DSS2": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "DSS3": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  }
                 }
               },
               "dose_response": {
@@ -222,16 +398,24 @@
                 "items": {
                   "type": "object",
                   "properties": {
-                    "dose": {"type": "number"},
-                    "response": {"type": "number"}
+                    "dose": {
+                      "type": "number"
+                    },
+                    "response": {
+                      "type": "number"
+                    }
                   }
                 }
               }
             }
           }
         },
-        "num_experiments": {"type": "integer"},
-        "filters_applied": {"type": "object"}
+        "num_experiments": {
+          "type": "integer"
+        },
+        "filters_applied": {
+          "type": "object"
+        }
       }
     },
     "test_examples": [
@@ -240,7 +424,10 @@
         "compound_name": "Paclitaxel",
         "per_page": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_experiments"
+    }
   },
   {
     "name": "PharmacoDB_list_datasets",
@@ -251,11 +438,14 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["list_datasets"],
-          "description": "Operation type"
+          "enum": [
+            "list_datasets"
+          ],
+          "description": "Operation type",
+          "default": "list_datasets"
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -265,19 +455,28 @@
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": "integer"},
-              "name": {"type": "string"}
+              "id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              }
             }
           }
         },
-        "num_datasets": {"type": "integer"}
+        "num_datasets": {
+          "type": "integer"
+        }
       }
     },
     "test_examples": [
       {
         "operation": "list_datasets"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_datasets"
+    }
   },
   {
     "name": "PharmacoDB_get_biomarker_assoc",
@@ -288,27 +487,45 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_biomarker_associations"],
-          "description": "Operation type"
+          "enum": [
+            "get_biomarker_associations"
+          ],
+          "description": "Operation type",
+          "default": "get_biomarker_associations"
         },
         "compound_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Compound name (e.g., 'Paclitaxel', 'Erlotinib'). Either compound_name or compound_id required."
         },
         "compound_id": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "PharmacoDB compound ID. Either compound_name or compound_id required."
         },
         "gene_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Gene Ensembl ID to filter (e.g., 'ENSG00000141510' for TP53)"
         },
         "tissue_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Tissue type to filter (e.g., 'Breast', 'Lung', 'Skin')"
         },
         "mdata_type": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Molecular data type: 'rna' (gene expression), 'cnv' (copy number), 'mutation'"
         },
         "per_page": {
@@ -319,7 +536,7 @@
           "description": "Number of results per page (default 20, max 100)"
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -329,22 +546,66 @@
           "items": {
             "type": "object",
             "properties": {
-              "id": {"type": "integer"},
-              "gene": {"type": "object"},
-              "compound": {"type": "object"},
-              "tissue": {"type": "object"},
-              "dataset": {"type": "object"},
-              "estimate": {"type": ["number", "null"], "description": "Effect size estimate"},
-              "pvalue_analytic": {"type": ["number", "null"], "description": "Analytic p-value"},
-              "fdr_analytic": {"type": ["number", "null"], "description": "FDR-corrected p-value"},
-              "sens_stat": {"type": "string", "description": "Sensitivity statistic used (AAC or IC50)"},
-              "mDataType": {"type": "string", "description": "Molecular data type (rna, cnv, mutation)"},
-              "n": {"type": ["integer", "null"], "description": "Number of samples"}
+              "id": {
+                "type": "integer"
+              },
+              "gene": {
+                "type": "object"
+              },
+              "compound": {
+                "type": "object"
+              },
+              "tissue": {
+                "type": "object"
+              },
+              "dataset": {
+                "type": "object"
+              },
+              "estimate": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Effect size estimate"
+              },
+              "pvalue_analytic": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Analytic p-value"
+              },
+              "fdr_analytic": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "FDR-corrected p-value"
+              },
+              "sens_stat": {
+                "type": "string",
+                "description": "Sensitivity statistic used (AAC or IC50)"
+              },
+              "mDataType": {
+                "type": "string",
+                "description": "Molecular data type (rna, cnv, mutation)"
+              },
+              "n": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of samples"
+              }
             }
           }
         },
-        "num_associations": {"type": "integer"},
-        "filters_applied": {"type": "object"}
+        "num_associations": {
+          "type": "integer"
+        },
+        "filters_applied": {
+          "type": "object"
+        }
       }
     },
     "test_examples": [
@@ -354,7 +615,10 @@
         "tissue_name": "Breast",
         "per_page": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_biomarker_associations"
+    }
   },
   {
     "name": "PharmacoDB_get_drug_targets",
@@ -365,23 +629,38 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_drug_targets"],
-          "description": "Operation type"
+          "enum": [
+            "get_drug_targets"
+          ],
+          "description": "Operation type",
+          "default": "get_drug_targets"
         },
         "gene_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Gene HGNC symbol for the gene->targets direction (e.g., 'EGFR', 'BRAF'). Mutually exclusive with compound inputs."
         },
         "gene_id": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "PharmacoDB gene database ID for the gene->targets direction (e.g., 8931 for EGFR). Mutually exclusive with compound inputs."
         },
         "compound_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Compound/drug name for the compound->targets direction (e.g., 'paclitaxel'). Mutually exclusive with gene inputs."
         },
         "compound_id": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "PharmacoDB compound database ID for the compound->targets direction (e.g., 49658 for Paclitaxel). Mutually exclusive with gene inputs."
         },
         "page": {
@@ -398,7 +677,7 @@
           "description": "Rows per page for the full drug-target table direction (default 20, max 200). Ignored when gene_name/gene_id/compound_name/compound_id is supplied."
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -406,47 +685,104 @@
           "type": "object",
           "description": "Single gene->targets or compound->targets direction result",
           "properties": {
-            "direction": {"type": "string", "description": "single_gene_target or single_compound_target"},
-            "gene_id": {"type": ["integer", "null"]},
-            "gene_name": {"type": ["string", "null"]},
-            "compound_id": {"type": ["integer", "null"]},
-            "compound_name": {"type": ["string", "null"]},
+            "direction": {
+              "type": "string",
+              "description": "single_gene_target or single_compound_target"
+            },
+            "gene_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "gene_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "compound_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "compound_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "targets": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "target_id": {"type": "integer"},
-                  "target_name": {"type": "string"}
+                  "target_id": {
+                    "type": "integer"
+                  },
+                  "target_name": {
+                    "type": "string"
+                  }
                 }
               }
             },
-            "num_targets": {"type": "integer"}
+            "num_targets": {
+              "type": "integer"
+            }
           },
-          "required": ["direction", "targets", "num_targets"]
+          "required": [
+            "direction",
+            "targets",
+            "num_targets"
+          ]
         },
         {
           "type": "object",
           "description": "Full cross-database drug-target table (paginated)",
           "properties": {
-            "direction": {"type": "string", "enum": ["all_compound_targets"]},
+            "direction": {
+              "type": "string",
+              "enum": [
+                "all_compound_targets"
+              ]
+            },
             "compound_targets": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "compound_id": {"type": "integer"},
-                  "compound_name": {"type": "string"},
-                  "targets": {"type": "array"}
+                  "compound_id": {
+                    "type": "integer"
+                  },
+                  "compound_name": {
+                    "type": "string"
+                  },
+                  "targets": {
+                    "type": "array"
+                  }
                 }
               }
             },
-            "num_returned": {"type": "integer"},
-            "total_available": {"type": "integer"},
-            "page": {"type": "integer"},
-            "per_page": {"type": "integer"}
+            "num_returned": {
+              "type": "integer"
+            },
+            "total_available": {
+              "type": "integer"
+            },
+            "page": {
+              "type": "integer"
+            },
+            "per_page": {
+              "type": "integer"
+            }
           },
-          "required": ["direction", "compound_targets", "num_returned", "total_available"]
+          "required": [
+            "direction",
+            "compound_targets",
+            "num_returned",
+            "total_available"
+          ]
         }
       ]
     },
@@ -455,7 +791,10 @@
         "operation": "get_drug_targets",
         "gene_name": "EGFR"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_drug_targets"
+    }
   },
   {
     "name": "PharmacoDB_get_molecular_profiling",
@@ -466,19 +805,28 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_molecular_profiling"],
-          "description": "Operation type"
+          "enum": [
+            "get_molecular_profiling"
+          ],
+          "description": "Operation type",
+          "default": "get_molecular_profiling"
         },
         "cell_line_name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Cancer cell line name (e.g., 'MCF-7', 'A549'). Mutually exclusive with cell_line_id."
         },
         "cell_line_id": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "PharmacoDB cell line database ID (e.g., 273 for MCF-7). Mutually exclusive with cell_line_name."
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -486,31 +834,60 @@
           "type": "object",
           "description": "Molecular profiling inventory for the requested cell line",
           "properties": {
-            "cell_line_name": {"type": ["string", "null"]},
-            "cell_line_id": {"type": ["integer", "null"]},
+            "cell_line_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "cell_line_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
             "profiling": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "cell_line": {"type": "object"},
-                  "dataset": {"type": "object"},
-                  "mDataType": {"type": "string", "description": "Molecular data type (e.g., rnaseq, rna, mutation, cnv, Kallisto isoforms)"},
-                  "num_prof": {"type": "integer", "description": "Number of profiles available for this data type/dataset"}
+                  "cell_line": {
+                    "type": "object"
+                  },
+                  "dataset": {
+                    "type": "object"
+                  },
+                  "mDataType": {
+                    "type": "string",
+                    "description": "Molecular data type (e.g., rnaseq, rna, mutation, cnv, Kallisto isoforms)"
+                  },
+                  "num_prof": {
+                    "type": "integer",
+                    "description": "Number of profiles available for this data type/dataset"
+                  }
                 }
               }
             },
-            "num_records": {"type": "integer"}
+            "num_records": {
+              "type": "integer"
+            }
           },
-          "required": ["profiling", "num_records"]
+          "required": [
+            "profiling",
+            "num_records"
+          ]
         },
         {
           "type": "object",
           "description": "Error envelope when the cell line has no profiling or the request fails",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -519,6 +896,9 @@
         "operation": "get_molecular_profiling",
         "cell_line_name": "MCF-7"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_molecular_profiling"
+    }
   }
 ]

@@ -369,21 +369,41 @@ class EuropePMCTool(BaseTool):
             query = f"({query}) AND ({clause})"
         if require_has_ft:
             query = f"({query}) AND HAS_FT:Y"
-        articles = self._search(
+        articles, hit_count = self._search(
             query,
             limit,
             enrich_missing_abstract=enrich_missing_abstract,
             extract_terms_from_fulltext=extract_terms_from_fulltext,
         )
-        return {
-            "status": "success",
-            "data": articles,
-            "metadata": {
-                "count": len(articles),
-                "query": query,
-                "source": "Europe PMC",
-            },
+        metadata = {
+            "count": len(articles),
+            "query": query,
+            "source": "Europe PMC",
         }
+        result = {"status": "success", "data": articles, "metadata": metadata}
+
+        # `count` is the number of records returned, which on its own is
+        # indistinguishable from the number of records that matched. Europe PMC
+        # reports the real figure as `hitCount` in every search response
+        # (verified live: .../search?query=NSCLC+radiogenomics+EGFR+CT+radiomics+
+        # TCIA&format=json&pageSize=1 -> "hitCount": 103); it used to be parsed
+        # and thrown away. Surface it, and say plainly when the returned set is
+        # only a slice of it.
+        metadata["total_results"] = hit_count
+        if hit_count is None:
+            return result
+        if len(articles) < hit_count:
+            result["truncated"] = True
+            result["truncation_note"] = (
+                f"Returned the top {len(articles)} of {hit_count} articles matching "
+                f"this query in Europe PMC. This is a ranked slice, not the full "
+                f"result set — an article absent here may still match. Raise `limit` "
+                f"(up to Europe PMC's 1000-per-request maximum) or narrow the query "
+                f"to see the rest."
+            )
+        else:
+            result["truncated"] = False
+        return result
 
     def _local_name(self, tag: str) -> str:
         return tag.rsplit("}", 1)[-1] if "}" in tag else tag
@@ -451,7 +471,15 @@ class EuropePMCTool(BaseTool):
         *,
         enrich_missing_abstract: bool = False,
         extract_terms_from_fulltext: list | None = None,
-    ):
+    ) -> tuple[list, int | None]:
+        """Run the Europe PMC search.
+
+        Returns ``(articles, hit_count)`` where ``hit_count`` is the total
+        number of records matching the query upstream (Europe PMC's
+        ``hitCount``), or ``None`` when the search failed and no total is
+        known. The caller needs the total to tell a truncated page apart from
+        a complete result set.
+        """
         # First try core mode to get abstracts
         core_params = {
             "query": query,
@@ -503,7 +531,7 @@ class EuropePMCTool(BaseTool):
                     "retryable": core_response.status_code
                     in (408, 429, 500, 502, 503, 504),
                 }
-            ]
+            ], None
 
         # Get core mode results
         try:
@@ -525,7 +553,13 @@ class EuropePMCTool(BaseTool):
                     "error": "Europe PMC returned invalid JSON",
                     "retryable": True,
                 }
-            ]
+            ], None
+
+        hit_count = core_payload.get("hitCount")
+        try:
+            hit_count = int(hit_count)
+        except (TypeError, ValueError):
+            hit_count = None
 
         core_results = core_payload.get("resultList", {}).get("result", [])
         lite_results = []
@@ -792,7 +826,7 @@ class EuropePMCTool(BaseTool):
                         # Silently skip articles that fail snippet extraction
                         continue
 
-        return articles
+        return articles, hit_count
 
 
 @register_tool("EuropePMCFullTextSnippetsTool")

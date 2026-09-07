@@ -476,7 +476,7 @@ actives = tu.tools.PubChem_get_assay_active_compounds(aid=504526)
 | `Reactome_get_reaction` | `stId` | Reaction details |
 | `Reactome_get_complex` | `stId` | Complex details |
 | `Reactome_list_species` | - | All species |
-| `Reactome_query_by_ids` | `ids`, `species` | ID query |
+| `Reactome_query_by_ids` | `ids` | ID query (no species/type filtering — filter results on `speciesName`/`schemaClass`) |
 | `Reactome_get_events_hierarchy` | `species` | Full hierarchy |
 | `Reactome_get_diseases` | - | Disease pathways |
 

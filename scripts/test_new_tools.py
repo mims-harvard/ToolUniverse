@@ -108,32 +108,6 @@ def validate_against_schema(
         return False, str(e)
 
 
-def _schema_describes_envelope(schema: Dict[str, Any]) -> bool:
-    """Heuristic: schema describes the {status,data,error,metadata} envelope.
-
-    Many tool configs declare return_schema at the envelope level (top-level
-    properties include 'data' or 'status'). For those, validating the
-    unwrapped result.get('data') against the schema always fails ("Schema
-    Mismatch: At root: ..."). Detect that style and validate the full result
-    instead. Inner-data schemas (no 'data'/'status' at top) keep the
-    historical unwrapped behaviour.
-
-    Looking for 'error' alone is NOT enough — many inner-data schemas pair an
-    inner array with a {'error': str} error wrapper but still describe the
-    inner data shape, not the envelope.
-    """
-    if not isinstance(schema, dict):
-        return False
-    branches = schema.get("oneOf") or schema.get("anyOf") or [schema]
-    for br in branches:
-        if not isinstance(br, dict):
-            continue
-        props = br.get("properties") or {}
-        if "data" in props or "status" in props:
-            return True
-    return False
-
-
 def format_result(val: Any, max_len: int = 100) -> str:
     """Format result for display."""
     s = str(val)
@@ -317,15 +291,20 @@ def run_tests(
 
                     if success:
                         stats["passed"] += 1
-                        # Validate Schema: envelope-style schemas describe the
-                        # whole {status,data,...} return; inner-data schemas
-                        # describe only the data payload. Pick the right target.
-                        validation_target = (
-                            result if _schema_describes_envelope(schema) else data
-                        )
-                        is_valid, schema_err = validate_against_schema(
-                            validation_target, schema
-                        )
+                        # return_schema describes the unwrapped data payload,
+                        # never the {status,data,...} envelope — matches
+                        # cli.py's `tu test` exactly (see devtu-fix-tool/
+                        # SKILL.md: "Schema validates the data field content,
+                        # NOT the full response"). A prior envelope-detection
+                        # heuristic here tried to auto-pick the validation
+                        # target, but any tool whose own payload legitimately
+                        # has a field named "status" or "data" (e.g. ENCODE's
+                        # own "status": "released", or IDR's own nested
+                        # "data" key) fooled it into validating the wrong
+                        # target. The real fix is upstream: correct schemas
+                        # to describe `data` directly, not paper over
+                        # incorrect ones here.
+                        is_valid, schema_err = validate_against_schema(data, schema)
                         if is_valid:
                             stats["schema_valid"] += 1
                             if args.verbose:

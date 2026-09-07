@@ -12,7 +12,7 @@ No authentication required. Free public access.
 """
 
 import re
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 import requests
 
@@ -21,7 +21,169 @@ from .tool_registry import register_tool
 
 MONARCH_BASE_URL = "https://api.monarchinitiative.org/v3/api"
 
+# OLS4 carries the `term replaced by` annotation that Monarch's own payload
+# omits, so an obsolete term can point at its replacement instead of being a
+# dead end. Only consulted for terms Monarch has already marked deprecated.
+_OLS4_TERMS_URL = "https://www.ebi.ac.uk/ols4/api/ontologies/{ontology}/terms"
+_OBO_IRI = "http://purl.obolibrary.org/obo/{term}"
+
 _UNDERSCORE_CURIE_RE = re.compile(r"^([A-Za-z]+)_(\d+)$")
+
+
+def _is_deprecated(payload: Dict[str, Any]) -> bool:
+    """Monarch reports live terms as `deprecated: None`, not `False`."""
+    return bool(payload.get("deprecated"))
+
+
+def _replaced_by(curie: str, timeout: int) -> Optional[str]:
+    """Resolve the MONDO term an obsolete CURIE was replaced by, or None.
+
+    Monarch keeps obsolete terms queryable but strips their content, so
+    `Mondo_get_disease` on one returns an empty record that looks like a
+    disease with no annotations. The replacement is recorded in the source
+    ontology, which OLS4 exposes.
+
+    MONDO only: the OBO PURL built below is wrong by construction for the
+    other prefixes that reach `_normalize_curie` -- Orphanet lives at
+    `orpha.net/ORDO/` under the OLS4 ontology `ordo`, EFO at
+    `ebi.ac.uk/efo/`, and OMIM is not an OLS4 ontology at all -- so
+    querying for them would spend a request to learn nothing.
+    """
+    prefix, _, local = curie.partition(":")
+    if not local or prefix.upper() != "MONDO":
+        return None
+    try:
+        response = requests.get(
+            _OLS4_TERMS_URL.format(ontology=prefix.lower()),
+            params={"iri": _OBO_IRI.format(term=f"{prefix.upper()}_{local}")},
+            headers={"Accept": "application/json"},
+            timeout=timeout,
+        )
+        response.raise_for_status()
+        terms = response.json().get("_embedded", {}).get("terms") or []
+    except Exception:
+        return None
+
+    for term in terms:
+        replacement = term.get("term_replaced_by")
+        if replacement:
+            return str(replacement).rsplit("/", 1)[-1].replace("_", ":", 1)
+    return None
+
+
+def _deprecation_metadata(
+    curie: str, empty_clause: str, timeout: int
+) -> Dict[str, Any]:
+    """The `deprecated`/`replaced_by`/note trio for a known-obsolete CURIE.
+
+    `empty_clause` names whatever the caller is about to hand back empty, verb
+    included, so one wording serves both a stripped record ("the empty fields
+    above mean") and a stripped result set ("this empty result means").
+    Capped below the caller's timeout: the answer it accompanies is already
+    complete, so a slow OLS4 must not stall it.
+    """
+    replacement = _replaced_by(curie, min(timeout, 10))
+    next_step = (
+        f"Re-query {replacement} for the current term."
+        if replacement
+        else "No replacement term is recorded; search by name for the current term."
+    )
+    return {
+        "deprecated": True,
+        "replaced_by": replacement,
+        "deprecation_note": (
+            f"{curie} is an obsolete Mondo term. Monarch strips the annotations "
+            f"of obsolete terms, so {empty_clause} 'not recorded here', not "
+            f"'none exist'. {next_step}"
+        ),
+    }
+
+
+def _obsolescence_metadata(curie: str, timeout: int) -> Dict[str, Any]:
+    """Deprecation metadata for an empty result set, or {} if there is none.
+
+    `_mondo_get_disease` reads `deprecated` off the record it already has, but
+    these endpoints return rows and nothing else -- so obsolescence has to be
+    asked for separately, which is why this probes /entity. Silent for live
+    terms, non-MONDO CURIEs and probe failures.
+    """
+    if not curie.upper().startswith("MONDO:"):
+        return {}
+    try:
+        response = requests.get(
+            f"{MONARCH_BASE_URL}/entity/{curie}", timeout=min(timeout, 10)
+        )
+        response.raise_for_status()
+        if not _is_deprecated(response.json()):
+            return {}
+    except Exception:
+        return {}
+
+    return _deprecation_metadata(curie, "this empty result means", timeout)
+
+
+# Biolink association categories are directed: the category name reads
+# "<subject>To<object>Association". Anchoring an entity on the wrong side is
+# silently valid at the API (it just matches nothing), so a caller asking
+# "which genes cause MONDO:0006559?" as subject=MONDO:0006559 gets a confident
+# empty list rather than the three causal genes the object side would return.
+# Map each category to the kind of entity that belongs on each side so an empty
+# result can say which side the caller's CURIE actually belongs on.
+_ASSOCIATION_SIDES = {
+    "biolink:CausalGeneToDiseaseAssociation": ("gene", "disease"),
+    "biolink:CorrelatedGeneToDiseaseAssociation": ("gene", "disease"),
+    "biolink:GeneToPhenotypicFeatureAssociation": ("gene", "phenotype"),
+    "biolink:DiseaseToPhenotypicFeatureAssociation": ("disease", "phenotype"),
+    "biolink:GeneToPathwayAssociation": ("gene", "pathway"),
+    "biolink:GeneToExpressionSiteAssociation": ("gene", "expression site"),
+}
+
+# Only unambiguous CURIE prefixes -- enough to recognise a disease passed where
+# a gene belongs (and vice versa) without guessing about multi-purpose
+# namespaces such as MGI/ZFIN, which identify both genes and genotypes.
+_CURIE_PREFIX_KIND = {
+    "HGNC": "gene",
+    "NCBIGENE": "gene",
+    "ENSEMBL": "gene",
+    "MONDO": "disease",
+    "OMIM": "disease",
+    "DOID": "disease",
+    "ORPHANET": "disease",
+    "HP": "phenotype",
+}
+
+
+def _curie_kind(curie: str) -> str:
+    """Best-effort entity kind for a CURIE, or '' when the prefix is ambiguous."""
+    if not isinstance(curie, str) or ":" not in curie:
+        return ""
+    return _CURIE_PREFIX_KIND.get(curie.split(":", 1)[0].strip().upper(), "")
+
+
+def _direction_hint(category: str, subject: str, obj: str) -> str:
+    """Explain the subject/object direction when a query returned nothing and
+    the supplied CURIE looks like it belongs on the other side."""
+    sides = _ASSOCIATION_SIDES.get(category)
+    if not sides:
+        return ""
+    subject_kind, object_kind = sides
+    if subject_kind == object_kind:
+        return ""
+    preamble = (
+        f"{category} is directed: the {subject_kind} is the 'subject' "
+        f"and the {object_kind} is the 'object'."
+    )
+    if subject and not obj and _curie_kind(subject) == object_kind:
+        return (
+            f"{preamble} You passed {subject} (a {object_kind}) as 'subject'; "
+            f"retry with object='{subject}' to get its {subject_kind}s."
+        )
+    if obj and not subject and _curie_kind(obj) == subject_kind:
+        return (
+            f"{preamble} You passed {obj} (a {subject_kind}) as 'object'; "
+            f"retry with subject='{obj}' to get its {object_kind}s."
+        )
+    return ""
 
 
 def _normalize_curie(entity_id: str) -> str:
@@ -83,6 +245,17 @@ class MonarchV3Tool(BaseTool):
                 "error": f"Unexpected error querying Monarch: {str(e)}",
             }
 
+    def _rows(self, rows: list, metadata: Dict[str, Any], curie: str) -> Dict[str, Any]:
+        """Envelope a row-returning endpoint, disclosing an obsolete CURIE.
+
+        Nothing distinguishes "obsolete, so stripped" from "live, but nothing
+        recorded" in a bare empty list, so every such endpoint asks the same
+        question on the same condition.
+        """
+        if not rows:
+            metadata.update(_obsolescence_metadata(curie, self.timeout))
+        return {"status": "success", "data": rows, "metadata": metadata}
+
     def _query(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to appropriate Monarch V3 endpoint."""
         handlers = {
@@ -132,6 +305,7 @@ class MonarchV3Tool(BaseTool):
                 "taxon": data.get("in_taxon"),
                 "taxon_label": data.get("in_taxon_label"),
                 "provided_by": data.get("provided_by"),
+                "deprecated": _is_deprecated(data),
             },
             "metadata": {
                 "source": "Monarch Initiative V3",
@@ -145,7 +319,15 @@ class MonarchV3Tool(BaseTool):
         if not subject and not obj:
             return {
                 "status": "error",
-                "error": "Either subject or object CURIE is required (e.g., HGNC:11998 or MONDO:0005148)",
+                "error": (
+                    "At least one of 'subject' or 'object' is required (a CURIE). "
+                    "Associations are directed: use 'subject' for the entity on the "
+                    "left of the category (e.g. subject='HGNC:11998' with "
+                    "biolink:CausalGeneToDiseaseAssociation for a gene's diseases) "
+                    "and 'object' for the entity on the right (e.g. "
+                    "object='MONDO:0005148' with the same category for a disease's "
+                    "causal genes)."
+                ),
             }
 
         category = arguments.get("category", "")
@@ -180,15 +362,23 @@ class MonarchV3Tool(BaseTool):
                 }
             )
 
+        metadata = {
+            "source": "Monarch Initiative V3",
+            "subject": subject,
+            "object": obj,
+            "category": category,
+            "total_results": data.get("total", len(associations)),
+        }
+        if not associations:
+            hint = _direction_hint(category, subject, obj)
+            if hint:
+                metadata["note"] = hint
+            metadata.update(_obsolescence_metadata(subject or obj, self.timeout))
+
         return {
             "status": "success",
             "data": associations,
-            "metadata": {
-                "source": "Monarch Initiative V3",
-                "subject": subject,
-                "category": category,
-                "total_results": data.get("total", len(associations)),
-            },
+            "metadata": metadata,
         }
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -223,6 +413,7 @@ class MonarchV3Tool(BaseTool):
                     "description": item.get("description"),
                     "taxon": item.get("in_taxon"),
                     "taxon_label": item.get("in_taxon_label"),
+                    "deprecated": _is_deprecated(item),
                 }
             )
 
@@ -269,6 +460,7 @@ class MonarchV3Tool(BaseTool):
                     "category": item.get("category"),
                     "description": item.get("description"),
                     "xref": item.get("xref", []),
+                    "deprecated": _is_deprecated(item),
                 }
             )
 
@@ -341,7 +533,12 @@ class MonarchV3Tool(BaseTool):
         else:
             inheritance = None
 
-        return {
+        # Monarch keeps obsolete terms queryable but strips their content, so
+        # without this an obsolete ID returns a fully populated-looking record
+        # whose every field is empty -- indistinguishable from a live disease
+        # that simply has no annotations yet.
+        deprecated = _is_deprecated(data)
+        result = {
             "status": "success",
             "data": {
                 "id": data.get("id"),
@@ -355,12 +552,24 @@ class MonarchV3Tool(BaseTool):
                 "causal_genes": causal_genes,
                 "inheritance": inheritance,
                 "association_counts": assoc_counts,
+                "deprecated": deprecated,
             },
             "metadata": {
                 "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
                 "disease_id": disease_id,
             },
         }
+
+        if deprecated:
+            # `deprecated` is already known from the record above, so unlike the
+            # row endpoints this needs no /entity probe -- only the note.
+            disclosure = _deprecation_metadata(
+                disease_id, "the empty fields above mean", self.timeout
+            )
+            result["data"]["replaced_by"] = disclosure["replaced_by"]
+            result["metadata"]["deprecation_note"] = disclosure["deprecation_note"]
+
+        return result
 
     def _mondo_get_phenotypes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get HPO phenotypes associated with a Mondo disease."""
@@ -398,15 +607,12 @@ class MonarchV3Tool(BaseTool):
                 }
             )
 
-        return {
-            "status": "success",
-            "data": phenotypes,
-            "metadata": {
-                "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
-                "disease_id": disease_id,
-                "total_phenotypes": data.get("total", len(phenotypes)),
-            },
+        metadata = {
+            "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
+            "disease_id": disease_id,
+            "total_phenotypes": data.get("total", len(phenotypes)),
         }
+        return self._rows(rows=phenotypes, metadata=metadata, curie=disease_id)
 
     # --- Additional Monarch V3 endpoints ---
 
@@ -437,15 +643,12 @@ class MonarchV3Tool(BaseTool):
                 )
         items.sort(key=lambda x: x["phenotype_count"], reverse=True)
 
-        return {
-            "status": "success",
-            "data": items,
-            "metadata": {
-                "source": "Monarch Initiative V3 - Histopheno",
-                "entity_id": data.get("id", entity_id),
-                "total_systems_with_phenotypes": len(items),
-            },
+        metadata = {
+            "source": "Monarch Initiative V3 - Histopheno",
+            "entity_id": data.get("id", entity_id),
+            "total_systems_with_phenotypes": len(items),
         }
+        return self._rows(rows=items, metadata=metadata, curie=entity_id)
 
     def _get_mappings(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get cross-ontology mappings for an entity."""
@@ -477,15 +680,12 @@ class MonarchV3Tool(BaseTool):
                 }
             )
 
-        return {
-            "status": "success",
-            "data": mappings,
-            "metadata": {
-                "source": "Monarch Initiative V3 - Mappings",
-                "entity_id": entity_id,
-                "total_mappings": data.get("total", len(mappings)),
-            },
+        metadata = {
+            "source": "Monarch Initiative V3 - Mappings",
+            "entity_id": entity_id,
+            "total_mappings": data.get("total", len(mappings)),
         }
+        return self._rows(rows=mappings, metadata=metadata, curie=entity_id)
 
     def _semsim_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for diseases matching a set of phenotypes using semantic similarity."""

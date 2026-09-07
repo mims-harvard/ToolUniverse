@@ -1,0 +1,74 @@
+[
+  {
+    "name": "FDAPurpleBook_search_products",
+    "type": "FDAPurpleBookTool",
+    "description": "Search FDA's Purple Book of licensed biological products: reference biologics, their licensed biosimilars/interchangeables, and exclusivity dates. Provide at least one filter (matched as a case-insensitive substring). Example: proper_name='adalimumab' returns Humira and every licensed adalimumab biosimilar/interchangeable with applicant, license type, and exclusivity expiration data. Always fetches FDA's latest published monthly snapshot, so results reflect the current database, not a fixed release.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "proprietary_name": {
+          "type": ["string", "null"],
+          "description": "Brand name, e.g. 'Humira'."
+        },
+        "proper_name": {
+          "type": ["string", "null"],
+          "description": "Non-proprietary/generic name (INN), e.g. 'adalimumab'."
+        },
+        "applicant": {
+          "type": ["string", "null"],
+          "description": "License holder, e.g. 'AbbVie'."
+        },
+        "bla_number": {
+          "type": ["string", "null"],
+          "description": "Biologics License Application number, e.g. '125057'."
+        },
+        "license_type": {
+          "type": ["string", "null"],
+          "description": "'351(a)' (reference biologic), '351(k) Biosimilar', or '351(k) Interchangeable'."
+        },
+        "reference_product_proper_name": {
+          "type": ["string", "null"],
+          "description": "For biosimilars/interchangeables: the reference product's generic name they were compared against, e.g. 'adalimumab'."
+        },
+        "reference_product_proprietary_name": {
+          "type": ["string", "null"],
+          "description": "For biosimilars/interchangeables: the reference product's brand name, e.g. 'Humira'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max records to return, 1-500. Default 30."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "applicant": {"type": ["string", "null"]},
+              "bla_number": {"type": ["string", "null"]},
+              "proprietary_name": {"type": ["string", "null"]},
+              "proper_name": {"type": ["string", "null"]},
+              "license_type": {"type": ["string", "null"]},
+              "reference_product_proper_name": {"type": ["string", "null"]},
+              "reference_product_proprietary_name": {"type": ["string", "null"]},
+              "exclusivity_expiration_date": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"proper_name": "adalimumab", "limit": 10},
+      {"applicant": "AbbVie", "license_type": "351(a)", "limit": 5}
+    ]
+  }
+]

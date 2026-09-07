@@ -1,0 +1,112 @@
+[
+  {
+    "name": "NIHDSLD_search_products",
+    "type": "NIHDSLDTool",
+    "description": "Search the NIH Dietary Supplement Label Database (DSLD), covering over 200,000 US supplement product labels, by product name, brand, or ingredient. Returns each match's product_id, brand, product type, and market status. Example: query='vitamin d' or query='turmeric curcumin'. Use product_id with NIHDSLD_get_label for the full ingredient list with amounts.",
+    "fields": {
+      "operation": "search_products"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Product name, brand, or ingredient, e.g. 'vitamin d', 'turmeric', 'Nature Made'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max products to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "product_id": {"type": ["string", "null"]},
+              "name": {"type": ["string", "null"]},
+              "brand": {"type": ["string", "null"]},
+              "product_type": {"type": ["string", "null"]},
+              "physical_state": {"type": ["string", "null"]},
+              "net_contents": {"type": ["string", "null"]},
+              "off_market": {"type": "boolean"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "vitamin d", "limit": 5},
+      {"query": "turmeric curcumin", "limit": 5}
+    ]
+  },
+  {
+    "name": "NIHDSLD_get_label",
+    "type": "NIHDSLDTool",
+    "description": "Retrieve one dietary supplement's full label from the NIH DSLD: every ingredient with its per-serving amount, unit, and percent daily value, plus serving size and brand. Example: product_id=20581 (Vitamin D Gummy Vitamins) returns 2000 IU Vitamin D at 500% daily value per 2-gummy serving. Use NIHDSLD_search_products to find a product_id.",
+    "fields": {
+      "operation": "get_label"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["product_id"],
+      "properties": {
+        "product_id": {
+          "type": ["string", "integer"],
+          "description": "DSLD product identifier, e.g. 20581."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "product_id": {"type": ["integer", "string", "null"]},
+            "name": {"type": ["string", "null"]},
+            "brand": {"type": ["string", "null"]},
+            "upc": {"type": ["string", "null"]},
+            "product_type": {"type": ["string", "null"]},
+            "serving_size": {"type": ["object", "null"]},
+            "servings_per_container": {},
+            "ingredients": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": ["string", "null"]},
+                  "category": {"type": ["string", "null"]},
+                  "amount": {"type": ["number", "null"]},
+                  "unit": {"type": ["string", "null"]},
+                  "percent_daily_value": {"type": ["number", "null"]},
+                  "per_serving_quantity": {"type": ["number", "null"]},
+                  "per_serving_unit": {"type": ["string", "null"]},
+                  "notes": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "off_market": {"type": "boolean"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"product_id": 20581},
+      {"product_id": "20581"}
+    ]
+  }
+]

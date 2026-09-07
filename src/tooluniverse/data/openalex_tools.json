@@ -39,13 +39,27 @@
           "minimum": 1,
           "maximum": 200
         },
+        "num_results": {
+          "type": "integer",
+          "description": "Alias for `max_results` (OpenAlex max 200).",
+          "minimum": 1,
+          "maximum": 200
+        },
         "year_from": {
           "type": "integer",
           "description": "Start year for publication date filter (e.g., 2020). Optional parameter to limit search to papers published from this year onwards."
         },
+        "start_year": {
+          "type": "integer",
+          "description": "Alias for `year_from`."
+        },
         "year_to": {
           "type": "integer",
           "description": "End year for publication date filter (e.g., 2023). Optional parameter to limit search to papers published up to this year."
+        },
+        "end_year": {
+          "type": "integer",
+          "description": "Alias for `year_to`."
         },
         "open_access": {
           "type": "boolean",

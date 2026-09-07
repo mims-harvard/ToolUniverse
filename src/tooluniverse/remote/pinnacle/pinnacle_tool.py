@@ -18,31 +18,34 @@ The tool provides access to pre-computed PPI embeddings that can be used for:
 from fastmcp import FastMCP
 import os
 import asyncio
-import uuid
+import math
+import threading
 from typing import Dict, Tuple, Optional, Any
-
-
-def _optional_token_auth():
-    """Require a Bearer token only when TOOLUNIVERSE_API_TOKEN is set.
-
-    Returns None (no authentication, unchanged behavior) when the variable is
-    not set, so existing deployments are unaffected.
-    """
-    token = os.getenv("TOOLUNIVERSE_API_TOKEN")
-    if not token:
-        return None
-    try:
-        from fastmcp.server.auth import StaticTokenVerifier
-
-        return StaticTokenVerifier(
-            tokens={token: {"client_id": "tooluniverse", "scopes": []}}
-        )
-    except Exception:
-        return None
+from tooluniverse.server_security import (
+    get_fastmcp_token_auth,
+    run_fastmcp_server,
+)
 
 
 # Initialize MCP Server for PINNACLE PPI embedding retrieval
-server = FastMCP("PINNACLE PPI SMCP Server", auth=_optional_token_auth())
+server = FastMCP("PINNACLE PPI SMCP Server", auth=get_fastmcp_token_auth())
+
+
+_MAX_PROTEINS = 250
+_MAX_EMBEDDING_DIM = 8192
+_PINNACLE_TOOL = None
+_PINNACLE_TOOL_LOCK = threading.Lock()
+_PINNACLE_REQUEST_LOCK = threading.Lock()
+
+
+def _get_pinnacle_tool():
+    """Initialize the provider checkpoint at most once per server process."""
+    global _PINNACLE_TOOL
+    if _PINNACLE_TOOL is None:
+        with _PINNACLE_TOOL_LOCK:
+            if _PINNACLE_TOOL is None:
+                _PINNACLE_TOOL = PinnaclePPITool()
+    return _PINNACLE_TOOL
 
 
 class PinnaclePPITool:
@@ -101,18 +104,19 @@ class PinnaclePPITool:
             ) from None
 
         # Load PINNACLE PPI embeddings from PyTorch checkpoint
-        print(f"Initializing PINNACLE PPI tool from embeddings: {self.embed_path}...")
-        self.ppi_dict = torch.load(self.embed_path, weights_only=False)
+        print("Initializing PINNACLE PPI tool from provider embeddings...")
+        self.ppi_dict = torch.load(self.embed_path, weights_only=True)
+        if not isinstance(self.ppi_dict, dict) or any(
+            not isinstance(key, str) or not isinstance(value, dict)
+            for key, value in self.ppi_dict.items()
+        ):
+            raise ValueError(
+                "PINNACLE embeddings must map cell-type strings to dictionaries"
+            )
 
-        # Display available cell types for reference
         available_cell_types = list(self.ppi_dict.keys())
         print(
             f"PINNACLE tool initialized successfully (loaded embeddings for {len(available_cell_types)} cell types)."
-        )
-        print(
-            f"Available cell types: {available_cell_types[:5]}..."
-            if len(available_cell_types) > 5
-            else f"Available cell types: {available_cell_types}"
         )
 
     def get_ppi_embeddings(self, cell_type: str) -> Tuple[Dict[str, Any], str]:
@@ -181,14 +185,12 @@ class PinnaclePPITool:
             )
 
         # No match found - return empty embeddings with helpful error message
-        available_types = list(self.ppi_dict.keys())
-        message = f"Cell type '{cell_type}' not found in PINNACLE embeddings. Available cell types ({len(available_types)} total): {available_types[:10]}{'...' if len(available_types) > 10 else ''}"
+        message = f"Cell type '{cell_type}' was not found in the PINNACLE embeddings."
         print(f"[PINNACLE PPI Retrieval]: {message}")
         return {}, message
 
 
-@server.tool()
-async def run_pinnacle_ppi_retrieval(cell_type: str, embed_path: Optional[str] = None):
+def _run_pinnacle_ppi_retrieval(cell_type: str, max_proteins: int = 100):
     """
     MCP Tool: Retrieves cell-type-specific protein-protein interaction embeddings from PINNACLE.
 
@@ -248,44 +250,45 @@ async def run_pinnacle_ppi_retrieval(cell_type: str, embed_path: Optional[str] =
         # Flexible naming support
         result = await run_pinnacle_ppi_retrieval("T-cells")
     """
-    # Generate unique request ID for tracking and logging
-    request_id = str(uuid.uuid4())[:8]
-    print(
-        f"[{request_id}] Received PINNACLE PPI embedding retrieval request for cell type: '{cell_type}'"
-    )
+    print("Received PINNACLE PPI embedding retrieval request")
 
     try:
-        # Brief async pause to allow for proper request handling
-        await asyncio.sleep(0.1)
-
         # Validate input parameter
-        if not cell_type or not cell_type.strip():
+        if (
+            not isinstance(cell_type, str)
+            or not cell_type.strip()
+            or len(cell_type) > 128
+        ):
             raise ValueError(
-                "Cell type parameter cannot be empty. Please provide a valid cell type name."
+                "Cell type must be a nonempty string of at most 128 characters."
             )
-
-        print(
-            f"[{request_id}] Processing PPI embedding retrieval for cell type: '{cell_type.strip()}'"
-        )
+        if (
+            isinstance(max_proteins, bool)
+            or not isinstance(max_proteins, int)
+            or not 1 <= max_proteins <= _MAX_PROTEINS
+        ):
+            raise ValueError(
+                f"max_proteins must be an integer from 1 to {_MAX_PROTEINS}"
+            )
 
         # Initialize global PINNACLE tool instance for MCP server
         # This instance will be used by the MCP tool function to serve PPI embedding requests
         try:
-            pinnacle_tool = PinnaclePPITool(embed_path=embed_path)
+            pinnacle_tool = _get_pinnacle_tool()
             print("PINNACLE PPI tool instance created and ready for MCP server")
-        except Exception as e:
-            print(f"Error creating PINNACLE PPI tool: {str(e)}")
-            print(
-                "Please ensure PINNACLE_DATA_PATH is correctly set and embedding files exist."
-            )
-            raise e
+        except Exception:
+            print("Error creating PINNACLE PPI tool")
+            return {
+                "error": "PINNACLE embeddings are unavailable on the provider.",
+                "context_info": ["The provider must verify PINNACLE_DATA_PATH."],
+            }
 
         # Execute PINNACLE embedding retrieval with intelligent matching
         embeddings, match_message = pinnacle_tool.get_ppi_embeddings(cell_type.strip())
 
         # Handle case where no embeddings are found
         if not embeddings:
-            print(f"[{request_id}] No embeddings found for cell type '{cell_type}'")
+            print("No PINNACLE embeddings found for the requested cell type")
             return {
                 "error": f"No PINNACLE embeddings available for cell type '{cell_type}'",
                 "context_info": [
@@ -297,10 +300,24 @@ async def run_pinnacle_ppi_retrieval(cell_type: str, embed_path: Optional[str] =
 
         # Convert PyTorch tensors to JSON-serializable lists
         # This enables downstream processing and API compatibility
-        serializable_embeddings = {
-            gene: tensor.tolist() if hasattr(tensor, "tolist") else tensor
-            for gene, tensor in embeddings.items()
-        }
+        selected_embeddings = sorted(embeddings.items())[:max_proteins]
+        serializable_embeddings = {}
+        for gene, tensor in selected_embeddings:
+            if not isinstance(gene, str) or len(gene) > 128:
+                raise RuntimeError("PINNACLE returned an invalid protein identifier")
+            values = tensor.tolist() if hasattr(tensor, "tolist") else tensor
+            if (
+                not isinstance(values, list)
+                or not 1 <= len(values) <= _MAX_EMBEDDING_DIM
+                or any(
+                    isinstance(value, bool)
+                    or not isinstance(value, (int, float))
+                    or not math.isfinite(float(value))
+                    for value in values
+                )
+            ):
+                raise RuntimeError("PINNACLE returned an invalid embedding vector")
+            serializable_embeddings[gene] = [float(value) for value in values]
 
         # Log successful completion with key metrics
         num_proteins = len(serializable_embeddings)
@@ -309,36 +326,45 @@ async def run_pinnacle_ppi_retrieval(cell_type: str, embed_path: Optional[str] =
             if serializable_embeddings
             else 0
         )
-        print(
-            f"[{request_id}] PINNACLE PPI retrieval completed: {num_proteins} proteins, {embedding_dim}D embeddings"
-        )
+        print("PINNACLE PPI retrieval completed")
 
         return {
             "embeddings": serializable_embeddings,
             "context_info": [
                 match_message,
-                f"Successfully retrieved embeddings for {num_proteins} proteins/genes.",
+                f"Returned {num_proteins} of {len(embeddings)} available protein/gene embeddings.",
                 f"Embedding dimensionality: {embedding_dim} features per protein.",
                 f"Cell type context: {cell_type} (matched and processed).",
             ],
         }
 
     except ValueError as e:
-        error_message = f"PINNACLE PPI retrieval validation error: {str(e)}"
-        print(f"[{request_id}] {error_message}")
+        error_message = f"PINNACLE PPI retrieval validation error: {e}"
+        print("PINNACLE PPI retrieval validation error")
         return {
             "error": error_message,
             "context_info": ["Please verify cell type parameter and format."],
         }
-    except Exception as e:
-        error_message = f"Unexpected error during PINNACLE PPI retrieval: {str(e)}"
-        print(f"[{request_id}] {error_message}")
+    except Exception:
+        error_message = "PINNACLE retrieval failed due to an internal provider error."
+        print("Unexpected error during PINNACLE PPI retrieval")
         return {
             "error": error_message,
             "context_info": [
                 "Internal server error occurred during embedding retrieval."
             ],
         }
+
+
+@server.tool()
+async def run_pinnacle_ppi_retrieval(cell_type: str, max_proteins: int = 100):
+    """Retrieve embeddings without blocking the MCP event loop."""
+
+    def execute():
+        with _PINNACLE_REQUEST_LOCK:
+            return _run_pinnacle_ppi_retrieval(cell_type, max_proteins)
+
+    return await asyncio.to_thread(execute)
 
 
 if __name__ == "__main__":
@@ -350,6 +376,9 @@ if __name__ == "__main__":
     print("Port: 7001 (configured to avoid conflicts with other biomedical tools)")
 
     # Launch the MCP server with PINNACLE PPI embedding capabilities
-    server.run(
-        transport="streamable-http", host="0.0.0.0", port=7001, stateless_http=True
+    run_fastmcp_server(
+        server,
+        host=os.getenv("TOOLUNIVERSE_MCP_HOST", "127.0.0.1"),
+        port=7001,
+        stateless_http=True,
     )

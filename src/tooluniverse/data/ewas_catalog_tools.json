@@ -1,0 +1,112 @@
+[
+  {
+    "name": "EWASCatalog_search_by_cpg",
+    "type": "EWASCatalogTool",
+    "description": "Look up all published epigenome-wide association study (EWAS) results for one CpG methylation site from the EWAS Catalog (MRC-IEU). Returns trait, effect size, tissue, cohort, and publication for every association, ranked by significance. Example: cpg_id='cg05575921' (AHRR, the strongest known smoking-methylation signal).",
+    "fields": {
+      "operation": "search_by_cpg"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["cpg_id"],
+      "properties": {
+        "cpg_id": {
+          "type": "string",
+          "description": "Illumina CpG probe identifier, e.g. 'cg05575921'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max associations to return, 1-200. Default 50."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "trait": {"type": ["string", "null"]},
+              "gene": {"type": ["string", "null"]},
+              "cpg": {"type": ["string", "null"]},
+              "chrpos": {"type": ["string", "null"]},
+              "beta": {"type": ["number", "string", "null"]},
+              "se": {"type": ["number", "string", "null"]},
+              "p": {"type": ["number", "string", "null"]},
+              "n": {"type": ["integer", "string", "null"]},
+              "tissue": {"type": ["string", "null"]},
+              "author": {"type": ["string", "null"]},
+              "pmid": {"type": ["string", "null"]},
+              "study_id": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"cpg_id": "cg05575921"},
+      {"cpg_id": "cg00000029", "limit": 5}
+    ]
+  },
+  {
+    "name": "EWASCatalog_search_by_gene",
+    "type": "EWASCatalogTool",
+    "description": "Look up all published epigenome-wide association study (EWAS) results annotated to one gene from the EWAS Catalog (MRC-IEU), across every CpG site mapped to it. Returns trait, effect size, tissue, cohort, and publication for each, ranked by significance. Example: gene_symbol='AHRR' (the smoking-methylation gene).",
+    "fields": {
+      "operation": "search_by_gene"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["gene_symbol"],
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "HGNC gene symbol, e.g. 'AHRR', 'TP53'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max associations to return, 1-200. Default 50."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "trait": {"type": ["string", "null"]},
+              "gene": {"type": ["string", "null"]},
+              "cpg": {"type": ["string", "null"]},
+              "chrpos": {"type": ["string", "null"]},
+              "beta": {"type": ["number", "string", "null"]},
+              "se": {"type": ["number", "string", "null"]},
+              "p": {"type": ["number", "string", "null"]},
+              "n": {"type": ["integer", "string", "null"]},
+              "tissue": {"type": ["string", "null"]},
+              "author": {"type": ["string", "null"]},
+              "pmid": {"type": ["string", "null"]},
+              "study_id": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"gene_symbol": "TP53", "limit": 10},
+      {"gene_symbol": "AHRR", "limit": 5}
+    ]
+  }
+]

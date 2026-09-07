@@ -5,7 +5,69 @@ import xml.etree.ElementTree as ET
 from typing import Any, Dict
 from .base_rest_tool import BaseRESTTool
 from .http_utils import request_with_retry
+from .ncbi_eutils_tool import esearch_query_disclosure
 from .tool_registry import register_tool
+
+
+def _clean_doi(value: Any) -> str:
+    """Normalize a raw DOI string: drop any display prefix and trailing dot."""
+    text = str(value or "").strip()
+    if text[:4].lower() == "doi:":
+        text = text[4:].strip()
+    return text.rstrip(".")
+
+
+def _doi_from_articleids(articleids: Any) -> str:
+    """Pull the DOI out of an esummary ``articleids`` list.
+
+    This is the structured, canonical location: NCBI stores a bare
+    ``{"idtype": "doi", "value": "10.x/y"}`` entry with no display prefix
+    and no other identifier mixed in.
+    """
+    for aid in articleids or []:
+        if isinstance(aid, dict) and aid.get("idtype") == "doi":
+            doi = _clean_doi(aid.get("value"))
+            if doi:
+                return doi
+    return ""
+
+
+def _doi_from_elocationid(elocationid: Any) -> str:
+    """Pull the DOI out of an esummary ``elocationid`` display string.
+
+    Handles ``"doi: 10.1234/abc"`` and the mixed preprint form
+    ``"pii: 2026.02.14.705936. doi: 10.64898/2026.02.14.705936"``.
+    """
+    text = str(elocationid or "")
+    lowered = text.lower()
+    if "doi:" not in lowered:
+        return ""
+    # Take the first token after "doi:" that contains '/' (valid DOI structure).
+    doi_part = text[lowered.index("doi:") + 4 :].strip()
+    for token in doi_part.split():
+        if "/" in token:
+            return token.rstrip(".")
+    return ""
+
+
+def _extract_doi(article_data: dict[str, Any]) -> str:
+    """Extract the DOI from a PubMed esummary record.
+
+    Fix-R25: the DOI used to be parsed *only* out of ``elocationid``, which
+    NCBI leaves empty for essentially every record published before ~2008 --
+    so ``doi``/``doi_url`` came back null for the whole older literature even
+    though the DOI was sitting in ``articleids`` in the very same response
+    (confirmed live for PMIDs 15720521, 17354009, 15500562, 14765742,
+    14627096, 5794093). ``articleids`` is preferred over ``elocationid``
+    because it is the structured field: it is populated for both old and new
+    records, its value needs no parsing, and it can never be confused with the
+    ``pii`` that NCBI packs into the same ``elocationid`` display string.
+    ``elocationid`` is kept as a fallback for records that carry one but no
+    ``doi`` articleid.
+    """
+    return _doi_from_articleids(
+        article_data.get("articleids")
+    ) or _doi_from_elocationid(article_data.get("elocationid"))
 
 
 @register_tool("PubMedRESTTool")
@@ -152,30 +214,23 @@ class PubMedRESTTool(BaseRESTTool):
             return {"status": "success", "data": []}
 
         def parse_article(pmid: str, article_data: Dict[str, Any]) -> Dict[str, Any]:
-            # Extract author list
-            authors = []
-            if "authors" in article_data:
-                authors = [
-                    author.get("name", "") for author in article_data["authors"]
-                ][:5]  # Limit to first 5 authors
+            # Extract author list. esummary returns the complete author list, so
+            # the full count is always known even though only the first 5 names
+            # are echoed back here (kept at 5 to bound the payload size). Report
+            # `author_count` / `authors_truncated` alongside so a caller building
+            # a bibliography can tell "this article really has 5 authors" apart
+            # from "we cut the list short" -- otherwise the two are
+            # byte-indistinguishable. Use PubMed_get_article for the full list.
+            all_authors = [
+                author.get("name", "") for author in article_data.get("authors", [])
+            ]
+            authors = all_authors[:5]  # Limit to first 5 authors
 
             # Extract article info
             pub_date = article_data.get("pubdate", "")
             pub_year = pub_date.split()[0] if pub_date else ""
 
-            elocationid = article_data.get("elocationid", "")
-            # Extract DOI: handle formats like "doi: 10.1234/abc" and mixed
-            # "pii: 2026.02.14.705936. 10.64898/2026.02.14.705936" (preprints).
-            doi = ""
-            if "doi:" in elocationid:
-                # Find the "doi:" token and extract what follows it
-                doi_part = elocationid[elocationid.index("doi:") + 4 :].strip()
-                # Take the first token that contains '/' (valid DOI structure)
-                for token in doi_part.split():
-                    if "/" in token:
-                        doi = token.rstrip(".")
-                        break
-            doi = doi or None
+            doi = _extract_doi(article_data) or None
 
             journal = article_data.get(
                 "fulljournalname", article_data.get("source", "")
@@ -197,6 +252,8 @@ class PubMedRESTTool(BaseRESTTool):
                 "pmid": pmid,
                 "title": article_data.get("title", ""),
                 "authors": authors,
+                "author_count": len(all_authors),
+                "authors_truncated": len(all_authors) > 5,
                 "journal": journal,
                 "pub_date": pub_date,
                 "pub_year": pub_year,
@@ -379,13 +436,30 @@ class PubMedRESTTool(BaseRESTTool):
             journal_el = art.find("Journal")
             journal = _text(journal_el, "Title") or _text(journal_el, "ISOAbbreviation")
 
-            doi = next(
-                (
-                    eid.text
-                    for eid in art.findall("ELocationID")
-                    if eid.get("EIdType") == "doi" and eid.text
-                ),
-                "",
+            # Fix-R25: same root cause as the esummary path -- older records
+            # (verified live for PMID 15720521) carry no <ELocationID> at all
+            # while still listing the DOI in <PubmedData><ArticleIdList>.
+            # Unlike esummary's free-text `elocationid`, the XML ELocationID is
+            # explicitly typed (EIdType="doi") and needs no parsing, so it stays
+            # the primary source here and ArticleIdList is added as a fallback.
+            doi = _clean_doi(
+                next(
+                    (
+                        eid.text
+                        for eid in art.findall("ELocationID")
+                        if eid.get("EIdType") == "doi" and eid.text
+                    ),
+                    "",
+                )
+            ) or _clean_doi(
+                next(
+                    (
+                        aid.text
+                        for aid in article_el.findall(".//ArticleIdList/ArticleId")
+                        if aid.get("IdType") == "doi" and aid.text
+                    ),
+                    "",
+                )
             )
 
             pd = art.find(".//PubDate")
@@ -426,6 +500,33 @@ class PubMedRESTTool(BaseRESTTool):
         if len(articles) != 1:
             result["count"] = len(articles)
         return result
+
+    @staticmethod
+    def _search_warning_metadata(esearch_result: dict) -> dict:
+        """Surface NCBI's own report that it did not run the query as asked.
+
+        Fix-54A-1: this parsing was PubMed-only, but every eutils database
+        behaves identically -- measured across fourteen of them -- and twelve
+        other modules here parse esearch responses without reading either
+        disclosure container. The logic now lives in one place,
+        :func:`~tooluniverse.ncbi_eutils_tool.esearch_query_disclosure`, which
+        carries the measurements; this method stays as PubMed's entry point.
+
+        The sweep is NOT complete. Six modules were wired (medgen, sra,
+        ncbi_sra, ncbi_nucleotide, epigenomics' four GEO searches, and this
+        one). Still unwired, all confirmed to parse ``esearchresult`` and build
+        their own payload, all with a measured database in that table:
+        ``clinvar_tool``, ``dbsnp_tool``, ``pmc_tool``, ``geo_tool``,
+        ``unified_guideline_tools``, ``clinical_society_tools`` and
+        ``icite_tool``. ``pmc_tool`` and ``icite_tool`` return a bare list with
+        nowhere to put the disclosure, so wiring them is a response-shape
+        change rather than an additive one.
+
+        Note this method splats its result flat into ``metadata`` while the six
+        new sites nest it under a ``query_disclosure`` key. One helper, two
+        shapes; unifying them would change PubMed's published response.
+        """
+        return esearch_query_disclosure(esearch_result, source="PubMed")
 
     def _fetch_abstracts(self, pmid_list: list[str]) -> Dict[str, str]:
         """Best-effort abstract fetch via efetch XML for a list of PMIDs."""
@@ -535,6 +636,11 @@ class PubMedRESTTool(BaseRESTTool):
                     # If this is a search request (has 'query' in arguments),
                     # fetch article summaries and return the standard envelope.
                     if "query" in arguments:
+                        # NCBI reports quoted phrases it could not match; that
+                        # report must reach the caller or the answer looks like
+                        # it came from the query they actually submitted.
+                        search_warnings = self._search_warning_metadata(esearch_result)
+
                         # A search that matched nothing must still return the
                         # same {status, data, metadata} envelope as a search
                         # that matched — otherwise zero-hit queries fall through
@@ -549,6 +655,7 @@ class PubMedRESTTool(BaseRESTTool):
                                     "total": int(esearch_result.get("count", 0)),
                                     "query": arguments.get("query"),
                                     "source": "PubMed",
+                                    **search_warnings,
                                 },
                             }
 
@@ -635,6 +742,7 @@ class PubMedRESTTool(BaseRESTTool):
                                 ),
                                 "query": arguments.get("query"),
                                 "source": "PubMed",
+                                **search_warnings,
                             },
                         }
 

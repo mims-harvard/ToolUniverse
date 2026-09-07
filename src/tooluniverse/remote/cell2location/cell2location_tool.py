@@ -41,6 +41,15 @@ import cell2location
 from cell2location.models import RegressionModel
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_argument_validation import (
+    bounded_integer,
+    bounded_text,
+    require_argument_object,
+)
+from tooluniverse.remote_data_path import load_remote_h5ad
+
+
+_MAX_CELL_TYPES = 256
 
 
 def _estimate_reference_signatures(adata_ref, cluster_label, batch_key, ref_epochs):
@@ -79,6 +88,8 @@ def _map_to_spatial(adata_sp, inf_aver, batch_key, sp_epochs):
     """Train Cell2location on the spatial data and return the abundance DataFrame."""
     # Restrict both matrices to their shared gene set.
     shared = [g for g in adata_sp.var_names if g in set(inf_aver.index)]
+    if not shared:
+        raise ValueError("Reference and spatial data have no shared genes.")
     adata_sp = adata_sp[:, shared].copy()
     inf_aver = inf_aver.loc[shared, :]
 
@@ -93,7 +104,8 @@ def _map_to_spatial(adata_sp, inf_aver, batch_key, sp_epochs):
     )
     mod_sp.train(max_epochs=sp_epochs)
     adata_sp = mod_sp.export_posterior(
-        adata_sp, sample_kwargs={"num_samples": 1000, "batch_size": mod_sp.adata.n_obs}
+        adata_sp,
+        sample_kwargs={"num_samples": 1000, "batch_size": min(2500, mod_sp.adata.n_obs)},
     )
     return adata_sp
 
@@ -115,26 +127,34 @@ def _map_to_spatial(adata_sp, inf_aver, batch_key, sp_epochs):
             "properties": {
                 "sc_path": {
                     "type": "string",
-                    "description": "Server-accessible path or URL to an .h5ad annotated single-cell/single-nucleus REFERENCE of RAW counts.",
+                    "description": "An annotated reference .h5ad file of raw counts inside the provider-configured data directory.",
                 },
                 "sp_path": {
                     "type": "string",
-                    "description": "Server-accessible path or URL to an .h5ad SPATIAL AnnData of RAW counts (e.g. 10x Visium).",
+                    "description": "A spatial .h5ad file of raw counts inside the provider-configured data directory (e.g. 10x Visium).",
                 },
                 "cluster_label": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
                     "description": "obs column in the reference giving the cell-type label to build signatures for (e.g. 'cell_type').",
                 },
                 "batch_key": {
                     "type": "string",
+                    "minLength": 1,
+                    "maxLength": 128,
                     "description": "obs column naming the batch/sample (optional; empty = no batch term). Applied to both reference and spatial setup.",
                 },
                 "ref_epochs": {
                     "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5000,
                     "description": "Reference RegressionModel training epochs (default 250; raise on GPU, e.g. 250-1000).",
                 },
                 "sp_epochs": {
                     "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5000,
                     "description": "Spatial Cell2location training epochs (default 250; raise on GPU, e.g. 250-30000).",
                 },
             },
@@ -152,6 +172,10 @@ class Cell2locationDeconvolutionTool:
     """Two-step cell2location deconvolution of spatial transcriptomics data."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        try:
+            arguments = require_argument_object(arguments)
+        except ValueError as exc:
+            return {"error": str(exc)}
         sc_path = arguments.get("sc_path")
         sp_path = arguments.get("sp_path")
         cluster_label = arguments.get("cluster_label")
@@ -159,19 +183,40 @@ class Cell2locationDeconvolutionTool:
             return {
                 "error": "Missing required parameter(s): sc_path, sp_path, cluster_label"
             }
-        batch_key = arguments.get("batch_key") or None
-        ref_epochs = arguments.get("ref_epochs")
-        ref_epochs = 250 if ref_epochs is None else int(ref_epochs)
-        sp_epochs = arguments.get("sp_epochs")
-        sp_epochs = 250 if sp_epochs is None else int(sp_epochs)
+        try:
+            cluster_label = bounded_text(cluster_label, "cluster_label")
+            batch_key = bounded_text(arguments.get("batch_key"), "batch_key")
+            ref_epochs = bounded_integer(
+                arguments.get("ref_epochs"),
+                "ref_epochs",
+                default=250,
+                minimum=1,
+                maximum=5_000,
+            )
+            sp_epochs = bounded_integer(
+                arguments.get("sp_epochs"),
+                "sp_epochs",
+                default=250,
+                minimum=1,
+                maximum=5_000,
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
 
         try:
-            adata_ref = sc.read_h5ad(sc_path)
+            adata_ref = load_remote_h5ad(sc_path, sc.read_h5ad)
             if cluster_label not in adata_ref.obs:
-                return {
-                    "error": f"cluster_label '{cluster_label}' not found in reference obs columns."
-                }
-            adata_sp = sc.read_h5ad(sp_path)
+                return {"error": "cluster_label was not found in reference obs."}
+            adata_sp = load_remote_h5ad(sp_path, sc.read_h5ad)
+            if batch_key and (
+                batch_key not in adata_ref.obs or batch_key not in adata_sp.obs
+            ):
+                return {"error": "batch_key must exist in both input datasets."}
+            reference_types = adata_ref.obs[cluster_label].astype(str).unique().tolist()
+            if not 1 <= len(reference_types) <= _MAX_CELL_TYPES:
+                return {"error": "cluster_label contains too many cell types."}
+            if any(not label or len(label) > 128 for label in reference_types):
+                return {"error": "cluster_label contains an invalid cell-type label."}
 
             inf_aver = _estimate_reference_signatures(
                 adata_ref, cluster_label, batch_key, ref_epochs
@@ -184,6 +229,15 @@ class Cell2locationDeconvolutionTool:
             # recover the cell type robustly rather than stripping a fixed prefix.
             cell_types = [c.split("_w_sf_")[-1] for c in abundance.columns]
             means = np.asarray(abundance.mean(axis=0)).ravel()
+            if (
+                abundance.shape[0] != adata_sp.n_obs
+                or abundance.shape[1] != len(cell_types)
+                or not 1 <= len(cell_types) <= _MAX_CELL_TYPES
+                or any(not cell_type or len(cell_type) > 128 for cell_type in cell_types)
+                or not np.isfinite(means).all()
+                or (means < 0).any()
+            ):
+                return {"error": "cell2location returned invalid abundance output."}
             mean_abundance = {
                 ct: round(float(m), 6) for ct, m in zip(cell_types, means)
             }
@@ -198,8 +252,8 @@ class Cell2locationDeconvolutionTool:
                     "CPU; raise on GPU for production-quality posteriors)."
                 ),
             }
-        except Exception as exc:  # never raise out of run()
-            return {"error": f"cell2location deconvolution failed: {exc}"}
+        except Exception:  # never raise out of run()
+            return {"error": "cell2location deconvolution failed on the provider."}
 
 
 if __name__ == "__main__":

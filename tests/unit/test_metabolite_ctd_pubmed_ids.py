@@ -1,16 +1,13 @@
-"""Regression guard for Fix-R27D-1 in metabolite_tool.py's `_ctd_diseases`
-(the RENCI Automat CTD-mirror fallback used since CTD's native
-batchQuery.go became CAPTCHA-blocked).
+"""Regression guard for metabolite_tool.py's `_ctd_diseases`.
 
-Confirmed live (automat.renci.org/ctd chemical-disease edges for
-cholesterol/CHEBI:16113): edge_props only ever carries agent_type/
-knowledge_level/primary_knowledge_source/publications -- there is no
-predicate/qualified_predicate field, so `direct_evidence` is genuinely
-unavailable from this source (not a bug to "fix" further, now documented
-honestly). `publications` (PMID:xxxxx strings) IS present but was
-previously hardcoded to an empty list instead of being read, so
-`pubmed_ids` came back [] for every single result (100% of associations
-for both cholesterol and lutein in the original report).
+Originally backed by the RENCI Automat CTD mirror (used as a fallback after
+CTD's native batchQuery.go became CAPTCHA-blocked), and now backed by
+mydisease.info after that mirror was fully decommissioned (its registry no
+longer lists a 'ctd' backend at all -- see ctd_tool.py for the full
+history). mydisease.info's cached CTD data DOES carry a genuine
+`direct_evidence` field (unlike RENCI's edges, which never had one), and its
+`pubmed` field is sometimes a single string and sometimes a list of several
+PMIDs -- both shapes must be read into `PubMedIDs` without crashing.
 """
 
 from unittest.mock import MagicMock, patch
@@ -26,76 +23,143 @@ def _tool():
     return MetaboliteTool({"name": "metabolite_test", "fields": {}})
 
 
-def _cypher_resp(curie):
+def _query_resp(hits):
     r = MagicMock()
     r.raise_for_status = MagicMock()
-    r.json.return_value = {"results": [{"data": [{"row": [curie]}]}]}
-    return r
-
-
-def _edges_resp(edges):
-    r = MagicMock()
-    r.raise_for_status = MagicMock()
-    r.json.return_value = edges
+    r.json.return_value = {"hits": hits}
     return r
 
 
 class TestCtdDiseasesPubmedExtraction:
-    def test_publications_extracted_and_pmid_prefix_stripped(self):
+    def test_publications_extracted_for_matching_chemical(self):
         tool = _tool()
-        edges = [
-            [
-                {"name": "cholesterol", "id": "CHEBI:16113"},
-                {
-                    "agent_type": "manual_agent",
-                    "knowledge_level": "knowledge_assertion",
-                    "primary_knowledge_source": "infores:ctd",
-                    "publications": ["PMID:29486218", "PMID:20557099"],
+        hits = [
+            {
+                "_id": "MONDO:0013209",
+                "mondo": {"label": "metabolic dysfunction-associated steatotic liver disease"},
+                "ctd": {
+                    "chemical_related_to_disease": [
+                        {
+                            "chemical_name": "cholesterol",
+                            "mesh_chemical_id": "D002784",
+                            "direct_evidence": "marker/mechanism",
+                            "pubmed": ["29486218", "20557099"],
+                        }
+                    ]
                 },
-                {
-                    "name": "metabolic dysfunction-associated steatotic liver disease",
-                    "id": "MONDO:0013209",
-                },
-            ]
+            }
         ]
         with patch(
-            "tooluniverse.metabolite_tool.requests.post",
-            return_value=_cypher_resp("CHEBI:16113"),
-        ), patch(
             "tooluniverse.metabolite_tool.requests.get",
-            return_value=_edges_resp(edges),
+            return_value=_query_resp(hits),
         ):
             rows = tool._ctd_diseases("cholesterol")
 
         assert len(rows) == 1
         assert rows[0]["PubMedIDs"] == ["29486218", "20557099"]
-        assert rows[0]["DirectEvidence"] is None
+        assert rows[0]["DirectEvidence"] == "marker/mechanism"
+        assert rows[0]["DiseaseName"] == "metabolic dysfunction-associated steatotic liver disease"
 
-    def test_edge_with_no_publications_gets_empty_list_not_crash(self):
+    def test_single_pubmed_string_becomes_single_item_list(self):
         tool = _tool()
-        edges = [
-            [
-                {"name": "cholesterol", "id": "CHEBI:16113"},
-                {"agent_type": "manual_agent"},
-                {"name": "some disease", "id": "MONDO:0000001"},
-            ]
+        hits = [
+            {
+                "_id": "MONDO:0000001",
+                "mondo": {"label": "some disease"},
+                "ctd": {
+                    "chemical_related_to_disease": {
+                        "chemical_name": "cholesterol",
+                        "pubmed": "12345",
+                    }
+                },
+            }
         ]
         with patch(
-            "tooluniverse.metabolite_tool.requests.post",
-            return_value=_cypher_resp("CHEBI:16113"),
-        ), patch(
             "tooluniverse.metabolite_tool.requests.get",
-            return_value=_edges_resp(edges),
+            return_value=_query_resp(hits),
+        ):
+            rows = tool._ctd_diseases("cholesterol")
+
+        assert rows[0]["PubMedIDs"] == ["12345"]
+
+    def test_entry_with_no_publications_gets_empty_list_not_crash(self):
+        tool = _tool()
+        hits = [
+            {
+                "_id": "MONDO:0000001",
+                "mondo": {"label": "some disease"},
+                "ctd": {
+                    "chemical_related_to_disease": [
+                        {"chemical_name": "cholesterol", "direct_evidence": None}
+                    ]
+                },
+            }
+        ]
+        with patch(
+            "tooluniverse.metabolite_tool.requests.get",
+            return_value=_query_resp(hits),
         ):
             rows = tool._ctd_diseases("cholesterol")
 
         assert rows[0]["PubMedIDs"] == []
 
+    def test_non_matching_chemical_name_is_filtered_out(self):
+        # A hit's chemical_related_to_disease array can list many unrelated
+        # chemicals for the same disease -- only entries whose own name
+        # matches the query term should turn into rows.
+        tool = _tool()
+        hits = [
+            {
+                "_id": "MONDO:0000001",
+                "mondo": {"label": "some disease"},
+                "ctd": {
+                    "chemical_related_to_disease": [
+                        {"chemical_name": "aspirin", "pubmed": "111"},
+                        {"chemical_name": "cholesterol", "pubmed": "222"},
+                    ]
+                },
+            }
+        ]
+        with patch(
+            "tooluniverse.metabolite_tool.requests.get",
+            return_value=_query_resp(hits),
+        ):
+            rows = tool._ctd_diseases("cholesterol")
+
+        assert len(rows) == 1
+        assert rows[0]["PubMedIDs"] == ["222"]
+
+    def test_merged_ctd_list_document_is_flattened(self):
+        # BioThings occasionally merges more than one source record onto the
+        # same disease document, in which case `ctd` is a list of
+        # sub-documents instead of a single dict -- confirmed live for at
+        # least one MONDO document.
+        tool = _tool()
+        hits = [
+            {
+                "_id": "MONDO:0002525",
+                "mondo": {"label": "inherited lipid metabolism disorder"},
+                "ctd": [
+                    {
+                        "chemical_related_to_disease": [
+                            {"chemical_name": "cholesterol", "pubmed": "333"}
+                        ]
+                    }
+                ],
+            }
+        ]
+        with patch(
+            "tooluniverse.metabolite_tool.requests.get",
+            return_value=_query_resp(hits),
+        ):
+            rows = tool._ctd_diseases("cholesterol")
+
+        assert len(rows) == 1
+        assert rows[0]["PubMedIDs"] == ["333"]
+
 
 class TestGetDiseasesPubmedIdsFormat:
     def test_list_format_pubmed_ids_passed_through(self):
-        # PubMedIDs is now always a list (from _ctd_diseases), not the
-        # legacy pipe-delimited string -- both shapes must work.
         tool = _tool()
         with patch.object(
             tool,

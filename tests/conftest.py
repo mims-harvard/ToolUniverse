@@ -28,10 +28,10 @@ def pytest_sessionfinish(session, exitstatus):
     """Cleanup cache managers at the end of test session."""
     import gc
     from tooluniverse.cache.result_cache_manager import ResultCacheManager
-    
+
     # Force garbage collection to trigger __del__ methods
     gc.collect()
-    
+
     # Find and cleanup any remaining cache managers.
     # Note: some live objects (e.g. lazy proxies such as django.conf.settings, which a
     # transitive dependency may import) raise when their ``__class__`` is accessed, so the
@@ -44,7 +44,7 @@ def pytest_sessionfinish(session, exitstatus):
         if not is_manager:
             continue
         try:
-            worker = getattr(obj, '_worker_thread', None)
+            worker = getattr(obj, "_worker_thread", None)
             if worker is not None and worker.is_alive():
                 obj.close()
         except Exception:
@@ -57,7 +57,9 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "require_api_keys: tests requiring API keys")
     config.addinivalue_line("markers", "manual: manual tests (not run in CI)")
     config.addinivalue_line("markers", "unit: unit tests (fast, isolated)")
-    config.addinivalue_line("markers", "integration: integration tests (may use network)")
+    config.addinivalue_line(
+        "markers", "integration: integration tests (may use network)"
+    )
 
 
 def pytest_collection_modifyitems(items):
@@ -67,22 +69,24 @@ def pytest_collection_modifyitems(items):
         if not item.function.__doc__:
             warnings.warn(
                 f"Test {item.nodeid} missing docstring - consider adding one",
-                category=UserWarning
+                category=UserWarning,
             )
-        
+
         # Check for appropriate markers
         marks = [m.name for m in item.iter_markers()]
-        if not any(m in marks for m in ['unit', 'integration', 'slow', 'manual']):
+        if not any(m in marks for m in ["unit", "integration", "slow", "manual"]):
             warnings.warn(
                 f"Test {item.nodeid} missing category marker (unit/integration/slow/manual)",
-                category=UserWarning
+                category=UserWarning,
             )
-        
+
         # Check for meaningful test names
-        if not any(keyword in item.name.lower() for keyword in ['test_', 'check_', 'verify_']):
+        if not any(
+            keyword in item.name.lower() for keyword in ["test_", "check_", "verify_"]
+        ):
             warnings.warn(
                 f"Test {item.nodeid} may not follow naming convention (should start with test_)",
-                category=UserWarning
+                category=UserWarning,
             )
 
 
@@ -90,6 +94,7 @@ def pytest_collection_modifyitems(items):
 def tools_generated():
     """Ensure tools are generated before running tests."""
     from pathlib import Path
+
     tools_dir = Path("src/tooluniverse/tools")
     if not tools_dir.exists() or not any(tools_dir.glob("*.py")):
         pytest.fail("Tools not generated. Run: python scripts/build_tools.py")
@@ -100,15 +105,41 @@ def tools_generated():
 def tooluniverse_instance():
     """Session-scoped ToolUniverse instance for better performance."""
     from tooluniverse import ToolUniverse
+
     tu = ToolUniverse()
     tu.load_tools()
     yield tu
     # Cleanup: ensure cache manager is properly closed
     try:
-        if hasattr(tu, 'cache_manager'):
+        if hasattr(tu, "cache_manager"):
             tu.cache_manager.close()
     except Exception:
         pass
+
+
+@pytest.fixture(autouse=True)
+def _reset_faers_report_total_memo():
+    """Keep the FAERS report-total memo from leaking between tests.
+
+    The memo is a process-global, so without this a test that lets a probe
+    succeed hands its answer to the next test that stubs the same probe to
+    FAIL -- which is worse than ordinary test pollution, because the assertion
+    under test is usually "a failed measurement reads as null, not as a
+    number", and a leaked entry supplies exactly the number that hides the
+    bug. Measured: 13 of the 20 failures this memo caused on introduction were
+    this, including test_faers_count_facet_coverage asserting a null
+    denominator and receiving 4741 cached by an earlier test in its own file.
+
+    Autouse and unconditional: the tests that need it are spread across six
+    pre-existing FAERS files that have no reason to know the memo exists, and
+    a cache whose isolation is opt-in is one import away from silently
+    reintroducing this.
+    """
+    from tooluniverse.openfda_adv_tool import _query_total_memo
+
+    _query_total_memo.clear()
+    yield
+    _query_total_memo.clear()
 
 
 @pytest.fixture
@@ -117,7 +148,9 @@ def disable_network(monkeypatch: pytest.MonkeyPatch):
     import requests
 
     def _raise(*args, **kwargs):  # type: ignore[no-untyped-def]
-        raise RuntimeError("Network disabled in unit test. Use @pytest.mark.integration for network tests.")
+        raise RuntimeError(
+            "Network disabled in unit test. Use @pytest.mark.integration for network tests."
+        )
 
     monkeypatch.setattr(requests.sessions.Session, "request", _raise)
     return None
@@ -132,6 +165,7 @@ def tmp_workdir(tmp_path, monkeypatch: pytest.MonkeyPatch):
 # ---------------------------------------------------------------------------
 # Shared cache-related fixtures (used by test_cache_*, test_tooluniverse_cache_*)
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def memory_cache_manager():
@@ -178,5 +212,3 @@ def cache_env(tmp_path, monkeypatch):
     monkeypatch.setenv("TOOLUNIVERSE_CACHE_MEMORY_SIZE", "4")
     monkeypatch.setenv("TOOLUNIVERSE_CACHE_PATH", cache_path)
     return cache_path
-
-

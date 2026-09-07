@@ -29,71 +29,45 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "query_name": {
-                    "type": "string",
-                    "description": "Original query name"
-                  },
-                  "matched_name": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Name matched in taxonomy"
-                  },
-                  "ott_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Open Tree Taxonomy identifier"
-                  },
-                  "is_synonym": {
-                    "type": "boolean",
-                    "description": "Whether matched name is a synonym"
-                  },
-                  "score": {
-                    "type": "number",
-                    "description": "Match confidence score (0-1)"
-                  },
-                  "nomenclature_code": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Nomenclature code (ICZN, ICN, etc.)"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "context": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Taxonomic context used for matching"
-                },
-                "total_results": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "query_name": {
+                "type": "string",
+                "description": "Original query name"
+              },
+              "matched_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Name matched in taxonomy"
+              },
+              "ott_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Open Tree Taxonomy identifier"
+              },
+              "is_synonym": {
+                "type": "boolean",
+                "description": "Whether matched name is a synonym"
+              },
+              "score": {
+                "type": "number",
+                "description": "Match confidence score (0-1)"
+              },
+              "nomenclature_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Nomenclature code (ICZN, ICN, etc.)"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -141,69 +115,47 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "ott_id": {
-                  "type": "integer",
-                  "description": "Open Tree Taxonomy ID"
-                },
-                "name": {
-                  "type": "string",
-                  "description": "Taxon name"
-                },
-                "rank": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Taxonomic rank (species, genus, family, etc.)"
-                },
-                "synonyms": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Known synonyms"
-                },
-                "tax_sources": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Source databases (e.g., ncbi:9606, gbif:2436436)"
-                },
-                "flags": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Taxonomic flags (extinct, incertae_sedis, etc.)"
-                },
-                "is_suppressed": {
-                  "type": "boolean",
-                  "description": "Whether taxon is suppressed from synthesis"
-                }
-              }
+            "ott_id": {
+              "type": "integer",
+              "description": "Open Tree Taxonomy ID"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "taxonomy_version": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                }
-              }
+            "name": {
+              "type": "string",
+              "description": "Taxon name"
+            },
+            "rank": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Taxonomic rank (species, genus, family, etc.)"
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Known synonyms"
+            },
+            "tax_sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Source databases (e.g., ncbi:9606, gbif:2436436)"
+            },
+            "flags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Taxonomic flags (extinct, incertae_sedis, etc.)"
+            },
+            "is_suppressed": {
+              "type": "boolean",
+              "description": "Whether taxon is suppressed from synthesis"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -251,64 +203,42 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "mrca_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Name of the MRCA taxon"
-                },
-                "mrca_ott_id": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "OTT ID of the MRCA taxon"
-                },
-                "mrca_rank": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Taxonomic rank of the MRCA"
-                },
-                "mrca_node_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Node ID in the synthetic tree"
-                },
-                "num_tips": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Number of descendant tips in the synthetic tree"
-                }
-              }
+            "mrca_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Name of the MRCA taxon"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "input_ott_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "integer"
-                  }
-                }
-              }
+            "mrca_ott_id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "OTT ID of the MRCA taxon"
+            },
+            "mrca_rank": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Taxonomic rank of the MRCA"
+            },
+            "mrca_node_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Node ID in the synthetic tree"
+            },
+            "num_tips": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of descendant tips in the synthetic tree"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -353,43 +283,18 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "newick": {
-                  "type": "string",
-                  "description": "Phylogenetic tree in Newick format"
-                },
-                "supporting_studies": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Study IDs supporting the topology"
-                }
-              }
+            "newick": {
+              "type": "string",
+              "description": "Phylogenetic tree in Newick format"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "input_ott_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "integer"
-                  }
-                },
-                "num_taxa": {
-                  "type": "integer"
-                }
-              }
+            "supporting_studies": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Study IDs supporting the topology"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

@@ -276,7 +276,10 @@ class ArXivPDFSnippetsTool(BaseTool):
         if not MARKITDOWN_AVAILABLE:
             return {
                 "status": "error",
-                "error": "markitdown library not available. Install with: pip install 'markitdown[all]'",
+                "error": (
+                    "markitdown library not available. Install with: "
+                    "pip install 'markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx,youtube-transcription]'"
+                ),
                 "retryable": False,
             }
 
@@ -380,10 +383,10 @@ class ArXivPDFSnippetsTool(BaseTool):
                 total_chars += len(snippet)
                 found += 1
 
-        return {
-            "status": "success",
+        payload = {
             "pdf_url": final_pdf_url,
             "snippets": snippets,
             "snippets_count": len(snippets),
             "truncated": total_chars >= max_total_chars,
         }
+        return {"status": "success", **payload, "data": payload}

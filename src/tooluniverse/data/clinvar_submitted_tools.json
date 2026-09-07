@@ -11,7 +11,9 @@
           "description": "ClinVar variant identifier. Accepts a VCV accession (e.g. 'VCV000013961') OR a bare ClinVar variation id (e.g. '13961'); a numeric id is normalized to VCV%09d. Example: 'VCV000013961' (BRAF V600E)."
         }
       },
-      "required": ["variant_id"]
+      "required": [
+        "variant_id"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -141,10 +143,189 @@
         "variant_id": "13961"
       }
     ],
-    "label": ["clinvar", "variant", "clinical_significance", "submitter", "scv"],
+    "label": [
+      "clinvar",
+      "variant",
+      "clinical_significance",
+      "submitter",
+      "scv"
+    ],
     "metadata": {
       "data_source": "NCBI ClinVar (eutils efetch, rettype=vcv)",
       "requires_api_key": false
     }
+  },
+  {
+    "name": "ClinVar_search_by_region",
+    "description": "Find ClinVar variants that OVERLAP a genomic region, including large copy-number variants that begin far outside it. Use this for 'which variant is located at chr:start-end' questions: Entrez's chrpos search matches a variant's START position, so a narrow window misses a pathogenic CNV that spans the region but starts megabases upstream (an 11 bp search at chr7:155593770-155593780 returns nothing, though a 1.5 Mb pathogenic loss covers it). The search therefore widens the window upstream by 'margin' and keeps only records whose span genuinely overlaps; records Entrez indexes as single-base are excluded from the upstream part of that window, since a one-base variant starting outside the region cannot reach into it. Results are sorted smallest span first, so the most specific overlapping variant comes first. Completeness is reported, not assumed: 'total_available' is Entrez's own count for the search, 'n_candidates' is how many of those records were actually fetched and checked for overlap, and 'truncated' is true (with a 'truncation_note') when the second number is smaller than the first -- in that case an empty or short 'variants' list is NOT evidence that nothing overlaps the region.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "region": {
+          "type": "string",
+          "description": "Region as written, e.g. 'chr7:155593770-155593780'. Alternative to chrom/start/end."
+        },
+        "chrom": {
+          "type": "string",
+          "description": "Chromosome, e.g. '7' or 'chr7'."
+        },
+        "start": {
+          "type": "integer",
+          "description": "Region start (1-based)."
+        },
+        "end": {
+          "type": "integer",
+          "description": "Region end (1-based, inclusive)."
+        },
+        "assembly": {
+          "type": "string",
+          "enum": [
+            "GRCh37",
+            "GRCh38"
+          ],
+          "description": "Assembly the coordinates are in. Default GRCh37.",
+          "default": "GRCh37"
+        },
+        "clinical_significance": {
+          "type": "string",
+          "description": "Optional filter, e.g. 'pathogenic'."
+        },
+        "margin": {
+          "type": "integer",
+          "description": "How far upstream to look for variants that start before the region and span into it. Default 2000000. Raising it costs few extra candidates because single-base records upstream are filtered out, so it is a safe way to reach larger spanning CNVs -- unless 'truncated' is already true, in which case a wider window only makes the truncation worse.",
+          "default": 2000000
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum overlapping variants to return; the full number found is reported as 'n_overlapping'. Default 50.",
+          "default": 50
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "term": {
+              "type": "string",
+              "description": "The Entrez query that was executed."
+            },
+            "total_available": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Entrez's own count of records matching 'term' -- the size of the full match set, not the number inspected. Null if esearch did not report a count."
+            },
+            "n_candidates": {
+              "type": "integer",
+              "description": "How many matching records this call actually fetched summaries for and checked for overlap. Capped per call, which is what 'truncated' reports."
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when n_candidates is less than total_available, i.e. the region was only partially scanned and 'variants' may be missing overlapping records."
+            },
+            "truncation_note": {
+              "type": "string",
+              "description": "Present only when 'truncated' is true: states how many of how many records were inspected and why the omitted ones are not the least relevant."
+            },
+            "n_overlapping": {
+              "type": "integer",
+              "description": "How many of the inspected records genuinely overlap the region. Larger than len(variants) when capped by 'max_results'."
+            },
+            "variants": {
+              "type": "array",
+              "description": "Overlapping variants, smallest span first, capped at 'max_results'.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "variation_id": {
+                    "type": "string",
+                    "description": "ClinVar numeric variation id."
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ClinVar record title (HGVS expression or cytogenetic CNV name)."
+                  },
+                  "obj_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Variant type, e.g. 'single nucleotide variant', 'copy number loss'."
+                  },
+                  "chr": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Chromosome the placement is on."
+                  },
+                  "start": {
+                    "type": "integer",
+                    "description": "Placement start in the requested assembly."
+                  },
+                  "stop": {
+                    "type": "integer",
+                    "description": "Placement stop in the requested assembly."
+                  },
+                  "span": {
+                    "type": "integer",
+                    "description": "stop - start + 1, the number of bases the variant covers."
+                  },
+                  "classification": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Aggregate germline classification, e.g. 'Pathogenic'."
+                  }
+                }
+              }
+            },
+            "note": {
+              "type": "string",
+              "description": "How the widened-window search works and what the counts mean."
+            }
+          },
+          "required": [
+            "term",
+            "total_available",
+            "n_candidates",
+            "truncated",
+            "n_overlapping",
+            "variants",
+            "note"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "fields": {
+      "operation": "search_by_region"
+    },
+    "type": "ClinVarSearchByRegion",
+    "test_examples": [
+      {
+        "region": "chr7:155593770-155593780",
+        "assembly": "GRCh37",
+        "clinical_significance": "pathogenic"
+      }
+    ]
   }
 ]

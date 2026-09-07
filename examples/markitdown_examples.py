@@ -5,7 +5,7 @@ MarkItDown Tools Examples
 This script demonstrates basic usage of MarkItDown tools in ToolUniverse.
 
 Prerequisites:
-    pip install 'markitdown[all]'
+    pip install 'markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx,youtube-transcription]'
 
 Usage:
     python examples/markitdown_examples.py

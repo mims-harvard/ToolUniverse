@@ -37,156 +37,131 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "pdb_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "PDB identifier"
-                  },
-                  "title": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Structure title"
-                  },
-                  "resolution": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Resolution in Angstroms"
-                  },
-                  "molecular_weight_kda": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Molecular weight in kDa"
-                  },
-                  "atom_count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Number of deposited atoms"
-                  },
-                  "polymer_entity_count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Number of polymer entities"
-                  },
-                  "nonpolymer_entity_count": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Number of non-polymer entities (ligands)"
-                  },
-                  "experimental_method": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Experimental method"
-                  },
-                  "deposit_date": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Deposition date"
-                  },
-                  "release_date": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Initial release date"
-                  },
-                  "citation_pubmed_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "PubMed ID of primary citation"
-                  },
-                  "citation_title": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Title of primary citation"
-                  },
-                  "citation_journal": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Journal abbreviation"
-                  },
-                  "citation_year": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ],
-                    "description": "Publication year"
-                  },
-                  "unit_cell_a": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Unit cell dimension a"
-                  },
-                  "unit_cell_b": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Unit cell dimension b"
-                  },
-                  "unit_cell_c": {
-                    "type": [
-                      "number",
-                      "null"
-                    ],
-                    "description": "Unit cell dimension c"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "requested_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "returned": {
-                  "type": "integer"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pdb_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PDB identifier"
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Structure title"
+              },
+              "resolution": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Resolution in Angstroms"
+              },
+              "molecular_weight_kda": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Molecular weight in kDa"
+              },
+              "atom_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of deposited atoms"
+              },
+              "polymer_entity_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of polymer entities"
+              },
+              "nonpolymer_entity_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of non-polymer entities (ligands)"
+              },
+              "experimental_method": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Experimental method"
+              },
+              "deposit_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Deposition date"
+              },
+              "release_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Initial release date"
+              },
+              "citation_pubmed_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "PubMed ID of primary citation"
+              },
+              "citation_title": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Title of primary citation"
+              },
+              "citation_journal": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Journal abbreviation"
+              },
+              "citation_year": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Publication year"
+              },
+              "unit_cell_a": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Unit cell dimension a"
+              },
+              "unit_cell_b": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Unit cell dimension b"
+              },
+              "unit_cell_c": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Unit cell dimension c"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -234,136 +209,114 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "comp_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Chemical component identifier"
-                },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Chemical name"
-                },
-                "formula": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Molecular formula"
-                },
-                "formula_weight": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
-                  "description": "Molecular weight in Da"
-                },
-                "type": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Component type (non-polymer, peptide-like, etc.)"
-                },
-                "parent_comp_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Parent component if modified residue"
-                },
-                "inchikey": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "InChIKey structural identifier"
-                },
-                "smiles": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "SMILES chemical notation"
-                },
-                "initial_release_date": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Date first released in PDB"
-                },
-                "targets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Target protein name"
-                      },
-                      "actions": {
-                        "type": [
-                          "array",
-                          "null"
-                        ],
-                        "description": "Target actions (inhibitor, substrate, etc.)"
-                      },
-                      "provenance": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Data source (e.g., DrugBank)"
-                      },
-                      "accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Target accession (e.g., UniProt ID)"
-                      },
-                      "database": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Reference database name"
-                      }
-                    }
-                  },
-                  "description": "Known drug targets for this compound"
-                }
-              }
+            "comp_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Chemical component identifier"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "comp_id": {
-                  "type": "string"
-                },
-                "target_count": {
-                  "type": "integer"
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Chemical name"
+            },
+            "formula": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Molecular formula"
+            },
+            "formula_weight": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Molecular weight in Da"
+            },
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Component type (non-polymer, peptide-like, etc.)"
+            },
+            "parent_comp_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Parent component if modified residue"
+            },
+            "inchikey": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChIKey structural identifier"
+            },
+            "smiles": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "SMILES chemical notation"
+            },
+            "initial_release_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Date first released in PDB"
+            },
+            "targets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Target protein name"
+                  },
+                  "actions": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Target actions (inhibitor, substrate, etc.)"
+                  },
+                  "provenance": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Data source (e.g., DrugBank)"
+                  },
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Target accession (e.g., UniProt ID)"
+                  },
+                  "database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Reference database name"
+                  }
                 }
-              }
+              },
+              "description": "Known drug targets for this compound"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -425,134 +378,109 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "entity_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Entity identifier (e.g., '4HHB_1')"
-                  },
-                  "description": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Polymer description"
-                  },
-                  "chain_ids": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Comma-separated chain IDs"
-                  },
-                  "polymer_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Polymer type (Protein, DNA, RNA, etc.)"
-                  },
-                  "entity_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Entity type (polypeptide(L), polyribonucleotide, etc.)"
-                  },
-                  "sequence": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "One-letter amino acid sequence"
-                  },
-                  "sequence_length": {
-                    "type": "integer",
-                    "description": "Length of the sequence"
-                  },
-                  "annotations": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": [
-                            "string",
-                            "null"
-                          ],
-                          "description": "Annotation ID (Pfam, GO, etc.)"
-                        },
-                        "type": {
-                          "type": [
-                            "string",
-                            "null"
-                          ],
-                          "description": "Annotation type (Pfam, GO, etc.)"
-                        },
-                        "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ],
-                          "description": "Annotation description"
-                        }
-                      }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "entity_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Entity identifier (e.g., '4HHB_1')"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Polymer description"
+              },
+              "chain_ids": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Comma-separated chain IDs"
+              },
+              "polymer_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Polymer type (Protein, DNA, RNA, etc.)"
+              },
+              "entity_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Entity type (polypeptide(L), polyribonucleotide, etc.)"
+              },
+              "sequence": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "One-letter amino acid sequence"
+              },
+              "sequence_length": {
+                "type": "integer",
+                "description": "Length of the sequence"
+              },
+              "annotations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Annotation ID (Pfam, GO, etc.)"
                     },
-                    "description": "Domain/family/GO annotations"
-                  },
-                  "source_organisms": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "scientific_name": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "ncbi_taxonomy_id": {
-                          "type": [
-                            "integer",
-                            "null"
-                          ]
-                        }
-                      }
+                    "type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Annotation type (Pfam, GO, etc.)"
                     },
-                    "description": "Source organism(s)"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "requested_ids": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Annotation description"
+                    }
                   }
                 },
-                "returned": {
-                  "type": "integer"
-                }
+                "description": "Domain/family/GO annotations"
+              },
+              "source_organisms": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "scientific_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ncbi_taxonomy_id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "description": "Source organism(s)"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

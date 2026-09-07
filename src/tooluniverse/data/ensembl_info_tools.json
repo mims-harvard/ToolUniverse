@@ -31,107 +31,88 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "species": {
-                  "type": "string",
-                  "description": "Species name queried"
-                },
-                "assembly_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Assembly name (e.g., GRCh38.p14)"
-                },
-                "assembly_accession": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "GenBank/RefSeq assembly accession (e.g., GCA_000001405.29)"
-                },
-                "assembly_date": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Assembly release date"
-                },
-                "genebuild_method": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Method used for gene annotation"
-                },
-                "genebuild_last_update": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Date of last genebuild update"
-                },
-                "golden_path_length": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Total genome length in base pairs"
-                },
-                "karyotype": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Ordered list of chromosome names"
-                },
-                "coordinate_system_versions": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Available coordinate system versions (e.g., GRCh38, GRCh37)"
-                },
-                "total_regions": {
-                  "type": "integer",
-                  "description": "Total number of top-level regions"
-                },
-                "chromosomes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "description": "Chromosome name"
-                      },
-                      "length": {
-                        "type": "integer",
-                        "description": "Chromosome length in bp"
-                      }
-                    }
-                  },
-                  "description": "Chromosomes with lengths (max 30)"
-                }
-              }
+            "species": {
+              "type": "string",
+              "description": "Species name queried"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
+            "assembly_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Assembly name (e.g., GRCh38.p14)"
+            },
+            "assembly_accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GenBank/RefSeq assembly accession (e.g., GCA_000001405.29)"
+            },
+            "assembly_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Assembly release date"
+            },
+            "genebuild_method": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Method used for gene annotation"
+            },
+            "genebuild_last_update": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Date of last genebuild update"
+            },
+            "golden_path_length": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total genome length in base pairs"
+            },
+            "karyotype": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Ordered list of chromosome names"
+            },
+            "coordinate_system_versions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Available coordinate system versions (e.g., GRCh38, GRCh37)"
+            },
+            "total_regions": {
+              "type": "integer",
+              "description": "Total number of top-level regions"
+            },
+            "chromosomes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Chromosome name"
+                  },
+                  "length": {
+                    "type": "integer",
+                    "description": "Chromosome length in bp"
+                  }
                 }
-              }
+              },
+              "description": "Chromosomes with lengths (max 30)"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -177,113 +158,94 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "total_species": {
-                  "type": "integer",
-                  "description": "Total species in Ensembl"
-                },
-                "matched_species": {
-                  "type": "integer",
-                  "description": "Number of species matching search"
-                },
-                "search_term": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Search term used (null if listing all)"
-                },
-                "species": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Ensembl species name (e.g., homo_sapiens)"
-                      },
-                      "display_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Display name (e.g., Human)"
-                      },
-                      "common_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Common name"
-                      },
-                      "taxon_id": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ],
-                        "description": "NCBI taxonomy ID"
-                      },
-                      "assembly": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Current assembly name"
-                      },
-                      "accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Assembly accession"
-                      },
-                      "division": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Ensembl division (EnsemblVertebrates, EnsemblPlants, etc.)"
-                      },
-                      "strain": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Strain name if applicable"
-                      },
-                      "strain_collection": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Strain collection name"
-                      }
-                    }
-                  },
-                  "description": "Matched species (max 50)"
-                }
-              }
+            "total_species": {
+              "type": "integer",
+              "description": "Total species in Ensembl"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "search": {
-                  "type": "string"
+            "matched_species": {
+              "type": "integer",
+              "description": "Number of species matching search"
+            },
+            "search_term": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Search term used (null if listing all)"
+            },
+            "species": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ensembl species name (e.g., homo_sapiens)"
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Display name (e.g., Human)"
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Common name"
+                  },
+                  "taxon_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "NCBI taxonomy ID"
+                  },
+                  "assembly": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Current assembly name"
+                  },
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Assembly accession"
+                  },
+                  "division": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ensembl division (EnsemblVertebrates, EnsemblPlants, etc.)"
+                  },
+                  "strain": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Strain name if applicable"
+                  },
+                  "strain_collection": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Strain collection name"
+                  }
                 }
-              }
+              },
+              "description": "Matched species (max 50)"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

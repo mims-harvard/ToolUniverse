@@ -1,242 +1,100 @@
-# COMPASS Immunotherapy Treatment Prediction Tool - MCP Server
+# COMPASS immune-response remote tool
 
-A MCP tool from [Prism ToolSpace](https://huggingface.co/datasets/mims-harvard/ToolSpace) for running immune checkpoint inhibitor (ICI) response predictions using the [COMPASS model](https://github.com/mims-harvard/COMPASS). This tool processes the pateint level mRNA's TPM (transcripts per million) tumor expression profile and cancer context to predict patient responsiveness for immunotherapy and provides interpretable insights through immune cell concept analysis.
+## TOU validation and deployment status (2026-08-16)
 
+> The working CPU deployment ran the official all-cohort COMPASS checkpoint, converted to safetensors plus data-only preprocessing, on the official GIDE sample. In the pinned Torch 2.10.0 environment, the safe artifact and upstream checkpoint had zero difference in class probabilities and all 44 concept scores. This is execution-equivalence evidence, not a clinical-accuracy benchmark. Authenticated private Platform import and owner testing passed on 2026-08-16; public publication and independent-caller authorization/isolation remain untested.
 
-## Prerequisites
+- Operation: `run_compass_prediction`
+- Start: `python -m tooluniverse.remote.immune_compass.compass_tool`
+- Endpoint: `http://127.0.0.1:7003/mcp`
+- Provider configuration: set `TOOLUNIVERSE_REMOTE_DATA_ROOT`, `COMPASS_SAFE_MODEL_DIR`, and `COMPASS_DEVICE=cpu`. The live service loads safetensors/JSON/data-only NPZ and never calls `torch.load`.
+- TOU check: `tu doctor --forward http://127.0.0.1:7003/mcp --json`
+- Private relay: `tu serve --share --forward http://127.0.0.1:7003/mcp --name validation-immune-compass --workers 1`
 
-### 1. Install COMPASS Library
+Non-loopback binding requires `TOOLUNIVERSE_API_TOKEN`; otherwise keep the server on loopback. The relay requires `TOOLUNIVERSE_SERVICE_KEY`. Public publication, independent-caller testing, and clinical accuracy remain unvalidated.
 
-First, install the COMPASS library from the official repository:
+New-user check: `python scripts/remote_validation/setup_skill_preflight.py --implementation immune-compass`. Add `--check-provider-env` before launch, `--live` after launch, and `--check-connect-prereqs` before sharing. Live preflight checks exact MCP discovery only; it does not run or validate a model. The pinned relay SDK is not on PyPI and currently requires authorized GitHub repository access plus a configured SSH key, so a working local MCP server does not by itself prove that a new operator can share it.
 
-```bash
-# create a uv virtual enviroment for COMPASS setup
-uv venv compass --python 3.10
-source compass/bin/activate
-uv pip install -r requirements.txt
+The authenticated 2026-08-16 Platform matrix found all 30 private owner relays online and all 41 operations discoverable. This implementation was imported as unpublished owner draft(s), configured with a 120-second timeout, and invoked through `/expert-sessions/{id}/test`. Across the set, 38 unique operations passed return-schema and semantic validation; the three USPTO operations returned exact provider HTTP 403 and remain credential-blocked. Public publication, independent-caller authorization/isolation, broad saturation, and persistent supervision were not tested.
 
-# Install COMPASS
-uv pip install immuno-compass
+See the [complete setup and verification guide](../../../../skills/setup-immune-compass-remote-tool/SKILL.md).
 
-```
+`run_compass_prediction` performs real inference with the official COMPASS
+architecture and a provider-approved model artifact. The public service never
+uses `torch.load`: it reconstructs the reviewed architecture and reads weights
+from safetensors plus data-only preprocessing arrays.
 
-### 2. GPU Support (Optional)
+## Authorize once, then share with one short command
 
-For GPU acceleration, install CUDA-enabled PyTorch before installing other dependencies:
-
-```bash
-# For CUDA 11.7 (adjust version as needed)
-uv pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --index-url https://download.pytorch.org/whl/cu117
-
-```
-
-## Model Weights Setup
-
-### 1. Download Pre-trained Models
-
-Download the pre-trained COMPASS models from the official repository. Available models include:
-
-- **`pft_leave_IMVigor210.pt`** - Fine-tuned on IMVigor210 cohort (urothelial carcinoma) - *Default*
-- **`pft_leave_Gide.pt`** - Fine-tuned on Gide cohort (melanoma)
-- **`pretrainer.pt`** - Base pre-trained model
-- **`finetuner_pft_all.pt`** - Fine-tuned on all available cohorts
-
-You can download models from:
-- **Official Download Page**: https://www.immuno-compass.com/download/
-- **Direct Model Links**:
-  - IMVigor210: https://www.immuno-compass.com/download/model/LOCO/pft_leave_IMVigor210.pt
-  - Gide: https://www.immuno-compass.com/download/model/LOCO/pft_leave_Gide.pt
-  - Pre-trainer: https://www.immuno-compass.com/download/model/pretrainer.pt
-
-### 2. Directory Structure Setup
-
-Create the following directory structure for your model weights:
-
-```
-/path/to/your/compass/
-├── immune-compass/
-│   └── checkpoint/        # Model weights directory
-│       ├── pft_leave_IMVigor210.pt
-│       ├── pft_leave_Gide.pt
-│       ├── pretrainer.pt
-│       └── finetuner_pft_all.pt
-```
-
-### 3. Set Environment Variable
-
-Set the `COMPASS_MODEL_PATH` environment variable to point to your COMPASS installation:
+After installing this provider's dependencies and the pinned Connect relay SDK,
+and exporting its required resources, run once per machine (and again after key rotation):
 
 ```bash
-# Add to your ~/.bashrc or ~/.zshrc
-export COMPASS_MODEL_PATH="/path/to/your/compass"
+tu remote login
+# Or import an existing protected 0600 file without sourcing it:
+tu remote login --env-file /path/to/tooluniverse-service.env
 ```
 
-**Example Setup:**
-```bash
-# Create directory structure
-mkdir -p /path/to/your/compass/checkpoint
-cd /path/to/your/compass/checkpoint
-
-# Download model weights to checkpoint directory
-wget https://www.immuno-compass.com/download/model/LOCO/pft_leave_IMVigor210.pt
-wget https://www.immuno-compass.com/download/model/LOCO/pft_leave_Gide.pt
-
-# Set environment variable
-export COMPASS_MODEL_PATH="/path/to/your/compass"
-```
-
-## Input and Output Specifications
-
-### Input Format
-
-The tool expects patient level TPM gene expression data in **pickle format** (`.pkl` file) containing a pandas DataFrame with:
-
-- **Rows**: Samples/patients
-- **Columns**: Genes (standard gene symbols like "CD274", "PDCD1", "CTLA4")
-- **Values**: Normalized expression in TPM (Transcripts Per Million)
-- **Minimum**: ~100 genes recommended for reliable predictions
-
-For specifiction of how to prepare the patient TPM profile data, please refer to [COMPASS page](https://www.immuno-compass.com/).
-
-### Output Format
-
-The tool returns a structured JSON response:
-
-```json
-{
-  "prediction": {
-    "is_responder": true,
-    "top_concepts": [
-      {
-        "concept": "CD8+ T cells",
-        "score": 0.85
-      },
-      {
-        "concept": "NK cells",
-        "score": 0.72
-      },
-      ...
-    ]
-  },
-  "context_info": [
-    "COMPASS prediction completed successfully.",
-    "Sample classified as: RESPONDER",
-    "Analysis based on 15672 input genes.",
-    "Top 44 immune cell concepts identified."
-  ]
-}
-```
-
-**Output Fields:**
-- `is_responder` (bool): True if predicted responder (probability ≥ threshold)
-- `top_concepts` (list): Ranked immune cell concepts with importance scores
-- `context_info` (list): Human-readable analysis summary
-- `error` (optional): Error description if prediction failed
-
-## Running the MCP Server
-
-### 1. Start the Server
+Then each private share is:
 
 ```bash
-# Enable the uv environment
-uv source compass/bin/activate
-
-# Set environment variable (if not in bashrc)
-export COMPASS_MODEL_PATH="/path/to/your/compass"
-
-# Run the MCP server
-python compass_tool.py
+tu remote share immune-compass
 ```
 
-### 2. Server Configuration
+By default, `tu remote login` requests a short-lived device code, opens the TU
+Platform approval page, and polls until the signed-in user approves. No key
+copy/paste is required. On a headless machine, add `--no-browser` and open the
+printed link elsewhere. The CLI exchanges approval for a computer-only key,
+verifies `/remote-servers/preflight`, stores it in a local 0600 config file, and
+never displays it.
 
-The server runs with the following default settings:
-- **Host**: `0.0.0.0` (accepts connections from any IP)
-- **Port**: `7003` (configured to avoid conflicts)
-- **Transport**: `streamable-http`
-- **Mode**: Stateless HTTP
+The share command selects the reviewed environment, checks it, starts or reuses
+the exact loopback MCP tool set, runs the TU Platform preflight, and keeps the
+private relay in the foreground until Ctrl-C. Override defaults only when needed:
 
-### 3. Server Logs
-
-When starting successfully, you'll see:
-```
-Starting MCP server for COMPASS Immune Response Prediction Tool...
-Model: COMPASS (COMprehensive Pathway Analysis for Single-cell Sequencing)
-Application: Immune Checkpoint Inhibitor Response Prediction
-Server: FastMCP with streamable HTTP transport
-Port: 7003 (configured to avoid conflicts with other biomedical tools)
+```bash
+tu remote share immune-compass --name my-immune-compass-remote --workers 1
 ```
 
-## Tool Usage
+Use `tu remote run immune-compass` for local-only operation. Sharing does not publish a
+tool or prove scientific accuracy.
 
-### MCP Tool Function
+In an interactive terminal, sharing automatically starts the same browser flow
+when the key is missing, expired, or revoked. A malformed or revoked explicit
+`TOOLUNIVERSE_SERVICE_KEY` fails fast instead of being silently replaced; unset
+or correct it, then run `tu remote login`. Non-interactive jobs also fail fast.
+Use `tu remote logout` to remove only the locally stored key.
 
-The server exposes one main tool function:
+## Provision a model
 
-```python
-run_compass_prediction(
-    gene_expression_data_path: str,
-    threshold: float = 0.5,
-    root_path: str = None
-)
+The official checkpoint is a whole-object PyTorch pickle. Run the converter
+only in an isolated administrator environment after reviewing the source and
+pinning its digest. The official repository checkpoint used for validation is
+`example/model/finetuner_pft_all.pt` at upstream revision
+`0e5c87665247e3a300f28282c8bbcc14e26973bd`, with SHA-256
+`fc83d7b5eac3697bcd9d117acefa35b56cf4c4c3c5880de367c85a870aef4b0b`.
+
+```bash
+python convert_checkpoint.py finetuner_pft_all.pt safe-compass \
+  --expected-sha256 fc83d7b5eac3697bcd9d117acefa35b56cf4c4c3c5880de367c85a870aef4b0b \
+  --upstream-revision 0e5c87665247e3a300f28282c8bbcc14e26973bd
 ```
 
-**Parameters:**
-- `gene_expression_data_path` (str): Path to the pickle file containing TPM expression data
-- `threshold` (float): Probability threshold for responder classification (0.0-1.0)
-  - Default: 0.5 (balanced sensitivity/specificity)
-  - Lower values (~0.3): Higher sensitivity
-  - Higher values (~0.7): Higher specificity
-- `root_path` (str, optional): Custom path to model checkpoint directory
+The converter emits `model.safetensors`, `preprocessing.npz`, and
+`metadata.json`, with cross-checked artifact digests. It is not imported by the
+live service.
 
+## Deploy
 
-## Troubleshooting
-
-### Common Issues
-
-1. **Model Not Found Error**
-   ```
-   FileNotFoundError: COMPASS model checkpoint not found at /path/to/checkpoint
-   ```
-   - Ensure `COMPASS_MODEL_PATH` is set correctly
-   - Verify model weights are downloaded to the `checkpoint/` directory
-
-2. **Import Error**
-   ```
-   ModuleNotFoundError: No module named 'compass'
-   ```
-   - Install COMPASS: `uv pip install immuno-compass`
-   - Ensure you're in the correct conda environment
-
-
-3. **Input Data Format Error**
-   ```
-   ValueError: Input data must be a non-empty dictionary
-   ```
-   - Ensure input file is in pickle format with correct DataFrame structure
-   - Check that gene symbols are standard (e.g., "CD274", not "PD-L1")
-
-
-## References
-
-- **COMPASS Paper**: [Generalizable AI predicts immunotherapy outcomes across cancers and treatments](https://github.com/mims-harvard/COMPASS)
-- **Project Website**: https://www.immuno-compass.com/
-- **GitHub Repository**: https://github.com/mims-harvard/COMPASS
-- **Documentation**: https://compass.readthedocs.io/
-
-## Citation
-
-If you use this tool, please cite the COMPASS paper:
-
-```bibtex
-@article{shen2024compass,
-  title={Generalizable AI predicts immunotherapy outcomes across cancers and treatments},
-  author={Shen, Wanxiang and Nguyen, Thinh H. and Li, Michelle M. and Huang, Yepeng and Moon, Intae and Nair, Nitya and Marbach, Daniel and Zitnik, Marinka},
-  journal={medRxiv},
-  year={2024}
-}
+```bash
+export TOOLUNIVERSE_REMOTE_DATA_ROOT=/srv/tooluniverse/data
+export COMPASS_SAFE_MODEL_DIR=/srv/tooluniverse/compass-safe
+export COMPASS_DEVICE=cpu
+python -m tooluniverse.remote.immune_compass.compass_tool
 ```
 
-## License
-
-This tool is released under the MIT License, consistent with the original COMPASS project.
+Input is one sample in the official COMPASS TSV/CSV layout: `Index`, then
+integer `cancer_code` (0 through 32), then TPM genes. The table must be inside
+the provider data root and contain all 15,672 model genes. The server listens
+on `http://127.0.0.1:7003/mcp`; a non-loopback bind requires
+`TOOLUNIVERSE_API_TOKEN`.

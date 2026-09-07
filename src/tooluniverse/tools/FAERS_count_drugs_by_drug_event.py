@@ -1,7 +1,7 @@
 """
 FAERS_count_drugs_by_drug_event
 
-Count the number of different drugs involved in FDA adverse event reports. All filters (patientse...
+Count the number of different drugs involved in FDA adverse event reports. All filters (medicinal...
 """
 
 from typing import Any, Optional, Callable
@@ -9,20 +9,24 @@ from ._shared_client import get_shared_client
 
 
 def FAERS_count_drugs_by_drug_event(
+    medicinalproduct: Optional[str] = None,
     patientsex: Optional[str] = None,
     patientagegroup: Optional[str] = None,
     occurcountry: Optional[str] = None,
     serious: Optional[str] = None,
+    limit: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Count the number of different drugs involved in FDA adverse event reports. All filters (patientse...
+    Count the number of different drugs involved in FDA adverse event reports. All filters (medicinal...
 
     Parameters
     ----------
+    medicinalproduct : str
+        Optional: restrict to reports that mention this drug, so the rows become that...
     patientsex : str
         Optional: Filter by patient sex. Omit this parameter if you don't want to fil...
     patientagegroup : str
@@ -31,6 +35,8 @@ def FAERS_count_drugs_by_drug_event(
         Optional: Filter by country where event occurred (ISO2 code, e.g., 'US', 'GB'...
     serious : str
         Optional: Filter by event seriousness. Omit this parameter if you don't want ...
+    limit : int
+        Optional: maximum number of ranked terms to return (default 100, which is ope...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,10 +54,12 @@ def FAERS_count_drugs_by_drug_event(
     _args = {
         k: v
         for k, v in {
+            "medicinalproduct": medicinalproduct,
             "patientsex": patientsex,
             "patientagegroup": patientagegroup,
             "occurcountry": occurcountry,
             "serious": serious,
+            "limit": limit,
         }.items()
         if v is not None
     }

@@ -19,6 +19,34 @@ from .tool_registry import register_tool
 OMA_BASE_URL = "https://omabrowser.org/api"
 
 
+def _page_size(value: Any, default: int, maximum: Any = 100) -> int:
+    """Normalize a caller-supplied page size.
+
+    Every paging parameter in oma_tools.json is declared ``["integer", "null"]``,
+    and the call sites went on to compare the value against a bound, so ``null``
+    raised ``TypeError: '<' not supported between instances of 'int' and
+    'NoneType'``, reported as an opaque "Unexpected error querying OMA".
+
+    That was never reachable through ``run_one_function``: execute_function.py
+    strips ``None`` arguments before dispatch on the grounds that "None means not
+    provided". This helper is therefore hardening for the paths that do not go
+    through it -- importing the class directly, as this repo's own unit tests do
+    -- and not a fix for something users were hitting. It is kept because a tool
+    that accepts its own declared argument only via one entry point is a trap for
+    the next caller, and because "absent" and "null" genuinely mean the same
+    thing here. The user-visible defect in this module was `per_page` being
+    declared and then ignored; see ``_get_orthologs``.
+    """
+    if value is None:
+        return default
+    try:
+        value = int(value)
+    except (TypeError, ValueError):
+        return default
+    value = max(1, value)
+    return value if maximum is None else min(value, maximum)
+
+
 @register_tool("OMATool")
 class OMATool(BaseTool):
     """
@@ -135,10 +163,18 @@ class OMATool(BaseTool):
             }
 
         rel_type = arguments.get("rel_type")
-        per_page = arguments.get("per_page", 20)
+        # No `maximum`: /protein/{id}/orthologs/ has no server-side paging, so the
+        # full set is already in hand and any cap here would make the tail of it
+        # unreachable rather than merely unrequested.
+        per_page = _page_size(arguments.get("per_page"), 20, maximum=None)
 
         url = f"{OMA_BASE_URL}/protein/{protein_id}/orthologs/"
-        params = {"per_page": min(per_page, 100)}
+        # `per_page` is deliberately not forwarded. This endpoint accepts it,
+        # returns HTTP 200, and ignores it: measured against P04637, per_page=3,
+        # 20 and 100 each returned all 157 orthologs, and the response carries no
+        # Link, X-Total-Count or content-range header to page with. Sending it
+        # only implied a limit that was never applied, so the limit is applied here.
+        params = {}
         if rel_type:
             params["rel_type"] = rel_type
 
@@ -164,14 +200,34 @@ class OMATool(BaseTool):
                 }
             )
 
+        total_count = len(results)
+        results = results[:per_page]
+        truncated = len(results) < total_count
+
+        metadata = {
+            "source": "OMA Browser",
+            "query": protein_id,
+            # `count` / `total_count` / `truncated` are the disclosure vocabulary
+            # this repo settled on; `total_orthologs` is gone rather than kept as
+            # a synonym for `total_count`, because it used to mean "rows returned"
+            # (the two coincided only while nothing was ever sliced) and a key
+            # that silently changes meaning is worse than a key that is absent.
+            "count": len(results),
+            "total_count": total_count,
+            "truncated": truncated,
+        }
+        if truncated:
+            metadata["truncation_note"] = (
+                f"Showing {len(results)} of {total_count} orthologs. OMA returns "
+                f"the complete set in one response and does not paginate this "
+                f"endpoint, so raise 'per_page' (e.g. per_page={total_count}) to "
+                f"see the rest; there is no next page to fetch."
+            )
+
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "OMA Browser",
-                "query": protein_id,
-                "total_orthologs": len(results),
-            },
+            "metadata": metadata,
         }
 
     def _get_hog(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -293,7 +349,7 @@ class OMATool(BaseTool):
                 ),
             }
 
-        limit = arguments.get("limit", 25)
+        limit = _page_size(arguments.get("limit"), 25)
 
         url = f"{OMA_BASE_URL}/xref/"
         response = requests.get(url, params={"search": search}, timeout=self.timeout)
@@ -302,7 +358,7 @@ class OMATool(BaseTool):
 
         results = []
         # /xref/?search= returns a flat list of cross-reference matches.
-        for x in data[: min(limit, 100)] if isinstance(data, list) else []:
+        for x in data[:limit] if isinstance(data, list) else []:
             genome = x.get("genome") or {}
             results.append(
                 {
@@ -341,11 +397,14 @@ class OMATool(BaseTool):
                 ),
             }
 
-        per_page = arguments.get("per_page", 20)
+        # Unlike /protein/{id}/orthologs/, this endpoint does honour per_page
+        # (measured: per_page=3 returned 3 rows, per_page=20 returned 20, each
+        # with a Link header), so the value is still forwarded upstream.
+        per_page = _page_size(arguments.get("per_page"), 20)
         page = arguments.get("page")
 
         url = f"{OMA_BASE_URL}/pairs/{genome1}/{genome2}/"
-        params = {"per_page": min(per_page, 100)}
+        params = {"per_page": per_page}
         if page:
             params["page"] = page
 

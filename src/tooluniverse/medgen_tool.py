@@ -20,6 +20,7 @@ from typing import Any
 from xml.etree import ElementTree
 
 from .base_rest_tool import BaseRESTTool
+from .ncbi_eutils_tool import esearch_query_disclosure
 from .tool_registry import register_tool
 
 EUTILS_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
@@ -112,20 +113,31 @@ class MedGenTool(BaseRESTTool):
         resp = self._ncbi_get(f"{EUTILS_BASE}/esearch.fcgi", params)
         search_data = resp.json()
 
-        id_list = search_data.get("esearchresult", {}).get("idlist", [])
-        total_count = int(search_data.get("esearchresult", {}).get("count", 0))
+        esearch_result = search_data.get("esearchresult", {})
+        id_list = esearch_result.get("idlist", [])
+        total_count = int(esearch_result.get("count", 0))
+
+        # Fix-54A-1: medgen esearch drops phrases it cannot match and answers
+        # the remainder, so ``metadata.query`` named a query that was not run.
+        # Measured: "cystic fibrosis zzzqqqxyz nonexistentterm12345" returned
+        # total_count 79 -- identical to "cystic fibrosis" alone -- with both
+        # nonsense phrases in errorlist.phrasesnotfound and nothing surfaced.
+        disclosure = esearch_query_disclosure(esearch_result, source="MedGen")
 
         if not id_list:
+            metadata = {
+                "query": query,
+                "source": "NCBI MedGen",
+            }
+            if disclosure:
+                metadata["query_disclosure"] = disclosure
             return {
                 "status": "success",
                 "data": {
                     "conditions": [],
                     "total_count": 0,
                 },
-                "metadata": {
-                    "query": query,
-                    "source": "NCBI MedGen",
-                },
+                "metadata": metadata,
             }
 
         # Fetch summaries for found IDs
@@ -171,20 +183,23 @@ class MedGenTool(BaseRESTTool):
                 }
             )
 
+        metadata = {
+            "query": query,
+            "source": "NCBI MedGen",
+            "description": (
+                "MedGen aggregates genetic condition data from OMIM, Orphanet, "
+                "ClinVar, HPO, GTR, and GeneReviews."
+            ),
+        }
+        if disclosure:
+            metadata["query_disclosure"] = disclosure
         return {
             "status": "success",
             "data": {
                 "conditions": conditions,
                 "total_count": total_count,
             },
-            "metadata": {
-                "query": query,
-                "source": "NCBI MedGen",
-                "description": (
-                    "MedGen aggregates genetic condition data from OMIM, Orphanet, "
-                    "ClinVar, HPO, GTR, and GeneReviews."
-                ),
-            },
+            "metadata": metadata,
         }
 
     def _get_condition(self, arguments: dict) -> dict:

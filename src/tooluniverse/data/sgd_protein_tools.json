@@ -25,86 +25,75 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "gene_name": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "systematic_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "sgd_link": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "domain_count": {
-                  "type": "integer"
-                },
-                "domains": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "source": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "start": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "end": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "domain_link": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "systematic_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sgd_link": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "domain_count": {
+              "type": "integer"
+            },
+            "domains": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "domain_link": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
-              },
-              "required": [
-                "domain_count",
-                "domains"
-              ]
+              }
             }
           },
           "required": [
-            "data"
+            "domain_count",
+            "domains"
           ]
         },
         {
@@ -158,80 +147,69 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "gene_name": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "systematic_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "sgd_link": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "site_count": {
-                  "type": "integer"
-                },
-                "sites": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "modification": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "residue": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "position": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      },
-                      "reference": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "pubmed_id": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
+            "systematic_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sgd_link": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "site_count": {
+              "type": "integer"
+            },
+            "sites": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "modification": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "residue": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "position": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pubmed_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   }
                 }
-              },
-              "required": [
-                "site_count",
-                "sites"
-              ]
+              }
             }
           },
           "required": [
-            "data"
+            "site_count",
+            "sites"
           ]
         },
         {
@@ -285,72 +263,61 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "const": "success"
+            "query": {
+              "type": "string"
             },
-            "data": {
+            "total_references": {
+              "type": "integer"
+            },
+            "counts_by_category": {
               "type": "object",
-              "properties": {
-                "query": {
-                  "type": "string"
-                },
-                "total_references": {
-                  "type": "integer"
-                },
-                "counts_by_category": {
+              "additionalProperties": {
+                "type": "integer"
+              }
+            },
+            "references": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
                   "type": "object",
-                  "additionalProperties": {
-                    "type": "integer"
-                  }
-                },
-                "references": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "citation": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "pubmed_id": {
-                          "type": [
-                            "integer",
-                            "null"
-                          ]
-                        },
-                        "year": {
-                          "type": [
-                            "integer",
-                            "null"
-                          ]
-                        },
-                        "reference_link": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        }
-                      }
+                  "properties": {
+                    "citation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "pubmed_id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "year": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "reference_link": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   }
-                },
-                "truncated_per_category": {
-                  "type": "integer"
                 }
-              },
-              "required": [
-                "total_references",
-                "counts_by_category",
-                "references"
-              ]
+              }
+            },
+            "truncated_per_category": {
+              "type": "integer"
             }
           },
           "required": [
-            "data"
+            "total_references",
+            "counts_by_category",
+            "references"
           ]
         },
         {

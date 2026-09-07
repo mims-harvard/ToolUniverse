@@ -6,10 +6,190 @@ population genetics data, variant frequencies, and gene constraint metrics
 using GraphQL.
 """
 
+import re
 import requests
-from typing import Dict, Any
+from typing import Dict, Any, Optional, Tuple
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+
+
+# --- Dataset provenance ------------------------------------------------------
+#
+# Every gnomAD response echoes the dataset that actually answered and the
+# assembly its coordinates are in, because neither was previously recoverable
+# from the payload. Two facts make that dangerous rather than merely untidy:
+#
+# 1. The defaults in this family deliberately differ. `gnomad_get_variant`,
+#    `gnomad_search_variants` and `gnomad_get_region` default to `gnomad_r3`,
+#    while `gnomad_get_variant_populations` and `gnomad_get_constraint` default
+#    to `gnomad_r4`. Sibling calls on the same variant therefore disagree by
+#    design, and nothing in the response said which callset produced which
+#    number.
+# 2. gnomAD v3 is a genomes-only callset -- it has no exome component at all --
+#    so under the r3 default `exome` is structurally null for *every* variant,
+#    which is indistinguishable from "not observed in exomes". On GJB2 c.35delG
+#    (13-20189546-AC-A) that silently hid the 10,423 exome allele observations
+#    out of 1,461,600 alleles that `gnomad_r4` reports. ExAC is the mirror
+#    image: exomes only, `genome` always null.
+#
+# Verified live against the API's own `variant.reference_genome` field and the
+# per-dataset allele numbers for 13-20189546-AC-A (GRCh38) and
+# 13-20763685-AC-A (GRCh37):
+#   gnomad_r4, gnomad_r4_non_ukb       GRCh38  genome an=151882, exome an=1461600
+#   gnomad_r3 + its five subsets       GRCh38  genome an=151764, exome null
+#   gnomad_r2_1 + its four subsets     GRCh37  genome an=31334,  exome an=249362
+#   exac                               GRCh37  genome null,      exome an=121352
+# Structural-variant callsets follow the same version-to-assembly rule and have
+# no exome/genome split at all, hence `None` rather than an empty tuple.
+#
+# Matched by prefix so subsets released later resolve without a code change.
+_DATASET_FAMILIES = (
+    # (dataset id prefix, reference assembly, callsets the dataset contains).
+    # `None` means the callset has no exome/genome split at all (SV callsets).
+    ("gnomad_sv_r2_1", "GRCh37", None),
+    ("gnomad_sv_r4", "GRCh38", None),
+    ("gnomad_r2_1", "GRCh37", ("genome", "exome")),
+    ("gnomad_r3", "GRCh38", ("genome",)),
+    ("gnomad_r4", "GRCh38", ("genome", "exome")),
+    ("exac", "GRCh37", ("exome",)),
+)
+
+_DEFAULT_ASSEMBLY = "GRCh38"
+
+# Where to send a caller for the callset the selected dataset does not carry.
+_CALLSET_ALTERNATIVES = {
+    "exome": "dataset='gnomad_r4' (GRCh38) or dataset='gnomad_r2_1' (GRCh37)",
+    "genome": "dataset='gnomad_r4' or dataset='gnomad_r3' (GRCh38)",
+}
+
+
+def _dataset_family(dataset: Optional[str]) -> Tuple[str, Optional[Tuple[str, ...]]]:
+    """Return (reference assembly, callsets carried) for a gnomAD dataset id."""
+    key = (dataset or "").lower()
+    for prefix, assembly, callsets in _DATASET_FAMILIES:
+        if key.startswith(prefix):
+            return assembly, callsets
+    return _DEFAULT_ASSEMBLY, None
+
+
+def resolve_dataset_assembly(dataset: Optional[str]) -> str:
+    """Map a gnomAD dataset id to the reference assembly it is built on."""
+    return _dataset_family(dataset)[0]
+
+
+def _reports_null(payload: Any, key: str) -> bool:
+    """True when the payload sets `key` to null, at the root or one node down.
+
+    gnomAD nests the record under its query field (``{"variant": {...}}``), so a
+    single extra level is all that is ever needed.
+    """
+    if not isinstance(payload, dict):
+        return False
+    nodes = [payload, *(v for v in payload.values() if isinstance(v, dict))]
+    return any(key in node and node[key] is None for node in nodes)
+
+
+def _missing_callset_note(dataset: Optional[str], payload: Any) -> Optional[str]:
+    """Explain a null callset that is structural rather than an observation.
+
+    Only the single-component callsets can reach a note: v3 carries genomes and
+    ExAC carries exomes, while v2.1 and v4 carry both and so never have a
+    structurally absent one.
+    """
+    callsets = _dataset_family(dataset)[1]
+    if not callsets:
+        return None
+    absent = next((k for k in _CALLSET_ALTERNATIVES if k not in callsets), None)
+    if absent is None or not _reports_null(payload, absent):
+        return None
+    return (
+        f"Dataset '{dataset}' is a {callsets[0]}-only callset with no {absent} "
+        f"component, so `{absent}` is null for every variant in it. That means "
+        f"'not present in this callset', NOT 'not observed'. For {absent} allele "
+        f"counts query {_CALLSET_ALTERNATIVES[absent]}."
+    )
+
+
+_CONSTRAINT_KEYS = (
+    "gnomad_constraint",
+    "exac_constraint",
+    "mitochondrial_constraint",
+)
+
+
+def _note_absent_constraints(result: Dict[str, Any]) -> None:
+    """Say plainly when gnomAD scored a gene under none of its constraint keys.
+
+    gnomAD scores mtDNA genes under `mitochondrial_constraint`, never under
+    `gnomad_constraint`/`exac_constraint`, which the query used to ask for
+    alone. MT-ND4 came back `success` with both nuclear blocks null -- read as
+    "unconstrained" when gnomAD in fact scores it at oe_lof_upper 0.022, among
+    the most LoF-intolerant genes there are. Now that all three are requested,
+    an all-null answer is a real absence, so name it as one rather than
+    leaving nulls to be misread.
+    """
+    gene = (result.get("data") or {}).get("gene")
+    if not isinstance(gene, dict):
+        return
+    if any(gene.get(key) for key in _CONSTRAINT_KEYS):
+        return
+    result["note"] = (
+        f"gnomAD returned no constraint metrics for {result.get('gene_symbol')} "
+        f"under any of {', '.join(_CONSTRAINT_KEYS)}. This means gnomAD has not "
+        f"scored the gene, not that the gene is unconstrained."
+    )
+
+
+def describe_dataset(
+    dataset: Optional[str], payload: Any = None, assembly: Optional[str] = None
+) -> Dict[str, Any]:
+    """Build the provenance block echoed on every dataset-backed response.
+
+    Always reports `dataset` and `reference_genome` -- including when the caller
+    omitted `dataset` and silently received the tool's default -- plus a
+    `dataset_note` whenever the payload's null callset is a property of the
+    callset rather than of the variant.
+
+    `assembly` is the reference genome the query actually sent, for the queries
+    that carry one of their own (gnomad_get_region does). It wins over the
+    lookup table: reporting an inference in preference to the value that was
+    transmitted is the very thing this disclosure exists to prevent. gnomAD
+    rejects a mismatched pair with HTTP 500 (confirmed live: dataset=gnomad_r2_1
+    with reference_genome=GRCh38, and gnomad_r3 with GRCh37, both 500 while the
+    matching pairs succeed), so the two agree on every response that gets here.
+    """
+    block: Dict[str, Any] = {
+        "dataset": dataset,
+        "reference_genome": assembly or resolve_dataset_assembly(dataset),
+    }
+    note = _missing_callset_note(dataset, payload)
+    if note:
+        block["dataset_note"] = note
+    return block
+
+
+def payload_reference_genome(payload: Any) -> Optional[str]:
+    """Return gnomAD's own `reference_genome`, if the payload carries one.
+
+    The dataset-scoped queries infer the assembly from the callset id, but the
+    feature queries have no dataset at all -- they take a `reference_genome`
+    argument directly. For those, the assembly does not have to be inferred or
+    hard-coded: the API states it itself. Introspecting the live schema
+    (``{__type(name: "Gene"){fields{name}}}``) shows `reference_genome` as the
+    first field of both `Gene` and `Transcript`, so the query asks for it and
+    this reads it back. `GeneSearchResult` exposes only `ensembl_id`,
+    `ensembl_version` and `symbol`, so a gene search has to fall back to the
+    value the request transmitted -- still the value in play, not a guess.
+
+    gnomAD nests each record under its query field (``{"gene": {...}}``), so one
+    level down is all that is ever needed.
+    """
+    if not isinstance(payload, dict):
+        return None
+    for node in payload.values():
+        if isinstance(node, dict) and isinstance(node.get("reference_genome"), str):
+            return node["reference_genome"]
+    return None
 
 
 class gnomADGraphQLTool(BaseTool):
@@ -118,6 +298,23 @@ class gnomADGraphQLQueryTool(gnomADGraphQLTool):
     - fields.query_schema: GraphQL query string
     - fields.variable_map: map tool argument names -> GraphQL variable names
     - fields.default_variables: default GraphQL variable values
+    - fields.derived_variables: GraphQL variables computed from another
+      variable via a lookup table, e.g.::
+
+          {"svDataset": {"from": "reference_genome",
+                         "map": {"GRCh37": "gnomad_sv_r2_1",
+                                 "GRCh38": "gnomad_sv_r4"},
+                         "default": "gnomad_sv_r4"}}
+
+      When the source value is free-form rather than an enum, `patterns`
+      matches it against regular expressions in order instead, e.g.::
+
+          {"svDataset": {"from": "variant_id",
+                         "patterns": [{"match": "^[A-Za-z]+_[0-9XY]+_[0-9]+$",
+                                       "value": "gnomad_sv_r2_1"}],
+                         "default": "gnomad_sv_r4"}}
+
+      `map` is consulted first, then `patterns`, then `default`.
     """
 
     def __init__(self, tool_config):
@@ -125,6 +322,39 @@ class gnomADGraphQLQueryTool(gnomADGraphQLTool):
         fields_cfg = tool_config.get("fields", {}) or {}
         self.variable_map = fields_cfg.get("variable_map", {}) or {}
         self.default_variables = fields_cfg.get("default_variables", {}) or {}
+        self.derived_variables = fields_cfg.get("derived_variables", {}) or {}
+
+    @staticmethod
+    def _match_patterns(patterns: Any, source_value: Any) -> Any:
+        """Return the value of the first regex rule matching `source_value`."""
+        if not isinstance(patterns, list) or not isinstance(source_value, str):
+            return None
+        for rule in patterns:
+            if not isinstance(rule, dict):
+                continue
+            expression = rule.get("match")
+            if expression and re.search(expression, source_value):
+                return rule.get("value")
+        return None
+
+    def _apply_derived_variables(self, variables: Dict[str, Any]) -> None:
+        """Fill in variables computed from another variable's value.
+
+        A derived variable is only applied when the caller did not supply it
+        explicitly, so an explicit value always wins over the lookup table.
+        """
+        for name, rule in self.derived_variables.items():
+            if name in variables or not isinstance(rule, dict):
+                continue
+            source = rule.get("from")
+            source_value = variables.get(self.variable_map.get(source, source))
+            value = (rule.get("map") or {}).get(source_value)
+            if value is None:
+                value = self._match_patterns(rule.get("patterns"), source_value)
+            if value is None:
+                value = rule.get("default")
+            if value is not None:
+                variables[name] = value
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         # Merge defaults + map argument names to GraphQL variables
@@ -133,7 +363,34 @@ class gnomADGraphQLQueryTool(gnomADGraphQLTool):
             if v is None:
                 continue
             variables[self.variable_map.get(k, k)] = v
-        return super().run(variables)
+        self._apply_derived_variables(variables)
+        result = super().run(variables)
+        # Disclose the callset that answered. `svDataset` is covered too because
+        # the SV tools derive it rather than taking it from the caller, so it is
+        # the least visible dataset choice in the family.
+        dataset = variables.get("dataset") or variables.get("svDataset")
+        data = result.get("data")
+        if dataset and isinstance(data, dict):
+            data.update(
+                describe_dataset(dataset, data, variables.get("referenceGenome"))
+            )
+        elif isinstance(data, dict):
+            # `gnomad_get_gene`, `gnomad_get_transcript` and `gnomad_search_genes`
+            # are the family's only queries with no dataset, so the disclosure
+            # above never reached them -- yet they return `chrom`/`start`/`stop`
+            # and said nothing about the frame those are in. The gap is not
+            # cosmetic: BRCA2 comes back as 13:32,315,086-32,400,268 under the
+            # GRCh38 default and 13:32,889,611-32,973,805 under GRCh37, a 574 kb
+            # shift, and a gene search returns ensembl_version 17 vs 10 for the
+            # same accession. Reported here as `reference_genome`, the same key
+            # and the same top-of-`data` placement the dataset-scoped siblings
+            # use, so one reading habit works across the family.
+            assembly = payload_reference_genome(data) or variables.get(
+                "referenceGenome"
+            )
+            if assembly:
+                data["reference_genome"] = assembly
+        return result
 
 
 @register_tool("gnomADGetVariantPopulations")
@@ -217,10 +474,14 @@ class gnomADGetVariantPopulations(gnomADGraphQLTool):
             "ref": variant.get("ref"),
             "alt": variant.get("alt"),
             "rsid": variant.get("rsid"),
-            "dataset": dataset,
             "genome": self._build_callset(variant.get("genome")),
             "exome": self._build_callset(variant.get("exome")),
         }
+        # This tool defaults to gnomad_r4 while gnomad_get_variant defaults to
+        # gnomad_r3, so the two disagree on the same variant by design. The
+        # dataset id was always reported here; the assembly and the structural
+        # null now come with it.
+        data.update(describe_dataset(dataset, data))
 
         return {
             "status": "success",
@@ -266,6 +527,21 @@ query GeneConstraints(
       obs_syn
       oe_syn
     }
+    mitochondrial_constraint {
+      __typename
+      ... on ProteinMitochondrialGeneConstraint {
+        exp_lof
+        obs_lof
+        oe_lof
+        oe_lof_upper
+      }
+      ... on RNAMitochondrialGeneConstraint {
+        observed
+        expected
+        oe
+        oe_upper
+      }
+    }
   }
 }
 """
@@ -289,5 +565,6 @@ query GeneConstraints(
         # Add gene_symbol to result for reference
         if result.get("status") == "success":
             result["gene_symbol"] = gene_symbol
+            _note_absent_constraints(result)
 
         return result

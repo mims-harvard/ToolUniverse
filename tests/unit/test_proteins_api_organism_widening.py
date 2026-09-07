@@ -34,13 +34,22 @@ def _resp(status_code, payload):
 
 class TestOrganismWidening(unittest.TestCase):
     def test_bacterial_query_widens_when_human_empty(self):
-        """blaKPC: human-filtered call is empty, widened call returns hits."""
+        """blaKPC: human-filtered call is empty, widened call returns hits.
+
+        Mirrors the live API: ``gene=blaKPC&taxid=9606`` is empty, and dropping
+        the human default on the same field returns Klebsiella/E. coli entries
+        whose gene symbol is literally ``blaKPC``.
+        """
         tool = _make_tool()
-        bacterial_hit = [{"accession": "Q9F663", "id": "BLKPC_KLEPN"}]
-        # Main call (gene=blaKPC&taxid=9606) and the human-kept protein retry are
-        # both empty (no human protein named blaKPC); the taxid-dropped retry hits.
+        bacterial_hit = [
+            {
+                "accession": "Q9F663",
+                "id": "BLKPC_KLEPN",
+                "gene": [{"name": {"value": "blaKPC"}}],
+            }
+        ]
         tool.session.get = MagicMock(
-            side_effect=[_resp(200, []), _resp(200, []), _resp(200, bacterial_hit)]
+            side_effect=[_resp(200, []), _resp(200, bacterial_hit)]
         )
 
         result = tool.run({"query": "blaKPC", "size": 3})
@@ -50,6 +59,11 @@ class TestOrganismWidening(unittest.TestCase):
         self.assertIn("note", result)
         self.assertIn("widened", result["note"].lower())
         self.assertGreaterEqual(tool.session.get.call_count, 2)
+        # The widened retry must keep gene= -- swapping to a free-text protein=
+        # search is what returned another entity's data (see the ben-1 tests).
+        retry_params = tool.session.get.call_args_list[1].kwargs["params"]
+        self.assertEqual(retry_params.get("gene"), "blaKPC")
+        self.assertNotIn("taxid", retry_params)
 
     def test_human_query_stays_human_first_without_note(self):
         """TP53: human call returns hits, so no widening and no note."""
@@ -78,6 +92,28 @@ class TestOrganismWidening(unittest.TestCase):
         tool = _make_tool()
         params = tool._build_params({"query": "blaKPC", "taxid": "573"})
         self.assertEqual(params.get("taxid"), "573")
+
+    def test_caller_supplied_organism_survives_the_field_swap_retry(self):
+        """A gene->protein retry must not drop the caller's organism filter.
+
+        Rebuilding the retry parameters from scratch dropped organism=/taxid=,
+        so a wheat query ("FT1" in Triticum aestivum) retried against all of
+        UniProt and answered with an assassin-bug protein under a note
+        claiming no organism had been supplied.
+        """
+        tool = _make_tool()
+        tool.session.get = MagicMock(
+            side_effect=[_resp(200, []), _resp(200, [{"accession": "X"}])]
+        )
+
+        result = tool.run({"query": "FT1", "organism": "Triticum aestivum", "size": 2})
+
+        self.assertEqual(result["status"], "success")
+        self.assertNotIn("note", result)
+        retry_params = tool.session.get.call_args_list[1].kwargs["params"]
+        self.assertEqual(retry_params.get("organism"), "Triticum aestivum")
+        self.assertEqual(retry_params.get("protein"), "FT1")
+        self.assertNotIn("gene", retry_params)
 
 
 if __name__ == "__main__":

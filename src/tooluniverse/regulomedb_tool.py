@@ -51,4 +51,67 @@ class RegulomeDBRESTTool(BaseTool):
             "notifications": raw.get("notifications"),
             "total_supporting_datasets": len(raw.get("@graph", [])),
         }
+        result.update(self._summarize_motifs(raw.get("@graph", [])))
         return {"status": "success", "data": result, "url": url}
+
+    # RegulomeDB records a motif hit under two methods: "PWMs" (the position
+    # weight matrix matched here) and "footprints" (a DNase footprint was called
+    # for that factor here). The site's Motifs tab lists the union of the two,
+    # one row per target label -- so PWM rows alone undercount it. `features`
+    # only carries booleans (`PWM: true`), which cannot answer "how many motifs
+    # are annotated here" at all.
+    MOTIF_METHODS = ("PWMs", "footprints")
+
+    @staticmethod
+    def _summarize_motifs(graph):
+        """Motif annotations from the evidence graph, matching the Motifs tab.
+
+        Target labels are kept verbatim: RegulomeDB emits a combined label such
+        as "STAT5A, STAT5B" for a matrix shared by two factors, and the site
+        shows it as a single motif row. Splitting it would undercount.
+        """
+        rows = []
+        for entry in graph or []:
+            method = entry.get("method")
+            if method not in RegulomeDBRESTTool.MOTIF_METHODS:
+                continue
+            rows.append(
+                {
+                    "target_label": entry.get("target_label"),
+                    "method": method,
+                    "chrom": entry.get("chrom"),
+                    "start": entry.get("start"),
+                    "end": entry.get("end"),
+                    "strand": entry.get("strand"),
+                }
+            )
+
+        by_target = {}
+        for row in rows:
+            target = row["target_label"]
+            slot = by_target.setdefault(
+                target, {"target_label": target, "methods": set(), "n_records": 0}
+            )
+            slot["methods"].add(row["method"])
+            slot["n_records"] += 1
+
+        motifs = [
+            {
+                "target_label": v["target_label"],
+                "methods": sorted(v["methods"]),
+                "n_records": v["n_records"],
+            }
+            for v in by_target.values()
+        ]
+        motifs.sort(key=lambda m: str(m["target_label"] or ""))
+
+        return {
+            "motifs": motifs,
+            "motif_count": len(motifs),
+            "motif_records": len(rows),
+            "motif_note": (
+                "motif_count is the number of distinct motif target labels across "
+                "PWM and footprint evidence, matching the RegulomeDB Motifs tab. "
+                "A combined label such as 'STAT5A, STAT5B' counts as one motif."
+            ),
+        }

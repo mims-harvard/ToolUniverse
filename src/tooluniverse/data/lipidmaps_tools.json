@@ -92,13 +92,13 @@
   },
   {
     "name": "LipidMaps_search_by_name",
-    "description": "Search for lipids by exact abbreviation in LIPID MAPS Structure Database. IMPORTANT: Only exact lipidomics abbreviations work (e.g., 'DHA', 'EPA', 'PC 16:0/18:1', 'SM 34:1'). Class names like 'ceramide' or 'sphingomyelin' will NOT match — use LipidMaps_search_by_formula for class-level searches. Returns matching lipid records with structures and classification.",
+    "description": "Search for lipids by exact abbreviation in LIPID MAPS Structure Database. IMPORTANT: Only exact lipidomics abbreviations work (e.g., 'DHA', 'EPA', 'PC 34:1' sum-composition, 'PC 16:0/18:1' acyl-chain-specific -- automatically retried against LIPID MAPS' abbrev_chains field if the sum-composition lookup finds nothing, 'SM 34:1;O2' -- sphingolipids require the ';O2' hydroxyl-count suffix, plain 'SM 34:1' does not match). Class names like 'ceramide' or 'sphingomyelin' will NOT match — use LipidMaps_search_by_formula for class-level searches. Returns matching lipid records with structures and classification.",
     "parameter": {
       "type": "object",
       "properties": {
         "input_value": {
           "type": "string",
-          "description": "Exact lipid abbreviation used in lipidomics (e.g., 'DHA', 'EPA', 'PC 16:0/18:1', 'SM 34:1'). Class names like 'ceramide' will not match — use exact abbreviations only."
+          "description": "Exact lipid abbreviation used in lipidomics (e.g., 'DHA', 'EPA', 'PC 34:1', 'PC 16:0/18:1', 'SM 34:1;O2'). Class names like 'ceramide' will not match — use exact abbreviations only. Sphingolipid sum-composition abbreviations must include the ';O2'-style hydroxyl-count suffix."
         },
         "output_item": {
           "type": "string",
@@ -122,6 +122,12 @@
       {
         "input_value": "EPA",
         "output_item": "all"
+      },
+      {
+        "input_value": "PC 16:0/18:1"
+      },
+      {
+        "input_value": "SM 34:1;O2"
       }
     ],
     "return_schema": {

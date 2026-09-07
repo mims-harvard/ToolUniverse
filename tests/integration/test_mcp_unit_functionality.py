@@ -16,8 +16,12 @@ import pytest
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+# `helpers` also comes from pytest.ini's `pythonpath`, but that does not apply
+# when this file is run as a bare script via the __main__ block below.
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from tooluniverse import ToolUniverse
+from helpers.threads import join_all
 
 
 @pytest.mark.unit
@@ -383,14 +387,14 @@ class TestMCPFunctionality(unittest.TestCase):
             # Create multiple threads
             threads = []
             for i in range(3):  # Reduced for testing
-                thread = threading.Thread(target=make_call, args=(i,))
+                thread = threading.Thread(
+                    target=make_call, args=(i,), name=f"mcp-call-{i}"
+                )
                 threads.append(thread)
                 thread.start()
-            
-            # Wait for all threads with timeout
-            for thread in threads:
-                thread.join(timeout=10)  # 10 second timeout per thread
-            
+
+            join_all(threads)
+
             # Verify all calls completed
             self.assertEqual(
                 len(results), 3, 

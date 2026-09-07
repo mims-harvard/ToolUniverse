@@ -1,7 +1,7 @@
 """
 FDA_get_user_safety_warning_by_drug_names
 
-Retrieve specific user safety warnings based on drug names.
+Retrieve specific user safety warnings based on drug names. IMPORTANT -- FDA labels file safety c...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def FDA_get_user_safety_warning_by_drug_names(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve specific user safety warnings based on drug names.
+    Retrieve specific user safety warnings based on drug names. IMPORTANT -- FDA labels file safety c...
 
     Parameters
     ----------

@@ -23,25 +23,40 @@ coverage from DNA sequence as a unifying model of gene regulation." Nature
 Genetics 57, 949-961 (2025).
 """
 
+import threading
 from typing import Any, Dict, List, Optional
 
 import torch
 from borzoi_pytorch import Borzoi
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_sequence_input import (
+    validate_sequence,
+    validate_track_selection,
+    validate_variant_sequences,
+)
 
 SEQ_LENGTH = 524_288
 N_BINS = 6_144
+N_TRACKS = 7_611
+MAX_INPUT_LENGTH = SEQ_LENGTH * 2
 _BASE_TO_CHANNEL = {"A": 0, "C": 1, "G": 2, "T": 3}
 _MODEL = None
+_MODEL_INIT_LOCK = threading.Lock()
+_INFERENCE_LOCK = threading.Lock()
+_DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def _get_model(replicate: int = 0):
     """Lazy-load a pretrained Borzoi replicate (cached)."""
     global _MODEL
     if _MODEL is None:
-        _MODEL = Borzoi.from_pretrained(f"johahi/borzoi-replicate-{replicate}")
-        _MODEL.eval()
+        with _MODEL_INIT_LOCK:
+            if _MODEL is None:
+                _MODEL = Borzoi.from_pretrained(
+                    f"johahi/borzoi-replicate-{replicate}"
+                ).to(_DEVICE)
+                _MODEL.eval()
     return _MODEL
 
 
@@ -55,7 +70,7 @@ def _encode(sequence: str) -> torch.Tensor:
         pad = SEQ_LENGTH - len(seq)
         left = pad // 2
         seq = "N" * left + seq + "N" * (pad - left)
-    onehot = torch.zeros(1, 4, SEQ_LENGTH)
+    onehot = torch.zeros(1, 4, SEQ_LENGTH, device=_DEVICE)
     for i, base in enumerate(seq):
         ch = _BASE_TO_CHANNEL.get(base)
         if ch is not None:  # N stays all-zero
@@ -71,8 +86,9 @@ def _predict(sequence: str) -> torch.Tensor:
     Enformer), so the central-bin value per track is taken along the bin axis.
     """
     model = _get_model()
-    with torch.no_grad():
-        out = model(_encode(sequence))
+    with _INFERENCE_LOCK:
+        with torch.no_grad():
+            out = model(_encode(sequence))
     return out[0]  # (7611, 6144) = (tracks, bins)
 
 
@@ -110,18 +126,28 @@ def _top_center_tracks(
                 "sequence": {
                     "type": "string",
                     "description": "DNA sequence (A/C/G/T/N). Cropped/padded to 524,288 bp around its center.",
+                    "minLength": 1,
+                    "maxLength": 1048576,
+                    "pattern": "^[ACGTNacgtn]+$",
                 },
                 "track_indices": {
                     "type": "array",
-                    "items": {"type": "integer"},
+                    "items": {"type": "integer", "minimum": 0, "maximum": 7610},
+                    "minItems": 1,
+                    "maxItems": 1000,
+                    "uniqueItems": True,
                     "description": "Track indices to report (optional). If omitted, the top-signal tracks are returned.",
                 },
                 "top_n": {
                     "type": "integer",
                     "description": "When track_indices is omitted, how many top tracks to return (default 20).",
+                    "default": 20,
+                    "minimum": 1,
+                    "maximum": 1000,
                 },
             },
             "required": ["sequence"],
+            "additionalProperties": False,
         },
     },
     mcp_config={
@@ -135,21 +161,35 @@ class BorzoiPredictTool:
     """Predict Borzoi coverage for a DNA sequence."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        sequence = arguments.get("sequence")
-        if not sequence:
-            return {"error": "Missing required parameter: sequence"}
-        track_indices = arguments.get("track_indices")
-        top_n = int(arguments.get("top_n") or 20)
+        if not isinstance(arguments, dict):
+            return {"error": "Arguments must be an object."}
+        try:
+            sequence = validate_sequence(
+                arguments.get("sequence"),
+                name="sequence",
+                alphabet="ACGTN",
+                max_length=MAX_INPUT_LENGTH,
+            )
+            track_indices, top_n = validate_track_selection(
+                arguments.get("track_indices"),
+                arguments.get("top_n"),
+                n_tracks=N_TRACKS,
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
 
-        pred = _predict(sequence)
-        return {
-            "model": "Borzoi",
-            "organism": "human",
-            "n_tracks": int(pred.shape[0]),
-            "n_bins": int(pred.shape[1]),
-            "bin_size_bp": 32,
-            "tracks": _top_center_tracks(pred, track_indices, top_n),
-        }
+        try:
+            pred = _predict(sequence)
+            return {
+                "model": "Borzoi",
+                "organism": "human",
+                "n_tracks": int(pred.shape[0]),
+                "n_bins": int(pred.shape[1]),
+                "bin_size_bp": 32,
+                "tracks": _top_center_tracks(pred, track_indices, top_n),
+            }
+        except Exception:
+            return {"error": "Borzoi prediction failed on the provider."}
 
 
 @register_mcp_tool(
@@ -167,22 +207,35 @@ class BorzoiPredictTool:
                 "ref_sequence": {
                     "type": "string",
                     "description": "Reference DNA sequence centered on the variant (cropped/padded to 524,288 bp).",
+                    "minLength": 1,
+                    "maxLength": 1048576,
+                    "pattern": "^[ACGTNacgtn]+$",
                 },
                 "alt_sequence": {
                     "type": "string",
                     "description": "Alternate DNA sequence (same length/centering as ref).",
+                    "minLength": 1,
+                    "maxLength": 1048576,
+                    "pattern": "^[ACGTNacgtn]+$",
                 },
                 "track_indices": {
                     "type": "array",
-                    "items": {"type": "integer"},
+                    "items": {"type": "integer", "minimum": 0, "maximum": 7610},
+                    "minItems": 1,
+                    "maxItems": 1000,
+                    "uniqueItems": True,
                     "description": "Track indices to report (optional; default = top |delta| tracks).",
                 },
                 "top_n": {
                     "type": "integer",
                     "description": "When track_indices omitted, number of top |delta| tracks to return (default 20).",
+                    "default": 20,
+                    "minimum": 1,
+                    "maximum": 1000,
                 },
             },
             "required": ["ref_sequence", "alt_sequence"],
+            "additionalProperties": False,
         },
     },
     mcp_config={
@@ -196,31 +249,43 @@ class BorzoiVariantEffectTool:
     """Score a variant as the Borzoi central-bin alt-ref coverage delta."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        ref = arguments.get("ref_sequence")
-        alt = arguments.get("alt_sequence")
-        if not (ref and alt):
-            return {
-                "error": "Missing required parameter(s): ref_sequence, alt_sequence"
-            }
-        track_indices = arguments.get("track_indices")
-        top_n = int(arguments.get("top_n") or 20)
+        if not isinstance(arguments, dict):
+            return {"error": "Arguments must be an object."}
+        try:
+            ref, alt = validate_variant_sequences(
+                arguments.get("ref_sequence"),
+                arguments.get("alt_sequence"),
+                alphabet="ACGTN",
+                max_length=MAX_INPUT_LENGTH,
+            )
+            track_indices, top_n = validate_track_selection(
+                arguments.get("track_indices"),
+                arguments.get("top_n"),
+                n_tracks=N_TRACKS,
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
 
-        delta = _center_bin(_predict(alt)) - _center_bin(_predict(ref))
-        if track_indices:
-            tracks = [
-                {"track": int(t), "delta": float(delta[int(t)])}
-                for t in track_indices
-                if 0 <= int(t) < delta.shape[0]
-            ]
-        else:
-            order = torch.argsort(delta.abs(), descending=True)[:top_n]
-            tracks = [{"track": int(t), "delta": float(delta[int(t)])} for t in order]
-        return {
-            "model": "Borzoi",
-            "organism": "human",
-            "n_tracks": int(delta.shape[0]),
-            "tracks": tracks,
-        }
+        try:
+            delta = _center_bin(_predict(alt)) - _center_bin(_predict(ref))
+            if track_indices:
+                tracks = [
+                    {"track": int(t), "delta": float(delta[int(t)])}
+                    for t in track_indices
+                ]
+            else:
+                order = torch.argsort(delta.abs(), descending=True)[:top_n]
+                tracks = [
+                    {"track": int(t), "delta": float(delta[int(t)])} for t in order
+                ]
+            return {
+                "model": "Borzoi",
+                "organism": "human",
+                "n_tracks": int(delta.shape[0]),
+                "tracks": tracks,
+            }
+        except Exception:
+            return {"error": "Borzoi variant scoring failed on the provider."}
 
 
 if __name__ == "__main__":

@@ -92,6 +92,17 @@
               }
             }
           }
+        },
+        "fields_unavailable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Requested fields the clinicaltables loinc_items/v3 index does not publish. They are returned as empty strings for every code, so their emptiness says nothing about this code."
+        },
+        "fields_unavailable_note": {
+          "type": "string",
+          "description": "Explains which requested fields are unavailable from this index and what to use instead."
         }
       }
     }
@@ -147,11 +158,22 @@
         "LONG_COMMON_NAME": {
           "type": "string"
         },
-        "SHORT_NAME": {
+        "SHORTNAME": {
           "type": "string"
         },
         "COMPONENT": {
           "type": "string"
+        },
+        "fields_unavailable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Requested fields the clinicaltables loinc_items/v3 index does not publish. They are returned as empty strings for every code, so their emptiness says nothing about this code."
+        },
+        "fields_unavailable_note": {
+          "type": "string",
+          "description": "Explains which requested fields are unavailable from this index and what to use instead."
         },
         "PROPERTY": {
           "type": "string"
@@ -183,13 +205,13 @@
   {
     "type": "LOINCTool",
     "name": "LOINC_get_answer_list",
-    "description": "Search LOINC answer-type codes matching a LOINC code or search term. Returns LOINC codes classified as answer-type items (categorical/coded result values used in clinical assessments). Use to find standardized answer codes for clinical observations.",
+    "description": "Get the answer lists published for a LOINC code -- the permissible coded values a list-type observation may take, such as Group A / Group B / Group O / Group AB for ABO group, or the four PHQ frequency options. Returns each matching LOINC code together with its answer lists (answer code, display text, sequence and score where scored) and its datatype. Codes whose datatype is not CNE or CWE take a free value rather than an answer from a list, and correctly return no answer list; answer_lists_found reports how many of the matched codes had one.",
     "parameter": {
       "type": "object",
       "properties": {
         "loinc_code": {
           "type": "string",
-          "description": "LOINC code or search term to find answer-type codes (e.g., '883-9' for ABO blood group answers, '11502-2' for laboratory report codes, 'ABO' or 'blood type' for broader search)."
+          "description": "LOINC code whose answer lists you want (e.g. '883-9' for ABO group, '44250-9' for a PHQ-9 item). A search term such as 'ABO' or 'blood type' also works and returns the answer lists of every code it matches."
         }
       },
       "required": [
@@ -209,6 +231,9 @@
     "test_examples": [
       {
         "loinc_code": "883-9"
+      },
+      {
+        "loinc_code": "44250-9"
       },
       {
         "loinc_code": "11502-2"
@@ -245,9 +270,76 @@
               },
               "SCALE_TYP": {
                 "type": "string"
+              },
+              "datatype": {
+                "type": "string",
+                "description": "Computed LOINC datatype: CNE (answer must come from the list), CWE (may come from the list), ST, REAL, DT, TM or Ratio."
+              },
+              "AnswerLists": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Answer lists for this code, or null if it publishes none. Each entry has AnswerListId, AnswerListName, an answers array of {AnswerStringID, DisplayText, SequenceNo, Score}, and the contexts in which the list applies.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "AnswerListId": {
+                      "type": "string"
+                    },
+                    "AnswerListName": {
+                      "type": "string"
+                    },
+                    "answers": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "AnswerStringID": {
+                            "type": "string"
+                          },
+                          "DisplayText": {
+                            "type": "string"
+                          },
+                          "SequenceNo": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "Score": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }
+        },
+        "fields_unavailable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Requested fields the clinicaltables loinc_items/v3 index does not publish. They are returned as empty strings for every code, so their emptiness says nothing about this code."
+        },
+        "fields_unavailable_note": {
+          "type": "string",
+          "description": "Explains which requested fields are unavailable from this index and what to use instead."
+        },
+        "answer_lists_found": {
+          "type": "integer",
+          "description": "How many of the matched codes actually publish an answer list. Reported separately from count so that matching codes that have no answer list cannot be read as answer lists."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when answer_lists_found is 0, explaining that the codes matched but publish no permissible-value list."
         }
       }
     }
@@ -255,13 +347,13 @@
   {
     "type": "LOINCTool",
     "name": "LOINC_search_forms",
-    "description": "Search LOINC clinical forms and survey instruments such as standardized questionnaires and assessment tools. Examples include PHQ-9 (depression), GAD-7 (anxiety), MMSE (cognitive), pain scales, and other validated clinical assessment instruments. Returns LOINC codes for complete forms that can be used in electronic health records.",
+    "description": "Search LOINC clinical forms, panels and survey instruments -- whole instruments, not their individual questions. Examples include PHQ-9 (depression), GAD-7 (anxiety), MMSE (cognitive), pain assessment panels and laboratory panels such as the comprehensive metabolic panel. Returns the LOINC code of each matching instrument, for use in electronic health records. A single question or lab test will not be returned here even when its wording matches the search terms -- use LOINC_search_tests for those.",
     "parameter": {
       "type": "object",
       "properties": {
         "terms": {
           "type": "string",
-          "description": "Search terms for clinical forms or survey instruments (e.g., 'PHQ-9', 'depression screening', 'GAD-7', 'anxiety', 'pain scale', 'MMSE', 'cognitive assessment'). Use specific form names or general assessment types."
+          "description": "Search terms naming a clinical form, panel or survey instrument (e.g. 'PHQ-9', 'GAD-7', 'MMSE', 'pain', 'depression', 'comprehensive metabolic'). Terms are matched against instrument names, so a broad clinical phrase that is not part of any instrument's name (e.g. 'depression screening') can legitimately return nothing."
         },
         "max_results": {
           "type": "integer",
@@ -290,7 +382,7 @@
         "max_results": 5
       },
       {
-        "terms": "depression screening"
+        "terms": "depression"
       },
       {
         "terms": "pain scale"
@@ -330,6 +422,21 @@
               }
             }
           }
+        },
+        "fields_unavailable": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Requested fields the clinicaltables loinc_items/v3 index does not publish. They are returned as empty strings for every code, so their emptiness says nothing about this code."
+        },
+        "fields_unavailable_note": {
+          "type": "string",
+          "description": "Explains which requested fields are unavailable from this index and what to use instead."
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when nothing matched, to distinguish 'no instrument has this name' from a failed query."
         }
       }
     }

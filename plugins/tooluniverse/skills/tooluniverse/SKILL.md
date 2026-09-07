@@ -286,7 +286,7 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 | "**custom tool**", "add my own tool", "local tool", "create tool", "extend ToolUniverse" | `Skill(skill="tooluniverse-custom-tool")` |
 | "**SDK**", "Python SDK", "build AI scientist", "programmatic access", "**import tooluniverse**", "**coding API**", "**tu build**", "**typed wrappers**" | `Skill(skill="tooluniverse-sdk")` |
 | "**install skills**", "missing skills", "skill not found", "add skills" | `Skill(skill="tooluniverse-install-skills")` |
-| "**self-review**", "check my work", "definition of done", "evaluation rubric", "success criteria", "grading criteria", "LLM-as-judge" | `Skill(skill="tooluniverse-self-review")` |
+| "**self-review**", "eval current work", "evaluate this work", "check my work", "is this complete", "definition of done", "evaluation rubric", "success criteria", "grading criteria", "LLM-as-judge" | `Skill(skill="tooluniverse-self-review")` |
 
 ---
 
@@ -306,10 +306,15 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 3. **Specificity Rule**: More specific beats general.
    - "cancer treatment" → precision-oncology (not disease-research)
 
-4. **Data Type Rule**: "get/retrieve/fetch" → retrieval skills.
+4. **Evaluation Intent Rule**: Route requests to review existing/current work to
+   `tooluniverse-self-review`, but do not route requests to create or run an eval suite,
+   grader, test, or benchmark there. Those are implementation tasks. Within self-review,
+   plain "eval" is qualitative; scoring requires an explicit score/grade/points request.
+
+5. **Data Type Rule**: "get/retrieve/fetch" → retrieval skills.
    - "get compound structure" → chemical-compound-retrieval (not drug-research)
 
-5. **Still ambiguous**: Ask user with AskUserQuestion.
+6. **Still ambiguous**: Ask user with AskUserQuestion.
 
 ---
 

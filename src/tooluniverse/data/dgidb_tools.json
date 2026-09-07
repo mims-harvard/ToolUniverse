@@ -1,7 +1,7 @@
 [
   {
     "name": "DGIdb_get_drug_gene_interactions",
-    "description": "Get drug-gene interactions for a list of genes from DGIdb. Returns drugs targeting each gene, interaction types, and evidence sources.",
+    "description": "Get drug-gene interactions for a list of genes from DGIdb. Returns drugs targeting each gene, interaction types, and evidence sources. Gene symbols DGIdb does not recognize are omitted from the results and named in metadata.unmatched_genes, so a missing gene is distinguishable from a gene with no interactions.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -106,7 +106,7 @@
   },
   {
     "name": "DGIdb_get_gene_druggability",
-    "description": "Get druggability information for genes. Returns gene categories indicating if a gene is druggable (kinase, GPCR, ion channel, etc.).",
+    "description": "Get druggability information for genes. Returns gene categories indicating if a gene is druggable (kinase, GPCR, ion channel, etc.). Gene symbols DGIdb does not recognize are omitted from the results and named in metadata.unmatched_genes.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -173,7 +173,7 @@
   },
   {
     "name": "DGIdb_get_gene_info",
-    "description": "Get detailed gene information from DGIdb including aliases, categories, and interaction counts.",
+    "description": "Get detailed gene information from DGIdb including aliases, categories, and interaction counts. Gene symbols DGIdb does not recognize are omitted from the results and named in metadata.unmatched_genes.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -247,7 +247,7 @@
   },
   {
     "name": "DGIdb_get_drug_info",
-    "description": "Get basic drug metadata from DGIdb by drug name. Returns drug name, concept ID, and approval status. To get drug-gene interactions, use DGIdb_get_drug_gene_interactions instead.",
+    "description": "Get basic drug metadata from DGIdb by drug name. Returns drug name, concept ID, and approval status. Name matching is prefix-based, so one query name can return several records; names DGIdb does not recognize are omitted and named in metadata.unmatched_drugs. To get drug-gene interactions, use DGIdb_get_drug_gene_interactions instead.",
     "parameter": {
       "type": "object",
       "properties": {

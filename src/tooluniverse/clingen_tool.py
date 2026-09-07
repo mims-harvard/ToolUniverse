@@ -14,6 +14,7 @@ gene-disease relationships for use in clinical genomics.
 import requests
 import csv
 import io
+import re
 from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Any, List, Optional
 from .base_tool import BaseTool
@@ -26,6 +27,95 @@ ACTIONABILITY_PEDIATRIC_URL = (
     "https://actionability.clinicalgenome.org/ac/Pediatric/api"
 )
 EREPO_BASE_URL = "https://erepo.clinicalgenome.org/evrepo/api"
+
+# Confirmed live against the Evidence Repository's `classifications` endpoint:
+#   * `gene`, `caid`, `hgvs` and `variationId` are real server-side filters
+#   * `variant` is not a parameter at all -- it is accepted and ignored, so the
+#     request degrades to an unfiltered listing of the whole repository. A
+#     deliberately bogus `variant=ZZZNOTAVARIANT` returned the same first rows
+#     as sending no filter whatsoever.
+#   * the response carries no total, and an unspecified `matchLimit` pages at 25
+# Those two facts together understated PAH by 32x -- `total: 25` reported for a
+# gene with 817 curated classifications -- and reported curated variants as
+# absent, because the old client-side narrowing ran over an arbitrary 25-row
+# page: CAID CA16020993 (PAH c.1315+1G>T) is row 401 of PAH's 817, so it was
+# answered "No variant classifications found ... Not all genes have active
+# VCEPs" when in fact the Phenylketonuria VCEP had classified it.
+#
+# The largest single gene is RUNX1 at 1,648 rows and the entire repository is
+# 13,084 rows, so this cap covers any gene-scoped query outright.
+_EREPO_MATCH_LIMIT = 5000
+
+# `data` stays capped so a listing cannot return tens of MB; `total` reports the
+# real count beside it and the gap is now disclosed rather than left to be
+# inferred from counting rows.
+_MAX_PUBLISHED = 100
+
+
+def _published(
+    rows: List[Dict[str, Any]], narrow_hint: str, total_is_capped: bool = False
+) -> Dict[str, Any]:
+    """Publish a capped slice of `rows` and state the cap beside the total.
+
+    Every listing in this module caps `data` for payload size while reporting
+    the full `total` next to it. Undisclosed, that reads as a total which
+    disagrees with the rows printed beside it: ClinGen_get_gene_validity
+    published `total: 3659` directly above exactly 100 rows, on a tool whose
+    own description promises a "comprehensive list".
+
+    `truncated` / `truncation_note` follow the repo-wide disclosure convention
+    (see cbioportal_tool._truncation_fields and clinvar_tool.
+    _truncation_disclosure) so a caller reading truncation generically does not
+    need a spelling unique to this module. `total_is_capped` marks the case
+    where the upstream request itself filled `_EREPO_MATCH_LIMIT`, which makes
+    `total` a lower bound rather than a count.
+    """
+    published = rows[:_MAX_PUBLISHED]
+    result: Dict[str, Any] = {
+        "data": published,
+        "total": len(rows),
+        "returned": len(published),
+    }
+    if total_is_capped:
+        result["truncated"] = True
+        result["truncation_note"] = (
+            f"The query filled the {_EREPO_MATCH_LIMIT}-row request cap, so "
+            f"`total` is a lower bound rather than the true count, and `data` "
+            f"carries the first {len(published)} rows. {narrow_hint}"
+        )
+    elif len(published) < len(rows):
+        result["truncated"] = True
+        result["truncation_note"] = (
+            f"`total` is the full count for this query; `data` carries only the "
+            f"first {len(published)} of them. {narrow_hint}"
+        )
+    else:
+        result["truncated"] = False
+    return result
+
+
+def _clean(value: Any) -> Optional[str]:
+    """Normalise a filter argument to a non-blank string, or None."""
+    if value is None:
+        return None
+    text = str(value).strip()
+    return text or None
+
+
+def _variant_query_param(variant: Any) -> tuple:
+    """Map a variant identifier onto the erepo parameter that filters on it.
+
+    Returns an (endpoint parameter name, value) pair. `hgvs` is the fallback
+    because it matches protein-change strings as well as full HGVS -- confirmed
+    live that `hgvs=p.Arg408Trp` resolves to a single classification.
+    """
+    value = str(variant).strip()
+    caid = value.upper().removeprefix("CAR:")
+    if re.fullmatch(r"CA\d+", caid):
+        return "caid", caid
+    if value.isdigit():
+        return "variationId", value
+    return "hgvs", value
 
 
 @register_tool("ClinGenTool")
@@ -94,8 +184,11 @@ class ClinGenTool(BaseTool):
 
             return {
                 "status": "success",
-                "data": curations[:100],  # Limit to first 100 for performance
-                "total": len(curations),
+                **_published(
+                    curations,
+                    "Pass `gene` to narrow to one gene's curations, or use "
+                    "ClinGen_search_gene_validity, which returns every match.",
+                ),
                 "source": "ClinGen Gene-Disease Validity",
             }
         except requests.exceptions.Timeout:
@@ -187,8 +280,10 @@ class ClinGenTool(BaseTool):
 
             return {
                 "status": "success",
-                "data": curations[:100],  # Limit for performance
-                "total": len(curations),
+                **_published(
+                    curations,
+                    "Pass `gene` to narrow to one gene's dosage curations.",
+                ),
                 "include_regions": include_regions,
                 "source": "ClinGen Dosage Sensitivity",
             }
@@ -318,8 +413,10 @@ class ClinGenTool(BaseTool):
 
             return {
                 "status": "success",
-                "data": curations[:100],
-                "total": len(curations),
+                **_published(
+                    curations,
+                    "Pass `gene` to narrow to one gene's actionability curations.",
+                ),
                 "context": context,
                 "source": f"ClinGen Clinical Actionability ({context})",
             }
@@ -379,6 +476,9 @@ class ClinGenTool(BaseTool):
                 ("Pediatric", ACTIONABILITY_PEDIATRIC_URL),
             ]
             results = {"Adult": [], "Pediatric": []}
+            # Fix-R43-1: a failed context must not read as a genuine zero, so
+            # record which ones failed rather than swallowing the exception.
+            failures: Dict[str, str] = {}
             with ThreadPoolExecutor(max_workers=len(contexts)) as executor:
                 futures = {
                     executor.submit(
@@ -390,24 +490,44 @@ class ClinGenTool(BaseTool):
                     context = futures[future]
                     try:
                         results[context] = future.result()
-                    except Exception:
-                        # Continue with other context if one fails
-                        pass
+                    except Exception as exc:
+                        failures[context] = f"{type(exc).__name__}: {exc}"
 
-            return {
-                "status": "success",
-                "data": results,
+            response: Dict[str, Any] = {
                 "gene_searched": gene,
-                "adult_count": len(results["Adult"]),
-                "pediatric_count": len(results["Pediatric"]),
                 "source": "ClinGen Clinical Actionability",
             }
+            if failures:
+                response["failed_contexts"] = failures
+            if len(failures) == len(contexts):
+                # Both counts would be a fabricated zero. proteins_api_tool
+                # likewise reports error when nothing at all was retrieved.
+                response["status"] = "error"
+                response["error"] = (
+                    f"All ClinGen actionability contexts failed to fetch for "
+                    f"{gene}; see failed_contexts. No count can be reported."
+                )
+                return response
+
+            response.update(
+                status="success",
+                data=results,
+                adult_count=len(results["Adult"]),
+                pediatric_count=len(results["Pediatric"]),
+            )
+            if failures:
+                response["note"] = (
+                    f"Partial result: {', '.join(sorted(failures))} could not be "
+                    "fetched, so its count of 0 means 'not retrieved', not "
+                    "'no curation exists'. Retry for a complete answer."
+                )
+            return response
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
     @staticmethod
     def _flatten_classification(item: Dict[str, Any]) -> Dict[str, Any]:
-        """Map one classifications?gene=/variant= JSON record to the tool's
+        """Map one `classifications` JSON record to the tool's
         declared 7-field return_schema (Variation, ClinVar Variation Id,
         HGNC Gene Symbol, Disease, Mondo Id, Assertion, Expert Panel)."""
         hgvs = item.get("hgvs") or []
@@ -437,15 +557,32 @@ class ClinGenTool(BaseTool):
         with no server-side filter and filters client-side -- confirmed live
         this routinely took 2-5+ minutes (and sometimes hung past a 300s
         client timeout) even for a gene with zero curated variants. The
-        classifications endpoint (no /all) supports server-side gene=/
-        variant= filtering and returns in ~1s -- confirmed live for both a
-        curated gene (PAH) and an uncurated one (empty result, still ~1s).
+        classifications endpoint (no /all) supports real server-side filtering.
         Calling it with neither gene nor variant set is just as unbounded as
         classifications/all (confirmed live: also hangs past 30s with no
         params), so require at least one.
+
+        Every filter is applied by the server: `gene` directly, and `variant`
+        via whichever of `caid`/`variationId`/`hgvs` matches the identifier
+        supplied. See `_variant_query_param` and `_EREPO_MATCH_LIMIT` for why
+        the tool must name the parameter the endpoint actually implements and
+        must state its own page size.
+
+        Cost of stating the page size: asking for every row is what makes
+        `total` a count rather than a page size, and the endpoint reports no
+        total of its own, so there is no cheaper way to get it. Measured live,
+        gene queries go from 44 KB / 0.8s to 1.5 MB / ~5s (PAH) and 8.1 MB /
+        ~15s at the worst case in the repository (RUNX1, 1,648 rows). That sits
+        inside this tool's 120s timeout with roughly 8x headroom. Identifier
+        lookups are unaffected -- `caid` returns ~2 KB in ~0.6s either way.
         """
-        gene = arguments.get("gene")
-        variant = arguments.get("variant")
+        # Strip before the guard, not after. A whitespace-only `variant` is
+        # truthy, so it satisfied "at least one filter" and then resolved to an
+        # empty `hgvs=`, sending exactly the unfiltered request this guard
+        # exists to prevent -- measured live at a full 120s timeout, with the
+        # cost paid upstream as well as here.
+        gene = _clean(arguments.get("gene"))
+        variant = _clean(arguments.get("variant"))
         if not gene and not variant:
             return {
                 "status": "error",
@@ -458,11 +595,12 @@ class ClinGenTool(BaseTool):
                 ),
             }
         try:
-            params = {}
+            params: Dict[str, Any] = {"matchLimit": _EREPO_MATCH_LIMIT}
             if gene:
                 params["gene"] = gene
             if variant:
-                params["variant"] = variant
+                variant_key, variant_value = _variant_query_param(variant)
+                params[variant_key] = variant_value
 
             response = requests.get(
                 f"{EREPO_BASE_URL}/classifications", params=params, timeout=self.timeout
@@ -471,39 +609,47 @@ class ClinGenTool(BaseTool):
             payload = response.json()
             items = payload.get("variantInterpretations", [])
 
-            # The upstream `variant=` param resolves to that variant's gene
-            # and returns every variant for the gene, not just the one
-            # requested (confirmed live: variant=CA114360 returns 25 PAH
-            # rows, not 1) -- narrow back down to an exact match on the
-            # variant's own identifiers/HGVS forms.
-            if variant:
-                variant_str = str(variant).upper()
-                items = [
-                    item
-                    for item in items
-                    if variant_str in str(item.get("caid", "")).upper()
-                    or variant_str == str(item.get("variationId", "")).upper()
-                    or any(variant_str in h.upper() for h in item.get("hgvs") or [])
-                ]
-
+            # Flattening every row and publishing 100 wastes ~0.6ms at the
+            # repository's worst case (RUNX1, 1,648 rows), against a ~15s round
+            # trip. Slicing first would make `total` count the slice instead of
+            # the query, which is the defect this whole change exists to fix,
+            # so the list stays whole.
             data = [self._flatten_classification(item) for item in items]
 
             result = {
                 "status": "success",
-                "data": data[:100],
-                "total": len(data),
+                **_published(
+                    data,
+                    "Pass `variant` (a ClinGen CAID, a ClinVar VariationID or an "
+                    "HGVS/protein-change string) to retrieve a specific row.",
+                    # No gene can fill the cap -- the largest is RUNX1 at 1,648
+                    # -- but `hgvs` matches on substring, so a short fragment
+                    # can sweep the repository. Reachable, and `total` would be
+                    # a floor rather than a count if it were reached.
+                    total_is_capped=len(data) >= _EREPO_MATCH_LIMIT,
+                ),
                 "source": "ClinGen Evidence Repository",
             }
             if not data:
-                queried = f"gene '{gene}'" if gene else f"variant '{variant}'"
-                result["note"] = (
-                    f"No variant classifications found for {queried}. "
-                    "The ClinGen Evidence Repository only contains variants "
-                    "curated by Variant Curation Expert Panels (VCEPs). "
-                    "Not all genes have active VCEPs. Try ClinGen_get_gene_validity "
-                    "for gene-disease validity or clinvar_search_variants for "
-                    "ClinVar variant classifications."
-                )
+                if gene:
+                    result["note"] = (
+                        f"No variant classifications found for gene '{gene}'. "
+                        "The ClinGen Evidence Repository only contains variants "
+                        "curated by Variant Curation Expert Panels (VCEPs), and "
+                        "not all genes have an active VCEP. Try "
+                        "ClinGen_get_gene_validity for gene-disease validity or "
+                        "ClinVar_search_variants for ClinVar classifications."
+                    )
+                else:
+                    result["note"] = (
+                        f"No variant classification found for variant '{variant}', "
+                        f"queried as `{variant_key}` server-side across the whole "
+                        "Evidence Repository, so the variant is genuinely "
+                        "uncurated rather than merely missing from a page of "
+                        "results. Supply `gene` to list every curated variant "
+                        "for its gene, or use ClinVar_search_variants for "
+                        "ClinVar classifications."
+                    )
             return result
         except requests.exceptions.Timeout:
             return {"status": "error", "error": f"Timeout after {self.timeout}s"}

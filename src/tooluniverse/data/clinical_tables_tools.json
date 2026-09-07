@@ -255,5 +255,170 @@
         "max_results": 5
       }
     ]
+  },
+  {
+    "name": "HCPCS_search",
+    "description": "US procedure and durable-medical-equipment billing code autocomplete via the NLM Clinical Table Search Service (HCPCS Level II). Given a partial or full description, returns matching HCPCS codes with their official short description. Use for billing/coding lookups (e.g. wheelchairs, ambulance services, supplies) not covered by CPT. No API key required.",
+    "type": "ClinicalTablesTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "terms": {
+          "type": "string",
+          "description": "Procedure/equipment description or prefix to search, e.g. 'wheelchair', 'ambulance'."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of matches to return (default 20, max 500).",
+          "default": 20
+        }
+      },
+      "required": ["terms"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "total_count": {"type": "integer"},
+            "count": {"type": "integer"},
+            "search_terms": {"type": "string"},
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {"type": "string", "description": "HCPCS Level II code."},
+                  "display": {"type": "string", "description": "Official short description."}
+                }
+              }
+            }
+          },
+          "required": ["results"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"terms": "wheelchair", "max_results": 5}
+    ]
+  },
+  {
+    "name": "StarAlleles_search",
+    "description": "Pharmacogenomic star allele autocomplete via the NLM Clinical Table Search Service, e.g. CYP2D6*4. Given a gene or allele prefix, returns matching star allele designations with their defining nucleotide change, alternate/historical name, and resulting protein change. Complements the existing CPIC tools (which give dosing recommendations per diplotype but do not look up individual allele definitions). No API key required.",
+    "type": "ClinicalTablesTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "terms": {
+          "type": "string",
+          "description": "Gene or allele name/prefix to search, e.g. 'CYP2D6', 'CYP2D6*4'."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of matches to return (default 20, max 500).",
+          "default": 20
+        }
+      },
+      "required": ["terms"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "total_count": {"type": "integer"},
+            "count": {"type": "integer"},
+            "search_terms": {"type": "string"},
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {"type": "string", "description": "Star allele designation, e.g. 'CYP2D6*18'."},
+                  "allele": {"type": "string"},
+                  "nucleotide_change": {"type": "string"},
+                  "alternate_name": {"type": "string"},
+                  "protein_change": {"type": "string"}
+                }
+              }
+            }
+          },
+          "required": ["results"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"terms": "CYP2D6", "max_results": 5}
+    ]
+  },
+  {
+    "name": "NPIProvider_search",
+    "description": "US healthcare provider/organization directory search via the NLM Clinical Table Search Service (NPPES NPI Registry). Given a provider or organization name, returns matches with their National Provider Identifier (NPI), specialty/type, and practice address. Set organization=true to search organizations (hospitals, clinics) instead of individual providers. The returned npi is what CMSOpenPayments_search_payments expects as its npi filter, resolving who a payment recipient actually is. No API key required.",
+    "type": "ClinicalTablesTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "terms": {
+          "type": "string",
+          "description": "Provider or organization name to search, e.g. 'Smith', 'Mayo Clinic'."
+        },
+        "organization": {
+          "type": ["boolean", "null"],
+          "description": "Search organizations (hospitals, clinics) instead of individual providers. Default false."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of matches to return (default 20, max 500).",
+          "default": 20
+        }
+      },
+      "required": ["terms"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "total_count": {"type": "integer"},
+            "count": {"type": "integer"},
+            "search_terms": {"type": "string"},
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "code": {"type": "string", "description": "National Provider Identifier (NPI)."},
+                  "name.full": {"type": "string"},
+                  "NPI": {"type": "string"},
+                  "provider_type": {"type": "string"},
+                  "addr_practice.full": {"type": "string"},
+                  "is_organization": {"type": "boolean"}
+                }
+              }
+            }
+          },
+          "required": ["results"]
+        },
+        {
+          "type": "object",
+          "properties": {"status": {"type": "string"}, "error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"terms": "Smith", "max_results": 5},
+      {"terms": "Mayo Clinic", "organization": true, "max_results": 5}
+    ]
   }
 ]

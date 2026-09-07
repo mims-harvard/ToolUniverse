@@ -21,6 +21,20 @@ MESH_LOOKUP_URL = "https://id.nlm.nih.gov/mesh/lookup"
 MESH_BASE_URL = "https://id.nlm.nih.gov/mesh"
 
 
+# MeSH record classes that hang off a descriptor rather than standing alone.
+# Everything else NLM serves from this endpoint -- TopicalDescriptor,
+# PublicationType, GeographicalDescriptor, Qualifier -- carries its own tree
+# numbers and annotation.
+_ENTRY_TERM_TYPES = frozenset({"Term", "Concept"})
+
+
+def _value(field: Any) -> str:
+    """Read a MeSH JSON-LD literal, which may be bare or an @value wrapper."""
+    if isinstance(field, dict):
+        return field.get("@value", "")
+    return field if isinstance(field, str) else ""
+
+
 @register_tool("MeSHTool")
 class MeSHTool(BaseTool):
     """
@@ -138,20 +152,32 @@ class MeSHTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        # Extract label
-        label = data.get("label", {})
-        if isinstance(label, dict):
-            label = label.get("@value", "")
+        # NLM's LOD server answers 200 with a bare `{ }` for any syntactically
+        # plausible identifier that does not exist -- only malformed ones 404.
+        # Mapping that empty body onto the field layout below produced a
+        # fully-shaped record (`label: ""`, `active: null`) reported as
+        # success, so a nonexistent descriptor was indistinguishable from a
+        # real one whose label happened to be blank. Confirmed live:
+        # D999999.json -> HTTP 200, body `{ }`.
+        if not data:
+            return {
+                "status": "error",
+                "error": (
+                    f"No MeSH record exists with identifier '{descriptor_id}'. "
+                    "NLM returns an empty record rather than a 404 for "
+                    "well-formed but unassigned identifiers. Descriptor IDs "
+                    "look like D009369; use MeSH_search_descriptors to find "
+                    "one by name."
+                ),
+            }
 
-        # Extract annotation
-        annotation = data.get("annotation", {})
-        if isinstance(annotation, dict):
-            annotation = annotation.get("@value", "")
+        # Descriptor records carry the name in `label`; Term and Concept
+        # records carry it in `prefLabel`. Reading only `label` blanked a name
+        # the API plainly supplies -- confirmed live that T010724.json returns
+        # prefLabel "Dysphagia" while the tool reported `label: ""`.
+        label = _value(data.get("label")) or _value(data.get("prefLabel"))
 
-        # Extract history note
-        history_note = data.get("historyNote", {})
-        if isinstance(history_note, dict):
-            history_note = history_note.get("@value", "")
+        annotation = _value(data.get("annotation"))
 
         # Extract tree numbers
         tree_numbers_raw = data.get("treeNumber", [])
@@ -175,10 +201,7 @@ class MeSHTool(BaseTool):
                 else entry_type.split("/")[-1]
             )
 
-        # Extract consider also
-        consider_also = data.get("considerAlso", {})
-        if isinstance(consider_also, dict):
-            consider_also = consider_also.get("@value", "")
+        consider_also = _value(data.get("considerAlso"))
 
         result = {
             "descriptor_id": data.get("identifier", descriptor_id),
@@ -191,6 +214,34 @@ class MeSHTool(BaseTool):
             "last_updated": data.get("lastUpdated"),
             "active": data.get("http://id.nlm.nih.gov/mesh/vocab#active"),
         }
+
+        # The record type is already known here, so an identifier that resolves
+        # to something other than a main heading should say so rather than
+        # leave the caller to notice that `tree_numbers` came back empty.
+        #
+        # What may be said about it depends on the class. Only Term and Concept
+        # records are owned by a descriptor and genuinely carry no tree numbers
+        # or annotation. PublicationType, GeographicalDescriptor and Qualifier
+        # are indexed in their own right and do have both -- D016428
+        # (PublicationType) returns tree V02.600 and a full annotation, so a
+        # blanket "it has no tree numbers or annotation of its own" printed a
+        # falsehood directly above the populated fields that contradict it.
+        if entry_type and entry_type != "TopicalDescriptor":
+            if entry_type in _ENTRY_TERM_TYPES:
+                result["note"] = (
+                    f"'{result['descriptor_id']}' is a MeSH {entry_type}, not a "
+                    "topical descriptor. Terms and concepts belong to a "
+                    "descriptor and carry no tree numbers or annotation of "
+                    "their own -- use mesh_get_subjects_by_subject_name with "
+                    "this record's label to resolve the descriptor that owns it."
+                )
+            else:
+                result["note"] = (
+                    f"'{result['descriptor_id']}' is a MeSH {entry_type}, not a "
+                    "topical descriptor. It is indexed in its own right, so the "
+                    "tree numbers and annotation above are its own, but it will "
+                    "not appear in searches that cover topical descriptors only."
+                )
 
         return {
             "status": "success",

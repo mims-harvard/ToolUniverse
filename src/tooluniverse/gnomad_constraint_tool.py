@@ -12,6 +12,7 @@ No API key is required. Endpoint: https://gnomad.broadinstitute.org/api
 import requests
 from typing import Dict, Any, Optional
 from .base_tool import BaseTool
+from .gnomad_tool import describe_dataset, resolve_dataset_assembly
 from .tool_registry import register_tool
 
 
@@ -21,16 +22,9 @@ from .tool_registry import register_tool
 # and translate it to the appropriate reference genome:
 #   gnomad_r4 / gnomad_r3  -> GRCh38 (gnomAD v4 constraint)
 #   gnomad_r2_1 / exac     -> GRCh37 (gnomAD v2.1.1 / ExAC-era constraint)
-_DATASET_TO_REFERENCE = {
-    "gnomad_r4": "GRCh38",
-    "gnomad_r3": "GRCh38",
-    "gnomad_r2_1": "GRCh37",
-    "gnomad_r2_1_controls": "GRCh37",
-    "gnomad_r2_1_non_neuro": "GRCh37",
-    "gnomad_r2_1_non_cancer": "GRCh37",
-    "gnomad_r2_1_non_topmed": "GRCh37",
-    "exac": "GRCh37",
-}
+# The dataset-to-assembly table lives in gnomad_tool so the whole gnomAD family
+# resolves assemblies the same way; it matches by prefix, so subsets such as
+# gnomad_r3_non_cancer resolve by rule instead of falling through to a default.
 
 _QUERY = """
 query GeneConstraint($geneSymbol: String, $geneId: String, $referenceGenome: ReferenceGenomeId!) {
@@ -68,9 +62,7 @@ class GnomADConstraintTool(BaseTool):
     @staticmethod
     def _resolve_reference(dataset: Optional[str]) -> str:
         """Map a gnomAD dataset id to the constraint reference genome."""
-        if not dataset:
-            return "GRCh38"
-        return _DATASET_TO_REFERENCE.get(dataset.lower(), "GRCh38")
+        return resolve_dataset_assembly(dataset)
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Fetch curated gene constraint metrics from gnomAD."""
@@ -159,8 +151,10 @@ class GnomADConstraintTool(BaseTool):
         data = {
             "gene_symbol": gene.get("symbol"),
             "gene_id": gene.get("gene_id"),
-            "dataset": dataset,
-            "reference_genome": reference_genome,
+            # Same provenance block as the rest of the gnomAD family, so a key
+            # added there can never skip this tool. Constraint has no
+            # exome/genome split, so no `dataset_note` ever applies.
+            **describe_dataset(dataset, assembly=reference_genome),
             "pLI": constraint.get("pli"),
             "oe_lof": constraint.get("oe_lof"),
             "oe_lof_lower": constraint.get("oe_lof_lower"),

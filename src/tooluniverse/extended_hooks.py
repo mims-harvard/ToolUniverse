@@ -6,10 +6,16 @@ hook types beyond summarization. It shows the pattern for creating
 new hook types while maintaining compatibility with the existing system.
 """
 
-import re
 import json
+import re
+from pathlib import Path
 from typing import Dict, Any, List
-from .output_hook import OutputHook
+
+from jsonschema import FormatChecker
+from jsonschema.exceptions import SchemaError
+from jsonschema.validators import validator_for
+
+from .output_hook import HookProcessingError, OutputHook
 
 
 class FilteringHook(OutputHook):
@@ -75,23 +81,8 @@ class FilteringHook(OutputHook):
             if not self.compiled_patterns:
                 return result
 
-            output_str = result if isinstance(result, str) else str(result)
-            filtered_output = output_str
-            filtered_count = 0
-
-            # Apply each filter pattern
-            for pattern in self.compiled_patterns:
-                matches = pattern.findall(filtered_output)
-                if matches:
-                    filtered_count += len(matches)
-                    if self.log_filtered_items:
-                        print(
-                            f"🔒 Filtered {len(matches)} items matching pattern: {pattern.pattern}"
-                        )
-
-                    filtered_output = pattern.sub(
-                        self.replacement_text, filtered_output
-                    )
+            value = result if self.preserve_structure else str(result)
+            filtered_output, filtered_count = self._filter_value(value)
 
             if filtered_count > 0:
                 print(
@@ -103,6 +94,49 @@ class FilteringHook(OutputHook):
         except Exception as e:
             print(f"Error in filtering hook: {str(e)}")
             return result
+
+    def _filter_value(self, value: Any) -> tuple[Any, int]:
+        """Filter string values recursively while preserving container types."""
+        if isinstance(value, str):
+            return self._filter_text(value)
+        if isinstance(value, dict):
+            filtered = {}
+            total = 0
+            for key, item in value.items():
+                filtered_item, count = self._filter_value(item)
+                filtered[key] = filtered_item
+                total += count
+            return filtered, total
+        if isinstance(value, list):
+            filtered_items = []
+            total = 0
+            for item in value:
+                filtered_item, count = self._filter_value(item)
+                filtered_items.append(filtered_item)
+                total += count
+            return filtered_items, total
+        if isinstance(value, tuple):
+            filtered_items = []
+            total = 0
+            for item in value:
+                filtered_item, count = self._filter_value(item)
+                filtered_items.append(filtered_item)
+                total += count
+            return tuple(filtered_items), total
+        return value, 0
+
+    def _filter_text(self, text: str) -> tuple[str, int]:
+        """Apply configured regular expressions to one string value."""
+        filtered = text
+        total = 0
+        for pattern in self.compiled_patterns:
+            filtered, count = pattern.subn(self.replacement_text, filtered)
+            total += count
+            if count and self.log_filtered_items:
+                print(
+                    f"Filtered {count} items matching pattern: {pattern.pattern}"
+                )
+        return filtered, total
 
 
 class FormattingHook(OutputHook):
@@ -225,6 +259,9 @@ class ValidationHook(OutputHook):
     - Check required fields
     - Ensure data quality
 
+    ``strict_mode`` enables JSON Schema format checks. ``error_action`` may warn,
+    apply the supported missing-field fix, or fail the tool call.
+
     Args:
         config (Dict[str, Any]): Hook configuration containing validation settings
         tooluniverse: Optional ToolUniverse instance (not used for validation)
@@ -241,11 +278,40 @@ class ValidationHook(OutputHook):
         super().__init__(config)
         hook_config = config.get("hook_config", {})
 
-        # Validation configuration
-        self.validation_schema = hook_config.get("validation_schema", None)
+        self.validation_schema = hook_config.get("validation_schema")
         self.strict_mode = hook_config.get("strict_mode", True)
-        self.error_action = hook_config.get("error_action", "warn")  # warn, fix, fail
+        self.error_action = hook_config.get("error_action", "warn")
         self.required_fields = hook_config.get("required_fields", [])
+
+        if self.error_action not in {"warn", "fix", "fail"}:
+            raise ValueError(
+                "ValidationHook error_action must be one of: warn, fix, fail"
+            )
+        if not isinstance(self.strict_mode, bool):
+            raise ValueError("ValidationHook strict_mode must be a boolean")
+        if not isinstance(self.required_fields, list) or any(
+            not isinstance(field, str) or not field
+            for field in self.required_fields
+        ):
+            raise ValueError(
+                "ValidationHook required_fields must be a list of non-empty strings"
+            )
+
+        self._schema_validator = None
+        if self.validation_schema is not None:
+            if not isinstance(self.validation_schema, dict):
+                raise ValueError("ValidationHook validation_schema must be an object")
+            validator_class = validator_for(self.validation_schema)
+            try:
+                validator_class.check_schema(self.validation_schema)
+            except SchemaError as exc:
+                raise ValueError(
+                    f"Invalid ValidationHook validation_schema: {exc.message}"
+                ) from exc
+            format_checker = FormatChecker() if self.strict_mode else None
+            self._schema_validator = validator_class(
+                self.validation_schema, format_checker=format_checker
+            )
 
     def process(
         self,
@@ -264,7 +330,10 @@ class ValidationHook(OutputHook):
             context (Dict[str, Any]): Additional context information
 
         Returns
-            Any: The validated output, or original output if validation fails
+            Any: The validated, fixed, or warning-preserved output
+
+        Raises:
+            HookProcessingError: If validation fails with ``error_action="fail"``
         """
         try:
             validation_result = self._validate_output(result)
@@ -280,19 +349,31 @@ class ValidationHook(OutputHook):
                     )
                 return result
             else:
+                details = "; ".join(validation_result["errors"])
                 if self.error_action == "fail":
-                    print(f"❌ ValidationHook: {tool_name} output validation failed")
-                    return result
+                    raise HookProcessingError(
+                        f"ValidationHook rejected {tool_name} output: {details}"
+                    )
                 elif self.error_action == "fix":
                     fixed_result = self._fix_output(result, validation_result["errors"])
-                    print(
-                        f"🔧 ValidationHook: Fixed {tool_name} output based on validation errors"
-                    )
+                    remaining = self._validate_output(fixed_result)
+                    if remaining["valid"]:
+                        print(f"🔧 ValidationHook: Fixed {tool_name} output")
+                    else:
+                        print(
+                            f"⚠️ ValidationHook: {tool_name} output remains invalid "
+                            f"after supported fixes: {'; '.join(remaining['errors'])}"
+                        )
                     return fixed_result
                 else:  # warn
-                    print(f"⚠️ ValidationHook: {tool_name} output has validation issues")
+                    print(
+                        f"⚠️ ValidationHook: {tool_name} output has validation "
+                        f"issues: {details}"
+                    )
                     return result
 
+        except HookProcessingError:
+            raise
         except Exception as e:
             print(f"Error in validation hook: {str(e)}")
             return result
@@ -301,17 +382,30 @@ class ValidationHook(OutputHook):
         """Validate the output against configured rules."""
         validation_result = {"valid": True, "errors": [], "warnings": []}
 
-        # Check required fields for dict outputs
-        if isinstance(result, dict) and self.required_fields:
-            for field in self.required_fields:
-                if field not in result:
-                    validation_result["errors"].append(
-                        f"Missing required field: {field}"
-                    )
-                    validation_result["valid"] = False
+        if self.required_fields:
+            if not isinstance(result, dict):
+                validation_result["errors"].append(
+                    "Required fields can only be checked on object outputs"
+                )
+            else:
+                for field in self.required_fields:
+                    if field not in result:
+                        validation_result["errors"].append(
+                            f"Missing required field: {field}"
+                        )
 
-        # Add schema validation here if needed
-        # This would integrate with jsonschema or similar libraries
+        if self._schema_validator is not None:
+            schema_errors = sorted(
+                self._schema_validator.iter_errors(result),
+                key=lambda error: tuple(str(part) for part in error.absolute_path),
+            )
+            for error in schema_errors:
+                path = ".".join(str(part) for part in error.absolute_path) or "<root>"
+                validation_result["errors"].append(
+                    f"Schema validation failed at {path}: {error.message}"
+                )
+
+        validation_result["valid"] = not validation_result["errors"]
 
         return validation_result
 
@@ -411,7 +505,9 @@ class LoggingHook(OutputHook):
                     "output_length": len(str(result)),
                     "timestamp": context.get("execution_time", "unknown"),
                     "output_preview": str(result)[: self.max_log_size],
-                }
+                },
+                ensure_ascii=False,
+                default=str,
             )
         else:  # detailed
             return f"""
@@ -428,7 +524,9 @@ Output Preview: {str(result)[: self.max_log_size]}{"..." if len(str(result)) > s
     def _write_log(self, log_entry: str):
         """Write the log entry to the configured destination."""
         if self.log_file:
-            with open(self.log_file, "a", encoding="utf-8") as f:
+            log_path = Path(self.log_file).expanduser()
+            log_path.parent.mkdir(parents=True, exist_ok=True)
+            with log_path.open("a", encoding="utf-8") as f:
                 f.write(log_entry + "\n")
         else:
             print(f"📝 Log: {log_entry}")

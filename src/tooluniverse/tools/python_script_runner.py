@@ -38,7 +38,7 @@ def python_script_runner(
     env_vars : dict[str, Any]
         Environment variables to set for script execution
     dependencies : list[str]
-        List of Python packages that the script depends on. Will be checked and optio...
+        List of exact Python distribution package names, as accepted by pip, that the...
     auto_install_dependencies : bool
         Whether to automatically install missing dependencies without user confirmation
     require_confirmation : bool

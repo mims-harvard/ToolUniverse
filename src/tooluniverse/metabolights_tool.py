@@ -10,6 +10,10 @@ from typing import Any, Dict
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
+# MetaboLights' own /ws/studies endpoint ignores keyword queries; EBI Search
+# indexes the same studies and honours them.
+EBI_SEARCH_URL = "https://www.ebi.ac.uk/ebisearch/ws/rest/metabolights"
+
 
 @register_tool("MetaboLightsRESTTool")
 class MetaboLightsRESTTool(BaseTool):
@@ -55,9 +59,6 @@ class MetaboLightsRESTTool(BaseTool):
             if study_id:
                 return f"{self.base_url}/studies/{study_id}"
 
-        elif tool_name == "metabolights_search_studies":
-            return f"{self.base_url}/studies"
-
         elif tool_name == "metabolights_get_study_assays":
             study_id = args.get("study_id", "")
             if study_id:
@@ -80,15 +81,7 @@ class MetaboLightsRESTTool(BaseTool):
         params = {}
         tool_name = self.tool_config.get("name", "")
 
-        if tool_name == "metabolights_search_studies":
-            if "query" in args:
-                params["query"] = args["query"]
-            if "size" in args:
-                params["size"] = args["size"]
-            if "page" in args:
-                params["page"] = args["page"]
-
-        elif tool_name == "metabolights_list_studies":
+        if tool_name == "metabolights_list_studies":
             if "size" in args:
                 params["size"] = args["size"]
             if "page" in args:
@@ -214,9 +207,71 @@ class MetaboLightsRESTTool(BaseTool):
                 "error": f"Failed to extract files from study endpoint: {str(e)}",
             }
 
+    def _search_via_ebi_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Keyword-search MetaboLights studies through EBI Search.
+
+        MetaboLights' own /ws/studies endpoint accepts a `query` parameter and
+        silently ignores it, so every search returned the same first N study
+        accessions by ID with status "success" -- a wrong answer that looked
+        like a right one. EBI Search indexes the same MetaboLights studies and
+        does honour the query (confirmed live: "acylcarnitine" -> 113 hits).
+        """
+        query = str(arguments.get("query", "")).strip()
+        size = arguments.get("size", 20)
+        page = arguments.get("page", 0)
+        params = {
+            "query": query,
+            "format": "json",
+            "size": size,
+            "start": int(page) * int(size),
+        }
+        # EBI Search's first response for an uncached query regularly exceeds
+        # 30s while warm repeats return in ~1s, so retry once before failing.
+        try:
+            response = self.session.get(
+                EBI_SEARCH_URL, params=params, timeout=self.timeout
+            )
+        except requests.exceptions.Timeout:
+            response = self.session.get(
+                EBI_SEARCH_URL, params=params, timeout=self.timeout * 2
+            )
+        response.raise_for_status()
+        payload = response.json()
+        entries = payload.get("entries", []) or []
+        result = {
+            "status": "success",
+            "data": [e.get("id") for e in entries if e.get("id")],
+            "url": response.url,
+            "count": len(entries),
+            "total_hits": payload.get("hitCount", 0),
+        }
+        if not entries:
+            suggested = payload.get("suggestedQuery")
+            result["note"] = (
+                f"No MetaboLights study matched '{query}'."
+                + (f" Did you mean '{suggested}'?" if suggested else "")
+                + " Use metabolights_list_studies to browse all public studies."
+            )
+        return result
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the MetaboLights API call"""
         tool_name = self.tool_config.get("name", "")
+
+        if tool_name == "metabolights_search_studies":
+            if not str(arguments.get("query", "")).strip():
+                return {
+                    "status": "error",
+                    "error": "query is required. To browse all public studies without "
+                    "a keyword, use metabolights_list_studies.",
+                }
+            try:
+                return self._search_via_ebi_search(arguments)
+            except (requests.RequestException, ValueError) as e:
+                return {
+                    "status": "error",
+                    "error": f"MetaboLights search via EBI Search failed: {str(e)}",
+                }
 
         if tool_name == "metabolights_get_reference_compound":
             if (
@@ -353,11 +408,8 @@ class MetaboLightsRESTTool(BaseTool):
                 extracted_data = data
                 count = len(data)
 
-            # Apply client-side pagination for list/search (API ignores size/page params)
-            if tool_name in (
-                "metabolights_list_studies",
-                "metabolights_search_studies",
-            ):
+            # Apply client-side pagination for the study list (API ignores size/page)
+            if tool_name == "metabolights_list_studies":
                 size = arguments.get("size", 20)
                 page = arguments.get("page", 0)
                 if isinstance(extracted_data, list):

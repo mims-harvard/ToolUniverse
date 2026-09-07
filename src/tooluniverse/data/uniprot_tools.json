@@ -660,13 +660,13 @@
   },
   {
     "name": "UniProt_search",
-    "description": "Search UniProtKB database with flexible query syntax. Returns protein entries with accession numbers and metadata. Query syntax supports: field searches (gene:TP53, organism_id:9606, reviewed:true), ranges (length:[100 TO 500], mass:[20000 TO 50000]), wildcards (gene:MEIOB*), boolean operators (AND/OR/NOT), and parentheses for grouping. Examples: 'gene:TP53 AND organism_id:9606', 'length:[400 TO 500] AND reviewed:true', 'tissue:brain NOT organism_id:10090'.",
+    "description": "Search UniProtKB database with flexible query syntax. Returns protein entries with accession numbers and metadata. Query syntax supports: field searches (gene:TP53, taxonomy_id:9606, reviewed:true), ranges (length:[100 TO 500], mass:[20000 TO 50000]), wildcards (gene:MEIOB*), boolean operators (AND/OR/NOT), and parentheses for grouping. Examples: 'gene:TP53 AND taxonomy_id:9606', 'length:[400 TO 500] AND reviewed:true', 'tissue:brain NOT taxonomy_id:10090'. Scope by taxon with taxonomy_id (lineage match, 'Taxonomy [OC]') rather than organism_id ('Organism [OS]', exact organism node only): most bacterial entries are annotated at strain level, so a species-level organism_id silently returns 0 or an undercount (gene:gyrA AND organism_id:1423 -> 0 hits; taxonomy_id:1423 -> 1). A caller-supplied organism_id:<taxid> is rewritten to taxonomy_id:<taxid> and the change is reported in data.normalization_note.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
-          "description": "Search query using UniProt syntax. Simple: 'MEIOB', 'insulin'. Field searches: 'gene:TP53', 'protein_name:insulin', 'organism_id:9606', 'reviewed:true'. Ranges: 'length:[100 TO 500]', 'mass:[20000 TO 50000]'. Wildcards: 'gene:MEIOB*'. Boolean: 'gene:TP53 AND organism_id:9606', 'tissue:brain OR tissue:liver', 'reviewed:true NOT fragment:true'. Use parentheses for grouping: '(organism_id:9606 OR organism_id:10090) AND gene:TP53'. Note: 'organism:' auto-converts to 'organism_id:'."
+          "description": "Search query using UniProt syntax. Simple: 'MEIOB', 'insulin'. Field searches: 'gene:TP53', 'protein_name:insulin', 'taxonomy_id:9606', 'reviewed:true'. Ranges: 'length:[100 TO 500]', 'mass:[20000 TO 50000]'. Wildcards: 'gene:MEIOB*'. Boolean: 'gene:TP53 AND taxonomy_id:9606', 'tissue:brain OR tissue:liver', 'reviewed:true NOT fragment:true'. Use parentheses for grouping: '(taxonomy_id:9606 OR taxonomy_id:10090) AND gene:TP53'. Taxon scoping: use 'taxonomy_id:<taxid>' (matches the whole lineage, so strain-level entries under a species taxid are included) or 'organism_name:\"...\"'. A bare 'organism:' auto-converts, and 'organism_id:<taxid>' is rewritten to 'taxonomy_id:<taxid>' with a note in data.normalization_note, because organism_id matches only the exact organism node and misses strain-level entries."
         },
         "organism": {
           "type": "string",
@@ -760,6 +760,10 @@
                   }
                 }
               }
+            },
+            "normalization_note": {
+              "type": "string",
+              "description": "Present only when the submitted query was rewritten. Currently emitted when an 'organism_id:<taxid>' clause was rewritten to 'taxonomy_id:<taxid>', widening the scope to include descendant strains."
             }
           },
           "required": [
@@ -843,7 +847,8 @@
               "type": [
                 "integer",
                 "number"
-              ]
+              ],
+              "description": "Number of mapping rows in `results`. This is a page count, not the number of matches -- compare against `total_results`."
             },
             "results": {
               "type": "array",
@@ -854,24 +859,48 @@
                     "type": "string"
                   },
                   "to": {
-                    "type": "object",
-                    "properties": {
-                      "accession": {
-                        "type": "string"
+                    "description": "A UniProtKB target yields an entry object; every other target database (PDB, Ensembl, ...) yields the bare identifier as a string. The schema declared only the object form, so simple mappings such as to_db=PDB never validated.",
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "accession": {
+                            "type": "string"
+                          },
+                          "id": {
+                            "type": "string"
+                          },
+                          "gene_name": {
+                            "type": "string"
+                          }
+                        }
                       },
-                      "id": {
-                        "type": "string"
-                      },
-                      "gene_name": {
+                      {
                         "type": "string"
                       }
-                    }
+                    ]
                   }
                 }
               }
             },
             "failed_ids": {
-              "type": "array"
+              "type": "array",
+              "description": "Input identifiers UniProt could not map at all (its `failedIds`), e.g. a typo'd accession. Empty when every input mapped."
+            },
+            "total_results": {
+              "type": [
+                "integer",
+                "number",
+                "null"
+              ],
+              "description": "Total mappings UniProt holds for these inputs, from its x-total-results header. Null when UniProt did not report one."
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when `results` is only a page of `total_results`."
+            },
+            "truncation_note": {
+              "type": "string"
             }
           },
           "required": [
@@ -1264,7 +1293,7 @@
       "properties": {
         "cluster_id": {
           "type": "string",
-          "description": "UniRef cluster ID (e.g., 'UniRef50_P04637', 'UniRef90_P04637', 'UniRef100_P04637'). Use UniProt_get_uniref_search to find cluster IDs."
+          "description": "UniRef cluster ID (e.g., 'UniRef50_P04637', 'UniRef90_P04637', 'UniRef100_P04637'). Use UniProt_search_uniref to find cluster IDs."
         }
       },
       "required": [

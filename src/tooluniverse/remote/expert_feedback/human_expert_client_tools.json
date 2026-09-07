@@ -4,7 +4,12 @@
         "description": "Automatically discover and load all tools from Human Expert MCP Server. Can register discovered tools as individual ToolUniverse tools for expert consultation in complex scientific decisions requiring human judgment.",
         "type": "MCPAutoLoaderTool",
         "server_url": "http://localhost:9876/mcp",
-        "tool_prefix": "expert_"
+        "tool_prefix": "expert_",
+        "parameter": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {}
+        }
     },
     {
         "name": "consult_human_expert",
@@ -15,13 +20,18 @@
         "mcp_tool_name": "consult_human_expert",
         "parameter": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
-                "question": {
-                    "type": "string",
+        "question": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20000,
                     "description": "The scientific question or case requiring expert consultation"
                 },
-                "specialty": {
-                    "type": "string",
+        "specialty": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
                     "description": "Area of expertise needed (e.g., 'cardiology', 'oncology', 'pharmacology', 'neurology', 'emergency', 'general')",
                     "default": "general"
                 },
@@ -31,8 +41,9 @@
                     "description": "Request priority level",
                     "default": "normal"
                 },
-                "context": {
-                    "type": "string",
+        "context": {
+          "type": "string",
+          "maxLength": 50000,
                     "description": "Additional context or background information about the case",
                     "default": ""
                 },
@@ -67,8 +78,9 @@
                     "type": "string",
                     "description": "Timestamp when the expert responded"
                 },
-                "request_id": {
-                    "type": "string",
+        "request_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}$",
                     "description": "Unique identifier for the consultation request"
                 },
                 "specialty": {
@@ -91,9 +103,11 @@
         "mcp_tool_name": "get_expert_response",
         "parameter": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
-                "request_id": {
-                    "type": "string",
+        "request_id": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{8}$",
                     "description": "The ID of the expert consultation request to check"
                 }
             },
@@ -140,8 +154,8 @@
         "mcp_tool_name": "get_expert_status",
         "parameter": {
             "type": "object",
-            "properties": {},
-            "additionalProperties": false
+            "additionalProperties": false,
+            "properties": {}
         },
         "return_schema": {
             "type": "object",
@@ -160,16 +174,17 @@
                             "type": "string",
                             "description": "Expert name"
                         },
-                        "specialties": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            },
-                            "description": "Expert's areas of specialization"
+                        "specialty": {
+                            "type": "string",
+                            "description": "Expert's area of specialization"
                         },
-                        "availability": {
-                            "type": "boolean",
-                            "description": "Whether the expert is currently available"
+                        "status": {
+                            "type": "string",
+                            "description": "Expert availability status"
+                        },
+                        "last_activity": {
+                            "type": "string",
+                            "description": "Timestamp of the expert's last activity"
                         }
                     }
                 },
@@ -215,8 +230,8 @@
         "mcp_tool_name": "list_pending_expert_requests",
         "parameter": {
             "type": "object",
-            "properties": {},
-            "additionalProperties": false
+            "additionalProperties": false,
+            "properties": {}
         },
         "return_schema": {
             "type": "object",
@@ -280,13 +295,17 @@
         "mcp_tool_name": "submit_expert_response",
         "parameter": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
                 "request_id": {
                     "type": "string",
+                    "pattern": "^[0-9a-f]{8}$",
                     "description": "The ID of the consultation request to respond to"
                 },
-                "response": {
-                    "type": "string",
+        "response": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50000,
                     "description": "The expert's response and recommendations"
                 }
             },

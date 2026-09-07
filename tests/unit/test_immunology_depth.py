@@ -16,8 +16,10 @@ capability gaps. All four reuse an existing registered tool class (no new
   ``get_germline_fasta``) — IMGT/GENE-DB germline IG/TR FASTA, following the
   GENElect redirect chain and extracting the FASTA <pre> block.
 * ``IEDB_predict_antigen_processing`` (IEDBPredictionTool, endpoint
-  ``predict_processing``) — combined proteasome + TAP + MHC-I processing
-  scores from the IEDB processing tool TSV.
+  ``predict_processing``) — combined cleavage + TAP + MHC-I processing scores
+  from IEDB's next-generation tools pipeline (Fix-R29A-1 moved this off the
+  retired synchronous ``tools_api/processing/`` endpoint, which accepts a
+  POST and then never answers, stalling every call for the full timeout).
 
 All network calls are mocked; these tests never touch the live APIs.
 """
@@ -276,41 +278,109 @@ class TestIMGTGermlineFasta(unittest.TestCase):
 # IEDB_predict_antigen_processing
 # ---------------------------------------------------------------------------
 
-_IEDB_PROCESSING_TSV = (
-    "allele\tseq_num\tstart\tend\tlength\tpeptide\tproteasome_score\ttap_score\t"
-    "mhc_score\tprocessing_score\ttotal_score\tic50_score\n"
-    "HLA-A*02:01\t1\t1\t9\t9\tSLYNTVATL\t1.5479\t0.5087\t-2.2849\t2.0566\t"
-    "-0.2283\t192.7\n"
-    "HLA-A*02:01\t1\t2\t10\t9\tLYNTVATLY\t1.2896\t1.3692\t-4.4622\t2.6588\t"
-    "-1.8034\t28984.2\n"
-)
+_IEDB_SUBMIT_OK = {"result_id": "rid-proc", "warnings": []}
+
+# Column set confirmed live for a netmhcpan binding predictor chained with
+# the netctlpan processing predictor.
+_IEDB_PROCESSING_DONE = {
+    "status": "done",
+    "data": {
+        "errors": [],
+        "warnings": [],
+        "results": [
+            {
+                "type": "peptide_table",
+                "table_columns": [
+                    {"name": n}
+                    for n in (
+                        "sequence_number",
+                        "peptide",
+                        "start",
+                        "end",
+                        "length",
+                        "allele",
+                        "netmhcpan_ba_ic50",
+                        "mhc_prediction",
+                        "tap_prediction_score",
+                        "cleavage_prediction_score",
+                        "combined_prediction_score",
+                    )
+                ],
+                "table_data": [
+                    [
+                        1,
+                        "LYNTVATLY",
+                        2,
+                        10,
+                        9,
+                        "HLA-A*02:01",
+                        30582.45,
+                        0.035,
+                        3.153,
+                        0.97688,
+                        0.33362,
+                    ],
+                    [
+                        1,
+                        "SLYNTVATL",
+                        1,
+                        9,
+                        9,
+                        "HLA-A*02:01",
+                        46.5,
+                        0.438,
+                        1.394,
+                        0.97756,
+                        0.6928,
+                    ],
+                ],
+            }
+        ],
+    },
+}
 
 
 def _iedb_tool():
     from tooluniverse.iedb_prediction_tool import IEDBPredictionTool
 
-    return IEDBPredictionTool(
+    tool = IEDBPredictionTool(
         {
             "name": "IEDB_predict_antigen_processing",
             "fields": {"endpoint_type": "predict_processing"},
         }
     )
+    tool.poll_interval = 0
+    return tool
+
+
+def _iedb_resp(payload):
+    resp = MagicMock()
+    resp.status_code = 200
+    resp.json.return_value = payload
+    resp.text = str(payload)
+    resp.raise_for_status.return_value = None
+    return resp
 
 
 class TestIEDBAntigenProcessing(unittest.TestCase):
     def test_parses_processing_scores_and_sorts(self):
-        """Processing scores are typed and rows sorted by total_score."""
+        """Rows carry the cleavage/TAP/MHC components and sort by the
+        combined score, highest first."""
         tool = _iedb_tool()
-        resp = MagicMock()
-        resp.text = _IEDB_PROCESSING_TSV
-        resp.raise_for_status.return_value = None
 
-        with patch(
-            "tooluniverse.iedb_prediction_tool.requests.post", return_value=resp
+        with (
+            patch(
+                "tooluniverse.iedb_prediction_tool.requests.post",
+                return_value=_iedb_resp(_IEDB_SUBMIT_OK),
+            ),
+            patch(
+                "tooluniverse.iedb_prediction_tool.requests.get",
+                return_value=_iedb_resp(_IEDB_PROCESSING_DONE),
+            ),
         ):
             result = tool.run(
                 {
-                    "sequence": "SLYNTVATLYCVHQRIDV",
+                    "sequence": "SLYNTVATLYCVHQRIDVKQNTLKLATGGKS",
                     "allele": "HLA-A*02:01",
                     "length": 9,
                 }
@@ -319,17 +389,21 @@ class TestIEDBAntigenProcessing(unittest.TestCase):
         self.assertEqual(result["status"], "success")
         rows = result["data"]
         self.assertEqual(len(rows), 2)
-        # Sorted by total_score descending: SLYNTVATL (-0.2283) before LYNTVATLY
+        # Sorted by combined_prediction_score descending, so the row that
+        # arrived second comes first.
         first = rows[0]
         self.assertEqual(first["peptide"], "SLYNTVATL")
-        self.assertEqual(first["proteasome_score"], 1.5479)
-        self.assertEqual(first["tap_score"], 0.5087)
-        self.assertEqual(first["mhc_score"], -2.2849)
-        self.assertEqual(first["processing_score"], 2.0566)
-        self.assertEqual(first["total_score"], -0.2283)
-        self.assertEqual(first["ic50_score"], 192.7)
-        self.assertGreater(first["total_score"], rows[1]["total_score"])
+        self.assertEqual(first["cleavage_prediction_score"], 0.97756)
+        self.assertEqual(first["tap_prediction_score"], 1.394)
+        self.assertEqual(first["mhc_prediction"], 0.438)
+        self.assertEqual(first["combined_prediction_score"], 0.6928)
+        self.assertEqual(first["netmhcpan_ba_ic50"], 46.5)
+        self.assertGreater(
+            first["combined_prediction_score"],
+            rows[1]["combined_prediction_score"],
+        )
         self.assertEqual(result["metadata"]["allele"], "HLA-A*02:01")
+        self.assertEqual(result["metadata"]["processing_method"], "netctlpan")
 
     def test_missing_sequence_errors(self):
         """Missing sequence returns an error envelope."""
@@ -349,7 +423,7 @@ class TestIEDBAntigenProcessing(unittest.TestCase):
         ):
             result = tool.run({"sequence": "SLYNTVATL"})
         self.assertEqual(result["status"], "error")
-        self.assertIn("time", result["error"].lower())
+        self.assertIn("timeout", result["error"].lower())
 
 
 if __name__ == "__main__":

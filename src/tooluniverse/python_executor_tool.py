@@ -8,12 +8,15 @@ This module provides two specialized tools for executing Python code:
 
 import ast
 import io
+import locale
 import os
 import signal
 import subprocess
 import sys
+import tempfile
 import time
 import traceback
+from importlib import metadata as importlib_metadata
 from typing import Any, Dict, List, Optional
 
 from .base_tool import BaseTool
@@ -219,6 +222,21 @@ class BasePythonExecutor:
         if "allowed_imports" in tool_config:
             self.allowed_modules.update(tool_config["allowed_imports"])
 
+    def _is_module_allowed(self, name: str) -> bool:
+        """Return whether *name* is an allowed module or one of its submodules."""
+        if name in self.allowed_modules:
+            return True
+
+        for allowed in self.allowed_modules:
+            prefix = f"{allowed}."
+            if name.startswith(prefix):
+                submodule_parts = name[len(prefix) :].split(".")
+                return not any(
+                    self._is_dangerous_attribute(part) for part in submodule_parts
+                )
+
+        return False
+
     @staticmethod
     def _is_dunder(name: Any) -> bool:
         """Return True for double-underscore names like ``__class__``.
@@ -258,6 +276,38 @@ class BasePythonExecutor:
                         and alias.name not in self.allowed_modules
                     ):
                         warnings.append(f"Forbidden import: {alias.name}")
+
+            elif isinstance(node, ast.ImportFrom):
+                module_name = node.module or ""
+                module_parts = module_name.split(".") if module_name else []
+                module_root = module_parts[0] if module_parts else ""
+
+                if (
+                    module_root in self.FORBIDDEN_AST_NODES["Import"]
+                    and module_root not in self.allowed_modules
+                ):
+                    warnings.append(f"Forbidden import: {module_name}")
+
+                dangerous_module_parts = [
+                    part
+                    for part in module_parts[1:]
+                    if self._is_dangerous_attribute(part)
+                ]
+                if dangerous_module_parts:
+                    warnings.append(
+                        f"Forbidden import path (sandbox escape): {module_name}"
+                    )
+
+                for alias in node.names:
+                    if alias.name == "*":
+                        warnings.append(
+                            "Forbidden wildcard import: imported names cannot be "
+                            "validated safely"
+                        )
+                    elif self._is_dangerous_attribute(alias.name):
+                        warnings.append(
+                            f"Forbidden imported name (sandbox escape): {alias.name}"
+                        )
 
             # Check for forbidden function calls
             elif isinstance(node, ast.Call):
@@ -323,7 +373,7 @@ class BasePythonExecutor:
         # Create safe __import__ function
         def safe_import(name, globals=None, locals=None, fromlist=(), level=0):
             """Safe import function that only allows pre-approved modules."""
-            if name in self.allowed_modules:
+            if self._is_module_allowed(name):
                 return __import__(name, globals, locals, fromlist, level)
             else:
                 raise ImportError(
@@ -492,13 +542,6 @@ class BasePythonExecutor:
             },
         }
 
-    def _get_package_to_install(self, package: str) -> str:
-        """Get the actual package name to install (parent package for submodules)"""
-        if "." in package:
-            # For submodules like 'keggtools.keggrest', install the parent package 'keggtools'
-            return package.split(".")[0]
-        return package
-
     def _check_and_install_dependencies(
         self,
         dependencies: List[str],
@@ -515,64 +558,14 @@ class BasePythonExecutor:
         print(f"📦 Checking dependencies: {dependencies}")
 
         for package in dependencies:
-            # Try multiple import strategies
-            import_success = False
-
-            # Strategy 1: Direct package name
+            # Dependencies are distribution names passed to pip, not necessarily
+            # import-package names. Checking imports conflates distributions that
+            # expose the same module (for example onnxruntime and
+            # onnxruntime-gpu), so consult installed distribution metadata.
             try:
-                __import__(package.replace("-", "_"))
-                print(f"   ✅ {package} is installed (direct import)")
-                import_success = True
-            except ImportError:
-                pass
-
-            # Strategy 2: Try common submodule patterns
-            if not import_success:
-                patterns = [
-                    package.replace("-", "_"),
-                    package.replace("-", ""),
-                    package.split("-")[0],  # For packages like 'keggtools' -> 'kegg'
-                ]
-
-                for pattern in patterns:
-                    try:
-                        __import__(pattern)
-                        print(f"   ✅ {package} is installed (as {pattern})")
-                        import_success = True
-                        break
-                    except ImportError:
-                        continue
-
-            # Strategy 3: Check if it's a submodule (e.g., keggtools.api)
-            if not import_success and "." in package:
-                try:
-                    __import__(package)
-                    print(f"   ✅ {package} is installed (submodule)")
-                    import_success = True
-                except ImportError:
-                    pass
-
-            # Strategy 4: Check parent package for submodules
-            if not import_success and "." in package:
-                parent_package = package.split(".")[0]
-                try:
-                    parent_module = __import__(parent_package)
-                    # Try to access the submodule
-                    submodule_name = package.split(".")[1]
-                    if hasattr(parent_module, submodule_name):
-                        print(
-                            f"   ✅ {package} is available (submodule of {parent_package})"
-                        )
-                        import_success = True
-                    else:
-                        # Try importing the submodule directly
-                        __import__(package)
-                        print(f"   ✅ {package} is installed (submodule)")
-                        import_success = True
-                except ImportError:
-                    pass
-
-            if not import_success:
+                importlib_metadata.version(package)
+                print(f"   ✅ {package} distribution is installed")
+            except importlib_metadata.PackageNotFoundError:
                 print(f"   ❌ {package} is not installed")
                 missing_packages.append(package)
 
@@ -581,11 +574,10 @@ class BasePythonExecutor:
 
         print(f"\n⚠️  Missing packages: {missing_packages}")
 
-        # Get packages to actually install (parent packages for submodules)
-        packages_to_install = [
-            self._get_package_to_install(pkg) for pkg in missing_packages
-        ]
-        packages_to_install = list(set(packages_to_install))  # Remove duplicates
+        # Preserve exact distribution identities and caller order. Distribution
+        # names may legitimately contain dots, so they must not be truncated as
+        # though they were import submodules.
+        packages_to_install = list(dict.fromkeys(missing_packages))
 
         # Handle missing packages
         if not auto_install:
@@ -634,11 +626,11 @@ class BasePythonExecutor:
 
                     # Verify installation
                     try:
-                        __import__(package_to_install.replace("-", "_"))
-                        print(f"   ✅ {package_to_install} import verified")
-                    except ImportError:
+                        importlib_metadata.version(package_to_install)
+                        print(f"   ✅ {package_to_install} installation verified")
+                    except importlib_metadata.PackageNotFoundError:
                         print(
-                            f"   ⚠️ {package_to_install} installed but import may need different name"
+                            f"   ⚠️ {package_to_install} installed but distribution metadata was not found"
                         )
                 else:
                     print(
@@ -697,6 +689,16 @@ class PythonCodeExecutor(BasePythonExecutor, BaseTool):
             # boundary configured via tool_config["allowed_imports"]. It must
             # NOT be widened by caller-supplied arguments, or a caller could
             # allowlist os/subprocess and disable the sandbox before it runs.
+            if "allowed_imports" in arguments:
+                error_response = self._format_error_response(
+                    ValueError(
+                        "allowed_imports cannot be set per call; import permissions "
+                        "must be configured by the server administrator"
+                    ),
+                    "SecurityError",
+                    execution_time=0,
+                )
+                return {"status": "error", "data": error_response}
 
             # Check AST safety
             is_safe, ast_warnings = self._check_ast_safety(code)
@@ -875,46 +877,61 @@ class PythonScriptRunner(BasePythonExecutor, BaseTool):
             # Execute in subprocess
             start_time = time.time()
 
-            try:
-                result = subprocess.run(
-                    cmd,
-                    cwd=working_dir,
-                    env=restricted_env,
-                    capture_output=True,
-                    text=True,
-                    timeout=timeout,
-                )
-
-                execution_time = time.time() - start_time
-
-                if result.returncode == 0:
-                    success_response = self._format_success_response(
-                        f"Script executed successfully "
-                        f"(exit code: {result.returncode})",
-                        result.stdout,
-                        result.stderr,
-                        execution_time,
-                        code_lines=0,  # Not easily measurable for external scripts
+            # File-backed output avoids waiting for pipe EOF after the child
+            # has exited. That can hang on Windows when another process
+            # inherits a duplicate pipe writer. It also lets us return output
+            # already written when the process times out.
+            with (
+                tempfile.TemporaryFile() as stdout_file,
+                tempfile.TemporaryFile() as stderr_file,
+            ):
+                try:
+                    result = subprocess.run(
+                        cmd,
+                        cwd=working_dir,
+                        env=restricted_env,
+                        stdin=subprocess.DEVNULL,
+                        stdout=stdout_file,
+                        stderr=stderr_file,
+                        close_fds=True,
+                        timeout=timeout,
                     )
-                    return {"status": "success", "data": success_response}
-                else:
+                except subprocess.TimeoutExpired:
+                    execution_time = time.time() - start_time
+                    stdout = self._read_subprocess_output(stdout_file)
+                    stderr = self._read_subprocess_output(stderr_file)
                     error_response = self._format_error_response(
-                        RuntimeError(
-                            f"Script failed with exit code {result.returncode}"
+                        TimeoutError(
+                            f"Script execution timed out after {timeout} seconds"
                         ),
-                        "RuntimeError",
-                        result.stdout,
-                        result.stderr,
+                        "TimeoutError",
+                        stdout,
+                        stderr,
                         execution_time,
                     )
                     return {"status": "error", "data": error_response}
 
-            except subprocess.TimeoutExpired:
-                execution_time = time.time() - start_time
+                stdout = self._read_subprocess_output(stdout_file)
+                stderr = self._read_subprocess_output(stderr_file)
+
+            execution_time = time.time() - start_time
+
+            if result.returncode == 0:
+                success_response = self._format_success_response(
+                    f"Script executed successfully (exit code: {result.returncode})",
+                    stdout,
+                    stderr,
+                    execution_time,
+                    code_lines=0,  # Not easily measurable for external scripts
+                )
+                return {"status": "success", "data": success_response}
+            else:
                 error_response = self._format_error_response(
-                    TimeoutError(f"Script execution timed out after {timeout} seconds"),
-                    "TimeoutError",
-                    execution_time=execution_time,
+                    RuntimeError(f"Script failed with exit code {result.returncode}"),
+                    "RuntimeError",
+                    stdout,
+                    stderr,
+                    execution_time,
                 )
                 return {"status": "error", "data": error_response}
 
@@ -923,3 +940,13 @@ class PythonScriptRunner(BasePythonExecutor, BaseTool):
                 e, type(e).__name__, execution_time=0
             )
             return {"status": "error", "data": error_response}
+
+    @staticmethod
+    def _read_subprocess_output(output_file) -> str:
+        """Read binary subprocess output with ``text=True`` newline semantics."""
+        output_file.flush()
+        output_file.seek(0)
+        output = output_file.read().decode(
+            locale.getpreferredencoding(False), errors="replace"
+        )
+        return output.replace("\r\n", "\n").replace("\r", "\n")

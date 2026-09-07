@@ -68,7 +68,7 @@
   },
   {
     "name": "GWASSumStats_get_region_associations",
-    "description": "Query full GWAS summary statistics for variants in a chromosomal region. Returns variant-level association data including p-values, effect sizes (beta/OR), allele frequencies, and study/trait information. Unlike gwas_search_associations (which returns curated top hits), this endpoint provides complete summary statistics from deposited studies. Filter by chromosome region, p-value threshold, and optionally by specific study.",
+    "description": "Query full GWAS summary statistics for variants in a chromosomal region. Returns variant-level association data including p-values, effect sizes (beta/OR), allele frequencies, and study/trait information. Unlike gwas_search_associations (which returns curated top hits), this endpoint provides complete summary statistics from deposited studies. Filter by chromosome region, p-value threshold, and optionally by specific study. Results are sorted most-significant-first. Some deposited studies encode an unreported p-value as the GWAS Catalog missing-value sentinel -99; such rows cannot satisfy p_upper and are excluded when p_upper is set (the count is reported in metadata.sentinel_rows_excluded). Omit p_upper to retain them, flagged with p_value_reported = false.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -128,6 +128,14 @@
           "chromosome": {"type": ["integer", "null"]},
           "position": {"type": ["integer", "null"]},
           "p_value": {"type": ["number", "null"]},
+          "p_value_reported": {
+            "type": "boolean",
+            "description": "False when p_value is the GWAS Catalog missing-value sentinel (-99) or otherwise not a finite number in [0, 1] rather than a real p-value. Such rows are excluded whenever p_upper is set."
+          },
+          "code": {
+            "type": ["integer", "null"],
+            "description": "Upstream GWAS Catalog harmonisation code for the variant (e.g. 10 = forward strand, alleles already correctly oriented; 14 = variant could not be validated for harmonisation). This describes allele harmonisation only and does NOT indicate whether p_value is real -- use p_value_reported for that."
+          },
           "beta": {"type": ["number", "null"]},
           "odds_ratio": {"type": ["number", "null"]},
           "effect_allele": {"type": ["string", "null"]},

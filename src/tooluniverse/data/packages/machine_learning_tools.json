@@ -12,9 +12,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "scikit-learn",
     "local_info": {
@@ -154,9 +152,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "torch",
     "local_info": {
@@ -296,9 +292,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "torch_geometric",
     "local_info": {
@@ -439,9 +433,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "umap-learn",
     "local_info": {
@@ -581,9 +573,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "statsmodels",
     "local_info": {
@@ -723,9 +713,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "schnetpack",
     "local_info": {
@@ -861,6 +849,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -870,9 +859,7 @@
           "description": "Type of information to retrieve about harmony-pytorch"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "harmony-pytorch",
     "local_info": {
@@ -1009,6 +996,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1018,9 +1006,7 @@
           "description": "Type of information to retrieve about python-libsbml"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "python-libsbml",
     "local_info": {
@@ -1157,6 +1143,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1166,9 +1153,7 @@
           "description": "Type of information to retrieve about pymzML"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "pymzml",
     "local_info": {
@@ -1309,9 +1294,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "faiss-cpu",
     "local_info": {
@@ -1447,6 +1430,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1457,9 +1441,7 @@
           "description": "Type of information to retrieve about hmmlearn"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "hmmlearn",
     "local_info": {
@@ -1596,6 +1578,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1605,9 +1588,7 @@
           "description": "Type of information to retrieve about COBRApy"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "cobra",
     "local_info": {
@@ -1748,9 +1729,7 @@
           "default": true
         }
       },
-      "required": [
-        "include_examples"
-      ]
+      "required": []
     },
     "package_name": "deepxde",
     "local_info": {
@@ -1885,6 +1864,7 @@
       "properties": {
         "info_type": {
           "type": "string",
+          "default": "overview",
           "enum": [
             "overview",
             "installation",
@@ -1895,9 +1875,7 @@
           "description": "Type of information to retrieve about DeepPurpose"
         }
       },
-      "required": [
-        "info_type"
-      ]
+      "required": []
     },
     "package_name": "deeppurpose",
     "local_info": {

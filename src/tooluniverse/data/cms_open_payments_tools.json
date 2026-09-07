@@ -1,0 +1,73 @@
+[
+  {
+    "name": "CMSOpenPayments_search_payments",
+    "type": "CMSOpenPaymentsTool",
+    "description": "Search CMS Open Payments (the 'Sunshine Act' database) for payments and transfers of value from drug/device manufacturers to a US physician or teaching hospital, or all payments made by a manufacturer, for one program year (2019-2025, default 2024). Provide exactly one identifying filter. npi and manufacturer_id are indexed and fast (1-3s); recipient_last_name and manufacturer_name are exact-match only and take roughly 25s. Example: npi='1528271848' returns that physician's itemized payments with company, amount, date, and associated drug/device.",
+    "fields": {
+      "operation": "search_payments"
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "npi": {
+          "type": ["string", "null"],
+          "description": "Recipient's National Provider Identifier, e.g. '1528271848'. Fast, indexed."
+        },
+        "recipient_last_name": {
+          "type": ["string", "null"],
+          "description": "Recipient's exact last name, e.g. 'Smith'. Slow (~25s), not indexed; prefer npi when known."
+        },
+        "manufacturer_id": {
+          "type": ["string", "null"],
+          "description": "Manufacturer/GPO's Open Payments id, e.g. '100000010419'. Fast, indexed."
+        },
+        "manufacturer_name": {
+          "type": ["string", "null"],
+          "description": "Manufacturer's exact registered name, e.g. 'Phadia US Inc.'. Slow (~25s), not indexed; prefer manufacturer_id when known."
+        },
+        "program_year": {
+          "type": ["integer", "null"],
+          "description": "Program year, 2019-2025. Default 2024."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max payment records to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "record_id": {"type": ["string", "null"]},
+              "recipient_name": {"type": ["string", "null"]},
+              "recipient_npi": {"type": ["string", "null"]},
+              "recipient_type": {"type": ["string", "null"]},
+              "recipient_specialty": {"type": ["string", "null"]},
+              "recipient_state": {"type": ["string", "null"]},
+              "manufacturer_name": {"type": ["string", "null"]},
+              "manufacturer_id": {"type": ["string", "null"]},
+              "total_amount_usd": {"type": ["string", "null"]},
+              "date_of_payment": {"type": ["string", "null"]},
+              "nature_of_payment": {"type": ["string", "null"]},
+              "associated_product": {"type": ["string", "null"]},
+              "program_year": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"npi": "1528271848", "limit": 5},
+      {"manufacturer_id": "100000010419", "limit": 5}
+    ]
+  }
+]

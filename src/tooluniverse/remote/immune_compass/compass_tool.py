@@ -1,353 +1,422 @@
-"""
-COMPASS Prediction Tool - MCP Server
+"""COMPASS immune-checkpoint-response prediction MCP server.
 
-This module provides an MCP (Model Context Protocol) server for running immune checkpoint
-inhibitor (ICI) response predictions using the COMPASS (COMprehensive Pathway Analysis
-for Single-cell Sequencing) model. The tool processes tumor gene expression data to
-predict patient responsiveness to immunotherapy.
-
-The COMPASS model analyzes gene expression profiles to identify key immune cell
-populations and pathways that contribute to treatment response prediction.
+The official release checkpoint is a pickled ``FineTuner``. Providers convert
+one reviewed, digest-pinned checkpoint offline with ``convert_checkpoint.py``.
+This live module only reads safetensors, JSON, and an ``allow_pickle=False``
+NumPy archive, then reconstructs the reviewed COMPASS architecture in code.
 """
 
-import os
-import sys
-import pandas as pd
+from __future__ import annotations
+
 import asyncio
-import uuid
+import hashlib
+import json
+import math
+import os
+from pathlib import Path
+import threading
+from typing import Any, List, Optional, Tuple
+
 from fastmcp import FastMCP
-from typing import List, Tuple, Optional
+import numpy as np
+import pandas as pd
 
-sys.path.insert(0, f"{os.getenv('COMPASS_MODEL_PATH')}/immune-compass/COMPASS")  # noqa: E402
+from tooluniverse.remote_data_path import resolve_remote_data_path
+from tooluniverse.server_security import (
+    get_fastmcp_token_auth,
+    run_fastmcp_server,
+)
 
-from compass import loadcompass  # noqa: E402
+
+server = FastMCP("COMPASS Prediction SMCP Server", auth=get_fastmcp_token_auth())
+
+_MAX_EXPRESSION_FILE_BYTES = 50_000_000
+_MAX_GENES = 100_000
+_MAX_WEIGHTS_BYTES = 256_000_000
+_MAX_PREPROCESSING_BYTES = 32_000_000
+_MODEL_LOCK = threading.Lock()
+_COMPASS_TOOL: Optional["CompassTool"] = None
+
+# The public provider artifact is deliberately narrower than the general
+# upstream training factory. Expanding this set requires a new code review.
+_EXPECTED_MODEL_ARGS = {
+    "input_dim": 15672,
+    "task_dim": 2,
+    "task_type": "c",
+    "proj_level": "cellpathway",
+    "proj_pid": False,
+    "proj_cancer_type": True,
+    "proj_disentangled": True,
+    "embed_dim": 44,
+    "num_cancer_types": 33,
+    "encoder": "performer",
+    "encoder_dropout": 0.2,
+    "transformer_dim": 32,
+    "transformer_nhead": 2,
+    "transformer_num_layers": 1,
+    "transformer_pos_emb": "learnable",
+    "task_batch_norms": True,
+    "task_dense_layer": [16],
+    "seed": 42,
+}
 
 
-def _optional_token_auth():
-    """Require a Bearer token only when TOOLUNIVERSE_API_TOKEN is set.
-
-    Returns None (no authentication, unchanged behavior) when the variable is
-    not set, so existing deployments are unaffected.
-    """
-    token = os.getenv("TOOLUNIVERSE_API_TOKEN")
-    if not token:
-        return None
+def _sha256(path: Path) -> str:
+    digest = hashlib.sha256()
     try:
-        from fastmcp.server.auth import StaticTokenVerifier
+        with path.open("rb") as stream:
+            for block in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(block)
+    except OSError:
+        raise ValueError("the configured safe COMPASS artifact is unavailable") from None
+    return digest.hexdigest()
 
-        return StaticTokenVerifier(
-            tokens={token: {"client_id": "tooluniverse", "scopes": []}}
+
+def _digest(value: Any, name: str) -> str:
+    if (
+        not isinstance(value, str)
+        or len(value) != 64
+        or any(ch not in "0123456789abcdef" for ch in value)
+    ):
+        raise ValueError(f"the safe COMPASS artifact has an invalid {name}")
+    return value
+
+
+def _artifact_dir(configured: Optional[str] = None) -> Path:
+    value = (
+        configured
+        if configured is not None
+        else os.environ.get("COMPASS_SAFE_MODEL_DIR", "")
+    )
+    if not isinstance(value, str):
+        raise ValueError("the provider must configure COMPASS_SAFE_MODEL_DIR")
+    if not value.strip():
+        raise ValueError("the provider must configure COMPASS_SAFE_MODEL_DIR")
+    try:
+        root = Path(value).expanduser().resolve(strict=True)
+    except (OSError, RuntimeError):
+        raise ValueError("the configured safe COMPASS artifact is unavailable") from None
+    if not root.is_dir():
+        raise ValueError("the configured safe COMPASS artifact is unavailable")
+    return root
+
+
+class _SafeMinMaxScaler:
+    def __init__(self, feature_names: np.ndarray, scale: np.ndarray, minimum: np.ndarray):
+        self.feature_names = feature_names
+        self.scale = scale
+        self.minimum = minimum
+
+    def transform(self, frame: pd.DataFrame) -> pd.DataFrame:
+        metadata = frame[[frame.columns[0]]]
+        values = np.log2(frame[self.feature_names].to_numpy(dtype=np.float64) + 1.0)
+        scaled = values * self.scale + self.minimum
+        return metadata.join(
+            pd.DataFrame(scaled, columns=self.feature_names, index=frame.index)
         )
+
+
+class _SafeCompassRunner:
+    def __init__(self, model: Any, scaler: _SafeMinMaxScaler, feature_names: np.ndarray, device: str):
+        self.model = model
+        self.scaler = scaler
+        self.feature_names = feature_names
+        self.device = device
+
+    def _select(self, frame: pd.DataFrame) -> pd.DataFrame:
+        return frame[[frame.columns[0], *self.feature_names.tolist()]]
+
+    def predict(self, frame: pd.DataFrame):
+        from compass.model.tune import Predictor
+
+        return Predictor(
+            self._select(frame),
+            self.model,
+            self.scaler,
+            device=self.device,
+            batch_size=1,
+            num_workers=0,
+        )
+
+    def extract(self, frame: pd.DataFrame):
+        from compass.model.tune import Extractor
+
+        return Extractor(
+            self._select(frame),
+            self.model,
+            self.scaler,
+            device=self.device,
+            batch_size=1,
+            num_workers=0,
+            with_gene_level=True,
+        )
+
+
+def _load_safe_runner(root: Path, device: str) -> tuple[_SafeCompassRunner, dict[str, Any]]:
+    metadata_path = root / "metadata.json"
+    preprocessing_path = root / "preprocessing.npz"
+    weights_path = root / "model.safetensors"
+    if not metadata_path.is_file() or not preprocessing_path.is_file() or not weights_path.is_file():
+        raise ValueError("the configured safe COMPASS artifact is incomplete")
+    if (
+        metadata_path.stat().st_size > 100_000
+        or preprocessing_path.stat().st_size > _MAX_PREPROCESSING_BYTES
+        or weights_path.stat().st_size > _MAX_WEIGHTS_BYTES
+    ):
+        raise ValueError("the configured safe COMPASS artifact exceeds its size limit")
+    try:
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError):
+        raise ValueError("the safe COMPASS metadata is invalid") from None
+    required = {
+        "format",
+        "source_sha256",
+        "upstream_revision",
+        "model_args",
+        "scale_method",
+        "weights_sha256",
+        "preprocessing_sha256",
+    }
+    if not isinstance(metadata, dict) or set(metadata) != required:
+        raise ValueError("the safe COMPASS metadata is invalid")
+    if metadata["format"] != "compass-safe-v1" or metadata["scale_method"] != "minmax":
+        raise ValueError("the safe COMPASS artifact format is unsupported")
+    _digest(metadata["source_sha256"], "source digest")
+    _digest(metadata["weights_sha256"], "weights digest")
+    _digest(metadata["preprocessing_sha256"], "preprocessing digest")
+    revision = metadata["upstream_revision"]
+    if (
+        not isinstance(revision, str)
+        or len(revision) != 40
+        or any(ch not in "0123456789abcdef" for ch in revision)
+    ):
+        raise ValueError("the safe COMPASS artifact has an invalid upstream revision")
+    if metadata["model_args"] != _EXPECTED_MODEL_ARGS:
+        raise ValueError("the safe COMPASS model architecture is not provider-approved")
+    if _sha256(weights_path) != metadata["weights_sha256"]:
+        raise ValueError("the safe COMPASS weights digest does not match")
+    if _sha256(preprocessing_path) != metadata["preprocessing_sha256"]:
+        raise ValueError("the safe COMPASS preprocessing digest does not match")
+
+    try:
+        with np.load(preprocessing_path, allow_pickle=False) as archive:
+            if set(archive.files) != {"feature_names", "min", "scale"}:
+                raise ValueError("unexpected preprocessing fields")
+            feature_names = archive["feature_names"].copy()
+            minimum = np.asarray(archive["min"], dtype=np.float64)
+            scale = np.asarray(archive["scale"], dtype=np.float64)
+    except (OSError, ValueError):
+        raise ValueError("the safe COMPASS preprocessing archive is invalid") from None
+    expected_shape = (_EXPECTED_MODEL_ARGS["input_dim"],)
+    if (
+        feature_names.shape != expected_shape
+        or feature_names.dtype.kind not in "US"
+        or minimum.shape != expected_shape
+        or scale.shape != expected_shape
+        or np.unique(feature_names).size != feature_names.size
+        or any(not name or len(name) > 64 for name in feature_names.astype(str).tolist())
+        or not np.isfinite(minimum).all()
+        or not np.isfinite(scale).all()
+        or np.any(scale <= 0)
+    ):
+        raise ValueError("the safe COMPASS preprocessing arrays are invalid")
+    feature_names = feature_names.astype(str)
+
+    try:
+        import torch
+        from safetensors.torch import load_file
+        from compass.model.model import Compass
+
+        if device == "cuda" and not torch.cuda.is_available():
+            raise ValueError("COMPASS_DEVICE requests CUDA, but CUDA is unavailable")
+        state = load_file(weights_path, device="cpu")
+        model = Compass(**_EXPECTED_MODEL_ARGS)
+        model.load_state_dict(state, strict=True)
+        model = model.to(device)
+        model.eval()
+    except ValueError:
+        raise
     except Exception:
-        return None
-
-
-# Initialize MCP Server for COMPASS predictions
-server = FastMCP("COMPASS Prediction SMCP Server", auth=_optional_token_auth())
+        raise RuntimeError("the safe COMPASS model could not be constructed") from None
+    scaler = _SafeMinMaxScaler(feature_names, scale, minimum)
+    return _SafeCompassRunner(model, scaler, feature_names, device), metadata
 
 
 class CompassTool:
-    """
-    A comprehensive tool for running immune checkpoint inhibitor (ICI) response predictions
-    using the COMPASS model.
+    """Provider-configured COMPASS inference over a safe converted artifact."""
 
-    This class provides functionality to:
-    - Load pre-trained COMPASS model checkpoints
-    - Process gene expression data (TPM format)
-    - Predict ICI treatment response
-    - Extract key immune cell populations contributing to predictions
-
-    The COMPASS model is trained to identify immune cell concepts and pathways
-    that are predictive of patient response to checkpoint inhibitor therapy.
-    """
-
-    def __init__(
-        self,
-        root_path: Optional[str] = None,
-        ckp_path: str = "pft_leave_IMVigor210.pt",
-        device: str = "cpu",
-    ):
-        """
-        Initializes the COMPASS tool by loading the pre-trained model checkpoint.
-
-        Args:
-            root_path (str, optional): Path to the directory containing model checkpoints.
-                                     If None, uses COMPASS_MODEL_PATH/immune-compass/checkpoint.
-            ckp_path (str): Name of the checkpoint file to load.
-                           Defaults to "pft_leave_IMVigor210.pt" (IMVigor210 cohort).
-            device (str): Device for model inference ("cuda" or "cpu"). Defaults to "cuda".
-
-        Raises:
-            FileNotFoundError: If the specified checkpoint file cannot be found.
-            Exception: If model loading fails due to compatibility or corruption issues.
-        """
-        # Construct model checkpoint path
-        if root_path is None:
-            compass_model_path = os.getenv("COMPASS_MODEL_PATH")
-            if compass_model_path is None:
-                raise ValueError("COMPASS_MODEL_PATH environment variable is not set")
-            if not os.path.exists(
-                os.path.join(compass_model_path, "immune-compass", "checkpoint")
-            ):
-                checkpoint_path = os.path.join(
-                    compass_model_path, "immune-compass", "checkpoint"
-                )
-                raise FileNotFoundError(
-                    f"COMPASS model checkpoint not found at {checkpoint_path}. Please check your COMPASS_MODEL_PATH."
-                )
-            root_path = os.path.join(compass_model_path, "immune-compass", "checkpoint")
-
-        self.model_path = os.path.join(root_path, ckp_path)
-        self.device = device
-
-        # Lazy import torch for device handling
-        try:
-            import torch
-        except ImportError:
-            raise ImportError(
-                "COMPASS tool requires 'torch' package. "
-                "Install it with: pip install torch"
-            ) from None
-
-        # Load the pre-trained COMPASS model
-        print(f"🛠️  Initializing COMPASS tool from checkpoint: {self.model_path}...")
-        self.finetuner = loadcompass(
-            self.model_path, weights_only=False, map_location=torch.device(self.device)
+    def __init__(self, safe_model_dir: Optional[str] = None, device: Optional[str] = None):
+        selected_device = device or os.environ.get("COMPASS_DEVICE", "cpu")
+        if selected_device not in {"cpu", "cuda"}:
+            raise ValueError("COMPASS_DEVICE must be either 'cpu' or 'cuda'")
+        self.runner, self.metadata = _load_safe_runner(
+            _artifact_dir(safe_model_dir), selected_device
         )
+        self.feature_names = self.runner.feature_names
+        self.num_cancer_types = int(_EXPECTED_MODEL_ARGS["num_cancer_types"])
+        self._inference_lock = threading.Lock()
 
-        # Configure device settings for CPU inference if needed
-        if self.device == "cpu":
-            self.finetuner.device = "cpu"
-
-        # Display model parameter count for transparency
-        self.finetuner.count_parameters()
-        print(
-            "[COMPASS] Tool initialized successfully (model loaded and ready for predictions)."
-        )
-
+    @staticmethod
     def _get_top_columns_per_row(
-        self,
-        df: pd.DataFrame,
+        frame: pd.DataFrame,
         top_n: int = 44,
         exclude: Optional[List[str]] = None,
     ) -> List[List[Tuple[str, float]]]:
-        """
-        Extracts the top-scoring immune cell concepts for each sample from COMPASS output.
-
-        This method processes the COMPASS cell concept matrix to identify the most
-        influential immune cell populations contributing to the prediction for each sample.
-
-        Args:
-            df (pd.DataFrame): DataFrame containing cell concept scores from COMPASS analysis.
-                              Rows represent samples, columns represent immune cell concepts.
-            top_n (int): Maximum number of top concepts to return per sample. Defaults to 44.
-            exclude (List[str]): List of column names to exclude from results.
-                               Defaults to ['CANCER', 'Reference'].
-
-        Returns
-            List[List[Tuple[str, float]]]: For each sample, a list of tuples containing
-                                         (concept_name, concept_score) sorted by score descending.
-        """
-        # Set default excludes safely to avoid mutable default argument
-        if exclude is None:
-            exclude = ["CANCER", "Reference"]
-        # Sort concepts by score (descending) for each sample
-        sorted_concepts_indices = [
-            row.sort_values(ascending=False).index[:top_n] for _, row in df.iterrows()
-        ]
-
-        results = []
-        for i, (_, row) in enumerate(df.iterrows()):
-            row_concepts = []
-            for col in sorted_concepts_indices[i]:
-                # Skip excluded columns (e.g., metadata columns)
-                if col not in exclude:
-                    row_concepts.append((col, row[col]))
-            results.append(row_concepts)
+        excluded = set(exclude or ["CANCER", "Reference"])
+        results: List[List[Tuple[str, float]]] = []
+        for _, row in frame.iterrows():
+            ranked = row.sort_values(ascending=False)
+            results.append(
+                [
+                    (str(name), float(value))
+                    for name, value in ranked.items()
+                    if name not in excluded
+                ][:top_n]
+            )
         return results
 
-    def predict(
-        self,
-        gene_expression_data_path: str,
-        threshold: float = 0.5,
-        batch_size: int = 128,
-    ) -> Tuple[bool, List[Tuple[str, float]]]:
-        """
-        Performs immune checkpoint inhibitor response prediction on gene expression data.
-
-        This method processes single-sample tumor gene expression data (in TPM format)
-        through the COMPASS model to predict treatment response and identify key
-        immune cell populations contributing to the prediction.
-
-        Args:
-            gene_expression_data_path (str): Path to the TPM expression data file.
-                                                   to their expression levels in Transcripts Per Million (TPM).
-            threshold (float): Prediction probability threshold for classifying samples as responders.
-                             Values ≥ threshold are classified as responders. Defaults to 0.5.
-            batch_size (int): Batch size for model inference. Larger values may improve speed
-                            but require more memory. Defaults to 128.
-
-        Returns
-            Tuple[bool, List[Tuple[str, float]]]: A tuple containing:
-                - bool: True if predicted as responder (probability ≥ threshold), False otherwise
-                - List[Tuple[str, float]]: Top immune cell concepts ranked by importance,
-                  where each tuple contains (concept_name, concept_score)
-
-        Raises:
-            ValueError: If gene_expression_data is empty or contains invalid values.
-            RuntimeError: If model inference fails.
-        """
-        # Convert gene expression dictionary to DataFrame format expected by COMPASS
-        df_tpm = pd.read_pickle(gene_expression_data_path)
-        df_tpm.index.name = "Index"  # Required by COMPASS for gene indexing
-
-        # Extract immune cell concepts and generate predictions using COMPASS model
-        # dfct contains cell concept scores, dfpred contains response probabilities
-        _, _, dfct = self.finetuner.extract(
-            df_tpm, batch_size=batch_size, with_gene_level=True
+    def _load_expression(self, requested_path: str) -> pd.DataFrame:
+        path = resolve_remote_data_path(
+            requested_path, allowed_suffixes={".csv", ".tsv", ".txt"}
         )
-        _, dfpred = self.finetuner.predict(df_tpm)
+        if path.stat().st_size > _MAX_EXPRESSION_FILE_BYTES:
+            raise ValueError("the TPM expression table exceeds the 50 MB limit")
+        separator = "," if path.suffix.lower() == ".csv" else "\t"
+        try:
+            frame = pd.read_csv(path, sep=separator)
+        except Exception:
+            raise ValueError("the requested TPM expression table could not be read") from None
+        if frame.shape[0] != 1:
+            raise ValueError("the TPM expression table must contain exactly one sample")
+        if not 3 <= frame.shape[1] <= _MAX_GENES + 2:
+            raise ValueError(f"the TPM table may contain at most {_MAX_GENES} genes")
+        if frame.columns[0] != "Index" or frame.columns[1] != "cancer_code":
+            raise ValueError("the TPM table must begin with Index and cancer_code columns")
+        if frame.columns.duplicated().any():
+            raise ValueError("the TPM table contains duplicate columns")
+        sample_id = str(frame.iloc[0, 0])
+        if not sample_id or len(sample_id) > 256:
+            raise ValueError("the TPM table has an invalid sample identifier")
+        try:
+            cancer_code = float(frame.iloc[0, 1])
+        except (TypeError, ValueError):
+            raise ValueError("cancer_code must be an integer model category") from None
+        if (
+            not math.isfinite(cancer_code)
+            or not cancer_code.is_integer()
+            or not 0 <= cancer_code < self.num_cancer_types
+        ):
+            raise ValueError("cancer_code must be an integer model category from 0 through 32")
+        genes = frame.columns[2:].tolist()
+        if any(not isinstance(gene, str) or not gene or len(gene) > 64 for gene in genes):
+            raise ValueError("the TPM table contains an invalid gene name")
+        missing = sorted(set(self.feature_names) - set(genes))
+        if missing:
+            raise ValueError(
+                f"the TPM table is missing {len(missing)} required COMPASS genes"
+            )
+        try:
+            numeric = frame.iloc[:, 2:].apply(pd.to_numeric, errors="raise")
+        except Exception:
+            raise ValueError("the TPM expression values must be numeric") from None
+        values = numeric.to_numpy(dtype=np.float64)
+        if not np.isfinite(values).all() or np.any(values < 0):
+            raise ValueError("the TPM expression values must be finite and non-negative")
+        result = pd.concat(
+            [
+                pd.Series([int(cancer_code)], name="cancer_code"),
+                numeric.reset_index(drop=True),
+            ],
+            axis=1,
+        )
+        result.index = pd.Index([sample_id], name="Index")
+        return result
 
-        # Extract and rank the most influential immune cell concepts
-        sorted_cell_concepts = self._get_top_columns_per_row(dfct)
+    def predict(self, requested_path: str, threshold: float) -> dict[str, Any]:
+        frame = self._load_expression(requested_path)
+        with self._inference_lock:
+            _, prediction = self.runner.predict(frame)
+            _, _, concepts = self.runner.extract(frame)
+        if prediction.shape != (1, 2) or concepts.shape[0] != 1:
+            raise RuntimeError("COMPASS returned an invalid prediction shape")
+        probability = float(prediction.iloc[0, 1])
+        concept_values = concepts.to_numpy(dtype=np.float64)
+        if not math.isfinite(probability) or not np.isfinite(concept_values).all():
+            raise RuntimeError("COMPASS returned non-finite prediction values")
+        ranked = self._get_top_columns_per_row(concepts)[0]
+        return {
+            "prediction": {
+                "is_responder": probability >= threshold,
+                "responder_probability": probability,
+                "threshold": float(threshold),
+                "top_concepts": [
+                    {"concept": name, "score": score} for name, score in ranked
+                ],
+            },
+            "model": {
+                "artifact_format": self.metadata["format"],
+                "source_sha256": self.metadata["source_sha256"],
+                "upstream_revision": self.metadata["upstream_revision"],
+                "device": self.runner.device,
+            },
+            "context_info": [
+                "COMPASS inference completed with the provider-approved model artifact."
+            ],
+        }
 
-        # Classify sample as responder based on prediction probability threshold
-        # dfpred.iloc[:, 1] contains the responder probability (column 1)
-        responder = dfpred.iloc[:, 1].max() >= threshold
 
-        return responder, sorted_cell_concepts[0] if sorted_cell_concepts else []
+def _get_compass_tool() -> CompassTool:
+    global _COMPASS_TOOL
+    if _COMPASS_TOOL is None:
+        with _MODEL_LOCK:
+            if _COMPASS_TOOL is None:
+                _COMPASS_TOOL = CompassTool()
+    return _COMPASS_TOOL
 
 
 @server.tool()
 async def run_compass_prediction(
     gene_expression_data_path: str,
     threshold: float = 0.5,
-    root_path: Optional[str] = None,
 ):
-    """
-    MCP Tool: Predicts immune checkpoint inhibitor (ICI) response using COMPASS model.
-
-    This tool analyzes single-sample tumor gene expression data to predict patient
-    responsiveness to immune checkpoint inhibitor therapy. The COMPASS model leverages
-    immune cell concept analysis to provide both a binary prediction and interpretable
-    insights into the immune microenvironment factors driving the prediction.
-
-    Clinical Context:
-    - Designed for precision oncology applications
-    - Helps identify patients likely to benefit from ICI therapy
-    - Provides mechanistic insights through immune cell population analysis
-    - Based on validated cohorts including IMVigor210 (urothelial carcinoma)
-
-    Args:
-        gene_expression_data_path (str): Path to the TPM expression data file.
-                                               Keys should be standard gene symbols (e.g., "CD274", "PDCD1", "CTLA4")
-                                               Values should be normalized expression in TPM (Transcripts Per Million).
-                                               Minimum ~100 genes recommended for reliable predictions.
-        threshold (float): Probability threshold for responder classification (0.0-1.0).
-                         Values ≥ threshold classify sample as likely responder.
-                         Default 0.5 provides balanced sensitivity/specificity.
-                         Consider lower thresholds (~0.3) for higher sensitivity.
-
-    Returns
-        dict: Structured prediction results containing:
-            - 'prediction' (dict): Core prediction results with:
-                * 'is_responder' (bool): True if predicted responder (probability ≥ threshold)
-                * 'top_concepts' (list): Ranked immune cell concepts as dicts with:
-                    - 'concept' (str): Name of immune cell population/concept
-                    - 'score' (float): Importance score for this concept
-            - 'context_info' (list): Human-readable analysis summary and status messages
-            - 'error' (str, optional): Error description if prediction failed
-    """
-    # Generate unique request ID for tracking and logging
-    request_id = str(uuid.uuid4())[:8]
-    print(f"[{request_id}] Received COMPASS ICI response prediction request")
-
-    # Initialize global COMPASS tool instance for MCP server
-    # This instance will be used by the MCP tool function to serve predictions
-    try:
-        compass_tool = CompassTool(root_path=root_path)
-        print("✅ COMPASS Prediction tool instance created and ready for MCP server")
-    except Exception as e:
-        print(f"❌ Error creating COMPASS Prediction tool: {str(e)}")
-        print(
-            "Please ensure COMPASS_MODEL_PATH is correctly set and model checkpoint exists."
-        )
-        raise e
-
-    try:
-        # Brief async pause to allow for proper request handling
-        await asyncio.sleep(0.1)
-
-        # Validate input parameters
-        if (
-            not isinstance(gene_expression_data_path, str)
-            or not gene_expression_data_path
-        ):
-            raise ValueError(
-                "Input 'gene_expression_data' must be a non-empty dictionary mapping gene symbols to TPM values."
-            )
-
-        if not (0.0 <= threshold <= 1.0):
-            raise ValueError(f"Threshold must be between 0.0 and 1.0, got {threshold}")
-
-        print(
-            f"[{request_id}] Processing {len(gene_expression_data_path)} genes with threshold {threshold}"
-        )
-
-        # Execute COMPASS model prediction
-        is_responder, top_concepts = compass_tool.predict(
-            gene_expression_data_path, threshold=threshold
-        )
-
-        # Convert concept tuples to JSON-serializable format
-        serializable_concepts = [
-            {"concept": concept, "score": float(score)}
-            for concept, score in top_concepts
-        ]
-
-        # Log successful completion
-        response_status = "RESPONDER" if is_responder else "NON-RESPONDER"
-        print(
-            f"[{request_id}] ✅ COMPASS prediction completed: {response_status} ({len(serializable_concepts)} concepts)"
-        )
-
+    """Predict ICI response for one provider-rooted COMPASS TPM table."""
+    if not isinstance(gene_expression_data_path, str) or not gene_expression_data_path:
         return {
-            "prediction": {
-                "is_responder": is_responder,
-                "top_concepts": serializable_concepts,
-            },
-            "context_info": [
-                "COMPASS prediction completed successfully.",
-                f"Sample classified as: {'RESPONDER' if is_responder else 'NON-RESPONDER'}",
-                f"Analysis based on {len(gene_expression_data_path)} input genes.",
-                f"Top {len(serializable_concepts)} immune cell concepts identified.",
-            ],
+            "error": "gene_expression_data_path must be a non-empty string.",
+            "context_info": ["Please select a provider-approved TPM table."],
         }
-
-    except (ValueError, FileNotFoundError) as e:
-        error_message = f"COMPASS prediction validation error: {str(e)}"
-        print(f"[{request_id}] {error_message}")
+    if (
+        isinstance(threshold, bool)
+        or not isinstance(threshold, (int, float))
+        or not math.isfinite(threshold)
+        or not 0.0 <= threshold <= 1.0
+    ):
         return {
-            "error": error_message,
-            "context_info": ["Please check input data format and model availability."],
+            "error": "threshold must be a finite number between 0.0 and 1.0.",
+            "context_info": ["Please check the prediction threshold."],
         }
-    except Exception as e:
-        error_message = f"Unexpected error during COMPASS prediction: {str(e)}"
-        print(f"[{request_id}] {error_message}")
+    try:
+        return await asyncio.to_thread(
+            _get_compass_tool().predict,
+            gene_expression_data_path,
+            float(threshold),
+        )
+    except (ValueError, RuntimeError) as exc:
         return {
-            "error": error_message,
-            "context_info": ["Internal server error occurred during prediction."],
+            "error": str(exc),
+            "context_info": ["COMPASS inference did not complete."],
+        }
+    except Exception:
+        return {
+            "error": "COMPASS inference failed on the provider.",
+            "context_info": ["COMPASS inference did not complete."],
         }
 
 
 if __name__ == "__main__":
-    print("Starting MCP server for COMPASS Immune Response Prediction Tool...")
-    print("Model: COMPASS (COMprehensive Pathway Analysis for Single-cell Sequencing)")
-    print("Application: Immune Checkpoint Inhibitor Response Prediction")
-    print("Server: FastMCP with streamable HTTP transport")
-    print("Port: 7003 (configured to avoid conflicts with other biomedical tools)")
-
-    # Launch the MCP server with COMPASS prediction capabilities
-    server.run(
-        transport="streamable-http", host="0.0.0.0", port=7003, stateless_http=True
+    run_fastmcp_server(
+        server,
+        host=os.getenv("TOOLUNIVERSE_MCP_HOST", "127.0.0.1"),
+        port=7003,
+        stateless_http=True,
     )

@@ -224,18 +224,37 @@ class CellMarkerTool(BaseTool):
         sub = _apply_species(sub, species)
         sub = _apply_tissue(sub, tissue_type)
 
-        marker_genes = sorted(m for m in sub["cell_marker"].unique() if m)
-        return {
-            "status": "success",
-            "data": {
-                "cell_name": cell_name,
-                "species": species if species else "all",
-                "total_records": int(len(sub)),
-                "unique_markers": len(marker_genes),
-                "marker_genes": marker_genes[:500],
-                "records": _records(sub),
-            },
+        # Curated, HGNC-style gene symbols only. `cell_marker` (Symbol, falling
+        # back to the raw literature-curated `marker` text) is used for exact
+        # record-level provenance in `records`, but the deduped summary list
+        # returned here must not mix in non-symbol fallback text -- CellMarker's
+        # raw `marker` field frequently contains GenBank accessions (e.g.
+        # 'AK057596'), antibody clone/CD-panel names (e.g. '33D1', 'HLA-DR'),
+        # and case-variant duplicates for records where a curated `Symbol`
+        # wasn't assigned.
+        marker_genes = sorted(
+            s for s in sub["Symbol"].dropna().astype(str).str.strip().unique() if s
+        )
+        data = {
+            "cell_name": cell_name,
+            "species": species if species else "all",
+            "total_records": int(len(sub)),
+            "unique_markers": len(marker_genes),
+            "marker_genes": marker_genes[:500],
+            "records": _records(sub),
         }
+        if len(sub) == 0:
+            # Distinguish "no data for this cell type" from "likely a typo":
+            # suggest close matches from the full cell-name vocabulary so a
+            # misspelled query doesn't silently look identical to a cell type
+            # that genuinely has zero curated markers.
+            import difflib
+
+            all_names = sorted(set(df["cell_name"]) - {""})
+            data["suggested_cell_names"] = difflib.get_close_matches(
+                cell_name.strip(), all_names, n=5, cutoff=0.6
+            )
+        return {"status": "success", "data": data}
 
     def _list_cell_types(self, arguments, df) -> Dict[str, Any]:
         tissue_type = arguments.get("tissue_type")

@@ -8,6 +8,13 @@ This is separate from the Reactome Content Service (already in ToolUniverse).
 
 API: https://reactome.org/AnalysisService
 No authentication required. Free public access.
+
+API-wide convention worth knowing: in a Reactome analysis object (``entities``,
+``reactions``), ``found`` and ``total`` are counts but ``ratio`` is NOT
+found/total -- it is ``total`` divided by the size of Reactome's corresponding
+universe for that pathway's species, so it describes the pathway's size and is
+identical whatever identifiers were submitted. See ``_format_analysis_result``
+for how this tool surfaces that distinction.
 """
 
 import requests
@@ -338,10 +345,34 @@ class ReactomeAnalysisTool(BaseTool):
             },
         }
 
+    @staticmethod
+    def _coverage(found: Any, total: Any) -> float | None:
+        """Fraction of a pathway's entities matched by the submitted identifiers.
+
+        This is ``found / total`` -- the pathway coverage a reader of an
+        enrichment result usually wants, and deliberately not Reactome's own
+        ``ratio`` (see the module docstring). None when either count is missing
+        or ``total`` is zero.
+        """
+        if not isinstance(found, (int, float)) or not isinstance(total, (int, float)):
+            return None
+        if not total:
+            return None
+        return found / total
+
     def _format_analysis_result(
         self, data: Dict, identifiers: str, include_expression: bool = False
     ) -> Dict[str, Any]:
-        """Format analysis result into standard output."""
+        """Format analysis result into standard output.
+
+        Reactome's ``entities.ratio`` measures pathway size, not coverage, so it
+        is emitted under the self-describing name
+        ``pathway_size_fraction_of_reactome`` (with ``entities_ratio`` kept as a
+        deprecated alias carrying the same value). Coverage is
+        ``entities_coverage``; the enrichment statistics are ``p_value`` and
+        ``fdr``. The field descriptions in reactome_analysis_tools.json are the
+        canonical explanation of the distinction.
+        """
         summary = data.get("summary", {})
         pathways_raw = data.get("pathways", [])
 
@@ -351,20 +382,28 @@ class ReactomeAnalysisTool(BaseTool):
             reactions = pw.get("reactions", {})
             species = pw.get("species", {})
 
+            found = entities.get("found")
+            total = entities.get("total")
+
             pathway_entry = {
                 "pathway_id": pw.get("stId"),
                 "name": pw.get("name"),
                 "species": species.get("name"),
                 "is_disease": pw.get("inDisease", False),
                 "is_lowest_level": pw.get("llp", False),
-                "entities_found": entities.get("found"),
-                "entities_total": entities.get("total"),
-                "entities_ratio": entities.get("ratio"),
+                "entities_found": found,
+                "entities_total": total,
+                "entities_coverage": self._coverage(found, total),
                 "p_value": entities.get("pValue"),
                 "fdr": entities.get("fdr"),
                 "reactions_found": reactions.get("found"),
                 "reactions_total": reactions.get("total"),
+                "pathway_size_fraction_of_reactome": entities.get("ratio"),
             }
+            # Deprecated alias, kept for backward compatibility.
+            pathway_entry["entities_ratio"] = pathway_entry[
+                "pathway_size_fraction_of_reactome"
+            ]
             if include_expression:
                 pathway_entry["entities_exp"] = entities.get("exp")
             pathways.append(pathway_entry)

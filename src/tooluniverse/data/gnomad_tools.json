@@ -2,7 +2,7 @@
   {
     "type": "gnomADGetGeneConstraints",
     "name": "gnomad_get_gene_constraints",
-    "description": "Get gene constraint metrics from gnomAD for a gene symbol (GRCh38). Returns constraint fields under `exac_constraint` and `gnomad_constraint` (e.g., pLI, oe_lof/oe_mis/oe_syn, exp/obs counts). Note: does NOT include LOEUF, missense Z-score, or synonymous Z-score -- for the full constraint panel (pLI + LOEUF + mis_z + syn_z), use gnomad_get_constraint instead.",
+    "description": "Get gene constraint metrics from gnomAD for a gene symbol (GRCh38). Returns constraint fields under `exac_constraint` and `gnomad_constraint` (e.g., pLI, oe_lof/oe_mis/oe_syn, exp/obs counts). Mitochondrially-encoded genes (MT-*) are scored under `mitochondrial_constraint` instead -- their `gnomad_constraint` and `exac_constraint` are always null, which does not mean unconstrained. Note: does NOT include LOEUF, missense Z-score, or synonymous Z-score -- for the full constraint panel (pLI + LOEUF + mis_z + syn_z), use gnomad_get_constraint instead.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -27,7 +27,7 @@
     "fields": {
       "endpoint": "https://gnomad.broadinstitute.org/api",
       "return_format": "JSON",
-      "query_schema": "query GeneConstraints($geneSymbol: String!, $referenceGenome: ReferenceGenomeId!) { gene(gene_symbol: $geneSymbol, reference_genome: $referenceGenome) { symbol gene_id exac_constraint { exp_lof obs_lof pLI exp_mis obs_mis exp_syn obs_syn } gnomad_constraint { exp_lof obs_lof oe_lof pLI exp_mis obs_mis oe_mis exp_syn obs_syn oe_syn } } }"
+      "query_schema": "query GeneConstraints($geneSymbol: String!, $referenceGenome: ReferenceGenomeId!) { gene(gene_symbol: $geneSymbol, reference_genome: $referenceGenome) { symbol gene_id exac_constraint { exp_lof obs_lof pLI exp_mis obs_mis exp_syn obs_syn } gnomad_constraint { exp_lof obs_lof oe_lof pLI exp_mis obs_mis oe_mis exp_syn obs_syn oe_syn } mitochondrial_constraint { __typename ... on ProteinMitochondrialGeneConstraint { exp_lof obs_lof oe_lof oe_lof_upper } ... on RNAMitochondrialGeneConstraint { observed expected oe oe_upper } } } }"
     },
     "return_schema": {
       "oneOf": [
@@ -50,7 +50,10 @@
                   ]
                 },
                 "gnomad_constraint": {
-                  "type": "object",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "properties": {
                     "exp_lof": {
                       "type": "number"
@@ -92,8 +95,19 @@
                       "type": "number"
                     }
                   }
+                },
+                "mitochondrial_constraint": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Constraint for mitochondrially-encoded genes, which gnomAD scores here and never under gnomad_constraint/exac_constraint. __typename is ProteinMitochondrialGeneConstraint (exp_lof, obs_lof, oe_lof, oe_lof_upper) for protein-coding mtDNA genes such as MT-ND4, or RNAMitochondrialGeneConstraint (observed, expected, oe, oe_upper) for mt-tRNA/mt-rRNA genes such as MT-TL1. Null for nuclear genes."
                 }
               }
+            },
+            "note": {
+              "type": "string",
+              "description": "Present only when gnomAD scored the gene under none of gnomad_constraint, exac_constraint or mitochondrial_constraint -- an absence of data rather than evidence that the gene is unconstrained."
             }
           },
           "required": [
@@ -133,7 +147,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_search_genes",
-    "description": "Search for genes in gnomAD by free-text query (typically a gene symbol). Returns matching `ensembl_id` (Ensembl gene ID) and `symbol`. Use `ensembl_id` as `gene_id` for `gnomad_get_gene`.",
+    "description": "Search for genes in gnomAD by free-text query (typically a gene symbol). Returns matching `ensembl_id` (Ensembl gene ID) and `symbol`. Use `ensembl_id` as `gene_id` for `gnomad_get_gene`. The response reports `reference_genome`, the assembly the search ran against (GRCh38 unless `reference_genome` says otherwise); results are assembly-specific, e.g. BRCA2 resolves to `ensembl_version` 17 on GRCh38 and 10 on GRCh37.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -187,6 +201,10 @@
                   }
                 }
               }
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Assembly the search ran against ('GRCh38' or 'GRCh37'). gnomAD's GeneSearchResult type exposes no reference_genome field, so this echoes the assembly the request transmitted -- the default when the caller omitted it. Search results are assembly-specific."
             }
           },
           "required": [
@@ -216,7 +234,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_gene",
-    "description": "Get basic gene metadata from gnomAD by `gene_symbol` or `gene_id` (Ensembl gene ID). Use `gnomad_search_genes` to discover `gene_id`. Use the returned `canonical_transcript_id` with `gnomad_get_transcript`.",
+    "description": "Get basic gene metadata from gnomAD by `gene_symbol` or `gene_id` (Ensembl gene ID). Use `gnomad_search_genes` to discover `gene_id`. Use the returned `canonical_transcript_id` with `gnomad_get_transcript`. The returned `chrom`/`start`/`stop` are in the assembly named by `reference_genome`, which gnomAD reports itself on both the `gene` object and the top level of the response (GRCh38 unless the `reference_genome` argument says otherwise). Coordinates are not comparable across assemblies: BRCA2 is 13:32,315,086-32,400,268 on GRCh38 and 13:32,889,611-32,973,805 on GRCh37.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -254,7 +272,7 @@
     "fields": {
       "endpoint": "https://gnomad.broadinstitute.org/api",
       "return_format": "JSON",
-      "query_schema": "query($geneSymbol: String, $geneId: String, $referenceGenome: ReferenceGenomeId!) { gene(gene_symbol: $geneSymbol, gene_id: $geneId, reference_genome: $referenceGenome) { gene_id symbol name chrom start stop strand canonical_transcript_id } }",
+      "query_schema": "query($geneSymbol: String, $geneId: String, $referenceGenome: ReferenceGenomeId!) { gene(gene_symbol: $geneSymbol, gene_id: $geneId, reference_genome: $referenceGenome) { reference_genome gene_id symbol name chrom start stop strand canonical_transcript_id } }",
       "variable_map": {
         "gene_symbol": "geneSymbol",
         "gene_id": "geneId",
@@ -272,6 +290,10 @@
             "gene": {
               "type": "object",
               "properties": {
+                "reference_genome": {
+                  "type": "string",
+                  "description": "Assembly of this record's chrom/start/stop, as reported by gnomAD's own Gene.reference_genome field ('GRCh38' or 'GRCh37')."
+                },
                 "gene_id": {
                   "type": "string"
                 },
@@ -303,6 +325,10 @@
                   "type": "string"
                 }
               }
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Assembly the returned coordinates are in ('GRCh38' or 'GRCh37'), taken from gnomAD's own Gene.reference_genome field and surfaced at the top level to match the dataset-scoped gnomAD tools. Present even when the caller omitted reference_genome and received the GRCh38 default."
             }
           },
           "required": [
@@ -332,7 +358,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_transcript",
-    "description": "Get basic transcript metadata from gnomAD by Ensembl transcript ID (e.g., ENST...). The response includes the linked `gene` object (gene ID + symbol). Use `gnomad_get_gene` to find a gene's `canonical_transcript_id`.",
+    "description": "Get basic transcript metadata from gnomAD by Ensembl transcript ID (e.g., ENST...). The response includes the linked `gene` object (gene ID + symbol). Use `gnomad_get_gene` to find a gene's `canonical_transcript_id`. The returned `chrom`/`start`/`stop` are in the assembly named by `reference_genome`, which gnomAD reports itself on both the `transcript` object and the top level of the response (GRCh38 unless the `reference_genome` argument says otherwise). Coordinates are not comparable across assemblies.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -357,7 +383,7 @@
     "fields": {
       "endpoint": "https://gnomad.broadinstitute.org/api",
       "return_format": "JSON",
-      "query_schema": "query($transcriptId: String!, $referenceGenome: ReferenceGenomeId!) { transcript(transcript_id: $transcriptId, reference_genome: $referenceGenome) { transcript_id gene_id gene { gene_id symbol } chrom start stop strand } }",
+      "query_schema": "query($transcriptId: String!, $referenceGenome: ReferenceGenomeId!) { transcript(transcript_id: $transcriptId, reference_genome: $referenceGenome) { reference_genome transcript_id gene_id gene { gene_id symbol } chrom start stop strand } }",
       "variable_map": {
         "transcript_id": "transcriptId",
         "reference_genome": "referenceGenome"
@@ -374,6 +400,10 @@
             "transcript": {
               "type": "object",
               "properties": {
+                "reference_genome": {
+                  "type": "string",
+                  "description": "Assembly of this record's chrom/start/stop, as reported by gnomAD's own Transcript.reference_genome field ('GRCh38' or 'GRCh37')."
+                },
                 "transcript_id": {
                   "type": "string"
                 },
@@ -410,6 +440,10 @@
                   "type": "string"
                 }
               }
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Assembly the returned coordinates are in ('GRCh38' or 'GRCh37'), taken from gnomAD's own Transcript.reference_genome field and surfaced at the top level to match the dataset-scoped gnomAD tools. Present even when the caller omitted reference_genome and received the GRCh38 default."
             }
           },
           "required": [
@@ -439,7 +473,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_search_variants",
-    "description": "Search for variants in gnomAD by free-text query (commonly an rsID like 'rs7412'). Returns matching `variant_id` strings. Note: gnomAD's `variant_search` response only exposes `variant_id`. Use the returned `variant_id` with `gnomad_get_variant`.",
+    "description": "Search for variants in gnomAD by free-text query (commonly an rsID like 'rs7412'). Returns matching `variant_id` strings. Note: gnomAD's `variant_search` response only exposes `variant_id`. Use the returned `variant_id` with `gnomad_get_variant`. `dataset` defaults to `gnomad_r3` (GRCh38, genomes only); which variants exist depends on the callset searched. Defaults deliberately differ across this gnomAD family: gnomad_get_variant, gnomad_search_variants and gnomad_get_region default to `gnomad_r3` while gnomad_get_variant_populations and gnomad_get_constraint default to `gnomad_r4`, so gnomad_get_variant and gnomad_get_variant_populations report different numbers for the same variant unless you pass the same `dataset` to both. Every response echoes `dataset` and `reference_genome` (gnomad_r2_1* and exac = GRCh37; gnomad_r3* and gnomad_r4* = GRCh38) so the callset that answered is never a guess.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -450,7 +484,7 @@
         "dataset": {
           "type": "string",
           "default": "gnomad_r3",
-          "description": "gnomAD dataset ID. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac."
+          "description": "gnomAD dataset ID. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac. Coverage: gnomad_r4* = GRCh38 with genomes + exomes; gnomad_r3* = GRCh38 with genomes ONLY (no exome component, so `exome` is always null); gnomad_r2_1* = GRCh37 with genomes + exomes; exac = GRCh37 with exomes only."
         }
       },
       "required": [
@@ -480,6 +514,18 @@
                   }
                 }
               }
+            },
+            "dataset": {
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [
@@ -509,7 +555,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_variant",
-    "description": "Get basic variant metadata from gnomAD by `variant_id` (format like '19-44908822-C-T'). Use `gnomad_search_variants` to discover valid `variant_id` values from an rsID query. `dataset` is required by gnomAD and defaults to `gnomad_r3`.",
+    "description": "Get basic variant metadata from gnomAD by `variant_id` (format like '19-44908822-C-T'). Use `gnomad_search_variants` to discover valid `variant_id` values from an rsID query. `dataset` is required by gnomAD and defaults to `gnomad_r3`. `gnomad_r3` is a GENOMES-ONLY callset with no exome component, so under that default `exome` is null for every variant -- that means 'not present in this callset', NOT 'not observed in exomes'; responses carry a `dataset_note` saying so. Pass dataset='gnomad_r4' for exome allele counts (on GJB2 c.35delG that is a further 10,423 allele observations out of 1,461,600 alleles). Defaults deliberately differ across this gnomAD family: gnomad_get_variant, gnomad_search_variants and gnomad_get_region default to `gnomad_r3` while gnomad_get_variant_populations and gnomad_get_constraint default to `gnomad_r4`, so gnomad_get_variant and gnomad_get_variant_populations report different numbers for the same variant unless you pass the same `dataset` to both. Every response echoes `dataset` and `reference_genome` (gnomad_r2_1* and exac = GRCh37; gnomad_r3* and gnomad_r4* = GRCh38) so the callset that answered is never a guess.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -520,7 +566,7 @@
         "dataset": {
           "type": "string",
           "default": "gnomad_r3",
-          "description": "gnomAD dataset ID. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac."
+          "description": "gnomAD dataset ID. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac. Coverage: gnomad_r4* = GRCh38 with genomes + exomes; gnomad_r3* = GRCh38 with genomes ONLY (no exome component, so `exome` is always null); gnomad_r2_1* = GRCh37 with genomes + exomes; exac = GRCh37 with exomes only."
         }
       },
       "required": [
@@ -588,9 +634,42 @@
                   }
                 },
                 "exome": {
-                  "type": "null"
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Exome callset frequencies. Null when the variant is absent from the exome callset OR when the selected dataset has no exome component at all (gnomad_r3*) -- see `dataset_note`.",
+                  "properties": {
+                    "af": {
+                      "type": "number"
+                    },
+                    "an": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    },
+                    "ac": {
+                      "type": [
+                        "integer",
+                        "number"
+                      ]
+                    }
+                  }
                 }
               }
+            },
+            "dataset": {
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [
@@ -620,7 +699,7 @@
   {
     "type": "gnomADGetVariantPopulations",
     "name": "gnomad_get_variant_populations",
-    "description": "Get per-ancestry (population-stratified) allele frequencies for a variant from gnomAD by `variant_id` (format like '1-55051215-G-GA'). Unlike `gnomad_get_variant` (aggregate AF only), this returns per-ancestry rows (`amr`, `nfe`, `fin`, `afr`, `eas`, `sas`, `asj`, `ami`, `mid`, `remaining`, plus `_XX`/`_XY` sex splits) with computed `af = ac / an` (af is null when an = 0), separated into `genome` and `exome` callsets. `dataset` defaults to `gnomad_r4`. Use `gnomad_search_variants` to find a `variant_id` from an rsID.",
+    "description": "Get per-ancestry (population-stratified) allele frequencies for a variant from gnomAD by `variant_id` (format like '1-55051215-G-GA'). Unlike `gnomad_get_variant` (aggregate AF only), this returns per-ancestry rows (`amr`, `nfe`, `fin`, `afr`, `eas`, `sas`, `asj`, `ami`, `mid`, `remaining`, plus `_XX`/`_XY` sex splits) with computed `af = ac / an` (af is null when an = 0), separated into `genome` and `exome` callsets. `dataset` defaults to `gnomad_r4`. Use `gnomad_search_variants` to find a `variant_id` from an rsID. `gnomad_r4` carries both genomes and exomes; `gnomad_r3` is genomes-only, so selecting it makes `exome` null for every variant (a property of the callset, not of the variant) and the response says so in `dataset_note`. Defaults deliberately differ across this gnomAD family: gnomad_get_variant, gnomad_search_variants and gnomad_get_region default to `gnomad_r3` while gnomad_get_variant_populations and gnomad_get_constraint default to `gnomad_r4`, so gnomad_get_variant and gnomad_get_variant_populations report different numbers for the same variant unless you pass the same `dataset` to both. Every response echoes `dataset` and `reference_genome` (gnomad_r2_1* and exac = GRCh37; gnomad_r3* and gnomad_r4* = GRCh38) so the callset that answered is never a guess.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -631,7 +710,7 @@
         "dataset": {
           "type": "string",
           "default": "gnomad_r4",
-          "description": "gnomAD dataset ID. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac."
+          "description": "gnomAD dataset ID. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac. Coverage: gnomad_r4* = GRCh38 with genomes + exomes; gnomad_r3* = GRCh38 with genomes ONLY (no exome component, so `exome` is always null); gnomad_r2_1* = GRCh37 with genomes + exomes; exac = GRCh37 with exomes only."
         }
       },
       "required": [
@@ -673,7 +752,8 @@
               ]
             },
             "dataset": {
-              "type": "string"
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
             },
             "genome": {
               "type": [
@@ -792,6 +872,14 @@
                   }
                 }
               }
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [
@@ -832,7 +920,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_region",
-    "description": "Get basic regional information from gnomAD by genomic interval. Returns genes overlapping the region and a list of `variant_id` values in the region for the selected dataset. Use those IDs with `gnomad_get_variant`. Keep regions small to avoid large payloads.",
+    "description": "Get basic regional information from gnomAD by genomic interval. Returns genes overlapping the region and a list of `variant_id` values in the region for the selected dataset. Use those IDs with `gnomad_get_variant`. Keep regions small to avoid large payloads. `dataset` defaults to `gnomad_r3` (GRCh38, genomes only), so the variant list is the one that callset contains. Defaults deliberately differ across this gnomAD family: gnomad_get_variant, gnomad_search_variants and gnomad_get_region default to `gnomad_r3` while gnomad_get_variant_populations and gnomad_get_constraint default to `gnomad_r4`, so gnomad_get_variant and gnomad_get_variant_populations report different numbers for the same variant unless you pass the same `dataset` to both. Every response echoes `dataset` and `reference_genome` (gnomad_r2_1* and exac = GRCh37; gnomad_r3* and gnomad_r4* = GRCh38) so the callset that answered is never a guess.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -860,7 +948,7 @@
         "dataset": {
           "type": "string",
           "default": "gnomad_r3",
-          "description": "gnomAD dataset ID used for `variants(dataset: ...)`. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac."
+          "description": "gnomAD dataset ID used for `variants(dataset: ...)`. Allowed values: gnomad_r4, gnomad_r4_non_ukb, gnomad_r3, gnomad_r3_controls_and_biobanks, gnomad_r3_non_cancer, gnomad_r3_non_neuro, gnomad_r3_non_topmed, gnomad_r3_non_v2, gnomad_r2_1, gnomad_r2_1_controls, gnomad_r2_1_non_neuro, gnomad_r2_1_non_cancer, gnomad_r2_1_non_topmed, exac. Coverage: gnomad_r4* = GRCh38 with genomes + exomes; gnomad_r3* = GRCh38 with genomes ONLY (no exome component, so `exome` is always null); gnomad_r2_1* = GRCh37 with genomes + exomes; exac = GRCh37 with exomes only."
         }
       },
       "required": [
@@ -930,6 +1018,18 @@
                   }
                 }
               }
+            },
+            "dataset": {
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [
@@ -962,7 +1062,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_sv_by_gene",
-    "description": "Get structural variants (SVs) from gnomAD v4 for a gene. Returns deletions, duplications, inversions, translocations, and complex SVs with population allele frequencies, SV type, consequence, and homozygote counts. Essential for interpreting CNVs in clinical genomics.",
+    "description": "Get structural variants (SVs) from gnomAD for a gene. The SV callset follows the requested assembly: GRCh38 (default) uses the gnomAD v4 SV callset (gnomad_sv_r4), GRCh37 uses the gnomAD v2.1 SV callset (gnomad_sv_r2_1), so SV coordinates always match the gene coordinates returned. Returns deletions, duplications, inversions, translocations, and complex SVs with population allele frequencies, SV type, consequence, and homozygote counts (null for multi-allelic CNVs). Essential for interpreting CNVs in clinical genomics.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -987,13 +1087,23 @@
     "fields": {
       "endpoint": "https://gnomad.broadinstitute.org/api",
       "return_format": "JSON",
-      "query_schema": "query($geneSymbol: String!, $referenceGenome: ReferenceGenomeId!) { gene(gene_symbol: $geneSymbol, reference_genome: $referenceGenome) { symbol gene_id chrom start stop structural_variants(dataset: gnomad_sv_r4) { variant_id chrom pos end type length ac an af homozygote_count major_consequence filters } } }",
+      "query_schema": "query($geneSymbol: String!, $referenceGenome: ReferenceGenomeId!, $svDataset: StructuralVariantDatasetId!) { gene(gene_symbol: $geneSymbol, reference_genome: $referenceGenome) { symbol gene_id chrom start stop structural_variants(dataset: $svDataset) { variant_id chrom pos end type length ac an af homozygote_count major_consequence filters } } }",
       "variable_map": {
         "gene_symbol": "geneSymbol",
         "reference_genome": "referenceGenome"
       },
       "default_variables": {
         "referenceGenome": "GRCh38"
+      },
+      "derived_variables": {
+        "svDataset": {
+          "from": "reference_genome",
+          "map": {
+            "GRCh37": "gnomad_sv_r2_1",
+            "GRCh38": "gnomad_sv_r4"
+          },
+          "default": "gnomad_sv_r4"
+        }
       }
     },
     "return_schema": {
@@ -1075,11 +1185,15 @@
                       "homozygote_count": {
                         "type": [
                           "integer",
-                          "number"
+                          "number",
+                          "null"
                         ]
                       },
                       "major_consequence": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
                       "filters": {
                         "type": "array",
@@ -1091,6 +1205,18 @@
                   }
                 }
               }
+            },
+            "dataset": {
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [
@@ -1133,7 +1259,7 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_sv_by_region",
-    "description": "Get structural variants (SVs) from gnomAD v4 overlapping a genomic region. Returns DEL/DUP/INV/BND/CPX variants with allele frequencies and consequences. Use for CNV interpretation in specific chromosomal regions. Region should be < 5Mb.",
+    "description": "Get structural variants (SVs) from gnomAD overlapping a genomic region. The SV callset follows the requested assembly: GRCh38 (default) uses the gnomAD v4 SV callset (gnomad_sv_r4), GRCh37 uses the gnomAD v2.1 SV callset (gnomad_sv_r2_1), so SV coordinates are always in the same assembly as the requested region. Returns DEL/DUP/INV/BND/CPX variants with allele frequencies and consequences. Use for CNV interpretation in specific chromosomal regions. Region should be < 5Mb.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1168,12 +1294,22 @@
     "fields": {
       "endpoint": "https://gnomad.broadinstitute.org/api",
       "return_format": "JSON",
-      "query_schema": "query($chrom: String!, $start: Int!, $stop: Int!, $referenceGenome: ReferenceGenomeId!) { region(chrom: $chrom, start: $start, stop: $stop, reference_genome: $referenceGenome) { chrom start stop genes { gene_id symbol } structural_variants(dataset: gnomad_sv_r4) { variant_id chrom pos end type length ac an af homozygote_count major_consequence filters } } }",
+      "query_schema": "query($chrom: String!, $start: Int!, $stop: Int!, $referenceGenome: ReferenceGenomeId!, $svDataset: StructuralVariantDatasetId!) { region(chrom: $chrom, start: $start, stop: $stop, reference_genome: $referenceGenome) { chrom start stop genes { gene_id symbol } structural_variants(dataset: $svDataset) { variant_id chrom pos end type length ac an af homozygote_count major_consequence filters } } }",
       "variable_map": {
         "reference_genome": "referenceGenome"
       },
       "default_variables": {
         "referenceGenome": "GRCh38"
+      },
+      "derived_variables": {
+        "svDataset": {
+          "from": "reference_genome",
+          "map": {
+            "GRCh37": "gnomad_sv_r2_1",
+            "GRCh38": "gnomad_sv_r4"
+          },
+          "default": "gnomad_sv_r4"
+        }
       }
     },
     "return_schema": {
@@ -1263,11 +1399,15 @@
                       "homozygote_count": {
                         "type": [
                           "integer",
-                          "number"
+                          "number",
+                          "null"
                         ]
                       },
                       "major_consequence": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
                       "filters": {
                         "type": "array",
@@ -1279,6 +1419,18 @@
                   }
                 }
               }
+            },
+            "dataset": {
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [
@@ -1321,13 +1473,23 @@
   {
     "type": "gnomADGraphQLQueryTool",
     "name": "gnomad_get_sv_detail",
-    "description": "Get detailed information for a specific gnomAD structural variant by its ID (e.g., DEL_chr17_24e4872b). Returns SV coordinates, type, length, population allele frequency, consequence, and filter status. Use gnomad_get_sv_by_gene or gnomad_get_sv_by_region to discover variant IDs first.",
+    "description": "Get detailed information for a specific gnomAD structural variant by its ID. Resolves IDs from both SV callsets, selected automatically from the ID format: GRCh38 IDs such as 'DEL_chr17_24e4872b' resolve against the gnomAD v4 SV callset (gnomad_sv_r4), while GRCh37 IDs such as 'DEL_1_1937' resolve against the gnomAD v2.1 SV callset (gnomad_sv_r2_1). Returns SV coordinates, type, length, population allele frequency, consequence, and filter status (consequence and homozygote/hemizygote counts are null for multi-allelic CNVs and intergenic SVs). Use gnomad_get_sv_by_gene or gnomad_get_sv_by_region to discover variant IDs first.",
     "parameter": {
       "type": "object",
       "properties": {
         "variant_id": {
           "type": "string",
-          "description": "gnomAD structural variant ID (e.g., 'DEL_chr17_24e4872b', 'DUP_chr22_abc12345')."
+          "description": "gnomAD structural variant ID. GRCh38/v4 IDs look like 'DEL_chr17_24e4872b'; GRCh37/v2.1 IDs look like 'DEL_1_1937'."
+        },
+        "dataset": {
+          "type": "string",
+          "enum": [
+            "gnomad_sv_r2_1",
+            "gnomad_sv_r2_1_controls",
+            "gnomad_sv_r2_1_non_neuro",
+            "gnomad_sv_r4"
+          ],
+          "description": "Optional SV callset override. Defaults to the callset auto-detected from the variant ID format (gnomad_sv_r2_1 for GRCh37-style IDs, gnomad_sv_r4 otherwise). Set explicitly only to query a v2.1 subset such as gnomad_sv_r2_1_controls."
         }
       },
       "required": [
@@ -1337,9 +1499,22 @@
     "fields": {
       "endpoint": "https://gnomad.broadinstitute.org/api",
       "return_format": "JSON",
-      "query_schema": "query($variantId: String!) { structural_variant(dataset: gnomad_sv_r4, variantId: $variantId) { variant_id chrom pos end type length ac an af homozygote_count hemizygote_count major_consequence consequence reference_genome filters chrom2 pos2 end2 ac_hom ac_hemi } }",
+      "query_schema": "query($variantId: String!, $svDataset: StructuralVariantDatasetId!) { structural_variant(dataset: $svDataset, variantId: $variantId) { variant_id chrom pos end type length ac an af homozygote_count hemizygote_count major_consequence consequence reference_genome filters chrom2 pos2 end2 ac_hom ac_hemi } }",
       "variable_map": {
-        "variant_id": "variantId"
+        "variant_id": "variantId",
+        "dataset": "svDataset"
+      },
+      "derived_variables": {
+        "svDataset": {
+          "from": "variant_id",
+          "patterns": [
+            {
+              "match": "^[A-Za-z]+_(?:[0-9]{1,2}|X|Y|MT?)_[0-9]+$",
+              "value": "gnomad_sv_r2_1"
+            }
+          ],
+          "default": "gnomad_sv_r4"
+        }
       }
     },
     "return_schema": {
@@ -1395,20 +1570,28 @@
                 "homozygote_count": {
                   "type": [
                     "integer",
-                    "number"
+                    "number",
+                    "null"
                   ]
                 },
                 "hemizygote_count": {
                   "type": [
                     "integer",
-                    "number"
+                    "number",
+                    "null"
                   ]
                 },
                 "major_consequence": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "consequence": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "reference_genome": {
                   "type": "string"
@@ -1420,27 +1603,52 @@
                   }
                 },
                 "chrom2": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "pos2": {
-                  "type": "null"
+                  "type": [
+                    "integer",
+                    "number",
+                    "null"
+                  ]
                 },
                 "end2": {
-                  "type": "null"
+                  "type": [
+                    "integer",
+                    "number",
+                    "null"
+                  ]
                 },
                 "ac_hom": {
                   "type": [
                     "integer",
-                    "number"
+                    "number",
+                    "null"
                   ]
                 },
                 "ac_hemi": {
                   "type": [
                     "integer",
-                    "number"
+                    "number",
+                    "null"
                   ]
                 }
               }
+            },
+            "dataset": {
+              "type": "string",
+              "description": "The gnomAD dataset that actually answered, including when it came from this tool's default."
+            },
+            "reference_genome": {
+              "type": "string",
+              "description": "Reference assembly the dataset is built on (gnomad_r2_1*/exac = GRCh37; gnomad_r3*/gnomad_r4* = GRCh38)."
+            },
+            "dataset_note": {
+              "type": "string",
+              "description": "Present only when the dataset structurally lacks a callset the payload reports as null (e.g. gnomad_r3 has no exomes), so `null` is not misread as 'not observed'."
             }
           },
           "required": [
@@ -1463,6 +1671,9 @@
     "test_examples": [
       {
         "variant_id": "DEL_chr17_24e4872b"
+      },
+      {
+        "variant_id": "DEL_1_1937"
       }
     ],
     "metadata": {

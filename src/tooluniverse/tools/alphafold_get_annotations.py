@@ -12,6 +12,7 @@ def alphafold_get_annotations(
     qualifier: Optional[str] = None,
     uniprot_id: Optional[str] = None,
     uniprot_accession: Optional[str] = None,
+    accession: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +29,8 @@ def alphafold_get_annotations(
         Alias for qualifier. UniProt accession (e.g., 'P69905').
     uniprot_accession : str
         Alias for qualifier. UniProt accession (e.g., 'P69905').
+    accession : str
+        Alias for qualifier. UniProt accession (e.g., 'P04637') -- the...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def alphafold_get_annotations(
             "qualifier": qualifier,
             "uniprot_id": uniprot_id,
             "uniprot_accession": uniprot_accession,
+            "accession": accession,
         }.items()
         if v is not None
     }

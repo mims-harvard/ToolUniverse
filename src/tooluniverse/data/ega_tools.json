@@ -1,0 +1,136 @@
+[
+  {
+    "name": "EGA_get_study",
+    "type": "EGATool",
+    "description": "Resolve an EGA (European Genome-phenome Archive) study accession to its public metadata: title, description, study type, and publication. Example: accession='EGAS00000000001' returns the WTCCC bipolar disorder case-control study. Metadata only -- the underlying controlled-access sequence/genotype data requires separate Data Access Committee approval. Use EGA_get_study_datasets to find the study's dataset accessions.",
+    "fields": {
+      "operation": "get_study"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["accession"],
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "EGA study accession, e.g. 'EGAS00000000001'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "accession_id": {"type": ["string", "null"]},
+            "title": {"type": ["string", "null"]},
+            "description": {"type": ["string", "null"]},
+            "study_type": {"type": ["string", "null"]},
+            "pubmed_ids": {"type": "array"},
+            "is_released": {"type": ["boolean", "null"]},
+            "released_date": {"type": ["string", "null"]},
+            "is_deprecated": {"type": ["boolean", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"accession": "EGAS00000000001"},
+      {"accession": "EGAS00000000002"}
+    ]
+  },
+  {
+    "name": "EGA_get_dataset",
+    "type": "EGATool",
+    "description": "Resolve an EGA dataset accession to its public metadata: technology platform, sample count, and access policy. Example: accession='EGAD00000000001' returns an Affymetrix 500K genotyping dataset of 1,504 samples under controlled access. Metadata only -- the underlying data requires Data Access Committee approval via the returned policy_accession_id.",
+    "fields": {
+      "operation": "get_dataset"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["accession"],
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "EGA dataset accession, e.g. 'EGAD00000000001'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "accession_id": {"type": ["string", "null"]},
+            "title": {"type": ["string", "null"]},
+            "description": {"type": ["string", "null"]},
+            "dataset_types": {"type": "array"},
+            "technologies": {"type": "array", "items": {"type": "string"}},
+            "num_samples": {"type": ["integer", "null"]},
+            "access_type": {"type": ["string", "null"]},
+            "policy_accession_id": {"type": ["string", "null"]},
+            "is_released": {"type": ["boolean", "null"]},
+            "released_date": {"type": ["string", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"accession": "EGAD00000000001"},
+      {"accession": "EGAD00000000002"}
+    ]
+  },
+  {
+    "name": "EGA_get_study_datasets",
+    "type": "EGATool",
+    "description": "List the dataset accessions belonging to one EGA study. Example: accession='EGAS00000000001' returns its constituent EGAD dataset(s) with technology and sample count. Use EGA_get_study to find a study accession first, then EGA_get_dataset for full details on any returned dataset.",
+    "fields": {
+      "operation": "get_study_datasets"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["accession"],
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "EGA study accession, e.g. 'EGAS00000000001'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession_id": {"type": ["string", "null"]},
+              "title": {"type": ["string", "null"]},
+              "technologies": {"type": "array", "items": {"type": "string"}},
+              "num_samples": {"type": ["integer", "null"]},
+              "access_type": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"accession": "EGAS00000000001"},
+      {"accession": "EGAS00000000002"}
+    ]
+  }
+]

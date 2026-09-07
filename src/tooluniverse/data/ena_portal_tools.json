@@ -45,52 +45,27 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "study_accession": {
-                    "type": "string"
-                  },
-                  "study_title": {
-                    "type": "string"
-                  },
-                  "center_name": {
-                    "type": "string"
-                  },
-                  "first_public": {
-                    "type": "string"
-                  },
-                  "description": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "returned": {
-                  "type": "integer"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "study_accession": {
+                "type": "string"
+              },
+              "study_title": {
+                "type": "string"
+              },
+              "center_name": {
+                "type": "string"
+              },
+              "first_public": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -155,55 +130,30 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "sample_accession": {
-                    "type": "string"
-                  },
-                  "sample_alias": {
-                    "type": "string"
-                  },
-                  "description": {
-                    "type": "string"
-                  },
-                  "tax_id": {
-                    "type": "string"
-                  },
-                  "scientific_name": {
-                    "type": "string"
-                  },
-                  "first_public": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "returned": {
-                  "type": "integer"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sample_accession": {
+                "type": "string"
+              },
+              "sample_alias": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "tax_id": {
+                "type": "string"
+              },
+              "scientific_name": {
+                "type": "string"
+              },
+              "first_public": {
+                "type": "string"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -259,36 +209,17 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "count": {
-                  "type": "integer",
-                  "description": "Number of matching records"
-                },
-                "result_type": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                }
-              }
+            "count": {
+              "type": "integer",
+              "description": "Number of matching records"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "result_type": {
+              "type": "string"
+            },
+            "query": {
+              "type": "string"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -350,55 +281,30 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "run_accession": {
-                    "type": "string"
-                  },
-                  "fastq_ftp": {
-                    "type": "string"
-                  },
-                  "submitted_ftp": {
-                    "type": "string"
-                  },
-                  "sra_ftp": {
-                    "type": "string"
-                  },
-                  "library_strategy": {
-                    "type": "string"
-                  },
-                  "instrument_platform": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "returned": {
-                  "type": "integer"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "run_accession": {
+                "type": "string"
+              },
+              "fastq_ftp": {
+                "type": "string"
+              },
+              "submitted_ftp": {
+                "type": "string"
+              },
+              "sra_ftp": {
+                "type": "string"
+              },
+              "library_strategy": {
+                "type": "string"
+              },
+              "instrument_platform": {
+                "type": "string"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

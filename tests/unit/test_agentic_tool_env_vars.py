@@ -26,6 +26,7 @@ class TestAgenticToolEnvironmentVariables:
             "TOOLUNIVERSE_LLM_DEFAULT_PROVIDER",
             "TOOLUNIVERSE_LLM_MODEL_DEFAULT",
             "TOOLUNIVERSE_LLM_TEMPERATURE",
+            "TOOLUNIVERSE_LLM_RETURN_JSON",
             "TOOLUNIVERSE_LLM_MAX_TOKENS",
             "TOOLUNIVERSE_LLM_CONFIG_MODE",
             "GEMINI_MODEL_ID",
@@ -35,6 +36,8 @@ class TestAgenticToolEnvironmentVariables:
             "AWS_REGION",
             "AWS_DEFAULT_REGION",
             "AWS_PROFILE",
+            "OPENAI_API_KEY",
+            "OPENAI_BASE_URL",
         ]
         for var in env_vars_to_clear:
             if var in os.environ:
@@ -406,6 +409,29 @@ class TestAgenticToolEnvironmentVariables:
 
         assert AgenticTool.has_any_api_keys() is True
 
+    def test_openai_provider_is_supported(self):
+        """Test that OpenAI-compatible provider config is accepted."""
+        os.environ["OPENAI_API_KEY"] = "test-key"
+
+        tool_config = {
+            "name": "test_tool",
+            "prompt": "Test prompt: {input}",
+            "input_arguments": ["input"],
+            "parameter": {
+                "type": "object",
+                "properties": {"input": {"type": "string"}},
+                "required": ["input"],
+            },
+            "api_type": "OPENAI",
+            "model_id": "gpt-4o-mini",
+        }
+
+        with patch.object(AgenticTool, "_try_initialize_api"):
+            tool = AgenticTool(tool_config)
+
+            assert tool._api_type == "OPENAI"
+            assert AgenticTool.has_any_api_keys() is True
+
     def test_task_specific_model_env_var(self):
         """Test that task-specific model environment variables work."""
         # Set task-specific environment variable
@@ -481,6 +507,117 @@ class TestAgenticToolEnvironmentVariables:
             # In fallback mode with no tool config, should use built-in defaults
             assert tool._api_type == "CHATGPT"  # Built-in default
             assert tool._temperature == 1.0  # Built-in default
+
+    @pytest.mark.parametrize(
+        ("env_value", "tool_value", "expected"),
+        [
+            ("true", False, True),
+            ("1", False, True),
+            ("false", True, False),
+            ("off", True, False),
+        ],
+    )
+    def test_return_json_env_override(self, env_value, tool_value, expected):
+        """Test that TOOLUNIVERSE_LLM_RETURN_JSON can override tool config."""
+        os.environ["TOOLUNIVERSE_LLM_CONFIG_MODE"] = "env_override"
+        os.environ["TOOLUNIVERSE_LLM_RETURN_JSON"] = env_value
+
+        tool_config = {
+            "name": "test_tool",
+            "prompt": "Test prompt: {input}",
+            "input_arguments": ["input"],
+            "parameter": {
+                "type": "object",
+                "properties": {"input": {"type": "string"}},
+                "required": ["input"],
+            },
+            "return_json": tool_value,
+        }
+
+        with patch.object(AgenticTool, "_try_initialize_api"):
+            tool = AgenticTool(tool_config)
+
+        assert tool._return_json is expected
+
+    def test_return_json_tool_config_wins_in_default_mode(self):
+        """Default mode keeps an explicit tool setting ahead of the environment."""
+        os.environ["TOOLUNIVERSE_LLM_CONFIG_MODE"] = "default"
+        os.environ["TOOLUNIVERSE_LLM_RETURN_JSON"] = "true"
+
+        tool_config = {
+            "name": "test_tool",
+            "prompt": "Test prompt: {input}",
+            "input_arguments": ["input"],
+            "parameter": {
+                "type": "object",
+                "properties": {"input": {"type": "string"}},
+                "required": ["input"],
+            },
+            "return_json": False,
+        }
+
+        with patch.object(AgenticTool, "_try_initialize_api"):
+            tool = AgenticTool(tool_config)
+
+        assert tool._return_json is False
+
+    def test_invalid_return_json_env_value_fails_fast(self):
+        """Reject ambiguous boolean values instead of silently enabling JSON mode."""
+        os.environ["TOOLUNIVERSE_LLM_RETURN_JSON"] = "sometimes"
+
+        tool_config = {
+            "name": "test_tool",
+            "prompt": "Test prompt: {input}",
+            "input_arguments": ["input"],
+            "parameter": {
+                "type": "object",
+                "properties": {"input": {"type": "string"}},
+                "required": ["input"],
+            },
+        }
+
+        with patch.object(AgenticTool, "_try_initialize_api"):
+            with pytest.raises(ValueError, match="Expected boolean environment value"):
+                AgenticTool(tool_config)
+
+    def test_invalid_temperature_env_var_fails_fast(self):
+        """Invalid temperature env values should fail with a clear error."""
+        os.environ["TOOLUNIVERSE_LLM_TEMPERATURE"] = "not-a-number"
+
+        tool_config = {
+            "name": "test_tool",
+            "prompt": "Test prompt: {input}",
+            "input_arguments": ["input"],
+            "parameter": {
+                "type": "object",
+                "properties": {"input": {"type": "string"}},
+                "required": ["input"],
+            },
+        }
+
+        with patch.object(AgenticTool, "_try_initialize_api"):
+            with pytest.raises(ValueError, match="TOOLUNIVERSE_LLM_TEMPERATURE"):
+                AgenticTool(tool_config)
+
+    @pytest.mark.parametrize("value", ["nan", "inf", "-inf"])
+    def test_non_finite_temperature_env_var_fails_fast(self, value):
+        """Reject non-finite floats before they reach a provider client."""
+        os.environ["TOOLUNIVERSE_LLM_TEMPERATURE"] = value
+
+        tool_config = {
+            "name": "test_tool",
+            "prompt": "Test prompt: {input}",
+            "input_arguments": ["input"],
+            "parameter": {
+                "type": "object",
+                "properties": {"input": {"type": "string"}},
+                "required": ["input"],
+            },
+        }
+
+        with patch.object(AgenticTool, "_try_initialize_api"):
+            with pytest.raises(ValueError, match="finite numeric"):
+                AgenticTool(tool_config)
 
 
 if __name__ == "__main__":

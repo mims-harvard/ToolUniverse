@@ -117,7 +117,7 @@ def test_cellrank_pseudotime_requires_key(monkeypatch):
     class _Adata:
         obs = {}
 
-    monkeypatch.setattr(crk.sc, "read_h5ad", lambda *a, **k: _Adata())
+    monkeypatch.setattr(crk, "load_remote_h5ad", lambda *a, **k: _Adata())
     out = crk.CellrankFateTool().run({"adata_path": "x.h5ad", "kernel": "pseudotime"})
     assert "pseudotime_key" in out["error"]
 
@@ -153,7 +153,7 @@ def test_cellrank_fate_envelope(monkeypatch):
                 [[0.9, 0.1], [0.8, 0.2], [0.2, 0.8], [0.1, 0.9]], ["Alpha", "Beta"]
             )
 
-    monkeypatch.setattr(crk.sc, "read_h5ad", lambda *a, **k: _Adata())
+    monkeypatch.setattr(crk, "load_remote_h5ad", lambda *a, **k: _Adata())
     monkeypatch.setattr(crk, "_ensure_graph", lambda adata: None)
     monkeypatch.setattr(crk, "_build_kernel", lambda *a, **k: object())
     monkeypatch.setattr(crk.cr, "estimators", types.SimpleNamespace(GPCCA=_Estimator))
@@ -202,6 +202,7 @@ def test_singler_summarize_shapes_envelope():
 
 def test_singler_run_parses_r_output(monkeypatch):
     class _Adata:
+        n_obs = 3
         obs_names = __import__("numpy").array(["c0", "c1", "c2"])
 
         class _V:
@@ -211,7 +212,7 @@ def test_singler_run_parses_r_output(monkeypatch):
         var_names = ["g1"]
         X = None
 
-    monkeypatch.setattr(sgr.sc, "read_h5ad", lambda *a, **k: _Adata())
+    monkeypatch.setattr(sgr, "load_remote_h5ad", lambda *a, **k: _Adata())
     monkeypatch.setattr(sgr, "_export_matrix", lambda *a, **k: None)
     monkeypatch.setattr(
         sgr,
@@ -231,7 +232,7 @@ def test_singler_propagates_r_error(monkeypatch):
         var_names = ["g1"]
         X = None
 
-    monkeypatch.setattr(sgr.sc, "read_h5ad", lambda *a, **k: _Adata())
+    monkeypatch.setattr(sgr, "load_remote_h5ad", lambda *a, **k: _Adata())
     monkeypatch.setattr(sgr, "_export_matrix", lambda *a, **k: None)
     monkeypatch.setattr(sgr, "_run_rscript", lambda work: {"error": "SingleR (R) failed: boom"})
     out = sgr.SinglerAnnotateTool().run({"adata_path": "q.h5ad", "celldex_ref": "ImmGenData"})
@@ -249,7 +250,7 @@ def test_slingshot_validates_embedding_and_cluster_keys(monkeypatch):
         obsm = {"X_pca": np.zeros((4, 5))}
         obs = {}
 
-    monkeypatch.setattr(sls.sc, "read_h5ad", lambda *a, **k: _Adata())
+    monkeypatch.setattr(sls, "load_remote_h5ad", lambda *a, **k: _Adata())
     # missing embedding key
     out = sls.SlingshotTrajectoryTool().run(
         {"adata_path": "x.h5ad", "cluster_key": "clusters", "embedding_key": "X_umap"}
@@ -266,11 +267,12 @@ def test_slingshot_envelope(monkeypatch):
     import pandas as pd
 
     class _Adata:
+        n_obs = 6
         obsm = {"X_pca": np.random.default_rng(0).normal(size=(6, 10))}
         obs = pd.DataFrame({"clusters": ["A", "A", "B", "B", "C", "C"]})
         obs_names = pd.Index([f"c{i}" for i in range(6)])
 
-    monkeypatch.setattr(sls.sc, "read_h5ad", lambda *a, **k: _Adata())
+    monkeypatch.setattr(sls, "load_remote_h5ad", lambda *a, **k: _Adata())
     monkeypatch.setattr(
         sls,
         "_run_rscript",
@@ -296,11 +298,12 @@ def test_slingshot_propagates_r_error(monkeypatch):
     import pandas as pd
 
     class _Adata:
+        n_obs = 4
         obsm = {"X_pca": np.zeros((4, 5))}
         obs = pd.DataFrame({"clusters": ["A", "A", "B", "B"]})
         obs_names = pd.Index(["c0", "c1", "c2", "c3"])
 
-    monkeypatch.setattr(sls.sc, "read_h5ad", lambda *a, **k: _Adata())
+    monkeypatch.setattr(sls, "load_remote_h5ad", lambda *a, **k: _Adata())
     monkeypatch.setattr(sls, "_run_rscript", lambda work: {"error": "Slingshot (R) failed: boom"})
     out = sls.SlingshotTrajectoryTool().run({"adata_path": "x.h5ad", "cluster_key": "clusters"})
     assert out["error"] == "Slingshot (R) failed: boom"
@@ -323,17 +326,27 @@ def test_monocle3_root_cluster_needs_cluster_key():
     assert "cluster_key" in out["error"]
 
 
+def test_monocle3_r_pipeline_is_reproducible_and_discloses_graph_fallback():
+    with open(mc3._R_SCRIPT, encoding="utf-8") as fh:
+        source = fh.read()
+    assert "set.seed(42)" in source
+    assert "learn_graph(cds, close_loop = FALSE)" in source
+    assert 'graph_learning <<- "close_loop_false_fallback"' in source
+    assert "graph_learning = graph_learning" in source
+
+
 def test_monocle3_envelope(monkeypatch):
     import pandas as pd
 
     class _Adata:
+        n_obs = 3
         var_names = ["g1", "g2"]
         obs_names = pd.Index(["c0", "c1", "c2"])
         obs = pd.DataFrame({"clusters": ["root", "mid", "tip"]})
         layers = {}
         X = None
 
-    monkeypatch.setattr(mc3.sc, "read_h5ad", lambda *a, **k: _Adata())
+    monkeypatch.setattr(mc3, "load_remote_h5ad", lambda *a, **k: _Adata())
     monkeypatch.setattr(mc3, "mmwrite", lambda *a, **k: None)
     monkeypatch.setattr(mc3, "csr_matrix", lambda x: __import__("types").SimpleNamespace(T=None))
     monkeypatch.setattr(
@@ -366,7 +379,7 @@ def test_monocle3_propagates_r_error(monkeypatch):
         layers = {}
         X = None
 
-    monkeypatch.setattr(mc3.sc, "read_h5ad", lambda *a, **k: _Adata())
+    monkeypatch.setattr(mc3, "load_remote_h5ad", lambda *a, **k: _Adata())
     monkeypatch.setattr(mc3, "mmwrite", lambda *a, **k: None)
     monkeypatch.setattr(mc3, "csr_matrix", lambda x: __import__("types").SimpleNamespace(T=None))
     monkeypatch.setattr(mc3, "_run_rscript", lambda work: {"error": "Monocle3 (R) failed: boom"})
@@ -399,54 +412,53 @@ def test_chrombpnet_jsd_identical_is_zero_disjoint_is_one():
 
 def test_chrombpnet_predict_missing_args():
     assert cbp.ChrombpnetPredictTool().run({})["error"]
-    assert cbp.ChrombpnetPredictTool().run({"model_path": "m.h5"})["error"]
+    assert cbp.ChrombpnetPredictTool().run({"return_profile": True})["error"]
 
 
 def test_chrombpnet_variant_missing_args():
     assert cbp.ChrombpnetVariantEffectTool().run({})["error"]
     assert cbp.ChrombpnetVariantEffectTool().run(
-        {"model_path": "m.h5", "ref_sequence": "ACGT"}
+        {"ref_sequence": "ACGT"}
     )["error"]
 
 
 def test_chrombpnet_predict_envelope(monkeypatch):
-    monkeypatch.setattr(cbp, "_get_model", lambda p: object())
+    monkeypatch.setattr(cbp, "_get_model", lambda: object())
     # profile peaks at center; log_total_counts = ln(100)
     prof = np.zeros(cbp.OUTPUT_LEN)
     prof[cbp.OUTPUT_LEN // 2] = 1.0
     monkeypatch.setattr(cbp, "_predict", lambda model, seq: (prof, math.log(100.0)))
-    out = cbp.ChrombpnetPredictTool().run({"model_path": "m.h5", "sequence": "ACGT"})
+    out = cbp.ChrombpnetPredictTool().run({"sequence": "ACGT"})
     assert out["model"] == "ChromBPNet"
     assert out["total_counts"] == pytest.approx(100.0)
     assert out["peak_offset"] == 0  # peak at profile center
     assert "profile" not in out
     out2 = cbp.ChrombpnetPredictTool().run(
-        {"model_path": "m.h5", "sequence": "ACGT", "return_profile": True}
+        {"sequence": "ACGT", "return_profile": True}
     )
     assert len(out2["profile"]) == cbp.OUTPUT_LEN
 
 
 def test_chrombpnet_variant_effect_scores(monkeypatch):
-    monkeypatch.setattr(cbp, "_get_model", lambda p: object())
+    monkeypatch.setattr(cbp, "_get_model", lambda: object())
     flat = np.full(cbp.OUTPUT_LEN, 1.0 / cbp.OUTPUT_LEN)
 
     def fake_predict(model, seq):
         # alt has 4x the counts of ref -> log2fc = 2; identical flat profile -> jsd 0
-        return (flat, math.log(400.0) if seq == "ALT" else math.log(100.0))
+        return (flat, math.log(400.0) if seq == "TGCA" else math.log(100.0))
 
     monkeypatch.setattr(cbp, "_predict", fake_predict)
     out = cbp.ChrombpnetVariantEffectTool().run(
-        {"model_path": "m.h5", "ref_sequence": "REF", "alt_sequence": "ALT"}
+        {"ref_sequence": "ACGT", "alt_sequence": "TGCA"}
     )
     assert out["count_log2fc"] == pytest.approx(2.0)
     assert out["profile_jsd"] == pytest.approx(0.0, abs=1e-9)
 
 
 def test_chrombpnet_handles_unloadable_model(monkeypatch):
-    def boom(_):
+    def boom():
         raise OSError("no such file")
 
     monkeypatch.setattr(cbp, "_get_model", boom)
-    out = cbp.ChrombpnetPredictTool().run({"model_path": "missing.h5", "sequence": "ACGT"})
-    assert "Could not load ChromBPNet model" in out["error"]
-
+    out = cbp.ChrombpnetPredictTool().run({"sequence": "ACGT"})
+    assert "Could not load the configured ChromBPNet model" in out["error"]

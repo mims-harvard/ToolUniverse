@@ -5,6 +5,7 @@
     "description": "Automatically discover and load all tools from Human Expert MCP Server. Can register discovered tools as individual ToolUniverse tools for expert consultation in complex scientific decisions requiring human judgment.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {}
     },
     "remote_info": {
@@ -30,13 +31,18 @@
     "description": "Consult a human expert for complex scientific questions requiring human judgment. This tool submits questions to human experts who can provide clinical decision support, analysis validation, treatment recommendations, and specialized opinions.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "question": {
           "type": "string",
+          "minLength": 1,
+          "maxLength": 20000,
           "description": "The scientific question or case requiring expert consultation"
         },
         "specialty": {
           "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
           "description": "Area of expertise needed (e.g., 'cardiology', 'oncology', 'pharmacology', 'neurology', 'emergency', 'general')",
           "default": "general"
         },
@@ -53,6 +59,7 @@
         },
         "context": {
           "type": "string",
+          "maxLength": 50000,
           "description": "Additional context or background information about the case",
           "default": ""
         },
@@ -65,11 +72,7 @@
         }
       },
       "required": [
-        "question",
-        "specialty",
-        "priority",
-        "context",
-        "timeout_minutes"
+        "question"
       ]
     },
     "return_schema": {
@@ -99,6 +102,7 @@
         },
         "request_id": {
           "type": "string",
+          "pattern": "^[0-9a-f]{8}$",
           "description": "Unique identifier for the consultation request"
         },
         "specialty": {
@@ -135,9 +139,11 @@
     "description": "Check if an expert response is available for a previous consultation request. Use this to retrieve responses when the initial consultation is complete.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "request_id": {
           "type": "string",
+          "pattern": "^[0-9a-f]{8}$",
           "description": "The ID of the expert consultation request to check"
         }
       },
@@ -191,7 +197,7 @@
     },
     "test_examples": [
       {
-        "request_id": "example_string"
+        "request_id": "deadbeef"
       }
     ]
   },
@@ -201,8 +207,8 @@
     "description": "Get current status of the human expert system including availability, pending requests, and system statistics.",
     "parameter": {
       "type": "object",
-      "properties": {},
-      "additionalProperties": false
+      "additionalProperties": false,
+      "properties": {}
     },
     "return_schema": {
       "type": "object",
@@ -224,16 +230,17 @@
               "type": "string",
               "description": "Expert name"
             },
-            "specialties": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "description": "Expert's areas of specialization"
+            "specialty": {
+              "type": "string",
+              "description": "Expert's area of specialization"
             },
-            "availability": {
-              "type": "boolean",
-              "description": "Whether the expert is currently available"
+            "status": {
+              "type": "string",
+              "description": "Expert availability status"
+            },
+            "last_activity": {
+              "type": "string",
+              "description": "Timestamp of the expert's last activity"
             }
           }
         },
@@ -287,8 +294,8 @@
     "description": "List all pending expert consultation requests (for expert use to see waiting questions).",
     "parameter": {
       "type": "object",
-      "properties": {},
-      "additionalProperties": false
+      "additionalProperties": false,
+      "properties": {}
     },
     "return_schema": {
       "type": "object",
@@ -364,13 +371,17 @@
     "description": "Submit expert response to a consultation request (for use by human experts through the expert interface).",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "request_id": {
           "type": "string",
+          "pattern": "^[0-9a-f]{8}$",
           "description": "The ID of the consultation request to respond to"
         },
         "response": {
           "type": "string",
+          "minLength": 1,
+          "maxLength": 50000,
           "description": "The expert's response and recommendations"
         }
       },
@@ -420,7 +431,7 @@
     },
     "test_examples": [
       {
-        "request_id": "example_string",
+        "request_id": "abc12345",
         "response": "example_string"
       }
     ]

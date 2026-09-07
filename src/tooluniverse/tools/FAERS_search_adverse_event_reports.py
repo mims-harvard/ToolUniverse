@@ -21,7 +21,7 @@ def FAERS_search_adverse_event_reports(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
     Search and retrieve detailed adverse event reports from FAERS. Returns individual case reports wi...
 
@@ -52,7 +52,7 @@ def FAERS_search_adverse_event_reports(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

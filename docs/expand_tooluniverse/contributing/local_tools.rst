@@ -156,7 +156,7 @@ Create tests in ``tests/unit/test_my_new_tool.py``:
 .. code-block:: python
 
    import pytest
-   from tooluniverse.my_new_tool import MyNewTool
+   from tooluniverse import MyNewTool
 
    class TestMyNewTool:
        def setup_method(self):

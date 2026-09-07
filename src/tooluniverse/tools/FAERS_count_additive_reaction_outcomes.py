@@ -13,6 +13,7 @@ def FAERS_count_additive_reaction_outcomes(
     patientsex: Optional[str] = None,
     patientagegroup: Optional[str] = None,
     occurcountry: Optional[str] = None,
+    limit: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +32,8 @@ def FAERS_count_additive_reaction_outcomes(
 
     occurcountry : str
 
+    limit : int
+        Optional: maximum number of ranked terms to return (default 100, which is ope...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def FAERS_count_additive_reaction_outcomes(
             "patientsex": patientsex,
             "patientagegroup": patientagegroup,
             "occurcountry": occurcountry,
+            "limit": limit,
         }.items()
         if v is not None
     }

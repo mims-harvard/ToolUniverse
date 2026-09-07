@@ -10,7 +10,9 @@
                     "description": "Ensembl stable ID to look up (gene: ENSG*, transcript: ENST*, protein: ENSP*, e.g., 'ENSG00000141510' for TP53)."
                 }
             },
-            "required": ["ensembl_id"]
+            "required": [
+                "ensembl_id"
+            ]
         },
         "fields": {
             "endpoint": "get_id_history"
@@ -29,44 +31,41 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "string",
-                                    "description": "Ensembl stable ID"
-                                },
-                                "latest_version": {
-                                    "type": "string",
-                                    "description": "Full versioned ID (e.g., ENSG00000141510.20)"
-                                },
-                                "current_release": {
-                                    "type": "integer",
-                                    "description": "Ensembl release number (e.g., 115)"
-                                },
-                                "assembly": {
-                                    "type": "string",
-                                    "description": "Genome assembly (e.g., GRCh38)"
-                                },
-                                "is_current": {
-                                    "type": "boolean",
-                                    "description": "Whether this ID is still active"
-                                },
-                                "type": {
-                                    "type": ["string", "null"],
-                                    "description": "Feature type (Gene, Transcript, Translation)"
-                                },
-                                "possible_replacement": {
-                                    "type": ["array", "null"],
-                                    "description": "Replacement IDs if this ID was retired"
-                                }
-                            }
+                        "id": {
+                            "type": "string",
+                            "description": "Ensembl stable ID"
                         },
-                        "metadata": {
-                            "type": "object"
+                        "latest_version": {
+                            "type": "string",
+                            "description": "Full versioned ID (e.g., ENSG00000141510.20)"
+                        },
+                        "current_release": {
+                            "type": "integer",
+                            "description": "Ensembl release number (e.g., 115)"
+                        },
+                        "assembly": {
+                            "type": "string",
+                            "description": "Genome assembly (e.g., GRCh38)"
+                        },
+                        "is_current": {
+                            "type": "boolean",
+                            "description": "Whether this ID is still active"
+                        },
+                        "type": {
+                            "type": [
+                                "string",
+                                "null"
+                            ],
+                            "description": "Feature type (Gene, Transcript, Translation)"
+                        },
+                        "possible_replacement": {
+                            "type": [
+                                "array",
+                                "null"
+                            ],
+                            "description": "Replacement IDs if this ID was retired"
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -75,7 +74,9 @@
                             "type": "string"
                         }
                     },
-                    "required": ["error"]
+                    "required": [
+                        "error"
+                    ]
                 }
             ]
         }
@@ -91,7 +92,9 @@
                     "description": "Comma-separated Ensembl stable IDs (max 50). Example: 'ENSG00000141510,ENSG00000012048' for TP53 and BRCA1."
                 }
             },
-            "required": ["ensembl_ids"]
+            "required": [
+                "ensembl_ids"
+            ]
         },
         "fields": {
             "endpoint": "batch_lookup"
@@ -107,39 +110,45 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "queried_ids": {
-                                    "type": "integer",
-                                    "description": "Number of IDs queried"
-                                },
-                                "found": {
-                                    "type": "integer",
-                                    "description": "Number of IDs found"
-                                },
-                                "entries": {
-                                    "type": "array",
-                                    "description": "Archive entries for each ID",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "id": {"type": "string"},
-                                            "latest_version": {"type": "string"},
-                                            "current_release": {"type": "integer"},
-                                            "assembly": {"type": "string"},
-                                            "is_current": {"type": "boolean"},
-                                            "type": {"type": ["string", "null"]}
-                                        }
+                        "queried_ids": {
+                            "type": "integer",
+                            "description": "Number of IDs queried"
+                        },
+                        "found": {
+                            "type": "integer",
+                            "description": "Number of IDs found"
+                        },
+                        "entries": {
+                            "type": "array",
+                            "description": "Archive entries for each ID",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "latest_version": {
+                                        "type": "string"
+                                    },
+                                    "current_release": {
+                                        "type": "integer"
+                                    },
+                                    "assembly": {
+                                        "type": "string"
+                                    },
+                                    "is_current": {
+                                        "type": "boolean"
+                                    },
+                                    "type": {
+                                        "type": [
+                                            "string",
+                                            "null"
+                                        ]
                                     }
                                 }
                             }
-                        },
-                        "metadata": {
-                            "type": "object"
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -148,7 +157,9 @@
                             "type": "string"
                         }
                     },
-                    "required": ["error"]
+                    "required": [
+                        "error"
+                    ]
                 }
             ]
         }

@@ -1,0 +1,358 @@
+[
+  {
+    "name": "BioThings_list_apis",
+    "type": "BioThingsGatewayTool",
+    "description": "List the ~50 biomedical APIs reachable through the BioThings gateway, with a one-line description of each. Includes resources with no other ToolUniverse coverage such as DDInter (drug-drug interactions), repoDB (drug repurposing), IDISK (dietary supplements), TTD, GMMAD2, denovo-db, BioMuta, PFOCR, SEMMEDDB, Disbiome, InnateDB, CCLE, and PheWAS. Entries that duplicate a dedicated ToolUniverse tool are flagged in preferred_tooluniverse_tool; prefer the dedicated tool in those cases. Call this before BioThings_query to pick an api slug.",
+    "fields": {
+      "operation": "list_apis"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "keyword": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Filter APIs by substring in the slug or description, e.g. 'drug', 'microbiome'."
+        },
+        "only_without_dedicated_tool": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, list only APIs that have no dedicated ToolUniverse equivalent."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Available BioThings APIs",
+          "items": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "api": {
+                "type": "string",
+                "description": "API slug to pass to the other BioThings tools"
+              },
+              "description": {
+                "type": "string",
+                "description": "What the API contains"
+              },
+              "preferred_tooluniverse_tool": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "A richer dedicated tool to prefer, if one exists"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "only_without_dedicated_tool": false
+      },
+      {
+        "keyword": "drug"
+      },
+      {
+        "only_without_dedicated_tool": true
+      }
+    ]
+  },
+  {
+    "name": "BioThings_query",
+    "type": "BioThingsGatewayTool",
+    "description": "Search any BioThings-hosted API with an Elasticsearch-style query. Use '*' to match everything, a bare term for full-text search, or a fielded query such as 'subject.name:aspirin'. Example: api='ddinter', q='drug_a.name:warfarin' finds drug-drug interactions involving warfarin. Returns matching records with their _id, which BioThings_get_entity accepts. Use BioThings_list_apis to choose an api and BioThings_get_metadata to discover field names.",
+    "fields": {
+      "operation": "query"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "api",
+        "q"
+      ],
+      "properties": {
+        "api": {
+          "type": "string",
+          "description": "API slug, e.g. 'ddinter', 'repodb', 'semmeddb'. See BioThings_list_apis."
+        },
+        "q": {
+          "type": "string",
+          "description": "Query string. '*' for all, a bare term for full-text, or 'field:value' for fielded search."
+        },
+        "size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum records to return (default 10, max 100)."
+        },
+        "skip": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of records to skip, for paging through large result sets."
+        },
+        "fields": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Comma-separated fields to return, e.g. 'subject,object,predicate'. Omit for all."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Matching records",
+          "items": {
+            "type": "object",
+            "description": "A record; remaining fields vary by API",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "Record identifier, accepted by BioThings_get_entity"
+              },
+              "_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Relevance score"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "api": "ddinter",
+        "q": "*",
+        "size": 3
+      },
+      {
+        "api": "repodb",
+        "q": "drug.name:sildenafil",
+        "size": 5
+      },
+      {
+        "api": "idisk",
+        "q": "*",
+        "size": 3
+      },
+      {
+        "api": "disbiome",
+        "q": "*",
+        "size": 3
+      }
+    ]
+  },
+  {
+    "name": "BioThings_get_entity",
+    "type": "BioThingsGatewayTool",
+    "description": "Retrieve one record from a BioThings API by its _id, as returned in BioThings_query results. Example: api='mondo', entity_id='MONDO:0010329'. Uses the API's typed annotation route and falls back to an _id query when that route is not exposed.",
+    "fields": {
+      "operation": "get_entity"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "api",
+        "entity_id"
+      ],
+      "properties": {
+        "api": {
+          "type": "string",
+          "description": "API slug, e.g. 'mondo'. See BioThings_list_apis."
+        },
+        "entity_id": {
+          "type": "string",
+          "description": "Record _id from a BioThings_query result, e.g. 'MONDO:0010329'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "The full record; fields vary by API",
+          "properties": {}
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "api": "mondo",
+        "entity_id": "MONDO:0010329"
+      },
+      {
+        "api": "repodb",
+        "entity_id": "DB13867_C0011615"
+      }
+    ]
+  },
+  {
+    "name": "BioThings_get_metadata",
+    "type": "BioThingsGatewayTool",
+    "description": "Describe a BioThings API: record counts, build date and version, upstream sources, and optionally the full list of queryable field names. Call this before writing a fielded BioThings_query so you use field names the API actually has. Example: api='semmeddb', include_fields=true.",
+    "fields": {
+      "operation": "get_metadata"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "api"
+      ],
+      "properties": {
+        "api": {
+          "type": "string",
+          "description": "API slug, e.g. 'semmeddb'. See BioThings_list_apis."
+        },
+        "include_fields": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, also fetch the full list of queryable field names."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "API description and statistics",
+          "properties": {
+            "api": {
+              "type": "string",
+              "description": "API slug"
+            },
+            "description": {
+              "type": "string",
+              "description": "What the API contains"
+            },
+            "biothing_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Record type used in the annotation route"
+            },
+            "build_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the index was built"
+            },
+            "build_version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Index build version"
+            },
+            "stats": {
+              "type": "object",
+              "description": "Record counts reported by the API",
+              "properties": {}
+            },
+            "sources": {
+              "type": "array",
+              "description": "Upstream data sources",
+              "items": {
+                "type": "string",
+                "description": "Upstream source name"
+              }
+            },
+            "queryable_fields": {
+              "type": "array",
+              "description": "Queryable fields, when requested",
+              "items": {
+                "type": "string",
+                "description": "Field name"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "api": "ddinter"
+      },
+      {
+        "api": "semmeddb",
+        "include_fields": true
+      },
+      {
+        "api": "ttd"
+      }
+    ]
+  }
+]

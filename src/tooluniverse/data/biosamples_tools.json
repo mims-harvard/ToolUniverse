@@ -31,59 +31,37 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": "string"
-                },
-                "taxon_id": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "status": {
-                  "type": "string"
-                },
-                "release_date": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "update_date": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "characteristics": {
-                  "type": "object"
-                }
-              }
+            "accession": {
+              "type": "string"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
+            "name": {
+              "type": "string"
+            },
+            "taxon_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "status": {
+              "type": "string"
+            },
+            "release_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "update_date": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "characteristics": {
+              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -145,73 +123,30 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "accession": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "taxon_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "status": {
-                    "type": "string"
-                  },
-                  "key_characteristics": {
-                    "type": "object"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_elements": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "total_pages": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "current_page": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "returned": {
-                  "type": "integer"
-                },
-                "query": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "taxon_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": "string"
+              },
+              "key_characteristics": {
+                "type": "object"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -273,58 +208,27 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "accession": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  },
-                  "taxon_id": {
-                    "type": [
-                      "integer",
-                      "null"
-                    ]
-                  },
-                  "key_characteristics": {
-                    "type": "object"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "total_elements": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "returned": {
-                  "type": "integer"
-                },
-                "filter": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "taxon_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "key_characteristics": {
+                "type": "object"
               }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -369,53 +273,45 @@
         {
           "type": "object",
           "properties": {
-            "status": {
+            "accession": {
               "type": "string"
             },
-            "data": {
-              "type": "object",
-              "properties": {
-                "accession": {
-                  "type": "string"
-                },
-                "name": {
-                  "type": ["string", "null"]
-                },
-                "relationships": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "source": {
-                        "type": "string"
-                      },
-                      "type": {
-                        "type": "string"
-                      },
-                      "target": {
-                        "type": "string"
-                      },
-                      "direction": {
-                        "type": "string"
-                      },
-                      "related_accession": {
-                        "type": ["string", "null"]
-                      }
-                    }
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "direction": {
+                    "type": "string"
+                  },
+                  "related_accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
-                },
-                "relationship_count": {
-                  "type": "integer"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "relationship_count": {
+              "type": "integer"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -445,7 +341,10 @@
           "description": "Free-text query to compute facets over. Examples: 'cancer', 'liver', 'Homo sapiens'."
         },
         "max_values": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum number of top values to return per facet (1-50, default 10)."
         }
       },
@@ -471,55 +370,56 @@
         {
           "type": "object",
           "properties": {
-            "status": {
-              "type": "string"
-            },
-            "data": {
-              "type": "object",
-              "properties": {
-                "facets": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "attribute": {
-                        "type": ["string", "null"]
-                      },
-                      "type": {
-                        "type": ["string", "null"]
-                      },
-                      "count": {
-                        "type": ["integer", "null"]
-                      },
-                      "top_values": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "label": {
-                              "type": ["string", "null"]
-                            },
-                            "count": {
-                              "type": ["integer", "null"]
-                            }
-                          }
+            "facets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "attribute": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "top_values": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "count": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
                         }
                       }
                     }
                   }
-                },
-                "external_reference_data_facets": {
-                  "type": "array"
                 }
               }
             },
-            "metadata": {
-              "type": "object"
+            "external_reference_data_facets": {
+              "type": "array"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

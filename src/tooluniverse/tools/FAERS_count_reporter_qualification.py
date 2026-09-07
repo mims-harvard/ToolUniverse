@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def FAERS_count_reporter_qualification(
     medicinalproduct: str,
     serious: Optional[str] = None,
+    limit: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +26,8 @@ def FAERS_count_reporter_qualification(
         Drug name (brand or generic, e.g., 'WARFARIN', 'METFORMIN').
     serious : str
         Optional: Filter by event seriousness. Omit this parameter if you don't want ...
+    limit : int
+        Optional: maximum number of ranked terms to return (default 100, which is ope...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def FAERS_count_reporter_qualification(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"medicinalproduct": medicinalproduct, "serious": serious}.items()
+        for k, v in {
+            "medicinalproduct": medicinalproduct,
+            "serious": serious,
+            "limit": limit,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

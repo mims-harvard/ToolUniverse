@@ -115,6 +115,7 @@ class UniChemTool(BaseTool):
                     "inchi": None,
                     "inchikey": None,
                     "formula": None,
+                    "uci": None,
                     "source_count": 0,
                     "sources": [],
                 },
@@ -146,16 +147,19 @@ class UniChemTool(BaseTool):
                 }
             )
 
-        # Derive InChIKey from InChI if not directly available
-        if inchi_str:
-            # Try to find it from sources or connectivity info
-            for s in sources_raw:
-                pass  # InChIKey might not be directly in compound response
+        # The /compounds response carries the standard InChIKey at the top
+        # level (same field ``_connectivity_search`` reads). Fall back to
+        # echoing the query only when the API omits it, so callers that
+        # searched by InChIKey never lose the value they had before.
+        inchikey = first.get("standardInchiKey")
+        if not inchikey:
+            inchikey = compound if search_type == "inchikey" else None
 
         result = {
             "inchi": inchi_str,
-            "inchikey": compound if search_type == "inchikey" else None,
+            "inchikey": inchikey,
             "formula": formula,
+            "uci": first.get("uci"),
             "source_count": len(sources),
             "sources": sources,
         }

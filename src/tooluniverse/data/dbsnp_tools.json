@@ -2,7 +2,7 @@
   {
     "type": "dbSNPGetVariantByRsID",
     "name": "dbsnp_get_variant_by_rsid",
-    "description": "Get variant information from dbSNP by rsID. Returns genomic coordinates, alleles, and basic variant information.",
+    "description": "Get variant information from dbSNP by rsID. Returns genomic coordinates, alleles, and basic variant information. Coordinates are reported on BOTH assemblies: 'position'/'position_grch38' are on GRCh38 (dbSNP's current assembly, named by the 'assembly' field) and 'position_grch37' is the same variant on GRCh37. Always pick the field matching your pipeline's build -- the two can differ by hundreds of kilobases.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14,7 +14,7 @@
       "required": ["rsid"]
     },
     "fields": {
-      "endpoint": "/beta/refsnp",
+      "endpoint": "/esummary.fcgi",
       "return_format": "JSON"
     },
     "return_schema": {
@@ -27,48 +27,106 @@
         },
         "data": {
           "type": "object",
-          "description": "Variant information from dbSNP",
+          "description": "Variant information from dbSNP, flattened from the NCBI E-utilities esummary document summary",
           "properties": {
             "refsnp_id": {
               "type": "string",
-              "description": "dbSNP reference ID"
+              "description": "dbSNP reference ID, with the 'rs' prefix (e.g. 'rs80338939')"
             },
-            "primary_snapshot_data": {
-              "type": "object",
-              "description": "Primary variant data",
-              "properties": {
-                "placements_with_allele": {
-                  "type": "array",
-                  "description": "Genomic placements",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "seq_id": {
-                        "type": "string",
-                        "description": "Chromosome"
-                      },
-                      "position": {
-                        "type": "integer",
-                        "description": "Genomic position"
-                      },
-                      "alleles": {
-                        "type": "array",
-                        "description": "Allele information"
-                      }
-                    }
+            "snp_id": {
+              "type": ["integer", "null"],
+              "description": "Numeric dbSNP ID without the 'rs' prefix (e.g. 80338939)"
+            },
+            "chromosome": {
+              "type": ["string", "null"],
+              "description": "Chromosome name (e.g. '13'), without a 'chr' prefix"
+            },
+            "position": {
+              "type": ["string", "null"],
+              "description": "Genomic coordinate on GRCh38 as a 'chromosome:position' STRING (e.g. '13:20189547'), not an integer. Identical to 'position_grch38'; see the 'assembly' field for the build label. Retained under this name for backwards compatibility."
+            },
+            "assembly": {
+              "type": "string",
+              "description": "Genome assembly that 'position' and 'position_grch38' are expressed on. Always 'GRCh38', dbSNP's current assembly."
+            },
+            "position_grch38": {
+              "type": ["string", "null"],
+              "description": "Genomic coordinate on GRCh38 as a 'chromosome:position' string, from esummary 'chrpos'. Same value as 'position', explicitly labelled."
+            },
+            "position_grch37": {
+              "type": ["string", "null"],
+              "description": "Genomic coordinate for the same variant on GRCh37 (hg19) as a 'chromosome:position' string, from esummary 'chrpos_prev_assm'. Null when dbSNP has no previous-assembly mapping. Use this, not 'position', for GRCh37/hg19 pipelines."
+            },
+            "allele": {
+              "type": ["string", "null"],
+              "description": "Variant allele as reported by dbSNP"
+            },
+            "snp_class": {
+              "type": ["string", "null"],
+              "description": "Variant class (e.g. 'snv', 'delins', 'del')"
+            },
+            "clinical_significance": {
+              "type": "array",
+              "description": "ClinVar clinical significance terms (e.g. 'pathogenic'). A single-element list containing an empty string when dbSNP reports none.",
+              "items": {"type": "string"}
+            },
+            "genes": {
+              "type": "array",
+              "description": "Symbols of genes overlapping the variant",
+              "items": {"type": "string"}
+            },
+            "allele_frequencies": {
+              "type": "array",
+              "description": "Raw per-study frequency entries from esummary 'global_mafs', UNPARSED. Use dbsnp_get_frequencies for parsed numeric values.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "study": {
+                    "type": "string",
+                    "description": "Study/population name (e.g. '1000Genomes')"
+                  },
+                  "freq": {
+                    "type": "string",
+                    "description": "Raw dbSNP encoding 'allele=frequency/allele_count', e.g. '-=0.002396/12'. The number after the slash is an ALLELE (chromosome) count, not a number of individuals."
                   }
                 }
               }
+            },
+            "hgvs_notation": {
+              "type": ["string", "null"],
+              "description": "dbSNP 'docsum' string. Not bare HGVS: a pipe-delimited record whose first segment is 'HGVS=' followed by a comma-separated list of HGVS expressions, then SEQ=/LEN=/GENE= segments. Parse before use."
+            },
+            "spdi_notation": {
+              "type": ["string", "null"],
+              "description": "Comma-separated SPDI expressions (sequence:position:deleted:inserted)"
+            },
+            "function_class": {
+              "type": "array",
+              "description": "Molecular consequence terms (e.g. 'frameshift_variant')",
+              "items": {"type": "string"}
+            },
+            "validated": {
+              "type": "array",
+              "description": "dbSNP validation status terms (e.g. 'by-frequency')",
+              "items": {"type": "string"}
+            },
+            "created_date": {
+              "type": ["string", "null"],
+              "description": "Record creation date, 'YYYY/MM/DD HH:MM'"
+            },
+            "updated_date": {
+              "type": ["string", "null"],
+              "description": "Record last-update date, 'YYYY/MM/DD HH:MM'"
             }
           }
         },
         "rsid": {
           "type": "string",
-          "description": "Input rsID"
+          "description": "Input rsID, normalized to include the 'rs' prefix"
         },
         "url": {
           "type": "string",
-          "description": "API URL used"
+          "description": "API URL used (NCBI E-utilities esummary.fcgi)"
         }
       }
     },
@@ -113,7 +171,7 @@
       "required": ["gene_symbol"]
     },
     "fields": {
-      "endpoint": "/beta/refsnp",
+      "endpoint": "/esearch.fcgi",
       "return_format": "JSON"
     },
     "return_schema": {
@@ -126,28 +184,32 @@
         },
         "data": {
           "type": "object",
-          "description": "Search results from dbSNP",
+          "description": "Search results from dbSNP. This endpoint returns IDENTIFIERS ONLY -- no coordinates, alleles, or gene annotation. Call dbsnp_get_variant_by_rsid on an rsID to get its details.",
           "properties": {
             "variants": {
               "type": "array",
-              "description": "Array of variant information",
+              "description": "Matching variants, identifiers only",
               "items": {
                 "type": "object",
                 "properties": {
                   "refsnp_id": {
                     "type": "string",
-                    "description": "dbSNP reference ID"
+                    "description": "dbSNP reference ID, with the 'rs' prefix (e.g. 'rs2500267164')"
                   },
-                  "gene": {
-                    "type": "string",
-                    "description": "Gene symbol"
-                  },
-                  "position": {
+                  "snp_id": {
                     "type": "integer",
-                    "description": "Genomic position"
+                    "description": "Numeric dbSNP ID without the 'rs' prefix"
                   }
                 }
               }
+            },
+            "total_count": {
+              "type": "integer",
+              "description": "Total number of variants matching the gene query in dbSNP, which is typically far larger than the number returned"
+            },
+            "returned_count": {
+              "type": "integer",
+              "description": "Number of variants actually returned, capped by the 'limit' parameter"
             }
           }
         },
@@ -157,7 +219,7 @@
         },
         "url": {
           "type": "string",
-          "description": "API URL used"
+          "description": "API URL used (NCBI E-utilities esearch.fcgi)"
         }
       }
     },
@@ -185,7 +247,7 @@
   {
     "type": "dbSNPGetFrequencies",
     "name": "dbsnp_get_frequencies",
-    "description": "Get allele frequencies for a variant from dbSNP. Returns population-specific allele frequency data.",
+    "description": "Get allele frequencies for a variant from dbSNP. Returns population-specific allele frequency data. Each study reports an 'allele_count' -- the number of ALLELES (chromosomes) observed carrying the allele, NOT a number of individuals. Do not read it as study size: for a diploid cohort the number of people is at most half of it, and the denominator is the cohort's total allele count, which dbSNP does not report here.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -197,7 +259,7 @@
       "required": ["rsid"]
     },
     "fields": {
-      "endpoint": "/beta/refsnp",
+      "endpoint": "/esummary.fcgi",
       "return_format": "JSON"
     },
     "return_schema": {
@@ -220,19 +282,23 @@
                 "properties": {
                   "study": {
                     "type": "string",
-                    "description": "Study/population name"
+                    "description": "Study/population name (e.g. '1000Genomes', 'TOPMED', 'GnomAD_genomes')"
                   },
                   "allele": {
                     "type": "string",
-                    "description": "Allele"
+                    "description": "The allele this frequency refers to. Note this is NOT always the minor or alternate allele -- dbSNP reports whichever allele the study submitted, so check it before comparing studies."
                   },
                   "frequency": {
                     "type": "number",
-                    "description": "Allele frequency"
+                    "description": "Frequency of 'allele' in this study, between 0 and 1"
+                  },
+                  "allele_count": {
+                    "type": "integer",
+                    "description": "Number of ALLELES (chromosomes) observed carrying 'allele' in this study -- the numerator of 'frequency'. This is the value after the slash in dbSNP's 'global_mafs' encoding 'allele=frequency/count'. It is NOT a count of individuals: for 1000 Genomes phase 3 (2504 samples = 5008 alleles), rs429358 gives 0.1505591 x 5008 = 754 and rs80338939 gives 0.002396 x 5008 = 12, so a study reporting 12 here observed 12 carrier chromosomes out of 5008, not a 12-person cohort. dbSNP does not report the denominator, so this number alone does not give study size."
                   },
                   "sample_count": {
                     "type": "integer",
-                    "description": "Sample count"
+                    "description": "LEGACY MISNOMER retained for backwards compatibility -- identical in value to 'allele_count'. Despite the name this is the allele/chromosome count from dbSNP's 'global_mafs', NOT a number of individuals or a sample size. Prefer 'allele_count'."
                   }
                 }
               }

@@ -10,7 +10,7 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv(usecwd=True))
 
-USPTO_API_KEY = os.environ.get("USPTO_API_KEY")
+_API_KEY_FROM_ENV = object()
 
 
 @register_tool("USPTOOpenDataPortalTool")
@@ -23,7 +23,7 @@ class USPTOOpenDataPortalTool(BaseTool):
     def __init__(
         self,
         tool_config,
-        api_key=USPTO_API_KEY,
+        api_key=_API_KEY_FROM_ENV,
         base_url="https://api.uspto.gov/api/v1",
     ):
         """
@@ -36,6 +36,10 @@ class USPTOOpenDataPortalTool(BaseTool):
         """
         super().__init__(tool_config)
         self.base_url = base_url
+        if api_key is _API_KEY_FROM_ENV:
+            # Resolve at construction time so a long-lived process or test can
+            # rotate provider credentials without re-importing this module.
+            api_key = os.environ.get("USPTO_API_KEY")
         if api_key == "YOUR_API_KEY" or not api_key:
             raise ValueError(
                 "You must set a USPTO API key via the USPTO_API_KEY environment variable."

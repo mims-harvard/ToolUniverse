@@ -185,12 +185,42 @@ class GxATool(BaseTool):
 
         # Extract gene expression profiles (apply gene_id filter client-side)
         profiles = data.get("profiles", {})
-        rows = profiles.get("rows", [])
+        raw_rows = profiles.get("rows", [])
+
+        # Feature-69A-004: the upstream endpoint only ever returns a small,
+        # arbitrary default sample of the experiment's genes (confirmed live:
+        # E-MTAB-2836 has searchResultTotal=9570 but only ~29 rows are ever
+        # returned, regardless of any geneQuery/geneId parameter we send).
+        # Disclose that sample size vs. the true total so `total_gene_profiles`
+        # (which reflects only what we searched) is never mistaken for the
+        # experiment's actual gene count.
+        profiles_returned_by_upstream = len(raw_rows)
+        try:
+            # Upstream sometimes serializes this as a numeric string.
+            profiles_available_upstream = int(
+                profiles.get("searchResultTotal", profiles_returned_by_upstream)
+            )
+        except (TypeError, ValueError):
+            profiles_available_upstream = profiles_returned_by_upstream
 
         # Apply client-side gene_id filter (API ignores geneId parameter)
+        rows = raw_rows
+        coverage_warning = None
         if gene_id:
             gene_id_upper = gene_id.upper()
-            rows = [r for r in rows if self._gene_id_matches(r, gene_id_upper)]
+            rows = [r for r in raw_rows if self._gene_id_matches(r, gene_id_upper)]
+            if not rows:
+                coverage_warning = (
+                    "The upstream Expression Atlas endpoint returned only a default "
+                    f"sample of {profiles_returned_by_upstream} of "
+                    f"{profiles_available_upstream} genes in this experiment, and it "
+                    "ignores every gene-filter parameter we can send it (verified "
+                    f"directly against the API). The requested gene '{gene_id}' was "
+                    "not present in that sample. An empty result here is NOT evidence "
+                    "that the gene is unexpressed or absent from the experiment -- it "
+                    "only means the requested gene fell outside the small sample the "
+                    "upstream API happened to return."
+                )
 
         gene_profiles = []
         for row in rows[:50]:  # Limit to first 50 genes
@@ -225,6 +255,9 @@ class GxATool(BaseTool):
                 "columns": columns,
                 "total_gene_profiles": len(rows),
                 "gene_profiles": gene_profiles,
+                "profiles_returned_by_upstream": profiles_returned_by_upstream,
+                "profiles_available_upstream": profiles_available_upstream,
+                "coverage_warning": coverage_warning,
             },
             "metadata": {
                 "source": "EBI Gene Expression Atlas",

@@ -1,0 +1,129 @@
+[
+  {
+    "name": "NCATSTranslator_resolve_entity",
+    "type": "NCATSTranslatorTool",
+    "description": "Resolve a free-text biomedical name to Translator-normalized identifiers (CURIEs) via SRI Name Resolution. Returns matches ranked by relevance with their biolink categories, species, and a synonym sample. Example: name='Alzheimer disease' returns curie='MONDO:0004975'. Use the returned curie as entity_id in NCATSTranslator_query_associations.",
+    "fields": {
+      "operation": "resolve_entity"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Free-text name, e.g. 'Alzheimer disease', 'aspirin', 'BRCA1'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max matches to return, 1-20. Default 10."
+        },
+        "biolink_type": {
+          "type": ["string", "null"],
+          "description": "Optional biolink category filter, e.g. 'Disease', 'ChemicalEntity', 'Gene'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "curie": {"type": ["string", "null"]},
+              "label": {"type": ["string", "null"]},
+              "categories": {"type": "array", "items": {"type": "string"}},
+              "taxa": {"type": "array", "items": {"type": "string"}},
+              "score": {"type": ["number", "null"]},
+              "synonym_count": {"type": "integer"},
+              "example_synonyms": {"type": "array", "items": {"type": "string"}}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"name": "Alzheimer disease"},
+      {"name": "aspirin", "limit": 3},
+      {"name": "BRCA1", "biolink_type": "Gene"}
+    ]
+  },
+  {
+    "name": "NCATSTranslator_query_associations",
+    "type": "NCATSTranslatorTool",
+    "description": "One-hop biolink association query across ~15 NCATS Translator knowledge providers via the Aragorn reasoner. Given a known entity (entity_id) and a target category and predicate, returns connected entities ranked by score with the primary knowledge source and publication count behind each. Example: entity_id='MONDO:0004975' (Alzheimer disease), target_category='ChemicalEntity', predicate='treats' finds chemicals that treat it. Set target_role='object' to instead find entities the known one acts as subject upon.",
+    "fields": {
+      "operation": "query_associations"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["entity_id", "target_category", "predicate"],
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "description": "Translator-normalized CURIE of the known entity, e.g. 'MONDO:0004975'. Use NCATSTranslator_resolve_entity to find it from a name."
+        },
+        "target_category": {
+          "type": "string",
+          "description": "Biolink category to search for, e.g. 'ChemicalEntity', 'Gene', 'Disease', 'PhenotypicFeature'."
+        },
+        "predicate": {
+          "type": "string",
+          "description": "Biolink predicate linking the two, e.g. 'treats', 'gene_associated_with_condition', 'has_phenotype', 'causes'."
+        },
+        "target_role": {
+          "type": ["string", "null"],
+          "description": "Whether the target (unknown) entity is the predicate's subject or object: 'subject' or 'object'. entity_id takes the other role. Default 'subject' (e.g. 'chemical treats disease' with entity_id as the disease)."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max results to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": ["string", "null"]},
+              "name": {"type": ["string", "null"]},
+              "categories": {"type": "array", "items": {"type": "string"}},
+              "score": {"type": ["number", "null"]},
+              "knowledge_sources": {"type": "array", "items": {"type": "string"}},
+              "publication_count": {"type": "integer"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "entity_id": "MONDO:0004975",
+        "target_category": "ChemicalEntity",
+        "predicate": "treats",
+        "limit": 5
+      },
+      {
+        "entity_id": "MONDO:0004975",
+        "target_category": "Gene",
+        "predicate": "gene_associated_with_condition",
+        "target_role": "subject",
+        "limit": 5
+      }
+    ]
+  }
+]

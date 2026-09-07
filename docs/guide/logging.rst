@@ -145,7 +145,7 @@ ERROR Level
 
 .. code-block:: text
 
-   ❌ ERROR: Failed to execute tool 'PubChem_search': Invalid API key
+   ❌ ERROR: Failed to execute tool 'PubChem_get_CID_by_compound_name': Invalid API key
    ❌ ERROR: OpenTargets query timeout after 30 seconds
 
 CRITICAL Level
@@ -244,7 +244,7 @@ Change log level during execution:
 
    # Enable verbose logging for debugging
    set_log_level('DEBUG')
-   result = tu.run({"name": "PubChem_search", "arguments": {"query": "aspirin"}})
+   result = tu.run({"name": "PubChem_get_CID_by_compound_name", "arguments": {"name": "aspirin"}})
 
    # Return to normal logging
    set_log_level('INFO')
@@ -314,8 +314,8 @@ Research Workflow Logging
    setup_logging('INFO')
    logger = get_logger('drug_discovery')
 
-   def drug_discovery_workflow(target_disease):
-       logger.info(f"🎯 Starting drug discovery for: {target_disease}")
+   def drug_discovery_workflow(disease_efo_id):
+       logger.info(f"🎯 Starting drug discovery for: {disease_efo_id}")
 
        tu = ToolUniverse()
        tu.load_tools()
@@ -323,8 +323,8 @@ Research Workflow Logging
        # Step 1: Find disease targets
        logger.progress("Step 1: Identifying disease targets")
        targets_query = {
-           "name": "OpenTargets_get_associated_targets_by_disease_name",
-           "arguments": {"diseaseName": target_disease, "limit": 10}
+           "name": "OpenTargets_get_associated_targets_by_disease_efoId",
+           "arguments": {"efoId": disease_efo_id, "size": 10}
        }
 
        try:
@@ -357,7 +357,7 @@ Debugging Failed Tools
 
    # Debug a failing query
    problematic_query = {
-       "name": "PubChem_get_compound_info",
+       "name": "PubChem_get_CID_by_compound_name",
        "arguments": {"compound_name": "invalid_compound_name"}
    }
 
@@ -389,7 +389,7 @@ Batch Processing with Progress Tracking
            logger.progress(f"Processing {i+1}/{len(compounds)}: {compound}")
 
            query = {
-               "name": "PubChem_get_compound_info",
+               "name": "PubChem_get_CID_by_compound_name",
                "arguments": {"compound_name": compound}
            }
 
@@ -526,7 +526,7 @@ Here's what different log levels look like in practice:
 .. code-block:: text
 
    🔍 DEBUG: Tool files loaded from: /path/to/tools/
-   🔍 DEBUG: Validating parameters for PubChem_search
+   🔍 DEBUG: Validating parameters for PubChem_get_CID_by_compound_name
    ℹ️ INFO: Loading 245 tools from 12 categories
    📈 PROGRESS: Processing compound 15/100: caffeine
    ⚠️ WARNING: API rate limit reached, waiting 2 seconds

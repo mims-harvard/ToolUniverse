@@ -1,0 +1,233 @@
+[
+  {
+    "name": "CellTypist_search_models",
+    "type": "CellTypistCatalogTool",
+    "description": "Search the CellTypist catalog of pre-trained models for automated single-cell type annotation, covering immune compartments, developmental atlases, and individual tissues. Filter by keyword against model descriptions, e.g. keyword='lung'. Returns model filename, what it was trained on, how many cell types it resolves, and a download URL. Use this to choose the right classifier for a tissue; use PanglaoDB_* or CellMarker_* instead if you want literature-curated marker genes for a named cell type. This tool returns catalog metadata only. To actually annotate cells, use the remote tool run_celltypist_annotate, which runs a chosen model against an expression matrix.",
+    "fields": {
+      "operation": "search_models"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "keyword": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Case-insensitive filter on model description or filename, e.g. 'lung', 'immune', 'fetal', 'brain'."
+        },
+        "min_celltypes": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Only return models resolving at least this many cell types, e.g. 50."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum models to return (default 25, max 100)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Matching CellTypist models",
+          "items": {
+            "type": "object",
+            "properties": {
+              "filename": {
+                "type": "string",
+                "description": "Model filename, e.g. 'Immune_All_Low.pkl'"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What the model was trained on"
+              },
+              "n_celltypes": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Cell types the model resolves"
+              },
+              "version": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Model version"
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Model build date"
+              },
+              "source_doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DOI of the source publication"
+              },
+              "download_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "URL of the serialized model"
+              },
+              "is_default": {
+                "type": "boolean",
+                "description": "True if a CellTypist default model"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "limit": 10
+      },
+      {
+        "keyword": "immune",
+        "limit": 5
+      },
+      {
+        "keyword": "lung",
+        "limit": 5
+      },
+      {
+        "min_celltypes": 50,
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "CellTypist_get_model",
+    "type": "CellTypistCatalogTool",
+    "description": "Retrieve metadata for one CellTypist model by filename, including its training description, number of resolved cell types, version, source DOI, and download URL. Filenames look like 'Immune_All_Low.pkl' and are returned by CellTypist_search_models. This returns catalog metadata only; running annotation requires the celltypist Python package and an expression matrix. This tool returns catalog metadata only. To actually annotate cells, use the remote tool run_celltypist_annotate, which runs a chosen model against an expression matrix.",
+    "fields": {
+      "operation": "get_model"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "filename"
+      ],
+      "properties": {
+        "filename": {
+          "type": "string",
+          "description": "Model filename, e.g. 'Immune_All_Low.pkl'. Case-insensitive."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "filename": {
+              "type": "string",
+              "description": "Model filename, e.g. 'Immune_All_Low.pkl'"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the model was trained on"
+            },
+            "n_celltypes": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "Cell types the model resolves"
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Model version"
+            },
+            "date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Model build date"
+            },
+            "source_doi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DOI of the source publication"
+            },
+            "download_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of the serialized model"
+            },
+            "is_default": {
+              "type": "boolean",
+              "description": "True if a CellTypist default model"
+            }
+          },
+          "description": "A single CellTypist model"
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "filename": "Immune_All_Low.pkl"
+      },
+      {
+        "filename": "Immune_All_High.pkl"
+      }
+    ]
+  }
+]

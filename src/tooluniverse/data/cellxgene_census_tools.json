@@ -64,6 +64,9 @@
         "purpose": "Synthetic gate. Set to '1' after `pip install cellxgene-census`; CELLxGENE tools require the Python package, not a network key.",
         "without": "All 7 CELLxGENE tools skip in the test harness and return a clear 'package not installed' error at runtime."
       }
+    },
+    "fields": {
+      "operation": "get_census_versions"
     }
   },
   {
@@ -161,7 +164,10 @@
     ],
     "required_api_keys": [
       "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
-    ]
+    ],
+    "fields": {
+      "operation": "get_obs_metadata"
+    }
   },
   {
     "name": "CELLxGENE_get_gene_metadata",
@@ -249,7 +255,10 @@
     ],
     "required_api_keys": [
       "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
-    ]
+    ],
+    "fields": {
+      "operation": "get_var_metadata"
+    }
   },
   {
     "name": "CELLxGENE_get_expression_data",
@@ -344,7 +353,10 @@
     ],
     "required_api_keys": [
       "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
-    ]
+    ],
+    "fields": {
+      "operation": "get_anndata"
+    }
   },
   {
     "name": "CELLxGENE_get_presence_matrix",
@@ -433,7 +445,10 @@
     ],
     "required_api_keys": [
       "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
-    ]
+    ],
+    "fields": {
+      "operation": "get_presence_matrix"
+    }
   },
   {
     "name": "CELLxGENE_get_embeddings",
@@ -523,7 +538,10 @@
     ],
     "required_api_keys": [
       "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
-    ]
+    ],
+    "fields": {
+      "operation": "get_embeddings"
+    }
   },
   {
     "name": "CELLxGENE_download_h5ad",
@@ -598,6 +616,9 @@
     ],
     "required_api_keys": [
       "CELLXGENE_CENSUS_PACKAGE_INSTALLED"
-    ]
+    ],
+    "fields": {
+      "operation": "download_h5ad"
+    }
   }
 ]

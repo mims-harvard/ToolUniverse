@@ -11,7 +11,7 @@
         "domain": "Drugs & Chemistry",
         "type": "secret",
         "register_url": "https://rxn.app.accelerate.science",
-        "purpose": "IBM RXN for Chemistry API key — runs ML forward reaction prediction and retrosynthesis.",
+        "purpose": "IBM RXN for Chemistry API key \u2014 runs ML forward reaction prediction and retrosynthesis.",
         "without": "RXN tools return a clear missing-key error and cannot run predictions."
       }
     },
@@ -24,7 +24,8 @@
         "operation": {
           "type": "string",
           "const": "predict_reaction",
-          "description": "Operation type (fixed: predict_reaction)."
+          "description": "Operation type (fixed: predict_reaction).",
+          "default": "predict_reaction"
         },
         "reactants": {
           "type": "string",
@@ -120,7 +121,10 @@
         "operation": "predict_reaction",
         "reactants": "BrBr.c1ccc2cc3ccccc3cc2c1"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "predict_reaction"
+    }
   },
   {
     "name": "RXNChemistry_predict_retrosynthesis",
@@ -134,7 +138,7 @@
         "domain": "Drugs & Chemistry",
         "type": "secret",
         "register_url": "https://rxn.app.accelerate.science",
-        "purpose": "IBM RXN for Chemistry API key — runs ML forward reaction prediction and retrosynthesis.",
+        "purpose": "IBM RXN for Chemistry API key \u2014 runs ML forward reaction prediction and retrosynthesis.",
         "without": "RXN tools return a clear missing-key error and cannot run predictions."
       }
     },
@@ -147,7 +151,8 @@
         "operation": {
           "type": "string",
           "const": "predict_retrosynthesis",
-          "description": "Operation type (fixed: predict_retrosynthesis)."
+          "description": "Operation type (fixed: predict_retrosynthesis).",
+          "default": "predict_retrosynthesis"
         },
         "product": {
           "type": "string",
@@ -244,6 +249,9 @@
         "operation": "predict_retrosynthesis",
         "product": "CC(=O)Oc1ccccc1C(=O)O"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "predict_retrosynthesis"
+    }
   }
 ]

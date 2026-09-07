@@ -8,12 +8,52 @@ API: https://pdc.cancer.gov/graphql
 Authentication: None required (free public API).
 """
 
+import json
+
 import requests
 from typing import Dict, Any, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 PDC_GRAPHQL_URL = "https://pdc.cancer.gov/graphql"
+
+# Structured study-catalog fields that PDC_search_studies matches a query
+# against, in the order they are reported back to the caller. Every entry is a
+# curated PDC metadata field except ``submitter_id_name``, which is the free
+# text study title. Keeping the title last means curated matches are listed
+# first in each study's ``matched_fields``.
+STUDY_SEARCH_FIELDS = (
+    "disease_type",
+    "primary_site",
+    "analytical_fraction",
+    "experiment_type",
+    "program_name",
+    "project_name",
+    "submitter_id_name",
+)
+
+# Curated metadata fields the query is matched against. A hit on one of these
+# is a controlled-vocabulary hit, as opposed to a coincidental study-title hit.
+STUDY_SEARCH_CURATED_FIELDS = tuple(
+    f for f in STUDY_SEARCH_FIELDS if f != "submitter_id_name"
+)
+
+# Page size used when pulling the PDC study catalog. PDC currently publishes a
+# few hundred studies, so this normally takes a single request.
+STUDY_CATALOG_PAGE_SIZE = 500
+
+# Safety valve so a malformed ``total`` from the API cannot cause a runaway
+# pagination loop.
+STUDY_CATALOG_MAX_PAGES = 20
+
+
+def _gql_string(value: str) -> str:
+    """Render a Python string as a quoted GraphQL string literal.
+
+    GraphQL string syntax is a subset of JSON string syntax, so ``json.dumps``
+    escapes quotes, backslashes and control characters correctly.
+    """
+    return json.dumps(str(value))
 
 
 def _execute_graphql(
@@ -102,44 +142,205 @@ class PDCTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": "Operation failed: %s" % str(e)}
 
+    def _fetch_study_catalog(self) -> Dict[str, Any]:
+        """Fetch the full PDC study catalog with its structured metadata.
+
+        Uses ``getPaginatedUIStudy``, which returns the curated study
+        annotations (disease type, primary site, analytical fraction,
+        experiment type, program and project) alongside the study title.
+        The legacy ``studySearch(name:)`` endpoint only matches the title and
+        silently truncates at 100 results, so it cannot back a search that
+        claims to cover disease/program/fraction.
+        """
+        gql = """
+        {
+            getPaginatedUIStudy(offset: %d, limit: %d) {
+                total
+                uiStudies {
+                    study_id
+                    pdc_study_id
+                    submitter_id_name
+                    disease_type
+                    primary_site
+                    analytical_fraction
+                    experiment_type
+                    program_name
+                    project_name
+                }
+            }
+        }
+        """
+
+        studies: list = []
+        total = 0
+        for page in range(STUDY_CATALOG_MAX_PAGES):
+            offset = page * STUDY_CATALOG_PAGE_SIZE
+            result = _execute_graphql(
+                gql % (offset, STUDY_CATALOG_PAGE_SIZE), timeout=60
+            )
+            if not result["ok"]:
+                return {"ok": False, "error": result["error"]}
+
+            paginated = result["data"].get("getPaginatedUIStudy") or {}
+            page_studies = paginated.get("uiStudies") or []
+            total = paginated.get("total") or total
+            studies.extend(page_studies)
+
+            if not page_studies or len(studies) >= total:
+                break
+
+        return {"ok": True, "studies": studies, "total": total or len(studies)}
+
+    def _fetch_program_vocabulary_matches(self, query_text: str) -> Dict[str, Any]:
+        """Resolve a query against PDC's controlled program vocabulary.
+
+        PDC's ``program_name`` filter matches the program *short name* (e.g.
+        "CPTAC", "APOLLO", "ICPC"), which does not appear in the long program
+        name carried on each study ("Clinical Proteomic Tumor Analysis
+        Consortium"). Substring matching over the catalog therefore cannot
+        find every study belonging to a program, so the program acronym is
+        resolved server-side and unioned into the results.
+
+        Only ``program_name`` needs this: the values of disease_type,
+        primary_site, analytical_fraction, experiment_type and project_name
+        are carried verbatim on each catalog record, so substring matching
+        over the catalog is already a superset of the server-side filter for
+        those fields.
+
+        Note: each filter must be sent as its own request. Combining several
+        filtered ``getPaginatedUIStudy`` selections into one document via
+        GraphQL aliases makes the API return results for the wrong filter.
+        """
+        gql = (
+            '{ getPaginatedUIStudy(offset: 0, limit: %d, program_name: %s) '
+            "{ uiStudies { pdc_study_id } } }"
+            % (STUDY_CATALOG_PAGE_SIZE, _gql_string(query_text))
+        )
+        result = _execute_graphql(gql, timeout=60)
+        if not result["ok"]:
+            return {"ok": False, "error": result["error"]}
+
+        paginated = result["data"].get("getPaginatedUIStudy") or {}
+        return {
+            "ok": True,
+            "pdc_study_ids": {
+                s.get("pdc_study_id")
+                for s in (paginated.get("uiStudies") or [])
+                if s.get("pdc_study_id")
+            },
+        }
+
     def _search_studies(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Search PDC studies by name/keyword."""
+        """Search PDC studies across their curated metadata fields.
+
+        The query is matched case-insensitively as a substring against each
+        field in ``STUDY_SEARCH_FIELDS`` - the curated disease type, primary
+        site, analytical fraction, experiment type, program and project, plus
+        the study title - and additionally resolved against PDC's controlled
+        program vocabulary so program acronyms work. Every returned study
+        reports which fields matched, so a title-only hit is never mistaken
+        for a curated disease-type hit.
+        """
         query_text = arguments.get("query")
-        if not query_text:
+        if not query_text or not str(query_text).strip():
             return {
                 "status": "error",
                 "error": "query parameter is required for study search",
             }
 
-        gql = """
-        {
-            studySearch(name: "%s") {
-                studies {
-                    study_id
-                    name
-                    pdc_study_id
-                    submitter_id_name
+        query_text = str(query_text).strip()
+        needle = query_text.casefold()
+
+        catalog = self._fetch_study_catalog()
+        if not catalog["ok"]:
+            return {"status": "error", "error": catalog["error"]}
+
+        all_studies = catalog["studies"]
+
+        warnings = []
+        program_matches = self._fetch_program_vocabulary_matches(query_text)
+        if program_matches["ok"]:
+            program_study_ids = program_matches["pdc_study_ids"]
+        else:
+            program_study_ids = set()
+            warnings.append(
+                "Could not resolve '%s' against PDC's controlled program "
+                "vocabulary (%s); program matching fell back to text "
+                "matching on the program and project names carried by each "
+                "study, so studies in a program whose acronym does not "
+                "appear in their metadata may be missing."
+                % (query_text, program_matches["error"])
+            )
+
+        matches = []
+        num_results_by_field = {field: 0 for field in STUDY_SEARCH_FIELDS}
+
+        for study in all_studies:
+            matched_fields = [
+                field
+                for field in STUDY_SEARCH_FIELDS
+                if needle in str(study.get(field) or "").casefold()
+            ]
+            if (
+                study.get("pdc_study_id") in program_study_ids
+                and "program_name" not in matched_fields
+            ):
+                matched_fields.append("program_name")
+                matched_fields.sort(key=STUDY_SEARCH_FIELDS.index)
+            if not matched_fields:
+                continue
+
+            for field in matched_fields:
+                num_results_by_field[field] += 1
+
+            name = study.get("submitter_id_name")
+            matches.append(
+                {
+                    "study_id": study.get("study_id"),
+                    "pdc_study_id": study.get("pdc_study_id"),
+                    # ``name`` is kept for backward compatibility; PDC's study
+                    # catalog exposes the title as submitter_id_name only.
+                    "name": name,
+                    "submitter_id_name": name,
+                    "disease_type": study.get("disease_type"),
+                    "primary_site": study.get("primary_site"),
+                    "analytical_fraction": study.get("analytical_fraction"),
+                    "experiment_type": study.get("experiment_type"),
+                    "program_name": study.get("program_name"),
+                    "project_name": study.get("project_name"),
+                    "matched_fields": matched_fields,
+                    "matched_curated_metadata": any(
+                        field in STUDY_SEARCH_CURATED_FIELDS
+                        for field in matched_fields
+                    ),
                 }
-                total
-            }
+            )
+
+        fields_searched = list(STUDY_SEARCH_FIELDS)
+        data = {
+            "query": query_text,
+            "fields_searched": fields_searched,
+            "num_studies_searched": len(all_studies),
+            "studies": matches,
+            "num_results": len(matches),
+            "num_results_by_field": num_results_by_field,
         }
-        """ % query_text.replace('"', '\\"')
+        if warnings:
+            data["warnings"] = warnings
 
-        result = _execute_graphql(gql, timeout=30)
-        if not result["ok"]:
-            return {"status": "error", "error": result["error"]}
+        if not matches:
+            data["note"] = (
+                "No PDC study matched '%s'. The query was compared "
+                "case-insensitively as a substring against %d PDC studies on "
+                "these fields: %s. This is an empty result, not a failed "
+                "request - PDC has no study annotated with this term. Try a "
+                "broader term (e.g. 'Lung' instead of a specific subtype), a "
+                "program name such as 'CPTAC' or 'APOLLO', or an analytical "
+                "fraction such as 'Proteome' or 'Phosphoproteome'."
+                % (query_text, len(all_studies), ", ".join(fields_searched))
+            )
 
-        search_data = result["data"].get("studySearch", {})
-        studies = search_data.get("studies", [])
-
-        return {
-            "status": "success",
-            "data": {
-                "query": query_text,
-                "studies": studies,
-                "num_results": len(studies),
-            },
-        }
+        return {"status": "success", "data": data}
 
     def _get_gene_protein(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get protein information and study coverage for a gene symbol."""

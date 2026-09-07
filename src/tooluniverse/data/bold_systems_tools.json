@@ -1,0 +1,147 @@
+[
+  {
+    "name": "BOLDSystems_search_by_taxon",
+    "type": "BOLDSystemsTool",
+    "description": "Search BOLD (Barcode of Life Data System) DNA barcode records by taxon. rank='genus'/'family'/'order' filters server-side; rank='species' (e.g. 'Panthera leo') queries at genus level and filters client-side, since BOLD does not support server-side species filtering. Optionally narrow by country. Example: taxon_name='Panthera', rank='genus' returns all big-cat barcode records with BIN cluster IDs, COI-5P accession numbers, and collection metadata.",
+    "fields": {
+      "operation": "search_by_taxon"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["taxon_name"],
+      "properties": {
+        "taxon_name": {
+          "type": "string",
+          "description": "Taxon name matching rank, e.g. 'Panthera' (genus), 'Felidae' (family), 'Carnivora' (order), or 'Panthera leo' (species)."
+        },
+        "rank": {
+          "type": ["string", "null"],
+          "enum": ["genus", "family", "order", "species", null],
+          "description": "Taxonomic rank of taxon_name. Default 'genus'."
+        },
+        "country": {
+          "type": ["string", "null"],
+          "description": "Optional country/ocean name to narrow results, e.g. 'Canada'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max records to return, 1-200. Default 30."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "processid": {"type": ["string", "null"]},
+              "bin_uri": {"type": ["string", "null"]},
+              "genus": {"type": ["string", "null"]},
+              "species": {"type": ["string", "null"]},
+              "identification": {"type": ["string", "null"]},
+              "insdc_acs": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"taxon_name": "Panthera", "rank": "genus", "limit": 5},
+      {"taxon_name": "Panthera leo", "rank": "species", "limit": 5}
+    ]
+  },
+  {
+    "name": "BOLDSystems_search_by_bin",
+    "type": "BOLDSystemsTool",
+    "description": "Search BOLD (Barcode of Life Data System) for all DNA barcode records sharing a BIN (Barcode Index Number) -- BOLD's algorithmic, sequence-similarity-based species-cluster identifier, which often resolves identity where taxonomy alone cannot. Example: bin_id='BOLD:AAD6819' returns 51 specimen records of Panthera leo sharing that barcode cluster. This is a capability unique to BOLD; ToolUniverse's iDigBio tools have no genetic barcode or BIN data.",
+    "fields": {
+      "operation": "search_by_bin"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["bin_id"],
+      "properties": {
+        "bin_id": {
+          "type": "string",
+          "description": "BOLD BIN identifier, e.g. 'BOLD:AAD6819' (the 'BOLD:' prefix is added automatically if omitted)."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max records to return, 1-200. Default 30."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "processid": {"type": ["string", "null"]},
+              "bin_uri": {"type": ["string", "null"]},
+              "species": {"type": ["string", "null"]},
+              "identification": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"bin_id": "BOLD:AAD6819", "limit": 10},
+      {"bin_id": "AAD6819", "limit": 5}
+    ]
+  },
+  {
+    "name": "BOLDSystems_get_record",
+    "type": "BOLDSystemsTool",
+    "description": "Retrieve a single BOLD (Barcode of Life Data System) DNA barcode record by its BOLD process ID. Returns full taxonomy, BIN cluster, collection metadata, and COI-5P INSDC accession. Example: process_id='ABRMM002-06' returns a Panthera leo record collected at the Metro Toronto Zoo.",
+    "fields": {
+      "operation": "get_record"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["process_id"],
+      "properties": {
+        "process_id": {
+          "type": "string",
+          "description": "BOLD process ID, e.g. 'ABRMM002-06'."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "processid": {"type": ["string", "null"]},
+            "bin_uri": {"type": ["string", "null"]},
+            "species": {"type": ["string", "null"]},
+            "insdc_acs": {"type": ["string", "null"]}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"process_id": "ABRMM002-06"},
+      {"process_id": "ABRMM043-06"}
+    ]
+  }
+]

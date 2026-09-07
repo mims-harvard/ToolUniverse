@@ -16,7 +16,7 @@ Verified parameter names, response formats, and fallback chains for all tools us
 | `FAERS_count_reportercountry_by_drug_event` | `medicinalproduct` (REQUIRED), `patientsex`, `patientagegroup`, `serious` | Returns [{term: "US"/"GB"/..., count}] |
 | `FAERS_search_adverse_event_reports` | `medicinalproduct`, `limit` (max 100), `skip` | Returns individual case reports with patient/drug/reaction data |
 | `FAERS_search_reports_by_drug_and_reaction` | `medicinalproduct` (REQUIRED), `reactionmeddrapt` (REQUIRED), `limit`, `skip`, `patientsex`, `serious` | Returns individual reports filtered by specific reaction |
-| `FAERS_search_serious_reports_by_drug` | `medicinalproduct` (REQUIRED), `seriousnessdeath`, `seriousnesshospitalization`, `seriousnesslifethreatening`, `seriousnessdisabling`, `limit` | Returns serious event reports |
+| `FAERS_search_serious_reports_by_drug` | `medicinalproduct` (REQUIRED), `serious`, `seriousnessdeath`, `seriousnesshospitalization`, `seriousnesslifethreatening`, `seriousnessdisabling`, `limit` | Case reports. Despite the name it returns serious AND non-serious reports unless you pass `serious='Yes'` or one of the `seriousness*` criteria |
 
 ## FAERS Analytics Tools (operation-based)
 

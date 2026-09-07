@@ -157,13 +157,16 @@ Configure Large Language Model providers for agentic tools and LLM-powered featu
      - Description
    * - ``TOOLUNIVERSE_LLM_DEFAULT_PROVIDER``
      - (none)
-     - Default LLM provider: ``CHATGPT``, ``OPENROUTER``, ``GEMINI``, ``VLLM``, ``BEDROCK``
+     - Default LLM provider: ``CHATGPT``, ``OPENAI``, ``OPENROUTER``, ``GEMINI``, ``VLLM``, ``BEDROCK``
    * - ``TOOLUNIVERSE_LLM_CONFIG_MODE``
      - ``default``
      - LLM configuration mode. Use ``default`` or custom profiles.
    * - ``TOOLUNIVERSE_LLM_TEMPERATURE``
      - (varies)
      - Temperature for LLM sampling (0.0-1.0). Higher = more creative.
+   * - ``TOOLUNIVERSE_LLM_RETURN_JSON``
+     - ``false``
+     - Request structured JSON output. Accepts ``true``/``false``, ``1``/``0``, ``yes``/``no``, or ``on``/``off``.
    * - ``TOOLUNIVERSE_LLM_MODEL_DEFAULT``
      - (provider default)
      - Default model ID when not task-specific.
@@ -173,9 +176,9 @@ Configure Large Language Model providers for agentic tools and LLM-powered featu
 
 **Examples**::
 
-   # Use OpenRouter for all LLM tasks
-   export TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=OPENROUTER
-   export TOOLUNIVERSE_LLM_MODEL_DEFAULT=openai/gpt-4o-mini
+   # Use OpenAI for all LLM tasks
+   export TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=OPENAI
+   export TOOLUNIVERSE_LLM_MODEL_DEFAULT=gpt-4o-mini
    
    # Task-specific models
    export TOOLUNIVERSE_LLM_MODEL_SUMMARIZATION=gpt-4o-mini
@@ -184,6 +187,10 @@ Configure Large Language Model providers for agentic tools and LLM-powered featu
    # Adjust temperature
    export TOOLUNIVERSE_LLM_TEMPERATURE=0.2
 
+   # Force structured JSON output when environment values take priority
+   export TOOLUNIVERSE_LLM_CONFIG_MODE=env_override
+   export TOOLUNIVERSE_LLM_RETURN_JSON=true
+
 **Use cases**:
 
 - **Agentic Tools**: Tools that use LLMs internally (e.g., Tool_Finder_LLM, summarization tools)
@@ -191,6 +198,28 @@ Configure Large Language Model providers for agentic tools and LLM-powered featu
 - **Custom Tools**: Your own tools that leverage LLM capabilities
 
 **See also**: Provider-specific API keys in :doc:`../guide/api_keys`.
+
+OpenAI-compatible variables:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 35 15 50
+
+   * - Variable
+     - Default
+     - Description
+   * - ``OPENAI_API_KEY``
+     - (none)
+     - API key for OpenAI or an OpenAI-compatible endpoint.
+   * - ``OPENAI_BASE_URL``
+     - SDK default
+     - Optional OpenAI-compatible API base URL.
+   * - ``OPENAI_MAX_TOKENS_BY_MODEL``
+     - (none)
+     - JSON mapping of model IDs or prefixes to default max output tokens.
+   * - ``OPENAI_DEFAULT_MODEL_LIMITS``
+     - built-in
+     - JSON mapping that extends or overrides built-in model-family defaults.
 
 Bedrock-specific variables:
 
@@ -576,11 +605,23 @@ Complete Variable List
    * - ``TOOLUNIVERSE_LLM_TEMPERATURE``
      - (varies)
      - LLM
+   * - ``TOOLUNIVERSE_LLM_RETURN_JSON``
+     - false
+     - LLM
    * - ``TOOLUNIVERSE_LLM_MODEL_DEFAULT``
      - (provider default)
      - LLM
    * - ``TOOLUNIVERSE_LLM_MODEL_{TASK}``
      - (none)
+     - LLM
+   * - ``OPENAI_BASE_URL``
+     - SDK default
+     - LLM
+   * - ``OPENAI_MAX_TOKENS_BY_MODEL``
+     - (none)
+     - LLM
+   * - ``OPENAI_DEFAULT_MODEL_LIMITS``
+     - built-in
      - LLM
    * - ``BEDROCK_REGION``
      - (none)

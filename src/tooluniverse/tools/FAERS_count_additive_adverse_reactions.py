@@ -15,6 +15,7 @@ def FAERS_count_additive_adverse_reactions(
     occurcountry: Optional[str] = None,
     serious: Optional[str] = None,
     seriousnessdeath: Optional[str] = None,
+    limit: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -37,6 +38,8 @@ def FAERS_count_additive_adverse_reactions(
         Optional: Filter by event seriousness. Omit this parameter if you don't want ...
     seriousnessdeath : str
         Optional: Pass 'Yes' to filter for reports where death was an outcome. Omit t...
+    limit : int
+        Optional: maximum number of ranked terms to return (default 100, which is ope...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def FAERS_count_additive_adverse_reactions(
             "occurcountry": occurcountry,
             "serious": serious,
             "seriousnessdeath": seriousnessdeath,
+            "limit": limit,
         }.items()
         if v is not None
     }

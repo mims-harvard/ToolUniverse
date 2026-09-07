@@ -12,14 +12,14 @@
         "domain": "Drugs & Chemistry",
         "type": "secret",
         "register_url": "https://www.brenda-enzymes.org/register.php",
-        "purpose": "BRENDA account email — retrieves enzyme kinetics, substrates, and parameters.",
+        "purpose": "BRENDA account email \u2014 retrieves enzyme kinetics, substrates, and parameters.",
         "without": "BRENDA tools are blocked without an account (paired with the password)."
       },
       "BRENDA_PASSWORD": {
         "domain": "Drugs & Chemistry",
         "type": "secret",
         "register_url": "https://www.brenda-enzymes.org/register.php",
-        "purpose": "BRENDA account password — authenticates the enzyme-data SOAP API.",
+        "purpose": "BRENDA account password \u2014 authenticates the enzyme-data SOAP API.",
         "without": "Required together with the BRENDA email."
       }
     },
@@ -29,7 +29,8 @@
         "operation": {
           "type": "string",
           "const": "get_km",
-          "description": "Operation type (fixed: get_km)"
+          "description": "Operation type (fixed: get_km)",
+          "default": "get_km"
         },
         "ec_number": {
           "type": "string",
@@ -72,7 +73,10 @@
       {
         "ec_number": "1.1.1.1"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_km"
+    }
   },
   {
     "name": "BRENDA_get_kcat",
@@ -88,7 +92,8 @@
         "operation": {
           "type": "string",
           "const": "get_kcat",
-          "description": "Operation type (fixed: get_kcat)"
+          "description": "Operation type (fixed: get_kcat)",
+          "default": "get_kcat"
         },
         "ec_number": {
           "type": "string",
@@ -131,7 +136,10 @@
       {
         "ec_number": "1.1.1.1"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_kcat"
+    }
   },
   {
     "name": "BRENDA_get_inhibitors",
@@ -147,7 +155,8 @@
         "operation": {
           "type": "string",
           "const": "get_inhibitors",
-          "description": "Operation type (fixed: get_inhibitors)"
+          "description": "Operation type (fixed: get_inhibitors)",
+          "default": "get_inhibitors"
         },
         "ec_number": {
           "type": "string",
@@ -187,7 +196,10 @@
       {
         "ec_number": "1.1.1.1"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_inhibitors"
+    }
   },
   {
     "name": "BRENDA_get_enzyme_info",
@@ -203,7 +215,8 @@
         "operation": {
           "type": "string",
           "const": "get_enzyme_info",
-          "description": "Operation type (fixed: get_enzyme_info)"
+          "description": "Operation type (fixed: get_enzyme_info)",
+          "default": "get_enzyme_info"
         },
         "ec_number": {
           "type": "string",
@@ -239,7 +252,10 @@
       {
         "ec_number": "1.1.1.1"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_enzyme_info"
+    }
   },
   {
     "name": "BRENDA_get_enzyme_kinetics",
@@ -255,7 +271,8 @@
         "operation": {
           "type": "string",
           "const": "get_enzyme_kinetics",
-          "description": "Operation type (fixed: get_enzyme_kinetics)"
+          "description": "Operation type (fixed: get_enzyme_kinetics)",
+          "default": "get_enzyme_kinetics"
         },
         "ec_number": {
           "type": "string",
@@ -347,6 +364,9 @@
         "organism": "Homo sapiens",
         "limit": 10
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_enzyme_kinetics"
+    }
   }
 ]

@@ -214,6 +214,12 @@ class EnsemblVEPTool(BaseTool):
                 "gene_id": tc.get("gene_id"),
                 "transcript_id": tc.get("transcript_id"),
                 "biotype": tc.get("biotype"),
+                # The alternate allele this consequence is predicted for. Required to
+                # disambiguate multi-allelic variants, where the same transcript and
+                # protein position yields different (even contradictory) consequences
+                # for different alleles. E.g. rs1815739 (ACTN3, allele_string C/A/T)
+                # is synonymous for A but stop_gained for T on ENST00000502692.
+                "variant_allele": tc.get("variant_allele"),
                 "consequence_terms": tc.get("consequence_terms", []),
                 "impact": tc.get("impact"),
                 "amino_acids": tc.get("amino_acids"),

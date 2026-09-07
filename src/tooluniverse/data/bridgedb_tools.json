@@ -10,7 +10,8 @@
           "enum": [
             "xrefs"
           ],
-          "description": "Operation type (fixed: xrefs)"
+          "description": "Operation type (fixed: xrefs)",
+          "default": "xrefs"
         },
         "identifier": {
           "type": "string",
@@ -117,6 +118,9 @@
           ]
         }
       ]
+    },
+    "fields": {
+      "operation": "xrefs"
     }
   },
   {
@@ -130,7 +134,8 @@
           "enum": [
             "search"
           ],
-          "description": "Operation type (fixed: search)"
+          "description": "Operation type (fixed: search)",
+          "default": "search"
         },
         "query": {
           "type": "string",
@@ -214,6 +219,9 @@
           ]
         }
       ]
+    },
+    "fields": {
+      "operation": "search"
     }
   },
   {
@@ -227,7 +235,8 @@
           "enum": [
             "attributes"
           ],
-          "description": "Operation type (fixed: attributes)"
+          "description": "Operation type (fixed: attributes)",
+          "default": "attributes"
         },
         "identifier": {
           "type": "string",
@@ -346,6 +355,9 @@
           ]
         }
       ]
+    },
+    "fields": {
+      "operation": "attributes"
     }
   }
 ]

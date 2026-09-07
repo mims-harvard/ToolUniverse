@@ -1,0 +1,406 @@
+[
+  {
+    "name": "MCSA_get_entry",
+    "type": "MCSATool",
+    "description": "Retrieve an enzyme's catalytic machinery from M-CSA, the curated Mechanism and Catalytic Site Atlas. Returns the catalytic residues with their PDB and UniProt numbering and the role each plays in the mechanism (nucleophile, proton donor, electrostatic stabiliser and so on), plus the EC number and reaction. ToolUniverse covers enzyme function through BRENDA, Rhea and UniProt, but nothing else identifies which specific residues do the catalysis. Example: mcsa_id=2 (class A beta-lactamase).",
+    "fields": {
+      "operation": "get_entry"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "mcsa_id"
+      ],
+      "properties": {
+        "mcsa_id": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "M-CSA entry identifier, e.g. 2. Runs from 1 to roughly 1000."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "",
+          "properties": {
+            "mcsa_id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "M-CSA identifier"
+            },
+            "enzyme_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Enzyme name"
+            },
+            "ec_numbers": {
+              "type": "array",
+              "description": "Enzyme Commission numbers",
+              "items": {
+                "type": "string",
+                "description": "EC number"
+              }
+            },
+            "reference_uniprot_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reference UniProt accession"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Entry description"
+            },
+            "reaction_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Catalysed reaction"
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "M-CSA entry URL"
+            },
+            "catalytic_residues": {
+              "type": "array",
+              "description": "Residues performing catalysis",
+              "items": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Residue three-letter code"
+                  },
+                  "pdb_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "PDB entry the numbering refers to"
+                  },
+                  "chain": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Chain identifier"
+                  },
+                  "residue_number": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Residue number in the PDB entry"
+                  },
+                  "uniprot_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt accession"
+                  },
+                  "uniprot_position": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Residue position in UniProt numbering"
+                  },
+                  "roles": {
+                    "type": "array",
+                    "description": "Roles this residue plays in the mechanism",
+                    "items": {
+                      "type": "string",
+                      "description": "Catalytic role"
+                    }
+                  },
+                  "roles_summary": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Comma-separated role summary"
+                  },
+                  "is_ptm": {
+                    "type": "boolean",
+                    "description": "Whether the residue carries a post-translational modification"
+                  }
+                }
+              }
+            },
+            "catalytic_residue_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of catalytic residues"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "mcsa_id": 2
+      },
+      {
+        "mcsa_id": 1
+      },
+      {
+        "mcsa_id": 203
+      }
+    ]
+  },
+  {
+    "name": "MCSA_search_enzymes",
+    "type": "MCSATool",
+    "description": "Search M-CSA for enzymes by name, EC number prefix, or reference UniProt accession. Example: ec_number='3.5.2' finds beta-lactamases; enzyme_name='lysozyme' finds the lysozyme families. The M-CSA API ignores server-side filters, so entries are scanned page by page under an explicit budget: metadata reports entries_scanned, catalogue_size and scan_complete, so a partial scan is never mistaken for an exhaustive one. Raise max_pages to 11 to cover the whole catalogue.",
+    "fields": {
+      "operation": "search_enzymes"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "enzyme_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Substring of the enzyme name, e.g. 'lysozyme'."
+        },
+        "ec_number": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "EC number or prefix, e.g. '3.5.2' or '3.5.2.6'."
+        },
+        "uniprot_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Reference UniProt accession, e.g. 'P62593'."
+        },
+        "max_pages": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Catalogue pages to scan, 100 entries each (default 4, max 11 which is the full catalogue)."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum matches to return (default 25)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Matching enzymes",
+          "items": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "mcsa_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "M-CSA identifier"
+              },
+              "enzyme_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Enzyme name"
+              },
+              "ec_numbers": {
+                "type": "array",
+                "description": "Enzyme Commission numbers",
+                "items": {
+                  "type": "string",
+                  "description": "EC number"
+                }
+              },
+              "reference_uniprot_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reference UniProt accession"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Entry description"
+              },
+              "reaction_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Catalysed reaction"
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "M-CSA entry URL"
+              },
+              "catalytic_residues": {
+                "type": "array",
+                "description": "Residues performing catalysis",
+                "items": {
+                  "type": "object",
+                  "description": "",
+                  "properties": {
+                    "code": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Residue three-letter code"
+                    },
+                    "pdb_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "PDB entry the numbering refers to"
+                    },
+                    "chain": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Chain identifier"
+                    },
+                    "residue_number": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Residue number in the PDB entry"
+                    },
+                    "uniprot_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "UniProt accession"
+                    },
+                    "uniprot_position": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Residue position in UniProt numbering"
+                    },
+                    "roles": {
+                      "type": "array",
+                      "description": "Roles this residue plays in the mechanism",
+                      "items": {
+                        "type": "string",
+                        "description": "Catalytic role"
+                      }
+                    },
+                    "roles_summary": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Comma-separated role summary"
+                    },
+                    "is_ptm": {
+                      "type": "boolean",
+                      "description": "Whether the residue carries a post-translational modification"
+                    }
+                  }
+                }
+              },
+              "catalytic_residue_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of catalytic residues"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "ec_number": "3.5.2",
+        "max_pages": 2
+      },
+      {
+        "enzyme_name": "lysozyme",
+        "max_pages": 11
+      },
+      {
+        "enzyme_name": "dehydrogenase",
+        "max_pages": 2,
+        "limit": 5
+      }
+    ]
+  }
+]

@@ -174,91 +174,75 @@ class MetaboliteTool(BaseTool):
         return []
 
     def _ctd_diseases(self, chemical_term: str) -> List[Dict[str, Any]]:
-        """Query CTD-via-RENCI Automat mirror for curated disease associations.
+        """Query mydisease.info's cached CTD chemical-disease curation.
 
         CTD's native batchQuery.go is altcha-CAPTCHA-blocked since early
-        2026 — see ctd_tool.py for the migration. The mirror at
-        automat.renci.org exposes the same chemical-disease edges; we
-        cypher-resolve the chemical name to a CURIE, then hit the typed
-        edge endpoint and flatten back to CTD-style rows so callers see no
-        change in shape.
+        2026, and the RENCI Automat mirror this method used as a fallback
+        has since been fully decommissioned (its registry no longer lists a
+        'ctd' backend at all -- see ctd_tool.py for the full history). This
+        queries the BioThings mydisease.info API instead, which still serves
+        CTD's chemical-disease edges under `ctd.chemical_related_to_disease`
+        on each disease document -- see ctd_tool.py's `_chemical_to_diseases`
+        for the same approach applied to the standalone CTD_* tools.
         """
-        # 1) Resolve the free-text chemical term to a graph CURIE
         safe = chemical_term.replace('"', "").replace("\\", "")
-        cypher = (
-            'MATCH (n) WHERE n.id = "' + safe + '" OR "' + safe + '" IN '
-            'n.equivalent_identifiers OR toLower(n.name) = toLower("' + safe + '") '
-            "RETURN n.id AS id LIMIT 1"
-        )
-        try:
-            r = requests.post(
-                "https://automat.renci.org/ctd/cypher",
-                headers={"Content-Type": "application/json"},
-                json={"query": cypher},
-                timeout=self.timeout,
-            )
-            r.raise_for_status()
-        except requests.RequestException as exc:
-            raise CTDBackendUnavailable(
-                f"CTD mirror (automat.renci.org/ctd) is unavailable: {exc}"
-            ) from exc
-        try:
-            payload = r.json()
-            curie = payload["results"][0]["data"][0]["row"][0]
-        except (KeyError, IndexError, TypeError, ValueError):
-            # Query succeeded but this term is not a node in the graph.
-            return []
-
-        # 2) Fetch the SmallMolecule → Disease edges
+        # `_resolve_ctd_term` tries a CAS Registry Number candidate (from
+        # PubChem synonyms) alongside plain names -- match it against the
+        # right nested field rather than always searching by name.
+        match_field = "cas_registry_number" if _CAS_RE.match(chemical_term) else "chemical_name"
         try:
             r = requests.get(
-                f"https://automat.renci.org/ctd/biolink:SmallMolecule/biolink:Disease/{curie}",
+                "https://mydisease.info/v1/query",
+                params={
+                    "q": f'ctd.chemical_related_to_disease.{match_field}:"{safe}"',
+                    "fields": "mondo.label,ctd.chemical_related_to_disease",
+                    "size": 200,
+                },
                 headers={"Accept": "application/json"},
                 timeout=self.timeout,
             )
             r.raise_for_status()
         except requests.RequestException as exc:
             raise CTDBackendUnavailable(
-                f"CTD mirror (automat.renci.org/ctd) is unavailable: {exc}"
+                f"mydisease.info is unavailable: {exc}"
             ) from exc
         try:
-            edges = r.json()
+            hits = r.json().get("hits") or []
         except ValueError:
             return []
-        if not isinstance(edges, list):
-            return []
 
-        # 3) Flatten [source, edge_props, target] back to CTD-style rows.
-        # Confirmed live (automat.renci.org/ctd chemical-disease edges):
-        # edge_props only ever carries agent_type/knowledge_level/
-        # primary_knowledge_source/publications -- there is no predicate/
-        # qualified_predicate field, so DirectEvidence (CTD's own
-        # "therapeutic"/"marker/mechanism" classification) is genuinely
-        # unavailable from this mirror, not a parsing bug. publications
-        # (PMID:xxxxx strings) IS present but was previously hardcoded to
-        # [] instead of being read.
         rows = []
-        for edge in edges:
-            if not isinstance(edge, list) or len(edge) < 3:
-                continue
-            tgt = edge[2] if isinstance(edge[2], dict) else {}
-            props = edge[1] if isinstance(edge[1], dict) else {}
-            disease_name = tgt.get("name")
-            if not disease_name:
-                continue
-            pubmed_ids = [
-                p.split(":", 1)[-1]
-                for p in props.get("publications") or []
-                if isinstance(p, str)
-            ]
-            rows.append(
-                {
-                    "DiseaseName": disease_name,
-                    "DiseaseID": tgt.get("id"),
-                    "DirectEvidence": None,
-                    "PubMedIDs": pubmed_ids,
-                }
-            )
+        for hit in hits:
+            disease_id = hit.get("_id")
+            mondo = hit.get("mondo")
+            disease_name = mondo.get("label") if isinstance(mondo, dict) else None
+            # BioThings occasionally merges more than one source record onto
+            # the same disease document, in which case `ctd` itself is a
+            # list of sub-documents instead of a single dict -- see
+            # ctd_tool.py's `_ctd_disease_entries` for the same handling.
+            ctd_field = hit.get("ctd") or []
+            ctd_docs = ctd_field if isinstance(ctd_field, list) else [ctd_field]
+            entries = []
+            for ctd_doc in ctd_docs:
+                if not isinstance(ctd_doc, dict):
+                    continue
+                related = ctd_doc.get("chemical_related_to_disease") or []
+                entries.extend(related if isinstance(related, list) else [related])
+            for entry in entries:
+                if not isinstance(entry, dict):
+                    continue
+                if str(entry.get(match_field, "")).strip().lower() != chemical_term.strip().lower():
+                    continue
+                pubmed = entry.get("pubmed")
+                pubmed_ids = pubmed if isinstance(pubmed, list) else ([pubmed] if pubmed else [])
+                rows.append(
+                    {
+                        "DiseaseName": disease_name,
+                        "DiseaseID": disease_id,
+                        "DirectEvidence": entry.get("direct_evidence"),
+                        "PubMedIDs": [str(p) for p in pubmed_ids],
+                    }
+                )
         return rows
 
     def _resolve_ctd_term(

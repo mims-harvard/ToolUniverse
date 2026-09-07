@@ -35,34 +35,77 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["experiments", "count", "gene_name", "cell_type"],
+          "required": [
+            "experiments",
+            "count",
+            "gene_name",
+            "cell_type"
+          ],
           "properties": {
             "experiments": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "accession": {"type": "string"},
-                  "assay_title": {"type": "string"},
-                  "target": {"type": ["object", "null"]},
-                  "biosample_ontology": {"type": ["object", "null"]},
-                  "description": {"type": ["string", "null"]},
-                  "status": {"type": ["string", "null"]}
+                  "accession": {
+                    "type": "string"
+                  },
+                  "assay_title": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "biosample_ontology": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
               }
             },
-            "gene_name": {"type": "string"},
-            "cell_type": {"type": "string"},
-            "count": {"type": "integer"},
-            "url": {"type": "string"},
-            "note": {"type": "string"}
+            "gene_name": {
+              "type": "string"
+            },
+            "cell_type": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "url": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            }
           }
         },
         {
           "type": "object",
-          "required": ["error"],
+          "required": [
+            "error"
+          ],
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           }
         }
       ]
@@ -94,7 +137,9 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_peaks_in_region"],
+          "enum": [
+            "get_peaks_in_region"
+          ],
           "default": "get_peaks_in_region",
           "description": "Operation selector. Must be 'get_peaks_in_region'."
         },
@@ -105,13 +150,22 @@
         "assembly": {
           "type": "string",
           "description": "Genome assembly.",
-          "enum": ["hg38", "hg19", "mm10", "mm39"],
+          "enum": [
+            "hg38",
+            "hg19",
+            "mm10",
+            "mm39"
+          ],
           "default": "hg38"
         },
         "version": {
           "type": "string",
           "description": "ReMap catalog release year.",
-          "enum": ["2022", "2020", "2018"],
+          "enum": [
+            "2022",
+            "2020",
+            "2018"
+          ],
           "default": "2022"
         },
         "datatype": {
@@ -120,12 +174,17 @@
           "default": "all"
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Optional cap on the number of peaks returned (peak_count still reports the true total). Omit to return all overlapping peaks.",
           "minimum": 1
         }
       },
-      "required": ["region"]
+      "required": [
+        "region"
+      ]
     },
     "fields": {
       "operation": "get_peaks_in_region",
@@ -136,39 +195,113 @@
       "oneOf": [
         {
           "type": "object",
-          "required": ["region", "peak_count", "peaks"],
+          "required": [
+            "region",
+            "peak_count",
+            "peaks"
+          ],
           "properties": {
-            "region": {"type": "string"},
-            "assembly": {"type": "string"},
-            "version": {"type": "string"},
-            "datatype": {"type": "string"},
-            "size": {"type": ["integer", "string", "null"]},
-            "peak_count": {"type": "integer"},
-            "returned_count": {"type": "integer"},
-            "unique_tf_count": {"type": "integer"},
-            "unique_tfs": {"type": "array", "items": {"type": "string"}},
+            "region": {
+              "type": "string"
+            },
+            "assembly": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "datatype": {
+              "type": "string"
+            },
+            "size": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ]
+            },
+            "peak_count": {
+              "type": "integer"
+            },
+            "returned_count": {
+              "type": "integer"
+            },
+            "unique_tf_count": {
+              "type": "integer"
+            },
+            "unique_tfs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
             "peaks": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "chrom": {"type": ["string", "null"]},
-                  "chromStart": {"type": ["string", "integer", "null"]},
-                  "chromEnd": {"type": ["string", "integer", "null"]},
-                  "experiment": {"type": ["string", "null"]},
-                  "tf": {"type": ["string", "null"]},
-                  "biotype": {"type": ["string", "null"]},
-                  "treatments": {"type": "array", "items": {"type": "string"}}
+                  "chrom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "chromStart": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "chromEnd": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "experiment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "tf": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "biotype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "treatments": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             },
-            "url": {"type": "string"}
+            "url": {
+              "type": "string"
+            }
           }
         },
         {
           "type": "object",
-          "required": ["error"],
-          "properties": {"error": {"type": "string"}}
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          }
         }
       ]
     },
@@ -179,6 +312,50 @@
         "assembly": "hg38",
         "version": "2022",
         "limit": 25
+      }
+    ]
+  },
+  {
+    "name": "ReMap_list_datasets_for_target",
+    "description": "List ReMap ChIP-seq datasets for a transcription factor, one row per dataset, optionally filtered to a GEO/ENCODE experiment accession and optionally with each dataset's peak count. A GEO series is NOT one dataset: GSE23852 for FOXA1 holds two (MCF-7_ETOH and MCF-7_E2) with different peak counts, so 'how many peaks in experiment X' usually needs the per-dataset split rather than a single number. Set count_peaks=true to download each dataset's BED and count peaks (slower).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "description": "Transcription factor / target name, e.g. 'FOXA1'."
+        },
+        "taxid": {
+          "type": "integer",
+          "description": "NCBI taxonomy id. Default 9606 (human).",
+          "default": 9606
+        },
+        "experiment": {
+          "type": "string",
+          "description": "Optional experiment accession prefix to filter on, e.g. 'GSE23852'. Dataset names look like 'GSE23852.FOXA1.MCF-7_ETOH'."
+        },
+        "count_peaks": {
+          "type": "boolean",
+          "description": "Download each dataset's BED and report its peak count. Slower; use when the question asks how many peaks.",
+          "default": false
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "fields": {
+      "operation": "list_datasets_for_target"
+    },
+    "type": "ReMapRESTTool",
+    "test_examples": [
+      {
+        "target": "FOXA1",
+        "experiment": "GSE23852"
+      },
+      {
+        "target": "FOXA1",
+        "taxid": 9606
       }
     ]
   }

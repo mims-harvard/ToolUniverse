@@ -1,0 +1,6 @@
+# Trial tables fetched by download_bcg_data.py (~4 MB, CC0, Zenodo 12737228).
+# Downloaded on demand rather than vendored.
+data/
+
+__pycache__/
+*.pyc

@@ -76,7 +76,10 @@
           "description": "Gene name, alias, keyword, or cell line name to search for, e.g., 'EGFR', 'TP53', or 'MCF7'."
         },
         "max_results": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum number of gene matches to return (default: 50). This search does a broad full-text match with no server-side limit, so a short/common query can otherwise return thousands of results; exact gene-symbol matches are ranked first."
         }
       },
@@ -316,7 +319,7 @@
       ]
     },
     "input_description": "Input Ensembl Gene ID (e.g., ENSG00000064787). The tool will parse HPA's single gene XML page to get the most comprehensive data. Optionally include detailed information for images, antibodies, and expression data.",
-    "output_description": "Returns comprehensive gene details including basic information, tissue immunohistochemistry (IHC) image URL list with metadata, subcellular immunofluorescence (IF) image URL list with metadata, antibody validation data, detailed expression data for tissues and cell lines, subcellular localization information, and statistical summary (antibody count, image count, expression tissue count, etc.).",
+    "output_description": "Returns comprehensive gene details including basic information, tissue immunohistochemistry (IHC) image URL list with metadata, subcellular immunofluorescence (IF) image URL list with metadata, antibody validation data, detailed expression data for tissues and cell lines, subcellular localization information, and a statistical summary. In the summary, 'tissues_with_expression' is the number of DISTINCT tissues with a detected IHC expression level (rows with no level and rows scored 'not detected' are excluded); 'distinct_tissues_assayed' and 'tissue_expression_rows' give the distinct-tissue and raw row counts of the tissue_expression array, which holds one row per tissue x antibody.",
     "test_examples": [
       {
         "ensembl_id": "ENSG00000141510",
@@ -359,10 +362,22 @@
               "type": "integer"
             },
             "tissues_with_expression": {
-              "type": "integer"
+              "type": "integer",
+              "description": "Number of distinct tissues with a detected IHC expression level; blank and 'not detected' rows are excluded."
             },
             "cell_lines_with_expression": {
               "type": "integer"
+            },
+            "distinct_tissues_assayed": {
+              "type": "integer",
+              "description": "Number of distinct tissues present in tissue_expression."
+            },
+            "tissue_expression_rows": {
+              "type": "integer",
+              "description": "Raw length of the tissue_expression array (one row per tissue x antibody, so tissues repeat)."
+            },
+            "summary_note": {
+              "type": "string"
             }
           }
         },
@@ -479,7 +494,7 @@
   {
     "type": "HPAGetCancerPrognosticsTool",
     "name": "HPA_get_cancer_prognostics_by_gene",
-    "description": "Retrieve prognostic value of a gene across various cancer types, indicating if its expression level correlates with patient survival outcomes.",
+    "description": "Retrieve prognostic value of a gene across various cancer types, indicating if its expression level correlates with patient survival outcomes. Reports both the significant results ('prognostic_summary') and the cancer types that were assessed but found NOT prognostic ('non_prognostic_summary'), plus 'cancers_assessed_count' as the denominator, so that a negative result can be distinguished from missing data.",
     "fields": {
       "endpoint": "https://www.proteinatlas.org/{ensembl_id}.json",
       "timeout": 30,
@@ -498,7 +513,7 @@
       ]
     },
     "input_description": "Input a single Ensembl Gene ID. The tool will use HPA's efficient JSON API to retrieve cancer prognostic data.",
-    "output_description": "Returns a list of cancers where the gene has significant prognostic value, including the prognostic type (favorable/unfavorable), p-value, and summary statistics. Explains whether high/low expression correlates with better/worse patient survival.",
+    "output_description": "Returns 'prognostic_summary' (cancers where the gene has SIGNIFICANT prognostic value, with prognostic type favorable/unfavorable and p-value), 'non_prognostic_summary' (cancers HPA assessed and found not prognostic, with p-values), and 'cancers_assessed_count' as the denominator for both. Use the denominator to tell 'HPA tested this cancer and found no signal' apart from 'HPA has no data for this cancer'.",
     "test_examples": [
       {
         "ensembl_id": "ENSG00000141510"
@@ -519,11 +534,21 @@
             "type": "string"
           }
         },
+        "cancers_assessed_count": {
+          "type": "integer",
+          "description": "Total number of cancer types HPA assessed for this gene (the denominator). Equals prognostic_cancers_count + non_prognostic_cancers_count. A cancer type absent from both summary arrays was not assessed by HPA for this gene."
+        },
         "prognostic_cancers_count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "Number of assessed cancer types where expression significantly correlates with survival. This is a filtered subset of cancers_assessed_count, not a total."
+        },
+        "non_prognostic_cancers_count": {
+          "type": "integer",
+          "description": "Number of assessed cancer types where HPA found NO significant survival correlation."
         },
         "prognostic_summary": {
           "type": "array",
+          "description": "Cancer types with SIGNIFICANT prognostic value only. Compare its length against cancers_assessed_count before concluding a cancer type has no data — non-significant assessed cancers are in non_prognostic_summary.",
           "items": {
             "type": "object",
             "properties": {
@@ -532,6 +557,30 @@
               },
               "prognostic_type": {
                 "type": "string"
+              },
+              "p_value": {
+                "type": "string"
+              },
+              "is_prognostic": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "non_prognostic_summary": {
+          "type": "array",
+          "description": "Cancer types HPA assessed and found NOT prognostic, with their p-values. These are citable negative results and are distinct from cancer types HPA never assessed (absent from both arrays).",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cancer_type": {
+                "type": "string"
+              },
+              "prognostic_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "p_value": {
                 "type": "string"
@@ -551,7 +600,7 @@
   {
     "type": "HPAGetProteinInteractionsTool",
     "name": "HPA_get_protein_interactions_by_gene",
-    "description": "DEPRECATED / non-functional: the Human Protein Atlas search API no longer exposes protein-protein interaction (ppi) data, so this tool returns an error. For PPI partners use STRING_get_interactions (by gene symbol) or EBIProteins_get_interactions (by UniProt accession) instead.",
+    "description": "DEPRECATED / non-functional: the Human Protein Atlas search API no longer exposes protein-protein interaction (ppi) data, so this tool returns an error. For PPI partners use STRING_get_protein_interactions (by gene symbol, parameter 'protein_ids') or EBIProteins_get_interactions (by UniProt accession) instead.",
     "fields": {
       "endpoint": "https://www.proteinatlas.org/api/search_download.php",
       "timeout": 30,
@@ -599,7 +648,7 @@
   {
     "type": "HPAGetRnaExpressionByTissueTool",
     "name": "HPA_get_rna_expression_in_specific_tissues",
-    "description": "Query RNA expression levels (nTPM) for a specific gene in one or more user-specified tissues with precise tissue matching. Note: HPA's rna_expression_in_specific_tissues endpoint returns 'No data' for many genes; test_examples removed pending a list of pre-populated ENSG ids.",
+    "description": "Query RNA expression levels (nTPM) for a specific gene in one or more user-specified tissues. Reads HPA's full per-tissue nTPM panel (the 'Tissue RNA - <tissue> [nTPM]' columns), so any of HPA's 51 published consensus tissues and brain regions can be queried, e.g. 'cerebral cortex', 'basal ganglia', 'midbrain', 'liver'. Common names are mapped to HPA's actual column names, including the ones HPA suffixes with '1' ('skin' -> 'Skin 1', 'stomach' -> 'Stomach 1', 'endometrium' -> 'Endometrium 1'); when a name resolves to a differently-named HPA column the response says so in a 'note'. A tissue reported as 'Not found' means HPA publishes no RNA column for that name (it is a naming problem or a tissue HPA covers only with protein/IHC data), not that the gene lacks expression there.",
     "fields": {
       "endpoint": "https://www.proteinatlas.org/{ensembl_id}.json",
       "timeout": 30,
@@ -617,7 +666,7 @@
           "items": {
             "type": "string"
           },
-          "description": "List of tissue names to query, e.g., ['brain', 'liver', 'heart muscle', 'kidney']. Case-insensitive matching is supported."
+          "description": "List of tissue names to query, e.g., ['skin', 'liver', 'heart muscle', 'kidney']. Case-insensitive; underscores, spaces and hyphens are interchangeable. HPA has no RNA column for 'bronchus', 'nasopharynx', 'oral mucosa' or 'soft tissue' (protein/IHC only)."
         }
       },
       "required": [
@@ -626,7 +675,7 @@
       ]
     },
     "input_description": "Input an Ensembl Gene ID and a list of tissue names. The tool will perform intelligent tissue name matching.",
-    "output_description": "Returns a dictionary mapping queried tissue names to their expression data, including matched tissue name, expression value in nTPM, and categorized expression level (Very high/High/Medium/Low/Very low). Also provides a sample of available tissues for reference.",
+    "output_description": "Returns a dictionary mapping each queried tissue name to its expression data: the HPA tissue the value actually came from (matched_tissue), the expression value, its unit read from the HPA column header (expression_unit), an expression_level band (Very high/High/Medium/Low/Very low), the HPA column header used (source_field), and a 'note' when the queried name resolved to a differently-named HPA column or matched nothing. expression_level is computed by ToolUniverse from expression_value, NOT a classification published by HPA -- HPA supplies only the number. The exact cut-offs (>50 Very high, >10 High, >1 Medium, >0.1 Low, <=0.1 Very low) are stated once per response in the top-level 'expression_level_basis' field rather than repeated on every tissue row, so the banding can be reproduced or ignored. Also lists the tissues HPA classifies the gene as enriched in.",
     "test_examples": [
       {
         "ensembl_id": "ENSG00000254647",
@@ -677,7 +726,7 @@
       ]
     },
     "input_description": "Input a gene name and a context (tissue or cell line name). This composite tool will perform multi-step analysis combining biological processes and expression data.",
-    "output_description": "Returns a comprehensive contextual analysis including: gene's biological processes, expression level in the specified context, contextual conclusion about functional relevance, and intelligent interpretation of whether the gene's roles are likely important in the given tissue/cell line context.",
+    "output_description": "Returns a comprehensive contextual analysis including: gene's biological processes, expression level in the specified context, contextual conclusion about functional relevance, and an interpretation of whether the gene's roles are likely important in the given tissue/cell line context. 'expression_level' is computed by ToolUniverse from the nTPM value, NOT a classification published by HPA -- HPA supplies only the number. This tool uses its own cut-offs (>10 highly expressed, >1 moderately expressed, >0.1 expressed at low level, <=0.1 not expressed or very low), which differ from the bands returned by HPA_get_rna_expression_by_source and HPA_get_rna_expression_in_specific_tissues; the 'expression_level_basis' field states them. 'functional_relevance' and 'contextual_conclusion' are derived from that band, so they inherit the same tool-computed cut-offs and are not HPA assertions.",
     "test_examples": [
       {
         "gene_name": "TP53",
@@ -696,7 +745,7 @@
   {
     "type": "HPAGetRnaExpressionBySourceTool",
     "name": "HPA_get_rna_expression_by_source",
-    "description": "Get RNA expression level (nTPM) for a gene in a specific biological source using optimized columns parameter. Supports tissue, blood, brain, and single_cell source types with comprehensive source mappings.",
+    "description": "Get RNA expression for a gene in a specific biological source, read from HPA's dedicated per-source download columns (t_RNA_*, blood_RNA_*, brain_RNA_*, sc_RNA_*). Supports source_type 'tissue', 'blood', 'brain' and 'single_cell'. Units differ by source: single_cell values are nCPM, all others nTPM -- the returned expression_unit is read from HPA's own column header, never assumed.",
     "fields": {
       "endpoint": "https://www.proteinatlas.org/api/search_download.php",
       "timeout": 30,
@@ -711,11 +760,11 @@
         },
         "source_type": {
           "type": "string",
-          "description": "The type of biological source. Choose from: 'tissue', 'blood', 'brain', 'single_cell'."
+          "description": "The type of biological source. Choose from: 'tissue' (51 consensus tissues, nTPM), 'blood' (19 immune cell subsets, nTPM), 'brain' (13 brain regions, nTPM), 'single_cell' (~160 single cell types, nCPM)."
         },
         "source_name": {
           "type": "string",
-          "description": "The specific name of the biological source, e.g., 'liver', 'heart_muscle', 't_cell', 'hepatocytes', 'cerebellum'. Must be a valid name from the comprehensive HPA columns mapping."
+          "description": "The specific source name, e.g. 'liver', 'heart_muscle', 'skin', 't_cell', 'hepatocyte', 'cerebellum'. Case-insensitive; spaces and hyphens are treated as underscores. Names HPA publishes only as subsets (blood 't_cell', 'b_cell', 'monocyte', 'dendritic_cell') resolve to a representative subset column and the response reports which one in a 'note'. An invalid name returns an error listing valid names -- it never returns a silent 'N/A'."
         }
       },
       "required": [
@@ -725,7 +774,7 @@
       ]
     },
     "input_description": "Input gene name (e.g., GFAP), source type (tissue/blood/brain/single_cell), and specific source name (e.g., liver). The tool will directly query the specific column for highly efficient data retrieval.",
-    "output_description": "Returns precise RNA expression data with nTPM value, expression level categorization (Very high/High/Medium/Low/Very low), and metadata about the query. Includes gene information, source details, expression unit explanation, and the specific data column used.",
+    "output_description": "Returns the expression value, its unit taken from HPA's column header (nTPM, or nCPM for single_cell), an expression_level band, the exact HPA column header the number came from (column_queried), and a 'note' whenever the requested source name resolved to a differently-named HPA column. expression_level is computed by ToolUniverse from expression_value, NOT a classification published by HPA -- HPA supplies only the number. The accompanying 'expression_level_basis' field spells out the exact cut-offs applied (>50 very high, >10 high, >1 medium, >0.1 low, <=0.1 very low) so the banding can be reproduced or ignored.",
     "test_examples": [
       {
         "gene_name": "TP53",

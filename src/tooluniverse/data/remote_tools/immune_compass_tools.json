@@ -2,13 +2,14 @@
   {
     "type": "RemoteTool",
     "name": "run_compass_prediction",
-    "description": "Predicts immune checkpoint inhibitor (ICI) response using COMPASS model. This tool analyzes single-sample tumor gene expression data to predict patient responsiveness to immune checkpoint inhibitor therapy. The COMPASS model leverages immune cell concept analysis to provide both a binary prediction and interpretable insights into the immune microenvironment factors driving the prediction.",
+    "description": "Predict immune-checkpoint-inhibitor response with the official COMPASS architecture and a digest-pinned provider artifact stored as safetensors plus data-only preprocessing arrays.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "gene_expression_data_path": {
           "type": "string",
-          "description": "Path to the TPM expression data file. Keys should be standard gene symbols (e.g., 'CD274', 'PDCD1', 'CTLA4'). Values should be normalized expression in TPM (Transcripts Per Million). Minimum ~100 genes recommended for reliable predictions."
+          "description": "One-sample CSV or TSV inside the provider data directory, with Index and cancer_code columns followed by all 15,672 model TPM genes."
         },
         "threshold": {
           "type": "number",
@@ -16,16 +17,10 @@
           "default": 0.5,
           "minimum": 0.0,
           "maximum": 1.0
-        },
-        "root_path": {
-          "type": "string",
-          "description": "Path to the directory containing model checkpoints. If None, uses COMPASS_MODEL_PATH/immune-compass/checkpoint."
         }
       },
       "required": [
-        "gene_expression_data_path",
-        "threshold",
-        "root_path"
+        "gene_expression_data_path"
       ]
     },
     "return_schema": {
@@ -39,8 +34,17 @@
               "type": "boolean",
               "description": "True if predicted responder (probability \u2265 threshold)"
             },
+            "responder_probability": {
+              "type": "number",
+              "description": "COMPASS probability for the responder class."
+            },
+            "threshold": {
+              "type": "number",
+              "description": "Threshold applied to responder_probability."
+            },
             "top_concepts": {
               "type": "array",
+              "maxItems": 44,
               "description": "Ranked immune cell concepts",
               "items": {
                 "type": "object",
@@ -56,6 +60,16 @@
                 }
               }
             }
+          }
+        },
+        "model": {
+          "type": "object",
+          "description": "Safe model provenance and inference device.",
+          "properties": {
+            "artifact_format": {"type": "string"},
+            "source_sha256": {"type": "string"},
+            "upstream_revision": {"type": "string"},
+            "device": {"type": "string"}
           }
         },
         "context_info": {
@@ -81,9 +95,8 @@
     },
     "test_examples": [
       {
-        "gene_expression_data_path": "TP53",
-        "threshold": 0.5,
-        "root_path": "example_string"
+        "gene_expression_data_path": "example_tpm.tsv",
+        "threshold": 0.5
       }
     ]
   }

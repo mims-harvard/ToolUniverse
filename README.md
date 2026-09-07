@@ -60,7 +60,7 @@ uv venv --python 3.12 && source .venv/bin/activate
 uv pip install tooluniverse
 ```
 
-The base install covers the API and database tools. Local ML, cheminformatics, and plotting tools need extras — `uv pip install 'tooluniverse[all]'`, or a single group such as `[ml]`, `[visualization]`, `[bioinformatics]`. Note `[all]` excludes `singlecell`, `smolagents`, `client`, and `build`, which install by name. Run `tooluniverse-doctor` to see which groups are missing.
+The base install covers the API and database tools. Local ML, cheminformatics, and plotting tools need extras — `uv pip install 'tooluniverse[all]'`, or a single group such as `[ml]`, `[visualization]`, `[bioinformatics]`. Note `[all]` excludes `pdf`, `singlecell`, `smolagents`, `client`, and `build`, which install by name. Run `tooluniverse-doctor` to see which groups are missing.
 
 **[`tu` CLI](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tu_cli.html)** — discover, inspect, run, and test tools from the terminal.
 **[Python SDK](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/python_guide.html)** — programmatic access for building AI scientist systems.

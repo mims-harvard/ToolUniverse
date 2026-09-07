@@ -4,6 +4,28 @@ Discover and validate biomarkers for a specific disease condition using compose 
 """
 
 
+def _extract_genes(tool_result):
+    """Pull a gene list out of an HPA_search_genes_by_query result.
+
+    call_tool() returns the tool's raw envelope (e.g.
+    {"status": "success", "data": {"genes": [...]}}), not the unwrapped
+    payload -- this previously checked for "genes" at the top level only,
+    which never matched, so every disease query silently fell through to
+    (formerly) a hardcoded fallback / (now) an honest "no genes found".
+    Check the nested location first, then the top level and bare list, for
+    resilience to either response shape.
+    """
+    if isinstance(tool_result, dict):
+        data = tool_result.get("data")
+        if isinstance(data, dict) and isinstance(data.get("genes"), list):
+            return data["genes"]
+        if isinstance(tool_result.get("genes"), list):
+            return tool_result["genes"]
+    elif isinstance(tool_result, list):
+        return tool_result
+    return []
+
+
 def compose(arguments, tooluniverse, call_tool):
     """Discover and validate biomarkers for a specific disease condition"""
 
@@ -41,16 +63,11 @@ def compose(arguments, tooluniverse, call_tool):
             hpa_result = call_tool(
                 "HPA_search_genes_by_query", {"search_query": disease_condition}
             )
-            if hpa_result and isinstance(hpa_result, dict) and "genes" in hpa_result:
-                genes = hpa_result["genes"]
+            genes = _extract_genes(hpa_result)
+            if genes:
                 gene_search_results.extend(genes)
                 print(
                     f"✅ HPA search found {len(genes)} genes for '{disease_condition}'"
-                )
-            elif hpa_result and isinstance(hpa_result, list):
-                gene_search_results.extend(hpa_result)
-                print(
-                    f"✅ HPA search found {len(hpa_result)} genes for '{disease_condition}'"
                 )
         except Exception as e:
             print(f"⚠️ HPA search failed: {e}")
@@ -64,59 +81,31 @@ def compose(arguments, tooluniverse, call_tool):
                     hpa_result = call_tool(
                         "HPA_search_genes_by_query", {"search_query": search_term}
                     )
-                    if (
-                        hpa_result
-                        and isinstance(hpa_result, dict)
-                        and "genes" in hpa_result
-                    ):
-                        genes = hpa_result["genes"]
+                    genes = _extract_genes(hpa_result)
+                    if genes:
                         gene_search_results.extend(genes)
                         print(
                             f"✅ HPA search found {len(genes)} genes for '{search_term}'"
                         )
                         break
-                    elif hpa_result and isinstance(hpa_result, list):
-                        gene_search_results.extend(hpa_result)
-                        print(
-                            f"✅ HPA search found {len(hpa_result)} genes for '{search_term}'"
-                        )
-                        break
                 except Exception as e:
                     print(f"⚠️ HPA search failed for '{search_term}': {e}")
 
-        # Strategy 3: Use alternative search if no results
+        # NOTE: this used to silently substitute a hardcoded list of
+        # generic cancer genes (BRCA1/BRCA2/TP53/EGFR/MYC) here and print a
+        # "✅" success line whenever HPA search found nothing -- for a
+        # disease with no matches (e.g. "healthy aging", which isn't a
+        # disease HPA indexes genes against), that meant every downstream
+        # step silently analyzed unrelated cancer genes while every log
+        # line still claimed success. Report the miss honestly instead so
+        # callers can tell "no data for this query" apart from "found
+        # data."
         if not gene_search_results:
-            print("⚠️ No genes found with HPA search strategies")
-            # Create a fallback result with common cancer genes
-            fallback_genes = [
-                {
-                    "gene_name": "BRCA1",
-                    "ensembl_id": "ENSG00000012048",
-                    "description": "Breast cancer type 1 susceptibility protein",
-                },
-                {
-                    "gene_name": "BRCA2",
-                    "ensembl_id": "ENSG00000139618",
-                    "description": "Breast cancer type 2 susceptibility protein",
-                },
-                {
-                    "gene_name": "TP53",
-                    "ensembl_id": "ENSG00000141510",
-                    "description": "Tumor protein p53",
-                },
-                {
-                    "gene_name": "EGFR",
-                    "ensembl_id": "ENSG00000146648",
-                    "description": "Epidermal growth factor receptor",
-                },
-                {
-                    "gene_name": "MYC",
-                    "ensembl_id": "ENSG00000136997",
-                    "description": "MYC proto-oncogene protein",
-                },
-            ]
-            gene_search_results.extend(fallback_genes)
-            print(f"✅ Using fallback cancer genes: {len(fallback_genes)} genes")
+            print(
+                "⚠️ No genes found with HPA search strategies for "
+                f"'{disease_condition}' -- skipping expression/pathway "
+                "steps that depend on a specific gene."
+            )
 
         if gene_search_results:
             # Get details for the first gene found

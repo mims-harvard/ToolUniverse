@@ -8,8 +8,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["r0_herd"],
-          "description": "Operation type"
+          "enum": [
+            "r0_herd"
+          ],
+          "description": "Operation type",
+          "default": "r0_herd"
         },
         "R0": {
           "type": "number",
@@ -24,7 +27,9 @@
           "description": "Optional vaccination coverage fraction [0, 1] to evaluate Re at"
         }
       },
-      "required": ["operation", "R0"]
+      "required": [
+        "R0"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -34,10 +39,18 @@
             "data": {
               "type": "object",
               "properties": {
-                "herd_threshold_perfect": {"type": "number"},
-                "herd_threshold_ve_adjusted": {"type": "number"},
-                "Re_at_coverage": {"type": "number"},
-                "epidemic_suppressed": {"type": "boolean"}
+                "herd_threshold_perfect": {
+                  "type": "number"
+                },
+                "herd_threshold_ve_adjusted": {
+                  "type": "number"
+                },
+                "Re_at_coverage": {
+                  "type": "number"
+                },
+                "epidemic_suppressed": {
+                  "type": "boolean"
+                }
               }
             }
           }
@@ -45,9 +58,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -57,7 +74,10 @@
         "R0": 3.0,
         "VE": 0.94
       }
-    ]
+    ],
+    "fields": {
+      "operation": "r0_herd"
+    }
   },
   {
     "name": "Epidemiology_vaccine_coverage",
@@ -68,8 +88,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["vaccine_coverage"],
-          "description": "Operation type"
+          "enum": [
+            "vaccine_coverage"
+          ],
+          "description": "Operation type",
+          "default": "vaccine_coverage"
         },
         "R0": {
           "type": "number",
@@ -84,7 +107,11 @@
           "description": "Proportion of total population that is vaccinated (0, 1)"
         }
       },
-      "required": ["operation", "R0", "PCV", "PPV"]
+      "required": [
+        "R0",
+        "PCV",
+        "PPV"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -94,10 +121,18 @@
             "data": {
               "type": "object",
               "properties": {
-                "VE": {"type": "number"},
-                "Vc": {"type": "number"},
-                "Re_current": {"type": "number"},
-                "Vc_achievable": {"type": "boolean"}
+                "VE": {
+                  "type": "number"
+                },
+                "Vc": {
+                  "type": "number"
+                },
+                "Re_current": {
+                  "type": "number"
+                },
+                "Vc_achievable": {
+                  "type": "boolean"
+                }
               }
             }
           }
@@ -105,9 +140,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -118,7 +157,10 @@
         "PCV": 0.06,
         "PPV": 0.35
       }
-    ]
+    ],
+    "fields": {
+      "operation": "vaccine_coverage"
+    }
   },
   {
     "name": "Epidemiology_nnt",
@@ -129,8 +171,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["nnt"],
-          "description": "Operation type"
+          "enum": [
+            "nnt"
+          ],
+          "description": "Operation type",
+          "default": "nnt"
         },
         "control_rate": {
           "type": "number",
@@ -141,7 +186,10 @@
           "description": "Event rate in the treatment group [0, 1]"
         }
       },
-      "required": ["operation", "control_rate", "treatment_rate"]
+      "required": [
+        "control_rate",
+        "treatment_rate"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -151,11 +199,21 @@
             "data": {
               "type": "object",
               "properties": {
-                "NNT_value": {"type": "number"},
-                "NNT_label": {"type": "string"},
-                "ARR": {"type": "number"},
-                "RR": {"type": "number"},
-                "OR": {"type": "number"}
+                "NNT_value": {
+                  "type": "number"
+                },
+                "NNT_label": {
+                  "type": "string"
+                },
+                "ARR": {
+                  "type": "number"
+                },
+                "RR": {
+                  "type": "number"
+                },
+                "OR": {
+                  "type": "number"
+                }
               }
             }
           }
@@ -163,19 +221,26 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
     "test_examples": [
       {
         "operation": "nnt",
-        "control_rate": 0.30,
-        "treatment_rate": 0.20
+        "control_rate": 0.3,
+        "treatment_rate": 0.2
       }
-    ]
+    ],
+    "fields": {
+      "operation": "nnt"
+    }
   },
   {
     "name": "Epidemiology_diagnostic",
@@ -186,8 +251,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["diagnostic"],
-          "description": "Operation type"
+          "enum": [
+            "diagnostic"
+          ],
+          "description": "Operation type",
+          "default": "diagnostic"
         },
         "tp": {
           "type": "integer",
@@ -206,7 +274,12 @@
           "description": "False negatives (disease+, test-)"
         }
       },
-      "required": ["operation", "tp", "fp", "tn", "fn"]
+      "required": [
+        "tp",
+        "fp",
+        "tn",
+        "fn"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -216,13 +289,27 @@
             "data": {
               "type": "object",
               "properties": {
-                "sensitivity": {"type": "number"},
-                "specificity": {"type": "number"},
-                "PPV": {"type": "number"},
-                "NPV": {"type": "number"},
-                "accuracy": {"type": "number"},
-                "LR_pos": {"type": "number"},
-                "LR_neg": {"type": "number"}
+                "sensitivity": {
+                  "type": "number"
+                },
+                "specificity": {
+                  "type": "number"
+                },
+                "PPV": {
+                  "type": "number"
+                },
+                "NPV": {
+                  "type": "number"
+                },
+                "accuracy": {
+                  "type": "number"
+                },
+                "LR_pos": {
+                  "type": "number"
+                },
+                "LR_neg": {
+                  "type": "number"
+                }
               }
             }
           }
@@ -230,9 +317,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -244,7 +335,10 @@
         "tn": 880,
         "fn": 20
       }
-    ]
+    ],
+    "fields": {
+      "operation": "diagnostic"
+    }
   },
   {
     "name": "Epidemiology_bayesian",
@@ -255,8 +349,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["bayesian"],
-          "description": "Operation type"
+          "enum": [
+            "bayesian"
+          ],
+          "description": "Operation type",
+          "default": "bayesian"
         },
         "prevalence": {
           "type": "number",
@@ -272,11 +369,18 @@
         },
         "test_result": {
           "type": "string",
-          "enum": ["positive", "negative"],
+          "enum": [
+            "positive",
+            "negative"
+          ],
           "description": "Whether to compute post-test probability for a positive or negative result (default: positive)"
         }
       },
-      "required": ["operation", "prevalence", "sensitivity", "specificity"]
+      "required": [
+        "prevalence",
+        "sensitivity",
+        "specificity"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -286,9 +390,15 @@
             "data": {
               "type": "object",
               "properties": {
-                "post_test_probability": {"type": "number"},
-                "LR": {"type": "number"},
-                "pre_test_odds": {"type": "number"}
+                "post_test_probability": {
+                  "type": "number"
+                },
+                "LR": {
+                  "type": "number"
+                },
+                "pre_test_odds": {
+                  "type": "number"
+                }
               }
             }
           }
@@ -296,9 +406,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -307,8 +421,11 @@
         "operation": "bayesian",
         "prevalence": 0.01,
         "sensitivity": 0.95,
-        "specificity": 0.90
+        "specificity": 0.9
       }
-    ]
+    ],
+    "fields": {
+      "operation": "bayesian"
+    }
   }
 ]

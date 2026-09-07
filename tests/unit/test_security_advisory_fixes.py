@@ -37,10 +37,11 @@ def _run(code, **extra):
 
 
 def test_caller_cannot_widen_import_allowlist():
-    """`allowed_imports` in call arguments must not enable `import os`."""
+    """`allowed_imports` in call arguments must be explicitly rejected."""
     result = _run("import os\nprint(os.getuid())", allowed_imports=["os", "subprocess"])
     assert result["status"] == "error"
-    assert "Forbidden import: os" in result["data"]["error"]
+    assert result["data"]["error_type"] == "SecurityError"
+    assert "allowed_imports cannot be set per call" in result["data"]["error"]
 
 
 def test_server_config_allowlist_still_respected():

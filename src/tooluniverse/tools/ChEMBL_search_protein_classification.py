@@ -1,7 +1,7 @@
 """
 ChEMBL_search_protein_classification
 
-Search protein classifications by target, classification type, or other criteria. To find a targe...
+Browse ChEMBL's protein family classification by class ID. ChEMBL's /protein_classification resou...
 """
 
 from typing import Any, Optional, Callable
@@ -9,7 +9,6 @@ from ._shared_client import get_shared_client
 
 
 def ChEMBL_search_protein_classification(
-    target_chembl_id: Optional[str] = None,
     protein_class_id: Optional[str] = None,
     limit: Optional[int] = 20,
     offset: Optional[int] = 0,
@@ -19,12 +18,10 @@ def ChEMBL_search_protein_classification(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search protein classifications by target, classification type, or other criteria. To find a targe...
+    Browse ChEMBL's protein family classification by class ID. ChEMBL's /protein_classification resou...
 
     Parameters
     ----------
-    target_chembl_id : str
-        Filter by target ChEMBL ID
     protein_class_id : str
         Filter by protein class ID
     limit : int
@@ -48,7 +45,6 @@ def ChEMBL_search_protein_classification(
     _args = {
         k: v
         for k, v in {
-            "target_chembl_id": target_chembl_id,
             "protein_class_id": protein_class_id,
             "limit": limit,
             "offset": offset,

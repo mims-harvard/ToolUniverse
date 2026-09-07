@@ -132,9 +132,14 @@ class PDBe_KB_Tool(BaseTool):
 
         protein_data = data[acc]
         ligands = []
-        max_ligands = 50  # Limit output size
+        all_ligand_entries = protein_data.get("data", [])
+        max_ligands = arguments.get("max_ligands")
+        # `or 100` would silently turn an explicit 0 into 100 (0 is falsy),
+        # and a negative value would slice from the end instead of erroring
+        # -- check for None explicitly and clamp instead.
+        max_ligands = 100 if max_ligands is None else max(0, max_ligands)
 
-        for entry in protein_data.get("data", [])[:max_ligands]:
+        for entry in all_ligand_entries[:max_ligands]:
             binding_residues = []
             for res in entry.get("residues", [])[:20]:
                 binding_residues.append(
@@ -158,14 +163,25 @@ class PDBe_KB_Tool(BaseTool):
                 }
             )
 
+        result_data = {
+            "uniprot_accession": acc,
+            "protein_length": protein_data.get("length"),
+            "ligands": ligands,
+            "total_ligands": len(all_ligand_entries),
+        }
+        if len(all_ligand_entries) > max_ligands:
+            result_data["truncated"] = True
+            result_data["truncation_note"] = (
+                f"Returning {max_ligands} of {len(all_ligand_entries)} ligands. "
+                f"Pass max_ligands={len(all_ligand_entries)} to retrieve all of them. "
+                "The API does not guarantee ordering by clinical relevance, so "
+                "a specific ligand of interest (e.g. a named drug) may be cut off "
+                "at the default limit."
+            )
+
         return {
             "status": "success",
-            "data": {
-                "uniprot_accession": acc,
-                "protein_length": protein_data.get("length"),
-                "ligands": ligands,
-                "total_ligands": len(protein_data.get("data", [])),
-            },
+            "data": result_data,
             "metadata": {
                 "source": "PDBe-KB (PDBe Knowledge Base) Graph API",
             },
@@ -190,9 +206,14 @@ class PDBe_KB_Tool(BaseTool):
 
         protein_data = data[acc]
         partners = []
-        max_partners = 30
+        all_partner_entries = protein_data.get("data", [])
+        max_partners = arguments.get("max_partners")
+        # `or 60` would silently turn an explicit 0 into 60 (0 is falsy),
+        # and a negative value would slice from the end instead of erroring
+        # -- check for None explicitly and clamp instead.
+        max_partners = 60 if max_partners is None else max(0, max_partners)
 
-        for entry in protein_data.get("data", [])[:max_partners]:
+        for entry in all_partner_entries[:max_partners]:
             interface_residues = []
             for res in entry.get("residues", [])[:30]:
                 interface_residues.append(
@@ -211,14 +232,23 @@ class PDBe_KB_Tool(BaseTool):
                 }
             )
 
+        result_data = {
+            "uniprot_accession": acc,
+            "protein_length": protein_data.get("length"),
+            "interaction_partners": partners,
+            "total_partners": len(all_partner_entries),
+        }
+        if len(all_partner_entries) > max_partners:
+            result_data["truncated"] = True
+            result_data["truncation_note"] = (
+                f"Returning {max_partners} of {len(all_partner_entries)} interaction "
+                f"partners. Pass max_partners={len(all_partner_entries)} to retrieve "
+                "all of them."
+            )
+
         return {
             "status": "success",
-            "data": {
-                "uniprot_accession": acc,
-                "protein_length": protein_data.get("length"),
-                "interaction_partners": partners,
-                "total_partners": len(protein_data.get("data", [])),
-            },
+            "data": result_data,
             "metadata": {
                 "source": "PDBe-KB (PDBe Knowledge Base) Graph API",
             },

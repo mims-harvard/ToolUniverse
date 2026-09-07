@@ -12,7 +12,7 @@
                 },
                 "condition": {
                     "type": "string",
-                    "description": "Disease or condition name (e.g., 'breast cancer', 'diabetes') At least one of gene, condition, or variant_id must be provided."
+                    "description": "Disease or condition name (e.g., 'breast cancer', 'diabetes') At least one of gene, condition, or variant_id must be provided. Matched against ClinVar's disease index, which carries MedGen's own condition names exactly -- a synonym, a locus name or a misspelling ('Lebers congenital amaurosis' for the indexed 'Leber congenital amaurosis') matches nothing there, so the search falls back to an unrestricted free-text match. When that happens the response says so: 'condition_filter_applied': false plus a 'condition_filter_warning', meaning total_count is NOT a disease-filtered count. Use MedGen_search_conditions to get the indexed name."
                 },
                 "variant_id": {
                     "type": "string",
@@ -41,7 +41,7 @@
                 },
                 "clinical_significance": {
                     "type": "string",
-                    "description": "Filter by clinical significance (e.g., 'Pathogenic', 'Likely pathogenic', 'Benign', 'Uncertain significance', 'VUS'). Applied client-side after retrieval."
+                    "description": "Filter by clinical significance. Must be one of the classes ClinVar's index actually recognizes: 'Pathogenic', 'Likely pathogenic', 'Uncertain significance', 'VUS', 'Likely benign', 'Benign', 'Established risk allele', 'Likely risk allele', 'Uncertain risk allele', 'drug response', 'risk factor', 'not provided', 'other'. Case-insensitive; underscores/hyphens are treated as spaces. Combine two classes with '/' to search their union (e.g. 'Pathogenic/Likely pathogenic'). Any other value is rejected with an error rather than silently filtering the results to nothing."
                 },
                 "gene_symbol": {
                     "type": [
@@ -55,7 +55,7 @@
                         "string",
                         "null"
                     ],
-                    "description": "Alias for clinical_significance (e.g., \"pathogenic\", \"benign\", \"uncertain_significance\")."
+                    "description": "Alias for clinical_significance (e.g., \"pathogenic\", \"benign\", \"uncertain_significance\"). Same accepted value set and same validation as clinical_significance."
                 },
                 "query": {
                     "type": [

@@ -8,9 +8,9 @@ in the mocked payload) and an error-path test. No live network access is used;
 all HTTP calls are patched.
 
 Tools under test:
-- TCIA_get_patients                 (BaseRESTTool, getPatient)
-- TCIA_get_sop_instance_uids        (BaseRESTTool, getSOPInstanceUIDs)
-- TCIA_get_manufacturer_values      (BaseRESTTool, getManufacturerValues)
+- TCIA_get_patients                 (TCIATool, getPatient)
+- TCIA_get_sop_instance_uids        (TCIATool, getSOPInstanceUIDs)
+- TCIA_get_manufacturer_values      (TCIATool, getManufacturerValues)
 - OpenNeuro_get_snapshot_files      (OpenNeuroTool, snapshot.files)
 - OpenNeuro_get_snapshot_validation (OpenNeuroTool, snapshot.validation)
 - OpenNeuro_advanced_search         (OpenNeuroTool, participantCount + advancedSearch)
@@ -51,13 +51,13 @@ def _mock_response(json_payload=None, status_code=200, text=None):
 
 
 # --------------------------------------------------------------------------- #
-# TCIA_get_patients  (BaseRESTTool via request_with_retry)
+# TCIA_get_patients  (TCIATool via request_with_retry)
 # --------------------------------------------------------------------------- #
 class TestTCIAGetPatients:
     def _tool(self):
-        from tooluniverse.base_rest_tool import BaseRESTTool
+        from tooluniverse.tcia_tool import TCIATool
 
-        return BaseRESTTool(_load_config("tcia_tools.json", "TCIA_get_patients"))
+        return TCIATool(_load_config("tcia_tools.json", "TCIA_get_patients"))
 
     def test_parse_success(self):
         """Success path: getPatient payload parses with patient-level fields."""
@@ -113,17 +113,15 @@ class TestTCIAGetPatients:
 
 
 # --------------------------------------------------------------------------- #
-# TCIA_get_sop_instance_uids  (BaseRESTTool via request_with_retry)
+# TCIA_get_sop_instance_uids  (TCIATool via request_with_retry)
 # --------------------------------------------------------------------------- #
 class TestTCIAGetSopInstanceUids:
     SERIES = "1.3.6.1.4.1.14519.5.2.1.6279.6001.179049373636438705059720603192"
 
     def _tool(self):
-        from tooluniverse.base_rest_tool import BaseRESTTool
+        from tooluniverse.tcia_tool import TCIATool
 
-        return BaseRESTTool(
-            _load_config("tcia_tools.json", "TCIA_get_sop_instance_uids")
-        )
+        return TCIATool(_load_config("tcia_tools.json", "TCIA_get_sop_instance_uids"))
 
     def test_parse_success(self):
         """Success path: getSOPInstanceUIDs returns per-image SOP UID objects."""
@@ -167,15 +165,13 @@ class TestTCIAGetSopInstanceUids:
 
 
 # --------------------------------------------------------------------------- #
-# TCIA_get_manufacturer_values  (BaseRESTTool via request_with_retry)
+# TCIA_get_manufacturer_values  (TCIATool via request_with_retry)
 # --------------------------------------------------------------------------- #
 class TestTCIAGetManufacturerValues:
     def _tool(self):
-        from tooluniverse.base_rest_tool import BaseRESTTool
+        from tooluniverse.tcia_tool import TCIATool
 
-        return BaseRESTTool(
-            _load_config("tcia_tools.json", "TCIA_get_manufacturer_values")
-        )
+        return TCIATool(_load_config("tcia_tools.json", "TCIA_get_manufacturer_values"))
 
     def test_parse_success(self):
         """Success path: getManufacturerValues returns distinct manufacturers."""

@@ -8,8 +8,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_family"],
-          "description": "Operation type"
+          "enum": [
+            "get_family"
+          ],
+          "description": "Operation type",
+          "default": "get_family"
         },
         "family_id": {
           "type": "string",
@@ -17,21 +20,36 @@
         },
         "format": {
           "type": "string",
-          "enum": ["json", "xml"],
+          "enum": [
+            "json",
+            "xml"
+          ],
           "default": "json",
           "description": "Output format"
         }
       },
-      "required": ["family_id"]
+      "required": [
+        "family_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "data": {"type": "object"},
-        "family_id": {"type": "string"},
-        "format": {"type": "string"},
-        "error": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        },
+        "family_id": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -40,7 +58,10 @@
         "family_id": "RF00360",
         "format": "json"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_family"
+    }
   },
   {
     "name": "Rfam_get_alignment",
@@ -51,8 +72,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_alignment"],
-          "description": "Operation type"
+          "enum": [
+            "get_alignment"
+          ],
+          "description": "Operation type",
+          "default": "get_alignment"
         },
         "family_id": {
           "type": "string",
@@ -60,7 +84,12 @@
         },
         "format": {
           "type": "string",
-          "enum": ["stockholm", "pfam", "fasta", "fastau"],
+          "enum": [
+            "stockholm",
+            "pfam",
+            "fasta",
+            "fastau"
+          ],
           "default": "stockholm",
           "description": "Alignment format: stockholm (structured), pfam (single-line), fasta (gapped), fastau (ungapped)"
         },
@@ -70,17 +99,31 @@
           "description": "Compress output with gzip"
         }
       },
-      "required": ["family_id"]
+      "required": [
+        "family_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "alignment": {"type": "string"},
-        "format": {"type": "string"},
-        "family_id": {"type": "string"},
-        "compressed": {"type": "boolean"},
-        "error": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "alignment": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "family_id": {
+          "type": "string"
+        },
+        "compressed": {
+          "type": "boolean"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -89,7 +132,10 @@
         "family_id": "RF00360",
         "format": "fasta"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_alignment"
+    }
   },
   {
     "name": "Rfam_get_covariance_model",
@@ -100,24 +146,39 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_covariance_model"],
-          "description": "Operation type"
+          "enum": [
+            "get_covariance_model"
+          ],
+          "description": "Operation type",
+          "default": "get_covariance_model"
         },
         "family_id": {
           "type": "string",
           "description": "Required: Rfam accession or family name"
         }
       },
-      "required": ["family_id"]
+      "required": [
+        "family_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "covariance_model": {"type": "string"},
-        "family_id": {"type": "string"},
-        "format": {"type": "string"},
-        "error": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "covariance_model": {
+          "type": "string"
+        },
+        "family_id": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -125,7 +186,10 @@
         "operation": "get_covariance_model",
         "family_id": "RF00360"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_covariance_model"
+    }
   },
   {
     "name": "Rfam_search_sequence",
@@ -136,8 +200,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_sequence"],
-          "description": "Operation type"
+          "enum": [
+            "search_sequence"
+          ],
+          "description": "Operation type",
+          "default": "search_sequence"
         },
         "sequence": {
           "type": "string",
@@ -151,24 +218,42 @@
           "description": "Maximum time to wait for results (default: 120s). Job continues running if timeout reached."
         }
       },
-      "required": ["sequence"]
+      "required": [
+        "sequence"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "job_id": {"type": "string"},
+        "status": {
+          "type": "string"
+        },
+        "job_id": {
+          "type": "string"
+        },
         "results": {
           "type": "object",
           "properties": {
-            "numHits": {"type": "integer"},
-            "searchSequence": {"type": "string"},
-            "hits": {"type": "object"}
+            "numHits": {
+              "type": "integer"
+            },
+            "searchSequence": {
+              "type": "string"
+            },
+            "hits": {
+              "type": "object"
+            }
           }
         },
-        "elapsed_seconds": {"type": "integer"},
-        "result_url": {"type": "string"},
-        "error": {"type": "string"}
+        "elapsed_seconds": {
+          "type": "integer"
+        },
+        "result_url": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -176,7 +261,10 @@
         "operation": "search_sequence",
         "sequence": "AGTTACGGCCATACCTCAGAGAATATACCGTATCCCGTTCGATCTGCGAAGTTAAGCTCTGAAGGGCGTCGTCAGTACTATAGTGGGTGACCATATGGGAATACGACGTGCTGTAGCTT"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_sequence"
+    }
   },
   {
     "name": "Rfam_get_tree_data",
@@ -187,24 +275,39 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_tree_data"],
-          "description": "Operation type"
+          "enum": [
+            "get_tree_data"
+          ],
+          "description": "Operation type",
+          "default": "get_tree_data"
         },
         "family_id": {
           "type": "string",
           "description": "Required: Rfam accession or family name"
         }
       },
-      "required": ["family_id"]
+      "required": [
+        "family_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "tree_data": {"type": "string"},
-        "format": {"type": "string"},
-        "family_id": {"type": "string"},
-        "error": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "tree_data": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "family_id": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -212,7 +315,10 @@
         "operation": "get_tree_data",
         "family_id": "RF00360"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_tree_data"
+    }
   },
   {
     "name": "Rfam_get_sequence_regions",
@@ -223,8 +329,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_sequence_regions"],
-          "description": "Operation type"
+          "enum": [
+            "get_sequence_regions"
+          ],
+          "description": "Operation type",
+          "default": "get_sequence_regions"
         },
         "family_id": {
           "type": "string",
@@ -232,23 +341,43 @@
         },
         "format": {
           "type": "string",
-          "enum": ["text", "json", "xml"],
+          "enum": [
+            "text",
+            "json",
+            "xml"
+          ],
           "default": "text",
           "description": "Output format"
         }
       },
-      "required": ["family_id"]
+      "required": [
+        "family_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "regions": {"type": "string"},
-        "data": {"type": "object"},
-        "format": {"type": "string"},
-        "family_id": {"type": "string"},
-        "error": {"type": "string"},
-        "message": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "regions": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        },
+        "format": {
+          "type": "string"
+        },
+        "family_id": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -257,7 +386,10 @@
         "family_id": "RF00360",
         "format": "text"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_sequence_regions"
+    }
   },
   {
     "name": "Rfam_get_structure_mapping",
@@ -268,8 +400,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_structure_mapping"],
-          "description": "Operation type"
+          "enum": [
+            "get_structure_mapping"
+          ],
+          "description": "Operation type",
+          "default": "get_structure_mapping"
         },
         "family_id": {
           "type": "string",
@@ -277,22 +412,40 @@
         },
         "format": {
           "type": "string",
-          "enum": ["json", "xml", "text"],
+          "enum": [
+            "json",
+            "xml",
+            "text"
+          ],
           "default": "json",
           "description": "Output format"
         }
       },
-      "required": ["family_id"]
+      "required": [
+        "family_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "data": {"type": "object"},
-        "structures": {"type": "string"},
-        "format": {"type": "string"},
-        "family_id": {"type": "string"},
-        "error": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object"
+        },
+        "structures": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "family_id": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -301,7 +454,10 @@
         "family_id": "RF00002",
         "format": "json"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_structure_mapping"
+    }
   },
   {
     "name": "Rfam_accession_to_id",
@@ -312,23 +468,36 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_family_id"],
-          "description": "Operation type"
+          "enum": [
+            "get_family_id"
+          ],
+          "description": "Operation type",
+          "default": "get_family_id"
         },
         "accession": {
           "type": "string",
           "description": "Required: Rfam accession (e.g., RF00360)"
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "family_id": {"type": "string"},
-        "accession": {"type": "string"},
-        "error": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "family_id": {
+          "type": "string"
+        },
+        "accession": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -336,7 +505,10 @@
         "operation": "get_family_id",
         "accession": "RF00360"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_family_id"
+    }
   },
   {
     "name": "Rfam_id_to_accession",
@@ -347,23 +519,36 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_family_accession"],
-          "description": "Operation type"
+          "enum": [
+            "get_family_accession"
+          ],
+          "description": "Operation type",
+          "default": "get_family_accession"
         },
         "family_id": {
           "type": "string",
           "description": "Required: Family name (e.g., snoZ107_R87)"
         }
       },
-      "required": ["family_id"]
+      "required": [
+        "family_id"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "status": {"type": "string"},
-        "accession": {"type": "string"},
-        "family_id": {"type": "string"},
-        "error": {"type": "string"}
+        "status": {
+          "type": "string"
+        },
+        "accession": {
+          "type": "string"
+        },
+        "family_id": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [
@@ -371,6 +556,9 @@
         "operation": "get_family_accession",
         "family_id": "snoZ107_R87"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_family_accession"
+    }
   }
 ]

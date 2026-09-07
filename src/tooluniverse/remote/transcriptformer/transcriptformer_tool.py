@@ -19,15 +19,41 @@ The tool provides access to disease-specific embedding stores that enable:
 from fastmcp import FastMCP
 import os
 import asyncio
-import uuid
 import gzip
 import json
 import numpy as np
+import threading
 from typing import Union, List, Dict, Tuple, Optional, Any
+from tooluniverse.server_security import (
+    get_fastmcp_token_auth,
+    run_fastmcp_server,
+)
 
 
 # Initialize MCP Server for Transcriptformer gene embedding retrieval
-server = FastMCP("Transcriptformer SMCP Server")
+server = FastMCP(
+    "Transcriptformer SMCP Server", auth=get_fastmcp_token_auth()
+)
+
+
+_MAX_REQUESTED_GENES = 250
+_MAX_GENE_NAME_LENGTH = 64
+_MAX_EMBEDDING_DIM = 4096
+_MAX_METADATA_COMPRESSED_BYTES = 50_000_000
+_MAX_METADATA_JSON_BYTES = 100_000_000
+_TRANSCRIPTFORMER_TOOL = None
+_TRANSCRIPTFORMER_TOOL_LOCK = threading.Lock()
+_TRANSCRIPTFORMER_REQUEST_LOCK = threading.Lock()
+
+
+def _get_transcriptformer_tool():
+    """Discover provider stores once and preserve the metadata cache across calls."""
+    global _TRANSCRIPTFORMER_TOOL
+    if _TRANSCRIPTFORMER_TOOL is None:
+        with _TRANSCRIPTFORMER_TOOL_LOCK:
+            if _TRANSCRIPTFORMER_TOOL is None:
+                _TRANSCRIPTFORMER_TOOL = TranscriptformerEmbeddingTool()
+    return _TRANSCRIPTFORMER_TOOL
 
 
 class TranscriptformerEmbeddingTool:
@@ -66,7 +92,7 @@ class TranscriptformerEmbeddingTool:
         # Construct path to embedding stores
         if data_dir is None:
             transcriptformer_data_path = os.getenv(
-                "TRANSCRIPTFORMER_DATA_PATH", "/root/PrismDB"
+                "TRANSCRIPTFORMER_DATA_PATH", ""
             )
         else:
             transcriptformer_data_path = data_dir
@@ -81,11 +107,12 @@ class TranscriptformerEmbeddingTool:
             )
 
         # Discover available disease-specific embedding stores
-        self.available_diseases: List[str] = [
-            d.lower().replace(" ", "_")
+        self._disease_directories = {
+            d.lower().replace(" ", "_"): d
             for d in os.listdir(self.base_dir)
             if os.path.isdir(os.path.join(self.base_dir, d))
-        ]
+        }
+        self.available_diseases: List[str] = sorted(self._disease_directories)
 
         # Initialize metadata cache for performance optimization
         self.metadata_cache: Dict[str, Dict[str, Any]] = {}
@@ -130,7 +157,7 @@ class TranscriptformerEmbeddingTool:
             )
 
         # Construct paths to disease-specific store and metadata
-        store_path = os.path.join(self.base_dir, disease.replace(" ", "_"))
+        store_path = os.path.join(self.base_dir, self._disease_directories[disease])
         metadata_path = os.path.join(store_path, "metadata.json.gz")
 
         # Validate metadata file exists
@@ -143,8 +170,13 @@ class TranscriptformerEmbeddingTool:
         print(
             f"Loading Transcriptformer metadata from embedding store: {os.path.basename(store_path)}..."
         )
-        with gzip.open(metadata_path, "rt", encoding="utf-8") as f:
-            metadata = json.load(f)
+        if os.path.getsize(metadata_path) > _MAX_METADATA_COMPRESSED_BYTES:
+            raise ValueError("Transcriptformer metadata exceeds the compressed-size limit")
+        with gzip.open(metadata_path, "rb") as f:
+            metadata_bytes = f.read(_MAX_METADATA_JSON_BYTES + 1)
+        if len(metadata_bytes) > _MAX_METADATA_JSON_BYTES:
+            raise ValueError("Transcriptformer metadata exceeds the expansion limit")
+        metadata = json.loads(metadata_bytes.decode("utf-8"))
 
         # Process and cache metadata with normalized keys
         self.metadata_cache[disease] = {
@@ -236,14 +268,14 @@ class TranscriptformerEmbeddingTool:
         # Validate disease state parameter
         if state not in metadata["available_states"]:
             context_info.append(
-                f"Invalid disease state '{state}'. Available states for {disease}: {metadata['available_states']}"
+                f"Disease state '{state}' is unavailable for the requested dataset."
             )
             return None, context_info
 
         # Validate cell type parameter
         if cell_type not in metadata["available_cell_types"]:
             context_info.append(
-                f"Invalid cell type '{cell_type}'. Available cell types for {disease}: {metadata['available_cell_types']}"
+                f"Cell type '{cell_type}' is unavailable for the requested dataset."
             )
             return None, context_info
 
@@ -309,12 +341,8 @@ class TranscriptformerEmbeddingTool:
 
         # Validate that the requested context combination exists
         if group_key not in metadata["groups_meta"]:
-            available_keys = list(metadata["groups_meta"].keys())
             context_info.append(
                 f"Context combination not available: state='{state}', cell_type='{cell_type}'"
-            )
-            context_info.append(
-                f"Available context combinations for {disease}: {available_keys}"
             )
             return None, context_info
 
@@ -322,12 +350,18 @@ class TranscriptformerEmbeddingTool:
         npy_path = os.path.join(metadata["store_path"], f"{group_key}.npy")
         if not os.path.exists(npy_path):
             context_info.append(
-                f"Embedding matrix file not found for context '{group_key}' at {npy_path}"
+                f"Embedding matrix is unavailable for context '{group_key}'"
             )
             return None, context_info
 
         print(f"Loading embedding matrix for context: {group_key}")
-        embedding_matrix = np.load(npy_path)
+        embedding_matrix = np.load(npy_path, allow_pickle=False, mmap_mode="r")
+        if (
+            embedding_matrix.ndim != 2
+            or embedding_matrix.shape[0] != len(metadata["ensembl_ids_ordered"])
+            or not 1 <= embedding_matrix.shape[1] <= _MAX_EMBEDDING_DIM
+        ):
+            raise ValueError("Transcriptformer embedding matrix has an invalid shape")
 
         # Extract embeddings for requested genes
         final_embeddings = {}
@@ -336,6 +370,10 @@ class TranscriptformerEmbeddingTool:
             if gene_idx is not None:
                 # Extract and dequantize embedding vector to float32
                 embedding_vector = embedding_matrix[gene_idx].astype(np.float32)
+                if not np.isfinite(embedding_vector).all():
+                    raise ValueError(
+                        "Transcriptformer embedding matrix contains non-finite values"
+                    )
                 final_embeddings[gene_name] = embedding_vector
 
         # Add success information to context
@@ -351,13 +389,11 @@ class TranscriptformerEmbeddingTool:
         return final_embeddings, context_info
 
 
-@server.tool()
-async def run_transcriptformer_embedding_retrieval(
+def _run_transcriptformer_embedding_retrieval(
     state: str,
     cell_type: str,
     gene_names: List[str],
     disease: str,
-    data_dir: Optional[str] = None,
 ):
     """
     MCP Tool: Retrieves contextualized gene embeddings from Transcriptformer models.
@@ -407,7 +443,7 @@ async def run_transcriptformer_embedding_retrieval(
                             - Gene symbols: ['TP53', 'BRCA1', 'EGFR', 'MYC']
                             - Ensembl IDs: ['ENSG00000141510', 'ENSG00000139618']
                             - Mixed formats supported
-                            - Empty list retrieves all available genes
+                            - Supply 1 to 250 identifiers per request
 
         disease (str): Disease/dataset identifier. Examples:
                     - 'breast_cancer': Breast cancer scRNA-seq data
@@ -438,14 +474,6 @@ async def run_transcriptformer_embedding_retrieval(
             disease="breast_cancer"
         )
 
-        # Get all gene embeddings for control hepatocytes
-        result = await run_transcriptformer_embedding_retrieval(
-            state="control",
-            cell_type="hepatocyte",
-            gene_names=[],
-            disease="liver_disease"
-        )
-
         # Mixed gene identifier formats
         result = await run_transcriptformer_embedding_retrieval(
             state="treated",
@@ -455,63 +483,68 @@ async def run_transcriptformer_embedding_retrieval(
         )
     """
 
-    # Generate unique request ID for tracking and logging
-    request_id = str(uuid.uuid4())[:8]
-    print(
-        f"[{request_id}] Received Transcriptformer embedding retrieval request for {disease} - {state} - {cell_type}"
-    )
-
-    # Set default data directory if not provided
-    if data_dir is None:
-        data_dir = os.getenv("TRANSCRIPTFORMER_DATA_PATH", "/root/PrismDB")
+    print("Received Transcriptformer embedding retrieval request")
 
     # Initialize global Transcriptformer tool instance for MCP server
     # This instance will be used by the MCP tool function to serve embedding requests
     try:
-        transcriptformer_tool = TranscriptformerEmbeddingTool(data_dir=data_dir)
+        transcriptformer_tool = _get_transcriptformer_tool()
         print("Transcriptformer tool instance created and ready for MCP server")
-    except Exception as e:
-        print(f"Error creating Transcriptformer tool: {str(e)}")
-        print(
-            "Please ensure TRANSCRIPTFORMER_DATA_PATH is correctly set and embedding stores exist."
-        )
-        raise e
+    except Exception:
+        print("Error creating Transcriptformer tool")
+        return {
+            "error": "Transcriptformer data are unavailable on the provider.",
+            "context_info": ["The provider must verify TRANSCRIPTFORMER_DATA_PATH."],
+        }
 
     try:
-        # Brief async pause to allow for proper request handling
-        await asyncio.sleep(0.1)
-
         # Validate input parameters
-        if not disease or not disease.strip():
+        if (
+            not isinstance(disease, str)
+            or not disease.strip()
+            or len(disease) > 128
+        ):
             raise ValueError(
                 "Disease parameter cannot be empty. Please specify a valid disease identifier."
             )
-        if not state or not state.strip():
+        if not isinstance(state, str) or not state.strip() or len(state) > 128:
             raise ValueError(
                 "State parameter cannot be empty. Please specify a valid disease state."
             )
-        if not cell_type or not cell_type.strip():
+        if (
+            not isinstance(cell_type, str)
+            or not cell_type.strip()
+            or len(cell_type) > 128
+        ):
             raise ValueError(
                 "Cell type parameter cannot be empty. Please specify a valid cell type."
             )
-
-        print(
-            f"[{request_id}] Processing embedding retrieval for {len(gene_names) if gene_names else 'all'} genes"
-        )
+        if (
+            not isinstance(gene_names, list)
+            or not 1 <= len(gene_names) <= _MAX_REQUESTED_GENES
+            or any(
+                not isinstance(gene, str)
+                or not gene.strip()
+                or len(gene) > _MAX_GENE_NAME_LENGTH
+                for gene in gene_names
+            )
+            or len(set(gene_names)) != len(gene_names)
+        ):
+            raise ValueError(
+                "gene_names must contain 1 to 250 unique nonempty strings of at most 64 characters"
+            )
 
         # Execute Transcriptformer embedding retrieval
         embeddings, context_info = transcriptformer_tool.get_embedding_for_context(
             state=state.strip(),
             cell_type=cell_type.strip(),
-            gene_names=gene_names if gene_names else None,
+            gene_names=gene_names,
             disease=disease.strip(),
         )
 
         # Handle retrieval failure
         if embeddings is None:
-            print(
-                f"[{request_id}] Embedding retrieval failed for context: {disease} - {state} - {cell_type}"
-            )
+            print("Transcriptformer embedding retrieval failed for the requested context")
             return {
                 "error": "Failed to retrieve Transcriptformer embeddings for specified context",
                 "context_info": context_info
@@ -534,9 +567,7 @@ async def run_transcriptformer_embedding_retrieval(
             if serializable_embeddings
             else 0
         )
-        print(
-            f"[{request_id}] Transcriptformer embedding retrieval completed: {num_genes} genes, {embedding_dim}D embeddings"
-        )
+        print("Transcriptformer embedding retrieval completed")
 
         return {
             "embeddings": serializable_embeddings,
@@ -552,22 +583,44 @@ async def run_transcriptformer_embedding_retrieval(
         error_message = (
             f"Transcriptformer embedding retrieval validation error: {str(e)}"
         )
-        print(f"[{request_id}] {error_message}")
+        print("Transcriptformer embedding retrieval validation error")
         return {
             "error": error_message,
             "context_info": ["Please verify input parameters and available contexts."],
         }
-    except Exception as e:
-        error_message = (
-            f"Unexpected error during Transcriptformer embedding retrieval: {str(e)}"
-        )
-        print(f"[{request_id}] {error_message}")
+    except Exception:
+        error_message = "Transcriptformer retrieval failed due to an internal provider error."
+        print("Unexpected error during Transcriptformer embedding retrieval")
         return {
             "error": error_message,
             "context_info": [
                 "Internal server error occurred during embedding retrieval."
             ],
         }
+
+
+@server.tool()
+async def run_transcriptformer_embedding_retrieval(
+    state: str,
+    cell_type: str,
+    gene_names: List[str],
+    disease: str,
+):
+    """Retrieve embeddings without blocking the MCP event loop."""
+
+    def execute():
+        # Metadata discovery/cache population and matrix reads share provider
+        # state, so serialize calls until a future store implementation proves
+        # safe concurrent access.
+        with _TRANSCRIPTFORMER_REQUEST_LOCK:
+            return _run_transcriptformer_embedding_retrieval(
+                state,
+                cell_type,
+                gene_names,
+                disease,
+            )
+
+    return await asyncio.to_thread(execute)
 
 
 if __name__ == "__main__":
@@ -581,6 +634,9 @@ if __name__ == "__main__":
 
     # Launch the MCP server with Transcriptformer embedding capabilities
     # Extended timeout for handling large embedding matrices
-    server.run(
-        transport="streamable-http", host="0.0.0.0", port=7000, stateless_http=True
+    run_fastmcp_server(
+        server,
+        host=os.getenv("TOOLUNIVERSE_MCP_HOST", "127.0.0.1"),
+        port=7000,
+        stateless_http=True,
     )

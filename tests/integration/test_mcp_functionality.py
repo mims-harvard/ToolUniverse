@@ -289,8 +289,11 @@ class TestMCPFunctionality:
         
         assert has_uniprot or has_chembl
 
-    def test_smcp_server_exclude_tools(self):
+    def test_smcp_server_exclude_tools(self, tmp_path, monkeypatch):
         """Test SMCP server tool exclusion"""
+        # Keep a developer's local .tooluniverse/profile.yaml from preloading
+        # every tool and bypassing the constructor filters under test.
+        monkeypatch.chdir(tmp_path)
         # Test excluding specific tools
         server = SMCP(
             name="Exclude Test",

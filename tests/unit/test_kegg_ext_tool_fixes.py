@@ -192,6 +192,82 @@ def test_get_network_does_not_double_prefix_already_prefixed_id():
     assert "network:network:" not in captured["url"]
 
 
+# N#####-style perturbed-network records (unlike the nt######-style Map
+# records above) carry their gene list under GENE and cross-referenced KEGG
+# pathways under PATHWAY -- previously unhandled entirely, so `elements`
+# stayed empty and the raw numeric Entrez IDs in `expanded` had no symbol
+# mapping. Confirmed live for N00151 (TNF-NFKB signaling): 16 real genes and
+# 2 real pathway cross-refs, both silently dropped.
+N_STYLE_NETWORK_FLAT_FILE = """ENTRY       N00151                      Network
+NAME        TNF-NFKB signaling pathway
+DEFINITION  TNF -> TNFRSF1A -> NFKB
+  EXPANDED  7124 -> 7132 -> 4790
+TYPE        Reference
+PATHWAY     hsa04668  TNF signaling pathway
+            hsa04064  NF-kappa B signaling pathway
+GENE        7124  TNF; tumor necrosis factor
+            7132  TNFRSF1A; TNF receptor superfamily member 1A
+            4790  NFKB1; nuclear factor kappa B subunit 1
+REFERENCE   PMID:22119011
+  AUTHORS   Verhelst K, Carpentier I, Beyaert R
+///
+"""
+
+
+def test_get_network_captures_gene_and_pathway_fields_for_n_style_ids():
+    tool = _tool("get_network")
+
+    with patch(
+        "tooluniverse.kegg_ext_tool.requests.get",
+        return_value=_resp(N_STYLE_NETWORK_FLAT_FILE),
+    ):
+        result = tool._get_network({"network_id": "N00151"})
+
+    assert result["data"]["genes"] == [
+        {
+            "entrez_id": "7124",
+            "symbol": "TNF",
+            "description": "tumor necrosis factor",
+        },
+        {
+            "entrez_id": "7132",
+            "symbol": "TNFRSF1A",
+            "description": "TNF receptor superfamily member 1A",
+        },
+        {
+            "entrez_id": "4790",
+            "symbol": "NFKB1",
+            "description": "nuclear factor kappa B subunit 1",
+        },
+    ]
+    assert result["data"]["pathways"] == [
+        {"pathway_id": "hsa04668", "name": "TNF signaling pathway"},
+        {"pathway_id": "hsa04064", "name": "NF-kappa B signaling pathway"},
+    ]
+    # A REFERENCE section (with its own indented AUTHORS/TITLE lines) must not
+    # bleed into the gene/pathway lists just because it's also indented text.
+    assert not any("PMID" in g["description"] for g in result["data"]["genes"])
+
+
+def test_get_network_element_parsing_still_works_for_nt_style_ids():
+    """The new GENE/PATHWAY branches must not regress the existing
+    MEMBER/ELEMENT handling for the other (Map-type) network ID family."""
+    tool = _tool("get_network")
+
+    with patch(
+        "tooluniverse.kegg_ext_tool.requests.get",
+        return_value=_resp(NETWORK_FLAT_FILE),
+    ):
+        result = tool._get_network({"network_id": "nt06276"})
+
+    assert result["data"]["genes"] == []
+    assert result["data"]["pathways"] == []
+    assert result["data"]["elements"] == [
+        "N00001  EGF-EGFR-RAS-ERK signaling pathway",
+        "N00002  BCR-ABL fusion kinase to RAS-ERK signaling pathway",
+    ]
+
+
 def test_brite_hierarchy_404_gives_table_type_hint():
     tool = _tool("get_brite_hierarchy")
 

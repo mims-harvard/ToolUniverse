@@ -41,25 +41,18 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "mirna": {"type": "string"},
-                  "gene": {"type": "string"},
-                  "gene_id": {"type": "string"},
-                  "clip_experiments": {"type": "integer"},
-                  "predicted_by": {"type": "array", "items": {"type": "string"}},
-                  "n_programs": {"type": "integer"}
-                }
-              }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["data"]
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "mirna": {"type": "string"},
+              "gene": {"type": "string"},
+              "gene_id": {"type": "string"},
+              "clip_experiments": {"type": "integer"},
+              "predicted_by": {"type": "array", "items": {"type": "string"}},
+              "n_programs": {"type": "integer"}
+            }
+          }
         },
         {
           "type": "object",
@@ -119,27 +112,20 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "rbp": {"type": "string"},
-                  "gene": {"type": "string"},
-                  "gene_id": {"type": "string"},
-                  "cluster_num": {"type": "integer"},
-                  "total_clip_experiments": {"type": "integer"},
-                  "total_clip_sites": {"type": "integer"},
-                  "chromosome": {"type": "string"},
-                  "strand": {"type": "string"}
-                }
-              }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["data"]
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rbp": {"type": "string"},
+              "gene": {"type": "string"},
+              "gene_id": {"type": "string"},
+              "cluster_num": {"type": "integer"},
+              "total_clip_experiments": {"type": "integer"},
+              "total_clip_sites": {"type": "integer"},
+              "chromosome": {"type": "string"},
+              "strand": {"type": "string"}
+            }
+          }
         },
         {
           "type": "object",
@@ -194,25 +180,18 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "gene": {"type": "string"},
-                  "partner": {"type": "string"},
-                  "partner_id": {"type": "string"},
-                  "shared_mirna_families": {"type": "integer"},
-                  "pval": {"type": ["number", "string", "null"]},
-                  "fdr": {"type": ["number", "string", "null"]}
-                }
-              }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["data"]
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gene": {"type": "string"},
+              "partner": {"type": "string"},
+              "partner_id": {"type": "string"},
+              "shared_mirna_families": {"type": "integer"},
+              "pval": {"type": ["number", "string", "null"]},
+              "fdr": {"type": ["number", "string", "null"]}
+            }
+          }
         },
         {
           "type": "object",
@@ -267,25 +246,18 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "rna": {"type": "string"},
-                  "partner": {"type": "string"},
-                  "interaction_num": {"type": "integer"},
-                  "total_experiments": {"type": "integer"},
-                  "total_reads": {"type": "integer"},
-                  "free_energy": {"type": ["number", "string", "null"]}
-                }
-              }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["data"]
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rna": {"type": "string"},
+              "partner": {"type": "string"},
+              "interaction_num": {"type": "integer"},
+              "total_experiments": {"type": "integer"},
+              "total_reads": {"type": "integer"},
+              "free_energy": {"type": ["number", "string", "null"]}
+            }
+          }
         },
         {
           "type": "object",
@@ -344,25 +316,18 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "mirna": {"type": "string"},
-                  "gene": {"type": "string"},
-                  "cleave_event_num": {"type": "integer"},
-                  "degradome_experiments": {"type": "integer"},
-                  "total_reads": {"type": "integer"},
-                  "category": {"type": "string"}
-                }
-              }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["data"]
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "mirna": {"type": "string"},
+              "gene": {"type": "string"},
+              "cleave_event_num": {"type": "integer"},
+              "degradome_experiments": {"type": "integer"},
+              "total_reads": {"type": "integer"},
+              "category": {"type": "string"}
+            }
+          }
         },
         {
           "type": "object",
@@ -413,26 +378,19 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "rbp": {"type": "string"},
-                  "gene": {"type": "string"},
-                  "tissue": {"type": "string"},
-                  "diseases": {"type": "string"},
-                  "disease_cosmic_id": {"type": "string"},
-                  "cosmic_num": {"type": "integer"},
-                  "sample_num": {"type": "integer"}
-                }
-              }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["data"]
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rbp": {"type": "string"},
+              "gene": {"type": "string"},
+              "tissue": {"type": "string"},
+              "diseases": {"type": "string"},
+              "disease_cosmic_id": {"type": "string"},
+              "cosmic_num": {"type": "integer"},
+              "sample_num": {"type": "integer"}
+            }
+          }
         },
         {
           "type": "object",
@@ -483,26 +441,19 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "rbp": {"type": "string"},
-                  "dataset_id": {"type": "string"},
-                  "motif_rank": {"type": "integer"},
-                  "identified_motif": {"type": "string"},
-                  "query_motif": {"type": "string"},
-                  "target_peak_num": {"type": "integer"},
-                  "pvalue": {"type": ["number", "string", "null"]}
-                }
-              }
-            },
-            "metadata": {"type": "object"}
-          },
-          "required": ["data"]
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rbp": {"type": "string"},
+              "dataset_id": {"type": "string"},
+              "motif_rank": {"type": "integer"},
+              "identified_motif": {"type": "string"},
+              "query_motif": {"type": "string"},
+              "target_peak_num": {"type": "integer"},
+              "pvalue": {"type": ["number", "string", "null"]}
+            }
+          }
         },
         {
           "type": "object",

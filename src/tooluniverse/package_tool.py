@@ -67,6 +67,53 @@ class PackageTool(BaseTool):
             # chained .get() then crashes with "'NoneType' has no attribute 'get'".
             project_urls = info.get("project_urls") or {}
 
+            # Repository URL: PyPI project_urls has no fixed key name -- projects
+            # use "Repository", "Source", "Source Code", "Code", "Homepage",
+            # or "GitHub" interchangeably (e.g. mne-python only sets "Source
+            # Code"). Try the common variants in order before giving up.
+            repository = ""
+            for key in (
+                "Repository",
+                "Source",
+                "Source Code",
+                "Code",
+                "GitHub",
+                "Development",
+                "Homepage",
+            ):
+                if project_urls.get(key):
+                    repository = project_urls[key]
+                    break
+
+            # Supported Python versions: `classifiers` is a flat list of ALL PyPI
+            # trove classifiers (license, OS, dev status, audience, ...), not
+            # just Python versions -- filtering to "Programming Language ::
+            # Python :: 3.X" entries gives the real list. Some packages (e.g.
+            # mne-python) only declare the generic "Python :: 3" classifier
+            # without per-minor-version entries; `requires_python` (e.g.
+            # ">=3.10") is the reliable fallback for those.
+            classifiers = info.get("classifiers") or []
+            python_versions = []
+            for classifier in classifiers:
+                if not classifier.startswith("Programming Language :: Python ::"):
+                    continue
+                version = classifier.rsplit("::", 1)[-1].strip()
+                if "." in version and version.replace(".", "").isdigit():
+                    python_versions.append(version)
+            if not python_versions and info.get("requires_python"):
+                python_versions = [info["requires_python"]]
+
+            # Last-updated date: `last_serial` is PyPI's internal monotonic
+            # change-counter (currently tens of millions), not a timestamp --
+            # using it as a Unix epoch decodes to bogus 1970s dates. The real
+            # upload date of the current release lives in `urls[*].upload_time_iso_8601`.
+            urls_info = pypi_data.get("urls") or []
+            last_updated = (
+                urls_info[0].get("upload_time_iso_8601", "Unknown")
+                if urls_info
+                else "Unknown"
+            )
+
             # Build response with PyPI data
             result = {
                 "package_name": info.get("name", self.package_name),
@@ -76,10 +123,8 @@ class PackageTool(BaseTool):
                 "license": info.get("license", "Not specified"),
                 "home_page": info.get("home_page", ""),
                 "documentation": project_urls.get("Documentation", ""),
-                "repository": project_urls.get(
-                    "Repository", project_urls.get("Source", "")
-                ),
-                "python_versions": info.get("classifiers", []),
+                "repository": repository,
+                "python_versions": python_versions,
                 "keywords": (
                     info.get("keywords", "").split(",") if info.get("keywords") else []
                 ),
@@ -89,7 +134,7 @@ class PackageTool(BaseTool):
                     "pip_upgrade": f"pip install --upgrade {self.package_name}",
                 },
                 "source": "pypi",
-                "last_updated": pypi_data.get("last_serial", "Unknown"),
+                "last_updated": last_updated,
             }
 
             # Merge with local enhanced information

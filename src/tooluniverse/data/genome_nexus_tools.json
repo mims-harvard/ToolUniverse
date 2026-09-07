@@ -29,87 +29,75 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
+                        "variant": {"type": "string", "description": "HGVS genomic notation"},
+                        "hgvsg": {"type": "string", "description": "Standardized HGVS genomic notation"},
+                        "assembly_name": {"type": "string", "description": "Genome assembly (GRCh37)"},
+                        "most_severe_consequence": {"type": "string", "description": "Most severe consequence type (e.g., missense_variant)"},
+                        "annotation_summary": {
                             "type": "object",
                             "properties": {
-                                "variant": {"type": "string", "description": "HGVS genomic notation"},
-                                "hgvsg": {"type": "string", "description": "Standardized HGVS genomic notation"},
-                                "assembly_name": {"type": "string", "description": "Genome assembly (GRCh37)"},
-                                "most_severe_consequence": {"type": "string", "description": "Most severe consequence type (e.g., missense_variant)"},
-                                "annotation_summary": {
-                                    "type": "object",
-                                    "properties": {
-                                        "variantType": {"type": "string"},
-                                        "canonicalTranscriptId": {"type": "string"},
-                                        "transcriptConsequences": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object",
-                                                "properties": {
-                                                    "transcriptId": {"type": "string"},
-                                                    "hugoGeneSymbol": {"type": "string"},
-                                                    "hgvspShort": {"type": ["string", "null"]},
-                                                    "codonChange": {"type": ["string", "null"]},
-                                                    "consequenceTerms": {"type": "string"},
-                                                    "entrezGeneId": {"type": ["string", "null"]}
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "transcript_consequences": {
+                                "variantType": {"type": "string"},
+                                "canonicalTranscriptId": {"type": "string"},
+                                "transcriptConsequences": {
                                     "type": "array",
                                     "items": {
                                         "type": "object",
                                         "properties": {
-                                            "gene_symbol": {"type": "string"},
-                                            "transcript_id": {"type": "string"},
-                                            "consequence_terms": {"type": "array", "items": {"type": "string"}},
-                                            "hgvsp": {"type": ["string", "null"]},
-                                            "hgvsc": {"type": ["string", "null"]},
-                                            "amino_acids": {"type": ["string", "null"]},
-                                            "polyphen_prediction": {"type": ["string", "null"]},
-                                            "polyphen_score": {"type": ["number", "null"]},
-                                            "sift_prediction": {"type": ["string", "null"]},
-                                            "sift_score": {"type": ["number", "null"]},
-                                            "alphaMissense": {
-                                                "type": ["object", "null"],
-                                                "properties": {
-                                                    "score": {"type": "number"},
-                                                    "pathogenicity": {"type": "string"}
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "hotspots": {
-                                    "type": ["object", "null"],
-                                    "properties": {
-                                        "annotation": {
-                                            "type": "array",
-                                            "description": "Cancer mutation hotspot data"
-                                        }
-                                    }
-                                },
-                                "colocated_variants": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "dbSnpId": {"type": "string"}
+                                            "transcriptId": {"type": "string"},
+                                            "hugoGeneSymbol": {"type": "string"},
+                                            "hgvspShort": {"type": ["string", "null"]},
+                                            "codonChange": {"type": ["string", "null"]},
+                                            "consequenceTerms": {"type": "string"},
+                                            "entrezGeneId": {"type": ["string", "null"]}
                                         }
                                     }
                                 }
                             }
                         },
-                        "metadata": {
-                            "type": "object",
+                        "transcript_consequences": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "gene_symbol": {"type": "string"},
+                                    "transcript_id": {"type": "string"},
+                                    "consequence_terms": {"type": "array", "items": {"type": "string"}},
+                                    "hgvsp": {"type": ["string", "null"]},
+                                    "hgvsc": {"type": ["string", "null"]},
+                                    "amino_acids": {"type": ["string", "null"]},
+                                    "polyphen_prediction": {"type": ["string", "null"]},
+                                    "polyphen_score": {"type": ["number", "null"]},
+                                    "sift_prediction": {"type": ["string", "null"]},
+                                    "sift_score": {"type": ["number", "null"]},
+                                    "alphaMissense": {
+                                        "type": ["object", "null"],
+                                        "properties": {
+                                            "score": {"type": "number"},
+                                            "pathogenicity": {"type": "string"}
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "hotspots": {
+                            "type": ["object", "null"],
                             "properties": {
-                                "source": {"type": "string"}
+                                "annotation": {
+                                    "type": "array",
+                                    "description": "Cancer mutation hotspot data"
+                                }
+                            }
+                        },
+                        "colocated_variants": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "dbSnpId": {"type": "string"}
+                                }
                             }
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -151,34 +139,22 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "variant": {"type": "string"},
-                                "gene_symbol": {"type": ["string", "null"]},
-                                "is_hotspot": {"type": "boolean"},
-                                "hotspots": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "hugoSymbol": {"type": "string"},
-                                            "residue": {"type": "string"},
-                                            "tumorCount": {"type": "integer"},
-                                            "type": {"type": "string", "description": "single residue or 3d"}
-                                        }
-                                    }
+                        "variant": {"type": "string"},
+                        "gene_symbol": {"type": ["string", "null"]},
+                        "is_hotspot": {"type": "boolean"},
+                        "hotspots": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "hugoSymbol": {"type": "string"},
+                                    "residue": {"type": "string"},
+                                    "tumorCount": {"type": "integer"},
+                                    "type": {"type": "string", "description": "single residue or 3d"}
                                 }
                             }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"}
-                            }
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -220,38 +196,26 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "transcriptId": {"type": "string", "description": "Ensembl transcript ID"},
-                                "geneId": {"type": "string", "description": "Ensembl gene ID"},
-                                "proteinId": {"type": "string", "description": "Ensembl protein ID"},
-                                "proteinLength": {"type": "integer"},
-                                "hugoSymbols": {"type": "array", "items": {"type": "string"}},
-                                "refseqMrnaId": {"type": ["string", "null"]},
-                                "ccdsId": {"type": ["string", "null"]},
-                                "pfamDomains": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "pfamDomainId": {"type": "string"},
-                                            "pfamDomainStart": {"type": "integer"},
-                                            "pfamDomainEnd": {"type": "integer"},
-                                            "pfamDomainDescription": {"type": ["string", "null"]}
-                                        }
-                                    }
+                        "transcriptId": {"type": "string", "description": "Ensembl transcript ID"},
+                        "geneId": {"type": "string", "description": "Ensembl gene ID"},
+                        "proteinId": {"type": "string", "description": "Ensembl protein ID"},
+                        "proteinLength": {"type": "integer"},
+                        "hugoSymbols": {"type": "array", "items": {"type": "string"}},
+                        "refseqMrnaId": {"type": ["string", "null"]},
+                        "ccdsId": {"type": ["string", "null"]},
+                        "pfamDomains": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "pfamDomainId": {"type": "string"},
+                                    "pfamDomainStart": {"type": "integer"},
+                                    "pfamDomainEnd": {"type": "integer"},
+                                    "pfamDomainDescription": {"type": ["string", "null"]}
                                 }
                             }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"}
-                            }
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -317,33 +281,21 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "variant": {"type": "string"},
-                                "hgvsg": {"type": "string"},
-                                "assembly_name": {"type": "string"},
-                                "most_severe_consequence": {"type": "string"},
-                                "annotation_summary": {"type": "object"},
-                                "transcript_consequences": {
-                                    "type": "array",
-                                    "items": {"type": "object"}
-                                },
-                                "hotspots": {"type": ["object", "null"]},
-                                "colocated_variants": {
-                                    "type": "array",
-                                    "items": {"type": "object"}
-                                }
-                            }
+                        "variant": {"type": "string"},
+                        "hgvsg": {"type": "string"},
+                        "assembly_name": {"type": "string"},
+                        "most_severe_consequence": {"type": "string"},
+                        "annotation_summary": {"type": "object"},
+                        "transcript_consequences": {
+                            "type": "array",
+                            "items": {"type": "object"}
                         },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"}
-                            }
+                        "hotspots": {"type": ["object", "null"]},
+                        "colocated_variants": {
+                            "type": "array",
+                            "items": {"type": "object"}
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",
@@ -385,54 +337,42 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "variant": {"type": "string", "description": "dbSNP rsID that was queried"},
-                                "hgvsg": {"type": ["string", "null"]},
-                                "assembly_name": {"type": ["string", "null"]},
-                                "most_severe_consequence": {"type": ["string", "null"]},
-                                "annotation_summary": {"type": ["object", "null"]},
-                                "transcript_consequences": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
+                        "variant": {"type": "string", "description": "dbSNP rsID that was queried"},
+                        "hgvsg": {"type": ["string", "null"]},
+                        "assembly_name": {"type": ["string", "null"]},
+                        "most_severe_consequence": {"type": ["string", "null"]},
+                        "annotation_summary": {"type": ["object", "null"]},
+                        "transcript_consequences": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "gene_symbol": {"type": ["string", "null"]},
+                                    "transcript_id": {"type": ["string", "null"]},
+                                    "consequence_terms": {"type": "array", "items": {"type": "string"}},
+                                    "hgvsp": {"type": ["string", "null"]},
+                                    "hgvsc": {"type": ["string", "null"]},
+                                    "amino_acids": {"type": ["string", "null"]},
+                                    "polyphen_prediction": {"type": ["string", "null"]},
+                                    "polyphen_score": {"type": ["number", "null"]},
+                                    "sift_prediction": {"type": ["string", "null"]},
+                                    "sift_score": {"type": ["number", "null"]},
+                                    "alphaMissense": {
+                                        "type": ["object", "null"],
                                         "properties": {
-                                            "gene_symbol": {"type": ["string", "null"]},
-                                            "transcript_id": {"type": ["string", "null"]},
-                                            "consequence_terms": {"type": "array", "items": {"type": "string"}},
-                                            "hgvsp": {"type": ["string", "null"]},
-                                            "hgvsc": {"type": ["string", "null"]},
-                                            "amino_acids": {"type": ["string", "null"]},
-                                            "polyphen_prediction": {"type": ["string", "null"]},
-                                            "polyphen_score": {"type": ["number", "null"]},
-                                            "sift_prediction": {"type": ["string", "null"]},
-                                            "sift_score": {"type": ["number", "null"]},
-                                            "alphaMissense": {
-                                                "type": ["object", "null"],
-                                                "properties": {
-                                                    "score": {"type": "number"},
-                                                    "pathogenicity": {"type": "string"}
-                                                }
-                                            }
+                                            "score": {"type": "number"},
+                                            "pathogenicity": {"type": "string"}
                                         }
                                     }
-                                },
-                                "hotspots": {"type": ["object", "null"]},
-                                "colocated_variants": {
-                                    "type": "array",
-                                    "items": {"type": "object"}
                                 }
                             }
                         },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"}
-                            }
+                        "hotspots": {"type": ["object", "null"]},
+                        "colocated_variants": {
+                            "type": "array",
+                            "items": {"type": "object"}
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",

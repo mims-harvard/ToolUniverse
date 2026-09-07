@@ -8,8 +8,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["validate"],
-          "description": "Operation type"
+          "enum": [
+            "validate"
+          ],
+          "description": "Operation type",
+          "default": "validate"
         },
         "a": {
           "type": "number",
@@ -48,7 +51,11 @@
           "description": "Optional reported density in g/cm^3 to compare against"
         }
       },
-      "required": ["operation", "a", "Z", "mw"]
+      "required": [
+        "a",
+        "Z",
+        "mw"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -58,12 +65,24 @@
             "data": {
               "type": "object",
               "properties": {
-                "crystal_system": {"type": "string"},
-                "volume_ang3": {"type": "number"},
-                "calculated_density_g_cm3": {"type": "number"},
-                "reported_density_g_cm3": {"type": "number"},
-                "percent_error": {"type": "number"},
-                "verdict": {"type": "string"}
+                "crystal_system": {
+                  "type": "string"
+                },
+                "volume_ang3": {
+                  "type": "number"
+                },
+                "calculated_density_g_cm3": {
+                  "type": "number"
+                },
+                "reported_density_g_cm3": {
+                  "type": "number"
+                },
+                "percent_error": {
+                  "type": "number"
+                },
+                "verdict": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -71,9 +90,13 @@
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -85,6 +108,9 @@
         "mw": 58.44,
         "reported_density": 2.16
       }
-    ]
+    ],
+    "fields": {
+      "operation": "validate"
+    }
   }
 ]

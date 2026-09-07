@@ -258,32 +258,18 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "hits": {
-                  "type": "integer",
-                  "description": "Total number of model identifiers in the registry"
-                },
-                "models": {
-                  "type": "array",
-                  "description": "Array of all BioModels identifier strings",
-                  "items": {
-                    "type": "string"
-                  }
-                }
+            "hits": {
+              "type": "integer",
+              "description": "Total number of model identifiers in the registry"
+            },
+            "models": {
+              "type": "array",
+              "description": "Array of all BioModels identifier strings",
+              "items": {
+                "type": "string"
               }
-            },
-            "url": {
-              "type": "string"
-            },
-            "count": {
-              "type": "integer"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

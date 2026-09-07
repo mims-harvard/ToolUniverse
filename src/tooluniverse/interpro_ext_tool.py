@@ -17,6 +17,24 @@ from .base_tool import BaseTool
 INTERPRO_API_BASE_URL = "https://www.ebi.ac.uk/interpro/api"
 
 
+def _json_or_none(response):
+    """Parse a JSON response body, returning None when there is no body.
+
+    The InterPro API reports an empty result set as HTTP 204 No Content with a
+    zero-length body instead of a 200 carrying ``{"count": 0, "results": []}``.
+    ``raise_for_status()`` treats 204 as success, so calling ``.json()`` on it
+    raises a JSONDecodeError that used to escape as an opaque
+    "Unexpected error querying InterPro API" message -- callers could not tell
+    "nothing matched" from "the tool is broken".
+    """
+    if response.status_code == 204:
+        return None
+    body = response.content
+    if not body or not body.strip():
+        return None
+    return response.json()
+
+
 class InterProExtTool(BaseTool):
     """
     Extended InterPro API tool for protein-by-domain queries.
@@ -85,7 +103,8 @@ class InterProExtTool(BaseTool):
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
-        data = response.json()
+        # HTTP 204 / empty body == "no protein carries this domain".
+        data = _json_or_none(response) or {}
 
         total_count = data.get("count", 0)
         results = data.get("results", [])

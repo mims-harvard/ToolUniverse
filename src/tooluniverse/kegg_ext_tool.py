@@ -32,6 +32,25 @@ _VARIANT_XREF_FIELDS = {
 }
 
 
+# KEGG deposits its compound/drug/disease records into PubChem as
+# *substances*, so a DBLINKS line "PubChem: 7805" carries a PubChem SID, not
+# a CID. Emitting it under the bare key "PubChem" invites callers to feed it
+# straight into a CID-based tool, which silently returns a different molecule
+# (SID 7805 = KEGG C05443 cholecalciferol, but CID 7805 = 1-bromo-4-
+# methylbenzene; SID 4808 = KEGG C01659 acrylamide, but CID 4808 is an
+# unrelated C36 compound). Verified live against PubChem PUG-REST:
+# /substance/sid/7805/cids -> 5280795 and /substance/sid/4808/cids -> 6579,
+# which are the real CIDs for those two compounds. Renaming the key makes the
+# namespace explicit at the point the value is produced.
+_DBLINK_KEY_RENAMES = {"PubChem": "PubChem_SID"}
+
+
+def _store_dblink(dblinks: Dict[str, str], raw_key: str, value: str) -> None:
+    """Record one KEGG DBLINKS entry under a namespace-explicit key."""
+    key = raw_key.strip()
+    dblinks[_DBLINK_KEY_RENAMES.get(key, key)] = value.strip()
+
+
 def _new_kegg_variation(mutation: str) -> Dict[str, Any]:
     """A fresh KEGG variant record with all cross-reference lists empty."""
     return {
@@ -219,6 +238,32 @@ class KEGGExtTool(BaseTool):
                     "error": f"Could not resolve gene symbol '{gene_id}' to a KEGG gene ID for organism '{organism}'. Use KEGG format 'hsa:7157' directly, or verify the gene symbol.",
                 }
             gene_id = resolved
+        else:
+            # Fix-R15C-2: a caller can plausibly pass "org:SYMBOL" (e.g.
+            # "bta:DGAT1") by analogy with the documented "hsa:7157" format,
+            # assuming the part after the colon is a gene identifier of any
+            # kind. KEGG's numeric gene IDs are org-specific and don't match
+            # symbols, so link/pathway silently returns zero rows for a
+            # symbol -- confirmed live: "bta:DGAT1" -> pathway_count 0, while
+            # the equivalent gene_symbol="DGAT1", organism="bta" resolves to
+            # "bta:282609" and returns 4 real pathways. Detect this shape
+            # (non-numeric ID part) and resolve it the same way as the
+            # bare-symbol branch above, instead of returning a silently
+            # empty "no pathways" result that looks like a real negative.
+            org_prefix, _, id_part = gene_id.partition(":")
+            if id_part and not id_part.isdigit():
+                resolved = self._resolve_gene_symbol(id_part, org_prefix)
+                if not resolved:
+                    return {
+                        "status": "error",
+                        "error": (
+                            f"'{gene_id}' looks like 'organism:SYMBOL' rather than a KEGG "
+                            f"numeric gene ID, and '{id_part}' could not be resolved to one "
+                            f"for organism '{org_prefix}'. Use KEGG format '{org_prefix}:7157' "
+                            f"directly, or pass gene_symbol='{id_part}', organism='{org_prefix}'."
+                        ),
+                    }
+                gene_id = resolved
 
         # Get pathway links for this gene
         url = f"{KEGG_BASE_URL}/link/pathway/{gene_id}"
@@ -392,7 +437,7 @@ class KEGGExtTool(BaseTool):
                 current_field = "DBLINKS"
                 parts = line[12:].strip().split(": ", 1)
                 if len(parts) == 2:
-                    result["dblinks"][parts[0].strip()] = parts[1].strip()
+                    _store_dblink(result["dblinks"], parts[0], parts[1])
             elif line.startswith("REMARK"):
                 result["remark"] = line[12:].strip()
                 current_field = None
@@ -413,7 +458,7 @@ class KEGGExtTool(BaseTool):
                 elif current_field == "DBLINKS":
                     parts = content.split(": ", 1)
                     if len(parts) == 2:
-                        result["dblinks"][parts[0].strip()] = parts[1].strip()
+                        _store_dblink(result["dblinks"], parts[0], parts[1])
             else:
                 # New field we don't specifically handle
                 current_field = None
@@ -690,7 +735,7 @@ class KEGGExtTool(BaseTool):
                 current_field = "DBLINKS"
                 parts = line[12:].strip().split(": ", 1)
                 if len(parts) == 2:
-                    result["dblinks"][parts[0].strip()] = parts[1].strip()
+                    _store_dblink(result["dblinks"], parts[0], parts[1])
             elif line.startswith("REFERENCE"):
                 current_field = "REFERENCE"
                 ref = line[12:].strip()
@@ -719,7 +764,7 @@ class KEGGExtTool(BaseTool):
                 elif current_field == "DBLINKS":
                     parts = content.split(": ", 1)
                     if len(parts) == 2:
-                        result["dblinks"][parts[0].strip()] = parts[1].strip()
+                        _store_dblink(result["dblinks"], parts[0], parts[1])
                 elif current_field == "REFERENCE":
                     result["references"].append(content)
             else:
@@ -888,7 +933,7 @@ class KEGGExtTool(BaseTool):
                 current_field = "DBLINKS"
                 parts = line[12:].strip().split(": ", 1)
                 if len(parts) == 2:
-                    result["dblinks"][parts[0].strip()] = parts[1].strip()
+                    _store_dblink(result["dblinks"], parts[0], parts[1])
             elif line.startswith("EFFICACY"):
                 current_field = "EFFICACY"
                 result["efficacy"] = line[12:].strip()
@@ -916,7 +961,7 @@ class KEGGExtTool(BaseTool):
                 elif current_field == "DBLINKS":
                     parts = content.split(": ", 1)
                     if len(parts) == 2:
-                        result["dblinks"][parts[0].strip()] = parts[1].strip()
+                        _store_dblink(result["dblinks"], parts[0], parts[1])
                 elif current_field == "EFFICACY":
                     result["efficacy"] = (result["efficacy"] or "") + " " + content
                 elif current_field == "PRODUCT":
@@ -1032,8 +1077,12 @@ class KEGGExtTool(BaseTool):
             "diseases": [],
             "drugs": [],
             "elements": [],
+            "genes": [],
+            "pathways": [],
         }
 
+        gene_lines: list = []
+        pathway_lines: list = []
         current_field = None
         for line in text.split("\n"):
             if line.startswith("NAME"):
@@ -1066,6 +1115,18 @@ class KEGGExtTool(BaseTool):
                 # they're merged into the one "elements" output field.
                 current_field = "ELEMENT"
                 result["elements"].append(line[12:].strip())
+            elif line.startswith("GENE"):
+                # N#####-style perturbed-network records (e.g. N00151) list
+                # the genes driving the network here as "<entrez_id>  <SYMBOL>;
+                # <description>" -- previously unhandled entirely, so the tool
+                # returned an empty gene list for exactly the records where a
+                # caller needs it most, forcing manual decoding of the numeric
+                # Entrez IDs embedded in "expanded" instead.
+                current_field = "GENE"
+                gene_lines.append(line[12:].strip())
+            elif line.startswith("PATHWAY"):
+                current_field = "PATHWAY"
+                pathway_lines.append(line[12:].strip())
             elif line.startswith("///"):
                 break
             elif line.startswith("            "):
@@ -1078,10 +1139,32 @@ class KEGGExtTool(BaseTool):
                     result["drugs"].append(content)
                 elif current_field == "ELEMENT":
                     result["elements"].append(content)
+                elif current_field == "GENE":
+                    gene_lines.append(content)
+                elif current_field == "PATHWAY":
+                    pathway_lines.append(content)
                 elif current_field == "DEFINITION":
                     result["definition"] = (result["definition"] or "") + " " + content
             else:
                 current_field = None
+
+        for gene_line in gene_lines:
+            entrez_id, _, rest = gene_line.partition("  ")
+            entrez_id = entrez_id.strip()
+            symbol, _, description = rest.strip().partition(";")
+            if entrez_id:
+                result["genes"].append(
+                    {
+                        "entrez_id": entrez_id,
+                        "symbol": symbol.strip(),
+                        "description": description.strip(),
+                    }
+                )
+
+        result["pathways"] = [
+            {"pathway_id": pid, "name": name}
+            for pid, name in self._parse_id_map(pathway_lines).items()
+        ]
 
         return {
             "status": "success",

@@ -51,9 +51,33 @@ class EnsemblComparaTool(BaseTool):
         except requests.exceptions.ConnectionError:
             return {"status": "error", "error": "Failed to connect to Ensembl REST API"}
         except requests.exceptions.HTTPError as e:
+            # Include the response body instead of just the status code --
+            # Ensembl's 400s carry a JSON {"error": "..."} explaining what
+            # wasn't recognized (e.g. an unresolved gene symbol), and
+            # silently dropping it left a bare "HTTP error: 400" with no
+            # indication of what to fix. Matches the error-body-extraction
+            # pattern already used by ensembl_map_tool.py and
+            # ensembl_variation_ext_tool.py.
+            status = e.response.status_code if e.response is not None else "unknown"
+            body = ""
+            if e.response is not None:
+                try:
+                    body = e.response.json().get("error", "")
+                except Exception:
+                    body = e.response.text[:200]
+            gene = arguments.get("gene", "")
+            hint = (
+                f" -- gene symbol '{gene}' may not exist for the requested "
+                "species; verify it via ensembl_lookup_gene or "
+                "HGNC_search_genes."
+                if gene
+                else ""
+            )
             return {
                 "status": "error",
-                "error": f"Ensembl API HTTP error: {e.response.status_code}",
+                "error": (
+                    f"Ensembl API HTTP {status}{f': {body}' if body else ''}{hint}"
+                ),
             }
         except Exception as e:
             return {

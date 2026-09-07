@@ -52,14 +52,44 @@
         "HPO_ID_list": ["HP:0001250"],
         "limit": 5,
         "offset": 1
+      },
+      {
+        "HPO_ID_list": ["HP:9999999", "HP:0001249"],
+        "limit": 5
       }
     ],
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "List of disease names associated with the provided HPO phenotype IDs"
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of disease names associated with the intersection of ALL provided HPO phenotype IDs. Returned when every input HPO ID matched at least one disease."
+        },
+        {
+          "type": "object",
+          "description": "Returned whenever the plain list would hide something: one or more input HPO IDs matched zero diseases, a phenotype's associations were truncated, or the intersection was larger than 'limit'. 'warning' is present only in the first two cases; 'total_matched' is always the full intersection size before 'limit'/'offset' were applied.",
+          "properties": {
+            "diseases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The page of the intersection selected by 'limit' and 'offset', in the first phenotype's upstream relevance order."
+            },
+            "total_matched": {
+              "type": "integer",
+              "description": "Number of diseases carrying every usable input phenotype, before 'limit' and 'offset' were applied. Use this as the denominator; len(diseases) is only the page size."
+            },
+            "warning": {
+              "type": "string",
+              "description": "Present only when a phenotype contributed no associations or its associations were truncated. Absent when the only reason for the object form is that the intersection exceeded 'limit'."
+            }
+          },
+          "required": ["diseases", "total_matched"]
+        }
+      ]
     }
   },
   {

@@ -33,6 +33,26 @@ SCREEN_GRAPHQL = "https://ga.staging.wenglab.org/graphql"
 _RANK_FLOOR = -10
 _RANK_CEIL = 10
 
+# SCREEN encodes proximality in the element class itself: PLS (promoter-like)
+# and pELS (proximal enhancer-like) are the TSS-proximal classes, dELS is the
+# distal one. The API's own `info.isproximal` comes back false for every element
+# -- checked over 263 cCREs spanning three loci, including 80 pELS and 16 PLS,
+# which are proximal by definition -- so forwarding it verbatim made
+# `is_proximal` useless: filtering on it returned nothing anywhere, which reads
+# as "this locus has no proximal elements" rather than "this field is unset".
+_PROXIMAL_ELEMENT_TYPES = ("PLS", "pELS")
+
+
+def _is_proximal(element_type, api_value):
+    """Whether a cCRE is TSS-proximal, from its element class.
+
+    Falls back to the class when the API leaves `isproximal` unset, and honours
+    a true value from the API if one is ever returned.
+    """
+    if api_value:
+        return True
+    return str(element_type or "") in _PROXIMAL_ELEMENT_TYPES
+
 
 @register_tool("ScreenCcreTool")
 class ScreenCcreTool(BaseTool):
@@ -165,7 +185,7 @@ class ScreenCcreTool(BaseTool):
                     if (start_pos is not None and length is not None)
                     else None,
                     "element_type": r.get("pct"),
-                    "is_proximal": info.get("isproximal"),
+                    "is_proximal": _is_proximal(r.get("pct"), info.get("isproximal")),
                     "dnase_zscore": r.get("dnase_zscore"),
                     "promoter_zscore": r.get("promoter_zscore"),
                     "enhancer_zscore": r.get("enhancer_zscore"),

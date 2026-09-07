@@ -5,10 +5,56 @@ returning identifiers, associated genes, phenotypes, and prevalence data
 in a single call.
 """
 
+import re
 from typing import Any, Dict, List
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+
+# Disease nomenclature mixes Roman and Arabic subtype numbers freely --
+# "Mucopolysaccharidosis type I" (query), "Mucopolysaccharidosis Type I"
+# (NCIT) and "Mucopolysaccharidosis type 1" (Orphanet) are one disease.
+_ROMAN_TO_ARABIC = {
+    "i": "1",
+    "ii": "2",
+    "iii": "3",
+    "iv": "4",
+    "v": "5",
+    "vi": "6",
+    "vii": "7",
+    "viii": "8",
+    "ix": "9",
+    "x": "10",
+}
+
+
+def _normalize_disease_label(text: str) -> str:
+    """Fold a disease name to a comparable form: lowercase, punctuation-free,
+    with Roman subtype numerals rewritten as Arabic."""
+    tokens = re.split(r"[^0-9a-z]+", (text or "").lower())
+    return " ".join(_ROMAN_TO_ARABIC.get(t, t) for t in tokens if t)
+
+
+def _labels_match(query: str, label: str) -> bool:
+    """True when `label` names the same disease the caller asked for."""
+    normalized_query = _normalize_disease_label(query)
+    return (
+        bool(normalized_query) and _normalize_disease_label(label) == normalized_query
+    )
+
+
+def _truncate_msg(msg: str, limit: int = 240) -> str:
+    """Truncate an error message on a word boundary, never mid-word.
+
+    Sub-tool error messages are the only actionable guidance a caller gets
+    on a failed source; cutting them off mid-word at a fixed character
+    count silently drops that guidance (e.g. DisGeNET's "...resolve first
+    (e.g. umls_search_concepts)..." hint used to get cut to "umls_search_").
+    """
+    if len(msg) <= limit:
+        return msg
+    head = msg[:limit].rsplit(" ", 1)[0]
+    return head + "..."
 
 
 @register_tool("CompoundDiseaseProfileTool")
@@ -35,17 +81,19 @@ class CompoundDiseaseProfileTool(BaseTool):
             try:
                 r = tu.run_one_function({"name": tool_name, "arguments": args})
                 if isinstance(r, dict) and r.get("status") == "error":
-                    sources_failed.append(f"{source_name}: {r.get('error', '')[:100]}")
+                    sources_failed.append(
+                        f"{source_name}: {_truncate_msg(r.get('error', ''))}"
+                    )
                 return r
             except Exception as e:
-                sources_failed.append(f"{source_name}: {str(e)[:100]}")
+                sources_failed.append(f"{source_name}: {_truncate_msg(str(e))}")
                 return {"status": "error"}
 
         # 1. Orphanet
         r = _try_tool(
             "Orphanet", "Orphanet_search_diseases", {"query": disease, "language": "en"}
         )
-        sections["orphanet"] = self._parse_orphanet(r)
+        sections["orphanet"] = self._parse_orphanet(r, disease)
 
         # 2. OMIM
         r = _try_tool("OMIM", "OMIM_search", {"query": disease, "limit": 5})
@@ -81,22 +129,38 @@ class CompoundDiseaseProfileTool(BaseTool):
             },
         }
 
-    def _parse_orphanet(self, result: Any) -> Dict[str, Any]:
+    @staticmethod
+    def _entry_label(entry: Dict[str, Any]) -> str:
+        return entry.get(
+            "Preferred term", entry.get("preferred_term", entry.get("name", ""))
+        )
+
+    def _parse_orphanet(self, result: Any, query: str) -> Dict[str, Any]:
         if not isinstance(result, dict) or result.get("status") == "error":
             return {}
         data = result.get("data", {})
         results_list = data.get("results", data) if isinstance(data, dict) else data
-        if isinstance(results_list, list) and results_list:
-            entry = results_list[0] if isinstance(results_list[0], dict) else {}
-            return {
-                "orpha_code": str(entry.get("ORPHAcode", entry.get("orpha_code", ""))),
-                "name": entry.get(
-                    "Preferred term", entry.get("preferred_term", entry.get("name", ""))
-                ),
-                "prevalence": entry.get("prevalence", ""),
-                "inheritance": entry.get("inheritance", ""),
-            }
-        return {}
+        if not isinstance(results_list, list) or not results_list:
+            return {}
+        entries = [e for e in results_list if isinstance(e, dict)]
+        if not entries:
+            return {}
+        # Orphanet's search is ranked by its own relevance, not by name
+        # equality: "mucopolysaccharidosis type I" puts MPS VI (ORPHA:583)
+        # first and the real MPS I (ORPHA:579) fourth. Taking results[0]
+        # therefore stamped a different disease's ORPHA code onto the
+        # profile. Prefer the hit whose name actually matches the query.
+        exact = next(
+            (e for e in entries if _labels_match(query, self._entry_label(e))), None
+        )
+        entry = exact or entries[0]
+        return {
+            "orpha_code": str(entry.get("ORPHAcode", entry.get("orpha_code", ""))),
+            "name": self._entry_label(entry),
+            "prevalence": entry.get("prevalence", ""),
+            "inheritance": entry.get("inheritance", ""),
+            "match": "exact" if exact is not None else "approximate",
+        }
 
     def _parse_omim(self, result: Any) -> Dict[str, Any]:
         if not isinstance(result, dict):
@@ -200,11 +264,21 @@ class CompoundDiseaseProfileTool(BaseTool):
         return {"terms": terms}
 
     def _build_profile(self, disease: str, sections: Dict[str, Any]) -> Dict[str, Any]:
-        """Build a unified disease profile from all sources."""
+        """Build a unified disease profile from all sources.
+
+        `identifiers` is the block downstream callers treat as "the IDs for
+        this disease", so only cross-references whose own label names the
+        queried disease belong in it. Every source is a ranked search, and
+        their top hits routinely disagree: for "mucopolysaccharidosis type I"
+        the unfiltered version emitted Orphanet 583 (MPS VI), MeSH D009085
+        (MPS IV) and ORDO 217085 (MPS II severe) side by side under one
+        disease name. Non-matching hits stay visible in `per_source` -- they
+        are just not promoted to identifiers.
+        """
         profile: Dict[str, Any] = {"disease": disease, "identifiers": {}}
 
         orphanet = sections.get("orphanet", {})
-        if orphanet.get("orpha_code"):
+        if orphanet.get("orpha_code") and orphanet.get("match") == "exact":
             profile["identifiers"]["orphanet"] = orphanet["orpha_code"]
         if orphanet.get("prevalence"):
             profile["prevalence"] = orphanet["prevalence"]
@@ -218,7 +292,7 @@ class CompoundDiseaseProfileTool(BaseTool):
                 profile["identifiers"]["omim"] = mim
 
         ot = sections.get("opentargets", {})
-        if ot.get("efo_id"):
+        if ot.get("efo_id") and _labels_match(disease, ot.get("name", "")):
             profile["identifiers"]["efo"] = ot["efo_id"]
         if ot.get("description"):
             profile["description"] = ot["description"]
@@ -227,7 +301,11 @@ class CompoundDiseaseProfileTool(BaseTool):
         if ols.get("terms"):
             for term in ols["terms"]:
                 ont = term.get("ontology", "").lower()
-                if ont and term.get("id"):
+                if (
+                    ont
+                    and term.get("id")
+                    and _labels_match(disease, term.get("label", ""))
+                ):
                     profile["identifiers"][ont] = term["id"]
 
         disgenet = sections.get("disgenet", {})

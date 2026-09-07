@@ -122,7 +122,13 @@ Search Multiple Sources
         "arguments": {"query": query, "limit": 3}
     })
     
-    print(f"Found: NICE {len(nice)}, PubMed {len(pubmed)}, WHO {len(who)}")
+    # Each search returns {"status", "data", "metadata"}. `metadata["total"]`
+    # is how many documents matched upstream, which is usually far more than
+    # the page you asked for.
+    for name, res in [("NICE", nice), ("PubMed", pubmed), ("WHO", who)]:
+        meta = res["metadata"]
+        print(f"{name}: {len(res['data'])} of {meta['total']} "
+              f"(truncated={meta['truncated']})")
 
 Extract NICE Full Text
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -138,7 +144,7 @@ Extract NICE Full Text
     # Step 2: Extract full text
     full_text = tu.run({
         "name": "NICE_Guideline_Full_Text",
-        "arguments": {"url": search[0]['url']}
+        "arguments": {"url": search["data"][0]["url"]}
     })
     
     print(f"Length: {full_text['full_text_length']:,} characters")
@@ -160,7 +166,7 @@ Extract WHO Content + PDF
     # Step 2: Extract content
     content = tu.run({
         "name": "WHO_Guideline_Full_Text",
-        "arguments": {"url": search[0]['url']}
+        "arguments": {"url": search["data"][0]["url"]}
     })
     
     print(f"Content length: {content['content_length']:,} characters")
@@ -220,10 +226,29 @@ Return Fields
 
 **Search Tools Return:**
 
+``NICE_Clinical_Guidelines_Search``, ``PubMed_Guidelines_Search``,
+``EuropePMC_Guidelines_Search``, ``TRIP_Database_Guidelines_Search``,
+``WHO_Guidelines_Search`` and ``OpenAlex_Guidelines_Search`` return
+``{"status", "data", "metadata"}``. The remaining search tools (GIN, CMA,
+SIGN, CTFPHC) return a bare list, because their sources publish no match
+count to report.
+
+``data`` holds one object per guideline:
+
 - ``title``: Guideline title
 - ``url``: Direct link to guideline
 - ``summary``/``abstract``/``description``: Content summary (200-2,500 chars)
 - Tool-specific: ``pmid``, ``doi``, ``authors``, ``date``, ``cited_by_count``, etc.
+
+``metadata`` describes the slice you received:
+
+- ``total``: documents matching upstream, or ``None`` where the source
+  publishes no count. A search for "infection" returns 15 NICE documents out
+  of ``total`` 1,057 — without this figure the page reads as the whole corpus.
+- ``retrieved``: rows fetched from the source before local filtering
+- ``returned``: rows in ``data``; fewer than ``retrieved`` means this tool
+  filtered some out, not that the source had fewer
+- ``truncated``: ``True`` when ``total`` exceeds ``retrieved``
 
 **NICE Full-Text Returns:**
 

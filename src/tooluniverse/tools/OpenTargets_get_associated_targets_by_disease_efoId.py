@@ -1,7 +1,7 @@
 """
 OpenTargets_get_associated_targets_by_disease_efoId
 
-Find targets associated with a specific disease or phenotype based on efoId.
+Find targets associated with a specific disease or phenotype based on efoId. Results are PAGINATE...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def OpenTargets_get_associated_targets_by_disease_efoId(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Find targets associated with a specific disease or phenotype based on efoId.
+    Find targets associated with a specific disease or phenotype based on efoId. Results are PAGINATE...
 
     Parameters
     ----------

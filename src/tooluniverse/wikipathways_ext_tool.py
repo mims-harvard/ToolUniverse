@@ -68,6 +68,18 @@ def _wpid_from_uri(uri: str) -> str:
     return tail.split("_", 1)[0]
 
 
+def _resolve_pathway_id(arguments: Dict[str, Any]) -> str:
+    """`pathway_id`, normalized, accepting `wpid` as an alias.
+
+    WikiPathways_get_pathway (the sibling tool in wikipathways_tool.py) names
+    this parameter `wpid`; accept it here too so a caller who just used that
+    tool doesn't hit a validation error switching to this one.
+    """
+    return (arguments.get("pathway_id") or arguments.get("wpid") or "").upper().replace(
+        '"', ""
+    )
+
+
 class WikiPathwaysExtTool(BaseTool):
     """WikiPathways extended endpoints via SPARQL."""
 
@@ -93,7 +105,7 @@ class WikiPathwaysExtTool(BaseTool):
             }
 
     def _get_pathway_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        pathway_id = (arguments.get("pathway_id") or "").upper().replace('"', "")
+        pathway_id = _resolve_pathway_id(arguments)
         if not pathway_id:
             return {
                 "status": "error",
@@ -178,7 +190,7 @@ SELECT DISTINCT ?gene ?gene_label WHERE {{
         the central entities (unlike get_pathway_genes which returns only gene
         products).
         """
-        pathway_id = (arguments.get("pathway_id") or "").upper().replace('"', "")
+        pathway_id = _resolve_pathway_id(arguments)
         if not pathway_id:
             return {
                 "status": "error",

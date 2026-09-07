@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def get_networkx_info(
-    info_type: str,
+    info_type: Optional[str] = "overview",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

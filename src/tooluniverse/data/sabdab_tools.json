@@ -8,7 +8,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "search_structures"
+          "const": "search_structures",
+          "default": "search_structures"
         },
         "query": {
           "type": "string",
@@ -41,7 +42,10 @@
       {
         "query": "anti-CD20"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_structures"
+    }
   },
   {
     "name": "SAbDab_get_structure",
@@ -52,7 +56,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_structure"
+          "const": "get_structure",
+          "default": "get_structure"
         },
         "pdb_id": {
           "type": "string",
@@ -80,7 +85,10 @@
       {
         "pdb_id": "1AHW"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_structure"
+    }
   },
   {
     "name": "SAbDab_get_structure_summary",
@@ -91,7 +99,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_structure_summary"
+          "const": "get_structure_summary",
+          "default": "get_structure_summary"
         },
         "pdb_id": {
           "type": "string",
@@ -245,7 +254,10 @@
       {
         "pdb_id": "3hfm"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_structure_summary"
+    }
   },
   {
     "name": "SAbDab_get_summary",
@@ -256,7 +268,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_summary"
+          "const": "get_summary",
+          "default": "get_summary"
         }
       },
       "required": []
@@ -274,6 +287,9 @@
     },
     "test_examples": [
       {}
-    ]
+    ],
+    "fields": {
+      "operation": "get_summary"
+    }
   }
 ]

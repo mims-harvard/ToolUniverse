@@ -5,12 +5,13 @@
     "description": "Transfer cell-type labels to unlabeled single cells with scANVI (semi-supervised single-cell annotation; Xu 2021 / scvi-tools, Gayoso 2022). Pretrains scVI on a raw-count matrix, refines it semi-supervised on the known labels, then predicts a cell type for every cell and returns the predictions for the previously-unlabeled cells. Input is a server-accessible .h5ad of raw UMI counts whose `labels_key` obs column holds known cell types for some cells and the `unlabeled_category` sentinel (default 'Unknown') for the cells to annotate.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData of RAW UMI counts."},
-        "labels_key": {"type": "string", "description": "obs column holding known cell-type labels for some cells and the unlabeled_category sentinel for the cells to annotate."},
-        "unlabeled_category": {"type": "string", "description": "Value in labels_key marking unlabeled cells (default 'Unknown')."},
-        "scvi_epochs": {"type": "integer", "description": "Unsupervised scVI pretraining epochs (default 100)."},
-        "scanvi_epochs": {"type": "integer", "description": "Semi-supervised scANVI refinement epochs (default 20)."}
+        "adata_path": {"type": "string", "description": "An .h5ad file of raw UMI counts inside the provider-configured data directory."},
+        "labels_key": {"type": "string", "minLength": 1, "maxLength": 128, "description": "obs column holding known cell-type labels for some cells and the unlabeled_category sentinel for the cells to annotate."},
+        "unlabeled_category": {"type": "string", "minLength": 1, "maxLength": 128, "description": "Value in labels_key marking unlabeled cells (default 'Unknown')."},
+        "scvi_epochs": {"type": "integer", "minimum": 1, "maximum": 400, "description": "Unsupervised scVI pretraining epochs (default 100)."},
+        "scanvi_epochs": {"type": "integer", "minimum": 1, "maximum": 200, "description": "Semi-supervised scANVI refinement epochs (default 20)."}
       },
       "required": ["adata_path", "labels_key"]
     },

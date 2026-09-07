@@ -114,16 +114,37 @@ class OMIMTool(BaseTool):
             omim_data = data.get("omim", {})
             search_response = omim_data.get("searchResponse", {})
 
+            # Search results are a lightweight index, not full records: keep
+            # only MIM number, title, entry type (prefix), and status. The
+            # full record (text sections, allelic variants, references, gene
+            # map, etc.) is available per-entry via OMIM_get_entry using the
+            # mimNumber returned here.
+            summarized_entries = []
+            for item in search_response.get("entryList", []):
+                entry = item.get("entry", {})
+                summarized_entries.append(
+                    {
+                        "mim_number": entry.get("mimNumber"),
+                        "prefix": entry.get("prefix"),
+                        "status": entry.get("status"),
+                        "preferred_title": entry.get("titles", {}).get(
+                            "preferredTitle"
+                        ),
+                        "matches": entry.get("matches"),
+                    }
+                )
+
             return {
                 "status": "success",
                 "data": {
                     "total_results": search_response.get("totalResults", 0),
                     "start": search_response.get("startIndex", 0),
-                    "entries": search_response.get("entryList", []),
+                    "entries": summarized_entries,
                 },
                 "metadata": {
                     "source": "OMIM",
                     "query": query,
+                    "note": "Use OMIM_get_entry with mim_number for full record details.",
                 },
             }
 

@@ -11,7 +11,8 @@
           "enum": [
             "immune_estimation"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "immune_estimation"
         },
         "cancer": {
           "type": "string",
@@ -26,7 +27,6 @@
         }
       },
       "required": [
-        "operation",
         "cancer"
       ]
     },
@@ -70,7 +70,10 @@
         "operation": "immune_estimation",
         "cancer": "BRCA"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "immune_estimation"
+    }
   },
   {
     "name": "TIMER2_gene_correlation",
@@ -84,7 +87,8 @@
           "enum": [
             "gene_correlation"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "gene_correlation"
         },
         "cancer": {
           "type": "string",
@@ -100,7 +104,6 @@
         }
       },
       "required": [
-        "operation",
         "cancer",
         "gene1",
         "gene2"
@@ -158,7 +161,10 @@
         "gene1": "CD8A",
         "gene2": "PDCD1"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "gene_correlation"
+    }
   },
   {
     "name": "TIMER2_survival_association",
@@ -172,7 +178,8 @@
           "enum": [
             "survival_association"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "survival_association"
         },
         "cancer": {
           "type": "string",
@@ -184,7 +191,6 @@
         }
       },
       "required": [
-        "operation",
         "cancer",
         "gene"
       ]
@@ -240,6 +246,9 @@
         "cancer": "BRCA",
         "gene": "CD8A"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "survival_association"
+    }
   }
 ]

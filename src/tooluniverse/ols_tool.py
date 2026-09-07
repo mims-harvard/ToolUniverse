@@ -7,6 +7,7 @@ adapted into a synchronous local tool that fits the ToolUniverse runtime.
 
 from __future__ import annotations
 
+import re
 import urllib.parse
 from typing import Any, Dict, List, Optional
 
@@ -18,6 +19,40 @@ from .tool_registry import register_tool
 
 OLS_BASE_URL = "https://www.ebi.ac.uk/ols4"
 REQUEST_TIMEOUT = 30.0  # 30 second timeout to prevent hanging on slow API responses
+
+# OLS4's `/api/search?exact=true` flag on its own restricts almost nothing: the
+# endpoint defaults to matching across label, synonym, description, iri,
+# short_form and obo_id, so an "exact" hit against a *description* token still
+# drags in the whole neighbourhood. Measured against the live API:
+#   q=fibroblast&ontology=cl&exact=true                     -> 167 of 168 terms
+#   q=fibroblast&ontology=cl&exact=true&queryFields=label   -> 1 term
+#   q=T cell&ontology=cl&exact=true                         -> 6803 terms
+#   q=T cell&ontology=cl&exact=true&queryFields=label,synonym -> 1 term
+# Constraining `queryFields` is therefore what makes `exact` mean what it says.
+# Synonyms are included because an exact hit on an alternative name is a genuine
+# exact match ('T-lymphocyte' -> CL:0000084 'T cell', 'aspirin' -> CHEBI:15365).
+_EXACT_NAME_FIELDS = "label,synonym"
+
+# Identifier-shaped queries are not names, and restricting them to label/synonym
+# returns nothing at all (q=CL:0000084&queryFields=label,synonym -> 0 hits), so
+# they get matched against the identifier fields instead.
+_EXACT_IDENTIFIER_FIELDS = "obo_id,short_form,iri"
+
+# CURIE ('CL:0000084') or OBO underscore form ('CL_0000084'). Deliberately
+# rejects anything containing whitespace so ordinary multi-word labels such as
+# 'type 2 diabetes mellitus' are treated as names.
+_IDENTIFIER_QUERY_RE = re.compile(r"^[A-Za-z][A-Za-z0-9.]*[:_][A-Za-z0-9._-]+$")
+
+
+def _exact_query_fields(query: str) -> str:
+    """Return the OLS4 ``queryFields`` set that makes ``exact=true`` restrictive."""
+
+    candidate = query.strip()
+    if candidate.lower().startswith(("http://", "https://")):
+        return _EXACT_IDENTIFIER_FIELDS
+    if _IDENTIFIER_QUERY_RE.match(candidate):
+        return _EXACT_IDENTIFIER_FIELDS
+    return _EXACT_NAME_FIELDS
 
 
 def url_encode_iri(iri: str) -> str:
@@ -237,6 +272,11 @@ class OLSTool(BaseTool):
             "exact": exact_match,
             "obsoletes": include_obsolete,
         }
+        # Only constrain `queryFields` when exact matching was actually asked
+        # for; the unfiltered search must keep its full-text recall.
+        exact_fields = _exact_query_fields(str(query)) if exact_match else None
+        if exact_fields:
+            params["queryFields"] = exact_fields
         if ontology:
             params["ontology"] = ontology
 
@@ -261,11 +301,17 @@ class OLSTool(BaseTool):
             formatted = self._format_term_collection(data, rows)
 
         formatted["query"] = query
-        formatted["filters"] = {
+        filters = {
             "ontology": ontology,
             "exact_match": exact_match,
             "include_obsolete": include_obsolete,
         }
+        # State which fields the exact match was applied to, so the echoed
+        # `exact_match: true` is a verifiable claim rather than an assertion the
+        # caller has to take on trust.
+        if exact_fields:
+            filters["exact_match_fields"] = exact_fields
+        formatted["filters"] = filters
         return formatted
 
     def _handle_get_ontology_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

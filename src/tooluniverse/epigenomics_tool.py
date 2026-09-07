@@ -21,6 +21,7 @@ import time
 import requests
 from typing import Dict, Any, Optional
 from .base_tool import BaseTool
+from .ncbi_eutils_tool import esearch_query_disclosure
 from .tool_registry import register_tool
 
 ENCODE_BASE_URL = "https://www.encodeproject.org"
@@ -83,6 +84,33 @@ def _request_with_backoff(url: str, *, timeout: int, **kwargs) -> requests.Respo
         time.sleep(delay)
     last_resp.raise_for_status()
     return last_resp
+
+
+def _geo_search_metadata(query, term, organism, esearch):
+    """Response metadata for a GEO dataset search, including GEO's own report
+    that it did not run the query as asked.
+
+    Fix-54A-1: ``search_term`` reported the term as SUBMITTED, but GEO's
+    esearch drops phrases it cannot match and answers the remainder, so the
+    field naming the executed query was the one field stating it wrongly.
+    Measured: query "breast cancer zzzqqqxyz nonexistentterm12345" returned
+    total 205972 -- identical to "breast cancer" alone -- with both nonsense
+    phrases in errorlist.phrasesnotfound and nothing said to the caller.
+
+    Shared by the four ``_geo_*_search`` methods, which differ only in the
+    ``term`` they build; stated once so the disclosure cannot be added to three
+    of them and forgotten in the fourth.
+    """
+    metadata = {
+        "source": "NCBI GEO (ncbi.nlm.nih.gov/geo)",
+        "query": query,
+        "search_term": term,
+        "organism": organism,
+    }
+    disclosure = esearch_query_disclosure(esearch, source="GEO")
+    if disclosure:
+        metadata["query_disclosure"] = disclosure
+    return metadata
 
 
 @register_tool("EpigenomicsTool")
@@ -607,6 +635,8 @@ class EpigenomicsTool(BaseTool):
         total = int(esearch.get("count", 0))
         ids = esearch.get("idlist", [])
 
+        metadata = _geo_search_metadata(query, term, organism, esearch)
+
         datasets = []
         if ids:
             summary_result = self._geo_esummary(ids)
@@ -637,12 +667,7 @@ class EpigenomicsTool(BaseTool):
                 "total": total,
                 "datasets": datasets,
             },
-            "metadata": {
-                "source": "NCBI GEO (ncbi.nlm.nih.gov/geo)",
-                "query": query,
-                "search_term": term,
-                "organism": organism,
-            },
+            "metadata": metadata,
         }
 
     def _geo_chipseq_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -661,6 +686,8 @@ class EpigenomicsTool(BaseTool):
         esearch = search_result.get("esearchresult", {})
         total = int(esearch.get("count", 0))
         ids = esearch.get("idlist", [])
+
+        metadata = _geo_search_metadata(query, term, organism, esearch)
 
         datasets = []
         if ids:
@@ -691,12 +718,7 @@ class EpigenomicsTool(BaseTool):
                 "total": total,
                 "datasets": datasets,
             },
-            "metadata": {
-                "source": "NCBI GEO (ncbi.nlm.nih.gov/geo)",
-                "query": query,
-                "search_term": term,
-                "organism": organism,
-            },
+            "metadata": metadata,
         }
 
     def _geo_dataset_details(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -761,6 +783,8 @@ class EpigenomicsTool(BaseTool):
         total = int(esearch.get("count", 0))
         ids = esearch.get("idlist", [])
 
+        metadata = _geo_search_metadata(query, term, organism, esearch)
+
         datasets = []
         if ids:
             summary_result = self._geo_esummary(ids)
@@ -789,12 +813,7 @@ class EpigenomicsTool(BaseTool):
                 "total": total,
                 "datasets": datasets,
             },
-            "metadata": {
-                "source": "NCBI GEO (ncbi.nlm.nih.gov/geo)",
-                "query": query,
-                "search_term": term,
-                "organism": organism,
-            },
+            "metadata": metadata,
         }
 
     def _geo_atacseq_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -813,6 +832,8 @@ class EpigenomicsTool(BaseTool):
         total = int(esearch.get("count", 0))
         ids = esearch.get("idlist", [])
 
+        metadata = _geo_search_metadata(query, term, organism, esearch)
+
         datasets = []
         if ids:
             summary_result = self._geo_esummary(ids)
@@ -841,12 +862,7 @@ class EpigenomicsTool(BaseTool):
                 "total": total,
                 "datasets": datasets,
             },
-            "metadata": {
-                "source": "NCBI GEO (ncbi.nlm.nih.gov/geo)",
-                "query": query,
-                "search_term": term,
-                "organism": organism,
-            },
+            "metadata": metadata,
         }
 
     def _encode_rnaseq_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

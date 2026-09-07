@@ -8,7 +8,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "search_catalog"
+          "const": "search_catalog",
+          "default": "search_catalog"
         },
         "query": {
           "type": "string",
@@ -39,7 +40,10 @@
       {
         "query": "pyridine"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_catalog"
+    }
   },
   {
     "name": "Enamine_get_compound",
@@ -50,7 +54,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_compound"
+          "const": "get_compound",
+          "default": "get_compound"
         },
         "enamine_id": {
           "type": "string",
@@ -76,7 +81,10 @@
       {
         "enamine_id": "Z1234567890"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_compound"
+    }
   },
   {
     "name": "Enamine_search_smiles",
@@ -87,7 +95,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "search_smiles"
+          "const": "search_smiles",
+          "default": "search_smiles"
         },
         "smiles": {
           "type": "string",
@@ -118,7 +127,10 @@
       {
         "smiles": "c1cccnc1"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_smiles"
+    }
   },
   {
     "name": "Enamine_get_libraries",
@@ -129,7 +141,8 @@
       "properties": {
         "operation": {
           "type": "string",
-          "const": "get_libraries"
+          "const": "get_libraries",
+          "default": "get_libraries"
         }
       },
       "required": []
@@ -147,6 +160,9 @@
     },
     "test_examples": [
       {}
-    ]
+    ],
+    "fields": {
+      "operation": "get_libraries"
+    }
   }
 ]

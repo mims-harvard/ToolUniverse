@@ -11,10 +11,18 @@ Note: These tests are marked as @pytest.mark.manual because they:
 To run manually: pytest tests/examples/test_performance_benchmarks.py -v
 """
 
+import sys
 import unittest
 import time
 import statistics
+from pathlib import Path
 import pytest
+
+# `helpers` also comes from pytest.ini's `pythonpath`, but that does not apply
+# when this file is run as a bare script via the __main__ block below.
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from helpers.threads import join_all
 from tooluniverse.tools import (
     OpenTargets_get_disease_id_description_by_name,
     ChEMBL_search_similar_molecules,
@@ -254,14 +262,16 @@ class TestPerformanceBenchmarks(unittest.TestCase):
         # Start all tools concurrently
         threads = []
         for tool_func, params, tool_name in concurrent_tools:
-            thread = threading.Thread(target=run_tool, args=(tool_func, params, tool_name))
+            thread = threading.Thread(
+                target=run_tool, args=(tool_func, params, tool_name), name=tool_name
+            )
             threads.append(thread)
             thread.start()
-        
-        # Wait for all threads to complete
-        for thread in threads:
-            thread.join(timeout=30)  # 30 second timeout
-        
+
+        # A silent timeout would drop that thread's entry from results_queue,
+        # so the success count below would blame the tools for the wait.
+        join_all(threads)
+
         # Collect results
         concurrent_results = []
         while not results_queue.empty():

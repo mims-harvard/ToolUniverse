@@ -30,7 +30,7 @@ def DNA_translate_reading_frames(
     frame : str | Any
         Reading frame to translate: '1', '2', '3', or 'all' (default). Frame 1 starts...
     genetic_code : int | Any
-        NCBI genetic code number. Currently only 1 (standard) is supported.
+        NCBI genetic code number. Only 1 (the standard code) is implemented; any othe...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

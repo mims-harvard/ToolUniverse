@@ -16,6 +16,7 @@ def FAERS_count_reactions_by_drug_event(
     serious: Optional[str] = None,
     seriousnessdeath: Optional[str] = None,
     reactionmeddraverse: Optional[str] = None,
+    limit: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -40,6 +41,8 @@ def FAERS_count_reactions_by_drug_event(
         Optional: Pass 'Yes' to filter for reports where death was an outcome. Omit t...
     reactionmeddraverse : str
         Optional: Filter by MedDRA reaction term (Lowest Level Term). When omitted, r...
+    limit : int
+        Optional: maximum number of ranked terms to return (default 100, which is ope...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -64,6 +67,7 @@ def FAERS_count_reactions_by_drug_event(
             "serious": serious,
             "seriousnessdeath": seriousnessdeath,
             "reactionmeddraverse": reactionmeddraverse,
+            "limit": limit,
         }.items()
         if v is not None
     }

@@ -1,0 +1,367 @@
+[
+  {
+    "name": "DDBJ_get_entry",
+    "type": "DDBJTool",
+    "description": "Retrieve a DNA Data Bank of Japan record by accession. DDBJ is the third INSDC member alongside NCBI/GenBank and EMBL-EBI/ENA, and also hosts JGA (Japan's controlled-access human archive), GEA (expression), and MetaboBank (metabolomics). The entry type is inferred from the accession prefix (PRJD*=bioproject, SAMD*=biosample, DRP*=sra-study, DRX*=sra-experiment, DRR*=sra-run, DRS*=sra-sample, JGAS*=jga-study, E-GEAD*=gea, MTBKS*=metabobank) unless you pass entry_type. Example: accession='DRP000001'.",
+    "fields": {
+      "operation": "get_entry"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "accession"
+      ],
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "DDBJ accession, e.g. 'DRP000001', 'PRJDB3490', 'JGAS000001', 'E-GEAD-1000', 'MTBKS102'."
+        },
+        "entry_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            null,
+            "bioproject",
+            "biosample",
+            "sra-study",
+            "sra-experiment",
+            "sra-run",
+            "sra-sample",
+            "jga-study",
+            "gea",
+            "metabobank"
+          ],
+          "description": "Override the inferred entry type. One of: bioproject, biosample, sra-study, sra-experiment, sra-run, sra-sample, jga-study, gea, metabobank."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "DDBJ record summary",
+          "properties": {
+            "identifier": {
+              "type": "string",
+              "description": "DDBJ accession"
+            },
+            "type": {
+              "type": "string",
+              "description": "DDBJ entry type"
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Record title"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Free-text description"
+            },
+            "organism": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Organism name, when recorded"
+            },
+            "organization": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Submitting organization names"
+            },
+            "status_field": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Record status, e.g. 'public'"
+            },
+            "accessibility": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Access level"
+            },
+            "date_created": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Creation date"
+            },
+            "date_modified": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Last modification date"
+            },
+            "date_published": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Publication date"
+            },
+            "library_strategy": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Sequencing strategies (DRA)"
+            },
+            "library_source": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Library sources (DRA)"
+            },
+            "instrument_model": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Sequencing instrument models (DRA)"
+            },
+            "platform": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Sequencing platforms (DRA)"
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DDBJ record URL"
+            },
+            "cross_reference_count": {
+              "type": "integer",
+              "description": "Number of linked DDBJ records"
+            },
+            "taxonomy_id": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ],
+              "description": "NCBI taxonomy ID for the organism"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "accession": "DRP000001"
+      },
+      {
+        "accession": "PRJDB3490"
+      },
+      {
+        "accession": "SAMD00000001"
+      },
+      {
+        "accession": "JGAS000001"
+      },
+      {
+        "accession": "E-GEAD-1000"
+      },
+      {
+        "accession": "MTBKS102"
+      }
+    ]
+  },
+  {
+    "name": "DDBJ_get_cross_references",
+    "type": "DDBJTool",
+    "description": "List the DDBJ records linked to an accession, so you can walk a study to its experiments, runs, and samples, or back to its BioProject. Returns linked accessions with their type and URL, plus a count of links per type. Filter with reference_type, e.g. 'sra-run'. Studies can link thousands of runs, so results are capped by limit.",
+    "fields": {
+      "operation": "get_cross_references"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "accession"
+      ],
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "DDBJ accession, e.g. 'DRP000001'."
+        },
+        "entry_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Override the inferred entry type. One of: bioproject, biosample, sra-study, sra-experiment, sra-run, sra-sample, jga-study."
+        },
+        "reference_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Only return links of this type, e.g. 'sra-run', 'bioproject'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum links to return (default 25, max 200)."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Linked DDBJ records",
+          "items": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "identifier": {
+                "type": "string",
+                "description": "Linked accession"
+              },
+              "type": {
+                "type": "string",
+                "description": "Linked record type"
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Record URL"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "accession": "DRP000001"
+      },
+      {
+        "accession": "DRP000001",
+        "reference_type": "sra-run",
+        "limit": 5
+      },
+      {
+        "accession": "PRJDB3490",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "DDBJ_search_entries",
+    "type": "DDBJTool",
+    "description": "Keyword search one DDBJ entry type (bioproject, biosample, sra-study, sra-experiment, sra-run, sra-sample, jga-study, gea, metabobank), optionally filtered by organism NCBI taxonomy ID. Example: entry_type='gea', keywords='daptomycin resistance' finds gene-expression studies on antibiotic resistance. Returns each match's identifier for use with DDBJ_get_entry or DDBJ_get_cross_references.",
+    "fields": {
+      "operation": "search_entries"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["entry_type", "keywords"],
+      "properties": {
+        "entry_type": {
+          "type": "string",
+          "enum": [
+            "bioproject",
+            "biosample",
+            "sra-study",
+            "sra-experiment",
+            "sra-run",
+            "sra-sample",
+            "jga-study",
+            "gea",
+            "metabobank"
+          ],
+          "description": "Which DDBJ record type to search."
+        },
+        "keywords": {
+          "type": "string",
+          "description": "Free-text search terms, e.g. 'daptomycin resistance'."
+        },
+        "organism_taxid": {
+          "type": ["string", "integer", "null"],
+          "description": "Optional NCBI taxonomy ID filter, e.g. 9606 (human)."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max entries to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "identifier": {"type": ["string", "null"]},
+              "title": {"type": ["string", "null"]},
+              "description": {"type": ["string", "null"]},
+              "organism": {"type": ["string", "null"]},
+              "accessibility": {"type": ["string", "null"]},
+              "date_published": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"entry_type": "gea", "keywords": "daptomycin", "limit": 5},
+      {"entry_type": "bioproject", "keywords": "lung cancer", "organism_taxid": 9606, "limit": 5}
+    ]
+  }
+]

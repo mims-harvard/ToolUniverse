@@ -37,73 +37,54 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "gene": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "phenotype_count": {
-                  "type": "integer"
-                },
-                "phenotypes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "description": {
-                        "type": "string"
-                      },
-                      "source": {
-                        "type": "string"
-                      },
-                      "location": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "gene_ensembl_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "ontology_accessions": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      },
-                      "external_references": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
+            "gene": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "phenotype_count": {
+              "type": "integer"
+            },
+            "phenotypes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_ensembl_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ontology_accessions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
+                  },
+                  "external_references": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -164,70 +145,51 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "region": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "phenotype_count": {
-                  "type": "integer"
-                },
-                "phenotypes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "description": {
-                        "type": "string"
-                      },
-                      "source": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "location": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "ontology_accessions": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
+            "region": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "phenotype_count": {
+              "type": "integer"
+            },
+            "phenotypes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ontology_accessions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -288,115 +250,93 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "query": {
-                  "type": "string"
-                },
-                "query_kind": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "association_count": {
-                  "type": "integer"
-                },
-                "associations": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "description": {
-                        "type": "string"
-                      },
-                      "variant": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "gene": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "risk_allele": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "p_value": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "beta": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "odds_ratio": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "clinical_significance": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "source": {
-                        "type": "string"
-                      },
-                      "location": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "mapped_to_accession": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "external_reference": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      }
-                    }
+            "query": {
+              "type": "string"
+            },
+            "query_kind": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "association_count": {
+              "type": "integer"
+            },
+            "associations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "variant": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "risk_allele": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "p_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "beta": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "odds_ratio": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "clinical_significance": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mapped_to_accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "external_reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                },
-                "total_returned": {
-                  "type": "integer"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -450,85 +390,66 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "variant_id": {
-                  "type": "string"
-                },
-                "species": {
-                  "type": "string"
-                },
-                "phenotype_count": {
-                  "type": "integer"
-                },
-                "phenotypes": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "trait": {
-                        "type": "string"
-                      },
-                      "source": {
-                        "type": "string"
-                      },
-                      "risk_allele": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "pvalue": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "beta_coefficient": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "study": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "genes": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "ontology_accessions": {
-                        "type": "array",
-                        "items": {
-                          "type": "string"
-                        }
-                      }
+            "variant_id": {
+              "type": "string"
+            },
+            "species": {
+              "type": "string"
+            },
+            "phenotype_count": {
+              "type": "integer"
+            },
+            "phenotypes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "trait": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "risk_allele": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pvalue": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "beta_coefficient": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "study": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "genes": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ontology_accessions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     }
                   }
                 }
               }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "endpoint": {
-                  "type": "string"
-                }
-              }
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

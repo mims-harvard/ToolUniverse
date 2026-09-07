@@ -11,7 +11,8 @@
           "enum": [
             "search_screens"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_screens"
         },
         "query": {
           "type": [
@@ -21,9 +22,7 @@
           "description": "Optional keyword to filter screens by name or description (e.g., 'JUMP', 'U2OS', 'wawer')"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "array",
@@ -53,7 +52,10 @@
       {
         "operation": "search_screens"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_screens"
+    }
   },
   {
     "name": "CellPainting_get_screen_plates",
@@ -67,7 +69,8 @@
           "enum": [
             "get_screen_plates"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_screen_plates"
         },
         "screen_id": {
           "type": "integer",
@@ -75,7 +78,6 @@
         }
       },
       "required": [
-        "operation",
         "screen_id"
       ]
     },
@@ -113,7 +115,10 @@
         "operation": "get_screen_plates",
         "screen_id": 1251
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_screen_plates"
+    }
   },
   {
     "name": "CellPainting_get_well_data",
@@ -127,7 +132,8 @@
           "enum": [
             "get_well_data"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_well_data"
         },
         "plate_id": {
           "type": "integer",
@@ -142,7 +148,6 @@
         }
       },
       "required": [
-        "operation",
         "plate_id"
       ]
     },
@@ -183,6 +188,9 @@
         "plate_id": 5104,
         "limit": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_well_data"
+    }
   }
 ]

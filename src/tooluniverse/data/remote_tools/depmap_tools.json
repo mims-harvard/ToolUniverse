@@ -5,18 +5,21 @@
     "description": "Analyzes gene-gene correlations from DepMap CRISPR knockout screening data. This tool validates genetic interactions using empirical cell viability data from 1,320+ cancer cell lines in the DepMap 24Q2 dataset. It determines if two genes have correlated knockout effects, providing insights into genetic dependencies and synthetic lethal relationships.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "gene_a": {
           "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9._-]{1,64}$",
           "description": "First gene symbol for correlation analysis (e.g., 'BRAF', 'TP53'). Must use standard HUGO gene nomenclature."
         },
         "gene_b": {
           "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9._-]{1,64}$",
           "description": "Second gene symbol for correlation analysis (e.g., 'MAPK1', 'MDM2'). Must use standard HUGO gene nomenclature."
-        },
-        "data_dir": {
-          "type": "string",
-          "description": "Path to directory containing DepMap correlation matrices. If None, uses DEPMAP_DATA_PATH/depmap_24q2."
         }
       },
       "required": [

@@ -38,6 +38,30 @@ def _normalize_hpo_id(term_id: str) -> str:
     return "HP:" + tid.split(":", 1)[1] if ":" in tid else tid
 
 
+def _merge_disclosure(requested_id: str, resolved_id: Any) -> Dict[str, Any]:
+    """Report an upstream merge of `requested_id` into `resolved_id`, else {}.
+
+    The JAX ontology API silently serves an obsolete/merged ID's replacement
+    record -- no obsolescence flag, no 404, no redirect marker -- so the id
+    mismatch is the only evidence, and every caller that resolves a term the
+    user named needs the same three keys back.
+    """
+    if not resolved_id or resolved_id == requested_id:
+        return {}
+    return {
+        "requested_id": requested_id,
+        "resolved_id": resolved_id,
+        "note": (
+            f"The requested term ID ({requested_id}) differs from the "
+            f"returned term's ID ({resolved_id}). This usually means "
+            f"{requested_id} is obsolete or was merged into {resolved_id} "
+            "upstream. Use get_phenotype_by_HPO_ID for an explicit "
+            "'deprecated' flag, or HPO_search_terms to find the "
+            "current preferred term."
+        ),
+    }
+
+
 @register_tool("HPOTool")
 class HPOTool(BaseTool):
     """
@@ -213,7 +237,8 @@ class HPOTool(BaseTool):
         """Get genes or diseases annotated to an HPO phenotype term.
 
         Uses the JAX network-annotation endpoint, which returns the genes,
-        diseases, assays and medical actions linked to a phenotype.
+        diseases, assays and medical actions linked to a phenotype in a
+        single response (the endpoint itself has no server-side paging).
         """
         term_id = arguments.get("term_id", "")
         if not term_id:
@@ -229,6 +254,21 @@ class HPOTool(BaseTool):
             limit = 50
         limit = max(1, min(limit, 500))
 
+        # Fix-19C-1/19C-2: a phenotype term can be linked to thousands of
+        # genes/diseases (confirmed live: HP:0001263 "Global developmental
+        # delay" has 2077 genes), but `limit` is capped at 500 and this
+        # endpoint has no server-side paging -- previously the tool always
+        # sliced from position 0, so well-known genes/diseases sorted past
+        # position 500 by the API (e.g. SHANK3, MECP2 for that term) were
+        # permanently unreachable with no way to page further. The full list
+        # is already in memory from the one API call below, so paging is a
+        # free client-side slice -- no extra round-trip needed.
+        try:
+            offset = int(arguments.get("offset", 0) or 0)
+        except (TypeError, ValueError):
+            offset = 0
+        offset = max(0, offset)
+
         # The annotation endpoint lives under /api/network/, not /api/hp/.
         url = f"{HPO_ANNOTATION_URL}/{term_id}"
         response = requests.get(url, timeout=self.timeout)
@@ -238,22 +278,47 @@ class HPOTool(BaseTool):
         items = data.get(kind) or []
         total = len(items)
         trimmed = []
-        for it in items[:limit]:
+        for it in items[offset : offset + limit]:
             entry = {"id": it.get("id"), "name": it.get("name")}
             if kind == "diseases":
                 entry["mondo_id"] = it.get("mondoId")
             trimmed.append(entry)
 
-        return {
-            "status": "success",
-            "data": {kind: trimmed},
-            "metadata": {
-                "source": "HPO (JAX Ontology) network annotation",
-                "term_id": term_id,
-                "total": total,
-                "returned": len(trimmed),
-            },
+        metadata = {
+            "source": "HPO (JAX Ontology) network annotation",
+            "term_id": term_id,
+            "total": total,
+            "offset": offset,
+            "returned": len(trimmed),
+            "has_more": offset + len(trimmed) < total,
         }
+        # An obsolete/merged term comes back as HTTP 200 with empty arrays,
+        # indistinguishable from a live term nothing is annotated to. The one
+        # payload carries genes, diseases, assays and medicalActions together,
+        # so a non-empty sibling array already proves the term resolves and the
+        # probe is only worth paying for when all four are empty.
+        if not any(
+            data.get(k) for k in ("genes", "diseases", "assays", "medicalActions")
+        ):
+            metadata.update(self._merge_metadata(term_id))
+
+        return {"status": "success", "data": {kind: trimmed}, "metadata": metadata}
+
+    def _merge_metadata(self, term_id: str) -> Dict[str, Any]:
+        """Report the replacement term when `term_id` was merged, else {}.
+
+        Capped below `self.timeout`: the rows this accompanies are already
+        final, so a slow JAX must not stall them.
+        """
+        try:
+            response = requests.get(
+                f"{HPO_BASE_URL}/terms/{term_id}", timeout=min(self.timeout, 10)
+            )
+            response.raise_for_status()
+            resolved_id = response.json().get("id")
+        except Exception:
+            return {}
+        return _merge_disclosure(term_id, resolved_id)
 
     def _get_term(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed information about an HPO term by its ID."""
@@ -291,13 +356,19 @@ class HPOTool(BaseTool):
                 if t and t.get("name")
             ]
 
+        metadata = {
+            "source": "HPO (JAX Ontology)",
+            "term_id": term_id,
+        }
+        # The record is already in hand, so this costs no extra request
+        # (confirmed live: querying the obsolete HP:0006887 silently returns
+        # HP:0001249's full record).
+        metadata.update(_merge_disclosure(term_id, result["id"]))
+
         return {
             "status": "success",
             "data": result,
-            "metadata": {
-                "source": "HPO (JAX Ontology)",
-                "term_id": term_id,
-            },
+            "metadata": metadata,
         }
 
     def _search_terms(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

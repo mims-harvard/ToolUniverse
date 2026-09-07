@@ -70,10 +70,31 @@ class WoRMSRESTTool(BaseTool):
             result["count"] = len(data)
         return result
 
+    @staticmethod
+    def _parse_marine_only(arguments: Dict[str, Any]):
+        """Read the optional `marine_only` argument.
+
+        Returns ``(value, error)`` where ``value`` is ``None`` when the caller
+        did not set the parameter, so the request can be sent exactly as it was
+        before this parameter existed.
+        """
+        raw = arguments.get("marine_only")
+        if "marine_only" not in arguments or raw is None:
+            return None, None
+        if isinstance(raw, bool):
+            return raw, None
+        if isinstance(raw, str) and raw.strip().lower() in ("true", "false"):
+            return raw.strip().lower() == "true", None
+        return None, f"marine_only must be a boolean, got: {raw!r}"
+
     def _run_search_by_name(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         query = arguments.get("query", "")
         if not query:
             return {"status": "error", "error": "Query parameter is required"}
+
+        marine_only, marine_error = self._parse_marine_only(arguments)
+        if marine_error:
+            return {"status": "error", "error": marine_error}
 
         try:
             limit = int(arguments.get("limit", 20))
@@ -91,9 +112,19 @@ class WoRMSRESTTool(BaseTool):
             return {"status": "error", "error": f"limit must be >= 1, got {limit}"}
         offset = max(offset, 1)
 
+        # WoRMS applies `marine_only=true` on AphiaRecordsByName unless told
+        # otherwise, so records flagged only freshwater/terrestrial (e.g. the
+        # parasite Schistosoma mansoni, AphiaID 1599676) are filtered out
+        # upstream. Send the parameter only when the caller set it explicitly:
+        # callers who omit it keep byte-identical requests and result sets.
+        marine_suffix = (
+            "" if marine_only is None else f"&marine_only={str(marine_only).lower()}"
+        )
+        effective_marine_only = True if marine_only is None else marine_only
+
         encoded_query = urllib.parse.quote(query)
         base_url = f"{self.base_url}/AphiaRecordsByName/{encoded_query}"
-        first_url = f"{base_url}?offset={offset}"
+        first_url = f"{base_url}?offset={offset}{marine_suffix}"
 
         # WoRMS caps every AphiaRecordsByName response at _PAGE_SIZE records and
         # pages with a 1-based `offset`. Walk pages until the caller's `limit` is
@@ -102,7 +133,7 @@ class WoRMSRESTTool(BaseTool):
         records: list = []
         page_offset = offset
         while len(records) <= limit:
-            url = f"{base_url}?offset={page_offset}"
+            url = f"{base_url}?offset={page_offset}{marine_suffix}"
             try:
                 response = self.session.get(url, timeout=self.timeout)
                 # 204 / empty body = no (further) records for this query.
@@ -120,6 +151,18 @@ class WoRMSRESTTool(BaseTool):
             page_offset += self._PAGE_SIZE
 
         if not records:
+            message = "No results found for this query"
+            if effective_marine_only:
+                # An empty page under the upstream marine filter is ambiguous:
+                # the name may be unknown to WoRMS, or known but non-marine.
+                # Say so instead of reporting a confident "not found".
+                message += (
+                    ". Note that WoRMS restricted this search to marine taxa "
+                    "(marine_only defaults to true), so species recorded only "
+                    "as freshwater or terrestrial are excluded. Retry with "
+                    "marine_only=false to include freshwater/terrestrial "
+                    "species."
+                )
             return {
                 "status": "success",
                 "data": [],
@@ -127,8 +170,9 @@ class WoRMSRESTTool(BaseTool):
                 "count": 0,
                 "offset": offset,
                 "limit": limit,
+                "marine_only": effective_marine_only,
                 "has_more": False,
-                "message": "No results found for this query",
+                "message": message,
             }
 
         has_more = len(records) > limit
@@ -140,6 +184,7 @@ class WoRMSRESTTool(BaseTool):
             "count": len(page),
             "offset": offset,
             "limit": limit,
+            "marine_only": effective_marine_only,
             "has_more": has_more,
         }
 

@@ -20,9 +20,13 @@ import threading
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+# `helpers` also comes from pytest.ini's `pythonpath`, but that does not apply
+# when this file is run as a bare script via the __main__ block below.
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from tooluniverse import ToolUniverse
 from tooluniverse.exceptions import ToolError, ToolValidationError
+from helpers.threads import join_all
 
 
 @pytest.mark.unit
@@ -116,11 +120,13 @@ class TestCriticalErrorHandling(unittest.TestCase):
             })
             results.append(result)
 
-        threads = [threading.Thread(target=make_call, args=(i,)) for i in range(5)]
+        threads = [
+            threading.Thread(target=make_call, args=(i,), name=f"uniprot-call-{i}")
+            for i in range(5)
+        ]
         for t in threads:
             t.start()
-        for t in threads:
-            t.join(timeout=30)
+        join_all(threads)
 
         self.assertEqual(len(results), 5, "All 5 threads must complete")
         for result in results:

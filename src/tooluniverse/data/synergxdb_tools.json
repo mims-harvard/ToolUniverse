@@ -11,7 +11,8 @@
           "enum": [
             "search_combos"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_combos"
         },
         "drug_id_1": {
           "type": [
@@ -132,7 +133,10 @@
         "page": 1,
         "per_page": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_combos"
+    }
   },
   {
     "name": "SYNERGxDB_get_combo_matrix",
@@ -146,7 +150,8 @@
           "enum": [
             "get_combo_matrix"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_combo_matrix"
         },
         "combo_id": {
           "type": "integer",
@@ -204,7 +209,10 @@
         "combo_id": 138775,
         "source_id": 2
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_combo_matrix"
+    }
   },
   {
     "name": "SYNERGxDB_list_drugs",
@@ -218,7 +226,8 @@
           "enum": [
             "list_drugs"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "list_drugs"
         },
         "query": {
           "type": "string",
@@ -285,7 +294,10 @@
       {
         "query": "imatinib"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_drugs"
+    }
   },
   {
     "name": "SYNERGxDB_get_drug",
@@ -299,7 +311,8 @@
           "enum": [
             "get_drug"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_drug"
         },
         "drug_id": {
           "type": "integer",
@@ -344,7 +357,10 @@
         "operation": "get_drug",
         "drug_id": 11
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_drug"
+    }
   },
   {
     "name": "SYNERGxDB_list_cell_lines",
@@ -358,7 +374,8 @@
           "enum": [
             "list_cell_lines"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "list_cell_lines"
         }
       },
       "required": []
@@ -419,7 +436,10 @@
       {
         "operation": "list_cell_lines"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_cell_lines"
+    }
   },
   {
     "name": "SYNERGxDB_list_datasets",
@@ -433,7 +453,8 @@
           "enum": [
             "list_datasets"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "list_datasets"
         }
       },
       "required": []
@@ -487,7 +508,10 @@
       {
         "operation": "list_datasets"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_datasets"
+    }
   },
   {
     "name": "SYNERGxDB_get_combo_stats",
@@ -501,7 +525,8 @@
           "enum": [
             "get_combo_stats"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_combo_stats"
         }
       },
       "required": []
@@ -537,7 +562,10 @@
       {
         "operation": "get_combo_stats"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_combo_stats"
+    }
   },
   {
     "name": "SYNERGxDB_get_biomarker_association",
@@ -548,8 +576,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_biomarker_association"],
-          "description": "Operation type"
+          "enum": [
+            "get_biomarker_association"
+          ],
+          "description": "Operation type",
+          "default": "get_biomarker_association"
         },
         "gene": {
           "type": "string",
@@ -560,7 +591,7 @@
           "description": "Alias for gene. HGNC gene symbol."
         }
       },
-      "required": ["operation"]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -570,12 +601,45 @@
           "items": {
             "type": "object",
             "properties": {
-              "fpkm": {"type": ["number", "null"], "description": "rnaseq expression (FPKM) of the queried gene in this cell line"},
-              "cellName": {"type": "string", "description": "Cancer cell line name"},
-              "bliss": {"type": ["number", "null"], "description": "Bliss independence synergy score"},
-              "loewe": {"type": ["number", "null"], "description": "Loewe additivity synergy score"},
-              "hsa": {"type": ["number", "null"], "description": "Highest Single Agent synergy score"},
-              "zip": {"type": ["number", "null"], "description": "Zero Interaction Potency synergy score"}
+              "fpkm": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "rnaseq expression (FPKM) of the queried gene in this cell line"
+              },
+              "cellName": {
+                "type": "string",
+                "description": "Cancer cell line name"
+              },
+              "bliss": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Bliss independence synergy score"
+              },
+              "loewe": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Loewe additivity synergy score"
+              },
+              "hsa": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Highest Single Agent synergy score"
+              },
+              "zip": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Zero Interaction Potency synergy score"
+              }
             }
           }
         },
@@ -583,9 +647,13 @@
           "type": "object",
           "description": "Error envelope when the gene is missing or the request fails",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -594,6 +662,9 @@
         "operation": "get_biomarker_association",
         "gene": "EGFR"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_biomarker_association"
+    }
   }
 ]

@@ -11,7 +11,8 @@
           "enum": [
             "calculate"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "calculate"
         },
         "formula": {
           "type": "string",
@@ -54,9 +55,7 @@
           "description": "Number of iodine atoms"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -107,6 +106,9 @@
         "operation": "calculate",
         "formula": "C8H15ClN2O2"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "calculate"
+    }
   }
 ]

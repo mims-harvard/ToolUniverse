@@ -9,7 +9,7 @@
     "fields": {
       "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getCollectionValues"
     },
-    "type": "BaseRESTTool",
+    "type": "TCIATool",
     "test_examples": [
       {}
     ],
@@ -87,7 +87,7 @@
     "fields": {
       "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getSeries"
     },
-    "type": "BaseRESTTool",
+    "type": "TCIATool",
     "test_examples": [
       {
         "Collection": "LIDC-IDRI",
@@ -183,7 +183,7 @@
     "fields": {
       "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getPatientStudy"
     },
-    "type": "BaseRESTTool",
+    "type": "TCIATool",
     "test_examples": [
       {
         "Collection": "LIDC-IDRI",
@@ -257,7 +257,7 @@
     "fields": {
       "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getModalityValues"
     },
-    "type": "BaseRESTTool",
+    "type": "TCIATool",
     "test_examples": [
       {
         "Collection": "LIDC-IDRI"
@@ -315,7 +315,7 @@
     "fields": {
       "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getBodyPartValues"
     },
-    "type": "BaseRESTTool",
+    "type": "TCIATool",
     "test_examples": [
       {
         "Modality": "CT"
@@ -361,7 +361,7 @@
     "fields": {
       "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getSeriesMetaData"
     },
-    "type": "BaseRESTTool",
+    "type": "TCIATool",
     "test_examples": [
       {
         "SeriesInstanceUID": "1.3.6.1.4.1.14519.5.2.1.6834.5010.189721824525842725510380467695"
@@ -407,7 +407,7 @@
     "fields": {
       "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getSeriesSize"
     },
-    "type": "BaseRESTTool",
+    "type": "TCIATool",
     "test_examples": [
       {
         "SeriesInstanceUID": "1.3.6.1.4.1.14519.5.2.1.6279.6001.100225287222365663678666836860"
@@ -463,7 +463,7 @@
     "fields": {
       "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getPatient"
     },
-    "type": "BaseRESTTool",
+    "type": "TCIATool",
     "test_examples": [
       {
         "Collection": "LIDC-IDRI"
@@ -535,7 +535,7 @@
     "fields": {
       "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getSOPInstanceUIDs"
     },
-    "type": "BaseRESTTool",
+    "type": "TCIATool",
     "test_examples": [
       {
         "SeriesInstanceUID": "1.3.6.1.4.1.14519.5.2.1.6279.6001.179049373636438705059720603192"
@@ -601,7 +601,7 @@
     "fields": {
       "endpoint": "https://services.cancerimagingarchive.net/nbia-api/services/v1/getManufacturerValues"
     },
-    "type": "BaseRESTTool",
+    "type": "TCIATool",
     "test_examples": [
       {
         "Collection": "LIDC-IDRI",

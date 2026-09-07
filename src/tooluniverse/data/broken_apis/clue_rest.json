@@ -1,0 +1,20 @@
+{
+  "api_name": "CLUE - Connectivity Map (CMap) L1000 Platform",
+  "base_url": "https://api.clue.io/api",
+  "failure_mode": "Service retired; no new API keys issued",
+  "root_cause": "clue.io's own homepage carries an official retirement banner: 'Effective January 31, 2026, the clue.io site, including its tools, will be retired due to financial constraints. As a result, subscriptions will no longer be offered.' The site (https://clue.io/) itself still loads, and https://api.clue.io/api/ still returns HTTP 401 for unauthenticated requests, but new CLUE_API_KEY registration is closed per the site's own notice, so the tool is unusable for any user without a pre-existing key.",
+  "confirmed_broken_date": "2026-09-04",
+  "last_retry_date": "2026-09-04",
+  "retry_count": 1,
+  "github_issues": [559],
+  "retry_after": null,
+  "workaround": "clue.io's own retirement notice points users to GEO (https://www.ncbi.nlm.nih.gov/geo/) for the underlying public data. ToolUniverse's geo_* tools (geo_search_datasets, geo_get_dataset_info, geo_get_sample_info, geo_list_supplementary_files) cover searching and retrieving GEO datasets/series, including the original L1000/CMap deposits, though not CLUE's own perturbation-signature search API.",
+  "workaround_tool_file": "src/tooluniverse/data/geo_tools.json",
+  "investigation_notes": [
+    "https://clue.io/ returns HTTP 200 and serves the retirement banner directly in the page HTML: 'Effective 1/31/2026 ... clue.io site, including its tools, will be retired due to financial constraints. As a result, subscriptions will no longer be offered.'",
+    "https://api.clue.io/api/ returns HTTP 401 with '{\"error\":\"User Key must be specified in the request header\"}' -- the API process is still running, but this is retirement-of-new-access, not a network outage",
+    "Reported in #559; no upstream restoration expected given the stated reason is financial, not technical",
+    "If clue.io is ever revived, move this back out of broken_apis and restore the default_config.py entry"
+  ],
+  "attempted_config_file": "src/tooluniverse/data/broken_apis/clue_tools.json"
+}

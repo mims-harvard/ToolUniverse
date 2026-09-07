@@ -5,13 +5,14 @@
     "description": "Infer single-cell lineages and pseudotime with Slingshot (Street 2018): from a low-dimensional embedding (obsm) + cluster labels (obs), order clusters into smooth lineages via a minimum spanning tree + simultaneous principal curves, and assign each cell a pseudotime along every lineage it belongs to. Robust for tree-shaped differentiation. Returns the lineage structure (ordered cluster sequences) and per-cell pseudotime; optionally anchor with a known start and/or terminal clusters. Input is a server-accessible .h5ad.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "adata_path": {"type": "string", "description": "Server-accessible path to an .h5ad AnnData with a reduced embedding in obsm and cluster labels in obs."},
-        "embedding_key": {"type": "string", "description": "obsm key of the embedding to build the trajectory on (default 'X_pca'; e.g. 'X_umap')."},
-        "cluster_key": {"type": "string", "description": "obs column with cluster labels whose centroids are ordered into lineages."},
-        "start_cluster": {"type": "string", "description": "Known root cluster to start every lineage from (optional but recommended for directionality)."},
-        "end_clusters": {"type": "array", "items": {"type": "string"}, "description": "Known terminal cluster(s) to force as lineage endpoints (optional)."},
-        "n_dims": {"type": "integer", "description": "Use only the first n_dims columns of the embedding (default: all; for X_pca, 10-20 is typical)."}
+        "adata_path": {"type": "string", "description": "An .h5ad file inside the provider-configured data directory with a reduced embedding in obsm and cluster labels in obs."},
+        "embedding_key": {"type": "string", "minLength": 1, "maxLength": 128, "description": "obsm key of the embedding to build the trajectory on (default 'X_pca'; e.g. 'X_umap')."},
+        "cluster_key": {"type": "string", "minLength": 1, "maxLength": 128, "description": "obs column with cluster labels whose centroids are ordered into lineages."},
+        "start_cluster": {"type": "string", "minLength": 1, "maxLength": 128, "description": "Known root cluster to start every lineage from (optional but recommended for directionality)."},
+        "end_clusters": {"type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 128}, "description": "Known terminal cluster(s) to force as lineage endpoints (optional)."},
+        "n_dims": {"type": "integer", "minimum": 2, "maximum": 100, "description": "Use only the first n_dims columns of the embedding (default: at most 100; for X_pca, 10-20 is typical)."}
       },
       "required": ["adata_path", "cluster_key"]
     },

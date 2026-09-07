@@ -407,40 +407,54 @@
           "type": "object",
           "description": "InterMine PathQuery JSON result",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "views": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Column paths in result order"
-                },
-                "results": {
-                  "type": "array",
-                  "items": {
-                    "type": "array"
-                  },
-                  "description": "Result rows; each row is a list of cell values matching 'views'"
-                },
-                "rootClass": {
-                  "type": "string"
-                },
-                "wasSuccessful": {
-                  "type": "boolean"
-                },
-                "executionTime": {
-                  "type": "string"
-                }
+            "views": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Column paths in result order"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "array"
+              },
+              "description": "Result rows; each row is a list of cell values matching 'views'"
+            },
+            "modelName": {
+              "type": "string"
+            },
+            "columnHeaders": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
+            },
+            "rootClass": {
+              "type": "string"
+            },
+            "start": {
+              "type": "integer"
+            },
+            "wasSuccessful": {
+              "type": "boolean"
+            },
+            "executionTime": {
+              "type": "string"
+            },
+            "error": {
+              "type": ["string", "null"]
+            },
+            "statusCode": {
+              "type": "integer"
             },
             "url": {
               "type": "string"
             }
           },
           "required": [
-            "data"
+            "views",
+            "results"
           ]
         },
         {

@@ -12,6 +12,7 @@ def WHOGHO_get_indicator_data(
     indicator_code: str,
     filter: Optional[str | Any] = None,
     top: Optional[int | Any] = None,
+    orderby: Optional[str | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,7 +28,9 @@ def WHOGHO_get_indicator_data(
     filter : str | Any
         OData filter for data rows. Examples: "SpatialDim eq 'USA'", "TimeDim eq 2022...
     top : int | Any
-        Maximum number of data rows to return. Default: 20
+        Maximum number of data rows to return (default 100). One row is one country-...
+    orderby : str | Any
+        OData $orderby clause controlling row order, which also determines which rows...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def WHOGHO_get_indicator_data(
             "indicator_code": indicator_code,
             "filter": filter,
             "top": top,
+            "orderby": orderby,
         }.items()
         if v is not None
     }

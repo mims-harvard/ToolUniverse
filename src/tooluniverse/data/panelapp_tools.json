@@ -1,7 +1,7 @@
 [
   {
     "name": "PanelApp_search_panels",
-    "description": "Search Genomics England PanelApp for gene panels used in clinical genetic testing. PanelApp is the authoritative source for curated gene panels used by the NHS and global genomic medicine services. Returns panel IDs, names, disease groups, status, version, and gene count statistics. Use this to find relevant gene panels for a disease area, then use PanelApp_get_panel to get the full gene list. Panels contain genes with confidence levels (green=3 for diagnostic grade, amber=2 for borderline, red=1 for limited evidence).",
+    "description": "Search Genomics England PanelApp for gene panels used in clinical genetic testing. PanelApp is the authoritative source for curated gene panels used by the NHS and global genomic medicine services. Returns panel IDs, names, disease groups, status, version, and gene count statistics. Use this to find relevant gene panels for a disease area, then use PanelApp_get_panel to get the full gene list. Panels contain genes with confidence levels (green=3 for diagnostic grade, amber=2 for borderline, red=1 for limited evidence). Matches only against panel-level metadata (name/disease group), not gene-level phenotype text, so some disease names (e.g. 'haemophilia') won't match any panel directly even though a relevant panel exists -- if a disease-name search returns nothing, try PanelApp_search_genes with the causal gene symbol instead (e.g. F8, F9 for haemophilia).",
     "parameter": {
       "type": "object",
       "properties": {

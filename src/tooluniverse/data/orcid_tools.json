@@ -8,27 +8,38 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_profile"],
-          "description": "Operation type"
+          "enum": [
+            "get_profile"
+          ],
+          "description": "Operation type",
+          "default": "get_profile"
         },
         "orcid": {
           "type": "string",
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0002-1825-0097')"
         }
       },
-      "required": ["operation", "orcid"]
+      "required": [
+        "orcid"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "orcid": {"type": "string"},
+        "orcid": {
+          "type": "string"
+        },
         "name": {},
         "biography": {},
         "emails": {},
         "keywords": {},
         "urls": {},
-        "works_count": {"type": "integer"},
-        "employments_count": {"type": "integer"}
+        "works_count": {
+          "type": "integer"
+        },
+        "employments_count": {
+          "type": "integer"
+        }
       }
     },
     "test_examples": [
@@ -36,7 +47,10 @@
         "operation": "get_profile",
         "orcid": "0000-0002-1825-0097"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_profile"
+    }
   },
   {
     "name": "ORCID_get_works",
@@ -47,26 +61,36 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_works"],
-          "description": "Operation type"
+          "enum": [
+            "get_works"
+          ],
+          "description": "Operation type",
+          "default": "get_works"
         },
         "orcid": {
           "type": "string",
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX"
         }
       },
-      "required": ["operation", "orcid"]
+      "required": [
+        "orcid"
+      ]
     },
     "return_schema": {
       "type": "array",
-      "items": {"type": "object"}
+      "items": {
+        "type": "object"
+      }
     },
     "test_examples": [
       {
         "operation": "get_works",
         "orcid": "0000-0002-1825-0097"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_works"
+    }
   },
   {
     "name": "ORCID_search_researchers",
@@ -77,8 +101,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_researchers"],
-          "description": "Operation type"
+          "enum": [
+            "search_researchers"
+          ],
+          "description": "Operation type",
+          "default": "search_researchers"
         },
         "query": {
           "type": "string",
@@ -98,11 +125,15 @@
           "description": "Number of results to return"
         }
       },
-      "required": ["operation", "query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
       "type": "array",
-      "items": {"type": "object"}
+      "items": {
+        "type": "object"
+      }
     },
     "test_examples": [
       {
@@ -110,7 +141,10 @@
         "query": "BRCA1 cancer genetics",
         "rows": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_researchers"
+    }
   },
   {
     "name": "ORCID_get_employments",
@@ -121,26 +155,36 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_employments"],
-          "description": "Operation type"
+          "enum": [
+            "get_employments"
+          ],
+          "description": "Operation type",
+          "default": "get_employments"
         },
         "orcid": {
           "type": "string",
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX"
         }
       },
-      "required": ["operation", "orcid"]
+      "required": [
+        "orcid"
+      ]
     },
     "return_schema": {
       "type": "array",
-      "items": {"type": "object"}
+      "items": {
+        "type": "object"
+      }
     },
     "test_examples": [
       {
         "operation": "get_employments",
         "orcid": "0000-0002-1825-0097"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_employments"
+    }
   },
   {
     "name": "ORCID_get_fundings",
@@ -151,15 +195,20 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_fundings"],
-          "description": "Operation type"
+          "enum": [
+            "get_fundings"
+          ],
+          "description": "Operation type",
+          "default": "get_fundings"
         },
         "orcid": {
           "type": "string",
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0001-5109-3700')"
         }
       },
-      "required": ["operation", "orcid"]
+      "required": [
+        "orcid"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -241,7 +290,10 @@
         "operation": "get_fundings",
         "orcid": "0000-0001-5109-3700"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_fundings"
+    }
   },
   {
     "name": "ORCID_get_peer_reviews",
@@ -252,15 +304,20 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_peer_reviews"],
-          "description": "Operation type"
+          "enum": [
+            "get_peer_reviews"
+          ],
+          "description": "Operation type",
+          "default": "get_peer_reviews"
         },
         "orcid": {
           "type": "string",
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0001-5109-3700')"
         }
       },
-      "required": ["operation", "orcid"]
+      "required": [
+        "orcid"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -339,6 +396,9 @@
         "operation": "get_peer_reviews",
         "orcid": "0000-0001-5109-3700"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_peer_reviews"
+    }
   }
 ]

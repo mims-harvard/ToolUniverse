@@ -29,9 +29,9 @@ def FAERS_calculate_disproportionality(
     drug_name : str
         Generic drug name (e.g., 'IBUPROFEN', 'ATORVASTATIN')
     adverse_event : str
-        MedDRA Preferred Term (e.g., 'Hepatotoxicity', 'Myopathy'). Use exact MedDRA ...
+        MedDRA Preferred Term (e.g., 'Hepatotoxicity', 'Myopathy'). Must be a WHOLE M...
     reaction : str
-        Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction.
+        Alias for adverse_event. MedDRA Preferred Term for the adverse drug reaction,...
     drug : str
         Alias for drug_name. Generic drug name.
     stream_callback : Callable, optional

@@ -1,13 +1,13 @@
 {
   "api_name": "BindingDB REST API",
   "base_url": "https://www.bindingdb.org/rest",
-  "failure_mode": "Request timeout (60s) — no response from REST endpoints",
-  "root_cause": "The BindingDB REST API endpoints (/getLigandsByUniprot, /getLigandsByUniprots, /getLigandsByPDBs, /getTargetByCompound) hang indefinitely. The BindingDB website (bindingdb.org) itself returns HTTP 200, but the REST API path does not respond within 60s. Likely an overloaded or decommissioned REST tier.",
+  "failure_mode": "Partially resolved — only the singular getLigandsByUniprot endpoint still hangs",
+  "root_cause": "The earlier 'all endpoints hang' diagnosis was too broad. Re-verified: getLigandsByUniprots, getLigandsByPDBs and getTargetByCompound all answer HTTP 200 in ~100 ms. Only the singular /getLigandsByUniprot (no trailing 's') still fails to respond within 60 s. The apparent total outage was compounded by a client-side defect: the tool sent plural query-parameter names (uniprots=/pdbs=) where BindingDB's spec documents singular ones (uniprot=/pdb=), which makes the server return an empty result set (uniprot) or HTTP 500 (pdb).",
   "confirmed_broken_date": "2026-03-24",
-  "last_retry_date": "2026-03-24",
-  "retry_count": 2,
-  "retry_after": "2026-06-01",
-  "retry_notes": "Try GET https://www.bindingdb.org/rest/getLigandsByUniprot?uniprot=P35354;100&response=application/json — if it responds within 60s the API is back.",
-  "workaround": "Use ChEMBL API (chembl_tool.py) for compound-target binding affinity data, or PubChem BioAssay for ligand activity data.",
+  "last_retry_date": "2026-08-10",
+  "retry_count": 3,
+  "retry_after": "2026-11-01",
+  "retry_notes": "Only the singular endpoint remains unreachable. Try GET https://www.bindingdb.org/rest/getLigandsByUniprot?uniprot=P35354;100&response=application/json — if it responds within 60s that endpoint is back. The plural endpoints are already in use by bindingdb_tool.py and need no retry.",
+  "workaround": "bindingdb_tool.py routes every operation through the plural getLigandsByUniprots endpoint, which works. No external substitute is required.",
   "tool_file": "src/tooluniverse/bindingdb_tool.py"
 }

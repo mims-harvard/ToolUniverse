@@ -2,7 +2,7 @@
   {
     "name": "PDC_search_studies",
     "type": "PDCTool",
-    "description": "Search the NCI Proteomics Data Commons (PDC) for cancer proteomics studies by keyword. PDC houses annotated data from CPTAC, ICPC, APOLLO, and other cancer proteomics programs covering 19+ cancer types with 160+ datasets. Search by disease name (e.g., 'Breast', 'Lung', 'CCRCC'), program name (e.g., 'CPTAC', 'HTAN'), or analytical fraction (e.g., 'Proteome', 'Phosphoproteome'). Returns matching study IDs, names, and PDC accession numbers. Use PDC study IDs with PDC_get_study_summary for detailed metadata.",
+    "description": "Search the NCI Proteomics Data Commons (PDC) for cancer proteomics studies. PDC houses annotated data from CPTAC, ICPC, APOLLO, CBTN, and other cancer proteomics programs. The query is matched case-insensitively as a substring against each study's curated PDC metadata - disease_type (e.g. 'Lung Adenocarcinoma', 'Breast Invasive Carcinoma'), primary_site (e.g. 'Bronchus and lung'), analytical_fraction (e.g. 'Proteome', 'Phosphoproteome', 'Acetylome'), experiment_type (e.g. 'TMT11', 'iTRAQ4'), program_name, project_name - and against the study title (submitter_id_name). Program acronyms ('CPTAC', 'ICPC', 'APOLLO') are additionally resolved against PDC's controlled program vocabulary, so they match every study in the program rather than only studies whose title happens to contain the acronym. Each returned study reports matched_fields, naming which fields produced the hit, so a title-only match is distinguishable from a curated disease_type match. Returns study IDs, PDC accession numbers, titles and the full curated metadata for every match; use the PDC study IDs with PDC_get_study_summary or PDC_get_quant_data_matrix.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,15 +11,15 @@
           "enum": [
             "search_studies"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_studies"
         },
         "query": {
           "type": "string",
-          "description": "Search keyword for studies. Can be disease name (Breast, Lung, Renal), program name (CPTAC, HTAN), or fraction type (Proteome, Phosphoproteome, Acetylome)."
+          "description": "Search term, matched case-insensitively as a substring against each study's disease_type, primary_site, analytical_fraction, experiment_type, program_name, project_name and title. Examples: a disease name ('Lung Adenocarcinoma', 'Breast', 'Glioblastoma'), an anatomical site ('Bronchus and lung', 'Kidney'), a program acronym ('CPTAC', 'ICPC', 'APOLLO', 'CBTN'), an analytical fraction ('Proteome', 'Phosphoproteome', 'Acetylome', 'Ubiquitylome'), or a study-title fragment ('LUAD', 'CCRCC')."
         }
       },
       "required": [
-        "operation",
         "query"
       ]
     },
@@ -30,6 +30,17 @@
           "type": "string",
           "description": "The search query used"
         },
+        "fields_searched": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Names of the study fields the query was matched against. Present on every response, including empty ones, so callers can tell an honest 'no PDC study is annotated with this term' from a search that never looked at the field they cared about."
+        },
+        "num_studies_searched": {
+          "type": "integer",
+          "description": "Number of PDC studies in the catalog that were examined"
+        },
         "studies": {
           "type": "array",
           "items": {
@@ -39,20 +50,76 @@
                 "type": "string",
                 "description": "PDC internal UUID for the study"
               },
-              "name": {
-                "type": "string",
-                "description": "Full study name"
-              },
               "pdc_study_id": {
                 "type": "string",
                 "description": "PDC accession number (e.g., PDC000127)"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Study title (same value as submitter_id_name; retained for backward compatibility)"
               },
               "submitter_id_name": {
                 "type": [
                   "string",
                   "null"
                 ],
-                "description": "Submitter-provided study name"
+                "description": "Submitter-provided study name/title"
+              },
+              "disease_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Curated disease types (semicolon-separated if multiple)"
+              },
+              "primary_site": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Curated primary anatomical sites (semicolon-separated if multiple)"
+              },
+              "analytical_fraction": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Proteomics fraction analyzed (Proteome, Phosphoproteome, Acetylome, ...)"
+              },
+              "experiment_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Mass spec experiment type (TMT10, TMT11, iTRAQ, LFQ, ...)"
+              },
+              "program_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Parent program name"
+              },
+              "project_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Parent project name"
+              },
+              "matched_fields": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Which fields of this study the query matched. A study whose only entry is 'submitter_id_name' matched the free-text title, not curated metadata."
+              },
+              "matched_curated_metadata": {
+                "type": "boolean",
+                "description": "True when at least one curated metadata field (not just the study title) matched"
               }
             }
           }
@@ -60,6 +127,24 @@
         "num_results": {
           "type": "integer",
           "description": "Number of matching studies"
+        },
+        "num_results_by_field": {
+          "type": "object",
+          "description": "Per-field count of how many matching studies matched on that field. Counts overlap because one study can match on several fields.",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "note": {
+          "type": "string",
+          "description": "Present only when num_results is 0: explains that the request succeeded and lists the fields that were searched, so an empty result is not mistaken for a failure."
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Present only when part of the search degraded (e.g. PDC's controlled program vocabulary could not be reached), describing what was reduced."
         }
       }
     },
@@ -68,7 +153,10 @@
         "operation": "search_studies",
         "query": "Breast"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_studies"
+    }
   },
   {
     "name": "PDC_get_gene_protein",
@@ -82,7 +170,8 @@
           "enum": [
             "get_gene_protein"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_gene_protein"
         },
         "gene_name": {
           "type": "string",
@@ -90,7 +179,6 @@
         }
       },
       "required": [
-        "operation",
         "gene_name"
       ]
     },
@@ -170,7 +258,10 @@
         "operation": "get_gene_protein",
         "gene_name": "TP53"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_gene_protein"
+    }
   },
   {
     "name": "PDC_list_programs",
@@ -184,12 +275,11 @@
           "enum": [
             "list_programs"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "list_programs"
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -236,7 +326,10 @@
       {
         "operation": "list_programs"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_programs"
+    }
   },
   {
     "name": "PDC_get_study_summary",
@@ -250,7 +343,8 @@
           "enum": [
             "get_study_summary"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_study_summary"
         },
         "pdc_study_id": {
           "type": "string",
@@ -258,7 +352,6 @@
         }
       },
       "required": [
-        "operation",
         "pdc_study_id"
       ]
     },
@@ -365,7 +458,10 @@
         "operation": "get_study_summary",
         "pdc_study_id": "PDC000127"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_study_summary"
+    }
   },
   {
     "name": "PDC_get_clinical_data",
@@ -379,7 +475,8 @@
           "enum": [
             "get_clinical_data"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_clinical_data"
         },
         "pdc_study_id": {
           "type": "string",
@@ -395,7 +492,6 @@
         }
       },
       "required": [
-        "operation",
         "pdc_study_id"
       ]
     },
@@ -480,7 +576,10 @@
         "pdc_study_id": "PDC000127",
         "limit": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_clinical_data"
+    }
   },
   {
     "name": "PDC_get_quant_data_matrix",
@@ -494,7 +593,8 @@
           "enum": [
             "get_quant_data_matrix"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_quant_data_matrix"
         },
         "pdc_study_id": {
           "type": "string",
@@ -512,7 +612,6 @@
         }
       },
       "required": [
-        "operation",
         "pdc_study_id"
       ]
     },
@@ -594,6 +693,9 @@
         "data_type": "log2_ratio",
         "max_genes": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_quant_data_matrix"
+    }
   }
 ]

@@ -47,101 +47,89 @@
       "operation": "markers_for_cell_type"
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "gene_symbol": {
-                    "type": "string"
-                  },
-                  "cell_type": {
-                    "type": "string"
-                  },
-                  "organ": {
-                    "type": "string"
-                  },
-                  "germ_layer": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "species": {
-                    "type": "string"
-                  },
-                  "canonical_marker": {
-                    "type": "boolean"
-                  },
-                  "nicknames": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "product_description": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "gene_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "ubiquitousness_index": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "sensitivity_human": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "sensitivity_mouse": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "specificity_human": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "specificity_mouse": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  }
-                },
-                "required": [
-                  "gene_symbol",
-                  "cell_type",
-                  "organ",
-                  "canonical_marker"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gene_symbol": {
+                "type": "string"
+              },
+              "cell_type": {
+                "type": "string"
+              },
+              "organ": {
+                "type": "string"
+              },
+              "germ_layer": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species": {
+                "type": "string"
+              },
+              "canonical_marker": {
+                "type": "boolean"
+              },
+              "nicknames": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "product_description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gene_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ubiquitousness_index": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "sensitivity_human": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "sensitivity_mouse": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "specificity_human": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "specificity_mouse": {
+                "type": [
+                  "number",
+                  "null"
                 ]
               }
-            }
-          },
-          "required": [
-            "data"
-          ]
+            },
+            "required": [
+              "gene_symbol",
+              "cell_type",
+              "organ",
+              "canonical_marker"
+            ]
+          }
         },
         {
           "type": "object",
@@ -211,101 +199,89 @@
       "operation": "cell_types_for_gene"
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "gene_symbol": {
-                    "type": "string"
-                  },
-                  "cell_type": {
-                    "type": "string"
-                  },
-                  "organ": {
-                    "type": "string"
-                  },
-                  "germ_layer": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "species": {
-                    "type": "string"
-                  },
-                  "canonical_marker": {
-                    "type": "boolean"
-                  },
-                  "nicknames": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "product_description": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "gene_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "ubiquitousness_index": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "sensitivity_human": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "sensitivity_mouse": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "specificity_human": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  },
-                  "specificity_mouse": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  }
-                },
-                "required": [
-                  "gene_symbol",
-                  "cell_type",
-                  "organ",
-                  "canonical_marker"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gene_symbol": {
+                "type": "string"
+              },
+              "cell_type": {
+                "type": "string"
+              },
+              "organ": {
+                "type": "string"
+              },
+              "germ_layer": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species": {
+                "type": "string"
+              },
+              "canonical_marker": {
+                "type": "boolean"
+              },
+              "nicknames": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "product_description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gene_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ubiquitousness_index": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "sensitivity_human": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "sensitivity_mouse": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "specificity_human": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "specificity_mouse": {
+                "type": [
+                  "number",
+                  "null"
                 ]
               }
-            }
-          },
-          "required": [
-            "data"
-          ]
+            },
+            "required": [
+              "gene_symbol",
+              "cell_type",
+              "organ",
+              "canonical_marker"
+            ]
+          }
         },
         {
           "type": "object",
@@ -358,42 +334,30 @@
       "operation": "list_cell_types"
     },
     "return_schema": {
-      "type": "object",
       "oneOf": [
         {
-          "type": "object",
-          "properties": {
-            "status": {
-              "const": "success"
-            },
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "cell_type": {
-                    "type": "string"
-                  },
-                  "organs": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "marker_count": {
-                    "type": "integer"
-                  }
-                },
-                "required": [
-                  "cell_type",
-                  "marker_count"
-                ]
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "cell_type": {
+                "type": "string"
+              },
+              "organs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "marker_count": {
+                "type": "integer"
               }
-            }
-          },
-          "required": [
-            "data"
-          ]
+            },
+            "required": [
+              "cell_type",
+              "marker_count"
+            ]
+          }
         },
         {
           "type": "object",

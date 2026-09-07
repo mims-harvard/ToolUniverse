@@ -72,9 +72,15 @@ CASES = [
     (
         "ClinicalTrials_get_database_stats",
         {
-            # gaierror-free: total_studies/average_byte_size legitimately null upstream
-            "total_studies": None,
-            "average_byte_size": None,
+            # These were NOT "legitimately null upstream", as this fixture used
+            # to claim -- the tool read `totalStudiesCount`/`averageByteSize`,
+            # neither of which ClinicalTrials.gov returns. The live keys are
+            # `totalStudies`/`averageSizeBytes`, so the representative payload
+            # is populated. Kept nullable in the schema for API hiccups only.
+            "total_studies": 597913,
+            "average_byte_size": 17275,
+            "byte_size_percentiles": {"50%": 9825},
+            "size_ranges": [{"sizeRange": "0 - 10 kb", "studiesCount": 316150}],
             "largest_studies": [{"id": "NCT02723955", "sizeBytes": 3596689}],
         },
     ),

@@ -37,7 +37,7 @@ or pick gene by default and note the assumption.
 ### 2. Pick the resolver
 
 For genes/proteins:
-- HGNC symbol → all → `tu run mygene_query_genes '{"q":"<symbol>","species":"human"}'`
+- HGNC symbol → all → `tu run MyGene_query_genes '{"query":"<symbol>","species":"human"}'`
   (returns Ensembl, UniProt, RefSeq, NCBI Gene, MGI in one call)
 - Ensembl ID → all → `tu run ensembl_lookup_gene '{"gene_id":"<id>"}'`
 - UniProt → gene/Ensembl → `tu run UniProt_search '{"query":"<accession>","limit":1}'`

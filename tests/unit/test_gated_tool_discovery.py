@@ -15,6 +15,7 @@ These tests cover the three layers of the fix:
     collapsing every error back to a hardcoded "not found" message.
 """
 
+import json
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -24,6 +25,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
 from tooluniverse.tool_discovery_tools import GetToolInfoTool, GrepToolsTool
+from tooluniverse.tool_finder_keyword import ToolFinderKeyword
 
 pytestmark = pytest.mark.unit
 
@@ -167,3 +169,68 @@ def test_render_grep_shows_gated_matches():
     result = _render_grep(d)
     assert "get_patent_overview_by_text_query" in result
     assert "USPTO_API_KEY" in result
+
+
+# ---------------------------------------------------------------------------
+# Keyword finder
+# ---------------------------------------------------------------------------
+
+
+def test_find_indexes_gated_tool_without_making_it_executable():
+    gated_config = {
+        "name": "BioGRID_get_chemical_interactions",
+        "description": "Find BioGRID chemical and protein interactions",
+        "type": "BioGRIDRESTTool",
+        "category": "BioGRID",
+        "parameter": {"type": "object", "properties": {}},
+    }
+    tu = _fake_tooluniverse(
+        all_tool_dict={"loaded_tool": {"name": "loaded_tool"}},
+        excluded={"BioGRID_get_chemical_interactions": ["BIOGRID_ACCESS_KEY"]},
+    )
+    tu.return_all_loaded_tools.return_value = [
+        {
+            "name": "loaded_tool",
+            "description": "An unrelated loaded tool",
+            "type": "TestTool",
+            "category": "test",
+            "parameter": {"type": "object", "properties": {}},
+        }
+    ]
+    tu._excluded_api_key_tool_configs = {
+        "BioGRID_get_chemical_interactions": gated_config
+    }
+
+    result = json.loads(
+        ToolFinderKeyword({}, tooluniverse=tu)._run_json_search(
+            {"description": "BioGRID_get_chemical_interactions", "limit": 5}
+        )
+    )
+
+    assert "BioGRID_get_chemical_interactions" not in tu.all_tool_dict
+    assert result["tools"][0]["name"] == "BioGRID_get_chemical_interactions"
+    assert result["tools"][0]["available"] is False
+    assert result["tools"][0]["missing_api_keys"] == ["BIOGRID_ACCESS_KEY"]
+    assert result["processing_info"]["gated_tools_indexed"] == 1
+
+
+def test_render_find_labels_gated_tool():
+    from tooluniverse.cli import _render_find
+
+    result = _render_find(
+        {
+            "total_matches": 1,
+            "tools": [
+                {
+                    "name": "BioGRID_get_chemical_interactions",
+                    "description": "Find BioGRID interactions",
+                    "relevance_score": 10.0,
+                    "available": False,
+                    "missing_api_keys": ["BIOGRID_ACCESS_KEY"],
+                }
+            ],
+        }
+    )
+
+    assert "BioGRID_get_chemical_interactions" in result
+    assert "requires: BIOGRID_ACCESS_KEY" in result

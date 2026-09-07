@@ -69,9 +69,7 @@
           "default": false
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "oneOf": [
@@ -200,6 +198,9 @@
         "operation": "annotate_per_residue",
         "pdb_id": "1CRN"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "annotate_per_residue"
+    }
   }
 ]

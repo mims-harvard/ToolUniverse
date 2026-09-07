@@ -24,7 +24,7 @@ def ChEBI_search(
     query : str
         Search query string - compound name, synonym, formula, or keyword. Examples: ...
     limit : int | Any
-        Maximum number of results to return. Default: 10. Max: 100.
+        Maximum number of compounds to return. Default: 10. Max: 100. Values above 15...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -9,7 +9,8 @@
         "operation": {
           "type": "string",
           "const": "get_protein",
-          "description": "Operation type (fixed: get_protein)"
+          "description": "Operation type (fixed: get_protein)",
+          "default": "get_protein"
         },
         "protein": {
           "type": "string",
@@ -62,7 +63,10 @@
       {
         "protein": "adrb2_human"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_protein"
+    }
   },
   {
     "name": "GPCRdb_list_proteins",
@@ -74,7 +78,8 @@
         "operation": {
           "type": "string",
           "const": "list_proteins",
-          "description": "Operation type (fixed: list_proteins)"
+          "description": "Operation type (fixed: list_proteins)",
+          "default": "list_proteins"
         },
         "protein_class": {
           "type": "string",
@@ -108,7 +113,10 @@
     },
     "test_examples": [
       {}
-    ]
+    ],
+    "fields": {
+      "operation": "list_proteins"
+    }
   },
   {
     "name": "GPCRdb_get_structures",
@@ -120,7 +128,8 @@
         "operation": {
           "type": "string",
           "const": "get_structures",
-          "description": "Operation type (fixed: get_structures)"
+          "description": "Operation type (fixed: get_structures)",
+          "default": "get_structures"
         },
         "protein": {
           "type": "string",
@@ -180,7 +189,10 @@
       {
         "state": "active"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_structures"
+    }
   },
   {
     "name": "GPCRdb_get_ligands",
@@ -192,7 +204,8 @@
         "operation": {
           "type": "string",
           "const": "get_ligands",
-          "description": "Operation type (fixed: get_ligands)"
+          "description": "Operation type (fixed: get_ligands)",
+          "default": "get_ligands"
         },
         "protein": {
           "type": "string",
@@ -259,7 +272,10 @@
         "protein": "adrb2_human",
         "limit": 10
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_ligands"
+    }
   },
   {
     "name": "GPCRdb_get_mutations",
@@ -271,7 +287,8 @@
         "operation": {
           "type": "string",
           "const": "get_mutations",
-          "description": "Operation type (fixed: get_mutations)"
+          "description": "Operation type (fixed: get_mutations)",
+          "default": "get_mutations"
         },
         "protein": {
           "type": "string",
@@ -318,6 +335,9 @@
       {
         "protein": "adrb2_human"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_mutations"
+    }
   }
 ]

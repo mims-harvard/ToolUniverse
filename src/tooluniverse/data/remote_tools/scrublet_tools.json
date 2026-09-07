@@ -5,20 +5,23 @@
     "description": "Detect technical doublets in a single-cell RNA-seq count matrix with Scrublet (Wolock et al., Cell Systems 2019). Simulates synthetic doublets from observed transcriptomes and scores each real cell by its local density of simulated doublets, returning a per-cell doublet_score and a boolean predicted_doublet call — so doublets can be filtered before clustering/annotation. Input is a server-accessible .h5ad of RAW counts (not normalized/log data).",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData of RAW counts."},
-        "expected_doublet_rate": {"type": "number", "description": "Expected fraction of transcriptomes that are doublets (default 0.06; scale ~0.008 per 1000 cells loaded for 10x)."}
+        "adata_path": {"type": "string", "description": "An .h5ad file inside the provider's TOOLUNIVERSE_REMOTE_DATA_ROOT directory, containing RAW counts."},
+        "expected_doublet_rate": {"type": "number", "description": "Expected fraction of transcriptomes that are doublets (default 0.06; scale ~0.008 per 1000 cells loaded for 10x).", "default": 0.06, "exclusiveMinimum": 0, "exclusiveMaximum": 1}
       },
       "required": ["adata_path"]
     },
     "return_schema": {
       "type": "object",
       "properties": {
-        "cell_ids": {"type": "array", "items": {"type": "string"}, "description": "Cell barcodes, aligned with the score/prediction arrays."},
-        "doublet_score": {"type": "array", "items": {"type": "number"}, "description": "Per-cell Scrublet doublet score (higher = more doublet-like)."},
-        "predicted_doublet": {"type": "array", "items": {"type": "boolean"}, "description": "Per-cell boolean: True if predicted to be a doublet."},
+        "cell_ids": {"type": "array", "maxItems": 10000, "items": {"type": "string"}, "description": "Cell barcodes, aligned with the score/prediction arrays."},
+        "doublet_score": {"type": "array", "maxItems": 10000, "items": {"type": "number"}, "description": "Per-cell Scrublet doublet score (higher = more doublet-like)."},
+        "predicted_doublet": {"type": "array", "maxItems": 10000, "items": {"type": "boolean"}, "description": "Per-cell boolean: True if predicted to be a doublet."},
         "n_doublets": {"type": "integer", "description": "Number of cells predicted to be doublets."},
+        "n_cells": {"type": "integer", "description": "Number of cells analyzed."},
         "doublet_rate": {"type": "number", "description": "Fraction of cells predicted to be doublets."},
+        "note": {"type": "string", "description": "Explains when per-cell arrays are omitted by the output limit."},
         "error": {"type": "string", "description": "Error description if the run failed."}
       }
     },

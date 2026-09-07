@@ -7,8 +7,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_taxon"],
-          "description": "Operation type (fixed: search_taxon)"
+          "enum": [
+            "search_taxon"
+          ],
+          "description": "Operation type (fixed: search_taxon)",
+          "default": "search_taxon"
         },
         "query": {
           "type": "string",
@@ -19,7 +22,9 @@
           "description": "Maximum number of results per rank (default: 20, max: 100)"
         }
       },
-      "required": ["operation", "query"]
+      "required": [
+        "query"
+      ]
     },
     "type": "GTDBTool",
     "test_examples": [
@@ -67,9 +72,14 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
+    },
+    "fields": {
+      "operation": "search_taxon"
     }
   },
   {
@@ -80,8 +90,11 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_species"],
-          "description": "Operation type (fixed: get_species)"
+          "enum": [
+            "get_species"
+          ],
+          "description": "Operation type (fixed: get_species)",
+          "default": "get_species"
         },
         "species": {
           "type": "string",
@@ -92,7 +105,9 @@
           "description": "Maximum number of genomes to return (default: 20). Species clusters can have thousands of genomes."
         }
       },
-      "required": ["operation", "species"]
+      "required": [
+        "species"
+      ]
     },
     "type": "GTDBTool",
     "test_examples": [
@@ -164,9 +179,14 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
+    },
+    "fields": {
+      "operation": "get_species"
     }
   },
   {
@@ -177,15 +197,20 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_taxon_info"],
-          "description": "Operation type (fixed: get_taxon_info)"
+          "enum": [
+            "get_taxon_info"
+          ],
+          "description": "Operation type (fixed: get_taxon_info)",
+          "default": "get_taxon_info"
         },
         "taxon": {
           "type": "string",
           "description": "GTDB taxon name with rank prefix (e.g., 'f__Lachnospiraceae', 'd__Bacteria', 'g__Escherichia', 's__Escherichia coli'). Use GTDB_search_taxon to find valid names."
         }
       },
-      "required": ["operation", "taxon"]
+      "required": [
+        "taxon"
+      ]
     },
     "type": "GTDBTool",
     "test_examples": [
@@ -213,11 +238,17 @@
               "description": "The GTDB taxon name"
             },
             "rank": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Taxonomic rank (Domain, Phylum, Class, Order, Family, Genus, Species)"
             },
             "n_genomes": {
-              "type": ["integer", "null"],
+              "type": [
+                "integer",
+                "null"
+              ],
               "description": "Total number of genomes classified under this taxon"
             },
             "higher_ranks": {
@@ -235,7 +266,10 @@
               }
             },
             "lineage": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "Full lineage from domain (d) to species (s), keys: d, p, c, o, f, g, s"
             }
           }
@@ -248,21 +282,29 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
+    },
+    "fields": {
+      "operation": "get_taxon_info"
     }
   },
   {
     "name": "GTDB_search_genomes",
-    "description": "Search for prokaryotic genomes in GTDB by organism name. This matches against the whole taxonomic clade, not just the organism-name text, so results can include other members of the same family/genus alongside genomes whose own name matches the query (exact/prefix name matches are ranked first). Returns genome accessions with both NCBI and GTDB taxonomy classifications, allowing comparison between the two taxonomic systems. Each result shows the genome accession (GCA/GCF), NCBI organism name, NCBI taxonomy, GTDB taxonomy, and whether the genome is a GTDB species representative. Supports pagination. Useful for finding genome accessions, exploring taxonomic reclassifications, and linking genomes to the GTDB taxonomy.",
+    "description": "Search for prokaryotic genomes in GTDB by organism name. A multi-word query (e.g. a binomial like 'Mycobacterium tuberculosis') is first matched precisely, requiring EVERY term of the query to appear in the genome's name or taxonomy; 'match_type' is then 'exact'. If nothing matches the whole query, the tool falls back to GTDB's loose search, which matches ANY term of the query and therefore returns a broader taxon (often just the genus) or a different species; that case is reported as 'match_type': 'broad' with a top-level 'note', and 'total_results' then counts the broader match rather than the queried organism -- always read 'match_type' and 'total_results_scope' before quoting a count or trusting a result. Results also match against the whole taxonomic clade rather than organism-name text alone, so exact/prefix name matches are ranked first within a page. Returns genome accessions with both NCBI and GTDB taxonomy classifications, allowing comparison between the two taxonomic systems. Each result shows the genome accession (GCA/GCF), NCBI organism name, NCBI taxonomy, GTDB taxonomy, and whether the genome is a GTDB species representative. Supports pagination. Useful for finding genome accessions, exploring taxonomic reclassifications, and linking genomes to the GTDB taxonomy.",
     "parameter": {
       "type": "object",
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["search_genomes"],
-          "description": "Operation type (fixed: search_genomes)"
+          "enum": [
+            "search_genomes"
+          ],
+          "description": "Operation type (fixed: search_genomes)",
+          "default": "search_genomes"
         },
         "query": {
           "type": "string",
@@ -277,7 +319,9 @@
           "description": "Number of results per page (default: 10, max: 50)"
         }
       },
-      "required": ["operation", "query"]
+      "required": [
+        "query"
+      ]
     },
     "type": "GTDBTool",
     "test_examples": [
@@ -302,9 +346,26 @@
               "type": "string",
               "description": "The search query"
             },
+            "match_type": {
+              "type": "string",
+              "enum": [
+                "exact",
+                "broad",
+                "none"
+              ],
+              "description": "How the results relate to the query. 'exact': every returned genome matches every term of the query. 'broad': nothing matched the whole query, so these results match only part of it (typically the genus) and are NOT the queried organism -- see 'note'. 'none': GTDB holds no matching genome."
+            },
             "total_results": {
               "type": "integer",
-              "description": "Total number of matching genomes"
+              "description": "Total number of genomes in the match described by 'match_type'. When match_type is 'broad' this is the count for the broader match, NOT for the queried organism -- see 'total_results_scope'."
+            },
+            "total_results_scope": {
+              "type": "string",
+              "description": "Plain-language statement of exactly what 'total_results' counts"
+            },
+            "note": {
+              "type": "string",
+              "description": "Present when match_type is 'broad' or 'none': explains that the results are not the queried organism and that total_results must not be reported as its genome count"
             },
             "page": {
               "type": "integer",
@@ -361,9 +422,14 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
+    },
+    "fields": {
+      "operation": "search_genomes"
     }
   },
   {
@@ -374,15 +440,20 @@
       "properties": {
         "operation": {
           "type": "string",
-          "enum": ["get_genome"],
-          "description": "Operation type (fixed: get_genome)"
+          "enum": [
+            "get_genome"
+          ],
+          "description": "Operation type (fixed: get_genome)",
+          "default": "get_genome"
         },
         "accession": {
           "type": "string",
           "description": "NCBI genome accession (e.g., 'GCF_000005845.2' for E. coli K-12, 'GCF_000009045.1' for B. subtilis)"
         }
       },
-      "required": ["operation", "accession"]
+      "required": [
+        "accession"
+      ]
     },
     "type": "GTDBTool",
     "test_examples": [
@@ -431,13 +502,27 @@
                     "type": "string",
                     "description": "GTDB release version"
                   },
-                  "d": { "type": "string" },
-                  "p": { "type": "string" },
-                  "c": { "type": "string" },
-                  "o": { "type": "string" },
-                  "f": { "type": "string" },
-                  "g": { "type": "string" },
-                  "s": { "type": "string" }
+                  "d": {
+                    "type": "string"
+                  },
+                  "p": {
+                    "type": "string"
+                  },
+                  "c": {
+                    "type": "string"
+                  },
+                  "o": {
+                    "type": "string"
+                  },
+                  "f": {
+                    "type": "string"
+                  },
+                  "g": {
+                    "type": "string"
+                  },
+                  "s": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -451,9 +536,14 @@
               "description": "Error message"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
+    },
+    "fields": {
+      "operation": "get_genome"
     }
   }
 ]

@@ -9,7 +9,8 @@
         "operation": {
           "type": "string",
           "const": "resolve_reference",
-          "description": "Operation type (fixed: resolve_reference)"
+          "description": "Operation type (fixed: resolve_reference)",
+          "default": "resolve_reference"
         },
         "prefix": {
           "type": "string",
@@ -20,7 +21,10 @@
           "description": "Database identifier (e.g., 'P04637' for UniProt, '17234' for ChEBI, '0006915' for GO)"
         }
       },
-      "required": ["prefix", "identifier"]
+      "required": [
+        "prefix",
+        "identifier"
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -56,7 +60,10 @@
         "prefix": "chebi",
         "identifier": "17234"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "resolve_reference"
+    }
   },
   {
     "name": "Bioregistry_get_registry",
@@ -68,14 +75,17 @@
         "operation": {
           "type": "string",
           "const": "get_registry",
-          "description": "Operation type (fixed: get_registry)"
+          "description": "Operation type (fixed: get_registry)",
+          "default": "get_registry"
         },
         "prefix": {
           "type": "string",
           "description": "Bioregistry prefix (e.g., 'uniprot', 'chebi', 'go', 'pdb', 'ensembl', 'hgnc', 'pubmed')"
         }
       },
-      "required": ["prefix"]
+      "required": [
+        "prefix"
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -118,7 +128,10 @@
       {
         "prefix": "chebi"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_registry"
+    }
   },
   {
     "name": "Bioregistry_get_prefix_mappings",
@@ -130,14 +143,17 @@
         "operation": {
           "type": "string",
           "const": "get_prefix_mappings",
-          "description": "Operation type (fixed: get_prefix_mappings)"
+          "description": "Operation type (fixed: get_prefix_mappings)",
+          "default": "get_prefix_mappings"
         },
         "prefix": {
           "type": "string",
           "description": "Bioregistry prefix (e.g., 'chebi', 'go', 'mondo', 'uniprot', 'hgnc')"
         }
       },
-      "required": ["prefix"]
+      "required": [
+        "prefix"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -155,7 +171,10 @@
               "type": "object"
             }
           },
-          "required": ["prefix", "mappings"]
+          "required": [
+            "prefix",
+            "mappings"
+          ]
         },
         {
           "type": "object",
@@ -165,7 +184,9 @@
               "type": "string"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     },
@@ -173,7 +194,10 @@
       {
         "prefix": "chebi"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_prefix_mappings"
+    }
   },
   {
     "name": "Bioregistry_search_registries",
@@ -185,7 +209,8 @@
         "operation": {
           "type": "string",
           "const": "search_registries",
-          "description": "Operation type (fixed: search_registries)"
+          "description": "Operation type (fixed: search_registries)",
+          "default": "search_registries"
         },
         "query": {
           "type": "string",
@@ -197,7 +222,9 @@
           "default": 10
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -242,6 +269,9 @@
       {
         "query": "gene ontology"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_registries"
+    }
   }
 ]

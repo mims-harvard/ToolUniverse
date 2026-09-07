@@ -11,7 +11,8 @@
           "enum": [
             "get_protein_expression"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_protein_expression"
         },
         "uniprot_id": {
           "type": "string",
@@ -38,7 +39,6 @@
         }
       },
       "required": [
-        "operation",
         "uniprot_id"
       ]
     },
@@ -135,7 +135,10 @@
         "tissue_category": "tissue",
         "calculation_method": "iBAQ"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_protein_expression"
+    }
   },
   {
     "name": "ProteomicsDB_search_proteins",
@@ -149,7 +152,8 @@
           "enum": [
             "search_proteins"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "search_proteins"
         },
         "query": {
           "type": "string",
@@ -165,7 +169,6 @@
         }
       },
       "required": [
-        "operation",
         "query"
       ]
     },
@@ -234,7 +237,10 @@
         "operation": "search_proteins",
         "query": "P04637"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_proteins"
+    }
   },
   {
     "name": "ProteomicsDB_get_expression_summary",
@@ -248,7 +254,8 @@
           "enum": [
             "get_expression_summary"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_expression_summary"
         },
         "uniprot_id": {
           "type": "string",
@@ -260,7 +267,6 @@
         }
       },
       "required": [
-        "operation",
         "uniprot_id"
       ]
     },
@@ -356,7 +362,10 @@
         "uniprot_id": "P00533",
         "top_n": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_expression_summary"
+    }
   },
   {
     "name": "ProteomicsDB_list_tissues",
@@ -370,7 +379,8 @@
           "enum": [
             "list_tissues"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "list_tissues"
         },
         "tissue_category": {
           "type": "string",
@@ -383,9 +393,7 @@
           "description": "Filter by biological source category. Optional - omit to list all categories."
         }
       },
-      "required": [
-        "operation"
-      ]
+      "required": []
     },
     "return_schema": {
       "type": "object",
@@ -436,7 +444,10 @@
         "operation": "list_tissues",
         "tissue_category": "fluid"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "list_tissues"
+    }
   },
   {
     "name": "ProteomicsDB_get_peptides_for_protein",
@@ -450,7 +461,8 @@
           "enum": [
             "get_peptides_for_protein"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "get_peptides_for_protein"
         },
         "uniprot_id": {
           "type": "string",
@@ -463,7 +475,6 @@
         }
       },
       "required": [
-        "operation",
         "uniprot_id"
       ]
     },
@@ -610,6 +621,9 @@
         "uniprot_id": "P00533",
         "max_results": 5
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_peptides_for_protein"
+    }
   }
 ]

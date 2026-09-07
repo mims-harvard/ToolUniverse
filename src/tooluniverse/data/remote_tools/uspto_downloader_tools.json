@@ -5,19 +5,20 @@
     "description": "Returns the abstract (ABST) text for a given patent application number.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "applicationNumberText": {
           "type": "string",
-          "description": "The USPTO application number (e.g. \"19113417\")."
+          "description": "The USPTO application number (e.g. \"19113417\").",
+          "minLength": 8,
+          "maxLength": 16,
+          "pattern": "^[0-9]{8,16}$"
         }
       },
       "required": [
         "applicationNumberText"
       ]
     },
-    "required_api_keys": [
-      "USPTO_API_KEY"
-    ],
     "remote_info": {
       "server_type": "MCP",
       "transport": "http",
@@ -25,17 +26,34 @@
       "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/uspto_downloader.html",
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/uspto_downloader",
       "api_endpoint": "patent/applications/{applicationNumberText}/documents",
-      "document": "ABST"
+      "document": "ABST",
+      "mcp_tool_name": "get_abstract_from_patent_app_number"
     },
     "test_examples": [
       {
-        "applicationNumberText": "The quick brown fox jumps over the lazy dog."
+        "applicationNumberText": "19113417"
       }
     ],
     "return_schema": {
       "type": "object",
       "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "result": {
+          "type": "string"
+        },
+        "document_chars": {
+          "type": "integer"
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "hint": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
     }
   },
   {
@@ -44,19 +62,20 @@
     "description": "Returns the claims (CLM) text for a given patent application number.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "applicationNumberText": {
           "type": "string",
-          "description": "The USPTO application number (e.g. \"19113417\")."
+          "description": "The USPTO application number (e.g. \"19113417\").",
+          "minLength": 8,
+          "maxLength": 16,
+          "pattern": "^[0-9]{8,16}$"
         }
       },
       "required": [
         "applicationNumberText"
       ]
     },
-    "required_api_keys": [
-      "USPTO_API_KEY"
-    ],
     "remote_info": {
       "server_type": "MCP",
       "transport": "http",
@@ -64,17 +83,34 @@
       "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/uspto_downloader.html",
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/uspto_downloader",
       "api_endpoint": "patent/applications/{applicationNumberText}/documents",
-      "document": "CLM"
+      "document": "CLM",
+      "mcp_tool_name": "get_claims_from_patent_app_number"
     },
     "test_examples": [
       {
-        "applicationNumberText": "The quick brown fox jumps over the lazy dog."
+        "applicationNumberText": "19113417"
       }
     ],
     "return_schema": {
       "type": "object",
       "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "result": {
+          "type": "string"
+        },
+        "document_chars": {
+          "type": "integer"
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "hint": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
     }
   },
   {
@@ -83,19 +119,20 @@
     "description": "Returns the full application text for a given patent application number.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "applicationNumberText": {
           "type": "string",
-          "description": "The USPTO application number (e.g. \"19113417\")."
+          "description": "The USPTO application number (e.g. \"19113417\").",
+          "minLength": 8,
+          "maxLength": 16,
+          "pattern": "^[0-9]{8,16}$"
         }
       },
       "required": [
         "applicationNumberText"
       ]
     },
-    "required_api_keys": [
-      "USPTO_API_KEY"
-    ],
     "remote_info": {
       "server_type": "MCP",
       "transport": "http",
@@ -103,17 +140,34 @@
       "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/uspto_downloader.html",
       "code_url": "https://github.com/mims-harvard/bioagent/tree/main/ToolUniverse/src/tooluniverse/remote/uspto_downloader",
       "api_endpoint": "patent/applications/{applicationNumberText}/documents",
-      "document": "APP.TEXT"
+      "document": "APP.TEXT",
+      "mcp_tool_name": "get_full_text_from_patent_app_number"
     },
     "test_examples": [
       {
-        "applicationNumberText": "The quick brown fox jumps over the lazy dog."
+        "applicationNumberText": "19113417"
       }
     ],
     "return_schema": {
       "type": "object",
       "description": "Output of the tool execution.",
-      "properties": {}
+      "properties": {
+        "result": {
+          "type": "string"
+        },
+        "document_chars": {
+          "type": "integer"
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "hint": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
     }
   }
 ]

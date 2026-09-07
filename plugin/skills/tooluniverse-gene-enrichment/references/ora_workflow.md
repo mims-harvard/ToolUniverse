@@ -272,8 +272,12 @@ reactome_result = tu.tools.ReactomeAnalysis_pathway_enrichment(
 )
 # Returns: {data: {token, analysis_type, identifiers_not_found, pathways_found, pathways: [
 #   {pathway_id, name, species, is_disease, is_lowest_level, entities_found, entities_total,
-#    entities_ratio, p_value, fdr, reactions_found, reactions_total}
+#    entities_coverage, p_value, fdr, reactions_found, reactions_total,
+#    pathway_size_fraction_of_reactome}
 # ]}}
+# entities_coverage = entities_found/entities_total; rank pathways by fdr or p_value.
+# pathway_size_fraction_of_reactome (deprecated alias entities_ratio) is pathway size over
+# Reactome's entity universe - independent of the submitted genes, so never rank by it.
 
 reactome_pathways = reactome_result.get('data', {}).get('pathways', [])
 # Filter significant

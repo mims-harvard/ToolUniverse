@@ -11,7 +11,8 @@
           "enum": [
             "calculate_adme"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "calculate_adme"
         },
         "smiles": {
           "type": "string",
@@ -26,7 +27,6 @@
         }
       },
       "required": [
-        "operation",
         "smiles"
       ]
     },
@@ -404,7 +404,10 @@
         "smiles": "CC(=O)Oc1ccccc1C(=O)O",
         "molecule_name": "aspirin"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "calculate_adme"
+    }
   },
   {
     "name": "SwissADME_check_druglikeness",
@@ -418,7 +421,8 @@
           "enum": [
             "check_druglikeness"
           ],
-          "description": "Operation type"
+          "description": "Operation type",
+          "default": "check_druglikeness"
         },
         "smiles": {
           "type": "string",
@@ -443,7 +447,6 @@
         }
       },
       "required": [
-        "operation",
         "smiles"
       ]
     },
@@ -537,6 +540,9 @@
         "operation": "check_druglikeness",
         "smiles": "CC(=O)Oc1ccccc1C(=O)O"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "check_druglikeness"
+    }
   }
 ]

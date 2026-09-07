@@ -5,10 +5,11 @@
     "description": "Run PAGA (Partition-based Graph Abstraction; Wolf et al., Genome Biology 2019) on a single-cell AnnData to estimate connectivity between cell clusters and sketch the trajectory backbone. Builds a neighbors graph if one is absent (log-normalize -> PCA -> neighbors), runs scanpy.tl.paga, then returns the cluster x cluster connectivity matrix plus the strongest connected cluster pairs (edges above a threshold). Input is a server-accessible .h5ad whose obs contains the requested cluster_key.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData whose obs contains `cluster_key`."},
-        "cluster_key": {"type": "string", "description": "obs column holding the discrete cluster labels (e.g. 'leiden' or 'cell_type')."},
-        "threshold": {"type": "number", "description": "Minimum connectivity for an edge to be reported (default 0.1)."}
+        "adata_path": {"type": "string", "description": "An .h5ad file inside the provider-configured data directory whose obs contains `cluster_key`."},
+        "cluster_key": {"type": "string", "minLength": 1, "maxLength": 128, "description": "obs column holding the discrete cluster labels (e.g. 'leiden' or 'cell_type')."},
+        "threshold": {"type": "number", "minimum": 0, "maximum": 1, "description": "Minimum connectivity for an edge to be reported (default 0.1)."}
       },
       "required": ["adata_path", "cluster_key"]
     },

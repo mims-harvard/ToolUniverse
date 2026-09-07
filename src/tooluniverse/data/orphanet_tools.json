@@ -9,7 +9,8 @@
         "operation": {
           "type": "string",
           "const": "search_diseases",
-          "description": "Operation type (fixed: search_diseases)"
+          "description": "Operation type (fixed: search_diseases)",
+          "default": "search_diseases"
         },
         "query": {
           "type": "string",
@@ -71,7 +72,10 @@
         "lang": "en",
         "limit": 10
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_diseases"
+    }
   },
   {
     "name": "Orphanet_get_disease",
@@ -83,7 +87,8 @@
         "operation": {
           "type": "string",
           "const": "get_disease",
-          "description": "Operation type (fixed: get_disease)"
+          "description": "Operation type (fixed: get_disease)",
+          "default": "get_disease"
         },
         "orpha_code": {
           "type": [
@@ -150,7 +155,10 @@
       {
         "orpha_code": "ORPHA:166024"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_disease"
+    }
   },
   {
     "name": "Orphanet_get_genes",
@@ -162,7 +170,8 @@
         "operation": {
           "type": "string",
           "const": "get_genes",
-          "description": "Operation type (fixed: get_genes)"
+          "description": "Operation type (fixed: get_genes)",
+          "default": "get_genes"
         },
         "orpha_code": {
           "type": [
@@ -228,7 +237,10 @@
       {
         "orpha_code": "558"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_genes"
+    }
   },
   {
     "name": "Orphanet_get_classification",
@@ -240,7 +252,8 @@
         "operation": {
           "type": "string",
           "const": "get_classification",
-          "description": "Operation type (fixed: get_classification)"
+          "description": "Operation type (fixed: get_classification)",
+          "default": "get_classification"
         },
         "orpha_code": {
           "type": [
@@ -284,7 +297,10 @@
               "type": "string"
             },
             "parent": {
-              "type": ["object", "null"],
+              "type": [
+                "object",
+                "null"
+              ],
               "description": "Preferential parent disease/category in the rare disease taxonomy tree, or null if this is a top-level category."
             },
             "children": {
@@ -303,7 +319,10 @@
       {
         "orpha_code": "558"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_classification"
+    }
   },
   {
     "name": "Orphanet_search_by_name",
@@ -315,7 +334,8 @@
         "operation": {
           "type": "string",
           "const": "search_by_name",
-          "description": "Operation type (fixed: search_by_name)"
+          "description": "Operation type (fixed: search_by_name)",
+          "default": "search_by_name"
         },
         "name": {
           "type": "string",
@@ -369,7 +389,10 @@
         "name": "Marfan syndrome",
         "exact": true
       }
-    ]
+    ],
+    "fields": {
+      "operation": "search_by_name"
+    }
   },
   {
     "name": "Orphanet_get_phenotypes",
@@ -381,7 +404,8 @@
         "operation": {
           "type": "string",
           "const": "get_phenotypes",
-          "description": "Operation type (fixed: get_phenotypes)"
+          "description": "Operation type (fixed: get_phenotypes)",
+          "default": "get_phenotypes"
         },
         "orpha_code": {
           "type": [
@@ -459,7 +483,10 @@
       {
         "orpha_code": "586"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_phenotypes"
+    }
   },
   {
     "name": "Orphanet_get_epidemiology",
@@ -471,7 +498,8 @@
         "operation": {
           "type": "string",
           "const": "get_epidemiology",
-          "description": "Operation type (fixed: get_epidemiology)"
+          "description": "Operation type (fixed: get_epidemiology)",
+          "default": "get_epidemiology"
         },
         "orpha_code": {
           "type": [
@@ -552,7 +580,10 @@
       {
         "orpha_code": "586"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_epidemiology"
+    }
   },
   {
     "name": "Orphanet_get_natural_history",
@@ -564,7 +595,8 @@
         "operation": {
           "type": "string",
           "const": "get_natural_history",
-          "description": "Operation type (fixed: get_natural_history)"
+          "description": "Operation type (fixed: get_natural_history)",
+          "default": "get_natural_history"
         },
         "orpha_code": {
           "type": [
@@ -634,7 +666,10 @@
       {
         "orpha_code": "399"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_natural_history"
+    }
   },
   {
     "name": "Orphanet_get_gene_diseases",
@@ -646,7 +681,8 @@
         "operation": {
           "type": "string",
           "const": "get_gene_diseases",
-          "description": "Operation type (fixed: get_gene_diseases)"
+          "description": "Operation type (fixed: get_gene_diseases)",
+          "default": "get_gene_diseases"
         },
         "gene_name": {
           "type": "string",
@@ -731,7 +767,10 @@
       {
         "gene_name": "dystrophin"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_gene_diseases"
+    }
   },
   {
     "name": "Orphanet_get_icd_mapping",
@@ -743,7 +782,8 @@
         "operation": {
           "type": "string",
           "const": "get_icd_mapping",
-          "description": "Operation type (fixed: get_icd_mapping)"
+          "description": "Operation type (fixed: get_icd_mapping)",
+          "default": "get_icd_mapping"
         },
         "orpha_code": {
           "type": [
@@ -807,6 +847,9 @@
         "orpha_code": "586",
         "coding_system": "omim"
       }
-    ]
+    ],
+    "fields": {
+      "operation": "get_icd_mapping"
+    }
   }
 ]

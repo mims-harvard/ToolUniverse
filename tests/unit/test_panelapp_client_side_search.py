@@ -26,6 +26,21 @@ _PANELS = [
     {"id": 3, "name": "Primary ovarian insufficiency", "disease_group": "Reproductive", "disease_sub_group": ""},
 ]
 
+_BLOOD_PANELS = [
+    {
+        "id": 1397,
+        "name": "Sickle cell, thalassaemia and other haemoglobinopathies",
+        "disease_group": "Haematology",
+        "disease_sub_group": "",
+    },
+    {
+        "id": 200,
+        "name": "Congenital myopathy",
+        "disease_group": "Neurology",
+        "disease_sub_group": "",
+    },
+]
+
 
 def _tool():
     return PanelAppSearchTool({"name": "panelapp_test", "fields": {}, "parameter": {}})
@@ -80,3 +95,32 @@ class TestClientSideSearchFiltering:
         tool = _tool()
         result = tool.run({})
         assert result["status"] == "error"
+
+
+class TestSingularPluralFuzzyMatch:
+    """Regression guard for Fix Round 12 / Feature-12C-1: a clinician
+    searching the singular disease term ("haemoglobinopathy") got zero
+    results because the panel is named in the plural
+    ("...haemoglobinopathies") and plain substring matching doesn't handle
+    inflection. The fuzzy fallback must catch this without over-matching
+    unrelated terms that happen to share a substring (e.g. "myopathy" is a
+    literal substring of "cardiomyopathy" but is a different topic).
+    """
+
+    def test_singular_query_matches_plural_panel_name(self):
+        tool = _tool()
+        with patch.object(tool.session, "get", return_value=_resp(_BLOOD_PANELS)):
+            result = tool.run({"search": "haemoglobinopathy"})
+
+        assert result["data"]["count"] == 1
+        assert "haemoglobinopathies" in result["data"]["results"][0]["name"].lower()
+
+    def test_does_not_over_match_unrelated_shared_substring(self):
+        # "myopathy" is a literal substring of "cardiomyopathy", but
+        # Congenital myopathy is not a relevant hit for a cardiomyopathy
+        # search -- containment alone must not be treated as a match.
+        tool = _tool()
+        with patch.object(tool.session, "get", return_value=_resp(_BLOOD_PANELS)):
+            result = tool.run({"search": "cardiomyopathy"})
+
+        assert result["data"]["count"] == 0

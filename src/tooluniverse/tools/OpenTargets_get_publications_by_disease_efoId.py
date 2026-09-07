@@ -1,7 +1,7 @@
 """
 OpenTargets_get_publications_by_disease_efoId
 
-Retrieve publications related to a disease efoId, including PubMed IDs and publication dates.
+Retrieve publications related to a disease efoId, including PubMed IDs and publication dates. Onl...
 """
 
 from typing import Any, Optional, Callable
@@ -21,7 +21,7 @@ def OpenTargets_get_publications_by_disease_efoId(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve publications related to a disease efoId, including PubMed IDs and publication dates.
+    Retrieve publications related to a disease efoId, including PubMed IDs and publication dates. Onl...
 
     Parameters
     ----------

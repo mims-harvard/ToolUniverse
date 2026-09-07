@@ -25,6 +25,7 @@ merges both into one structured record. No authentication required; free public
 access.
 """
 
+from html import unescape
 import re
 import requests
 from typing import Any, Dict, List
@@ -34,7 +35,7 @@ from .tool_registry import register_tool
 
 RHEA_BASE_URL = "https://www.rhea-db.org/rhea"
 
-# Pull "<a data-molid="chebi:25858">1,7-dimethylxanthine</a>" out of htmlequation.
+# Parse each participant block, including its coefficient and compartment.
 # Generic/polymer participants (e.g. protein-linked residues consumed or
 # produced by the reaction, like "L-tyrosyl-[protein]") aren't real ChEBI
 # compounds -- Rhea gives them a "rhea-comp:" id instead of a "chebi:" one.
@@ -43,7 +44,10 @@ RHEA_BASE_URL = "https://www.rhea-db.org/rhea"
 # live for RHEA:10596, whose htmlequation carries "rhea-comp:10136" and
 # "rhea-comp:20101" for its two protein-residue participants).
 _PARTICIPANT_RE = re.compile(
-    r'data-molid="(?P<ns>chebi|rhea-comp):(?P<molid>\d+)"[^>]*>(?P<name>.*?)</a>',
+    r'(?:<span class="stoichiometry">(?P<stoichiometry>.*?)</span>\s*)?'
+    r'<a\s+[^>]*data-molid="(?P<ns>chebi|rhea-comp):(?P<molid>\d+)"[^>]*>'
+    r'(?P<name>.*?)</a>\s*'
+    r'(?:<span class="location">(?P<location>.*?)</span>)?',
     re.IGNORECASE | re.DOTALL,
 )
 # Strip residual inline HTML tags (<i>, <small>, <sup>, <sub>) from names.
@@ -104,20 +108,23 @@ class RheaReactionTool(BaseTool):
         return text.strip()
 
     @staticmethod
-    def _clean_name(name: str) -> str:
-        return _TAG_RE.sub("", name).strip()
+    def _clean_text(value: str) -> str:
+        """Remove Rhea's display markup and decode HTML character entities."""
+        return unescape(_TAG_RE.sub("", value)).strip()
 
     def _parse_participants(
         self, html_equation: str
-    ) -> Dict[str, List[Dict[str, str]]]:
-        """Split htmlequation on ' = ' and extract ChEBI participants per side."""
-        reactants: List[Dict[str, str]] = []
-        products: List[Dict[str, str]] = []
+    ) -> Dict[str, List[Dict[str, Any]]]:
+        """Extract participants without discarding coefficients or compartments."""
+        reactants: List[Dict[str, Any]] = []
+        products: List[Dict[str, Any]] = []
         if not html_equation:
             return {"reactants": reactants, "products": products}
 
         # The two reaction sides are separated by a bare ' = ' between spans.
-        parts = re.split(r"</span>\s*=\s*<span", html_equation, maxsplit=1)
+        parts = re.split(
+            r"(?<=</span>)\s*=\s*(?=<span)", html_equation, maxsplit=1
+        )
         if len(parts) == 2:
             left, right = parts[0], parts[1]
         else:
@@ -127,10 +134,19 @@ class RheaReactionTool(BaseTool):
         for side_html, bucket in ((left, reactants), (right, products)):
             for m in _PARTICIPANT_RE.finditer(side_html):
                 is_generic = m.group("ns").lower() == "rhea-comp"
+                location = self._clean_text(m.group("location") or "")
+                if location.startswith("(") and location.endswith(")"):
+                    location = location[1:-1].strip()
                 participant = {
                     "chebi_id": None if is_generic else f"CHEBI:{m.group('molid')}",
-                    "name": self._clean_name(m.group("name")),
+                    "name": self._clean_text(m.group("name")),
                     "is_generic": is_generic,
+                    # Rhea omits the coefficient for a single participant.
+                    # Keep this a string because symbolic values such as n and
+                    # 2n occur in polymer reactions.
+                    "stoichiometry": self._clean_text(m.group("stoichiometry") or "")
+                    or "1",
+                    "location": location or None,
                 }
                 if is_generic:
                     participant["rhea_comp_id"] = f"RHEA-COMP:{m.group('molid')}"

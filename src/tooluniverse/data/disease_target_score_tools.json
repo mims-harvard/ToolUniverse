@@ -11,7 +11,7 @@
         },
         "datasourceId": {
           "type": "string",
-          "description": "The datasource ID to extract scores from. Available options: 'clinical_precedence', 'eva', 'eva_somatic', 'cancer_gene_census', 'cancer_biomarkers', 'europepmc', 'expression_atlas', 'genomics_england', 'impc', 'reactome', 'uniprot_literature', 'uniprot_variants'"
+          "description": "The datasource ID to extract scores from. Available options: 'gwas_credible_sets' (genetic/GWAS association), 'gene_burden', 'clinical_precedence', 'eva', 'eva_somatic', 'cancer_gene_census', 'cancer_biomarkers', 'europepmc', 'expression_atlas', 'genomics_england', 'impc', 'reactome', 'uniprot_literature', 'uniprot_variants'. Two IDs were retired upstream and now match nothing rather than erroring: 'ot_genetics_portal' became 'gwas_credible_sets' and 'chembl' became 'clinical_precedence'; both retired names are remapped automatically and reported in datasource_rename_note."
         },
         "pageSize": {
           "type": "integer",
@@ -472,7 +472,7 @@
   },
   {
     "name": "europepmc_disease_target_score",
-    "description": "Extract disease-target association scores from Europe PMC literature. This includes literature-based evidence.",
+    "description": "Extract disease-target association scores from Europe PMC literature. This includes literature-based evidence. Returns EVERY target with a Europe PMC score for the disease, sorted strongest-first -- it is not a paged or top-N view. Scanning is capped at 25 seconds; when the cap is hit the response sets 'truncated' and a 'note' saying how many of the disease's associated targets were scanned.",
     "datasource_id": "europepmc",
     "parameter": {
       "type": "object",
@@ -483,7 +483,7 @@
         },
         "pageSize": {
           "type": "integer",
-          "description": "Number of results per page (default: 100, max: 100)",
+          "description": "Upstream fetch batch size (max 100), NOT a limit on results returned. The tool pages through all of the disease's associated targets regardless of this value -- 'pageSize': 10 on MONDO_0005011 (Crohn disease) still returns 390 scored targets. Lower it only to make each upstream request smaller.",
           "default": 100
         }
       },

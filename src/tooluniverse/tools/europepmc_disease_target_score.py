@@ -24,7 +24,7 @@ def europepmc_disease_target_score(
     efoId : str
         The EFO (Experimental Factor Ontology) ID of the disease, e.g., 'MONDO_0011996'...
     pageSize : int
-        Number of results per page (default: 100, max: 100)
+        Upstream fetch batch size (max 100), NOT a limit on results returned. The too...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

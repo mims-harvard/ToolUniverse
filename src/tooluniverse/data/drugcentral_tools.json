@@ -32,78 +32,74 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "description": "List of matching drugs with DrugCentral data",
-              "items": {
+      "type": "array",
+      "description": "List of matching drugs with DrugCentral data",
+      "items": {
+        "type": "object",
+        "properties": {
+          "inchikey": {
+            "type": ["string", "null"],
+            "description": "InChIKey identifier"
+          },
+          "name": {
+            "type": ["string", "null"],
+            "description": "International Nonproprietary Name (INN)"
+          },
+          "cas_rn": {
+            "type": ["string", "null"],
+            "description": "CAS Registry Number"
+          },
+          "smiles": {
+            "type": ["string", "null"],
+            "description": "SMILES chemical structure"
+          },
+          "approval": {
+            "description": "Regulatory approval record(s), passed through from DrugCentral unchanged. Upstream returns a single object when the drug has exactly one approval record (e.g. praziquantel) and an array when it has several (e.g. metformin: FDA, EMA, PMDA), so both shapes occur.",
+            "oneOf": [
+              {
                 "type": "object",
                 "properties": {
-                  "inchikey": {
+                  "agency": {"type": ["string", "null"]},
+                  "company": {"type": ["string", "null"]},
+                  "date": {"type": ["string", "null"]},
+                  "orphan": {
                     "type": ["string", "null"],
-                    "description": "InChIKey identifier"
-                  },
-                  "name": {
-                    "type": ["string", "null"],
-                    "description": "International Nonproprietary Name (INN)"
-                  },
-                  "cas_rn": {
-                    "type": ["string", "null"],
-                    "description": "CAS Registry Number"
-                  },
-                  "smiles": {
-                    "type": ["string", "null"],
-                    "description": "SMILES chemical structure"
-                  },
-                  "approval": {
-                    "type": ["array", "null"],
-                    "description": "Regulatory approval records",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "agency": {"type": ["string", "null"]},
-                        "company": {"type": ["string", "null"]},
-                        "date": {"type": ["string", "null"]}
-                      }
-                    }
-                  },
-                  "drugbank_id": {
-                    "type": ["string", "null"],
-                    "description": "DrugBank identifier"
-                  },
-                  "chembl_id": {
-                    "type": ["string", "array", "null"],
-                    "description": "ChEMBL identifier(s)"
-                  },
-                  "pubchem_cid": {
-                    "type": ["string", "integer", "null"],
-                    "description": "PubChem Compound ID"
+                    "description": "Orphan-drug designation flag, reported upstream as the string 'True' or 'False'."
                   }
                 }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "total_hits": {"type": "integer"},
-                "returned": {"type": "integer"},
-                "query": {"type": "string"},
-                "source": {"type": "string"}
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {"type": "string"}
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "agency": {"type": ["string", "null"]},
+                    "company": {"type": ["string", "null"]},
+                    "date": {"type": ["string", "null"]},
+                    "orphan": {
+                      "type": ["string", "null"],
+                      "description": "Orphan-drug designation flag, reported upstream as the string 'True' or 'False'."
+                    }
+                  }
+                }
+              },
+              {"type": "null"}
+            ]
           },
-          "required": ["error"]
+          "drugbank_id": {
+            "type": ["string", "null"],
+            "description": "DrugBank identifier"
+          },
+          "chembl_id": {
+            "type": ["string", "array", "null"],
+            "description": "ChEMBL identifier(s)"
+          },
+          "pubchem_cid": {
+            "type": ["string", "integer", "null"],
+            "description": "PubChem Compound ID"
+          }
         }
-      ]
+      }
     }
   },
   {
@@ -233,7 +229,7 @@
   {
     "name": "DrugCentral_get_targets",
     "type": "DrugCentralTool",
-    "description": "Get drug target information from DrugCentral for a specific drug by its InChIKey or ChEMBL ID. Returns bioactivity data including target protein names, target classes (Enzyme, Kinase, Transporter, GPCR, etc.), organisms, action types (INHIBITOR, AGONIST, etc.), activity values (IC50, Ki, EC50), mechanism of action (MoA) flags, UniProt protein IDs, and gene symbols. DrugCentral data accessed via MyChem.info. Example: 'XZWYZXLIPXDOLR-UHFFFAOYSA-N' returns metformin targets (AMPK, Complex I, OCT1/2/3, DPP4).",
+    "description": "Get drug target information from DrugCentral for a specific drug by its InChIKey or ChEMBL ID. Returns bioactivity data including target protein names, target classes (Enzyme, Kinase, Transporter, GPCR, etc.), organisms, action types (INHIBITOR, AGONIST, etc.), potency measurements, mechanism of action (MoA) flags, UniProt protein IDs, and gene symbols. IMPORTANT - POTENCY UNITS: DrugCentral reports potency on the p-scale, i.e. 'activity_value' is the -log10 of the molar potency (the pChEMBL convention), NOT a concentration in nM or uM. So an entry reading activity_type 'IC50' with activity_value '4.01' means pIC50 = 4.01, i.e. an IC50 of 10^-4.01 M = ~96800 nM (96.8 uM) - weak, not sub-micromolar. Higher activity_value means more potent. For convenience each target also carries 'activity_type_reported' (the p-scale name, e.g. 'pIC50'), 'activity_value_scale' (a plain-language note on the scale), and 'activity_value_nM' (the same potency converted to nanomolar, or null when upstream reports no numeric value). DrugCentral data accessed via MyChem.info. Example: 'XZWYZXLIPXDOLR-UHFFFAOYSA-N' returns metformin targets (AMPK, Complex I, OCT1/2/3, DPP4).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -292,11 +288,23 @@
                       },
                       "activity_type": {
                         "type": ["string", "null"],
-                        "description": "Activity measure type (IC50, Ki, EC50, Kd, etc.)"
+                        "description": "Raw DrugCentral activity measure type (IC50, Ki, EC50, Kd, etc.). NOTE: the accompanying activity_value is the p-scale (-log10 M) form of this measure, not a concentration -- see activity_type_reported."
                       },
                       "activity_value": {
                         "type": ["string", "null"],
-                        "description": "Activity value (typically log scale, e.g., '4.54' for 10^-4.54 M)"
+                        "description": "Potency on the p-scale: -log10 of the molar potency, as reported by DrugCentral (e.g. '4.01' means 10^-4.01 M = ~96800 nM). This is NOT a nM/uM concentration. Higher = more potent."
+                      },
+                      "activity_type_reported": {
+                        "type": ["string", "null"],
+                        "description": "Name of the quantity actually reported in activity_value, i.e. the p-scale form of activity_type (e.g. 'pIC50', 'pKi', 'pKd'). Null when DrugCentral reports no activity type."
+                      },
+                      "activity_value_scale": {
+                        "type": "string",
+                        "description": "Plain-language statement of the scale and units of activity_value (constant: pActivity, -log10 molar, with the nM conversion formula)."
+                      },
+                      "activity_value_nM": {
+                        "type": ["number", "null"],
+                        "description": "activity_value converted to nanomolar as 10**(9 - activity_value), rounded to 4 significant figures. Null when activity_value is missing or non-numeric."
                       },
                       "is_moa": {
                         "type": "boolean",

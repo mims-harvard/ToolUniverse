@@ -19,7 +19,7 @@ def FAERS_search_reports_by_drug_combination(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
     Search and retrieve detailed adverse event reports involving multiple drugs (drug interactions). ...
 
@@ -46,7 +46,7 @@ def FAERS_search_reports_by_drug_combination(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

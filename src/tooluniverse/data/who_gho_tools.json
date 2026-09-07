@@ -88,7 +88,7 @@
   },
   {
     "name": "WHOGHO_get_indicator_data",
-    "description": "Get actual health data values for a specific WHO Global Health Observatory indicator by its code. Returns country-level data with values, confidence intervals, year, and sex/age breakdowns. No authentication required. Common indicator codes: WHOSIS_000001 (life expectancy at birth), MALARIA002 (malaria cases), MDG_0000000026 (HIV prevalence), NCD_BMI_30C (obesity prevalence), SDGPM25 (PM2.5 air pollution), WHS4_100 (hospital beds per 10000).",
+    "description": "Get actual health data values for a specific WHO Global Health Observatory indicator by its code. Returns country-level data with values, confidence intervals, year, and sex/age breakdowns. No authentication required. Common indicator codes: WHOSIS_000001 (life expectancy at birth), MALARIA002 (malaria cases), MDG_0000000026 (HIV prevalence), NCD_BMI_30C (obesity prevalence), SDGPM25 (PM2.5 air pollution), WHS4_100 (hospital beds per 10000). Rows are ordered by country then year and capped at `top`: the response reports 'count' (rows returned), 'total_available' (rows matching upstream) and a 'truncated' flag, and when truncated a 'truncation_note' explaining how to retrieve the rest.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -108,7 +108,14 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of data rows to return. Default: 20"
+          "description": "Maximum number of data rows to return (default 100). One row is one country-year-dimension observation, so a full time series for one country needs top >= the number of years (and x3 if the indicator is broken down by sex). Raise this when the response reports truncated=true."
+        },
+        "orderby": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "OData $orderby clause controlling row order, which also determines which rows survive the `top` cut-off. Default: \"SpatialDim asc,TimeDim asc\" (grouped by country, then chronological), so a truncated result is a contiguous prefix rather than an arbitrary sample. Use \"TimeDim asc\" for a purely chronological cross-section, or \"TimeDim desc\" for the most recent years first."
         }
       },
       "required": [
@@ -118,11 +125,24 @@
     "fields": {
       "endpoint": "https://ghoapi.azureedge.net/api/{indicator_code}",
       "params": {
-        "$top": 20
+        "$top": 100,
+        "$orderby": "SpatialDim asc,TimeDim asc",
+        "$count": "true"
       },
       "param_mapping": {
         "filter": "$filter",
-        "top": "$top"
+        "top": "$top",
+        "orderby": "$orderby"
+      },
+      "echo_request_url": true,
+      "pagination_disclosure": {
+        "total_path": [
+          "@odata.count"
+        ],
+        "rows_path": [
+          "value"
+        ],
+        "more_hint": "The GHO OData API applied the `top` row cap server-side. Re-run with a larger `top` to retrieve the full series, or narrow `filter` (e.g. \"SpatialDim eq 'BGD'\", \"TimeDim ge 2015\") so the whole result fits. Rows are returned in `orderby` order, so a truncated result is a contiguous prefix of that ordering."
       }
     },
     "type": "BaseRESTTool",
@@ -148,6 +168,13 @@
           "type": "object",
           "description": "WHO GHO indicator data values",
           "properties": {
+            "@odata.count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total rows matching the query upstream, before the `top` cap. Compare with the length of 'value' (also echoed as the envelope's 'count'/'total_available'/'truncated' fields) to detect truncation."
+            },
             "value": {
               "type": "array",
               "description": "Data records",

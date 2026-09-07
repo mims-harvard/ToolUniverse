@@ -24,7 +24,7 @@ def ReactomeInteractors_get_protein_interactors(
     accession : str
         UniProt accession number for the query protein. Examples: 'P04637' (TP53), 'Q...
     page_size : int | Any
-        Maximum number of interactors to return (default: 20, max: 100).
+        Maximum number of interactors to return on this page (default: 20)...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

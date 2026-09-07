@@ -32,36 +32,22 @@
         "return_schema": {
             "oneOf": [
                 {
-                    "type": "object",
-                    "properties": {
-                        "data": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "disprot_id": {"type": "string", "description": "DisProt accession (e.g., DP00086)"},
-                                    "acc": {"type": "string", "description": "UniProt accession"},
-                                    "name": {"type": "string", "description": "Protein name"},
-                                    "gene": {"type": "string", "description": "Gene symbol"},
-                                    "organism": {"type": "string"},
-                                    "length": {"type": "integer"},
-                                    "disorder_content": {"type": ["number", "null"], "description": "Fraction of sequence that is disordered (0-1)"},
-                                    "regions_counter": {"type": ["integer", "null"], "description": "Number of annotated disorder regions"},
-                                    "dataset": {"type": "array", "items": {"type": "string"}, "description": "Dataset categories"}
-                                }
-                            },
-                            "description": "List of matching disordered proteins"
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"},
-                                "query": {"type": "string"},
-                                "returned": {"type": "integer"}
-                            }
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "disprot_id": {"type": "string", "description": "DisProt accession (e.g., DP00086)"},
+                            "acc": {"type": "string", "description": "UniProt accession"},
+                            "name": {"type": "string", "description": "Protein name"},
+                            "gene": {"type": "string", "description": "Gene symbol"},
+                            "organism": {"type": "string"},
+                            "length": {"type": "integer"},
+                            "disorder_content": {"type": ["number", "null"], "description": "Fraction of sequence that is disordered (0-1)"},
+                            "regions_counter": {"type": ["integer", "null"], "description": "Number of annotated disorder regions"},
+                            "dataset": {"type": "array", "items": {"type": "string"}, "description": "Dataset categories"}
                         }
                     },
-                    "required": ["data"]
+                    "description": "List of matching disordered proteins"
                 },
                 {
                     "type": "object",
@@ -103,55 +89,42 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "disprot_id": {"type": "string"},
-                                "acc": {"type": "string"},
-                                "name": {"type": "string"},
-                                "gene": {"type": "string"},
-                                "organism": {"type": "string"},
-                                "length": {"type": "integer"},
-                                "disorder_content": {"type": ["number", "null"]},
-                                "regions_counter": {"type": ["integer", "null"]},
-                                "dataset": {"type": "array", "items": {"type": "string"}},
-                                "regions": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "region_id": {"type": ["string", "null"]},
-                                            "start": {"type": ["integer", "null"]},
-                                            "end": {"type": ["integer", "null"]},
-                                            "term_name": {"type": ["string", "null"], "description": "Disorder classification term"},
-                                            "term_namespace": {"type": ["string", "null"]},
-                                            "evidence_code": {"type": ["string", "null"]},
-                                            "method": {"type": ["string", "null"]},
-                                            "cross_refs": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "db": {"type": "string"},
-                                                        "id": {"type": "string"}
-                                                    }
-                                                }
+                        "disprot_id": {"type": "string"},
+                        "acc": {"type": "string"},
+                        "name": {"type": "string"},
+                        "gene": {"type": "string"},
+                        "organism": {"type": "string"},
+                        "length": {"type": "integer"},
+                        "disorder_content": {"type": ["number", "null"]},
+                        "regions_counter": {"type": ["integer", "null"]},
+                        "dataset": {"type": "array", "items": {"type": "string"}},
+                        "regions": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "region_id": {"type": ["string", "null"]},
+                                    "start": {"type": ["integer", "null"]},
+                                    "end": {"type": ["integer", "null"]},
+                                    "term_name": {"type": ["string", "null"], "description": "Disorder classification term"},
+                                    "term_namespace": {"type": ["string", "null"]},
+                                    "evidence_code": {"type": ["string", "null"]},
+                                    "method": {"type": ["string", "null"]},
+                                    "cross_refs": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "db": {"type": "string"},
+                                                "id": {"type": "string"}
                                             }
                                         }
-                                    },
-                                    "description": "Experimentally validated disorder regions"
+                                    }
                                 }
-                            }
-                        },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"},
-                                "total_regions": {"type": "integer"}
-                            }
+                            },
+                            "description": "Experimentally validated disorder regions"
                         }
-                    },
-                    "required": ["data"]
+                    }
                 },
                 {
                     "type": "object",

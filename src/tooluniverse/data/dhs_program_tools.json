@@ -1,0 +1,114 @@
+[
+  {
+    "name": "DHSProgram_search_indicators",
+    "type": "DHSProgramTool",
+    "description": "Search the DHS Program's indicator catalog by keyword: fertility, maternal and child mortality, nutrition, immunization, and HIV indicators from nationally representative household surveys across ~90 low- and middle-income countries. Example: query='total fertility rate'. Returns each indicator's indicator_id for use with DHSProgram_get_data.",
+    "fields": {
+      "operation": "search_indicators"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["query"],
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Free-text search, e.g. 'total fertility rate', 'child immunization', 'stunting'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max indicators to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "indicator_id": {"type": ["string", "null"]},
+              "label": {"type": ["string", "null"]},
+              "definition": {"type": ["string", "null"]},
+              "category": {"type": ["string", "null"]},
+              "subcategory": {"type": ["string", "null"]},
+              "measurement_type": {"type": ["string", "null"]},
+              "denominator": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"query": "total fertility rate", "limit": 5},
+      {"query": "vaccinated", "limit": 5}
+    ]
+  },
+  {
+    "name": "DHSProgram_get_data",
+    "type": "DHSProgramTool",
+    "description": "Retrieve DHS Program survey results for one indicator, optionally filtered by country (ISO2-like DHS country code) and survey year range, broken down by subgroup (wealth quintile, region, education) where available. Example: indicator_id='FE_FRTR_W_TFR' (total fertility rate), country_code='EG' (Egypt) returns 4.5 births per woman from the 1988 survey. Use DHSProgram_search_indicators to find an indicator_id.",
+    "fields": {
+      "operation": "get_data"
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["indicator_id"],
+      "properties": {
+        "indicator_id": {
+          "type": "string",
+          "description": "DHS indicator id, e.g. 'FE_FRTR_W_TFR'."
+        },
+        "country_code": {
+          "type": ["string", "null"],
+          "description": "Optional DHS country code, e.g. 'EG' (Egypt), 'KE' (Kenya)."
+        },
+        "survey_year_start": {
+          "type": ["integer", "null"],
+          "description": "Optional earliest survey year to include."
+        },
+        "survey_year_end": {
+          "type": ["integer", "null"],
+          "description": "Optional latest survey year to include."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max records to return, 1-100. Default 25."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "country": {"type": ["string", "null"]},
+              "survey_id": {"type": ["string", "null"]},
+              "survey_year": {"type": ["string", "null"]},
+              "indicator": {"type": ["string", "null"]},
+              "value": {"type": ["number", "null"]},
+              "characteristic": {"type": ["string", "null"]},
+              "denominator_weighted": {"type": ["string", "null"]}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {"indicator_id": "FE_FRTR_W_TFR", "country_code": "EG", "limit": 5},
+      {"indicator_id": "FE_FRTR_W_TFR", "survey_year_start": 2010, "limit": 5}
+    ]
+  }
+]

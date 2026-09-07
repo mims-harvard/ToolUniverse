@@ -5,19 +5,24 @@
     "description": "Retrieves cell-type-specific protein-protein interaction embeddings from PINNACLE. This tool provides access to pre-computed PINNACLE (Protein Interaction Network Contextualized Learning) embeddings that represent protein-protein interactions in specific cellular contexts. These embeddings encode functional relationships between proteins as dense vector representations, capturing both direct physical interactions and functional associations.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "cell_type": {
           "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
           "description": "Target cell type for embedding retrieval. Supports flexible naming: Standard formats: 'b_cell', 'hepatocyte', 'cardiomyocyte'; Alternative formats: 'B-cell', 'T cell', 'NK cells'; Tissue types: 'liver', 'heart', 'brain', 'immune'. The tool performs intelligent matching to find the best available match."
         },
-        "embed_path": {
-          "type": "string",
-          "description": "Path to the PINNACLE embeddings file (.pth format). If None, uses PINNACLE_DATA_PATH/pinnacle_embeds/ppi_embed_dict.pth."
+        "max_proteins": {
+          "type": "integer",
+          "description": "Maximum number of protein embeddings to return, sorted by gene symbol.",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 250
         }
       },
       "required": [
-        "cell_type",
-        "embed_path"
+        "cell_type"
       ]
     },
     "return_schema": {
@@ -56,8 +61,8 @@
     },
     "test_examples": [
       {
-        "cell_type": "example_string",
-        "embed_path": "example_string"
+        "cell_type": "b_cell",
+        "max_proteins": 100
       }
     ]
   }

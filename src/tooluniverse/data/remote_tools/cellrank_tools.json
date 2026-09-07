@@ -5,12 +5,13 @@
     "description": "Map single-cell fate with CellRank 2 (Weiler 2024 / Lange 2022): build a Markov transition matrix over cells with a selectable kernel (connectivity = kNN graph only, pseudotime, or RNA-velocity), coarse-grain it with a GPCCA estimator to identify terminal macrostates, and compute each cell's probability of reaching each terminal state — the standard differentiation/lineage readout. Returns the terminal states and the per-cell fate-probability matrix (plus per-cluster mean fate probabilities when a cluster_key is supplied). Input is a server-accessible .h5ad.",
     "parameter": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
-        "adata_path": {"type": "string", "description": "Server-accessible path or URL to an .h5ad AnnData (log-normalized; raw scVelo velocity layers required only for kernel='velocity')."},
-        "kernel": {"type": "string", "description": "Transition kernel: 'connectivity' (default; needs only a kNN graph), 'pseudotime' (needs pseudotime_key), or 'velocity' (needs scVelo velocity layers)."},
-        "n_states": {"type": "integer", "description": "Number of macrostates to compute (default 3); terminal states are auto-selected from these."},
-        "pseudotime_key": {"type": "string", "description": "obs column with a precomputed pseudotime (required when kernel='pseudotime', e.g. 'dpt_pseudotime')."},
-        "cluster_key": {"type": "string", "description": "obs column with cluster/cell-type labels; used to name macrostates and report per-cluster mean fate probabilities (optional)."}
+        "adata_path": {"type": "string", "description": "An .h5ad file inside the provider-configured data directory (log-normalized; raw scVelo velocity layers required only for kernel='velocity')."},
+        "kernel": {"type": "string", "enum": ["connectivity", "pseudotime", "velocity"], "description": "Transition kernel: 'connectivity' (default; needs only a kNN graph), 'pseudotime' (needs pseudotime_key), or 'velocity' (needs scVelo velocity layers)."},
+        "n_states": {"type": "integer", "minimum": 2, "maximum": 20, "description": "Number of macrostates to compute (default 3); terminal states are auto-selected from these."},
+        "pseudotime_key": {"type": "string", "minLength": 1, "maxLength": 128, "description": "obs column with a precomputed pseudotime (required when kernel='pseudotime', e.g. 'dpt_pseudotime')."},
+        "cluster_key": {"type": "string", "minLength": 1, "maxLength": 128, "description": "obs column with cluster/cell-type labels; used to name macrostates and report per-cluster mean fate probabilities (optional)."}
       },
       "required": ["adata_path"]
     },

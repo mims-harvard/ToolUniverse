@@ -1,0 +1,470 @@
+[
+  {
+    "name": "Orphadata_get_disorder",
+    "type": "OrphadataTool",
+    "description": "Retrieve a rare disease from Orphanet by ORPHAcode, with synonyms, disorder type, and cross-references to OMIM, ICD-10, ICD-11, MeSH, UMLS, and MedDRA. Orphadata is the machine-readable distribution of Orphanet and a Global Core Biodata Resource. Example: orphacode=558 (Marfan syndrome). Use Orphadata_search_by_name to find ORPHAcodes from a disease name.",
+    "fields": {
+      "operation": "get_disorder"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "orphacode"
+      ],
+      "properties": {
+        "orphacode": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "ORPHAcode, e.g. 558."
+        },
+        "lang": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Language code: en, fr, de, es, it, nl, pt, pl. Default en."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Rare disease record",
+          "properties": {
+            "orphacode": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "ORPHAcode identifier"
+            },
+            "preferred_term": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Preferred disease name"
+            },
+            "synonyms": {
+              "type": "array",
+              "description": "Known synonyms",
+              "items": {
+                "type": "string",
+                "description": "Synonym"
+              }
+            },
+            "disorder_group": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Disorder / group of disorders / subtype"
+            },
+            "typology": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Orphanet typology"
+            },
+            "definition": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Textual definition when available"
+            },
+            "orphanet_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Orphanet page URL"
+            },
+            "external_references": {
+              "type": "array",
+              "description": "Cross-references to other terminologies",
+              "items": {
+                "type": "object",
+                "description": "",
+                "properties": {
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Terminology, e.g. OMIM, ICD-10, MeSH, UMLS"
+                  },
+                  "reference": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Identifier in that terminology"
+                  },
+                  "relation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Mapping relation"
+                  },
+                  "icd_relation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ICD-specific mapping relation"
+                  }
+                }
+              }
+            },
+            "last_updated": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Record date"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "orphacode": 558
+      },
+      {
+        "orphacode": 98896
+      },
+      {
+        "orphacode": "586"
+      }
+    ]
+  },
+  {
+    "name": "Orphadata_search_by_name",
+    "type": "OrphadataTool",
+    "description": "Find rare diseases in Orphanet by name or synonym, returning ORPHAcodes for use with the other Orphadata tools. Matching is on full clinical names, so prefer 'Marfan syndrome' over 'Marfan'. Example: name='Cystic fibrosis'.",
+    "fields": {
+      "operation": "search_by_name"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Disease name or synonym, e.g. 'Marfan syndrome'."
+        },
+        "lang": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Language code. Default en."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Matching disorders",
+          "items": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "orphacode": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "ORPHAcode"
+              },
+              "preferred_term": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Preferred disease name"
+              },
+              "disorder_group": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Disorder / group / subtype"
+              },
+              "orphanet_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Orphanet page URL"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "name": "Marfan syndrome"
+      },
+      {
+        "name": "Cystic fibrosis"
+      }
+    ]
+  },
+  {
+    "name": "Orphadata_get_epidemiology",
+    "type": "OrphadataTool",
+    "description": "Retrieve Orphanet prevalence and epidemiology estimates for a rare disease by ORPHAcode, including prevalence class, geographic area, point/birth prevalence type, and validation status. Useful for rare-disease burden and trial feasibility questions. Example: orphacode=558.",
+    "fields": {
+      "operation": "get_epidemiology"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "orphacode"
+      ],
+      "properties": {
+        "orphacode": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "ORPHAcode, e.g. 558."
+        },
+        "lang": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Language code. Default en."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Prevalence estimates",
+          "items": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "prevalence_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Point prevalence, birth prevalence, incidence, or cases"
+              },
+              "prevalence_class": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Prevalence band, e.g. '1-9 / 100 000'"
+              },
+              "prevalence_qualification": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Value qualification"
+              },
+              "val_moy": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ],
+                "description": "Mean estimated value"
+              },
+              "geographic_area": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Geographic area of the estimate"
+              },
+              "validation_status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Orphanet validation status"
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source citation"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "orphacode": 558
+      },
+      {
+        "orphacode": 586
+      }
+    ]
+  },
+  {
+    "name": "Orphadata_get_phenotypes",
+    "type": "OrphadataTool",
+    "description": "Retrieve HPO phenotype annotations for a rare disease by ORPHAcode, with each phenotype's frequency in that disease (e.g. 'Very frequent (99-80%)') and whether it is a diagnostic criterion. Complements the HPO_* tools, which start from a phenotype rather than a disease. Example: orphacode=558.",
+    "fields": {
+      "operation": "get_phenotypes"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "orphacode"
+      ],
+      "properties": {
+        "orphacode": {
+          "type": [
+            "integer",
+            "string"
+          ],
+          "description": "ORPHAcode, e.g. 558."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum phenotypes to return. Omit for all."
+        },
+        "lang": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Language code. Default en."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "HPO phenotype annotations",
+          "items": {
+            "type": "object",
+            "description": "",
+            "properties": {
+              "hpo_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "HPO term identifier, e.g. HP:0001166"
+              },
+              "hpo_term": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "HPO term label"
+              },
+              "frequency": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Frequency of the phenotype in this disease"
+              },
+              "diagnostic_criteria": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the phenotype is a diagnostic criterion"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "required": [
+            "error"
+          ],
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Human-readable error message"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "orphacode": 558,
+        "limit": 10
+      },
+      {
+        "orphacode": 586,
+        "limit": 5
+      }
+    ]
+  }
+]

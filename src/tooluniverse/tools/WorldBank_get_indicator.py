@@ -13,6 +13,8 @@ def WorldBank_get_indicator(
     indicator: str,
     mrv: Optional[int | Any] = None,
     date: Optional[str | Any] = None,
+    per_page: Optional[int | Any] = None,
+    page: Optional[int | Any] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +33,10 @@ def WorldBank_get_indicator(
         Most recent values - number of most recent years to return (e.g., 5 for last ...
     date : str | Any
         Year or year range to filter data (e.g., '2020', '2015:2023' for a range)
+    per_page : int | Any
+        Rows returned per request (default 1000, maximum 32500). One row is one coun...
+    page : int | Any
+        1-based page number of the result set (default 1). Only needed when a result...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def WorldBank_get_indicator(
             "indicator": indicator,
             "mrv": mrv,
             "date": date,
+            "per_page": per_page,
+            "page": page,
         }.items()
         if v is not None
     }

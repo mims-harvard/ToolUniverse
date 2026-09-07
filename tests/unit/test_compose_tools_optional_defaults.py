@@ -32,9 +32,28 @@ def _tool_config(name):
     raise AssertionError(f"{name} not found in compose_tools.json")
 
 
-def test_drug_safety_analyzer_requires_only_drug_name_and_patient_sex():
+def test_drug_safety_analyzer_requires_only_drug_name():
+    """`patient_sex` was required while being described and implemented as optional.
+
+    The original sweep took `serious_events_only` out of `required` here and
+    `sample_type` out of BiomarkerDiscoveryWorkflow's, on the grounds that the
+    composition function already handles the omitted case -- but left
+    `patient_sex` in, even though it is read the same way
+    (`arguments.get("patient_sex")`, then `if patient_sex:` before it is
+    forwarded to FAERS) and its own description ends "(optional)".
+
+    So the schema rejected the call the description invited::
+
+        $ python -m tooluniverse.cli run DrugSafetyAnalyzer \\
+            '{"drug_name":"dexmedetomidine"}'
+        Error: Parameter validation failed for 'root':
+               'patient_sex' is a required property
+
+    There is no sex-unstratified drug safety review available while that holds,
+    and filtering by sex roughly halves the FAERS denominator.
+    """
     cfg = _tool_config("DrugSafetyAnalyzer")
-    assert cfg["parameter"]["required"] == ["drug_name", "patient_sex"]
+    assert cfg["parameter"]["required"] == ["drug_name"]
 
 
 def test_biomarker_discovery_workflow_requires_only_disease_condition():

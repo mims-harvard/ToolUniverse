@@ -36,32 +36,21 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "pockets": {
-                  "type": "array",
-                  "description": "Array of predicted binding pockets (URLs or objects)",
-                  "items": {
-                    "oneOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "object"
-                      }
-                    ]
+            "pockets": {
+              "type": "array",
+              "description": "Array of predicted binding pockets (URLs or objects)",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
                   }
-                }
+                ]
               }
-            },
-            "metadata": {
-              "type": "object"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -148,61 +137,50 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "result_table": {
-                  "type": "string",
-                  "description": "CSV formatted table with pocket predictions"
-                },
-                "pockets": {
-                  "type": "array",
-                  "description": "Array of predicted pockets with subpocket information",
-                  "items": {
-                    "oneOf": [
-                      {
-                        "type": "string"
-                      },
-                      {
-                        "type": "object"
-                      }
-                    ]
+            "result_table": {
+              "type": "string",
+              "description": "CSV formatted table with pocket predictions"
+            },
+            "pockets": {
+              "type": "array",
+              "description": "Array of predicted pockets with subpocket information",
+              "items": {
+                "oneOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "object"
                   }
-                },
-                "residues": {
-                  "oneOf": [
-                    {
-                      "type": "object"
-                    },
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  ],
-                  "description": "Mapping of pockets to constituent residues, or array of URL strings"
-                },
-                "descriptor_explanation": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "URL or explanations of calculated descriptors"
-                },
-                "parameters": {
-                  "type": "object",
-                  "description": "Parameters used for the analysis"
-                }
+                ]
               }
             },
-            "metadata": {
-              "type": "object"
+            "residues": {
+              "oneOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ],
+              "description": "Mapping of pockets to constituent residues, or array of URL strings"
+            },
+            "descriptor_explanation": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL or explanations of calculated descriptors"
+            },
+            "parameters": {
+              "type": "object",
+              "description": "Parameters used for the analysis"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -270,30 +248,19 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "result_png_picture": {
-                  "type": "string",
-                  "description": "URL or base64-encoded PNG interaction diagram"
-                },
-                "result_pdf_picture": {
-                  "type": "string",
-                  "description": "URL or base64-encoded PDF interaction diagram"
-                },
-                "result_svg_picture": {
-                  "type": "string",
-                  "description": "URL or base64-encoded SVG interaction diagram"
-                }
-              }
+            "result_png_picture": {
+              "type": "string",
+              "description": "URL or base64-encoded PNG interaction diagram"
             },
-            "metadata": {
-              "type": "object"
+            "result_pdf_picture": {
+              "type": "string",
+              "description": "URL or base64-encoded PDF interaction diagram"
+            },
+            "result_svg_picture": {
+              "type": "string",
+              "description": "URL or base64-encoded SVG interaction diagram"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -409,51 +376,40 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "result_table": {
-                  "type": "string",
-                  "description": "CSV table with binding site similarity analysis results"
+            "result_table": {
+              "type": "string",
+              "description": "CSV table with binding site similarity analysis results"
+            },
+            "pdb_files": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Aligned PDB structures in the ensemble"
+            },
+            "ligands": {
+              "oneOf": [
+                {
+                  "type": "string"
                 },
-                "pdb_files": {
+                {
                   "type": "array",
                   "items": {
                     "type": "string"
-                  },
-                  "description": "Aligned PDB structures in the ensemble"
-                },
-                "ligands": {
-                  "oneOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      }
-                    }
-                  ],
-                  "description": "SDF file URL(s) with aligned ligands"
-                },
-                "alignment": {
-                  "type": "string",
-                  "description": "Text file with sequence alignment"
-                },
-                "parameters": {
-                  "type": "object",
-                  "description": "Parameters used for the analysis"
+                  }
                 }
-              }
+              ],
+              "description": "SDF file URL(s) with aligned ligands"
             },
-            "metadata": {
-              "type": "object"
+            "alignment": {
+              "type": "string",
+              "description": "Text file with sequence alignment"
+            },
+            "parameters": {
+              "type": "object",
+              "description": "Parameters used for the analysis"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -524,42 +480,31 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "complex": {
-                  "type": "string",
-                  "description": "URL to overall protein-ligand complex quality metrics"
-                },
-                "activesite": {
-                  "type": "string",
-                  "description": "URL to active site geometry and quality assessment"
-                },
-                "ligands": {
-                  "type": "string",
-                  "description": "URL to individual ligand quality assessments"
-                },
-                "smarts": {
-                  "type": "string",
-                  "description": "URL to SMARTS patterns for chemical validation"
-                },
-                "hetcode": {
-                  "type": "string",
-                  "description": "Heteroatom residue codes found"
-                },
-                "config": {
-                  "type": "string",
-                  "description": "URL to configuration and parameters used"
-                }
-              }
+            "complex": {
+              "type": "string",
+              "description": "URL to overall protein-ligand complex quality metrics"
             },
-            "metadata": {
-              "type": "object"
+            "activesite": {
+              "type": "string",
+              "description": "URL to active site geometry and quality assessment"
+            },
+            "ligands": {
+              "type": "string",
+              "description": "URL to individual ligand quality assessments"
+            },
+            "smarts": {
+              "type": "string",
+              "description": "URL to SMARTS patterns for chemical validation"
+            },
+            "hetcode": {
+              "type": "string",
+              "description": "Heteroatom residue codes found"
+            },
+            "config": {
+              "type": "string",
+              "description": "URL to configuration and parameters used"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -626,30 +571,19 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "protein": {
-                  "type": "string",
-                  "description": "URL to the protonated protein structure (PDB format)"
-                },
-                "ligands": {
-                  "type": "string",
-                  "description": "URL to the protonated ligand(s) (SDF format)"
-                },
-                "log": {
-                  "type": "string",
-                  "description": "URL to the ProtoSS log file"
-                }
-              }
+            "protein": {
+              "type": "string",
+              "description": "URL to the protonated protein structure (PDB format)"
             },
-            "metadata": {
-              "type": "object"
+            "ligands": {
+              "type": "string",
+              "description": "URL to the protonated ligand(s) (SDF format)"
+            },
+            "log": {
+              "type": "string",
+              "description": "URL to the ProtoSS log file"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

@@ -53,61 +53,42 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "query": {
-                  "type": "string",
-                  "description": "Search query used"
-                },
-                "groups": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "group_id": {
-                        "type": "string",
-                        "description": "OrthoDB group ID (e.g., '727649at7742')"
-                      },
-                      "name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Group name (for first result)"
-                      },
-                      "level_taxid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Taxonomic level ID"
-                      }
-                    }
-                  },
-                  "description": "Orthologous groups matching query"
-                },
-                "total_groups": {
-                  "type": "integer",
-                  "description": "Total groups found"
-                }
-              }
+            "query": {
+              "type": "string",
+              "description": "Search query used"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "query": {
-                  "type": "string"
+            "groups": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "group_id": {
+                    "type": "string",
+                    "description": "OrthoDB group ID (e.g., '727649at7742')"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Group name (for first result)"
+                  },
+                  "level_taxid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Taxonomic level ID"
+                  }
                 }
-              }
+              },
+              "description": "Orthologous groups matching query"
+            },
+            "total_groups": {
+              "type": "integer",
+              "description": "Total groups found"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -155,150 +136,131 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "group_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "OrthoDB group ID"
-                },
-                "name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Group consensus name"
-                },
-                "level_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ],
-                  "description": "Taxonomic level name (Vertebrata, Metazoa, etc.)"
-                },
-                "tax_id": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ],
-                  "description": "Taxonomic level ID"
-                },
-                "go_terms": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "category": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "count": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
-                  },
-                  "description": "GO term annotations"
-                },
-                "kegg_pathways": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "count": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
-                  },
-                  "description": "KEGG pathway associations"
-                },
-                "interpro_domains": {
-                  "type": [
-                    "array",
-                    "null"
-                  ],
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ]
-                      },
-                      "count": {
-                        "type": [
-                          "integer",
-                          "null"
-                        ]
-                      }
-                    }
-                  },
-                  "description": "InterPro domain annotations"
-                }
-              }
+            "group_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "OrthoDB group ID"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "group_id": {
-                  "type": "string"
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Group consensus name"
+            },
+            "level_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Taxonomic level name (Vertebrata, Metazoa, etc.)"
+            },
+            "tax_id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Taxonomic level ID"
+            },
+            "go_terms": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
                 }
-              }
+              },
+              "description": "GO term annotations"
+            },
+            "kegg_pathways": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "description": "KEGG pathway associations"
+            },
+            "interpro_domains": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "description": "InterPro domain annotations"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",
@@ -354,96 +316,77 @@
         {
           "type": "object",
           "properties": {
-            "data": {
-              "type": "object",
-              "properties": {
-                "group_id": {
-                  "type": "string",
-                  "description": "OrthoDB group ID"
-                },
-                "orthologs": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "group_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Ortholog group ID"
-                      },
-                      "group_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Group name"
-                      },
-                      "level_taxid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Taxonomic level"
-                      },
-                      "organism_taxid": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Organism taxonomy ID"
-                      },
-                      "organism_name": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Organism scientific name"
-                      },
-                      "gene_id": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Gene identifier"
-                      },
-                      "description": {
-                        "type": [
-                          "string",
-                          "null"
-                        ],
-                        "description": "Gene/protein description"
-                      }
-                    }
-                  },
-                  "description": "Orthologous genes (max 100)"
-                },
-                "total_orthologs": {
-                  "type": "integer",
-                  "description": "Total orthologs returned"
-                },
-                "organisms_summary": {
-                  "type": "object",
-                  "description": "Count of genes per organism"
-                }
-              }
+            "group_id": {
+              "type": "string",
+              "description": "OrthoDB group ID"
             },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "source": {
-                  "type": "string"
-                },
-                "group_id": {
-                  "type": "string"
+            "orthologs": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "group_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ortholog group ID"
+                  },
+                  "group_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Group name"
+                  },
+                  "level_taxid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Taxonomic level"
+                  },
+                  "organism_taxid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Organism taxonomy ID"
+                  },
+                  "organism_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Organism scientific name"
+                  },
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene identifier"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Gene/protein description"
+                  }
                 }
-              }
+              },
+              "description": "Orthologous genes (max 100)"
+            },
+            "total_orthologs": {
+              "type": "integer",
+              "description": "Total orthologs returned"
+            },
+            "organisms_summary": {
+              "type": "object",
+              "description": "Count of genes per organism"
             }
-          },
-          "required": [
-            "data"
-          ]
+          }
         },
         {
           "type": "object",

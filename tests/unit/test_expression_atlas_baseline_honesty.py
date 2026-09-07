@@ -77,7 +77,25 @@ class TestBaselineListingIsHonest:
         assert "gene_specific_count" not in result["data"]
         for exp in result["data"]["baseline_experiments"]:
             assert "gene_mentioned" not in exp
-        assert "GxA_get_experiment_expression" in result["note"]
+        # Fix round 32: the note used to tell callers to use
+        # GxA_get_experiment_expression with gene_id to check whether a
+        # specific experiment has data for the gene. That is itself broken
+        # -- confirmed live that GXA's gene filter is silently ignored
+        # (e.g. E-MTAB-2836 reports searchResultTotal="9570" but every
+        # geneQuery variant returns the same 29-row default sample), so an
+        # empty/no-match result from it is not evidence the gene is absent.
+        # The note must no longer steer callers into that unsafe check, but
+        # it must still say plainly that this listing doesn't filter by gene.
+        assert "does not filter by gene" in result["note"]
+        # The old, unsafe recommendation told callers to *use*
+        # GxA_get_experiment_expression + gene_id to check presence; that
+        # exact instruction must be gone.
+        assert "to check whether that specific experiment has" not in result["note"]
+        # If GxA_get_experiment_expression is mentioned at all, it must be
+        # framed as unreliable for this purpose, not recommended for it.
+        if "GxA_get_experiment_expression" in result["note"]:
+            assert "Do not use" in result["note"]
+            assert "not evidence" in result["note"]
 
     def test_only_baseline_experiments_returned_for_species(self):
         tool = _tool()

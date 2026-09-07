@@ -121,7 +121,7 @@
   },
   {
     "name": "OMA_get_orthologs",
-    "description": "Get pairwise orthologs for a protein from the OMA (Orthologous MAtrix) Browser. Returns orthologous proteins across species with relationship type (1:1, 1:many, many:1, many:many), evolutionary distance, and alignment score. OMA orthologs are inferred using a rigorous algorithm that provides high-confidence predictions. Example: P04637 (human p53) returns orthologs in 200+ species including Mus musculus, Danio rerio, and Drosophila melanogaster.",
+    "description": "Get pairwise orthologs for a protein from the OMA (Orthologous MAtrix) Browser. Returns orthologous proteins across species with relationship type (1:1, 1:many, many:1, many:many), evolutionary distance, and alignment score. OMA orthologs are inferred using a rigorous algorithm that provides high-confidence predictions. Example: P04637 (human p53) returns orthologs in 200+ species including Mus musculus, Danio rerio, and Drosophila melanogaster. The response reports 'count' (orthologs in this response) alongside 'total_count' (all orthologs OMA holds for the protein); these differ whenever 'per_page' is smaller than the full set, which is usual -- P04637 has 157. When they differ 'truncated' is true and 'truncation_note' says how to widen the request. Treat 'count' as a page size and never as the number of species with an ortholog.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -141,7 +141,7 @@
             "integer",
             "null"
           ],
-          "description": "Number of orthologs to return (default: 20, max: 100)."
+          "description": "Number of orthologs to return (default: 20). OMA does not paginate this endpoint -- it returns the complete ortholog set in one response -- so this limit is applied by ToolUniverse after fetching, and there is no maximum: set it to 'total_count' to receive every ortholog."
         }
       },
       "required": [

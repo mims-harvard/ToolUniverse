@@ -840,6 +840,98 @@ class TestProfileYamlWorkspaceMerge:
         # Cache setting from workspace should survive the merge
         assert tu.cache_manager.memory.max_size == 55
 
+    def test_plain_reload_preserves_workspace_profile_tool_filters(self, tmp_path):
+        """A later load_tools() must not discard the active Profile filters."""
+        from tooluniverse.execute_function import ToolUniverse
+
+        tools_file = tmp_path / "tools.json"
+        _write_json(
+            tools_file,
+            [
+                {
+                    "name": "profile_kept_tool",
+                    "description": "Tool retained by the test Profile.",
+                    "type": "Unknown",
+                },
+                {
+                    "name": "profile_excluded_tool",
+                    "description": "Tool excluded by the test Profile.",
+                    "type": "Unknown",
+                },
+            ],
+        )
+        ws = tmp_path / ".tooluniverse"
+        ws.mkdir()
+        _write_yaml(
+            ws / "profile.yaml",
+            {
+                **_minimal_profile("persistent-filters"),
+                "tools": {"exclude_tools": ["profile_excluded_tool"]},
+            },
+        )
+
+        tu = ToolUniverse(
+            tool_files={"profile-test": str(tools_file)},
+            keep_default_tools=False,
+            workspace=str(ws),
+        )
+        assert "profile_kept_tool" in tu.all_tool_dict
+        assert "profile_excluded_tool" not in tu.all_tool_dict
+
+        tu.load_tools()
+
+        assert "profile_kept_tool" in tu.all_tool_dict
+        assert "profile_excluded_tool" not in tu.all_tool_dict
+
+    def test_loading_new_profile_does_not_inherit_previous_tool_filters(self, tmp_path):
+        """Switching Profiles replaces, rather than combines, their tool filters."""
+        from tooluniverse.execute_function import ToolUniverse
+
+        tools_file = tmp_path / "tools.json"
+        _write_json(
+            tools_file,
+            [
+                {
+                    "name": "first_profile_tool",
+                    "description": "Tool selected by the first test Profile.",
+                    "type": "Unknown",
+                },
+                {
+                    "name": "second_profile_tool",
+                    "description": "Tool selected by the second test Profile.",
+                    "type": "Unknown",
+                },
+            ],
+        )
+        first = tmp_path / "first.yaml"
+        second = tmp_path / "second.yaml"
+        _write_yaml(
+            first,
+            {
+                **_minimal_profile("first"),
+                "tools": {"include_tools": ["first_profile_tool"]},
+            },
+        )
+        _write_yaml(
+            second,
+            {
+                **_minimal_profile("second"),
+                "tools": {"include_tools": ["second_profile_tool"]},
+            },
+        )
+
+        tu = ToolUniverse(
+            tool_files={"profile-test": str(tools_file)},
+            keep_default_tools=False,
+            profile=str(first),
+            workspace=str(tmp_path / "workspace-without-profile"),
+        )
+        assert set(tu.all_tool_dict) == {"first_profile_tool"}
+
+        tu.load_profile(str(second))
+
+        assert set(tu.all_tool_dict) == {"second_profile_tool"}
+
 
 class TestProfileYamlSchemaValidation:
     """Tests that the schema correctly validates all new fields."""

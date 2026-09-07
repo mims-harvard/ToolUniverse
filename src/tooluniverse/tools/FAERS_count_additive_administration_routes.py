@@ -11,11 +11,12 @@ from ._shared_client import get_shared_client
 def FAERS_count_additive_administration_routes(
     medicinalproducts: list[str],
     serious: Optional[str] = None,
+    limit: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Enumerate and count administration routes for adverse events across specified medicinal products....
 
@@ -25,6 +26,8 @@ def FAERS_count_additive_administration_routes(
         Array of medicinal product names.
     serious : str
         Optional: Filter by event seriousness. Omit this parameter if you don't want ...
+    limit : int
+        Optional: maximum number of ranked terms to return (default 100, which is ope...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +37,18 @@ def FAERS_count_additive_administration_routes(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"medicinalproducts": medicinalproducts, "serious": serious}.items()
+        for k, v in {
+            "medicinalproducts": medicinalproducts,
+            "serious": serious,
+            "limit": limit,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

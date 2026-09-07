@@ -1,0 +1,12 @@
+interface:
+  display_name: "NIH Funding Landscape"
+  short_description: "Turn NIH grants into decision-ready evidence"
+  default_prompt: "Use $tooluniverse-nih-funding-landscape to answer this NIH funding question with audited definitions, key drivers, and explicit limits."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "OpenNIH"
+      description: "Anonymous read-only NIH grant search and portfolio analysis"
+      transport: "streamable_http"
+      url: "https://mcp.opennih.org/mcp"

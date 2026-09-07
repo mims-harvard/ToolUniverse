@@ -189,9 +189,9 @@ The report lists every optional dependency group that is not installed.
    uv pip install 'tooluniverse[ml]'              # ADMET-AI, embeddings
    uv pip install 'tooluniverse[visualization]'   # RDKit, py3Dmol, plotting
    uv pip install 'tooluniverse[bioinformatics]'  # Biopython, freesasa
-   uv pip install 'tooluniverse[all]'             # everything except the four below
+   uv pip install 'tooluniverse[all]'             # everything except the five below
 
-``[all]`` excludes ``singlecell``, ``smolagents``, ``client``, and ``build`` —
+``[all]`` excludes ``pdf``, ``singlecell``, ``smolagents``, ``client``, and ``build`` —
 install those by name.
 
 PyTorch / Lightning warnings during ML tool calls
@@ -247,17 +247,15 @@ Tool not found errors
 
    .. code-block:: python
 
-      if "OpenTargets_tool" not in tu.all_tool_dict:
+      if "OpenTargets_get_associated_targets_by_disease_efoId" not in tu.all_tool_dict:
           print("OpenTargets tool not loaded")
           # Check for missing dependencies
 
-3. **Manual tool loading:**
+3. **Load OpenTargets tools explicitly:**
 
    .. code-block:: python
 
-      from tooluniverse.opentargets_tool import OpenTargetsTool
-      tool = OpenTargetsTool()
-      tu.register_custom_tool(tool_instance=tool)
+      tu.load_tools(include_tool_types=["OpenTarget"])
 
 API Authentication errors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -781,9 +779,8 @@ If none of these solutions work:
 
    When reporting issues, please run the diagnostic script first:
 
-   .. code-block:: python
+   .. code-block:: bash
 
-      from tooluniverse.diagnostics import run_diagnostic
-      print(run_diagnostic())
+      python -m tooluniverse.doctor
 
    Include this output in your bug report.

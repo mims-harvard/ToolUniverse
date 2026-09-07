@@ -29,47 +29,35 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "pdb_id": {"type": "string"},
-                                "ligands": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "chem_comp_id": {"type": "string", "description": "3-letter chemical component code"},
-                                            "chem_comp_name": {"type": "string", "description": "Full chemical name"},
-                                            "weight": {"type": "number", "description": "Molecular weight in Da"},
-                                            "chain_id": {"type": "string"},
-                                            "entity_id": {"type": "integer"},
-                                            "author_residue_number": {"type": "integer"},
-                                            "carbohydrate_polymer": {"type": "boolean"},
-                                            "annotations": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "type": {"type": ["string", "null"]},
-                                                        "interacting_chain": {"type": ["string", "null"]},
-                                                        "interacting_uniprot": {"type": ["string", "null"]}
-                                                    }
-                                                }
+                        "pdb_id": {"type": "string"},
+                        "ligands": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "chem_comp_id": {"type": "string", "description": "3-letter chemical component code"},
+                                    "chem_comp_name": {"type": "string", "description": "Full chemical name"},
+                                    "weight": {"type": "number", "description": "Molecular weight in Da"},
+                                    "chain_id": {"type": "string"},
+                                    "entity_id": {"type": "integer"},
+                                    "author_residue_number": {"type": "integer"},
+                                    "carbohydrate_polymer": {"type": "boolean"},
+                                    "annotations": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "type": {"type": ["string", "null"]},
+                                                "interacting_chain": {"type": ["string", "null"]},
+                                                "interacting_uniprot": {"type": ["string", "null"]}
                                             }
                                         }
                                     }
-                                },
-                                "total_ligands": {"type": "integer"}
+                                }
                             }
                         },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"}
-                            }
-                        }
-                    },
-                    "required": ["data"]
+                        "total_ligands": {"type": "integer"}
+                    }
                 },
                 {
                     "type": "object",
@@ -116,52 +104,40 @@
                 {
                     "type": "object",
                     "properties": {
-                        "data": {
-                            "type": "object",
-                            "properties": {
-                                "pdb_id": {"type": "string"},
-                                "molecules": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "object",
-                                        "properties": {
-                                            "entity_id": {"type": "integer"},
-                                            "chains": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "chain_id": {"type": "string"},
-                                                        "total_residues": {"type": "integer"},
-                                                        "residues": {
-                                                            "type": "array",
-                                                            "items": {
-                                                                "type": "object",
-                                                                "properties": {
-                                                                    "residue_number": {"type": "integer"},
-                                                                    "residue_name": {"type": "string"},
-                                                                    "author_residue_number": {"type": "integer"},
-                                                                    "observed_ratio": {"type": "number"}
-                                                                }
-                                                            }
+                        "pdb_id": {"type": "string"},
+                        "molecules": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "entity_id": {"type": "integer"},
+                                    "chains": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "chain_id": {"type": "string"},
+                                                "total_residues": {"type": "integer"},
+                                                "residues": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "residue_number": {"type": "integer"},
+                                                            "residue_name": {"type": "string"},
+                                                            "author_residue_number": {"type": "integer"},
+                                                            "observed_ratio": {"type": "number"}
                                                         }
                                                     }
                                                 }
                                             }
                                         }
                                     }
-                                },
-                                "total_molecules": {"type": "integer"}
+                                }
                             }
                         },
-                        "metadata": {
-                            "type": "object",
-                            "properties": {
-                                "source": {"type": "string"}
-                            }
-                        }
-                    },
-                    "required": ["data"]
+                        "total_molecules": {"type": "integer"}
+                    }
                 },
                 {
                     "type": "object",

@@ -166,10 +166,17 @@ class ExpressionAtlasTool(BaseTool):
             # (confirmed live: identical result count with and without it),
             # so there's no cheap way to filter this list by gene. Listing
             # species-level baseline experiments honestly, without a broken
-            # per-gene relevance signal, and pointing to
-            # GxA_get_experiment_expression (which does support per-gene
-            # filtering, against one already-known experiment) for the
-            # actual per-gene lookup.
+            # per-gene relevance signal. Do NOT recommend
+            # GxA_get_experiment_expression + gene_id as a way to check
+            # whether a specific experiment has data for a gene: confirmed
+            # live (Fix round 32) that its gene filter is silently ignored
+            # too -- e.g. E-MTAB-2836 reports searchResultTotal="9570" but
+            # every geneQuery variant tried (plain symbol, JSON-wrapped
+            # symbol, Ensembl ID, with/without specific=true) returns the
+            # same 29-row default sample, so an empty/no-match result from
+            # it is not evidence the gene is absent. For actual per-gene
+            # expression, point callers at tools confirmed to work, e.g.
+            # GTEx_get_expression_summary.
             results = [
                 {
                     "experiment_accession": exp.get("experimentAccession", ""),
@@ -198,10 +205,17 @@ class ExpressionAtlasTool(BaseTool):
                 "note": (
                     f"This lists baseline experiments for '{species}'; it does "
                     "not filter by gene (the underlying API has no reliable way "
-                    "to do so). Use GxA_get_experiment_expression with an "
-                    "experiment_accession from this list and gene_id="
-                    f"'{gene}' to check whether that specific experiment has "
-                    "data for the gene."
+                    f"to do so). This list does not tell you whether '{gene}' "
+                    "was measured in any of these experiments. Do not use "
+                    "GxA_get_experiment_expression with gene_id to check for a "
+                    "gene's presence in an experiment -- its gene filter is "
+                    "silently ignored by the upstream API, so it returns only "
+                    "a small default sample of an experiment's genes and an "
+                    "empty/no-match result is not evidence the gene is absent. "
+                    "For actual per-gene expression data, use a tool confirmed "
+                    "to filter correctly, such as GTEx_get_expression_summary "
+                    f"(gene_symbol='{gene}') for human tissue expression, or "
+                    "HPA_get_rna_expression_in_specific_tissues."
                 ),
                 "source": ("EBI Expression Atlas - Baseline Expression"),
             }

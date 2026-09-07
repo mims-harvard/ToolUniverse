@@ -267,10 +267,16 @@ class EnrichrTool(BaseTool):
         for path, weight in ranked_paths[:20]:
             connected_path[f"Path: {path}"] = f"Total Weight: {weight}"
 
-        # Compute connectivity data for each gene and graph node (limit per pair)
+        # Compute connectivity data for each gene and enrichment term. Only
+        # "term" nodes are valid targets here -- if every node in G were
+        # considered, each gene would trivially "connect" to itself (a
+        # zero-length, zero-weight self-path) and other genes would need no
+        # path at all, cluttering the output with meaningless zero-weight
+        # entries instead of real gene-to-pathway connectivity.
+        term_nodes = [n for n, d in G.nodes(data=True) if d.get("type") == "term"]
         connections = {}
         for gene in genes:
-            for term in G.nodes:
+            for term in term_nodes:
                 paths_to_term = self.rank_paths_to_term(G, gene, term)
                 if paths_to_term is not None:
                     connections[f"Connectivity: {gene} - {term}"] = paths_to_term[:5]

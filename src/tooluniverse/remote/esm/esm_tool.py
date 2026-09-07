@@ -20,14 +20,22 @@ Embeddings are 960-dimensional vectors (mean-pooled across tokens) that enable:
 - Protein engineering and design
 """
 
+import threading
 from typing import Dict, Any
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_sequence_input import validate_sequence
 from esm.models.esmc import ESMC
 from esm.sdk.api import ESMProtein, LogitsConfig
 
 
+MAX_SEQUENCE_LENGTH = 2046
+PROTEIN_ALPHABET = "ACDEFGHIKLMNPQRSTVWY"
+
+
 # Global model cache (lazy load on first use)
 _ESM_CLIENT = None
+_ESM_INIT_LOCK = threading.Lock()
+_ESM_INFERENCE_LOCK = threading.Lock()
 
 
 def get_client():
@@ -37,8 +45,45 @@ def get_client():
     """
     global _ESM_CLIENT
     if _ESM_CLIENT is None:
-        _ESM_CLIENT = ESMC.from_pretrained("esmc_300m")
-        _ESM_CLIENT.eval()
+        with _ESM_INIT_LOCK:
+            if _ESM_CLIENT is None:
+                try:
+                    _ESM_CLIENT = ESMC.from_pretrained("esmc_300m")
+                except ValueError as exc:
+                    # The reviewed Biohub source pin uses huggingface_hub's
+                    # load_torch_model on the snapshot directory, while the
+                    # official ESM-C repository stores its single checkpoint
+                    # below data/weights. Load that exact weights-only file.
+                    if "does not contain a valid checkpoint" not in str(exc):
+                        raise
+                    import torch
+                    from accelerate import init_empty_weights
+                    from esm.tokenization import get_esmc_model_tokenizers
+                    from esm.utils.constants.esm3 import data_root
+
+                    device = torch.device(
+                        "cuda" if torch.cuda.is_available() else "cpu"
+                    )
+                    with init_empty_weights():
+                        model = ESMC(
+                            d_model=960,
+                            n_heads=15,
+                            n_layers=30,
+                            tokenizer=get_esmc_model_tokenizers(),
+                            use_flash_attn=True,
+                        ).eval()
+                    checkpoint = (
+                        data_root("esmc-300")
+                        / "data/weights/esmc_300m_2024_12_v0.pth"
+                    )
+                    state_dict = torch.load(
+                        checkpoint, map_location=device, weights_only=True
+                    )
+                    model.load_state_dict(state_dict, assign=True)
+                    _ESM_CLIENT = model.to(device)
+                    if device.type == "cuda":
+                        _ESM_CLIENT = _ESM_CLIENT.to(torch.bfloat16)
+                _ESM_CLIENT.eval()
     return _ESM_CLIENT
 
 
@@ -56,13 +101,16 @@ def compute_embedding(sequence: str):
 
     client = get_client()
     protein = ESMProtein(sequence=sequence)
-    tensor = client.encode(protein)
-    output = client.logits(tensor, LogitsConfig(return_embeddings=True))
+    with _ESM_INFERENCE_LOCK:
+        tensor = client.encode(protein)
+        with torch.no_grad():
+            output = client.logits(tensor, LogitsConfig(return_embeddings=True))
 
-    # output.embeddings[0] has shape [num_tokens, embedding_dim]
-    # Mean pool across tokens to get sequence-level embedding
-    embedding_tensor = output.embeddings[0]  # Shape: [num_tokens, 960]
-    mean_embedding = torch.mean(embedding_tensor, dim=0)  # Shape: [960]
+    # Exclude BOS/EOS special tokens from the residue-level mean.
+    embedding_tensor = output.embeddings[0]
+    if embedding_tensor.shape[0] < 3:
+        raise ValueError("ESM-C returned no residue embeddings.")
+    mean_embedding = torch.mean(embedding_tensor[1:-1], dim=0)
 
     return mean_embedding.tolist()
 
@@ -76,7 +124,10 @@ def compute_embedding(sequence: str):
             "properties": {
                 "sequence": {
                     "type": "string",
-                    "description": "Protein amino acid sequence using standard 20 amino acids (A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y)",
+                    "description": "Protein sequence using the 20 standard amino acids; 1 to 2,046 residues.",
+                    "minLength": 1,
+                    "maxLength": 2046,
+                    "pattern": "^[ACDEFGHIKLMNPQRSTVWYacdefghiklmnpqrstvwy]+$",
                 }
             },
             "required": ["sequence"],
@@ -113,13 +164,26 @@ class ESMEmbeddingTool:
             - embedding_dim: Dimension of embedding (960, mean-pooled across tokens)
             - embedding: List of float values representing the embedding
         """
-        sequence = arguments.get("sequence", "")
-        embedding = compute_embedding(sequence)
-        return {
-            "model": "esmc_300m",
-            "embedding_dim": len(embedding),
-            "embedding": embedding,
-        }
+        if not isinstance(arguments, dict):
+            return {"error": "Arguments must be an object."}
+        try:
+            sequence = validate_sequence(
+                arguments.get("sequence"),
+                name="sequence",
+                alphabet=PROTEIN_ALPHABET,
+                max_length=MAX_SEQUENCE_LENGTH,
+            )
+        except ValueError as exc:
+            return {"error": str(exc)}
+        try:
+            embedding = compute_embedding(sequence)
+            return {
+                "model": "esmc_300m",
+                "embedding_dim": len(embedding),
+                "embedding": embedding,
+            }
+        except Exception:
+            return {"error": "ESM-C embedding failed on the provider."}
 
 
 if __name__ == "__main__":
