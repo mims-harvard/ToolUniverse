@@ -1,0 +1,194 @@
+[
+  {
+    "name": "VSDDiscoverSources",
+    "type": "VSDDiscoverSources",
+    "description": "Search ToolUniverse's packaged catalog of reviewed public JSON sources. This is offline discovery only; it does not contact or register a source.",
+    "category": "special_tools",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Optional case-insensitive text filter over source name, description, ID, and endpoint."
+        }
+      },
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "required": [
+        "sources"
+      ]
+    }
+  },
+  {
+    "name": "VSDRegisterSource",
+    "type": "VSDRegisterSource",
+    "description": "Explicitly probe and persist an allowlisted HTTPS JSON source. Only side-effect-free GET requests are supported; private networks, unsafe redirects, oversized responses, and credential-like query parameters are rejected.",
+    "category": "special_tools",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{2,63}$",
+          "description": "Stable lowercase identifier for the persisted source."
+        },
+        "endpoint": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 2048,
+          "description": "Allowlisted HTTPS JSON endpoint to probe and persist."
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Human-readable source name."
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Provider-neutral description of the scientific source."
+        },
+        "default_params": {
+          "type": "object",
+          "description": "Non-secret scalar GET parameters used for probing and future queries."
+        }
+      },
+      "required": [
+        "source_id",
+        "endpoint"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "registered": {
+          "type": "boolean"
+        },
+        "source": {
+          "type": "object"
+        },
+        "catalog_path": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "registered",
+        "source",
+        "catalog_path"
+      ]
+    }
+  },
+  {
+    "name": "VSDListSources",
+    "type": "VSDListSources",
+    "description": "List the public JSON sources explicitly registered in the local Verified Source Directory.",
+    "category": "special_tools",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "required": [
+        "sources"
+      ]
+    }
+  },
+  {
+    "name": "VSDQuerySource",
+    "type": "VSDQuerySource",
+    "description": "Run a bounded, redirect-validated HTTPS GET against one explicitly registered VSD JSON source. Credentials must not be passed as arguments.",
+    "category": "special_tools",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{2,63}$",
+          "description": "Previously registered VSD source identifier."
+        },
+        "params": {
+          "type": "object",
+          "description": "Non-secret scalar GET parameters merged with the source defaults."
+        }
+      },
+      "required": [
+        "source_id"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "object"
+        },
+        "request": {
+          "type": "object"
+        },
+        "result": {}
+      },
+      "required": [
+        "source",
+        "request",
+        "result"
+      ]
+    }
+  },
+  {
+    "name": "VSDRemoveSource",
+    "type": "VSDRemoveSource",
+    "description": "Remove one explicitly registered source from the local Verified Source Directory.",
+    "category": "special_tools",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]{2,63}$",
+          "description": "Registered VSD source identifier to remove."
+        }
+      },
+      "required": [
+        "source_id"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "removed": {
+          "type": "boolean"
+        },
+        "source_id": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "removed",
+        "source_id"
+      ]
+    }
+  }
+]
