@@ -157,7 +157,7 @@ Configure Large Language Model providers for agentic tools and LLM-powered featu
      - Description
    * - ``TOOLUNIVERSE_LLM_DEFAULT_PROVIDER``
      - (none)
-     - Default LLM provider: ``CHATGPT``, ``OPENAI``, ``OPENROUTER``, ``GEMINI``, ``VLLM``
+     - Default LLM provider: ``CHATGPT``, ``OPENAI``, ``OPENROUTER``, ``GEMINI``, ``VLLM``, ``BEDROCK``
    * - ``TOOLUNIVERSE_LLM_CONFIG_MODE``
      - ``default``
      - LLM configuration mode. Use ``default`` or custom profiles.
@@ -220,6 +220,34 @@ OpenAI-compatible variables:
    * - ``OPENAI_DEFAULT_MODEL_LIMITS``
      - built-in
      - JSON mapping that extends or overrides built-in model-family defaults.
+
+Bedrock-specific variables:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 35 15 50
+
+   * - Variable
+     - Default
+     - Description
+   * - ``BEDROCK_REGION``
+     - (none)
+     - Bedrock-specific AWS region. Overrides ``AWS_REGION`` and ``AWS_DEFAULT_REGION`` for Bedrock clients.
+   * - ``AWS_REGION``
+     - (none)
+     - AWS region used by Bedrock when ``BEDROCK_REGION`` is unset.
+   * - ``AWS_DEFAULT_REGION``
+     - (none)
+     - Fallback AWS region used by boto3.
+   * - ``AWS_PROFILE``
+     - (none)
+     - Optional named AWS profile. Its configured region is used when no region environment variable is set.
+   * - ``BEDROCK_MAX_TOKENS_BY_MODEL``
+     - (none)
+     - JSON mapping of Bedrock model IDs or prefixes to default max output tokens.
+   * - ``BEDROCK_DEFAULT_MODEL_LIMITS``
+     - built-in
+     - JSON mapping that extends or overrides built-in Bedrock model-family defaults.
 
 Performance & System
 --------------------
@@ -363,8 +391,8 @@ You can set environment variables in a ``.env`` file at project root:
    SEMANTIC_SCHOLAR_API_KEY=your_key_here
    
    # LLM Configuration
-   TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=openai
-   OPENAI_API_KEY=sk-...
+   TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=OPENROUTER
+   OPENROUTER_API_KEY=your_openrouter_key_here
 
 **To use**:
 
@@ -593,6 +621,15 @@ Complete Variable List
      - (none)
      - LLM
    * - ``OPENAI_DEFAULT_MODEL_LIMITS``
+     - built-in
+     - LLM
+   * - ``BEDROCK_REGION``
+     - (none)
+     - LLM
+   * - ``BEDROCK_MAX_TOKENS_BY_MODEL``
+     - (none)
+     - LLM
+   * - ``BEDROCK_DEFAULT_MODEL_LIMITS``
      - built-in
      - LLM
    * - ``TOOLUNIVERSE_THREAD_POOL_SIZE``
