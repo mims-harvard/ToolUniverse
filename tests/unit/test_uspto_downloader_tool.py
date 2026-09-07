@@ -111,3 +111,122 @@ def test_run_reports_missing_docx_dependency_without_crashing():
     assert result["error"] == "USPTO document extraction dependency is not installed."
     assert "python-docx" in result["hint"]
     assert "pip install tooluniverse[ocr]" in result["hint"]
+
+
+class _FakePixmap:
+    def __init__(self, width=2, height=2):
+        self.width = width
+        self.height = height
+        self.samples = bytes([255, 255, 255] * (width * height))
+
+
+class _FakePage:
+    def __init__(self, text):
+        self._text = text
+
+    def get_text(self):
+        return self._text
+
+    def get_pixmap(self, dpi=300, alpha=False):
+        return _FakePixmap()
+
+
+class _FakePdfDoc:
+    def __init__(self, pages):
+        self._pages = pages
+        self.page_count = len(pages)
+
+    def __iter__(self):
+        return iter(self._pages)
+
+    def close(self):
+        pass
+
+
+class _FakeFitz:
+    def __init__(self, pages):
+        self._pages = pages
+
+    def open(self, stream, filetype):
+        return _FakePdfDoc(self._pages)
+
+
+class _FakeOcrReader:
+    def __init__(self, calls):
+        self._calls = calls
+
+    def readtext(self, image_bytes, detail=0):
+        self._calls.append(image_bytes)
+        return ["OCR RESULT"]
+
+
+class _FakeEasyocr:
+    def __init__(self, calls):
+        self._calls = calls
+
+    def Reader(self, langs, gpu=False):
+        return _FakeOcrReader(self._calls)
+
+
+def _pdf_metadata():
+    return _metadata(
+        [{"mimeTypeIdentifier": "PDF", "downloadUrl": "https://uspto.gov/x.pdf"}]
+    )
+
+
+def test_run_ocrs_only_pdf_pages_without_embedded_text():
+    """A page with no embedded text (e.g. a scanned page mixed into an
+    otherwise text-based PDF) is OCR'd; pages with real text are not."""
+    tool = _tool()
+    pages = [_FakePage("Real embedded text"), _FakePage("   "), _FakePage("More text")]
+    ocr_calls = []
+
+    with (
+        patch.object(mod.USPTOOpenDataPortalTool, "run", return_value=_pdf_metadata()),
+        patch.object(mod, "_download_uspto_document", return_value=b"%PDF-1.4 fake"),
+        patch.object(mod, "_pdf_backend", return_value=_FakeFitz(pages)),
+        patch.object(mod, "_ocr_reader", return_value=_FakeEasyocr(ocr_calls)),
+    ):
+        result = tool.run({"applicationNumberText": "19053071"})
+
+    assert "Real embedded text" in result["result"]
+    assert "More text" in result["result"]
+    assert "OCR RESULT" in result["result"]
+    assert len(ocr_calls) == 1
+
+
+def test_run_does_not_ocr_a_text_heavy_document_that_needs_no_ocr():
+    """A large document made entirely of text pages must not be blocked by
+    the OCR page-count budget, since no page actually needs OCR."""
+    tool = _tool()
+    pages = [_FakePage(f"page {i} text") for i in range(mod._MAX_OCR_PAGES + 50)]
+    ocr_calls = []
+
+    with (
+        patch.object(mod.USPTOOpenDataPortalTool, "run", return_value=_pdf_metadata()),
+        patch.object(mod, "_download_uspto_document", return_value=b"%PDF-1.4 fake"),
+        patch.object(mod, "_pdf_backend", return_value=_FakeFitz(pages)),
+        patch.object(mod, "_ocr_reader", return_value=_FakeEasyocr(ocr_calls)),
+    ):
+        result = tool.run({"applicationNumberText": "19053071"})
+
+    assert "error" not in result
+    assert ocr_calls == []
+
+
+def test_run_still_enforces_ocr_page_limit_when_pages_actually_need_ocr():
+    """The OCR budget still applies, counted over pages that lack embedded
+    text (not the document's total page count)."""
+    tool = _tool()
+    pages = [_FakePage("") for _ in range(mod._MAX_OCR_PAGES + 1)]
+    ocr_calls = []
+
+    with (
+        patch.object(mod.USPTOOpenDataPortalTool, "run", return_value=_pdf_metadata()),
+        patch.object(mod, "_download_uspto_document", return_value=b"%PDF-1.4 fake"),
+        patch.object(mod, "_pdf_backend", return_value=_FakeFitz(pages)),
+        patch.object(mod, "_ocr_reader", return_value=_FakeEasyocr(ocr_calls)),
+    ):
+        result = tool.run({"applicationNumberText": "19053071"})
+
+    assert result["error"] == "USPTO document retrieval failed on the provider."

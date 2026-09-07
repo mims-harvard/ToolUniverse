@@ -352,6 +352,7 @@ default_tool_files = {
     "mcp_auto_loader_boltz": os.path.join(
         current_dir, "data", "boltz_mcp_loader_tools.json"
     ),
+    "boltz_api": os.path.join(current_dir, "data", "boltz_api_tools.json"),
     "mcp_auto_loader_esm": os.path.join(
         current_dir, "data", "mcp_auto_loader_esm.json"
     ),

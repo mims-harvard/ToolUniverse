@@ -227,25 +227,36 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
         return result
 
     def _run_provider(self, arguments):
-        def ocr_pdf_bytes(pdf_bytes, dpi=300):
-            print("Running OCR on PDF bytes...")
+        def extract_pdf_text(pdf_bytes, dpi=300):
+            """Extract each page's embedded text, OCR-ing only pages that
+            have none (e.g. a scanned page inside an otherwise text PDF)."""
             doc = _pdf_backend().open(stream=pdf_bytes, filetype="pdf")
             try:
                 if doc.page_count > _MAX_PDF_PAGES:
                     raise ValueError("USPTO PDF exceeds the page limit.")
-                if doc.page_count > _MAX_OCR_PAGES:
-                    raise ValueError("USPTO image-only PDF exceeds the OCR page limit.")
 
-                reader = _ocr_reader().Reader(["en"], gpu=False)
+                reader = None
+                ocr_page_count = 0
+                total_ocr_pixels = 0
                 pages_text = []
-                total_pixels = 0
                 for page in doc:
+                    page_text = page.get_text().strip()
+                    if page_text:
+                        pages_text.append(page_text)
+                        continue
+
+                    ocr_page_count += 1
+                    if ocr_page_count > _MAX_OCR_PAGES:
+                        raise ValueError("USPTO PDF exceeds the OCR page limit.")
+                    if reader is None:
+                        reader = _ocr_reader().Reader(["en"], gpu=False)
+
                     pix = page.get_pixmap(dpi=dpi, alpha=False)
                     pixels = pix.width * pix.height
-                    total_pixels += pixels
+                    total_ocr_pixels += pixels
                     if (
                         pixels > _MAX_OCR_PIXELS_PER_PAGE
-                        or total_pixels > _MAX_OCR_TOTAL_PIXELS
+                        or total_ocr_pixels > _MAX_OCR_TOTAL_PIXELS
                     ):
                         raise ValueError("USPTO PDF exceeds the OCR image limit.")
                     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
@@ -310,19 +321,7 @@ class USPTOPatentDocumentDownloader(USPTOOpenDataPortalTool):
                 pdf_bytes = _download_uspto_document(
                     pdf_opt.get("downloadUrl"), self.headers
                 )
-                pdf_doc = _pdf_backend().open(stream=pdf_bytes, filetype="pdf")
-                try:
-                    if pdf_doc.page_count > _MAX_PDF_PAGES:
-                        raise ValueError("USPTO PDF exceeds the page limit.")
-                    plain_text, extraction_truncated = _bounded_join_text(
-                        page.get_text() for page in pdf_doc
-                    )
-                finally:
-                    pdf_doc.close()
-
-                if plain_text == "":
-                    # If no text was extracted, try to extract text from images
-                    plain_text, extraction_truncated = ocr_pdf_bytes(pdf_bytes)
+                plain_text, extraction_truncated = extract_pdf_text(pdf_bytes)
 
             if plain_text:
                 # if plain text is longer than current result, it is probably a better text extraction
