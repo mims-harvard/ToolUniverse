@@ -1,0 +1,79 @@
+[
+  {
+    "name": "mcp_auto_loader_exa",
+    "description": "Opt-in connection to Exa's official web-search MCP server (https://mcp.exa.ai/mcp). Discovers two reviewed, read-only tools for neural/semantic web search and full-page content extraction over Exa's own web index — general internet retrieval, distinct from ToolUniverse's structured scientific-database tools. The hosted public server needs no API key for casual use; an optional key raises rate limits for production use.",
+    "type": "MCPAutoLoaderTool",
+    "tool_prefix": "exa_",
+    "server_url": "${EXA_MCP_URL}",
+    "transport": "http",
+    "timeout": 30,
+    "strict_tool_contracts": true,
+    "http_headers_from_env": {
+      "x-api-key": {
+        "env": "EXA_API_KEY"
+      }
+    },
+    "selected_tools": [
+      "web_search_exa",
+      "web_fetch_exa"
+    ],
+    "tool_contracts": [
+      {
+        "name": "web_search_exa",
+        "title": "Search the web (Exa)",
+        "description": "Neural/semantic web search over Exa's own index. Describe the ideal page in natural language rather than keywords (e.g. 'blog post comparing React and Vue performance'). Use category:people or category:company to focus results. Returns clean, ready-to-use content from top results; follow up with exa_web_fetch_exa if the returned content is insufficient.",
+        "contract_sha256": "3bd880d7e5c7f2110eaf5c1d08dee4b02cf95e27d6b944c7af5275c682e1ab64",
+        "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true}
+      },
+      {
+        "name": "web_fetch_exa",
+        "title": "Fetch a webpage's content (Exa)",
+        "description": "Read one or more webpages' full content as clean markdown. Use after exa_web_search_exa when the search result content is insufficient, or to read any known URL directly. Batch multiple URLs in one call.",
+        "contract_sha256": "c52bc77073c7d3ba0fcc0f08e3bd2a0e90fd2327d50f64ad765e9549194e1dd0",
+        "annotations": {"readOnlyHint": true, "destructiveHint": false, "idempotentHint": true, "openWorldHint": true}
+      }
+    ],
+    "required_api_keys": ["EXA_MCP_URL"],
+    "optional_api_keys": ["EXA_API_KEY"],
+    "api_key_info": {
+      "EXA_MCP_URL": {
+        "domain": "Literature & Patents",
+        "type": "endpoint",
+        "register_url": "https://exa.ai",
+        "purpose": "Endpoint URL for the opt-in Exa web-search MCP connection.",
+        "without": "Leave blank to keep this third-party MCP connection disabled. To enable, set this to https://mcp.exa.ai/mcp — the public endpoint requires no account for casual use."
+      },
+      "EXA_API_KEY": {
+        "domain": "Literature & Patents",
+        "type": "secret",
+        "register_url": "https://dashboard.exa.ai/",
+        "purpose": "Raises Exa's rate limits for production use of the web-search MCP connection.",
+        "without": "Works at Exa's free/casual rate limit without it."
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["discover", "generate_configs", "call_tool"],
+          "description": "Discover reviewed tools, generate proxy configurations, or call one reviewed tool."
+        },
+        "tool_name": {
+          "type": "string",
+          "description": "Reviewed MCP tool name, required when operation is call_tool."
+        },
+        "tool_arguments": {
+          "type": "object",
+          "description": "Search query or URL-fetch arguments for the selected tool."
+        }
+      },
+      "required": ["operation"]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Reviewed Exa web-search MCP discovery data or structured tool result.",
+      "additionalProperties": true
+    }
+  }
+]

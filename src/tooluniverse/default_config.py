@@ -363,6 +363,9 @@ default_tool_files = {
     "mcp_auto_loader_noodle": os.path.join(
         current_dir, "data", "mcp_auto_loader_noodle.json"
     ),
+    "mcp_auto_loader_exa": os.path.join(
+        current_dir, "data", "mcp_auto_loader_exa.json"
+    ),
     "cryoet": os.path.join(current_dir, "data", "cryoet_tools.json"),
     "esm": os.path.join(current_dir, "data", "esm_tools.json"),
     "structure_annotation": os.path.join(
