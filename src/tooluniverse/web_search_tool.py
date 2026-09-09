@@ -1,6 +1,7 @@
 """Web search tools for ToolUniverse using Parallel Search MCP and DDGS."""
 
 import json
+import os
 import re
 import subprocess
 import sys
@@ -20,6 +21,14 @@ PARALLEL_PROVIDER_NOTICE = (
     "Query sent to Parallel's hosted third-party Search MCP service at "
     f"{PARALLEL_SEARCH_MCP_URL}. ToolUniverse region and safesearch controls "
     "are not applied by this backend; do not submit sensitive or "
+    "patient-identifying information."
+)
+
+SERPBASE_SEARCH_URL = "https://api.serpbase.dev/google/search"
+SERPBASE_PROVIDER_NOTICE = (
+    "Query sent to SerpBase's hosted third-party Google-SERP API at "
+    f"{SERPBASE_SEARCH_URL} (billed per request). ToolUniverse safesearch "
+    "control is not applied by this backend; do not submit sensitive or "
     "patient-identifying information."
 )
 
@@ -187,6 +196,64 @@ print(json.dumps(results))
 
         return results
 
+    def _search_with_serpbase(
+        self, query: str, max_results: int, region: str = "us-en"
+    ) -> List[Dict[str, Any]]:
+        """Search with SerpBase's real Google-SERP API and normalize its results.
+
+        Requires SERPBASE_API_KEY. SerpBase returns HTTP 200 even for
+        authentication/quota errors, with the failure indicated in the JSON
+        body's ``error`` field rather than the status code, so that field is
+        checked explicitly rather than relying on ``raise_for_status()`` alone.
+        """
+        api_key = os.environ.get("SERPBASE_API_KEY", "")
+        if not api_key:
+            raise RuntimeError(
+                "SERPBASE_API_KEY environment variable is not set. "
+                "Request a key at https://serpbase.dev."
+            )
+
+        country, _, language = region.partition("-")
+        payload = {"q": query, "gl": country or "us", "hl": language or "en"}
+
+        response = requests.post(
+            SERPBASE_SEARCH_URL,
+            json=payload,
+            headers={"X-API-Key": api_key},
+            timeout=30,
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        if data.get("error"):
+            raise RuntimeError(f"SerpBase API error: {data['error']}")
+
+        organic = data.get("organic")
+        if not isinstance(organic, list):
+            raise RuntimeError("SerpBase response did not include organic results")
+
+        results = []
+        for item in organic:
+            if not isinstance(item, dict):
+                continue
+            link = item.get("link") or item.get("url")
+            if not isinstance(link, str) or not link:
+                continue
+            title = item.get("title")
+            snippet = item.get("snippet")
+            results.append(
+                {
+                    "title": title if isinstance(title, str) else "",
+                    "url": link,
+                    "snippet": snippet if isinstance(snippet, str) else "",
+                    "rank": item.get("rank", len(results) + 1),
+                }
+            )
+            if len(results) >= max_results:
+                break
+
+        return results
+
     def _search_with_fallback(
         self,
         query: str,
@@ -235,6 +302,28 @@ print(json.dumps(results))
 
             # Explicit providers fall back to DDGS auto today. Preserve that
             # contract without adding Parallel to the default provider chain.
+            backends_to_try = ["auto"]
+        elif backend == "serpbase":
+            attempted_backends.append("serpbase")
+            try:
+                results = self._search_with_serpbase(
+                    query=query, max_results=max_results, region=region
+                )
+                if results:
+                    return (
+                        results,
+                        "serpbase",
+                        attempted_backends,
+                        None,
+                        provider_errors,
+                    )
+                had_empty_success = True
+            except Exception as error:
+                last_error = str(error)
+                provider_errors["serpbase"] = str(error)
+
+            # Explicit providers fall back to DDGS auto today. Preserve that
+            # contract without adding SerpBase to the default provider chain.
             backends_to_try = ["auto"]
         elif backend == "auto":
             # Try the explicit DuckDuckGo backend first. It tends to fail with
@@ -484,6 +573,23 @@ print(json.dumps(results))
                         },
                     }
 
+            if backend == "serpbase" and safesearch != "moderate":
+                error_msg = (
+                    "The SerpBase backend does not support the safesearch "
+                    "control. Omit it or use a DDGS backend."
+                )
+                return {
+                    "status": "error",
+                    "error": error_msg,
+                    "data": {
+                        "status": "error",
+                        "error": error_msg,
+                        "query": query,
+                        "total_results": 0,
+                        "results": [],
+                    },
+                }
+
             # Validate max_results
             max_results = max(1, min(max_results, 50))  # Limit between 1-50
 
@@ -529,6 +635,8 @@ print(json.dumps(results))
                 }
                 if "parallel" in attempted_backends:
                     response["data"]["provider_notice"] = PARALLEL_PROVIDER_NOTICE
+                if "serpbase" in attempted_backends:
+                    response["data"]["provider_notice"] = SERPBASE_PROVIDER_NOTICE
                 return response
 
             # Add rate limiting to be respectful
@@ -547,6 +655,8 @@ print(json.dumps(results))
                 result_data["provider_errors"] = provider_errors
             if "parallel" in attempted_backends:
                 result_data["provider_notice"] = PARALLEL_PROVIDER_NOTICE
+            if "serpbase" in attempted_backends:
+                result_data["provider_notice"] = SERPBASE_PROVIDER_NOTICE
 
             return {"status": "success", "data": result_data}
 
