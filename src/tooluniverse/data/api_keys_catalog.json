@@ -537,6 +537,18 @@
     ]
   },
   {
+    "name": "SERPBASE_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Other",
+    "register_url": "https://serpbase.dev",
+    "purpose": "Query the backend='serpbase' option for real Google SERP results (https://api.serpbase.dev), billed per request.",
+    "without": "web_search still works via DDGS/Parallel/DuckDuckGo-HTML/Wikipedia; backend='serpbase' is blocked without it.",
+    "used_by": [
+      "web_search_tools.json"
+    ]
+  },
+  {
     "name": "TXAGENT_MCP_SERVER_HOST",
     "requirement": "required",
     "type": "endpoint",

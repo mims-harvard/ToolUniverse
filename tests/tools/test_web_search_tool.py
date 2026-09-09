@@ -468,3 +468,323 @@ def test_api_documentation_search_enhances_query_once_without_mutating_input(
     assert result["data"]["search_type"] == "api_documentation"
     assert result["data"]["focus"] == "api_docs"
     assert arguments == original_arguments
+
+
+# --------------------------------------------------------------------------- #
+# SerpBase backend
+# --------------------------------------------------------------------------- #
+
+# Fixture shape from SerpBase's own documented example response
+# (https://serpbase.dev/docs), verified live against the real endpoint's
+# auth-error shape (200 OK + "error" field, not a 401) but not against a
+# real successful response -- no API key was available to confirm this.
+_SERPBASE_DOCUMENTED_RESPONSE = {
+    "status": 1000,
+    "request_id": "test-request-id",
+    "elapsed_ms": 120,
+    "credits_charged": 1,
+    "search_type": "search",
+    "query": "python asyncio",
+    "page": 1,
+    "organic": [
+        {
+            "rank": 1,
+            "title": "asyncio — Asynchronous I/O",
+            "link": "https://docs.python.org/3/library/asyncio.html",
+            "snippet": "asyncio is a library to write concurrent code.",
+        }
+    ],
+}
+
+
+class _FakeSerpBaseResponse:
+    def __init__(self, payload):
+        self._payload = payload
+
+    def raise_for_status(self):
+        pass
+
+    def json(self):
+        return self._payload
+
+
+@pytest.mark.unit
+def test_serpbase_search_requires_api_key(monkeypatch):
+    monkeypatch.delenv("SERPBASE_API_KEY", raising=False)
+    tool = _new_tool()
+
+    with pytest.raises(RuntimeError, match="SERPBASE_API_KEY"):
+        tool._search_with_serpbase(query="test", max_results=5)
+
+
+@pytest.mark.unit
+def test_serpbase_search_parses_documented_response_shape(monkeypatch):
+    monkeypatch.setenv("SERPBASE_API_KEY", "test-key")
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["url"] = url
+        captured["json"] = json
+        captured["headers"] = headers
+        return _FakeSerpBaseResponse(_SERPBASE_DOCUMENTED_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    results = _new_tool()._search_with_serpbase(
+        query="python asyncio", max_results=5, region="us-en"
+    )
+
+    assert captured["url"] == "https://api.serpbase.dev/google/search"
+    assert captured["json"] == {"q": "python asyncio", "gl": "us", "hl": "en"}
+    assert captured["headers"] == {"X-API-Key": "test-key"}
+    assert results == [
+        {
+            "title": "asyncio — Asynchronous I/O",
+            "url": "https://docs.python.org/3/library/asyncio.html",
+            "snippet": "asyncio is a library to write concurrent code.",
+            "rank": 1,
+        }
+    ]
+
+
+@pytest.mark.unit
+def test_serpbase_search_splits_region_into_gl_and_hl(monkeypatch):
+    monkeypatch.setenv("SERPBASE_API_KEY", "test-key")
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["json"] = json
+        return _FakeSerpBaseResponse({"organic": []})
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    _new_tool()._search_with_serpbase(query="x", max_results=1, region="cn-zh")
+
+    assert captured["json"]["gl"] == "cn"
+    assert captured["json"]["hl"] == "zh"
+
+
+@pytest.mark.unit
+def test_serpbase_search_raises_on_error_field_even_with_200(monkeypatch):
+    """SerpBase returns HTTP 200 even for auth failures, with the failure in
+    the JSON body's `error` field -- confirmed live against the real API."""
+    monkeypatch.setenv("SERPBASE_API_KEY", "wrong-key")
+
+    def fake_post(*args, **kwargs):
+        return _FakeSerpBaseResponse({"error": "unauthorized", "status": 1001})
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    with pytest.raises(RuntimeError, match="unauthorized"):
+        _new_tool()._search_with_serpbase(query="x", max_results=1)
+
+
+@pytest.mark.unit
+def test_serpbase_search_raises_on_missing_organic_key(monkeypatch):
+    monkeypatch.setenv("SERPBASE_API_KEY", "test-key")
+
+    def fake_post(*args, **kwargs):
+        return _FakeSerpBaseResponse({"status": 1000, "query": "x"})
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    with pytest.raises(RuntimeError, match="organic"):
+        _new_tool()._search_with_serpbase(query="x", max_results=1)
+
+
+@pytest.mark.unit
+def test_serpbase_search_skips_malformed_items_and_falls_back_to_url_field(
+    monkeypatch,
+):
+    monkeypatch.setenv("SERPBASE_API_KEY", "test-key")
+
+    def fake_post(*args, **kwargs):
+        return _FakeSerpBaseResponse(
+            {
+                "organic": [
+                    "not a dict",
+                    {"title": "No link at all"},
+                    {"title": "Uses url not link", "url": "https://example.com/u"},
+                    {"title": "Real result", "link": "https://example.com/real"},
+                ]
+            }
+        )
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    results = _new_tool()._search_with_serpbase(query="x", max_results=10)
+
+    assert [r["url"] for r in results] == [
+        "https://example.com/u",
+        "https://example.com/real",
+    ]
+    assert [r["rank"] for r in results] == [1, 2]
+
+
+@pytest.mark.unit
+def test_serpbase_search_truncates_to_max_results(monkeypatch):
+    monkeypatch.setenv("SERPBASE_API_KEY", "test-key")
+
+    def fake_post(*args, **kwargs):
+        return _FakeSerpBaseResponse(
+            {
+                "organic": [
+                    {"title": f"Result {i}", "link": f"https://example.com/{i}"}
+                    for i in range(10)
+                ]
+            }
+        )
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    results = _new_tool()._search_with_serpbase(query="x", max_results=3)
+
+    assert len(results) == 3
+
+
+@pytest.mark.unit
+def test_serpbase_backend_reports_success(monkeypatch):
+    tool = _new_tool()
+    monkeypatch.setattr(
+        tool,
+        "_search_with_serpbase",
+        lambda **kwargs: [
+            {
+                "title": "SerpBase result",
+                "url": "https://example.com",
+                "snippet": "excerpt",
+                "rank": 1,
+            }
+        ],
+    )
+
+    result = tool.run(
+        {
+            "query": "test query",
+            "backend": "serpbase",
+            "region": "us-en",
+            "safesearch": "moderate",
+        }
+    )
+
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "serpbase"
+    assert result["data"]["attempted_backends"] == ["serpbase"]
+    assert "api.serpbase.dev" in result["data"]["provider_notice"]
+    assert "patient-identifying" in result["data"]["provider_notice"]
+
+
+@pytest.mark.unit
+def test_serpbase_backend_rejects_unsupported_safesearch_control(monkeypatch):
+    tool = _new_tool()
+
+    def unexpected_call(**kwargs):
+        raise AssertionError("Unsupported controls must fail before transmission")
+
+    monkeypatch.setattr(tool, "_search_with_serpbase", unexpected_call)
+
+    result = tool.run(
+        {"query": "sensitive query", "backend": "serpbase", "safesearch": "off"}
+    )
+
+    assert result["status"] == "error"
+    assert "safesearch" in result["error"]
+    assert "does not support" in result["error"]
+
+
+@pytest.mark.unit
+def test_serpbase_backend_accepts_non_default_region(monkeypatch):
+    """Unlike Parallel, SerpBase supports region -- only safesearch is rejected."""
+    tool = _new_tool()
+    monkeypatch.setattr(
+        tool,
+        "_search_with_serpbase",
+        lambda **kwargs: [
+            {"title": "R", "url": "https://example.com", "snippet": "", "rank": 1}
+        ],
+    )
+
+    result = tool.run({"query": "test query", "backend": "serpbase", "region": "cn-zh"})
+
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "serpbase"
+
+
+@pytest.mark.unit
+def test_serpbase_backend_failure_falls_back_to_auto(monkeypatch):
+    tool = _new_tool()
+
+    def serpbase_fail(**kwargs):
+        raise RuntimeError("serpbase failed")
+
+    monkeypatch.setattr(tool, "_search_with_serpbase", serpbase_fail)
+    monkeypatch.setattr(
+        tool,
+        "_search_with_ddgs",
+        lambda **kwargs: [
+            {
+                "title": "Fallback result",
+                "url": "https://fallback.example",
+                "snippet": "from DDGS",
+                "rank": 1,
+            }
+        ],
+    )
+
+    result = tool.run({"query": "test query", "backend": "serpbase"})
+
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "auto"
+    assert result["data"]["attempted_backends"] == ["serpbase", "auto"]
+    assert result["data"]["provider_errors"]["serpbase"] == "serpbase failed"
+    assert "api.serpbase.dev" in result["data"]["provider_notice"]
+
+
+@pytest.mark.unit
+def test_serpbase_all_provider_failure_keeps_disclosure(monkeypatch):
+    tool = _new_tool()
+
+    def always_fail(**kwargs):
+        raise RuntimeError("simulated provider failure")
+
+    monkeypatch.setattr(tool, "_search_with_serpbase", always_fail)
+    monkeypatch.setattr(tool, "_search_with_ddgs", always_fail)
+    monkeypatch.setattr(tool, "_search_with_duckduckgo_html", always_fail)
+    monkeypatch.setattr(tool, "_search_with_wikipedia_api", always_fail)
+
+    result = tool.run({"query": "test query", "backend": "serpbase"})
+
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "none"
+    assert result["data"]["all_providers_failed"] is True
+    assert result["data"]["attempted_backends"][0] == "serpbase"
+    assert "api.serpbase.dev" in result["data"]["provider_notice"]
+
+
+@pytest.mark.unit
+def test_auto_backend_does_not_call_serpbase(monkeypatch):
+    tool = _new_tool()
+
+    def unexpected_call(**kwargs):
+        raise AssertionError("SerpBase must remain opt-in")
+
+    monkeypatch.setattr(tool, "_search_with_serpbase", unexpected_call)
+    monkeypatch.setattr(
+        tool,
+        "_search_with_ddgs",
+        lambda **kwargs: [
+            {
+                "title": "Default result",
+                "url": "https://default.example",
+                "snippet": "from default chain",
+                "rank": 1,
+            }
+        ],
+    )
+
+    result = tool.run({"query": "test query", "backend": "auto"})
+
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "duckduckgo"
+    assert "serpbase" not in result["data"]["attempted_backends"]
+    assert "provider_notice" not in result["data"]
