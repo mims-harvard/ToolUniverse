@@ -571,7 +571,11 @@ class UniProtRESTTool(BaseTool):
 
                 job_status = status_data.get("jobStatus") or status_data.get("status")
 
-                if job_status == "FINISHED" or "results" in status_data:
+                if (
+                    job_status == "FINISHED"
+                    or "results" in status_data
+                    or "failedIds" in status_data
+                ):
                     resp, payload = status_resp, status_data
                     carried = status_data.get("results")
                     total = self._header_total(status_resp)
