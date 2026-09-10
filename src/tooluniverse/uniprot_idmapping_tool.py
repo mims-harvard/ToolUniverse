@@ -133,7 +133,11 @@ class UniProtIDMappingTool(BaseTool):
             # Returning this embedded copy directly previously silently
             # truncated to UniProt's unpaginated default page size (25),
             # even when the job actually had hundreds of matches.
-            if status_data.get("jobStatus") == "FINISHED" or "results" in status_data:
+            if (
+                status_data.get("jobStatus") == "FINISHED"
+                or "results" in status_data
+                or "failedIds" in status_data
+            ):
                 break
             if status_data.get("jobStatus") == "ERROR":
                 msg = status_data.get("errorMessage", "Unknown error")
