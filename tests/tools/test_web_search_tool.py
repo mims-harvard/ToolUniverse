@@ -142,6 +142,30 @@ def test_web_search_falls_back_to_http_provider(monkeypatch):
 
 
 @pytest.mark.unit
+def test_duckduckgo_redirect_preserves_percent_encoded_destination_query(monkeypatch):
+    """parse_qs decodes uddg once; a second decode changes the destination."""
+    tool = _new_tool()
+
+    class FakeResponse:
+        text = (
+            '<a class="result__a" '
+            'href="/l/?uddg=https%3A%2F%2Fexample.org%2Fsearch%3Fq%3Da%252Bb">'
+            "Result</a>"
+        )
+
+        def raise_for_status(self):
+            return None
+
+    monkeypatch.setattr(
+        web_search_tool.requests, "get", lambda *args, **kwargs: FakeResponse()
+    )
+
+    results = tool._search_with_duckduckgo_html("query", max_results=1)
+
+    assert results[0]["url"] == "https://example.org/search?q=a%2Bb"
+
+
+@pytest.mark.unit
 def test_parallel_search_uses_mcp_and_normalizes_structured_results(monkeypatch):
     calls = {}
 
