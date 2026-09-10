@@ -8,7 +8,7 @@ import sys
 import time
 from html import unescape
 from typing import Any, Dict, List, Optional, Tuple
-from urllib.parse import parse_qs, unquote, urlparse
+from urllib.parse import parse_qs, urlparse
 
 import requests
 
@@ -448,7 +448,10 @@ print(json.dumps(results))
                 query_map = parse_qs(parsed.query)
                 uddg_values = query_map.get("uddg")
                 if uddg_values:
-                    parsed_href = unquote(uddg_values[0])
+                    # parse_qs already percent-decodes query values. Decoding a
+                    # second time corrupts destinations that intentionally
+                    # contain escaped reserved characters (for example %2B).
+                    parsed_href = uddg_values[0]
 
             clean_title = unescape(re.sub(r"<[^>]+>", "", raw_title)).strip()
             raw_snippet = snippets[index - 1] if index - 1 < len(snippets) else ""
