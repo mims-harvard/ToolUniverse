@@ -31,10 +31,14 @@ def _search_returning(pmids, count):
             **{p: {"title": "A guideline", "pubdate": "2026"} for p in pmids},
         }
     }
-    abstracts = "".join(
-        f"<PubmedArticle><PMID>{p}</PMID>"
-        f"<AbstractText>A guideline abstract</AbstractText></PubmedArticle>"
-        for p in pmids
+    abstracts = (
+        "<PubmedArticleSet>"
+        + "".join(
+            f"<PubmedArticle><PMID>{p}</PMID>"
+            f"<AbstractText>A guideline abstract</AbstractText></PubmedArticle>"
+            for p in pmids
+        )
+        + "</PubmedArticleSet>"
     )
 
     def fake_get(url, **kwargs):
