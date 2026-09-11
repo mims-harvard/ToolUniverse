@@ -1408,6 +1408,9 @@ class OpenAlexGuidelinesTool(BaseTool):
 
     def _search_openalex_guidelines(self, query, limit, year_from=None, year_to=None):
         """Search for clinical guidelines using OpenAlex API."""
+        if limit == 0:
+            return _guideline_envelope([], total=0, retrieved=0, source="OpenAlex")
+
         try:
             # Build search query to focus on guidelines
             search_query = (
