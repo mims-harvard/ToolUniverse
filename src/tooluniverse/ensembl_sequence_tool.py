@@ -9,6 +9,8 @@ API: https://rest.ensembl.org/
 No authentication required. Free public access.
 """
 
+import re
+
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
@@ -86,8 +88,10 @@ class EnsemblSequenceTool(BaseTool):
                 "error": "region parameter is required (e.g., '17:7668421..7668520:1' or '17:7668421-7668520')",
             }
 
-        # Normalize region format: accept both 17:start-end and 17:start..end
-        region = region.replace("-", "..")
+        # Normalize only the coordinate separator. A global replacement also
+        # changes the documented reverse strand suffix (`:-1`) and any
+        # hyphens that belong to a contig name.
+        region = re.sub(r"(?<=:)(\d+)-(\d+)(?=:[^:]+$|$)", r"\1..\2", region)
 
         # Add strand if not present
         if region.count(":") < 2 and ".." in region:
