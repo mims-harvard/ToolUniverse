@@ -615,17 +615,18 @@ peaks = tu.tools.ChIPAtlas_get_peak_data(
 
 ### Sequence Deep-Learning Variant-Effect Predictors
 
-Predict the functional impact of a non-coding (and, for Evo 2, any) variant directly from sequence — the mechanistic evidence (PS3_supporting / PP3) that SIFT/PolyPhen/AlphaMissense cannot give for non-coding loci. Outputs are Δ (alt − ref) effect sizes, not calibrated probabilities.
+Predict the functional impact of a non-coding (and, for Evo 2, any) variant directly from sequence — the mechanistic evidence (PS3_supporting / PP3) that SIFT/PolyPhen/AlphaMissense cannot give for non-coding loci. Outputs are Δ (alt − ref) effect sizes, not calibrated probabilities, except AlphaGenome Atlas's AVI_SCORE (see below).
 
 | Tool | Predicts | Access |
 |------|----------|--------|
+| `AlphaGenome_atlas_lookup_variant` | Precomputed AVI_SCORE (unified AlphaGenome + AlphaMissense impact score) + per-track scores for a known SNV, no live model run | hosted API — `ALPHA_GENOME_API_KEY` |
 | `AlphaGenome_score_variant` | RNA-seq/ATAC/CAGE/splice track Δ (1 Mb, single-base) | hosted API — `ALPHA_GENOME_API_KEY` |
 | `run_enformer_variant_effect` | Δ across 5,313 human tracks (196 kb) | remote MCP server |
 | `run_borzoi_variant_effect` | RNA-seq coverage Δ (expression/splicing, 524 kb) | remote MCP server |
 | `run_chrombpnet_variant_effect` | chromatin accessibility Δ (ATAC/DNase, base-res) | remote MCP server |
 | `Evo2_score_variant` | genome-LM delta log-likelihood; coding + non-coding | hosted NIM — `NVIDIA_API_KEY` |
 
-**Inputs**: `AlphaGenome_score_variant` → `chromosome`,`position`,`reference_bases`,`alternate_bases`,`output_type`,`sequence_length`. `Evo2_score_variant` → `sequence`+`position`+`alternate` (or `ref_sequence`/`alt_sequence`), optional `model` (`evo2-40b`/`evo2-7b`). The Enformer/Borzoi/ChromBPNet remote tools take the variant locus. See SKILL.md Phase 2.5 for selection guidance.
+**Inputs**: `AlphaGenome_atlas_lookup_variant`/`AlphaGenome_score_variant` → `chromosome`,`position`,`reference_bases`,`alternate_bases` (Atlas additionally takes `scorers`, default `["AVI_SCORE"]`; score_variant takes `output_type`,`sequence_length` — indels only work on score_variant, Atlas is SNV-only). `Evo2_score_variant` → `sequence`+`position`+`alternate` (or `ref_sequence`/`alt_sequence`), optional `model` (`evo2-40b`/`evo2-7b`). The Enformer/Borzoi/ChromBPNet remote tools take the variant locus. Check `AlphaGenome_atlas_lookup_variant` first for a known SNV (cheap precomputed lookup) before reaching for the live `score_variant` call. See SKILL.md Phase 2.5 for selection guidance.
 
 **Example - Get regulatory annotations**:
 ```python
