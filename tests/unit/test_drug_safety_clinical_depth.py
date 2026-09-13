@@ -468,6 +468,18 @@ class TestDailyMedSPLHistory(unittest.TestCase):
         self.assertEqual(result["status"], "success")
         self.assertIn("xml", result)
 
+    def test_full_spl_missing_setid_is_a_local_validation_error(self):
+        """The XML path must not issue a request for a missing Set ID."""
+        from tooluniverse.dailymed_tool import GetSPLBySetIDTool
+
+        tool = GetSPLBySetIDTool({})
+        with patch("tooluniverse.dailymed_tool.requests.get") as get:
+            result = tool.run({})
+
+        self.assertEqual(result["status"], "error")
+        self.assertIn("setid parameter is required", result["error"])
+        get.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()
