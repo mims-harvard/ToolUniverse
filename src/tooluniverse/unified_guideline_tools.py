@@ -61,8 +61,17 @@ def _extract_meaningful_terms(query):
     if not isinstance(query, str):
         return []
 
-    # Keep alphabetic tokens with length >= 3
-    tokens = re.findall(r"[a-zA-Z]{3,}", query.lower())
+    # Keep connected biomedical identifiers as one token (COVID-19,
+    # HLA-B*57:01, IL-6) as well as Unicode terms.  Splitting at punctuation
+    # turns the numeric suffix into a broad substring filter (e.g. "2019"),
+    # which admits unrelated literature.  Numeric-only fragments are never
+    # useful evidence concepts, so discard them.
+    tokens = re.findall(r"[^\W_]+(?:[-*:/][^\W_]+)*", query.lower())
+    tokens = [
+        token
+        for token in tokens
+        if len(token) >= 2 and any(character.isalpha() for character in token)
+    ]
     stop_terms = {
         "management",
         "care",
