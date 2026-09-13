@@ -9,6 +9,8 @@ API: https://clinicaltrials.gov/data-api/api
 No authentication required. Public access.
 """
 
+import re
+
 import requests
 from typing import Any
 
@@ -181,11 +183,16 @@ class CTGovAPITool(BaseRESTTool):
 
     def _get_study(self, arguments: dict) -> dict:
         """Get full details for a single study by NCT ID."""
-        nct_id = arguments.get("nct_id", "").strip()
+        nct_id = arguments.get("nct_id", "").strip().upper()
         if not nct_id:
             return {
                 "status": "error",
                 "error": "nct_id parameter is required (e.g., 'NCT04280705')",
+            }
+        if not re.fullmatch(r"NCT\d{8}", nct_id):
+            return {
+                "status": "error",
+                "error": "nct_id must be an NCT identifier (e.g., 'NCT04280705')",
             }
 
         url = f"{CLINICALTRIALS_BASE}/studies/{nct_id}"
