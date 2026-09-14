@@ -621,9 +621,14 @@ class ClinicalTrialsTool(RESTfulTool):
         """Get full details for a single study by NCT ID."""
         import requests
 
-        nct_id = arguments.get("nct_id")
+        nct_id = str(arguments.get("nct_id") or "").strip().upper()
         if not nct_id:
             return {"status": "error", "error": "nct_id is required"}
+        if not re.fullmatch(r"NCT\d{8}", nct_id):
+            return {
+                "status": "error",
+                "error": "nct_id must be an NCT identifier (e.g., 'NCT04280705')",
+            }
 
         resp = requests.get(
             f"{self._BASE_URL}/studies/{nct_id}",

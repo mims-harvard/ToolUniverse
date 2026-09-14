@@ -2,7 +2,7 @@
   {
     "type": "WebSearchTool",
     "name": "web_search",
-    "description": "General web search using DDGS (Dux Distributed Global Search) supporting multiple search engines including Google, Bing, Brave, Yahoo, and DuckDuckGo. No API keys required. Parallel Search MCP is opt-in; selecting it sends the query to Parallel's hosted third-party service, so do not submit sensitive or patient-identifying information.",
+    "description": "General web search using DDGS (Dux Distributed Global Search) supporting multiple search engines including Google, Bing, Brave, Yahoo, and DuckDuckGo. No API keys required. Parallel Search MCP and SerpBase are opt-in; selecting either sends the query to that hosted third-party service, so do not submit sensitive or patient-identifying information. SerpBase additionally requires SERPBASE_API_KEY and returns real Google SERP results (billed per request), useful when DDGS's Google backend is unavailable or rate-limited.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -30,10 +30,11 @@
         },
         "backend": {
           "type": "string",
-          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp; that backend does not apply ToolUniverse region or safesearch controls.",
+          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp; that backend does not apply ToolUniverse region or safesearch controls. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results; that backend applies region but not safesearch.",
           "enum": [
             "auto",
             "parallel",
+            "serpbase",
             "google",
             "bing",
             "brave",
@@ -44,7 +45,7 @@
         },
         "region": {
           "type": "string",
-          "description": "Search region/locale for DDGS backends. Parallel does not support this control; only the default value is accepted with backend='parallel'.",
+          "description": "Search region/locale for DDGS backends, and country/language for the SerpBase backend (split on the hyphen into gl/hl). Parallel does not support this control; only the default value is accepted with backend='parallel'.",
           "enum": [
             "us-en",
             "cn-zh",
@@ -57,7 +58,7 @@
         },
         "safesearch": {
           "type": "string",
-          "description": "Safe search level for DDGS backends. Parallel does not support this control; only the default value is accepted with backend='parallel'.",
+          "description": "Safe search level for DDGS backends. Parallel and SerpBase do not support this control; only the default value is accepted with those backends.",
           "enum": [
             "on",
             "moderate",
@@ -69,6 +70,16 @@
       "required": [
         "query"
       ]
+    },
+    "optional_api_keys": ["SERPBASE_API_KEY"],
+    "api_key_info": {
+      "SERPBASE_API_KEY": {
+        "domain": "Other",
+        "type": "secret",
+        "register_url": "https://serpbase.dev",
+        "purpose": "Query the backend='serpbase' option for real Google SERP results (https://api.serpbase.dev), billed per request.",
+        "without": "web_search still works via DDGS/Parallel/DuckDuckGo-HTML/Wikipedia; backend='serpbase' is blocked without it."
+      }
     },
     "return_schema": {
       "oneOf": [
@@ -208,10 +219,11 @@
         },
         "backend": {
           "type": "string",
-          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp.",
+          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results.",
           "enum": [
             "auto",
             "parallel",
+            "serpbase",
             "google",
             "bing",
             "brave",

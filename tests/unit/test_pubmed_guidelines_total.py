@@ -47,10 +47,14 @@ def _xml(text):
     return r
 
 
-ABSTRACTS = "".join(
-    f"<PubmedArticle><PMID>{pmid}</PMID>"
-    f"<AbstractText>Abstract {pmid}</AbstractText></PubmedArticle>"
-    for pmid in ("1", "2")
+ABSTRACTS = (
+    "<PubmedArticleSet>"
+    + "".join(
+        f"<PubmedArticle><PMID>{pmid}</PMID>"
+        f"<AbstractText>Abstract {pmid}</AbstractText></PubmedArticle>"
+        for pmid in ("1", "2")
+    )
+    + "</PubmedArticleSet>"
 )
 
 

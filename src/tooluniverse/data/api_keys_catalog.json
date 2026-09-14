@@ -180,6 +180,18 @@
     ]
   },
   {
+    "name": "CONSENSUS_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Literature & Patents",
+    "register_url": "https://consensus.app/home/api",
+    "purpose": "Search 220M+ peer-reviewed papers via the Consensus API.",
+    "without": "Consensus tools are blocked without it. Requires a paid Consensus account (Pro, Deep, or Teams plan).",
+    "used_by": [
+      "consensus_tools.json"
+    ]
+  },
+  {
     "name": "DISGENET_API_KEY",
     "requirement": "required",
     "type": "secret",
@@ -558,6 +570,18 @@
     "used_by": [
       "semantic_scholar_ext_tools.json",
       "semantic_scholar_tools.json"
+    ]
+  },
+  {
+    "name": "SERPBASE_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Other",
+    "register_url": "https://serpbase.dev",
+    "purpose": "Query the backend='serpbase' option for real Google SERP results (https://api.serpbase.dev), billed per request.",
+    "without": "web_search still works via DDGS/Parallel/DuckDuckGo-HTML/Wikipedia; backend='serpbase' is blocked without it.",
+    "used_by": [
+      "web_search_tools.json"
     ]
   },
   {
