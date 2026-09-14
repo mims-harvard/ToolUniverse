@@ -755,22 +755,36 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
     ) -> Dict[str, Dict[str, Any]]:
         expected_names = self.selected_tools or list(self.tool_contracts)
 
-        # Verify each reviewed tool independently. A single tool whose upstream
-        # schema has drifted is excluded on its own rather than aborting the
-        # whole category, so unaffected siblings stay usable -- third-party MCP
-        # servers change one tool at a time, and taking every other reviewed
-        # tool offline with it is a much larger outage than the drift warrants.
-        # Excluded tools are never exposed, so this does not weaken the pin.
+        # A reviewed tool that is absent entirely still fails the whole
+        # category. Every reviewed tool being present is a check on the
+        # server's identity rather than on any one tool's schema: an endpoint
+        # serving only a subset may be stale, rolled back, or the wrong host,
+        # and these schemas are public enough that a subset can match
+        # byte-for-byte. Drift in one tool is a far weaker signal, so only
+        # drift is survivable below.
+        missing_remote = [name for name in expected_names if name not in remote_tools]
+        if missing_remote:
+            raise ValueError(
+                "Reviewed MCP tools missing from server: "
+                + ", ".join(sorted(missing_remote))
+            )
+
+        # Verify each reviewed tool's contract independently. A single tool
+        # whose upstream schema has drifted is excluded on its own rather than
+        # aborting the whole category, so unaffected siblings stay usable --
+        # third-party MCP servers change one tool at a time, and taking every
+        # other reviewed tool offline with it is a much larger outage than the
+        # drift warrants. A drifted tool is never pinned, so it produces no
+        # proxy config and is not registered by this load.
         pinned_tools = {}
         rejected = {}
         for name in expected_names:
-            if name not in remote_tools:
-                rejected[name] = "missing from server"
-                continue
             reviewed = self.tool_contracts.get(name)
             if reviewed is None:
-                rejected[name] = "no reviewed contract"
-                continue
+                # A selected name with no reviewed contract is a local config
+                # error (typically a typo), not upstream drift -- fail loudly
+                # instead of quietly shrinking the category.
+                raise ValueError(f"No reviewed MCP contract for tool: {name}")
             reviewed_hash = reviewed.get("contract_sha256")
             if not reviewed_hash:
                 reviewed_hash = self._contract_sha256(reviewed)

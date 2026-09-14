@@ -353,17 +353,43 @@ async def test_one_drifted_tool_does_not_take_down_its_unaffected_siblings(
 
 
 @pytest.mark.asyncio
-async def test_a_missing_tool_does_not_take_down_its_siblings(monkeypatch, caplog):
+async def test_a_missing_reviewed_tool_still_fails_the_whole_category(monkeypatch):
+    """Presence of every reviewed tool checks the server's identity.
+
+    A server offering only a subset may be stale, rolled back, or the wrong
+    host, so -- unlike drift in a single tool -- this stays fail-closed even
+    when the remaining reviewed tools match byte-for-byte.
+    """
     loader = MCPAutoLoaderTool(_two_tool_loader_config())
 
     async def fake_request(method, params=None):
         return {"tools": [copy.deepcopy(SECOND_CONTRACT)]}
 
     monkeypatch.setattr(loader, "_make_mcp_request", fake_request)
-    discovered = await loader.discover_tools()
 
-    assert list(discovered) == ["second_reviewed_tool"]
-    assert "reviewed_tool (missing from server)" in caplog.text
+    with pytest.raises(Exception, match="missing from server"):
+        await loader.discover_tools()
+
+
+@pytest.mark.asyncio
+async def test_a_selected_tool_without_a_reviewed_contract_fails_loudly(monkeypatch):
+    """A typo in selected_tools is a local config error, not upstream drift."""
+    config = _two_tool_loader_config()
+    config["selected_tools"] = ["reviewed_tool", "typoo_tool"]
+    loader = MCPAutoLoaderTool(config)
+
+    async def fake_request(method, params=None):
+        return {
+            "tools": [
+                copy.deepcopy(CONTRACT),
+                {"name": "typoo_tool", "inputSchema": {}, "outputSchema": {}},
+            ]
+        }
+
+    monkeypatch.setattr(loader, "_make_mcp_request", fake_request)
+
+    with pytest.raises(Exception, match="No reviewed MCP contract"):
+        await loader.discover_tools()
 
 
 @pytest.mark.asyncio
