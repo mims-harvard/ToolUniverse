@@ -32,7 +32,7 @@ REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "src" / "tooluniverse" / "data"
 CATALOG = DATA / "api_keys_catalog.json"
 ENV_TEMPLATE = REPO / ".env.template"
-_SKIP = {"api_keys_catalog.json"}
+_SKIP = {"api_keys_catalog.json", "mcp_contracts.lock.json"}
 
 DOMAIN_ORDER = [
     "Genomics & Variants",
