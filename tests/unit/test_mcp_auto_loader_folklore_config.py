@@ -18,7 +18,7 @@ EXPECTED_CONTRACT_HASHES = {
         "999ec1ddb4ea413fe8a22df866086e0fa94f5e5f8027e6fbb6a1faabb38174d8"
     ),
     "get_publication_details": (
-        "7f91cb6ac7c93b9a59116ab81aa74620b9eff248a66a29da2c0e3847c4f9017b"
+        "7906416a2f1dc0ec5f1c210f87a216da190a5f6e842e5059db70e1a5f6e190dd"
     ),
     "search_literature_corpus": (
         "6e09be489f4d1a5d25652df12ca0ec0924d8fc27f4c940e31528dd1ea22d776e"

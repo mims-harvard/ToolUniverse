@@ -98,7 +98,7 @@
         "name": "store_inline_sequence",
         "title": "Store an inline DNA sequence",
         "description": "Send a supplied DNA sequence to the configured third-party MCP service and receive a reusable server-side handle. Do not send private or identifiable genomic data to the shared public demo endpoint.",
-        "contract_sha256": "54fa131fff438454071f7cd782cd9ace1c056523a385150a3b1f430c0178bdb9",
+        "contract_sha256": "434f38f220ce4be8a15ec81b9e0fc6ef14f5fff45e871fd18ec4ec372b22a097",
         "annotations": {
           "readOnlyHint": false,
           "destructiveHint": false,
@@ -110,7 +110,7 @@
         "name": "predict_promoter",
         "title": "Predict promoter regions",
         "description": "Predict promoter regions with a reviewed Genomic Intelligence model. Prefer a server-side sequence_ref; raw sequence input is sent to the configured third-party MCP service.",
-        "contract_sha256": "d9f5db6952f9f62bf34d9d5504a2b91886a6ea850791a53e7858e03be4f7ef05",
+        "contract_sha256": "eccb902b11415f3189e1caa604f018cb0356ab32625572c168f68242b6a4cc58",
         "annotations": {
           "readOnlyHint": true,
           "destructiveHint": false,
@@ -122,7 +122,7 @@
         "name": "predict_splice",
         "title": "Predict splice sites",
         "description": "Predict splice donor and acceptor sites with a reviewed Genomic Intelligence model. Prefer sequence_ref; raw sequence input is sent to the configured service.",
-        "contract_sha256": "3077a2a04af23489c3fc9166e19f1c28954f3e014eb57c6a21eb959fa5a86f4d",
+        "contract_sha256": "5af1ca0fd53975ec26639de3e41f40068b8ee67ce8b8e0c538348d5f43ec63ec",
         "annotations": {
           "readOnlyHint": true,
           "destructiveHint": false,
@@ -134,7 +134,7 @@
         "name": "predict_enhancer",
         "title": "Predict enhancer activity",
         "description": "Predict enhancer activity with a reviewed Genomic Intelligence model. Prefer sequence_ref; raw sequence input is sent to the configured third-party service.",
-        "contract_sha256": "c6feb5fc03d3bae22213125833954256a63c807fcfe71149d68fb5484eb2fce2",
+        "contract_sha256": "31764dbf1037225a1d6895f49b3715204f76ced412c343d8e5f1cef77f3be391",
         "annotations": {
           "readOnlyHint": true,
           "destructiveHint": false,
@@ -146,7 +146,7 @@
         "name": "predict_chromatin",
         "title": "Predict chromatin features",
         "description": "Predict chromatin annotations across reviewed features with a Genomic Intelligence model. Prefer sequence_ref; raw sequence input is sent to the configured service.",
-        "contract_sha256": "580cfb99c06b8e1cd67353ac223739d5489badbae800d9822c20982f79409a39",
+        "contract_sha256": "23fde61976ec60cd1e33c88b2c94624e168a14fc5c7314cf61555d4f2d5f8c85",
         "annotations": {
           "readOnlyHint": true,
           "destructiveHint": false,
@@ -158,7 +158,7 @@
         "name": "predict_expression",
         "title": "Predict gene expression",
         "description": "Predict expression from the required TSS-centred window and experimental context. Use fetch_gene_for_expression; raw sequence input is sent to the configured service.",
-        "contract_sha256": "ed6dd0cfb42e2e233baf750a3b4e5d2207329ba9367cefbe57fefc2e38dcfc56",
+        "contract_sha256": "41b8c67d2d1a022ea3b6c043eb8161d54685d60a4eca82a14f4cfcb84eb7e2ce",
         "annotations": {
           "readOnlyHint": true,
           "destructiveHint": false,
@@ -170,7 +170,7 @@
         "name": "find_genes",
         "title": "Find genes in a DNA sequence",
         "description": "Find transcript intervals and gene structure in a sequence. Public demo users must keep wait=true; detached jobs require a private key. Raw sequence input is sent to the configured service.",
-        "contract_sha256": "a3c71dbc2873a4af431def60c83f5eacb483ac7a8cbbc0800bf6b0c9acf68777",
+        "contract_sha256": "2fded6f0f98cf1661b8775f623e83ecd2792e148c88db6a62013a9a560cbc2b8",
         "annotations": {
           "readOnlyHint": false,
           "destructiveHint": false,
@@ -182,7 +182,7 @@
         "name": "find_genes_and_predict_expression",
         "title": "Find genes and predict expression",
         "description": "Find genes and predict per-gene expression in one server-side workflow. Public demo users must keep wait=true; detached jobs require a private key. Experimental context is required.",
-        "contract_sha256": "0546d4ef54ce01e0c9ac5e4568ec884a7effd7452913fb735b414d2bf004147b",
+        "contract_sha256": "42681714a809d268bb89453ce49ec0db3d56a06b1e539c07840e75edf2fda8c5",
         "annotations": {
           "readOnlyHint": false,
           "destructiveHint": false,

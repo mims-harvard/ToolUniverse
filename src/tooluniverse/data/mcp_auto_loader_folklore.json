@@ -46,7 +46,7 @@
         "name": "get_publication_details",
         "title": "Get details for a PubMed publication",
         "description": "Retrieve one complete public bibliographic record by PMID from Folklore's PubMed-derived genetics corpus, including abstract, authors, publication metadata, gene and variant mentions, retraction status, and source links. This read-only literature evidence contains no patient context.",
-        "contract_sha256": "7f91cb6ac7c93b9a59116ab81aa74620b9eff248a66a29da2c0e3847c4f9017b",
+        "contract_sha256": "7906416a2f1dc0ec5f1c210f87a216da190a5f6e842e5059db70e1a5f6e190dd",
         "annotations": {
           "readOnlyHint": true,
           "destructiveHint": false,
