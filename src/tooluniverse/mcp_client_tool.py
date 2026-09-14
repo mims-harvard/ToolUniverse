@@ -801,21 +801,35 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
             remote_hash = self._contract_sha256(remote_tools[name])
             if reviewed_hash != remote_hash:
                 # The hash only says the contract moved. Ask the narrower,
-                # decidable question: would a call built from the schema we
-                # reviewed still be valid? If so the tool keeps working on the
-                # REVIEWED schema, so a field the server added is never filled
-                # in by the agent. Without a recorded schema there is nothing
-                # to compare and the tool is refused, as before.
+                # decidable question: would the contract we reviewed still work
+                # against this server? If so the tool keeps running on the
+                # REVIEWED contract, so nothing the server changed reaches the
+                # agent. Without a recorded schema there is nothing to compare
+                # and the tool is refused, as before.
+                recorded = recorded_contracts.get(name)
+                # The lockfile is a record of what was reviewed, never an
+                # authority of its own: trust it only while it still hashes to
+                # the contract_sha256 pinned in the config. Refreshing the
+                # lockfile alone -- which sync_mcp_contracts.py --update does,
+                # re-recording straight from the server -- would otherwise
+                # re-point the trust anchor at whatever is being served now,
+                # and the comparison would be live against live.
+                if recorded is not None and (
+                    self._contract_sha256(recorded) != reviewed_hash
+                ):
+                    rejected[name] = (
+                        "contract changed, and the recorded schema does not "
+                        "match the pinned contract_sha256"
+                    )
+                    continue
                 compatible, drift_reasons = classify_contract_drift(
-                    recorded_contracts.get(name), remote_tools[name]
+                    recorded, remote_tools[name]
                 )
                 if not compatible:
                     rejected[name] = "; ".join(drift_reasons) or "contract changed"
                     continue
                 tolerated[name] = True
-                pinned_tool = pinned_tool_from_reviewed(
-                    recorded_contracts[name], remote_tools[name]
-                )
+                pinned_tool = pinned_tool_from_reviewed(recorded, remote_tools[name])
             else:
                 pinned_tool = copy.deepcopy(remote_tools[name])
             for local_field in ("description", "title", "annotations"):
