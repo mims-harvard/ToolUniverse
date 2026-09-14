@@ -285,6 +285,106 @@ async def test_strict_loader_fails_closed_on_contract_drift(monkeypatch):
         await loader.discover_tools()
 
 
+SECOND_CONTRACT = {
+    "name": "second_reviewed_tool",
+    "description": "Second locally reviewed description.",
+    "inputSchema": {
+        "type": "object",
+        "properties": {"url": {"type": "string"}},
+        "required": ["url"],
+    },
+    "outputSchema": {
+        "type": "object",
+        "properties": {"content": {"type": "string"}},
+        "required": ["content"],
+        "additionalProperties": False,
+    },
+    "annotations": {
+        "readOnlyHint": True,
+        "destructiveHint": False,
+    },
+}
+
+
+def _two_tool_loader_config():
+    """A loader reviewing two tools, as the real Exa/Folklore loaders do."""
+    return _loader_config(
+        selected_tools=[CONTRACT["name"], SECOND_CONTRACT["name"]],
+        tool_contracts=[
+            {
+                "name": CONTRACT["name"],
+                "description": CONTRACT["description"],
+                "contract_sha256": MCPAutoLoaderTool._contract_sha256(CONTRACT),
+                "annotations": copy.deepcopy(CONTRACT["annotations"]),
+            },
+            {
+                "name": SECOND_CONTRACT["name"],
+                "description": SECOND_CONTRACT["description"],
+                "contract_sha256": MCPAutoLoaderTool._contract_sha256(SECOND_CONTRACT),
+                "annotations": copy.deepcopy(SECOND_CONTRACT["annotations"]),
+            },
+        ],
+    )
+
+
+@pytest.mark.asyncio
+async def test_one_drifted_tool_does_not_take_down_its_unaffected_siblings(
+    monkeypatch, caplog
+):
+    """Upstream changing one tool must not deregister every other reviewed tool.
+
+    Exa added a required `objective` field to `web_search_exa`, which under
+    abort-all behavior also took `web_fetch_exa` offline even though its
+    contract still matched exactly.
+    """
+    loader = MCPAutoLoaderTool(_two_tool_loader_config())
+    drifted = copy.deepcopy(CONTRACT)
+    drifted["inputSchema"]["properties"]["objective"] = {"type": "string"}
+    drifted["inputSchema"]["required"] = ["query", "objective"]
+
+    async def fake_request(method, params=None):
+        return {"tools": [drifted, copy.deepcopy(SECOND_CONTRACT)]}
+
+    monkeypatch.setattr(loader, "_make_mcp_request", fake_request)
+    discovered = await loader.discover_tools()
+
+    assert list(discovered) == ["second_reviewed_tool"]
+    assert "reviewed_tool (contract changed)" in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_a_missing_tool_does_not_take_down_its_siblings(monkeypatch, caplog):
+    loader = MCPAutoLoaderTool(_two_tool_loader_config())
+
+    async def fake_request(method, params=None):
+        return {"tools": [copy.deepcopy(SECOND_CONTRACT)]}
+
+    monkeypatch.setattr(loader, "_make_mcp_request", fake_request)
+    discovered = await loader.discover_tools()
+
+    assert list(discovered) == ["second_reviewed_tool"]
+    assert "reviewed_tool (missing from server)" in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_drifted_tool_is_never_exposed_even_when_siblings_load(monkeypatch):
+    """The pin still holds: a drifted tool is excluded, never silently accepted."""
+    loader = MCPAutoLoaderTool(_two_tool_loader_config())
+    drifted = copy.deepcopy(CONTRACT)
+    drifted["inputSchema"]["properties"]["query"]["type"] = "integer"
+
+    async def fake_request(method, params=None):
+        return {"tools": [drifted, copy.deepcopy(SECOND_CONTRACT)]}
+
+    monkeypatch.setattr(loader, "_make_mcp_request", fake_request)
+    await loader.discover_tools()
+    configs = loader.generate_proxy_tool_configs()
+
+    assert [config["target_tool_name"] for config in configs] == [
+        "second_reviewed_tool"
+    ]
+
+
 @pytest.mark.asyncio
 async def test_strict_loader_fails_closed_when_reviewed_tool_is_missing(
     monkeypatch,

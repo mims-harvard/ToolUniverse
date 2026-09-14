@@ -754,29 +754,49 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
         self, remote_tools: Dict[str, Dict[str, Any]]
     ) -> Dict[str, Dict[str, Any]]:
         expected_names = self.selected_tools or list(self.tool_contracts)
-        missing_remote = [name for name in expected_names if name not in remote_tools]
-        if missing_remote:
-            raise ValueError(
-                "Reviewed MCP tools missing from server: "
-                + ", ".join(sorted(missing_remote))
-            )
 
+        # Verify each reviewed tool independently. A single tool whose upstream
+        # schema has drifted is excluded on its own rather than aborting the
+        # whole category, so unaffected siblings stay usable -- third-party MCP
+        # servers change one tool at a time, and taking every other reviewed
+        # tool offline with it is a much larger outage than the drift warrants.
+        # Excluded tools are never exposed, so this does not weaken the pin.
         pinned_tools = {}
+        rejected = {}
         for name in expected_names:
+            if name not in remote_tools:
+                rejected[name] = "missing from server"
+                continue
             reviewed = self.tool_contracts.get(name)
             if reviewed is None:
-                raise ValueError(f"No reviewed MCP contract for tool: {name}")
+                rejected[name] = "no reviewed contract"
+                continue
             reviewed_hash = reviewed.get("contract_sha256")
             if not reviewed_hash:
                 reviewed_hash = self._contract_sha256(reviewed)
             remote_hash = self._contract_sha256(remote_tools[name])
             if reviewed_hash != remote_hash:
-                raise ValueError(f"MCP contract changed for reviewed tool: {name}")
+                rejected[name] = "contract changed"
+                continue
             pinned_tool = copy.deepcopy(remote_tools[name])
             for local_field in ("description", "title", "annotations"):
                 if local_field in reviewed:
                     pinned_tool[local_field] = copy.deepcopy(reviewed[local_field])
             pinned_tools[name] = pinned_tool
+
+        if rejected:
+            summary = ", ".join(
+                f"{name} ({reason})" for name, reason in sorted(rejected.items())
+            )
+            if not pinned_tools:
+                raise ValueError(
+                    f"No reviewed MCP tools passed contract verification: {summary}"
+                )
+            logger.warning(
+                "Skipping reviewed MCP tools that failed contract verification: "
+                f"{summary}. Re-review the upstream schema and update "
+                "contract_sha256 to restore them."
+            )
         return pinned_tools
 
     async def discover_tools(self) -> Dict[str, Any]:
