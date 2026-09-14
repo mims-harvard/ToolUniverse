@@ -349,7 +349,7 @@ async def test_one_drifted_tool_does_not_take_down_its_unaffected_siblings(
     discovered = await loader.discover_tools()
 
     assert list(discovered) == ["second_reviewed_tool"]
-    assert "reviewed_tool (contract changed)" in caplog.text
+    assert "reviewed_tool (contract changed" in caplog.text
 
 
 @pytest.mark.asyncio

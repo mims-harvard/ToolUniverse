@@ -19,6 +19,11 @@ from mcp.client.streamable_http import streamablehttp_client
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 from .logging_config import get_logger
+from .mcp_contract_compat import (
+    classify as classify_contract_drift,
+    load_reviewed_contracts,
+    pinned_tool_from_reviewed,
+)
 import os
 
 logger = get_logger(__name__)
@@ -699,6 +704,9 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
             http_headers_from_env=tool_config.get("http_headers_from_env"),
         )
 
+        # The loader's own config name keys its reviewed contracts in the
+        # lockfile, so drift can be compared against what was reviewed.
+        self.loader_name = tool_config.get("name", "")
         self.auto_register = tool_config.get("auto_register", True)
         self.tool_prefix = tool_config.get("tool_prefix", "mcp_")
         self.selected_tools = tool_config.get(
@@ -776,8 +784,10 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
         # other reviewed tool offline with it is a much larger outage than the
         # drift warrants. A drifted tool is never pinned, so it produces no
         # proxy config and is not registered by this load.
+        recorded_contracts = load_reviewed_contracts(self.loader_name)
         pinned_tools = {}
         rejected = {}
+        tolerated = {}
         for name in expected_names:
             reviewed = self.tool_contracts.get(name)
             if reviewed is None:
@@ -790,13 +800,35 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
                 reviewed_hash = self._contract_sha256(reviewed)
             remote_hash = self._contract_sha256(remote_tools[name])
             if reviewed_hash != remote_hash:
-                rejected[name] = "contract changed"
-                continue
-            pinned_tool = copy.deepcopy(remote_tools[name])
+                # The hash only says the contract moved. Ask the narrower,
+                # decidable question: would a call built from the schema we
+                # reviewed still be valid? If so the tool keeps working on the
+                # REVIEWED schema, so a field the server added is never filled
+                # in by the agent. Without a recorded schema there is nothing
+                # to compare and the tool is refused, as before.
+                compatible, drift_reasons = classify_contract_drift(
+                    recorded_contracts.get(name), remote_tools[name]
+                )
+                if not compatible:
+                    rejected[name] = "; ".join(drift_reasons) or "contract changed"
+                    continue
+                tolerated[name] = True
+                pinned_tool = pinned_tool_from_reviewed(
+                    recorded_contracts[name], remote_tools[name]
+                )
+            else:
+                pinned_tool = copy.deepcopy(remote_tools[name])
             for local_field in ("description", "title", "annotations"):
                 if local_field in reviewed:
                     pinned_tool[local_field] = copy.deepcopy(reviewed[local_field])
             pinned_tools[name] = pinned_tool
+
+        if tolerated:
+            logger.info(
+                "Upstream changed these MCP tools compatibly, so they keep "
+                f"running on the reviewed schema: {', '.join(sorted(tolerated))}. "
+                "The daily contract-drift check will raise the diff for review."
+            )
 
         if rejected:
             summary = ", ".join(
