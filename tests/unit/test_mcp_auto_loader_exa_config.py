@@ -5,7 +5,7 @@ from tooluniverse.default_config import default_tool_files
 
 EXPECTED_HASHES = {
     "web_search_exa": (
-        "3bd880d7e5c7f2110eaf5c1d08dee4b02cf95e27d6b944c7af5275c682e1ab64"
+        "d1965634634fd93b11439b88b2d8e5cdbbade46b567e8fb2993cf3b3faf9321f"
     ),
     "web_fetch_exa": (
         "c52bc77073c7d3ba0fcc0f08e3bd2a0e90fd2327d50f64ad765e9549194e1dd0"
