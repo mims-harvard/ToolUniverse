@@ -55,6 +55,20 @@ def _guideline_envelope(results, *, total, retrieved=None, source=None):
     return {"status": "success", "data": results, "metadata": metadata}
 
 
+def _is_specific_token(token):
+    """Reject short plain-English words that match almost any abstract.
+
+    Relevance filtering is a substring ``any()`` test, so a two-letter English
+    word such as "of" or "in" matches essentially every record and silently
+    disables the filter. Such words are only discarded when they are plain
+    ASCII letters: short non-Latin terms (医疗) and connected biomedical
+    identifiers (IL-6, COVID-19, H1N1) stay, since those are specific.
+    """
+    if len(token) >= 3:
+        return True
+    return not token.isascii() or not token.isalpha()
+
+
 def _extract_meaningful_terms(query):
     """Return significant query terms for relevance filtering."""
     if not isinstance(query, str):
@@ -69,7 +83,7 @@ def _extract_meaningful_terms(query):
     tokens = [
         token
         for token in tokens
-        if len(token) >= 2 and any(character.isalpha() for character in token)
+        if any(character.isalpha() for character in token) and _is_specific_token(token)
     ]
     stop_terms = {
         "management",
