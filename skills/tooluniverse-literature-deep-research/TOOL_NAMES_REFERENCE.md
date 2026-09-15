@@ -37,11 +37,18 @@
 'DOAJ_search_articles'            # Open access journals
 'CORE_search_papers'              # 200M+ aggregated open access papers
 'openalex_search_works'           # OpenAlex with sort/filter support
+'Consensus_search_papers'         # 220M+ papers; AI takeaway + study-design metadata per paper (triage, not a source)
 ```
 
 ### Multi-Source Deep Search
 ```python
 'advanced_literature_search_agent' # Deep multi-source search agent (slower, thorough)
+```
+
+### Opt-In MCP (require env-var setup; not always available)
+```python
+'noodle_*'  # NOODLE_MCP_URL -- PubMed-derived search + bounded citation/semantic graph traversal (6 tools)
+'exa_*'     # EXA_MCP_URL (optional key) -- general neural web search, last resort when the above are empty (2 tools)
 ```
 
 ### Regional/Specialized
