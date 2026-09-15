@@ -39,7 +39,7 @@ Resist the urge to skip to ClinVar immediately. A "Pathogenic" ClinVar entry is 
 3. **Consequence hierarchy** -- Prioritize by predicted impact:
    - Loss-of-function (frameshift, nonsense, splice-site): strongest candidates
    - Missense in conserved domain: strong if in known functional domain
-   - Synonymous / intronic: usually benign unless at splice junction
+   - Synonymous / intronic: usually benign unless at splice junction -- but "usually" is doing real work: a *deep* intronic variant can still be pathogenic by creating a cryptic splice site far from the canonical boundary, which consequence filtering alone won't flag. If a deep intronic or otherwise unannotated variant survives Steps 1-2 (rare, correct inheritance, phenotype match) despite a bland consequence label, don't dismiss it yet -- see `tooluniverse-regulatory-variant-analysis` for a direct sequence-based check on whether it actually disrupts splicing, expression, or another regulatory readout.
 
 4. **ClinVar vs OMIM vs gnomAD -- when to check each**:
    - **ClinVar**: "Is this specific variant known to be pathogenic?" Check review stars (>=2 stars = reliable)
