@@ -116,7 +116,7 @@ Non-bio: skip bio tools, use ArXiv/DBLP/OSF. Cross-domain: resolve bio entities 
 
 ### 2.1 Query Strategy
 **Step 1: Seeds** (15-30 core papers): domain-specific title searches with date/sort filters.
-**Step 2: Citation expansion**: `PubMed_get_cited_by`, `EuropePMC_get_citations/references`, `PubMed_get_related`, `SemanticScholar_get_recommendations`, `OpenCitations_get_citations`
+**Step 2: Citation expansion**: `PubMed_get_cited_by`, `EuropePMC_get_citations/references`, `PubMed_get_related`, `SemanticScholar_get_recommendations`, `OpenCitations_get_citations`. If the opt-in Noodle MCP is connected (`noodle_*`, needs `NOODLE_MCP_URL`), its bounded citation/semantic graph traversal is another angle on the same PubMed corpus -- a discovery signal, not evidence of causality or validity, same caveat as the others.
 **Step 3: Collision-filtered broader queries**: `"[TERM]" AND ([context]) NOT [collision]`
 
 ### 2.2 Literature Tools — core set + adaptive by domain
@@ -133,7 +133,7 @@ Run the **core multi-field set on every review** (catches what any single index 
 | Biology (ecology/evolution/plant) | **EuropePMC as PRIMARY** + OpenAlex | PubMed returns 0–1 for non-clinical biology |
 | CS / ML / AI | `ArXiv_search_papers`, `DBLP_search_publications` | arXiv + CS bibliography |
 | Physics / HEP / astro | `InspireHEP_search_papers` | 1.6M+ particle/astro records |
-| Broad / hard-to-find / OA | `Crossref_search_works`, `CORE_search_papers`, `DOAJ_search_articles`, `Fatcat_search_scholar` | DOI registry + OA aggregators + Internet Archive Scholar |
+| Broad / hard-to-find / OA | `Crossref_search_works`, `CORE_search_papers`, `DOAJ_search_articles`, `Fatcat_search_scholar`, `Consensus_search_papers` | DOI registry + OA aggregators + Internet Archive Scholar; Consensus (220M+ papers) adds an AI takeaway + study-design metadata per paper -- useful for fast triage, not a substitute for reading the source |
 | Regional / EU-funded | `OpenAIRE_search_publications`, `HAL_search_archive` | EU open science + French national archive |
 | Datasets / software / outputs | `Figshare_search_articles`, `Zenodo_search_records` | Citable DOIs for data & code |
 | Preprints (latest) | `EuropePMC_search_articles(source='PPR')`, `OSF_search_preprints`, `BioRxiv_get_preprint`/`MedRxiv_get_preprint` (DOI lookup) | bioRxiv/medRxiv/PsyArXiv etc. |
@@ -152,6 +152,8 @@ Full-text: see `FULLTEXT_STRATEGY.md` for three-tier strategy.
 ### 2.5 Tool Failure / OA Handling
 Retry once -> fallback tool. Key fallbacks: PubMed_get_cited_by -> EuropePMC_get_citations -> OpenCitations. OA: Unpaywall if configured, else Europe PMC/PMC/OpenAlex flags.
 
+Last resort when every structured index above is empty (a brand-new preprint, a dataset page, a project site with no DOI): the opt-in `exa_*` tools (general neural web search, no key needed for casual use) can still find it, but it's general internet retrieval, not a scientific database -- verify anything it surfaces against a real source before citing, don't grade it T1-T4 as if it were literature.
+
 ---
 
 ## Phase 3: Evidence Grading
@@ -164,6 +166,8 @@ Retry once -> fallback tool. Key fallbacks: PubMed_get_cited_by -> EuropePMC_get
 | **T4** | Mention | Review article | Survey, workshop abstract |
 
 Inline: `Target X regulates Y [T1: PMID:12345678]`. Per theme: summarize evidence distribution.
+
+Triaging a large candidate set before reading in full: `Consensus_search_papers` returns study type and sample size per paper, a fast first pass for provisional tiering -- confirm against the actual paper before citing, its metadata is a starting point, not the grade itself.
 
 ---
 
@@ -190,7 +194,7 @@ Do NOT expose: raw tool outputs, dedup counts, search round details.
 
 ## References
 
-- `TOOL_NAMES_REFERENCE.md` -- 123 tools with parameters
+- `TOOL_NAMES_REFERENCE.md` -- 130+ tools with parameters
 - `REPORT_TEMPLATE.md` -- template, domain adaptations, bibliography, completeness checklist
 - `FULLTEXT_STRATEGY.md` -- three-tier full-text verification
 - `WORKFLOW.md` -- compact cheat-sheet
