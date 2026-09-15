@@ -50,7 +50,7 @@ Query GTEx to determine whether the variant (or variants in tight LD) modulates 
 Search the GWAS Catalog for the rsID or the surrounding locus. Genome-wide significant associations (p < 5×10⁻⁸) in relevant traits anchor the variant's biological importance. Cross-reference with OpenTargets for locus-to-gene mapping from multiple GWAS studies.
 
 **5. What does a sequence-based model predict directly?**
-Run `AlphaGenome_atlas_lookup_variant` for a near-instant AVI_SCORE (a unified AlphaGenome + AlphaMissense impact estimate; precomputed, so it costs nothing to check on every candidate SNV up front, even before the annotation phases below). A high AVI_SCORE with no other evidence is exactly the "variant with no obvious job" case — it means the annotation databases haven't caught up, not that the variant is inert. When the AVI_SCORE is high, or the position is an indel/synthetic sequence Atlas can't cover, escalate to the live model: `AlphaGenome_score_variant` for a per-track effect breakdown, or `AlphaGenome_score_ism_variants` to scan the surrounding window and identify which exact base change (and which biological readout — expression, splicing, chromatin) drives the effect. This is the only one of the five questions that gives a *mechanistic* answer (e.g., "this substitution creates a transcription-factor binding motif that wasn't there before") rather than a correlational one.
+Run `AlphaGenome_atlas_lookup_variant` for a near-instant AVI_SCORE (a unified AlphaGenome + AlphaMissense impact estimate; precomputed, so it is cheap to check on every candidate SNV up front, even before the annotation phases below). A high AVI_SCORE with no other evidence is exactly the "variant with no obvious job" case — it means the annotation databases haven't caught up, not that the variant is inert. When the AVI_SCORE is high, or the position is an indel/synthetic sequence Atlas can't cover, escalate to the live model: `AlphaGenome_score_variant` for a per-track effect breakdown, or `AlphaGenome_score_ism_variants` to scan the surrounding window and identify which exact base change (and which biological readout — expression, splicing, chromatin) drives the effect. This is the only one of the five questions that gives a *mechanistic* answer (e.g., "this substitution creates a transcription-factor binding motif that wasn't there before") rather than a correlational one.
 
 **Synthesizing the evidence**: Build a multi-layer case. A variant with GWAS significance + eQTL evidence + RegulomeDB score 1a-2a + active chromatin (H3K27ac) in the relevant tissue represents high-confidence regulatory impact — and a concordant AVI_SCORE or ISM result strengthens that case further, since it comes from an independent, causal-mechanism source rather than more correlational annotation. Two or three converging lines of evidence (e.g., eQTL plus active enhancer) constitute moderate confidence. A single line, or a variant only in a poised but not active regulatory context, represents lower confidence — but see the AlphaGenome-only case below before calling it "no evidence."
 
@@ -108,9 +108,13 @@ Use `ols_search_terms` to resolve trait names to ontology IDs before GWAS querie
 
 ## Phase 0.5: Sequence-Based Triage (AlphaGenome Atlas)
 
-Once you have genomic coordinates for the variant (chromosome, position, reference/alternate bases), run `AlphaGenome_atlas_lookup_variant` before spending calls on the annotation phases below. It's a precomputed database read covering essentially all possible human SNVs, so it's worth running as a default first step rather than a last resort: it returns `AVI_SCORE`, a single number fusing AlphaGenome's regulatory prediction with AlphaMissense's coding-impact model, comparable across coding and non-coding variants alike.
+**Requires `ALPHA_GENOME_API_KEY`.** If it isn't configured, the AlphaGenome tools won't appear in your toolset at all — skip this phase and Phase 4.5 entirely and proceed with Phases 1-4, which are a complete, self-sufficient pipeline on their own (this is how the skill worked before AlphaGenome support existed, and nothing below depends on it having run).
 
-Treat the result as a prior, not a verdict: a high AVI_SCORE with weak annotation evidence means "look harder here, the databases haven't caught up" (see Phase 4.5); a low AVI_SCORE alongside strong GWAS/eQTL evidence is worth a second look at whether the causal variant is actually a different one in LD. Atlas only covers single-nucleotide substitutions — for an indel, skip straight to `AlphaGenome_score_variant` (live model) instead.
+When you have one specific variant (chromosome, position, reference/alternate bases), run `AlphaGenome_atlas_lookup_variant` before spending calls on the annotation phases below. It's a precomputed database read covering essentially all possible human SNVs, so it's cheap enough to run as a default first step rather than a last resort: it returns `AVI_SCORE`, a single number fusing AlphaGenome's regulatory prediction with AlphaMissense's coding-impact model, comparable across coding and non-coding variants alike.
+
+When you instead have a *list* of candidates rather than one known variant — e.g. Phase 1's `gwas_get_variants_for_trait` returned dozens of SNPs for a trait, or you're fine-mapping a locus — use `AlphaGenome_atlas_scan_interval` on the region instead of looping `atlas_lookup_variant` over every candidate one at a time. One call ranks every possible SNV in up to a 10 kb window by AVI_SCORE, which is exactly the "group candidates by predicted molecular effect before doing expensive follow-up" pattern that found materially more trait associations in large cohort analyses than treating each candidate as equally worth investigating.
+
+Treat either result as a prior, not a verdict: a high AVI_SCORE with weak annotation evidence means "look harder here, the databases haven't caught up" (see Phase 4.5); a low AVI_SCORE alongside strong GWAS/eQTL evidence is worth a second look at whether the causal variant is actually a different one in LD. Atlas only covers single-nucleotide substitutions — for an indel, skip straight to `AlphaGenome_score_variant` (live model) instead.
 
 ---
 
@@ -182,7 +186,8 @@ After collecting evidence, reason through the layers:
 - **OpenTargets GWAS returns None**: Verify MONDO/EFO ID format; try `OpenTargets_multi_entity_search_by_query_string` first to confirm the correct ID.
 - **ENCODE tissue not found**: ENCODE uses specific biosample names; RegulomeDB aggregates data from many cell types and may cover the gap.
 - **All of Phases 1-4 return empty/weak**: Don't conclude "no evidence" yet — run Phase 4.5. AlphaGenome predicts directly from sequence and doesn't depend on the variant (or anything nearby) having been studied before, so it's the one evidence source that still works when the databases have nothing.
-- **Variant is an indel, not a single-nucleotide substitution**: `AlphaGenome_atlas_lookup_variant`/`atlas_scan_interval` are SNV-only; use the live `AlphaGenome_score_variant` instead.
+- **Variant is an indel, not a single-nucleotide substitution**: `AlphaGenome_atlas_lookup_variant`/`AlphaGenome_atlas_scan_interval` are SNV-only; use the live `AlphaGenome_score_variant` instead.
+- **AlphaGenome tools aren't in your toolset**: `ALPHA_GENOME_API_KEY` isn't configured. Skip Phases 0.5 and 4.5 and run Phases 1-4 as a standalone pipeline — do not block the analysis waiting on a key that may never be provided.
 
 ---
 
@@ -247,6 +252,24 @@ Step 4: Synthesize: high AVI_SCORE + a concrete, mechanistic splice-site predict
   treating the model output as a final answer.
 ```
 
+### Triaging Many Candidates at a GWAS Locus
+
+A GWAS hit rarely implicates exactly one variant — LD means a locus typically carries dozens of candidates. Running the full annotation pipeline (Phases 1-4) on every one of them is expensive; triage first.
+
+```
+Step 1: gwas_get_variants_for_trait(trait/efo_id=...)
+  -> Dozens of candidate SNPs at the associated locus
+
+Step 2: AlphaGenome_atlas_scan_interval(chromosome=..., start=..., end=...)
+  -> One call, AVI_SCORE for every SNV across the locus (<=10 kb per call; tile larger loci)
+
+Step 3: Rank candidates by AVI_SCORE; take the top handful (not just the GWAS lead SNP --
+  a variant in tight LD with a stronger predicted effect is often the better causal candidate)
+
+Step 4: Run Phases 1-4 (GWAS, eQTL, RegulomeDB/ENCODE, OpenTargets) only on those top candidates,
+  not the full list -- the expensive annotation calls are now spent where they're likely to pay off
+```
+
 ---
 
 ## Limitations
@@ -257,4 +280,4 @@ Step 4: Synthesize: high AVI_SCORE + a concrete, mechanistic splice-site predict
 - eQTL analysis identifies correlation, not causation; fine-mapping is needed to identify causal variants.
 - RegulomeDB scores are heuristic; a score of 1a does not guarantee functional impact.
 - GWAS associations are population-level; individual variant effects depend on genetic background.
-- AlphaGenome/AVI_SCORE predictions are model estimates, not experimental measurements — they corroborate annotation evidence or generate a hypothesis worth validating, but a high score alone is not equivalent to a confirmed functional impact. `AlphaGenome_score_ism_variants` is capped at a 500 bp window and `atlas_scan_interval` at 10,000 bp per call — scope the region before calling either.
+- AlphaGenome/AVI_SCORE predictions are model estimates, not experimental measurements — they corroborate annotation evidence or generate a hypothesis worth validating, but a high score alone is not equivalent to a confirmed functional impact. `AlphaGenome_score_ism_variants` is capped at a 500 bp window and `AlphaGenome_atlas_scan_interval` at 10,000 bp per call — scope the region before calling either.
