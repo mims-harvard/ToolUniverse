@@ -164,6 +164,8 @@ Run this phase when either condition holds: (a) Phases 1-4 came back empty or we
 
 A concordant result across two or three tracks (e.g., a histone mark for enhancer activity plus expression, both shifting the same direction) is stronger evidence than a single-track hit — the same logic Phase 5 already applies to annotation evidence.
 
+AlphaGenome isn't the only sequence-prediction model in ToolUniverse, just the broadest and the one this phase defaults to. If it's unavailable (no key) or a specific case calls for something else — a published, self-hostable model instead of a hosted API, or a question specifically about chromatin accessibility rather than a broad multi-modality readout — see `tooluniverse-regulatory-genomics` for Enformer, Borzoi, ChromBPNet, and Evo 2, which cover the same kind of ground with different tradeoffs.
+
 ---
 
 ## Phase 5: Functional Impact Synthesis
@@ -187,7 +189,7 @@ After collecting evidence, reason through the layers:
 - **ENCODE tissue not found**: ENCODE uses specific biosample names; RegulomeDB aggregates data from many cell types and may cover the gap.
 - **All of Phases 1-4 return empty/weak**: Don't conclude "no evidence" yet — run Phase 4.5. AlphaGenome predicts directly from sequence and doesn't depend on the variant (or anything nearby) having been studied before, so it's the one evidence source that still works when the databases have nothing.
 - **Variant is an indel, not a single-nucleotide substitution**: `AlphaGenome_atlas_lookup_variant`/`AlphaGenome_atlas_scan_interval` are SNV-only; use the live `AlphaGenome_score_variant` instead.
-- **AlphaGenome tools aren't in your toolset**: `ALPHA_GENOME_API_KEY` isn't configured. Skip Phases 0.5 and 4.5 and run Phases 1-4 as a standalone pipeline — do not block the analysis waiting on a key that may never be provided.
+- **AlphaGenome tools aren't in your toolset**: `ALPHA_GENOME_API_KEY` isn't configured. Skip Phases 0.5 and 4.5 and run Phases 1-4 as a standalone pipeline — do not block the analysis waiting on a key that may never be provided. If a sequence-model prediction still matters for the case, `tooluniverse-regulatory-genomics` covers self-hostable alternatives (Enformer, Borzoi, ChromBPNet) that don't need this specific key.
 
 ---
 
