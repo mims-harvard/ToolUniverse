@@ -630,9 +630,7 @@ class AlphaGenomeTool(BaseTool):
                 row_labels = list(obs[row_label_column])
 
             for gi, row_values in enumerate(matrix):
-                label = (
-                    row_labels[gi] if row_labels and gi < len(row_labels) else None
-                )
+                label = row_labels[gi] if row_labels and gi < len(row_labels) else None
                 for track_name, val in zip(track_names, row_values):
                     entry = {"track": str(track_name), "score": float(val)}
                     if label is not None:
