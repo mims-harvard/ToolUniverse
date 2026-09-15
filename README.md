@@ -15,6 +15,12 @@
 
 ## Install
 
+> [!IMPORTANT]
+> **Claude Desktop extension showing "Failed — Server disconnected"?** The copy of ToolUniverse in
+> Claude Desktop's built-in Extensions directory is an old build that cannot start. Remove it, then
+> use either option below — both install a working version.
+> Details and status: [#585](https://github.com/mims-harvard/ToolUniverse/issues/585)
+
 **AI agent (recommended)** — open your AI agent and run:
 ```
 Read https://aiscientist.tools/setup.md and set up ToolUniverse for me.
