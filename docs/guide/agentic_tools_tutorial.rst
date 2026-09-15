@@ -73,6 +73,12 @@ ToolUniverse supports these AI providers:
  - Configuration: Set ``OPENROUTER_API_KEY``
  - See :doc:`../guide/openrouter_support` for details
 
+**OrcaRouter**
+ - Access to multiple providers through one API
+ - Models: ``orcarouter/auto``, ``orcarouter/fusion``, and more
+ - Configuration: Set ``ORCAROUTER_API_KEY``
+ - See :doc:`../guide/orcarouter_support` for details
+
 **vLLM (Self-Hosted)**
  - Run models on your own infrastructure
  - Models: Any model supported by vLLM (Llama, Mistral, Qwen, etc.)
@@ -190,7 +196,7 @@ Set up AI model settings:
 
 **Configuration Options**:
 
-- ``api_type``: "CHATGPT", "OPENAI", "GEMINI", "OPENROUTER", or "VLLM"
+- ``api_type``: "CHATGPT", "OPENAI", "GEMINI", "OPENROUTER", "ORCAROUTER", or "VLLM"
 - ``model_id``: Choose your model (see Step 2)
 
   - For vLLM: Must match the model name loaded on your vLLM server
