@@ -238,6 +238,7 @@ Community & Support
    guide/openrouter_support
    guide/vllm_support
    guide/openai_compatible_support
+   guide/bedrock_support
    guide/euhealth_tools_tutorial
 
 .. toctree::
