@@ -30,8 +30,8 @@ Before any tool call, reason about the target's structural biology:
 - **Enzymes with active sites** (proteases, kinases, ATPases): deep, well-defined pockets. Classic small molecule territory. Prioritize co-crystal structure search and known inhibitor scaffold analysis.
 - **GPCRs and ion channels**: transmembrane pockets. Structure often available; start with GPCRdb and GtoPdb for known pharmacology.
 - **Nuclear receptors**: deep hydrophobic pockets. Excellent small molecule tractability; ligand-based methods are well-powered.
-- **Protein-protein interfaces**: flat, large contact surface. Small molecules rarely compete effectively unless there is a "hot spot" cavity. Check whether any allosteric pockets exist before committing to small molecule strategy. Warn the user if no pocket is found.
-- **Intrinsically disordered regions**: essentially no small molecule approach. Redirect to peptide or degrader strategies.
+- **Protein-protein interfaces**: flat, large contact surface. Small molecules rarely compete effectively unless there is a "hot spot" cavity. Check whether any allosteric pockets exist before committing to small molecule strategy. Warn the user if no pocket is found. If the target is a known molecular-glue-degrader neosubstrate (or the goal is to induce a new PPI rather than block an existing pocket), check `MolGlueDB_search_compounds`/`MolGlueDB_get_compound` for known glue chemotypes before declaring the target undruggable by small molecules.
+- **Intrinsically disordered regions**: essentially no direct small molecule approach. Redirect to peptide strategies, or check `MolGlueDB_search_compounds` in case the target is a documented molecular-glue neosubstrate.
 - **Scaffolding / adaptor proteins**: assess co-crystal structures for unexpected pockets before declaring undruggable.
 
 Use this reasoning to select phases and warn the user about challenges before executing a full workflow.
@@ -142,6 +142,7 @@ Priority order for bioactivity data:
 3. `GtoPdb_search_ligands` - pharmacology focus (GPCRs, channels)
 4. `PubChem_search_assays_by_target_gene` - HTS screens, novel scaffolds
 5. `OpenTargets_get_chemical_probes_by_target_ensemblID` - validated probes
+6. `MolGlueDB_search_compounds` - molecular glue degraders specifically (small molecules that induce a novel protein-protein interaction rather than occupy a conventional pocket); check this when the target has no tractable pocket but is a known or candidate neosubstrate
 
 Key steps:
 1. Filter to IC50/Ki/Kd < 10 uM; retrieve molecule details for top actives

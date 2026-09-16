@@ -144,9 +144,15 @@ Input -> Phase 1: Gene ID resolution -> Phase 2: Nucleotide retrieval
 
 **InterPro_get_entries_for_protein**: `accession` (UniProt ID). Returns InterPro domain/family/superfamily entries with positions.
 
-**Pfam_get_protein_annotations**: `accession` (UniProt ID). Returns Pfam domain hits with exact residue coordinates and E-values.
+**Pfam_get_protein_annotations**: `accession` (UniProt ID). Returns Pfam domain hits with exact residue coordinates and E-values. For a raw sequence with no UniProt accession yet (e.g. a novel or designed sequence), `EBI_scan_pfam_domains` runs the same Pfam scan directly on the sequence instead.
 
-**BLAST_protein_search**: `sequence` (amino acid string), `database` (default "swissprot"), `limit`. Returns homologs with alignment scores, identity, E-values.
+**BLAST_protein_search**: `sequence` (amino acid string), `database` (default "swissprot"), `limit`. Returns homologs with alignment scores, identity, E-values. If BLAST finds nothing (remote homology, low sequence identity), `EBI_profile_search` (`method='phmmer'` default, or `'psiblast'`) uses profile/HMM methods that are more sensitive for distant relationships BLAST's pairwise scoring misses.
+
+**EBI_pairwise_align**: exactly two sequences (`algorithm='needle'` for global, `'water'` for local), returns percent identity/similarity/gaps and the alignment itself -- no existing tool in this skill does direct pairwise alignment.
+
+**EBI_translate_sequence**: nucleotide-to-protein, protein-to-nucleotide (back-translation), or 6-frame translation with ORF detection. `DNA_translate_reading_frames` above only does forward 3-frame (no reverse strand, no back-translation) -- use EBI's tool specifically for reverse-strand frames or when going protein-to-DNA.
+
+**EBI_predict_membrane_topology**: predicts transmembrane helices and signal peptides directly from a protein sequence (Phobius). Distinct from `proteins_api_get_features`'s TRANSMEM annotations (see "Reasoning for Protein Feature Questions" below) -- that's looking up *already-annotated* topology for a known UniProt entry; this predicts topology for a sequence that may have none.
 
 **EnsemblCompara_get_orthologues**: `gene` (gene symbol, e.g., "CFTR"), `species` (e.g., "human"). User-friendly alternative to NCBIDatasets_get_orthologs — accepts gene symbols directly.
 

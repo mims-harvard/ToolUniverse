@@ -42,7 +42,7 @@ Search tools that index datasets across thousands of repositories. These find da
 
 **Layer 2 — Domain-specific repositories:**
 Search repositories specialized for your data type.
-- Health surveys: CDC, NHANES (search by variable name, not topic keywords)
+- Health surveys: CDC, NHANES (US; search by variable name, not topic keywords); DHS Program (`DHSProgram_search_indicators`/`_get_data`) for the international/LMIC equivalent -- fertility, maternal/child mortality, nutrition, immunization, HIV indicators across national surveys, filterable by country and year
 - Genomics (open): SRA, ENA, ArrayExpress, GEO, and DDBJ (`DDBJ_search_entries`/`_get_entry`/`_get_cross_references`) -- the third INSDC archive alongside SRA/ENA, plus GEA/MetaboBank entries; also GSA (`GSA_get_accession`) for China's national genomics archive
 - Genomics (controlled-access, human studies): dbGaP (`DbGaP_search_studies`/`_get_study`) and EGA (`EGA_get_study`/`_get_dataset`/`_get_study_datasets`) -- both require a separate data-access request process; these tools return study/dataset metadata, not the underlying genotype data itself
 - Proteomics: PRIDE, MassIVE
