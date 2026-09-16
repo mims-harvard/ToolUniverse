@@ -10,6 +10,8 @@ API: https://open.fda.gov/apis/drug/label/
 No authentication required. Optional API key raises rate limits.
 """
 
+import os
+import time
 import requests
 from typing import Any
 
@@ -17,6 +19,58 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 FDA_LABEL_URL = "https://api.fda.gov/drug/label.json"
+
+FDA_LABEL_TIMEOUT = float(os.getenv("OPENFDA_TIMEOUT", "30"))
+FDA_LABEL_MAX_RETRIES = int(os.getenv("OPENFDA_MAX_RETRIES", "3"))
+_API_KEY_PLACEHOLDERS = {
+    "", "none", "null", "your_api_key", "your_api_key_here",
+    "your_fda_api_key", "your_fda_key_here", "your_key_here",
+}
+
+
+def _fda_api_key() -> str | None:
+    """FDA_API_KEY, if it looks like a real key.
+
+    openFDA allows 240 requests/minute per IP and only 1,000 per day without a
+    key; with one it is 240/minute and 120,000/day. These tools previously sent
+    no key at all, so they sat on the anonymous quota even when a key was
+    configured -- and an exhausted quota degrades retrieval silently.
+    """
+    v = os.getenv("FDA_API_KEY")
+    if not isinstance(v, str) or v.strip().lower() in _API_KEY_PLACEHOLDERS:
+        return None
+    return v.strip()
+
+
+def _fda_get(params: dict) -> requests.Response:
+    """GET openFDA with the API key attached and bounded retry on 429/5xx.
+
+    Raises requests exceptions for the caller's error handler; 404 is left to
+    the caller because openFDA uses it for "no matching records", which is a
+    legitimate empty result rather than a failure.
+    """
+    params = dict(params)
+    key = _fda_api_key()
+    if key:
+        params["api_key"] = key
+    last = None
+    for attempt in range(FDA_LABEL_MAX_RETRIES + 1):
+        resp = requests.get(FDA_LABEL_URL, params=params, timeout=FDA_LABEL_TIMEOUT)
+        if resp.status_code == 429 or resp.status_code >= 500:
+            last = resp
+            if attempt < FDA_LABEL_MAX_RETRIES:
+                delay = 2 ** attempt
+                retry_after = resp.headers.get("Retry-After")
+                if retry_after:
+                    try:
+                        delay = max(delay, min(float(retry_after), 60))
+                    except (TypeError, ValueError):
+                        pass
+                time.sleep(delay)
+                continue
+            return last
+        return resp
+    return last
 
 
 def _extract_label(result: dict) -> dict:
@@ -84,9 +138,37 @@ class FDALabelTool(BaseTool):
                 return self._list_classes(arguments)
             return {"status": "error", "error": f"Unknown query_type: {qt}"}
         except requests.exceptions.Timeout:
-            return {"status": "error", "error": "openFDA request timed out"}
+            return {
+                "status": "error",
+                "error": f"openFDA request timed out after {FDA_LABEL_TIMEOUT}s",
+                "error_details": {"type": "TimeoutError", "retriable": True},
+            }
+        except requests.exceptions.HTTPError as e:
+            status = getattr(e.response, "status_code", None)
+            out = {
+                "status": "error",
+                "error": f"openFDA request failed (HTTP {status}): {e}",
+                "error_details": {"type": "HTTPError", "http_status": status,
+                                  "retriable": status == 429 or (status or 0) >= 500},
+            }
+            if status == 429:
+                out["error"] = "openFDA rate limit exceeded (HTTP 429)"
+                out["next_steps"] = [
+                    "openFDA allows 240 requests/minute per IP "
+                    "(1,000/day without an API key).",
+                    "Set FDA_API_KEY (free: "
+                    "https://open.fda.gov/apis/authentication/)."
+                    if not _fda_api_key() else
+                    "FDA_API_KEY is set; lower concurrency or stagger jobs "
+                    "sharing this outbound IP.",
+                ]
+            return out
         except requests.exceptions.RequestException as e:
-            return {"status": "error", "error": f"openFDA request failed: {e}"}
+            return {
+                "status": "error",
+                "error": f"openFDA request failed: {e}",
+                "error_details": {"type": type(e).__name__, "retriable": True},
+            }
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {e}"}
 
@@ -99,11 +181,7 @@ class FDALabelTool(BaseTool):
         """
         for field in ("openfda.generic_name", "openfda.brand_name"):
             for q in (f'{field}:"{drug_name}"', f"{field}:{drug_name}"):
-                resp = requests.get(
-                    FDA_LABEL_URL,
-                    params={"search": q, "limit": limit},
-                    timeout=20,
-                )
+                resp = _fda_get({"search": q, "limit": limit})
                 if resp.status_code == 404:
                     continue
                 resp.raise_for_status()
@@ -124,11 +202,7 @@ class FDALabelTool(BaseTool):
             return self._query_drug_fields(drug_name, limit) or []
 
         q = f'indications_and_usage:"{indication}"'
-        resp = requests.get(
-            FDA_LABEL_URL,
-            params={"search": q, "limit": limit},
-            timeout=20,
-        )
+        resp = _fda_get({"search": q, "limit": limit})
         if resp.status_code == 404:
             return []
         resp.raise_for_status()
@@ -158,14 +232,10 @@ class FDALabelTool(BaseTool):
 
     def _list_classes(self, arguments: dict) -> Any:
         limit = min(int(arguments.get("limit", 20)), 100)
-        resp = requests.get(
-            FDA_LABEL_URL,
-            params={
-                "count": "openfda.pharm_class_epc.exact",
-                "limit": limit,
-            },
-            timeout=20,
-        )
+        resp = _fda_get({
+            "count": "openfda.pharm_class_epc.exact",
+            "limit": limit,
+        })
         resp.raise_for_status()
         data = resp.json()
         results = data.get("results", [])

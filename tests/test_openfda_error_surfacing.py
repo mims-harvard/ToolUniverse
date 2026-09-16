@@ -89,6 +89,7 @@ def test_not_found_still_reports_no_data(fake_requests):
 
 
 def test_non_json_body_is_reported(fake_requests):
+    """A non-JSON body (e.g. an HTML gateway page) must surface as an error."""
     fake_requests(lambda: _Resp(_Resp, 502, text="<html>gateway</html>"))
     out = _call()
     assert out is not None and out.get("status") == "error"
@@ -126,3 +127,62 @@ def test_request_uses_a_timeout(monkeypatch):
     )
     _call()
     assert seen.get("timeout"), "openFDA GET issued without a timeout"
+
+
+# ---------------------------------------------------------------------------
+# fda_label_tool: the FDA_* label tools sent no api_key at all, so they sat on
+# openFDA's anonymous quota even when FDA_API_KEY was configured.
+# ---------------------------------------------------------------------------
+from tooluniverse import fda_label_tool as FL  # noqa: E402
+
+
+def test_label_tool_sends_api_key(monkeypatch):
+    """A configured FDA_API_KEY must actually reach openFDA."""
+    seen = {}
+
+    def capture(url, params=None, timeout=None, **kw):
+        seen["params"] = params or {}
+        seen["timeout"] = timeout
+        return _Resp({"results": []}, 200)
+
+    monkeypatch.setenv("FDA_API_KEY", "k" * 40)
+    monkeypatch.setattr(FL, "requests",
+                        types.SimpleNamespace(get=capture, exceptions=requests.exceptions))
+    FL._fda_get({"search": "x", "limit": 1})
+    assert seen["params"].get("api_key") == "k" * 40
+    assert seen["timeout"], "label tool issued a request without a timeout"
+
+
+def test_label_tool_ignores_placeholder_key(monkeypatch):
+    """Placeholder values must not be sent as a key."""
+    seen = {}
+
+    def capture(url, params=None, timeout=None, **kw):
+        seen["params"] = params or {}
+        return _Resp({"results": []}, 200)
+
+    monkeypatch.setenv("FDA_API_KEY", "your_api_key_here")
+    monkeypatch.setattr(FL, "requests",
+                        types.SimpleNamespace(get=capture, exceptions=requests.exceptions))
+    FL._fda_get({"search": "x", "limit": 1})
+    assert "api_key" not in seen["params"]
+
+
+def test_label_tool_retries_rate_limit(monkeypatch):
+    """429 is retried with backoff rather than surfaced on the first attempt."""
+    calls = {"n": 0}
+
+    def flaky(url, params=None, timeout=None, **kw):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return _Resp({"error": {"code": "OVER_RATE_LIMIT"}}, 429,
+                         headers={"Retry-After": "0"})
+        return _Resp({"results": [{"openfda": {}}]}, 200)
+
+    monkeypatch.setattr(FL, "requests",
+                        types.SimpleNamespace(get=flaky, exceptions=requests.exceptions))
+    monkeypatch.setattr(FL, "FDA_LABEL_MAX_RETRIES", 2)
+    monkeypatch.setattr(FL.time, "sleep", lambda *_: None)
+    resp = FL._fda_get({"search": "x", "limit": 1})
+    assert calls["n"] == 2
+    assert resp.status_code == 200
