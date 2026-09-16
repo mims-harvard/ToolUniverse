@@ -120,7 +120,7 @@ class ToolUniverseClient:
                 f"'{type(self).__name__}' object has no attribute '{method_name}'"
             )
 
-        def method_proxy(**kwargs) -> Any:
+        def method_proxy(*args, **kwargs) -> Any:
             """
             Proxy function that sends method call to server.
 
@@ -133,6 +133,43 @@ class ToolUniverseClient:
             Raises:
                 Exception: If server returns an error
             """
+            # Accept positional arguments, binding them to parameter names taken
+            # from the local ToolUniverse signature.
+            #
+            # The in-process ToolUniverse methods are ordinary positional-or-
+            # keyword functions and callers use them that way -- TxAgent, for
+            # instance, calls run_one_function(tool_call) and
+            # tool_specification('CallAgent', return_prompt=True). Because this
+            # proxy was keyword-only, substituting a ToolUniverseClient for a
+            # local ToolUniverse raised
+            #     method_proxy() takes 0 positional arguments but 1 was given
+            # on the first tool call, so the HTTP client accepted a strictly
+            # narrower call surface than the object it stands in for.
+            if args:
+                try:
+                    import inspect
+
+                    from tooluniverse import ToolUniverse
+
+                    sig = inspect.signature(getattr(ToolUniverse, method_name))
+                    names = [p for p in sig.parameters if p != "self"][: len(args)]
+                    if len(names) < len(args):
+                        raise TypeError(
+                            f"{method_name}() takes {len(names)} positional "
+                            f"argument(s) but {len(args)} were given"
+                        )
+                    for name, val in zip(names, args):
+                        if name in kwargs:
+                            raise TypeError(
+                                f"{method_name}() got multiple values for "
+                                f"argument '{name}'"
+                            )
+                        kwargs[name] = val
+                except (AttributeError, ValueError) as exc:
+                    raise TypeError(
+                        f"{method_name}() could not bind positional arguments: {exc}"
+                    ) from exc
+
             try:
                 response = self.session.post(
                     f"{self.base_url}/api/call",
