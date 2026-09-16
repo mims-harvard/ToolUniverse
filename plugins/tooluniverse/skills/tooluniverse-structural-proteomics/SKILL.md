@@ -13,6 +13,7 @@ Comprehensive structural data integration using ToolUniverse tools across PDB, A
 - PDB structures/resolutions: `PDBeSIFTS_get_best_structures` and `RCSBGraphQL_get_structure_summary`
 - AlphaFold confidence: `alphafold_get_summary`
 - Ligands/affinities: `PDBe_get_structure_ligands` and `BindingDB_get_ligands_by_uniprot`
+- Protein-protein binding mutations (ddG): `SKEMPI_search_by_structure`/`SKEMPI_search_by_protein`/`SKEMPI_get_mutation` -- BindingDB's protein-protein equivalent, for interface-mutation affinity effects rather than small-molecule ligands
 - Druggability: `ProteinsPlus_predict_binding_sites`
 
 ## COMPUTE, DON'T DESCRIBE

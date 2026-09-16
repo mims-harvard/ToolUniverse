@@ -103,6 +103,8 @@ Key identifier formats: disease codes are ORPHAcode integers (e.g., 558 for Marf
 
 **Orphanet_get_icd_mapping**: `orpha_code` (string REQUIRED). Maps to ICD-10/ICD-11 for clinical coding contexts.
 
+**Note on `Orphadata_*` tools**: a separate, smaller tool family (`Orphadata_get_disorder`/`_search_by_name`/`_get_epidemiology`/`_get_phenotypes`) wraps the same underlying Orphanet data with substantial overlap with the `Orphanet_*` family above. `Orphanet_*` is more complete (10 tools vs. 4, including gene associations, classification, and natural history that Orphadata doesn't have) -- use it as the default. Reach for `Orphadata_get_disorder` specifically only when you need its cross-references to MeSH/UMLS/MedDRA, which `Orphanet_get_icd_mapping` doesn't cover (it maps to ICD-10/ICD-11/OMIM/SNOMED-CT instead).
+
 ---
 
 ## Phase 2: Phenotype Mapping (HPO)

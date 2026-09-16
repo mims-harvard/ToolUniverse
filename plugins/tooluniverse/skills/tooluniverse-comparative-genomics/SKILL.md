@@ -93,6 +93,8 @@ Report: Conservation summary, ortholog evidence, functional comparison, phenotyp
 
 `ensembl_lookup_gene` takes `gene_id` (symbol or Ensembl ID). The `species` parameter is REQUIRED when using gene symbols (e.g., `species="homo_sapiens"`); omitting it causes errors. Extract the Ensembl gene ID, description, biotype, and chromosomal coordinates for downstream queries. For non-human references, adjust `species` accordingly (e.g., "mus_musculus", "danio_rerio").
 
+For a species outside Ensembl's well-annotated set (most non-model organisms), check `GoaT_get_species(taxon=...)` first to confirm a reference genome assembly actually exists (and its status: draft/chromosome-level/annotated) before assuming gene-level lookups will work at all.
+
 ---
 
 ## Phase 2: Ortholog Discovery

@@ -255,7 +255,7 @@ Types: `receptor` (stoichiometry, pharmacology), `ion_channel` (subunit arrangem
 
 **Script**: `skills/tooluniverse-sequence-analysis/scripts/amino_acids.py`
 
-Use this script for any question about the genetic code, codon degeneracy, amino acid chemistry, codon usage bias, or tRNA wobble pairing. All outputs are JSON.
+Use this script for any question about the genetic code, codon degeneracy, amino acid chemistry, codon usage bias, or tRNA wobble pairing. All outputs are JSON. **Its codon-usage frequencies are human-only** ("human codon usage %") -- for any other organism (e.g. codon-optimizing for *E. coli*, yeast, or CHO expression), use `CodonUsage_get_table`/`CodonUsage_get_optimal_codons(taxid=...)` instead, which cover any NCBI-taxid organism.
 
 ```
 python3 skills/tooluniverse-sequence-analysis/scripts/amino_acids.py --type codon_table
