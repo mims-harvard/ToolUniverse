@@ -1,5 +1,6 @@
 import copy
 import re
+import time
 from typing import Any, Dict
 
 import requests
@@ -157,6 +158,109 @@ def extract_sentences_with_keywords(text_list, keywords):
                 sentences_with_keywords.append(sentence)
 
     return "......".join(sentences_with_keywords)
+
+
+# openFDA returns a JSON error envelope for quota, auth and server problems.
+# Only NOT_FOUND means "this label genuinely has no such field"; every other
+# code means the request did not run. Historically all of them fell through to
+# `return None`, which callers cannot distinguish from an absent field -- an
+# LLM agent then answers from parametric knowledge with no error anywhere in
+# the logs. Everything below exists to make that failure visible.
+OPENFDA_TIMEOUT = float(os.getenv("OPENFDA_TIMEOUT", "30"))
+OPENFDA_MAX_RETRIES = int(os.getenv("OPENFDA_MAX_RETRIES", "3"))
+# Transient: worth retrying. OVER_RATE_LIMIT is the common one -- openFDA allows
+# 240 requests/minute per IP (1,000/day without a key), and concurrent jobs on a
+# shared outbound IP blow through that easily.
+_OPENFDA_TRANSIENT_CODES = {"OVER_RATE_LIMIT", "SERVER_ERROR", "BAD_GATEWAY"}
+
+
+def _openfda_error_envelope(response_data):
+    """Return openFDA's error dict if the payload is an error envelope."""
+    if isinstance(response_data, dict):
+        err = response_data.get("error")
+        if isinstance(err, dict):
+            return err
+        if isinstance(err, str):
+            return {"code": "UNKNOWN", "message": err}
+    return None
+
+
+def _openfda_request(url, timeout=None, max_retries=None):
+    """GET openFDA with a timeout and bounded retry on transient failures.
+
+    Returns ``(response_data, transport_error)``. ``transport_error`` is a
+    ready-to-return error dict when the request could not be completed at all;
+    otherwise it is None and ``response_data`` holds the parsed payload (which
+    may still be an openFDA error envelope, e.g. NOT_FOUND).
+
+    Error dicts carry ``results: []`` and ``meta`` so callers can handle success
+    and failure with the same shape and never mistake one for the other.
+    """
+    def _err(payload):
+        payload.setdefault("results", [])
+        payload.setdefault("meta", {"skip": 0, "limit": 0, "total": 0})
+        return payload
+
+    timeout = OPENFDA_TIMEOUT if timeout is None else timeout
+    retries = OPENFDA_MAX_RETRIES if max_retries is None else max_retries
+    last = None
+    for attempt in range(retries + 1):
+        try:
+            response = requests.get(url, timeout=timeout)
+        except requests.exceptions.Timeout:
+            last = _err({"status": "error",
+                         "error": f"openFDA request timed out after {timeout}s",
+                         "error_details": {"type": "TimeoutError", "retriable": True}})
+        except requests.exceptions.RequestException as e:
+            last = _err({"status": "error", "error": f"openFDA request failed: {e}",
+                         "error_details": {"type": type(e).__name__, "retriable": True}})
+        else:
+            try:
+                response_data = response.json()
+            except ValueError:
+                snippet = (response.text or "")[:200]
+                last = _err({"status": "error",
+                             "error": (f"openFDA returned non-JSON response "
+                                       f"(HTTP {response.status_code}): {snippet}"),
+                             "error_details": {"type": "InvalidJSON",
+                                               "http_status": response.status_code,
+                                               "retriable": response.status_code >= 500}})
+            else:
+                err = _openfda_error_envelope(response_data)
+                code = err.get("code") if err else None
+                transient = (code in _OPENFDA_TRANSIENT_CODES
+                             or response.status_code == 429
+                             or response.status_code >= 500)
+                if err is None or not transient:
+                    return response_data, None
+                last = _err({"status": "error",
+                        "error": (f"openFDA {code or response.status_code}: "
+                                  f"{err.get('message') if err else ''}").strip(),
+                        "error_details": {"type": "OpenFDAError", "code": code,
+                                          "http_status": response.status_code,
+                                          "retriable": True},
+                        "next_steps": [
+                            "openFDA allows 240 requests/minute per IP "
+                            "(1,000/day without an API key).",
+                            "Set FDA_API_KEY (free: https://open.fda.gov/apis/authentication/).",
+                            "Lower concurrency, or avoid running several jobs "
+                            "against openFDA from the same host at once.",
+                        ]})
+                if attempt < retries:
+                    delay = 2 ** attempt
+                    retry_after = response.headers.get("Retry-After")
+                    if retry_after:
+                        try:
+                            delay = max(delay, min(float(retry_after), 60))
+                        except (TypeError, ValueError):
+                            pass
+                    time.sleep(delay)
+                    continue
+        if attempt < retries and (last or {}).get("error_details", {}).get("retriable"):
+            time.sleep(2 ** attempt)
+            continue
+        break
+    return None, last
 
 
 def search_openfda(
@@ -405,10 +509,9 @@ def search_openfda(
         full_url += f"&api_key={api_key}"
         used_api_key = True
 
-    response = requests.get(full_url)
-
-    # Get the JSON response
-    response_data = response.json()
+    response_data, transport_error = _openfda_request(full_url)
+    if transport_error is not None:
+        return transport_error
 
     # If an invalid API key was supplied, retry once without it.
     if (
@@ -417,8 +520,14 @@ def search_openfda(
         and isinstance(response_data.get("error"), dict)
         and response_data["error"].get("code") == "API_KEY_INVALID"
     ):
-        response = requests.get(f"{endpoint_url}?{query}")
-        response_data = response.json()
+        print(
+            "Warning: FDA_API_KEY was rejected by openFDA (API_KEY_INVALID); "
+            "retrying unauthenticated. The anonymous quota is far lower "
+            "(240/min, 1,000/day per IP), so expect rate-limit errors under load."
+        )
+        response_data, transport_error = _openfda_request(f"{endpoint_url}?{query}")
+        if transport_error is not None:
+            return transport_error
 
     # ===== Generic NOT_FOUND fallback engine (applies to all FDADrugLabel tools) =====
     requested_return_fields = return_fields
@@ -515,7 +624,7 @@ def search_openfda(
         url = f"{endpoint_url}?{q}"
         if _is_valid_api_key(api_key):
             url += f"&api_key={api_key}"
-        resp = requests.get(url)
+        resp = requests.get(url, timeout=OPENFDA_TIMEOUT)
         try:
             return resp.json()
         except Exception:
@@ -753,7 +862,41 @@ def search_openfda(
                 },
                 "results": [],
             }
-        return None
+
+        # Any other openFDA error code means the query did not run: quota
+        # exhausted, bad key, malformed request, server fault. Returning None
+        # here would be indistinguishable from "this label has no such field",
+        # so the caller silently loses the evidence. Surface it instead.
+        message = err.get("message") if isinstance(err, dict) else str(err)
+        out = {
+            "status": "error",
+            "error": f"openFDA {code or 'error'}: {message}",
+            "error_details": {
+                "type": "OpenFDAError",
+                "code": code,
+                "retriable": code in _OPENFDA_TRANSIENT_CODES,
+            },
+            "meta": {
+                "skip": params.get("skip", 0) or 0,
+                "limit": params.get("limit", 0) or 0,
+                "total": 0,
+            },
+            "results": [],
+        }
+        if code == "OVER_RATE_LIMIT":
+            out["next_steps"] = [
+                "openFDA allows 240 requests/minute per IP "
+                "(1,000/day without an API key).",
+                "Set FDA_API_KEY (free: https://open.fda.gov/apis/authentication/).",
+                "Lower concurrency, or stagger jobs sharing this outbound IP.",
+            ]
+        elif code == "API_KEY_INVALID":
+            out["next_steps"] = [
+                "FDA_API_KEY was rejected. openFDA keys are 40-character "
+                "alphanumeric strings; a UUID is not a valid key.",
+                "Get one at https://open.fda.gov/apis/authentication/",
+            ]
+        return out
 
     # Extract meta information
     meta_info = response_data.get("meta", {})
