@@ -17,6 +17,7 @@ import requests
 from typing import Any
 
 from .base_tool import BaseTool
+from .http_utils import request_with_retry
 from .tool_registry import register_tool
 
 FDA_LABEL_URL = "https://api.fda.gov/drug/label.json"
@@ -271,6 +272,27 @@ def _extract_label(
     return _apply_section_limit(record, max_chars)
 
 
+class _RetryableGet:
+    """Adapts ``request_with_retry``'s session protocol onto ``requests.get``.
+
+    openFDA throttles per minute as well as per day, so a burst of label
+    lookups can hit 429 even with a valid key; these calls used to go straight
+    to ``raise_for_status()`` and fail. Routing them through the shared helper
+    reuses its backoff and ``Retry-After`` handling.
+
+    The indirection keeps this module's HTTP surface as ``requests.get`` rather
+    than ``requests.request``, so the call shape stays what it has always been.
+    ``requests`` is resolved at call time, not captured at import.
+    """
+
+    @staticmethod
+    def request(method, url, **kwargs):
+        # Forward only what the caller actually set. request_with_retry always
+        # passes headers/json/data, and sending those as explicit ``None`` would
+        # change the call signature this module has always used.
+        return requests.get(url, **{k: v for k, v in kwargs.items() if v is not None})
+
+
 @register_tool("FDALabelTool")
 class FDALabelTool(BaseTool):
     """
@@ -339,7 +361,9 @@ class FDALabelTool(BaseTool):
         """
         for field in ("openfda.generic_name", "openfda.brand_name"):
             for q in _name_queries(field, drug_name):
-                resp = requests.get(
+                resp = request_with_retry(
+                    _RetryableGet,
+                    "GET",
                     FDA_LABEL_URL,
                     params=self._params(search=q, limit=limit),
                     timeout=20,
@@ -384,7 +408,9 @@ class FDALabelTool(BaseTool):
             return response
 
         q = _phrase("indications_and_usage", indication)
-        resp = requests.get(
+        resp = request_with_retry(
+            _RetryableGet,
+            "GET",
             FDA_LABEL_URL,
             params=self._params(search=q, limit=limit),
             timeout=20,
@@ -445,7 +471,9 @@ class FDALabelTool(BaseTool):
 
     def _list_classes(self, arguments: dict) -> Any:
         limit = min(int(arguments.get("limit", 20)), 100)
-        resp = requests.get(
+        resp = request_with_retry(
+            _RetryableGet,
+            "GET",
             FDA_LABEL_URL,
             params=self._params(
                 count="openfda.pharm_class_epc.exact",
