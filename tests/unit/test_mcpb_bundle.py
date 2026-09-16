@@ -66,12 +66,23 @@ def test_mcpb_server_type_is_valid_enum():
 
 
 def test_mcpb_launcher_command_preserved():
-    """UV dependencies must be installed before the MCP handshake begins."""
+    """UV dependencies must be installed before the MCP handshake begins.
+
+    The bundle ships no .venv and no uv.lock, so uv has to sync from the
+    bundled pyproject.toml on first launch. ``--no-sync`` suppresses exactly
+    that: it leaves an empty virtualenv and the server dies on the first
+    third-party import (``ModuleNotFoundError: No module named 'yaml'``)
+    before the handshake. ``--with .`` is unnecessary because the dependency
+    list already lives in that pyproject.toml, but the sync itself is not.
+    """
     manifest = json.loads(MANIFEST.read_text())
     assert manifest["server"]["type"] == "uv"
     config = manifest["server"]["mcp_config"]
     assert config["command"] == "uv"
-    assert "--no-sync" in config["args"]
+    assert "--no-sync" not in config["args"], (
+        "--no-sync stops uv installing the bundle's dependencies, so the "
+        "server never starts"
+    )
     assert "--with" not in config["args"]
     assert "--python" not in config["args"]  # Shared via .python-version instead.
     assert (MCPB_DIR / ".python-version").read_text().strip() == "3.12"

@@ -25,7 +25,6 @@
             "command": "uv",
             "args": [
                 "run",
-                "--no-sync",
                 "--directory",
                 "${__dirname}",
                 "${__dirname}${/}src${/}run_stdio.py"
