@@ -49,6 +49,9 @@ This skill **retrieves and interprets multi-product safety records**. It does no
 | Device | Recalls | `OpenFDA_search_device_recalls` | `/device/recall.json` |
 | Device | Enforcement / recall reports | `OpenFDA_search_device_enforcement` | `/device/enforcement.json` |
 | Device | 510(k) clearances (context) | `OpenFDA_search_device_510k` | `/device/510k.json` |
+| Device | Unique Device Identifier (UDI) lookup | `OpenFDADevice_search_udi` | -- |
+| Device | US regulatory class (1/2/3) | `OpenFDADevice_get_classification` | -- |
+| Device | Premarket Approval (PMA, Class 3 devices) | `OpenFDADevice_search_pma` | -- |
 | Food/supplement/cosmetic | Adverse events (CAERS) | `OpenFDA_search_food_adverse_events` | `/food/event.json` |
 | Food | Enforcement / recall reports | `OpenFDA_search_food_enforcement` | `/food/enforcement.json` |
 | Veterinary | Animal drug adverse events | `OpenFDA_search_animalvet_adverse_events` | `/animalandveterinary/event.json` |
@@ -58,6 +61,8 @@ This skill **retrieves and interprets multi-product safety records**. It does no
 | Drug | Labels | `OpenFDA_search_drug_labels` | `/drug/label.json` |
 
 All tools take a Lucene `search` string plus optional `limit` and `skip`. All are keyless and verified live.
+
+**Note**: `OpenFDADevice_search_recalls`/`_search_adverse_events`/`_search_510k` return the same underlying openFDA data as `OpenFDA_search_device_recalls`/`_device_adverse_events`/`_device_510k` above (two independently-added wrappers over the same endpoints) — either works, no need to call both. Use whichever is already in your loaded toolset; the `OpenFDADevice_*` family additionally has the three UDI/classification/PMA tools with no equivalent in the other family.
 
 ---
 

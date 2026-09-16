@@ -252,7 +252,7 @@ See `WORKFLOW_DETAILS.md` Phase 6 for code examples.
 **Goal**: Assess expression, purification, formulation, and CMC feasibility.
 
 **Key steps**:
-1. Assess codon optimization for CHO, identify rare codons
+1. Assess codon optimization for CHO, identify rare codons -- `CodonUsage_get_optimal_codons(taxid=<Cricetulus griseus NCBI taxid>)` gives the CHO-preferred codon per amino acid to compare against; resolve the taxid first if not already known rather than assuming one. `CodonUsage_get_table` (same taxid) additionally gives per-codon usage frequency, needed to flag which codons in the actual sequence are rare in CHO specifically -- human codon-usage tables (e.g. from tooluniverse-sequence-analysis) are the wrong reference here, rare-in-human is not the same set as rare-in-CHO
 2. Design signal peptide
 3. Plan 3-step purification: Protein A capture -> cation exchange polishing -> viral nanofiltration
 4. Recommend formulation (buffer, pH, stabilizer, tonicity)

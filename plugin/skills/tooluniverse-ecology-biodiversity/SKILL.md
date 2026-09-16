@@ -65,6 +65,7 @@ When a question involves identifying or comparing species:
 | `iDigBio_search_records` | Search 130M+ digitized museum/herbarium specimen records (Darwin Core) by `genus`/`scientificname`/locality — use to complement GBIF with physical-specimen provenance |
 | `iDigBio_get_record` | Full Darwin Core detail for one specimen by `uuid` (from `iDigBio_search_records`) |
 | `WoRMS_search_species` | Marine species taxonomy |
+| `BOLDSystems_search_by_taxon` / `_search_by_bin` / `_get_record` | DNA barcode-based species identification (COI barcoding); BIN clusters group specimens by barcode similarity, useful for cryptic-species questions GBIF's name-based search can't resolve |
 | `ensembl_get_taxonomy` | Taxonomic classification |
 | `NCBIDatasets_get_taxonomy` | NCBI taxonomy lookup |
 | `PubMed_search_articles` | Literature on ecology topics |

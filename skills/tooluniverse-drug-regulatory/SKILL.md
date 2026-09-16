@@ -123,7 +123,9 @@ members = tu.tools.RxClass_get_class_members(class_id=class_id, ttys="IN")
 
 ---
 
-## Phase 3: Approval & Generic Status (FDA Orange Book)
+## Phase 3: Approval & Generic Status (FDA Orange Book / Purple Book)
+
+**Orange Book covers small-molecule drugs; biologics and biosimilars (e.g. "is there a biosimilar of adalimumab") are a different FDA list entirely** — use `FDAPurpleBook_search_products` for those instead of Orange Book, which won't have them.
 
 **FDA_OrangeBook_search_drug**: `brand_name` (string), `generic_name` (string), `application_number` (string), `limit` (int, default 10).
 Returns `{status, data: {products: [{brand_name, generic_name, dosage_form, strength, te_code, application_number, approval_date}]}}`.
