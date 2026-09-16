@@ -615,7 +615,7 @@ class EuropePMCGuidelinesTool(BaseTool):
                 if pmid:
                     url = f"https://europepmc.org/article/MED/{pmid}"
                 elif pmcid:
-                    url = f"https://europepmc.org/article/{pmcid}"
+                    url = f"https://europepmc.org/article/PMC/{pmcid}"
                 elif doi:
                     url = f"https://doi.org/{doi}"
 
