@@ -34,7 +34,10 @@ class CellosaurusSearchTool(BaseTool):
         Search Cellosaurus cell lines using the /search/cell-line endpoint.
         """
         try:
-            params = {"q": query.strip(), "offset": offset, "size": size}
+            # Cellosaurus search is Solr-backed: page size is ``rows`` and
+            # the cursor is ``start``. The tool's public ``size`` / ``offset``
+            # names are preserved; ``size`` and ``offset`` are ignored by the API.
+            params = {"q": query.strip(), "start": offset, "rows": size}
 
             url = f"{self.base_url}/search/cell-line"
             headers = {"Accept": "application/json"}
