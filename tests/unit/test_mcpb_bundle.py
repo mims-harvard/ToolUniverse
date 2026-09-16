@@ -2,9 +2,10 @@
 
 Two defects motivated these tests:
 
-  Bug #1 — the published manifest declared ``server.type: "uv"``, which the
-  MCPB manifest schema rejects (enum is ``python | node | binary``). Claude
-  Code's loader failed validation on ``/doctor`` and blocked every install.
+  Bug #1 — older MCPB loaders rejected ``server.type: "uv"``. MCPB 0.4 now
+  supports it, and Desktop needs that type to prepare dependencies before
+  starting the MCP handshake. Using ``python`` with ``uv run`` instead made
+  cold installs spend the handshake timeout downloading dependencies.
 
   Bug #2 — ``tooluniverse/__init__.py`` called ``version("tooluniverse")``
   unconditionally. Inside the bundle the dist installs as
@@ -27,7 +28,7 @@ MANIFEST = MCPB_DIR / "manifest.json"
 BUNDLE_PYPROJECT = MCPB_DIR / "pyproject.toml"
 ROOT_PYPROJECT = REPO_ROOT / "pyproject.toml"
 
-# Per the MCPB manifest schema enforced by Claude Code's plugin loader.
+# MCPB 0.4 adds host-managed UV setup to the earlier schema's server types.
 VALID_SERVER_TYPES = {"python", "node", "binary"}
 
 
@@ -55,16 +56,46 @@ def test_mcpb_server_type_is_valid_enum():
     """Regression for #201: server.type must be in the MCPB schema enum."""
     manifest = json.loads(MANIFEST.read_text())
     server_type = manifest["server"]["type"]
-    assert server_type in VALID_SERVER_TYPES, (
+    valid_types = VALID_SERVER_TYPES | (
+        {"uv"} if manifest["manifest_version"] == "0.4" else set()
+    )
+    assert server_type in valid_types, (
         f"server.type {server_type!r} violates the MCPB schema enum "
-        f"{sorted(VALID_SERVER_TYPES)}; this is the exact failure reported in #201"
+        f"{sorted(valid_types)} for manifest {manifest['manifest_version']}"
     )
 
 
 def test_mcpb_launcher_command_preserved():
-    """type=python is just schema metadata — uv must remain the actual launcher."""
+    """UV dependencies must be installed before the MCP handshake begins."""
     manifest = json.loads(MANIFEST.read_text())
-    assert manifest["server"]["mcp_config"]["command"] == "uv"
+    assert manifest["server"]["type"] == "uv"
+    config = manifest["server"]["mcp_config"]
+    assert config["command"] == "uv"
+    assert "--no-sync" in config["args"]
+    assert "--with" not in config["args"]
+    assert "--python" not in config["args"]  # Shared via .python-version instead.
+    assert (MCPB_DIR / ".python-version").read_text().strip() == "3.12"
+
+
+def test_mcpb_python_range_has_semver_syntax_and_matching_bounds():
+    """Desktop rejects PEP 440 commas even when the installed Python fits."""
+    import re
+
+    from packaging.specifiers import SpecifierSet
+
+    manifest = json.loads(MANIFEST.read_text())
+    runtime_range = manifest["compatibility"]["runtimes"]["python"]
+    assert "," not in runtime_range, "Desktop requires space-separated semver bounds"
+    declared = re.search(
+        r'^requires-python\s*=\s*"([^"]+)"',
+        BUNDLE_PYPROJECT.read_text(),
+        re.MULTILINE,
+    )
+    assert declared
+    # For the bundle's simple comparison bounds, translate the separator only.
+    assert SpecifierSet(",".join(runtime_range.split())) == SpecifierSet(
+        declared.group(1)
+    )
 
 
 def test_mcpb_manifest_version_matches_pyproject():

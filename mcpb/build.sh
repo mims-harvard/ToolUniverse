@@ -13,6 +13,7 @@ mkdir -p "$BUILD_DIR/src" "$DIST_DIR"
 
 cp "$MCPB_SRC/manifest.json"   "$BUILD_DIR/manifest.json"
 cp "$MCPB_SRC/pyproject.toml"  "$BUILD_DIR/pyproject.toml"
+cp "$MCPB_SRC/.python-version" "$BUILD_DIR/.python-version"
 cp "$MCPB_SRC/README.md"       "$BUILD_DIR/README.md"
 cp "$MCPB_SRC/icon.png"        "$BUILD_DIR/icon.png"
 cp "$REPO_ROOT/.env.template"  "$BUILD_DIR/.env.template"
@@ -39,8 +40,12 @@ if [ "$ROOT_VER" != "$BUNDLE_VER" ] || [ "$ROOT_VER" != "$MANIFEST_VER" ]; then
   exit 1
 fi
 
-# Validate manifest against official schema.
-( cd "$BUILD_DIR" && npx --yes @anthropic-ai/mcpb@latest validate manifest.json )
+# Validate against MCPB 0.4. An installed CLI permits offline/reproducible builds.
+if [ -n "${MCPB_CLI:-}" ]; then
+  ( cd "$BUILD_DIR" && "$MCPB_CLI" validate manifest.json )
+else
+  ( cd "$BUILD_DIR" && npx --yes @anthropic-ai/mcpb@2.1.2 validate manifest.json )
+fi
 
 # Pack.
 rm -f "$OUT"

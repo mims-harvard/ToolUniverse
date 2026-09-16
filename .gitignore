@@ -86,6 +86,7 @@ ipython_config.py
 
 # pyenv
 .python-version
+!mcpb/.python-version
 
 # celery beat schedule file
 celerybeat-schedule

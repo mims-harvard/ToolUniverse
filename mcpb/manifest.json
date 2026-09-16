@@ -19,18 +19,15 @@
     "support": "https://github.com/mims-harvard/ToolUniverse/issues",
     "icon": "icon.png",
     "server": {
-        "type": "python",
+        "type": "uv",
         "entry_point": "src/run_stdio.py",
         "mcp_config": {
             "command": "uv",
             "args": [
                 "run",
+                "--no-sync",
                 "--directory",
                 "${__dirname}",
-                "--with",
-                ".",
-                "--python",
-                "3.12",
                 "${__dirname}${/}src${/}run_stdio.py"
             ],
             "env": {
@@ -48,7 +45,7 @@
             "linux"
         ],
         "runtimes": {
-            "python": ">=3.10,<3.15"
+            "python": ">=3.10 <3.15"
         }
     },
     "keywords": [

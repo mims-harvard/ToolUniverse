@@ -8,13 +8,29 @@ Model Context Protocol Bundle published at
 
 | File | Purpose |
 |---|---|
-| `manifest.json` | MCPB manifest (validated by Claude Code). `server.type` MUST be `python \| node \| binary`. |
+| `manifest.json` | MCPB 0.4 manifest. `server.type = "uv"` lets Claude Desktop install dependencies before starting MCP. |
 | `pyproject.toml` | Bundle-specific deps. Keep in sync with the repo root `pyproject.toml`. |
+| `.python-version` | Python 3.12 selection shared by installation and launch. |
 | `src/run_stdio.py` | Entry point. Launches `tooluniverse.smcp_server.run_stdio_server` in compact mode. |
 | `icon.png` | Bundle icon. |
 | `build.sh` | Builds the `.mcpb` zip from this directory + the repo's `src/tooluniverse/`. |
 
 ## Build
+
+This bundle requires a host with MCPB 0.4 UV runtime support, such as current
+Claude Desktop. Older loaders that only accept `python`, `node`, and `binary`
+server types must be updated. See the [MCPB UV runtime specification](https://github.com/modelcontextprotocol/mcpb/blob/main/MANIFEST.md#uv-runtime-v04).
+
+Claude Desktop prepares the virtual environment and dependencies during
+installation. This can take several minutes on the first install. The server
+then uses `uv run --no-sync` to start that prepared environment without network
+resolution or a second `--with .` installation inside the MCP handshake timeout.
+Keep `.python-version` in the bundle so both phases select the same Python.
+
+The manifest's Python compatibility range uses semver (`>=3.10 <3.15`), while
+`pyproject.toml` uses PEP 440 (`>=3.10,<3.15`). The bundle itself runs on Python
+3.12; installing it on a machine with system Python 3.14 does not test the
+dependencies under Python 3.14.
 
 ```bash
 bash mcpb/build.sh
@@ -25,7 +41,8 @@ The script:
 
 1. Copies `mcpb/*` and the repo's `src/tooluniverse/` into a clean build dir
    (excluding `test/`, `__pycache__/`, `.pytest_cache/`, generated wrappers).
-2. Runs `npx @anthropic-ai/mcpb validate` against the manifest.
+2. Runs `npx @anthropic-ai/mcpb@2.1.2 validate` against the manifest (or the
+   executable specified by `MCPB_CLI` for offline builds).
 3. Zips into `dist/tooluniverse.mcpb`.
 
 ## Release

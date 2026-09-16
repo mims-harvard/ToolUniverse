@@ -4,7 +4,10 @@ MCP Bundle
 What is MCPB?
 -------------
 
-The **Model Context Protocol Bundle (MCPB)** is a standardized packaging format designed to simplify the distribution and usage of Model Context Protocol (MCP) servers. For **ToolUniverse**, the MCPB wraps the entire ecosystem—including Python dependencies, the Node.js bridge, and the server logic—into a single, standalone executable or bundle.
+The **Model Context Protocol Bundle (MCPB)** packages an MCP server for installation
+in a desktop client. ToolUniverse's bundle includes its Python source and dependency
+declarations. A client supporting the MCPB 0.4 UV runtime prepares the Python
+environment during installation, before starting the server.
 
 Why use MCPB with ToolUniverse?
 -------------------------------
@@ -15,7 +18,7 @@ Traditionally, running an MCP server like ToolUniverse required setting up a spe
 
 *   **Zero Configuration**: No need to manage Python virtual environments or install Node.js manually.
 *   **One-Click Installation**: In supported clients like Claude Desktop, you just drop the `.mcpb` file.
-*   **Portability**: The bundle contains everything needed to run ToolUniverse on your machine.
+*   **Portability**: The client installs dependencies for your platform. Internet access is required during the first installation.
 
 Key Features
 ------------
@@ -31,11 +34,24 @@ To use the ToolUniverse MCPB:
 
 1.  Download the latest release from our `GitHub Releases <https://github.com/mims-harvard/ToolUniverse/releases/tag/mcpb>`_.
 2.  Follow the instructions in the `official Claude Desktop Guide <https://www.anthropic.com/engineering/desktop-extensions>`_ to configure it with your client.
+3.  Wait for dependency installation to finish. In **Settings → Developer**,
+    confirm that the extension-managed **ToolUniverse** server is running.
+4.  In a chat, open **+ → Connectors** and enable **ToolUniverse**. A running
+    server can still be disabled for an individual chat. Allow the requested
+    tool call when Claude asks for permission.
+
+To verify a real tool call, ask Claude to use ``execute_tool`` with
+``tool_name="Sequence_gc_content"`` and
+``arguments={"sequence": "ATGC", "operation": "gc_content"}``.
+The tool should return ``gc_percent: 50.0`` and ``length: 4``.
 
 Client compatibility note
 -------------------------
 
-MCPB support depends on the client. For Claude Desktop, use the MCPB release
+MCPB support depends on the client. Use a current Claude Desktop version with
+MCPB 0.4 UV runtime support. The first installation can take several minutes
+while dependencies download; later starts reuse the prepared environment.
+For Claude Desktop, use the MCPB release
 flow above. For Claude Code, add ToolUniverse directly as a stdio MCP server
 instead of installing the MCPB bundle:
 

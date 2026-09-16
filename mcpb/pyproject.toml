@@ -10,11 +10,14 @@ description = "ToolUniverse MCP Server (Native MCPB bundle)"
 # dependencies, currently youtube-transcript-api (>=3.8,<3.15) pulled in by
 # markitdown's youtube-transcription extra. It is NOT a ToolUniverse limit --
 # the root pyproject declares ">=3.10" with no cap. Claude Desktop shows this
-# range as an install requirement (mcpb/manifest.json keeps the same value),
+# range as an install requirement (mcpb/manifest.json keeps the same bounds),
 # so leaving it stale blocks users on a Python we actually support: a stale
 # "<3.14" did exactly that after issue #527 lifted the real cap. Re-check with
 #   uv pip compile mcpb/pyproject.toml --python-version 3.X
-# before widening, and keep manifest.json in sync.
+# before widening, and keep manifest.json in sync. The manifest uses semver
+# syntax (">=3.10 <3.15", space-separated); this file uses PEP 440 syntax
+# (">=3.10,<3.15", comma-separated). A comma in the manifest fails Desktop's
+# runtime version check even when a compatible Python is installed.
 requires-python = ">=3.10,<3.15"
 
 # Pattern 2: DIRECT dependencies (bundled source code).
