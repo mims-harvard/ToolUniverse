@@ -24,10 +24,10 @@ class CellosaurusSearchTool(BaseTool):
         offset = arguments.get("offset", 0)
         size = arguments.get("size", 20)
 
-        if not q:
+        if q is None or not str(q).strip():
             return {"status": "error", "error": "`q` parameter is required."}
 
-        return self._search_cell_lines(q, offset, size)
+        return self._search_cell_lines(str(q).strip(), offset, size)
 
     def _search_cell_lines(self, query, offset, size):
         """
