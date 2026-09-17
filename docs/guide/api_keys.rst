@@ -155,6 +155,15 @@ ToolUniverse omits them automatically for these models and moving
 :Cost: Self-hosted (free, but requires GPU infrastructure)
 :Tool Categories: ``agents`` (when configured)
 
+**AWS Bedrock**
+
+:Region: ``BEDROCK_REGION`` or ``AWS_REGION`` / ``AWS_DEFAULT_REGION``
+:Credentials: Any boto3-supported AWS credentials, profile, or IAM role
+:Required For: Agentic tools using Bedrock-hosted models and inference profiles
+:How to Setup: Enable model access in Amazon Bedrock and grant the runtime identity Bedrock invoke permissions
+:Cost: Based on Amazon Bedrock model pricing
+:Tool Categories: ``agents`` (when configured)
+
 MCP Server Configurations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -398,11 +407,11 @@ Environment Variables
 
 .. code-block:: bash
 
-   # Default LLM provider (CHATGPT, OPENAI, OPENROUTER, GEMINI, VLLM)
+   # Default LLM provider (CHATGPT, OPENAI, OPENROUTER, GEMINI, VLLM, BEDROCK)
    TOOLUNIVERSE_LLM_DEFAULT_PROVIDER=OPENAI
 
    # Model configuration per task
-   TOOLUNIVERSE_LLM_MODEL_DEFAULT=gpt-4-turbo-preview
+   TOOLUNIVERSE_LLM_MODEL_DEFAULT=openai/gpt-4o-mini
    TOOLUNIVERSE_LLM_MODEL_SUMMARIZATION=gpt-3.5-turbo
    TOOLUNIVERSE_LLM_MODEL_REASONING=gpt-4
 
