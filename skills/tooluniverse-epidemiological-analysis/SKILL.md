@@ -113,6 +113,26 @@ tu-datastore sync-hf download --repo "agenticx/tooluniverse-datastores" --collec
 ```
 Check for this warning in the response before treating an empty result as "no matching dataset exists" — an empty `results` array with the datastore warning means the tool isn't set up yet, not that nothing was found. Once synced, treat this family as Step 2's European counterpart to the NHANES/DHS discovery pattern above: find the right registry/dataset here, then move to Step 3 to actually download and parse it.
 
+**COVID-19 case/death/vaccination time series**: for outbreak-surveillance
+PECO questions, `src/tooluniverse/data/diseasesh_tools.json` and
+`src/tooluniverse/data/disease_sh_ext_tools.json` (Disease.sh API, sourced
+from JHU CSSE) give global/country/historical case-death-recovery counts
+and vaccine coverage — no auth, no setup needed (verified live, unlike
+euhealth above). `DiseaseSh_get_global_stats` (no params) -> worldwide
+totals; `DiseaseSh_get_country_stats {"country": ...}` -> one country's
+current snapshot; `DiseaseSh_get_historical {"country": ..., "lastdays":
+...}` -> daily cumulative timeline; `DiseaseSH_get_vaccine_coverage
+{"country": ..., "lastdays": ...}` -> vaccination-dose timeline. **Note a
+real near-duplicate, verified live**: `DiseaseSh_get_historical` (from
+`diseasesh_tools.json`) and `DiseaseSH_get_covid_historical` (from
+`disease_sh_ext_tools.json`) return the same timeline shape for the same
+country/day-range from the same underlying API — pick either one, they are
+not two independent data sources despite living in different tool files.
+`country: "all"` is not a valid value for the per-country tools (verified
+live: `DiseaseSh_get_country_stats {"country": "all"}` errors with
+"Country not found or doesn't have any cases") — use
+`DiseaseSh_get_global_stats` for a worldwide aggregate instead.
+
 **REST API data**: For sources like GDC (TCGA), ClinicalTrials.gov, or OpenTargets, paginate through the API:
 ```python
 all_records = []

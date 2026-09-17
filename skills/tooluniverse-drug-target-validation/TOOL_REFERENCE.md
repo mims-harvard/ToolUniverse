@@ -85,6 +85,7 @@ When a primary tool fails, use these fallbacks in order:
 - Key tractability: OpenTargets PROTAC tractability
 - Structure: full-length structures for linker design
 - Chemical matter: known binders + E3 ligase binders
+- **Existing degrader precedent (PROTAC-DB 3.0)**: before assuming a target has no PROTAC chemical matter, check `ProtacDB_search_targets(target_name=..., uniprot_id=...)` — if the target already has entries (446+ unique targets covered), it's *validated tractable* by the PROTAC modality, not just theoretically favorable. Pull specific compounds with `ProtacDB_search_protacs(target=..., e3_ligase=...)` (filter by E3 ligase — CRBN and VHL are the two most common; a target with degraders reported against both is a stronger signal than one warhead/ligase pair only) and get full structural/potency detail (DC50, Dmax, cell line, warhead SMILES, linker, E3 ligand) with `ProtacDB_get_protac(protac_id=...)`. Live-verified real example: `ProtacDB_search_targets(target_name="BRD4")` returns UniProt `O60885`; `ProtacDB_search_protacs(target="BRD4")` returns real degrader entries with `smiles_canonical`, `dc50`, `dmax` fields. Absence of PROTAC-DB entries is not proof a target is undruggable by this modality — it may just mean no one has published a degrader yet; treat it as "no precedent found," not "infeasible."
 
 ---
 

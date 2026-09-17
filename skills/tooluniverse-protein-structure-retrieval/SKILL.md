@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-protein-structure-retrieval
-description: Protein structure retrieval from RCSB PDB, PDBe, AlphaFold, and SWISS-MODEL with disambiguation, quality assessment (resolution, R-factor, pLDDT, coverage), and metadata. Distinguishes high-quality experimental (X-ray under 2 Angstrom) vs predicted vs homology-model vs medium-quality structures. Use for fetching protein structures, structure-quality comparison, batch model-availability checks across a gene list, and selecting structures for drug design or modeling.
+description: Protein structure retrieval from RCSB PDB, PDBe, AlphaFold, SWISS-MODEL, 3D-Beacons (cross-provider structure aggregator), and PDB-REDO (re-refined X-ray structures), with disambiguation, quality assessment (resolution, R-factor, pLDDT, coverage), and metadata. Distinguishes high-quality experimental (X-ray under 2 Angstrom) vs predicted vs homology-model vs medium-quality structures. Use for fetching protein structures, structure-quality comparison, batch model-availability checks across a gene list, checking every structure provider at once, and selecting structures for drug design or modeling.
 disable-model-invocation: true
 ---
 
@@ -92,6 +92,20 @@ To get genuine computed homology models specifically, call `SwissModel_get_model
 
 **When to reach for SWISS-MODEL vs. AlphaFold**: AlphaFold (above) is the default single-model reference for any UniProt-reviewed protein. Reach for SWISS-MODEL specifically when (a) you need multiple alternative models built from different templates to compare, (b) a large protein's AlphaFold confidence is poor in one region and a domain-specific homology model with better template coverage might do better there, or (c) you're checking many accessions at once and want batch lookup rather than N separate AlphaFold calls.
 
+### 3D-Beacons (Meta-Aggregator Across All Structure Providers)
+
+`ThreeDBeacons_get_structure_summary(accession=...)` is the best FIRST call when you don't yet know which structure source has the most/best coverage for a UniProt accession — it queries PDBe, SWISS-MODEL, AlphaFold DB, AlphaFill, and ModelArchive simultaneously and returns a `by_provider` count plus a `by_category` breakdown (`EXPERIMENTALLY DETERMINED` / `TEMPLATE-BASED` / `AB-INITIO`). **Real example** (verified live): EGFR/P00533 → `total_structures: 426`, `by_provider: {"PDBe": 412, "SWISS-MODEL": 2, "AlphaFold DB": 6, "AlphaFill": 1, "ModelArchive": 5}` — confirming this protein is overwhelmingly covered by experimental structures already, and that the 2 SWISS-MODEL entries (Phase above) are a small fraction of what's actually available; don't stop at SWISS-MODEL's own listing if 3D-Beacons shows a much richer PDBe count.
+
+`ThreeDBeacons_get_structures(accession=..., category=..., provider=..., max_results=...)` returns the individual structure/model records (not just counts) — filter by `category` or `provider` to narrow down before fetching detail elsewhere. `ThreeDBeacons_get_annotations(accession=..., type=..., provider=...)` maps residue-level annotations (e.g. `type="DOMAIN"`, `type="BINDING"`) onto the protein's 3D models — real example: BRCA1/P38398 with `type="DOMAIN"` returns real domain-to-residue mappings, while a `type="BINDING"` query on P04637 can legitimately return zero annotations (`annotation_count: 0`) — an empty result here means no such annotation exists in the aggregated sources, not a broken call.
+
+**Workflow**: use `ThreeDBeacons_get_structure_summary` as the first orientation step for any UniProt accession, before deciding whether to drill into PDBe/RCSB (Phase 2), AlphaFold, or SWISS-MODEL specifically.
+
+### PDB-REDO (Re-Refined Experimental Structures)
+
+PDB-REDO automatically re-refines every X-ray PDB entry with current software/parameters, often improving on the original deposition's refinement quality. `PDB_REDO_get_structure_quality(pdb_id=...)` returns detailed refinement metrics (unit cell axes, B-factors, real-space/working correlation coefficients `CCFFIN`/`CCWFIN`, resolution `DATARESH`, completeness) for the re-refined structure — real example (verified live): PDB `4hjo` (an EGFR structure) → `DATARESH: 2.75`, `CCWFIN: 0.93`, `COMPLETED: 96.9`. `PDB_REDO_get_version_info(pdb_id=...)` returns re-refinement provenance/versioning metadata for the same entry.
+
+**When to use**: prefer PDB-REDO's re-refined metrics over the original PDB deposition's stated resolution/R-factors when precision matters for downstream drug-design decisions — re-refinement can meaningfully change R-free and even correct minor model errors from the original deposition.
+
 ---
 
 ## Phase 3: Report Structure Profile
@@ -151,3 +165,7 @@ Present as a **Structure Profile Report**. Hide search process. Include:
 **AlphaFold**: `alphafold_get_prediction` (get prediction), `alphafold_get_summary` (search)
 
 **SWISS-MODEL**: `SwissModel_get_summary` (best available model, single call), `SwissModel_get_models` (list all models, filterable by `range`/`provider`/`template`), `SwissModel_download_pdb` (actual coordinate text), `SwissModel_get_models_batch` (up to 250 UniProt accessions in one call)
+
+**3D-Beacons**: `ThreeDBeacons_get_structure_summary` (cross-provider counts, best first call), `ThreeDBeacons_get_structures` (individual structure/model records, filterable by `category`/`provider`), `ThreeDBeacons_get_annotations` (residue-level domain/binding annotations mapped onto 3D models)
+
+**PDB-REDO**: `PDB_REDO_get_structure_quality` (re-refined X-ray metrics), `PDB_REDO_get_version_info` (re-refinement provenance)

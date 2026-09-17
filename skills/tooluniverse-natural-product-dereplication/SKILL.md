@@ -24,6 +24,15 @@ Decide whether a putative natural product is **already known**, identify the **m
 | `OPSIN_name_to_structure` | `name` (systematic IUPAC) | smiles / inchi / inchikey. `parsed:false` for trade/trivial names |
 | `PubChem_get_CID_by_compound_name` | `name` | `{IdentifierList:{CID:[...]}}` |
 | `PubChem_get_compound_properties_by_CID` | `cid`, `properties` (e.g. `["MolecularFormula","MolecularWeight","InChIKey","IUPACName"]`) | property table — use to obtain an InChIKey for arbitrary compounds |
+| `LOTUS_search_natural_products` | `query` (name / SMILES / InChIKey) | list of natural-product occurrence records (`lotus_id`, `smiles`, `inchikey`, `contains_sugar`, `heavy_atom_number`) |
+| `LOTUS_search_by_inchikey` | `inchikey` | same shape as above, InChIKey-scoped |
+| `LOTUS_get_compound` | `compound_id` (internal LOTUS id) | full occurrence record incl. reported source organism(s) |
+| `MIBiG_list_clusters` | `search_term` (compound/organism name) | biosynthetic gene clusters (BGC accession, quality, completeness, product name(s)) |
+| `MIBiG_get_stats` | none | repository-wide counts by status and biosynthetic class (PKS/NRPS/terpene/...) |
+
+**LOTUS vs. NPAtlas scope**: NPAtlas is microbial-only (bacteria + fungi). **LOTUS covers the full tree of life** — plant, animal, marine-invertebrate, and microbial natural products — so a "no NPAtlas hit" that you want to interpret more broadly (is this a known natural product from *any* organism, not just a microbe?) should also be checked against LOTUS before calling something non-natural or novel. LOTUS's own record is an occurrence report (structure + reported source), not a curated single "origin organism" the way NPAtlas's full record is — expect multiple/looser source attributions.
+
+**MIBiG as a producer follow-up**: once NPAtlas (or LOTUS) identifies a producing organism for a microbial natural product, `MIBiG_list_clusters` (search by compound or organism name) can surface the actual experimentally-characterized biosynthetic gene cluster responsible, if one has been deposited — useful for going from "this microbe makes it" to "here is the gene cluster that makes it." `MIBiG_get_stats` gives repository-wide context (e.g. how many clusters exist per biosynthetic class) with no query needed.
 
 ---
 
@@ -145,7 +154,8 @@ Input IUPAC `2-acetyloxybenzoic acid`.
 
 ## Limitations (be honest in every report)
 
-- **NPAtlas = microbial NPs only** (bacteria + fungi). No plant, animal, or marine-invertebrate metabolites unless a microbial producer was reported. Absence is not proof of novelty.
+- **NPAtlas = microbial NPs only** (bacteria + fungi). No plant, animal, or marine-invertebrate metabolites unless a microbial producer was reported. Absence is not proof of novelty. Check **LOTUS** for broader tree-of-life coverage before concluding non-microbial absence means "not a natural product at all."
+- **MIBiG cluster search is name-matched**, not structure-matched — a compound-name hit doesn't guarantee the returned BGC is the correct/only one producing that exact molecule; confirm the product name(s) in the returned record match.
 - **ClassyFire is a cache lookup** by InChIKey. `classified:false` means "not cached for this exact InChIKey", not "unclassifiable". Wrong stereo/charge layers miss the cache.
 - **Name search ≠ structure match.** NPAtlas/PubChem name searches return synonyms, analogs, and salts. Always confirm identity at the InChIKey level before declaring a compound "known".
 - **Formula/exact-mass hits are candidate lists**, not identifications — isomers share formulas. Confirm with orthogonal evidence (MS/MS, NMR, InChIKey).
