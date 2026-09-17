@@ -1,0 +1,166 @@
+[
+  {
+    "type": "CompoundIdentifierResolutionTool",
+    "name": "resolve_identifier_for_gene_or_protein",
+    "description": "Resolve a gene or protein identifier across namespaces when you do NOT know which namespace it belongs to. Detects whether a string like 'TP53', 'ENSG00000141510', 'P04637', '7157' or 'NM_000546' is a symbol, Ensembl, UniProt, Entrez, RefSeq or HGNC id, then queries MyGene, UniProt ID Mapping, g:Profiler, BridgeDb and Ensembl and returns every equivalent id with the sources that agree on it. Use this to obtain the id another tool requires. Use UniProtIDMap_convert_ids, BridgeDb_xrefs or gProfiler_convert_ids directly instead when you already know the source namespace and want one authority. Genes and proteins only: for compounds use PubChem/ChEMBL tools, for ontology terms use ols_get_term_xrefs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "identifier": {
+          "type": "string",
+          "description": "The identifier to resolve, e.g. 'TP53', 'ENSG00000141510', 'P04637', '7157', 'NM_000546', 'HGNC:11998'."
+        },
+        "namespace": {
+          "type": ["string", "null"],
+          "enum": [
+            "gene_symbol",
+            "entrez_gene",
+            "ensembl_gene",
+            "ensembl_transcript",
+            "ensembl_protein",
+            "uniprot",
+            "refseq_rna",
+            "refseq_protein",
+            "hgnc",
+            null
+          ],
+          "description": "Override namespace detection. Use when the identifier is ambiguous — a bare integer is read as an Entrez Gene ID but could be another namespace."
+        },
+        "species": {
+          "type": ["string", "null"],
+          "description": "Species for symbol lookups, common name or NCBI taxonomy ID. Default 'human'. Examples: 'human', 'mouse', '10090'."
+        },
+        "tax_id": {
+          "type": ["integer", "null"],
+          "description": "NCBI taxonomy ID restricting UniProt ID mapping, e.g. 9606 (human), 10090 (mouse). Optional."
+        },
+        "sources": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string",
+            "enum": [
+              "mygene",
+              "uniprot_idmap",
+              "gprofiler",
+              "bridgedb",
+              "ensembl_xrefs"
+            ]
+          },
+          "description": "Restrict which resolvers are queried. Default: all. UniProt ID Mapping submits a job and is the slowest; drop 'uniprot_idmap' for a faster answer."
+        }
+      },
+      "required": ["identifier"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Unwrapped payload (result['data']) of a successful call.",
+          "properties": {
+                "query": {
+                  "type": "object",
+                  "description": "What was asked and how the namespace was decided.",
+                  "properties": {
+                    "identifier": { "type": "string" },
+                    "namespace_detected": {
+                      "type": ["string", "null"],
+                      "description": "Namespace inferred from the literal; null when unrecognized and 'namespace' was supplied."
+                    },
+                    "namespace_used": {
+                      "type": "string",
+                      "description": "Namespace actually used for routing."
+                    },
+                    "detection_confidence": {
+                      "type": "string",
+                      "description": "'high', 'medium', 'low', or 'overridden' when the caller supplied 'namespace'."
+                    },
+                    "detection_alternatives": {
+                      "type": "array",
+                      "items": { "type": "string" },
+                      "description": "Other namespaces whose grammar the identifier also satisfies."
+                    },
+                    "species": { "type": "string" }
+                  },
+                  "required": ["identifier", "namespace_used", "detection_confidence"]
+                },
+                "sources_queried": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Resolvers actually called. A resolver that cannot accept the detected namespace is skipped and does not appear."
+                },
+                "sources_failed": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "'<source>: <reason>' per resolver that was called and errored. Non-empty is normal; upstream ID services are individually flaky."
+                },
+                "sources_skipped": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "'<source>: <reason>' per resolver deliberately not called — because it has no identifier space for the detected namespace, no organism vocabulary for the requested species, or nothing to add. Every resolver you asked for appears in exactly one of sources_queried or sources_skipped, so an empty result is always explained. Kept apart from sources_failed, which counts calls that were made."
+                },
+                "total_sources_queried": { "type": "integer" },
+                "identifiers": {
+                  "type": "object",
+                  "description": "Resolved identifiers keyed by namespace, ordered by concordance and then by the order sources reported them, since sources list their primary answer first. A namespace with no results is absent. Ensembl, UniProt and RefSeq accessions are returned without their '.version' suffix so that resolvers which disagree only about the version count as agreeing; UniProt '-1' isoform suffixes are preserved because an isoform is a different molecule.",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "value": { "type": "string" },
+                        "sources": {
+                          "type": "array",
+                          "items": { "type": "string" },
+                          "description": "Resolvers that reported this value."
+                        },
+                        "concordance": {
+                          "type": "integer",
+                          "description": "Number of resolvers reporting this value. Counts agreement, not correctness."
+                        }
+                      },
+                      "required": ["value", "sources", "concordance"]
+                    }
+                  }
+                },
+                "namespaces_truncated": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Namespaces whose value list was capped; absence of a value from a capped list is not evidence it does not exist."
+                },
+                "disclosure_notes": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Statements of every reason the table above could be misread."
+                }
+          },
+          "required": [
+            "query",
+            "sources_queried",
+            "sources_failed",
+            "sources_skipped",
+            "identifiers",
+            "disclosure_notes"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The request could not be attempted.",
+          "properties": {
+            "status": { "type": "string", "description": "'error'" },
+            "error": {
+              "type": "string",
+              "description": "Why, and what to pass instead."
+            }
+          },
+          "required": ["status", "error"]
+        }
+      ]
+    },
+    "test_examples": [
+      { "identifier": "TP53" },
+      { "identifier": "ENSG00000141510" },
+      { "identifier": "P04637", "sources": ["mygene", "bridgedb"] },
+      { "identifier": "7157", "namespace": "entrez_gene" }
+    ]
+  }
+]
