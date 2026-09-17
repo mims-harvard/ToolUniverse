@@ -64,6 +64,28 @@ See [PHASE_DETAILS.md](PHASE_DETAILS.md) for detailed procedures per phase.
 | `tooluniverse-rnaseq-deseq2` | RNA-seq for integration | Phase 7 |
 | `tooluniverse-multi-omics-integration` | Cross-omics analysis | Phase 7 |
 | `tooluniverse-target-research` | Protein annotation | Phase 8 |
+| `tooluniverse-proteomics-data-retrieval` | Find a public cancer-proteomics study/quant matrix (PDC/CPTAC) to reanalyze | Phase 1 (input) |
+
+## Normal-Tissue Expression Context (ProteomicsDB)
+
+`src/tooluniverse/data/proteomicsdb_tools.json` provides 5 tools for MS-based protein
+expression across **normal** human tissues, cell lines, and body fluids — useful in
+Phase 8 (report/interpretation) to contextualize a DE result: is this protein normally
+tissue-restricted (a DE hit is more biologically striking) or ubiquitously expressed
+(a DE hit is less specific)? Complementary to antibody-based HPA expression and to
+PDC's cancer-cohort quantitative data (`tooluniverse-proteomics-data-retrieval`).
+
+| Tool | Purpose |
+|------|---------|
+| `ProteomicsDB_search_proteins` | Resolve a gene symbol/name to the correct UniProt accession first — a broad query (e.g. `"EGFR"`) can return unrelated proteins whose name/gene happens to match a substring (verified live: searching `"EGFR"` returned `FLT1` alongside real EGFR isoforms); always check `gene_name` in each hit before using its `uniprot_id` |
+| `ProteomicsDB_get_protein_expression` | Full per-tissue expression records for a UniProt accession — `expression_value` (log10-normalized, cross-tissue-comparable) vs. `unnormalized_intensity` (NOT comparable across tissues; never rank on this field) |
+| `ProteomicsDB_get_expression_summary` | Top-N tissues/cell lines ranked by expression, plus total tissue/cell-line/fluid counts — the fast path when you just need "where is this protein most expressed" (verified live: EGFR's top hits are all breast/esophageal cancer cell lines, not normal tissue — cell lines dominate ProteomicsDB's coverage for many oncogenes, so check `tissue_category` if you specifically need normal-tissue baseline) |
+| `ProteomicsDB_list_tissues` | Enumerate all tissues/cell lines/fluids with BTO ontology IDs before filtering |
+| `ProteomicsDB_get_peptides_for_protein` | Peptide-level identification evidence (sequence, uniqueness, q-values, source experiment/PubMed ID) — identification-level support that the tissue-expression tools don't provide |
+
+Response wrapper: every tool returns `{"status": "success", "data": {...}}` on success. Use
+`ProteomicsDB_search_proteins` before `ProteomicsDB_get_protein_expression`/`_get_expression_summary`/`_get_peptides_for_protein`
+unless you already have a confirmed UniProt accession.
 
 ## Quantified Minimums
 

@@ -267,6 +267,49 @@ result = tu.tools.MyGene_query_genes(query='EGFR', species='human')
 
 ---
 
+## Variant Annotation & Cancer Hotspot Tools (Genome Nexus)
+
+Genome Nexus (Memorial Sloan Kettering, genomenexus.org — the same annotator behind cBioPortal) aggregates VEP consequence prediction, SIFT, PolyPhen-2, AlphaMissense, and the Chang et al. cancer hotspot database into one call. **All coordinate-based inputs require GRCh37/hg19** — do not pass GRCh38 coordinates.
+
+### GenomeNexus_annotate_variant
+**Purpose**: Full annotation from an HGVS genomic variant
+**Parameters**: `hgvsg` (string, REQUIRED): GRCh37 HGVS genomic notation, e.g. `'7:g.140453136A>T'` (BRAF V600E), `'17:g.7577120C>T'` (TP53 R273H)
+
+**Response** (live-verified, BRAF V600E): `{status, data: {variant, hgvsg, assembly_name: "GRCh37", most_severe_consequence: "missense_variant", annotation_summary: {genomicLocation, canonicalTranscriptId, transcriptConsequences: [...]}, transcript_consequences: [{gene_symbol, transcript_id, hgvsp, hgvsc, amino_acids, sift_prediction, sift_score, polyphen_prediction, polyphen_score, alphaMissense: {score, pathogenicity}, canonical, exon}], hotspots: {annotation: [[{hugoSymbol, residue, tumorCount, type}], ...]}, colocated_variants: [{dbSnpId}]}, metadata}`
+```python
+result = tu.tools.GenomeNexus_annotate_variant(hgvsg="7:g.140453136A>T")
+# transcript_consequences[0] (canonical) = {
+#   gene_symbol: "BRAF", hgvsp: "ENSP00000288602.6:p.Val600Glu", hgvsc: "ENST00000288602.6:c.1799T>A",
+#   sift_prediction: "deleterious", sift_score: 0.0,
+#   polyphen_prediction: "probably_damaging", polyphen_score: 0.963,
+#   alphaMissense: {score: 0.9927, pathogenicity: "pathogenic"}, canonical: "1"
+# }
+# Non-canonical transcripts in the same list often have alphaMissense: null and canonical: null --
+# always read the canonical="1" entry for the headline call.
+```
+
+### GenomeNexus_annotate_mutation
+**Purpose**: Same annotation as `annotate_variant`, from separate coordinate fields instead of an HGVS string
+**Parameters**: `chromosome` (string, no 'chr' prefix), `start` (int, GRCh37, 1-based), `end` (int), `reference_allele` (string), `variant_allele` (string) — all REQUIRED
+**Response**: identical shape to `GenomeNexus_annotate_variant`. Use when your upstream source (e.g. a VCF row) already gives you chrom/pos/ref/alt separately rather than an HGVS string.
+
+### GenomeNexus_annotate_dbsnp
+**Purpose**: Same annotation, resolved from a dbSNP rsID instead of coordinates
+**Parameters**: `rsid` (string, REQUIRED): e.g. `'rs121913529'` (KRAS G12 codon). A bare numeric ID is accepted and auto-prefixed with `'rs'`.
+**Response**: identical shape, but `hgvsg`/`assembly_name` may come back `null` if Genome Nexus can't uniquely resolve the rsID to one genomic position — check for `null` before assuming the lookup fully succeeded.
+
+### GenomeNexus_get_cancer_hotspots
+**Purpose**: Direct hotspot-only lookup (a filtered subset of what `annotate_variant`'s `hotspots` field already contains) — use this when you only need a yes/no answer plus tumor counts, without the full VEP annotation payload
+**Parameters**: `hgvsg` (string, REQUIRED, GRCh37)
+**Response** (live-verified, BRAF V600E): `{status, data: {variant, gene_symbol: "BRAF", is_hotspot: true, hotspots: [{hugoSymbol: "BRAF", residue: "V600", tumorCount: 897, type: "single residue"}, {..., tumorCount: 545, type: "3d"}]}, metadata}`. `type: "3d"` means the residue clusters spatially in the folded protein with other recurrently-mutated residues even if not individually as frequent — still evidence of a functional hotspot region.
+
+### GenomeNexus_get_canonical_transcript
+**Purpose**: Resolve a gene symbol to its canonical Ensembl transcript/protein and Pfam domain architecture — useful before annotation to confirm which transcript ID should be treated as canonical, or for a quick domain-architecture overview
+**Parameters**: `gene_symbol` (string, REQUIRED): HUGO symbol, e.g. `'BRAF'`, `'TP53'`
+**Response** (live-verified, BRAF): `{status, data: {transcriptId: "ENST00000288602", geneId: "ENSG00000157764", proteinId: "ENSP00000288602", proteinLength: 766, hugoSymbols: ["BRAF"], refseqMrnaId: "NM_004333", ccdsId: "CCDS5863", pfamDomains: [{pfamDomainId, pfamDomainStart, pfamDomainEnd, pfamDomainDescription}]}}`. Note `pfamDomainDescription` was `null` for every domain in this live response even though the fields are populated — do not assume a human-readable domain name will always be present; fall back to reporting the raw Pfam ID (e.g. `PF07714` = protein kinase domain, look up via Pfam/InterPro if a name is needed).
+
+---
+
 ## Known CIViC Gene IDs (Common Cancer Genes)
 
 These are pre-verified CIViC gene IDs to bypass the search limitation:

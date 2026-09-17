@@ -53,6 +53,30 @@ Dataset quality depends on instrument, sample preparation, and quantification me
 |-----------|----------|-----------|
 | **MassIVE** | 10,000+ datasets | Rich metadata (summaries, keywords, modifications, contacts), species filtering by taxonomy ID |
 | **ProteomeXchange** | Aggregates PRIDE, MassIVE, PeptideAtlas, jPOST, iProX | Broadest coverage, standardized PXD accessions |
+| **PDC (NCI Proteomics Data Commons)** | 250+ cancer proteomics studies (CPTAC, ICPC, APOLLO, CBTN, etc.) | Curated disease/site/analytical-fraction metadata, per-gene spectral-count coverage, clinical case linkage, and direct access to the quantitative abundance matrix (not just file listings) |
+
+## Cancer Proteomics via PDC
+
+Unlike MassIVE/ProteomeXchange (general-purpose MS dataset registries returning
+metadata/file listings), PDC is scoped to cancer proteogenomics programs and can
+return the actual quantitative data and per-patient clinical metadata directly —
+useful when the goal is a cancer-cohort reanalysis rather than a generic dataset
+search.
+
+| Tool | Purpose |
+|------|---------|
+| `PDC_search_studies` | Substring match against curated `disease_type`, `primary_site`, `analytical_fraction` (Proteome/Phosphoproteome/Acetylome/Ubiquitylome/...), `experiment_type` (TMT10/TMT11/iTRAQ/LFQ), program/project name, or the study title. Program acronyms (`CPTAC`, `ICPC`, `APOLLO`) resolve against PDC's controlled vocabulary so they match every study in the program, not just title hits. Check `matched_curated_metadata` per result — `true` means a curated field matched, not just free-text title |
+| `PDC_get_gene_protein` | Given a gene symbol, returns NCBI/HGNC identifiers, all known protein accessions, and per-study spectral-count evidence (presence/abundance evidence — NOT the quantitative ratio) — use to see which PDC studies have measured a gene of interest before picking one to reanalyze |
+| `PDC_list_programs` | Enumerate all programs (CPTAC, ICPC, APOLLO, CBTN, Georgetown, Broad, ...) and their projects |
+| `PDC_get_study_summary` | Full metadata for one `pdc_study_id` (e.g. `PDC000127`): disease type, site, analytical fraction, experiment type, case/aliquot counts, embargo status, file counts by category — the PDC equivalent of `MassIVE_get_dataset`/`ProteomeXchange_get_dataset` |
+| `PDC_get_clinical_data` | Paginated per-case clinical metadata (case ID, disease type, site, demographics) for a study — use to link proteomic findings to patient characteristics |
+| `PDC_get_quant_data_matrix` | **The actual quantitative protein-abundance matrix** (gene x aliquot, `log2_ratio` by default) — this is the core CPTAC quantitative output, distinct from `PDC_get_gene_protein`'s spectral counts. Gene rows are truncated to `max_genes` (default 50; raise it to pull more) but the aliquot column header is always returned in full — verified live: `PDC000127` (CPTAC CCRCC) reports 9,591 total gene rows |
+
+**Workflow**: `PDC_search_studies(query="<disease/site/program>")` → confirm scope with
+`PDC_get_study_summary(pdc_study_id=...)` → `PDC_get_clinical_data` for patient context
+→ `PDC_get_quant_data_matrix` for the actual abundance values to analyze. Feed the
+resulting matrix into `tooluniverse-proteomics-analysis` (Phase 2 onward: preprocessing,
+differential expression, enrichment) rather than re-deriving that logic here.
 
 ---
 

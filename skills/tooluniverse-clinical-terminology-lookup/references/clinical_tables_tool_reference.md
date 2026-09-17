@@ -157,3 +157,115 @@ from the JSON schema alone. Fields present live but absent from the JSON
   `NPI` value returned is what `CMSOpenPayments_search_payments` expects as
   its `npi` filter — use this tool to resolve a provider name to an NPI
   before querying payment history there.
+
+---
+
+# ICD and RxNorm Tool Reference
+
+Source: `src/tooluniverse/data/icd_tools.json` (5 tools, type `ICDTool`/
+`ICD10Tool`) and `src/tooluniverse/data/rxnorm_extended_tools.json` (5
+tools). Live-tested (`tu test` + `tu run`); every field below was actually
+observed live except where noted as schema-only.
+
+## ICD10_search_codes
+
+- **Parameters:** `query` (string, required), `limit` (int, default 20, max 100).
+- **`tu test` result:** PASS, 4/4 examples.
+- **Custom call:** `{"query": "type 2 diabetes", "limit": 3}`
+  ```json
+  {"data": {"total": 94, "results": [
+    {"code": "E11.65", "name": "Type 2 diabetes mellitus with hyperglycemia"},
+    {"code": "E11.9", "name": "Type 2 diabetes mellitus without complications"},
+    {"code": "E10.A2", "name": "Type 1 diabetes mellitus, presymptomatic, Stage 2"}
+  ]}, "metadata": {"source": "NLM Clinical Tables - ICD-10-CM",
+    "version": "2026 ICD-10-CM codes"}}
+  ```
+  No API key. `query` also accepts a partial code (e.g. `"E11"`), per the
+  tool's own test examples.
+
+## ICD10_get_code_info
+
+- **Parameters:** `code` (string, required, e.g. `"E11.9"`).
+- **`tu test` result:** PASS, 3/3 examples.
+- **Custom call:** `{"code": "E11.9"}` -> `{"data": {"total": 1, "results":
+  [{"code": "E11.9", "name": "Type 2 diabetes mellitus without
+  complications"}]}}`. One exact code in, one (or zero, if invalid) result
+  out — this is a lookup, not a search.
+
+## ICD11_search_diseases / ICD11_get_entity / ICD11_browse_hierarchy
+
+- **Parameters (per schema):** `query`/`entity_id` (required), plus
+  `linearization` (`mms`/`icf`/`ichi`, default `mms`), `flatResults`,
+  `useFlexisearch`, `language`.
+- **Live status: all 3 currently fail without setup.** `tu test
+  ICD11_search_diseases` -> 3/3 failed, every one returning `{"status":
+  "error", "error": "ICD API authentication required. Set ICD_CLIENT_ID
+  and ICD_CLIENT_SECRET environment variables. Register at:
+  https://icd.who.int/icdapi"}`. Same for `ICD11_get_entity` (2/2 failed)
+  and `ICD11_browse_hierarchy` (1/1 failed). This matches the tool's own
+  declared `required_api_keys`, so it's expected behavior, not a bug — but
+  note these 3 tools still appear in `tu list`/load normally (unlike, e.g.,
+  Addgene's tools elsewhere in this repo, which are excluded from `tu list`
+  entirely until their key is set) because `required_api_keys` is declared
+  inside this tool's `parameter` block rather than at the top level of the
+  tool config — ToolUniverse's loader-level key gate only reads the
+  top-level field, so it doesn't catch this case; the tool's own `run()`
+  code still correctly refuses to call out without the keys. Net effect
+  for a user is the same either way (a clear error, no fabricated data),
+  just via a different code path than the more common gating pattern.
+  Register free at https://icd.who.int/icdapi to use these.
+
+## RxNorm_find_rxcui
+
+- **Parameters:** `drug_name` (string, required).
+- **`tu test` result:** PASS, 3/3 examples.
+- **Custom call:** `{"drug_name": "metformin"}` -> `{"data": {"drug_name":
+  "metformin", "rxcuis": ["6809"], "primary_rxcui": "6809", "found":
+  true}}`.
+
+## RxNorm_get_drug_info
+
+- **Parameters:** `rxcui` (string) or `drug_name` (string) — at least one.
+- **`tu test` result:** PASS, 3/3 examples.
+- **Custom call:** `{"rxcui": "6809"}` -> `{"data": {"rxcui": "6809",
+  "name": "metformin", "synonym": null, "term_type": "IN",
+  "term_type_label": "Ingredient (generic)", "language": "ENG"}}`.
+  `term_type` is an RxNorm TTY abbreviation — the response's own
+  `metadata.tty_key` (see `RxNorm_get_related_drugs` below) maps every
+  abbreviation to its full label, so no separate reference is needed.
+
+## RxNorm_get_related_drugs
+
+- **Parameters:** `rxcui` and/or `drug_name`, optional `tty` (filter to
+  one term-type, e.g. `"BN"` for brand name).
+- **`tu test` result:** PASS, 3/3 examples.
+- **Custom call:** `{"rxcui": "6809", "tty": "BN"}` -> 14 real branded
+  products containing metformin (`Janumet`, `Glucophage`, `Kombiglyze`,
+  `Jentadueto`, `Kazano`, `Invokamet`, `Xigduo`, `Synjardy`, `Segluromet`,
+  `Trijardy`, `Zituvimet`, `Riomet`, `Actoplus Met`, `Glumetza`), each with
+  its own `rxcui`. Response includes `metadata.tty_key`, a live-observed
+  field not in the JSON schema — a full label map for every TTY code
+  (`IN`=Ingredient generic, `PIN`=Precise Ingredient, `BN`=Brand Name,
+  `SCD`=Semantic Clinical Drug, `SBD`=Semantic Branded Drug, `GPCK`/`BPCK`
+  =Generic/Branded Pack, `SCDF`/`SBDF`=Clinical/Branded Drug Form,
+  `SCDC`=Semantic Drug Component, `MIN`=Multiple Ingredients, `DF`=Dose
+  Form).
+
+## RxNorm_get_ndc_status_history
+
+- **Parameters:** `ndc` (string, required, 11-digit NDC).
+- **`tu test` result:** PASS, 2/2 examples. Real observed shape (from
+  `tu test`): `{"ndc": "00093005801", "found": true, "ndc11":
+  "00093005801", "status": "ACTIVE", "active": ...}` — includes historical
+  RxCUI remapping timeline per the tool's description; confirm exact
+  remapping-field names against a live call before depending on them, only
+  `ndc`/`ndc11`/`status`/`active`/`found` were directly inspected here.
+
+## RxNorm_get_ndc_properties
+
+- **Parameters:** `ndc` (string, required — accepts common NDC formats,
+  e.g. `"0781-1506-10"`, not just the bare 11-digit form).
+- **`tu test` result:** PASS, 1/1 example. Real observed shape: `{"ndc":
+  "0781-1506-10", "found": true, "products": [{"ndc_item":
+  "00781150610", "ndc10": ...}]}` — note the response normalizes the input
+  format into `ndc_item`/`ndc10` fields inside each product entry.

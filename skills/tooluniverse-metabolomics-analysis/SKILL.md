@@ -120,6 +120,18 @@ Phase 8: Generate Report
 ### Phase 1: Data Import & Identification
 Load peak tables (CSV/TSV) or process raw spectra (mzML). Match features to HMDB by accurate mass (+/- 5 ppm). Assign confidence levels: L1 (standard match), L2 (MS/MS), L3 (mass only), L4 (unknown).
 
+**MS/MS spectral-library matching for L2 confidence (MassBank Europe)**: when a feature has an unknown identity and only a fragmentation spectrum, use `src/tooluniverse/data/massbank_tools.json`'s 5 tools to search MassBank Europe's open-access reference spectral library (~139,000 records) rather than guessing an identity from mass alone (mass-only matches are L3 at best; only a matching MS/MS fragmentation pattern justifies L2):
+
+| Tool | Use for |
+|------|---------|
+| `MassBank_spectral_similarity_search` | **Core unknown-ID workflow.** Submit the query MS/MS peak list as comma-separated `mz;intensity` pairs (e.g. `"163.0601;100,145.0495;60,127.0390;30"`) and get back cosine-scored, ranked candidate accessions (score in [0,1], 1.0 = identical spectrum). Default threshold 0.5; raise toward 0.8+ for high-confidence-only matches, lower toward 0.3 to widen candidates. |
+| `MassBank_get_record_by_accession` | Resolve a candidate accession (from any of the other 4 tools) into the full record: compound names, formula, exact mass, SMILES/InChI, instrument/acquisition parameters, and cross-references to CAS/CHEBI/KEGG/PubChem. |
+| `MassBank_search_by_compound` | Look up reference spectra for an already-suspected identity by name (e.g. `"glucose"`) — useful to confirm a hypothesis or pull a reference spectrum for comparison, not for de novo identification. |
+| `MassBank_search_by_formula` | Same idea, filtered by molecular formula (e.g. `"C6H12O6"`) when a formula has been inferred from accurate mass but the specific compound/isomer is still unknown. |
+| `MassBank_search_records_advanced` | Narrow a large candidate set with AND-combined filters: `exact_mass`+`mass_tolerance`, a required fragment `peaks` value, a `neutral_loss`, `ion_mode`, `ms_type`, `instrument_type`, or a SMILES/SMARTS `substructure` match. Returns accessions only — resolve each with `MassBank_get_record_by_accession`. |
+
+Verified live (MassBank Europe API, `tu test`/`tu run`, all 5 tools, 11/11 examples pass): a real search for `"glucose"` returns spectra for glucose and its biological derivatives (e.g. glucose-6-phosphate, `MSBNK-Antwerp_Univ-METOX_P100333_9EE2`, formula `C6H13O9P`, mass 260.0297, with `CAS`/`CHEBI`/`KEGG`/`PUBCHEM`/`INCHIKEY` cross-references) — search results are not limited to the exact queried compound, so check each candidate's `formula`/`mass` before treating a hit as a confirmed match. Note this is genuinely different from `tooluniverse-metabolomics`'s HMDB-based lookup: use MassBank when identity is unknown and you only have a spectrum; use `tooluniverse-metabolomics`/HMDB once a name or ID is already suspected and you want pathway/biological context instead.
+
 ### Phase 2: Quality Control
 Assess CV in QC samples (reject >30%), compute blank ratios (keep >3x blank), filter features with >50% missing values. Check internal standard recovery (95-105% acceptable).
 
