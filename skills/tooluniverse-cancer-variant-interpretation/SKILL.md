@@ -211,6 +211,19 @@ Complements CIViC/cBioPortal with structured, computed consequence prediction (V
 | `GenomeNexus_get_cancer_hotspots` | `hgvsg` (GRCh37) | `is_hotspot` (bool), `hotspots[].{residue, tumorCount, type}` — `type` is `"single residue"` or `"3d"` (structural cluster) |
 | `GenomeNexus_get_canonical_transcript` | `gene_symbol` | `transcriptId`, `proteinId`, `proteinLength`, `refseqMrnaId`, `pfamDomains[]` |
 
+### Cancer Driver Gene Classification (IntOGen)
+
+Genome Nexus's `is_hotspot` (above) answers "is this exact *variant* recurrent?" IntOGen answers a different, gene-level question: "is this whole *gene* a statistically established cancer driver in this cancer type?", derived from applying 7 independent driver-detection methods (dNdScv, OncodriveFML, OncodriveCLUSTL, HotMAPS, smRegions, CBaSE, MutPanning) to thousands of tumors across 271 cohorts (TCGA, ICGC, Hartwig, and others). Use it to establish gene-level driver status BEFORE or ALONGSIDE the hotspot check — a variant in a gene that isn't a driver in this cancer type is far less likely to be actionable regardless of its hotspot status, and a gene that IS a driver but where your specific variant ISN'T a known hotspot may still warrant the mechanism-based reasoning in "Driver vs Passenger Reasoning" above.
+
+| Tool | Key Parameters | Response Key Fields |
+|------|---------------|-------------------|
+| `IntOGen_list_cancer_types` | none | `data.cancer_types[].{cancer_type_id, cancer_name}` (87 codes, e.g. `BRCA`, `LUAD`, `SKCM`) |
+| `IntOGen_get_drivers` | `cancer_type` (IntOGen code, REQUIRED) | `data.driver_genes[].{gene, mutations, samples, cohorts}` |
+| `IntOGen_get_gene_info` | `gene` (HUGO symbol, REQUIRED) | `data.cancer_types[].{cancer_type, cancer_name, methods[], mutated_samples, total_samples}` |
+| `IntOGen_list_cohorts` | `cancer_type` (optional filter) | `data.cohorts[].{cohort_id, name, samples, source, tumor_type, age_group}` |
+
+**Combined workflow**: given gene + cancer type, call `IntOGen_get_drivers(cancer_type=...)` and check whether the gene appears in `driver_genes[]` — if yes, it's a statistically established driver in this exact cancer type (report `mutations`/`samples`/`cohorts` as supporting evidence). For the inverse question ("which cancer types is this gene a driver in overall?"), use `IntOGen_get_gene_info(gene=...)` instead, which also reports which of the 7 detection `methods` flagged it per cancer type — a gene flagged by multiple independent methods is stronger evidence than one flagged by a single method. **Operational note**: the IntOGen backend is occasionally slow and can time out (~45s) on a cold request — retry once before reporting "no data found."
+
 ---
 
 ## Fallback Strategy

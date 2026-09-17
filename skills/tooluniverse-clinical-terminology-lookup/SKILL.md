@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-clinical-terminology-lookup
-description: Fast autocomplete/normalization lookups against the NLM Clinical Table Search Service — resolve a partial or informal drug name to its RxTerms display name and RxCUI, autocomplete a health condition or problem-list entry to its formal name and ICD-10-CM/ICD-9-CM codes, normalize a disease mention to a UMLS CUI, look up an HCPCS Level II billing/DME code, autocomplete a pharmacogenomic star allele (e.g. CYP2D6, CYP2C19) to its nucleotide/protein change, or find a US healthcare provider/organization by name via the NPPES NPI registry. Also covers standardized coding-system lookups: search or look up ICD-10-CM diagnosis codes directly by name or code, and resolve a drug name to its full RxNorm identity — RXCUI, related brand/generic products, and NDC package-level status/properties. Use when someone gives a free-text or informal clinical term ("high blood pressure", "metfor...", "Cleveland Clinic") and needs the standardized name/code before a downstream lookup, or explicitly asks to "autocomplete", "look up the RxCUI for", "find the ICD-10 code for", "look up this star allele", "find the NPI for", "what does ICD-10 code X mean", or "look up the NDC for this drug package".
+description: Fast autocomplete/normalization lookups against the NLM Clinical Table Search Service — resolve a partial or informal drug name to its RxTerms display name and RxCUI, autocomplete a health condition or problem-list entry to its formal name and ICD-10-CM/ICD-9-CM codes, normalize a disease mention to a UMLS CUI, look up an HCPCS Level II billing/DME code, autocomplete a pharmacogenomic star allele (e.g. CYP2D6, CYP2C19) to its nucleotide/protein change, or find a US healthcare provider/organization by name via the NPPES NPI registry. Also covers standardized coding-system lookups: search or look up ICD-10-CM diagnosis codes directly by name or code, resolve a drug name to its full RxNorm identity (RXCUI, related brand/generic products, NDC package-level status/properties), browse NCI Thesaurus cancer-concept hierarchy and its cross-vocabulary maps to MedDRA/SNOMED/GDC, and search/resolve LOINC lab-test and clinical-form codes. Use when someone gives a free-text or informal clinical term ("high blood pressure", "metfor...", "Cleveland Clinic") and needs the standardized name/code before a downstream lookup, or explicitly asks to "autocomplete", "look up the RxCUI for", "find the ICD-10 code for", "look up this star allele", "find the NPI for", "what does ICD-10 code X mean", "look up the NDC for this drug package", "find the NCIt code for this cancer concept", "what does this cancer concept map to in MedDRA", or "find the LOINC code for this lab test".
 disable-model-invocation: true
 ---
 
@@ -45,6 +45,14 @@ needs it normalized:
 - A specific NDC (National Drug Code) package identifier -> its current
   marketing status/history or product/package metadata
   (`RxNorm_get_ndc_status_history`, `RxNorm_get_ndc_properties`)
+- A cancer-related term or concept -> NCI Thesaurus code, definition, and
+  hierarchy position (`NCIThesaurus_search`, `NCIThesaurus_get_concept`,
+  `NCIThesaurus_get_children`, `NCIThesaurus_get_parents`), or its
+  cross-vocabulary mapping to MedDRA/SNOMED/GDC (`NCIThesaurus_get_concept_maps`)
+- A lab test or clinical observation name -> LOINC code
+  (`LOINC_search_tests`, `LOINC_get_code_details`); a coded observation's
+  permissible values (`LOINC_get_answer_list`); or a clinical
+  form/panel/survey-instrument name -> its LOINC code (`LOINC_search_forms`)
 
 **NOT for** (route elsewhere once the term is resolved):
 - Deep drug mechanism/interaction/regulatory research once the RxCUI/name
@@ -167,6 +175,94 @@ Kombiglyze, etc.) that contain metformin as an ingredient.
 
 See `references/clinical_tables_tool_reference.md` for full parameter
 tables and real captured example responses for all 10 of these tools.
+
+## Cancer Ontology and Lab-Test Coding: NCI Thesaurus and LOINC
+
+Two more standardized-coding-system tool families, for cancer-specific
+concepts and lab-test/observation codes respectively — neither overlaps
+with ICD-10-CM/RxNorm above.
+
+### NCI Thesaurus / NCIt (`src/tooluniverse/data/nci_thesaurus_tools.json`)
+
+| Tool | Resolves | Auth |
+|---|---|---|
+| `NCIThesaurus_search` | free-text term -> matching NCIt concept codes (`term`, `page_size`) | none |
+| `NCIThesaurus_get_concept` | NCIt code -> full definition, synonyms (with source terminology), properties (incl. `UMLS_CUI` as one of the `properties` entries, not a top-level field) | none |
+| `NCIThesaurus_get_children` | NCIt code -> immediate subcategories (downward hierarchy) | none |
+| `NCIThesaurus_get_parents` | NCIt code -> immediate broader categories / drug-class parents (upward hierarchy) | none |
+| `NCIThesaurus_get_concept_maps` | NCIt code -> cross-vocabulary maps to MedDRA/SNOMED/GDC/ICD | none |
+
+NCIt is the National Cancer Institute's reference terminology for cancer
+diseases, drugs, anatomy, genes, and biological processes — broader than
+just tumor types (e.g. drugs like Trastuzumab and processes like
+Apoptosis are also NCIt concepts). Use `get_children`/`get_parents` to
+navigate from a broad category down to a specific subtype (or back up to
+find a drug's mechanistic class) rather than guessing hierarchy from the
+name alone. Use `get_concept_maps` specifically when you need the code in
+*another* vocabulary (e.g. a MedDRA term for a pharmacovigilance report,
+or a GDC therapeutic-agent code) — `get_concept` never returns this, only
+`get_concept_maps` does.
+
+Real example chain (`immunotherapy` -> `Breast Carcinoma`): `NCIThesaurus_search
+{"term": "immunotherapy", "page_size": 5}` -> 2 hits including `C15262`
+("Immunotherapy") and `C308` ("Immunotherapeutic Agent"). Separately,
+`NCIThesaurus_get_concept {"code": "C4872"}` -> "Breast Carcinoma" with an
+18-entry `synonyms[]` (each tagged by `source`, e.g. `GDC`, `FDA`,
+`CTRP`) and a `properties[]` array containing `{"type": "UMLS_CUI",
+"value": "C0678222"}` and `{"type": "Semantic_Type", "value": "Neoplastic
+Process"}`. Feeding the same code into `NCIThesaurus_get_concept_maps
+{"code": "C4872"}` returns a *different* field the concept-detail call
+never exposes: `maps: [{"target_terminology": "MedDRA", "target_code":
+"10006187", "target_term_type": "LLT"}, {"target_terminology": "GDC",
+...}]` — confirming `get_concept`'s synonym `source` tags and
+`get_concept_maps`'s cross-vocabulary codes are genuinely different data,
+not duplicates.
+
+### LOINC (`src/tooluniverse/data/loinc_tools.json`)
+
+| Tool | Resolves | Auth |
+|---|---|---|
+| `LOINC_search_tests` | lab-test/observation name -> matching LOINC codes | none |
+| `LOINC_get_code_details` | one LOINC code -> full component/property/method detail | none |
+| `LOINC_get_answer_list` | LOINC code (or a search term) -> its permissible coded values, if any | none |
+| `LOINC_search_forms` | clinical form/panel/survey-instrument name -> matching whole-instrument LOINC codes | none |
+
+LOINC standardizes lab tests, vital signs, and clinical observations —
+distinct from ICD (diagnoses) and RxNorm (drugs). **Important, verified
+live**: this index (`clinicaltables loinc_items/v3`) does not publish
+`SYSTEM` (specimen type), `SCALE_TYP`, `CLASS`, `METHOD_TYP`,
+`TIME_ASPCT`, `STATUS`, or `COMMON_TEST_RANK` for any code — every result
+returns these as empty strings regardless of the actual code, and the
+response itself says so via a `fields_unavailable`/`fields_unavailable_note`
+pair. **Never read an empty `SYSTEM`/`CLASS` field as "this code has no
+specimen/class" — it means the field isn't in this data source at all.**
+Use `LONG_COMMON_NAME`/`COMPONENT`/`SHORTNAME` (which ARE populated) to
+disambiguate instead, and note the limitation if a user specifically
+needs specimen type.
+
+`LOINC_search_forms` only returns whole instruments (PHQ-9, GAD-7, MMSE,
+lab panels) — a single question or individual lab test never appears
+here even on a matching keyword; use `LOINC_search_tests` for those.
+`LOINC_get_answer_list` distinguishes "code matched but has no coded
+answer list" (free-value datatypes like `REAL`/`ST`) from "code not
+found" via its `answer_lists_found` count and a `note` field present only
+when that count is 0 — don't conflate a `CNE`/`CWE` code with an empty
+list with a lookup failure.
+
+Real example chain (`hemoglobin A1c` -> ABO answer list): `LOINC_search_tests
+{"terms": "hemoglobin A1c", "max_results": 3}` -> 14 total matches
+including `4548-4` ("Hemoglobin A1c/Hemoglobin.total in Blood") ->
+`LOINC_get_code_details {"loinc_code": "4548-4"}` confirms
+`SHORTNAME: "HbA1c MFr Bld"`, `PROPERTY: "MFr"`, with `SYSTEM`/`CLASS`/etc.
+correctly flagged empty via `fields_unavailable`. Separately,
+`LOINC_get_answer_list {"loinc_code": "883-9"}` (ABO blood group) returns
+`datatype: "CNE"` and a real 4-value answer list (`Group A`/`Group
+B`/`Group O`/`Group AB`, each with an `AnswerStringID` like `LA19710-5`) —
+this is the exact permissible-value set an EHR would present as a
+dropdown for this observation.
+
+See `references/clinical_tables_tool_reference.md` for full parameter
+tables and real captured example responses for all 9 of these tools.
 
 ## Workflow
 
