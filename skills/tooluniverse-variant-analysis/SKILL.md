@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-variant-analysis
-description: VCF and variant analysis — parsing, annotation, classification (synonymous, missense, frameshift, stop_gained), VAF filtering, coding vs non-coding categorization, multi-condition variant comparison, and variant-notation conversion (SPDI/HGVS/VCF/rsID interconversion, ALFA per-ancestry allele frequencies). Use for VCF parsing, variant fraction calculations (denominator = coding subset only, NOT all variants), per-sample mutation profiling, and converting a variant between SPDI/HGVS/VCF-coordinate/dbSNP-rsID representations.
+description: VCF and variant analysis — parsing, annotation, classification (synonymous, missense, frameshift, stop_gained), VAF filtering, coding vs non-coding categorization, multi-condition variant comparison, variant-notation conversion (SPDI/HGVS/VCF/rsID interconversion, ALFA per-ancestry allele frequencies), and European Variation Archive (EVA) lookups (per-study cohort variant data, RS-accession resolution). Use for VCF parsing, variant fraction calculations (denominator = coding subset only, NOT all variants), per-sample mutation profiling, converting a variant between SPDI/HGVS/VCF-coordinate/dbSNP-rsID representations, and cross-checking a variant against EVA's raw submitted study cohorts.
 disable-model-invocation: true
 ---
 
@@ -399,6 +399,44 @@ result = answer_non_reference_after_filter(
 | `dbsnp_get_variant_by_rsid` | Population frequencies | `rsid` | Frequencies, clinical significance |
 | `gnomad_get_variant` | gnomAD metadata | `variant_id` (CHR-POS-REF-ALT) | Basic variant info |
 | `EnsemblVEP_annotate_rsid` | Consequence prediction | `variant_id` (rsID) | Transcript impact |
+
+### European Variation Archive (EVA)
+
+EVA is EBI's variant archive: a repository of raw, per-study submitted
+variant calls (small sequencing-project cohorts, not one large aggregated
+population database) plus a clustered-variant (RS) accessioning service.
+It is **complementary to, not a replacement for**, MyVariant/dbSNP/gnomAD
+above:
+
+- gnomAD/MyVariant give you one large, aggregated population allele
+  frequency per variant (hundreds of thousands of individuals pooled).
+- EVA's `cohortStats` (verified live) is per-submitted-study: each
+  `sourceEntries.<studyId>_<fileId>.cohortStats.ALL` block carries its
+  OWN small cohort's `maf`/`altAlleleFreq` (e.g. one exome-sequencing
+  project of a few hundred samples) — treat as **cohort-specific evidence
+  to corroborate a gnomAD frequency**, never as a substitute for it, and
+  never average cohort-level MAFs together as if they were one population.
+- `EVA_list_studies` surfaces the actual named sequencing projects behind
+  those cohorts (disease-specific or population-specific studies), useful
+  when the question is "what data exists" rather than "what is the
+  frequency."
+- `EVA_get_clustered_variant_by_rs` is a *different* EVA sub-service (the
+  accessioning/identifiers API, not the variant-data API) — it resolves a
+  numeric RS accession (no `rs` prefix, e.g. `429358`) straight to its
+  assembly/contig/position record; useful as a fast coordinate check that
+  doesn't require picking a gene or region first.
+
+| Tool | When to Use | Key Parameter | Response |
+|------|------------|----------------|----------|
+| `EVA_get_variants_by_gene` | All EVA-submitted variants for a gene | `gene` (HGNC symbol) | `response[].result[]`, each with `chromosome` (a RefSeq contig accession like `CM000679.2`, NOT a plain chromosome number), `start`, `reference`/`alternate`, `hgvs.genomic[]`, per-study `sourceEntries` |
+| `EVA_get_variants_by_region` | Scan a coordinate range (hotspots, regulatory regions) | `region` (`chr:start-end`, plain chromosome number here, unlike the response's contig accession) | Same shape as above, region-scoped |
+| `EVA_list_studies` | Discover what sequencing projects/cohorts exist before querying variants | `species` (default `hsapiens_grch38`) | `result[]` of `{studyId, studyName, filesCount}` |
+| `EVA_get_clustered_variant_by_rs` | Fast RS-accession-to-coordinate resolution (accessioning API, distinct from the variant-data API above) | `accession` (numeric RS id, no `rs` prefix) | `[{accession, version, data: {assemblyAccession, taxonomyAccession, contig, start, type}}]` |
+
+**Pagination note**: `numTotalResults` in the response can far exceed the
+returned page (e.g. BRCA1 had 6,684 total EVA-submitted variants against
+a `limit` of 3-20) — never treat a small returned page as the complete
+set; check `numTotalResults` before summarizing "how many variants."
 
 ### Structural Variant Annotation
 

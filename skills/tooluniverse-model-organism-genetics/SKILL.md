@@ -93,6 +93,23 @@ Supplement via Monarch:
 
 ---
 
+### Phase 2b: Systematic Knockout Phenotyping (IMPC) — statistically-powered, complements MGI's curated calls
+
+MGI (Phase 2) aggregates curated phenotype annotations from the published literature — heterogeneous alleles, heterogeneous assays, no guarantee every gene was ever tested for every system. IMPC (International Mouse Phenotyping Consortium) is a different kind of evidence: one standardized pipeline (EUCOMM/KOMP-derived null alleles, e.g. `Trp53<tm1b(EUCOMM)Hmgu>`) runs the SAME broad battery of tests (viability, eye morphology, clinical chemistry, behavior, etc.) across thousands of knockout lines at IMPC phenotyping centers, with a p-value and effect size attached to every call. Use IMPC when you need a statistically-defensible answer to "does knocking this gene out actually produce a significant phenotype," not just "has anyone ever reported a phenotype."
+
+1. `IMPC_search_genes(query="<mouse_symbol_or_MGI_ID_or_name_fragment>", limit=20)` — resolve a symbol/name fragment to its MGI ID and human ortholog(s); useful for disambiguation when the mouse symbol alone is uncertain
+2. `IMPC_get_gene_summary(gene_symbol="<mouse_symbol>")` (or `mgi_id="MGI:XXXXXXX"`) — top-level flags only: `has_phenotype_data`, `phenotype_status`, `production_status`. **Its `mp_terms`/`mp_ids`/`top_level_mp_terms` arrays are empty even when `has_phenotype_data` is true** (verified live) — this tool tells you WHETHER data exists, not WHAT it says; always follow up with step 3 or 4 for the actual phenotype list.
+3. `IMPC_get_phenotypes_by_gene(gene_symbol="<mouse_symbol>", limit=100)` — the full genotype-phenotype call list: MP term, zygosity, sex, life stage, procedure/parameter, p-value, effect size, phenotyping center, allele symbol; also returns `phenotype_summary_by_system` (MP top-level term -> list of specific phenotypes), useful for a quick systems-level overview before drilling into individual calls
+4. `IMPC_get_gene_phenotype_hits(gene_symbol="<mouse_symbol>", significant_only=true, limit=100)` — similar underlying data to step 3 but oriented around the statistical result itself: adds `classification_tag` (plain-language significance/sex-specificity summary), `statistical_method` (e.g. "Linear Mixed Model framework, LME, including Weight", "Fisher Exact Test framework"), and separate `female_ko_estimate`/`male_ko_estimate` when an effect is sex-specific. Set `significant_only=false` to see tested-but-non-significant parameters too (useful for confirming a system was actually screened and came back negative, vs. never tested).
+
+**No gene found / zero results is informative, not an error**: a real gene can legitimately have zero IMPC phenotype calls if its knockout line hasn't reached statistical analysis yet (verified live: `IMPC_get_phenotypes_by_gene(gene_symbol="Braf")` returns `total_phenotype_calls: 0` with `mgi_id: ""` — Braf has an MGI record but no completed IMPC pipeline data at time of writing). State this plainly rather than treating an empty IMPC result as "no phenotype exists" or silently falling back to MGI without saying so.
+
+**Worked example (verified live)**: `IMPC_get_gene_summary(gene_symbol="Trp53")` resolves `MGI:98834`, human ortholog `TP53`. `IMPC_get_phenotypes_by_gene` returns 6 significant calls / 5 unique MP terms across 4 systems: vision/eye (persistence of hyaloid vascular system, p=1.2e-5; abnormal retina morphology, p=1.9e-7), homeostasis/metabolism (decreased circulating creatine kinase, heterozygote-only, p=6.0e-5), mortality/aging (preweaning lethality with incomplete penetrance, p<0.001), and behavior/neurological (increased startle reflex, female-specific effect size 878 vs. male 355, p=1.7e-12). `IMPC_get_gene_phenotype_hits` on the same gene surfaces the same calls with `statistical_method` and sex-split estimates attached, e.g. tagging the startle-reflex result as "significant in females only."
+
+**Workflow**: for any gene already run through Phase 2 (MGI), also run this phase and compare — a phenotype curated in MGI from an old paper but absent from IMPC's systematic screen (or vice versa) is worth flagging explicitly rather than silently preferring one source.
+
+---
+
 ### Phase 3: Invertebrate Models
 
 #### Fly (FlyBase)

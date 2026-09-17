@@ -54,6 +54,9 @@ Resolution determines valid conclusions: <2A = atom positions visible; 2-3A = si
 ### Domains
 `InterPro_get_protein_domains` (uniprot_id), `Pfam_get_protein_annotations` (uniprot_id), `UniProt_get_entry_by_accession` (accession)
 
+### Fold/Domain Classification (CATH + InterPro member databases)
+`CATH_get_superfamily` (superfamily_id), `CATH_get_domain_summary` (domain_id), `CATH_list_funfams` (superfamily_id), `CATH_get_funfam` (superfamily_id, funfam_number), `InterPro_list_member_databases` (no params), `InterPro_list_member_signatures` (member_database, page_size), `InterPro_get_member_signature` (member_database, accession), `InterPro_get_structures_for_entry` (interpro_id, page_size)
+
 ### Proteomics
 `ProteomeXchange_search_datasets` (query), `ProteomeXchange_get_dataset` (dataset_id)
 
@@ -95,6 +98,37 @@ Phase 4 (optional, slow): BMRB_search_chemical_shifts -> raw per-atom chemical-s
 
 **Tool note**: `BMRB_search_by_keyword`'s `term` parameter accepts a plain protein/molecule name (e.g. `"ubiquitin"`, `"calmodulin"`) -- not `keyword`, despite the tool name.
 
+## Workflow 5: Fold and Domain-Signature Classification (CATH + InterPro Member Databases)
+
+CATH classifies a protein *domain*'s 3D fold (Class/Architecture/Topology/Homologous-superfamily) and further groups domains into functionally-coherent FunFams within a superfamily. This is complementary to, not a replacement for, `InterPro_get_protein_domains`/`Pfam_get_protein_annotations` above: those two answer "what domains does *this protein* have," while CATH and the InterPro member-database tools here let you go the other direction — starting from a fold/superfamily/signature and finding everything that belongs to it (structures, domains, or the raw per-database signature catalog behind InterPro's integrated entries).
+
+```
+Phase 1: CATH_get_domain_summary(domain_id) -> C.A.T.H classification + residue count for one PDB-chain-domain
+         (domain_id format: <pdb_id><chain><domain_number>, e.g. "1cukA01")
+Phase 2: CATH_get_superfamily(superfamily_id) -> homologous-superfamily name + domain/family counts across all of CATH
+Phase 3: CATH_list_funfams(superfamily_id) -> functional sub-families within that superfamily, ranked by member count
+Phase 4: CATH_get_funfam(superfamily_id, funfam_number) -> detail for one specific FunFam
+```
+
+**Real example** (verified live): `CATH_get_domain_summary(domain_id="1cukA01")` -> `cath_id: "2.40.50.140.116.1.1.1.1"`, superfamily `2.40.50.140` ("Nucleic acid-binding proteins", Mainly Beta) -> `CATH_get_superfamily("2.40.50.140")` -> 2,879 total domains in this superfamily -> `CATH_list_funfams("2.40.50.140")` -> 1,285 FunFams, top one "30S ribosomal protein S12" (6,057 members).
+
+**Tool note**: `CATH_get_superfamily` takes `superfamily_id`, not `cath_id` — passing `cath_id` fails parameter validation even though the tool's own response echoes a `cath_id` field.
+
+```
+Phase 1: InterPro_list_member_databases() -> catalog of all 14 member databases (pfam, cathgene3d, ssf, panther,
+         cdd, profile, smart, ncbifam, prosite, prints, hamap, pirsf, sfld, antifam) with entry counts
+Phase 2: InterPro_list_member_signatures(member_database, page_size) -> browse that database's raw signature catalog,
+         each entry showing its `integrated_interpro` cross-reference if InterPro has folded it into an integrated entry
+Phase 3: InterPro_get_member_signature(member_database, accession) -> full detail for one signature (name, GO terms,
+         protein/structure/taxa counts)
+Phase 4: InterPro_get_structures_for_entry(interpro_id, page_size) -> real PDB structures (with experiment type and
+         resolution) whose chains carry a given *integrated* InterPro entry
+```
+
+**Real example** (verified live): `InterPro_get_member_signature(member_database="pfam", accession="PF00069")` -> "Protein kinase domain", `integrated_interpro: "IPR000719"`, 1,364,822 proteins / 5,477 structures / 36,542 taxa carry this signature -> `InterPro_get_structures_for_entry(interpro_id="IPR000719")` -> real PDB hits including kinase-inhibitor co-crystals (e.g. `10dj`, Fyn kinase + saracatinib, 2.22Å) — a direct bridge from "this protein has a kinase domain" to "here are solved structures of that domain, several already in complex with a drug."
+
+**Tool note**: `InterPro_get_member_signature` requires BOTH `member_database` and `accession` — the accession alone (e.g. `PF00069`) is not sufficient because the same-shaped accession could theoretically collide across member databases.
+
 ## Workflow 2: Identify Binding Pocket Ligands
 
 ```
@@ -132,6 +166,8 @@ Phase 8: Evidence integration
 | `SAbDab_search_structures` | `name` | `query` or `antigen` |
 | `RCSB_get_chemical_component` | `ligand_id` | `comp_id` |
 | `BMRB_search_by_keyword` | `keyword` | `term` |
+| `CATH_get_superfamily` | `cath_id` | `superfamily_id` |
+| `InterPro_get_member_signature` | `accession` alone | `member_database` + `accession` (both required) |
 
 ---
 

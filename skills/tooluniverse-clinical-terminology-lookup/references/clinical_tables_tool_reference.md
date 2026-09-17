@@ -269,3 +269,63 @@ observed live except where noted as schema-only.
   "0781-1506-10", "found": true, "products": [{"ndc_item":
   "00781150610", "ndc10": ...}]}` — note the response normalizes the input
   format into `ndc_item`/`ndc10` fields inside each product entry.
+
+## NCI Thesaurus (NCIt)
+
+### NCIThesaurus_search
+
+- **Parameters:** `term` (string, required), `page_size` (int, optional, default 10, max 100).
+- **`tu test` result:** PASS, 2/2 examples.
+- **Custom call:** `{"term": "immunotherapy", "page_size": 5}` -> 2 real hits: `{"code": "C15262", "name": "Immunotherapy"}`, `{"code": "C308", "name": "Immunotherapeutic Agent"}`. Response wraps hits in `data[]` plus `metadata: {source, total_results, query}`.
+
+### NCIThesaurus_get_concept
+
+- **Parameters:** `code` (string, required, e.g. `"C3224"`).
+- **`tu test` result:** PASS, 2/2 examples.
+- **Custom call:** `{"code": "C4872"}` (Breast Carcinoma) -> full `definition`, an 18-entry `synonyms[]` array (each `{"name", "type" (e.g. `SY`/`PT`), "source"}` — source varies per synonym: `caDSR`, `CPTAC`, `CTEP`, `CTRP`, `FDA`, `GDC`, `HemOnc`, `NCI-GLOSS`, `NCI`, `NICHD`), and a `properties[]` array of `{"type", "value"}` pairs including `UMLS_CUI` (`C0678222`), `Semantic_Type` (`Neoplastic Process`), `Neoplastic_Status` (`Malignant`), and `Maps_To` entries — **note `UMLS_CUI` lives inside `properties`, not as a top-level field.**
+
+### NCIThesaurus_get_children
+
+- **Parameters:** `code` (string, required).
+- **`tu test` result:** PASS, 2/2 examples (C3262 Neoplasm -> 3 children incl. "Neoplasm by Morphology"; C3224 Melanoma -> children incl. "Amelanotic Melanoma").
+- Returns `data[]` of `{"code", "name", "leaf"}` — immediate children only, one level down.
+
+### NCIThesaurus_get_parents
+
+- **Parameters:** `code` (string, required).
+- **`tu test` result:** PASS, 2/2 examples (C1647 Trastuzumab -> parent "Anti-HER2 Monoclonal Antibody"; C4872 Breast Carcinoma -> parents incl. "Carcinoma", "Malignant Neoplasm").
+- Immediate parents only (`leaf` is typically `null` for a parent node, not a leaf-status marker on itself).
+
+### NCIThesaurus_get_concept_maps
+
+- **Parameters:** `code` (string, required).
+- **`tu test` result:** PASS, 2/2 examples.
+- **Custom call:** `{"code": "C4872"}` -> `{"code": "C4872", "name": "Breast Carcinoma", "maps": [{"type": "Has Synonym", "target_name": "Breast cancer", "target_code": "10006187", "target_term_type": "LLT", "target_terminology": "MedDRA", "target_terminology_version": "18.1"}, {"target_terminology": "GDC", "target_name": "Breast Cancer", "target_code": "relationship_primary_diagnosis", "target_term_type": "PT"}]}`, plus `metadata: {total_maps, target_terminologies}`. This is the ONLY tool that returns cross-vocabulary codes — `get_concept` never includes them.
+
+## LOINC
+
+**Cross-cutting limitation, verified live across all 4 tools below:** the underlying `clinicaltables loinc_items/v3` index does not publish `SYSTEM`, `SCALE_TYP`, `CLASS`, `METHOD_TYP`, `TIME_ASPCT`, `STATUS`, or `COMMON_TEST_RANK` for ANY code — every response returns these as empty strings and separately lists them in a `fields_unavailable[]` array with a `fields_unavailable_note` explaining this is a data-source gap, not a per-code fact. Rely on `LONG_COMMON_NAME`/`COMPONENT`/`SHORTNAME` instead; if a user specifically needs specimen type (`SYSTEM`), say this index can't provide it rather than reporting an empty string as "no specimen."
+
+### LOINC_search_tests
+
+- **Parameters:** `terms` (string, required), `max_results` (int, default 20, max 500), `exclude_copyrighted` (bool, default true).
+- **`tu test` result:** PASS, 3/3 examples.
+- **Custom call:** `{"terms": "hemoglobin A1c", "max_results": 3}` -> `total_count: 14`, 3 results incl. `4548-4` ("Hemoglobin A1c/Hemoglobin.total in Blood"), `112870-1` (a panel), `55454-3` (marked "Deprecated" in its own name — check `LONG_COMMON_NAME` for a "Deprecated" prefix before using a hit).
+
+### LOINC_get_code_details
+
+- **Parameters:** `loinc_code` (string, required, hyphenated format e.g. `"2093-3"`).
+- **`tu test` result:** PASS, 3/3 examples.
+- **Custom call:** `{"loinc_code": "4548-4"}` -> `SHORTNAME: "HbA1c MFr Bld"`, `PROPERTY: "MFr"`, `COMPONENT: "Hemoglobin A1c/Hemoglobin.total"`, with `TIME_ASPCT`/`SYSTEM`/`SCALE_TYP`/`CLASS`/`STATUS`/`COMMON_TEST_RANK` all empty and listed in `fields_unavailable`.
+
+### LOINC_get_answer_list
+
+- **Parameters:** `loinc_code` (string, required — accepts a specific code or a search term matching multiple codes).
+- **`tu test` result:** PASS, 3/3 examples.
+- **Custom call:** `{"loinc_code": "883-9"}` (ABO group) -> `datatype: "CNE"` (answer MUST come from the list) and `AnswerLists: [{"AnswerListId": "LL2419-1", "AnswerListName": "ABO group", "answers": [{"AnswerStringID": "LA19710-5", "DisplayText": "Group A", "SequenceNo": 1}, ...Group B/O/AB]}]`. Top-level `answer_lists_found` (here `1`) distinguishes "matched a code with an answer list" from "matched but no list exists" (datatypes like `REAL`/`ST`/`DT` correctly return no list, and a `note` field appears only when `answer_lists_found` is 0).
+
+### LOINC_search_forms
+
+- **Parameters:** `terms` (string, required — matched against instrument NAMES only, e.g. "PHQ-9"/"GAD-7"/"MMSE"/a panel name), `max_results` (int, default 20, max 200).
+- **`tu test` result:** PASS, 3/3 examples (PHQ-9 -> 2 hits; "depression" -> 20 of 23 total; "pain scale" -> 5 hits).
+- Returns whole instruments/panels only — a single question or lab test never appears here even if its wording matches; use `LOINC_search_tests` for individual tests/questions. A `note` field appears only when nothing matched.

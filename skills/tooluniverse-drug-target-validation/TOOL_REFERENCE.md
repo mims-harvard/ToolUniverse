@@ -121,6 +121,13 @@ When a primary tool fails, use these fallbacks in order:
 - `OpenTargets_get_chemical_probes_by_target_ensemblID` - chemical probes
 - `OpenTargets_get_target_enabling_packages_by_ensemblID` - TEPs
 
+#### Phase 2b: Kinase targets only (KLIFS)
+- `KLIFS_list_kinases` - find KLIFS kinase ID by group/species (params: `kinase_group`, `species`, both optional)
+- `KLIFS_get_kinase` - family/group, UniProt/IUPHAR IDs, 80-residue pocket sequence (param: `kinase_ID` int, from `KLIFS_list_kinases`)
+- `KLIFS_get_structures` - all crystal structures with DFG-in/out and alphaC-in/out conformation, ligand, resolution, quality score (param: `kinase_ID`)
+- `KLIFS_get_structures_by_pdb` - same annotation, looked up by PDB code(s) (param: `pdb_codes`, comma-separated string, e.g. `"4hjo,3mvh"`)
+- `KLIFS_get_ligands` - all co-crystallized inhibitors for the kinase with SMILES/InChIKey (param: `kinase_ID`)
+
 ### Phase 3: Chemical Matter
 - `ChEMBL_search_targets` / `ChEMBL_get_target_activities` - bioactivity
 - `BindingDB_get_ligands_by_uniprot` - binding data

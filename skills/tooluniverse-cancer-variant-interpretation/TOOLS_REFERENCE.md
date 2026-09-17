@@ -310,6 +310,38 @@ result = tu.tools.GenomeNexus_annotate_variant(hgvsg="7:g.140453136A>T")
 
 ---
 
+## Cancer Driver Gene Classification Tools (IntOGen)
+
+IntOGen (intogen.org) applies 7 independent computational driver-detection methods (dNdScv, OncodriveFML, OncodriveCLUSTL, HotMAPS, smRegions, CBaSE, MutPanning) to somatic mutation data from 271 cohorts (TCGA, ICGC, Hartwig, and others) to classify genes as statistically established cancer drivers **per cancer type**. This is a gene-level classification — distinct from Genome Nexus's variant-level hotspot lookup above. **Operational note**: live-verified to occasionally time out (~45s) on a cold request even though the underlying data returns in well under a second on a warm/retried call — retry once rather than reporting the endpoint as broken.
+
+### IntOGen_list_cancer_types
+**Purpose**: Enumerate all cancer type codes IntOGen supports, for use as the `cancer_type` argument to the other 3 tools
+**Parameters**: none
+**Response** (live-verified): `{status, data: {cancer_types: [{cancer_type_id, cancer_name}, ...], total_cancer_types: 87}}`, e.g. `{cancer_type_id: "ACC", cancer_name: "Adrenocortical Carcinoma"}`, `{cancer_type_id: "AML", cancer_name: "Acute Myeloid Leukemia"}`. 87 codes total, spanning solid tumors, hematological malignancies, and pediatric cancers.
+
+### IntOGen_get_drivers
+**Purpose**: List all genes classified as cancer drivers for one specific cancer type
+**Parameters**: `cancer_type` (string, REQUIRED): IntOGen code, e.g. `'BRCA'`, `'LUAD'`, `'SKCM'` — see `IntOGen_list_cancer_types`
+**Response** (live-verified, LUAD): `{status, data: {cancer_type: "LUAD", driver_genes: [{gene, mutations, samples, cohorts}, ...], total_drivers, total_cohorts}}`. Top LUAD drivers observed: `TP53` (562 mutations / 472 samples / 6 cohorts), `EGFR` (346/288/6), `KRAS` (297/289/6), `KEAP1` (155/139/6), `STK11` (149/103/6). `cohorts` is how many of IntOGen's independent cohorts detected the gene as a driver — a gene flagged in more cohorts is more robustly established.
+```python
+result = tu.tools.IntOGen_get_drivers(cancer_type="LUAD")
+# Check if your gene of interest is in result["data"]["driver_genes"] before calling it a driver
+```
+
+### IntOGen_get_gene_info
+**Purpose**: The inverse lookup — given a gene, list every cancer type where it's classified as a driver, plus which detection methods flagged it in each
+**Parameters**: `gene` (string, REQUIRED): HUGO symbol, e.g. `'TP53'`, `'KRAS'`
+**Response** (live-verified, TP53): `{status, data: {gene: "TP53", cancer_types: [{cancer_type, cancer_name, methods: [...], mutated_samples, total_samples}, ...], num_cancer_types}}`. Example entry: `{cancer_type: "ACC", cancer_name: "Adrenocortical Carcinoma", methods: ["mutpanning", "oncodrivefml", "cbase", "dndscv"], mutated_samples: 14, total_samples: 119}`. A gene flagged by more of the 7 possible `methods` in a given cancer type is more robust evidence than one flagged by a single method — TP53 is a pan-cancer driver (flagged in dozens of cancer types per the tool's own description, 74 at time of writing).
+
+### IntOGen_list_cohorts
+**Purpose**: List the underlying cohorts (individual genomic studies) IntOGen aggregates, optionally filtered to one cancer type
+**Parameters**: `cancer_type` (string, optional): if omitted, returns all 271 cohorts across every cancer type; if given, returns just that cancer type's cohorts with `source`/`tumor_type`/`age_group` populated
+**Response** (live-verified, LUAD filter): `{status, data: {cohorts: [{cohort_id, name, nickname, samples, source, tumor_type, age_group}, ...], total_cohorts}}`. Example: `{cohort_id: "TCGA_WXS_LUAD", name: "Lung Adenocarcinoma from TCGA/PanCatAtlas, phs000178", samples: 560, source: "TCGA/PanCatAtlas, phs000178", tumor_type: "Primary", age_group: "Adult"}`. Useful for citing which specific studies back a driver-gene call, or for checking whether a cancer type's driver list rests on one large cohort vs. many independent smaller ones (more independent cohorts agreeing = stronger evidence).
+
+**Combining with Genome Nexus**: a complete precision-oncology gene/variant assessment checks BOTH levels — `IntOGen_get_drivers`/`get_gene_info` for "is this gene a real driver in this cancer type" and `GenomeNexus_get_cancer_hotspots` for "is this specific variant a known recurrent hotspot." A variant in an IntOGen-confirmed driver gene AND at a Genome Nexus hotspot residue is the strongest combined signal; a variant in a driver gene but NOT at a hotspot still warrants the mechanism-based reasoning already described in `SKILL.md`'s "Driver vs Passenger Reasoning" section rather than automatic dismissal.
+
+---
+
 ## Known CIViC Gene IDs (Common Cancer Genes)
 
 These are pre-verified CIViC gene IDs to bypass the search limitation:
