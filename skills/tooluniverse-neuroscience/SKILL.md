@@ -182,7 +182,80 @@ For C. elegans neural circuit questions, ALWAYS use `WormBase_get_gene` to look 
 - **ASJ neuron projections**: the main projection target of ASJ axons is PVQ (verified in WormBase connectome data), NOT AIA. Always check actual synapse counts rather than inferring from circuit diagrams.
 - Search WormBase with the specific neuron name to get its pre/postsynaptic partners and projection targets.
 
-## 7. Common Pitfalls
+## 7. Single-Neuron Morphology Lookups (NeuroMorpho)
+
+For questions about a specific reconstructed neuron's shape, dendritic/axonal
+morphology, or morphometric measurements, use the 7 NeuroMorpho.Org tools
+instead of guessing typical values from general knowledge — this is a
+database of 250,000+ digitally traced neuron reconstructions with precise
+per-neuron quantitative measurements.
+
+| Tool | Use For | Key Parameters |
+|------|---------|---------------|
+| `NeuroMorpho_search_neurons` | Find neurons by species/brain region/cell type/archive/stain | `query_field`, `query_value`, `filter_field`, `filter_value`, `size` |
+| `NeuroMorpho_get_field_values` | Discover valid values for a search field before searching | `field_name` (e.g. `species`, `brain_region`, `cell_type`) |
+| `NeuroMorpho_get_neuron` | Full metadata for one neuron: species, brain region, cell type, staining, reconstruction software, source publication | `neuron_id` or `neuron_name` |
+| `NeuroMorpho_get_morphometry` | Quantitative shape measurements: surface area, volume, number of stems/bifurcations/branches, width/height/depth, total length, fractal dimension | `neuron_id` or `neuron_name` |
+| `NeuroMorpho_get_persistence_vector` | 100-coefficient TMD (Topological Morphology Descriptor) shape signature, for ML clustering/classification of dendritic shape | `neuron_id` |
+| `NeuroMorpho_search_literature` | Find the source publications behind reconstructions for a brain region/cell type/species | `query_field` (`brainRegion`, `cellType`, `species`, `tracingSystem`), `query_value` |
+| `NeuroMorpho_get_literature` | Full citation record (DOI, PMID, journal, authors) for one source publication | `article_id` (from `NeuroMorpho_search_literature`) |
+
+**Workflow**: `NeuroMorpho_search_neurons` (search results already include most
+metadata fields — species, brain_region, cell_type, soma_surface, surface,
+volume, reference_pmid, png_url — so a follow-up `NeuroMorpho_get_neuron` call
+is often unnecessary unless you need a field the search response omits) ->
+for quantitative measurements not in the search response (bifurcations,
+branch count, fractal dimension, path/Euclidean distance), call
+`NeuroMorpho_get_morphometry` on a specific `neuron_id` -> for the underlying
+publication, take `reference_pmid` from the neuron record directly, or use
+`NeuroMorpho_search_literature`/`NeuroMorpho_get_literature` to browse by
+brain region/cell type rather than a specific neuron.
+
+Verified live example: searching `species=human`, `brain_region=hippocampus`
+returns 139 matches (e.g. neuron 147055, a human CA1 pyramidal cell, archive
+DeFelipe); its morphometry gives `surface=40808.7 um^2`, `volume=15367.3 um^3`,
+`n_bifs=76`, `length=11305.5 um`, `fractal_Dim=1.024`.
+
+## 8. Neuroimaging Dataset Discovery (OpenNeuro)
+
+For finding published, BIDS-formatted neuroimaging datasets (MRI, fMRI, EEG,
+iEEG, MEG, PET) — as opposed to `DANDI` (electrophysiology/imaging in NWB
+format, already listed above) — use the 7 OpenNeuro tools. OpenNeuro hosts
+1600+ datasets; do not assume a dataset with the "right" ID exists without
+checking, and do not guess at file names — always resolve them through
+`OpenNeuro_get_snapshot_files`.
+
+| Tool | Use For | Key Parameters |
+|------|---------|---------------|
+| `OpenNeuro_list_datasets` | Browse the newest public datasets, cursor-paginated | `first` (max 25), `after` (cursor) |
+| `OpenNeuro_search_by_modality` | Filter datasets by imaging modality | `modality` (`MRI`, `EEG`, `iEEG`, `MEG`, `PET`), `first` |
+| `OpenNeuro_advanced_search` | Faceted search (species, sex, diagnosis, task, scanner manufacturer, PET tracer, age/subject-count range) plus the archive-wide total participant count | any combination of facet args; omit all for a whole-archive count |
+| `OpenNeuro_get_dataset` | Full metadata for one dataset: modalities, subjects, tasks, BIDS version, authors, DOI, README | `datasetId` (e.g. `ds000117`) |
+| `OpenNeuro_get_dataset_snapshots` | List every published version (snapshot tag) of a dataset | `datasetId` |
+| `OpenNeuro_get_snapshot_files` | File manifest with direct download URLs for one specific version | `datasetId`, `tag` (from the snapshots call) |
+| `OpenNeuro_get_snapshot_validation` | BIDS-validator error/warning counts for one version, to check quality before downloading | `datasetId`, `tag` |
+
+**Workflow**: `OpenNeuro_search_by_modality` or `OpenNeuro_advanced_search` to
+find a candidate dataset ID -> `OpenNeuro_get_dataset` for its
+modalities/subjects/tasks/README (dataset-level metadata only — no file
+list) -> `OpenNeuro_get_dataset_snapshots` to get a specific version tag ->
+`OpenNeuro_get_snapshot_files` for the actual downloadable file manifest, or
+`OpenNeuro_get_snapshot_validation` to check BIDS-compliance first.
+
+**Gotcha (verified live)**: `OpenNeuro_advanced_search` with a facet filter
+can report a nonzero `pageInfo.count` while returning an empty `edges` list —
+per the tool's own description, some matched datasets aren't anonymously
+readable, so the count stays accurate even when the ID list is incomplete.
+Don't treat an empty `edges` array as "count is wrong" or "no datasets
+exist" when `pageInfo.count` says otherwise.
+
+Verified live example: `ds000117` ("Multisubject, multimodal face
+processing") has 13 published snapshot versions (`00001`-`00004`, `1.0.0`
+through `1.0.6`, `1.1.0`, `2.0.0`); its latest snapshot spans MRI+MEG
+modalities, 17 subjects, 2 tasks (`facerecognition`, `noise`), 1157 total
+files, ~90 GB.
+
+## 9. Common Pitfalls
 
 - **Confusing brain regions**: The hippocampus is NOT in the frontal lobe. The substantia nigra is in the midbrain, NOT the basal ganglia (though functionally linked). Always verify.
 - **Mixing up neurotransmitter receptors**: GABA_A is ionotropic (Cl-), GABA_B is metabotropic (G-protein). NMDA requires both glutamate AND glycine/D-serine co-agonist.
