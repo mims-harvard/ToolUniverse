@@ -46,6 +46,7 @@ LOOK UP DON'T GUESS: pathway membership, gene-to-pathway assignments, and enrich
 | **Pathway Commons** | Meta-database aggregating multiple sources |
 | **BioModels** | Mathematical/computational SBML models |
 | **Enrichr** | Statistical over-representation analysis |
+| **BiGG Models** | Genome-scale metabolic reconstructions (85+ organisms), FBA-ready COBRA format |
 
 ## Workflow Overview
 
@@ -231,11 +232,45 @@ Metabolic flux analysis (MFA) quantifies the rates of metabolic reactions in viv
 
 Key concepts:
 - **Steady-state assumption**: At metabolic steady state, the rate of production of each intermediate equals its rate of consumption. This gives a system of linear equations: S * v = 0, where S is the stoichiometric matrix and v is the flux vector.
-- **Flux Balance Analysis (FBA)**: When the system is underdetermined (more reactions than metabolites), FBA uses linear programming to optimize an objective function (e.g., maximize biomass production). Use `biomodels_search` to find published SBML models for the organism.
+- **Flux Balance Analysis (FBA)**: When the system is underdetermined (more reactions than metabolites), FBA uses linear programming to optimize an objective function (e.g., maximize biomass production). Use `biomodels_search` to find a published SBML *paper's* model for the organism, or — for a model that is already curated, versioned, and ready to run FBA on without further cleanup — use BiGG (below).
 - **13C-MFA**: Uses isotope labeling to experimentally constrain intracellular fluxes. The labeling pattern of metabolites reveals which pathways carried flux.
 - **Control coefficients**: How much does a 1% change in enzyme activity change the pathway flux? Most enzymes have near-zero flux control coefficients — flux is usually controlled by a few rate-limiting steps plus substrate supply.
 
 LOOK UP DON'T GUESS: stoichiometric coefficients, pathway topology, and published flux distributions. Use KEGG (`kegg_get_pathway_info`), Reactome (`Reactome_get_pathway_reactions`), and BioModels (`biomodels_search`) for these data.
+
+### Genome-Scale Metabolic Models & FBA (BiGG)
+
+BiGG Models (bigg.ucsd.edu) is a curated database of 108 genome-scale metabolic
+reconstructions (bacteria, archaea, eukaryotes — E. coli, yeast, human Recon3D,
+and more), each already in FBA-ready COBRA format: every reaction carries flux
+`lower_bound`/`upper_bound` and a `gene_reaction_rule`, unlike a `biomodels_search`
+hit (which is a paper's raw SBML file that may need cleanup before it will run).
+Use BiGG when the goal is to actually *run* FBA, not just read about a pathway.
+
+**Tools** (each has its own `operation` enum value defaulted in its schema — you don't need to set it manually, just call the tool named for what you want):
+
+| Tool | Key Params | Use |
+|------|-----------|-----|
+| `BiGG_list_models` | none | Discover available organisms/models (108 total) |
+| `BiGG_get_model` | `model_id` | Model metadata: reaction/metabolite/gene counts, publication DOI, genome accession |
+| `BiGG_get_model_reactions` | `model_id` | Enumerate every reaction ID + name in a model |
+| `BiGG_get_reaction` | `reaction_id`, `model_id` (or `"universal"`) | Full stoichiometry, participating metabolites, gene-reaction rule |
+| `BiGG_get_metabolite` | `metabolite_id`, `model_id` (or `"universal"`) | Formula, compartment, cross-refs (KEGG/MetaCyc/HMDB/ChEBI) |
+| `BiGG_search` | `query`, `search_type` (`models`/`reactions`/`metabolites`/`genes`) | Free-text discovery across any of the four entity types |
+| `BiGG_get_database_version` | none | Data currency check |
+| `BiGG_download_model` | `model_id`, `format` (`json`/`sbml`) | The full FBA-ready COBRA model — every reaction with bounds/objective coefficient, every metabolite, every gene |
+
+**Workflow — find a model, inspect it, get it FBA-ready:**
+
+1. `BiGG_list_models` → each entry has `bigg_id`, `organism`, `reaction_count`, `metabolite_count`, `gene_count`. For a quick/small worked example, `e_coli_core` (E. coli core metabolism: 95 reactions, 72 metabolites, 137 genes) is the standard teaching model; for genome-scale work pick a full reconstruction like `iJO1366` (E. coli) or `Recon3D` (human).
+2. `BiGG_get_model(model_id="e_coli_core")` → publication DOI, genome accession (`ncbi_accession:NC_000913.3` for E. coli), file sizes, last-updated date — check currency before citing.
+3. `BiGG_get_model_reactions(model_id="e_coli_core")` → list of `{bigg_id, name, organism}` per reaction (e.g. `ACKr` = "Acetate kinase"). Use this to find candidate reaction IDs before drilling in.
+4. `BiGG_get_reaction(reaction_id="ACKr", model_id="e_coli_core")` → full stoichiometry as a `metabolites` array (each with `bigg_id`, `name`, signed `stoichiometry`), plus `gene_reaction_rule` (empty string/None for some reactions — a real absence, not a fetch failure) and `database_links` (RHEA, etc.).
+5. `BiGG_get_metabolite(metabolite_id="g3p_c", model_id="e_coli_core")` → `name`, `formula`, `compartment_bigg_id`/`compartment_name`, and `database_links` for cross-referencing to KEGG/ChEBI. Note some fields (e.g. `formulae`) come back `None` for some entries — report what's actually present rather than assuming every field is populated.
+6. `BiGG_search(query="glucose", search_type="metabolites")` → ranked hits across the **universal** namespace by default (`model_bigg_id: "Universal"`) as well as model-specific IDs; use `search_type="models"` to find organisms, `"genes"` to resolve a gene symbol to its BiGG gene ID.
+7. `BiGG_download_model(model_id="e_coli_core", format="json")` → the complete COBRA model: top-level `metabolites`/`reactions`/`genes`/`compartments` arrays, each reaction with `lower_bound`, `upper_bound`, `gene_reaction_rule`, and a `metabolites` dict of `{metabolite_id: stoichiometry}` — this is the object to hand to a COBRApy `Model` for FBA, not `BiGG_get_model`'s metadata-only response. `format="sbml"` returns the same model as an SBML XML string instead, for tools that expect that format.
+
+**Gotchas** (from live testing): `model_id` defaults to `"universal"` for `BiGG_get_reaction`/`BiGG_get_metabolite` — pass the specific model ID when you want model-scoped stoichiometry/bounds rather than the universal (model-agnostic) entry. `BiGG_search`'s default `search_type` is `"reactions"` — set it explicitly for metabolite/gene/model searches. `BiGG_get_model` returns only counts and metadata; `BiGG_download_model` is the one that returns an actually runnable model.
 
 ---
 
@@ -266,5 +301,6 @@ LOOK UP DON'T GUESS: stoichiometric coefficients, pathway topology, and publishe
 - **Pathway Commons**: Aggregation may have duplicates; check source attribution
 - **BioModels**: Sparse for many processes; often returns no results
 - **Enrichr**: Requires gene symbols (not IDs); case-sensitive
+- **BiGG**: Curated reconstructions only exist for 108 organisms (mostly bacteria/model organisms; not every species of interest has one) — check `BiGG_search(search_type="models")` before assuming coverage; `BiGG_get_reaction`/`BiGG_get_metabolite` default to the `"universal"` (model-agnostic) namespace unless `model_id` is passed explicitly
 
 **Best for**: Gene set analysis, protein function investigation, pathway discovery, systems-level biology

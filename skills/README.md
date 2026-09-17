@@ -31,6 +31,7 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-clinical-guidelines` | Clinical practice guidelines from 12+ sources (NICE, WHO, ADA, etc.) |
 | `tooluniverse-clinical-trial-design` | Clinical trial design feasibility assessment |
 | `tooluniverse-clinical-trial-matching` | Patient-to-trial matching for precision medicine |
+| `tooluniverse-clinical-terminology-lookup` | Fast terminology autocomplete/normalization (RxTerms, ICD-style conditions, HCPCS, star alleles, NPI) |
 | `tooluniverse-clinical-trial-protocol` | Generate FDA-style clinical trial protocol documents with sample-size calculation |
 | `tooluniverse-crispr-screen-analysis` | CRISPR knockout/activation screen analysis |
 | `tooluniverse-custom-tool` | Create and register custom tools |
