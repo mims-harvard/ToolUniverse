@@ -31,6 +31,7 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-clinical-guidelines` | Clinical practice guidelines from 12+ sources (NICE, WHO, ADA, etc.) |
 | `tooluniverse-clinical-trial-design` | Clinical trial design feasibility assessment |
 | `tooluniverse-clinical-trial-matching` | Patient-to-trial matching for precision medicine |
+| `tooluniverse-clinical-trial-protocol` | Generate FDA-style clinical trial protocol documents with sample-size calculation |
 | `tooluniverse-crispr-screen-analysis` | CRISPR knockout/activation screen analysis |
 | `tooluniverse-custom-tool` | Create and register custom tools |
 | `tooluniverse-disease-research` | Comprehensive disease reports using 100+ tools |
@@ -52,12 +53,14 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-immunotherapy-response-prediction` | Predict response to immune checkpoint inhibitors |
 | `tooluniverse-infectious-disease` | Pathogen characterization and drug repurposing for outbreaks |
 | `tooluniverse-install-skills` | Auto-detect and install missing skills |
+| `tooluniverse-lab-data-standardization` | Convert lab instrument output (plate reader, NanoDrop, qPCR, etc.) to a standardized ASM-style JSON/CSV |
 | `tooluniverse-literature-deep-research` | Literature research with evidence grading and theme extraction |
 | `tooluniverse-metabolomics` | Metabolomics research (metabolite ID, study analysis) |
 | `tooluniverse-metabolomics-analysis` | Metabolomics data analysis (quantification, pathway, flux) |
 | `tooluniverse-multi-omics-integration` | Multi-omics dataset integration |
 | `tooluniverse-multiomic-disease-characterization` | Multi-omics disease characterization |
 | `tooluniverse-network-pharmacology` | Compound-target-disease network analysis |
+| `tooluniverse-nfcore-pipelines` | Run real nf-core pipelines (rnaseq, sarek, atacseq) end-to-end via Nextflow |
 | `tooluniverse-pharmacovigilance` | Drug safety signal analysis from FDA reports |
 | `tooluniverse-phylogenetics` | Phylogenetics and sequence analysis |
 | `tooluniverse-polygenic-risk-score` | Polygenic risk score construction and interpretation |
@@ -69,6 +72,8 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-proteomics-analysis` | Mass spectrometry proteomics analysis |
 | `tooluniverse-rare-disease-diagnosis` | Rare disease differential diagnosis from phenotype and genetics |
 | `tooluniverse-rnaseq-deseq2` | RNA-seq differential expression with PyDESeq2 |
+| `tooluniverse-scientific-problem-selection` | Research strategy: idea pitching, risk assessment, stuck-project troubleshooting |
+| `tooluniverse-scvi-tools` | Deep-learning single-cell integration (scVI, scANVI, totalVI, PeakVI, MultiVI, DestVI, veloVI) |
 | `tooluniverse-sdk` | Build AI scientist systems using the Python SDK |
 | `tooluniverse-sequence-retrieval` | DNA, RNA, and protein sequences from NCBI and ENA |
 | `tooluniverse-single-cell` | Single-cell RNA-seq analysis (scanpy, anndata) |

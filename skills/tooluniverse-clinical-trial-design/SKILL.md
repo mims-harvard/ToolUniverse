@@ -203,6 +203,10 @@ See `WORKFLOW_DETAILS.md` for the complete 6-path Python workflow and use case e
 
 ---
 
+## Next Steps
+
+Once this feasibility assessment is complete, use **`tooluniverse-clinical-trial-protocol`** to turn the 6-dimension findings (endpoint, population, comparator, effect size, duration, regulatory pathway) into an actual protocol document — full ICH E6(R2)/FDA-style sections plus a real sample-size calculation. That skill consumes this report's output rather than re-deriving feasibility.
+
 ## Integration with Other Skills
 
 - **tooluniverse-drug-research**: Investigate mechanism, preclinical data
