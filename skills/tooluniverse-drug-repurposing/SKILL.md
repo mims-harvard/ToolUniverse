@@ -29,6 +29,7 @@ Each strategy uses different tools and has different evidentiary weight. Identif
 1. **Target-Based**: Disease targets -> Find drugs that modulate those targets
 2. **Compound-Based**: Approved drugs -> Find new disease indications
 3. **Disease-Driven**: Disease -> Targets -> Match to existing drugs
+4. **Signature-Based**: Disease gene-expression signature -> Find drugs whose perturbation signature reverses it (connectivity-map reasoning). Use when the disease has a well-characterized differential-expression signature (e.g. from GEO/TCGA) but no single validated target — this strategy needs no target hypothesis at all, only up/down gene lists.
 
 ---
 
@@ -191,6 +192,20 @@ Before prioritizing a repurposing candidate, check whether the new use (or the c
 **Requires `USPTO_API_KEY`** (free, register at https://data.uspto.gov/myodp). Without a valid key every call returns HTTP 403 — verified live: `get_patent_overview_by_text_query` and `get_patent_application_metadata` both return `HTTP Error: 403` with USPTO's own guidance that a 403 means key rejection (invalid, or a newly issued key still activating), not a malformed query. A 404 on a specific patent number means that patent is outside the Patent File Wrapper dataset's coverage, not that the tool is broken.
 
 **Workflow**: search by drug/compound name or title keyword with `get_patent_overview_by_text_query` (wrap multi-word phrases in escaped double quotes for exact matching) → take an `applicationNumberText` from a hit → pull term-adjustment and continuity data to see the *actual* remaining protection window, since continuations and PTA both push the real expiration later than the nominal grant-date + 20-years math suggests. A drug whose base composition patent looks expired may still be covered by a use-patent or formulation continuation — always check continuity data before concluding a compound is open for repurposing without licensing.
+
+### Signature-Based Repurposing (LINCS / L1000FWD)
+
+For Strategy 4, reverse a disease's own gene-expression signature rather than reasoning through a single target:
+
+| Tool | Purpose |
+|------|---------|
+| `LINCS_search_signatures(drug_name=..., cell_line=..., limit=...)` | Find existing L1000/other-assay perturbation signatures for a known drug — useful for confirming what a candidate compound's own transcriptional footprint looks like before comparing it to a disease signature |
+| `LINCS_list_libraries(keyword=..., limit=...)` | Browse LINCS SigCom's 431+ signature libraries (L1000 expression, kinase profiling, cell growth inhibition, proteomics) to find the right assay type for a given question |
+| `L1000FWD_sig_search(up_genes=[...], down_genes=[...], n_results=..., mode=...)` | The core connectivity-map query: submit a disease's up/down differentially-expressed gene lists and get back drugs whose L1000 perturbation signature is anti-correlated (candidate repurposing hits) or correlated (mechanistic mimics) with it |
+
+**Workflow**: derive the disease's up/down gene sets first (e.g. from a published DE analysis, GEO dataset, or this repo's own `tooluniverse-rnaseq-deseq2` output) → `L1000FWD_sig_search(up_genes=disease_up, down_genes=disease_down, mode="reverse")` → each hit returns `combined_scores`/`pvals`/`qvals` — rank by score, and treat a top reversal hit as an E4 (Computational) candidate needing the same target-validation and dose-feasibility scrutiny as any other strategy, not a shortcut past it. Cross-check any promising hit against `LINCS_search_signatures(drug_name=<hit>)` to see its signature directly rather than trusting the connectivity score alone.
+
+**Verified live**: `LINCS_search_signatures(drug_name="vorinostat")` and `L1000FWD_sig_search` both return real, non-empty results — this is a working, queryable strategy, not a placeholder.
 
 ### Computational Procedure: Drug-Target Dose Feasibility Check
 

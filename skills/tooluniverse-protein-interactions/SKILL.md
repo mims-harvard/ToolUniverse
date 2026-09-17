@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-protein-interactions
-description: Protein-protein interaction (PPI) network analysis — STRING (predicted + experimental), BioGRID (curated), SASBDB (small-angle scattering). Distinguishes physical interactions (binding) from functional associations (co-expression, co-regulation). Use for interactome queries, complex partner identification, and pathway-level interaction analysis.
+description: Protein-protein interaction (PPI) network analysis — STRING (predicted + experimental), BioGRID (curated), SASBDB (small-angle scattering), Complex Portal (curated complex membership and stoichiometry, includes CORUM data). Distinguishes physical interactions (binding) from functional associations (co-expression, co-regulation). Use for interactome queries, complex partner identification, curated complex composition lookup, and pathway-level interaction analysis.
 disable-model-invocation: true
 ---
 
@@ -21,6 +21,7 @@ LOOK UP DON'T GUESS: protein interaction scores, experimental evidence types, an
 | **STRING** | 14M+ proteins, 5,000+ organisms | Not required | Primary interaction source |
 | **BioGRID** | 2.3M+ interactions, 80+ organisms | Required | Fallback, curated data |
 | **SASBDB** | 2,000+ SAXS/SANS entries | Not required | Solution structures |
+| **Complex Portal** | Curated complexes (incl. CORUM data) | Not required | Curated complex membership/stoichiometry |
 
 ## 4-Phase Workflow
 
@@ -30,6 +31,21 @@ LOOK UP DON'T GUESS: protein interaction scores, experimental evidence types, an
 4. **Structural Data (optional)** — `SASBDB_search_entries()` for SAXS/SANS solution structures
 
 See `python_implementation.py` for runnable examples (`example_tp53_analysis()`, `analyze_protein_network()`).
+
+## Complex Portal: Curated Complex Membership
+
+STRING/BioGRID answer "do A and B interact"; Complex Portal answers a different question — "what is the full, curated membership and stoichiometry of a known biological complex." Use it when the question is about a specific named or implied multi-subunit assembly (e.g. "what's in the SAGA complex," "what regulates p53 via a complex") rather than a pairwise or network-level interaction.
+
+```
+Phase 1: ComplexPortal_search_complexes(query=..., species=..., number=...) -> ranked candidate complexes,
+         each with complex_id, name, description, and a subunits[] list (identifier, name,
+         interactor_type: "protein" or "small molecule" for bound cofactors like zinc)
+Phase 2: ComplexPortal_get_complex(complex_id) -> full detail for one specific complex by its CPX- ID
+```
+
+**Real example** (verified live): `ComplexPortal_search_complexes(query="TP53", species="Homo sapiens")` -> real complexes including `CPX-6093` "TP53-MDM2-MDM4 transcription regulation complex" (subunits P04637/Q00987/O15151) and two SAGA-complex variants (KAT2A/KAT2B) that recruit via TP53/MYC — real multi-subunit assemblies with real UniProt-identified subunits, including small-molecule cofactors (e.g. a zinc atom, `CHEBI:27363`) alongside protein subunits.
+
+**Gotcha (verified live)**: `ComplexPortal_get_complex` can return `complex_id: null, name: null` in its own echoed fields even on a successful lookup — use `systematic_name` and the `subunits` list to confirm you got the right complex, and keep the `complex_id` you already had from `ComplexPortal_search_complexes` rather than trusting the field echoed back by `get_complex`.
 
 ## Parameters
 
@@ -208,4 +224,5 @@ For "what protein does X" questions: ALWAYS search UniProt and PubMed first — 
 - STRING: https://string-db.org/
 - BioGRID: https://thebiogrid.org/ (register for free API key)
 - SASBDB: https://www.sasbdb.org/
+- Complex Portal: https://www.ebi.ac.uk/complexportal/
 - ToolUniverse: https://github.com/mims-harvard/ToolUniverse

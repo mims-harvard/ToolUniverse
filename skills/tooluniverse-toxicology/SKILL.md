@@ -229,6 +229,14 @@ Capture: generic name, SMILES, PubChem CID, ChEMBL ID, drug class.
 
 ---
 
+## Phase 4b: Toxin Reference Lookup (T3DB) — currently broken upstream, verified
+
+**Objective**: Cross-reference a chemical/toxin against T3DB's curated toxin profiles (mechanism of toxicity, health effects, routes of exposure) via `T3DB_search_toxins` (`query`: str) and `T3DB_get_toxin` (`toxin_id`: str, e.g. `T3D0001`).
+
+**Live-verified status: both tools currently fail with HTTP 403** on every attempt (confirmed on multiple retries, both the search endpoint and a direct `get_toxin` call by known ID) — t3db.ca appears to be blocking the underlying request pattern entirely, not a transient outage tied to a specific query. **Do not fabricate a toxin profile, mechanism, or health-effect list if this 403s** — report T3DB as unavailable and fall back to CTD (Phase 4) and AOPWiki (Phase 1) for mechanistic toxicology instead, or DailyMed (Phase 3) if the chemical is also an FDA-approved drug. Re-check T3DB's live status with a cheap call before assuming this is still broken — it may be fixed by the time you read this.
+
+---
+
 ## Synthesis: Integrated Toxicology Report
 
 **Structure**:
@@ -305,6 +313,7 @@ Key finding summary (2-3 sentences)
 - **AOPWiki**: AOPs are in development; many lack high plausibility scores
 - **FAERS**: Observational data; confounding by indication; underreporting bias
 - **CTD**: Inferred associations have high false-positive rate
+- **T3DB**: Both tools verified returning HTTP 403 as of this writing (upstream request-blocking, not a per-query issue) — treat as unavailable until re-verified live
 - **DailyMed**: FDA-approved drugs only; no environmental chemical coverage
 - **Environmental chemicals**: Primarily Phase 1 (AOP) + Phase 4 (CTD) data available
 

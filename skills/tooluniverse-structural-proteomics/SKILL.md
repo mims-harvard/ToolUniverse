@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-structural-proteomics
-description: Structural biology plus proteomics integration for drug target validation. Combines PDB experimental structures, AlphaFold predictions, GPCRdb, SAbDab antibody structures, ProteinsPlus binding-site prediction, and BindingDB ligand-affinity data. Use for druggability assessment, binding-site characterization, ligand-pocket analysis, structural-confidence scoring (resolution, pLDDT), and antibody-target interface analysis.
+description: Structural biology plus proteomics integration for drug target validation. Combines PDB experimental structures, AlphaFold predictions, GPCRdb, SAbDab antibody structures, ProteinsPlus binding-site prediction, BindingDB ligand-affinity data, BMRB NMR data, CATH/InterPro fold classification, intrinsic-disorder prediction (MobiDB/DisProt/IUPred3), membrane-protein topology (OPM/TopDB/PDBTM/ChannelsDB), and enzyme catalytic-site data (M-CSA). Use for druggability assessment, binding-site characterization, ligand-pocket analysis, structural-confidence scoring (resolution, pLDDT), antibody-target interface analysis, disordered-region assessment, membrane-protein topology, and catalytic-mechanism lookup.
 disable-model-invocation: true
 ---
 
@@ -62,6 +62,15 @@ Resolution determines valid conclusions: <2A = atom positions visible; 2-3A = si
 
 ### BMRB (NMR data)
 `BMRB_search_by_keyword` (term, database="macromolecules"|"metabolomics"), `BMRB_search_by_sequence` (sequence), `BMRB_get_entries_by_pdb_id` (pdb_id), `BMRB_get_entries_by_uniprot` (uniprot_id), `BMRB_get_entry` (entry_id), `BMRB_get_entry_citation` (entry_id), `BMRB_get_validation` (entry_id), `BMRB_search_chemical_shifts` (entry_id or search filters)
+
+### Intrinsic Disorder (MobiDB, DisProt, IUPred3)
+`MobiDB_get_protein` (accession), `MobiDB_get_consensus` (accession) — **currently unreachable, see Limitations**. `DisProt_search` (query, page_size), `DisProt_get_entry` (accession — DisProt ID or UniProt accession). `IUPred3_predict_disorder` (accession, iupred_type="long"|"short"|"anchor")
+
+### Membrane Protein Structure (OPM, TopDB, PDBTM, ChannelsDB)
+`OPM_search_structures` (query, limit), `TopDB_get_topology` (identifier), `PDBTM_get_topology` (pdb_id), `ChannelsDB_get_channels_pdb` (pdb_id), `ChannelsDB_get_channels_cofactor` (pdb_id)
+
+### Catalytic Site Atlas (M-CSA)
+`MCSA_get_entry` (mcsa_id), `MCSA_search_enzymes` (enzyme_name, ec_number, uniprot_id, max_pages, limit)
 
 ---
 
@@ -129,6 +138,59 @@ Phase 4: InterPro_get_structures_for_entry(interpro_id, page_size) -> real PDB s
 
 **Tool note**: `InterPro_get_member_signature` requires BOTH `member_database` and `accession` — the accession alone (e.g. `PF00069`) is not sufficient because the same-shaped accession could theoretically collide across member databases.
 
+## Workflow 6: Intrinsic Disorder Assessment (MobiDB + DisProt + IUPred3)
+
+These three tools answer the same underlying question — "is this region of the protein structured or disordered?" — with different evidence quality, from highest to lowest confidence:
+
+```
+Tier 1 (curated experimental evidence): DisProt_search(query) -> DisProt_get_entry(accession)
+         -> real, literature-curated disordered-region boundaries with the experimental method that
+            established them (NMR, circular dichroism, limited proteolysis, etc.)
+Tier 2 (aggregated predictions + curation): MobiDB_get_protein(accession) / MobiDB_get_consensus(accession)
+         -> merges DisProt curation with multiple computational predictors into one consensus view
+            **currently unreachable, see Limitations below**
+Tier 3 (single fast predictor, sequence-only): IUPred3_predict_disorder(accession, iupred_type=...)
+         -> a real-time computed disorder score per residue; "long" = long disordered regions,
+            "short" = short disordered segments, "anchor" = disorder that becomes ordered upon binding
+            a partner (protein-binding-induced folding)
+```
+
+**Real example** (verified live): p53/P04637 — `DisProt_get_entry("P04637")` confirms curated disordered regions (DP00086, "Cellular tumor antigen p53"); `IUPred3_predict_disorder(accession="P04637", iupred_type="long")` returns a real per-residue disorder-score profile independently, useful for a quick check even without DisProt curation existing for a given protein.
+
+**When to use which**: check DisProt first if you need citable, experimentally-validated boundaries. Use IUPred3 for any protein (curated or not) when you just need a fast disorder profile. Reach for MobiDB only once it is confirmed reachable again (see Limitations) — do not report a "no disorder data" conclusion based on a MobiDB timeout; that is a connectivity failure, not evidence of an ordered protein.
+
+## Workflow 7: Membrane Protein Structure (OPM + TopDB + PDBTM + ChannelsDB)
+
+```
+Phase 1: OPM_search_structures(query, limit) -> solved membrane-protein structures positioned in a lipid
+         bilayer, with geometric/energetic properties: hydrophobic thickness, tilt angle, and
+         transfer_energy_kcal_per_mol (more negative = more favorable membrane insertion)
+Phase 2: TopDB_get_topology(identifier) -> curated per-segment topology (Inside/Membrane/Outside regions)
+         for a named protein, cross-species; identifier is typically a TopDB/UniProt-style ID
+         (e.g. "OPSD_HUMAN"), not a bare gene symbol
+Phase 3: PDBTM_get_topology(pdb_id) -> structure-derived per-chain topology for one specific PDB entry:
+         tm_type ("alpha"/"beta"/"non_tm"), num_tm_segments, is_membrane_embedded
+Phase 4: ChannelsDB_get_channels_pdb(pdb_id) / ChannelsDB_get_channels_cofactor(pdb_id) -> detected
+         channels/tunnels/pores through the structure (general access tunnels vs. cofactor-specific
+         access tunnels) for a given PDB entry
+```
+
+**Real example** (verified live, cross-validated across all four tools on rhodopsin): `OPM_search_structures(query="rhodopsin")` finds real bacteriorhodopsin/archaerhodopsin family members with thickness/tilt data; `TopDB_get_topology("OPSD_HUMAN")` -> 7 transmembrane segments, reliability score 92.81; `PDBTM_get_topology("1f88")` -> chain A, `tm_type: "alpha"`, `num_tm_segments: 7` — the same helix count TopDB reported independently, a useful cross-check between curated (TopDB) and structure-derived (PDBTM) topology. `ChannelsDB_get_channels_pdb` on a real ion channel (`1bl8`, KcsA potassium channel) returns real annotated pore/tunnel data; **not every PDB entry has ChannelsDB coverage** — `1f88` (rhodopsin) returned "Protein with ID '1f88' not found in ChannelsDB" even though OPM/TopDB/PDBTM all have data for it, so a ChannelsDB miss does not mean the protein lacks a real pore.
+
+## Workflow 8: Enzyme Catalytic Mechanism (M-CSA)
+
+M-CSA (Mechanism and Catalytic Site Atlas) curates the actual catalytic residues and reaction mechanism for enzymes with solved structures — distinct from BRENDA/kinetics data (rates/constants) and from generic active-site predictions (ProteinsPlus above, which is pocket-geometry-based, not mechanism-curated).
+
+```
+Phase 1: MCSA_search_enzymes(enzyme_name=... | ec_number=... | uniprot_id=...) -> candidate M-CSA entries
+Phase 2: MCSA_get_entry(mcsa_id) -> full catalytic machinery: catalytic residues, mechanism steps,
+         EC number(s), reference structure
+```
+
+**Real example** (verified live): `MCSA_search_enzymes(enzyme_name="lysozyme")` -> `mcsa_id: 203`, "lysozyme (glycosyl hydrolase 22 family)", EC 3.2.1.17, reference UniProt P00698 -> `MCSA_get_entry(203)` for the full mechanism detail.
+
+---
+
 ## Workflow 2: Identify Binding Pocket Ligands
 
 ```
@@ -168,6 +230,7 @@ Phase 8: Evidence integration
 | `BMRB_search_by_keyword` | `keyword` | `term` |
 | `CATH_get_superfamily` | `cath_id` | `superfamily_id` |
 | `InterPro_get_member_signature` | `accession` alone | `member_database` + `accession` (both required) |
+| `TopDB_get_topology` | bare gene symbol | a TopDB/UniProt-style identifier (e.g. `"OPSD_HUMAN"`) |
 
 ---
 
@@ -197,3 +260,5 @@ DoGSiteScorer >0.6 = druggable; <0.4 = unlikely druggable. PISA assemblies shoul
 - GPCRdb: Class A-F GPCRs only
 - PDBePISA: `operation` is internal, not a public parameter
 - BMRB: `BMRB_get_entries_by_pdb_id` is a BLAST-based sequence match, not a curated 1:1 PDB<->BMRB cross-reference -- a query can return several candidate entries (or none) for a real NMR PDB ID; `BMRB_search_chemical_shifts` is slow (15-20s+) for well-studied entries, only call it when raw shift values are actually needed
+- MobiDB: `MobiDB_get_protein` and `MobiDB_get_consensus` were verified live (repeatedly, with a 90s timeout) to hang indefinitely against their configured endpoint (`https://mobidb.org/api/download`) -- confirmed independently via direct `curl` to the same host (20s with no response). This is an upstream connectivity issue, not a query-parameter mistake. Use DisProt (curated) or IUPred3 (fast predictor) instead until this is confirmed working again -- do not retry MobiDB with a longer timeout expecting it to resolve.
+- ChannelsDB: coverage is per-PDB-entry, not universal -- a real membrane protein with confirmed topology elsewhere (OPM/TopDB/PDBTM) can still return "not found in ChannelsDB" for that specific PDB ID (verified live: `1f88` rhodopsin)

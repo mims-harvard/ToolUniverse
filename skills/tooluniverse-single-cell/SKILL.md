@@ -313,12 +313,17 @@ sc.tl.umap(adata)
 - **GEO_search_rnaseq_datasets** / **geo_search_datasets**: Search GEO for scRNA-seq studies
 - **NCBI_SRA_search_runs**: Search SRA for sequencing runs (query="single cell RNA-seq [disease]")
 - **OmicsDI_search_datasets**: Cross-repository dataset search
+- **SCXA_list_experiments** / **SCXA_search_gene**: EBI Single Cell Expression Atlas — 380+ curated scRNA-seq datasets, searchable by species/keyword or by which experiments show a gene expressed. `SCXA_search_gene` can be slow (10-40s+ per call observed live) — don't assume it failed just because it takes longer than other lookups.
+- **SCXA_get_cluster_marker_genes**: Pre-computed per-cluster/per-cell-type marker genes for a specific SCXA experiment. `marker_type` only accepts `"clusters"` or `"cell_types"` (not `"cell_type"`), and `marker_type="cell_types"` additionally *requires* `organism_part` (e.g. "pancreas", "lung") — verified live, both are hard parameter-validation errors, not soft warnings.
+- **SCP_search_studies** / **SCP_list_studies** / **SCP_get_study**: Broad Institute Single Cell Portal — 1000+ public studies, 80M+ cells. `SCP_list_studies` sorts by cell count descending and can filter by `min_cells`.
+- **UCSCCellBrowser_search_datasets** / **UCSCCellBrowser_get_dataset** / **UCSCCellBrowser_list_facets**: 300+ curated single-cell datasets filterable by organism/body part/disease. Call `UCSCCellBrowser_list_facets` first to get valid filter values (facets are `"organisms"`, `"body_parts"`, `"diseases"`) before filtering `search_datasets`.
 
 ### Cell Type Markers
 - **CellMarker_search_by_cell_type**: Tissue-specific cell markers (use `CellMarker_list_cell_types` first — exact names required, e.g., "Regulatory T(Treg) cell" not "Regulatory T cell")
 - **CellMarker_search_cancer_markers**: Cancer-context markers with experimental evidence
 - **CellMarker_search_by_gene**: Reverse lookup — which cell types express a gene?
 - **HPA_search_genes_by_query**: Cell-type marker gene search
+- **PanglaoDB_list_cell_types** / **PanglaoDB_markers_for_cell_type** / **PanglaoDB_cell_types_for_gene**: PanglaoDB curated marker genes, each with a `canonical_marker` flag plus per-species `sensitivity_*`/`specificity_*` scores. Call `PanglaoDB_list_cell_types` (optionally filtered by `organ`) to get exact valid `cell_type` strings first. **Results from `PanglaoDB_cell_types_for_gene` are NOT ranked by specificity** — verified live, querying `CD3E` (a canonical T-cell marker) returned "Macrophages" as the *first* hit with `canonical_marker: true` and only a low `specificity_human: 0.1`; always check `canonical_marker` and the `specificity_*`/`sensitivity_*` fields per row rather than trusting result order, and cross-check against CellMarker/HPA above for annotation-critical calls.
 
 ### Gene Annotation
 - **MyGene_query_genes** / **MyGene_batch_query**: Gene ID conversion

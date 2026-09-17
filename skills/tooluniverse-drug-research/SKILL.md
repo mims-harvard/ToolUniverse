@@ -89,7 +89,12 @@ Step 12: Document all sources -> Update Section 11 (Data Sources)
 
 4. PharmGKB_search_drugs(query=drug_name)
    -> Extract: PharmGKB ID (PA...)
+
+5. DrugCentral_search(query=drug_name, size=...)
+   -> Extract: InChIKey, CAS number, canonical SMILES, cross-referenced FDA/EMA/PMDA approval status in one call
 ```
+
+**DrugCentral** (live-verified: `DrugCentral_search`, `DrugCentral_get_drug`, `DrugCentral_get_targets`) is a useful fifth disambiguation source and a fast Path 2 (Mechanism & Targets) shortcut — `DrugCentral_get_targets(chem_id=<InChIKey or ChEMBL ID>)` returns target names/classes directly, which can cross-check (not replace) the ChEMBL-activities-derived target table this skill's Path 2 already builds. Real example: `DrugCentral_search(query="metformin")` returns InChIKey `XZWYZXLIPXDOLR-UHFFFAOYSA-N`; `DrugCentral_get_targets` on that InChIKey returns `5'-AMP-activated protein kinase` among its targets.
 
 ### Handle Naming Ambiguity
 

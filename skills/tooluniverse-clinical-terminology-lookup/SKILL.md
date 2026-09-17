@@ -304,6 +304,79 @@ itself (only a count).
 See `references/clinical_tables_tool_reference.md` for full parameter
 tables and real captured example responses for these 4 tools.
 
+## Disease Ontology and Genetic-Condition Terminology: Mondo, DO, MedGen
+
+Three more standardized-vocabulary tool families, distinct from ICD-10-CM
+(clinical billing/documentation), NCIt (cancer-specific), and UniProt's
+disease vocabulary (protein-annotation-specific) above — these are
+general-purpose disease/condition ontologies built specifically to
+cross-reference EVERY other disease vocabulary from one entry point.
+
+### Mondo Disease Ontology (`src/tooluniverse/data/mondo_tools.json`)
+
+| Tool | Resolves | Key output |
+|---|---|---|
+| `Mondo_search_disease` | disease name/keyword -> matching MONDO IDs, ranked | `id`, `name`, `description`, `xref[]` |
+| `Mondo_get_disease` | one MONDO ID -> full detail | same fields as above, single record |
+| `Mondo_get_disease_phenotypes` | one MONDO ID -> associated HPO phenotypes | `phenotype_id` (HP:xxxxxxx), `phenotype_name`, `disease_subtype` |
+
+**The standout feature, verified live**: every Mondo hit's `xref[]` array is
+a one-call cross-reference to essentially every other disease vocabulary at
+once. Real example (`Mondo_search_disease {"query": "melanoma", "limit": 3}`)
+-> `MONDO:0005105` ("melanoma") with `xref: ["DOID:1909", "EFO:0000756",
+"HP:0002861", "ICDO:8720/3", "MEDGEN:9944", "MESH:D008545", "NANDO:2200077",
+"NCIT:C3224", "ONCOTREE:MEL", "Orphanet:411533", "SCTID:372244006",
+"UMLS:C0025202"]` — DOID, EFO, HPO, ICD-O, MedGen, MeSH, NCIt, OncoTree,
+Orphanet, SNOMED CT, and UMLS codes all in one response. **When a task needs
+the SAME disease's ID in a different vocabulary than the one you started
+with, try Mondo first** — it's usually faster than a separate lookup in
+each source vocabulary's own tool.
+
+### Human Disease Ontology / DO (`src/tooluniverse/data/disease_ontology_tools.json`)
+
+| Tool | Resolves | Key output |
+|---|---|---|
+| `DiseaseOntology_get_term` | DOID -> full definition, synonyms, cross-refs | `definition`, `synonyms[]` |
+| `DiseaseOntology_get_parents` | DOID -> immediate broader disease category via `is_a` | `parents[]` (id, name) |
+
+Real example (`DiseaseOntology_get_term {"doid": "DOID:1909"}` — melanoma,
+the same DOID Mondo's `xref` surfaced above): returns the DO-native
+definition text and synonym list, confirming the two ontologies describe
+the same disease consistently. Use DO specifically when you already have a
+DOID (e.g. from another tool's cross-reference field, or from Mondo's
+`xref`) and need DO's own hierarchy navigation — Mondo doesn't expose
+`is_a` parent/child structure the way DO's `get_parents` does.
+
+### NCBI MedGen (`src/tooluniverse/data/medgen_tools.json`)
+
+| Tool | Resolves | Key output |
+|---|---|---|
+| `MedGen_search_conditions` | keyword -> genetic conditions/diseases/syndromes | `uid`, `concept_id` (UMLS CUI), `title` |
+| `MedGen_get_condition` | UID, CUI, or concept_id -> full definition, genes, inheritance | `definition`, associated genes, OMIM IDs, `modes_of_inheritance` |
+| `MedGen_get_clinical_features` | same ID types -> HPO phenotype features | `clinical_features[]` (name, HPO ID) |
+
+MedGen is NCBI's aggregation point for genetic/rare-disease concepts
+(pulling from OMIM, Orphanet, ClinVar, GeneReviews) — it's the tool to
+reach for when the disease is specifically a genetic condition/syndrome and
+you need associated genes and inheritance pattern alongside the definition,
+which Mondo/DO don't return directly. Real example: `MedGen_search_conditions
+{"query": "melanoma", "max_results": 3}` returns condition titles with
+`uid`/`concept_id` (UMLS CUI) fields; `MedGen_get_condition {"uid":
+"41393"}` (cystic fibrosis, from the tool's own worked example) returns the
+full definition plus its associated gene and inheritance mode, and
+`MedGen_get_clinical_features` on the same UID returns its HPO-coded
+clinical feature list — directly comparable in shape to
+`Mondo_get_disease_phenotypes` above (both return HPO IDs), useful for
+cross-checking phenotype-driven diagnosis leads from two independent
+curation efforts.
+
+**For downstream gene-disease association research** once a disease/CUI is
+resolved here, hand off to `tooluniverse-gene-disease-association`
+(Gene2Phenotype, GenCC, OMIM concordance) or `tooluniverse-rare-disease-diagnosis`
+for phenotype-driven differential diagnosis — these three ontology tools
+only resolve the disease's *identity and cross-references*, not a curated
+association strength or clinical actionability score.
+
 ## Workflow
 
 1. Identify which of the six normalization needs applies.

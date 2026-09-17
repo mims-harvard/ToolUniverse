@@ -141,6 +141,8 @@ Present as a **Dataset Search Report**. Hide search process. Include:
 - `GTEx_get_expression_summary` -- baseline tissue expression (54 normal tissues, param: `gene_symbol`)
 - `ENAPortal_search_studies` -- sequencing studies (param: `query` with `description="..."`)
 - `CxGDisc_search_datasets` -- single-cell datasets (needs exact disease ontology terms)
+- `GxA_list_experiments` / `GxA_get_experiment_info` / `GxA_get_experiment_expression` -- EBI Gene Expression Atlas: curated baseline (tissue) and differential (condition-comparison) bulk RNA-seq/microarray experiments. Filter `GxA_list_experiments` by `species` and `experiment_type` ("baseline" vs "differential") first; `GxA_get_experiment_expression` needs a specific `experiment_accession` (e.g. `E-MTAB-2836`) plus `gene_id`.
+- `ARCHS4_get_gene_expression` / `ARCHS4_get_gene_correlations` -- ARCHS4: box-plot expression statistics (min/Q1/median/Q3/max, log2) across human/mouse tissues and cell lines, and top co-expressed genes by Pearson correlation across 300K+ uniformly reprocessed RNA-seq samples. Good for a quick baseline-expression sanity check or finding candidate co-regulated genes without running a full differential-expression pipeline.
 - `PubMed_search_articles` -- dataset discovery via publications
 
 ---

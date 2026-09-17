@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-regulatory-genomics
-description: Transcription factor binding, cis-regulatory elements (cCREs), chromatin accessibility, and regulatory annotation using JASPAR (motifs), ENCODE (cCREs, ChIP-seq), RegulomeDB (regulatory variant scoring), UCSC — plus sequence-based deep-learning prediction of regulatory activity and non-coding variant effects (AlphaGenome, Enformer, Borzoi, ChromBPNet, Evo 2). Use for regulatory element annotation, TF-binding-site prediction, regulatory-region functional impact assessment, and predicting how a non-coding variant or a raw DNA sequence affects expression/chromatin/accessibility. Use this whenever a user asks what regulates a gene, whether a SNP hits a regulatory element, or to predict a non-coding variant's functional effect from sequence.
+description: Transcription factor binding, cis-regulatory elements (cCREs), chromatin accessibility, and regulatory annotation using JASPAR (motifs), UniBind, ENCODE (cCREs, ChIP-seq), RegulomeDB (regulatory variant scoring), UCSC, and the Ensembl Regulatory Build (motif instances, evolutionarily constrained elements, TF binding matrices) — plus sequence-based deep-learning prediction of regulatory activity and non-coding variant effects (AlphaGenome, Enformer, Borzoi, ChromBPNet, Evo 2). Use for regulatory element annotation, TF-binding-site prediction, regulatory-region functional impact assessment, and predicting how a non-coding variant or a raw DNA sequence affects expression/chromatin/accessibility. Use this whenever a user asks what regulates a gene, whether a SNP hits a regulatory element, or to predict a non-coding variant's functional effect from sequence.
 disable-model-invocation: true
 ---
 
@@ -67,6 +67,9 @@ When analysis requires computation (statistics, data processing, scoring, enrich
 | `UCSC_get_encode_cCREs` | Get cCREs overlapping a genomic region | `chrom`, `start`, `end` |
 | `RegulomeDB_query_variant` | Score regulatory impact of a variant | `rsid` (e.g., "rs4994") |
 | `ENCODE_search_biosamples` | Find available cell lines/tissues in ENCODE | `term_name`, `biosample_type`, `limit` |
+| `EnsemblReg_get_motif_features` | TF binding motif instances in a region (Ensembl Regulatory Build) | `region`, `species` | motif instances with `binding_matrix_stable_id`, `transcription_factor_complex`, `score` |
+| `EnsemblReg_get_constrained_elements` | Evolutionarily constrained (purifying-selection) elements in a region — the conservation evidence type called out below | `region`, `species` | `constrained_elements[]` with `score`, `start`/`end` |
+| `EnsemblReg_get_binding_matrix` | Full PWM/PFM for an Ensembl binding-matrix stable ID | `binding_matrix_id` (e.g. `ENSPFM0320`) | nucleotide-frequency matrix, `associated_tfs[]`, `threshold` |
 
 ### Sequence-based deep-learning models (predict, don't just annotate)
 
@@ -143,6 +146,45 @@ tu.run_tool("UniBind_list_tfs", {"search": "SMAD"})   # -> [SMAD2, SMAD3, SMAD4]
 
 Notes: `species` is the scientific name ('Homo sapiens', not a taxid);
 `collection` is 'Robust' (high-confidence) or 'Permissive'; public, no API key.
+
+### Phase 1c: Ensembl Regulatory Build (motifs + the missing conservation evidence type)
+
+The Domain Reasoning above lists four converging evidence types for a
+high-confidence regulatory element — conservation, accessibility, TF
+binding, eQTL — but conservation had no tool until now.
+`EnsemblReg_get_constrained_elements` fills that gap directly: it returns
+evolutionarily constrained (purifying-selection) elements in a region,
+independent of JASPAR/UniBind/ENCODE's binding-evidence tools. Combine it
+with `EnsemblReg_get_motif_features` (a second, database-scale source of TF
+motif instances, complementary to JASPAR/UniBind) to build the
+two-or-more-evidence-types case this skill's reasoning already calls for.
+
+```
+# TF binding motif instances in a region (species defaults to homo_sapiens)
+tu.run_tool("EnsemblReg_get_motif_features", {"region": "7:140424943-140524564"})
+#   -> motif_count, motif_features[] each with stable_id,
+#      transcription_factor_complex, binding_matrix_stable_id, score,
+#      start/end/strand
+
+# Evolutionary conservation evidence for the same region
+tu.run_tool("EnsemblReg_get_constrained_elements", {"region": "17:7661779-7687538"})
+#   -> element_count, constrained_elements[] each with score (higher =
+#      stronger conservation), start/end
+
+# Full PWM for a binding matrix found above (e.g. from motif_features)
+tu.run_tool("EnsemblReg_get_binding_matrix", {"binding_matrix_id": "ENSPFM0320"})
+#   -> associated_tfs[], nucleotide-frequency matrix, threshold, consensus
+```
+
+**Operational notes (live-verified, not assumed)**: these three endpoints
+are slow — `get_motif_features` typically takes 10-25s, `get_binding_matrix`
+50-60s, `get_constrained_elements` up to 25s for a small region. Use a
+generous timeout (60-90s) rather than treating a slow response as a hang.
+`get_constrained_elements` is also unreliable on larger regions (e.g. the
+~100kb BRAF locus reproducibly failed or timed out on repeated attempts
+while the smaller TP53 region succeeded) — prefer regions well under 50kb
+for this specific endpoint, and retry once before concluding the call
+failed.
 
 ### Phase 2: ENCODE Experiment Search
 

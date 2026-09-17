@@ -42,6 +42,9 @@ Lipid identification starts with mass spectrometry: the lipid class is determine
 |------|---------|
 | `LipidMaps_search_by_name` | Lipid identification by name, abbreviation, or mass |
 | `LipidMaps_get_compound_by_id` | Detailed lipid info (structure, classification, pathways) |
+| `SwissLipids_search` | Lipid identification by name/shorthand — SIB's complementary lipid database, use when LIPID MAPS misses a species (see below) |
+| `SwissLipids_get_lipid` | Full SwissLipids entry: name, formula, monoisotopic mass, cross-refs |
+| `SwissLipids_get_children` | Descend the SwissLipids classification tree (category → class → species) one level |
 | `HMDB_search` / `HMDB_get_metabolite` | Lipid metabolite details, disease associations |
 | `kegg_search_pathway` | Lipid metabolism pathways (keyword=`sphingolipid`, `glycerolipid`, etc.) |
 | `KEGG_get_pathway_genes` | Enzymes in lipid pathways |
@@ -85,6 +88,26 @@ PubChem_get_CID_by_compound_name(name="ceramide") → CID, SMILES
 - Species-level abbreviations like "Cer(d18:1/16:0)" may return 0 results — use the generic class name first, then filter by chain length from results
 - For exact mass search: use `LipidMaps_search_by_formula` with molecular formula (e.g., "C34H67NO3")
 - If name search fails, try PubChem: `PubChem_get_CID_by_compound_name(name="C16 Ceramide")` then cross-reference
+
+**SwissLipids as a second lipid database** — when LIPID MAPS doesn't have a species
+or you want its independent classification, SwissLipids (swisslipids.org, SIB)
+covers the same ground with its own ID space and hierarchy:
+
+```
+SwissLipids_search(query="PC(16:0/18:1)")   → real hit: entity_id "SLM:000088148"
+SwissLipids_get_lipid(entity_id="SLM:000000510") → real entry: "hexadecanoate"
+  (palmitate), formula C16H31O2, mass 255.4167, charge -1, plus a full
+  adduct_mz table ([M+H]+, [M+Na]+, [M-H]-, etc.) useful for matching
+  observed MS peaks directly — LIPID MAPS entries don't include this table.
+SwissLipids_get_children(entity_id="SLM:000000338") → descend one level in the
+  classification tree (e.g. from a lipid category down to its member species)
+```
+
+Shorthand abbreviations like `PC(16:0/18:1)` work directly in `SwissLipids_search`
+(unlike LIPID MAPS, which often needs the generic class name first). Note
+`classification` can come back as an empty array `[]` for some entries — a real
+data gap in SwissLipids, not a failed lookup; fall back to LIPID MAPS for that
+lipid's category if classification is required.
 
 ### Phase 1: Structural Classification
 

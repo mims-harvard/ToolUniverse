@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-variant-analysis
-description: VCF and variant analysis — parsing, annotation, classification (synonymous, missense, frameshift, stop_gained), VAF filtering, coding vs non-coding categorization, multi-condition variant comparison, variant-notation conversion (SPDI/HGVS/VCF/rsID interconversion, ALFA per-ancestry allele frequencies), and European Variation Archive (EVA) lookups (per-study cohort variant data, RS-accession resolution). Use for VCF parsing, variant fraction calculations (denominator = coding subset only, NOT all variants), per-sample mutation profiling, converting a variant between SPDI/HGVS/VCF-coordinate/dbSNP-rsID representations, and cross-checking a variant against EVA's raw submitted study cohorts.
+description: VCF and variant analysis — parsing, annotation, classification (synonymous, missense, frameshift, stop_gained), VAF filtering, coding vs non-coding categorization, multi-condition variant comparison, variant-notation conversion (SPDI/HGVS/VCF/rsID interconversion, ALFA per-ancestry allele frequencies), European Variation Archive (EVA) lookups (per-study cohort variant data, RS-accession resolution), HGVS validation/normalization (Mutalyzer), gene-specific curated variants (LOVD), canonical cross-database allele IDs (ClinGen Allele Registry), automated ACMG/AMP classification (GeneBe), principal-transcript selection (APPRIS), Ensembl linkage disequilibrium (LD) for GWAS/fine-mapping, GRCh37/GRCh38 coordinate liftover and protein/cDNA-to-genomic mapping, and Ensembl ID utilities (stable-ID version history, cross-references, region/gene feature overlap, assembly/species metadata). Use for VCF parsing, variant fraction calculations (denominator = coding subset only, NOT all variants), per-sample mutation profiling, converting a variant between SPDI/HGVS/VCF-coordinate/dbSNP-rsID representations, cross-checking a variant against EVA's raw submitted study cohorts, validating an HGVS string's syntax, looking up curated variants for a well-studied gene, resolving a variant to its ClinGen CA ID, getting an automated ACMG verdict, or picking a gene's principal transcript.
 disable-model-invocation: true
 ---
 
@@ -528,6 +528,194 @@ canonicalization, rsID lookup).
 
 **See references/variant_notation_conversion.md for the full parameter
 tables, real example calls/responses, and a worked rs429358 (APOE) chain.**
+
+### HGVS Validation & Curated Variant Databases (Mutalyzer, LOVD, ClinGen Allele Registry, GeneBe, APPRIS)
+
+Five more small tool families, live-tested, that round out the clinical
+variant workflow: syntax validation, gene-specific curated variant
+lookup, canonical cross-database allele IDs, automated ACMG
+classification, and principal-transcript selection.
+
+**Mutalyzer — HGVS syntax validation/normalization** (complements, does
+not duplicate, the NCBI Variation notation-conversion tools above):
+`NCBIVariation_hgvs_to_spdi`/`spdi_to_hgvs` convert BETWEEN notations;
+Mutalyzer instead validates and corrects ONE HGVS string's syntax against
+its actual reference sequence, translates it to predicted protein/RNA
+effect, and can back-translate a protein change to its possible coding
+descriptions.
+
+| Tool | When to Use | Key Parameter | Response |
+|------|------------|----------------|----------|
+| `Mutalyzer_normalize_variant` | Validate/correct an HGVS description before using it elsewhere | `variant` (e.g. `NM_000546.6:c.215C>G`) | `corrected_description`, predicted protein/RNA effect, gene symbol |
+| `Mutalyzer_parse_hgvs` | Break an HGVS string into its structured parts (ref sequence, coordinate system, variant type) | `variant` | Structured `model` (reference, coordinate_system, variant type/position) |
+| `Mutalyzer_back_translate` | Have a protein change (`p.`), need possible DNA-level descriptions | `variant` (e.g. `NP_000537.3:p.Pro72Arg`) | `dna_descriptions[]` (can be >1 — codon degeneracy) |
+
+**LOVD — gene-specific curated variant databases**: unlike MyVariant/EVA's
+broad multi-gene sweep, LOVD hosts per-gene curated variant collections
+maintained by gene-specific curators (strong for well-studied genes like
+TP53/BRCA1/BRCA2, sparse or absent for others).
+
+| Tool | When to Use | Key Parameter | Response |
+|------|------------|----------------|----------|
+| `LOVD_get_gene` | Confirm a gene has an LOVD entry, get its transcript/build metadata | `gene_symbol` | HGNC/Entrez ID, RefSeq transcript(s), curation dates |
+| `LOVD_get_variants` | List all curated variants for a gene | `gene_symbol` | `[]` of variants with DNA/RNA/protein HGVS, hg19 position, `Times_reported` |
+| `LOVD_search_variants` | Look up one specific variant by LOVD DBID or DNA notation | `gene_symbol` + (`variant_dbid` OR `dna_notation`) | Same per-variant shape as above |
+
+**ClinGen Allele Registry — canonical cross-database allele IDs**: two
+tool families cover the SAME underlying registry with overlapping
+functionality (verified live — same CA IDs, same external-record shape)
+but different tool classes (`ClinGenARTool` vs `ClinGenAlleleTool`).
+**Prefer `ClinGenAR_*`** — it has the same forward lookup/detail calls
+as `ClinGenAllele_*` PLUS a reverse-lookup-by-external-ID capability
+`ClinGenAllele_*` lacks. Use `ClinGenAllele_*` only if already in a
+context using it.
+
+| Tool | When to Use | Key Parameter | Response |
+|------|------------|----------------|----------|
+| `ClinGenAR_lookup_allele` | Have an HGVS string, need the canonical CA ID | `hgvs` | `allele_id` (CA...), community-standard title |
+| `ClinGenAR_get_external_records` | Have a CA ID, need cross-references to ClinVar/dbSNP/COSMIC/gnomAD/ExAC | `allele_id` | `external_records` grouped by source database |
+| `ClinGenAR_lookup_by_external_id` | Have an rsID or ClinVar VariationID, need the CA ID (reverse of the above) | `dbsnp_rs` OR `clinvar_variation_id` (mutually exclusive) | `alleles[]` (can be >1 CA ID per external ID) |
+
+**GeneBe — automated ACMG/AMP classification**: given raw genomic
+coordinates (not HGVS), returns a full ACMG verdict with the specific
+criteria invoked (PS3/PM1/PM2/etc.), a ClinVar cross-check, and
+AlphaMissense/gnomAD context in one call — useful as a fast automated
+first-pass classification before manual ACMG review, not a replacement
+for expert curation.
+
+| Tool | When to Use | Key Parameter | Response |
+|------|------------|----------------|----------|
+| `GeneBe_classify_variant` | Classify one variant by chr/pos/ref/alt | `chr`, `pos`, `ref`, `alt`, `genome` (hg38 default) | `acmg_classification`, `acmg_criteria`, `clinvar_classification`, `alphamissense_score`, `gnomad_exomes_af` |
+| `GeneBe_classify_variants_batch` | Classify up to 1000 variants in one request | `variants[]` (each `{chr,pos,ref,alt}`), `genome` | Per-variant ACMG results, same fields as above |
+
+**APPRIS — principal transcript/isoform selection**: when a gene has
+multiple transcripts and a variant's coding consequence depends on which
+transcript is used, APPRIS tells you which isoform is functionally
+"principal" (by protein structure/conservation evidence) vs. alternative
+— useful for picking the right transcript before interpreting a coding
+HGVS description.
+
+| Tool | When to Use | Key Parameter | Response |
+|------|------------|----------------|----------|
+| `APPRIS_get_isoforms` | List all transcripts for a gene with PRINCIPAL/ALTERNATIVE tags | `gene_id` (Ensembl gene ID), `species` | `[]` per transcript with `type` (principal_isoform/alternative), tags |
+| `APPRIS_get_principal_isoform` | Get just the one principal transcript directly | `gene_id`, `species` | `transcript_id`, `ccds_id`, `length_na` |
+| `APPRIS_get_functional_annotations` | Detailed per-method evidence (firestar/spade/matador3d/corsair/etc.) behind the principal-isoform call | `gene_id`, `species`, optional `methods`, `transcript_id` | Per-method scores/annotations |
+
+**Real chained example** (TP53, using the same variant coordinate
+`NC_000017.11:g.7674220C>T` / `NM_000546.6:c.743G>A` across tools for a
+single coherent worked path, verified live):
+`Mutalyzer_normalize_variant("NM_000546.6:c.215C>G")` → corrected
+description + predicted protein effect. `LOVD_get_variants("TP53")` →
+real curated entries (e.g. LOVD DBID `TP53_010464`,
+`NM_000546.5:c.*2609C>A`). `ClinGenAR_lookup_by_external_id(clinvar_variation_id="376694")`
+→ real `allele_id="CA16040589"`, title `NM_000546.6(TP53):c.706T>A
+(p.Tyr236Asn)`, with COSMIC cross-references. `GeneBe_classify_variant(chr="17",
+pos=7674220, ref="C", alt="T", genome="hg38")` → real live result:
+`acmg_classification="Pathogenic"`, `acmg_score=22`,
+`dbsnp="rs11540652"`, `alphamissense_score=0.996`,
+`gnomad_exomes_af=6.16e-06` — cross-checks cleanly against ClinVar's own
+"Pathogenic" call on the same coordinate. `APPRIS_get_principal_isoform("ENSG00000141510")`
+→ real `ccds_id="CCDS11118.1"` principal transcript for TP53.
+
+### Linkage Disequilibrium (Ensembl)
+
+LD measures non-random co-inheritance of alleles at different loci —
+essential for GWAS interpretation (is a hit variant itself causal, or just
+correlated with the real causal variant?) and fine-mapping (which variants
+in a locus should be tested together).
+
+| Tool | When to Use | Key Parameters | Response |
+|------|------------|-----------------|----------|
+| `EnsemblLD_get_ld_variants` | Find every variant in LD with one query variant, in one population | `variant_id` (rsID), `population` (`1000GENOMES:phase_3:<POP>`), optional `r2_threshold`/`d_prime_threshold`/`limit` | `ld_variants[]` sorted by r2 descending; `truncated`/`total_ld_count` — raise `limit` if truncated |
+| `EnsemblLD_get_ld_pairwise` | Check whether two SPECIFIC variants are correlated, across every 1000 Genomes population at once | `variant1`, `variant2` (rsIDs) | `ld_by_population[]`, each with `r2`/`d_prime` — LD can differ sharply by ancestry (verified live: rs6792369/rs1042779 showed r2=1.0 in some populations, 0.84 in others) |
+| `EnsemblLD_get_ld_region` | Full pairwise LD matrix among ALL variants in a window | `region` (`chr:start..end`, GRCh38, <=1Mb), `population` | `ld_pairs[]` — this is the LD matrix input to statistical fine-mapping (SuSiE, FINEMAP) and LD-aware clumping |
+
+```
+EnsemblLD_get_ld_variants(variant_id="rs429358", population="1000GENOMES:phase_3:CEU", r2_threshold=0.5)
+#  -> real: LD partners for the APOE variant (rs429358, also used in
+#     Variant Notation Conversion and EVA above) in the CEU population
+```
+
+Live-verified response times: 2-8s for `get_ld_variants`/`get_ld_pairwise`,
+similar for small `get_ld_region` windows — no special timeout handling
+needed.
+
+### Coordinate Liftover and Protein/cDNA-to-Genomic Mapping (Ensembl)
+
+| Tool | When to Use | Key Parameters | Response |
+|------|------------|-----------------|----------|
+| `EnsemblMap_convert_coordinates` | Migrate a variant/BED interval between genome assemblies (e.g. GRCh37 -> GRCh38) | `species`, `source_assembly`, `chromosome`, `start`, `end`, `target_assembly` | `mappings[]` with `original`/`mapped` blocks, each carrying `seq_region_name`/`start`/`end`/`strand` |
+| `EnsemblMap_translate_coordinates` | Map a protein amino-acid range or transcript cDNA-position range to genomic coordinates | `ensembl_id` (ENSP* for protein, ENST* for cDNA), `start`, `end` (1-based, in that coordinate space) | `mappings[]` of genomic coordinates, one entry per exon the range spans |
+
+```
+EnsemblMap_convert_coordinates(species="human", source_assembly="GRCh37",
+    chromosome="7", start=140453136, end=140453136, target_assembly="GRCh38")
+#  -> real: BRAF V600E's GRCh37 position 7:140453136 maps to GRCh38 7:140753336
+
+EnsemblMap_translate_coordinates(ensembl_id="ENSP00000269305", start=100, end=200)
+#  -> real: TP53 protein residues 100-200 map to 3 exons at
+#     chr17:7674931-7676071 (GRCh38) — use this before designing an assay
+#     or interpreting a reported amino-acid range against the genome
+```
+
+**Live-verified timing**: `convert_coordinates` is fast (7-24s);
+`translate_coordinates` can take up to ~60s — use a generous timeout
+rather than assuming a slow response is a failure.
+
+### Ensembl ID Utilities (archive, overlap, cross-references, assembly/species metadata)
+
+Generic Ensembl-ID housekeeping tools, useful whenever a variant-analysis
+workflow needs to resolve, validate, or contextualize a gene/transcript ID
+rather than annotate a specific variant.
+
+| Tool | When to Use | Key Parameters | Response |
+|------|------------|-----------------|----------|
+| `EnsemblArchive_get_id_history` | Check whether a stable ID (ENSG\*/ENST\*/ENSP\*) is still current, and what replaced it if not | `ensembl_id` | `is_current`, `latest_version`, `current_release`, `possible_replacement[]` |
+| `EnsemblArchive_batch_lookup` | Same check for up to 50 IDs at once | `ensembl_ids` (comma-separated) | `entries[]`, one per ID |
+| `Ensembl_get_region_features` | Everything overlapping a genomic window — genes, transcripts, regulatory elements, constrained elements | `region`, `species`, `feature_types` (comma-separated: `gene,transcript,regulatory,constrained,variation,repeat,motif`) | `features[]`, `type_summary` |
+| `Ensembl_get_gene_overlapping_features` | Everything co-located with one gene (overlapping genes, transcript isoforms, regulatory features at that locus) | `gene_id`, `feature_types` | `features[]`, `type_summary` |
+| `Ensembl_get_cross_references` | Map an Ensembl ID to HGNC/EntrezGene/UniProt/OMIM/Reactome/GeneCards and other external DB records | `ensembl_id`, optional `external_db` filter | `xrefs[]` with `dbname`/`primary_id`/`display_id`, `database_summary` |
+| `Ensembl_lookup_gene_by_symbol` | Resolve a gene symbol to its Ensembl gene/transcript/protein IDs | `symbol`, `species` | `ensembl_ids[]` with `id`/`type` |
+| `Ensembl_get_assembly_info` | Genome assembly metadata for a species (assembly name/accession, karyotype, coordinate-system versions) | `species` (e.g. `homo_sapiens`) | `assembly_name`, `karyotype[]`, `coordinate_system_versions[]` |
+| `Ensembl_get_species_info` | Discover which genomes/assemblies Ensembl has available, by name/common-name/taxon-ID search | `search` (optional — omit to list all 348+ species) | `species[]` with `taxon_id`, `assembly`, `division` |
+
+**Honesty note on reliability (live-verified across repeated attempts, not
+assumed from one run):**
+- `EnsemblArchive_*`, `Ensembl_get_cross_references`, and
+  `Ensembl_get_assembly_info`/`Ensembl_get_species_info` are genuinely
+  working endpoints but **slow and occasionally transiently flaky** —
+  first attempts sometimes returned a fast `HTTP 500`/timeout that
+  succeeded cleanly on retry with a longer timeout (60-90s). Retry once
+  with a longer timeout before reporting these as broken.
+- `Ensembl_get_region_features` reproducibly fails (`HTTP 500`) when
+  `feature_types` combines multiple values (e.g. `"gene,regulatory"`) for
+  at least the TP53 region, while each feature type alone
+  (`"gene"` or `"regulatory"` separately) succeeds every time. **Workaround:
+  query one feature type per call and merge the results client-side rather
+  than trusting a combined multi-type query.**
+- `Ensembl_lookup_gene_by_symbol` is **confirmed broken upstream, not a
+  ToolUniverse bug**: it consistently returns Ensembl's website HTML error
+  page (not JSON) instead of a real response, reproduced across multiple
+  attempts and multiple symbols (TP53, BRCA1) — and independently
+  confirmed via a direct `curl` to the same `xrefs/symbol/<species>/<symbol>`
+  endpoint outside ToolUniverse entirely, which also hung/failed. Do not
+  fabricate a symbol-to-ID mapping if this tool fails — use
+  `Ensembl_get_cross_references` in the other direction (Ensembl ID ->
+  external names) if you already have an ID, or resolve the symbol via
+  another already-documented tool (e.g. `NCBIVariation_rsid_lookup`'s
+  `genes[]` field, or MyGene/UniProt lookups elsewhere in ToolUniverse)
+  instead.
+
+```
+Ensembl_get_cross_references(ensembl_id="ENSG00000141510")
+#  -> real: TP53's HGNC/EntrezGene/UniProt/OMIM/Reactome cross-references
+#     (157 xrefs across 11 databases, verified live)
+
+Ensembl_get_region_features(region="7:140424943-140524564", feature_types="gene")
+Ensembl_get_region_features(region="7:140424943-140524564", feature_types="regulatory")
+#  -> query separately and merge; the combined "gene,regulatory" form
+#     500s on this region (see reliability note above)
+```
 
 ---
 
