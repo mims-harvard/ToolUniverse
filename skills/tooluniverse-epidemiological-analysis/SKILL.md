@@ -104,6 +104,15 @@ df['outcome_binary'] = (df['outcome_continuous'] >= threshold).astype(int)
 
 **International/LMIC population health**: for a PECO question outside the US, `DHSProgram_search_indicators`/`DHSProgram_get_data` covers the same kind of national survey indicators (fertility, maternal/child mortality, nutrition, immunization, HIV) across many countries, filterable by country and survey year — the NHANES/BRFSS-style source when the population isn't the US.
 
+**EU health dataset discovery**: for a PECO question centered on Europe, `src/tooluniverse/data/euhealth_tools.json` provides ~20 topic-scoped dataset-discovery tools (`euhealthinfo_search_cancer`, `_search_deaths`, `_search_causes_of_death`, `_search_births`, `_search_infectious_diseases`, `_search_covid_19`, `_search_healthcare_expenditure`, `_search_diabetes_epidemiology_registry`, `_search_hospital_in_patient_data`, `_search_population_health_survey`, `_search_key_indicators_registries_surveys`, `_search_surveillance_mortality_rates`, `_search_surveillance`, `_search_primary_care_workforce`, `_search_obesity`, `_search_vaccination`, `_search_mental_health`, `_search_disability`, `_search_alcohol_tobacco_psychoactive_use`, `_search_cancer_registry`) plus `euhealthinfo_deepdive`. **These find WHERE relevant European datasets/registries live — dataset metadata (title, landing page, keywords, license, spatial/language coverage), not the raw statistics themselves.** They all share one parameter shape: `limit` (default 25), `country` (full name or ISO-3166 code), `language` (ISO 639-1 or full name), `term_override` (replace the tool's built-in topic seed query with your own text), `method` (`keyword`/`embedding`/`hybrid`, default `hybrid`), `alpha` (blend ratio for hybrid), `top_k`. Response shape (verified live): `{"results": [...]}` or a bare array, each hit carrying `uuid`, `title`, `landing_page`, `license`, `keywords`, `themes`, `language`, `spatial`, `snippet` — feed a hit's `uuid` (or the search topic name directly) into `euhealthinfo_deepdive({"uuids": [...]}` or `{"topic": "euhealthinfo_search_cancer", ...}`)` to resolve classified outgoing links (download pages, resource portals) per dataset.
+
+**Setup required before first use**: as of this writing, these tools return `{"warning": "EUHealth datastore not found locally (euhealth.db missing)...", "results": []}` — verified live, not a guess — until the underlying dataset index is synced locally:
+```bash
+export HF_TOKEN=YOUR_HF_TOKEN
+tu-datastore sync-hf download --repo "agenticx/tooluniverse-datastores" --collection euhealth --overwrite
+```
+Check for this warning in the response before treating an empty result as "no matching dataset exists" — an empty `results` array with the datastore warning means the tool isn't set up yet, not that nothing was found. Once synced, treat this family as Step 2's European counterpart to the NHANES/DHS discovery pattern above: find the right registry/dataset here, then move to Step 3 to actually download and parse it.
+
 **REST API data**: For sources like GDC (TCGA), ClinicalTrials.gov, or OpenTargets, paginate through the API:
 ```python
 all_records = []

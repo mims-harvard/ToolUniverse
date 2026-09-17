@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-variant-analysis
-description: VCF and variant analysis — parsing, annotation, classification (synonymous, missense, frameshift, stop_gained), VAF filtering, coding vs non-coding categorization, multi-condition variant comparison. Use for VCF parsing, variant fraction calculations (denominator = coding subset only, NOT all variants), and per-sample mutation profiling.
+description: VCF and variant analysis — parsing, annotation, classification (synonymous, missense, frameshift, stop_gained), VAF filtering, coding vs non-coding categorization, multi-condition variant comparison, and variant-notation conversion (SPDI/HGVS/VCF/rsID interconversion, ALFA per-ancestry allele frequencies). Use for VCF parsing, variant fraction calculations (denominator = coding subset only, NOT all variants), per-sample mutation profiling, and converting a variant between SPDI/HGVS/VCF-coordinate/dbSNP-rsID representations.
 disable-model-invocation: true
 ---
 
@@ -412,6 +412,44 @@ result = answer_non_reference_after_filter(
 
 **See references/annotation_guide.md for detailed tool usage examples**
 
+### Variant Notation Conversion (SPDI / HGVS / VCF / rsID)
+
+Different databases and tools expect different variant notations — NCBI's
+canonical internal form is SPDI (`SeqID:Position:Deleted:Inserted`), ClinVar
+and most clinical reports use HGVS (`NC_000019.10:g.44908684T>C`), a VCF file
+uses `CHROM POS REF ALT`, and dbSNP identifies variants by rsID. Converting
+between them (or normalizing to one canonical form for deduplication) is a
+common preprocessing step before annotation lookups elsewhere in this skill.
+
+| Tool | When to Use | Key Parameter | Response |
+|------|------------|----------------|----------|
+| `NCBIVariation_vcf_to_spdi` | Have raw VCF fields, need SPDI to enter this pipeline | `chrom` (RefSeq accession, e.g. `NC_000019.10`), `pos`, `ref`, `alt` | Normalized `spdis[]` |
+| `NCBIVariation_spdi_to_hgvs` | Have SPDI, need HGVS for a clinical report or ClinVar-style lookup | `spdi` | `hgvs` string |
+| `NCBIVariation_hgvs_to_spdi` | Have an HGVS description (g./c./r.), need SPDI or want to validate the HGVS syntax | `hgvs` | `spdis[]` (one HGVS can map to >1 SPDI across assemblies/transcripts) |
+| `NCBIVariation_spdi_canonical` | Need the single normalized/right-shifted SPDI for an indel (dedup, consistent storage) | `spdi` | One canonical `spdi` |
+| `NCBIVariation_spdi_equivalents` | Need the same variant's coordinates across GRCh37/GRCh38/RefSeqGene/transcript (liftover) | `spdi` | `equivalents[]` across coordinate systems |
+| `NCBIVariation_rsid_lookup` | Have an rsID, need genomic coordinates, gene, MANE Select transcript, and ClinVar significance in one call | `rsid` | `grch38_placements[]`, `genes[]`, `clinical_significance[]`, `mane_select_ids[]` |
+| `NCBIVariation_spdi_to_rsids` | Have a genomic SPDI, need the co-located dbSNP rsID(s) (reverse of rsid_lookup) | `spdi` | `rsids[]` |
+| `NCBIVariation_alfa_frequencies_by_rsid` | Need **per-ancestry** allele frequencies (European/African/East Asian/South Asian/Latin American/etc.), not just one global MAF | `rsid` | `positions[].studies[].populations[]`, each with `allele_counts` and `allele_frequencies` per ancestry |
+
+**Distinct from gnomAD/MyVariant frequency data above**: `gnomad_get_variant`
+and `MyVariant_query_variants` return population-level gnomAD frequencies;
+`NCBIVariation_alfa_frequencies_by_rsid` is NCBI's own ALFA aggregator and
+reports a different set of ancestry buckets (it will not always agree
+numerically with gnomAD for the same variant) — do not treat them as
+interchangeable sources for the same "population frequency" claim; state
+which source (gnomAD vs. ALFA) a reported frequency came from.
+
+**Decision guide** — start from what you have, land on what you need:
+VCF fields → SPDI (`vcf_to_spdi`) → HGVS (`spdi_to_hgvs`) or rsID
+(`spdi_to_rsids`); rsID → coordinates/gene/ClinVar (`rsid_lookup`) or
+per-ancestry frequency (`alfa_frequencies_by_rsid`); HGVS → SPDI
+(`hgvs_to_spdi`) if you need to re-enter the SPDI pipeline (equivalents,
+canonicalization, rsID lookup).
+
+**See references/variant_notation_conversion.md for the full parameter
+tables, real example calls/responses, and a worked rs429358 (APOE) chain.**
+
 ---
 
 ## Common Use Patterns
@@ -454,6 +492,7 @@ df = variants_to_dataframe(passing, sample="TUMOR")
 - **references/mutation_classification_guide.md**: Detailed mutation type classification rules
 - **references/annotation_guide.md**: ToolUniverse annotation workflows with examples
 - **references/sv_cnv_analysis.md**: Complete SV/CNV interpretation workflow
+- **references/variant_notation_conversion.md**: SPDI/HGVS/VCF/rsID conversion tools, with real example calls and responses
 
 ---
 
