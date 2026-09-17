@@ -1,0 +1,148 @@
+name: Publish MCPB bundle
+
+# Builds the Claude Desktop bundle and replaces the asset on the `mcpb` release.
+#
+# This used to be a manual step, and that is how a broken bundle reached users:
+# it was built by hand in the window between two fixes landing, so the published
+# file was a stale build that could not start at all. Nothing noticed, because
+# nothing compares the published artifact to the code.
+#
+# The gate is deliberately self-healing, for the same reason publish-pypi.yml
+# compares against PyPI rather than HEAD~1: it reads the version out of the
+# *currently published* .mcpb and rebuilds whenever that disagrees with
+# pyproject.toml. Any drift — a missed run, a hand-uploaded stale file, a failed
+# upload — is corrected by the next push to main rather than persisting until
+# someone unpacks the release asset by hand.
+#
+# Nothing is uploaded until the freshly built bundle has actually started and
+# completed an MCP handshake (mcpb/smoke_test.py). A bundle that cannot boot
+# fails the job instead of reaching the release page.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    # No paths filter, matching publish-pypi.yml: large squash-merges have been
+    # observed not to fire path-filtered workflows even when the path was in the
+    # diff. The version check below is cheap and short-circuits.
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-mcpb
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Is the published bundle behind?
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.check.outputs.should_publish }}
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compare pyproject version against the published bundle
+        id: check
+        run: |
+          set -euo pipefail
+
+          REPO_VERSION=$(python3 -c "
+          import re
+          print(re.search(r'version\s*=\s*\"([^\"]+)\"', open('pyproject.toml').read()).group(1))
+          ")
+          echo "pyproject.toml version: $REPO_VERSION"
+
+          # Read the version out of the asset that users actually download.
+          PUBLISHED=""
+          if curl -fsSL -o /tmp/published.mcpb \
+              "https://github.com/${{ github.repository }}/releases/download/mcpb/tooluniverse.mcpb" 2>/dev/null; then
+            PUBLISHED=$(python3 -c "
+          import json, zipfile
+          try:
+              print(json.loads(zipfile.ZipFile('/tmp/published.mcpb').read('manifest.json'))['version'])
+          except Exception:
+              print('')
+          ")
+          fi
+          echo "published bundle version: ${PUBLISHED:-<unavailable>}"
+
+          # Republish on any disagreement, not just "newer". A published bundle
+          # ahead of the repo is also wrong, and that is precisely the stale
+          # hand-built state this is meant to correct.
+          if [ "$REPO_VERSION" != "$PUBLISHED" ]; then
+            echo "Bundle is out of date — will rebuild and publish"
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Published bundle already matches — nothing to do"
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=$REPO_VERSION" >> "$GITHUB_OUTPUT"
+
+  publish:
+    name: Build, start it, then upload
+    needs: check
+    if: needs.check.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write # replacing the release asset
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build the bundle
+        run: bash mcpb/build.sh
+
+      # The gate that the manual process lacked. An unbootable bundle must fail
+      # the job here rather than land on the release page.
+      - name: Start it and complete an MCP handshake
+        run: python3 mcpb/smoke_test.py dist/tooluniverse.mcpb --timeout 1500
+
+      - name: Upload to the mcpb release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh release upload mcpb dist/tooluniverse.mcpb \
+            --repo "${{ github.repository }}" --clobber
+
+      - name: Verify what is now published
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Upload succeeding is not the same as the right bytes being served.
+          curl -fsSL -o /tmp/roundtrip.mcpb \
+            "https://github.com/${{ github.repository }}/releases/download/mcpb/tooluniverse.mcpb"
+          LOCAL=$(sha256sum dist/tooluniverse.mcpb | cut -d' ' -f1)
+          REMOTE=$(sha256sum /tmp/roundtrip.mcpb | cut -d' ' -f1)
+          echo "local : $LOCAL"
+          echo "remote: $REMOTE"
+          if [ "$LOCAL" != "$REMOTE" ]; then
+            echo "::error::published asset does not match the bundle just built"
+            exit 1
+          fi
+          VERSION=$(python3 -c "
+          import json, zipfile
+          print(json.loads(zipfile.ZipFile('/tmp/roundtrip.mcpb').read('manifest.json'))['version'])
+          ")
+          echo "published version: $VERSION"
+          {
+            echo "## MCPB bundle published"
+            echo
+            echo "- version: \`$VERSION\`"
+            echo "- sha256: \`$LOCAL\`"
+            echo "- started and completed an MCP handshake before upload"
+          } >> "$GITHUB_STEP_SUMMARY"
