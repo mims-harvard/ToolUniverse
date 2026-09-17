@@ -46,7 +46,7 @@ When uncertain about any scientific fact, SEARCH databases first rather than rea
 - Regression models (polynomial, spline) for dose-response or ratio data
 - Imaging software output (ImageJ, CellProfiler, QuPath)
 
-**NOT for**: Phylogenetics, RNA-seq DEG, single-cell scRNA-seq, statistics without imaging context.
+**NOT for**: Phylogenetics, RNA-seq DEG, single-cell scRNA-seq, statistics without imaging context, radiology/DICOM/CT/MRI/PET series and cohort discovery (use `tooluniverse-medical-imaging-radiology`).
 
 ---
 
