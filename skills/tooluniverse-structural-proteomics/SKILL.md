@@ -57,6 +57,9 @@ Resolution determines valid conclusions: <2A = atom positions visible; 2-3A = si
 ### Proteomics
 `ProteomeXchange_search_datasets` (query), `ProteomeXchange_get_dataset` (dataset_id)
 
+### BMRB (NMR data)
+`BMRB_search_by_keyword` (term, database="macromolecules"|"metabolomics"), `BMRB_search_by_sequence` (sequence), `BMRB_get_entries_by_pdb_id` (pdb_id), `BMRB_get_entries_by_uniprot` (uniprot_id), `BMRB_get_entry` (entry_id), `BMRB_get_entry_citation` (entry_id), `BMRB_get_validation` (entry_id), `BMRB_search_chemical_shifts` (entry_id or search filters)
+
 ---
 
 ## Workflow 1: Find All Structures for a Drug Target
@@ -70,7 +73,27 @@ Phase 4: InterPro/Pfam domain mapping → identify unresolved regions
 Phase 5: Summary table (PDB ID, method, resolution, ligands, coverage, quality)
 ```
 
-**Decisions**: Resolution <2.5A for drug design. X-ray > Cryo-EM > NMR > AlphaFold for binding sites. Holo > apo structures.
+**Decisions**: Resolution <2.5A for drug design. X-ray > Cryo-EM > NMR > AlphaFold for binding sites. Holo > apo structures. When a target's best experimental structure IS an NMR structure (common for small/disordered proteins where crystallography fails), or when dynamics/flexibility data matters more than a single static pocket geometry, pull the underlying chemical-shift/assignment data via BMRB (Workflow 4) rather than treating the PDB coordinate file as the only NMR evidence available.
+
+## Workflow 4: NMR Structural/Dynamics Data (BMRB)
+
+```
+Phase 1: Resolve target -> BMRB_search_by_keyword (protein name) or BMRB_search_by_sequence (exact sequence match)
+         or, if you already have an NMR PDB entry -> BMRB_get_entries_by_pdb_id (cross-reference to the matching BMRB entry/entries)
+         or BMRB_get_entries_by_uniprot (UniProt accession -> linked BMRB entries)
+Phase 2: BMRB_get_entry(entry_id) -> full deposition: saveframes for entry_information, assigned chemical shifts,
+         sample conditions, method. BMRB_get_entry_citation(entry_id) -> BibTeX citation for the deposition.
+Phase 3: BMRB_get_validation(entry_id) -> AVS (assigned-value-set) analysis: per-residue/per-atom chemical-shift
+         typing and assignment-quality scores -- use this before trusting a shift value, the same way
+         PDBeValidation quality scores gate trust in an X-ray/cryo-EM structure.
+Phase 4 (optional, slow): BMRB_search_chemical_shifts -> raw per-atom chemical-shift table for an entry
+         (large response, 15-20s+ for popular entries -- only pull this when the actual shift values are
+         needed, e.g. for a downstream chemical-shift-based dynamics or secondary-structure calculation).
+```
+
+**Real example** (verified live): PDB `1D3Z` (an NMR ubiquitin structure) -> `BMRB_get_entries_by_pdb_id` returns BMRB entries `11505`, `11547`, `15047`, ... (BLAST-matched by sequence, not a strict 1:1 PDB<->BMRB mapping -- expect several candidate entries and pick by title/method) -> `BMRB_get_entry("11505")` confirms title "Alternative structure of Ubiquitin" -> `BMRB_get_validation("11505")` returns the AVS chemical-shift-typing analysis for that deposition.
+
+**Tool note**: `BMRB_search_by_keyword`'s `term` parameter accepts a plain protein/molecule name (e.g. `"ubiquitin"`, `"calmodulin"`) -- not `keyword`, despite the tool name.
 
 ## Workflow 2: Identify Binding Pocket Ligands
 
@@ -108,6 +131,7 @@ Phase 8: Evidence integration
 | `Foldseek_search_structure` | `mode="3diaa"` | `mode="tmalign"` |
 | `SAbDab_search_structures` | `name` | `query` or `antigen` |
 | `RCSB_get_chemical_component` | `ligand_id` | `comp_id` |
+| `BMRB_search_by_keyword` | `keyword` | `term` |
 
 ---
 
@@ -136,3 +160,4 @@ DoGSiteScorer >0.6 = druggable; <0.4 = unlikely druggable. PISA assemblies shoul
 - AlphaFold: lacks ligand context
 - GPCRdb: Class A-F GPCRs only
 - PDBePISA: `operation` is internal, not a public parameter
+- BMRB: `BMRB_get_entries_by_pdb_id` is a BLAST-based sequence match, not a curated 1:1 PDB<->BMRB cross-reference -- a query can return several candidate entries (or none) for a real NMR PDB ID; `BMRB_search_chemical_shifts` is slow (15-20s+) for well-studied entries, only call it when raw shift values are actually needed
