@@ -147,6 +147,11 @@ Examples:
         action="store_true",
         help="Enable compact mode: only expose core tools (4 tools) to prevent context window overflow. All tools are still loaded in background for execute_tool to work.",
     )
+    parser.add_argument(
+        "--expose-agentic-prompts",
+        action="store_true",
+        help="Expose AgenticTool prompt templates as host-executed MCP prompts without requiring backend LLM credentials.",
+    )
 
     args = parser.parse_args()
 
@@ -199,6 +204,7 @@ Examples:
             hook_config=hook_config,
             hook_type=args.hook_type,
             compact_mode=args.compact_mode,
+            expose_agentic_prompts=args.expose_agentic_prompts,
         )
 
         # Run server with streamable-http transport
@@ -385,6 +391,11 @@ Examples:
         "--compact-mode",
         action="store_true",
         help="Enable compact mode: only expose core tools (4 tools) to prevent context window overflow. All tools are still loaded in background for execute_tool to work.",
+    )
+    parser.add_argument(
+        "--expose-agentic-prompts",
+        action="store_true",
+        help="Expose AgenticTool prompt templates as host-executed MCP prompts without requiring backend LLM credentials.",
     )
 
     # Hook configuration options (default disabled for stdio)
@@ -633,6 +644,7 @@ Examples:
             hook_config=hook_config,
             hook_type=hook_type,
             compact_mode=args.compact_mode,
+            expose_agentic_prompts=args.expose_agentic_prompts,
         )
 
         # Run server with stdio transport (forced)
@@ -840,6 +852,11 @@ Examples:
         action="store_true",
         help="Enable compact mode: only expose core tools (4 tools) to prevent context window overflow. All tools are still loaded in background for execute_tool to work.",
     )
+    parser.add_argument(
+        "--expose-agentic-prompts",
+        action="store_true",
+        help="Expose AgenticTool prompt templates as host-executed MCP prompts without requiring backend LLM credentials.",
+    )
 
     args = parser.parse_args()
 
@@ -1031,6 +1048,7 @@ Examples:
             hook_config=hook_config,
             hook_type=args.hook_type,
             compact_mode=args.compact_mode,
+            expose_agentic_prompts=args.expose_agentic_prompts,
         )
 
         # Run server
