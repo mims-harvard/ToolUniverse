@@ -44,6 +44,7 @@ Apply when users:
 - Bulk RNA-seq DESeq2 only -> `tooluniverse-rnaseq-deseq2`
 - Gene enrichment only -> `tooluniverse-gene-enrichment`
 - VCF/variant analysis -> `tooluniverse-variant-analysis`
+- Deep-learning integration/batch correction (scVI, scANVI, totalVI, PeakVI, MultiVI, DestVI, veloVI) -> `tooluniverse-scvi-tools`
 
 ---
 
