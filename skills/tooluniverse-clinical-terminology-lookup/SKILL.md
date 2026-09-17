@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-clinical-terminology-lookup
-description: Fast autocomplete/normalization lookups against the NLM Clinical Table Search Service — resolve a partial or informal drug name to its RxTerms display name and RxCUI, autocomplete a health condition or problem-list entry to its formal name and ICD-10-CM/ICD-9-CM codes, normalize a disease mention to a UMLS CUI, look up an HCPCS Level II billing/DME code, autocomplete a pharmacogenomic star allele (e.g. CYP2D6, CYP2C19) to its nucleotide/protein change, or find a US healthcare provider/organization by name via the NPPES NPI registry. Also covers standardized coding-system lookups: search or look up ICD-10-CM diagnosis codes directly by name or code, resolve a drug name to its full RxNorm identity (RXCUI, related brand/generic products, NDC package-level status/properties), browse NCI Thesaurus cancer-concept hierarchy and its cross-vocabulary maps to MedDRA/SNOMED/GDC, and search/resolve LOINC lab-test and clinical-form codes. Use when someone gives a free-text or informal clinical term ("high blood pressure", "metfor...", "Cleveland Clinic") and needs the standardized name/code before a downstream lookup, or explicitly asks to "autocomplete", "look up the RxCUI for", "find the ICD-10 code for", "look up this star allele", "find the NPI for", "what does ICD-10 code X mean", "look up the NDC for this drug package", "find the NCIt code for this cancer concept", "what does this cancer concept map to in MedDRA", or "find the LOINC code for this lab test".
+description: Fast autocomplete/normalization lookups against the NLM Clinical Table Search Service — resolve a partial or informal drug name to its RxTerms display name and RxCUI, autocomplete a health condition or problem-list entry to its formal name and ICD-10-CM/ICD-9-CM codes, normalize a disease mention to a UMLS CUI, look up an HCPCS Level II billing/DME code, autocomplete a pharmacogenomic star allele (e.g. CYP2D6, CYP2C19) to its nucleotide/protein change, or find a US healthcare provider/organization by name via the NPPES NPI registry. Also covers standardized coding-system lookups: search or look up ICD-10-CM diagnosis codes directly by name or code, resolve a drug name to its full RxNorm identity (RXCUI, related brand/generic products, NDC package-level status/properties), browse NCI Thesaurus cancer-concept hierarchy and its cross-vocabulary maps to MedDRA/SNOMED/GDC, and search/resolve LOINC lab-test and clinical-form codes. Also resolves UniProt's own disease and functional-keyword controlled vocabularies (DI-/KW- IDs) for protein-annotation contexts. Use when someone gives a free-text or informal clinical term ("high blood pressure", "metfor...", "Cleveland Clinic") and needs the standardized name/code before a downstream lookup, or explicitly asks to "autocomplete", "look up the RxCUI for", "find the ICD-10 code for", "look up this star allele", "find the NPI for", "what does ICD-10 code X mean", "look up the NDC for this drug package", "find the NCIt code for this cancer concept", "what does this cancer concept map to in MedDRA", or "find the LOINC code for this lab test".
 disable-model-invocation: true
 ---
 
@@ -263,6 +263,46 @@ dropdown for this observation.
 
 See `references/clinical_tables_tool_reference.md` for full parameter
 tables and real captured example responses for all 9 of these tools.
+
+## Protein-Annotation Vocabularies: UniProt Disease and Keywords
+
+Two more standardized-vocabulary tool families, from
+`src/tooluniverse/data/uniprot_ref_tools.json` — genuinely different from
+ICD-10-CM/NCIt above: these are the controlled vocabularies UniProt itself
+uses to annotate *proteins* with disease and functional-keyword tags, not
+a clinical/EHR coding system. Reach for these when the task is "which
+UniProt disease/keyword ID does this term map to" (e.g. before calling a
+UniProt-based tool elsewhere that expects a `DI-XXXXX` or `KW-XXXX` ID),
+not for clinical documentation.
+
+| Tool | Resolves | Key output |
+|---|---|---|
+| `UniProtRef_search_diseases` | disease name/symptom/gene -> UniProt disease ID(s) (`DI-XXXXX`) | `id`, `name`, `cross_references[]` (OMIM/MeSH/MedGen/SNOMED), `reviewed_protein_count` |
+| `UniProtRef_get_disease` | one `DI-XXXXX` ID -> full definition | `definition`, `alternative_names[]`, `cross_references[]`, `reviewed_protein_count`, `unreviewed_protein_count` |
+| `UniProtRef_search_keywords` | functional/biological-process term -> UniProt keyword ID(s) (`KW-XXXX`) | `id`, `name`, `category`, `reviewed_protein_count` |
+| `UniProtRef_get_keyword` | one `KW-XXXX` ID -> full definition + hierarchy | `parents[]`, `go_mappings[]` (GO term equivalents), `reviewed_protein_count`, `unreviewed_protein_count` |
+
+Real example chain (verified live): `UniProtRef_search_keywords
+{"query": "zinc finger"}` -> `KW-0863` ("Zinc-finger", category `Domain`,
+13,427 reviewed proteins) — a *different* keyword from `UniProtRef_get_keyword
+{"keyword_id": "KW-0862"}` ("Zinc", category `Ligand`, 43,994 reviewed +
+6,677,859 unreviewed proteins) — don't conflate "protein contains a
+zinc-finger domain" with "protein binds zinc," they're separate keywords
+with separate IDs despite the name overlap. Disease side: `UniProtRef_search_diseases
+{"query": "breast cancer"}` -> `DI-03803` ("Breast cancer, lobular") among
+others; `UniProtRef_get_disease {"disease_id": "DI-01559"}` -> "Breast-ovarian
+cancer, familial, 1" with OMIM/MeSH cross-references and separate
+reviewed/unreviewed protein counts.
+
+For downstream "which genes/proteins are actually linked to this disease"
+research (not just the disease-name-to-ID mapping these two tools give
+you), hand off to `tooluniverse-gene-disease-association`, which already
+curates OMIM/GenCC/Gene2Phenotype for that purpose — these UniProt tools
+only resolve the term, they don't return the associated protein list
+itself (only a count).
+
+See `references/clinical_tables_tool_reference.md` for full parameter
+tables and real captured example responses for these 4 tools.
 
 ## Workflow
 

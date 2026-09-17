@@ -60,6 +60,7 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-medical-imaging-radiology` | Radiology/DICOM cancer-imaging cohort and series discovery (TCIA) |
 | `tooluniverse-metabolomics` | Metabolomics research (metabolite ID, study analysis) |
 | `tooluniverse-metabolomics-analysis` | Metabolomics data analysis (quantification, pathway, flux) |
+| `tooluniverse-ml-inference-utility` | Generic ML/NLP/vision inference (classification, embeddings, NER, summarization) |
 | `tooluniverse-multi-omics-integration` | Multi-omics dataset integration |
 | `tooluniverse-multiomic-disease-characterization` | Multi-omics disease characterization |
 | `tooluniverse-network-pharmacology` | Compound-target-disease network analysis |

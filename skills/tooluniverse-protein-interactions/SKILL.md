@@ -65,6 +65,58 @@ Key fields returned per interaction edge:
 - `OmniPath_get_signaling_interactions` — directed, signed PPI (stimulation/inhibition)
 - `Reactome_map_uniprot_to_pathways` — map proteins to Reactome pathways (param: `uniprot_id`)
 - `ReactomeAnalysis_pathway_enrichment` — pathway enrichment for gene sets
+- SIGNOR (causal signaling, literature-backed) — see below
+
+### SIGNOR: Causal Signaling Interactions
+
+STRING/BioGRID above tell you protein A and protein B interact (physically or
+functionally) but not the *direction* or *effect*. SIGNOR fills that gap: it is
+a manually curated database where every edge is a directional causal statement
+— "A up-/down-regulates B's activity/quantity via mechanism M (phosphorylation,
+ubiquitination, transcriptional regulation, binding, ...), optionally at
+residue R" — each backed by a specific PMID. It's the same kind of directed,
+signed edge as `OmniPath_get_signaling_interactions`, but from one curated
+source with per-edge mechanism/residue/literature detail rather than an
+aggregation across many databases; use both when you need convergent support
+for a causal claim.
+
+**Tools** (all real, live-verified — `entity_id`/protein identifiers should be
+UniProt accessions, e.g. `P00533` for EGFR, not gene symbols):
+
+| Tool | Purpose | Key params |
+|------|---------|------------|
+| `SIGNOR_get_interactions` | Upstream regulators + downstream targets of one protein | `entity_id` (UniProt acc), `organism` (taxid, default 9606), `limit` |
+| `SIGNOR_list_pathways` | Browse curated signaling pathways (disease- or process-named) | `query` (optional keyword, e.g. `"apoptosis"`, `"MAPK"`) |
+| `SIGNOR_get_pathway` | All causal interactions within one curated pathway | `pathway_id` (from `list_pathways`, e.g. `"SIGNOR-EGF"`), `limit` |
+| `SIGNOR_connect_proteins` | Shortest curated causal sub-network linking 2+ proteins | `proteins` (array of UniProt accs, 2+), `level` (1=direct only, 2=one intermediate, 3=two intermediates), `limit` |
+
+Each interaction returns `source_entity`/`target_entity` (+ their UniProt
+`source_id`/`target_id`), `effect` (e.g. `"down-regulates activity"`,
+`"up-regulates quantity by expression"`), `mechanism` (e.g.
+`"phosphorylation"`, `"ubiquitination"`, `"binding"`, `"transcriptional
+regulation"` — can be an empty string when unspecified), `residue` (nullable),
+`pmid`, `direct` (bool — true = no known intermediate; SIGNOR's own
+`connect_proteins` output can mix `direct: true` and `direct: false` edges in
+one path, so check this field per-edge rather than assuming the whole path is
+direct), and a confidence-adjacent `score`.
+
+**Workflow — trace a causal path between two proteins:**
+```
+SIGNOR_connect_proteins(proteins=["P00533", "P28482"], level=2)  # EGFR -> ERK2(MAPK1)
+```
+returns the curated sub-network connecting them (verified live: real edges
+include EGFR's own upstream regulators like ERRFI1 and PRKG2, and
+transcriptional links such as JAK2->MYC and LCK->STAT3 that co-occur in the
+2-hop neighborhood — `connect_proteins` returns the local causal graph around
+the requested proteins, not only a single shortest path, so filter for edges
+that actually chain from source to target if you need one specific route).
+
+**Workflow — browse a disease/process pathway then inspect one protein's role in it:**
+```
+SIGNOR_list_pathways(query="cancer")          # -> pathway_id, e.g. "SIGNOR-EGF" (EGFR Signaling)
+SIGNOR_get_pathway(pathway_id="SIGNOR-EGF")   # -> all curated edges in that pathway (metadata.total_interactions gives the true count if limit truncates)
+SIGNOR_get_interactions(entity_id="P00533")   # -> zoom into EGFR specifically: e.g. real edges show VCB-Cul2 ubiquitinating/destabilizing EGFR (PMID:15590694) and EGFR phosphorylating IKBKE (PMID:27287717)
+```
 
 **Druggability & Clinical Context:**
 - `DGIdb_get_drug_gene_interactions` — drug interactions for hub proteins (param: `genes` as array)

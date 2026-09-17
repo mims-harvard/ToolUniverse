@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-gene-enrichment
-description: Gene-set enrichment analysis — GO (Biological Process, Molecular Function, Cellular Component), KEGG, Reactome pathway enrichment via clusterProfiler, gseapy, ORA, GSEA. Use for interpreting DEG lists, screen hit lists, or any gene-list-to-pathways query. Includes simplify-cutoff handling and union-vs-total denominator conventions for percent-DE questions.
+description: Gene-set enrichment analysis — GO (Biological Process, Molecular Function, Cellular Component), KEGG, Reactome pathway enrichment via clusterProfiler, gseapy, ORA, GSEA, plus g:Profiler for enrichment/ID conversion/ortholog mapping/SNP-to-gene annotation. Use for interpreting DEG lists, screen hit lists, or any gene-list-to-pathways query. Includes simplify-cutoff handling and union-vs-total denominator conventions for percent-DE questions.
 disable-model-invocation: true
 ---
 
@@ -252,10 +252,20 @@ Cross-Validation (REQUIRED for publication):
   │  - Filter by category: Process, Function, Component, KEGG, Reactome
   │  - Network-based enrichment
   │
-  └─ ReactomeAnalysis_pathway_enrichment [T1 - curated]
+  ├─ ReactomeAnalysis_pathway_enrichment [T1 - curated]
      - Reactome curated pathways
      - Cross-species projection
      - Detailed pathway hierarchy
+  │
+  └─ gProfiler_enrichment [T2 - validated]
+     - GO BP/MF/CC, KEGG, Reactome (REAC), WikiPathways (WP), Human Phenotype (HP),
+       CORUM, TF, miRNA — sources param, comma-separated
+     - g:SCS multiple-testing correction (different algorithm from gseapy's BH on
+       Enrichr's Fisher-exact; expect similar but not identical adjusted p-values)
+     - Broadest organism support of the four (any g:Profiler-supported species,
+       not just human/mouse) — useful when gseapy's organism coverage is thin
+     - Real result verified live: TP53,BRCA1,EGFR,KRAS -> KEGG:05224 "Breast
+       cancer" p=4.3e-6 as the top KEGG term (4/4 query genes, term_size=148)
 
 Additional Context (Optional):
   ├─ GO_get_term_by_id, QuickGO_get_term_detail (GO term details)
@@ -391,6 +401,13 @@ Use: When working with non-human organisms
 |------|-------|--------|
 | `MyGene_batch_query` | gene_ids, fields | Symbol, Entrez, Ensembl mappings |
 | `STRING_map_identifiers` | protein_ids, species | Preferred names, STRING IDs |
+| `gProfiler_convert_ids` | gene_list (comma-sep), target_namespace, organism | Cross-namespace conversion (ENSG/ENST/ENSP/UNIPROTSWISSPROT/ENTREZGENE_ACC/WIKIGENE_ACC/REFSEQ_*) — useful when the target namespace isn't one `MyGene_batch_query`'s `fields` list covers directly |
+
+### Cross-Species and Variant-to-Gene Tools (g:Profiler)
+| Tool | Input | Output | Notes |
+|------|-------|--------|-------|
+| `gProfiler_find_orthologs` | gene_list, source_organism, target_organism | Ortholog gene name + Ensembl ID per input gene | Verified live: human->mouse resolves reliably (BRCA1->Brca1/ENSMUSG00000017146, TP53->Trp53/ENSMUSG00000059552); a more distant pair (human->zebrafish) returned `"name": "N/A"` for BRCA1 — report an `N/A` entry as "no confident ortholog found for this species pair," not as a tool error |
+| `gProfiler_annotate_snps` | snp_list (comma-sep rsIDs, ~200 max), organism | Genomic coordinates, mapped gene(s), variant consequence | Feeds a GWAS/variant hit list into gene-level enrichment (map SNPs -> genes -> `gProfiler_enrichment` or `gseapy`); verified live: rs429358 -> APOE (chr19:44908684, missense_variant), consistent with this rsID's known coordinates used elsewhere in ToolUniverse (`tooluniverse-variant-analysis`) |
 
 **See**: references/tool_parameters.md for complete parameter documentation
 

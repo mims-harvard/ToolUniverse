@@ -147,3 +147,33 @@ Present as a **Sequence Profile Report**. Hide search process. Include:
 **NCBI_search_nucleotide**: `operation`="search", `organism` (scientific name), `gene` (symbol), `strain`, `keywords`, `seq_type` (complete_genome/mrna/refseq), `limit`
 
 **NCBI_get_sequence**: `operation`="fetch_sequence", `accession`, `format` (fasta/genbank)
+
+---
+
+## Whole-Organism Reference Proteomes (UniProt)
+
+A different granularity from Phases 1-3 above: `src/tooluniverse/data/uniprot_ref_tools.json`'s
+`UniProtRef_search_proteomes`/`UniProtRef_get_proteome` (no API key
+required) return organism-LEVEL proteome metadata — total protein count,
+chromosome/component breakdown, genome accession — not one sequence.
+Reach for these when the question is "what is species X's reference
+proteome and how big is it" (e.g. before a proteome-wide analysis, or to
+find the right genome-assembly accession to hand to Phase 2 above), not
+for fetching an individual gene/transcript sequence.
+
+| Tool | Resolves | Key output |
+|---|---|---|
+| `UniProtRef_search_proteomes` | organism name/taxon ID -> matching proteome ID(s) | `id` (`UPXXXXXXXXX`), `organism`, `taxon_id`, `proteome_type` (Reference/Non Reference), `protein_count` |
+| `UniProtRef_get_proteome` | one proteome ID -> full organism/assembly detail | `organism.scientific_name`/`taxon_id`, `components[]` (`name`, `protein_count`, `genome_accession`), `total_protein_count` |
+
+Real example chain (verified live): `UniProtRef_search_proteomes {"query":
+"SARS-CoV-2"}` -> 3 results, including `UP000464024` (`proteome_type:
+"Reference proteome"`, 17 proteins) alongside two `"Non Reference
+proteome"` entries for the same organism (5 and 10 proteins) — always
+check `proteome_type` and prefer `"Reference proteome"` rather than
+assuming the first hit is canonical. Feeding `UP000464024` into
+`UniProtRef_get_proteome` confirms `components: [{"name": "Segment",
+"protein_count": 17, "genome_accession": "MN908947"}]` (the real SARS-CoV-2
+reference genome accession) and `total_protein_count: 17`. For human
+(`UP000005640`) and E. coli K-12 (`UP000000625`), `get_proteome` returns
+per-chromosome/plasmid component breakdowns the same way.
