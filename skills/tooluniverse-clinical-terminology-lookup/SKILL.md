@@ -377,6 +377,97 @@ for phenotype-driven differential diagnosis — these three ontology tools
 only resolve the disease's *identity and cross-references*, not a curated
 association strength or clinical actionability score.
 
+## Cross-Ontology Search, Text Annotation, and Specialized Terminologies
+
+Four more tool families, genuinely different from everything above: a
+900+-ontology meta-search with free-text annotation (BioPortal), the
+HL7 interoperability-standard terminology server (FHIR Terminology,
+notably the only ToolUniverse path to proper SNOMED CT code-based lookup
+and hierarchy expansion), a cancer-specific drug dictionary distinct from
+NCIt/RxNorm, and NCI's *other* specialty terminologies (explicitly not
+NCIt, which stays with `NCIThesaurus_*` above).
+
+### BioPortal (`src/tooluniverse/data/bioportal_tools.json`)
+
+| Tool | Resolves | Key output |
+|---|---|---|
+| `BioPortal_search_ontology_terms` | free-text term (optionally scoped to specific ontologies) -> matching concepts across 900+ ontologies at once | `label`, `id`, `full_id` (IRI), ontology-specific |
+| `BioPortal_get_concept` | ontology acronym + full concept IRI -> full definition/synonyms | `label`, `synonyms[]`, definition |
+| `BioPortal_annotate_text` | free text (clinical note, abstract) -> every biomedical concept mention found in it | `matched_text`, `from`/`to` (char offsets), `match_type` (`PREF`/`SYN`), `concept_label`, `concept_id` |
+| `BioPortal_get_hierarchy` | ontology + concept IRI -> children/parents/ancestors | list of `{label, id, full_id}` |
+
+**`BioPortal_annotate_text` is the standout capability here** — nothing
+else in this skill extracts concept mentions from unstructured text.
+Verified live on a real clinical sentence: `{"text": "Patient presents
+with hypertension and type 2 diabetes mellitus, prescribed metformin.",
+"ontologies": "DOID,RXNORM"}` correctly found `DOID_10763`
+("hypertension"), `DOID_9352`, and — cross-validating the RxNorm section
+above — `RXNORM 6809` for metformin, **the exact same RXCUI**
+`RxNorm_find_rxcui` returns for the same drug name. Use this when the
+input is a full sentence/note rather than a single term (route a single
+term to the more specific tool already documented for it instead — e.g.
+`RxTerms_search_drugs` for a bare drug name, not BioPortal).
+`BioPortal_get_concept`/`get_hierarchy` need the concept's full IRI (from
+a prior search result), not a bare ID.
+
+### FHIR Terminology Service (`src/tooluniverse/data/fhir_terminology_tools.json`)
+
+| Tool | Resolves | Auth |
+|---|---|---|
+| `FHIRTerminology_lookup_code` | code + system -> display name/synonyms | none |
+| `FHIRTerminology_expand_valueset` | FHIR value-set URL -> member codes | none |
+
+**This is ToolUniverse's only proper SNOMED CT code-based lookup and
+hierarchy tool.** Verified live: `{"system": "snomed", "code":
+"22298006"}` -> `"Myocardial infarction"`. The standout use is
+subsumption expansion: `{"value_set_url":
+"http://snomed.info/sct?fhir_vs=isa/22298006"}` returns every clinical
+subtype (verified live: "Old myocardial infarction", "Acute myocardial
+infarction of posterolateral wall", etc.) — a full is-a hierarchy walk
+nothing else here provides. LOINC/RxNorm/ICD-10-CM codes are also
+accepted by `lookup_code` but the dedicated tools already documented
+above (LOINC/RxNorm/ICD-10-CM sections) are richer for those three —
+reach for this tool specifically for SNOMED CT.
+
+### NCI Drug Dictionary (`src/tooluniverse/data/nci_drugdict_tools.json`)
+
+| Tool | Resolves | Key output |
+|---|---|---|
+| `NCIDrugDict_search` | cancer drug/agent name (brand, code name, or chemical name) -> matching entries | `aliases[]` (typed: `CodeName`/`Synonym`/`USBrandName`/...), `termId` |
+| `NCIDrugDict_get_drug` | term ID -> full detail | `nciConceptId`, all alias types incl. CAS/NSC numbers |
+
+Verified live: `{"query": "pembrolizumab", "matchType": "Contains"}`
+returns entries including the `USBrandName` alias "Keytruda"; feeding a
+real `termId` into `NCIDrugDict_get_drug` returns the full alias set
+(code names, synonyms, brand names). Distinct from `NCIThesaurus_*`
+(broader — covers non-drug concepts too, and doesn't expose CAS/NSC
+numbers) and `RxNorm_*` (RxNorm is the general US drug-identity
+standard; NCI Drug Dictionary is specifically oncology-trial/NCI-curated
+with cancer-drug-specific alias types like NSC numbers).
+
+### NCI EVS — Non-NCIt Terminologies (`src/tooluniverse/data/nci_evs_tools.json`)
+
+| Tool | Resolves | Auth |
+|---|---|---|
+| `NCIEVS_search_terminology` | term + terminology code -> matching concepts | none |
+| `NCIEVS_get_concept` | terminology + code -> full detail | none |
+
+**Explicitly NOT for NCIt** — the tool's own description says to use
+`NCIThesaurus_search` for that; this family covers everything else NCI
+EVS hosts: `ctcae5`/`ctcae6` (adverse-event grading, the clinical-trial
+safety standard), `icd9cm` (legacy US diagnosis codes), `radlex`
+(radiology), `ndfrt`/`medrt` (drug reference terminology), `canmed`.
+MedDRA is licensed and not queryable here. Verified live:
+`{"terminology": "ctcae5", "term": "neutropenia"}` -> `C143481` ("Febrile
+neutropenia"); `{"terminology": "icd9cm", "term": "diabetes"}` -> real
+legacy codes (`250` "Diabetes mellitus", `250.3` "Diabetes with other
+coma"). Reach for `icd9cm` here specifically when working with legacy
+records predating ICD-10-CM (the `ICD10_*` tools above only cover the
+current standard).
+
+See `references/clinical_tables_tool_reference.md` for full parameter
+tables and real captured example responses for all 10 of these tools.
+
 ## Workflow
 
 1. Identify which of the six normalization needs applies.

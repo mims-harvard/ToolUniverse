@@ -135,6 +135,50 @@ result = count_cells_in_image(image_path="cells.tif", channel=0, min_area=50)
 Segmentation: Nuclei → Otsu+watershed; Colonies → Otsu; Phase contrast → adaptive threshold.
 See **references/segmentation.md**, **references/cell_counting.md**, **references/image_processing.md**.
 
+### Deep-learning segmentation (Cellpose) as an alternative to classical CV
+
+`Cellpose_segment_image` runs the Cellpose deep-learning model locally on a real
+image file (`.tif`/`.tiff`/`.png`/`.jpg`/`.jpeg`/`.bmp`) and returns per-object
+area/centroid plus an optional label-mask image -- reach for it when
+Otsu/watershed under- or over-segments touching cells or irregular shapes that
+classical thresholding handles poorly. `model_type="cyto3"` (default) segments
+whole cells/cytoplasm; `model_type="nuclei"` segments nuclei. Requires the
+optional `cellpose` package (`pip install cellpose`, pulls in `torch`) -- if
+missing, the tool returns a clean `"cellpose package is not available"` error
+(verified live in this environment, no crash) rather than a traceback; the
+first real call also downloads and caches model weights (small for cellpose
+3.x, ~1 GB for the unified 4.x CPSAM model), so expect a slow first run.
+
+### Public Cell Painting screen data (Image Data Resource)
+
+For image-based phenotypic screening questions ("what Cell Painting screens
+exist for compound X", "how many plates/wells in screen Y"), use the
+`CellPainting_*` tools against the Image Data Resource (IDR) rather than
+assuming a screen exists:
+- `CellPainting_search_screens(query=...)` -- list/filter available screens.
+  **Verified live: an empty query returns only 26 screens, and none are named
+  literally "JUMP"** despite the tool's own description citing JUMP-CP as an
+  example dataset -- do not assume a screen exists by name; always list first
+  (`{}`) and grep the real screen-name list, or try substrings like a PI name
+  (e.g. "wawer", "dahlin") instead of a project acronym.
+- `CellPainting_get_screen_plates(screen_id=...)` -- plates in a screen (get
+  `screen_id` from the search step, e.g. `idr0016-wawer-bioactivecompoundprofiling/screenA`).
+- `CellPainting_get_well_data(plate_id=..., limit=...)` -- well-level metadata
+  and image links for a plate (get `plate_id` from the plates step).
+
+### Fluorescent protein reference (FPbase)
+
+For experiment-design questions about which fluorophore to use:
+- `FPbase_get_protein(slug=...)` -- full spectral/biophysical data (excitation/
+  emission max, extinction coefficient, quantum yield, brightness, maturation
+  time, PDB/UniProt IDs) for a named protein by its lowercase slug (e.g.
+  `"egfp"`, `"mcherry"`, `"tdtomato"`).
+- `FPbase_search_by_spectrum(agg_exc_max__gte/__lte, agg_em_max__gte/__lte, name__icontains)`
+  -- filter FPbase's 1000+ proteins by excitation/emission wavelength range,
+  e.g. to find green-emitting options (`agg_em_max__gte=490, agg_em_max__lte=530`)
+  for a multiplexed panel or FRET pair design. All filters are optional and
+  combine as AND.
+
 ---
 
 ## R-to-Python Equivalents

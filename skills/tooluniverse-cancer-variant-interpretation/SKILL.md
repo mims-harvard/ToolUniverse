@@ -224,6 +224,16 @@ Genome Nexus's `is_hotspot` (above) answers "is this exact *variant* recurrent?"
 
 **Combined workflow**: given gene + cancer type, call `IntOGen_get_drivers(cancer_type=...)` and check whether the gene appears in `driver_genes[]` — if yes, it's a statistically established driver in this exact cancer type (report `mutations`/`samples`/`cohorts` as supporting evidence). For the inverse question ("which cancer types is this gene a driver in overall?"), use `IntOGen_get_gene_info(gene=...)` instead, which also reports which of the 7 detection `methods` flagged it per cancer type — a gene flagged by multiple independent methods is stronger evidence than one flagged by a single method. **Operational note**: the IntOGen backend is occasionally slow and can time out (~45s) on a cold request — retry once before reporting "no data found."
 
+### Somatic Classification Tiers (CancerVar)
+
+Everything above (Genome Nexus, IntOGen, CIViC, cBioPortal) is evidence you assemble and weigh yourself. `CancerVar_classify_variant` instead runs the full AMP/ASCO/CAP 2017 rubric server-side and returns a ready-made Tier I-IV verdict — use it as a fast, automatable cross-check on your own manual assessment, not as a replacement for citing the underlying evidence above in a report.
+
+| Tool | Key Parameters | Response Key Fields |
+|------|---------------|-------------------|
+| `CancerVar_classify_variant` | `chrom`, `pos`, `ref`, `alt` (GRCh37/hg19 by default; pass `build="hg38"` for GRCh38), all REQUIRED | `data.tier` (`Tier_I_strong`\|`Tier_II_potential`\|`Tier_III_unknown`\|`Tier_IV_benign`), `data.opai` (Oncogenicity Pathogenicity Index, 0-1), `data.cbp_criteria` (12 named evidence scores, e.g. hotspot-database membership, FDA-approved-therapy association, population rarity) |
+
+Verified live on BRAF V600E (`chrom="7", pos=140453136, ref="A", alt="T", build="hg19"`): `tier="Tier_I_strong"`, `opai=0.99` — matches the FDA-approved-therapy-association tier this variant is known for, and matches the tool's own documented worked example exactly (unlike InterVar below, this example was accurate). Tier I requires CBP_1 or CBP_2 (FDA-approved association) to be active; Tier II is investigational/preclinical evidence without regulatory approval; Tier III is a true VUS-equivalent; Tier IV is benign. Report the tier alongside which specific `cbp_criteria` were active, the same way you'd cite ACMG criteria for a germline call — a bare tier number without its supporting criteria is not an audit-ready answer.
+
 ---
 
 ## Fallback Strategy

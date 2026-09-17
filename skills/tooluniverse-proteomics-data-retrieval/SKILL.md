@@ -55,6 +55,24 @@ Dataset quality depends on instrument, sample preparation, and quantification me
 | **ProteomeXchange** | Aggregates PRIDE, MassIVE, PeptideAtlas, jPOST, iProX | Broadest coverage, standardized PXD accessions |
 | **PDC (NCI Proteomics Data Commons)** | 250+ cancer proteomics studies (CPTAC, ICPC, APOLLO, CBTN, etc.) | Curated disease/site/analytical-fraction metadata, per-gene spectral-count coverage, clinical case linkage, and direct access to the quantitative abundance matrix (not just file listings) |
 | **PRIDE Archive** | EBI's proteomics repository -- one of the submission repositories ProteomeXchange aggregates | Full-text keyword search directly against title/description/species/tissue/disease (ProteomeXchange's own search is accession/keyword-only with thinner hits); the only one of these four with real FTP/Aspera **file download URLs**, not just metadata; a reverse protein->project lookup no other tool here provides |
+| **PeptideAtlas** | ISB's peptide-level observation atlas -- another ProteomeXchange-aggregated repository, but answers a different question than the dataset-level tools above | The canonical record of which tryptic peptides of a protein have actually been OBSERVED by mass spec, and how often -- not which datasets exist |
+
+## PeptideAtlas: Peptide-Level Observation Evidence
+
+Unlike the dataset-discovery tools above (which answer "what studies exist"),
+`PeptideAtlas_get_observed_peptides` answers "for this specific protein, which
+peptides have actually been detected, and with what confidence" -- a direct
+protein-level query, not a dataset search. Constrain by `biosequence_name` (a
+UniProt accession, e.g. `P02768` for serum albumin) to get that protein's
+peptides, or omit it with a small `row_limit` to sample the whole build (the
+default build indexes millions of peptides). Each result gives
+`peptide_sequence`, `n_observations` (spectral count across the whole atlas),
+`n_samples`, `best_probability` (PeptideProphet), and
+`empirical_proteotypic_score` (how uniquely this peptide identifies the
+protein, vs. one shared across a protein family) -- live-verified against real
+UniProt accessions. Use this to check whether a specific tryptic peptide is
+actually detectable before designing a targeted-MS (SRM/PRM) assay around it,
+or to gauge how well-characterized a protein is by MS overall.
 
 ## Cancer Proteomics via PDC
 

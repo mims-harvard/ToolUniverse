@@ -413,6 +413,29 @@ Use: When working with non-human organisms
 
 ---
 
+## Sample-Level and Alternative Scoring Methods
+
+The tools above all answer "which pathways are enriched in this ONE gene list / ranking". The six pure-compute tools below answer different questions — read the input each one actually expects before reaching for it, since they are not interchangeable despite all being "enrichment-adjacent":
+
+| Tool | Input | Output | Answers |
+|------|-------|--------|---------|
+| `GSEA_prerank` | ONE ranked `{gene: score}` list + gene set(s) | ES, NES, permutation p-value, leading-edge genes per set | Same question as gseapy.prerank (is a set enriched at the top/bottom of this ranking), but pure-Python — no R, no bundled MSigDB, so you supply the gene sets yourself |
+| `GSVA_score` | An expression **matrix** (genes x **samples**) + gene set(s) | One **signed** score per (gene set, sample) | Per-sample pathway activity — "is this pathway up in sample 3 relative to the cohort", not "is this pathway enriched overall" |
+| `ssGSEA_score` | Same matrix input as GSVA | One **unbounded-magnitude** score per (gene set, sample) | Same per-sample question as GSVA, different math — verified live on identical input: GSVA gave a bounded, centered score (`0.5` tumor / `-1.0` normal) while ssGSEA gave a much larger-magnitude score for the same set (`6.03` tumor / `-5.86` normal). Don't compare GSVA and ssGSEA scores directly to each other — pick one method and stay with it across an analysis |
+| `Activity_infer_ulm` | Per-gene statistic + a **regulatory network** (`[{source, target, weight}]`, e.g. a DoRothEA/PROGENy edge list) | Per-source (TF/pathway) activity t-value + p-value | TF/pathway activity inference — needs a network as a required input, not just a gene set; get one from `OmniPath_get_dorothea_regulon` if you don't have one |
+| `Coexpression_modules` | An expression matrix only (no gene sets) | Discovered gene modules + each module's eigengene (1st-PC summary profile) | Which genes move together across samples — a WGCNA-style *discovery* tool, not a test against a known pathway |
+| `DeepGO_predict_function` | A single protein **sequence** (not a gene list at all) | Predicted GO terms (BP/MF/CC) with confidence scores, per protein | Function prediction for one uncharacterized/novel sequence — use when you have a sequence and no annotation yet, not when you already have a gene list to test |
+
+All six are pure-compute (no external API, no R) and verified live:
+- `GSEA_prerank`: TOP_SET (top-ranked genes) -> ES=1.0, NES=1.77, p=0.002; BOTTOM_SET -> ES=-1.0, NES=-1.93, p=0.004 — signs and magnitudes behave as expected for a clean synthetic separation.
+- `Activity_infer_ulm`: TF_A (targets among top-ranked genes) -> activity=+5.17, p=2.4e-7; TF_B (targets among bottom-ranked genes) -> activity=-5.56, p=2.7e-8.
+- `Coexpression_modules`: a synthetic 8-gene/6-sample matrix with two obvious correlation blocks -> correctly recovered exactly 2 modules of 4 genes each, zero unassigned.
+- `DeepGO_predict_function`: a 92-aa test sequence -> real GO term predictions (e.g. `GO:0005737` "cytoplasm", score 0.80; `GO:0005515` "protein binding", score 0.73) — confidence scores, not p-values; `threshold` (default 0.3) sets the minimum score to report.
+
+**See**: references/tool_parameters.md for full parameter documentation of these six tools.
+
+---
+
 ## Detailed Documentation
 
 All detailed examples, code blocks, and advanced topics have been moved to `references/`:

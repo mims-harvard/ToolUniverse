@@ -102,6 +102,8 @@ Resolve target to ALL identifiers before any analysis.
 
 **Output**: Table of verified identifiers (Gene Symbol, Ensembl, UniProt, Entrez, ChEMBL, HGNC) plus protein function and target class.
 
+**Optional fast cross-database search**: `TargetMine_search(q=<gene>, facet_Category="Gene")` / `TargetMine_search_genes(q=<gene>)` queries one InterMine warehouse that already integrates UniProt, PDB, ChEMBL, Reactome, KEGG, DrugBank, TTD, and clinical-trials data — useful as a quick single-call sanity check that a gene/target resolves consistently across sources before running the full per-database Phase 0-1 sequence, not a replacement for it (verified live: `TargetMine_search(q="EGFR", facet_Category="Gene")` returns real hits with organism/category facets in ~0.3s).
+
 ### Phase 1: Disease Association (0-30 pts)
 
 Quantify target-disease association from genetic, literature, and pathway evidence.
