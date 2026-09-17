@@ -124,14 +124,29 @@ jobs:
         run: |
           set -euo pipefail
           # Upload succeeding is not the same as the right bytes being served.
-          curl -fsSL -o /tmp/roundtrip.mcpb \
-            "https://github.com/${{ github.repository }}/releases/download/mcpb/tooluniverse.mcpb"
+          #
+          # Release assets are served through a CDN, so for a short window
+          # after --clobber the download URL can still return the previous
+          # bytes. A single check would then fail a publish that actually
+          # worked -- and a red publish job invites exactly the manual
+          # re-upload this workflow exists to remove. Retry before believing
+          # a mismatch.
           LOCAL=$(sha256sum dist/tooluniverse.mcpb | cut -d' ' -f1)
-          REMOTE=$(sha256sum /tmp/roundtrip.mcpb | cut -d' ' -f1)
           echo "local : $LOCAL"
-          echo "remote: $REMOTE"
+          URL="https://github.com/${{ github.repository }}/releases/download/mcpb/tooluniverse.mcpb"
+          REMOTE=""
+          for attempt in 1 2 3 4 5 6; do
+            if curl -fsSL --retry 2 -o /tmp/roundtrip.mcpb "$URL"; then
+              REMOTE=$(sha256sum /tmp/roundtrip.mcpb | cut -d' ' -f1)
+              echo "remote (attempt $attempt): $REMOTE"
+              [ "$LOCAL" = "$REMOTE" ] && break
+            else
+              echo "remote (attempt $attempt): download failed"
+            fi
+            sleep $((attempt * 10))
+          done
           if [ "$LOCAL" != "$REMOTE" ]; then
-            echo "::error::published asset does not match the bundle just built"
+            echo "::error::published asset still does not match the bundle built here after retries (local=$LOCAL remote=${REMOTE:-<none>})"
             exit 1
           fi
           VERSION=$(python3 -c "
