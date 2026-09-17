@@ -1,0 +1,75 @@
+name: MCPB bundle smoke test
+
+# Builds the Claude Desktop bundle and actually starts it.
+#
+# Everything else that guards this bundle reads files in the repo:
+# tests/unit/test_mcpb_bundle.py checks the manifest, build.sh checks version
+# drift and runs the MCPB schema validator. None of them launch the artifact we
+# publish. A bundle that could not boot at all therefore reached the release
+# page: its launcher told uv to skip installing the bundle's dependencies, so
+# the server died on its first third-party import. Manifest valid, versions
+# matched, unit tests green.
+#
+# This job unpacks the built .mcpb and launches it with the command recorded in
+# the manifest, then completes an MCP initialize handshake. A launcher change
+# that breaks startup breaks this too.
+#
+# It is slow -- the first launch resolves and installs the bundle's whole
+# dependency set -- so it runs on changes that can affect the bundle rather
+# than on every push.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "mcpb/**"
+      - "src/tooluniverse/**"
+      - "pyproject.toml"
+      - ".github/workflows/mcpb-smoke.yml"
+  pull_request:
+    paths:
+      - "mcpb/**"
+      - "src/tooluniverse/**"
+      - "pyproject.toml"
+      - ".github/workflows/mcpb-smoke.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mcpb-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: Build the bundle and start it
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build the bundle
+        run: bash mcpb/build.sh
+
+      - name: Start it and complete an MCP handshake
+        run: python3 mcpb/smoke_test.py dist/tooluniverse.mcpb --timeout 1500
+
+      - name: Upload the bundle for inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tooluniverse-mcpb
+          path: dist/tooluniverse.mcpb
+          retention-days: 14
+          if-no-files-found: warn
