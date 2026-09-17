@@ -251,6 +251,27 @@ Hand off downstream interpretation to the matching skill:
 DE analysis on the resulting count matrix -> `tooluniverse-rnaseq-deseq2`;
 VCF interpretation -> `tooluniverse-variant-analysis`.
 
+### Optional: benchmark a sarek run against Genome in a Bottle (GIAB)
+
+If the sarek run used one of NIST's GIAB reference samples (HG001-HG007) rather
+than a real patient sample, you can validate the pipeline's own accuracy by
+comparing its output VCF against the matching GIAB high-confidence truth set —
+useful when standing up a new pipeline/config and you need to know its
+precision/recall before trusting it on real data.
+
+```
+GIAB_list_directory(path="")                                            # top-level trios/samples
+GIAB_list_directory(path="AshkenazimTrio/HG002_NA24385_son/NISTv4.2.1/GRCh38")
+```
+
+This tool only browses NIST's file tree and returns download URLs for the
+benchmark VCF/BED files (there is no comparison logic here) — actually
+diffing your pipeline's VCF against the truth set requires an external tool
+such as `hap.py` or `vcfeval`, run outside ToolUniverse. Verified live:
+`path=""` lists the trio/sample directories (e.g. `AshkenazimTrio`), and a
+full release path (e.g. the HG002 example above) lists that release's actual
+VCF/BED files with direct URLs.
+
 ---
 
 ## References

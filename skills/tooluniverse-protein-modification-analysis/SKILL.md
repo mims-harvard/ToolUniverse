@@ -104,6 +104,19 @@ Phase 5: Synthesis & Report
 
 All 3 return multiple UniProt entries per query (isoforms, paralogs sharing the position) — always check `total_entries`/`total_variants` and report which specific entry/isoform a finding came from, don't assume the first entry is the canonical one.
 
+**Single-category shortcuts (verified identical data to `EBIProteins_get_features`):** `EBIProteins_get_domains_sites`, `EBIProteins_get_molecule_processing`, and `EBIProteins_get_structural_features` each take a plain `accession` and return exactly the same feature list as `EBIProteins_get_features(accession, category="DOMAINS_AND_SITES"|"MOLECULE_PROCESSING"|"STRUCTURAL")` respectively — confirmed live on P04637, byte-for-byte the same 31 `DOMAINS_AND_SITES` features (minor field-naming difference only: the dedicated tool flattens `evidences[].source`/`.id`, the generic one nests `source_name`/`source_id`). Use the dedicated tool when you already know which single category you want (one fewer parameter); use `EBIProteins_get_features` when browsing multiple categories in a loop. `EBIProteins_get_molecule_processing` is the one to reach for on precursor proteins that get cleaved into a mature form — e.g. P01308 (insulin) returns signal peptide (1-24), B chain (25-54), C peptide (57-87), A chain (90-110).
+
+**Protein-to-genome coordinate mapping (two tools, more detail than the existing `EBIProteins_get_coordinates` summary above):**
+
+| Tool | Direction | Returns |
+|------|-----------|---------|
+| `EBIProteins_get_coordinate_mapping` | protein → genome | Per-*exon* residue-to-genomic-coordinate mapping across all transcript isoforms (chromosome, strand, exon boundaries) — exon-level detail that `EBIProteins_get_coordinates` (chromosome/strand/exon *count* only) doesn't give you |
+| `EBIProteins_get_proteins_by_genomic_loc` | genome → protein | Reverse lookup: given `taxonomy` + `location` (`"17:7676154"`, 1-based) or `chromosome`+`position`, every UniProt protein whose coding sequence overlaps that position, with the exact affected residue |
+
+Real example (verified live): `EBIProteins_get_coordinate_mapping(accession="P04637")` → TP53 maps to 6 transcripts on chromosome 17 (reverse strand), 10 exons, positions 7669612-7676594. The reverse direction confirms it: `EBIProteins_get_proteins_by_genomic_loc(taxonomy="9606", location="17:7676154")` → TP53 (P04637) at protein residue 72 (Pro) on transcript ENST00000923569 — use this when you have a chromosomal variant position and need to know which protein(s)/residue it hits, before running any PTM/functional analysis on that residue.
+
+**Epitopes (experimental, IEDB-sourced — distinct from `EBIProteins_get_antigen`'s *predicted* antigenic regions):** `EBIProteins_get_epitopes(accession)` returns experimentally-mapped immune epitope regions with sequence, PubMed evidence, and IEDB IDs — e.g. P04637 (TP53) has 62 mapped epitopes. Use this over `EBIProteins_get_antigen` when the question is "has this region actually been shown to trigger an immune response" rather than "does this region look antigenic by sequence pattern" — relevant for vaccine/antibody design questions that land in this skill via a PTM-and-antigenicity angle.
+
 ---
 
 ## Evidence Grading
@@ -128,8 +141,10 @@ All 3 return multiple UniProt entries per query (isoforms, paralogs sharing the 
 | `ELM_get_instances` | `operation="get_instances"`, `uniprot_id`, `motif_type` |
 | `ELM_list_classes` | `operation="list_classes"` |
 | `MassIVE_search_datasets` | `page_size`, `species` |
-| `EBIProteins_get_mutagenesis` / `_get_proteomics_ptm` / `_get_antigen` / `_get_coordinates` / `_get_proteomics_peptides` / `_get_hpp_peptides` | `accession` (UniProt) |
+| `EBIProteins_get_mutagenesis` / `_get_proteomics_ptm` / `_get_antigen` / `_get_coordinates` / `_get_proteomics_peptides` / `_get_hpp_peptides` / `_get_domains_sites` / `_get_molecule_processing` / `_get_structural_features` / `_get_epitopes` | `accession` (UniProt) |
 | `EBIProteins_get_features` | `accession`, `category` (default `DOMAINS_AND_SITES`) |
+| `EBIProteins_get_coordinate_mapping` | `accession` (UniProt) |
+| `EBIProteins_get_proteins_by_genomic_loc` | `taxonomy` (default 9606), `location` ("chr:pos") or `chromosome`+`position` |
 | `EBIProteins_get_variation` | `accession`, optional `source_type`, `disease_only` |
 | `EBIProteins_get_variation_by_dbsnp` | `dbsnp_id` (rsID) |
 | `EBIProteins_get_variation_by_hgvs` | `hgvs` (genomic, `NC_...:g....`) |

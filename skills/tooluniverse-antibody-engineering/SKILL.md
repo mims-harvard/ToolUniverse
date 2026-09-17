@@ -305,6 +305,10 @@ See `REPORT_TEMPLATE.md` for the full report template.
 - `UniProt_get_entry_by_accession`: Target info
 - `RCSBData_get_entry`: Experimental structures
 
+### Reagent Verification (Antibody Registry)
+- `AntibodyRegistry_search`: Find validated commercial antibodies for a target (by target gene/protein name, antibody name, or vendor keyword). Returns each hit's RRID, target (with UniProt/Entrez id), clonality, host organism, applications, vendor/catalog number, and defining citation. Useful during Phase 1 (target/precedent research) to see what antibody reagents already exist against a target antigen before designing a new one, or during Phase 8 (validation planning) to identify a benchmark reagent.
+- `AntibodyRegistry_get_by_rrid`: Resolve a specific RRID (e.g. `AB_2298772`, accepts the bare numeric id or `RRID:AB_...` form too) cited in a methods section to its full record — verify which exact antibody a paper used rather than assuming from the name alone. Live-verified: both tools return real records (e.g. `AntibodyRegistry_search(query="GFAP")` -> a real GFAP rabbit mAb with UniProt target P14136).
+
 ### Systems Biology (for Bispecifics)
 - `STRING_get_interaction_partners`: Protein interactions
 - `STRING_get_enrichment`: Pathway analysis

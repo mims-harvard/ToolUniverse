@@ -355,3 +355,96 @@ proteome metadata) — kept in that skill rather than here since it's a
 sequence/genome-data-retrieval task, not a clinical-terminology
 normalization task, despite sharing the same source JSON file as the
 disease/keyword tools above.
+
+## BioPortal (`bioportal_tools.json`)
+
+All 4 tools type `BioPortalTool`, no API key required. `get_concept`/
+`get_hierarchy` need a full IRI (`http://purl.obolibrary.org/obo/DOID_1909`
+style), not a bare code — get that IRI from a prior `search_ontology_terms`
+or `annotate_text` result's `full_id`/`concept_full_id` field.
+
+- **`BioPortal_search_ontology_terms`** — `query` (required), `ontologies`
+  (comma-separated acronyms, null = all 900+), `page_size`.
+  `tu test` PASS, 2/2 examples. `{"query": "melanoma"}` -> `DOID_1909`
+  ("melanoma"); `{"query": "apoptosis", "ontologies": "GO"}` ->
+  `GO_0097194` ("execution phase of apoptosis").
+- **`BioPortal_get_concept`** — `ontology` (required, e.g. `"DOID"`,
+  `"GO"`), `concept_id` (required, full IRI). `tu test` PASS, 2/2.
+- **`BioPortal_annotate_text`** — `text` (required, <=~500 words),
+  `ontologies` (optional restrict), `longest_only` (bool, default true).
+  `tu test` PASS, 2/2. **Custom call**
+  `{"text": "Patient presents with hypertension and type 2 diabetes
+  mellitus, prescribed metformin.", "ontologies": "DOID,RXNORM"}` ->
+  ```json
+  {"status": "success", "data": [
+    {"matched_text": "HYPERTENSION", "from": 23, "to": 34, "match_type": "PREF",
+     "concept_label": "hypertension", "concept_id": "DOID_10763",
+     "concept_full_id": "http://purl.obolibrary.org/obo/DOID_10763"},
+    {"matched_text": "TYPE 2 DIABETES MELLITUS", "from": 40, "to": 63, "match_type": "PREF",
+     "concept_label": "type 2 diabetes mellitus", "concept_id": "DOID_9352"},
+    {"matched_text": "METFORMIN", "from": 77, "to": 85, "match_type": "PREF",
+     "concept_label": "metformin", "concept_id": "6809",
+     "concept_full_id": "http://purl.bioontology.org/ontology/RXNORM/6809"}
+  ], "metadata": {"source": "BioPortal Annotator (NCBO)", "total_annotations": 3, "text_length": 86}}
+  ```
+  The RXNORM concept_id `6809` matches `RxNorm_find_rxcui`'s `primary_rxcui`
+  for "metformin" documented earlier in this file — cross-validated.
+- **`BioPortal_get_hierarchy`** — `ontology`, `concept_id` (full IRI,
+  both required), `direction` (`children`/`parents`/`ancestors`, default
+  `children`), `page_size`. `tu test` PASS, 2/2: DOID_9351 (diabetes
+  mellitus) children include `DOID_9744` ("type 1 diabetes mellitus");
+  HP_0001250 (Seizure) ancestors include `HP_0012638` ("Abnormal nervous
+  system physiology").
+
+## FHIR Terminology Service (`fhir_terminology_tools.json`)
+
+Both tools type `FHIRTerminologyTool`, no API key required.
+
+- **`FHIRTerminology_lookup_code`** — `system` (required, e.g. `"snomed"`
+  or a full FHIR system URI), `code` (required). `tu test` PASS, 2/2:
+  `{"system": "snomed", "code": "22298006"}` -> `{"code": "22298006",
+  "display": "Myocardial infarction", "system": "http://snomed.info/sct"}`;
+  `{"system": "snomed", "code": "73211009"}` -> `"Diabetes mellitus"`.
+- **`FHIRTerminology_expand_valueset`** — `value_set_url` (required),
+  `limit` (int, 1-500, default 50). `tu test` PASS, 2/2. **Custom call**
+  `{"value_set_url": "http://snomed.info/sct?fhir_vs=isa/22298006", "limit": 5}`
+  -> real subtype list: `1755008` ("Old myocardial infarction"),
+  `15990001` ("Acute myocardial infarction of posterolateral wall"), plus
+  more, all sharing `"system": "http://snomed.info/sct"`. Use the
+  `isa/<code>` value-set URL pattern for "every descendant of this SNOMED
+  concept" — no other tool in this skill does SNOMED subsumption.
+
+## NCI Drug Dictionary (`nci_drugdict_tools.json`)
+
+Both tools type `BaseRESTTool`, no API key required.
+
+- **`NCIDrugDict_search`** — `query` (required), `matchType`
+  (`"Begins"`/`"Contains"`, default `"Begins"`), `size` (default 10).
+  `tu test` PASS, 3/3: `{"query": "imatinib"}` -> 1 result (code name
+  "CGP 57148"); `{"query": "pembrolizumab", "matchType": "Contains"}` ->
+  8 results incl. `USBrandName` "Keytruda"; `{"query": "tamoxifen"}` -> 1
+  result.
+- **`NCIDrugDict_get_drug`** — `term_id` (integer, required — get from a
+  `search` result). `tu test` PASS, 3/3: term_id 37862 (imatinib
+  mesylate) and 695789 (pembrolizumab, alias "Keytruda") both return full
+  alias lists (`CodeName`/`Synonym`/`USBrandName`/`Abbreviation` types).
+
+## NCI EVS — Non-NCIt Terminologies (`nci_evs_tools.json`)
+
+Both tools type `NCIEVSTool`, no API key required. Explicitly excludes
+NCIt (use `NCIThesaurus_*` for that) and MedDRA (licensed, not available).
+
+- **`NCIEVS_search_terminology`** — `terminology` (required, e.g.
+  `"ctcae5"`, `"icd9cm"`, `"radlex"`, `"ndfrt"`, `"medrt"`, `"canmed"`),
+  `term` (required), `limit` (default 20, max 100). `tu test` PASS, 2/2:
+  `{"terminology": "ctcae5", "term": "neutropenia"}` -> `C143481`
+  ("Febrile neutropenia"); `{"terminology": "radlex", "term":
+  "fracture"}` -> `RID4650` ("fracture"). **Custom call**
+  `{"terminology": "icd9cm", "term": "diabetes"}` -> real legacy codes:
+  `250` ("Diabetes mellitus", leaf), `253.5` ("Diabetes insipidus", not
+  leaf), `250.3` ("Diabetes with other coma", leaf) — confirms `icd9cm`
+  works as a legacy-code fallback distinct from the current-standard
+  `ICD10_*` tools above.
+- **`NCIEVS_get_concept`** — `terminology`, `code` (both required).
+  `tu test` PASS, 1/1: `{"terminology": "ctcae5", "code": "C143481"}` ->
+  full detail incl. `active: true`.

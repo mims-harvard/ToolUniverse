@@ -177,3 +177,112 @@ assuming the first hit is canonical. Feeding `UP000464024` into
 reference genome accession) and `total_protein_count: 17`. For human
 (`UP000005640`) and E. coli K-12 (`UP000000625`), `get_proteome` returns
 per-chromosome/plasmid component breakdowns the same way.
+
+**Registry duplication, verified live:** `UniProt_search_proteomes` (in
+`src/tooluniverse/data/uniprot_proteomes_tools.json`, hitting
+`rest.uniprot.org/proteomes/search` directly) does the SAME search as
+`UniProtRef_search_proteomes` above, but is a separate, older tool
+implementation. Its advantage: one call returns the full rich record
+(BUSCO completeness, genome assembly, per-component protein counts, full
+citation list) that `UniProtRef_search_proteomes` requires a *second*
+`UniProtRef_get_proteome` call to obtain — verified live on `organism_name:
+human`, `organism_name:escherichia coli`, `organism_name:mouse`, all 3
+returning the full nested object in one shot. If you only need the ID or
+`proteomeType` for triage, either tool works; if you need full detail
+immediately, prefer `UniProt_search_proteomes` and skip the follow-up call.
+
+## Sequence Archive and Clustering (UniParc, UniRef)
+
+A different question again from Phases 1-3 and the proteome tools above:
+"has this exact sequence been seen before, and under how many accessions,"
+and "what other sequences are near-identical to this one."
+
+| Tool | Answers | Key params |
+|---|---|---|
+| `UniParc_search` | Find all UPI archive entries for a gene/organism/keyword | `query` (UniProt query syntax, e.g. `"gene:EGFR AND organism_id:9606"`), `size` |
+| `UniParc_get_entry` | Full sequence + every UniProt accession that ever pointed to this exact sequence, across every database load | `upi` |
+| `UniRef_search_clusters` | Find sequence-similarity clusters for a gene/organism/keyword | `query`, `cluster_type` (UniRef100/90/50), `size` |
+| `UniRef_get_cluster` | Cluster detail: member count, representative sequence, common taxon | `cluster_id` (e.g. `UniRef90_P00533`) |
+
+Real example (verified live, EGFR/human): `UniParc_search {"query": "gene:EGFR
+AND organism_id:9606", "size": 3}` -> 3 distinct UPI entries, each with a
+different set of UniProt accessions (`Q8NDU8.1`, `Q9BZS2.1`, `Q9UMG5.1`) and
+different `oldest_created` dates — UniParc treats each unique amino-acid
+string as one entry regardless of which UniProt accession(s) submitted it,
+so isoforms/fragments with distinct sequences get distinct UPIs even
+though they share a gene name. `UniRef_get_cluster {"cluster_id":
+"UniRef90_P00533"}` -> a real 119-member cluster spanning `Boreoeutheria`
+(the common ancestor taxon), with a `representative_member` (`EGFR_HUMAN`,
+1210 aa) that carries 9+ merged UniProtKB accessions (`P00533`, `O00688`,
+...) — note the `seed_id` (`UPI0005F3CCCC`, a UniParc ID) and
+`representative_member` are not always the same sequence.
+
+Use UniParc when the question is "which UniProt accessions actually share
+this exact sequence" (deduplication); use UniRef when the question is
+"what else looks like this sequence at X% identity" (finding related
+proteins across species for MSA/phylogenetics input, or reducing
+redundancy before a proteome-wide analysis).
+
+## Subcellular Location Vocabulary (UniProt Locations)
+
+`UniProtLocations_search`/`UniProtLocations_get_location` resolve UniProt's
+controlled subcellular-location vocabulary (organelles, membranes,
+topology, orientation) by ID (`SL-XXXX`) or free-text search.
+
+**Real gotcha, verified live:** the common term "plasma membrane" does
+NOT surface UniProt's actual term for it — UniProt's controlled vocabulary
+calls this location **"Cell membrane"** (`SL-0039`), not "Plasma membrane."
+Searching `"plasma membrane"` or `"Plasma membrane"` returns only
+tangentially related hits (e.g. `SL-0552` "Rhabdomere membrane," whose
+*definition* happens to mention "plasma membrane," not the term itself).
+Search a broader, UniProt-native term (`"membrane"`, `"cell"`) and scan the
+results rather than assuming your everyday biology term matches UniProt's
+naming — this is a real vocabulary mismatch, not a search bug.
+
+## Sample Metadata (EBI BioSamples)
+
+`BioSamples_search`/`BioSamples_search_by_filter`/`BioSamples_get_sample`/
+`BioSamples_get_relationships`/`BioSamples_get_facets` query EBI's 60M+
+sample-metadata archive (organism, tissue, disease, experimental context)
+for samples that back sequencing/omics submissions — a different layer
+from the sequence itself, useful for "what samples exist for condition X"
+before going to ENA/SRA for the actual data.
+
+**Real gotcha, verified live:** `BioSamples_search` with a multi-word
+phrase (`"EGFR lung adenocarcinoma"`) returned **zero** results, while the
+single term `"EGFR"` returned real hits immediately — the search does not
+implicitly AND multiple free-text words the way a search engine would.
+Use one keyword at a time, or use `BioSamples_search_by_filter` (structured
+`attribute`/`value` pairs, e.g. `attribute="organism", value="Homo
+sapiens"`) when you need to combine multiple real constraints. `get_facets`
+is useful up front to discover which attribute values actually exist
+before filtering on one (verified live: returns real facet counts, e.g.
+432,302 samples for a broad text query).
+
+## Organism Taxonomy (EBI Taxonomy)
+
+`EBITaxonomy_get_by_id`/`get_by_scientific_name`/`search_by_name`/`suggest`
+resolve organism names/IDs (NCBI Taxonomy, mirrored by EBI) — lineage,
+rank, division, genetic code. Use `search_by_name` for common names
+("mouse," "fruit fly") and `suggest` for type-ahead partial matching;
+`get_by_scientific_name`/`get_by_id` for an exact, already-known name/ID.
+Verified live: `Homo sapiens` -> `tax_id: "9606"`, full lineage string
+`"Eukaryota; Metazoa; Chordata; ... Hominidae; Homo;"`.
+
+## Cross-Domain Quick Lookup (BioThings Gateway)
+
+`BioThings_list_apis`/`BioThings_query`/`BioThings_get_entity`/
+`BioThings_get_metadata` reach ~50 BioThings-hosted APIs (drug-drug
+interactions, gene-disease text-mining, PubMed-mined predications, and
+more) through one Elasticsearch-style query interface — useful as a fast
+first check for whether ToolUniverse has DEDICATED coverage of a resource
+before reaching for this generic gateway (`BioThings_list_apis`'s
+`preferred_tooluniverse_tool` field tells you when a richer dedicated tool
+already exists; prefer that instead). Call `BioThings_get_metadata` before
+writing a fielded `BioThings_query` so field names are correct. Verified
+live: `BioThings_get_entity {"api": "mondo", "entity_id": "MONDO:0010329"}`
+returns a real MONDO disease-ontology record with ancestor terms; querying
+the `ddinter` API returns real drug-drug-interaction pairs with severity.
+This complements `tooluniverse-data-integration-analysis`'s multi-database
+evidence-gathering workflow as a fast single-call option when a dedicated
+tool doesn't already exist for the resource you need.

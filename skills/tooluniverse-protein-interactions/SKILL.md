@@ -158,6 +158,17 @@ interaction_ids = result.get("metadata", {}).get("interaction_ids", [])
 
 IntAct tools accept `protein_name` as an alias parameter in addition to the original identifier parameter.
 
+### EBI Proteins-Gateway IntAct Access
+
+`EBIProteins_get_interactions(accession, limit=50)` and `EBIProteins_get_interaction_details(accession)` are a second, concrete access path into the same IntAct-sourced interaction data referenced above (via the EBI Proteins API rather than IntAct's own endpoint) — use these when a plain UniProt-accession-in, ranked-partners-out call is more convenient than mapping identifiers through STRING/IntAct first.
+
+| Tool | Returns |
+|------|---------|
+| `EBIProteins_get_interactions` | Binary interaction partners sorted by supporting-experiment count, each with `partner_accession`, `gene_name`, `experiments` (count), `organism_differ` (bool) |
+| `EBIProteins_get_interaction_details` | The query protein's own record (name, existence evidence, organism, disease associations, subcellular locations) plus its top interaction partners in one call — useful when you need protein context and its network in a single request instead of two |
+
+Real example (verified live): `EBIProteins_get_interactions(accession="P04637")` (TP53) → 198 partners incl. MDM2 (Q00987), ABL1, AIMP2 (6 experiments), EP300 (8 experiments). `EBIProteins_get_interaction_details(accession="P04637")` → same interaction data plus real disease associations (e.g. Li-Fraumeni syndrome) and subcellular locations in one response — skip the separate `UniProt_get_function_by_accession` call above when disease/localization context is the only extra thing needed.
+
 ## Domain Reasoning: Multimeric Assemblies & Binding Valency
 
 LOOK UP DON'T GUESS: oligomeric state, subunit stoichiometry, and binding valency. Use RCSB PDB (`RCSBAdvSearch_search_structures`, `RCSBData_get_entry`) or UniProt (`UniProt_get_function_by_accession`) to confirm whether a protein is a monomer, dimer, trimer, etc. Do not assume from gene name alone.

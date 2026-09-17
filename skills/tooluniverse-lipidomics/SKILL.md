@@ -50,6 +50,8 @@ Lipid identification starts with mass spectrometry: the lipid class is determine
 | `KEGG_get_pathway_genes` | Enzymes in lipid pathways |
 | `PubChem_get_compound_properties_by_CID` | Chemical properties (mass, formula, SMILES) |
 | `CTD_get_gene_diseases` | Gene-disease links for lipid metabolism enzymes |
+| `LipidMaps_get_gene` | Resolve a lipid-metabolism gene (symbol/NCBI ID/LMP ID) to its LIPID MAPS Proteome Database record — name, synonyms, chromosome location, species |
+| `LipidMaps_get_protein` | Same lookup at the protein level — adds UniProt/RefSeq cross-references and amino-acid sequence |
 | `DisGeNET_search_gene` | Disease associations for lipid genes |
 | `PubMed_search_articles` | Published lipidomics studies |
 | `OpenTargets_get_associated_drugs_by_target_ensemblID` | Drugs targeting lipid metabolism enzymes |
@@ -136,9 +138,12 @@ KEGG_get_pathway_genes(pathway_id="hsa00600")  # → SMPD1, CERS1, ...
 
 ### Phase 3: Disease Associations
 
-For each lipid or lipid enzyme, check disease links:
+For each lipid or lipid enzyme, resolve the gene/protein record first if needed, then check disease links:
 
 ```python
+LipidMaps_get_gene(input_value="SMPD1", input_item="gene_symbol")  # LMPD record: name, synonyms, chromosome
+  # verified live example: input_value="FASN" → {"gene_symbol": "Fasn", "lmp_id": "LMP001577", "gene_name": "fatty acid synthase", ...}
+LipidMaps_get_protein(input_value="P49327", input_item="uniprot_id")  # adds UniProt/RefSeq xrefs + sequence
 CTD_get_gene_diseases(input_terms="SMPD1")  # sphingomyelinase → Niemann-Pick
 DisGeNET_search_gene(gene="SMPD1")  # broader disease associations
 HMDB_get_metabolite(compound_name="ceramide")  # metabolite-disease links

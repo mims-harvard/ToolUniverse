@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-structural-proteomics
-description: Structural biology plus proteomics integration for drug target validation. Combines PDB experimental structures, AlphaFold predictions, GPCRdb, SAbDab antibody structures, ProteinsPlus binding-site prediction, BindingDB ligand-affinity data, BMRB NMR data, CATH/InterPro fold classification, intrinsic-disorder prediction (MobiDB/DisProt/IUPred3), membrane-protein topology (OPM/TopDB/PDBTM/ChannelsDB), and enzyme catalytic-site data (M-CSA). Use for druggability assessment, binding-site characterization, ligand-pocket analysis, structural-confidence scoring (resolution, pLDDT), antibody-target interface analysis, disordered-region assessment, membrane-protein topology, and catalytic-mechanism lookup.
+description: Structural biology plus proteomics integration for drug target validation. Combines PDB experimental structures, AlphaFold predictions, GPCRdb, SAbDab antibody structures, ProteinsPlus binding-site prediction, BindingDB ligand-affinity data, BMRB NMR data, CATH/InterPro fold classification, intrinsic-disorder prediction (MobiDB/DisProt/IUPred3), membrane-protein topology (OPM/TopDB/PDBTM/ChannelsDB), enzyme catalytic-site data (M-CSA), PDBe ligand/compound chemistry, and MD simulation trajectory metadata (MDDB). Use for druggability assessment, binding-site characterization, ligand-pocket analysis, structural-confidence scoring (resolution, pLDDT), antibody-target interface analysis, disordered-region assessment, membrane-protein topology, catalytic-mechanism lookup, and finding published MD simulations for a target.
 disable-model-invocation: true
 ---
 
@@ -42,6 +42,9 @@ Resolution determines valid conclusions: <2A = atom positions visible; 2-3A = si
 ### Binding Sites
 `ProteinsPlus_predict_binding_sites` (pdb_id, chain), `BindingDB_get_ligands_by_uniprot` (uniprot_id), `BindingDB_get_ligands_by_pdb` (pdb_id), `BindingDB_get_targets_by_compound` (smiles)
 
+### Ligand/Compound Chemistry (PDBe Compounds)
+`PDBe_get_compound_summary` (comp_id — 3-letter PDB chemical-component code) — formula, weight, InChI/InChIKey, SMILES, systematic names, and cross-references to PubChem/DrugBank/EPA CompTox for one ligand. `PDBe_get_compound_structures` (comp_id) — **see gotcha below, does not return an exhaustive structure list**.
+
 ### Foldseek
 `Foldseek_search_structure` (sequence, mode="tmalign"), `Foldseek_get_result` (ticket)
 
@@ -57,8 +60,14 @@ Resolution determines valid conclusions: <2A = atom positions visible; 2-3A = si
 ### Fold/Domain Classification (CATH + InterPro member databases)
 `CATH_get_superfamily` (superfamily_id), `CATH_get_domain_summary` (domain_id), `CATH_list_funfams` (superfamily_id), `CATH_get_funfam` (superfamily_id, funfam_number), `InterPro_list_member_databases` (no params), `InterPro_list_member_signatures` (member_database, page_size), `InterPro_get_member_signature` (member_database, accession), `InterPro_get_structures_for_entry` (interpro_id, page_size)
 
+### Domain Architecture and Clans (InterPro, Pfam-accession-keyed)
+`InterPro_get_protein_domain_architecture` (accession), `InterPro_get_structures_for_domain` (pfam_accession, max_results), `InterPro_get_clan_members` (clan_accession, max_results) — **InterPro's API is intermittently flaky, see Workflow 5b below before assuming a "not found" result means the entry doesn't exist**
+
 ### Proteomics
 `ProteomeXchange_search_datasets` (query), `ProteomeXchange_get_dataset` (dataset_id)
+
+### Molecular Dynamics Simulation Metadata (MDDB)
+`MDDB_search_projects` (query, limit), `MDDB_get_project` (accession) — simulation parameters (force field, temperature, ensemble, simulated time, frames, trajectory size) for published MD trajectories; metadata only, not the trajectory files
 
 ### BMRB (NMR data)
 `BMRB_search_by_keyword` (term, database="macromolecules"|"metabolomics"), `BMRB_search_by_sequence` (sequence), `BMRB_get_entries_by_pdb_id` (pdb_id), `BMRB_get_entries_by_uniprot` (uniprot_id), `BMRB_get_entry` (entry_id), `BMRB_get_entry_citation` (entry_id), `BMRB_get_validation` (entry_id), `BMRB_search_chemical_shifts` (entry_id or search filters)
@@ -138,6 +147,29 @@ Phase 4: InterPro_get_structures_for_entry(interpro_id, page_size) -> real PDB s
 
 **Tool note**: `InterPro_get_member_signature` requires BOTH `member_database` and `accession` — the accession alone (e.g. `PF00069`) is not sufficient because the same-shaped accession could theoretically collide across member databases.
 
+## Workflow 5b: Whole-Protein Domain Architecture and Pfam Clans
+
+Three more InterPro tools, keyed by Pfam accession/UniProt accession rather than the integrated InterPro ID used above — a different entry point for the same underlying database:
+
+```
+InterPro_get_protein_domain_architecture(accession) -> ALL Pfam domains on one protein at once, with
+    exact residue start/end and the integrated InterPro ID for each -- the "what domains does this
+    whole protein have, with coordinates" complement to InterPro_get_member_signature's "tell me about
+    one specific signature" above
+InterPro_get_structures_for_domain(pfam_accession, max_results) -> PDB structures containing a given
+    Pfam domain -- the Pfam-accession-keyed sibling of InterPro_get_structures_for_entry(interpro_id)
+    above; use whichever accession type (Pfam PFxxxxx vs integrated IPRxxxxxx) you already have,
+    they answer the same question from the two different InterPro identifier namespaces
+InterPro_get_clan_members(clan_accession, max_results) -> member Pfam families in a clan (Pfam's own
+    superfamily grouping) -- distinct from CATH's superfamily/FunFam grouping in Workflow 5 above:
+    CATH groups by solved 3D fold, Pfam clans group by sequence-profile relatedness; the two systems
+    can (and often do) disagree on where the boundary of a "related family" sits
+```
+
+**Real example** (verified live, same protein as Workflow 1): `InterPro_get_protein_domain_architecture(accession="P04637")` (TP53) -> 4 real Pfam domains with exact coordinates: PF08563 "P53 transactivation motif" (6-30), PF18521 "Transactivation domain 2" (35-59), PF00870 "P53 DNA-binding domain" (100-288), PF07710 "P53 tetramerisation motif" (319-357) -- matches the tetramerisation/DNA-binding boundaries already used in this skill's other workflows. `InterPro_get_clan_members(clan_accession="CL0016")` -> real clan "PKinase" with 30+ member Pfam families.
+
+**Reliability warning (verified live, repeatedly): this InterPro endpoint family is intermittently flaky.** The exact same call (`InterPro_get_structures_for_domain(pfam_accession="PF00069")`) returned "Not found in InterPro: PF00069" on two consecutive attempts, then succeeded on a third with no change to the request. `InterPro_get_protein_domain_architecture` showed the same pattern in reverse (failed via `tu test`'s canned examples, succeeded via a fresh `tu run` moments later, on the identical accession). **Treat a "Not found in InterPro" error from any tool in this cluster as inconclusive, not as proof the accession doesn't exist — retry 1-2 times before reporting an entry is missing.**
+
 ## Workflow 6: Intrinsic Disorder Assessment (MobiDB + DisProt + IUPred3)
 
 These three tools answer the same underlying question — "is this region of the protein structured or disordered?" — with different evidence quality, from highest to lowest confidence:
@@ -197,10 +229,27 @@ Phase 2: MCSA_get_entry(mcsa_id) -> full catalytic machinery: catalytic residues
 Phase 1: PDBe_get_structure_ligands + RCSBGraphQL_get_ligand_info + PDBe_KB_get_ligand_sites
 Phase 2: ProteinsPlus_predict_binding_sites → druggability score, pocket residues
 Phase 3: BindingDB_get_ligands_by_pdb/uniprot → Ki, Kd, IC50
-Phase 4: RCSB_get_chemical_component for key ligands
+Phase 4: RCSB_get_chemical_component for key ligands, or PDBe_get_compound_summary for
+         the same 3-letter comp_id if you need InChI/InChIKey/SMILES/systematic names and
+         cross-references (PubChem/DrugBank/EPA CompTox) rather than RCSB's structural fields
 ```
 
 **Filter artifacts**: GOL, EDO, SO4, PEG, ACT, CL, NA. Keep cofactors (ATP, NAD, HEM) and catalytic metals (ZN, MG) if relevant.
+
+**Real example** (verified live): `PDBe_get_compound_summary({"comp_id":"ATP"})` -> formula C10H16N5O13P3, weight 507.181, InChIKey `ZKHQWZAMYRWXGA-KQYNXXCUSA-N`, cross-references including BRENDA and Probes And Drugs. `PDBe_get_compound_summary({"comp_id":"HEM"})` -> `formal_charge: null` (a real schema mismatch, verified live: the tool's `return_schema` declares `formal_charge` as a non-nullable integer, but HEM's actual charge is reported as null — the call still succeeds and the rest of the data is correct, this is a documentation/schema gap, not a broken tool).
+
+**Gotcha (verified live, do not present as exhaustive): `PDBe_get_compound_structures` does not reliably return "all structures containing this compound" despite its description.** Tested on ATP (which appears in thousands of real PDB structures — kinases, ATPases) and HEM (hemoglobins, cytochromes, peroxidases): both calls returned exactly ONE PDB entry each (`1b0u` for ATP, `3ia3` for HEM). Tracing the tool's implementation confirms why: when its primary per-compound structure list is empty, it silently falls back to the compound's `first_observed_in` field (which is inherently a single structure) and still labels that result `pdb_entries`. Treat a `pdb_entries` result from this tool as "one example structure containing this compound," not as a complete list — for an exhaustive structure search by ligand, use `RCSBGraphQL_get_ligand_info` or `RCSBAdvSearch_search_structures` instead.
+
+## Workflow 9: MD Simulation Trajectory Metadata (MDDB)
+
+MDDB indexes 15,000+ molecular dynamics simulation trajectories (MoDEL, BioExcel, DESRES-ANTON, and community depositions) — metadata only (force field, temperature, ensemble, simulated time, frame count, trajectory size), not the trajectory files themselves. Use when a target already has (or you want to check whether it has) a published MD simulation, as a complement to the static structures the rest of this skill documents.
+
+```
+Phase 1: MDDB_search_projects(query, limit) -> candidate project accessions, by protein name or PDB id
+Phase 2: MDDB_get_project(accession) -> full simulation parameters for one project
+```
+
+**Real example** (verified live): `MDDB_search_projects({"query":"6M71","limit":5})` -> project `MD-A001UA` -> `MDDB_get_project({"accession":"MD-A001UA"})` -> a real 10 microsecond DESRES-ANTON simulation of the SARS-CoV-2 nsp7-nsp8-nsp12 RNA polymerase complex (Amber ff99SB-ILDN, NPT ensemble, 310 K, 8,335 frames, ~2.5 GB) with a text description of a specific structural finding from the simulation (a disordered N-terminal region folding into a kinase-like fold during the run). Note `total_simulated_time_ps` is summed across all replicas listed under `md_replica_count`, not per-replica.
 
 ## Workflow 3: Cross-Validate Drug Binding
 
@@ -231,6 +280,7 @@ Phase 8: Evidence integration
 | `CATH_get_superfamily` | `cath_id` | `superfamily_id` |
 | `InterPro_get_member_signature` | `accession` alone | `member_database` + `accession` (both required) |
 | `TopDB_get_topology` | bare gene symbol | a TopDB/UniProt-style identifier (e.g. `"OPSD_HUMAN"`) |
+| `PDBe_get_compound_structures` | trusting `pdb_entries` as exhaustive | it falls back to a single `first_observed_in` example when the primary list is empty (verified live) — use `RCSBGraphQL_get_ligand_info` for a real exhaustive search |
 
 ---
 
@@ -262,3 +312,6 @@ DoGSiteScorer >0.6 = druggable; <0.4 = unlikely druggable. PISA assemblies shoul
 - BMRB: `BMRB_get_entries_by_pdb_id` is a BLAST-based sequence match, not a curated 1:1 PDB<->BMRB cross-reference -- a query can return several candidate entries (or none) for a real NMR PDB ID; `BMRB_search_chemical_shifts` is slow (15-20s+) for well-studied entries, only call it when raw shift values are actually needed
 - MobiDB: `MobiDB_get_protein` and `MobiDB_get_consensus` were verified live (repeatedly, with a 90s timeout) to hang indefinitely against their configured endpoint (`https://mobidb.org/api/download`) -- confirmed independently via direct `curl` to the same host (20s with no response). This is an upstream connectivity issue, not a query-parameter mistake. Use DisProt (curated) or IUPred3 (fast predictor) instead until this is confirmed working again -- do not retry MobiDB with a longer timeout expecting it to resolve.
 - ChannelsDB: coverage is per-PDB-entry, not universal -- a real membrane protein with confirmed topology elsewhere (OPM/TopDB/PDBTM) can still return "not found in ChannelsDB" for that specific PDB ID (verified live: `1f88` rhodopsin)
+- InterPro domain-architecture cluster (`InterPro_get_protein_domain_architecture`/`_get_structures_for_domain`/`_get_clan_members`): the underlying InterPro API is intermittently flaky -- the identical query can 404 twice then succeed on a third attempt with no request change (verified live, repeatedly). A "Not found in InterPro" result is inconclusive on the first attempt; retry before concluding the accession/domain genuinely isn't in InterPro.
+- `PDBe_get_compound_summary`: `formal_charge` is `null` for at least some neutral compounds (verified live: HEM) despite the tool's `return_schema` declaring it a non-nullable integer -- the call still succeeds with correct data otherwise, treat a null charge as "not reported as charged," not as a failure.
+- `PDBe_get_compound_structures`: see the Workflow 2 gotcha above -- verified live to return only one example PDB entry even for ubiquitous ligands (ATP, HEM), not an exhaustive list.

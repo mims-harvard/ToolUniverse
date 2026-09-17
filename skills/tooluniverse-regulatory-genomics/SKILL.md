@@ -70,6 +70,9 @@ When analysis requires computation (statistics, data processing, scoring, enrich
 | `EnsemblReg_get_motif_features` | TF binding motif instances in a region (Ensembl Regulatory Build) | `region`, `species` | motif instances with `binding_matrix_stable_id`, `transcription_factor_complex`, `score` |
 | `EnsemblReg_get_constrained_elements` | Evolutionarily constrained (purifying-selection) elements in a region — the conservation evidence type called out below | `region`, `species` | `constrained_elements[]` with `score`, `start`/`end` |
 | `EnsemblReg_get_binding_matrix` | Full PWM/PFM for an Ensembl binding-matrix stable ID | `binding_matrix_id` (e.g. `ENSPFM0320`) | nucleotide-frequency matrix, `associated_tfs[]`, `threshold` |
+| `MEME_fimo_scan` / `MEME_discover_motifs` / `MEME_tomtom_compare` / `MEME_list_databases` | Scan sequences for known motifs / discover novel motifs de novo / compare a motif against JASPAR-HOCOMOCO-CIS-BP / list available comparison databases | `sequences`, `motif_text` (MEME format) | Submits a job to meme-suite.org; 10-120s depending on op |
+| `HOCOMOCO_search_motifs` / `HOCOMOCO_get_motif` | Curated ChIP-seq-derived TF motif by gene name / full motif detail + optional PWM | `query` (gene name) / `motif_id` | Human + mouse only; complements JASPAR, not a replacement |
+| `Dfam_search_families` / `Dfam_get_family` / `Dfam_get_annotations` | Find transposable-element/repeat families / get one family's detail / get repeat annotations for a genomic region | `name_prefix`/`clade`/`repeat_type` / `accession` / `chrom`,`start`,`end` | Repeats can carry their own regulatory elements (e.g. SVA/Alu insertions) |
 
 ### Sequence-based deep-learning models (predict, don't just annotate)
 
@@ -185,6 +188,90 @@ generous timeout (60-90s) rather than treating a slow response as a hang.
 while the smaller TP53 region succeeded) — prefer regions well under 50kb
 for this specific endpoint, and retry once before concluding the call
 failed.
+
+### Phase 1d: TF Motif Discovery and Comparison (MEME Suite) + Curated Reference Motifs (HOCOMOCO)
+
+JASPAR gives a curated motif *library*; the MEME Suite tools instead let you
+*discover* a motif de novo from a set of related sequences and *compare* any
+motif (discovered or known) against reference databases. HOCOMOCO is a
+second curated reference library (ChIP-seq-derived, human/mouse only) —
+complementary to JASPAR, not a replacement, since the two are built from
+different underlying peak sets and sometimes disagree on model quality for
+the same TF.
+
+```
+# 1. Scan sequences for known motif occurrences (submits a job to
+#    meme-suite.org, polls ~10-30s)
+tu.run_tool("MEME_fimo_scan", {
+    "sequences": ">promoter\nGGATCCGCGCGCTATAAAAGGATCC...",
+    "motif_text": "MEME version 5\n\nALPHABET= ACGT\n...",  # full MEME-format motif
+    "pvalue_threshold": 0.0001
+})
+#   -> hits[] with start/stop/strand/score/pvalue/qvalue/matched_sequence
+
+# 2. De novo motif discovery across >=2 related sequences (~30-120s)
+tu.run_tool("MEME_discover_motifs", {
+    "sequences": ">seq1\n...\n>seq2\n...",  # co-regulated gene promoters, etc.
+    "nmotifs": 3
+})
+#   -> motifs[] with consensus, width, sites, evalue, probability_matrix
+
+# 3. Identify which known TF a discovered (or any) motif resembles
+#    (~5-20s)
+tu.run_tool("MEME_tomtom_compare", {
+    "query_motif": "MEME version 5\n...",
+    "target_db": "JASPAR2026_vertebrates"  # or "HOCOMOCO_v12"; see list_databases
+})
+#   -> matches[] ranked by evalue, with target_id (e.g. JASPAR MA0106.3)
+
+# 4. See available target databases for tomtom_compare (no remote call,
+#    cached metadata)
+tu.run_tool("MEME_list_databases", {"category_filter": "JASPAR"})
+```
+
+**HOCOMOCO as a curated cross-check** — given a TF name, get its curated
+consensus/PWM/quality grade directly, no discovery step needed:
+
+```
+tu.run_tool("HOCOMOCO_search_motifs", {"query": "CTCF"})
+#   -> [{motif_id: "CTCF.H14CORE.0.P.B", gene_name_human, quality, consensus, ...}]
+tu.run_tool("HOCOMOCO_get_motif", {"motif_id": "CTCF.H14CORE.0.P.B", "include_pwm": true})
+#   -> real verified response: consensus "hbRCCRShAGRKGGCGShvn", quality "B",
+#      tfclass (superclass/class/family/subfamily), uniprot_ac_human "P49711",
+#      pwm (if include_pwm=true)
+```
+
+Quality grades run A (best) to D (lowest); data_sources "P" = ChIP-Seq
+peaks, "S" = HT-SELEX. Use HOCOMOCO's quality grade to sanity-check a
+JASPAR/MEME-discovered motif for the same TF — a low grade or missing entry
+is itself informative (that TF's binding may be less well characterized).
+
+### Repeat Elements (Dfam)
+
+Transposable elements and other repeats can create, destroy, or shift
+regulatory elements (SVA/Alu insertions carrying their own TF binding
+sites is a well-known mechanism) — a fifth context worth checking alongside
+the four evidence types in Domain Reasoning above when a regulatory element
+sits inside or near a repeat-masked region.
+
+```
+tu.run_tool("Dfam_search_families", {"name_prefix": "AluS"})
+#   -> [{accession: "DF000000003", name: "AluSc", repeat_type: "SINE", ...}]
+tu.run_tool("Dfam_get_family", {"accession": "DF000000003"})
+#   -> consensus_sequence, classification, clades[], citations[]
+
+# Real example: TP53 locus (chr17:7,661,779-7,687,538, GRCh38) — the same
+# region used in the Ensembl Regulatory Build section above — carries two
+# real SVA retroposon insertions (SVA_E, SVA_A) and an AluSc SINE:
+tu.run_tool("Dfam_get_annotations", {
+    "assembly": "hg38", "chrom": "chr17", "start": 7661779, "end": 7687538
+})
+#   -> [{accession: "DF000001071", query: "SVA_E", type: "Retroposon",
+#        bit_score: 180, e_value: "1.3e-50", seq_start: 7661463, ...}, ...]
+```
+
+`nrph=true` (default) returns non-redundant profile hits only; set `false`
+for every raw hit including overlapping/lower-scoring alignments.
 
 ### Phase 2: ENCODE Experiment Search
 

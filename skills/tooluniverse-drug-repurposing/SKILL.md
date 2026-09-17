@@ -207,6 +207,17 @@ For Strategy 4, reverse a disease's own gene-expression signature rather than re
 
 **Verified live**: `LINCS_search_signatures(drug_name="vorinostat")` and `L1000FWD_sig_search` both return real, non-empty results — this is a working, queryable strategy, not a placeholder.
 
+### Cross-Knowledge-Graph Queries (NCATS Biomedical Data Translator)
+
+For a fast, single-call sweep across ~15 knowledge providers at once (rather than querying OpenTargets/ChEMBL/Reactome one at a time), the NCATS Translator tools give a biolink-standardized alternative:
+
+| Tool | Purpose |
+|------|---------|
+| `NCATSTranslator_resolve_entity(name=..., biolink_type=...)` | Resolve free text to a Translator-normalized CURIE via SRI Name Resolution (e.g. `name="Alzheimer disease"` → `curie="MONDO:0004975"`) |
+| `NCATSTranslator_query_associations(entity_id=..., target_category=..., predicate=...)` | One-hop biolink query via the Aragorn reasoner — e.g. `entity_id="MONDO:0004975"`, `target_category="ChemicalEntity"`, `predicate="treats"` returns candidate treatments ranked by score with source/publication-count provenance |
+
+**Verified live**: `resolve_entity(name="Alzheimer disease")` → `MONDO:0004975`; `query_associations(entity_id="MONDO:0004975", target_category="ChemicalEntity", predicate="treats")` → real ranked hits (e.g. `CHEBI:87631` "statin", score ~0.9). This is a good Strategy (c)-style breadth check — cheap to run early, but its ranked "score" is E4 (Computational) evidence like any other network-proximity signal, not a substitute for the target-genetics/ChEMBL-affinity/clinical-trial verification steps above.
+
 ### Computational Procedure: Drug-Target Dose Feasibility Check
 
 A drug that hits a new target only at 100x its approved dose is NOT a viable repurposing candidate. Use this procedure after identifying drug-target pairs:

@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-model-organism-genetics
-description: Cross-species genetic analysis using model organism databases (MGI mouse, ZFIN zebrafish, FlyBase fruit fly, WormBase worm, SGD budding yeast, PomBase fission yeast, RGD rat, GBIF taxonomy) plus VEuPathDB for eukaryotic pathogens (Plasmodium, Toxoplasma, fungi, vectors). Maps human genes to orthologs, retrieves phenotype/expression/functional data, assesses gene function conservation, and identifies the best animal model for studying a human gene or disease.
+description: Cross-species genetic analysis using model organism databases (MGI mouse, IMPC systematic knockout phenotyping, ZFIN zebrafish, FlyBase fruit fly, WormBase worm, SGD budding yeast plus protein-domain/PTM/literature detail, PomBase fission yeast, RGD rat, GeneNetwork systems-genetics/eQTL panels, HumanMine/MouseMine cross-species data-warehouse search, GBIF taxonomy) plus VEuPathDB for eukaryotic pathogens (Plasmodium, Toxoplasma, fungi, vectors). Maps human genes to orthologs, retrieves phenotype/expression/functional data, assesses gene function conservation, and identifies the best animal model for studying a human gene or disease.
 disable-model-invocation: true
 ---
 
@@ -110,6 +110,38 @@ MGI (Phase 2) aggregates curated phenotype annotations from the published litera
 
 ---
 
+### Phase 2c: Broader Data-Warehouse Search (HumanMine / MouseMine) — free-text fallback when structured lookups come up thin
+
+MGI/IMPC (Phases 2/2b) require you to already have a mouse symbol or MGI ID and answer narrow, structured questions (phenotype calls, gene record). HumanMine and MouseMine are general-purpose InterMine data warehouses that integrate 30+ underlying sources (NCBI Gene, Ensembl, UniProt, Reactome, KEGG, GWAS Catalog, publications) behind one free-text search — useful when you don't yet have a clean ID, want pathway/publication hits alongside gene hits, or need a flexible graph query MGI's fixed endpoints don't offer.
+
+1. `HumanMine_search(q="<term>", size=10)` — free-text across genes/proteins/pathways/diseases for **human, mouse, and rat simultaneously**; results are tagged by `organism.shortName` (e.g. `H. sapiens`, `M. musculus`, `R. norvegicus`) so you see cross-species hits in one call. Verified live: `q="TP53"` returns 32 hits split 21 human / 3 mouse / 8 rat.
+2. `HumanMine_search_genes(q="<term>", size=10)` / `HumanMine_search_pathways(q="<term>", size=10)` — narrower convenience wrappers filtering to genes-only or pathways-only (Reactome/KEGG-sourced).
+3. `MouseMine_search(q="<term>", size=10, format="json")` — the mouse-only InterMine sibling; broader than MGI's own gene/phenotype endpoints because it also indexes publications and pathway membership in the same search.
+4. `MouseMine_search_genes(q="<term>", size=10)` — filters to `ProteinCodingGene` only. Verified live on `q="Trp53"` (same gene used in the Phase 2b IMPC example): 180 hits, with a `pathways.name` facet showing `Transcriptional Regulation by TP53`, `G1/S DNA Damage Checkpoints`, etc. — a fast way to see pathway context without a separate Reactome call.
+5. `MouseMine_search_alleles(q="<term>", size=10)` — allele/mutant search returning `attributeString` (e.g. `Null/knockout`) and `alleleType` (Targeted, Endonuclease-mediated, Spontaneous, ...). Verified live on `q="Trp53"`: 170 alleles including `Trp53<em2Mvw>` (endonuclease-mediated null).
+6. `InterMine_run_pathquery(query="<XML PathQuery>")` — for HumanMine only, an escape hatch to traverse the InterMine data model graph directly (gene→pathways, gene→protein domains, region→features) when the canned search tools don't expose the relationship you need. Requires hand-written XML with `model`, `view`, and `constraint` elements — verified live with the tool's own worked example (`Gene.symbol Gene.pathways.name` constrained to `PAX6`), which correctly returned `PAX6 → Activation of HOX genes during differentiation`, `Developmental Biology`, etc.
+
+Use these as a **fallback/supplement**, not a replacement for Phases 1-2b: MGI/IMPC give you curated, structured, statistically-scored data; HumanMine/MouseMine give you fast free-text triage across a wider net of sources when you're not sure what you're looking for yet. For dedicated human-disease-association work (not just "does this gene show up near this disease term"), hand off to `tooluniverse-gene-disease-association`'s DisGeNET/OpenTargets/Monarch pipeline instead of treating a HumanMine disease-facet hit as a real association.
+
+**Mouse Phenome Database — do not rely on `MPD_get_phenotype_data`'s name at face value.** Despite being registered as an MPD tool, its own description states MPD's real REST API has no simple strain+phenotype-category search, so it substitutes a keyword search against **ENCODE experiment records mentioning the strain name** — this is a weak proxy for actual MPD phenotype measurements, not MPD data itself. Verified live: `strain="C57BL/6J"` succeeds, but `strain="DBA/2J"` reproducibly 404s (the unescaped `/` in the strain name breaks the outgoing ENCODE query URL) — a strain-name-dependent failure, not evidence the strain lacks data. Treat any result from this tool as circumstantial at best; for real cross-strain phenotype comparisons prefer Phase 2b (IMPC) or Phase 2c's GeneNetwork section below, and do not report "no ENCODE hits" as "no phenotype data exists for this strain."
+
+---
+
+### Phase 2d: Systems Genetics / eQTL Across Recombinant Inbred Panels (GeneNetwork)
+
+GeneNetwork is a different data type again: genetic-cross populations (13+ species) with matched genotype + expression/phenotype measurements per individual/strain, used for QTL mapping (which genomic region drives variation in this trait). Its best-known resource is the **BXD family** (C57BL/6J × DBA/2J recombinant inbred mouse strains — note both parental strains are the same C57BL/6J and DBA/2J from the MPD caveat above), but it also covers rat (HXB/BXH), Arabidopsis, and others.
+
+1. `GeneNetwork_list_species()` — no params; verified live returns `{"FullName": "Mus musculus", "Name": "mouse", "TaxonomyId": 10090}` plus rat/human/arabidopsis/etc.
+2. `GeneNetwork_list_groups(species="mouse")` — genetic cross populations for that species; verified live returns `BXD` (`GeneticType: "riset"`, i.e. recombinant inbred set) among others.
+3. `GeneNetwork_list_datasets(group="bxd")` — tissue/platform-specific datasets for that cross; verified live returns entries like `Long_Abbreviation: "BXDMicroArray_ProbeSet_August03"` (brain expression) alongside phenotype-only datasets (e.g. `BXDPublish`).
+4. `GeneNetwork_get_sample_data(dataset_name="<Long_Abbreviation>", trait_name="<probe_or_trait_id>")` — per-strain measurement values with standard errors for one trait across the whole panel.
+5. `GeneNetwork_get_trait_info(dataset_name="<...>", trait_name="<...>")` — trait metadata: gene symbol, chromosome/Mb position, `lrs` (LOD-like linkage score), `additive` effect, best `locus` (peak marker) — this is the QTL-mapping result for that trait. Verified live on the tool's own worked example (`HC_M2_0606_P`/`1436869_at` = Shh probe): returns `symbol: "Shh"`, `chr: "5"`, peak `locus: "rs8253327"`, `lrs: 12.77`.
+6. `GeneNetwork_get_dataset_info(dataset_name="<...>")` — dataset-level metadata (tissue, platform, data scale, public/confidential status) to confirm you're querying the right dataset before pulling sample data.
+
+Use this phase when the question is specifically "what genomic locus explains strain-to-strain variation in trait X" (classic QTL mapping) rather than "does gene X have a knockout phenotype" (Phase 2/2b) — GeneNetwork answers a genetics-of-variation question, not a loss-of-function question.
+
+---
+
 ### Phase 3: Invertebrate Models
 
 #### Fly (FlyBase)
@@ -169,6 +201,11 @@ Example — SHR is annotated to `Left Ventricular Hypertrophy` (DOID:9004616, qu
 5. `SGD_get_interactions(sgd_id="<sgd_id>")` — synthetic lethal partners = potential drug targets
 
 Most informative for: cell cycle, DNA repair, protein folding, metabolism, autophagy, secretory pathway, chromatin. Not informative for: multicellular processes (development, immunity, neural function).
+
+**Protein-level detail (complements the gene-level steps above)** — these three tools take a `locus` string directly (standard gene name, systematic/ORF name, or SGD ID — no separate ID-resolution step needed):
+6. `SGD_get_protein_domains(locus="<gene_or_ORF_name>")` — mapped domains from Pfam/InterPro/SMART/PROSITE/CDD/Gene3D/SUPERFAMILY in one call. Verified live on `locus="CDC28"` (the S. cerevisiae ortholog of fission-yeast **cdc2** from the Phase 5b PomBase example): 12 domain hits including Gene3D's "Phosphorylase Kinase; domain 1" and "Transferase(Phosphotransferase) domain 1" — consistent with CDC28's role as the budding-yeast CDK.
+7. `SGD_get_ptm_sites(locus="<gene_or_ORF_name>")` — curated post-translational modification sites (phosphorylation, ubiquitination, etc.) with residue, position, reference, and PMID. Verified live on `locus="CDC28"`: 34 sites, e.g. phosphorylated Ser2 (Lanz et al. 2021, PMID:33491328; also independently reported by Leutert et al. 2023, PMID:37845410).
+8. `SGD_get_literature(locus="<gene_or_ORF_name>")` — reference counts by curation category (primary, review, additional, etc.), not full citations — use this to gauge how well-studied a gene is before deciding whether to expect rich Phase 5 data. Verified live: `ACT1` has 1659 total references vs. `CDC28`'s 1971 — both heavily studied, unsurprising for essential cell-cycle/cytoskeletal genes.
 
 ---
 
