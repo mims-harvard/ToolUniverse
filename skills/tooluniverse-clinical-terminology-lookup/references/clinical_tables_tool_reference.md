@@ -329,3 +329,29 @@ observed live except where noted as schema-only.
 - **Parameters:** `terms` (string, required — matched against instrument NAMES only, e.g. "PHQ-9"/"GAD-7"/"MMSE"/a panel name), `max_results` (int, default 20, max 200).
 - **`tu test` result:** PASS, 3/3 examples (PHQ-9 -> 2 hits; "depression" -> 20 of 23 total; "pain scale" -> 5 hits).
 - Returns whole instruments/panels only — a single question or lab test never appears here even if its wording matches; use `LOINC_search_tests` for individual tests/questions. A `note` field appears only when nothing matched.
+
+## UniProt Disease and Keyword Vocabularies (`uniprot_ref_tools.json`)
+
+Source: `src/tooluniverse/data/uniprot_ref_tools.json`. All 4 tools type
+`UniProtRefTool`, no API key required.
+
+### UniProtRef_search_diseases / UniProtRef_get_disease
+
+- **Parameters:** `search_diseases` takes `query` (string, required) + `size` (int, default 10, max 25); `get_disease` takes `disease_id` (string, required, format `DI-XXXXX`).
+- **`tu test` result:** PASS, 2/2 examples each.
+- **Custom calls:** `{"query": "breast cancer"}` -> `DI-03803` ("Breast cancer, lobular", acronym `LBC`), `DI-01559` ("familial breast-ovarian cancer 1"), `DI-02603` ("familial breast-ovarian cancer 2") among results, each with `reviewed_protein_count`. `{"disease_id": "DI-01559"}` -> full record: `name: "Breast-ovarian cancer, familial, 1"`, `cross_references` incl. `{"database": "MIM", "id": "604370"}` and `{"database": "MeSH", "id": "D001943"}`, plus separate `reviewed_protein_count`/`unreviewed_protein_count` (only `get_disease` exposes the unreviewed count; `search_diseases` only returns `reviewed_protein_count`).
+
+### UniProtRef_search_keywords / UniProtRef_get_keyword
+
+- **Parameters:** `search_keywords` takes `query` (string, required) + `size` (int, default 10, max 25); `get_keyword` takes `keyword_id` (string, required, format `KW-XXXX`).
+- **`tu test` result:** PASS, 2/2 examples each.
+- **Custom calls:** `{"query": "zinc finger"}` -> `KW-0863` ("Zinc-finger", category `Domain`, 13,427 reviewed proteins) — note this is a distinct keyword/ID from `{"keyword_id": "KW-0862"}` ("Zinc", category `Ligand`, 43,994 reviewed + 6,677,859 unreviewed proteins; `parents: [{"id": "KW-9993", "name": "Ligand"}]`; `go_mappings: []` for this particular keyword, though the schema supports GO-term mappings on keywords that have them, e.g. `KW-0053` Apoptosis -> GO:0006915).
+
+## UniProt Reference Proteomes
+
+See `skills/tooluniverse-sequence-retrieval/SKILL.md` for
+`UniProtRef_get_proteome`/`UniProtRef_search_proteomes` (whole-organism
+proteome metadata) — kept in that skill rather than here since it's a
+sequence/genome-data-retrieval task, not a clinical-terminology
+normalization task, despite sharing the same source JSON file as the
+disease/keyword tools above.

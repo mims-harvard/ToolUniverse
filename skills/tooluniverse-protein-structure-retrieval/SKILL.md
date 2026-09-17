@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-protein-structure-retrieval
-description: Protein structure retrieval from RCSB PDB, PDBe, and AlphaFold with disambiguation, quality assessment (resolution, R-factor, pLDDT), and metadata. Distinguishes high-quality experimental (X-ray under 2 Angstrom) vs predicted vs medium-quality structures. Use for fetching protein structures, structure-quality comparison, and selecting structures for drug design or modeling.
+description: Protein structure retrieval from RCSB PDB, PDBe, AlphaFold, and SWISS-MODEL with disambiguation, quality assessment (resolution, R-factor, pLDDT, coverage), and metadata. Distinguishes high-quality experimental (X-ray under 2 Angstrom) vs predicted vs homology-model vs medium-quality structures. Use for fetching protein structures, structure-quality comparison, batch model-availability checks across a gene list, and selecting structures for drug design or modeling.
 disable-model-invocation: true
 ---
 
@@ -78,6 +78,19 @@ af = tu.tools.alphafold_get_prediction(uniprot_id=uniprot_id)
 | get_protein_metadata | pdbe_get_entry_summary |
 | Experimental structure | AlphaFold prediction |
 | get_protein_ligands | PDBe_KB_get_ligand_sites |
+| No usable AlphaFold model (multi-domain protein, low pLDDT for a specific range) | `SwissModel_get_models` filtered to that residue `range` — the repository holds per-domain homology models AlphaFold's single full-length model may not resolve well |
+
+### SWISS-MODEL Repository (Homology Models + Re-Indexed Experimental Structures)
+
+Use `SwissModel_get_summary(uniprot_id=...)` for a one-call "does a homology model exist and how good is it" check — it returns the single best-coverage entry across everything SWISS-MODEL has for that accession. **Important**: the "best" entry it returns can be an experimental PDB structure re-indexed by UniProt residue range (verified live: for EGFR/P00533, `get_summary`'s `best_model` was an X-RAY DIFFRACTION entry, not a homology model) — check `best_model.method`, don't assume "best model" means "computed homology model."
+
+To get genuine computed homology models specifically, call `SwissModel_get_models(uniprot_id=..., provider="swissmodel")` — `provider="pdb"` isolates the re-indexed experimental entries instead, and omitting `provider` returns both. Other filters: `range` (residue window, useful for large multi-domain proteins where one region has poor AlphaFold confidence) and `template` (a specific PDB template ID).
+
+`SwissModel_download_pdb(uniprot_id=..., provider=...)` fetches the actual ATOM/HETATM coordinate text (not just a URL) for downstream docking/visualization — same filters as `get_models`. `SwissModel_get_models_batch(uniprot_ids=[...])` resolves up to 250 accessions in one call, useful when checking model availability across a gene list before deciding which proteins need AlphaFold/ESMFold instead.
+
+**Quality-metric caveat (verified live)**: `qmean_global`/`qmean_z_score` were `null` on every real homology-model entry tested (EGFR's 2 SWISS-MODEL models) — QMEAN is frequently absent, not a metric you can always rely on. Use `coverage` (fraction of the UniProt sequence the model spans), `template` (which PDB structure it was built from), and `method` as the more consistently populated quality signals; treat QMEAN as a bonus when present, not a required check.
+
+**When to reach for SWISS-MODEL vs. AlphaFold**: AlphaFold (above) is the default single-model reference for any UniProt-reviewed protein. Reach for SWISS-MODEL specifically when (a) you need multiple alternative models built from different templates to compare, (b) a large protein's AlphaFold confidence is poor in one region and a domain-specific homology model with better template coverage might do better there, or (c) you're checking many accessions at once and want batch lookup rather than N separate AlphaFold calls.
 
 ---
 
@@ -136,3 +149,5 @@ Present as a **Structure Profile Report**. Hide search process. Include:
 **PDBe**: `pdbe_get_entry_summary` (overview), `pdbe_get_entry_molecules` (entities), `pdbe_get_entry_experiment` (experimental), `PDBe_KB_get_ligand_sites` (pockets)
 
 **AlphaFold**: `alphafold_get_prediction` (get prediction), `alphafold_get_summary` (search)
+
+**SWISS-MODEL**: `SwissModel_get_summary` (best available model, single call), `SwissModel_get_models` (list all models, filterable by `range`/`provider`/`template`), `SwissModel_download_pdb` (actual coordinate text), `SwissModel_get_models_batch` (up to 250 UniProt accessions in one call)

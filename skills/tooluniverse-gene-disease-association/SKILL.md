@@ -121,6 +121,14 @@ histopheno = tu.tools.MonarchV3_get_histopheno(entity_id=mondo_id)  # phenotypes
 entity = tu.tools.MonarchV3_get_entity(entity_id=hgnc_curie)  # details, synonyms, xrefs
 ```
 
+Note: `EnsemblPheno_get_by_gene` is another multi-source gene->phenotype
+aggregator (GWAS catalog/ClinVar/OMIM/Orphanet), but is currently
+returning live HTTP 500 errors upstream at Ensembl — verified, not a
+ToolUniverse bug. Its variant-level counterpart, `EnsemblPheno_get_by_variant`,
+does work; see `tooluniverse-variant-analysis`'s "Ensembl Phenotype
+Associations" section. Prefer Monarch/G2P above until Ensembl's gene/term/
+region endpoints recover.
+
 ---
 
 ## Phase 5: Mendelian Disease Evidence

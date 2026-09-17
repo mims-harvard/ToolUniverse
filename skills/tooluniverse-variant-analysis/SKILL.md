@@ -438,6 +438,47 @@ returned page (e.g. BRCA1 had 6,684 total EVA-submitted variants against
 a `limit` of 3-20) — never treat a small returned page as the complete
 set; check `numTotalResults` before summarizing "how many variants."
 
+### Ensembl Phenotype Associations
+
+Aggregates phenotype/disease associations from multiple upstream sources
+(NHGRI-EBI GWAS catalog, ClinVar, OMIM, Cancer Gene Census, Orphanet,
+dbGaP) behind one Ensembl REST endpoint, queryable by gene, region,
+phenotype term, or variant. **Live reliability, verified repeatedly, not
+assumed**: only `EnsemblPheno_get_by_variant` currently works — 2/2 live
+calls succeeded with real data. `EnsemblPheno_get_by_gene`,
+`EnsemblPheno_get_by_region`, and `EnsemblPheno_get_by_term` all failed on
+every attempt (`get_by_gene` hangs/times out; the other two return a fast
+"HTTP error: unknown"). This traces to Ensembl's own REST API, not
+ToolUniverse: a direct `curl` to
+`rest.ensembl.org/phenotype/gene/homo_sapiens/BRCA1` independently
+returned a live HTTP 500 from EBI. **Use `EnsemblPheno_get_by_variant`
+with confidence; treat the other three as currently broken upstream and
+re-check with a fresh `tu run` call before relying on them** — do not
+fabricate a gene/region/term-level phenotype result if they fail again.
+
+| Tool | When to Use | Key Parameter | Response | Live status |
+|------|------------|----------------|----------|-------------|
+| `EnsemblPheno_get_by_variant` | Phenotypes/traits linked to one rsID, multi-source | `variant_id` (rsID) | `phenotypes[]` with `trait`, `source`, `risk_allele`, `pvalue`, `beta_coefficient`, `study` | **Working** (verified) |
+| `EnsemblPheno_get_by_gene` | Phenotypes linked to a gene, multi-source aggregate | `gene` (symbol) | `phenotypes[]` with `description`, `source`, `ontology_accessions` | Broken (HTTP 500 upstream, verified) |
+| `EnsemblPheno_get_by_region` | Phenotype landscape of a genomic interval | `region` (`chr:start-end`) | `phenotypes[]`, region-scoped | Broken upstream (verified) |
+| `EnsemblPheno_get_by_term` | Reverse lookup: phenotype name/ontology accession -> variants/genes | `term` or `accession` (EFO/HP/MONDO) | `associations[]` with `variant`, `gene`, `risk_allele`, `p_value`, `odds_ratio` | Broken upstream (verified) |
+
+**Real example** (rs429358, the same APOE variant already used above in
+Variant Notation Conversion — cross-checked for consistency):
+`EnsemblPheno_get_by_variant(variant_id="rs429358")` returned 1140 real
+phenotype associations, including lipid/metabolite GWAS hits (e.g.
+"1,2-dihydroxy-3-keto-5-methylthiopentene dioxygenase levels", PMID
+39528825) sourced from the NHGRI-EBI GWAS catalog — a second rsID,
+`rs7903146` (TCF7L2/diabetes), returned 331 associations including MAGIC
+consortium glucose-trait hits. Each `phenotypes[]` entry's `source` field
+tells you which upstream database it came from — grade evidence
+accordingly (a ClinVar-sourced entry carries different weight than a
+single-study GWAS hit).
+
+For gene-level phenotype aggregation while `EnsemblPheno_get_by_gene` is
+down, use Monarch or Gene2Phenotype instead (see
+`tooluniverse-gene-disease-association`'s Phase 4/Phase 5).
+
 ### Structural Variant Annotation
 
 | Tool | When to Use | Parameters | Response |
