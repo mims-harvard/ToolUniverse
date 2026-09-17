@@ -119,7 +119,7 @@ For detailed code snippets and API call patterns for each phase, see `ANALYSIS_D
 Not every mutation in a tumor is driving the cancer. Before querying databases, form a hypothesis:
 
 - **Is this gene a known oncogene or tumor suppressor?** Genes like EGFR, BRAF, KRAS, TP53, PIK3CA are well-established cancer drivers. A mutation in one of these warrants deep investigation. A mutation in a gene with no known cancer role is likely a passenger.
-- **Is this specific mutation recurrent across tumors (hotspot)?** Use cBioPortal to check. A mutation seen in hundreds of independent tumors (e.g., BRAF V600E) is almost certainly a driver. A unique, never-before-seen missense in the same gene is less certain.
+- **Is this specific mutation recurrent across tumors (hotspot)?** Use cBioPortal to check prevalence across specific studies, or `GenomeNexus_get_cancer_hotspots` for a direct `is_hotspot` boolean plus tumor counts from the Chang et al. hotspot database (e.g., BRAF V600E: `is_hotspot: true`, 897 tumors as a single-residue hotspot, 545 as a 3D-cluster hotspot). A mutation seen in hundreds of independent tumors is almost certainly a driver. A unique, never-before-seen missense in the same gene is less certain.
 - **What is the predicted functional impact?** Truncating mutations (nonsense, frameshift) in tumor suppressors are likely loss-of-function drivers. Missense mutations in oncogenes at known hotspot residues are likely gain-of-function drivers.
 - **For unique (non-hotspot) missense in driver genes, look at mechanism, not just pathogenicity.** AlphaMissense gives a score; the ESMC-6B SAE composite `ESM_explain_variant_mechanism(sequence=wt_protein_seq, position=..., ref_aa=..., alt_aa=..., top_k_features=5)` answers *how* the substitution disrupts function — catalytic / ligand-binding / PTM / structural-stability loss. A unique missense that disrupts the same SAE feature category as a known driver hotspot in the same gene is more likely a driver than a missense that disrupts unrelated features. Requires `ESM_API_KEY`; missense only.
 - **Conclusion pattern**: A recurrent mutation in a known driver gene is likely actionable. A unique mutation in a gene not associated with cancer is likely a passenger. State your assessment and the reasoning behind it.
@@ -198,6 +198,18 @@ Form your clinical hypothesis FIRST based on gene function and mutation type, TH
 | `PubMed_search_articles` | `query`, `limit`, `include_abstract` | Returns **list** of dicts (NOT wrapped) |
 | `Reactome_map_uniprot_to_pathways` | `id` (UniProt accession) | Pathway mappings |
 | `GTEx_get_median_gene_expression` | `gencode_id`, `operation="median"` | Expression by tissue |
+
+### Variant Annotation & Cancer Hotspots (Genome Nexus)
+
+Complements CIViC/cBioPortal with structured, computed consequence prediction (VEP/SIFT/PolyPhen/AlphaMissense) plus a dedicated cancer-hotspot lookup — use it to establish *in silico* pathogenicity and hotspot status before or alongside the curated clinical-evidence search, not instead of it. Requires **GRCh37/hg19** coordinates (convert first if you only have GRCh38, e.g. via NCBI Variation Services in `tooluniverse-variant-analysis`).
+
+| Tool | Key Parameters | Response Key Fields |
+|------|---------------|-------------------|
+| `GenomeNexus_annotate_variant` | `hgvsg` (GRCh37, e.g. `"7:g.140453136A>T"`) | `most_severe_consequence`, `transcript_consequences[].{hgvsp, sift_prediction, polyphen_prediction, alphaMissense}`, `hotspots.annotation`, `colocated_variants[].dbSnpId` |
+| `GenomeNexus_annotate_mutation` | `chromosome`, `start`, `end`, `reference_allele`, `variant_allele` (GRCh37) | Same shape as `annotate_variant` — use when you have separate coordinate fields instead of an HGVS string |
+| `GenomeNexus_annotate_dbsnp` | `rsid` (e.g. `"rs121913529"`) | Same shape; resolves the rsID to coordinates first |
+| `GenomeNexus_get_cancer_hotspots` | `hgvsg` (GRCh37) | `is_hotspot` (bool), `hotspots[].{residue, tumorCount, type}` — `type` is `"single residue"` or `"3d"` (structural cluster) |
+| `GenomeNexus_get_canonical_transcript` | `gene_symbol` | `transcriptId`, `proteinId`, `proteinLength`, `refseqMrnaId`, `pfamDomains[]` |
 
 ---
 

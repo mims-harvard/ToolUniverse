@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-model-organism-genetics
-description: Cross-species genetic analysis using model organism databases (MGI mouse, ZFIN zebrafish, FlyBase fruit fly, WormBase worm, SGD yeast, RGD rat, GBIF taxonomy). Maps human genes to orthologs, retrieves phenotype/expression/functional data, assesses gene function conservation, and identifies the best animal model for studying a human gene or disease.
+description: Cross-species genetic analysis using model organism databases (MGI mouse, ZFIN zebrafish, FlyBase fruit fly, WormBase worm, SGD budding yeast, PomBase fission yeast, RGD rat, GBIF taxonomy) plus VEuPathDB for eukaryotic pathogens (Plasmodium, Toxoplasma, fungi, vectors). Maps human genes to orthologs, retrieves phenotype/expression/functional data, assesses gene function conservation, and identifies the best animal model for studying a human gene or disease.
 disable-model-invocation: true
 ---
 
@@ -11,7 +11,7 @@ When analysis requires computation (statistics, data processing, scoring, enrich
 
 Map human genes to model organism orthologs and retrieve phenotype, expression, and functional data across six species. Synthesize cross-species evidence to assess gene function conservation and identify the best animal models for studying human genes and diseases.
 
-**Not for**: human variant interpretation (`tooluniverse-variant-analysis`), drug target validation (`tooluniverse-drug-target-validation`), human disease characterization (`tooluniverse-multiomic-disease-characterization`).
+**Not for**: human variant interpretation (`tooluniverse-variant-analysis`), drug target validation (`tooluniverse-drug-target-validation`), human disease characterization (`tooluniverse-multiomic-disease-characterization`), pathogen outbreak/drug-repurposing intelligence once a VEuPathDB target gene is identified (`tooluniverse-infectious-disease`).
 
 **LOOK UP, DON'T GUESS**: When asked about a species' taxonomy, ecology, or biology, search GBIF/NCBI Taxonomy first. For GBIF: use `GBIF_search_species(query="species name")`, then use the `nubKey` (not `key`) from the result to call `GBIF_get_species(speciesKey=nubKey)` for full taxonomy (kingdom, phylum, class, order, family). The `nubKey` is the GBIF backbone key; the `key` is dataset-specific and often lacks higher taxonomy.
 
@@ -152,6 +152,38 @@ Example — SHR is annotated to `Left Ventricular Hypertrophy` (DOID:9004616, qu
 5. `SGD_get_interactions(sgd_id="<sgd_id>")` — synthetic lethal partners = potential drug targets
 
 Most informative for: cell cycle, DNA repair, protein folding, metabolism, autophagy, secretory pathway, chromatin. Not informative for: multicellular processes (development, immunity, neural function).
+
+---
+
+### Phase 5b: Fission Yeast (PomBase) — S. pombe, distinct from SGD's S. cerevisiae
+
+S. pombe (fission yeast) and S. cerevisiae (budding yeast) diverged ~350-450 million years ago and are about as distant from each other as either is from humans for some pathways — S. pombe's cell-cycle and RNAi machinery is often the MORE human-like of the two yeasts, so check both when a Phase 5 (SGD) search comes up thin or when the process in question is cell-cycle/chromatin/RNA-processing-related.
+
+1. `PomBase_search_genes(query="<gene_name_or_keyword>", limit=10)` — search by gene name, systematic-ID prefix (e.g. `"SPAC"`), or product keyword across 12,600+ genes
+2. `PomBase_get_gene(gene_id="<systematic_id>")` — gene name, product, InterPro domains, deletion viability, UniProt cross-reference (systematic IDs look like `SPBC11B10.09`, `SPAC2F7.03c`)
+3. `PomBase_get_gene_phenotypes(gene_id="<systematic_id>")` — FYPO (Fission Yeast Phenotype Ontology) terms with evidence codes, plus `deletion_viability`
+4. `PomBase_get_orthologs(gene_id="<systematic_id>")` — human orthologs (HGNC IDs, taxon 9606) and S. cerevisiae orthologs (systematic name, taxon 4932) in one call — useful for triangulating a human gene through BOTH yeasts at once
+5. `PomBase_get_interactions(gene_id="<systematic_id>")` — physical (Affinity Capture-MS etc.) and genetic interactions with evidence, PMID, throughput, source database
+6. `PomBase_get_go_annotations(gene_id="<systematic_id>")` — GO terms by aspect (biological_process/molecular_function/cellular_component)
+
+Worked example (verified live): `PomBase_get_gene(gene_id="SPBC11B10.09")` resolves to **cdc2**, the fission-yeast cyclin-dependent kinase. `PomBase_get_orthologs` on the same ID returns human `HGNC:1722`/`HGNC:1771`/`HGNC:1772` (CDK1/CDK2/CDK3 family) and S. cerevisiae `YBR160W` (CDC28) — cdc2 is the founding member of the CDK family, first characterized in fission yeast. `PomBase_get_gene_phenotypes` confirms `deletion_viability: "inviable"` with 60 FYPO terms including "abnormal cell cycle arrest at mitotic G2/M phase transition," consistent with its essential mitotic role. `PomBase_get_interactions` returns 100 physical interactions (e.g. with `red1`/SPAC1006.03c via Affinity Capture-MS, PMID:24713849).
+
+---
+
+### Phase 3b: Eukaryotic Pathogens (VEuPathDB) — malaria, toxoplasmosis, fungi, vectors
+
+VEuPathDB is a family of pathogen/vector/host genome databases (PlasmoDB for *Plasmodium*/malaria, ToxoDB for *Toxoplasma*, FungiDB, VectorBase, CryptoDB, GiardiaDB, MicrosporidiaDB, PiroplasmaDB, TrichDB, TriTrypDB, AmoebaDB) sharing one WDK REST API. This is the right resource when the "model organism" in question is actually a pathogen and the question is about pathogen gene function rather than human-disease-model translation (for outbreak/drug-repurposing intelligence once a target gene is identified, hand off to `tooluniverse-infectious-disease`).
+
+**Live-verified access limitation (read before using):** as of this writing, only `VEuPathDB_list_record_types` works without authentication. The other 4 tools —
+`VEuPathDB_list_gene_searches`, `VEuPathDB_list_organism_searches`, `VEuPathDB_search_genes_by_organism`, `VEuPathDB_get_gene_record` — all fail live with `HTTP 401: Valid API Key required for this endpoint`, even though the tool's own module docstring claims "No authentication required." This is an upstream policy change since the tool was written, not a bug in your request, and the tool currently has **no built-in mechanism to supply an API key** (no `required_api_keys`/env-var support in `veupathdb_tool.py`) — so these 4 operations cannot currently be completed by this skill. Verify with a cheap call first:
+
+```
+VEuPathDB_list_record_types()  # {} — no params, this one still works
+```
+
+If a call to `VEuPathDB_search_genes_by_organism` or `VEuPathDB_get_gene_record` returns a 401, tell the user plainly that VEuPathDB now gates this endpoint and the tool has no key-passing mechanism yet — do not fabricate a gene record or organism gene list to work around it.
+
+When/if access is restored or a key mechanism is added: `VEuPathDB_search_genes_by_organism(organism="<Genus species Strain>", project="<plasmodb|toxodb|fungidb|vectorbase|cryptodb|giardiadb|microsporidiadb|piroplasmadb|trichdb|tritrypdb|amoebadb>", limit=25)` finds genes for a named organism/strain (e.g. `organism="Plasmodium falciparum 3D7"`, `project="plasmodb"`), and `VEuPathDB_get_gene_record(gene_id="<primary_key>", project="<same project>")` retrieves one gene's attributes (product, gene type, genomic location, chromosome, transcript count) by its VEuPathDB primary key (e.g. `PF3D7_0417200` for *P. falciparum*'s DHFR-TS gene).
 
 ---
 
