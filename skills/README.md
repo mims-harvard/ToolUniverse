@@ -43,6 +43,7 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-expression-data-retrieval` | Gene expression datasets from ArrayExpress and BioStudies |
 | `tooluniverse-gene-enrichment` | Gene enrichment and pathway analysis (gseapy, PANTHER, STRING, etc.) |
 | `tooluniverse-gene-liability` | Human safety liability scoring for gene inhibition or loss of function |
+| `tooluniverse-glycobiology` | Glycan structure and protein-glycosylation research (GlyGen) |
 | `tooluniverse-gwas-drug-discovery` | GWAS signals to drug targets and repurposing opportunities |
 | `tooluniverse-gwas-finemapping` | Causal variant prioritization via statistical fine-mapping |
 | `tooluniverse-gwas-snp-interpretation` | Genetic variant interpretation from GWAS studies |
@@ -55,6 +56,7 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-install-skills` | Auto-detect and install missing skills |
 | `tooluniverse-lab-data-standardization` | Convert lab instrument output (plate reader, NanoDrop, qPCR, etc.) to a standardized ASM-style JSON/CSV |
 | `tooluniverse-literature-deep-research` | Literature research with evidence grading and theme extraction |
+| `tooluniverse-medical-imaging-radiology` | Radiology/DICOM cancer-imaging cohort and series discovery (TCIA) |
 | `tooluniverse-metabolomics` | Metabolomics research (metabolite ID, study analysis) |
 | `tooluniverse-metabolomics-analysis` | Metabolomics data analysis (quantification, pathway, flux) |
 | `tooluniverse-multi-omics-integration` | Multi-omics dataset integration |
@@ -81,6 +83,7 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-spatial-transcriptomics` | Spatial transcriptomics (10x Visium, MERFISH, seqFISH) |
 | `tooluniverse-statistical-modeling` | Statistical modeling and regression for biomedical data |
 | `tooluniverse-structural-variant-analysis` | Structural variant analysis for clinical genomics |
+| `tooluniverse-synthetic-biology-parts` | Genetic parts/BioBrick lookup from SynBioHub and the iGEM Registry |
 | `tooluniverse-systems-biology` | Pathway analysis (Reactome, KEGG, WikiPathways) |
 | `tooluniverse-target-research` | Comprehensive drug target profiling (9 research paths) |
 | `tooluniverse-variant-analysis` | VCF processing, variant annotation, and SV/CNV interpretation |
