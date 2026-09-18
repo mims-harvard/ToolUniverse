@@ -349,6 +349,8 @@ default_tool_files = {
         current_dir, "data", "uspto_downloader_tools.json"
     ),
     "uspto": os.path.join(current_dir, "data", "uspto_tools.json"),
+    # protocols.io - public repository of peer-reviewed/community lab protocols.
+    "protocolsio": os.path.join(current_dir, "data", "protocolsio_tools.json"),
     "xml": os.path.join(current_dir, "data", "xml_tools.json"),
     "mcp_auto_loader_boltz": os.path.join(
         current_dir, "data", "boltz_mcp_loader_tools.json"
