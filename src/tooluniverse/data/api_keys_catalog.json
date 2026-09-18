@@ -536,6 +536,18 @@
     ]
   },
   {
+    "name": "PROTOCOLS_IO_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Molecular Cloning & Lab Methods",
+    "register_url": "https://www.protocols.io/api-clients",
+    "purpose": "Search and retrieve published lab protocols from protocols.io.",
+    "without": "protocols.io tools are blocked without it.",
+    "used_by": [
+      "protocolsio_tools.json"
+    ]
+  },
+  {
     "name": "REPLICATE_API_TOKEN",
     "requirement": "required",
     "type": "secret",
