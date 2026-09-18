@@ -12,6 +12,11 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 
 default_tool_files = {
     "special_tools": os.path.join(current_dir, "data", "special_tools.json"),
+    # Unified interface over interchangeable ML model backends: one canonical
+    # input/output contract per task (variant effect, protein structure, ADMET,
+    # binding affinity) with many models behind it, so they can be compared and
+    # benchmarked against each other.
+    "unified_models": os.path.join(current_dir, "data", "unified_model_tools.json"),
     "tooluniverse_page": os.path.join(
         current_dir, "data", "tooluniverse_page_tools.json"
     ),
@@ -948,6 +953,8 @@ default_tool_files = {
     ),
     # TCIA - The Cancer Imaging Archive (medical imaging datasets)
     "tcia": os.path.join(current_dir, "data", "tcia_tools.json"),
+    # IDC - NCI Image Data Commons (radiology + digital pathology, no auth)
+    "idc": os.path.join(current_dir, "data", "idc_tools.json"),
     # OpenNeuro - Neuroimaging data repository (BIDS datasets)
     "openneuro": os.path.join(current_dir, "data", "openneuro_tools.json"),
     # ModelDB - Computational neuroscience model repository (Yale/SenseLab)

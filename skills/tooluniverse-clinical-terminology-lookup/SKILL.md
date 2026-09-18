@@ -468,6 +468,52 @@ current standard).
 See `references/clinical_tables_tool_reference.md` for full parameter
 tables and real captured example responses for all 10 of these tools.
 
+## General Cross-Reference Resolution: Wikidata
+
+`src/tooluniverse/data/wikidata_entity_tools.json` (`Wikidata_search_entities`,
+`Wikidata_get_entity`) and `src/tooluniverse/data/wikidata_sparql_tools.json`
+(`Wikidata_SPARQL_query`) — a general-purpose knowledge graph, distinct from
+every vocabulary above in that ONE entity carries cross-reference IDs into
+many external databases at once, and it supports arbitrary graph queries
+(e.g. "find all drugs that treat condition X") that a single-vocabulary
+lookup cannot answer.
+
+**Honesty note:** Wikidata is crowd-edited. Treat it as a fast way to *find*
+candidate cross-reference IDs or relationships, never as the authoritative
+source for a load-bearing claim — verify anything clinically or scientifically
+significant against the primary database the ID points to (DrugBank, PubChem,
+ChEMBL, MeSH, etc.) before relying on it.
+
+- `Wikidata_search_entities({"search": "<term>", "limit": <n>})` — free-text
+  search, returns Q-numbers with labels/descriptions. **Parameter is `search`,
+  not `query`** — verified live (the latter raises a validation error).
+- `Wikidata_get_entity({"ids": "<Q-number>", "props": "claims"})` — full
+  structured data for one entity. Real example verified live: `Q18216`
+  (aspirin) carries `P652` (UNII: `R16CO5Y76E`), `P662` (PubChem CID: `2244`),
+  `P715` (DrugBank ID: `DB00945`), `P486` (MeSH ID: `D001241`), `P231` (CAS:
+  `50-78-2`), `P267` (ATC code: `A01AD05`) — one call resolving to six
+  external identifiers at once.
+- `Wikidata_SPARQL_query({"sparql": "<SPARQL string>"})` — arbitrary graph
+  queries. **Parameter is `sparql`, not `query`.** Real, verified-working
+  example (find drugs used to treat migraine, `Q133823`, via property
+  `P2176` "drug used for treatment"):
+  ```sparql
+  SELECT ?drug ?drugLabel WHERE {
+    wd:Q133823 wdt:P2176 ?drug .
+    SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
+  }
+  LIMIT 10
+  ```
+  Real results: paracetamol, amitriptyline, ibuprofen, rizatriptan,
+  zolmitriptan, topiramate, and others — genuine migraine treatments,
+  including real triptans. **Always resolve a disease/drug name to its
+  Q-number via `Wikidata_search_entities` first and confirm the label
+  matches** — a plausible-looking Q-number typed from memory can silently
+  point at the wrong entity (e.g. `Q133423` looks like migraine's ID but
+  isn't; the real one is `Q133823` — a single-digit transposition that
+  returns zero results with no error, not a wrong answer, so an empty
+  result here means check the ID before concluding "no data exists").
+
 ## Workflow
 
 1. Identify which of the six normalization needs applies.
