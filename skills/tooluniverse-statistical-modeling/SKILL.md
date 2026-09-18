@@ -301,6 +301,33 @@ cph.fit(df[['time', 'event', 'treatment', 'age']], duration_col='time', event_co
 hr = cph.hazard_ratios_['treatment']
 ```
 
+**Deterministic tool alternative** — for Kaplan-Meier / log-rank / Cox
+questions that don't need custom lifelines diagnostics, `Survival_kaplan_meier`,
+`Survival_log_rank_test`, and `Survival_cox_regression` (ToolUniverse tools,
+pure-compute, no lifelines import needed) give the same statistics as a single
+call and are less error-prone than hand-rolled code for a one-off number:
+
+```bash
+tu run Survival_kaplan_meier '{"durations":[5,10,15,20,25,30,12,8,22,18],"event_observed":[1,0,1,1,0,1,1,0,0,1]}'
+# -> median_survival_time, per-time survival_table (survival_probability,
+#    at_risk, ci_lower_95/ci_upper_95 via Greenwood log-log), n_events, n_censored
+
+tu run Survival_log_rank_test '{"durations_a":[...],"events_a":[...],"durations_b":[...],"events_b":[...]}'
+# -> chi2_statistic, p_value, observed/expected events per group, interpretation string
+
+tu run Survival_cox_regression '{"durations":[...],"event_observed":[...],"covariates":{"age":[...],"stage":[...]}}'
+# -> per-covariate hazard_ratio + 95% CI + p_value, log_likelihood, convergence flag
+```
+
+Typical workflow: `Survival_kaplan_meier` first for a descriptive curve/median
+survival, `Survival_log_rank_test` to test whether two groups differ, then
+`Survival_cox_regression` to adjust for covariates and get a hazard ratio (verified
+live: HR=1.71 for `stage` with 95% CI 0.46–6.28 was accompanied by a
+`low_epv_warning` when events-per-covariate fell below 10 — always surface this
+warning rather than reporting the HR as reliable on its own). Use
+`references/cox_regression.md` for hand-written lifelines diagnostics
+(proportional-hazards checks, Schoenfeld residuals) that these tools don't cover.
+
 ### Phase 1b: ANOVA for Multi-Feature Data
 
 When data has multiple features (genes, miRNAs, metabolites), use **per-feature ANOVA** (not aggregate). This is the most common pattern in genomics.

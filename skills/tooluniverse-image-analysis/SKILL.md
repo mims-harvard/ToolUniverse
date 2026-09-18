@@ -166,6 +166,35 @@ assuming a screen exists:
 - `CellPainting_get_well_data(plate_id=..., limit=...)` -- well-level metadata
   and image links for a plate (get `plate_id` from the plates step).
 
+### Public imaging study/dataset discovery (BioImage Archive)
+
+For "what imaging datasets exist for X" or "find a study I can reuse/benchmark
+against" (distinct from `CellPainting_*` above, which is specifically
+phenotypic-screening plate data) — the BioImage Archive (EBI BioStudies) is a
+general repository of bioimaging *study* metadata across modalities
+(fluorescence, cryo-EM, confocal, brightfield):
+- `BioImageArchive_search_studies(query=..., page_size=..., page=...)` —
+  general study search across the whole archive by modality/organism/
+  technique/topic. **Verified live: query is a broad free-text match** (e.g.
+  `"fluorescence microscopy cell"` returned 775,219 total hits across
+  literature-linked `S-EPMC*` and directly-submitted `S-BIAD*` accessions) —
+  narrow with specific technique/organism terms rather than single words.
+- `BioImageArchive_search_bioimages(query=..., page_size=...)` — same
+  archive, scoped to the BioImages-specific collection (returns `S-BIAD*`-style
+  submissions with microscopy-specific metadata, generally more useful than
+  the broader search above for "find a reusable imaging dataset" questions).
+- `BioImageArchive_get_study(accession=...)` — full study metadata
+  (title/description/organism/imaging_method) for one accession
+  (`S-BIAD####` / `S-BSST####` / `S-EPMC#######` format) found via either
+  search tool above.
+- `BioImageArchive_list_study_files(accession=..., limit=..., offset=...)` —
+  the actual per-file manifest for a study: filename, relative download path,
+  size, and any per-image experimental annotations the submitters attached
+  (e.g. staining, diagnosis, magnification, signal/noise class) — use this to
+  see what's actually in a study before deciding whether it's the right
+  reference/benchmark dataset. Page with `limit`/`offset`;
+  `metadata.records_total` gives the full file count (can be in the hundreds).
+
 ### Fluorescent protein reference (FPbase)
 
 For experiment-design questions about which fluorophore to use:
