@@ -5,6 +5,32 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 
+def _coerce_gene_list(raw):
+    """Turn agent-supplied gene input into a list of symbols.
+
+    LLMs often pass a single string such as ``"TP53"`` or ``"BRCA1,TP53"``.
+    Iterating that string would query one character at a time.
+    """
+    if raw is None:
+        return None
+    if isinstance(raw, str):
+        genes = [
+            part.strip() for part in raw.replace(";", ",").split(",") if part.strip()
+        ]
+        return genes or None
+    if isinstance(raw, (list, tuple)):
+        genes = []
+        for item in raw:
+            if item is None:
+                continue
+            text = str(item).strip()
+            if text:
+                genes.append(text)
+        return genes or None
+    text = str(raw).strip()
+    return [text] if text else None
+
+
 @register_tool("HumanBaseTool")
 class HumanBaseTool(BaseTool):
     """
@@ -17,11 +43,19 @@ class HumanBaseTool(BaseTool):
     def run(self, arguments):
         """Main entry point for the tool."""
         # Feature-111A-007: 'genes' as alias for 'gene_list'
-        gene_list = arguments.get("gene_list") or arguments.get("genes")
+        gene_list = _coerce_gene_list(arguments.get("gene_list")) or _coerce_gene_list(
+            arguments.get("genes")
+        )
         tissue = arguments.get("tissue", "brain")
         max_node = arguments.get("max_node") or arguments.get("top_n") or 10
         interaction = arguments.get("interaction", None)
         string_mode = arguments.get("string_mode", True)
+
+        if not gene_list:
+            return {
+                "status": "error",
+                "error": "`gene_list` is required (gene symbols, or a comma-separated string).",
+            }
 
         graph, bp_collection = self.humanbase_ppi_retrieve(
             gene_list, tissue, max_node, interaction
