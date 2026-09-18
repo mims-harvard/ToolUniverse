@@ -286,3 +286,13 @@ the `ddinter` API returns real drug-drug-interaction pairs with severity.
 This complements `tooluniverse-data-integration-analysis`'s multi-database
 evidence-gathering workflow as a fast single-call option when a dedicated
 tool doesn't already exist for the resource you need.
+
+## Cross-Database ID Resolution (Bioregistry, Identifiers.org, TogoID)
+
+Three overlapping registries for "I have an ID in system A, what's the equivalent in system B" — verified live with a shared example (human TP53): NCBI Gene `7157` -> `TogoID_convert {"ids": "7157", "source": "ncbigene", "target": "ensembl_gene"}` -> real `ENSG00000141510`; that Ensembl gene's HGNC ID `11998` resolves via both `Bioregistry_resolve_reference {"prefix": "hgnc", "identifier": "11998"}` and `IdentifiersOrg_resolve {"namespace": "hgnc", "local_id": "11998"}` to the same genenames.org record, confirming the two registries agree.
+
+- **Bioregistry** (`Bioregistry_resolve_reference`/`get_registry`/`get_prefix_mappings`/`search_registries`) — 2600+ prefixes, returns multiple provider URLs per identifier (bioregistry.io, identifiers.org, n2t.net, bio2rdf, and resource-specific links like GenCC/INDRA when relevant) plus prefix metadata (ID regex pattern, homepage). Use `search_registries` first when you don't know the exact prefix for a database.
+- **Identifiers.org** (`IdentifiersOrg_resolve`/`get_namespace`/`search_namespaces`/`list_namespaces`) — the original MIRIAM registry; `resolve` returns full institutional/provider metadata (which organization hosts the resolver, recommended vs. alternate providers) that Bioregistry's `default` link doesn't surface. Prefer this when you need to know WHO operates the canonical resolver for a namespace, not just a URL.
+- **TogoID** (`TogoID_convert`/`list_datasets`) — the only one of the three that actually CONVERTS an ID between 117 dataset types (not just gives you a URL for the ID you already have) — e.g. NCBI Gene -> Ensembl Gene -> UniProt -> PDB in one call each. Call `list_datasets` first to get valid `source`/`target` dataset-type strings.
+
+Reach for this cluster when a workflow needs to hop between ID systems that this skill's dedicated tools (UniProt/UniParc/UniRef/EBI Taxonomy above) don't directly connect — e.g. converting a variant-analysis skill's Ensembl gene ID into the NCBI Gene ID a different tool expects.
