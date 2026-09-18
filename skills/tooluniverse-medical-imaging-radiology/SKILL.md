@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-medical-imaging-radiology
-description: Discover and characterize cancer radiology imaging cohorts from The Cancer Imaging Archive (TCIA) — list public collections (e.g. LIDC-IDRI, TCGA-GBM, TCGA-LUAD, TCGA-BRCA), enumerate patients/subjects and studies within a collection, browse DICOM series by modality (CT, MR, PT, CR, DX, US, NM) or body part (CHEST, BRAIN, ABDOMEN, ...), pull series-level DICOM metadata and scanner manufacturer, estimate download size before pulling data, and enumerate individual DICOM instance (slice) UIDs within a series. Use when someone asks to "find a CT/MRI/PET imaging cohort for [cancer type]", "how many patients/studies/series are in [TCIA collection]", "what imaging modalities/body parts/scanners does [collection] have", "look up DICOM series metadata for [SeriesInstanceUID]", "estimate the size of this TCIA series before downloading", or "build a radiology imaging research cohort". NOT for microscopy/cell imaging quantification (use tooluniverse-image-analysis), NOT for actual DICOM pixel data analysis, segmentation, or diagnosis (TCIA tools here return metadata only — no pixel access), NOT for tumor genomic/omics data (use tooluniverse-cancer-genomics-tcga).
+description: Discover and characterize cancer imaging cohorts spanning radiology (CT/MR/PT/CR/DX/US/NM) AND digital pathology (whole-slide microscopy) from two NCI archives — The Cancer Imaging Archive (TCIA: list public collections like LIDC-IDRI/TCGA-GBM/TCGA-LUAD/TCGA-BRCA, enumerate patients/studies/series, series-level DICOM metadata, download-size estimates) and Image Data Commons (IDC: broader modality coverage including whole-slide pathology images, cohort-level filter/count sizing across the whole archive). Use when someone asks to "find a CT/MRI/PET imaging cohort for [cancer type]", "find whole-slide pathology images for [cancer type]", "how many patients/studies/series are in [collection]", "what imaging modalities/body parts/scanners does [collection] have", "look up DICOM series metadata for [SeriesInstanceUID]", "estimate the size of this cohort before downloading", or "build an imaging research cohort". NOT for microscopy/cell imaging quantification (use tooluniverse-image-analysis), NOT for actual DICOM pixel data analysis, segmentation, or diagnosis (both TCIA and IDC tools here return metadata only — no pixel access), NOT for tumor genomic/omics data (use tooluniverse-cancer-genomics-tcga).
 disable-model-invocation: true
 ---
 
@@ -112,7 +112,48 @@ calls and real (trimmed) responses: `references/tcia_tool_reference.md`.
   `TCIA_get_series` or `TCIA_get_series_metadata` if the user needs to know
   redistribution terms.
 
+## Image Data Commons (IDC) — broader modalities, including digital pathology
+
+IDC is a second, newer NCI archive (`api.imaging.datacommons.cancer.gov`,
+no API key required) that overlaps with TCIA on radiology but additionally
+covers **digital pathology / whole-slide microscopy** (DICOM modality `SM`),
+which TCIA's NBIA API does not expose. Use IDC when the user wants pathology
+slide images, or wants a fast cohort-size estimate across the whole archive
+rather than TCIA's patient/study/series drill-down.
+
+| Tool | Purpose | Key params |
+|------|---------|------------|
+| `IDC_list_collections` | List all IDC collections (cancer type, species, subject count) | none |
+| `IDC_get_collection` | Detail for one collection: counts, size, modalities present, license | `collection_id` |
+| `IDC_list_attributes` | List filterable attributes (name, type, categorical) | none |
+| `IDC_list_attribute_values` | Real distinct values for a categorical attribute (e.g. `Modality`) | `attribute` |
+| `IDC_get_cohort_counts` | Patient/study/series/instance counts + size (TB) for a filter, without downloading | `terms`, `ranges` (both optional) |
+
+All 5 verified live. Real example: `IDC_list_attribute_values` with
+`attribute="Modality"` returns real counts including `SM` (Slide
+Microscopy) at 76,299 series — confirming genuine whole-slide pathology
+coverage. `IDC_get_cohort_counts` with `terms={"Modality": ["SM"]}` returns
+22,645 patients / 76,299 series / 49.02 TB for that filter alone.
+
+**Cohort-count workflow:**
+1. `IDC_list_attributes` to see what's filterable, then `IDC_list_attribute_values`
+   on the attribute of interest (e.g. `Modality`, `BodyPartExamined`) to get
+   real values — don't guess casing/spelling.
+2. `IDC_get_cohort_counts` with `terms={"attribute": ["value", ...]}` for
+   equality/IN filters, or `ranges={"attribute": {"gte": x, "lte": y}}` for
+   numeric/date ranges. Combine multiple attributes in one call.
+3. **Always check `filters_applied` and `warnings` in the response** before
+   trusting the counts — an empty `filters_applied` means nothing was
+   filtered and the numbers describe the *entire* IDC archive (99+ TB), not
+   a cohort. This is a real, documented API behavior, not a bug: an empty
+   filter is a valid way to ask "how big is IDC," but it's easy to mistake
+   for "my filter matched everything."
+4. `IDC_list_collections` / `IDC_get_collection` for collection-level
+   browsing, parallel to TCIA's `TCIA_list_collections` /
+   `TCIA_get_patients` pattern but without a patient/study drill-down —
+   IDC's API is cohort-filter-oriented, not hierarchy-browse-oriented.
+
 ## References
 
-- `references/tcia_tool_reference.md` — all 10 tools with real example
+- `references/tcia_tool_reference.md` — all 10 TCIA tools with real example
   calls and real (trimmed) responses captured live against the TCIA API

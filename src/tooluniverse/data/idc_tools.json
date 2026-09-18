@@ -1,0 +1,281 @@
+[
+  {
+    "name": "IDC_list_collections",
+    "type": "IDCTool",
+    "description": "List all NCI Image Data Commons (IDC) collections with cancer types, tumor locations, species, and subject counts. IDC is a public, no-auth-required repository spanning both radiology (CT/MRI/PET) AND digital pathology (whole-slide microscopy images) - broader modality coverage than TCIA. Use to find a real collection_id to filter on before drilling into detail or a cohort count. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["list_collections"],
+          "description": "Operation type",
+          "default": "list_collections"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "collections": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "collection_id": { "type": "string" },
+                      "collection_name": { "type": ["string", "null"] },
+                      "cancer_types": { "type": ["string", "null"] },
+                      "tumor_locations": { "type": ["string", "null"] },
+                      "species": { "type": ["string", "null"] },
+                      "subjects": { "type": ["integer", "null"] },
+                      "supporting_data": { "type": ["string", "null"] },
+                      "description": { "type": ["string", "null"] }
+                    }
+                  }
+                },
+                "total_count": { "type": "integer" }
+              }
+            },
+            "metadata": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": { "error": { "type": "string" } },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [{ "operation": "list_collections" }],
+    "fields": { "operation": "list_collections" }
+  },
+  {
+    "name": "IDC_get_collection",
+    "type": "IDCTool",
+    "description": "Get detailed metadata for one IDC collection by its collection_id: subject/study/series/instance counts, total size in TB, the DICOM modalities present (e.g. CT, MR, SM for whole-slide pathology), and license breakdown. Use after IDC_list_collections to inspect a specific collection in full. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_collection"],
+          "description": "Operation type",
+          "default": "get_collection"
+        },
+        "collection_id": {
+          "type": "string",
+          "description": "IDC collection_id, e.g. '4d_lung' or 'nlst' (get real values from IDC_list_collections)."
+        }
+      },
+      "required": ["collection_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "collection_id": { "type": "string" },
+                "patients": { "type": "integer" },
+                "studies": { "type": "integer" },
+                "series": { "type": "integer" },
+                "instances": { "type": "integer" },
+                "size_TB": { "type": "number" },
+                "modalities": { "type": "array", "items": { "type": "string" } },
+                "licenses": { "type": "array" }
+              }
+            },
+            "metadata": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": { "error": { "type": "string" } },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [{ "operation": "get_collection", "collection_id": "4d_lung" }],
+    "fields": { "operation": "get_collection" }
+  },
+  {
+    "name": "IDC_list_attributes",
+    "type": "IDCTool",
+    "description": "List the attributes an IDC cohort filter can use (e.g. Modality, collection_id, BodyPartExamined), each with its data type and whether it is categorical (enumerable via IDC_list_attribute_values). Call this before building a cohort filter to learn valid attribute names rather than guessing. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["list_attributes"],
+          "description": "Operation type",
+          "default": "list_attributes"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "attributes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": { "type": "string" },
+                      "table": { "type": "string" },
+                      "data_type": { "type": "string" },
+                      "kind": { "type": "string" },
+                      "categorical": { "type": "boolean" },
+                      "description": { "type": "string" }
+                    }
+                  }
+                },
+                "total_count": { "type": "integer" }
+              }
+            },
+            "metadata": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": { "error": { "type": "string" } },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [{ "operation": "list_attributes" }],
+    "fields": { "operation": "list_attributes" }
+  },
+  {
+    "name": "IDC_list_attribute_values",
+    "type": "IDCTool",
+    "description": "List the distinct real values (with counts) of a categorical IDC attribute, e.g. Modality or BodyPartExamined. Call this before filtering a cohort on that attribute so real values with correct casing are used instead of guessed ones. Response includes a 'truncated' flag - if true, re-call with a higher limit. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["list_attribute_values"],
+          "description": "Operation type",
+          "default": "list_attribute_values"
+        },
+        "attribute": {
+          "type": "string",
+          "description": "Attribute name from IDC_list_attributes, e.g. 'Modality', 'BodyPartExamined', 'collection_id'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Max distinct values to return (default 100, max 10000)."
+        }
+      },
+      "required": ["attribute"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "attribute": { "type": "string" },
+                "values": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "value": { "type": "string" },
+                      "count": { "type": "integer" }
+                    }
+                  }
+                },
+                "truncated": { "type": "boolean" },
+                "note": { "type": "string" }
+              }
+            },
+            "metadata": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": { "error": { "type": "string" } },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      { "operation": "list_attribute_values", "attribute": "Modality", "limit": 10 }
+    ],
+    "fields": { "operation": "list_attribute_values" }
+  },
+  {
+    "name": "IDC_get_cohort_counts",
+    "type": "IDCTool",
+    "description": "Get patient/study/series/instance counts and total size (TB) for a filtered IDC cohort, without downloading rows - a fast size check before building a full manifest. 'terms' is {attribute: [values]} for equality/IN (e.g. {\"Modality\": [\"SM\"]} for whole-slide digital pathology, or {\"Modality\": [\"CT\"]} for radiology); 'ranges' is {attribute: {\"gte\": x, \"lte\": y}}. An empty filter is valid and describes the entire IDC archive - check the response's filters_applied and warnings fields rather than assuming your filter landed. No API key required.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_cohort_counts"],
+          "description": "Operation type",
+          "default": "get_cohort_counts"
+        },
+        "terms": {
+          "type": ["object", "null"],
+          "description": "Equality/IN filters: {attribute_name: [value1, value2, ...]}. Get real attribute names from IDC_list_attributes and real values from IDC_list_attribute_values."
+        },
+        "ranges": {
+          "type": ["object", "null"],
+          "description": "Numeric/date range filters: {attribute_name: {\"gte\": x, \"lte\": y}}."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "patients": { "type": "integer" },
+                "studies": { "type": "integer" },
+                "series": { "type": "integer" },
+                "instances": { "type": "integer" },
+                "size_TB": { "type": "number" },
+                "filters_applied": { "type": "object" },
+                "warnings": { "type": "array", "items": { "type": "string" } }
+              }
+            },
+            "metadata": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": { "error": { "type": "string" } },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      { "operation": "get_cohort_counts", "terms": { "Modality": ["SM"] } }
+    ],
+    "fields": { "operation": "get_cohort_counts" }
+  }
+]
