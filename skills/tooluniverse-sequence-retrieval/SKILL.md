@@ -80,6 +80,7 @@ fasta = tu.tools.ena_get_sequence_fasta(accession=accession)
 | NCBI_get_sequence | ENA (if GenBank format) | NCBI unavailable |
 | ena_get_entry | NCBI_get_sequence | ENA doesn't have RefSeq |
 | NCBI_search_nucleotide | Try broader keywords | No results |
+| NCBI_get_sequence / ena_get_sequence_fasta | dbfetch_fetch_entry (db="refseqn"/"ena_sequence") | Both NCBI and ENA-specific tools unavailable; dbfetch mirrors the same underlying records |
 
 ---
 
@@ -296,3 +297,9 @@ Three overlapping registries for "I have an ID in system A, what's the equivalen
 - **TogoID** (`TogoID_convert`/`list_datasets`) — the only one of the three that actually CONVERTS an ID between 117 dataset types (not just gives you a URL for the ID you already have) — e.g. NCBI Gene -> Ensembl Gene -> UniProt -> PDB in one call each. Call `list_datasets` first to get valid `source`/`target` dataset-type strings.
 
 Reach for this cluster when a workflow needs to hop between ID systems that this skill's dedicated tools (UniProt/UniParc/UniRef/EBI Taxonomy above) don't directly connect — e.g. converting a variant-analysis skill's Ensembl gene ID into the NCBI Gene ID a different tool expects.
+
+## EBI dbfetch (One Interface, Many Databases)
+
+`dbfetch_fetch_entry` (`db`, `id`, `format`) / `dbfetch_fetch_batch` (`db`, `ids` comma-separated, `format`) / `dbfetch_list_databases` / `dbfetch_list_formats` — fetches raw records by accession from any of 16 EBI-hosted databases (`uniprotkb`, `pdb`, `embl`, `ena_sequence`, `refseqp`, `refseqn`, `ensemblgene`, `ensembltranscript`, `interpro`, `medline`, `taxonomy`, `uniprot`, `chembl`, `afdb`, `imgtligm`, `hgnc`) through one uniform call, and can fetch several accessions from the same database in a single request via `fetch_batch`. No API key required. Verified live: `dbfetch_fetch_entry {"db": "uniprotkb", "id": "P04637", "format": "fasta"}` returns the real human p53 (P53_HUMAN) FASTA sequence; `dbfetch_fetch_batch {"db": "uniprotkb", "ids": "P04637,P01308", "format": "fasta"}` returns both p53 and insulin in one response.
+
+**When to use this instead of the dedicated tools above**: reach for dbfetch when you need one-off or batch fetches across DIFFERENT database types without juggling per-database tools/clients (e.g. grabbing a UniProt entry and a PDB entry and an EMBL entry in a short session), or specifically need `fetch_batch`'s multi-accession-in-one-call convenience. Prefer the dedicated tools above (UniProt/UniParc/ENA/NCBI) when you need their richer structured fields (cross-references, feature annotations, curation-level metadata) — dbfetch returns the database's native flat/FASTA/XML text, not a parsed structured object.
