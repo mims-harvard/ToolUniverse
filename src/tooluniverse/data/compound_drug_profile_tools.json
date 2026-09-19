@@ -1,0 +1,414 @@
+[
+  {
+    "type": "CompoundDrugProfileTool",
+    "name": "gather_drug_profile",
+    "description": "Gather a drug's identity, structure, mechanism of action, approved indications and safety from ChEMBL, PubChem, OpenTargets and RxNorm in a single call. Accepts a drug name ('aspirin', 'Tylenol') or a ChEMBL id ('CHEMBL25'), resolves it once to a ChEMBL id, PubChem CID and RxCUI, then returns the sections together. Cross-checks the two structure sources on InChIKey to catch a name that resolved to two different molecules, and ChEMBL's boxed-warning flag against OpenTargets' warning rows. Use when you want a rounded picture of a drug; use ChEMBL_get_molecule, OpenTargets_get_drug_indications_by_chemblId or FDA_get_warnings_by_drug_name directly when you already have the identifier and want one authority.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug": {
+          "type": "string",
+          "description": "Drug name or ChEMBL id, e.g. 'aspirin', 'metformin', 'Tylenol', 'CHEMBL25'."
+        },
+        "sections": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "identity",
+              "structure",
+              "mechanism",
+              "indications",
+              "safety"
+            ]
+          },
+          "description": "Limit which sections are assembled. Omit for all five; an empty list is an error. Only the upstream calls a requested section needs are made: 'mechanism' alone costs four calls against nine for the full profile. 'indications' costs two, one for the approved uses and one for the count of everything investigated. The three identifier lookups always run, because query.chembl_id, query.pubchem_cid and query.rxcui are always returned."
+        }
+      },
+      "required": [
+        "drug"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Unwrapped payload (result['data']) of a successful call.",
+          "properties": {
+            "query": {
+              "type": "object",
+              "description": "What was asked and what it resolved to.",
+              "properties": {
+                "drug": {
+                  "type": "string"
+                },
+                "chembl_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "pubchem_cid": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "rxcui": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "resolved_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Name of the drug actually profiled."
+                },
+                "name_match": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "'identifier' when a ChEMBL id was supplied; 'exact' when a drug of that name was found; 'nearest' when only a near match was, corroborated by PubChem resolving the same name \u2014 the normal result for a brand name such as Tylenol; 'unverified' when a near match was taken with nothing corroborating it, which is what a typo or a stray identifier produces because the upstream search returns a best guess for any string. Treat an 'unverified' profile as unidentified until confirmed."
+                }
+              },
+              "required": [
+                "drug"
+              ]
+            },
+            "sources_queried": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Upstream databases actually called."
+            },
+            "sources_failed": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "'<source>: <reason>' per call that errored. A section it feeds is missing, not empty."
+            },
+            "sources_skipped": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "'<source>: <reason>' per source deliberately not called, e.g. a section keyed by an identifier that could not be resolved."
+            },
+            "identity": {
+              "type": "object",
+              "description": "Present when the 'identity' section was requested.",
+              "properties": {
+                "preferred_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "molecule_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "first_approval": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Year of first approval; null when never approved."
+                },
+                "max_phase": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Highest clinical phase reached; 4 means approved."
+                },
+                "withdrawn": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "atc_classifications": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "synonyms": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "synonyms_truncated": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "structure": {
+              "type": "object",
+              "description": "Present when the 'structure' section was requested.",
+              "properties": {
+                "formula": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "molecular_weight": {
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                },
+                "smiles": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "inchikey": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "iupac_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "inchikey_agreement": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether ChEMBL and PubChem returned the same InChIKey. False means the name resolved to two different molecules and the profile mixes them. Null means only one source supplied a key, so there was no cross-check."
+                }
+              }
+            },
+            "mechanism": {
+              "type": "array",
+              "description": "Present when the 'mechanism' section was requested. Empty when OpenTargets records none.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "mechanism_of_action": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "action_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "target_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "targets": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "ensembl_gene": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "symbol": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "indications": {
+              "type": "object",
+              "description": "Present when the 'indications' section was requested. Leads with the indications that reached approval, because the all-indications endpoint returns every disease the drug has ever been studied in, unranked \u2014 aspirin's 186 rows begin with sudden sensorineural hearing loss.",
+              "properties": {
+                "approved_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Upstream's own total of approved indications."
+                },
+                "approved": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "disease": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "disease_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "truncated": {
+                  "type": "boolean",
+                  "description": "Whether 'approved' was cut; absence from it is not evidence a use is not recorded."
+                },
+                "total_investigated_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Every disease the drug has been studied in at any phase, approved or not. Membership of that larger set is not evidence of efficacy or approval."
+                }
+              }
+            },
+            "safety": {
+              "type": "object",
+              "description": "Present when the 'safety' section was requested. An empty warning list means none is recorded, not that the drug is safe.",
+              "properties": {
+                "chembl_black_box_flag": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "opentargets_warnings": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "warning_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "toxicity_class": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "country": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "boxed_warning_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Number of boxed warnings recorded. Null when the lookup did not answer \u2014 deliberately not 0, which would assert a clean safety record."
+                },
+                "withdrawn": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "sources_agree_on_boxed_warning": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether ChEMBL's boxed-warning flag matches whether OpenTargets returned any boxed warning. Null when ChEMBL supplied no flag."
+                },
+                "warnings_checked": {
+                  "type": "boolean",
+                  "description": "Whether the warnings lookup answered. False means nothing here says whether the drug carries a boxed warning."
+                }
+              }
+            },
+            "disclosure_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Statements of every reason the profile above could be misread."
+            }
+          },
+          "required": [
+            "query",
+            "sources_queried",
+            "sources_failed",
+            "sources_skipped",
+            "disclosure_notes"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "The request could not be attempted.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'error'"
+            },
+            "error": {
+              "type": "string",
+              "description": "Why, and what to pass instead."
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "drug": "aspirin"
+      },
+      {
+        "drug": "CHEMBL25"
+      },
+      {
+        "drug": "clozapine",
+        "sections": [
+          "identity",
+          "safety"
+        ]
+      },
+      {
+        "drug": "metformin",
+        "sections": [
+          "mechanism",
+          "indications"
+        ]
+      }
+    ]
+  }
+]
