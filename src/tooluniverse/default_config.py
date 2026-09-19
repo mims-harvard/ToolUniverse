@@ -948,6 +948,9 @@ default_tool_files = {
     ),
     # TCIA - The Cancer Imaging Archive (medical imaging datasets)
     "tcia": os.path.join(current_dir, "data", "tcia_tools.json"),
+    # EPA CompTox/CCTE - chemical identity, hazard, and ToxCast/Tox21
+    # high-throughput bioactivity screening data.
+    "comptox": os.path.join(current_dir, "data", "comptox_tools.json"),
     # OpenNeuro - Neuroimaging data repository (BIDS datasets)
     "openneuro": os.path.join(current_dir, "data", "openneuro_tools.json"),
     # ModelDB - Computational neuroscience model repository (Yale/SenseLab)
