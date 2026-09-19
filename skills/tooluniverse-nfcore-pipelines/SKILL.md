@@ -56,6 +56,8 @@ never fabricate a pipeline result.
 - Interpreting/annotating a VCF that already exists ->
   `tooluniverse-variant-analysis`
 - scRNA-seq QC/clustering on an h5ad/10X matrix -> `tooluniverse-single-cell`
+- Finding which software/package/tutorial to use for a task, rather than
+  running a specific nf-core pipeline -> `tooluniverse-bioinformatics-resource-discovery`
 
 This skill's job ends at "pipeline completed, here are the output files."
 Interpreting those outputs is the job of the skills above.
