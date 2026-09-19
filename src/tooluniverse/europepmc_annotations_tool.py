@@ -85,7 +85,7 @@ class EuroPMCAnnotationsTool(BaseTool):
         }
         if annotation_type:
             params["type"] = annotation_type
-        if page_size:
+        if page_size is not None:
             params["pageSize"] = page_size
 
         response = requests.get(url, params=params, timeout=self.timeout)
