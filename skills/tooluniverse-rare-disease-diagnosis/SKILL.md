@@ -73,6 +73,12 @@ Phase 7: Report Synthesis → Prioritized differential with next steps
 
 **Phase 3 - Gene Panel**: For each candidate gene, `MARRVEL_get_gene(symbol)` resolves OMIM/HGNC/Ensembl/Entrez/UniProt IDs in one call, and `MARRVEL_get_omim_phenotypes(symbol)` lists the Mendelian diseases linked to the gene with mode of inheritance — use the inheritance pattern to filter candidates against the pedigree (e.g. drop AR genes for a clearly dominant pedigree). Then ClinGen classification drives inclusion (Definitive/Strong/Moderate = include; Limited = flag; Disputed/Refuted = exclude). Scoring: Tier 1 (top disease gene +5), Tier 2 (multi-disease +3), Tier 3 (ClinGen Definitive +3), Tier 4 (tissue expression +2), Tier 5 (pLI >0.9 +1).
 
+**Phase 3 - Clinical Testing Panels (PanelApp)**: Cross-check candidate genes against Genomics England PanelApp, the curated gene-panel source NHS and other genomic medicine services actually order testing from — a genuinely different signal from MARRVEL/ClinGen's disease-gene curation, since it reflects what a real diagnostic lab panel would include today.
+- `PanelApp_search_panels(search=<phenotype/disease keyword>)` — find the relevant clinical panel(s) for the working differential, e.g. `search="intellectual disability"` returns panel id `285` ("Intellectual disability", disease group "Developmental disorders", versioned — panels are actively curated and re-versioned).
+- `PanelApp_get_panel(panel_id=<id>)` — full gene list for that panel with each gene's confidence level: **3=green (diagnostic-grade, strong evidence)**, 2=amber (borderline), 1=red (low evidence, do not use for diagnostic reporting) — only report green genes as actionable findings; amber/red are candidates for research follow-up, not a diagnosis.
+- `PanelApp_search_genes(gene_symbol=<symbol>)` — reverse lookup: which clinical panels (and at what confidence) already include a specific candidate gene, e.g. `PTEN` appears on 54 panels (cancer predisposition, overgrowth, macrocephaly panels, etc.) — a gene appearing on many panels at green confidence is a stronger candidate than one appearing nowhere.
+Use PanelApp as a real-world-testing-relevance check alongside (not instead of) the MARRVEL/ClinGen tier scoring above: a green-confidence PanelApp hit that also has ClinGen Definitive classification is the strongest possible signal that a lab would both classify AND actually test for the gene.
+
 **Phase 4 - Variants**: Start with `FAVOR_annotate_variant("chr-pos-ref-alt")` (GRCh38) for a single-call snapshot — population frequencies (gnomAD by ancestry, BRAVO), GENCODE consequence, CADD/SIFT/PolyPhen-2/AlphaMissense scores, conservation, and ClinVar significance — then drill into ClinVar/gnomAD/EVE/SpliceAI for detail. gnomAD frequency classes: ultra-rare <0.00001, rare <0.0001, low-freq <0.01. ACMG: PVS1 (null), PS1 (same AA), PM2 (absent pop), PP3 (computational), BA1 (>5% AF). 2+ concordant predictors strengthen PP3.
 
 ---
@@ -94,6 +100,7 @@ Phase 7: Report Synthesis → Prioritized differential with next steps
 |---------|------------|------------|
 | `get_joint_associated_diseases_by_HPO_ID_list` | `Orphanet_search_diseases` | PubMed phenotype search |
 | `MARRVEL_get_omim_phenotypes` | `OMIM_search` | Orphanet gene-disease |
+| `PanelApp_search_genes` | `PanelApp_search_panels` (browse by phenotype instead) | ClinGen validation only |
 | `FAVOR_annotate_variant` | `ClinVar_get_variant_details` | `gnomad_get_variant` |
 | `ClinVar_get_variant_details` | `gnomad_get_variant` | VEP annotation |
 | `GTEx_get_expression_summary` | `HPA_search_genes_by_query` | Tissue-specific literature |

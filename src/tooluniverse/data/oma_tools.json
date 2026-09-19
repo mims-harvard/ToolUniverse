@@ -320,13 +320,13 @@
   },
   {
     "name": "OMA_get_group",
-    "description": "Get OMA Group details including member proteins. OMA Groups contain sets of strict 1:1 orthologs across all genomes, ensuring each species contributes at most one gene. This is the most stringent orthology definition in OMA. Example: group 1388790 returns the p53 OMA Group with fingerprint 'HKKGEPC', description 'cellular tumor antigen p53', and members from fish, mammals, and other vertebrates.",
+    "description": "Get OMA Group details including member proteins. OMA Groups contain sets of strict 1:1 orthologs across all genomes, ensuring each species contributes at most one gene. This is the most stringent orthology definition in OMA. Group numbers are not stable/predictable identifiers to memorize -- resolve the current group ID for a protein of interest via OMA_get_protein's 'oma_group' field first. Verified example: group 1458663 returns the p53 OMA Group, description 'Cellular tumor antigen p53', fingerprint 'ACCQRNQ'.",
     "parameter": {
       "type": "object",
       "properties": {
         "group_id": {
           "type": "string",
-          "description": "OMA Group number (numeric ID). Examples: '1388790' (p53 group), '839588' (EGFR group). Use OMA_get_protein to find the group ID for a specific protein."
+          "description": "OMA Group number (numeric ID). Verified example: '1458663' (p53 group). Use OMA_get_protein to find the current group ID for a specific protein rather than assuming a remembered ID still maps to the same group."
         }
       },
       "required": [
@@ -339,7 +339,7 @@
     "type": "OMATool",
     "test_examples": [
       {
-        "group_id": "1388790"
+        "group_id": "1458663"
       },
       {
         "group_id": "839588"

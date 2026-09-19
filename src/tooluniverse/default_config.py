@@ -355,6 +355,8 @@ default_tool_files = {
         current_dir, "data", "uspto_downloader_tools.json"
     ),
     "uspto": os.path.join(current_dir, "data", "uspto_tools.json"),
+    # protocols.io - public repository of peer-reviewed/community lab protocols.
+    "protocolsio": os.path.join(current_dir, "data", "protocolsio_tools.json"),
     "xml": os.path.join(current_dir, "data", "xml_tools.json"),
     "mcp_auto_loader_boltz": os.path.join(
         current_dir, "data", "boltz_mcp_loader_tools.json"
@@ -952,6 +954,9 @@ default_tool_files = {
     ),
     # TCIA - The Cancer Imaging Archive (medical imaging datasets)
     "tcia": os.path.join(current_dir, "data", "tcia_tools.json"),
+    # EPA CompTox/CCTE - chemical identity, hazard, and ToxCast/Tox21
+    # high-throughput bioactivity screening data.
+    "comptox": os.path.join(current_dir, "data", "comptox_tools.json"),
     # OpenNeuro - Neuroimaging data repository (BIDS datasets)
     "openneuro": os.path.join(current_dir, "data", "openneuro_tools.json"),
     # ModelDB - Computational neuroscience model repository (Yale/SenseLab)

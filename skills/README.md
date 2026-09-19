@@ -31,6 +31,8 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-clinical-guidelines` | Clinical practice guidelines from 12+ sources (NICE, WHO, ADA, etc.) |
 | `tooluniverse-clinical-trial-design` | Clinical trial design feasibility assessment |
 | `tooluniverse-clinical-trial-matching` | Patient-to-trial matching for precision medicine |
+| `tooluniverse-clinical-terminology-lookup` | Fast terminology autocomplete/normalization (RxTerms, ICD-style conditions, HCPCS, star alleles, NPI) |
+| `tooluniverse-clinical-trial-protocol` | Generate FDA-style clinical trial protocol documents with sample-size calculation |
 | `tooluniverse-crispr-screen-analysis` | CRISPR knockout/activation screen analysis |
 | `tooluniverse-custom-tool` | Create and register custom tools |
 | `tooluniverse-disease-research` | Comprehensive disease reports using 100+ tools |
@@ -42,6 +44,7 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-expression-data-retrieval` | Gene expression datasets from ArrayExpress and BioStudies |
 | `tooluniverse-gene-enrichment` | Gene enrichment and pathway analysis (gseapy, PANTHER, STRING, etc.) |
 | `tooluniverse-gene-liability` | Human safety liability scoring for gene inhibition or loss of function |
+| `tooluniverse-glycobiology` | Glycan structure and protein-glycosylation research (GlyGen) |
 | `tooluniverse-gwas-drug-discovery` | GWAS signals to drug targets and repurposing opportunities |
 | `tooluniverse-gwas-finemapping` | Causal variant prioritization via statistical fine-mapping |
 | `tooluniverse-gwas-snp-interpretation` | Genetic variant interpretation from GWAS studies |
@@ -52,12 +55,16 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-immunotherapy-response-prediction` | Predict response to immune checkpoint inhibitors |
 | `tooluniverse-infectious-disease` | Pathogen characterization and drug repurposing for outbreaks |
 | `tooluniverse-install-skills` | Auto-detect and install missing skills |
+| `tooluniverse-lab-data-standardization` | Convert lab instrument output (plate reader, NanoDrop, qPCR, etc.) to a standardized ASM-style JSON/CSV |
 | `tooluniverse-literature-deep-research` | Literature research with evidence grading and theme extraction |
+| `tooluniverse-medical-imaging-radiology` | Radiology/DICOM cancer-imaging cohort and series discovery (TCIA) |
 | `tooluniverse-metabolomics` | Metabolomics research (metabolite ID, study analysis) |
 | `tooluniverse-metabolomics-analysis` | Metabolomics data analysis (quantification, pathway, flux) |
+| `tooluniverse-ml-inference-utility` | Generic ML/NLP/vision inference (classification, embeddings, NER, summarization) |
 | `tooluniverse-multi-omics-integration` | Multi-omics dataset integration |
 | `tooluniverse-multiomic-disease-characterization` | Multi-omics disease characterization |
 | `tooluniverse-network-pharmacology` | Compound-target-disease network analysis |
+| `tooluniverse-nfcore-pipelines` | Run real nf-core pipelines (rnaseq, sarek, atacseq) end-to-end via Nextflow |
 | `tooluniverse-pharmacovigilance` | Drug safety signal analysis from FDA reports |
 | `tooluniverse-phylogenetics` | Phylogenetics and sequence analysis |
 | `tooluniverse-polygenic-risk-score` | Polygenic risk score construction and interpretation |
@@ -69,6 +76,8 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-proteomics-analysis` | Mass spectrometry proteomics analysis |
 | `tooluniverse-rare-disease-diagnosis` | Rare disease differential diagnosis from phenotype and genetics |
 | `tooluniverse-rnaseq-deseq2` | RNA-seq differential expression with PyDESeq2 |
+| `tooluniverse-scientific-problem-selection` | Research strategy: idea pitching, risk assessment, stuck-project troubleshooting |
+| `tooluniverse-scvi-tools` | Deep-learning single-cell integration (scVI, scANVI, totalVI, PeakVI, MultiVI, DestVI, veloVI) |
 | `tooluniverse-sdk` | Build AI scientist systems using the Python SDK |
 | `tooluniverse-sequence-retrieval` | DNA, RNA, and protein sequences from NCBI and ENA |
 | `tooluniverse-single-cell` | Single-cell RNA-seq analysis (scanpy, anndata) |
@@ -76,6 +85,7 @@ npx skills add mims-harvard/ToolUniverse
 | `tooluniverse-spatial-transcriptomics` | Spatial transcriptomics (10x Visium, MERFISH, seqFISH) |
 | `tooluniverse-statistical-modeling` | Statistical modeling and regression for biomedical data |
 | `tooluniverse-structural-variant-analysis` | Structural variant analysis for clinical genomics |
+| `tooluniverse-synthetic-biology-parts` | Genetic parts/BioBrick lookup from SynBioHub and the iGEM Registry |
 | `tooluniverse-systems-biology` | Pathway analysis (Reactome, KEGG, WikiPathways) |
 | `tooluniverse-target-research` | Comprehensive drug target profiling (9 research paths) |
 | `tooluniverse-variant-analysis` | VCF processing, variant annotation, and SV/CNV interpretation |

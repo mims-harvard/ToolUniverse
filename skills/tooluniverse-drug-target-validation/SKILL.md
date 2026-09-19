@@ -102,6 +102,8 @@ Resolve target to ALL identifiers before any analysis.
 
 **Output**: Table of verified identifiers (Gene Symbol, Ensembl, UniProt, Entrez, ChEMBL, HGNC) plus protein function and target class.
 
+**Optional fast cross-database search**: `TargetMine_search(q=<gene>, facet_Category="Gene")` / `TargetMine_search_genes(q=<gene>)` queries one InterMine warehouse that already integrates UniProt, PDB, ChEMBL, Reactome, KEGG, DrugBank, TTD, and clinical-trials data — useful as a quick single-call sanity check that a gene/target resolves consistently across sources before running the full per-database Phase 0-1 sequence, not a replacement for it (verified live: `TargetMine_search(q="EGFR", facet_Category="Gene")` returns real hits with organism/category facets in ~0.3s).
+
 ### Phase 1: Disease Association (0-30 pts)
 
 Quantify target-disease association from genetic, literature, and pathway evidence.
@@ -130,6 +132,18 @@ Assess whether the target is amenable to therapeutic intervention.
 - `OpenTargets_get_target_enabling_packages_by_ensemblID` - TEPs
 - `TCDB_get_transporter` - For SLC/ABC transporter targets: TC classification, family, PDB structures (param: `uniprot_accession`)
 - `TCDB_search_by_substrate` - Find transporters by substrate (param: `substrate_name`)
+
+#### Phase 2b: Kinase-Specific Structural Data (KLIFS)
+
+**When the target class is a protein kinase**, don't stop at the generic tractability/structure checks above — KLIFS (Kinase-Ligand Interaction Fingerprints and Structures) gives kinase-specific binding-pocket-conformation data that generic PDB/AlphaFold lookups don't:
+
+- `KLIFS_list_kinases(kinase_group, species)` - find the KLIFS kinase ID by group (`TK`, `TKL`, `STE`, `CK1`, `AGC`, `CAMK`, `CMGC`, `RGC`, `Other`) or list all; match by gene symbol in the response
+- `KLIFS_get_kinase(kinase_ID)` - kinase family/group, UniProt/IUPHAR cross-refs, and the 80-residue standardized KLIFS pocket sequence
+- `KLIFS_get_structures(kinase_ID)` - every annotated crystal structure for the kinase, each with **DFG-loop conformation** (`in`/`out`/`out-like`) and **alphaC-helix conformation** (`in`/`out`), resolution, quality score, and bound ligand
+- `KLIFS_get_structures_by_pdb(pdb_codes)` - same DFG/alphaC annotation, looked up by PDB code(s) instead of kinase ID (comma-separated for multiple)
+- `KLIFS_get_ligands(kinase_ID)` - every co-crystallized inhibitor across all of that kinase's structures, with SMILES/InChIKey — the fastest way to enumerate known chemical starting points for a kinase target
+
+**Why DFG/alphaC state matters for druggability scoring**: DFG-in + alphaC-in is the active conformation (ATP-competitive Type I inhibitors bind here). DFG-out structures expose an allosteric back pocket adjacent to the ATP site (Type II inhibitors, e.g. imatinib) — a kinase with confirmed DFG-out structures has a *second*, often more selective, druggable pocket beyond the ATP site, which should raise its druggability sub-score. A kinase with only DFG-in structures across hundreds of PDB entries may be harder to hit selectively with a Type II strategy. Report the DFG/alphaC state distribution (e.g. "527 DFG-in / 23 DFG-out / 15 DFG-out-like structures") as evidence, not just a structure count.
 
 ### Phase 3: Chemical Matter (feeds Phase 2 scoring)
 

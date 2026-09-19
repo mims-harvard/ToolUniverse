@@ -104,6 +104,41 @@ df['outcome_binary'] = (df['outcome_continuous'] >= threshold).astype(int)
 
 **International/LMIC population health**: for a PECO question outside the US, `DHSProgram_search_indicators`/`DHSProgram_get_data` covers the same kind of national survey indicators (fertility, maternal/child mortality, nutrition, immunization, HIV) across many countries, filterable by country and survey year — the NHANES/BRFSS-style source when the population isn't the US.
 
+**EU health dataset discovery**: for a PECO question centered on Europe, `src/tooluniverse/data/euhealth_tools.json` provides ~20 topic-scoped dataset-discovery tools (`euhealthinfo_search_cancer`, `_search_deaths`, `_search_causes_of_death`, `_search_births`, `_search_infectious_diseases`, `_search_covid_19`, `_search_healthcare_expenditure`, `_search_diabetes_epidemiology_registry`, `_search_hospital_in_patient_data`, `_search_population_health_survey`, `_search_key_indicators_registries_surveys`, `_search_surveillance_mortality_rates`, `_search_surveillance`, `_search_primary_care_workforce`, `_search_obesity`, `_search_vaccination`, `_search_mental_health`, `_search_disability`, `_search_alcohol_tobacco_psychoactive_use`, `_search_cancer_registry`) plus `euhealthinfo_deepdive`. **These find WHERE relevant European datasets/registries live — dataset metadata (title, landing page, keywords, license, spatial/language coverage), not the raw statistics themselves.** They all share one parameter shape: `limit` (default 25), `country` (full name or ISO-3166 code), `language` (ISO 639-1 or full name), `term_override` (replace the tool's built-in topic seed query with your own text), `method` (`keyword`/`embedding`/`hybrid`, default `hybrid`), `alpha` (blend ratio for hybrid), `top_k`. Response shape (verified live): `{"results": [...]}` or a bare array, each hit carrying `uuid`, `title`, `landing_page`, `license`, `keywords`, `themes`, `language`, `spatial`, `snippet` — feed a hit's `uuid` (or the search topic name directly) into `euhealthinfo_deepdive({"uuids": [...]}` or `{"topic": "euhealthinfo_search_cancer", ...}`)` to resolve classified outgoing links (download pages, resource portals) per dataset.
+
+**Setup required before first use**: as of this writing, these tools return `{"warning": "EUHealth datastore not found locally (euhealth.db missing)...", "results": []}` — verified live, not a guess — until the underlying dataset index is synced locally:
+```bash
+export HF_TOKEN=YOUR_HF_TOKEN
+tu-datastore sync-hf download --repo "agenticx/tooluniverse-datastores" --collection euhealth --overwrite
+```
+Check for this warning in the response before treating an empty result as "no matching dataset exists" — an empty `results` array with the datastore warning means the tool isn't set up yet, not that nothing was found. Once synced, treat this family as Step 2's European counterpart to the NHANES/DHS discovery pattern above: find the right registry/dataset here, then move to Step 3 to actually download and parse it.
+
+**COVID-19 case/death/vaccination time series**: for outbreak-surveillance
+PECO questions, `src/tooluniverse/data/diseasesh_tools.json` and
+`src/tooluniverse/data/disease_sh_ext_tools.json` (Disease.sh API, sourced
+from JHU CSSE) give global/country/historical case-death-recovery counts
+and vaccine coverage — no auth, no setup needed (verified live, unlike
+euhealth above). `DiseaseSh_get_global_stats` (no params) -> worldwide
+totals; `DiseaseSh_get_country_stats {"country": ...}` -> one country's
+current snapshot; `DiseaseSh_get_historical {"country": ..., "lastdays":
+...}` -> daily cumulative timeline; `DiseaseSH_get_vaccine_coverage
+{"country": ..., "lastdays": ...}` -> vaccination-dose timeline. **Note a
+real near-duplicate, verified live**: `DiseaseSh_get_historical` (from
+`diseasesh_tools.json`) and `DiseaseSH_get_covid_historical` (from
+`disease_sh_ext_tools.json`) return the same timeline shape for the same
+country/day-range from the same underlying API — pick either one, they are
+not two independent data sources despite living in different tool files.
+`country: "all"` is not a valid value for the per-country tools (verified
+live: `DiseaseSh_get_country_stats {"country": "all"}` errors with
+"Country not found or doesn't have any cases") — use
+`DiseaseSh_get_global_stats` for a worldwide aggregate instead.
+
+**Global health indicators (WHO GHO)**: for cross-country comparisons or a PECO question needing a WHO-tracked indicator (life expectancy, NCD prevalence, immunization coverage, mortality, air pollution, etc. — 2000+ indicators), `WHOGHO_search_indicators`/`WHOGHO_get_indicator_data`/`WHOGHO_list_dimension_values` query WHO's Global Health Observatory OData API directly, no auth required (verified live). **Parameter gotcha**: these use OData filter syntax, not a plain keyword string — `WHOGHO_search_indicators {"filter": "contains(IndicatorName,'life expectancy')", "top": 5}` (not `{"query": ...}`, which errors), and `WHOGHO_get_indicator_data {"indicator_code": "WHOSIS_000001", "filter": "SpatialDim eq 'USA' and TimeDim eq 2019", "top": 5}` to scope to one country/year (omitting `filter` returns the full multi-country/multi-year series, e.g. 12,936 rows for life expectancy — always filter). `WHOGHO_list_dimension_values {"dimension_code": "COUNTRY"}` resolves valid `SpatialDim` codes; pass `dimension_code: "Dimension"` to list all 195 filterable dimensions. Verified real value: US female life expectancy at birth, 2019 = 81.0 years (WHOSIS_000001).
+
+**Real-time environmental exposure (air quality)**: for a PECO question with an air-pollution exposure arm, `WAQI_get_air_quality {"city": "..."}` returns the current station-measured Air Quality Index for a named city/monitoring station (verified live: Berlin -> AQI 87, dominant pollutant + per-pollutant sub-indices in `data.iaqi`), no auth required. `OpenMeteo_get_air_quality {"latitude": ..., "longitude": ...}` instead returns modeled hourly PM2.5/PM10/CO/NO2/O3/SO2 concentrations (not just an index) for any lat/lon, including short-range forecast hours, and is the better source when the study needs a continuous concentration variable rather than a categorical AQI, or when the location has no nearby WAQI station. Use these as the environmental-exposure counterpart to the health-outcome sources above (e.g. join AQI/PM2.5 by city-day to an outcome dataset) — neither returns historical time series more than a few days back, so for a retrospective cohort's exposure history use `OpenMeteo_get_historical_climate` or a dedicated air-quality archive instead.
+
+**US county/community-level social determinants**: `health_disparities_get_svi_info`/`health_disparities_get_county_rankings_info` (CDC/ATSDR Social Vulnerability Index and County Health Rankings) — **verified live: these are pointer/metadata tools, not data-retrieval tools.** Despite accepting `state`/`county` parameters, the response is a fixed `access_url` to the source website plus a description of what's available there (download URL, data year, geography level) — it does not return per-county SVI scores or ranking numbers in the JSON. Use these to find where the dataset lives and what it covers, then download the actual CSV from the returned URL for analysis, the same "discovery, not data" pattern as the euhealth tools above.
+
 **REST API data**: For sources like GDC (TCGA), ClinicalTrials.gov, or OpenTargets, paginate through the API:
 ```python
 all_records = []

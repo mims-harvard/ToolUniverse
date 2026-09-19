@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-toxicology
-description: Drug and chemical toxicity assessment via adverse outcome pathways (AOPs), real-world FAERS adverse event signals, FDA labels, and toxicogenomic associations. Triangulates molecular initiating event to cellular outcome to organ-level toxicity to clinical adverse event. Use for hepatotoxicity/cardiotoxicity/nephrotoxicity prediction and toxicology reports.
+description: Drug and chemical toxicity assessment via adverse outcome pathways (AOPs), real-world FAERS adverse event signals, FDA labels, toxicogenomic associations, and EPA CompTox quantitative hazard/high-throughput bioactivity data. Triangulates molecular initiating event to cellular outcome to organ-level toxicity to clinical adverse event. Use for hepatotoxicity/cardiotoxicity/nephrotoxicity prediction and toxicology reports.
 disable-model-invocation: true
 ---
 
@@ -20,6 +20,7 @@ Toxicity has many mechanisms, and the first interpretive question is temporal: i
 - FAERS adverse event signals: retrieve from `FAERS_count_reactions_by_drug_event` and `FAERS_calculate_disproportionality`; never estimate PRR values.
 - FDA label warnings: call `DailyMed_parse_adverse_reactions` and related tools; do not state boxed warnings from memory.
 - CTD chemical-gene and chemical-disease associations: query `CTD_get_chemical_gene_interactions` and `CTD_get_chemical_diseases`; do not infer gene targets without database evidence.
+- EPA CompTox hazard values and ToxCast/Tox21 bioactivity: query `CompTox_get_hazard_data` and `CompTox_get_bioactivity_summary`/`CompTox_get_bioactivity_assays`; never estimate an LD50, a hazard classification, or an assay hit-call rate from memory — this is exactly the kind of chemical-specific quantitative data that must come from the database.
 
 ---
 
@@ -62,8 +63,8 @@ When analysis requires computation (statistics, data processing, scoring, enrich
 |------|--------|----------|
 | T1 | [T1] | FDA boxed warning, clinical trial toxicity finding, regulatory label |
 | T2 | [T2] | FAERS signal PRR > 2, AOP with high biological plausibility, CTD curated |
-| T3 | [T3] | CTD inferred association, AOP annotation with moderate plausibility |
-| T4 | [T4] | Text-mined CTD entry, early-stage AOP annotation |
+| T3 | [T3] | CTD inferred association, AOP annotation with moderate plausibility, screening-level CompTox ToxVal |
+| T4 | [T4] | Text-mined CTD entry, early-stage AOP annotation, isolated ToxCast/Tox21 assay hit with no cross-source corroboration |
 
 ---
 
@@ -86,6 +87,9 @@ Chemical/Drug Query
 |
 +-- PHASE 4: Toxicogenomics (CTD)
 |   Chemical-gene interactions; chemical-disease associations
+|
++-- PHASE 4c: Quantitative Hazard & HTS Bioactivity (EPA CompTox)
+|   Curated dose-based hazard values (ToxVal); ToxCast/Tox21 assay hit rates
 |
 +-- SYNTHESIS: Integrated Toxicology Report
     AOP-linked mechanism + FAERS signal + CTD gene targets + Risk classification
@@ -229,6 +233,53 @@ Capture: generic name, SMILES, PubChem CID, ChEMBL ID, drug class.
 
 ---
 
+## Phase 4c: Quantitative Hazard & HTS Bioactivity (EPA CompTox)
+
+**Objective**: Get curated, dose-based hazard values and quantitative high-throughput screening (HTS) bioactivity data — the kind of numeric, assay-level evidence AOPWiki (mechanism) and FAERS (real-world signal) don't provide.
+
+Requires `EPA_COMPTOX_API_KEY` (free; request by emailing `ccte_api@epa.gov`). Without the key, these tools are excluded from `tu list` entirely (same gating pattern as Addgene/USPTO) rather than failing loudly — check for their presence before relying on this phase.
+
+### Tools
+
+**CompTox_search_chemical** (`word`: str — name, CASRN, or InChIKey):
+- **Output**: Matching `dtxsid`/`dtxcid`/`casrn`/`preferredName` records
+- **Use**: Resolve chemical identity to a DTXSID — required input for every other CompTox call. Run this immediately after Phase 0's PubChem/ChEMBL disambiguation; DTXSID is a separate identifier space from PubChem CID / ChEMBL ID.
+
+**CompTox_get_hazard_data** (`dtxsid`: str):
+- **Output**: ToxVal records — points of departure (NOAEL/LOAEL/BMDL), lethality effect levels (LD50/LC50), reference doses, exposure limits, each tagged with source, species, and study type
+- **Use**: The quantitative dose-response counterpart to AOPWiki's qualitative mechanism and DailyMed's label text — grade as T1/T2 per source (regulatory sources like EPA IRIS/ECOTOX rank higher than screening-level estimates; check the `source` field per record)
+
+**CompTox_get_bioactivity_summary** (`dtxsid`: str):
+- **Output**: Aggregate ToxCast/Tox21 hit counts (`activeMc`/`totalMc`, `activeSc`/`totalSc`) and cytotoxicity burst point (`cytotoxMedianUm`)
+- **Use**: A fast "how promiscuous and how cytotoxic does this chemical look across ~700+ HTS assays" check before deciding whether per-assay drill-down is worth it
+
+**CompTox_get_bioactivity_assays** (`dtxsid`: str):
+- **Output**: Per-assay hit-call records (`aeid`, `hitCall`, `ac50`) — which specific biological targets/pathways the chemical activated
+- **Use**: Drill into which assay endpoints (`aeid`) drove the summary hit count; cross-reference specific `aeid`s against Phase 1's AOP key events when a mechanistic link is claimed — do not assume an HTS hit implies the AOP mechanism without checking the assay's actual target
+
+### Workflow
+
+1. `CompTox_search_chemical` on the compound name to get its DTXSID
+2. `CompTox_get_hazard_data` for curated dose-based hazard values; note source/species per record
+3. `CompTox_get_bioactivity_summary` for the HTS overview; if `activeMc`/`totalMc` shows meaningful activity, drill into `CompTox_get_bioactivity_assays`
+4. Cross-reference high-hit-rate assay targets against Phase 1's AOP key events and Phase 4's CTD gene targets — convergent evidence across three independent sources (AOP mechanism, CTD gene interaction, ToxCast assay target) is much stronger than any one alone
+
+### Decision Logic
+
+- **No DTXSID match**: The compound may not be in the CompTox universe (common for very new drugs or non-registered mixtures) — document as "not in CompTox" rather than treating it as zero hazard
+- **Hazard records but no bioactivity**: Chemical has traditional tox study data but hasn't been through ToxCast/Tox21 screening — do not infer bioactivity from hazard data or vice versa, they measure different things
+- **High assay hit rate with low `cytotoxMedianUm`**: A large fraction of "hits" may just reflect general cytotoxicity (cell stress triggers many unrelated assays) rather than a specific mechanism — check whether hit `aeid`s cluster around one pathway or are scattered, and flag a low cytotoxicity burst point as a reason to discount isolated hits
+
+---
+
+## Phase 4b: Toxin Reference Lookup (T3DB) — currently broken upstream, verified
+
+**Objective**: Cross-reference a chemical/toxin against T3DB's curated toxin profiles (mechanism of toxicity, health effects, routes of exposure) via `T3DB_search_toxins` (`query`: str) and `T3DB_get_toxin` (`toxin_id`: str, e.g. `T3D0001`).
+
+**Live-verified status: both tools currently fail with HTTP 403** on every attempt (confirmed on multiple retries, both the search endpoint and a direct `get_toxin` call by known ID) — t3db.ca appears to be blocking the underlying request pattern entirely, not a transient outage tied to a specific query. **Do not fabricate a toxin profile, mechanism, or health-effect list if this 403s** — report T3DB as unavailable and fall back to CTD (Phase 4) and AOPWiki (Phase 1) for mechanistic toxicology instead, or DailyMed (Phase 3) if the chemical is also an FDA-approved drug. Re-check T3DB's live status with a cheap call before assuming this is still broken — it may be fixed by the time you read this.
+
+---
+
 ## Synthesis: Integrated Toxicology Report
 
 **Structure**:
@@ -286,6 +337,7 @@ Key finding summary (2-3 sentences)
 | `FAERS_count_reactions_by_drug_event` | `OpenFDA_search_drug_events` | Literature search |
 | `DailyMed_parse_adverse_reactions` | `OpenFDA_search_drug_events` | FAERS serious events |
 | `CTD_get_chemical_diseases` | `CTD_get_chemical_gene_interactions` | PubMed search |
+| `CompTox_get_hazard_data` | `CTD_get_chemical_diseases` | AOPWiki apical outcome only |
 
 ---
 
@@ -305,8 +357,11 @@ Key finding summary (2-3 sentences)
 - **AOPWiki**: AOPs are in development; many lack high plausibility scores
 - **FAERS**: Observational data; confounding by indication; underreporting bias
 - **CTD**: Inferred associations have high false-positive rate
+- **T3DB**: Both tools verified returning HTTP 403 as of this writing (upstream request-blocking, not a per-query issue) — treat as unavailable until re-verified live
+- **EPA CompTox**: requires a free API key (`EPA_COMPTOX_API_KEY`, request via `ccte_api@epa.gov`) — schemas verified against the live production OpenAPI specs, but full response shapes were not live-tested end-to-end in this environment since no real key was available; DTXSID coverage skews toward chemicals with US regulatory/environmental relevance and may be sparse for newer or purely investigational drugs
 - **DailyMed**: FDA-approved drugs only; no environmental chemical coverage
 - **Environmental chemicals**: Primarily Phase 1 (AOP) + Phase 4 (CTD) data available
+- **Food additive/ingredient identity**: This skill assesses a chemical's toxicity once you know what it is; it does not look up which foods/products actually contain a given additive or allergen, or a product's nutrient/ingredient label — for that, use `tooluniverse-nutrition-food-composition` (USDA FoodData Central, Open Food Facts) first, then bring the additive's identity here for hazard assessment
 
 ---
 
@@ -317,3 +372,4 @@ Key finding summary (2-3 sentences)
 - CTD: http://ctdbase.org
 - DailyMed: https://dailymed.nlm.nih.gov
 - OpenFDA: https://open.fda.gov
+- EPA CompTox: https://comptox.epa.gov/dashboard/ (API docs: https://comptox.epa.gov/ctx-api/docs/)

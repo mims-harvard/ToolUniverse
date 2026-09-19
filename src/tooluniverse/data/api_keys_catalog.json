@@ -204,6 +204,18 @@
     ]
   },
   {
+    "name": "EPA_COMPTOX_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Toxicology & Chemical Safety",
+    "register_url": "mailto:ccte_api@epa.gov",
+    "purpose": "Query EPA CompTox chemical identity, hazard, and ToxCast/Tox21 bioactivity data.",
+    "without": "CompTox tools are blocked without it.",
+    "used_by": [
+      "comptox_tools.json"
+    ]
+  },
+  {
     "name": "ESM_API_KEY",
     "requirement": "required",
     "type": "secret",
@@ -533,6 +545,18 @@
     "without": "PharmVar tools are blocked without it.",
     "used_by": [
       "pharmvar_tools.json"
+    ]
+  },
+  {
+    "name": "PROTOCOLS_IO_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Molecular Cloning & Lab Methods",
+    "register_url": "https://www.protocols.io/api-clients",
+    "purpose": "Search and retrieve published lab protocols from protocols.io.",
+    "without": "protocols.io tools are blocked without it.",
+    "used_by": [
+      "protocolsio_tools.json"
     ]
   },
   {
