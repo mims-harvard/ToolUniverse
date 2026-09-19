@@ -340,6 +340,13 @@ in NWB format and `AllenCellTypes_search_specimens` for single-neuron
 electrophysiology+morphology specimens — a fifth and sixth resource type
 already documented above.
 
+For a different kind of question entirely — "what cognitive function is
+this MNI coordinate associated with?" or "which studies/coordinates are
+linked to this term?" — none of the six resources above hold what you need;
+that's coordinate-based meta-analytic decoding over ~14,000 published fMRI
+studies, covered by the separate `tooluniverse-neurosynth-meta-analysis`
+skill.
+
 ## 12. Common Pitfalls
 
 - **Confusing brain regions**: The hippocampus is NOT in the frontal lobe. The substantia nigra is in the midbrain, NOT the basal ganglia (though functionally linked). Always verify.
