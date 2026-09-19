@@ -132,7 +132,7 @@ class OmniPathTool(BaseTool):
             params["databases"] = arguments["databases"]
         if arguments.get("organisms"):
             params["organisms"] = str(arguments["organisms"])
-        if arguments.get("limit"):
+        if arguments.get("limit") is not None:
             params["limit"] = str(arguments["limit"])
 
         # Must have at least one protein filter
@@ -197,7 +197,7 @@ class OmniPathTool(BaseTool):
             params["receiver"] = "yes" if arguments["receiver"] else "no"
         if arguments.get("secreted") is not None:
             params["secreted"] = "yes" if arguments["secreted"] else "no"
-        if arguments.get("limit"):
+        if arguments.get("limit") is not None:
             params["limit"] = str(arguments["limit"])
 
         data = self._make_request("intercell/", params)
@@ -260,7 +260,7 @@ class OmniPathTool(BaseTool):
             params["signed"] = "yes" if arguments["signed"] else "no"
         if arguments.get("organisms"):
             params["organisms"] = str(arguments["organisms"])
-        if arguments.get("limit"):
+        if arguments.get("limit") is not None:
             params["limit"] = str(arguments["limit"])
 
         if not any(arguments.get(k) for k in ["partners", "sources", "targets"]):
@@ -511,7 +511,7 @@ class OmniPathTool(BaseTool):
             params["types"] = arguments["types"]
         if arguments.get("organisms"):
             params["organisms"] = str(arguments["organisms"])
-        if arguments.get("limit"):
+        if arguments.get("limit") is not None:
             params["limit"] = str(arguments["limit"])
 
         if not any(arguments.get(k) for k in ["enzymes", "substrates"]):
@@ -662,7 +662,9 @@ class OmniPathTool(BaseTool):
 
             if confidence_levels:
                 requested = {
-                    level.strip() for level in confidence_levels.split(",") if level.strip()
+                    level.strip()
+                    for level in confidence_levels.split(",")
+                    if level.strip()
                 }
                 if not level_set & requested:
                     continue
