@@ -160,6 +160,7 @@ STATIC_LAZY_REGISTRY = {
     "ComposeTool": "compose_tool",
     "CompoundDiseaseProfileTool": "compound_disease_tool",
     "CompoundDrugProfileTool": "compound_drug_profile_tool",
+    "CompoundTargetProfileTool": "compound_target_profile_tool",
     "CompoundGeneDiseaseAssociationTool": "compound_gene_disease_tool",
     "CompoundIdentifierResolutionTool": "compound_identifier_tool",
     "CompoundVariantAnnotationTool": "compound_variant_tool",
