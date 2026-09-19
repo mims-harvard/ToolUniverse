@@ -1,0 +1,331 @@
+[
+  {
+    "name": "CompTox_search_chemical",
+    "type": "CompToxTool",
+    "description": "Resolve a chemical name, CASRN, DTXSID, DTXCID, or InChIKey to identity records via EPA's CompTox Chemicals Dashboard (CTX Chemical API). Returns matching preferredName, dtxsid, dtxcid, casrn, and smiles. Use as the first step before any hazard or bioactivity lookup, since those require a DTXSID. Requires EPA_COMPTOX_API_KEY environment variable (free, request via ccte_api@epa.gov).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_chemical"],
+          "description": "Operation type",
+          "default": "search_chemical"
+        },
+        "word": {
+          "type": "string",
+          "description": "Chemical name, CASRN, DTXSID, DTXCID, or InChIKey to search for (e.g., 'aspirin', '1912-24-9', 'DTXSID7020182')."
+        },
+        "match_type": {
+          "type": ["string", "null"],
+          "enum": ["equal", "start-with", "contain", null],
+          "description": "Match mode: 'equal' for exact match (default), 'start-with' or 'contain' for partial/fuzzy search."
+        }
+      },
+      "required": ["word"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "searchName": { "type": "string" },
+                      "preferredName": { "type": "string" },
+                      "dtxsid": { "type": "string" },
+                      "dtxcid": { "type": "string" },
+                      "casrn": { "type": "string" },
+                      "smiles": { "type": "string" },
+                      "rank": { "type": "integer" }
+                    }
+                  }
+                },
+                "result_count": { "type": "integer" }
+              }
+            },
+            "metadata": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": { "error": { "type": "string" } },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "search_chemical",
+        "word": "atrazine",
+        "match_type": "equal"
+      }
+    ],
+    "required_api_keys": ["EPA_COMPTOX_API_KEY"],
+    "api_key_info": {
+      "EPA_COMPTOX_API_KEY": {
+        "domain": "Toxicology & Chemical Safety",
+        "type": "secret",
+        "register_url": "mailto:ccte_api@epa.gov",
+        "purpose": "Query EPA CompTox chemical identity, hazard, and ToxCast/Tox21 bioactivity data.",
+        "without": "CompTox tools are blocked without it."
+      }
+    },
+    "fields": { "operation": "search_chemical" }
+  },
+  {
+    "name": "CompTox_get_chemical_detail",
+    "type": "CompToxTool",
+    "description": "Get full chemical structure and property detail (molecular formula, mass, IUPAC name, SMILES/InChIKey, total/active ToxCast assay counts) from EPA's CompTox Chemicals Dashboard by DTXSID. Use after CompTox_search_chemical resolves a name to a DTXSID. Requires EPA_COMPTOX_API_KEY environment variable.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_chemical_detail"],
+          "description": "Operation type",
+          "default": "get_chemical_detail"
+        },
+        "dtxsid": {
+          "type": "string",
+          "description": "DSSTox Substance Identifier (e.g., 'DTXSID7020182')."
+        },
+        "projection": {
+          "type": ["string", "null"],
+          "description": "Response detail level. Default 'chemicaldetailall' (full detail). Other options include 'chemicalidentifier' (names/IDs only) and 'chemicalstructure' (structure fields only)."
+        }
+      },
+      "required": ["dtxsid"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "preferredName": { "type": "string" },
+                "dtxsid": { "type": "string" },
+                "dtxcid": { "type": "string" },
+                "casrn": { "type": "string" },
+                "iupacName": { "type": "string" },
+                "smiles": { "type": "string" },
+                "molFormula": { "type": "string" },
+                "monoisotopicMass": { "type": "number" },
+                "totalAssays": { "type": "integer" },
+                "activeAssays": { "type": "integer" }
+              }
+            },
+            "metadata": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": { "error": { "type": "string" } },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_chemical_detail",
+        "dtxsid": "DTXSID7020182"
+      }
+    ],
+    "required_api_keys": ["EPA_COMPTOX_API_KEY"],
+    "fields": { "operation": "get_chemical_detail" }
+  },
+  {
+    "name": "CompTox_get_hazard_data",
+    "type": "CompToxTool",
+    "description": "Get curated human and eco-toxicity hazard values (ToxVal database: points of departure, lethality effect levels like LD50/LC50, reference doses, exposure limits) for a chemical from EPA's CompTox Hazard API, by DTXSID. Complements OpenFDA/CTD label-level warnings with quantitative dose-based hazard data. Requires EPA_COMPTOX_API_KEY environment variable.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_hazard_data"],
+          "description": "Operation type",
+          "default": "get_hazard_data"
+        },
+        "dtxsid": {
+          "type": "string",
+          "description": "DSSTox Substance Identifier (e.g., 'DTXSID7020182')."
+        }
+      },
+      "required": ["dtxsid"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "toxval_records": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "dtxsid": { "type": "string" },
+                      "name": { "type": "string" },
+                      "source": { "type": "string" },
+                      "toxvalType": { "type": "string" },
+                      "toxvalNumeric": { "type": ["number", "null"] },
+                      "toxvalUnits": { "type": ["string", "null"] },
+                      "studyType": { "type": ["string", "null"] },
+                      "species": { "type": ["string", "null"] }
+                    }
+                  }
+                },
+                "record_count": { "type": "integer" }
+              }
+            },
+            "metadata": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": { "error": { "type": "string" } },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_hazard_data",
+        "dtxsid": "DTXSID7020182"
+      }
+    ],
+    "required_api_keys": ["EPA_COMPTOX_API_KEY"],
+    "fields": { "operation": "get_hazard_data" }
+  },
+  {
+    "name": "CompTox_get_bioactivity_summary",
+    "type": "CompToxTool",
+    "description": "Get an aggregate ToxCast/Tox21 high-throughput screening (HTS) bioactivity summary for a chemical from EPA's CompTox Bioactivity API, by DTXSID: total assays tested vs. active, cytotoxicity burst point (median/lower bound), and hit counts. This is the entry point for asking 'has this chemical been screened for bioactivity, and how promiscuous/cytotoxic does it look' before drilling into individual assays. Requires EPA_COMPTOX_API_KEY environment variable.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_bioactivity_summary"],
+          "description": "Operation type",
+          "default": "get_bioactivity_summary"
+        },
+        "dtxsid": {
+          "type": "string",
+          "description": "DSSTox Substance Identifier (e.g., 'DTXSID7020182')."
+        }
+      },
+      "required": ["dtxsid"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "dtxsid": { "type": "string" },
+                "activeMc": { "type": "integer", "description": "Active multi-concentration assay count" },
+                "totalMc": { "type": "integer", "description": "Total multi-concentration assays tested" },
+                "activeSc": { "type": "integer", "description": "Active single-concentration assay count" },
+                "totalSc": { "type": "integer", "description": "Total single-concentration assays tested" },
+                "cytotoxMedianUm": { "type": ["number", "null"], "description": "Cytotoxicity burst median point, in micromolar" },
+                "ntested": { "type": "number" },
+                "nhit": { "type": "number" }
+              }
+            },
+            "metadata": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": { "error": { "type": "string" } },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_bioactivity_summary",
+        "dtxsid": "DTXSID7020182"
+      }
+    ],
+    "required_api_keys": ["EPA_COMPTOX_API_KEY"],
+    "fields": { "operation": "get_bioactivity_summary" }
+  },
+  {
+    "name": "CompTox_get_bioactivity_assays",
+    "type": "CompToxTool",
+    "description": "Get per-assay ToxCast/Tox21 dose-response hit-call records for a chemical from EPA's CompTox Bioactivity API, by DTXSID: which of the ~700+ high-throughput screening assays this chemical was active in, with AC50/hit-call detail per assay endpoint (aeid). Use after CompTox_get_bioactivity_summary to drill into which specific biological targets/pathways the chemical hits. Requires EPA_COMPTOX_API_KEY environment variable.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_bioactivity_assays"],
+          "description": "Operation type",
+          "default": "get_bioactivity_assays"
+        },
+        "dtxsid": {
+          "type": "string",
+          "description": "DSSTox Substance Identifier (e.g., 'DTXSID7020182')."
+        }
+      },
+      "required": ["dtxsid"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "assay_records": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "dtxsid": { "type": "string" },
+                      "aeid": { "type": ["integer", "null"] },
+                      "hitCall": { "type": ["number", "null"] },
+                      "ac50": { "type": ["number", "null"] },
+                      "modl": { "type": ["string", "null"] }
+                    }
+                  }
+                },
+                "record_count": { "type": "integer" }
+              }
+            },
+            "metadata": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": { "error": { "type": "string" } },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_bioactivity_assays",
+        "dtxsid": "DTXSID7020182"
+      }
+    ],
+    "required_api_keys": ["EPA_COMPTOX_API_KEY"],
+    "fields": { "operation": "get_bioactivity_assays" }
+  }
+]
