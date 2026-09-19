@@ -146,7 +146,7 @@ class AlphaGenomeTool(BaseTool):
                 "AlphaGenome Atlas support requires an up-to-date SDK: "
                 "pip install --upgrade alphagenome."
             )
-        api_key = os.environ.get("ALPHA_GENOME_API_KEY", "")
+        api_key = self.credential("ALPHA_GENOME_API_KEY") or ""
         if not api_key:
             return self._err(
                 "Set ALPHA_GENOME_API_KEY (free non-commercial key at "
