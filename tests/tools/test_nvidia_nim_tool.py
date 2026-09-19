@@ -71,8 +71,9 @@ def nvidia_nim_tool():
         }
     }
     
-    with patch.dict(os.environ, {"NVIDIA_API_KEY": "test-api-key-12345"}):
-        return NvidiaNIMTool(tool_config)
+    tool = NvidiaNIMTool(tool_config)
+    tool.api_key = "test-api-key-12345"
+    return tool
 
 
 # ============================================================================

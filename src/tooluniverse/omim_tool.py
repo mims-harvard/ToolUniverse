@@ -9,7 +9,6 @@ API Documentation: https://omim.org/help/api
 Requires API key: https://omim.org/api
 """
 
-import os
 import requests
 from typing import Dict, Any, Optional, List
 from .base_tool import BaseTool
@@ -38,7 +37,11 @@ class OMIMTool(BaseTool):
         super().__init__(tool_config)
         self.timeout: int = tool_config.get("timeout", 30)
         self.parameter = tool_config.get("parameter", {})
-        self.api_key = os.environ.get("OMIM_API_KEY", "")
+
+    @property
+    def api_key(self) -> str:
+        """Resolve the OMIM key for the active request."""
+        return self.credential("OMIM_API_KEY") or ""
 
     def _get_params(self, extra_params: Dict = None) -> Dict[str, Any]:
         """Get base parameters with API key."""
@@ -52,7 +55,7 @@ class OMIMTool(BaseTool):
         if not self.api_key:
             return {
                 "status": "error",
-                "error": "OMIM API key required. Set OMIM_API_KEY environment variable. Register at https://omim.org/api",
+                "error": "OMIM API key required. Provide OMIM_API_KEY as a request credential or environment variable. Register at https://omim.org/api",
             }
 
         operation = arguments.get("operation", "")
