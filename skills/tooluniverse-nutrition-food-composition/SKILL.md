@@ -31,7 +31,7 @@ The USDA's official nutrient database: Foundation Foods (analytically measured r
 
 Optional `FDC_API_KEY` (free, register at https://fdc.nal.usda.gov/api-guide.html) — **without one, calls fall back to a shared, rate-limited `DEMO_KEY`**, which is what this skill's live verification used successfully; register a personal key for any workload beyond occasional lookups.
 
-Verified live: `FoodDataCentral_search_foods {"query": "raw banana", "page_size": 3, "data_type": "Foundation"}` returned real Foundation-food records (e.g. fdcId `1105073`, "Bananas, overripe, raw") with full `topNutrients` arrays and `totalHits: 164` across 55 pages. `FoodDataCentral_get_food {"fdc_id": 2344723}` returned a complete real nutrient profile — **but for "Starfruit, raw" (Survey/FNDDS), not "Bananas, raw" as the tool's own JSON description example claims**. That description's example `fdcId` is stale/wrong — always use an `fdcId` you actually got back from `search_foods` in the same session, never one quoted in a tool description or from memory.
+Verified live: `FoodDataCentral_search_foods {"query": "raw banana", "page_size": 3, "data_type": "Foundation"}` returned real Foundation-food records (e.g. fdcId `1105073`, "Bananas, overripe, raw") with full `topNutrients` arrays and `totalHits: 164` across 55 pages. `FoodDataCentral_get_food {"fdc_id": 1105073}` returned the complete real nutrient profile for that same food, confirming the two tools are consistent. (The tool's JSON description previously cited a different, stale example `fdcId` that had drifted to return "Starfruit, raw" instead of the banana it claimed — this has been corrected in the tool definition; still, prefer an `fdcId` you actually got back from `search_foods` in the same session over any example ID, since USDA's own IDs can be reassigned or deprecated over time.)
 
 ## 2. Open Food Facts — Crowdsourced Global Product Database
 
@@ -62,7 +62,7 @@ Verified live:
 
 ## Common Pitfalls
 
-- **Don't trust example `fdcId`s from tool descriptions or memory** — the `FoodDataCentral_get_food` tool's own description cites an example ID that returns a different food than claimed (verified above). Always source the ID from a `search_foods` call in the same session.
+- **Don't trust an `fdcId` from memory** — USDA IDs can drift over time (this skill's own reference example was found and fixed once already, see above). Always source the ID from a `search_foods` call in the same session.
 - **OpenFoodFacts data is crowdsourced, not centrally curated** — a missing or odd-looking field (absent Nutri-Score, sparse nutrients) may just reflect incomplete community contribution for that specific product, not a tool malfunction. Don't assume the record is exhaustive.
 - **`filter_products_by_tags`'s tag fields use a controlled vocabulary** (`en:peanuts`, `en:e322`, not free text) — get exact tag values from a product's own tag fields (e.g. `allergens_tags` in a prior `get_product`/`search_products` result) rather than guessing the tag string.
 - Retry once on a transient OpenFoodFacts HTML error page before concluding the API is down.
