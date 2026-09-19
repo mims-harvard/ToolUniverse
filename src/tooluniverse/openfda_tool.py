@@ -2039,6 +2039,11 @@ class FDATool(BaseTool):
     def api_key(self):
         return self.credential("FDA_API_KEY") or self._explicit_api_key
 
+    @api_key.setter
+    def api_key(self, value):
+        # Keep direct assignment working for callers that configure a key in code.
+        self._explicit_api_key = value
+
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)
         # Set default limit to 100 if not provided
@@ -2484,6 +2489,11 @@ class FDADrugLabelFieldValueTool(BaseTool):
     @property
     def api_key(self):
         return self.credential("FDA_API_KEY") or self._explicit_api_key
+
+    @api_key.setter
+    def api_key(self, value):
+        # Keep direct assignment working for callers that configure a key in code.
+        self._explicit_api_key = value
 
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)

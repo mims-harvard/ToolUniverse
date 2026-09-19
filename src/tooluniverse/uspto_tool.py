@@ -53,6 +53,11 @@ class USPTOOpenDataPortalTool(BaseTool):
             return None
         return {"X-API-KEY": api_key, "Accept": "application/json"}
 
+    @property
+    def headers(self):
+        """Request headers for the active credential scope (``None`` without a key)."""
+        return self._headers()
+
     @staticmethod
     def _http_error_hint(status_code):
         """Return actionable guidance for common USPTO HTTP error responses.
