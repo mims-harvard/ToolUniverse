@@ -35,7 +35,7 @@ When asked about a variant's significance, query ClinVar/gnomAD/CIViC FIRST. Nev
 ## Workflow Overview
 
 ```
-Phase 1: VARIANT IDENTITY        → Normalize HGVS, map gene/transcript/consequence
+Phase 1: VARIANT IDENTITY        → Normalize HGVS, map gene/transcript/consequence, resolve ClinGen CA ID
 Phase 2: CLINICAL DATABASES       → ClinVar, gnomAD, OMIM, ClinGen, COSMIC, SpliceAI
 Phase 2.5: REGULATORY CONTEXT     → ChIPAtlas/ENCODE annotation + DL variant-effect (AlphaGenome/Enformer/Borzoi/ChromBPNet/Evo2) (non-coding only)
 Phase 3: COMPUTATIONAL PREDICTIONS → CADD, AlphaMissense, EVE, SIFT/PolyPhen
@@ -49,7 +49,7 @@ Phase 6: ACMG CLASSIFICATION      → Evidence codes, classification, recommenda
 
 ## Phase 1: Variant Identity
 
-Tools: `MyVariant_query_variants`, `EnsemblVar_get_variant_consequences`, `NCBIGene_search`, `VariantValidator_gene2transcripts`, `VariantValidator_validate_variant`, `Tark_get_mane_transcripts`, `Tark_get_transcript`
+Tools: `MyVariant_query_variants`, `EnsemblVar_get_variant_consequences`, `NCBIGene_search`, `VariantValidator_gene2transcripts`, `VariantValidator_validate_variant`, `Tark_get_mane_transcripts`, `Tark_get_transcript`, `ClinGenAllele_lookup_hgvs`, `ClinGenAllele_get_allele`
 
 **VariantValidator_gene2transcripts**: Look up MANE Select and MANE Plus Clinical transcripts for a gene. Use this to identify the correct canonical transcript before variant annotation.
 - Parameters: `gene_symbol` (e.g. "TP53"), `transcript_set` ("mane" | "refseq" | "ensembl" | "all"), `genome_build` ("GRCh38" default)
@@ -61,6 +61,8 @@ Tools: `MyVariant_query_variants`, `EnsemblVar_get_variant_consequences`, `NCBIG
 **VariantValidator_validate_variant**: Validate HGVS variant descriptions and get normalized notation with genomic/transcript/protein consequences.
 - Parameters: `genome_build` ("GRCh37" | "GRCh38"), `variant_description` (HGVS, e.g. "NM_007294.4:c.5266dup"), `select_transcripts` (transcript or "all")
 - Returns: Validated HGVS, protein consequence, genomic coordinates, gene IDs
+
+**ClinGenAllele_lookup_hgvs** / **ClinGenAllele_get_allele**: Resolve a genomic (`NC_*`), coding (`NM_*`), or protein (`NP_*`) HGVS expression to the ClinGen Allele Registry's canonical allele ID (CA ID) and get its cross-references to ClinVar, dbSNP, COSMIC, and gnomAD in one call — verified live, `NM_000546.6:c.743G>A` (TP53 p.Arg248Gln) resolves to `CA000387` with `ClinVarVariations`, `dbSNP`, and `COSMIC` IDs attached. Use `ClinGenAllele_get_allele(ca_id=...)` to re-fetch the same record by CA ID once you have it (e.g. from a ClinVar record that already cites one). Useful as a fast identity-canonicalization step when a variant needs to be matched across databases that key on different accessions — no API key required. **Coordinate gotcha**: `genomic_alleles[].start`/`end` are 0-based interbase (half-open), NOT the 1-based position used by HGVS `g.`/VCF/gnomAD — add 1 to `start` to get the HGVS genomic position; each row's `coordinate_system` field states this explicitly.
 
 Capture: HGVS notation (c. and p.), gene symbol, canonical transcript (MANE Select via VariantValidator), consequence type, amino acid change, exon/intron location.
 

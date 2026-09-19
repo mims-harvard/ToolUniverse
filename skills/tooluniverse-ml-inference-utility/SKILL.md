@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-ml-inference-utility
-description: Generic ML/NLP/vision inference against any HuggingFace-hosted model (serverless hf-inference provider) — text classification/sentiment, dense text embeddings for semantic similarity, masked-token prediction (including protein language models), summarization, zero-shot classification against caller-supplied labels, named entity recognition, extractive question answering, translation, image classification, and object detection. Use when someone asks to "classify this text with a HuggingFace model", "embed this text for similarity search", "run NER on this passage", "summarize this with model X", "zero-shot classify this against these labels", "predict the masked token", "classify/detect objects in this image", or names a specific HuggingFace model_id to run inference with. NOT a domain-analysis skill itself — this is a generic cross-domain utility other skills should reach for as a supporting step, the same way tooluniverse-clinical-terminology-lookup is a supporting lookup step rather than a research domain. NOT for training/fine-tuning models (inference only, against already-hosted models). Honest: as of this writing, HuggingFace's serverless inference API requires a valid HF_TOKEN for every one of these 10 tools, on every model tested — live-verified, not assumed from the "optional" wording in the tools' own descriptions.
+description: Generic ML/NLP/vision inference against any HuggingFace-hosted model (serverless hf-inference provider) — text classification/sentiment, dense text embeddings for semantic similarity, masked-token prediction (including protein language models), summarization, zero-shot classification against caller-supplied labels, named entity recognition, extractive question answering, translation, image classification, and object detection. Use when someone asks to "classify this text with a HuggingFace model", "embed this text for similarity search", "run NER on this passage", "summarize this with model X", "zero-shot classify this against these labels", "predict the masked token", "classify/detect objects in this image", or names a specific HuggingFace model_id to run inference with. NOT a domain-analysis skill itself — this is a generic cross-domain utility other skills should reach for as a supporting step, the same way tooluniverse-clinical-terminology-lookup is a supporting lookup step rather than a research domain. NOT for training/fine-tuning models (inference only, against already-hosted models). Honest: as of this writing, HuggingFace's serverless inference API requires a valid HF_TOKEN for every one of these 10 tools, on every model tested — live-verified, not assumed from the "optional" wording in the tools' own descriptions. Also covers finding a model_id first via HuggingFace Hub search (HuggingFace_search_models/get_model/search_datasets — a separate, token-free catalog API) and running inference on Replicate-hosted models (Replicate_run_prediction/get_prediction) as an alternative platform when a model isn't served by HuggingFace's hf-inference provider.
 disable-model-invocation: true
 ---
 
@@ -169,6 +169,63 @@ fill-mask description explicitly calls this out) and prefer that instead.
    concluding the model is unavailable.
 5. **Report the tool's actual returned values** — scores, labels, spans,
    boxes — never a description of what the model "probably" returned.
+
+## Finding a model first: HuggingFace Hub search (a different API, no token needed)
+
+`HFInference_*` above *runs* an already-known `model_id`. Three separate tools
+search the **HuggingFace Hub** catalog itself (`huggingface.co/api/models` and
+`/api/datasets`, not the serverless inference API) to find that `model_id` in
+the first place — **live-verified, no `HF_TOKEN` required** for any of the
+three, unlike every `HFInference_*` tool above:
+
+| Tool | Purpose | Required params |
+|---|---|---|
+| `HuggingFace_search_models` | Keyword/task/library search over 500k+ models | `search` (+ optional `limit`, `pipeline_tag`, `library`) |
+| `HuggingFace_get_model` | Full metadata (tags, config, license, files) for one known model | `author`, `model_name` (separate fields, not `author/name`) |
+| `HuggingFace_search_datasets` | Keyword search over 100k+ datasets | `search` (+ optional `limit`) |
+
+Use single-word or short-phrase queries for `search` — live-tested,
+multi-word phrases like `"esm2 protein language model"` return zero results
+(the Hub API does substring/token matching, not fuzzy semantic search), while
+`"esm2"` alone or `"bert"` with `pipeline_tag`/`library` filters return real
+results. Verified live: `search_models({"search": "esm2"})` returns real ESM2
+checkpoints (`facebook/esm2_t6_8M_UR50D`, `facebook/esm2_t48_15B_UR50D`, ...)
+with real download/like counts; `get_model({"author": "facebook",
+"model_name": "esm2_t6_8M_UR50D"})` returns full config including its mask
+token convention (`<mask>`, confirmed in `widgetData`); `search_datasets({
+"search": "genomics"})` returns real TREC-genomics IR datasets.
+
+**Workflow**: use `HuggingFace_search_models`/`search_datasets` first to find
+or confirm a `model_id` (especially to check `pipeline_tag`, `library_name`,
+license, and gating status before spending an `HFInference_*` call on it),
+then feed that `model_id` into the matching `HFInference_*` tool above to
+actually run it.
+
+## An alternative inference platform: Replicate
+
+`Replicate_run_prediction` / `Replicate_get_prediction` call a *different*
+hosted-inference platform (replicate.com) rather than HuggingFace's
+serverless API — reach for these when a model you need is published on
+Replicate but not served by HuggingFace's `hf-inference` provider (Replicate
+hosts many image-generation, protein-structure, and audio models that never
+appear as `HFInference_*`-compatible endpoints).
+
+- `Replicate_run_prediction`: `input` required; either `model` (`owner/name`,
+  latest version) or `version` (a 64-char version hash), not both. Creates
+  the prediction and polls up to ~22s; if still running, returns
+  `status: "processing"` with an `id` to check later.
+- `Replicate_get_prediction`: `prediction_id` required — fetches a
+  previously-created prediction's current status/output.
+
+Both **require `REPLICATE_API_TOKEN`** (register at
+https://replicate.com/account/api-tokens) — **live-verified**: with no token
+set, both fail cleanly with `Tool 'Replicate_run_prediction' requires API
+key(s) not set: REPLICATE_API_TOKEN`, before any network call. No token was
+available in this environment, so only this key-gating behavior was
+confirmed live — a real prediction (e.g. the tool's own `replicate/
+hello-world` test example) was not run and its output is not documented
+here; do not assume the model/input schema beyond what the tool's own JSON
+description states until you've run it with a real token.
 
 ## Reference
 
