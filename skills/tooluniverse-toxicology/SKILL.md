@@ -361,6 +361,7 @@ Key finding summary (2-3 sentences)
 - **EPA CompTox**: requires a free API key (`EPA_COMPTOX_API_KEY`, request via `ccte_api@epa.gov`) — schemas verified against the live production OpenAPI specs, but full response shapes were not live-tested end-to-end in this environment since no real key was available; DTXSID coverage skews toward chemicals with US regulatory/environmental relevance and may be sparse for newer or purely investigational drugs
 - **DailyMed**: FDA-approved drugs only; no environmental chemical coverage
 - **Environmental chemicals**: Primarily Phase 1 (AOP) + Phase 4 (CTD) data available
+- **Food additive/ingredient identity**: This skill assesses a chemical's toxicity once you know what it is; it does not look up which foods/products actually contain a given additive or allergen, or a product's nutrient/ingredient label — for that, use `tooluniverse-nutrition-food-composition` (USDA FoodData Central, Open Food Facts) first, then bring the additive's identity here for hazard assessment
 
 ---
 
