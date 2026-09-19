@@ -343,6 +343,9 @@ default_tool_files = {
     "compound_identifier": os.path.join(
         current_dir, "data", "compound_identifier_tools.json"
     ),
+    "compound_drug_profile": os.path.join(
+        current_dir, "data", "compound_drug_profile_tools.json"
+    ),
     "python_executor": os.path.join(current_dir, "data", "python_executor_tools.json"),
     "idmap": os.path.join(current_dir, "data", "idmap_tools.json"),
     "disease_target_score": os.path.join(
