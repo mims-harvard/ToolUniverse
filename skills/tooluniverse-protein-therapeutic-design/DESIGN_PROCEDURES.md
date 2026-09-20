@@ -41,10 +41,16 @@ def get_target_structure(tu, target_id):
 
 ```python
 # Phase 2: RFdiffusion backbone generation
-backbones = tu.tools.NvidiaNIM_rfdiffusion(diffusion_steps=50)
+# contigs (DSL) and input_pdb (PDB text, ATOM records only) are both required
+backbones = tu.tools.NvidiaNIM_rfdiffusion(
+    contigs="A1-150/0 60-100", input_pdb=target_pdb_text, diffusion_steps=50
+)
 
-# Phase 3: ProteinMPNN sequence design
-sequences = tu.tools.NvidiaNIM_proteinmpnn(pdb_string=backbone_pdb, num_sequences=8, temperature=0.1)
+# Phase 3: ProteinMPNN sequence design (sampling_temp is a list; args checked against the
+# tool schema only - not live-run, no NVIDIA_API_KEY available when this was verified)
+sequences = tu.tools.NvidiaNIM_proteinmpnn(
+    input_pdb=backbone_pdb, num_seq_per_target=8, sampling_temp=[0.1]
+)
 ```
 
 ### Sampling Parameters

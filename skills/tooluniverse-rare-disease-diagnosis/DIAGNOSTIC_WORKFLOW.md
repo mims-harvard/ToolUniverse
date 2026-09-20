@@ -303,24 +303,28 @@ def validate_expression(tu, gene_symbol, affected_tissue):
 def get_cell_type_expression(tu, gene_symbol, affected_tissues):
     """Get single-cell expression to validate tissue relevance."""
 
+    # CELLxGENE queries need a filter (unfiltered queries time out on 50M+ cells)
+    if not affected_tissues:
+        raise ValueError("Pass at least one affected tissue, e.g. 'heart' or 'lung'")
+    obs_filter = f'tissue_general == "{affected_tissues[0]}"'
+
+    # Returns an AnnData summary (dimensions, metadata), not per-cell-type mean expression.
+    # Requires the cellxgene-census package; arguments checked against the tool schema only
+    # (not live-run), so inspect the returned dicts before relying on specific keys.
     expression = tu.tools.CELLxGENE_get_expression_data(
-        gene=gene_symbol,
-        tissue=affected_tissues[0] if affected_tissues else "all"
+        obs_value_filter=obs_filter,
+        var_value_filter=f'feature_name in ["{gene_symbol}"]',
+        obs_column_names=["cell_type"]
     )
 
     cell_metadata = tu.tools.CELLxGENE_get_cell_metadata(
-        gene=gene_symbol
+        obs_value_filter=obs_filter,
+        column_names=["cell_type"]
     )
 
-    high_expression = [
-        ct for ct in expression
-        if ct.get('mean_expression', 0) > 1.0
-    ]
-
     return {
-        'expression_data': expression,
-        'high_expression_cells': high_expression,
-        'total_cell_types': len(cell_metadata)
+        'expression_summary': expression,
+        'cell_metadata': cell_metadata
     }
 ```
 
@@ -381,15 +385,16 @@ def get_pathway_context(tu, gene_symbols):
 def get_protein_interactions(tu, gene_symbol):
     """Get interaction partners for candidate genes."""
 
+    # No species parameter; results are [{id, source, interaction_name, interactor_descriptions}]
     interactions = tu.tools.intact_search_interactions(
         query=gene_symbol,
-        species="human"
-    )
+        max=25
+    )['data']
 
     network = tu.tools.intact_get_interaction_network(
-        gene=gene_symbol,
+        gene_symbol=gene_symbol,
         depth=1
-    )
+    )['data']
 
     return {
         'interactions': interactions,

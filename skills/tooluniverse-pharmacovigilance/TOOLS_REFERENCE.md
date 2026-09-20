@@ -462,15 +462,18 @@ def detect_emerging_signals(tu, drug_name, threshold_prr=3.0):
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `AdverseEventICDMapper` | Map AE text to ICD-10 | `text` |
+| `AdverseEventICDMapper` | Map AE text to ICD-10 (LLM-backed agentic tool) | `source_text` |
 
 **Example**:
 ```python
 # Map adverse event to ICD-10
 mapping = tu.tools.AdverseEventICDMapper(
-    text="Patient developed severe hepatotoxicity with jaundice"
+    source_text="Patient developed severe hepatotoxicity with jaundice"
 )
-# Returns: [{"adverse_event": "hepatotoxicity", "icd10cm_code": "K71.9", ...}]
+# Returns a text string (per its return_schema: type string) listing each adverse event with its
+# ICD-10-CM code, not a list of dicts. It is an LLM-backed AgenticTool, so it needs an LLM
+# backend configured; not live-run when this snippet was checked (argument name taken from the
+# tool schema and its own test_example).
 ```
 
 ---

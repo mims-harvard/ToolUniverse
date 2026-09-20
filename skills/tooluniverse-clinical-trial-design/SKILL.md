@@ -172,7 +172,7 @@ Create `[INDICATION]_trial_feasibility_report.md` with all 14 sections. See `REP
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # Example: EGFR+ NSCLC trial feasibility

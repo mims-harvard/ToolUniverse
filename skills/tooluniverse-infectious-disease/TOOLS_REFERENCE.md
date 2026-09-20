@@ -29,9 +29,10 @@ tax = tu.tools.NCBIDatasets_suggest_taxonomy(query="SARS-CoV-2")
 ```python
 # Search for viral proteins
 proteins = tu.tools.UniProt_search(
-    query="organism:2697049",  # SARS-CoV-2 TaxID
-    reviewed=True
+    query="organism:2697049 AND reviewed:true",  # SARS-CoV-2 TaxID; "reviewed" is a query field, not a parameter
+    limit=25
 )
+# Results: proteins['data']['results'] -> [{accession, id, protein_name, gene_names, organism, length}]
 ```
 
 ---
@@ -42,7 +43,7 @@ proteins = tu.tools.UniProt_search(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `ChEMBL_search_targets` | Search targets | `query`, `organism` |
+| `ChEMBL_search_targets` | Search targets | `pref_name__contains`, `organism`, `target_type` |
 | `ChEMBL_get_target_activities` | Get bioactivity | `target_chembl_id` |
 | `ChEMBL_search_drugs` | Search drugs | `query`, `max_phase` |
 
@@ -229,7 +230,7 @@ if doi_from_search.startswith('10.1101/'):
 # Alternative: Use web search for bioRxiv
 web_results = tu.tools.web_search(
     query=f"{pathogen_name} clinical trial effectiveness",
-    limit=20
+    max_results=20
 )
 
 # Computational papers
@@ -294,9 +295,8 @@ def analyze_outbreak(tu, pathogen_name):
     
     # Phase 2: Get target proteins
     proteins = tu.tools.UniProt_search(
-        query=f"organism:{taxid}",
-        reviewed=True
-    )
+        query=f"organism:{taxid} AND reviewed:true"
+    )['data']['results']
     
     # Phase 3: Predict structures for top targets
     structures = {}
@@ -305,7 +305,7 @@ def analyze_outbreak(tu, pathogen_name):
             accession=protein['accession']
         )
         struct = tu.tools.NvidiaNIM_alphafold2(sequence=seq)
-        structures[protein['name']] = struct
+        structures[protein['protein_name']] = struct
     
     # Phase 4: Find repurposing candidates
     candidates = tu.tools.ChEMBL_search_drugs(
@@ -383,7 +383,7 @@ def transfer_knowledge(tu, novel_pathogen, reference_pathogen):
     # Get target from novel pathogen
     novel_proteins = tu.tools.UniProt_search(
         query=f"organism:{novel_pathogen}"
-    )
+    )['data']['results']
     
     # Find homologous targets
     homologs = []
@@ -465,7 +465,7 @@ def transfer_knowledge(tu, novel_pathogen, reference_pathogen):
 |------|-------|---------|
 | `NCBIDatasets_suggest_taxonomy` | `name="virus"` | `query="virus"` |
 | `UniProt_search` | `name="protease"` | `query="protease"` |
-| `ChEMBL_search_targets` | `target="Mpro"` | `query="Mpro"` |
+| `ChEMBL_search_targets` | `query="Mpro"` (no `query` parameter) | `pref_name__contains="3C-like proteinase"` (matches target names, not gene symbols) |
 | `NvidiaNIM_diffdock` | `protein_file=path` | `protein=content` |
 | `NvidiaNIM_alphafold2` | `seq="MVLS..."` | `sequence="MVLS..."` |
 

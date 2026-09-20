@@ -77,9 +77,10 @@ mutations = tu.tools.cBioPortal_get_mutations(study_id='luad_tcga', gene_list='E
 ```python
 # OpenTargets: All drugs targeting the gene
 drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
-    ensemblId='ENSG00000146648', size=50
+    ensemblId='ENSG00000146648'
 )
-# Returns: approved drugs, phase info, mechanism of action
+# No size/paging parameter: every row comes back in one call (82 for EGFR at time of writing)
+# Rows: data.target.drugAndClinicalCandidates.rows[] -> {drug: {id, name}, maxClinicalStage, diseases[]}
 
 # FDA label
 fda = tu.tools.FDA_get_indications_by_drug_name(drug_name='osimertinib', limit=3)

@@ -546,7 +546,7 @@ def get_batch_concurrency_limit(self):
 Enable caching for expensive async operations:
 
 ```python
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # First call: 15 minutes (runs job)

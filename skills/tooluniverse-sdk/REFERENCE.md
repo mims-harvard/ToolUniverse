@@ -115,7 +115,7 @@ os.environ["TOOLUNIVERSE_CACHE_PATH"] = str(cache_dir / "cache.sqlite")
 os.environ["TOOLUNIVERSE_CACHE_ENABLED"] = "true"
 os.environ["TOOLUNIVERSE_CACHE_PERSIST"] = "true"
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 ```
 
@@ -274,7 +274,7 @@ result = client.run_one_function({
 ```python
 def analyze_disease_targets(disease_efo_id):
     """Complete disease-to-drug pipeline"""
-    tu = ToolUniverse(use_cache=True, hooks_enabled=True)
+    tu = ToolUniverse(hooks_enabled=True)
     tu.load_tools()
     
     try:
@@ -429,7 +429,7 @@ tu = ToolUniverse()
 tu.load_tools(categories=["proteins", "drugs"])
 
 # Solution 2: Enable caching
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 
 # Solution 3: Use batch execution
 results = tu.run_batch(calls)

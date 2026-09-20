@@ -245,9 +245,13 @@ result = tu.tools.NvidiaNIM_esmfold(
 ```python
 result = tu.tools.NvidiaNIM_msa_search(
     sequence="MRPSGTAGAALLALL...",
-    database="uniref90"  # "uniref90", "bfd", etc.
+    output_alignment_formats=["a3m"],  # "a3m" (default) and/or "fasta"
+    max_msa_sequences=1000             # optional cap (max 10000)
 )
-# Returns: MSA in A3M format
+# Returns: MSA search result (alignments in a3m/fasta).
+# `databases=[...]` optionally restricts which databases are searched (there is no
+# single `database` argument); valid names come from NVIDIA NIM's MSA-search docs and
+# were not verified here (needs NVIDIA_API_KEY).
 ```
 **Use**: Pre-generate MSA for repeated AlphaFold2 predictions.
 
@@ -387,10 +391,14 @@ result = tu.tools.PubChem_get_compound_bioactivity(cid=2244)
 **Purpose**: Find PDB structures by sequence
 ```python
 result = tu.tools.PDB_search_similar_structures(
-    query="P00533",  # UniProt or PDB ID
-    type="sequence"  # or "structure"
+    query=sequence,           # protein sequence string (or a PDB ID like "4HHB", or text)
+    search_type="sequence",   # "sequence", "structure" (query = PDB ID) or "text"
+    similarity_threshold=0.7, # 0-1
+    max_results=10
 )
-# Returns: PDB IDs with similarity scores
+# Returns: data.results[] -> {'pdb_id', 'rank', 'score'} plus data.total_found
+# A UniProt accession is NOT accepted as `query`; fetch the sequence first with
+# UniProt_get_sequence_by_accession(accession=...) (returns the sequence string).
 ```
 
 ### get_protein_metadata_by_pdb_id

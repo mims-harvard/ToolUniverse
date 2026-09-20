@@ -93,22 +93,26 @@ def validate_gene_symbols_v2(tu, gene_list):
         validated['data_source'] = 'Open Targets (fallback)'
 
         for gene in gene_list:
-            # Query Open Targets to check if gene exists
-            result = tu.tools.OpenTargets_get_target_info_by_ensemblID(target_id=gene)
+            # Resolve the symbol to an Ensembl ID. (OpenTargets_get_target_info_by_ensemblID
+            # takes an Ensembl ID, not a symbol.) The search is fuzzy, so require an exact
+            # symbol match; an unknown symbol such as 'EGFRVIII' returns no hits.
+            result = tu.tools.OpenTargets_get_target_id_description_by_name(targetName=gene)
+            hits = (result.get('data') or {}).get('search', {}).get('hits', []) if result.get('status') == 'success' else []
+            exact = [h for h in hits if h.get('name', '').upper() == gene.upper()]
 
-            if result.get('status') == 'success' and result.get('data'):
-                target_data = result.get('data', {})
+            if exact:
                 validated['valid'].append({
                     'input': gene,
-                    'symbol': target_data.get('approved_symbol', gene),
-                    'ensembl_id': target_data.get('id'),  # Ensembl ID from Open Targets
+                    'symbol': exact[0]['name'],
+                    'ensembl_id': exact[0]['id'],  # Ensembl ID from Open Targets
                     'match_type': 'exact',
                     'source': 'Open Targets'
                 })
             else:
-                # Gene not found - mark as invalid
+                # Gene not found - mark as invalid; near matches (if any) become suggestions
                 validated['invalid'].append(gene)
-                # Open Targets doesn't provide suggestions easily, so leave empty
+                if hits:
+                    validated['suggestions'][gene] = [h['name'] for h in hits[:3]]
 
     return validated
 ```
@@ -170,10 +174,23 @@ def analyze_gene_essentiality_v2(tu, gene_list, cancer_type=None):
         print("⚠️  DepMap unavailable, using Open Targets tractability as proxy...")
 
         for gene in gene_list:
-            ot_result = tu.tools.OpenTargets_get_target_info_by_ensemblID(target_id=gene)
+            # Symbol -> Ensembl ID (exact symbol match), then fetch tractability and safety
+            lookup = tu.tools.OpenTargets_get_target_id_description_by_name(targetName=gene)
+            hits = (lookup.get('data') or {}).get('search', {}).get('hits', [])
+            exact = [h for h in hits if h.get('name', '').upper() == gene.upper()]
+            if not exact:
+                continue
+            ensembl_id = exact[0]['id']
+            tract = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(ensemblId=ensembl_id)
+            safety = tu.tools.OpenTargets_get_target_safety_profile_by_ensemblID(ensemblId=ensembl_id)
 
-            if ot_result.get('status') == 'success' and ot_result.get('data'):
-                target_data = ot_result.get('data', {})
+            if tract.get('status') == 'success' and safety.get('status') == 'success':
+                target_data = {
+                    # data.target.tractability[] -> {'label', 'modality', 'value'}
+                    'tractability': tract['data']['target'].get('tractability', []),
+                    # data.target.safetyLiabilities[] (key is absent when there are none)
+                    'safety': safety['data']['target'].get('safetyLiabilities', []),
+                }
 
                 # Use tractability and safety as proxy for essentiality
                 essentiality_class = classify_essentiality_open_targets(target_data)
@@ -199,8 +216,8 @@ def classify_essentiality_open_targets(target_data):
     - Tractable + moderate safety → Potentially selective
     - Low tractability + low safety risk → Likely non-essential
     """
-    tractability = target_data.get('tractability', {})
-    safety = target_data.get('safety', {})
+    tractability = target_data.get('tractability', [])  # list of {'label', 'modality', 'value'}
+    safety = target_data.get('safety', [])              # list of safety-liability records
 
     # Check if gene is in essential gene lists
     # Note: Open Targets doesn't directly provide essentiality scores
@@ -208,7 +225,7 @@ def classify_essentiality_open_targets(target_data):
     # 1. Safety liabilities (essential genes often have safety concerns)
     # 2. Tractability (druggable genes are often essential)
 
-    safety_liabilities = safety.get('adverse_effects', [])
+    safety_liabilities = safety
     has_safety_concerns = len(safety_liabilities) > 0
 
     # Simplistic classification (Open Targets doesn't have CRISPR scores)
@@ -392,14 +409,19 @@ tu.load_tools()
 genes = ['KRAS', 'EGFR', 'TP53']
 
 for gene in genes:
-    result = tu.tools.OpenTargets_get_target_info_by_ensemblID(target_id=gene)
-    if result.get('status') == 'success':
-        data = result.get('data', {})
-        print(f"✅ {gene}: {data.get('approved_symbol')} - {data.get('biotype')}")
+    lookup = tu.tools.OpenTargets_get_target_id_description_by_name(targetName=gene)
+    # an unknown symbol returns data.search == {} (no 'hits' key), so use .get
+    hits = [h for h in lookup['data']['search'].get('hits', []) if h['name'].upper() == gene]
+    if hits:
+        ensembl_id = hits[0]['id']
+        info = tu.tools.OpenTargets_get_target_info_by_ensemblID(ensemblId=ensembl_id)['data']['target']
+        print(f"✅ {gene}: {info['approvedSymbol']} - {info['biotype']}")
 
         # Check tractability
-        tractability = data.get('tractability', {})
-        print(f"   Tractability: {tractability}")
+        tract = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(ensemblId=ensembl_id)
+        approved = [t['modality'] for t in tract['data']['target']['tractability']
+                    if t['label'] == 'Approved Drug' and t['value']]
+        print(f"   Approved-drug tractability modalities: {approved}")
     else:
         print(f"❌ {gene}: Not found")
 ```

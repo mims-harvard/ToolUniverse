@@ -72,7 +72,8 @@ Every optimization MUST include per-variant documentation with:
 | `IMGT_get_sequence` | Human framework sequences | Humanization |
 | `SAbDab_search_structures` | Antibody structure precedents | Structure |
 | `TheraSAbDab_search_by_target` | Clinical antibody benchmarks | Validation |
-| `alphafold_get_prediction` | Structure modeling | Structure |
+| `ESMFold_predict_structure` | Fv structure modeling (VH-linker-VL scFv) | Structure |
+| `alphafold_get_prediction` | Retrieve a precomputed AlphaFold DB model by UniProt accession (target antigen) | Structure |
 | `iedb_search_epitopes` | Epitope identification | Immunogenicity |
 | `iedb_search_bcell` | B-cell epitope prediction | Immunogenicity |
 | `UniProt_get_entry_by_accession` | Target antigen information | Target |
@@ -180,7 +181,7 @@ See `WORKFLOW_DETAILS.md` Phase 2 for code examples.
 **Goal**: Predict structure, analyze CDR conformations, map epitope.
 
 **Key steps**:
-1. Predict Fv structure via `alphafold_get_prediction` (VH:VL)
+1. Predict Fv structure via `ESMFold_predict_structure` (VH-linker-VL scFv; `alphafold_get_prediction` only retrieves precomputed models by UniProt accession)
 2. Assess pLDDT scores by region (framework, CDRs, interface)
 3. Classify CDR canonical structures and calculate RMSD
 4. Search known epitopes via `iedb_search_epitopes`
@@ -301,7 +302,8 @@ See `REPORT_TEMPLATE.md` for the full report template.
 - `iedb_get_epitope_references`: Citations
 
 ### Structure & Target
-- `alphafold_get_prediction`: Structure prediction
+- `ESMFold_predict_structure`: Fv structure prediction from a sequence
+- `alphafold_get_prediction`: Retrieve a precomputed AlphaFold DB model by UniProt accession
 - `UniProt_get_entry_by_accession`: Target info
 - `RCSBData_get_entry`: Experimental structures
 

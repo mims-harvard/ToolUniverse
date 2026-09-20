@@ -7,7 +7,7 @@ Full Python example using ToolUniverse to assess trial feasibility across all 6 
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # ============================================================================
