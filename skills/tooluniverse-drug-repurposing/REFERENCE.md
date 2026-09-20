@@ -25,12 +25,12 @@ targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(
 ```
 **Use**: Find proteins/genes associated with disease (repurposing targets)
 
-#### OpenTargets_get_diseases_by_target_ensemblId
+#### OpenTargets_get_diseases_phenotypes_by_target_ensembl
 ```python
-diseases = tu.tools.OpenTargets_get_diseases_by_target_ensemblId(
+diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensembl(
     ensemblId="ENSG00000012048"
 )
-# Returns: Diseases associated with gene/protein
+# Returns: data.target.associatedDiseases.rows[] -> {score, disease: {id, name}, datasourceScores}
 ```
 **Use**: Reverse lookup - find diseases for drug targets (compound-based repurposing)
 

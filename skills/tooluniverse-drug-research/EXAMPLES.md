@@ -325,8 +325,8 @@ and longevity.
 
 ```python
 # Start with ChEMBL ID directly
-compound = tu.tools.ChEMBL_get_compound_by_chemblid(chembl_id="CHEMBL4303291")
-smiles = compound['molecule_structures']['canonical_smiles']
+compound = tu.tools.ChEMBL_get_molecule(chembl_id="CHEMBL4303291")
+smiles = compound['data']['molecule_structures']['canonical_smiles']
 
 # Get PubChem CID from SMILES
 cid_result = tu.tools.PubChem_get_CID_by_SMILES(smiles=smiles)

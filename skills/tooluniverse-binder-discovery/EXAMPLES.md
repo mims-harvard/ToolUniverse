@@ -394,8 +394,7 @@ chembl_result = tu.tools.ChEMBL_search_targets(query="CDK4", organism="Homo sapi
 # → CHEMBL3116
 
 # Step 1.2: Get protein sequence
-uniprot_details = tu.tools.UniProt_get_entry(accession="P11802")
-cdk4_sequence = uniprot_details['sequence']
+cdk4_sequence = tu.tools.UniProt_get_sequence_by_accession(accession="P11802")['result']
 
 # Step 1.3: Check for existing PDB structures
 pdb_structures = tu.tools.PDB_search_similar_structures(query="P11802", type="sequence")
@@ -448,7 +447,10 @@ ref_compound = tu.tools.ChEMBL_get_molecule(molecule_chembl_id="CHEMBL1906")
 palbociclib_smiles = ref_compound['molecule_structures']['canonical_smiles']
 
 # Step 3.5.2: Get PDB structure content
-pdb_content = tu.tools.get_pdb_structure_file(pdb_id="2W9Z", format="pdb")
+# (no dedicated PDB-download tool; fetch the file from RCSB)
+pdb_content = tu.tools.download_text_content(
+    url="https://files.rcsb.org/download/2W9Z.pdb"
+)['content']
 
 # Step 3.5.3: Dock reference compound to validate binding pocket
 if nvidia_available:

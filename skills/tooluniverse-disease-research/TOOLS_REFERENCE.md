@@ -236,11 +236,11 @@ tu.tools.GWAS_search_associations_by_gene(gene_name="TP53", size=10)
 # Returns: associations for gene
 ```
 
-### gnomad_get_variant_frequency
-**Purpose**: Get population variant frequencies
+### gnomad_get_variant
+**Purpose**: Get population variant frequencies (`gnomad_get_variant_populations` for per-ancestry frequencies; `gnomad_search_variants` to find a `variant_id` from an rsID)
 ```python
-tu.tools.gnomad_get_variant_frequency(variant="1-55505647-G-T")
-# Returns: population frequencies (gnomAD data)
+tu.tools.gnomad_get_variant(variant_id="19-44908822-C-T", dataset="gnomad_r4")
+# Returns: variant.rsid, variant.genome/exome allele frequency (af, ac, an)
 ```
 
 ---
@@ -414,18 +414,20 @@ tu.tools.humanbase_ppi_analysis(
 # Returns: PPI network, GO biological processes
 ```
 
-### gtex_get_expression_by_gene
+### GTEx_get_expression_summary
 **Purpose**: Get tissue-specific gene expression (GTEx)
 ```python
-tu.tools.gtex_get_expression_by_gene(gene="BRCA1")
-# Returns: expression levels across tissues
+tu.tools.GTEx_get_expression_summary(gene_symbol="BRCA1")
+# Returns: data.geneExpression[] - median TPM per tissue (tissueSiteDetailId, median, unit)
 ```
 
-### HPA_get_protein_expression
-**Purpose**: Get protein expression from Human Protein Atlas
+### HPA_get_comprehensive_gene_details_by_ensembl_id
+**Purpose**: Get protein expression from Human Protein Atlas (takes an Ensembl ID; find it with `HPA_search_genes_by_query(search_query="TP53")`; see also `HPA_get_subcellular_location` for localization)
 ```python
-tu.tools.HPA_get_protein_expression(gene="TP53")
-# Returns: protein expression by tissue, subcellular localization
+tu.tools.HPA_get_comprehensive_gene_details_by_ensembl_id(
+    ensembl_id="ENSG00000141510", include_images=False, include_antibodies=False
+)
+# Returns: data.gene_name, data.summary (tissues_with_expression, ...), tissue expression rows
 ```
 
 ### geo_search_datasets
@@ -625,19 +627,20 @@ tu.tools.GtoPdb_get_interactions(
 # Returns: interaction data
 ```
 
-### GtoPdb_list_ligands
+### GtoPdb_search_ligands
 **Purpose**: Search ligands/drugs
 ```python
-tu.tools.GtoPdb_list_ligands(ligand_type="Approved", limit=20)
-# Returns: ligands with properties
+tu.tools.GtoPdb_search_ligands(name="aspirin", approved=True)
+# Returns: matching ligands with ligand IDs (optional filters: type, query)
 ```
 
-### GtoPdb_get_ligand
-**Purpose**: Get ligand details
+### GtoPdb_get_ligand_properties
+**Purpose**: Get ligand structure and computed properties
 ```python
-tu.tools.GtoPdb_get_ligand(ligand_id=1016)
-# Returns: SMILES, properties, targets
+tu.tools.GtoPdb_get_ligand_properties(ligand_id=1016)
+# Returns: chemical structure and molecular properties
 ```
+> Note: as of this writing the GtoPdb web services reject requests without an API key (HTTP 401), so these GtoPdb tools could not be run end-to-end when this reference was corrected; check the error before relying on them.
 
 ---
 

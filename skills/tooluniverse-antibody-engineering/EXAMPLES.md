@@ -1048,7 +1048,7 @@ Light Chain 2: VL2(anti-TIM-3) - CL-lambda*
 
 | Tool | Query | Results |
 |------|-------|---------|
-| STRING_get_interactions | PD-L1, TIM-3 | Co-expression analysis |
+| STRING_get_network | PD-L1, TIM-3 | Co-expression analysis |
 | TheraSAbDab_search_by_target | PD-L1, TIM-3 | Clinical precedents |
 | UniProt | Q9NZQ7, Q8TDQ0 | Target biology |
 | AlphaFold | VH-VL complexes | Structure models |

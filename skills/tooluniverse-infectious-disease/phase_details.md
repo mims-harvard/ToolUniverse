@@ -20,17 +20,22 @@ def identify_pathogen(tu, pathogen_query):
 ### 1.2 Related Pathogens (Knowledge Transfer)
 
 ```python
-def find_related_pathogens(tu, taxid):
-    """Find related pathogens for drug knowledge transfer."""
-    relatives = tu.tools.NCBI_Taxonomy_get_children(taxid=taxid, rank="genus")
+def find_related_pathogens(tu, taxid, relative_names):
+    """Find related pathogens for drug knowledge transfer.
+
+    ToolUniverse has no tool that lists an NCBI taxon's child taxa, so the
+    caller supplies candidate relatives (organism names); the pathogen's genus
+    is read from its NCBI lineage.
+    """
+    tax = tu.tools.NCBIDatasets_get_taxonomy(tax_id=str(taxid))['data']
+    genus = next((x for x in tax['lineage_names'] if x['rank'] == 'GENUS'), None)
     related_with_drugs = []
-    for rel in relatives:
-        drugs = tu.tools.ChEMBL_search_targets(
-            query=rel['scientific_name'], organism_contains=True
-        )
-        if drugs:
-            related_with_drugs.append({'pathogen': rel, 'drugs': drugs})
-    return related_with_drugs
+    for name in relative_names:
+        result = tu.tools.ChEMBL_search_targets(organism=name, limit=10)
+        targets = result['data']['targets']
+        if targets:
+            related_with_drugs.append({'pathogen': name, 'targets': targets})
+    return {'genus': genus, 'related_with_drugs': related_with_drugs}
 ```
 
 ### 1.3 Output Example

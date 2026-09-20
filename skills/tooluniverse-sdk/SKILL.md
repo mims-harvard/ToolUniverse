@@ -62,10 +62,13 @@ def drug_discovery_pipeline(disease_id):
     tu.load_tools()
     try:
         targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_id)
+        # ChEMBL takes ChEMBL target IDs, not the Ensembl IDs in `targets`;
+        # map them first (e.g. via ChEMBL_search_targets). Example IDs: EGFR, COX-2
+        chembl_target_ids = ["CHEMBL203", "CHEMBL230"]
         compound_calls = [
-            {"name": "ChEMBL_search_molecule_by_target",
-             "arguments": {"target_id": t['id'], "limit": 10}}
-            for t in targets['data'][:5]
+            {"name": "ChEMBL_search_activities",
+             "arguments": {"target_chembl_id": tid, "limit": 10}}
+            for tid in chembl_target_ids
         ]
         compounds = tu.run_batch(compound_calls)
         return {"targets": targets, "compounds": compounds}

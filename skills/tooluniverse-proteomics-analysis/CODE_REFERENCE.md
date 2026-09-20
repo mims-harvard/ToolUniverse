@@ -224,16 +224,16 @@ def build_protein_network(protein_list, confidence=0.7):
     tu = ToolUniverse()
 
     interactions = tu.run_one_function({
-        "name": "string_get_interactions",
+        "name": "STRING_get_network",
         "arguments": {
-            "proteins": ",".join(protein_list),
-            "species": 9606, "score_threshold": int(confidence * 1000)
+            "identifiers": "\r".join(protein_list),  # \r-separated for multiple proteins
+            "species": 9606, "required_score": int(confidence * 1000)
         }
     })
 
     G = nx.Graph()
     for interaction in interactions['data']:
-        G.add_edge(interaction['protein1'], interaction['protein2'], score=interaction['score'])
+        G.add_edge(interaction['preferredName_A'], interaction['preferredName_B'], score=interaction['score'])
     return G
 
 def detect_protein_modules(network_graph):

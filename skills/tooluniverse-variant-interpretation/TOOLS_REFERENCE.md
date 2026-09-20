@@ -783,15 +783,15 @@ result = tu.tools.OMIM_search(query="BRCA1")
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `PDBe_get_uniprot_mappings` | Find structures | `uniprot_id` |
-| `RCSBData_get_entry` | Download PDB | `pdb_id` |
+| `PDBeSIFTS_get_best_structures` | Find structures for a UniProt accession (best coverage/resolution first) | `uniprot_accession`, `limit` |
+| `RCSBData_get_entry` | PDB entry metadata (method, resolution, dates) | `pdb_id` |
 
 **Example - Get structure**:
 ```python
 # Find PDB structures for TP53
-hits = tu.tools.PDBe_get_uniprot_mappings(uniprot_id="P04637")
-if hits:
-    structure = tu.tools.PDB_get_structure(pdb_id=hits[0]['pdb_id'])
+hits = tu.tools.PDBeSIFTS_get_best_structures(uniprot_accession="P04637", limit=5)
+if hits['data']['structures']:
+    structure = tu.tools.RCSBData_get_entry(pdb_id=hits['data']['structures'][0]['pdb_id'])
 ```
 
 ### AlphaFold - Predicted Structures
@@ -917,12 +917,12 @@ def structural_analysis_for_vus(tu, gene, uniprot_id, residue_position):
     """Structural analysis for VUS missense variants."""
     
     # Try PDB first
-    pdb_structures = tu.tools.PDBe_get_uniprot_mappings(uniprot_id=uniprot_id)
+    pdb_structures = tu.tools.PDBeSIFTS_get_best_structures(uniprot_accession=uniprot_id, limit=50)['data']['structures']
     
     if pdb_structures:
         # Use best resolution experimental structure
-        best_pdb = sorted(pdb_structures, key=lambda x: x.get('resolution', 10))[0]
-        structure = tu.tools.PDB_get_structure(pdb_id=best_pdb['pdb_id'])
+        best_pdb = sorted(pdb_structures, key=lambda x: x.get('resolution') or 10)[0]
+        structure = tu.tools.RCSBData_get_entry(pdb_id=best_pdb['pdb_id'])
         structure_source = f"PDB {best_pdb['pdb_id']}"
     else:
         # Fallback to AlphaFold
@@ -1025,7 +1025,7 @@ def calculate_acmg_classification(evidence_codes):
 ### Structure
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
-| `PDBe_get_uniprot_mappings` | `alphafold_get_prediction` | `NvidiaNIM_alphafold2` |
+| `PDBeSIFTS_get_best_structures` | `alphafold_get_prediction` | `NvidiaNIM_alphafold2` |
 
 ### Gene Information
 | Primary | Fallback 1 | Fallback 2 |

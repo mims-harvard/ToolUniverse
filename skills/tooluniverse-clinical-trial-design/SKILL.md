@@ -180,8 +180,9 @@ tu.load_tools()
 disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(
     diseaseName="non-small cell lung cancer"
 )
-prevalence = tu.tools.OpenTargets_get_diseases_phenotypes(
-    efoId=disease_info['data']['id']
+# Returns HPO phenotypes only, not prevalence figures; get prevalence from literature
+prevalence = tu.tools.OpenTargets_get_associated_phenotypes_by_disease_efoId(
+    efoId=disease_info['data']['search']['hits'][0]['id']
 )
 
 # Step 2: Biomarker prevalence

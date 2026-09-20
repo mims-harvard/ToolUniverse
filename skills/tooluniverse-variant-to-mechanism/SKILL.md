@@ -219,9 +219,10 @@ Once target gene(s) identified, characterize molecular function.
 ppi = tu.tools.STRING_get_interaction_partners(
     identifiers="TCF7L2", species=9606, required_score=700)
 
-# STRING functional enrichment (GO, KEGG, Reactome)
-enrichment = tu.tools.STRING_get_functional_enrichment(
-    identifiers="TCF7L2", species=9606)
+# STRING functional enrichment (GO, KEGG, Reactome) — needs a gene SET,
+# newline-separated; results are in data["enrichments"]
+enrichment = tu.tools.STRING_get_enrichment(
+    identifiers="TCF7L2\nCTNNB1\nAPC\nLEF1", species=9606)
 
 # Reactome pathway enrichment — space-separated STRING, NOT array
 reactome = tu.tools.ReactomeAnalysis_pathway_enrichment(

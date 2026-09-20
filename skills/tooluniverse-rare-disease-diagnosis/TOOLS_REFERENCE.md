@@ -657,8 +657,8 @@ def diagnose_rare_disease(tu, symptoms, patient_id):
     # Phase 3: Build gene panel
     genes = set()
     for orpha_id, count in top_diseases:
-        disease_genes = tu.tools.Orphanet_get_disease_genes(orpha_code=orpha_id)
-        genes.update(disease_genes)
+        disease_genes = tu.tools.Orphanet_get_genes(orpha_code=str(orpha_id))
+        genes.update(g['Symbol'] for g in disease_genes['data']['genes'])
     
     return {
         'hpo_terms': hpo_terms,
@@ -670,7 +670,7 @@ def diagnose_rare_disease(tu, symptoms, patient_id):
 ### Example 2: Variant Interpretation
 
 ```python
-def interpret_variant(tu, variant_hgvs, gene_symbol):
+def interpret_variant(tu, variant_hgvs, gene_symbol, chrom, pos, ref, alt):
     """Interpret a variant using ACMG criteria."""
     
     evidence = {}
@@ -681,9 +681,10 @@ def interpret_variant(tu, variant_hgvs, gene_symbol):
         evidence['PM2'] = {'strength': 'Moderate', 'reason': 'Absent from gnomAD'}
     
     # PP3: Computational predictions
-    cadd = tu.tools.CADD_get_scores(variant=variant_hgvs)
-    if cadd['phred_score'] > 25:
-        evidence['PP3'] = {'strength': 'Supporting', 'reason': f'CADD={cadd["phred_score"]}'}
+    cadd = tu.tools.CADD_get_variant_score(chrom=chrom, pos=pos, ref=ref, alt=alt)
+    phred = (cadd.get('data') or {}).get('phred_score')
+    if phred is not None and phred > 25:
+        evidence['PP3'] = {'strength': 'Supporting', 'reason': f'CADD={phred}'}
     
     # ClinVar
     clinvar = tu.tools.ClinVar_search_variants(query=variant_hgvs)
