@@ -14,16 +14,28 @@ def resolve_gene(tu, gene_symbol):
     ids = {}
 
     # Ensembl ID (for OpenTargets)
-    gene_info = tu.tools.MyGene_query_genes(q=gene_symbol, species="human")
-    ids['ensembl'] = gene_info.get('ensembl', {}).get('gene')
+    gene_info = tu.tools.MyGene_query_genes(query=gene_symbol, species="human", size=1)
+    hits = gene_info['data']['hits']
+    ids['ensembl'] = hits[0].get('ensembl', {}).get('gene') if hits else None
 
-    # UniProt (for structure)
-    uniprot = tu.tools.UniProt_search(query=gene_symbol, organism="human")
-    ids['uniprot'] = uniprot[0].get('primaryAccession') if uniprot else None
+    # UniProt (for structure) - reviewed entry only, otherwise fragments can rank first
+    uniprot = tu.tools.UniProt_search(
+        query=f"gene_exact:{gene_symbol} AND reviewed:true", organism="human", limit=1
+    )
+    uniprot_hit = uniprot['data']['results'][0] if uniprot['data']['results'] else None
+    ids['uniprot'] = uniprot_hit['accession'] if uniprot_hit else None
 
-    # ChEMBL target
-    target = tu.tools.ChEMBL_search_targets(query=gene_symbol, organism="Homo sapiens")
-    ids['chembl_target'] = target[0].get('target_chembl_id') if target else None
+    # ChEMBL target (target names are protein names, not gene symbols, so search by
+    # the UniProt protein name)
+    target = None
+    if uniprot_hit:
+        target = tu.tools.ChEMBL_search_targets(
+            pref_name__contains=uniprot_hit['protein_name'],
+            organism="Homo sapiens",
+            target_type="SINGLE PROTEIN"
+        )
+    targets = target['data']['targets'] if target else []
+    ids['chembl_target'] = targets[0].get('target_chembl_id') if targets else None
 
     return ids
 ```
@@ -47,7 +59,7 @@ def get_civic_evidence(tu, gene_symbol, variant_name):
 
     evidence_items = []
     for var in variants:
-        evi = tu.tools.civic_get_variant(id=var['id'])
+        evi = tu.tools.civic_get_variant(variant_id=var['id'])
         evidence_items.extend(evi.get('evidence_items', []))
 
     return {
@@ -315,10 +327,17 @@ def check_tumor_specific_expression(tu, gene_symbol, cancer_type):
 ```python
 def get_tumor_expression_context(tu, gene_symbol, cancer_type):
     """Get cell-type specific expression in tumor microenvironment."""
+    # Filters are SQL-like strings; the tool's operation is get_anndata, so reshape the
+    # result into per-cell-type records before the tumor/normal split below
+    # (requires the cellxgene_census package; return shape not verified here)
     expression = tu.tools.CELLxGENE_get_expression_data(
-        gene=gene_symbol, tissue=cancer_type
+        var_value_filter=f'feature_name == "{gene_symbol}"',
+        obs_value_filter=f'disease == "{cancer_type}"'
     )
-    cell_metadata = tu.tools.CELLxGENE_get_cell_metadata(gene=gene_symbol)
+    cell_metadata = tu.tools.CELLxGENE_get_cell_metadata(
+        obs_value_filter=f'disease == "{cancer_type}"',
+        column_names=["cell_type", "disease", "tissue_general"]
+    )
 
     tumor_expression = [c for c in expression if 'tumor' in c.get('cell_type', '').lower()]
     normal_expression = [c for c in expression if 'normal' in c.get('cell_type', '').lower()]
@@ -368,19 +387,22 @@ def get_tumor_expression_context(tu, gene_symbol, cancer_type):
 ### Pathway Context (KEGG/Reactome)
 
 ```python
-def get_pathway_context(tu, gene_symbols, cancer_type):
+def get_pathway_context(tu, gene_symbols, cancer_efo_id):
     """Get pathway context for drug combinations and resistance."""
     pathway_map = {}
     for gene in gene_symbols:
-        kegg_gene = tu.tools.kegg_find_genes(query=f"hsa:{gene}")
-        if kegg_gene:
-            pathways = tu.tools.kegg_get_gene_info(gene_id=kegg_gene[0]['id'])
+        kegg_gene = tu.tools.kegg_find_genes(keyword=gene, organism="hsa")
+        if kegg_gene['data']:
+            pathways = tu.tools.kegg_get_gene_info(gene_id=kegg_gene['data'][0]['gene_id'])
             pathway_map[gene] = pathways.get('pathways', [])
 
-        reactome = tu.tools.reactome_disease_target_score(
-            disease=cancer_type, target=gene
-        )
-        pathway_map[f"{gene}_reactome"] = reactome
+    # Reactome scores are per disease (MONDO/EFO ID), not per gene: fetch once, filter by gene
+    # (data.truncated is True when the scan stopped early - check it before concluding absence)
+    reactome = tu.tools.reactome_disease_target_score(efoId=cancer_efo_id)
+    for gene in gene_symbols:
+        pathway_map[f"{gene}_reactome"] = [
+            t for t in reactome['data']['target_scores'] if t['target_symbol'] == gene
+        ]
     return pathway_map
 ```
 
@@ -390,16 +412,19 @@ def get_pathway_context(tu, gene_symbols, cancer_type):
 def get_resistance_network(tu, drug_target, bypass_candidates):
     """Find protein interactions that may mediate resistance."""
     network = tu.tools.intact_get_interaction_network(
-        gene=drug_target, depth=2
+        gene_symbol=drug_target, depth=2
     )
+    interactions = network['data']  # list of interaction records
+    # Each record lists interactor_descriptions (protein names, not gene symbols),
+    # so pass bypass_candidates as protein names, e.g. "Hepatocyte growth factor receptor"
     bypass_in_network = [
-        node for node in network['nodes']
-        if node['gene'] in bypass_candidates
+        i for i in interactions
+        if any(b.lower() in d.lower() for d in i['interactor_descriptions'] for b in bypass_candidates)
     ]
     return {
         'network': network,
         'bypass_connections': bypass_in_network,
-        'total_interactors': len(network['nodes'])
+        'total_interactions': len(interactions)
     }
 ```
 
@@ -413,10 +438,10 @@ def get_resistance_network(tu, drug_target, bypass_candidates):
 def analyze_resistance(tu, drug_name, gene_symbol):
     """Find known resistance mechanisms."""
     resistance = tu.tools.civic_search_evidence_items(
-        drug=drug_name,
-        evidence_type="Predictive",
-        clinical_significance="Resistance"
-    )
+        therapy=drug_name,
+        evidence_type="PREDICTIVE",
+        significance="RESISTANCE"
+    )  # evidence items are in resistance['data']['evidenceItems']['nodes']
     papers = tu.tools.PubMed_search_articles(
         query=f'"{drug_name}" AND "{gene_symbol}" AND resistance',
         limit=20
@@ -482,13 +507,11 @@ def search_treatment_literature(tu, cancer_type, biomarker, drug_name):
 ```python
 def search_preprints(tu, cancer_type, biomarker):
     """Search preprints for cutting-edge findings."""
-    biorxiv = tu.tools.BioRxiv_list_recent_preprints(
-        query=f"{cancer_type} {biomarker} treatment", limit=10
+    # bioRxiv/medRxiv have no keyword-search tool; search their preprints via Europe PMC
+    preprints = tu.tools.EuropePMC_search_articles(
+        query=f"{cancer_type} {biomarker} treatment AND SRC:PPR", limit=10
     )
-    medrxiv = tu.tools.MedRxiv_get_preprint(
-        query=f"{cancer_type} {biomarker}", limit=10
-    )
-    return {'biorxiv': biorxiv, 'medrxiv': medrxiv}
+    return {'preprints': preprints}
 ```
 
 ### Citation Analysis (OpenAlex)

@@ -304,7 +304,7 @@ RFSGSGSGTDFTLTISSLQPEDFATYYCQQSYSTPLTFGQGTKVEIK
 | IMGT_search_genes | IGHV, IGKV (Homo sapiens) | Germline candidates |
 | IMGT_get_sequence | IGHV1-69*01, IGKV1-39*01 | Framework sequences |
 | TheraSAbDab_search_by_target | PD-L1 | 3 approved antibodies |
-| alphafold_get_prediction | VH:VL complexes | Structure models |
+| ESMFold_predict_structure | VH-linker-VL scFv | Structure models |
 | iedb_search_epitopes | Sequence scanning | T-cell epitopes |
 ```
 
@@ -1048,7 +1048,7 @@ Light Chain 2: VL2(anti-TIM-3) - CL-lambda*
 
 | Tool | Query | Results |
 |------|-------|---------|
-| STRING_get_interactions | PD-L1, TIM-3 | Co-expression analysis |
+| STRING_get_network | PD-L1, TIM-3 | Co-expression analysis |
 | TheraSAbDab_search_by_target | PD-L1, TIM-3 | Clinical precedents |
 | UniProt | Q9NZQ7, Q8TDQ0 | Target biology |
 | AlphaFold | VH-VL complexes | Structure models |

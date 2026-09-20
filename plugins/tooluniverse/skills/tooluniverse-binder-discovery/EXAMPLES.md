@@ -13,10 +13,10 @@ Detailed workflow examples for common discovery scenarios.
 uniprot_result = tu.tools.UniProt_search(query="EGFR human", organism="human", limit=5)
 # → P00533 (EGFR_HUMAN)
 
-gene_result = tu.tools.MyGene_query_genes(q="EGFR", species="human")
+gene_result = tu.tools.MyGene_query_genes(query="EGFR", species="human")
 # → ENSG00000146648, NCBI: 1956
 
-chembl_result = tu.tools.ChEMBL_search_targets(query="EGFR", organism="Homo sapiens")
+chembl_result = tu.tools.ChEMBL_search_targets(pref_name__contains="Epidermal growth factor receptor", organism="Homo sapiens")
 # → CHEMBL203
 
 # Step 1.2: Assess druggability
@@ -112,12 +112,14 @@ probes = tu.tools.OpenTargets_get_chemical_probes_by_target_ensemblID(
 ### Phase 3: Structure Analysis
 
 ```python
-# Step 3.1: Find PDB structures
+# Step 3.1: Find PDB structures (the tool takes a PDB ID, a raw sequence, or text -- not a UniProt accession)
+egfr_sequence = tu.tools.UniProt_get_sequence_by_accession(accession="P00533")  # returns the sequence string
 pdb_list = tu.tools.PDB_search_similar_structures(
-    query="P00533",
-    type="sequence"
+    query=egfr_sequence,
+    search_type="sequence",
+    max_results=100
 )
-# → 156 structures
+# → pdb_list['data']['results'] = [{'pdb_id', 'rank', 'score'}, ...]; pdb_list['data']['total_found'] = total hits
 
 # Step 3.2: Get metadata for key structures
 key_pdbs = ["1M17", "4HJO", "5UG9", "6JX4"]
@@ -159,10 +161,10 @@ seeds = [
 all_similar = []
 for seed_id, seed_smiles in seeds:
     similar = tu.tools.ChEMBL_search_similar_molecules(
-        molecule=seed_smiles,
-        similarity=75
+        query=seed_smiles,
+        similarity_threshold=75
     )
-    all_similar.extend(similar['molecules'])
+    all_similar.extend(similar['result'][0]['similar_molecules'])
 # → 892 similar compounds
 
 # Step 4.3: PubChem expansion
@@ -210,8 +212,9 @@ passed_tox = [c for c in toxicity if c['AMES'] < 0.5 and c['hERG'] < 0.5]
 # Structural alerts
 final_candidates = []
 for c in passed_tox:
-    alerts = tu.tools.ChEMBL_search_compound_structural_alerts(smiles=c['smiles'])
-    if not alerts.get('pains', []):
+    # Takes a ChEMBL molecule ID (not SMILES); returns data.compound_structural_alerts[]
+    alerts = tu.tools.ChEMBL_search_compound_structural_alerts(molecule_chembl_id=c['chembl_id'])
+    if not alerts['data']['compound_structural_alerts']:
         final_candidates.append(c)
 # → 678 pass all filters
 ```
@@ -283,9 +286,10 @@ activities = tu.tools.ChEMBL_get_target_activities(target_chembl_id="CHEMBL45235
 # → Only 23 activity records, best IC50 = 2.5 µM
 
 # Phase 2b: Check related targets (SLC7 family)
-related_targets = ["SLC7A1", "SLC7A5", "SLC7A8"]  # Similar transporters
+# ChEMBL_search_targets filters on the preferred target NAME, not the gene symbol
+related_targets = ["Large neutral amino acids transporter", "Cationic amino acid transporter"]  # Similar transporters
 for target in related_targets:
-    activities = tu.tools.ChEMBL_search_targets(query=target)
+    activities = tu.tools.ChEMBL_search_targets(pref_name__contains=target, organism="Homo sapiens")
     # Look for ligands that might cross-react
 
 # Phase 3: Structure - AlphaFold only
@@ -328,15 +332,16 @@ ref_admet = tu.tools.ADMETAI_predict_toxicity(smiles=[ref_smiles])
 # Known issue: hERG = 0.72 (liability)
 
 # Step 2: Tight similarity search (85-95%)
-similar = tu.tools.ChEMBL_search_similar_molecules(molecule=ref_smiles, similarity=85)
+similar = tu.tools.ChEMBL_search_similar_molecules(query=ref_smiles, similarity_threshold=85)
 # → 156 close analogs
 
 # Step 3: Predict ADMET for all
-all_smiles = [m['smiles'] for m in similar['molecules']]
+similar_mols = similar['result'][0]['similar_molecules']
+all_smiles = [m['smiles'] for m in similar_mols]
 admet_results = tu.tools.ADMETAI_predict_toxicity(smiles=all_smiles)
 
 # Step 4: Filter for improved hERG
-improved = [m for m, a in zip(similar['molecules'], admet_results) 
+improved = [m for m, a in zip(similar_mols, admet_results) 
             if a['hERG'] < 0.5]  # Improved from 0.72
 # → 34 analogs with improved hERG
 
@@ -387,18 +392,17 @@ print(f"NVIDIA NIM tools: {'Available' if nvidia_available else 'Unavailable'}")
 uniprot_result = tu.tools.UniProt_search(query="CDK4 human", organism="human", limit=5)
 # → P11802 (CDK4_HUMAN)
 
-gene_result = tu.tools.MyGene_query_genes(q="CDK4", species="human")
+gene_result = tu.tools.MyGene_query_genes(query="CDK4", species="human")
 # → ENSG00000135446
 
-chembl_result = tu.tools.ChEMBL_search_targets(query="CDK4", organism="Homo sapiens")
-# → CHEMBL3116
+chembl_result = tu.tools.ChEMBL_search_targets(pref_name__contains="Cyclin-dependent kinase 4", organism="Homo sapiens")
+# → CHEMBL331 (SINGLE PROTEIN; CHEMBL1907601 is the CDK4/cyclin D1 complex)
 
 # Step 1.2: Get protein sequence
-uniprot_details = tu.tools.UniProt_get_entry(accession="P11802")
-cdk4_sequence = uniprot_details['sequence']
+cdk4_sequence = tu.tools.UniProt_get_sequence_by_accession(accession="P11802")  # returns the sequence string
 
 # Step 1.3: Check for existing PDB structures
-pdb_structures = tu.tools.PDB_search_similar_structures(query="P11802", type="sequence")
+pdb_structures = tu.tools.PDB_search_similar_structures(query=cdk4_sequence, search_type="sequence")
 # → 25 structures, best: 2W9Z (2.0 Å, with palbociclib)
 
 # Step 1.4: Predict structure with NVIDIA NIM for comparison
@@ -448,7 +452,10 @@ ref_compound = tu.tools.ChEMBL_get_molecule(molecule_chembl_id="CHEMBL1906")
 palbociclib_smiles = ref_compound['molecule_structures']['canonical_smiles']
 
 # Step 3.5.2: Get PDB structure content
-pdb_content = tu.tools.get_pdb_structure_file(pdb_id="2W9Z", format="pdb")
+# (no dedicated PDB-download tool; fetch the file from RCSB)
+pdb_content = tu.tools.download_text_content(
+    url="https://files.rcsb.org/download/2W9Z.pdb"
+)['content']
 
 # Step 3.5.3: Dock reference compound to validate binding pocket
 if nvidia_available:
@@ -638,9 +645,9 @@ if nvidia_available:
 
 ### Pitfall 1: Silent Tool Failures
 
-**Problem**: ChEMBL returns empty for wrong parameter name
+**Problem**: A wrong parameter name is rejected with a validation error ("unrecognized parameter(s)")
 ```python
-# WRONG - returns empty
+# WRONG - rejected
 tu.tools.ChEMBL_get_target_activities(chembl_target_id="CHEMBL203")
 
 # CORRECT

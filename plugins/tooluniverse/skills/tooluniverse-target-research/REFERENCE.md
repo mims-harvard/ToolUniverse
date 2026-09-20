@@ -232,8 +232,8 @@ Experimental binding affinity data (Ki, IC50, Kd) for target-ligand pairs.
 
 | Tool | Parameters | Returns |
 |------|------------|---------|
-| `BindingDB_get_ligands_by_uniprot` | `uniprot`, `affinity_cutoff` | Ligands with affinities |
-| `BindingDB_get_ligands_by_uniprots` | `uniprots`, `affinity_cutoff` | Multi-target ligands |
+| `BindingDB_get_ligands_by_uniprot` | `uniprot_id`, `affinity_cutoff` | Ligands with affinities |
+| `BindingDB_get_ligands_by_uniprots` | `uniprot_ids` (comma-separated string), `affinity_cutoff` | Multi-target ligands |
 | `BindingDB_get_ligands_by_pdb` | `pdb_ids`, `affinity_cutoff`, `sequence_identity` | Structure-based ligands |
 | `BindingDB_get_targets_by_compound` | `smiles`, `similarity_cutoff` | Polypharmacology |
 
@@ -241,7 +241,7 @@ Experimental binding affinity data (Ki, IC50, Kd) for target-ligand pairs.
 ```python
 # Get ligands for EGFR
 ligands = tu.tools.BindingDB_get_ligands_by_uniprot(
-    uniprot="P00533",
+    uniprot_id="P00533",
     affinity_cutoff=100  # Only potent ligands <100 nM
 )
 # Returns: SMILES, affinity_type (Ki/IC50/Kd), affinity value, PMID

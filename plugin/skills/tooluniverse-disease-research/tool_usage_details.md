@@ -46,7 +46,7 @@ tu.tools.gwas_get_variants_for_trait(disease_trait=disease_name, size=50)
 tu.tools.gwas_get_associations_for_trait(disease_trait=disease_name, size=50)
 tu.tools.gwas_get_studies_for_trait(disease_trait=disease_name, size=30)
 tu.tools.GWAS_search_associations_by_gene(gene_name=gene)  # top genes
-tu.tools.gnomad_get_variant_frequency(variant=variant)  # key variants
+tu.tools.gnomad_get_variant(variant_id=variant, dataset="gnomad_r4")  # key variants (variant_id like 19-44908822-C-T)
 ```
 
 ---
@@ -54,17 +54,17 @@ tu.tools.gnomad_get_variant_frequency(variant=variant)  # key variants
 ## Section 4: Treatment (use ALL)
 
 ```python
-tu.tools.OpenTargets_get_associated_drugs_by_disease_efoId(efoId=efo_id, size=100)
+tu.tools.OpenTargets_get_associated_drugs_by_disease_efoId(efoId=efo_id)
 tu.tools.OpenTargets_get_drug_chembId_by_generic_name(drugName=drug)
 tu.tools.OpenTargets_get_drug_mechanisms_of_action_by_chemblId(chemblId=chembl_id)
 tu.tools.search_clinical_trials(condition=disease_name, pageSize=50)
-tu.tools.get_clinical_trial_descriptions(nct_ids=nct_list)
+tu.tools.get_clinical_trial_descriptions(nct_ids=nct_list, description_type="brief")  # or "full"
 tu.tools.get_clinical_trial_conditions_and_interventions(nct_ids=nct_list)
 tu.tools.get_clinical_trial_eligibility_criteria(nct_ids=nct_list)
 tu.tools.get_clinical_trial_outcome_measures(nct_ids=nct_list)
 tu.tools.extract_clinical_trial_outcomes(nct_ids=nct_list)
 tu.tools.GtoPdb_search_diseases(name=disease_name)
-tu.tools.GtoPdb_search_diseases(disease_id=gtopdb_id)
+tu.tools.GtoPdb_get_disease_associations(disease_id=gtopdb_id)
 ```
 
 ---
@@ -78,7 +78,7 @@ tu.tools.Reactome_get_pathway(stId=pathway_id)
 tu.tools.Reactome_get_pathway_reactions(stId=pathway_id)
 tu.tools.humanbase_ppi_analysis(gene_list=top_genes, tissue=relevant_tissue)
 tu.tools.GTEx_get_expression_summary(gene_symbol=gene)  # top genes
-tu.tools.HPA_get_rna_expression_by_source(gene_name=gene)
+tu.tools.HPA_get_rna_expression_by_source(gene_name=gene, source_type="tissue", source_name=relevant_tissue)
 tu.tools.geo_search_datasets(query=disease_name)
 ```
 
@@ -94,7 +94,7 @@ tu.tools.PubMed_search_articles(query=f'"{disease_name}" AND treatment', limit=5
 tu.tools.PubMed_get_article(pmid=pmid)  # top 10 articles
 tu.tools.PubMed_get_related(pmid=key_pmid)
 tu.tools.PubMed_get_cited_by(pmid=key_pmid)
-tu.tools.OpenTargets_get_publications_by_disease_efoId(efoId=efo_id)
+tu.tools.OpenTargets_get_publications_by_disease_efoId(entityId=efo_id)
 tu.tools.openalex_search_works(query=disease_name, limit=50)
 tu.tools.EuropePMC_search_articles(query=disease_name, limit=50)
 tu.tools.SemanticScholar_search_papers(query=disease_name, limit=50)
@@ -127,11 +127,10 @@ tu.tools.civic_search_molecular_profiles(limit=50)
 ## Section 9: Pharmacology
 
 ```python
-tu.tools.GtoPdb_search_targets(target_type=type, limit=50)  # GPCR, ion channel, etc
-tu.tools.GtoPdb_search_targets(target_id=tid)
+tu.tools.GtoPdb_search_targets(type=target_type)  # "GPCR", "VGIC", "Enzyme", etc
+tu.tools.GtoPdb_search_targets(gene_symbol=gene)
 tu.tools.GtoPdb_get_interactions(target_id=tid)
-tu.tools.GtoPdb_get_interactions(approved_only=True)
-tu.tools.GtoPdb_list_ligands(ligand_type="Approved")
+tu.tools.GtoPdb_search_ligands(approved=True)  # then GtoPdb_get_interactions(ligandId=...) per ligand
 ```
 
 ---
@@ -142,7 +141,7 @@ tu.tools.GtoPdb_list_ligands(ligand_type="Approved")
 tu.tools.OpenTargets_get_drug_warnings_by_chemblId(chemblId=cid)
 tu.tools.OpenTargets_get_drug_blackbox_status_by_chembl_ID(chemblId=cid)
 tu.tools.extract_clinical_trial_adverse_events(nct_ids=nct_list)
-tu.tools.FAERS_count_reactions_by_drug_event(drug=drug_name, event=event)
+tu.tools.FAERS_count_reactions_by_drug_event(medicinalproduct=drug_name, reactionmeddraverse=event)
 tu.tools.AdverseEventPredictionQuestionGenerator(disease_name=disease, drug_name=drug)
 ```
 

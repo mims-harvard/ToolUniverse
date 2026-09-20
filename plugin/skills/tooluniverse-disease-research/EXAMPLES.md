@@ -243,7 +243,7 @@ extract_clinical_trial_outcomes, GtoPdb_search_diseases, GtoPdb_search_diseases
 - Key interactions: APP-PSEN1, APP-BACE1, APOE-CLU
 
 ### Expression Patterns
-[Source: gtex_get_expression_by_gene, HPA_get_protein_expression]
+[Source: GTEx_get_expression_summary, HPA_get_comprehensive_gene_details_by_ensembl_id]
 
 | Gene | Highest Expression Tissue | TPM | Source |
 |------|--------------------------|-----|--------|
@@ -253,7 +253,7 @@ extract_clinical_trial_outcomes, GtoPdb_search_diseases, GtoPdb_search_diseases
 
 **Sources Used**: Reactome_get_diseases, Reactome_map_uniprot_to_pathways, 
 Reactome_get_pathway, Reactome_get_pathway_reactions, humanbase_ppi_analysis,
-gtex_get_expression_by_gene, HPA_get_protein_expression, geo_search_datasets
+GTEx_get_expression_summary, HPA_get_comprehensive_gene_details_by_ensembl_id, geo_search_datasets
 
 ---
 
@@ -398,7 +398,7 @@ FAERS_count_reactions_by_drug_event
 | 15 | search_clinical_trials | condition="Alzheimer disease", pageSize=50 | 4 | 50 |
 | 16 | Reactome_map_uniprot_to_pathways | id="P05067" (APP) | 5 | 12 |
 | 17 | humanbase_ppi_analysis | gene_list=["APP","PSEN1","APOE","TREM2"], tissue="brain" | 5 | 45 |
-| 18 | gtex_get_expression_by_gene | gene="APP" | 5 | 54 |
+| 18 | GTEx_get_expression_summary | gene_symbol="APP" | 5 | 54 |
 | 19 | PubMed_search_articles | query="Alzheimer disease", limit=100 | 6 | 100 |
 | 20 | openalex_search_works | query="Alzheimer disease", limit=50 | 6 | 50 |
 | 21 | OpenTargets_get_similar_entities_by_disease_efoId | efoId="EFO_0000249", size=20 | 7 | 15 |

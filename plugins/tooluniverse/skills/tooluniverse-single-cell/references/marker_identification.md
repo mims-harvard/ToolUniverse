@@ -73,15 +73,16 @@ from tooluniverse import ToolUniverse
 tu = ToolUniverse()
 tu.load_tools()
 
-# Search for cell-type markers
-result = tu.tools.HPA_search_genes_by_query(query="T cell marker blood")
-if result:
-    print("HPA T cell markers:", [g.get('gene_name') for g in result[:10]])
+# Keyword search over gene names/synonyms (not a cell-type-marker query: "T cell marker blood"
+# returned SFRP2 first, so verify each hit is really a T cell marker)
+result = tu.tools.HPA_search_genes_by_query(search_query="T cell marker blood", max_results=10)
+if result['data']['genes']:
+    print("HPA keyword hits:", [g['gene_name'] for g in result['data']['genes']])
 
 # Get tissue-specific expression
 result = tu.tools.HPA_get_rna_expression_in_specific_tissues(
     ensembl_id="ENSG00000167286",  # CD3D
-    tissue_name="blood"
+    tissue_names=["blood"]  # nTPM per tissue in result['data']['tissue_expression']
 )
 ```
 

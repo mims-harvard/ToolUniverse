@@ -17,7 +17,7 @@ report_path = "[entity]_network_pharmacology_report.md"
 
 ```python
 from tooluniverse import ToolUniverse
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # === COMPOUND DISAMBIGUATION ===
@@ -67,7 +67,7 @@ disease_ids = tu.tools.OpenTargets_get_disease_ids_by_efoId(efoId=disease_id)
 drug_moa = tu.tools.OpenTargets_get_drug_mechanisms_of_action_by_chemblId(chemblId=chembl_id)
 # Returns: {data: {drug: {mechanismsOfAction: {rows: [{mechanismOfAction, actionType, targetName, targets: [{id, approvedSymbol}]}]}}}}
 
-drug_targets_ot = tu.tools.OpenTargets_get_associated_targets_by_drug_chemblId(chemblId=chembl_id, size=50)
+drug_targets_ot = tu.tools.OpenTargets_get_associated_targets_by_drug_chemblId(chemblId=chembl_id)
 drug_targets_db = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(
     query="metformin", case_sensitive=False, exact_match=True, limit=1
 )
@@ -80,26 +80,26 @@ stitch_interactions = tu.tools.STITCH_get_chemical_protein_interactions(
     identifiers=["CIDm000004091"], species=9606
 )
 
-drug_indications = tu.tools.OpenTargets_get_drug_indications_by_chemblId(chemblId=chembl_id, size=50)
+drug_indications = tu.tools.OpenTargets_get_drug_indications_by_chemblId(chemblId=chembl_id)
 fda_approval = tu.tools.OpenTargets_get_drug_approval_status_by_chemblId(chemblId=chembl_id)
-drug_diseases = tu.tools.OpenTargets_get_associated_diseases_by_drug_chemblId(chemblId=chembl_id, size=50)
+drug_diseases = tu.tools.OpenTargets_get_associated_diseases_by_drug_chemblId(chemblId=chembl_id)
 ```
 
 **Step 1.2**: Identify target nodes (disease-associated targets).
 
 ```python
-disease_targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_id, limit=50)
+disease_targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_id, size=50)
 
 for target in disease_targets['data']['disease']['associatedTargets']['rows'][:10]:
     evidence = tu.tools.OpenTargets_target_disease_evidence(
         efoId=disease_id, ensemblId=target['target']['id']
     )
 
-gwas_studies = tu.tools.OpenTargets_search_gwas_studies_by_disease(diseaseIds=[disease_id], size=20)
+gwas_studies = tu.tools.OpenTargets_search_gwas_studies_by_disease(diseaseIds=[disease_id])
 ctd_diseases = tu.tools.CTD_get_gene_diseases(input_terms="PSEN1")
 
 for gene in ["PSEN1", "APP", "BACE1"]:
-    pharos = tu.tools.Pharos_get_target(target_name=gene)
+    pharos = tu.tools.Pharos_get_target(gene=gene)
 ```
 
 **Step 1.3**: Identify disease nodes and related conditions.
@@ -108,7 +108,7 @@ for gene in ["PSEN1", "APP", "BACE1"]:
 related_diseases = tu.tools.OpenTargets_get_similar_entities_by_disease_efoId(efoId=disease_id, size=10, threshold=0.5)
 disease_children = tu.tools.OpenTargets_get_disease_descendants_children_by_efoId(efoId=disease_id)
 disease_parents = tu.tools.OpenTargets_get_disease_ancestors_parents_by_efoId(efoId=disease_id)
-disease_phenotypes = tu.tools.OpenTargets_get_associated_phenotypes_by_disease_efoId(efoId=disease_id, size=20)
+disease_phenotypes = tu.tools.OpenTargets_get_associated_phenotypes_by_disease_efoId(efoId=disease_id)
 disease_areas = tu.tools.OpenTargets_get_disease_therapeutic_areas_by_efoId(efoId=disease_id)
 ```
 
@@ -120,7 +120,7 @@ disease_areas = tu.tools.OpenTargets_get_disease_therapeutic_areas_by_efoId(efoI
 
 ```python
 chembl_activities = tu.tools.ChEMBL_get_target_activities(target_chembl_id__exact="CHEMBL2111455", limit=50)
-all_mechanisms = tu.tools.ChEMBL_search_mechanisms(query="metformin", limit=50)
+all_mechanisms = tu.tools.ChEMBL_search_mechanisms(drug_chembl_id=chembl_id, limit=50)
 
 db_targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(
     query="metformin", case_sensitive=False, exact_match=True, limit=1
@@ -142,14 +142,16 @@ for gene_symbol in ["PSEN1", "APP", "APOE"]:
     gwas_assoc = tu.tools.GWAS_search_associations_by_gene(gene_name=gene_symbol)
 
 ctd_gene_diseases = tu.tools.CTD_get_gene_diseases(input_terms="PSEN1")
-pharmgkb_gene = tu.tools.PharmGKB_get_gene_details(gene_symbol="PSEN1")
+# PharmGKB_get_gene_details needs a PharmGKB accession (e.g. PA33855), so search by symbol first
+pharmgkb_hits = tu.tools.PharmGKB_search_genes(query="PSEN1")
+pharmgkb_gene = tu.tools.PharmGKB_get_gene_details(gene_id=pharmgkb_hits["data"][0]["id"])
 ```
 
 **Step 2.3**: Compound-disease edges (clinical evidence).
 
 ```python
 trials = tu.tools.search_clinical_trials(query_term="metformin", condition="Alzheimer", pageSize=20)
-trials2 = tu.tools.ClinicalTrials_search_studies(query="metformin Alzheimer disease", limit=20)
+trials2 = tu.tools.ClinicalTrials_search_studies(query="metformin Alzheimer disease", max_results=20)
 
 ctd_chem_diseases = tu.tools.CTD_get_chemical_diseases(input_terms="Metformin")
 
@@ -160,21 +162,23 @@ europepmc_results = tu.tools.EuropePMC_search_articles(query="metformin Alzheime
 **Step 2.4**: Target-target edges (PPI network).
 
 ```python
+# Partner list for ONE protein (STRING_get_interaction_partners is single-protein)
 string_ppi = tu.tools.STRING_get_interaction_partners(
-    protein_ids=["PSEN1", "APP", "APOE", "BACE1", "MAPT"], species=9606, limit=20
+    identifiers="PSEN1", species=9606, limit=20
 )
+# Network among several proteins: identifiers separated by "\r"
 string_network = tu.tools.STRING_get_network(
-    protein_ids=["PSEN1", "APP", "APOE", "BACE1", "MAPT"], species=9606
+    identifiers="\r".join(["PSEN1", "APP", "APOE", "BACE1", "MAPT"]), species=9606
 )
 intact_results = tu.tools.intact_search_interactions(query="PSEN1", max=20)
 
 ot_interactions = tu.tools.OpenTargets_get_target_interactions_by_ensemblID(
-    ensemblId="ENSG00000080815", size=20
+    ensemblId="ENSG00000080815", page={"index": 0, "size": 20}
 )
 
 humanbase_ppi = tu.tools.humanbase_ppi_analysis(
     gene_list=["PSEN1", "APP", "APOE", "BACE1", "MAPT"],
-    tissue="brain", max_node=50, interaction="sn", string_mode="physical"
+    tissue="brain", max_node=50, interaction="interaction", string_mode=False
 )
 ```
 
@@ -250,7 +254,7 @@ for target in disease_targets['data']['disease']['associatedTargets']['rows'][:2
     gene_symbol = target['target']['approvedSymbol']
     ensembl_id = target['target']['id']
 
-    target_drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(ensemblId=ensembl_id, size=20)
+    target_drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(ensemblId=ensembl_id)
     dgidb_drugs = tu.tools.DGIdb_get_drug_gene_interactions(genes=[gene_symbol])
     drugbank_drugs = tu.tools.drugbank_get_drug_name_and_description_by_target_name(
         query=gene_symbol, case_sensitive=False, exact_match=False, limit=20
@@ -259,7 +263,7 @@ for target in disease_targets['data']['disease']['associatedTargets']['rows'][:2
 # Compound-to-disease mode: Find diseases for each drug target
 for target in drug_targets:
     target_diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensembl(
-        ensemblId=target['id'], size=20
+        ensemblId=target['id'], page={"index": 0, "size": 20}
     )
 ```
 
@@ -284,7 +288,7 @@ drug_pathways = tu.tools.drugbank_get_pathways_reactions_by_drug_or_id(
 **Step 5.1**: Multi-target profiling.
 
 ```python
-all_drug_targets = tu.tools.OpenTargets_get_associated_targets_by_drug_chemblId(chemblId=chembl_id, size=100)
+all_drug_targets = tu.tools.OpenTargets_get_associated_targets_by_drug_chemblId(chemblId=chembl_id)
 
 db_full_targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(
     query=drug_name, case_sensitive=False, exact_match=True, limit=1
@@ -307,7 +311,7 @@ for gene in drug_target_genes[:10]:
 ```python
 for gene in drug_target_genes[:10]:
     druggability = tu.tools.DGIdb_get_gene_druggability(genes=[gene])
-    pharos_info = tu.tools.Pharos_get_target(target_name=gene)
+    pharos_info = tu.tools.Pharos_get_target(gene=gene)
     tractability = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(ensemblId=gene_ensembl_id)
 ```
 
@@ -318,7 +322,7 @@ for gene in drug_target_genes[:10]:
 **Step 6.1**: Adverse event profiling.
 
 ```python
-faers_ae = tu.tools.FAERS_search_reports_by_drug_and_reaction(drug_name=drug_name, limit=100)
+faers_ae = tu.tools.FAERS_search_adverse_event_reports(medicinalproduct=drug_name, limit=100)
 faers_serious = tu.tools.FAERS_filter_serious_events(
     operation="filter_serious_events", drug_name=drug_name, seriousness_type="all"
 )
@@ -355,11 +359,11 @@ for target_ensembl_id in drug_target_ensembl_ids[:10]:
 ```python
 trials = tu.tools.search_clinical_trials(query_term=drug_name, condition=disease_name, pageSize=20)
 
-for trial in trials.get('studies', [])[:5]:
+for trial in trials['data']['studies'][:5]:
     nct_id = trial['NCT ID']
     trial_details = tu.tools.ClinicalTrials_get_study(nct_id=nct_id)
-    trial_outcomes = tu.tools.extract_clinical_trial_outcomes(nct_id=nct_id)
-    trial_ae = tu.tools.extract_clinical_trial_adverse_events(nct_id=nct_id)
+    trial_outcomes = tu.tools.extract_clinical_trial_outcomes(nct_ids=[nct_id])
+    trial_ae = tu.tools.extract_clinical_trial_adverse_events(nct_ids=[nct_id])
 
 approved = tu.tools.OpenTargets_get_approved_indications_by_drug_chemblId(chemblId=chembl_id)
 ```
@@ -372,8 +376,8 @@ pubmed_evidence = tu.tools.PubMed_search_articles(
     max_results=50
 )
 europepmc_evidence = tu.tools.EuropePMC_search_articles(query=f"{drug_name} {disease_name}", limit=50)
-ot_drug_pubs = tu.tools.OpenTargets_get_publications_by_drug_chemblId(chemblId=chembl_id, size=20)
-ot_disease_pubs = tu.tools.OpenTargets_get_publications_by_disease_efoId(efoId=disease_id, size=20)
+ot_drug_pubs = tu.tools.OpenTargets_get_publications_by_drug_chemblId(entityId=chembl_id)
+ot_disease_pubs = tu.tools.OpenTargets_get_publications_by_disease_efoId(entityId=disease_id)
 guidelines = tu.tools.PubMed_Guidelines_Search(query=f"{drug_name} {disease_name}")
 ```
 
@@ -387,6 +391,10 @@ if smiles:
     bbb = tu.tools.ADMETAI_predict_BBB_penetrance(smiles=[smiles])
     bioavail = tu.tools.ADMETAI_predict_bioavailability(smiles=[smiles])
 
-pharmgkb_drug = tu.tools.PharmGKB_get_drug_details(drug_name=drug_name)
-pharmgkb_clin = tu.tools.PharmGKB_get_clinical_annotations(query=drug_name)
+# PharmGKB_get_drug_details needs a PharmGKB accession (e.g. PA450395), so search by name first
+pharmgkb_hits = tu.tools.PharmGKB_search_drugs(query=drug_name)
+pharmgkb_drug = tu.tools.PharmGKB_get_drug_details(drug_id=pharmgkb_hits["data"][0]["id"])
+# PharmGKB_get_clinical_annotations only fetches a known annotation_id (no drug/gene search);
+# for drug-level pharmacogenomic guidance use CPIC guidelines instead
+cpic_guidelines = tu.tools.CPIC_list_guidelines(drug=drug_name)
 ```

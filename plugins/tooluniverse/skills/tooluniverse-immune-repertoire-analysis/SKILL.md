@@ -87,7 +87,11 @@ Identify expanded clonotypes above a frequency threshold (default: 95th percenti
 Query epitope databases for known TCR-epitope associations:
 - **IEDB** (`iedb_search_tcell_assays`): Search T-cell assay records by sequence or MHC class; use `iedb_search_epitopes` with `sequence_contains` for motif search
 - **BVBRC** (`BVBRC_search_epitopes`): Best for organism-based epitope discovery (e.g., `taxon_id="2697049"` for SARS-CoV-2); returns epitope sequences with T-cell/B-cell assay counts
-- **VDJdb** (manual): https://vdjdb.cdr3.net/search
+- **VDJdb** (`VDJDB_*` tools -- 228,214 curated records as of this writing):
+  - `VDJDB_search_cdr3` -- search by CDR3 amino-acid sequence (exact or substring) to find its recorded antigen specificity, if any
+  - `VDJDB_get_antigen_specificity` -- reverse lookup: given `epitope` (the antigen peptide sequence, e.g. `"GLCTLVAML"`), find every TCR confirmed to recognize it, with `mhc.a`/`mhc.class` restriction, `antigen.gene`/`antigen.species` source, and `reference.id` (PMID)
+  - `VDJDB_get_database_summary` -- record count and available columns, useful before building a filtered query
+  - Verified live: `VDJDB_get_antigen_specificity({"epitope": "GLCTLVAML"})` returns real TCRs specific for this well-known EBV BMLF1 epitope (HLA-A*02:01-restricted), each with its CDR3, V/J segments, and source PMID -- this is a direct, higher-confidence route to epitope specificity than CDR3-alone inference
 - **PubMed literature** (`PubMed_search_articles`): Search for CDR3 + epitope/antigen/specificity
 - **IEDB detail tools**: `iedb_get_epitope_antigens` (link epitope→antigen), `iedb_get_epitope_mhc` (MHC restriction)
 
@@ -109,6 +113,7 @@ Link TCR/BCR clonotypes to cell phenotypes from paired single-cell RNA-seq:
 - `iedb_search_bcell` - B-cell assay records
 - `iedb_search_epitopes` - Epitope motif search via `sequence_contains`
 - `BVBRC_search_epitopes` - Organism-based epitope discovery (best for pathogen-specific queries)
+- `VDJDB_search_cdr3` / `VDJDB_get_antigen_specificity` - Curated CDR3-to-epitope specificity lookup (228K+ records)
 - `NCBI_SRA_search_runs` - Find public TCR/BCR-seq datasets (use strategy="AMPLICON")
 - `ImmPort_search_studies` - NIAID immunology studies (vaccine trials, flow cytometry)
 - `PubMed_search_articles` - Literature on TCR/BCR specificity

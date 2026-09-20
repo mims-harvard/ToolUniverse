@@ -207,6 +207,22 @@ For simple monomer confidence with no complex/binding question, ESMFold and Alph
 
 ---
 
+## Membrane Topology & Signal Peptide Prediction (DTU tools, optional)
+
+`dtu_protein_predict` runs DTU Health Tech's ML predictors on a raw sequence via the BioLib cloud runner (`pip install pybiolib`, anonymous, no account) — a different question than ESMFold/AlphaFold's 3D coordinates: per-residue topology and sequence features rather than a fold.
+
+| Model | What it predicts | Status (live-verified) |
+|-------|-------------------|------------------------|
+| `deeptmhmm` (default) | Per-residue topology (inside/outside/TM-helix/beta-strand/signal) + a TM-region table — use for "is this a membrane protein, and how many passes" | Reliable |
+| `signalp` | Signal-peptide detection + cleavage site | Reliable — verified live on a real signal-peptide-bearing sequence: correctly returned `has_signal_peptide: true`, cleavage at residue 22 |
+| `deeploc` | Subcellular localization | **Prokaryotic only** (maps to DeepLocPro — the eukaryotic DeepLoc 2.0 isn't published on BioLib) and its upstream BioLib app currently crashes during embedding (device-mismatch); prefer `deeptmhmm`/`signalp` |
+
+Jobs run anonymously on shared BioLib cloud infrastructure and commonly take 2-5 minutes — raise `max_wait_time` for large/multiple sequences, and don't treat a slow response as a hang. Input is FASTA text, a bare amino-acid string, or a `fasta_path`. Missing `pybiolib` fails cleanly with an install instruction rather than a stack trace — check for that first if the tool errors immediately.
+
+Use this alongside Phase 1 (ProtParam) when the protein might be membrane-associated or secreted (e.g. GRAVY score > 0, or a "receptor"/"secreted"-sounding name) — a membrane topology or signal-peptide call changes how you read ESMFold/AlphaFold confidence (transmembrane helices are often high-pLDDT despite being embedded in a lipid bilayer the model never sees).
+
+---
+
 ## Phase 4: Experimental Structure Comparison
 
 **Objective**: Check whether experimental structures exist in PDB and how predictions compare.

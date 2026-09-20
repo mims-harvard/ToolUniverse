@@ -29,6 +29,7 @@ Each strategy uses different tools and has different evidentiary weight. Identif
 1. **Target-Based**: Disease targets -> Find drugs that modulate those targets
 2. **Compound-Based**: Approved drugs -> Find new disease indications
 3. **Disease-Driven**: Disease -> Targets -> Match to existing drugs
+4. **Signature-Based**: Disease gene-expression signature -> Find drugs whose perturbation signature reverses it (connectivity-map reasoning). Use when the disease has a well-characterized differential-expression signature (e.g. from GEO/TCGA) but no single validated target — this strategy needs no target hypothesis at all, only up/down gene lists.
 
 ---
 
@@ -67,7 +68,7 @@ tu.load_tools()
 disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(diseaseName="rheumatoid arthritis")
 # Response nests ID at data.search.hits[0].id
 disease_id = disease_info['data']['search']['hits'][0]['id']
-targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_id, limit=10)
+targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_id, size=10)
 
 # Step 2: Find drugs for each target
 # Response nests targets at data.disease.associatedTargets.rows
@@ -91,6 +92,10 @@ for target in rows[:5]:
 - `drugbank_get_drug_name_and_description_by_indication` - Drugs by indication. **Param: `query=` (NOT `indication=`)**
 - `DGIdb_get_drug_gene_interactions` - Drug-gene interactions. Response path: `data.data.genes.nodes[0].interactions`
 - `ChEMBL_search_drugs` / `ChEMBL_get_drug_mechanisms` - Drug search and MOA
+
+**Patent/IP** (USPTO Patent File Wrapper — see "Patent Landscape Check" below):
+- `get_patent_overview_by_text_query` - Keyword/title patent search
+- `get_patent_application_metadata`, `get_patent_term_adjustment_data`, `get_patent_continuity_data`, `get_patent_foreign_priority_data`, `get_associated_documents_metadata` - Per-application detail lookups by application number
 
 **Drug Information** (ALL DrugBank tools use `query=` as the search parameter, plus `case_sensitive=False`, `exact_match=False`, `limit=N`):
 - `drugbank_get_drug_basic_info_by_drug_name_or_id` - Basic info. **Param: `query="drug_name"`**
@@ -169,7 +174,49 @@ After running Phases 1-4, synthesize by answering:
 3. **Safety first**: Prioritize approved drugs with known safety profiles
 4. **Dose matters**: A drug that hits a disease target at 100x its approved dose is not a repurposing candidate
 5. **Mechanism over correlation**: Network proximity alone is insufficient — explain WHY the drug should work
-6. **Consider IP and formulation**: Generic drugs are easier to repurpose but harder to fund trials for
+6. **Consider IP and formulation**: Generic drugs are easier to repurpose but harder to fund trials for. See "Patent Landscape Check" below to verify IP status rather than assuming a drug is off-patent because it's old or generic in one market — patent term adjustments and continuation filings can extend protection well past the nominal 20-year term.
+
+### Patent Landscape Check (USPTO)
+
+Before prioritizing a repurposing candidate, check whether the new use (or the compound itself) is already claimed by a live patent. Six tools wrap the USPTO Patent File Wrapper API for this:
+
+| Tool | Purpose |
+|------|---------|
+| `get_patent_overview_by_text_query` | Keyword/title search, e.g. `applicationMetaData.inventionTitle:"your drug or use"` |
+| `get_patent_application_metadata` | Full metadata for one application (filing/grant dates, CPC classification) by application number |
+| `get_patent_term_adjustment_data` | Patent term adjustment (PTA) — how much extra protection time was granted beyond the nominal 20-year term |
+| `get_patent_continuity_data` | Parent/child continuation-application relationships — a compound's protection can extend well past its original filing via continuations |
+| `get_patent_foreign_priority_data` | Foreign priority claims (useful for global IP landscape, not just US) |
+| `get_associated_documents_metadata` | Associated publications/grants for the application |
+
+**Requires `USPTO_API_KEY`** (free, register at https://data.uspto.gov/myodp). Without a valid key every call returns HTTP 403 — verified live: `get_patent_overview_by_text_query` and `get_patent_application_metadata` both return `HTTP Error: 403` with USPTO's own guidance that a 403 means key rejection (invalid, or a newly issued key still activating), not a malformed query. A 404 on a specific patent number means that patent is outside the Patent File Wrapper dataset's coverage, not that the tool is broken.
+
+**Workflow**: search by drug/compound name or title keyword with `get_patent_overview_by_text_query` (wrap multi-word phrases in escaped double quotes for exact matching) → take an `applicationNumberText` from a hit → pull term-adjustment and continuity data to see the *actual* remaining protection window, since continuations and PTA both push the real expiration later than the nominal grant-date + 20-years math suggests. A drug whose base composition patent looks expired may still be covered by a use-patent or formulation continuation — always check continuity data before concluding a compound is open for repurposing without licensing.
+
+### Signature-Based Repurposing (LINCS / L1000FWD)
+
+For Strategy 4, reverse a disease's own gene-expression signature rather than reasoning through a single target:
+
+| Tool | Purpose |
+|------|---------|
+| `LINCS_search_signatures(drug_name=..., cell_line=..., limit=...)` | Find existing L1000/other-assay perturbation signatures for a known drug — useful for confirming what a candidate compound's own transcriptional footprint looks like before comparing it to a disease signature |
+| `LINCS_list_libraries(keyword=..., limit=...)` | Browse LINCS SigCom's 431+ signature libraries (L1000 expression, kinase profiling, cell growth inhibition, proteomics) to find the right assay type for a given question |
+| `L1000FWD_sig_search(up_genes=[...], down_genes=[...], n_results=..., mode=...)` | The core connectivity-map query: submit a disease's up/down differentially-expressed gene lists and get back drugs whose L1000 perturbation signature is anti-correlated (candidate repurposing hits) or correlated (mechanistic mimics) with it |
+
+**Workflow**: derive the disease's up/down gene sets first (e.g. from a published DE analysis, GEO dataset, or this repo's own `tooluniverse-rnaseq-deseq2` output) → `L1000FWD_sig_search(up_genes=disease_up, down_genes=disease_down, mode="reverse")` → each hit returns `combined_scores`/`pvals`/`qvals` — rank by score, and treat a top reversal hit as an E4 (Computational) candidate needing the same target-validation and dose-feasibility scrutiny as any other strategy, not a shortcut past it. Cross-check any promising hit against `LINCS_search_signatures(drug_name=<hit>)` to see its signature directly rather than trusting the connectivity score alone.
+
+**Verified live**: `LINCS_search_signatures(drug_name="vorinostat")` and `L1000FWD_sig_search` both return real, non-empty results — this is a working, queryable strategy, not a placeholder.
+
+### Cross-Knowledge-Graph Queries (NCATS Biomedical Data Translator)
+
+For a fast, single-call sweep across ~15 knowledge providers at once (rather than querying OpenTargets/ChEMBL/Reactome one at a time), the NCATS Translator tools give a biolink-standardized alternative:
+
+| Tool | Purpose |
+|------|---------|
+| `NCATSTranslator_resolve_entity(name=..., biolink_type=...)` | Resolve free text to a Translator-normalized CURIE via SRI Name Resolution (e.g. `name="Alzheimer disease"` → `curie="MONDO:0004975"`) |
+| `NCATSTranslator_query_associations(entity_id=..., target_category=..., predicate=...)` | One-hop biolink query via the Aragorn reasoner — e.g. `entity_id="MONDO:0004975"`, `target_category="ChemicalEntity"`, `predicate="treats"` returns candidate treatments ranked by score with source/publication-count provenance |
+
+**Verified live**: `resolve_entity(name="Alzheimer disease")` → `MONDO:0004975`; `query_associations(entity_id="MONDO:0004975", target_category="ChemicalEntity", predicate="treats")` → real ranked hits (e.g. `CHEBI:87631` "statin", score ~0.9). This is a good Strategy (c)-style breadth check — cheap to run early, but its ranked "score" is E4 (Computational) evidence like any other network-proximity signal, not a substitute for the target-genetics/ChEMBL-affinity/clinical-trial verification steps above.
 
 ### Computational Procedure: Drug-Target Dose Feasibility Check
 
@@ -190,7 +237,7 @@ def check_dose_feasibility(drug_name, original_target, new_target):
     """
     # Get bioactivity for original target
     orig = tu.run_one_function({
-        'name': 'ChEMBL_get_bioactivities',
+        'name': 'ChEMBL_search_activities',
         'arguments': {
             'molecule_chembl_id': drug_name,  # or search first
             'target_chembl_id': original_target,
@@ -200,7 +247,7 @@ def check_dose_feasibility(drug_name, original_target, new_target):
 
     # Get bioactivity for new target
     new = tu.run_one_function({
-        'name': 'ChEMBL_get_bioactivities',
+        'name': 'ChEMBL_search_activities',
         'arguments': {
             'molecule_chembl_id': drug_name,
             'target_chembl_id': new_target,
@@ -232,6 +279,8 @@ def check_dose_feasibility(drug_name, original_target, new_target):
 |---------|----------|
 | Disease not found | Try synonyms or EFO ID lookup |
 | No drugs for target | Check HUGO nomenclature, expand to pathway-level, try similar targets |
+| Patent tools return HTTP 403 | `USPTO_API_KEY` missing/invalid, or a newly issued key still activating — verify at https://data.uspto.gov/myodp; not a query problem |
+| Patent tools return HTTP 404 for a known patent | That specific patent is outside the Patent File Wrapper dataset's coverage gaps, not a broken query |
 | Insufficient literature | Search drug class instead, check preclinical/animal studies |
 | Safety data unavailable | Drug may not be US-approved, check EMA or clinical trial safety |
 
