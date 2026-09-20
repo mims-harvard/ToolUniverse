@@ -46,7 +46,7 @@ tu.tools.gwas_get_variants_for_trait(disease_trait=disease_name, size=50)
 tu.tools.gwas_get_associations_for_trait(disease_trait=disease_name, size=50)
 tu.tools.gwas_get_studies_for_trait(disease_trait=disease_name, size=30)
 tu.tools.GWAS_search_associations_by_gene(gene_name=gene)  # top genes
-tu.tools.gnomad_get_variant_frequency(variant=variant)  # key variants
+tu.tools.gnomad_get_variant(variant_id=variant, dataset="gnomad_r4")  # key variants (variant_id like 19-44908822-C-T)
 ```
 
 ---
@@ -131,7 +131,7 @@ tu.tools.GtoPdb_search_targets(target_type=type, limit=50)  # GPCR, ion channel,
 tu.tools.GtoPdb_search_targets(target_id=tid)
 tu.tools.GtoPdb_get_interactions(target_id=tid)
 tu.tools.GtoPdb_get_interactions(approved_only=True)
-tu.tools.GtoPdb_list_ligands(ligand_type="Approved")
+tu.tools.GtoPdb_search_ligands(approved=True)
 ```
 
 ---

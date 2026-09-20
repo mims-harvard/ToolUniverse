@@ -18,13 +18,13 @@ tu.load_tools()
 disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(
     diseaseName="non-small cell lung cancer"
 )
-efo_id = disease_info['data']['id']
+efo_id = disease_info['data']['search']['hits'][0]['id']
 
-# Get phenotype data (includes prevalence if available)
-phenotypes = tu.tools.OpenTargets_get_diseases_phenotypes(
+# Get HPO phenotype annotations (no prevalence figures)
+phenotypes = tu.tools.OpenTargets_get_associated_phenotypes_by_disease_efoId(
     efoId=efo_id
 )
-# Note: May need to supplement with literature (PubMed) for specific prevalence
+# Note: Prevalence must come from literature (PubMed)
 
 # Step 1.2: Estimate EGFR mutation prevalence
 egfr_variants = tu.tools.ClinVar_search_variants(

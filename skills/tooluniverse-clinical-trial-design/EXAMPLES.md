@@ -31,12 +31,13 @@ disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(
     diseaseName="non-small cell lung cancer"
 )
 
-print(f"Disease: {disease_info['data']['name']}")
-print(f"EFO ID: {disease_info['data']['id']}")
+disease = disease_info['data']['search']['hits'][0]
+print(f"Disease: {disease['name']}")
+print(f"Disease ID: {disease['id']}")
 
-# Get phenotype/prevalence data
-phenotypes = tu.tools.OpenTargets_get_diseases_phenotypes(
-    efoId=disease_info['data']['id']
+# Get HPO phenotype annotations (no prevalence figures)
+phenotypes = tu.tools.OpenTargets_get_associated_phenotypes_by_disease_efoId(
+    efoId=disease['id']
 )
 
 # 1.2: Get biomarker prevalence from ClinVar
@@ -582,8 +583,9 @@ disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(
     diseaseName="Niemann-Pick disease type C"
 )
 
-print(f"Disease: {disease_info['data']['name']}")
-print(f"Description: {disease_info['data']['description'][:200]}...")
+hit = disease_info['data']['search']['hits'][0]
+print(f"Disease: {hit['name']}")
+print(f"Description: {hit['description'][:200]}...")
 
 # 1.2: Literature for prevalence
 prevalence_papers = tu.tools.PubMed_search_articles(

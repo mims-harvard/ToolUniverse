@@ -142,16 +142,20 @@ result = tu.tools.NvidiaNIM_esm2_650m(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `PDBe_get_uniprot_mappings` | Find PDB structures | `uniprot_id` |
-| `RCSBData_get_entry` | Download PDB file | `pdb_id` |
+| `PDBeSIFTS_get_best_structures` | Find PDB structures for a UniProt accession (best first) | `uniprot_accession` |
+| `download_text_content` | Download a PDB file (no dedicated PDB-download tool exists) | `url` (`https://files.rcsb.org/download/<PDB_ID>.pdb`) |
 | `alphafold_get_prediction` | Get AlphaFold DB structure | `accession` |
 
 **Example - Get target structure**:
 ```python
 # Try PDB first
-pdb_hits = tu.tools.PDBe_get_uniprot_mappings(uniprot_id="Q9NZQ7")
-if pdb_hits:
-    structure = tu.tools.PDB_get_structure(pdb_id=pdb_hits[0]['pdb_id'])
+pdb_hits = tu.tools.PDBeSIFTS_get_best_structures(uniprot_accession="Q9NZQ7")
+structures = pdb_hits["data"]["structures"]
+if structures:
+    pdb_id = structures[0]["pdb_id"].upper()
+    structure = tu.tools.download_text_content(
+        url=f"https://files.rcsb.org/download/{pdb_id}.pdb"
+    )["content"]
 else:
     # Fallback to AlphaFold
     structure = tu.tools.alphafold_get_prediction(accession="Q9NZQ7")
@@ -162,7 +166,7 @@ else:
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `EMDB_search_structures` | Search cryo-EM maps | `query` |
-| `EMDB_get_structure` | Get entry details | `entry_id` |
+| `EMDB_get_structure` | Get entry details | `emdb_id` (e.g. `EMD-63503`) |
 
 **When to use EMDB**:
 - Membrane protein targets (GPCRs, ion channels)
@@ -173,18 +177,22 @@ else:
 **Example - Get cryo-EM structure for membrane target**:
 ```python
 # Search EMDB for membrane receptor
-emdb_hits = tu.tools.EMDB_search_structures(query="EGFR membrane receptor")
+emdb_hits = tu.tools.EMDB_search_structures(query="EGFR membrane receptor")["data"]
 
-if emdb_hits:
-    # Get details including associated PDB models
-    best_entry = emdb_hits[0]  # Often sorted by resolution
-    details = tu.tools.EMDB_get_structure(entry_id=best_entry['emdb_id'])
+# Keep entries that have a fitted atomic model (crossreferences.pdb_list);
+# many EMDB maps have no deposited PDB model
+with_model = [e for e in emdb_hits if "pdb_list" in e.get("crossreferences", {})]
+
+if with_model:
+    best_entry = with_model[0]
+    pdb_refs = best_entry["crossreferences"]["pdb_list"]["pdb_reference"]
+    pdb_id = pdb_refs[0]["pdb_id"].upper()
     
     # Get the atomic model (PDB) for design
-    if details.get('pdb_ids'):
-        structure = tu.tools.PDB_get_structure(pdb_id=details['pdb_ids'][0])
-        print(f"Got structure from cryo-EM: {details['pdb_ids'][0]}")
-        print(f"Resolution: {best_entry.get('resolution', 'N/A')} Å")
+    structure = tu.tools.download_text_content(
+        url=f"https://files.rcsb.org/download/{pdb_id}.pdb"
+    )["content"]
+    print(f"Got structure from cryo-EM: {best_entry['emdb_id']} -> {pdb_id}")
 ```
 
 **Output Quality Assessment**:

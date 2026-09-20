@@ -296,21 +296,25 @@ def analyze_disease_targets(disease_efo_id):
         target_info = tu.run_batch(target_calls)
         
         # Step 3: Find compounds (batch)
+        # ChEMBL takes ChEMBL target IDs (map Ensembl/UniProt IDs via ChEMBL_search_targets)
+        chembl_target_ids = ["CHEMBL203", "CHEMBL230"]  # example: EGFR, COX-2
         compound_calls = [
-            {"name": "ChEMBL_search_molecule_by_target",
-             "arguments": {"target_id": tid, "limit": 10}}
-            for tid in target_ids
+            {"name": "ChEMBL_search_activities",
+             "arguments": {"target_chembl_id": tid, "limit": 10}}
+            for tid in chembl_target_ids
         ]
         compounds = tu.run_batch(compound_calls)
         
         # Step 4: ADMET predictions
         all_smiles = []
         for comp_list in compounds:
-            if comp_list and 'molecules' in comp_list:
-                all_smiles.extend([m['smiles'] for m in comp_list['molecules'][:3]])
+            if comp_list and comp_list.get('status') == 'success':
+                acts = comp_list['data']['activities'][:3]
+                all_smiles.extend([a['canonical_smiles'] for a in acts if a.get('canonical_smiles')])
         
         admet_calls = [
-            {"name": "ADMETAI_predict_admet", "arguments": {"smiles": s}}
+            # One ADMETAI_predict_* tool per endpoint group (toxicity, bioavailability, ...)
+            {"name": "ADMETAI_predict_toxicity", "arguments": {"smiles": s}}
             for s in all_smiles
         ]
         admet_results = tu.run_batch(admet_calls)

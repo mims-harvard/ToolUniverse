@@ -123,14 +123,11 @@ def assess_population_frequency(tu, chrom, sv_start, sv_end, sv_type):
                 'review_status': variant.get('review_status'),
             })
 
-    # DECIPHER for similar patient cases
-    decipher_search = tu.tools.DECIPHER_search(
-        query=f"chr{chrom}:{sv_start}-{sv_end}", search_type="region"
-    )
+    # Note: ToolUniverse has no DECIPHER tool - look up similar patient cases
+    # manually in the DECIPHER web portal (https://www.deciphergenomics.org).
 
     return {
         'clinvar_matches': known_svs,
-        'decipher_cases': decipher_search.get('data', []),
         'frequency_interpretation': interpret_frequency(known_svs)
     }
 
@@ -212,10 +209,10 @@ def comprehensive_literature_search(tu, genes, sv_type, phenotype):
         )
         literature.append({'gene': gene, 'dosage_papers': dosage_papers, 'case_reports': case_papers})
 
-    # DECIPHER cases
-    decipher_cases = [tu.tools.DECIPHER_search(query=gene, search_type="gene") for gene in genes]
+    # Note: no DECIPHER tool exists in ToolUniverse - check DECIPHER cohorts
+    # for these genes manually at https://www.deciphergenomics.org.
 
-    return {'gene_literature': literature, 'decipher_cases': decipher_cases}
+    return {'gene_literature': literature}
 ```
 
 ---

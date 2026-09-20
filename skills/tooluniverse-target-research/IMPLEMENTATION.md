@@ -157,7 +157,7 @@ def path_0_open_targets(tu, ids):
     results = {}
 
     # 1. Diseases & Phenotypes (Section 8)
-    diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensemblId(
+    diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensembl(
         ensemblId=ensembl_id
     )
     results['diseases'] = diseases if diseases else {'note': 'No disease associations returned'}

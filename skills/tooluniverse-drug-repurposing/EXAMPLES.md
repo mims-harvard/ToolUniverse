@@ -183,18 +183,20 @@ for target in targets.get('data', [])[:5]:
     gene_symbol = target.get('gene_symbol')
     if gene_symbol:
         # Search for diseases associated with this target
-        target_diseases = tu.tools.OpenTargets_get_diseases_by_target_ensemblId(
+        target_diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensembl(
             ensemblId=target['ensembl_id']
         )
+        rows = target_diseases['data']['target']['associatedDiseases']['rows']
         
-        for disease in target_diseases.get('data', [])[:3]:
+        for row in rows[:3]:
+            disease = row['disease']
             # Check if not already indicated
-            if disease['disease_name'] not in [ind['indication'] for ind in indications.get('data', [])]:
+            if disease['name'] not in [ind['indication'] for ind in indications.get('data', [])]:
                 potential_indications.append({
-                    'disease': disease['disease_name'],
+                    'disease': disease['name'],
                     'target': gene_symbol,
-                    'association_score': disease['score'],
-                    'disease_id': disease['disease_id']
+                    'association_score': row['score'],
+                    'disease_id': disease['id']
                 })
 
 # Step 3: Literature evidence for potential indications

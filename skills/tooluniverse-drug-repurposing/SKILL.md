@@ -237,7 +237,7 @@ def check_dose_feasibility(drug_name, original_target, new_target):
     """
     # Get bioactivity for original target
     orig = tu.run_one_function({
-        'name': 'ChEMBL_get_bioactivities',
+        'name': 'ChEMBL_search_activities',
         'arguments': {
             'molecule_chembl_id': drug_name,  # or search first
             'target_chembl_id': original_target,
@@ -247,7 +247,7 @@ def check_dose_feasibility(drug_name, original_target, new_target):
 
     # Get bioactivity for new target
     new = tu.run_one_function({
-        'name': 'ChEMBL_get_bioactivities',
+        'name': 'ChEMBL_search_activities',
         'arguments': {
             'molecule_chembl_id': drug_name,
             'target_chembl_id': new_target,

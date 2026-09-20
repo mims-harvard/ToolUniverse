@@ -374,8 +374,8 @@ protein_seq = tu.tools.UniProt_get_sequence_by_accession(accession=uniprot_id)
 
 # 2. Get/predict structure
 try:
-    pdb_hits = tu.tools.PDBe_get_uniprot_mappings(uniprot_id=uniprot_id)
-    structure = tu.tools.PDB_get_structure(pdb_id=pdb_hits[0]['pdb_id'])
+    pdb_hits = tu.tools.PDBeSIFTS_get_best_structures(uniprot_accession=uniprot_id, limit=5)
+    structure = tu.tools.RCSBData_get_entry(pdb_id=pdb_hits['data']['structures'][0]['pdb_id'])
 except:
     structure = tu.tools.NvidiaNIM_alphafold2(
         sequence=protein_seq['sequence'],
