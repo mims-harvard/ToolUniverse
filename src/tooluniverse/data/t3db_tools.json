@@ -1,7 +1,7 @@
 [
   {
     "name": "T3DB_get_toxin",
-    "description": "Get detailed toxin information from the Toxin and Toxin-Target Database (T3DB) by T3DB ID. Returns chemical properties (name, CAS, formula, molecular weight), mechanism of toxicity, health effects, route of exposure, and protein/gene targets with UniProt IDs. Covers 3,678 common toxins including pollutants, pesticides, drugs, and food toxins. Use for toxicology research, environmental health, and chemical safety assessment. Note: T3DB is currently behind Cloudflare bot-detection that blocks the default python-requests UA. The tool returns a structured error; callers who can solve the JS challenge (e.g. via cloudscraper) can still invoke it.",
+    "description": "Get detailed toxin information from the Toxin and Toxin-Target Database (T3DB) by T3DB ID. Returns chemical properties (name, CAS, formula, molecular weight), mechanism of toxicity, health effects, route of exposure, and protein/gene targets with UniProt IDs. Covers 3,678 common toxins including pollutants, pesticides, drugs, and food toxins. Use for toxicology research, environmental health, and chemical safety assessment. Note: T3DB is currently behind Cloudflare bot-detection that blocks the default python-requests UA. The tool returns a structured error; callers who can solve the JS challenge (e.g. via cloudscraper) can still invoke it. NOTE (checked 2026-09-20): www.t3db.ca currently serves a Cloudflare bot challenge (\"Just a moment...\") to automated clients, so this tool returns HTTP 403; ToolUniverse does not attempt to bypass it.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -40,7 +40,7 @@
   },
   {
     "name": "T3DB_search_toxins",
-    "description": "Search for toxins by name or keyword in the T3DB (Toxin and Toxin-Target Database). Returns matching toxin IDs and names. Use T3DB_get_toxin with the returned ID for detailed information. Covers pollutants, pesticides, drugs, food toxins, and environmental chemicals. Note: T3DB is currently behind Cloudflare bot-detection that blocks the default python-requests UA. The tool returns a structured error; callers who can solve the JS challenge (e.g. via cloudscraper) can still invoke it.",
+    "description": "Search for toxins by name or keyword in the T3DB (Toxin and Toxin-Target Database). Returns matching toxin IDs and names. Use T3DB_get_toxin with the returned ID for detailed information. Covers pollutants, pesticides, drugs, food toxins, and environmental chemicals. Note: T3DB is currently behind Cloudflare bot-detection that blocks the default python-requests UA. The tool returns a structured error; callers who can solve the JS challenge (e.g. via cloudscraper) can still invoke it. NOTE (checked 2026-09-20): www.t3db.ca currently serves a Cloudflare bot challenge (\"Just a moment...\") to automated clients, so this tool returns HTTP 403; ToolUniverse does not attempt to bypass it.",
     "parameter": {
       "type": "object",
       "properties": {
