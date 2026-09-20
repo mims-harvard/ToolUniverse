@@ -2,7 +2,7 @@
   {
     "name": "GSA_get_accession",
     "type": "GSATool",
-    "description": "Look up a GSA (Genome Sequence Archive) accession by its CRA-format ID. GSA, run by China's National Genomics Data Center, is a major raw-sequencing archive alongside NCBI SRA/EBI ENA/DDBJ for a large and growing share of Chinese-origin genomic datasets. Returns title, linked BioProject accession, associated publication (title/journal/DOI/PubMed ID), file count/size, and direct HTTPS/FTP download URLs. Example: accession='CRA002926' returns a gynecological-mucosal-melanoma sequencing dataset linked to its Frontiers in Oncology publication.",
+    "description": "Look up a GSA (Genome Sequence Archive) accession by its CRA-format ID. GSA, run by China's National Genomics Data Center, is a major raw-sequencing archive alongside NCBI SRA/EBI ENA/DDBJ for a large and growing share of Chinese-origin genomic datasets. Returns title, linked BioProject accession, associated publication (title/journal/DOI/PubMed ID), file count/size, and direct HTTPS/FTP download URLs. Example: accession='CRA002926' returns a gynecological-mucosal-melanoma sequencing dataset linked to its Frontiers in Oncology publication. NOTE (checked 2026-09-20): ngdc.cncb.ac.cn/gsa currently serves a JavaScript security-check page (\"正在进行安全检查\") instead of the accession page to automated clients, so this tool can report that no accession was found; ToolUniverse does not attempt to bypass it.",
     "parameter": {
       "type": "object",
       "required": ["accession"],

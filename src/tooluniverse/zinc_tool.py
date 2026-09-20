@@ -254,7 +254,11 @@ class ZincTool(BaseTool):
             "database": (None, str(database)),
         }
         try:
-            submit_resp = self.session.get(submit_url, files=form, timeout=self.timeout)
+            # Must be a POST: CartBlanche answers a GET carrying this multipart body with
+            # HTTP 400 "No Valid SMILES", even for valid SMILES.
+            submit_resp = self.session.post(
+                submit_url, files=form, timeout=self.timeout
+            )
         except requests.exceptions.RequestException as e:
             return {
                 "status": "error",
