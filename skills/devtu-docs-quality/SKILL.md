@@ -1,6 +1,6 @@
 ---
 name: devtu-docs-quality
-description: "TOP PRIORITY skill — find and immediately fix or remove every piece of wrong, outdated, or redundant information in ToolUniverse docs. Wrong code, broken links, incorrect counts, and overlapping instructions must be fixed or removed — never left in place. Runs five phases: (D) static method scan, (C) live code execution, (A) automated validation, (B) ToolUniverse audit, (E) less-is-more simplification. Core philosophy: each concept appears exactly once; remove don't add; no emojis; single setup entry point. Use when reviewing docs, before releases, after API changes, or when asked to audit, fix, or simplify documentation."
+description: "TOP PRIORITY skill — find and immediately fix or remove every piece of wrong, outdated, or redundant information in ToolUniverse docs. Wrong code, broken links, incorrect counts, and overlapping instructions must be fixed or removed — never left in place. Runs five phases: (D) static method scan, (C) static tool-call check, (A) automated validation, (B) ToolUniverse audit, (E) less-is-more simplification. Core philosophy: each concept appears exactly once; remove don't add; no emojis; single setup entry point. Use when reviewing docs, before releases, after API changes, or when asked to audit, fix, or simplify documentation."
 ---
 
 # Documentation Quality Assurance
@@ -254,15 +254,15 @@ When Phase E reports issues, apply the less-is-more decision tree above. Fix all
 
 ---
 
-## Phase C: Live Code Execution
+## Phase C: Tool-Call Check
 
 ```bash
-python scripts/test_doc_code_blocks.py
+python scripts/check_skill_tool_calls.py
 ```
 
-The runner injects a real `ToolUniverse` instance as preamble, skips blocks needing API keys or async, and classifies `NameError` on out-of-scope variables as "context-dependent" (not a failure).
+Reads the tool schemas from `src/tooluniverse/data/*.json` and checks every `tools.X(...)`, `tu run X '{...}'` and `{"name": "X", "arguments": {...}}` call in the skill markdown: arguments the tool does not declare (ToolUniverse rejects them, or silently drops them when mixed with valid ones), missing required arguments, and tool names that do not exist. It is static: nothing is instantiated, and it must stay that way, because some tool classes load multi-GB datasets when constructed (a live run over many tools reached >100 GB). Mark a deliberate wrong-usage example with `WRONG`, `❌` or `# noqa: skill-call` on or just above the call. Run individual tools live, one at a time, only to confirm a return shape you are about to document.
 
-**Common runtime failures:**
+**Common failures:**
 
 | Error | Cause | Fix |
 |-------|-------|-----|
@@ -323,7 +323,7 @@ All items must pass before the audit is done. A partial pass is not acceptable.
 
 **Technical correctness:**
 - [ ] Phase D scan exits 0 — no invalid method calls
-- [ ] `python scripts/test_doc_code_blocks.py` exits 0 — no runtime failures
+- [ ] `python scripts/check_skill_tool_calls.py` exits 0 — no unknown tools or arguments in skill code blocks
 - [ ] No `spec['parameters']` without `format="openai"`
 - [ ] Automated validation passes (0 HIGH issues)
 - [ ] All CLIs from `pyproject.toml` documented
@@ -347,4 +347,4 @@ If any item is failing: stop, fix it, re-run the relevant phase, confirm it pass
 
 - [API_REFERENCE.md](API_REFERENCE.md) — valid method signatures, wrong-method table, correct patterns
 - [DOCS_STRUCTURE.md](DOCS_STRUCTURE.md) — per-file audit status for all doc files
-- `scripts/test_doc_code_blocks.py` — Phase C live runner
+- `scripts/check_skill_tool_calls.py` — Phase C static tool-call checker
