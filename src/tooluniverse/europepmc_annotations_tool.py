@@ -18,6 +18,10 @@ from .tool_registry import register_tool
 
 EUROPEPMC_ANNOTATIONS_URL = "https://www.ebi.ac.uk/europepmc/annotations_api"
 
+# annotationsByArticleIds returns every annotation for an article, so responses
+# are capped here to keep them usable.
+DEFAULT_ANNOTATION_CAP = 100
+
 
 @register_tool("EuroPMCAnnotationsTool")
 class EuroPMCAnnotationsTool(BaseTool):
@@ -74,10 +78,13 @@ class EuroPMCAnnotationsTool(BaseTool):
             "error": f"Unknown endpoint_type: {self.endpoint_type}",
         }
 
-    def _fetch_annotations(
-        self, article_ids: str, annotation_type: str = None, page_size: int = None
-    ):
-        """Fetch annotations from the API."""
+    def _fetch_annotations(self, article_ids: str, annotation_type: str = None):
+        """Fetch annotations from the API.
+
+        annotationsByArticleIds has no pagination: it returns every annotation
+        for the requested articles regardless of any pageSize argument, so the
+        caller caps the response instead.
+        """
         url = f"{EUROPEPMC_ANNOTATIONS_URL}/annotationsByArticleIds"
         params = {
             "articleIds": article_ids,
@@ -85,12 +92,27 @@ class EuroPMCAnnotationsTool(BaseTool):
         }
         if annotation_type:
             params["type"] = annotation_type
-        if page_size:
-            params["pageSize"] = page_size
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         return response.json()
+
+    @staticmethod
+    def _annotation_cap(page_size: Any) -> int:
+        """Resolve the per-article annotation cap, defaulting to 100.
+
+        A non-positive cap would return an empty list beside a non-zero
+        total_annotations, which reads as "this article has none". The schema
+        rejects those, and anything that reaches here anyway falls back to the
+        default rather than silently emptying the response.
+        """
+        if page_size is None:
+            return DEFAULT_ANNOTATION_CAP
+        try:
+            cap = int(page_size)
+        except (TypeError, ValueError):
+            return DEFAULT_ANNOTATION_CAP
+        return cap if cap > 0 else DEFAULT_ANNOTATION_CAP
 
     @staticmethod
     def _normalize_article_id(article_id: str) -> str:
@@ -186,7 +208,7 @@ class EuroPMCAnnotationsTool(BaseTool):
         """Get annotations of a specific type from multiple articles."""
         article_ids = arguments.get("article_ids", "")
         annotation_type = arguments.get("annotation_type", "")
-        page_size = arguments.get("page_size")
+        page_size = self._annotation_cap(arguments.get("page_size"))
 
         if not article_ids:
             return {
@@ -199,7 +221,7 @@ class EuroPMCAnnotationsTool(BaseTool):
                 "error": "annotation_type is required (e.g., 'Chemicals')",
             }
 
-        raw = self._fetch_annotations(article_ids, annotation_type, page_size)
+        raw = self._fetch_annotations(article_ids, annotation_type)
 
         if not isinstance(raw, list):
             raw = []
@@ -220,12 +242,18 @@ class EuroPMCAnnotationsTool(BaseTool):
                     }
                 )
 
+            returned = annotations[:page_size]
             articles.append(
                 {
                     "article_id": f"{article.get('source', '')}:{article.get('extId', '')}",
                     "pmcid": article.get("pmcid"),
-                    "annotation_count": len(annotations),
-                    "annotations": annotations[:100],
+                    # annotation_count is what the caller receives and
+                    # total_annotations what exists, so a capped article says
+                    # so itself instead of leaving the shortfall to be inferred
+                    # from a batch-wide sum.
+                    "annotation_count": len(returned),
+                    "total_annotations": len(annotations),
+                    "annotations": returned,
                 }
             )
 

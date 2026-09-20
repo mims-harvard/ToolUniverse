@@ -100,7 +100,8 @@
             "integer",
             "null"
           ],
-          "description": "Number of results per page. Default: 25. Max: 1000."
+          "minimum": 1,
+          "description": "Maximum annotations returned per article. Default: 100. The Europe PMC endpoint returns every annotation for the requested articles in one response, so this caps how many are included per article; each article's total_annotations still reports its full count."
         }
       },
       "required": [
@@ -137,7 +138,8 @@
                 "properties": {
                   "article_id": {"type": "string"},
                   "pmcid": {"type": ["string", "null"]},
-                  "annotation_count": {"type": "integer"},
+                  "annotation_count": {"type": "integer", "description": "Annotations returned for this article, after the page_size cap."},
+                  "total_annotations": {"type": "integer", "description": "Annotations this article has in total, before the cap."},
                   "annotations": {"type": "array"}
                 }
               }

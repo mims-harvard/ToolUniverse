@@ -27,7 +27,7 @@ def EuroPMCAnnot_get_annotations_by_type(
     annotation_type : str
         Annotation type to retrieve. One of: 'Chemicals', 'Organisms', 'Gene Ontology...
     page_size : int | Any
-        Number of results per page. Default: 25. Max: 1000.
+        Maximum annotations returned per article. Default: 100. The Europe PMC endpoi...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
