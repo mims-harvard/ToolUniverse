@@ -94,3 +94,14 @@ def test_nonexistent_tool_is_reported_in_cli_and_dict_forms_too():
         "Foo_delete: no such tool"
     ]
     assert _check("tu.run({'name': 'Alice_smith', 'arguments': {'x': 1}})") == []
+
+
+def test_no_skill_shows_a_tool_call_the_schemas_reject(capsys):
+    """Guard: skills must not document undeclared arguments or nonexistent tools.
+
+    Fails with the offending file, tool and arguments. Mark a deliberate
+    wrong-usage example with WRONG, ❌ or `# noqa: skill-call` on or above it.
+    """
+    status = checker.main([str(Path(checker.ROOT) / "skills")])
+    output = capsys.readouterr().out
+    assert status == 0, output
