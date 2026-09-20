@@ -1,6 +1,9 @@
 # import xml.etree.ElementTree as ET
+import json
+import os
+import threading
 from lxml import etree as ET
-from typing import List, Dict, Any, Optional, Set
+from typing import List, Dict, Any, Optional, Set, Tuple
 from .base_tool import BaseTool
 from .utils import download_from_hf
 from .tool_registry import register_tool
@@ -12,6 +15,17 @@ from .logging_config import get_logger
 # prepended ahead of the JSON payload and failed to parse it. Routing
 # through the logging module keeps it on stderr instead.
 logger = get_logger(__name__)
+
+# Parsed XML datasets are large: DrugBank is ~1.5 GB of XML, which is several times
+# that as an lxml tree (roughly 8-15 GB), and 15 tool definitions point at that one
+# file. Each XMLDatasetTool instance used to parse its own copy in __init__, so using
+# a handful of DrugBank tools in one session multiplied memory by the number of
+# tools (an eager load of all of them reached >100 GB). The tree is only ever read,
+# never mutated, so instances that use the same file, record_xpath and namespaces
+# share one parsed copy. Per-tool state (_record_cache, field mappings) stays
+# per-instance.
+_PARSED_DATASETS: Dict[Tuple[Any, ...], Tuple[Any, List[Any]]] = {}
+_PARSED_DATASETS_LOCK = threading.Lock()
 
 
 @register_tool("XMLTool")
@@ -52,11 +66,27 @@ class XMLDatasetTool(BaseTool):
             if not xml_path:
                 return
 
-            tree = ET.parse(xml_path)
-            self.xml_root = tree.getroot()
-            self.records = self.xml_root.findall(
-                self.record_xpath, namespaces=self.namespaces
+            # Key on the resolved file identity (path, size, mtime) so a replaced
+            # file is re-parsed, plus what determines the parsed record list.
+            st = os.stat(xml_path)
+            key = (
+                os.path.realpath(xml_path),
+                st.st_size,
+                st.st_mtime_ns,
+                self.record_xpath,
+                json.dumps(self.namespaces, sort_keys=True),
             )
+            with _PARSED_DATASETS_LOCK:
+                shared = _PARSED_DATASETS.get(key)
+                if shared is None:
+                    tree = ET.parse(xml_path)
+                    root = tree.getroot()
+                    shared = (
+                        root,
+                        root.findall(self.record_xpath, namespaces=self.namespaces),
+                    )
+                    _PARSED_DATASETS[key] = shared
+            self.xml_root, self.records = shared
 
             logger.info(
                 "Loaded XML dataset: %d records from root '%s'",
