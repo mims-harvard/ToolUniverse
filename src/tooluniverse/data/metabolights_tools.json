@@ -156,7 +156,7 @@
   {
     "type": "MetaboLightsRESTTool",
     "name": "metabolights_get_study_samples",
-    "description": "Get all samples associated with a MetaboLights study. Returns sample metadata including sample names, characteristics, and factor values. Note: The samples endpoint may return 400 errors for some studies. This tool automatically falls back to extracting sample information from the study endpoint (ISA investigation structure). If both methods fail, access samples via MetaboLights website.",
+    "description": "Get all samples associated with a MetaboLights study. Returns sample metadata including sample names, characteristics, and factor values. Note: The samples endpoint may return 400 errors for some studies. This tool automatically falls back to extracting sample information from the study endpoint (ISA investigation structure). If both methods fail, access samples via MetaboLights website. NOTE (checked 2026-09-20): the upstream /samples endpoint currently returns HTTP 400, so this tool falls back to the study record, which returned no sample rows for MTBLS1; for study metadata use metabolights_get_study or metabolights_get_study_assays.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -295,7 +295,7 @@
   {
     "type": "MetaboLightsRESTTool",
     "name": "metabolights_get_study_data_files",
-    "description": "Search for data files in a MetaboLights study. Returns a list of files matching the search criteria. Use search_pattern to filter by file type (e.g., '*.mzML', '*.raw', '*.d'). At least one of file_match or folder_match must be true.",
+    "description": "Search for data files in a MetaboLights study. Returns a list of files matching the search criteria. Use search_pattern to filter by file type (e.g., '*.mzML', '*.raw', '*.d'). At least one of file_match or folder_match must be true. NOTE (checked 2026-09-20): the upstream data-files endpoint currently returns an empty list for every public study tried (MTBLS1, MTBLS2, MTBLS3, MTBLS10, MTBLS374); use metabolights_get_study_files to list a study's files.",
     "parameter": {
       "type": "object",
       "properties": {

@@ -821,7 +821,7 @@
     },
     "test_examples": [
       {
-        "domain": "ensembl"
+        "domain": "ensembl_gene"
       },
       {
         "domain": "uniprot"
@@ -887,8 +887,8 @@
     },
     "test_examples": [
       {
-        "domain": "ensembl",
-        "query": "xref_uniprot:P04637",
+        "domain": "ensembl_gene",
+        "query": "UNIPROT_SWISSPROT:P04637",
         "size": 10
       }
     ]

@@ -165,7 +165,7 @@
   {
     "type": "ProteinsAPIRESTTool",
     "name": "proteins_api_get_epitopes",
-    "description": "Get epitope sequences for a protein. Returns B-cell and T-cell epitope information with antigenicity predictions. Supports batch operations: pass a list of accessions or comma-separated string to retrieve multiple proteins in parallel. Note: This tool extracts epitope-related data from the main protein endpoint (the separate epitopes endpoint is not available). Returns immunology comments and epitope features if present.",
+    "description": "Get the epitope features for a protein from the EBI Proteins API epitope endpoint (IEDB-derived). Returns the accession, entry name, sequence and a `features` list of EPITOPE entries, each with its position (begin/end), a description, an IEDB cross-reference and PubMed evidence. Verified: P04637 (p53) returns 62 epitope features. Supports batch operations: pass a list of accessions or comma-separated string to retrieve multiple proteins in parallel. Proteins without epitope data return an empty result.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -191,12 +191,17 @@
       ]
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/proteins/api/proteins/{accession}/epitopes",
+      "endpoint": "https://www.ebi.ac.uk/proteins/api/epitope/{accession}",
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "array",
-      "description": "Epitope sequences and annotations including immunology comments and epitope features."
+      "type": "object",
+      "description": "Epitope record: accession, entryName, sequence, sequenceChecksum, taxid, and a `features` array of EPITOPE entries (type, description, begin, end, xrefs to IEDB, evidences).",
+      "properties": {
+        "accession": {"type": "string"},
+        "entryName": {"type": "string"},
+        "features": {"type": "array", "items": {"type": "object"}}
+      }
     },
     "test_examples": [
       {

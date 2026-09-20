@@ -178,6 +178,11 @@ class EBISearchRESTTool(BaseTool):
                 return data["fields"]
             if "domain" in data and "fields" in data["domain"]:
                 return data["domain"]["fields"]
+            # Current EBI Search response: {"domains": [{"id": ..., "fieldInfos": [...]}]}.
+            # Without this the tool returned [] for every domain (uniprot has 228 fields).
+            domains = data.get("domains")
+            if isinstance(domains, list) and domains and isinstance(domains[0], dict):
+                return domains[0].get("fieldInfos", [])
             return []
         elif "." in extract_path:
             # Extract nested path like "domain.name"
