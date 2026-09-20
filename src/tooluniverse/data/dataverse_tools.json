@@ -201,7 +201,10 @@
       ]
     },
     "fields": {
-      "endpoint": "https://dataverse.harvard.edu/api/datasets/:persistentId"
+      "endpoint": "https://dataverse.harvard.edu/api/datasets/:persistentId",
+      "headers": {
+        "User-Agent": "ToolUniverse (+https://github.com/mims-harvard/ToolUniverse)"
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [

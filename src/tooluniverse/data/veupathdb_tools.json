@@ -42,7 +42,19 @@
   {
     "name": "VEuPathDB_list_gene_searches",
     "type": "BaseRESTTool",
-    "description": "List all available gene search strategies in VEuPathDB. Returns the search types that can be used to query genes across pathogen, vector, and host genomes. Each search has a URL segment, display name, description, and the parameters it accepts. Common searches include: GenesByTaxonGene (by organism), GenesFromTranscripts (transform transcript results to genes), and single gene lookups. Use this to discover what types of gene queries are available before constructing searches.",
+    "optional_api_keys": [
+      "VEUPATHDB_API_KEY"
+    ],
+    "api_key_info": {
+      "VEUPATHDB_API_KEY": {
+        "domain": "Genetics & Variants",
+        "type": "secret",
+        "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess",
+        "purpose": "List VEuPathDB gene and organism search definitions (pathogen, vector and host genomics).",
+        "without": "VEuPathDB_list_gene_searches and VEuPathDB_list_organism_searches return HTTP 401 without a key; the other VEuPathDB tools work keyless."
+      }
+    },
+    "description": "List all available gene search strategies in VEuPathDB. Returns the search types that can be used to query genes across pathogen, vector, and host genomes. Each search has a URL segment, display name, description, and the parameters it accepts. Common searches include: GenesByTaxonGene (by organism), GenesFromTranscripts (transform transcript results to genes), and single gene lookups. Use this to discover what types of gene queries are available before constructing searches. Requires a free VEUPATHDB_API_KEY (register on VEuPathDB; the endpoint returns HTTP 401 without one), sent in the Authorization header.",
     "parameter": {
       "type": "object",
       "properties": {},
@@ -50,7 +62,12 @@
     },
     "fields": {
       "endpoint": "https://veupathdb.org/veupathdb/service/record-types/gene/searches",
-      "return_format": "JSON"
+      "return_format": "JSON",
+      "auth_header": {
+        "env_var": "VEUPATHDB_API_KEY",
+        "header": "Authorization",
+        "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess"
+      }
     },
     "return_schema": {
       "oneOf": [
@@ -120,7 +137,19 @@
   {
     "name": "VEuPathDB_list_organism_searches",
     "type": "BaseRESTTool",
-    "description": "List all available organism search strategies in VEuPathDB. Returns the search types that can be used to query organisms in the VEuPathDB database, covering 785+ pathogen, vector, and host organism genomes. Useful for discovering what organism queries are available. Common searches include: AllOrganisms (list all), GenomeDataTypes (genome statistics), GeneMetrics (gene counts), and OrganismsByText (text search).",
+    "optional_api_keys": [
+      "VEUPATHDB_API_KEY"
+    ],
+    "api_key_info": {
+      "VEUPATHDB_API_KEY": {
+        "domain": "Genetics & Variants",
+        "type": "secret",
+        "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess",
+        "purpose": "List VEuPathDB gene and organism search definitions (pathogen, vector and host genomics).",
+        "without": "VEuPathDB_list_gene_searches and VEuPathDB_list_organism_searches return HTTP 401 without a key; the other VEuPathDB tools work keyless."
+      }
+    },
+    "description": "List all available organism search strategies in VEuPathDB. Returns the search types that can be used to query organisms in the VEuPathDB database, covering 785+ pathogen, vector, and host organism genomes. Useful for discovering what organism queries are available. Common searches include: AllOrganisms (list all), GenomeDataTypes (genome statistics), GeneMetrics (gene counts), and OrganismsByText (text search). Requires a free VEUPATHDB_API_KEY (register on VEuPathDB; the endpoint returns HTTP 401 without one), sent in the Authorization header.",
     "parameter": {
       "type": "object",
       "properties": {},
@@ -128,7 +157,12 @@
     },
     "fields": {
       "endpoint": "https://veupathdb.org/veupathdb/service/record-types/organism/searches",
-      "return_format": "JSON"
+      "return_format": "JSON",
+      "auth_header": {
+        "env_var": "VEUPATHDB_API_KEY",
+        "header": "Authorization",
+        "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess"
+      }
     },
     "return_schema": {
       "oneOf": [

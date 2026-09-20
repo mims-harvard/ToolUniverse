@@ -669,6 +669,18 @@
     ]
   },
   {
+    "name": "VEUPATHDB_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Genetics & Variants",
+    "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess",
+    "purpose": "List VEuPathDB gene and organism search definitions (pathogen, vector and host genomics).",
+    "without": "VEuPathDB_list_gene_searches and VEuPathDB_list_organism_searches return HTTP 401 without a key; the other VEuPathDB tools work keyless.",
+    "used_by": [
+      "veupathdb_tools.json"
+    ]
+  },
+  {
     "name": "WAQI_API_KEY",
     "requirement": "optional",
     "type": "secret",

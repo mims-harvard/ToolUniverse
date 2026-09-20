@@ -1,7 +1,7 @@
 [
   {
     "name": "POWO_search_plants",
-    "description": "Search the Plants of the World Online (POWO) database maintained by the Royal Botanic Gardens, Kew. POWO is the most comprehensive global checklist of vascular plants with 1.3+ million names and 350,000+ accepted species. Search by plant name, genus, family, or common name. Returns taxonomic information including accepted names, synonyms, distribution, and images. Essential for plant taxonomy, botany, and biodiversity research.",
+    "description": "Search the Plants of the World Online (POWO) database maintained by the Royal Botanic Gardens, Kew. POWO is the most comprehensive global checklist of vascular plants with 1.3+ million names and 350,000+ accepted species. Search by plant name, genus, family, or common name. Returns taxonomic information including accepted names, synonyms, distribution, and images. Essential for plant taxonomy, botany, and biodiversity research. NOTE: powo.science.kew.org currently serves a Cloudflare bot challenge to automated clients, so this tool can return HTTP 403; ToolUniverse does not attempt to bypass it.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -177,7 +177,7 @@
   },
   {
     "name": "POWO_get_taxon",
-    "description": "Get detailed taxonomic information for a specific plant species from Plants of the World Online (POWO). Returns comprehensive data including taxonomic classification, accepted name, synonyms, geographic distribution by region, morphological descriptions, and images. Use POWO_search_plants to find the fqId (fully qualified ID) first.",
+    "description": "Get detailed taxonomic information for a specific plant species from Plants of the World Online (POWO). Returns comprehensive data including taxonomic classification, accepted name, synonyms, geographic distribution by region, morphological descriptions, and images. Use POWO_search_plants to find the fqId (fully qualified ID) first. NOTE: powo.science.kew.org currently serves a Cloudflare bot challenge to automated clients, so this tool can return HTTP 403; ToolUniverse does not attempt to bypass it.",
     "parameter": {
       "type": "object",
       "properties": {

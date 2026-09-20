@@ -227,6 +227,12 @@
       "endpoint": "https://www.fpbase.org/api/proteins/",
       "params": {
         "format": "json"
+      },
+      "param_mapping": {
+        "agg_exc_max__gte": "default_state__ex_max__gte",
+        "agg_exc_max__lte": "default_state__ex_max__lte",
+        "agg_em_max__gte": "default_state__em_max__gte",
+        "agg_em_max__lte": "default_state__em_max__lte"
       }
     },
     "type": "BaseRESTTool",
