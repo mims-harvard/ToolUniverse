@@ -116,7 +116,7 @@
                 },
                 "filters": {
                     "type": "object",
-                    "description": "PostgREST filters. Key columns: receptor_group_id, receptor_type, receptor_name, cdr3_alpha, cdr3_beta, chain_type, v_gene, j_gene.",
+                    "description": "PostgREST filters, e.g. {\"chain2_cdr3_seq\": \"eq.ASSQDRDTQY\"}. Key columns: receptor_group_id, receptor_type (e.g. alphabeta), chain1_cdr3_seq (alpha/gamma CDR3), chain2_cdr3_seq (beta/delta CDR3), receptor_chain1_types, receptor_chain2_types, receptor_species_names, receptor_names, pubmed_ids. There are no cdr3_alpha, cdr3_beta, v_gene or j_gene columns.",
                     "additionalProperties": {"type": "string"}
                 }
             },
