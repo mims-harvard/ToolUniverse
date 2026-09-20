@@ -111,7 +111,7 @@
         "page_size": 5
       },
       {
-        "genome_type": "Isolate",
+        "page": 2,
         "page_size": 5
       }
     ],

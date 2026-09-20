@@ -817,53 +817,53 @@
     },
     "test_examples": [
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 10
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "assay_chembl_id"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "description"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "assay_type"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "confidence_score"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "target_chembl_id"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "assay_organism"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "bao_label"
@@ -931,7 +931,7 @@
   {
     "type": "ChEMBLRESTTool",
     "name": "ChEMBL_search_activities",
-    "description": "Search activity data by molecule, target, assay, or activity values. Supports filtering by IC50, Ki, EC50, etc. Note: activity data is sparse and depends on curation; some specific filter combinations can legitimately return zero results. For reliable retrieval, prefer starting from a known target (`target_chembl_id__exact`) or assay (`assay_chembl_id__exact`). To find molecule or target IDs, use ChEMBL_search_molecules or ChEMBL_search_targets.",
+    "description": "Search activity data by molecule, target, assay, or activity values. Supports filtering by IC50, Ki, EC50, etc. Note: activity data is sparse and depends on curation; some specific filter combinations can legitimately return zero results. For reliable retrieval, prefer starting from a known target (`target_chembl_id`) or assay (`assay_chembl_id`). To find molecule or target IDs, use ChEMBL_search_molecules or ChEMBL_search_targets.",
     "fields": {
       "endpoint": "/activity.json"
     },
@@ -1042,11 +1042,11 @@
     },
     "test_examples": [
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 3
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "activity_id",
@@ -1055,70 +1055,70 @@
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "activity_id"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "molecule_chembl_id"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "target_chembl_id"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "assay_chembl_id"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "standard_type"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "standard_value"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "standard_units"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "pchembl_value"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "standard_relation"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "standard_flag"
