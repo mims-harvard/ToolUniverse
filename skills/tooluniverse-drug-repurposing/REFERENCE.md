@@ -421,28 +421,31 @@ result = tu.tools.ADMETAI_predict_physicochemical_properties(smiles="...", use_c
 ```
 
 ### OpenTargets Target Object
+One row of `OpenTargets_get_associated_targets_by_disease_efoId(...)['data']['disease']['associatedTargets']['rows']`
+(verified live; there is no gene name, UniProt ID, or data-source list in the row):
 ```python
 {
-    'gene_symbol': 'APP',
-    'gene_name': 'Amyloid Precursor Protein',
-    'ensembl_id': 'ENSG00000142192',
-    'uniprot_id': 'P05067',
-    'score': 0.95,           # Association score (0-1)
-    'data_sources': [...]    # Evidence sources
+    'target': {'id': 'ENSG00000142192', 'approvedSymbol': 'APP'},
+    'score': 0.87            # Association score (0-1)
 }
 ```
+For a UniProt accession, call `OpenTargets_get_target_info_by_ensemblID(ensemblId=...)` and read `proteinIds`.
 
 ### DrugBank Drug Object
+One entry of `drugbank_get_drug_basic_info_by_drug_name_or_id(query=...)['data']['results']`
+(verified live; other fields such as indication, mechanism of action, and targets come from the
+separate `drugbank_*` tools, not from this record):
 ```python
 {
     'drugbank_id': 'DB00945',
-    'name': 'Aspirin',
+    'drug_name': 'Acetylsalicylic acid',
     'description': '...',
-    'groups': ['approved', 'vet_approved'],
-    'indication': '...',
-    'pharmacodynamics': '...',
-    'mechanism_of_action': '...',
-    'targets': [...]
+    'approval_groups': 'approved | vet_approved',   # ' | '-separated string, not a list
+    'drug_type': 'small molecule',
+    'brand_names': '10 Person ANSI | 217 | ...',    # ' | '-separated string
+    'synonyms': '2-Acetoxybenzenecarboxylic acid | ...',   # ' | '-separated string
+    'cas_number': '50-78-2',
+    'unii': 'R16CO5Y76E'
 }
 ```
 

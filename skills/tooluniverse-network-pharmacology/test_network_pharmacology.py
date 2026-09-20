@@ -726,15 +726,18 @@ def test_aspirin_linked_targets():
     """Test aspirin linked targets from OpenTargets."""
     chembl_id = RESOLVED.get('aspirin_chembl', 'CHEMBL25')
     r = tu.tools.OpenTargets_get_associated_targets_by_drug_chemblId(
-        chemblId=chembl_id, size=30
+        chemblId=chembl_id
     )
     assert_not_none(r)
     assert_in('data', r)
-    linked = r['data']['drug']['linkedTargets']
+    # Targets are nested under each mechanism-of-action row (no linkedTargets key)
+    rows = r['data']['drug']['mechanismsOfAction']['rows']
+    target_symbols = [
+        t.get('approvedSymbol', '') for row in rows for t in row.get('targets', [])
+    ]
     # Aspirin has 2 primary linked targets (PTGS1, PTGS2) in OpenTargets
-    assert_gt(linked['count'], 0, "Expected linked targets for aspirin")
+    assert_gt(len(target_symbols), 0, "Expected linked targets for aspirin")
     # Verify PTGS targets are present
-    target_symbols = [t.get('approvedSymbol', '') for t in linked['rows']]
     assert_true('PTGS1' in target_symbols or 'PTGS2' in target_symbols,
                 f"Expected PTGS1/PTGS2 in aspirin targets, got: {target_symbols}")
 
