@@ -30,7 +30,7 @@ python3 -m tooluniverse.cli run PepCalc_peptide_properties '{"seq":"HGEGTFTSDLSK
 Verification targets (all expected KEYLESS unless noted):
 - Characterization/motif: `PepCalc_peptide_properties`, `ProtParam_calculate`, `ScanProsite_scan_protein`, `PROSITE_get_entry`, `ELM_list_classes`, `ELM_get_interaction_domains`, `ELM_get_instances`, `ESMFold_predict_structure`
 - Homology: `BLAST_protein_search`, `EBI_msa_align`, `AMPSphere_sequence_match`
-- Receptor family / pharmacology: `GtoPdb_search_targets`, `GtoPdb_search_ligands`, `GtoPdb_get_interactions`, `GPCRdb_get_protein`, `GPCRdb_list_proteins`, `GPCRdb_get_ligands`, `HGNC_fetch_gene_by_symbol`, `HGNC_fetch_gene_family_members`
+- Receptor family / pharmacology: `GtoPdb_search_targets`, `GtoPdb_search_ligands`, `GtoPdb_get_interactions` (all `GtoPdb_*` need `GTOPDB_API_KEY`; without it they return HTTP 401, so fall back to `GPCRdb_*`), `GPCRdb_get_protein`, `GPCRdb_list_proteins`, `GPCRdb_get_ligands`, `HGNC_fetch_gene_by_symbol`, `HGNC_fetch_gene_family_members`
 - Phenotype / cross-species: `OpenTargets_get_disease_id_description_by_name`, `OpenTargets_get_associated_targets_by_disease_efoId`, `EnsemblCompara_get_paralogues`, `EnsemblCompara_get_orthologues`, `Alliance_get_gene_orthologs`
 - Target-engagement (soluble candidates, keyless): `ProteomicsDB_get_protein_meltome`
 - ID mapping / sequences: `UniProt_search`, `UniProt_get_sequence_by_accession`, `PDBeSIFTS_get_best_structures`

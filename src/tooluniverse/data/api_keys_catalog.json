@@ -350,6 +350,18 @@
     ]
   },
   {
+    "name": "GTOPDB_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Drugs & Chemistry",
+    "register_url": "https://www.guidetopharmacology.org/webServices.jsp",
+    "purpose": "Query the IUPHAR/BPS Guide to Pharmacology (targets, ligands, interactions, diseases).",
+    "without": "The GtoPdb web services reject every request without a key (HTTP 401), so all GtoPdb_* tools fail; register on the site, then request a key via the contact link on the web-services page.",
+    "used_by": [
+      "gtopdb_tools.json"
+    ]
+  },
+  {
     "name": "HF_TOKEN",
     "requirement": "required",
     "type": "secret",

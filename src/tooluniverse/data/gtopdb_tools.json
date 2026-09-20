@@ -1,7 +1,7 @@
 [
   {
     "name": "GtoPdb_search_targets",
-    "description": "Search the Guide to Pharmacology database (GtoPdb) for drug targets including GPCRs, ion channels, nuclear receptors, enzymes, transporters, and catalytic receptors. Returns target IDs, names, abbreviations, types, and family classifications. GtoPdb is the IUPHAR/BPS reference resource for pharmacological drug targets with 3000+ curated targets. No authentication required.",
+    "description": "Search the Guide to Pharmacology database (GtoPdb) for drug targets including GPCRs, ion channels, nuclear receptors, enzymes, transporters, and catalytic receptors. Returns target IDs, names, abbreviations, types, and family classifications. GtoPdb is the IUPHAR/BPS reference resource for pharmacological drug targets with 3000+ curated targets. Requires a free GTOPDB_API_KEY (register at guidetopharmacology.org, then request a key from the web-services page); the API returns HTTP 401 without one. The key is sent in the GTP-API-Key header.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -41,6 +41,18 @@
       "params": {}
     },
     "type": "GtoPdbRESTTool",
+    "optional_api_keys": [
+      "GTOPDB_API_KEY"
+    ],
+    "api_key_info": {
+      "GTOPDB_API_KEY": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://www.guidetopharmacology.org/webServices.jsp",
+        "purpose": "Query the IUPHAR/BPS Guide to Pharmacology (targets, ligands, interactions, diseases).",
+        "without": "The GtoPdb web services reject every request without a key (HTTP 401), so all GtoPdb_* tools fail; register on the site, then request a key via the contact link on the web-services page."
+      }
+    },
     "test_examples": [
       {
         "name": "dopamine"
@@ -118,7 +130,7 @@
   },
   {
     "name": "GtoPdb_search_ligands",
-    "description": "Search the Guide to Pharmacology database for pharmacological ligands (drugs, natural products, endogenous compounds). Returns ligand details including type, approval status, INN name, WHO essential medicine status, and whether it is an approved drug. GtoPdb covers 10,000+ curated ligands with pharmacological activity data. No authentication required.",
+    "description": "Search the Guide to Pharmacology database for pharmacological ligands (drugs, natural products, endogenous compounds). Returns ligand details including type, approval status, INN name, WHO essential medicine status, and whether it is an approved drug. GtoPdb covers 10,000+ curated ligands with pharmacological activity data. Requires a free GTOPDB_API_KEY (register at guidetopharmacology.org, then request a key from the web-services page); the API returns HTTP 401 without one. The key is sent in the GTP-API-Key header.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -158,6 +170,18 @@
       "params": {}
     },
     "type": "GtoPdbRESTTool",
+    "optional_api_keys": [
+      "GTOPDB_API_KEY"
+    ],
+    "api_key_info": {
+      "GTOPDB_API_KEY": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://www.guidetopharmacology.org/webServices.jsp",
+        "purpose": "Query the IUPHAR/BPS Guide to Pharmacology (targets, ligands, interactions, diseases).",
+        "without": "The GtoPdb web services reject every request without a key (HTTP 401), so all GtoPdb_* tools fail; register on the site, then request a key via the contact link on the web-services page."
+      }
+    },
     "test_examples": [
       {
         "name": "aspirin"
@@ -200,7 +224,7 @@
   },
   {
     "name": "GtoPdb_get_interactions",
-    "description": "Get pharmacological interactions between targets and ligands from the Guide to Pharmacology database. Provide gene_symbol (convenience, auto-resolves to targetId), targetId (from GtoPdb_search_targets), or ligandId (from GtoPdb_search_ligands) to filter interactions. Returns binding affinity (Ki, Kd, IC50, EC50), action type (agonist, antagonist, inhibitor, etc.), species, and assay information. NOTE: GtoPdb coverage focuses on GPCRs, ion channels, nuclear receptors, and enzymes; kinase inhibitors (EGFR, BRAF, ALK, VEGFR inhibitors) have limited interaction data \u2014 use ChEMBL_get_drug_mechanisms for those instead. No authentication required.",
+    "description": "Get pharmacological interactions between targets and ligands from the Guide to Pharmacology database. Provide gene_symbol (convenience, auto-resolves to targetId), targetId (from GtoPdb_search_targets), or ligandId (from GtoPdb_search_ligands) to filter interactions. Returns binding affinity (Ki, Kd, IC50, EC50), action type (agonist, antagonist, inhibitor, etc.), species, and assay information. NOTE: GtoPdb coverage focuses on GPCRs, ion channels, nuclear receptors, and enzymes; kinase inhibitors (EGFR, BRAF, ALK, VEGFR inhibitors) have limited interaction data \u2014 use ChEMBL_get_drug_mechanisms for those instead. Requires a free GTOPDB_API_KEY (register at guidetopharmacology.org, then request a key from the web-services page); the API returns HTTP 401 without one. The key is sent in the GTP-API-Key header.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -247,6 +271,18 @@
       "params": {}
     },
     "type": "GtoPdbRESTTool",
+    "optional_api_keys": [
+      "GTOPDB_API_KEY"
+    ],
+    "api_key_info": {
+      "GTOPDB_API_KEY": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://www.guidetopharmacology.org/webServices.jsp",
+        "purpose": "Query the IUPHAR/BPS Guide to Pharmacology (targets, ligands, interactions, diseases).",
+        "without": "The GtoPdb web services reject every request without a key (HTTP 401), so all GtoPdb_* tools fail; register on the site, then request a key via the contact link on the web-services page."
+      }
+    },
     "test_examples": [
       {
         "gene_symbol": "KRAS",
@@ -287,7 +323,7 @@
   },
   {
     "name": "GtoPdb_search_diseases",
-    "description": "Search the Guide to Pharmacology (GtoPdb / IUPHAR-BPS) for diseases by name, and retrieve their curated disease IDs, names, synonyms, and cross-references to external databases (OMIM, Orphanet, Disease Ontology). GtoPdb links diseases to the drug targets and approved/experimental ligands relevant to them. Example: 'epilepsy' returns disease entries such as 'Epilepsy and Intellectual Disability'. No authentication required.",
+    "description": "Search the Guide to Pharmacology (GtoPdb / IUPHAR-BPS) for diseases by name, and retrieve their curated disease IDs, names, synonyms, and cross-references to external databases (OMIM, Orphanet, Disease Ontology). GtoPdb links diseases to the drug targets and approved/experimental ligands relevant to them. Example: 'epilepsy' returns disease entries such as 'Epilepsy and Intellectual Disability'. Requires a free GTOPDB_API_KEY (register at guidetopharmacology.org, then request a key from the web-services page); the API returns HTTP 401 without one. The key is sent in the GTP-API-Key header.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -314,6 +350,18 @@
       "params": {}
     },
     "type": "GtoPdbRESTTool",
+    "optional_api_keys": [
+      "GTOPDB_API_KEY"
+    ],
+    "api_key_info": {
+      "GTOPDB_API_KEY": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://www.guidetopharmacology.org/webServices.jsp",
+        "purpose": "Query the IUPHAR/BPS Guide to Pharmacology (targets, ligands, interactions, diseases).",
+        "without": "The GtoPdb web services reject every request without a key (HTTP 401), so all GtoPdb_* tools fail; register on the site, then request a key via the contact link on the web-services page."
+      }
+    },
     "test_examples": [
       {
         "name": "epilepsy"
@@ -381,7 +429,7 @@
   },
   {
     "name": "GtoPdb_get_ligand_properties",
-    "description": "Get the chemical structure and computed molecular properties of a ligand from the Guide to Pharmacology (GtoPdb / IUPHAR-BPS) by its ligand ID. Merges two keyless endpoints into one record: structure (canonical SMILES, InChI, InChIKey, IUPAC name) and molecularProperties (molecular weight, logP, hydrogen-bond donors/acceptors, rotatable bonds, topological polar surface area, Lipinski rule-of-five violation count). Use GtoPdb_search_ligands first to find a ligand_id (e.g., aspirin = 4139). No authentication required.",
+    "description": "Get the chemical structure and computed molecular properties of a ligand from the Guide to Pharmacology (GtoPdb / IUPHAR-BPS) by its ligand ID. Merges two endpoints into one record: structure (canonical SMILES, InChI, InChIKey, IUPAC name) and molecularProperties (molecular weight, logP, hydrogen-bond donors/acceptors, rotatable bonds, topological polar surface area, Lipinski rule-of-five violation count). Use GtoPdb_search_ligands first to find a ligand_id (e.g., aspirin = 4139). Requires a free GTOPDB_API_KEY (register at guidetopharmacology.org, then request a key from the web-services page); the API returns HTTP 401 without one. The key is sent in the GTP-API-Key header.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -407,6 +455,18 @@
       "params": {}
     },
     "type": "GtoPdbRESTTool",
+    "optional_api_keys": [
+      "GTOPDB_API_KEY"
+    ],
+    "api_key_info": {
+      "GTOPDB_API_KEY": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://www.guidetopharmacology.org/webServices.jsp",
+        "purpose": "Query the IUPHAR/BPS Guide to Pharmacology (targets, ligands, interactions, diseases).",
+        "without": "The GtoPdb web services reject every request without a key (HTTP 401), so all GtoPdb_* tools fail; register on the site, then request a key via the contact link on the web-services page."
+      }
+    },
     "test_examples": [
       {
         "ligand_id": 4139
@@ -527,7 +587,7 @@
   },
   {
     "name": "GtoPdb_get_disease_associations",
-    "description": "Get curated disease-to-target and disease-to-ligand associations from the Guide to Pharmacology (GtoPdb / IUPHAR-BPS) for a given disease ID. Merges two keyless endpoints into one record: diseaseTargets (drug targets linked to the disease, with roles, references, and ligand-target interactions) and diseaseLigands (approved/experimental ligands linked to the disease, with approval status and clinical-use notes). An empty list is a valid result (some diseases have targets but no curated ligands). Use GtoPdb_search_diseases first to find a disease_id (e.g., non-allergic asthma = 1161). No authentication required.",
+    "description": "Get curated disease-to-target and disease-to-ligand associations from the Guide to Pharmacology (GtoPdb / IUPHAR-BPS) for a given disease ID. Merges two endpoints into one record: diseaseTargets (drug targets linked to the disease, with roles, references, and ligand-target interactions) and diseaseLigands (approved/experimental ligands linked to the disease, with approval status and clinical-use notes). An empty list is a valid result (some diseases have targets but no curated ligands). Use GtoPdb_search_diseases first to find a disease_id (e.g., non-allergic asthma = 1161). Requires a free GTOPDB_API_KEY (register at guidetopharmacology.org, then request a key from the web-services page); the API returns HTTP 401 without one. The key is sent in the GTP-API-Key header.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -553,6 +613,18 @@
       "params": {}
     },
     "type": "GtoPdbRESTTool",
+    "optional_api_keys": [
+      "GTOPDB_API_KEY"
+    ],
+    "api_key_info": {
+      "GTOPDB_API_KEY": {
+        "domain": "Drugs & Chemistry",
+        "type": "secret",
+        "register_url": "https://www.guidetopharmacology.org/webServices.jsp",
+        "purpose": "Query the IUPHAR/BPS Guide to Pharmacology (targets, ligands, interactions, diseases).",
+        "without": "The GtoPdb web services reject every request without a key (HTTP 401), so all GtoPdb_* tools fail; register on the site, then request a key via the contact link on the web-services page."
+      }
+    },
     "test_examples": [
       {
         "disease_id": 1161

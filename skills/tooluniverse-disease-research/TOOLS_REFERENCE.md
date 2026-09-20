@@ -579,6 +579,8 @@ tu.tools.civic_search_molecular_profiles(limit=50)
 
 ## 9. Pharmacology (GtoPdb)
 
+> All `GtoPdb_*` tools need `GTOPDB_API_KEY` (the API returns HTTP 401 without a key); the calls below were checked against the tool schemas but not run live.
+
 ### GtoPdb_search_diseases
 **Purpose**: Search diseases
 ```python

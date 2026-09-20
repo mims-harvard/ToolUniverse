@@ -1,3 +1,4 @@
+import os
 import re
 import requests
 from typing import Any, Dict
@@ -262,6 +263,27 @@ def _type_validation_error(raw_value: Any, specs: dict, dead: dict, kind: str) -
     }
 
 
+_KEY_HINT = (
+    "GtoPdb requires an API key. Set the GTOPDB_API_KEY environment variable "
+    "(it is sent in the GTP-API-Key header). Register on guidetopharmacology.org, "
+    "then request a key via the contact link on "
+    "https://www.guidetopharmacology.org/webServices.jsp."
+)
+
+
+def _api_message(raw_detail: str) -> str:
+    """Readable message from a GtoPdb error body ({"error": ...} or {"message": ...})."""
+    import json as _json
+
+    try:
+        parsed = _json.loads(raw_detail)
+        if isinstance(parsed, dict):
+            return parsed.get("error") or parsed.get("message") or raw_detail
+    except Exception:
+        pass
+    return raw_detail
+
+
 @register_tool("GtoPdbRESTTool")
 class GtoPdbRESTTool(BaseTool):
     def __init__(self, tool_config: Dict):
@@ -270,6 +292,19 @@ class GtoPdbRESTTool(BaseTool):
         self.session = requests.Session()
         self.session.headers.update({"Accept": "application/json"})
         self.timeout = 30
+        self._apply_api_key()
+
+    def _apply_api_key(self) -> None:
+        """Send GTOPDB_API_KEY in the GTP-API-Key header (GtoPdb rejects keyless requests).
+
+        Re-read on every run() so a key exported after the tool was constructed is
+        picked up, and a removed key stops being sent.
+        """
+        key = os.environ.get("GTOPDB_API_KEY", "").strip()
+        if key:
+            self.session.headers["GTP-API-Key"] = key
+        else:
+            self.session.headers.pop("GTP-API-Key", None)
 
     def _build_url(self, args: Dict[str, Any]) -> str:
         """Build URL with path parameters and query parameters."""
@@ -425,18 +460,16 @@ class GtoPdbRESTTool(BaseTool):
             }
         if response.status_code != 200:
             raw_detail = (response.text or "")[:500]
-            try:
-                import json as _json
-
-                api_msg = _json.loads(raw_detail).get("error", raw_detail)
-            except Exception:
-                api_msg = raw_detail
-            return None, {
+            api_msg = _api_message(raw_detail)
+            error = {
                 "status": "error",
                 "error": f"GtoPdb API error: {api_msg} (HTTP {response.status_code})",
                 "url": url,
                 "status_code": response.status_code,
             }
+            if response.status_code == 401:
+                error["hint"] = _KEY_HINT
+            return None, error
         try:
             return response.json(), None
         except Exception as exc:
@@ -563,6 +596,7 @@ class GtoPdbRESTTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         url = None
         self._pending_ligand_id_filter = None  # Feature-38B-02: reset per call
+        self._apply_api_key()
 
         # Feature-65A: two composite tools fetch + merge a pair of per-ID endpoints
         # (structure+molecularProperties, diseaseTargets+diseaseLigands). They are
@@ -846,20 +880,17 @@ class GtoPdbRESTTool(BaseTool):
             if response.status_code != 200:
                 raw_detail = (response.text or "")[:500]
                 # Feature-35A-01: extract human-readable API error from JSON detail
-                try:
-                    import json as _json
-
-                    detail_obj = _json.loads(raw_detail)
-                    api_msg = detail_obj.get("error", raw_detail)
-                except Exception:
-                    api_msg = raw_detail
-                return {
+                api_msg = _api_message(raw_detail)
+                error = {
                     "status": "error",
                     "error": f"GtoPdb API error: {api_msg} (HTTP {response.status_code})",
                     "url": url,
                     "status_code": response.status_code,
                     "detail": raw_detail,
                 }
+                if response.status_code == 401:
+                    error["hint"] = _KEY_HINT
+                return error
             data = response.json()
 
             # Feature-49A-H3: strip raw HTML tags from GtoPdb API fields.
