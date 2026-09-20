@@ -35,10 +35,25 @@ class MPDRESTTool(BaseTool):
             )
 
             response = self.session.get(url, timeout=self.timeout)
-            response.raise_for_status()
 
-            # Parse JSON response
-            data = response.json()
+            data = None
+            if response.status_code == 404:
+                # ENCODE answers a search with zero hits with HTTP 404 and a normal
+                # JSON body ({"total": 0, "@graph": [], "notification": "No results
+                # found"}). That is an empty result, not a failed request.
+                try:
+                    body = response.json()
+                except ValueError:
+                    body = None
+                if (
+                    isinstance(body, dict)
+                    and body.get("total") == 0
+                    and body.get("@graph") == []
+                ):
+                    data = body
+            if data is None:
+                response.raise_for_status()
+                data = response.json()
 
             return {
                 "status": "success",
