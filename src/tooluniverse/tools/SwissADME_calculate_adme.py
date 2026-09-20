@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def SwissADME_calculate_adme(
-    operation: str,
     smiles: str,
-    molecule_name: Optional[str | Any] = None,
+    operation: Optional[str] = "calculate_adme",
+    molecule_name: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def SwissADME_calculate_adme(
         Operation type
     smiles : str
         SMILES string of the molecule to analyze. Must be a valid small molecule SMIL...
-    molecule_name : str | Any
+    molecule_name : str
         Optional name for the molecule. If not provided, SwissADME assigns 'Molecule 1'.
     stream_callback : Callable, optional
         Callback for streaming output

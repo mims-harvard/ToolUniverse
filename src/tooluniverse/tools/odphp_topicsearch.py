@@ -10,15 +10,15 @@ from ._shared_client import get_shared_client
 
 def odphp_topicsearch(
     lang: str,
-    topicId: str,
-    categoryId: str,
-    keyword: str,
-    strip_html: bool,
+    topicId: Optional[str] = None,
+    categoryId: Optional[str] = None,
+    keyword: Optional[str] = None,
+    strip_html: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Find specific health topics and get their full content. Use when the user mentions a keyword (e.g...
 
@@ -43,7 +43,7 @@ def odphp_topicsearch(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

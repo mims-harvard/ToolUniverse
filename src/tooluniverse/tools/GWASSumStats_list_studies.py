@@ -1,7 +1,7 @@
 """
 GWASSumStats_list_studies
 
-List GWAS studies that have deposited full summary statistics with the EBI GWAS Catalog. Unlike t...
+DEPRECATED / non-functional: the EBI GWAS Catalog Summary Statistics REST API was retired (every ...
 """
 
 from typing import Any, Optional, Callable
@@ -9,18 +9,18 @@ from ._shared_client import get_shared_client
 
 
 def GWASSumStats_list_studies(
-    size: Optional[int | Any] = None,
+    size: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    List GWAS studies that have deposited full summary statistics with the EBI GWAS Catalog. Unlike t...
+    DEPRECATED / non-functional: the EBI GWAS Catalog Summary Statistics REST API was retired (every ...
 
     Parameters
     ----------
-    size : int | Any
+    size : int
         Number of studies to return (default 20, max 100).
     stream_callback : Callable, optional
         Callback for streaming output

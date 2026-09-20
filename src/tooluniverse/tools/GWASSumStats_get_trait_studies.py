@@ -1,7 +1,7 @@
 """
 GWASSumStats_get_trait_studies
 
-Get GWAS studies with deposited summary statistics for a specific EFO trait. Returns study access...
+DEPRECATED / non-functional: the EBI GWAS Catalog Summary Statistics REST API was retired (every ...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def GWASSumStats_get_trait_studies(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get GWAS studies with deposited summary statistics for a specific EFO trait. Returns study access...
+    DEPRECATED / non-functional: the EBI GWAS Catalog Summary Statistics REST API was retired (every ...
 
     Parameters
     ----------

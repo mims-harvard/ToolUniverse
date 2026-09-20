@@ -21,7 +21,7 @@ def BMRB_get_entries_by_uniprot(
     Parameters
     ----------
     uniprot_id : str
-        UniProt accession (e.g., 'P62988' for ubiquitin, 'P0DTD1' for SARS-CoV-2 poly...
+        UniProt accession (e.g., 'P04637' for human p53, 'P00533' for EGFR; an access...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
