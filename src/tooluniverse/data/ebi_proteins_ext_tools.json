@@ -860,7 +860,7 @@
   },
   {
     "name": "EBIProteins_get_rna_editing",
-    "description": "Get RNA editing annotations (A-to-I / Q->R recoding sites) for a UniProt protein from the EBI Proteins API. Returns post-transcriptional RNA editing sites where a genomic adenosine is read as guanosine, recoding the protein. Each site includes the protein position, genomic location, codon, consequence type, wild-type and edited amino acid, and tissue/sample editing statistics. Distinct from DNA-level variation. Example: P42262 (GRIA2) returns 3 sites including the canonical Q/R site at residue 607 (Q->R, genomic NC_000004.12:g.157336723A>G, missense). P28335 (HTR2C) returns 5 sites.",
+    "description": "Get RNA editing annotations (A-to-I / Q->R recoding sites) for a UniProt protein from the EBI Proteins API. Returns post-transcriptional RNA editing sites where a genomic adenosine is read as guanosine, recoding the protein. Each site includes the protein position, genomic location, codon, consequence type, wild-type and edited amino acid, and tissue/sample editing statistics. Distinct from DNA-level variation. NOTE (checked 2026-09-20): the upstream rna-editing dataset currently returns no features for any accession tried (GRIA2 P42262, HTR2C P28335), and a taxid=9606 query returns an empty list, so this tool returns an error until EBI restores the data. It previously returned e.g. the canonical GRIA2 Q/R site at residue 607.",
     "parameter": {
       "type": "object",
       "properties": {
