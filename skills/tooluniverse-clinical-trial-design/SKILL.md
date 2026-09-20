@@ -189,13 +189,13 @@ prevalence = tu.tools.OpenTargets_get_associated_phenotypes_by_disease_efoId(
 variants = tu.tools.ClinVar_search_variants(gene="EGFR", significance="pathogenic")
 
 # Step 3: Precedent trials
-trials = tu.tools.search_clinical_trials(
+trials = tu.tools.ClinicalTrials_search_studies(
     condition="EGFR positive non-small cell lung cancer",
-    status="completed", phase="2"
+    filter_status="COMPLETED", filter_phase="PHASE2"
 )
 
 # Step 4: Standard of care comparator
-soc = tu.tools.FDA_OrangeBook_search_drug(ingredient="osimertinib")
+soc = tu.tools.FDA_OrangeBook_search_drug(generic_name="osimertinib")
 
 # Compile into feasibility report...
 ```

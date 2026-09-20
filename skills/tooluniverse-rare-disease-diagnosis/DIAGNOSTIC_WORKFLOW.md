@@ -283,8 +283,8 @@ def prioritize_genes_with_clingen(tu, gene_list):
 ```python
 def validate_expression(tu, gene_symbol, affected_tissue):
     """Check if gene is expressed in relevant tissue."""
-    gene_info = tu.tools.MyGene_query_genes(q=gene_symbol, species="human")
-    ensembl_id = gene_info.get('ensembl', {}).get('gene')
+    gene_info = tu.tools.MyGene_query_genes(query=gene_symbol, species="human", size=1)
+    ensembl_id = gene_info['data']['hits'][0]['ensembl']['gene']
 
     expression = tu.tools.GTEx_get_median_gene_expression(
         gencode_id=f"{ensembl_id}.latest"
@@ -327,18 +327,23 @@ def get_cell_type_expression(tu, gene_symbol, affected_tissues):
 ### Regulatory Context (ChIPAtlas)
 
 ```python
-def get_regulatory_context(tu, gene_symbol):
+def get_regulatory_context(tu, gene_symbol, experiment_id=None):
     """Get transcription factor binding for candidate genes."""
 
+    # Returns the ChIP-Atlas enrichment-analysis submission details for this gene list
+    # (a web-form URL), not computed TF enrichment results
     tf_binding = tu.tools.ChIPAtlas_enrichment_analysis(
-        gene=gene_symbol,
-        cell_type="all"
+        gene_list=[gene_symbol],
+        genome="hg38"
     )
 
+    # Peak files are fetched per experiment (SRX/ERX/DRX ID), not per gene;
+    # returns a download URL for the BED file
     peaks = tu.tools.ChIPAtlas_get_peak_data(
-        gene=gene_symbol,
-        experiment_type="TF"
-    )
+        experiment_id=experiment_id,
+        genome="hg38",
+        format="bed"
+    ) if experiment_id else None
 
     return {
         'transcription_factors': tf_binding,
@@ -355,14 +360,17 @@ def get_regulatory_context(tu, gene_symbol):
 ```python
 def get_pathway_context(tu, gene_symbols):
     """Get pathway context for candidate genes."""
+    import re
 
     pathways = {}
     for gene in gene_symbols:
-        kegg_genes = tu.tools.kegg_find_genes(query=f"hsa:{gene}")
+        kegg_genes = tu.tools.kegg_find_genes(keyword=gene, organism="hsa")
 
-        if kegg_genes:
-            gene_info = tu.tools.kegg_get_gene_info(gene_id=kegg_genes[0]['id'])
-            pathways[gene] = gene_info.get('pathways', [])
+        if kegg_genes['data']:
+            gene_info = tu.tools.kegg_get_gene_info(gene_id=kegg_genes['data'][0]['gene_id'])
+            # raw_data is the KEGG flat file; its PATHWAY block lists "hsaNNNNN  name" lines
+            m = re.search(r'^PATHWAY\s+(.*?)(?=^\S)', gene_info['data']['raw_data'], re.S | re.M)
+            pathways[gene] = [ln.strip() for ln in m.group(1).splitlines() if ln.strip()] if m else []
 
     return pathways
 ```
@@ -617,15 +625,19 @@ def analyze_variant_structure(tu, protein_sequence, variant_position):
 def assess_domain_impact(tu, uniprot_id, variant_position):
     """Check if variant affects functional domain."""
 
-    domains = tu.tools.InterPro_get_protein_domains(accession=uniprot_id)
+    domains = tu.tools.InterPro_get_protein_domains(protein_id=uniprot_id)['data']
 
-    for domain in domains:
-        if domain['start'] <= variant_position <= domain['end']:
-            return {
-                'in_domain': True,
-                'domain_name': domain['name'],
-                'domain_function': domain['description']
-            }
+    for entry in domains:
+        meta = entry['metadata']
+        for protein in entry['proteins']:
+            for loc in protein['entry_protein_locations']:
+                for frag in loc['fragments']:
+                    if frag['start'] <= variant_position <= frag['end']:
+                        return {
+                            'in_domain': True,
+                            'domain_name': meta['name'],
+                            'domain_type': meta['type']
+                        }
 
     return {'in_domain': False}
 ```
@@ -665,14 +677,15 @@ def search_disease_literature(tu, disease_name, genes):
 def search_preprints(tu, disease_name, genes):
     """Search preprints for cutting-edge findings."""
 
-    biorxiv = tu.tools.BioRxiv_list_recent_preprints(
-        query=f"{disease_name} genetics",
+    # BioRxiv_list_recent_preprints only lists by date range (start_date/end_date);
+    # to search by topic, query Europe PMC restricted to preprints
+    biorxiv = tu.tools.EuropePMC_search_articles(
+        query=f"SRC:PPR AND {disease_name} genetics",
         limit=10
     )
 
     arxiv = tu.tools.ArXiv_search_papers(
         query=f"rare disease diagnosis {' OR '.join(genes[:3])}",
-        category="q-bio",
         limit=5
     )
 

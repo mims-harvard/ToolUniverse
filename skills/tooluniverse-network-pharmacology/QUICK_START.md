@@ -48,8 +48,9 @@ disease_genes = [
 
 # Step 4: Build PPI network between drug targets and disease genes
 combined_genes = list(set(drug_target_genes[:10] + disease_genes[:10]))
-ppi_network = tu.tools.STRING_get_interaction_partners(
-    protein_ids=combined_genes, species=9606, limit=50
+# STRING_get_network takes multiple proteins as one string separated by "\r"
+ppi_network = tu.tools.STRING_get_network(
+    identifiers="\r".join(combined_genes), species=9606
 )
 
 # Step 5: Calculate proximity (shared interactions)
@@ -196,8 +197,8 @@ new_drug_candidates = tu.tools.DGIdb_get_drug_gene_interactions(
 )
 
 # Step 5: Build disease PPI network
-string_ppi = tu.tools.STRING_get_interaction_partners(
-    protein_ids=disease_gene_symbols[:15], species=9606, limit=30
+string_ppi = tu.tools.STRING_get_network(
+    identifiers="\r".join(disease_gene_symbols[:15]), species=9606
 )
 
 # Step 6: Check CTD for chemical-disease links
@@ -287,9 +288,9 @@ target_genes = [t.get('approvedSymbol', '') for t in
                 drug_targets['data']['drug']['linkedTargets']['rows']]
 
 # Step 4: Build mTOR pathway network
-mtor_ppi = tu.tools.STRING_get_interaction_partners(
-    protein_ids=["MTOR", "RPTOR", "RICTOR", "TSC1", "TSC2"],
-    species=9606, limit=30
+mtor_ppi = tu.tools.STRING_get_network(
+    identifiers="\r".join(["MTOR", "RPTOR", "RICTOR", "TSC1", "TSC2"]),
+    species=9606
 )
 
 # Step 5: Pathway analysis for mTOR signaling

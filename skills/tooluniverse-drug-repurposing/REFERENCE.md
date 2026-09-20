@@ -41,7 +41,7 @@ diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensembl(
 #### drugbank_get_drug_name_and_description_by_target_name
 ```python
 drugs = tu.tools.drugbank_get_drug_name_and_description_by_target_name(
-    target_name="BACE1"
+    query="BACE1"
 )
 # Returns: List of drugs targeting specified protein
 ```
@@ -50,7 +50,7 @@ drugs = tu.tools.drugbank_get_drug_name_and_description_by_target_name(
 #### drugbank_get_drug_name_and_description_by_indication
 ```python
 drugs = tu.tools.drugbank_get_drug_name_and_description_by_indication(
-    indication="hypertension"
+    query="hypertension"
 )
 # Returns: Drugs approved for specified indication
 ```
@@ -100,7 +100,7 @@ mechanisms = tu.tools.ChEMBL_get_drug_mechanisms(
 #### drugbank_get_drug_basic_info_by_drug_name_or_id
 ```python
 info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
-    drug_name_or_drugbank_id="metformin"
+    query="metformin"
 )
 # Returns: Basic drug info including approval status, groups, description
 ```
@@ -109,7 +109,7 @@ info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
 #### drugbank_get_indications_by_drug_name_or_drugbank_id
 ```python
 indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id="aspirin"
+    query="aspirin"
 )
 # Returns: List of approved indications
 ```
@@ -118,7 +118,7 @@ indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(
 #### drugbank_get_targets_by_drug_name_or_drugbank_id
 ```python
 targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id="imatinib"
+    query="imatinib"
 )
 # Returns: Drug targets with accessions
 ```
@@ -127,7 +127,7 @@ targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(
 #### drugbank_get_pharmacology_by_drug_name_or_drugbank_id
 ```python
 pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id="warfarin"
+    query="warfarin"
 )
 # Returns: Mechanism of action, pharmacodynamics, pharmacokinetics
 ```
@@ -136,7 +136,7 @@ pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(
 #### drugbank_get_pathways_reactions_by_drug_or_id
 ```python
 pathways = tu.tools.drugbank_get_pathways_reactions_by_drug_or_id(
-    drug_name_or_drugbank_id="statins"
+    query="statins"
 )
 # Returns: Affected pathways and reactions
 ```
@@ -145,7 +145,7 @@ pathways = tu.tools.drugbank_get_pathways_reactions_by_drug_or_id(
 #### drugbank_get_drug_name_and_description_by_pathway_name
 ```python
 drugs = tu.tools.drugbank_get_drug_name_and_description_by_pathway_name(
-    pathway_name="cholesterol biosynthesis"
+    query="cholesterol biosynthesis"
 )
 # Returns: Drugs affecting specified pathway
 ```
@@ -154,7 +154,7 @@ drugs = tu.tools.drugbank_get_drug_name_and_description_by_pathway_name(
 #### drugbank_get_drug_desc_pharmacology_by_moa
 ```python
 drugs = tu.tools.drugbank_get_drug_desc_pharmacology_by_moa(
-    mechanism_of_action="receptor antagonist"
+    query="receptor antagonist"
 )
 # Returns: Drugs with specified mechanism
 ```
@@ -185,7 +185,7 @@ precautions = tu.tools.FDA_get_precautions_by_drug_name(
 #### drugbank_get_drug_interactions_by_drug_name_or_id
 ```python
 interactions = tu.tools.drugbank_get_drug_interactions_by_drug_name_or_id(
-    drug_name_or_id="warfarin"
+    query="warfarin"
 )
 # Returns: Drug-drug interactions
 ```
@@ -194,13 +194,14 @@ interactions = tu.tools.drugbank_get_drug_interactions_by_drug_name_or_id(
 #### FAERS_search_reports_by_drug_and_reaction
 ```python
 reports = tu.tools.FAERS_search_reports_by_drug_and_reaction(
-    drug_name="LIPITOR",
-    reaction="myalgia",
+    medicinalproduct="LIPITOR",
+    reactionmeddrapt="MYALGIA",   # MedDRA preferred term; both args are required
     limit=100
 )
-# Returns: Adverse event reports
+# Returns: {'reports': [...], 'count': <this page>, 'total_available': <all matches>, 'truncated': bool}
+# limit is capped at 100 -- read total_available for the true number of matching reports
 ```
-**Use**: Real-world safety data, specific adverse events
+**Use**: Real-world safety data, specific adverse events (for a drug's whole reaction profile, use `FAERS_count_reactions_by_drug_event`)
 
 #### FAERS_count_reactions_by_drug_event
 ```python
@@ -255,10 +256,10 @@ properties = tu.tools.PubChem_get_compound_properties_by_CID(
 ```python
 similar = tu.tools.PubChem_search_compounds_by_similarity(
     smiles="CC(=O)Oc1ccccc1C(=O)O",
-    threshold=85,
-    limit=50
+    threshold=0.85,   # Tanimoto similarity, 0-1 scale
+    max_results=50
 )
-# Returns: Structurally similar compounds
+# Returns: data.IdentifierList.CID -- a list of similar compound CIDs (no per-compound scores)
 ```
 **Use**: Structure-based repurposing - find approved drug analogs
 
@@ -274,9 +275,10 @@ bioactivity = tu.tools.PubChem_get_compound_bioactivity(
 #### ChEMBL_search_activities
 ```python
 bioactivity = tu.tools.ChEMBL_search_activities(
-    chembl_id="CHEMBL25"
+    molecule_chembl_id="CHEMBL25",
+    limit=25
 )
-# Returns: Detailed bioactivity data (IC50, EC50, etc.)
+# Returns: data.activities[] -- bioactivity records (standard_type, standard_value, ...)
 ```
 **Use**: Quantitative activity data for target validation
 
@@ -485,9 +487,12 @@ target = "ABL1"
 
 # Check DrugBank
 db_targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id=drug
+    query=drug
 )
-db_confirms = any(t['gene_symbol'] == target for t in db_targets.get('data', []))
+# DrugBank returns data.results[]; each drug row has targets[] with protein names (no gene symbols)
+db_rows = db_targets.get('data', {}).get('results', [])
+db_confirms = any(target.lower() in t['name'].lower()
+                  for row in db_rows for t in row.get('targets', []))
 
 # Check DGIdb
 dgidb = tu.tools.DGIdb_get_drug_gene_interactions(gene_name=target)
@@ -496,10 +501,11 @@ dgidb_confirms = any(d['drug_name'].lower() == drug.lower()
 
 # Check ChEMBL
 chembl_drugs = tu.tools.ChEMBL_search_drugs(query=drug, limit=1)
-if chembl_drugs and 'data' in chembl_drugs:
-    chembl_id = chembl_drugs['data'][0]['molecule_chembl_id']
+molecules = (chembl_drugs or {}).get('data', {}).get('molecules', [])
+if molecules:
+    chembl_id = molecules[0]['molecule_chembl_id']
     mechanisms = tu.tools.ChEMBL_get_drug_mechanisms(chembl_id=chembl_id)
-    chembl_confirms = any(target in str(m) for m in mechanisms.get('data', []))
+    chembl_confirms = any(target in str(m) for m in mechanisms.get('data', {}).get('mechanisms', []))
 
 validation_score = sum([db_confirms, dgidb_confirms, chembl_confirms])
 print(f"Validation: {validation_score}/3 databases confirm {drug}-{target} interaction")

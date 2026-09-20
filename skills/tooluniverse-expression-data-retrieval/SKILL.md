@@ -53,12 +53,12 @@ Search silently. Do NOT narrate the process.
 result = tu.tools.arrayexpress_search_experiments(keywords="[gene/disease]", species="[species]", limit=20)
 
 # Get experiment details, samples, files
-details = tu.tools.arrayexpress_get_experiment(accession=accession)
-samples = tu.tools.arrayexpress_get_experiment_samples(accession=accession)
-files = tu.tools.arrayexpress_get_experiment_files(accession=accession)
+details = tu.tools.arrayexpress_get_experiment(experiment_id=accession)
+samples = tu.tools.arrayexpress_get_experiment_samples(experiment_id=accession)
+files = tu.tools.arrayexpress_get_experiment_files(experiment_id=accession)
 
 # BioStudies for multi-omics
-biostudies = tu.tools.biostudies_search(query="[keywords]", limit=10)
+biostudies = tu.tools.biostudies_search(query="[keywords]", pageSize=10)
 study = tu.tools.biostudies_get_study(accession=study_accession)
 study_files = tu.tools.biostudies_get_study_files(accession=study_accession)
 ```

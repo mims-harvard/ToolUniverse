@@ -53,7 +53,7 @@ def annotate_gene(tu, gene_symbol):
     """Comprehensive gene annotation."""
     omim = tu.tools.OMIM_search(operation="search", query=gene_symbol, limit=5)
     disgenet = tu.tools.DisGeNET_search_gene(operation="search_gene", gene=gene_symbol, limit=10)
-    ncbi = tu.tools.NCBIGene_search(term=gene_symbol, organism="human")
+    ncbi = tu.tools.NCBIGene_search(term=f"{gene_symbol}[Gene Name] AND human[Organism]")
     return {'symbol': gene_symbol, 'omim': omim, 'disgenet': disgenet, 'ncbi': ncbi}
 ```
 
@@ -110,18 +110,22 @@ def assess_dosage_sensitivity(tu, gene_list):
 def assess_population_frequency(tu, chrom, sv_start, sv_end, sv_type):
     """Check population databases for overlapping SVs."""
     # ClinVar for known pathogenic/benign SVs
-    clinvar = tu.tools.ClinVar_search_variants(
-        chromosome=str(chrom), start=sv_start, stop=sv_end, variant_type=sv_type.upper()
+    # ClinVar_search_variants cannot search by coordinates; ClinVar_search_by_region returns every
+    # variant OVERLAPPING the region (assembly defaults to GRCh37). It has no variant-type filter,
+    # so compare each hit's obj_type / span with sv_type yourself. If data['truncated'] is true only
+    # the first 500 candidates were scanned (see data['truncation_note']): narrow the region.
+    clinvar = tu.tools.ClinVar_search_by_region(
+        chrom=str(chrom), start=sv_start, end=sv_end, assembly="GRCh37"
     )
 
     known_svs = []
-    if clinvar.get('data'):
-        for variant in clinvar['data']:
-            known_svs.append({
-                'database': 'ClinVar',
-                'classification': variant.get('clinical_significance'),
-                'review_status': variant.get('review_status'),
-            })
+    for variant in clinvar['data'].get('variants', []):
+        known_svs.append({
+            'database': 'ClinVar',
+            'classification': variant.get('classification'),
+            'variant_type': variant.get('obj_type'),
+            'span': variant.get('span'),
+        })
 
     # Note: ToolUniverse has no DECIPHER tool - look up similar patient cases
     # manually in the DECIPHER web portal (https://www.deciphergenomics.org).

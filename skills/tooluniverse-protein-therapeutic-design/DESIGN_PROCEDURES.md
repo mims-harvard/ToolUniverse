@@ -10,19 +10,24 @@ Detailed code examples and procedures for each design phase.
 def get_target_structure(tu, target_id):
     """Get target structure: PDB first, then EMDB cryo-EM, then AlphaFold."""
     # Try PDB (X-ray/NMR)
-    pdb_results = tu.tools.PDBe_get_uniprot_mappings(uniprot_id=target_id)
+    # PDBeSIFTS_get_best_structures maps a UniProt accession to PDB entries
+    sifts = tu.tools.PDBeSIFTS_get_best_structures(uniprot_accession=target_id)
+    pdb_results = sifts.get('data', {}).get('structures', []) if sifts.get('status') == 'success' else []
     if pdb_results:
-        best_pdb = sorted(pdb_results, key=lambda x: x['resolution'])[0]
+        best_pdb = sorted(pdb_results, key=lambda x: x.get('resolution') or 99)[0]
         return {'source': 'PDB', 'pdb_id': best_pdb['pdb_id']}
 
     # Try EMDB (cryo-EM, good for membrane proteins)
     protein_info = tu.tools.UniProt_get_entry_by_accession(accession=target_id)
     emdb_results = tu.tools.EMDB_search_structures(query=protein_info['proteinDescription']['recommendedName']['fullName']['value'])
-    if emdb_results:
-        best_emdb = sorted(emdb_results, key=lambda x: x.get('resolution', 99))[0]
-        emdb_details = tu.tools.EMDB_get_structure(entry_id=best_emdb['emdb_id'])
-        if emdb_details.get('pdb_ids'):
-            return {'source': 'EMDB cryo-EM', 'emdb_id': best_emdb['emdb_id'], 'pdb_id': emdb_details['pdb_ids'][0]}
+    emdb_hits = emdb_results.get('data', []) if emdb_results.get('status') == 'success' else []
+    if emdb_hits:
+        best_emdb = emdb_hits[0]  # records carry emdb_id but no top-level resolution
+        emdb_details = tu.tools.EMDB_get_structure(emdb_id=best_emdb['emdb_id'])
+        # Only some maps cross-reference a fitted PDB model
+        pdb_refs = emdb_details.get('data', {}).get('crossreferences', {}).get('pdb_list', {}).get('pdb_reference', [])
+        if pdb_refs:
+            return {'source': 'EMDB cryo-EM', 'emdb_id': best_emdb['emdb_id'], 'pdb_id': pdb_refs[0]['pdb_id']}
 
     # Fallback: AlphaFold prediction
     sequence = tu.tools.UniProt_get_sequence_by_accession(accession=target_id)

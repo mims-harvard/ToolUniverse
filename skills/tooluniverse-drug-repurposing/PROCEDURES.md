@@ -34,7 +34,7 @@ drug_candidates = []
 for target in targets['data'][:10]:
     # Search DrugBank
     drugbank_results = tu.tools.drugbank_get_drug_name_and_description_by_target_name(
-        target_name=target['gene_symbol']
+        query=target['gene_symbol']
     )
 
     # Search DGIdb
@@ -53,13 +53,13 @@ for target in targets['data'][:10]:
 # 2.2 Get drug details
 for drug_name in unique_drugs:
     drug_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
-        drug_name_or_drugbank_id=drug_name
+        query=drug_name
     )
     indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(
-        drug_name_or_drugbank_id=drug_name
+        query=drug_name
     )
     pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(
-        drug_name_or_drugbank_id=drug_name
+        query=drug_name
     )
 ```
 
@@ -71,12 +71,12 @@ for drug in top_candidates:
     warnings = tu.tools.FDA_get_warnings_and_cautions_by_drug_name(
         drug_name=drug['name']
     )
-    adverse_events = tu.tools.FAERS_search_reports_by_drug_and_reaction(
-        drug_name=drug['name'],
+    adverse_events = tu.tools.FAERS_count_reactions_by_drug_event(
+        medicinalproduct=drug['name'],
         limit=100
     )
     interactions = tu.tools.drugbank_get_drug_interactions_by_drug_name_or_id(
-        drug_name_or_id=drug['name']
+        query=drug['name']
     )
 
 # 3.2 Assess ADMET properties (for novel formulations)
@@ -159,7 +159,7 @@ ranked_candidates = sorted(
 ```python
 known_drug = "metformin"
 moa = tu.tools.drugbank_get_drug_desc_pharmacology_by_moa(
-    mechanism_of_action="[moa_term]"
+    query="[moa_term]"
 )
 similar = tu.tools.ChEMBL_search_similar_molecules(
     query=known_drug,
@@ -171,10 +171,10 @@ similar = tu.tools.ChEMBL_search_similar_molecules(
 
 ```python
 pathways = tu.tools.drugbank_get_pathways_reactions_by_drug_or_id(
-    drug_name_or_drugbank_id="[drug_name]"
+    query="[drug_name]"
 )
 pathway_drugs = tu.tools.drugbank_get_drug_name_and_description_by_pathway_name(
-    pathway_name=pathways['data'][0]['pathway_name']
+    query=pathways['data']['results'][0]['pathways'][0]['name']
 )
 ```
 
@@ -182,11 +182,11 @@ pathway_drugs = tu.tools.drugbank_get_drug_name_and_description_by_pathway_name(
 
 ```python
 indication_drugs = tu.tools.drugbank_get_drug_name_and_description_by_indication(
-    indication="[related_indication]"
+    query="[related_indication]"
 )
 # Analyze adverse events as therapeutic effects (e.g., minoxidil → hair growth)
-adverse_as_therapeutic = tu.tools.FAERS_search_reports_by_drug_and_reaction(
-    drug_name="[drug_name]",
+adverse_as_therapeutic = tu.tools.FAERS_count_reactions_by_drug_event(
+    medicinalproduct="[drug_name]",
     limit=1000
 )
 ```
@@ -202,7 +202,7 @@ targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(
 )
 for drug in candidate_drugs:
     drug_targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(
-        drug_name_or_drugbank_id=drug
+        query=drug
     )
     overlap = len(set(drug_targets) & set(disease_targets))
     if overlap >= 3:
@@ -212,14 +212,17 @@ for drug in candidate_drugs:
 ### Structure-Based Repurposing
 
 ```python
-cid = tu.tools.PubChem_get_CID_by_compound_name(compound_name=known_active)
+cid = tu.tools.PubChem_get_CID_by_compound_name(compound_name=known_active)['data']['IdentifierList']['CID'][0]
+props = tu.tools.PubChem_get_compound_properties_by_CID(cid=cid)
+smiles = props['data']['PropertyTable']['Properties'][0]['ConnectivitySMILES']
 similar = tu.tools.PubChem_search_compounds_by_similarity(
-    cid=cid['data']['cid'], threshold=85
+    smiles=smiles, threshold=0.85  # Tanimoto, 0-1 scale; returns CIDs only
 )
-for compound in similar['data']:
+for similar_cid in similar['data']['IdentifierList']['CID']:
     # FDA labels are keyed by drug name, not CID -- resolve the name first
-    _syn = tu.tools.PubChem_get_compound_synonyms_by_CID(cid=compound['cid'])
-    _name = _syn['data'][0] if isinstance(_syn, dict) and _syn.get('data') else None
+    _syn = tu.tools.PubChem_get_compound_synonyms_by_CID(cid=similar_cid)
+    _info = _syn.get('data', {}).get('InformationList', {}).get('Information', [])
+    _name = _info[0]['Synonym'][0] if _info and _info[0].get('Synonym') else None
     drug_info = tu.tools.FDA_get_drug_label(drug_name=_name)
 ```
 
@@ -251,11 +254,11 @@ approved_drugs = [d for d in all_drugs if d.get('approved')]
 ### Pattern 2: Deep Dive Single Drug
 ```python
 drug_name = "metformin"
-info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(drug_name_or_drugbank_id=drug_name)
-targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(drug_name_or_drugbank_id=drug_name)
-indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(drug_name_or_drugbank_id=drug_name)
-pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(drug_name_or_drugbank_id=drug_name)
-interactions = tu.tools.drugbank_get_drug_interactions_by_drug_name_or_id(drug_name_or_id=drug_name)
+info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(query=drug_name)
+targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(query=drug_name)
+indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(query=drug_name)
+pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(query=drug_name)
+interactions = tu.tools.drugbank_get_drug_interactions_by_drug_name_or_id(query=drug_name)
 warnings = tu.tools.FDA_get_warnings_and_cautions_by_drug_name(drug_name=drug_name)
 papers = tu.tools.PubMed_search_articles(query=f"{drug_name} AND [new_disease]", max_results=100)
 ```
@@ -267,7 +270,7 @@ comparison = []
 for drug in candidates:
     data = {
         'name': drug,
-        'info': tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(drug_name_or_drugbank_id=drug),
+        'info': tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(query=drug),
         'safety': tu.tools.FDA_get_warnings_and_cautions_by_drug_name(drug_name=drug),
         'evidence': tu.tools.PubMed_search_articles(query=drug, max_results=10)
     }
@@ -287,8 +290,8 @@ targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=rel
 ### Use Case 2: Adverse Effect as Therapeutic
 ```python
 # Example: Thalidomide (teratogenic) -> cancer treatment
-adverse_events = tu.tools.FAERS_search_reports_by_drug_and_reaction(
-    drug_name=drug, limit=1000
+adverse_events = tu.tools.FAERS_count_reactions_by_drug_event(
+    medicinalproduct=drug, limit=1000
 )
 # Analyze if adverse effects beneficial in other contexts (e.g., weight loss AE -> obesity)
 ```
@@ -297,7 +300,7 @@ adverse_events = tu.tools.FAERS_search_reports_by_drug_and_reaction(
 ```python
 disease_targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_id)
 primary_targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id=primary_drug
+    query=primary_drug
 )
 uncovered_targets = [t for t in disease_targets if t not in primary_targets]
 # Find drugs for uncovered targets

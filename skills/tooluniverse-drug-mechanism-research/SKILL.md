@@ -70,7 +70,7 @@ for row in moa["data"]["drug"]["mechanismsOfAction"]["rows"]:
         print(f"  Target gene: {t['approvedSymbol']} ({t['id']})")
 
 # ChEMBL: detailed MOA with literature references and direct_interaction flag
-mechs = tu.tools.ChEMBL_get_drug_mechanisms(drug_chembl_id__exact="CHEMBL1431")
+mechs = tu.tools.ChEMBL_get_drug_mechanisms(drug_chembl_id="CHEMBL1431")
 for m in mechs["data"]["mechanisms"]:
     print(f"MOA: {m['mechanism_of_action']}, Direct: {m['direct_interaction']}")
     print(f"  Refs: {[r['ref_id'] for r in m.get('mechanism_refs', [])]}")
@@ -126,7 +126,7 @@ annot = tu.tools.STRING_get_functional_annotations(identifiers="PRKAA1", species
 enrichment = tu.tools.ReactomeAnalysis_pathway_enrichment(identifiers="PRKAA1 PRKAA2 PRKAB1")
 
 # STRING enrichment
-enrichment = tu.tools.STRING_functional_enrichment(identifiers="PRKAA1 PRKAA2", species=9606)
+enrichment = tu.tools.STRING_functional_enrichment(protein_ids=["PRKAA1", "PRKAA2"], species=9606)
 ```
 
 **Reasoning strategy**: If multiple drug targets converge on the same pathway, that pathway is the drug's true mechanism. If targets are in different pathways, the drug has genuinely multi-pathway effects -- report each separately.
@@ -200,7 +200,7 @@ articles = tu.tools.EuropePMC_search_articles(
     query="metformin mechanism action mitochondrial", limit=10)
 
 # Follow citation chains for seminal papers
-citations = tu.tools.EuropePMC_get_citations(source="MED", identifier="12345678")
+citations = tu.tools.EuropePMC_get_citations(source="MED", article_id="12345678")
 ```
 
 **Search strategy**: Start with "[drug] mechanism of action [primary target]". If the mechanism is debated, add the competing hypotheses as separate queries. Recent reviews (add "review" to query) give the current consensus.

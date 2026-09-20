@@ -19,7 +19,7 @@ result = tu.tools.UniProt_search(
 **Purpose**: Get Ensembl and NCBI gene IDs
 ```python
 result = tu.tools.MyGene_query_genes(
-    q="EGFR",
+    query="EGFR",
     species="human",
     fields="ensembl.gene,symbol,name"
 )
@@ -30,7 +30,7 @@ result = tu.tools.MyGene_query_genes(
 **Purpose**: Get ChEMBL target ID
 ```python
 result = tu.tools.ChEMBL_search_targets(
-    query="EGFR",
+    pref_name__contains="Epidermal growth factor receptor",
     organism="Homo sapiens",
     limit=10
 )
@@ -59,17 +59,19 @@ result = tu.tools.DGIdb_get_gene_druggability(
 ### ChEMBL_search_binding_sites
 **Purpose**: Find known binding sites
 ```python
+# Filters by binding-site NAME only (not by target); site names look like
+# "Epidermal growth factor receptor erbB1, Pkinase_Tyr domain"
 result = tu.tools.ChEMBL_search_binding_sites(
-    target_chembl_id="CHEMBL203"
+    site_name__contains="Epidermal growth factor receptor"
 )
-# Returns: binding site names, types
+# Returns: data.binding_sites[] with site_id, site_name
 ```
 
 ### InterPro_get_protein_domains
 **Purpose**: Get domain architecture
 ```python
 result = tu.tools.InterPro_get_protein_domains(
-    accession="P00533"  # UniProt accession
+    protein_id="P00533"  # UniProt accession
 )
 # Returns: domains, families, sites with positions
 ```
@@ -304,10 +306,10 @@ result = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
 **Purpose**: Get ligands with measured binding affinities
 ```python
 result = tu.tools.BindingDB_get_ligands_by_uniprot(
-    uniprot="P00533",  # UniProt accession
-    affinity_cutoff=10000  # Max affinity in nM
+    uniprot_id="P00533",  # UniProt accession
+    affinity_cutoff=10000  # Max affinity in nM (large cutoffs can exceed the 30s timeout; retry with a tighter cutoff)
 )
-# Returns: SMILES, affinity_type (Ki/IC50/Kd), affinity value, PMID
+# Returns: data.affinities[] with smile, affinity_type (Ki/IC50/Kd), affinity, pmid
 ```
 **Advantages**: Direct affinity measurements, literature links, compounds not in ChEMBL
 
@@ -442,9 +444,9 @@ result = tu.tools.EMDB_search_structures(
 **Purpose**: Get details for EMDB entry including associated PDB models
 ```python
 result = tu.tools.EMDB_get_structure(
-    entry_id="EMD-12345"
+    emdb_id="EMD-3061"
 )
-# Returns: entry details including pdb_ids (associated atomic models)
+# Returns: data.crossreferences.pdb_list.pdb_reference[].pdb_id (associated atomic models; absent for entries without a model)
 ```
 
 **Cryo-EM vs X-ray Decision**:
@@ -516,12 +518,12 @@ result = tu.tools.NvidiaNIM_boltz2(
 **Purpose**: Similarity search in ChEMBL
 ```python
 result = tu.tools.ChEMBL_search_similar_molecules(
-    molecule="CC(C)Cc1ccc(cc1)C(C)C(O)=O",  # SMILES, ChEMBL ID, or name
-    similarity=70  # Tanimoto threshold (0-100)
+    query="CC(C)Cc1ccc(cc1)C(C)C(O)=O",  # SMILES, ChEMBL ID, or name
+    similarity_threshold=70  # Tanimoto threshold (0-100)
 )
-# Returns: similar molecules with similarity score
+# Returns: result[0].similar_molecules[] with chembl_id, smiles, similarity
 ```
-**⚠️ Parameter**: Use `molecule`, NOT `smiles`
+**⚠️ Parameter**: Use `query` and `similarity_threshold`, NOT `smiles`/`molecule`/`similarity`
 
 ### PubChem_search_compounds_by_similarity
 **Purpose**: Similarity search in PubChem
@@ -555,10 +557,12 @@ result = tu.tools.PubChem_search_compounds_by_substructure(
 **Purpose**: Cross-database chemical-protein links
 ```python
 result = tu.tools.STITCH_get_chemical_protein_interactions(
-    identifier="EGFR",
+    identifiers=["EGFR"],
     species=9606  # Human
 )
 # Returns: chemicals with confidence scores
+# NOTE: as of the last check STITCH's /json/interactions endpoint returns 404 upstream, so this
+# tool currently fails; use STRING_get_network / ChEMBL_search_activities for chemical-protein links
 ```
 
 ---
@@ -677,10 +681,11 @@ result = tu.tools.ADMETAI_predict_clearance_distribution(
 ### ChEMBL_search_compound_structural_alerts
 **Purpose**: PAINS and toxicophore detection
 ```python
+# Takes a ChEMBL molecule ID (not SMILES); CHEMBL25 = aspirin
 result = tu.tools.ChEMBL_search_compound_structural_alerts(
-    smiles="CC(C)Cc1ccc(cc1)C(C)C(O)=O"
+    molecule_chembl_id="CHEMBL25"
 )
-# Returns: structural alerts, PAINS flags
+# Returns: data.compound_structural_alerts[] with alert.alert_name, alert.alert_set.set_name, alert.smarts
 ```
 
 ---
@@ -751,9 +756,8 @@ result = tu.tools.PubMed_search_articles(
 ```python
 # Search preprints using EuropePMC (bioRxiv/medRxiv don't have search APIs)
 result = tu.tools.EuropePMC_search_articles(
-    query="EGFR small molecule discovery",
-    source="PPR",  # PPR = Preprints only
-    pageSize=15
+    query="SRC:PPR AND EGFR small molecule discovery",  # SRC:PPR = preprints only
+    limit=15
 )
 
 # If you have a DOI, get full bioRxiv metadata:
@@ -763,16 +767,15 @@ full_metadata = tu.tools.BioRxiv_get_preprint(doi="10.1101/2023.12.01.569554")
 **⚠️ Note**: Preprints NOT peer-reviewed. Use for emerging compounds/methods.
 
 ### MedRxiv_get_preprint
-**Purpose**: Get medRxiv preprint by DOI (for search, use EuropePMC with source='PPR')
+**Purpose**: Get medRxiv preprint by DOI (for search, use EuropePMC with a `SRC:PPR` query)
 ```python
 # Get preprint by DOI
 result = tu.tools.MedRxiv_get_preprint(doi="10.1101/2021.04.29.21256344")
 
 # For searching clinical preprints, use EuropePMC:
 search = tu.tools.EuropePMC_search_articles(
-    query="EGFR inhibitor clinical trial",
-    source="PPR",
-    pageSize=10
+    query="SRC:PPR AND EGFR inhibitor clinical trial",
+    limit=10
 )
 # Returns: preprints with doi, title, abstract, etc.
 ```
@@ -866,7 +869,7 @@ Primary: get_protein_metadata_by_pdb_id (for each PDB)
 Primary: PubMed_search_articles (peer-reviewed)
 ├─ Success → Use published literature
 └─ Supplement with:
-         ├─ EuropePMC_search_articles (source='PPR' for preprints)
+         ├─ EuropePMC_search_articles (query with `SRC:PPR` for preprints)
          └─ openalex_search_works (citation analysis)
 ```
 
@@ -902,7 +905,7 @@ Primary: ADMETAI_predict_* (all endpoints)
 |------|-------|---------|-------|
 | `OpenTargets_*` | `ensembl_id` | `ensemblId` | CamelCase for OpenTargets |
 | `ChEMBL_get_target_activities` | `chembl_target_id` | `target_chembl_id` | Underscore style |
-| `ChEMBL_search_similar_molecules` | `smiles` | `molecule` | Accepts SMILES, ID, or name |
+| `ChEMBL_search_similar_molecules` | `smiles` | `query` (+ `similarity_threshold`) | Accepts SMILES, ID, or name |
 | `alphafold_get_prediction` | `uniprot` | `accession` | Just the accession |
 | `ADMETAI_*` | `smiles="..."` | `smiles=["..."]` | Must be list |
 | `NvidiaNIM_alphafold2` | `seq` | `sequence` | Full parameter name |

@@ -108,14 +108,14 @@ PTMs: Multiple phosphorylation sites (Y992, Y1068, Y1086...)
 go_terms = tu.tools.GO_get_annotations_for_gene(gene_id='UniProtKB:P00533')
 
 # Reactome pathways
-reactome_pathways = tu.tools.Reactome_map_uniprot_to_pathways(id='P00533')
+reactome_pathways = tu.tools.Reactome_map_uniprot_to_pathways(uniprot_id='P00533')
 
 # KEGG pathways
 kegg_info = tu.tools.kegg_get_gene_info(gene_id='hsa:1956')
 
 # Open Targets GO
 ot_go = tu.tools.OpenTargets_get_target_gene_ontology_by_ensemblID(
-    ensemblID='ENSG00000146648'
+    ensemblId='ENSG00000146648'
 )
 ```
 
@@ -157,7 +157,7 @@ intact_ppi = tu.tools.intact_get_interactions(
 
 # Open Targets interactions
 ot_ppi = tu.tools.OpenTargets_get_target_interactions_by_ensemblID(
-    ensemblID='ENSG00000146648'
+    ensemblId='ENSG00000146648'
 )
 ```
 
@@ -190,12 +190,12 @@ hpa = tu.tools.HPA_get_comprehensive_gene_details_by_ensembl_id(
 
 # Subcellular location
 subcell = tu.tools.HPA_get_subcellular_location(
-    ensembl_id='ENSG00000146648'
+    gene_name='EGFR'
 )
 
 # Cancer prognostics
 cancer = tu.tools.HPA_get_cancer_prognostics_by_gene(
-    gene_symbol='EGFR'
+    ensembl_id='ENSG00000146648'
 )
 ```
 
@@ -257,7 +257,7 @@ ClinVar Pathogenic Variants: 45
 ```python
 # Open Targets tractability
 tractability = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(
-    ensemblID='ENSG00000146648'
+    ensemblId='ENSG00000146648'
 )
 
 # DGIdb druggability
@@ -265,7 +265,7 @@ druggability = tu.tools.DGIdb_get_gene_druggability(genes=['EGFR'])
 
 # Known drugs
 drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
-    ensemblID='ENSG00000146648'
+    ensemblId='ENSG00000146648'
 )
 
 # ChEMBL bioactivity
@@ -284,12 +284,12 @@ activities = tu.tools.ChEMBL_get_target_activities(
 
 # Safety profile
 safety = tu.tools.OpenTargets_get_target_safety_profile_by_ensemblID(
-    ensemblID='ENSG00000146648'
+    ensemblId='ENSG00000146648'
 )
 
 # Chemical probes
 probes = tu.tools.OpenTargets_get_chemical_probes_by_target_ensemblID(
-    ensemblID='ENSG00000146648'
+    ensemblId='ENSG00000146648'
 )
 ```
 
@@ -343,8 +343,7 @@ pubmed_drug = tu.tools.PubMed_search_articles(
 
 # Open Targets publications
 ot_pubs = tu.tools.OpenTargets_get_publications_by_target_ensemblID(
-    ensemblID='ENSG00000146648',
-    size=10
+    entityId='ENSG00000146648'
 )
 ```
 
@@ -450,7 +449,7 @@ def assess_druggability():
     
     # 1. Tractability
     results['tractability'] = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(
-        ensemblID=ids['ensembl']
+        ensemblId=ids['ensembl']
     )
     
     # 2. DGIdb assessment
@@ -458,7 +457,7 @@ def assess_druggability():
     
     # 3. Known drugs
     results['drugs'] = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
-        ensemblID=ids['ensembl']
+        ensemblId=ids['ensembl']
     )
     
     # 4. ChEMBL activities
@@ -479,7 +478,7 @@ def assess_druggability():
     
     # 6. Safety
     results['safety'] = tu.tools.OpenTargets_get_target_safety_profile_by_ensemblID(
-        ensemblID=ids['ensembl']
+        ensemblId=ids['ensembl']
     )
     
     return results
@@ -531,16 +530,16 @@ def analyze_target(target):
     result = {
         'symbol': target['symbol'],
         'tractability': tu.tools.OpenTargets_get_target_tractability_by_ensemblID(
-            ensemblID=target['ensembl']
+            ensemblId=target['ensembl']
         ),
         'drugs': tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
-            ensemblID=target['ensembl']
+            ensemblId=target['ensembl']
         ),
         'diseases': tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensembl(
             ensemblId=target['ensembl']
         ),
         'safety': tu.tools.OpenTargets_get_target_safety_profile_by_ensemblID(
-            ensemblID=target['ensembl']
+            ensemblId=target['ensembl']
         ),
         'ppi': tu.tools.STRING_get_protein_interactions(
             protein_ids=[target['symbol']],
@@ -605,12 +604,12 @@ def validate_target(gene_symbol, disease_area='cancer'):
     
     # 2. EXPRESSION EVIDENCE
     # Cancer expression
-    hpa_cancer = tu.tools.HPA_get_cancer_prognostics_by_gene(gene_symbol='CDK4')
+    hpa_cancer = tu.tools.HPA_get_cancer_prognostics_by_gene(ensembl_id='ENSG00000135446')  # CDK4
     validation_results['expression'] = hpa_cancer
     
     # 3. FUNCTIONAL EVIDENCE
     # Pathways
-    pathways = tu.tools.Reactome_map_uniprot_to_pathways(id='P11802')
+    pathways = tu.tools.Reactome_map_uniprot_to_pathways(uniprot_id='P11802')
     go_terms = tu.tools.GO_get_annotations_for_gene(gene_id='UniProtKB:P11802')
     validation_results['function'] = {
         'pathways': pathways,
@@ -619,10 +618,10 @@ def validate_target(gene_symbol, disease_area='cancer'):
     
     # 4. DRUGGABILITY
     tractability = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(
-        ensemblID=ensembl_id
+        ensemblId=ensembl_id
     )
     existing_drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
-        ensemblID=ensembl_id
+        ensemblId=ensembl_id
     )
     validation_results['druggability'] = {
         'tractability': tractability,
@@ -631,10 +630,10 @@ def validate_target(gene_symbol, disease_area='cancer'):
     
     # 5. SAFETY
     safety = tu.tools.OpenTargets_get_target_safety_profile_by_ensemblID(
-        ensemblID=ensembl_id
+        ensemblId=ensembl_id
     )
     mouse_models = tu.tools.OpenTargets_get_biological_mouse_models_by_ensemblID(
-        ensemblID=ensembl_id
+        ensemblId=ensembl_id
     )
     validation_results['safety'] = {
         'profile': safety,
@@ -715,17 +714,17 @@ def find_targets_for_disease(disease_name):
         
         # Druggability
         tract = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(
-            ensemblID=ensembl_id
+            ensemblId=ensembl_id
         )
         
         # Existing drugs
         drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
-            ensemblID=ensembl_id
+            ensemblId=ensembl_id
         )
         
         # Safety
         safety = tu.tools.OpenTargets_get_target_safety_profile_by_ensemblID(
-            ensemblID=ensembl_id
+            ensemblId=ensembl_id
         )
         
         target_assessments.append({
@@ -782,7 +781,7 @@ ensembl = mapping['results'][0]['to']
 
 # 3. Get all info
 entry = tu.tools.UniProt_get_entry_by_accession(accession=uniprot)
-tractability = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(ensemblID=ensembl)
+tractability = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(ensemblId=ensembl)
 ```
 
 ### Pattern: PDB → Ligand Analysis
@@ -813,6 +812,6 @@ targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=efo
 # 3. Target → Drugs
 for target in targets['data'][:5]:
     drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
-        ensemblID=target['target_id']
+        ensemblId=target['target_id']
     )
 ```
