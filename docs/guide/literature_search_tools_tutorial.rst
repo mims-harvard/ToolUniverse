@@ -337,9 +337,8 @@ Search for preprints in specific fields:
     preprints = tu.run({
         "name": "EuropePMC_search_articles",
         "arguments": {
-        "query": "CRISPR gene editing",
-        "source": "PPR",
-        "pageSize": 2
+        "query": "CRISPR gene editing AND SRC:PPR",
+        "limit": 2
         }
     })
 
@@ -932,7 +931,7 @@ Search Zenodo for research data, publications, and datasets:
         "name": "Zenodo_search_records",
         "arguments": {
         "query": "machine learning",
-        "max_results": 5
+        "limit": 5
         }
     })
 
@@ -941,7 +940,7 @@ Search Zenodo for research data, publications, and datasets:
         "name": "Zenodo_search_records",
         "arguments": {
         "query": "climate change",
-        "max_results": 3,
+        "limit": 3,
         "community": "zenodo"
         }
     })
@@ -951,7 +950,7 @@ Search Zenodo for research data, publications, and datasets:
         "name": "Zenodo_search_records",
         "arguments": {
         "query": "COVID-19 dataset",
-        "max_results": 5
+        "limit": 5
         }
     })
 
@@ -1030,8 +1029,7 @@ Here are examples showing the enhanced features of the optimized tools:
         "name": "SemanticScholar_search_papers",
         "arguments": {
         "query": "deep learning",
-        "limit": 2,
-        "api_key": "your_api_key_here"  # Optional for higher limits
+        "limit": 2  # A higher rate limit needs the SEMANTIC_SCHOLAR_API_KEY environment variable
         }
     })
     
