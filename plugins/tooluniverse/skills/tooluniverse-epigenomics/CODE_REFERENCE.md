@@ -842,7 +842,7 @@ def annotate_genes_with_tooluniverse(gene_list, tu):
         annotation = {'gene': gene}
 
         try:
-            ens = tu.tools.ensembl_lookup_gene(id=gene, species='homo_sapiens')
+            ens = tu.tools.ensembl_lookup_gene(gene_id=gene, species='homo_sapiens')
             if isinstance(ens, dict):
                 data = ens.get('data', ens)
                 annotation['ensembl_id'] = data.get('id', 'N/A')

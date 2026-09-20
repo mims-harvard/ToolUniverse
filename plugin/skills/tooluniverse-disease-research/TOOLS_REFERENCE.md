@@ -236,11 +236,11 @@ tu.tools.GWAS_search_associations_by_gene(gene_name="TP53", size=10)
 # Returns: associations for gene
 ```
 
-### gnomad_get_variant_frequency
-**Purpose**: Get population variant frequencies
+### gnomad_get_variant
+**Purpose**: Get population variant frequencies (`gnomad_get_variant_populations` for per-ancestry frequencies; `gnomad_search_variants` to find a `variant_id` from an rsID)
 ```python
-tu.tools.gnomad_get_variant_frequency(variant="1-55505647-G-T")
-# Returns: population frequencies (gnomAD data)
+tu.tools.gnomad_get_variant(variant_id="19-44908822-C-T", dataset="gnomad_r4")
+# Returns: variant.rsid, variant.genome/exome allele frequency (af, ac, an)
 ```
 
 ---
@@ -250,7 +250,7 @@ tu.tools.gnomad_get_variant_frequency(variant="1-55505647-G-T")
 ### OpenTargets_get_associated_drugs_by_disease_efoId
 **Purpose**: Get drugs for disease
 ```python
-tu.tools.OpenTargets_get_associated_drugs_by_disease_efoId(efoId="EFO_0000384", size=100)
+tu.tools.OpenTargets_get_associated_drugs_by_disease_efoId(efoId="EFO_0000384")
 # Returns: drug info, phase, status, mechanism, target
 ```
 
@@ -383,14 +383,14 @@ tu.tools.Reactome_get_pathway_reactions(stId="R-HSA-73817")
 ### Reactome_map_uniprot_to_pathways
 **Purpose**: Get pathways for protein
 ```python
-tu.tools.Reactome_map_uniprot_to_pathways(id="P04637")
+tu.tools.Reactome_map_uniprot_to_pathways(uniprot_id="P04637")
 # Returns: pathways containing this protein
 ```
 
 ### Reactome_map_uniprot_to_reactions
 **Purpose**: Get reactions for protein
 ```python
-tu.tools.Reactome_map_uniprot_to_reactions(id="P04637")
+tu.tools.Reactome_map_uniprot_to_reactions(uniprot_id="P04637")
 # Returns: reactions involving this protein
 ```
 
@@ -414,24 +414,26 @@ tu.tools.humanbase_ppi_analysis(
 # Returns: PPI network, GO biological processes
 ```
 
-### gtex_get_expression_by_gene
+### GTEx_get_expression_summary
 **Purpose**: Get tissue-specific gene expression (GTEx)
 ```python
-tu.tools.gtex_get_expression_by_gene(gene="BRCA1")
-# Returns: expression levels across tissues
+tu.tools.GTEx_get_expression_summary(gene_symbol="BRCA1")
+# Returns: data.geneExpression[] - median TPM per tissue (tissueSiteDetailId, median, unit)
 ```
 
-### HPA_get_protein_expression
-**Purpose**: Get protein expression from Human Protein Atlas
+### HPA_get_comprehensive_gene_details_by_ensembl_id
+**Purpose**: Get protein expression from Human Protein Atlas (takes an Ensembl ID; find it with `HPA_search_genes_by_query(search_query="TP53")`; see also `HPA_get_subcellular_location` for localization)
 ```python
-tu.tools.HPA_get_protein_expression(gene="TP53")
-# Returns: protein expression by tissue, subcellular localization
+tu.tools.HPA_get_comprehensive_gene_details_by_ensembl_id(
+    ensembl_id="ENSG00000141510", include_images=False, include_antibodies=False
+)
+# Returns: data.gene_name, data.summary (tissues_with_expression, ...), tissue expression rows
 ```
 
 ### geo_search_datasets
 **Purpose**: Search GEO for gene expression datasets
 ```python
-tu.tools.geo_search_datasets(query="Alzheimer disease", max_results=20)
+tu.tools.geo_search_datasets(query="Alzheimer disease", limit=20)
 # Returns: GEO dataset accessions, descriptions
 ```
 
@@ -473,14 +475,14 @@ tu.tools.PubMed_get_cited_by(pmid="20210808", limit=20)
 ### OpenTargets_get_publications_by_disease_efoId
 **Purpose**: Get publications for disease
 ```python
-tu.tools.OpenTargets_get_publications_by_disease_efoId(efoId="EFO_0000384")
+tu.tools.OpenTargets_get_publications_by_disease_efoId(entityId="MONDO_0005148")
 # Returns: disease-related publications
 ```
 
 ### OpenTargets_get_publications_by_target_ensemblID
 **Purpose**: Get publications for target
 ```python
-tu.tools.OpenTargets_get_publications_by_target_ensemblID(ensemblId="ENSG00000141510")
+tu.tools.OpenTargets_get_publications_by_target_ensemblID(entityId="ENSG00000141510")
 # Returns: target-related publications
 ```
 
@@ -577,67 +579,66 @@ tu.tools.civic_search_molecular_profiles(limit=50)
 
 ## 9. Pharmacology (GtoPdb)
 
+> All `GtoPdb_*` tools need `GTOPDB_API_KEY` (the API returns HTTP 401 without a key); the calls below were checked against the tool schemas but not run live.
+
 ### GtoPdb_search_diseases
 **Purpose**: Search diseases
 ```python
-tu.tools.GtoPdb_search_diseases(name="diabetes", limit=20)
+tu.tools.GtoPdb_search_diseases(name="diabetes")
 # Returns: diseases with IDs, OMIM, DOID
 ```
 
-### GtoPdb_search_diseases
-**Purpose**: Get disease details
+### GtoPdb_get_disease_associations
+**Purpose**: Get disease-linked targets and ligands (disease_id from GtoPdb_search_diseases)
 ```python
-tu.tools.GtoPdb_search_diseases(disease_id=652)
-# Returns: targets, ligands, description
+tu.tools.GtoPdb_get_disease_associations(disease_id=652)
+# Returns: diseaseTargets and diseaseLigands
 ```
 
 ### GtoPdb_search_targets
 **Purpose**: Get pharmacological targets
 ```python
-tu.tools.GtoPdb_search_targets(target_type="GPCR", limit=20)
+tu.tools.GtoPdb_search_targets(type="GPCR")
 # Returns: targets with drugs, ligands
 ```
 
 ### GtoPdb_search_targets
-**Purpose**: Get target details
+**Purpose**: Get target details by HGNC gene symbol
 ```python
-tu.tools.GtoPdb_search_targets(target_id=290)
+tu.tools.GtoPdb_search_targets(gene_symbol="CHRNA7")
 # Returns: detailed target info
 ```
 
 ### GtoPdb_get_interactions
 **Purpose**: Get target-ligand interactions
 ```python
-tu.tools.GtoPdb_get_interactions(
-    target_id=290,
-    action_type="Agonist"
-)
-# Returns: interactions with affinity
+tu.tools.GtoPdb_get_interactions(target_id=290)
+# Returns: interactions with affinity (no server-side action-type filter)
 ```
 
 ### GtoPdb_get_interactions
-**Purpose**: Search drug-target interactions
+**Purpose**: Search drug-target interactions for one ligand
 ```python
-tu.tools.GtoPdb_get_interactions(
-    approved_only=True,
-    limit=100
-)
+# No "approved only" bulk query exists: find approved ligands with
+# GtoPdb_search_ligands(approved=True, ...), then fetch each one's interactions
+tu.tools.GtoPdb_get_interactions(ligandId=5765)  # aspirin
 # Returns: interaction data
 ```
 
-### GtoPdb_list_ligands
+### GtoPdb_search_ligands
 **Purpose**: Search ligands/drugs
 ```python
-tu.tools.GtoPdb_list_ligands(ligand_type="Approved", limit=20)
-# Returns: ligands with properties
+tu.tools.GtoPdb_search_ligands(name="aspirin", approved=True)
+# Returns: matching ligands with ligand IDs (optional filters: type, query)
 ```
 
-### GtoPdb_get_ligand
-**Purpose**: Get ligand details
+### GtoPdb_get_ligand_properties
+**Purpose**: Get ligand structure and computed properties
 ```python
-tu.tools.GtoPdb_get_ligand(ligand_id=1016)
-# Returns: SMILES, properties, targets
+tu.tools.GtoPdb_get_ligand_properties(ligand_id=1016)
+# Returns: chemical structure and molecular properties
 ```
+> Note: as of this writing the GtoPdb web services reject requests without an API key (HTTP 401), so these GtoPdb tools could not be run end-to-end when this reference was corrected; check the error before relying on them.
 
 ---
 
@@ -690,7 +691,7 @@ tu.tools.AdverseEventICDMapper(
 ### FAERS_count_reactions_by_drug_event
 **Purpose**: Get FDA adverse event reports count
 ```python
-tu.tools.FAERS_count_reactions_by_drug_event(drug="metformin", event="nausea")
+tu.tools.FAERS_count_reactions_by_drug_event(medicinalproduct="metformin", reactionmeddraverse="nausea")
 # Returns: count of adverse event reports from FAERS
 ```
 
@@ -789,8 +790,8 @@ if disease_name and not disease_id:
     disease_id = result.get('efo_id')
 elif disease_id and not disease_name:
     # Get name from EFO ID
-    result = tu.tools.OpenTargets_get_disease_id_description_by_name(efoId=disease_id)
-    disease_name = result.get('name')
+    result = tu.tools.OpenTargets_get_disease_ids_by_efoId(efoId=disease_id)
+    disease_name = result['data']['disease']['name']
 ```
 
 ### Issue: Empty results from a tool

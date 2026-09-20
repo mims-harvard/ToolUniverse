@@ -340,7 +340,10 @@ ddi_dailymed = tu.tools.DailyMed_parse_drug_interactions(drug_name="atorvastatin
 ```python
 pgx_search = tu.tools.PharmGKB_search_drugs(query="atorvastatin")
 pgx_details = tu.tools.PharmGKB_get_drug_details(drug_id="PA448500")
-dosing = tu.tools.PharmGKB_get_dosing_guidelines(gene="SLCO1B1")
+# Dosing guidelines are fetched by guideline ID: list CPIC guidelines for the gene, take the
+# `clinpgxid` field (not `pharmgkbid`), then fetch the guideline from PharmGKB
+cpic = tu.tools.CPIC_list_guidelines(gene="SLCO1B1")
+dosing = tu.tools.PharmGKB_get_dosing_guidelines(guideline_id=cpic['data'][0]['clinpgxid'])  # e.g. PA166264281
 fda_pgx = tu.tools.fda_pharmacogenomic_biomarkers(drug_name="atorvastatin", limit=10)
 ```
 
@@ -360,9 +363,8 @@ openalex = tu.tools.openalex_search_works(
     limit=15
 )
 preprints = tu.tools.EuropePMC_search_articles(
-    query="atorvastatin safety signal",
-    source="PPR",
-    pageSize=10
+    query="atorvastatin safety signal AND SRC:PPR",  # SRC:PPR restricts to preprints; a `source` argument is ignored
+    limit=10
 )
 ```
 

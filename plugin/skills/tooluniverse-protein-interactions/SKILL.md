@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-protein-interactions
-description: Protein-protein interaction (PPI) network analysis — STRING (predicted + experimental), BioGRID (curated), SASBDB (small-angle scattering). Distinguishes physical interactions (binding) from functional associations (co-expression, co-regulation). Use for interactome queries, complex partner identification, and pathway-level interaction analysis.
+description: Protein-protein interaction (PPI) network analysis — STRING (predicted + experimental), BioGRID (curated), SASBDB (small-angle scattering), Complex Portal (curated complex membership and stoichiometry, includes CORUM data). Distinguishes physical interactions (binding) from functional associations (co-expression, co-regulation). Use for interactome queries, complex partner identification, curated complex composition lookup, and pathway-level interaction analysis.
 disable-model-invocation: true
 ---
 
@@ -21,6 +21,7 @@ LOOK UP DON'T GUESS: protein interaction scores, experimental evidence types, an
 | **STRING** | 14M+ proteins, 5,000+ organisms | Not required | Primary interaction source |
 | **BioGRID** | 2.3M+ interactions, 80+ organisms | Required | Fallback, curated data |
 | **SASBDB** | 2,000+ SAXS/SANS entries | Not required | Solution structures |
+| **Complex Portal** | Curated complexes (incl. CORUM data) | Not required | Curated complex membership/stoichiometry |
 
 ## 4-Phase Workflow
 
@@ -30,6 +31,21 @@ LOOK UP DON'T GUESS: protein interaction scores, experimental evidence types, an
 4. **Structural Data (optional)** — `SASBDB_search_entries()` for SAXS/SANS solution structures
 
 See `python_implementation.py` for runnable examples (`example_tp53_analysis()`, `analyze_protein_network()`).
+
+## Complex Portal: Curated Complex Membership
+
+STRING/BioGRID answer "do A and B interact"; Complex Portal answers a different question — "what is the full, curated membership and stoichiometry of a known biological complex." Use it when the question is about a specific named or implied multi-subunit assembly (e.g. "what's in the SAGA complex," "what regulates p53 via a complex") rather than a pairwise or network-level interaction.
+
+```
+Phase 1: ComplexPortal_search_complexes(query=..., species=..., number=...) -> ranked candidate complexes,
+         each with complex_id, name, description, and a subunits[] list (identifier, name,
+         interactor_type: "protein" or "small molecule" for bound cofactors like zinc)
+Phase 2: ComplexPortal_get_complex(complex_id) -> full detail for one specific complex by its CPX- ID
+```
+
+**Real example** (verified live): `ComplexPortal_search_complexes(query="TP53", species="Homo sapiens")` -> real complexes including `CPX-6093` "TP53-MDM2-MDM4 transcription regulation complex" (subunits P04637/Q00987/O15151) and two SAGA-complex variants (KAT2A/KAT2B) that recruit via TP53/MYC — real multi-subunit assemblies with real UniProt-identified subunits, including small-molecule cofactors (e.g. a zinc atom, `CHEBI:27363`) alongside protein subunits.
+
+**Gotcha (verified live)**: `ComplexPortal_get_complex` can return `complex_id: null, name: null` in its own echoed fields even on a successful lookup — use `systematic_name` and the `subunits` list to confirm you got the right complex, and keep the `complex_id` you already had from `ComplexPortal_search_complexes` rather than trusting the field echoed back by `get_complex`.
 
 ## Parameters
 
@@ -65,6 +81,58 @@ Key fields returned per interaction edge:
 - `OmniPath_get_signaling_interactions` — directed, signed PPI (stimulation/inhibition)
 - `Reactome_map_uniprot_to_pathways` — map proteins to Reactome pathways (param: `uniprot_id`)
 - `ReactomeAnalysis_pathway_enrichment` — pathway enrichment for gene sets
+- SIGNOR (causal signaling, literature-backed) — see below
+
+### SIGNOR: Causal Signaling Interactions
+
+STRING/BioGRID above tell you protein A and protein B interact (physically or
+functionally) but not the *direction* or *effect*. SIGNOR fills that gap: it is
+a manually curated database where every edge is a directional causal statement
+— "A up-/down-regulates B's activity/quantity via mechanism M (phosphorylation,
+ubiquitination, transcriptional regulation, binding, ...), optionally at
+residue R" — each backed by a specific PMID. It's the same kind of directed,
+signed edge as `OmniPath_get_signaling_interactions`, but from one curated
+source with per-edge mechanism/residue/literature detail rather than an
+aggregation across many databases; use both when you need convergent support
+for a causal claim.
+
+**Tools** (all real, live-verified — `entity_id`/protein identifiers should be
+UniProt accessions, e.g. `P00533` for EGFR, not gene symbols):
+
+| Tool | Purpose | Key params |
+|------|---------|------------|
+| `SIGNOR_get_interactions` | Upstream regulators + downstream targets of one protein | `entity_id` (UniProt acc), `organism` (taxid, default 9606), `limit` |
+| `SIGNOR_list_pathways` | Browse curated signaling pathways (disease- or process-named) | `query` (optional keyword, e.g. `"apoptosis"`, `"MAPK"`) |
+| `SIGNOR_get_pathway` | All causal interactions within one curated pathway | `pathway_id` (from `list_pathways`, e.g. `"SIGNOR-EGF"`), `limit` |
+| `SIGNOR_connect_proteins` | Shortest curated causal sub-network linking 2+ proteins | `proteins` (array of UniProt accs, 2+), `level` (1=direct only, 2=one intermediate, 3=two intermediates), `limit` |
+
+Each interaction returns `source_entity`/`target_entity` (+ their UniProt
+`source_id`/`target_id`), `effect` (e.g. `"down-regulates activity"`,
+`"up-regulates quantity by expression"`), `mechanism` (e.g.
+`"phosphorylation"`, `"ubiquitination"`, `"binding"`, `"transcriptional
+regulation"` — can be an empty string when unspecified), `residue` (nullable),
+`pmid`, `direct` (bool — true = no known intermediate; SIGNOR's own
+`connect_proteins` output can mix `direct: true` and `direct: false` edges in
+one path, so check this field per-edge rather than assuming the whole path is
+direct), and a confidence-adjacent `score`.
+
+**Workflow — trace a causal path between two proteins:**
+```
+SIGNOR_connect_proteins(proteins=["P00533", "P28482"], level=2)  # EGFR -> ERK2(MAPK1)
+```
+returns the curated sub-network connecting them (verified live: real edges
+include EGFR's own upstream regulators like ERRFI1 and PRKG2, and
+transcriptional links such as JAK2->MYC and LCK->STAT3 that co-occur in the
+2-hop neighborhood — `connect_proteins` returns the local causal graph around
+the requested proteins, not only a single shortest path, so filter for edges
+that actually chain from source to target if you need one specific route).
+
+**Workflow — browse a disease/process pathway then inspect one protein's role in it:**
+```
+SIGNOR_list_pathways(query="cancer")          # -> pathway_id, e.g. "SIGNOR-EGF" (EGFR Signaling)
+SIGNOR_get_pathway(pathway_id="SIGNOR-EGF")   # -> all curated edges in that pathway (metadata.total_interactions gives the true count if limit truncates)
+SIGNOR_get_interactions(entity_id="P00533")   # -> zoom into EGFR specifically: e.g. real edges show VCB-Cul2 ubiquitinating/destabilizing EGFR (PMID:15590694) and EGFR phosphorylating IKBKE (PMID:27287717)
+```
 
 **Druggability & Clinical Context:**
 - `DGIdb_get_drug_gene_interactions` — drug interactions for hub proteins (param: `genes` as array)
@@ -89,6 +157,17 @@ interaction_ids = result.get("metadata", {}).get("interaction_ids", [])
 ### IntAct `protein_name` Alias
 
 IntAct tools accept `protein_name` as an alias parameter in addition to the original identifier parameter.
+
+### EBI Proteins-Gateway IntAct Access
+
+`EBIProteins_get_interactions(accession, limit=50)` and `EBIProteins_get_interaction_details(accession)` are a second, concrete access path into the same IntAct-sourced interaction data referenced above (via the EBI Proteins API rather than IntAct's own endpoint) — use these when a plain UniProt-accession-in, ranked-partners-out call is more convenient than mapping identifiers through STRING/IntAct first.
+
+| Tool | Returns |
+|------|---------|
+| `EBIProteins_get_interactions` | Binary interaction partners sorted by supporting-experiment count, each with `partner_accession`, `gene_name`, `experiments` (count), `organism_differ` (bool) |
+| `EBIProteins_get_interaction_details` | The query protein's own record (name, existence evidence, organism, disease associations, subcellular locations) plus its top interaction partners in one call — useful when you need protein context and its network in a single request instead of two |
+
+Real example (verified live): `EBIProteins_get_interactions(accession="P04637")` (TP53) → 198 partners incl. MDM2 (Q00987), ABL1, AIMP2 (6 experiments), EP300 (8 experiments). `EBIProteins_get_interaction_details(accession="P04637")` → same interaction data plus real disease associations (e.g. Li-Fraumeni syndrome) and subcellular locations in one response — skip the separate `UniProt_get_function_by_accession` call above when disease/localization context is the only extra thing needed.
 
 ## Domain Reasoning: Multimeric Assemblies & Binding Valency
 
@@ -156,4 +235,5 @@ For "what protein does X" questions: ALWAYS search UniProt and PubMed first — 
 - STRING: https://string-db.org/
 - BioGRID: https://thebiogrid.org/ (register for free API key)
 - SASBDB: https://www.sasbdb.org/
+- Complex Portal: https://www.ebi.ac.uk/complexportal/
 - ToolUniverse: https://github.com/mims-harvard/ToolUniverse

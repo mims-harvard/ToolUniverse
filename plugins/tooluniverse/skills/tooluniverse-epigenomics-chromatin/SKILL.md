@@ -141,10 +141,10 @@ result = tu.tools.UCSC_get_encode_cCREs(chrom="chr17", start=7668421, end=768749
 
 ## Phase 4: eQTL Analysis
 
-**GTEx_get_single_tissue_eqtls**: `gene_symbol`. Returns all significant eQTLs across tissues with snpId, pValue, tissueSiteDetailId, nes (normalized effect size).
+**GTEx_get_single_tissue_eqtls**: `gencode_id` (list of Ensembl gene IDs, versioned or not), `tissue_site_detail_id`, `page`. It does not accept a gene symbol; use `GTEx_query_eqtl` below if you only have a symbol. Returns significant eQTLs across tissues with snpId, pValue, tissueSiteDetailId, nes (normalized effect size).
 
 ```python
-result = tu.tools.GTEx_get_single_tissue_eqtls(gene_symbol="BRCA1")
+result = tu.tools.GTEx_get_single_tissue_eqtls(gencode_id=["ENSG00000012048"])  # BRCA1
 from collections import Counter
 tissue_counts = Counter(e["tissueSiteDetailId"] for e in result["data"])
 ```
@@ -162,7 +162,7 @@ result = tu.tools.GTEx_get_multi_tissue_eqtls(
 
 **GTEx_calculate_eqtl**: `operation="calculate_eqtl"`, `gencode_id`, `variant_id` (chr_pos_ref_alt_b38), `tissue_site_detail_id`. Works for non-significant pairs.
 
-**eQTL_list_datasets** / **eQTL_get_associations**: EBI eQTL Catalogue. Use `dataset_id` (from list call), `gene_id` (Ensembl), `variant`. Complementary to GTEx.
+**eQTL_list_datasets** / **eQTL_get_associations**: DEPRECATED, do not use. The EBI eQTL Catalogue retired its REST API (HTTP 410 Gone), so both tools return an error. Use the GTEx eQTL tools above for tissue eQTLs and `OpenTargets_get_credible_set_colocalisation` for GWAS/QTL colocalisation; the full eQTL Catalogue is available only as tabix/FTP summary statistics.
 
 ---
 
@@ -234,7 +234,7 @@ Convergence of T1+T2 evidence from independent sources (e.g., ENCODE ChIP-seq ov
 | RNA-seq | ENCODE_search_rnaseq_experiments (total RNA-seq) | retry with polyA plus RNA-seq |
 | ATAC-seq | ENCODE_search_chromatin_accessibility | GEO_search_atacseq_datasets |
 | cCREs | UCSC_get_encode_cCREs | SCREEN_get_regulatory_elements |
-| eQTLs | GTEx_get_single_tissue_eqtls | eQTL_get_associations (EBI) |
+| eQTLs | GTEx_get_single_tissue_eqtls | GTEx_query_eqtl |
 | Expression | GTEx_get_expression_summary | GTEx_get_median_gene_expression |
 | TF motifs | jaspar_search_matrices | ReMap_get_transcription_factor_binding |
 | Variant scoring | RegulomeDB_query_variant | combine eQTL + TF binding manually |

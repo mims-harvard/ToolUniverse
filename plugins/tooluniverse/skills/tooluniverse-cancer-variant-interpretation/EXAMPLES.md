@@ -38,12 +38,13 @@ result = tu.tools.cBioPortal_get_mutations(study_id='luad_tcga', gene_list='EGFR
 ### Phase 4: Therapeutic Options (verified)
 
 ```python
-drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(ensemblId='ENSG00000146648', size=20)
-# Returns 1870+ drug entries including:
-# - Osimertinib (CHEMBL3353410) - Phase 4, approved, EGFR inhibitor
-# - Cetuximab (CHEMBL1201577) - Phase 4, approved
-# - Lapatinib (CHEMBL1201179) - Phase 4, approved
-# - Neratinib (CHEMBL3989921) - Phase 4, approved
+drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(ensemblId='ENSG00000146648')
+# No size/paging parameter; returns all 82 rows (at time of writing) in
+# data.target.drugAndClinicalCandidates.rows[], including (maxClinicalStage APPROVAL):
+# - Osimertinib - EGFR inhibitor
+# - Cetuximab
+# - Lapatinib
+# - Neratinib
 
 fda = tu.tools.FDA_get_indications_by_drug_name(drug_name='osimertinib', limit=3)
 # Returns: FDA label showing indications for:
@@ -102,7 +103,7 @@ mutations = tu.tools.cBioPortal_get_mutations(study_id='skcm_tcga', gene_list='B
 
 # OpenTargets drugs
 drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
-    ensemblId='ENSG00000157764', size=20
+    ensemblId='ENSG00000157764'
 )
 # Returns vemurafenib, dabrafenib, encorafenib, and MEK inhibitors
 ```
@@ -134,7 +135,7 @@ mutations = tu.tools.cBioPortal_get_mutations(study_id='paad_tcga', gene_list='K
 
 # OpenTargets drugs
 drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
-    ensemblId='ENSG00000133703', size=20
+    ensemblId='ENSG00000133703'
 )
 # Returns sotorasib and other KRAS-targeting agents
 
@@ -166,7 +167,7 @@ Interpret TP53 R273H
 
 # Drug landscape
 drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
-    ensemblId='ENSG00000141510', size=20
+    ensemblId='ENSG00000141510'
 )
 # TP53 has limited direct targeted therapies
 
@@ -192,7 +193,7 @@ TP53 R273H is a well-known hotspot "contact" mutation that disrupts DNA binding.
 | `UniProt_get_function_by_accession` | **list** of strings (NOT dict) |
 | `OpenTargets_get_target_id_description_by_name` | dict: `{data: {search: {hits: [{id, name}]}}}` |
 | `cBioPortal_get_mutations` | dict: `{status: 'success', data: [{proteinChange, ...}]}` |
-| `OpenTargets_get_associated_drugs_by_target_ensemblID` | dict: `{data: {target: {knownDrugs: {count, rows}}}}` |
+| `OpenTargets_get_associated_drugs_by_target_ensemblID` | dict: `{data: {target: {drugAndClinicalCandidates: {count, rows}}}}` |
 | `FDA_get_indications_by_drug_name` | dict: `{results: [{indications_and_usage}]}` |
 | `drugbank_get_drug_basic_info_by_drug_name_or_id` | dict: `{results: [{drug_name, drugbank_id, description}]}` |
 | `PubMed_search_articles` | **list** of dicts: `[{pmid, title, authors}]` (NOT wrapped) |

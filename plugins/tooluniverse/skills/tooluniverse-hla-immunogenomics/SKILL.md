@@ -47,7 +47,9 @@ Typical triggers:
 | Database | Scope | Best For |
 |----------|-------|----------|
 | **IMGT** | International ImMunoGeneTics; HLA/MHC gene nomenclature and sequences | Authoritative HLA gene info, allele nomenclature, sequence data |
+| **IPD-IMGT/HLA** | IPD-IMGT/HLA allele database (via `IPD_*` tools); allele-accession-level records and reference cell lines | Full allele-history detail for a specific accession, HLA-typed reference cell lines |
 | **IEDB** | Immune Epitope Database; experimentally validated epitope-MHC data | Epitope binding, MHC restriction, T-cell assay results |
+| **HLA Ligand Atlas / MHC Motif Atlas** | Mass-spectrometry-eluted, naturally-presented HLA ligands | Direct evidence of presentation (not just predicted/assayed binding) |
 | **BVBRC** | BV-BRC (formerly PATRIC/IRD); pathogen epitopes | Pathogen-derived epitopes with host MHC context |
 | **UniProt** | Protein function and structure annotations | HLA protein features, domains, variants |
 | **DGIdb** | Drug-Gene Interaction Database | Druggability of HLA-pathway genes |
@@ -117,6 +119,16 @@ HLA nomenclature quick reference:
 
 **If allele not found**: Check nomenclature -- older names may have been reassigned. Try searching by the gene name alone (e.g., "HLA-A") and filtering results.
 
+**Allele-level detail via IPD-IMGT/HLA**: For the authoritative allele-nomenclature record itself (not just gene-level info), use the IPD-IMGT/HLA tools:
+- `IPD_search_hla_alleles` -- search by allele name prefix/substring
+  - Input: `name` (e.g. `"A*02:01"` -- NOT `query`, a common mistake)
+  - Output: list of `{accession, name}` pairs; a 4-field allele name like `A*02:01` typically matches several full-resolution accessions (e.g. `A*02:01:01:01`, `A*02:01:01:02`)
+- `IPD_get_hla_allele` -- fetch the full record for one accession (e.g. `HLA00005`)
+  - Output: `allele_history` across IPD-IMGT/HLA release versions -- useful for confirming a name hasn't been reassigned since an older paper was published
+- `IPD_search_cells` -- search HLA-typed reference cell lines by field value (e.g. donor lab, cell ID) -- useful for finding a well-characterized homozygous cell line for a given allele
+
+**Verified live example**: `IPD_search_hla_alleles({"name": "A*02:01"})` returns accessions `HLA00005`/`HLA00006`/... for the `A*02:01:01:01`/`A*02:01:01:02`/... sub-lineages; `IPD_get_hla_allele({"accession": "HLA00005"})` returns the full allele-history record.
+
 ### Phase 2: MHC Binding & Restriction
 
 **Objective**: Find what peptides bind to a specific MHC molecule, or what MHC molecules present a given peptide.
@@ -140,6 +152,19 @@ HLA nomenclature quick reference:
 - Moderate binder: IC50 50-500 nM
 - Weak binder: IC50 500-5000 nM
 - Non-binder: IC50 > 5000 nM
+
+**Naturally-presented ligands (immunopeptidomics)**: IEDB's binding assays test whether a peptide *can* bind; the HLA Ligand Atlas and MHC Motif Atlas instead report peptides *actually eluted* from HLA molecules by mass spectrometry -- direct evidence of presentation, not just affinity.
+- `MHCMotifAtlas_get_allele_ligands` -- curated naturally-presented ligands for one allele
+  - Input: `allele` in compact form, e.g. `"A0201"` (Class I) or `"DRB1_01_01"` (Class II) -- no asterisks/colons
+  - Output: `{allele, mhc_class, peptides: [{peptide}, ...]}`
+- `HLALigandAtlas_get_benign_peptides` -- benign-tissue immunopeptidome from the HLA Ligand Atlas (hla-ligand-atlas.org)
+  - Input: `hla_class` must be the literal string `"HLA-I"` or `"HLA-II"` (not `"I"`/`"II"`), optional `limit`
+  - Output: peptides with `donor_alleles` (the donor's full typed HLA set, prefixed `s/` for the allele the peptide was specifically assigned to vs. `n/` for the donor's other alleles) and source `tissues`
+- `HLALigandAtlas_get_donors` -- donor-to-HLA-allele mapping table
+  - Input: optional `donor` / `allele` substring filters
+  - **Always filter this call.** The unfiltered (all-donors) query processes the full mapping table and can take 60+ seconds or time out; a scoped query (e.g. `{"donor": "AUT01-DN13"}`) returns in under a second. Never call it with no arguments in an interactive workflow.
+
+**Verified live example**: `MHCMotifAtlas_get_allele_ligands({"allele": "A0201"})` returns real eluted peptides (e.g. `ALFTKVLENV`); `HLALigandAtlas_get_benign_peptides({"hla_class": "HLA-I", "limit": 3})` returns real thymus-tissue peptides with full donor-allele context.
 
 ### Phase 3: Epitope-MHC Associations
 

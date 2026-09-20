@@ -110,5 +110,5 @@ The script prints a text forest plot (per-study effect, CI, weight%, and the poo
 
 ## Related skills
 - `tooluniverse-literature-deep-research` — find and grade the studies to feed in.
-- `tooluniverse-statistical-modeling` — single-study regression, Cox, ORs (see `references/cox_regression.md` for HR extraction).
+- `tooluniverse-statistical-modeling` — single-study regression, Cox, ORs (see `../tooluniverse-statistical-modeling/references/cox_regression.md` for HR extraction).
 - `tooluniverse-gwas-study-explorer` / `tooluniverse-gwas-finemapping` — GWAS-specific multi-cohort analysis.

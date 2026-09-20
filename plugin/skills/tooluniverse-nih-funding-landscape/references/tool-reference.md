@@ -11,6 +11,7 @@
 - [Multi-component funding protocol](#multi-component-funding-protocol)
 - [Topic-query protocol](#topic-query-protocol)
 - [PI-disambiguation protocol](#pi-disambiguation-protocol)
+- [ORCID identity cross-check](#orcid-identity-cross-check)
 - [Funding-to-output protocol](#funding-to-output-protocol)
 - [Institution-comparison protocol](#institution-comparison-protocol)
 - [Concentration protocol](#concentration-protocol)
@@ -47,6 +48,7 @@ rank_institutions result.entity_id -> get_institution_profile / mechanism_mix / 
 search result.id OR search_grants result.project_num -> fetch(id)
 search_grants result.project_num -> citation/fetch of one full record
 search_grants result.core_project_num -> deduplication/lineage only; not fetchable
+ORCID_search_researchers result.orcid -> ORCID_get_profile / get_works / get_employments / get_fundings / get_peer_reviews
 ```
 
 Do not guess PI profile IDs or institution entity IDs. `search_grants` does not return institution entity IDs.
@@ -172,6 +174,32 @@ until reconciled through `search_grants` and `fetch`.
 9. The same normalized historical PI name and institution can map to several profile IDs because source identifiers drift. Treat them as candidate fragments, inspect overlapping grants and profile provenance, and never add profile totals merely because the labels match.
 10. The current profile contract has no `publications` field. A missing field is unavailable data, not zero publications. Collaborators are shared-award participants, not verified coauthors, mentors, or direct collaborators.
 
+## ORCID identity cross-check
+
+OpenNIH's PI profile has no `publications` field and a PI's normalized name can
+map to several fragmented `pi_profile_id` values (see step 10 of
+PI-disambiguation above). ORCID is a real, independent identity source that
+can tighten the disambiguation instead of relying on name/institution overlap
+alone. It requires no discovery step or key — call it directly with a
+researcher's name or a known ORCID iD (format `XXXX-XXXX-XXXX-XXXX`).
+
+| Tool | Use | Notes |
+|---|---|---|
+| `ORCID_search_researchers` | Find candidate ORCID iDs from a name/topic query | Returns given/family names, credit name, and current institution affiliations per candidate -- use these to narrow which OpenNIH `pi_profile_id` fragments belong to the same person |
+| `ORCID_get_profile` | Confirm one identity | Name, biography, keywords, works/employment summary counts |
+| `ORCID_get_employments` | Career/affiliation history with date ranges | Cross-check against the institution(s) shown across a PI's fragmented OpenNIH profiles |
+| `ORCID_get_works` | Full publication list with DOI/PubMed IDs | Fills the gap left by `get_pi_profile`'s missing publications field; feed DOIs/PMIDs into PubMed/PMC/OpenAlex for grading, don't treat the ORCID listing itself as graded evidence |
+| `ORCID_get_fundings` | Grant records the researcher has added to their own ORCID record | Self-reported and NOT limited to NIH -- treat as a candidate list to verify against `search_grants`, not as confirmation of an OpenNIH award |
+| `ORCID_get_peer_reviews` | Reviewing/editorial service record | Service profiling only; not a funding or output signal |
+
+Protocol:
+
+1. Use `ORCID_search_researchers` with the PI's name plus a topic/institution term when OpenNIH's own name-order fallbacks (surname, `LAST, FIRST`) still leave multiple candidates.
+2. Compare each candidate's `institutions` field and other-names against the OpenNIH grant rows' organization and any name variants seen. An institution match across both sources is stronger than a name match alone (grade as X2 resolved entity, not X1, unless a grant/publication identifier also matches).
+3. If a single ORCID iD is confirmed, use `ORCID_get_employments` to corroborate the institution-year overlap for grants awarded across an institutional move, and `ORCID_get_works` to source real publication identifiers for the funding-to-output protocol below.
+4. `ORCID_get_fundings` lists whatever the researcher (or their institution) has manually added to ORCID -- it is not a live NIH award ledger and can be incomplete, non-NIH, or absent even for a well-funded PI. A missing or empty result is not evidence the researcher lacks funding.
+5. An ORCID iD match becomes an X1 exact link once it is used to source a specific work/DOI/PMID that independently appears in the OpenNIH-linked evidence chain; the bare identity match itself is X2.
+
 ## Funding-to-output protocol
 
 Use a staged link rather than a topic-only narrative:
@@ -179,9 +207,10 @@ Use a staged link rather than a topic-only narrative:
 1. Start with the full and core NIH project numbers from verified OpenNIH rows.
 2. Query PubMed's Grant Number field with the exact identifier. Preserve every PMID and article type. Grade an exact grant-number association X1, while stating that acknowledgment/attribution is not proof the grant caused the result.
 3. Retrieve publication details from PubMed/PMC/OpenAlex. Use iCite only for clearly labeled bibliometric context. APT is a model-derived indicator, not a literal probability of translation, approval, or commercial success.
-4. Search ClinicalTrials.gov for the exact grant number before disease or intervention terms. Exact zero means no exact link was found in that query, not that no related trial exists.
-5. Treat disease/topic trial hits as X3 candidates. Search summaries can contain null sponsor, enrollment, phase, and intervention fields even when the study record has them; call the study-detail tool for every NCT ID cited.
-6. Search patents or other outputs only when the required source and credentials are available. Name an unavailable source explicitly instead of silently omitting it.
+4. If the PI's identity was confirmed via the ORCID identity cross-check above, `ORCID_get_works` is a second, author-anchored publication source -- intersect it with the grant-number PubMed search rather than substituting for it; a work on the ORCID list without an exact grant-number acknowledgment is X3, not X1.
+5. Search ClinicalTrials.gov for the exact grant number before disease or intervention terms. Exact zero means no exact link was found in that query, not that no related trial exists.
+6. Treat disease/topic trial hits as X3 candidates. Search summaries can contain null sponsor, enrollment, phase, and intervention fields even when the study record has them; call the study-detail tool for every NCT ID cited.
+7. Search patents or other outputs only when the required source and credentials are available. Name an unavailable source explicitly instead of silently omitting it.
 
 Minimum evidence table columns are award identifier, output identifier, output
 type/date, match method, evidence grade, verified detail source, and limitation.

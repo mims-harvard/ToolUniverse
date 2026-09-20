@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-model-organism-genetics
-description: Cross-species genetic analysis using model organism databases (MGI mouse, ZFIN zebrafish, FlyBase fruit fly, WormBase worm, SGD yeast, RGD rat, GBIF taxonomy). Maps human genes to orthologs, retrieves phenotype/expression/functional data, assesses gene function conservation, and identifies the best animal model for studying a human gene or disease.
+description: Cross-species genetic analysis using model organism databases (MGI mouse, IMPC systematic knockout phenotyping, ZFIN zebrafish, FlyBase fruit fly, WormBase worm, SGD budding yeast plus protein-domain/PTM/literature detail, PomBase fission yeast, RGD rat, GeneNetwork systems-genetics/eQTL panels, HumanMine/MouseMine cross-species data-warehouse search, GBIF taxonomy) plus VEuPathDB for eukaryotic pathogens (Plasmodium, Toxoplasma, fungi, vectors). Maps human genes to orthologs, retrieves phenotype/expression/functional data, assesses gene function conservation, and identifies the best animal model for studying a human gene or disease.
 disable-model-invocation: true
 ---
 
@@ -11,7 +11,7 @@ When analysis requires computation (statistics, data processing, scoring, enrich
 
 Map human genes to model organism orthologs and retrieve phenotype, expression, and functional data across six species. Synthesize cross-species evidence to assess gene function conservation and identify the best animal models for studying human genes and diseases.
 
-**Not for**: human variant interpretation (`tooluniverse-variant-analysis`), drug target validation (`tooluniverse-drug-target-validation`), human disease characterization (`tooluniverse-multiomic-disease-characterization`).
+**Not for**: human variant interpretation (`tooluniverse-variant-analysis`), drug target validation (`tooluniverse-drug-target-validation`), human disease characterization (`tooluniverse-multiomic-disease-characterization`), pathogen outbreak/drug-repurposing intelligence once a VEuPathDB target gene is identified (`tooluniverse-infectious-disease`).
 
 **LOOK UP, DON'T GUESS**: When asked about a species' taxonomy, ecology, or biology, search GBIF/NCBI Taxonomy first. For GBIF: use `GBIF_search_species(query="species name")`, then use the `nubKey` (not `key`) from the result to call `GBIF_get_species(speciesKey=nubKey)` for full taxonomy (kingdom, phylum, class, order, family). The `nubKey` is the GBIF backbone key; the `key` is dataset-specific and often lacks higher taxonomy.
 
@@ -93,6 +93,55 @@ Supplement via Monarch:
 
 ---
 
+### Phase 2b: Systematic Knockout Phenotyping (IMPC) — statistically-powered, complements MGI's curated calls
+
+MGI (Phase 2) aggregates curated phenotype annotations from the published literature — heterogeneous alleles, heterogeneous assays, no guarantee every gene was ever tested for every system. IMPC (International Mouse Phenotyping Consortium) is a different kind of evidence: one standardized pipeline (EUCOMM/KOMP-derived null alleles, e.g. `Trp53<tm1b(EUCOMM)Hmgu>`) runs the SAME broad battery of tests (viability, eye morphology, clinical chemistry, behavior, etc.) across thousands of knockout lines at IMPC phenotyping centers, with a p-value and effect size attached to every call. Use IMPC when you need a statistically-defensible answer to "does knocking this gene out actually produce a significant phenotype," not just "has anyone ever reported a phenotype."
+
+1. `IMPC_search_genes(query="<mouse_symbol_or_MGI_ID_or_name_fragment>", limit=20)` — resolve a symbol/name fragment to its MGI ID and human ortholog(s); useful for disambiguation when the mouse symbol alone is uncertain
+2. `IMPC_get_gene_summary(gene_symbol="<mouse_symbol>")` (or `mgi_id="MGI:XXXXXXX"`) — top-level flags only: `has_phenotype_data`, `phenotype_status`, `production_status`. **Its `mp_terms`/`mp_ids`/`top_level_mp_terms` arrays are empty even when `has_phenotype_data` is true** (verified live) — this tool tells you WHETHER data exists, not WHAT it says; always follow up with step 3 or 4 for the actual phenotype list.
+3. `IMPC_get_phenotypes_by_gene(gene_symbol="<mouse_symbol>", limit=100)` — the full genotype-phenotype call list: MP term, zygosity, sex, life stage, procedure/parameter, p-value, effect size, phenotyping center, allele symbol; also returns `phenotype_summary_by_system` (MP top-level term -> list of specific phenotypes), useful for a quick systems-level overview before drilling into individual calls
+4. `IMPC_get_gene_phenotype_hits(gene_symbol="<mouse_symbol>", significant_only=true, limit=100)` — similar underlying data to step 3 but oriented around the statistical result itself: adds `classification_tag` (plain-language significance/sex-specificity summary), `statistical_method` (e.g. "Linear Mixed Model framework, LME, including Weight", "Fisher Exact Test framework"), and separate `female_ko_estimate`/`male_ko_estimate` when an effect is sex-specific. Set `significant_only=false` to see tested-but-non-significant parameters too (useful for confirming a system was actually screened and came back negative, vs. never tested).
+
+**No gene found / zero results is informative, not an error**: a real gene can legitimately have zero IMPC phenotype calls if its knockout line hasn't reached statistical analysis yet (verified live: `IMPC_get_phenotypes_by_gene(gene_symbol="Braf")` returns `total_phenotype_calls: 0` with `mgi_id: ""` — Braf has an MGI record but no completed IMPC pipeline data at time of writing). State this plainly rather than treating an empty IMPC result as "no phenotype exists" or silently falling back to MGI without saying so.
+
+**Worked example (verified live)**: `IMPC_get_gene_summary(gene_symbol="Trp53")` resolves `MGI:98834`, human ortholog `TP53`. `IMPC_get_phenotypes_by_gene` returns 6 significant calls / 5 unique MP terms across 4 systems: vision/eye (persistence of hyaloid vascular system, p=1.2e-5; abnormal retina morphology, p=1.9e-7), homeostasis/metabolism (decreased circulating creatine kinase, heterozygote-only, p=6.0e-5), mortality/aging (preweaning lethality with incomplete penetrance, p<0.001), and behavior/neurological (increased startle reflex, female-specific effect size 878 vs. male 355, p=1.7e-12). `IMPC_get_gene_phenotype_hits` on the same gene surfaces the same calls with `statistical_method` and sex-split estimates attached, e.g. tagging the startle-reflex result as "significant in females only."
+
+**Workflow**: for any gene already run through Phase 2 (MGI), also run this phase and compare — a phenotype curated in MGI from an old paper but absent from IMPC's systematic screen (or vice versa) is worth flagging explicitly rather than silently preferring one source.
+
+---
+
+### Phase 2c: Broader Data-Warehouse Search (HumanMine / MouseMine) — free-text fallback when structured lookups come up thin
+
+MGI/IMPC (Phases 2/2b) require you to already have a mouse symbol or MGI ID and answer narrow, structured questions (phenotype calls, gene record). HumanMine and MouseMine are general-purpose InterMine data warehouses that integrate 30+ underlying sources (NCBI Gene, Ensembl, UniProt, Reactome, KEGG, GWAS Catalog, publications) behind one free-text search — useful when you don't yet have a clean ID, want pathway/publication hits alongside gene hits, or need a flexible graph query MGI's fixed endpoints don't offer.
+
+1. `HumanMine_search(q="<term>", size=10)` — free-text across genes/proteins/pathways/diseases for **human, mouse, and rat simultaneously**; results are tagged by `organism.shortName` (e.g. `H. sapiens`, `M. musculus`, `R. norvegicus`) so you see cross-species hits in one call. Verified live: `q="TP53"` returns 32 hits split 21 human / 3 mouse / 8 rat.
+2. `HumanMine_search_genes(q="<term>", size=10)` / `HumanMine_search_pathways(q="<term>", size=10)` — narrower convenience wrappers filtering to genes-only or pathways-only (Reactome/KEGG-sourced).
+3. `MouseMine_search(q="<term>", size=10, format="json")` — the mouse-only InterMine sibling; broader than MGI's own gene/phenotype endpoints because it also indexes publications and pathway membership in the same search.
+4. `MouseMine_search_genes(q="<term>", size=10)` — filters to `ProteinCodingGene` only. Verified live on `q="Trp53"` (same gene used in the Phase 2b IMPC example): 180 hits, with a `pathways.name` facet showing `Transcriptional Regulation by TP53`, `G1/S DNA Damage Checkpoints`, etc. — a fast way to see pathway context without a separate Reactome call.
+5. `MouseMine_search_alleles(q="<term>", size=10)` — allele/mutant search returning `attributeString` (e.g. `Null/knockout`) and `alleleType` (Targeted, Endonuclease-mediated, Spontaneous, ...). Verified live on `q="Trp53"`: 170 alleles including `Trp53<em2Mvw>` (endonuclease-mediated null).
+6. `InterMine_run_pathquery(query="<XML PathQuery>")` — for HumanMine only, an escape hatch to traverse the InterMine data model graph directly (gene→pathways, gene→protein domains, region→features) when the canned search tools don't expose the relationship you need. Requires hand-written XML with `model`, `view`, and `constraint` elements — verified live with the tool's own worked example (`Gene.symbol Gene.pathways.name` constrained to `PAX6`), which correctly returned `PAX6 → Activation of HOX genes during differentiation`, `Developmental Biology`, etc.
+
+Use these as a **fallback/supplement**, not a replacement for Phases 1-2b: MGI/IMPC give you curated, structured, statistically-scored data; HumanMine/MouseMine give you fast free-text triage across a wider net of sources when you're not sure what you're looking for yet. For dedicated human-disease-association work (not just "does this gene show up near this disease term"), hand off to `tooluniverse-gene-disease-association`'s DisGeNET/OpenTargets/Monarch pipeline instead of treating a HumanMine disease-facet hit as a real association.
+
+**Mouse Phenome Database — do not rely on `MPD_get_phenotype_data`'s name at face value.** Despite being registered as an MPD tool, its own description states MPD's real REST API has no simple strain+phenotype-category search, so it substitutes a keyword search against **ENCODE experiment records mentioning the strain name** — this is a weak proxy for actual MPD phenotype measurements, not MPD data itself. Verified live: `strain="C57BL/6J"` succeeds, but `strain="DBA/2J"` reproducibly 404s (the unescaped `/` in the strain name breaks the outgoing ENCODE query URL) — a strain-name-dependent failure, not evidence the strain lacks data. Treat any result from this tool as circumstantial at best; for real cross-strain phenotype comparisons prefer Phase 2b (IMPC) or Phase 2c's GeneNetwork section below, and do not report "no ENCODE hits" as "no phenotype data exists for this strain."
+
+---
+
+### Phase 2d: Systems Genetics / eQTL Across Recombinant Inbred Panels (GeneNetwork)
+
+GeneNetwork is a different data type again: genetic-cross populations (13+ species) with matched genotype + expression/phenotype measurements per individual/strain, used for QTL mapping (which genomic region drives variation in this trait). Its best-known resource is the **BXD family** (C57BL/6J × DBA/2J recombinant inbred mouse strains — note both parental strains are the same C57BL/6J and DBA/2J from the MPD caveat above), but it also covers rat (HXB/BXH), Arabidopsis, and others.
+
+1. `GeneNetwork_list_species()` — no params; verified live returns `{"FullName": "Mus musculus", "Name": "mouse", "TaxonomyId": 10090}` plus rat/human/arabidopsis/etc.
+2. `GeneNetwork_list_groups(species="mouse")` — genetic cross populations for that species; verified live returns `BXD` (`GeneticType: "riset"`, i.e. recombinant inbred set) among others.
+3. `GeneNetwork_list_datasets(group="bxd")` — tissue/platform-specific datasets for that cross; verified live returns entries like `Long_Abbreviation: "BXDMicroArray_ProbeSet_August03"` (brain expression) alongside phenotype-only datasets (e.g. `BXDPublish`).
+4. `GeneNetwork_get_sample_data(dataset_name="<Long_Abbreviation>", trait_name="<probe_or_trait_id>")` — per-strain measurement values with standard errors for one trait across the whole panel.
+5. `GeneNetwork_get_trait_info(dataset_name="<...>", trait_name="<...>")` — trait metadata: gene symbol, chromosome/Mb position, `lrs` (LOD-like linkage score), `additive` effect, best `locus` (peak marker) — this is the QTL-mapping result for that trait. Verified live on the tool's own worked example (`HC_M2_0606_P`/`1436869_at` = Shh probe): returns `symbol: "Shh"`, `chr: "5"`, peak `locus: "rs8253327"`, `lrs: 12.77`.
+6. `GeneNetwork_get_dataset_info(dataset_name="<...>")` — dataset-level metadata (tissue, platform, data scale, public/confidential status) to confirm you're querying the right dataset before pulling sample data.
+
+Use this phase when the question is specifically "what genomic locus explains strain-to-strain variation in trait X" (classic QTL mapping) rather than "does gene X have a knockout phenotype" (Phase 2/2b) — GeneNetwork answers a genetics-of-variation question, not a loss-of-function question.
+
+---
+
 ### Phase 3: Invertebrate Models
 
 #### Fly (FlyBase)
@@ -152,6 +201,43 @@ Example — SHR is annotated to `Left Ventricular Hypertrophy` (DOID:9004616, qu
 5. `SGD_get_interactions(sgd_id="<sgd_id>")` — synthetic lethal partners = potential drug targets
 
 Most informative for: cell cycle, DNA repair, protein folding, metabolism, autophagy, secretory pathway, chromatin. Not informative for: multicellular processes (development, immunity, neural function).
+
+**Protein-level detail (complements the gene-level steps above)** — these three tools take a `locus` string directly (standard gene name, systematic/ORF name, or SGD ID — no separate ID-resolution step needed):
+6. `SGD_get_protein_domains(locus="<gene_or_ORF_name>")` — mapped domains from Pfam/InterPro/SMART/PROSITE/CDD/Gene3D/SUPERFAMILY in one call. Verified live on `locus="CDC28"` (the S. cerevisiae ortholog of fission-yeast **cdc2** from the Phase 5b PomBase example): 12 domain hits including Gene3D's "Phosphorylase Kinase; domain 1" and "Transferase(Phosphotransferase) domain 1" — consistent with CDC28's role as the budding-yeast CDK.
+7. `SGD_get_ptm_sites(locus="<gene_or_ORF_name>")` — curated post-translational modification sites (phosphorylation, ubiquitination, etc.) with residue, position, reference, and PMID. Verified live on `locus="CDC28"`: 34 sites, e.g. phosphorylated Ser2 (Lanz et al. 2021, PMID:33491328; also independently reported by Leutert et al. 2023, PMID:37845410).
+8. `SGD_get_literature(locus="<gene_or_ORF_name>")` — reference counts by curation category (primary, review, additional, etc.), not full citations — use this to gauge how well-studied a gene is before deciding whether to expect rich Phase 5 data. Verified live: `ACT1` has 1659 total references vs. `CDC28`'s 1971 — both heavily studied, unsurprising for essential cell-cycle/cytoskeletal genes.
+
+---
+
+### Phase 5b: Fission Yeast (PomBase) — S. pombe, distinct from SGD's S. cerevisiae
+
+S. pombe (fission yeast) and S. cerevisiae (budding yeast) diverged ~350-450 million years ago and are about as distant from each other as either is from humans for some pathways — S. pombe's cell-cycle and RNAi machinery is often the MORE human-like of the two yeasts, so check both when a Phase 5 (SGD) search comes up thin or when the process in question is cell-cycle/chromatin/RNA-processing-related.
+
+1. `PomBase_search_genes(query="<gene_name_or_keyword>", limit=10)` — search by gene name, systematic-ID prefix (e.g. `"SPAC"`), or product keyword across 12,600+ genes
+2. `PomBase_get_gene(gene_id="<systematic_id>")` — gene name, product, InterPro domains, deletion viability, UniProt cross-reference (systematic IDs look like `SPBC11B10.09`, `SPAC2F7.03c`)
+3. `PomBase_get_gene_phenotypes(gene_id="<systematic_id>")` — FYPO (Fission Yeast Phenotype Ontology) terms with evidence codes, plus `deletion_viability`
+4. `PomBase_get_orthologs(gene_id="<systematic_id>")` — human orthologs (HGNC IDs, taxon 9606) and S. cerevisiae orthologs (systematic name, taxon 4932) in one call — useful for triangulating a human gene through BOTH yeasts at once
+5. `PomBase_get_interactions(gene_id="<systematic_id>")` — physical (Affinity Capture-MS etc.) and genetic interactions with evidence, PMID, throughput, source database
+6. `PomBase_get_go_annotations(gene_id="<systematic_id>")` — GO terms by aspect (biological_process/molecular_function/cellular_component)
+
+Worked example (verified live): `PomBase_get_gene(gene_id="SPBC11B10.09")` resolves to **cdc2**, the fission-yeast cyclin-dependent kinase. `PomBase_get_orthologs` on the same ID returns human `HGNC:1722`/`HGNC:1771`/`HGNC:1772` (CDK1/CDK2/CDK3 family) and S. cerevisiae `YBR160W` (CDC28) — cdc2 is the founding member of the CDK family, first characterized in fission yeast. `PomBase_get_gene_phenotypes` confirms `deletion_viability: "inviable"` with 60 FYPO terms including "abnormal cell cycle arrest at mitotic G2/M phase transition," consistent with its essential mitotic role. `PomBase_get_interactions` returns 100 physical interactions (e.g. with `red1`/SPAC1006.03c via Affinity Capture-MS, PMID:24713849).
+
+---
+
+### Phase 3b: Eukaryotic Pathogens (VEuPathDB) — malaria, toxoplasmosis, fungi, vectors
+
+VEuPathDB is a family of pathogen/vector/host genome databases (PlasmoDB for *Plasmodium*/malaria, ToxoDB for *Toxoplasma*, FungiDB, VectorBase, CryptoDB, GiardiaDB, MicrosporidiaDB, PiroplasmaDB, TrichDB, TriTrypDB, AmoebaDB) sharing one WDK REST API. This is the right resource when the "model organism" in question is actually a pathogen and the question is about pathogen gene function rather than human-disease-model translation (for outbreak/drug-repurposing intelligence once a target gene is identified, hand off to `tooluniverse-infectious-disease`).
+
+**Live-verified access limitation (read before using):** as of this writing, only `VEuPathDB_list_record_types` works without authentication. The other 4 tools —
+`VEuPathDB_list_gene_searches`, `VEuPathDB_list_organism_searches`, `VEuPathDB_search_genes_by_organism`, `VEuPathDB_get_gene_record` — all fail live with `HTTP 401: Valid API Key required for this endpoint`, even though the tool's own module docstring claims "No authentication required." This is an upstream policy change since the tool was written, not a bug in your request, and the tool currently has **no built-in mechanism to supply an API key** (no `required_api_keys`/env-var support in `veupathdb_tool.py`) — so these 4 operations cannot currently be completed by this skill. Verify with a cheap call first:
+
+```
+VEuPathDB_list_record_types()  # {} — no params, this one still works
+```
+
+If a call to `VEuPathDB_search_genes_by_organism` or `VEuPathDB_get_gene_record` returns a 401, tell the user plainly that VEuPathDB now gates this endpoint and the tool has no key-passing mechanism yet — do not fabricate a gene record or organism gene list to work around it.
+
+When/if access is restored or a key mechanism is added: `VEuPathDB_search_genes_by_organism(organism="<Genus species Strain>", project="<plasmodb|toxodb|fungidb|vectorbase|cryptodb|giardiadb|microsporidiadb|piroplasmadb|trichdb|tritrypdb|amoebadb>", limit=25)` finds genes for a named organism/strain (e.g. `organism="Plasmodium falciparum 3D7"`, `project="plasmodb"`), and `VEuPathDB_get_gene_record(gene_id="<primary_key>", project="<same project>")` retrieves one gene's attributes (product, gene type, genomic location, chromosome, transcript count) by its VEuPathDB primary key (e.g. `PF3D7_0417200` for *P. falciparum*'s DHFR-TS gene).
 
 ---
 

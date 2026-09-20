@@ -40,23 +40,25 @@ tu.load_tools()
 result = tu.tools.Pharos_get_target(gene="KRAS")
 
 # Druggability assessment (Pharos)
-result = tu.tools.Pharos_search_targets(query="KRAS", limit=1)
+result = tu.tools.Pharos_search_targets(query="KRAS", top=1)  # `top` = max results (1-100)
 
 # Clinical trials
 result = tu.tools.search_clinical_trials(
-    intervention="KRAS inhibitor",
-    recruitment_status="recruiting"
+    intervention="sotorasib",              # an intervention NAME; the phrase "KRAS inhibitor" matches nothing
+    overall_status=["RECRUITING"]          # uppercase enum values; lowercase is rejected (HTTP 400)
 )
+# Note: this tool filters to phase 2/3/4 by default (see result metadata); use
+# ClinicalTrials_search_studies for an unfiltered search.
 
 # Pathway enrichment (Enrichr)
-result = tu.tools.enrichr_analyze_gene_list(
+result = tu.tools.Enrichr_enrich(
     gene_list=["KRAS", "EGFR", "BRAF"],
     library="KEGG_2021_Human"
 )
 
 # PPI networks (STRING)
-result = tu.tools.STRING_get_interactions(
-    identifiers="KRAS,EGFR,BRAF",
+result = tu.tools.STRING_get_network(
+    identifiers="KRAS\rEGFR\rBRAF",  # separate multiple proteins with \r, NOT commas
     species=9606
 )
 
@@ -79,8 +81,8 @@ Tell Claude:
 Claude will follow the workflow from SKILL.md and use these tools:
 1. Pharos_get_target - Gene validation (DepMap fallback)
 2. Pharos_search_targets - Druggability assessment
-3. enrichr_analyze_gene_list - Pathway enrichment
-4. STRING_get_interactions - PPI network analysis
+3. Enrichr_enrich - Pathway enrichment
+4. STRING_get_network - PPI network analysis
 5. search_clinical_trials - Clinical relevance
 
 #### Option 2: Direct Tool Calls
@@ -102,7 +104,7 @@ Returns:
 
 **Step 2: Pathway Enrichment**
 ```json
-Tool: enrichr_analyze_gene_list
+Tool: Enrichr_enrich
 Parameters:
 {
   "gene_list": ["KRAS", "EGFR", "BRAF"],
@@ -117,10 +119,10 @@ Alternative libraries:
 
 **Step 3: PPI Network Analysis**
 ```json
-Tool: STRING_get_interactions
+Tool: STRING_get_network
 Parameters:
 {
-  "identifiers": "KRAS,EGFR,BRAF",
+  "identifiers": "KRAS\rEGFR\rBRAF",
   "species": 9606,
   "required_score": 400
 }
@@ -131,8 +133,8 @@ Parameters:
 Tool: search_clinical_trials
 Parameters:
 {
-  "intervention": "KRAS inhibitor",
-  "recruitment_status": "recruiting"
+  "intervention": "sotorasib",
+  "overall_status": ["RECRUITING"]
 }
 ```
 
@@ -190,10 +192,10 @@ These parameter names apply to **both Python SDK and MCP**:
 |------|-----------|--------------|-------|
 | Pharos_get_target | Gene symbol | `gene` | Fallback for DepMap |
 | Pharos_search_targets | Query | `query` | Search by gene/drug |
-| enrichr_analyze_gene_list | Gene list | `gene_list` | List of gene symbols |
-| enrichr_analyze_gene_list | Library | `library` | Pathway database name |
-| STRING_get_interactions | Gene list | `identifiers` | Comma-separated |
-| STRING_get_interactions | Species | `species` | 9606 for human |
+| Enrichr_enrich | Gene list | `gene_list` | List of gene symbols |
+| Enrichr_enrich | Library | `library` | Pathway database name |
+| STRING_get_network | Gene list | `identifiers` | `\r`-separated (comma-separated fails) |
+| STRING_get_network | Species | `species` | 9606 for human |
 | search_clinical_trials | Intervention | `intervention` | Drug/target name |
 | PubMed_search_articles | Query | `query` | Search string |
 

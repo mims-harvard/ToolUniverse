@@ -31,7 +31,7 @@ def resolve_target_ids(tu, query):
 
     # CRITICAL: Get versioned Ensembl ID for GTEx
     if ids['ensembl']:
-        gene_info = tu.tools.ensembl_lookup_gene(id=ids['ensembl'], species="human")
+        gene_info = tu.tools.ensembl_lookup_gene(gene_id=ids['ensembl'], species="human")
         if gene_info and gene_info.get('version'):
             ids['ensembl_versioned'] = f"{ids['ensembl']}.{gene_info['version']}"
 
@@ -157,7 +157,7 @@ def path_0_open_targets(tu, ids):
     results = {}
 
     # 1. Diseases & Phenotypes (Section 8)
-    diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensemblId(
+    diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensembl(
         ensemblId=ensembl_id
     )
     results['diseases'] = diseases if diseases else {'note': 'No disease associations returned'}
@@ -188,7 +188,7 @@ def path_0_open_targets(tu, ids):
 
     # 6. Publications (Section 11)
     publications = tu.tools.OpenTargets_get_publications_by_target_ensemblID(
-        ensemblId=ensembl_id
+        entityId=ensembl_id
     )
     results['publications'] = publications if publications else {'note': 'No publications returned'}
 
@@ -252,18 +252,20 @@ def path_structure_robust(tu, ids):
         sequence = tu.tools.UniProt_get_sequence_by_accession(accession=ids['uniprot'])
         if sequence and len(sequence) < 1000:
             similar = tu.tools.PDB_search_similar_structures(
-                sequence=sequence[:500],
-                identity_cutoff=0.7
+                query=sequence[:500],
+                search_type="sequence",
+                similarity_threshold=0.7
             )
-            if similar:
-                for hit in similar[:10]:
+            if similar and similar.get('data'):
+                # data.results[] -> {'pdb_id', 'rank', 'score'}
+                for hit in similar['data']['results'][:10]:
                     if hit['pdb_id'] not in [s.get('pdb_id') for s in structures['pdb']]:
                         structures['pdb'].append(hit)
         structures['method_notes'].append(f"Step 2: Sequence search (identity >= 70%)")
 
     # STEP 3: Domain-based Search (for multi-domain proteins)
     if ids['uniprot']:
-        domains = tu.tools.InterPro_get_protein_domains(uniprot_accession=ids['uniprot'])
+        domains = tu.tools.InterPro_get_protein_domains(protein_id=ids['uniprot'])
         structures['domains'] = domains if domains else []
 
     # AlphaFold (always check)
@@ -289,16 +291,14 @@ def path_expression(tu, ids):
 
     # Try unversioned first
     gtex_result = tu.tools.GTEx_get_median_gene_expression(
-        gencode_id=ensembl_id,
-        operation="median"
+        gencode_id=ensembl_id
     )
 
     # Fallback to versioned if empty
     if not gtex_result or gtex_result.get('data') == []:
         if versioned_id:
             gtex_result = tu.tools.GTEx_get_median_gene_expression(
-                gencode_id=versioned_id,
-                operation="median"
+                gencode_id=versioned_id
             )
             if gtex_result and gtex_result.get('data'):
                 results['gtex'] = gtex_result
@@ -314,7 +314,12 @@ def path_expression(tu, ids):
         results['gtex'] = gtex_result
 
     # HPA (always query as backup)
-    hpa_result = tu.tools.HPA_get_rna_expression_by_source(ensembl_id=ensembl_id)
+    # (HPA_get_rna_expression_by_source needs a gene symbol plus one source_name;
+    # for a multi-tissue backup use the per-tissue tool -> data.tissue_expression{tissue: {...}})
+    hpa_result = tu.tools.HPA_get_rna_expression_in_specific_tissues(
+        ensembl_id=ensembl_id,
+        tissue_names=['liver', 'brain', 'heart muscle', 'kidney', 'lung']  # pick tissues relevant to the target
+    )
     results['hpa'] = hpa_result if hpa_result else {'note': 'No HPA RNA data'}
 
     return results
@@ -536,13 +541,13 @@ def get_bindingdb_ligands(tu, uniprot_id, affinity_cutoff=10000):
     Critical for identifying chemical starting points and assessing tractability.
     """
     result = tu.tools.BindingDB_get_ligands_by_uniprot(
-        uniprot=uniprot_id,
-        affinity_cutoff=affinity_cutoff
+        uniprot_id=uniprot_id,
+        affinity_cutoff=affinity_cutoff  # a loose cutoff (e.g. 10000 nM) can time out for popular targets
     )
 
-    if result:
+    if result and result.get('data', {}).get('affinities'):
         ligands = []
-        for entry in result:
+        for entry in result['data']['affinities']:  # data.affinities[] -> smile, affinity_type, affinity, monomerid, pmid
             ligands.append({
                 'smiles': entry.get('smile'),
                 'affinity_type': entry.get('affinity_type'),
@@ -632,9 +637,11 @@ def path_literature_collision_aware(tu, ids):
             related = tu.tools.PubMed_get_related(pmid=pmid, limit=20)
             for r in related.get('articles', []):
                 expanded_pmids.add(r.get('pmid'))
-            citing = tu.tools.EuropePMC_get_citations(pmid=pmid, limit=20)
-            for c in citing.get('citations', []):
-                expanded_pmids.add(c.get('pmid'))
+            citing = tu.tools.EuropePMC_get_citations(source="MED", article_id=pmid, page_size=20)
+            # data.citationList.citation[] -> {'source': 'MED', 'id': '<PMID>', 'title', ...}
+            for c in citing['data'].get('citationList', {}).get('citation', []):
+                if c.get('source') == 'MED':
+                    expanded_pmids.add(c.get('id'))
         seed_pmids.update(expanded_pmids)
 
     # Step 5: Classify papers by evidence tier

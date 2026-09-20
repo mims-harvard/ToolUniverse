@@ -67,14 +67,14 @@ A target with approved drugs may already be validated but competitive; a target 
 **BEFORE calling ANY tool for the first time**, verify its parameters:
 
 ```python
-tool_info = tu.tools.get_tool_info(tool_name="Reactome_map_uniprot_to_pathways")
-# Reveals: takes `id` not `uniprot_id`
+tool_info = tu.tools.get_tool_info(tool_names="Reactome_map_uniprot_to_pathways")
+# Reveals: takes `uniprot_id` (not `id`)
 ```
 
 Known parameter corrections:
-- `Reactome_map_uniprot_to_pathways`: param is `id` (not `uniprot_id`)
+- `Reactome_map_uniprot_to_pathways`: param is `uniprot_id` (not `id`)
 - `ensembl_get_xrefs`: param is `id` (not `gene_id`)
-- `GTEx_get_median_gene_expression`: requires `gencode_id` + `operation="median"`; try versioned Ensembl ID if empty
+- `GTEx_get_median_gene_expression`: takes `gencode_id` (or `gene_symbol`); `operation` defaults correctly, so omit it (`operation="median"` is rejected); try versioned Ensembl ID if empty
 - `OpenTargets_*`: param is `ensemblId` (camelCase, not `ensemblID`)
 - `STRING_get_protein_interactions`: takes `protein_ids` (list) + `species`
 - `intact_get_interactions`: takes `identifier` (UniProt accession, not gene symbol)
@@ -244,7 +244,7 @@ Separate SNVs from CNVs in ClinVar results. Integrate DisGeNET for curated gene-
 
 ## Retry Logic & Fallback Chains
 
-- `ChEMBL_get_target_activities` fails → `GtoPdb_search_ligands` → `OpenTargets drugs`
+- `ChEMBL_get_target_activities` fails → `GtoPdb_search_ligands` *(needs `GTOPDB_API_KEY`; skip this hop if unset)* → `OpenTargets drugs`
 - `intact_get_interactions` fails → `STRING_get_protein_interactions` → `OpenTargets interactions`
 - `GO_get_annotations_for_gene` fails → `OpenTargets GO` → `MyGene GO`
 - `GTEx_get_median_gene_expression` fails → `HPA_get_rna_expression_by_source` → document as unavailable

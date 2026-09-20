@@ -46,6 +46,8 @@ LOOK UP DON'T GUESS: pathway membership, gene-to-pathway assignments, and enrich
 | **Pathway Commons** | Meta-database aggregating multiple sources |
 | **BioModels** | Mathematical/computational SBML models |
 | **Enrichr** | Statistical over-representation analysis |
+| **BiGG Models** | Genome-scale metabolic reconstructions (85+ organisms), FBA-ready COBRA format |
+| **Rhea** | Expert-curated biochemical reaction knowledgebase (ChEBI-based, EC-cross-referenced) |
 
 ## Workflow Overview
 
@@ -231,11 +233,72 @@ Metabolic flux analysis (MFA) quantifies the rates of metabolic reactions in viv
 
 Key concepts:
 - **Steady-state assumption**: At metabolic steady state, the rate of production of each intermediate equals its rate of consumption. This gives a system of linear equations: S * v = 0, where S is the stoichiometric matrix and v is the flux vector.
-- **Flux Balance Analysis (FBA)**: When the system is underdetermined (more reactions than metabolites), FBA uses linear programming to optimize an objective function (e.g., maximize biomass production). Use `biomodels_search` to find published SBML models for the organism.
+- **Flux Balance Analysis (FBA)**: When the system is underdetermined (more reactions than metabolites), FBA uses linear programming to optimize an objective function (e.g., maximize biomass production). Use `biomodels_search` to find a published SBML *paper's* model for the organism, or — for a model that is already curated, versioned, and ready to run FBA on without further cleanup — use BiGG (below).
 - **13C-MFA**: Uses isotope labeling to experimentally constrain intracellular fluxes. The labeling pattern of metabolites reveals which pathways carried flux.
 - **Control coefficients**: How much does a 1% change in enzyme activity change the pathway flux? Most enzymes have near-zero flux control coefficients — flux is usually controlled by a few rate-limiting steps plus substrate supply.
 
 LOOK UP DON'T GUESS: stoichiometric coefficients, pathway topology, and published flux distributions. Use KEGG (`kegg_get_pathway_info`), Reactome (`Reactome_get_pathway_reactions`), and BioModels (`biomodels_search`) for these data.
+
+### Genome-Scale Metabolic Models & FBA (BiGG)
+
+BiGG Models (bigg.ucsd.edu) is a curated database of 108 genome-scale metabolic
+reconstructions (bacteria, archaea, eukaryotes — E. coli, yeast, human Recon3D,
+and more), each already in FBA-ready COBRA format: every reaction carries flux
+`lower_bound`/`upper_bound` and a `gene_reaction_rule`, unlike a `biomodels_search`
+hit (which is a paper's raw SBML file that may need cleanup before it will run).
+Use BiGG when the goal is to actually *run* FBA, not just read about a pathway.
+
+**Tools** (each has its own `operation` enum value defaulted in its schema — you don't need to set it manually, just call the tool named for what you want):
+
+| Tool | Key Params | Use |
+|------|-----------|-----|
+| `BiGG_list_models` | none | Discover available organisms/models (108 total) |
+| `BiGG_get_model` | `model_id` | Model metadata: reaction/metabolite/gene counts, publication DOI, genome accession |
+| `BiGG_get_model_reactions` | `model_id` | Enumerate every reaction ID + name in a model |
+| `BiGG_get_reaction` | `reaction_id`, `model_id` (or `"universal"`) | Full stoichiometry, participating metabolites, gene-reaction rule |
+| `BiGG_get_metabolite` | `metabolite_id`, `model_id` (or `"universal"`) | Formula, compartment, cross-refs (KEGG/MetaCyc/HMDB/ChEBI) |
+| `BiGG_search` | `query`, `search_type` (`models`/`reactions`/`metabolites`/`genes`) | Free-text discovery across any of the four entity types |
+| `BiGG_get_database_version` | none | Data currency check |
+| `BiGG_download_model` | `model_id`, `format` (`json`/`sbml`) | The full FBA-ready COBRA model — every reaction with bounds/objective coefficient, every metabolite, every gene |
+
+**Workflow — find a model, inspect it, get it FBA-ready:**
+
+1. `BiGG_list_models` → each entry has `bigg_id`, `organism`, `reaction_count`, `metabolite_count`, `gene_count`. For a quick/small worked example, `e_coli_core` (E. coli core metabolism: 95 reactions, 72 metabolites, 137 genes) is the standard teaching model; for genome-scale work pick a full reconstruction like `iJO1366` (E. coli) or `Recon3D` (human).
+2. `BiGG_get_model(model_id="e_coli_core")` → publication DOI, genome accession (`ncbi_accession:NC_000913.3` for E. coli), file sizes, last-updated date — check currency before citing.
+3. `BiGG_get_model_reactions(model_id="e_coli_core")` → list of `{bigg_id, name, organism}` per reaction (e.g. `ACKr` = "Acetate kinase"). Use this to find candidate reaction IDs before drilling in.
+4. `BiGG_get_reaction(reaction_id="ACKr", model_id="e_coli_core")` → full stoichiometry as a `metabolites` array (each with `bigg_id`, `name`, signed `stoichiometry`), plus `gene_reaction_rule` (empty string/None for some reactions — a real absence, not a fetch failure) and `database_links` (RHEA, etc.).
+5. `BiGG_get_metabolite(metabolite_id="g3p_c", model_id="e_coli_core")` → `name`, `formula`, `compartment_bigg_id`/`compartment_name`, and `database_links` for cross-referencing to KEGG/ChEBI. Note some fields (e.g. `formulae`) come back `None` for some entries — report what's actually present rather than assuming every field is populated.
+6. `BiGG_search(query="glucose", search_type="metabolites")` → ranked hits across the **universal** namespace by default (`model_bigg_id: "Universal"`) as well as model-specific IDs; use `search_type="models"` to find organisms, `"genes"` to resolve a gene symbol to its BiGG gene ID.
+7. `BiGG_download_model(model_id="e_coli_core", format="json")` → the complete COBRA model: top-level `metabolites`/`reactions`/`genes`/`compartments` arrays, each reaction with `lower_bound`, `upper_bound`, `gene_reaction_rule`, and a `metabolites` dict of `{metabolite_id: stoichiometry}` — this is the object to hand to a COBRApy `Model` for FBA, not `BiGG_get_model`'s metadata-only response. `format="sbml"` returns the same model as an SBML XML string instead, for tools that expect that format.
+
+**Gotchas** (from live testing): `model_id` defaults to `"universal"` for `BiGG_get_reaction`/`BiGG_get_metabolite` — pass the specific model ID when you want model-scoped stoichiometry/bounds rather than the universal (model-agnostic) entry. `BiGG_search`'s default `search_type` is `"reactions"` — set it explicitly for metabolite/gene/model searches. `BiGG_get_model` returns only counts and metadata; `BiGG_download_model` is the one that returns an actually runnable model.
+
+### Reaction-Level Biochemistry (Rhea)
+
+Rhea (rhea-db.org, SIB) is an expert-curated knowledgebase of individual
+biochemical reactions — each has a ChEBI-based equation, a curation status
+(`approved`, `reviewed`, etc.), a mass/charge balance flag, and cross-referenced
+EC number(s). Use it when the question is about ONE reaction's participants,
+stoichiometry, and enzyme classification, rather than a whole model's fluxes
+(BiGG, above) or a pathway diagram (Reactome/KEGG).
+
+**Tools:**
+
+| Tool | Key Params | Use |
+|------|-----------|-----|
+| `Rhea_search_reactions` | `query`, `limit`, `offset` | Free-text search by compound/keyword. **Use a single keyword, not a phrase** — `query="glucose"` returns real hits, `query="glucose oxidation"` returns zero (verified live) |
+| `Rhea_search_by_ec` | `ec_number`, `limit`, `offset` | All reactions catalyzed by a given EC class |
+| `Rhea_search_by_chebi` | `chebi_id`, `limit`, `offset` | All reactions where a specific ChEBI compound participates (substrate, product, or either) |
+| `Rhea_get_reaction` | `rhea_id` | Full detail: equation, `status_curation`, `balanced`/`transport` flags, reactants/products with ChEBI IDs and stoichiometry |
+| `Rhea_get_reaction_participants` | `rhea_id` | Just the reactants/products list (subset of `Rhea_get_reaction`, useful when you don't need curation metadata) |
+
+**Workflow (real values from live testing):** `Rhea_search_reactions(query="glucose")` →
+`RHEA:14293` ("D-glucose + NAD(+) = D-glucono-1,5-lactone + NADH + H(+)", EC 1.1.1.47/1.1.1.118/1.1.1.359 among others) →
+`Rhea_get_reaction(rhea_id="RHEA:14293")` → `status_curation: "approved"`, `balanced: true`, reactants
+`[{chebi_id: "CHEBI:4167", name: "D-glucose", stoichiometry: "1"}, {chebi_id: "CHEBI:57540", name: "NAD+", ...}]`.
+Cross-reference a Rhea `chebi_id` against `tooluniverse-chemical-compound-retrieval`'s PubChem/ChEBI tools for
+the compound's structure, and a Rhea `ec_numbers` value against BRENDA (see Domain Reasoning above) for kinetic
+constants on that same reaction.
 
 ---
 
@@ -266,5 +329,39 @@ LOOK UP DON'T GUESS: stoichiometric coefficients, pathway topology, and publishe
 - **Pathway Commons**: Aggregation may have duplicates; check source attribution
 - **BioModels**: Sparse for many processes; often returns no results
 - **Enrichr**: Requires gene symbols (not IDs); case-sensitive
+- **BiGG**: Curated reconstructions only exist for 108 organisms (mostly bacteria/model organisms; not every species of interest has one) — check `BiGG_search(search_type="models")` before assuming coverage; `BiGG_get_reaction`/`BiGG_get_metabolite` default to the `"universal"` (model-agnostic) namespace unless `model_id` is passed explicitly
+
+---
+
+## GO Term Lookup, KEGG BRITE Classification, and Causal-Statement Mining (GOAPI / KEGG BRITE / INDRA)
+
+Four more small, previously-undocumented tool families, live-tested below. Two of them overlap in *purpose* with tools already used elsewhere in ToolUniverse — read the overlap notes before reaching for these as a first choice.
+
+### GOAPI: direct GO term/gene-annotation lookup
+
+`GOAPI_get_term`, `GOAPI_get_gene_functions`, `GOAPI_get_genes_by_function` (`go_api_tools.json`) hit the GO API directly. **Overlap note**: this is a *different* tool family from `GO_get_annotations_for_gene` / `GO_get_term_by_id` / `GO_get_term_details` (`gene_ontology_tools.json`), which several other skills — `tooluniverse-target-research`, `tooluniverse-gene-enrichment`, `tooluniverse-structural-variant-analysis` — already document for the same purpose. Prefer those existing tools if you're already using them elsewhere in a workflow; reach for GOAPI when its CURIE-based gene addressing (below) or its reverse "genes by function" lookup is specifically what you need.
+
+- `GOAPI_get_term(go_id="GO:0006281")` → term label + full definition + PMID xrefs (verified live: "GO:0006281" = "DNA repair", correct definition returned).
+- `GOAPI_get_gene_functions(gene_id=..., rows=, aspect=)` → **gotcha, verified live**: `gene_id` must be a CURIE (`"HGNC:11998"`, `"UniProtKB:P04637"`, `"MGI:MGI:98834"`), not a bare gene symbol — `gene_id="TP53"` fails with a 400, `gene_id="UniProtKB:P04637"` succeeds and returns real GO terms with `evidence_type`/`evidence_label`/`provided_by`/`references` per annotation (e.g. p53 → "negative regulation of cell population proliferation", IMP evidence from UniProt, PMID:10962037).
+- `GOAPI_get_genes_by_function(go_id=...)` → the reverse direction: real gene list annotated with a GO term, each with `gene_id` (CURIE), `gene_label`, `taxon_id`.
+
+### KEGG BRITE: hierarchical functional classification
+
+`KEGG_list_brite_hierarchies` (no params) and `KEGG_get_brite_hierarchy(hierarchy_id=...)` (`kegg_brite_tools.json`) — genuinely new, no existing coverage. BRITE is KEGG's classification-tree layer (e.g. enzymes grouped by EC hierarchy, drugs by target class), distinct from `kegg_search_pathway`/`kegg_get_pathway_info` already in this skill's Phase 3, which return pathway *maps* rather than classification *trees*.
+
+- `KEGG_list_brite_hierarchies()` → real response: 156 hierarchy files (e.g. `br08901` = "KEGG pathway maps").
+- `KEGG_get_brite_hierarchy(hierarchy_id="ko01000")` → real nested `children` tree of enzyme classes (e.g. "1. Oxidoreductases" → "1.1 Acting on the CH-OH group of donors" → ...). Use when you need the classification structure itself (e.g. "what are all the kinase subclasses"), not a single pathway's gene/compound list.
+
+### INDRA: automated literature-mined causal statements
+
+`INDRA_get_statements`, `INDRA_get_evidence_count`, `INDRA_get_statement_by_hash` (`indra_tools.json`) — genuinely new. INDRA text-mines causal relationships (Activation/Inhibition/Phosphorylation/Complex/etc.) directly from PubMed abstracts and assembles them with evidence counts — this is **automated extraction with variable precision**, not manually curated causal edges like SIGNOR's (documented in `tooluniverse-protein-interactions`). Treat an INDRA statement as a literature-mining lead to verify, not a confirmed mechanism, especially when `evidence_shown` is low relative to `total_evidence`.
+
+- `INDRA_get_evidence_count(agent="TP53")` → real count: 25,846 total evidence items across all TP53 statements (verified live; slow-ish, ~3-20s).
+- `INDRA_get_statements(agent="EGFR", limit=3)` → **gotcha**: this call can take 30-90+ seconds — give it a generous timeout, don't assume a hang means failure. Real response: statements typed `Phosphorylation`/`Complex`/etc., each with `hash`, `evidence_shown`, and per-evidence `pmid`+source sentence (e.g. a real Phosphorylation statement backed by 2 shown evidence sentences from PMID 31635022 and 37443708, out of 74,891 total evidence for EGFR overall — most evidence is never shown per call, use `INDRA_get_evidence_count` first to gauge how well-studied a relationship is).
+- `INDRA_get_statement_by_hash(hash=...)` → full single-statement detail once you have a hash from the above (real example: hash `-35357180905875939`, an EGFR Inhibition statement with 1,376 evidence items).
+
+### Known-broken tool, verified live: ReactomeInteractors
+
+`ReactomeInteractors_get_protein_interactors`, `ReactomeInteractors_get_entity_pathways`, `ReactomeInteractors_search_entity` (`reactome_interactors_tools.json`) — **all 3 tools currently return HTTP 521 on every call**, confirmed both via `tu test`/`tu run` and an independent direct `curl` to Reactome's own interactors endpoint (`reactome.org/ContentService/interactors/...`), which also returned 521. This is Reactome's interactors service being unreachable at the origin, not a ToolUniverse bug — it may be transient, so don't assume it's permanently gone, but **do not fabricate protein-interactor or entity-pathway results from this family** if you hit the same error; report it as "ReactomeInteractors service currently unreachable (HTTP 521)" and fall back to `STRING_functional_enrichment`, `intact_get_interactions`, or (for causal edges) SIGNOR/INDRA above instead. Note this is a *different* tool family from the already-documented `Reactome_map_uniprot_to_pathways`/`Reactome_get_pathway_reactions` (Phase 2, above) and from `Reactome_get_interactor` (singular, in `reactome_tools.json`, used by `tooluniverse-spatial-omics-analysis`) — three separate Reactome-branded tool families exist in the registry; this section covers only the `ReactomeInteractors_*` one.
 
 **Best for**: Gene set analysis, protein function investigation, pathway discovery, systems-level biology
