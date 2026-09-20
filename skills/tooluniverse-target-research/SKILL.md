@@ -244,7 +244,7 @@ Separate SNVs from CNVs in ClinVar results. Integrate DisGeNET for curated gene-
 
 ## Retry Logic & Fallback Chains
 
-- `ChEMBL_get_target_activities` fails → `GtoPdb_search_ligands` → `OpenTargets drugs`
+- `ChEMBL_get_target_activities` fails → `GtoPdb_search_ligands` *(needs `GTOPDB_API_KEY`; skip this hop if unset)* → `OpenTargets drugs`
 - `intact_get_interactions` fails → `STRING_get_protein_interactions` → `OpenTargets interactions`
 - `GO_get_annotations_for_gene` fails → `OpenTargets GO` → `MyGene GO`
 - `GTEx_get_median_gene_expression` fails → `HPA_get_rna_expression_by_source` → document as unavailable

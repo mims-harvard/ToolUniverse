@@ -139,7 +139,7 @@ pLDDT guidance: >=90 very high confidence, 70-90 confident, <70 use with caution
 Priority order for bioactivity data:
 1. `ChEMBL_get_target_activities` - curated, SAR-ready
 2. `BindingDB_get_ligands_by_uniprot` - direct Ki/Kd with literature links
-3. `GtoPdb_search_ligands` - pharmacology focus (GPCRs, channels)
+3. `GtoPdb_search_ligands` - pharmacology focus (GPCRs, channels); needs `GTOPDB_API_KEY` (HTTP 401 without it), so skip when unset
 4. `PubChem_search_assays_by_target_gene` - HTS screens, novel scaffolds
 5. `OpenTargets_get_chemical_probes_by_target_ensemblID` - validated probes
 6. `MolGlueDB_search_compounds` - molecular glue degraders specifically (small molecules that induce a novel protein-protein interaction rather than occupy a conventional pocket); check this when the target has no tractable pocket but is a known or candidate neosubstrate
