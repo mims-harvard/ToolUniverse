@@ -8,6 +8,7 @@
         "partners": {
           "type": [
             "string",
+            "array",
             "null"
           ],
           "description": "Gene symbol(s) or UniProt ID(s) to query as interaction partners (either source or target). Comma-separated for multiple. Examples: 'TGFB1', 'CD274,PDCD1', 'EGFR', 'P01137'."
@@ -15,6 +16,7 @@
         "sources": {
           "type": [
             "string",
+            "array",
             "null"
           ],
           "description": "Gene symbol(s) or UniProt ID(s) for source (ligand) proteins only. Use instead of 'partners' to get outgoing interactions. Examples: 'TGFB1', 'WNT3A'."
@@ -22,6 +24,7 @@
         "targets": {
           "type": [
             "string",
+            "array",
             "null"
           ],
           "description": "Gene symbol(s) or UniProt ID(s) for target (receptor) proteins only. Use instead of 'partners' to get incoming interactions. Examples: 'EGFR', 'PDCD1'."
@@ -41,6 +44,7 @@
           "description": "NCBI taxonomy ID for species filter. Default: 9606 (human). Options: 9606 (human), 10090 (mouse), 10116 (rat)."
         },
         "limit": {
+          "minimum": 1,
           "type": [
             "integer",
             "null"
@@ -159,6 +163,7 @@
         "proteins": {
           "type": [
             "string",
+            "array",
             "null"
           ],
           "description": "Gene symbol(s) or UniProt ID(s), comma-separated. Examples: 'EGFR', 'TGFB1,PDCD1', 'P00533,P01137'."
@@ -199,6 +204,7 @@
           "description": "Filter for secreted proteins (true) or non-secreted (false)."
         },
         "limit": {
+          "minimum": 1,
           "type": [
             "integer",
             "null"
@@ -331,6 +337,7 @@
         "partners": {
           "type": [
             "string",
+            "array",
             "null"
           ],
           "description": "Gene symbol(s) or UniProt ID(s) to query. Comma-separated for multiple. Examples: 'TP53', 'NOTCH1', 'SRC,ABL1'."
@@ -338,6 +345,7 @@
         "sources": {
           "type": [
             "string",
+            "array",
             "null"
           ],
           "description": "Gene symbol(s) or UniProt ID(s) for source/upstream proteins only."
@@ -345,6 +353,7 @@
         "targets": {
           "type": [
             "string",
+            "array",
             "null"
           ],
           "description": "Gene symbol(s) or UniProt ID(s) for target/downstream proteins only."
@@ -378,6 +387,7 @@
           "description": "NCBI taxonomy ID. Default: 9606 (human). Options: 9606, 10090, 10116."
         },
         "limit": {
+          "minimum": 1,
           "type": [
             "integer",
             "null"
@@ -510,7 +520,10 @@
       "type": "object",
       "properties": {
         "proteins": {
-          "type": "string",
+          "type": [
+            "string",
+            "array"
+          ],
           "description": "UniProt accession(s), comma-separated. Note: gene symbols are NOT supported for this endpoint; use UniProt IDs. Examples: 'P01137' (TGFB1), 'P00533' (EGFR), 'P01137,P37173' (TGFB1+TGFBR2)."
         },
         "databases": {
@@ -629,7 +642,10 @@
       "type": "object",
       "properties": {
         "proteins": {
-          "type": "string",
+          "type": [
+            "string",
+            "array"
+          ],
           "description": "UniProt accession(s) or gene symbol(s), comma-separated. Examples: 'P01137,P37173', 'TGFB1,EGFR', 'P00533'."
         },
         "databases": {
@@ -750,6 +766,7 @@
         "enzymes": {
           "type": [
             "string",
+            "array",
             "null"
           ],
           "description": "Gene symbol(s) or UniProt ID(s) for enzyme/kinase. Comma-separated for multiple. Examples: 'SRC', 'P12931', 'LCK,FYN'."
@@ -757,6 +774,7 @@
         "substrates": {
           "type": [
             "string",
+            "array",
             "null"
           ],
           "description": "Gene symbol(s) or UniProt ID(s) for substrate. Examples: 'STAT3', 'P40763'."
@@ -776,6 +794,7 @@
           "description": "NCBI taxonomy ID. Default: 9606 (human)."
         },
         "limit": {
+          "minimum": 1,
           "type": [
             "integer",
             "null"
@@ -897,6 +916,7 @@
         "tf_gene": {
           "type": [
             "string",
+            "array",
             "null"
           ],
           "description": "Transcription factor gene symbol (e.g., 'TP53', 'MYC', 'STAT3'). Mutually exclusive with target_gene or can be combined."
@@ -904,6 +924,7 @@
         "target_gene": {
           "type": [
             "string",
+            "array",
             "null"
           ],
           "description": "Target gene symbol to find regulating TFs (e.g., 'CDKN1A', 'BCL2'). Mutually exclusive with tf_gene or can be combined."
@@ -988,7 +1009,10 @@
       "type": "object",
       "properties": {
         "tf_gene": {
-          "type": "string",
+          "type": [
+            "string",
+            "array"
+          ],
           "description": "Transcription factor gene symbol (e.g., 'TP53', 'MYC', 'STAT3', 'NF2')"
         },
         "confidence_levels": {
