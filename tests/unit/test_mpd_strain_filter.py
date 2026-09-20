@@ -108,3 +108,40 @@ def test_response_discloses_data_source_limitation():
     note = result["query_info"]["note"]
     assert "phenotype_category" in note
     assert "not applied" in note
+
+
+def test_zero_hit_search_404_is_an_empty_success_not_an_error():
+    """ENCODE answers zero hits with HTTP 404 and a normal JSON body (verified
+    live for strain DBA/2J): that must come back as an empty success."""
+    tool = MPDRESTTool(_tool_config())
+
+    resp = MagicMock()
+    resp.status_code = 404
+    resp.json.return_value = {
+        "total": 0,
+        "@graph": [],
+        "notification": "No results found",
+    }
+
+    with patch.object(tool.session, "get", return_value=resp):
+        result = tool.run({"strain": "DBA/2J", "limit": 5})
+
+    assert result["status"] == "success"
+    assert result["data"]["total"] == 0
+    assert result["data"]["@graph"] == []
+    resp.raise_for_status.assert_not_called()
+
+
+def test_other_404_still_raises_as_an_error():
+    tool = MPDRESTTool(_tool_config())
+
+    resp = MagicMock()
+    resp.status_code = 404
+    resp.json.return_value = {"detail": "not the ENCODE empty-search shape"}
+    resp.raise_for_status.side_effect = Exception("404 Client Error: Not Found")
+
+    with patch.object(tool.session, "get", return_value=resp):
+        result = tool.run({"strain": "DBA/2J"})
+
+    assert result["status"] == "error"
+    assert "MPD API error" in result["error"]
