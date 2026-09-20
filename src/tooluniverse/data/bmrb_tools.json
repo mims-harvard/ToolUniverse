@@ -496,7 +496,7 @@
       "properties": {
         "uniprot_id": {
           "type": "string",
-          "description": "UniProt accession (e.g., 'P62988' for ubiquitin, 'P0DTD1' for SARS-CoV-2 polyprotein)"
+          "description": "UniProt accession (e.g., 'P04637' for human p53, 'P00533' for EGFR; an accession with no BMRB entry returns an empty list, e.g. 'P62988')"
         }
       },
       "required": [
@@ -509,7 +509,7 @@
     "type": "BaseRESTTool",
     "test_examples": [
       {
-        "uniprot_id": "P62988"
+        "uniprot_id": "P04637"
       },
       {
         "uniprot_id": "P0CG48"

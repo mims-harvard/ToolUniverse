@@ -1,7 +1,7 @@
 [
   {
     "name": "eQTL_list_datasets",
-    "description": "List available eQTL (expression Quantitative Trait Loci) datasets from the EBI eQTL Catalogue. Each dataset represents a study-tissue-quantification combination with measured genetic associations to gene expression. Returns dataset IDs, study labels, tissue types, sample sizes, and quantification methods (ge=gene expression, exon, tx=transcript, txrev=transcript ratio, leafcutter=splicing). Use dataset IDs with eQTL_get_associations for specific variant-gene associations.",
+    "description": "DEPRECATED / non-functional: the EBI eQTL Catalogue retired its REST API (every request now returns HTTP 410 Gone; see https://www.ebi.ac.uk/eqtl/Data_access/), so this tool returns an error. For eQTLs use GTEx_get_single_tissue_eqtls or GTEx_query_eqtl (GTEx tissues), and OpenTargets_get_credible_set_colocalisation for GWAS/QTL colocalisation; the full eQTL Catalogue summary statistics are only available through tabix/FTP. Original description: List available eQTL (expression Quantitative Trait Loci) datasets from the EBI eQTL Catalogue. Each dataset represents a study-tissue-quantification combination with measured genetic associations to gene expression. Returns dataset IDs, study labels, tissue types, sample sizes, and quantification methods (ge=gene expression, exon, tx=transcript, txrev=transcript ratio, leafcutter=splicing). Use dataset IDs with eQTL_get_associations for specific variant-gene associations.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -103,7 +103,7 @@
   },
   {
     "name": "eQTL_get_associations",
-    "description": "Get eQTL associations (variant-gene expression correlations) from a specific dataset in the EBI eQTL Catalogue. Returns statistical associations between genetic variants and molecular traits (gene/exon/transcript expression or splicing). Each result includes beta effect size, p-value, allele frequency, and variant coordinates. Use eQTL_list_datasets first to find available dataset IDs. Can filter by gene_id (Ensembl gene ID) or variant (chr_pos_ref_alt format).",
+    "description": "DEPRECATED / non-functional: the EBI eQTL Catalogue retired its REST API (every request now returns HTTP 410 Gone; see https://www.ebi.ac.uk/eqtl/Data_access/), so this tool returns an error. For eQTLs use GTEx_get_single_tissue_eqtls or GTEx_query_eqtl (GTEx tissues), and OpenTargets_get_credible_set_colocalisation for GWAS/QTL colocalisation; the full eQTL Catalogue summary statistics are only available through tabix/FTP. Original description: Get eQTL associations (variant-gene expression correlations) from a specific dataset in the EBI eQTL Catalogue. Returns statistical associations between genetic variants and molecular traits (gene/exon/transcript expression or splicing). Each result includes beta effect size, p-value, allele frequency, and variant coordinates. Use eQTL_list_datasets first to find available dataset IDs. Can filter by gene_id (Ensembl gene ID) or variant (chr_pos_ref_alt format).",
     "parameter": {
       "type": "object",
       "properties": {

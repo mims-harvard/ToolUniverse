@@ -123,7 +123,7 @@
   },
   {
     "name": "DBLP_search_authors",
-    "description": "Search and disambiguate authors in the DBLP Computer Science Bibliography by name. Resolves an author name to canonical DBLP author records, each with a stable PID URL (e.g., https://dblp.org/pid/l/JureLeskovec) plus, when available, affiliation notes, name aliases, and awards (e.g., 'Turing Award'). The PID is the gateway to that author's deduplicated publication list. Use this to identify the correct author before fetching their bibliography; DBLP_search_publications only searches papers, not authors.",
+    "description": "Search and disambiguate authors in the DBLP Computer Science Bibliography by name. Resolves an author name to canonical DBLP author records, each with a stable PID URL (e.g., https://dblp.org/pid/l/JureLeskovec) plus, when available, affiliation notes, name aliases, and awards (e.g., 'Turing Award'). The PID is the gateway to that author's deduplicated publication list. Use this to identify the correct author before fetching their bibliography; DBLP_search_publications only searches papers, not authors. NOTE: dblp.org currently serves an anti-bot challenge page (\"Making sure you're not a bot!\") on this endpoint, so this tool can return an HTML-instead-of-data error; ToolUniverse does not attempt to bypass it.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -227,7 +227,7 @@
   },
   {
     "name": "DBLP_search_venues",
-    "description": "Search DBLP for a publication VENUE (conference or journal) by acronym or full name, resolving it to its canonical DBLP venue record. For example 'ICML' resolves to 'International Conference on Machine Learning (ICML)' and 'neurips' resolves to 'Conference on Neural Information Processing Systems (NeurIPS)'. Each hit includes the venue name, acronym, type (Conference/Journal), and a DBLP venue URL for browsing its proceedings. DBLP_search_publications only searches papers, not venues.",
+    "description": "Search DBLP for a publication VENUE (conference or journal) by acronym or full name, resolving it to its canonical DBLP venue record. For example 'ICML' resolves to 'International Conference on Machine Learning (ICML)' and 'neurips' resolves to 'Conference on Neural Information Processing Systems (NeurIPS)'. Each hit includes the venue name, acronym, type (Conference/Journal), and a DBLP venue URL for browsing its proceedings. DBLP_search_publications only searches papers, not venues. NOTE: dblp.org currently serves an anti-bot challenge page (\"Making sure you're not a bot!\") on this endpoint, so this tool can return an HTML-instead-of-data error; ToolUniverse does not attempt to bypass it.",
     "parameter": {
       "type": "object",
       "properties": {
