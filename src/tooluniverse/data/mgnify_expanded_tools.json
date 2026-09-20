@@ -168,7 +168,11 @@
       "properties": {
         "depth": {
           "type": "integer",
-          "description": "Hierarchy depth to filter by (1=root, 2=second level, etc.)."
+          "description": "Depth of the biome lineage to keep, counting 'root' as 1 (so 'root:Engineered' is 2 and 'root:Host-associated:Human' is 3). Filtered client-side because the MGnify API has no depth filter."
+        },
+        "lineage": {
+          "type": "string",
+          "description": "List this biome and all biomes below it, e.g. 'root:Host-associated:Human' (uses /biomes/{lineage}/children, which returns the biome itself plus every descendant, not only direct children). Combine with depth to keep one level. Omit to list all biomes."
         },
         "page": {
           "type": "integer",
@@ -192,6 +196,14 @@
       {
         "page": 2,
         "page_size": 10
+      },
+      {
+        "depth": 3,
+        "page_size": 5
+      },
+      {
+        "lineage": "root:Host-associated:Human",
+        "page_size": 5
       }
     ],
     "return_schema": {

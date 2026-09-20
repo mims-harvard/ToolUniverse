@@ -76,13 +76,13 @@ analyses = tu.run_one_function({
 # 4. Get taxonomic profile from an analysis
 taxonomy = tu.run_one_function({
     'name': 'MGnify_get_taxonomy',
-    'arguments': {'analysis_accession': 'MGYA00612683'}
+    'arguments': {'analysis_id': 'MGYA00793746'}
 })
 
 # 5. Get functional annotations
 go_terms = tu.run_one_function({
     'name': 'MGnify_get_go_terms',
-    'arguments': {'analysis_accession': 'MGYA00612683'}
+    'arguments': {'analysis_id': 'MGYA00793746'}
 })
 ```
 
@@ -126,7 +126,7 @@ analyses = tu.run_one_function({
 # Get taxonomy for a specific analysis
 taxonomy = tu.run_one_function({
     'name': 'MGnify_get_taxonomy',
-    'arguments': {'analysis_accession': 'MGYA00612683'}
+    'arguments': {'analysis_id': 'MGYA00793746'}
 })
 # Returns organisms with lineage, abundance counts, and taxonomy rank
 ```
@@ -139,13 +139,13 @@ Evaluate metagenome-assembled genomes (MAGs):
 # Search for genomes from a specific taxon
 genomes = tu.run_one_function({
     'name': 'MGnify_search_genomes',
-    'arguments': {'search': 'Faecalibacterium prausnitzii', 'size': 5}
+    'arguments': {'taxonomy': 'Faecalibacterium prausnitzii', 'page_size': 5}
 })
 
 # Get quality metrics for a genome
 genome = tu.run_one_function({
     'name': 'MGnify_get_genome',
-    'arguments': {'genome_accession': 'MGYG000000001'}
+    'arguments': {'genome_id': 'MGYG000000001'}
 })
 # Returns completeness, contamination, N50, genome length, taxonomy
 
@@ -164,13 +164,13 @@ Discover functional potential of a metagenome:
 # GO terms from an analysis
 go_terms = tu.run_one_function({
     'name': 'MGnify_get_go_terms',
-    'arguments': {'analysis_accession': 'MGYA00612683'}
+    'arguments': {'analysis_id': 'MGYA00793746'}
 })
 
 # InterPro domains
 interpro = tu.run_one_function({
     'name': 'MGnify_get_interpro',
-    'arguments': {'analysis_accession': 'MGYA00612683'}
+    'arguments': {'analysis_id': 'MGYA00793746'}
 })
 ```
 

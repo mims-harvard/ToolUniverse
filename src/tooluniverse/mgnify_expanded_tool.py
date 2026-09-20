@@ -11,6 +11,7 @@ No authentication required. Free for academic/research use.
 """
 
 import requests
+from urllib.parse import quote
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -224,46 +225,81 @@ class MGnifyExpandedTool(BaseTool):
         }
 
     def _biome_list(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Browse/search MGnify biome hierarchy."""
-        params = {"format": "json"}
+        """Browse the MGnify biome hierarchy.
 
+        The API has no depth (or lineage) filter on /biomes -- both are rejected
+        with HTTP 400 "invalid query parameter" -- so ``depth`` is applied
+        client-side on each biome's lineage (``root`` = 1, ``root:Engineered`` = 2),
+        and ``lineage`` lists that biome plus all its descendants via
+        /biomes/{lineage}/children.
+        """
         page_size = min(arguments.get("page_size", 25), 100)
-        params["page_size"] = page_size
-        if "page" in arguments:
-            params["page"] = arguments["page"]
-
-        if "depth" in arguments:
-            params["depth"] = arguments["depth"]
+        page = arguments.get("page", 1)
+        depth = arguments.get("depth")
+        lineage = arguments.get("lineage")
 
         url = f"{MGNIFY_BASE_URL}/biomes"
+        if lineage:
+            url = f"{MGNIFY_BASE_URL}/biomes/{quote(str(lineage), safe=':')}/children"
+
+        if depth is None:
+            params = {"format": "json", "page_size": page_size, "page": page}
+            raw = self._get_json(url, params)
+            results = self._biome_rows(raw)
+            pagination = raw.get("meta", {}).get("pagination", {})
+            total = pagination.get("count", len(results))
+            pages = pagination.get("pages")
+            shown_page = pagination.get("page", page)
+        else:
+            depth = int(depth)
+            rows = []
+            fetch_page = 1
+            while True:  # the API caps a page at 250 biomes (491 in total)
+                raw = self._get_json(
+                    url, {"format": "json", "page_size": 250, "page": fetch_page}
+                )
+                rows.extend(self._biome_rows(raw))
+                total_pages = raw.get("meta", {}).get("pagination", {}).get("pages", 1)
+                if fetch_page >= (total_pages or 1) or fetch_page >= 10:
+                    break
+                fetch_page += 1
+            matching = [r for r in rows if r["biome_id"].count(":") + 1 == depth]
+            total = len(matching)
+            pages = max(1, -(-total // page_size))
+            shown_page = page
+            start = (page - 1) * page_size
+            results = matching[start : start + page_size]
+
+        return {
+            "status": "success",
+            "data": results,
+            "metadata": {
+                "total_results": total,
+                "page": shown_page,
+                "pages": pages,
+                "source": "MGnify",
+                "endpoint": "biomes",
+            },
+        }
+
+    def _get_json(self, url: str, params: Dict[str, Any]) -> Dict[str, Any]:
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
-        raw = response.json()
+        return response.json()
 
-        results = []
+    @staticmethod
+    def _biome_rows(raw: Dict[str, Any]) -> list:
+        rows = []
         for item in raw.get("data", []):
             attrs = item.get("attributes", {})
-            results.append(
+            rows.append(
                 {
                     "biome_id": item.get("id"),
                     "biome_name": attrs.get("biome-name"),
                     "samples_count": attrs.get("samples-count"),
                 }
             )
-
-        pagination = raw.get("meta", {}).get("pagination", {})
-
-        return {
-            "status": "success",
-            "data": results,
-            "metadata": {
-                "total_results": pagination.get("count", len(results)),
-                "page": pagination.get("page", 1),
-                "pages": pagination.get("pages"),
-                "source": "MGnify",
-                "endpoint": "biomes",
-            },
-        }
+        return rows
 
     def _study_detail(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed information about a specific MGnify study."""
