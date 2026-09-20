@@ -319,7 +319,6 @@
     "test_examples": [
       {
         "abuse_info": "Addiction",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -592,7 +591,6 @@
     "test_examples": [
       {
         "accessory_name": "Syringe",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -865,7 +863,6 @@
     "test_examples": [
       {
         "active_ingredient": "Ibuprofen",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -1657,7 +1654,6 @@
     "test_examples": [
       {
         "alarm_type": "Hepatotoxicity",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -2455,7 +2451,6 @@
     "test_examples": [
       {
         "interaction_info": "Alcohol",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -2732,7 +2727,6 @@
     "test_examples": [
       {
         "field_info": "Instructions",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -3308,9 +3302,8 @@
     ],
     "test_examples": [
       {
-        "carcinogenic_info": "E11.9",
-        "indication": "Hypertension",
-        "limit": 5,
+        "carcinogenic_info": "carcinogenic",
+        "limit": 2,
         "skip": 0
       }
     ],
@@ -5133,7 +5126,6 @@
     "test_examples": [
       {
         "disposal_info": "Waste",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -6051,9 +6043,8 @@
     ],
     "test_examples": [
       {
-        "lab_test_interference": "E11.9",
-        "indication": "Hypertension",
-        "limit": 5,
+        "lab_test_interference": "false positive",
+        "limit": 2,
         "skip": 0
       }
     ],
@@ -6638,9 +6629,8 @@
     ],
     "test_examples": [
       {
-        "effective_time": "E11.9",
-        "indication": "Hypertension",
-        "limit": 5,
+        "effective_time": "2023",
+        "limit": 2,
         "skip": 0
       }
     ],
@@ -7321,9 +7311,8 @@
     ],
     "test_examples": [
       {
-        "precaution_info": "E11.9",
-        "indication": "Hypertension",
-        "limit": 5,
+        "precaution_info": "pregnancy",
+        "limit": 2,
         "skip": 0
       }
     ],
@@ -8049,7 +8038,6 @@
     "test_examples": [
       {
         "letter_info": "safety alert",
-        "indication": "Hypertension",
         "limit": 5,
         "skip": 0
       }
@@ -8186,9 +8174,8 @@
     ],
     "test_examples": [
       {
-        "health_claim": "E11.9",
-        "indication": "Hypertension",
-        "limit": 5,
+        "health_claim": "reduce",
+        "limit": 2,
         "skip": 0
       }
     ],
@@ -9207,7 +9194,6 @@
     "test_examples": [
       {
         "field_info": "Instructions",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -9603,9 +9589,8 @@
     ],
     "test_examples": [
       {
-        "instructions_for_use": "E11.9",
-        "indication": "Hypertension",
-        "limit": 5,
+        "instructions_for_use": "inject",
+        "limit": 2,
         "skip": 0
       }
     ],
@@ -10116,9 +10101,8 @@
     ],
     "test_examples": [
       {
-        "child_safety_info": "E11.9",
-        "indication": "Hypertension",
-        "limit": 5,
+        "child_safety_info": "children",
+        "limit": 2,
         "skip": 0
       }
     ],
@@ -11448,9 +11432,8 @@
     ],
     "test_examples": [
       {
-        "toxicology_info": "E11.9",
-        "indication": "Hypertension",
-        "limit": 5,
+        "toxicology_info": "carcinogenesis",
+        "limit": 2,
         "skip": 0
       }
     ],
@@ -11720,9 +11703,8 @@
     ],
     "test_examples": [
       {
-        "nonteratogenic_effects": "E11.9",
-        "indication": "Hypertension",
-        "limit": 5,
+        "nonteratogenic_effects": "neonatal",
+        "limit": 2,
         "skip": 0
       }
     ],
@@ -15712,9 +15694,8 @@
     ],
     "test_examples": [
       {
-        "residue_warning": "1",
-        "indication": "Hypertension",
-        "limit": 1,
+        "residue_warning": "milk",
+        "limit": 2,
         "skip": 0
       }
     ],
@@ -15858,7 +15839,6 @@
     "test_examples": [
       {
         "risk_info": "pregnancy category C",
-        "indication": "Hypertension",
         "limit": 5,
         "skip": 0
       }
@@ -16402,7 +16382,6 @@
     "test_examples": [
       {
         "safe_handling_warning": "cytotoxic",
-        "indication": "Hypertension",
         "limit": 5,
         "skip": 0
       }
@@ -16794,7 +16773,6 @@
     "test_examples": [
       {
         "spl_indexing_data_elements": "NDC",
-        "indication": "Hypertension",
         "limit": 5,
         "skip": 0
       }
@@ -17584,7 +17562,6 @@
     "test_examples": [
       {
         "ingredient_name": "acetaminophen",
-        "indication": "Hypertension",
         "limit": 5,
         "skip": 0
       }
@@ -18473,9 +18450,8 @@
     ],
     "test_examples": [
       {
-        "summary_text": "The quick brown fox jumps over the lazy dog.",
-        "indication": "Hypertension",
-        "limit": 1,
+        "summary_text": "warning",
+        "limit": 2,
         "skip": 0
       }
     ],
@@ -18734,9 +18710,8 @@
     ],
     "test_examples": [
       {
-        "teratogenic_effects": "E11.9",
-        "indication": "Hypertension",
-        "limit": 5,
+        "teratogenic_effects": "pregnancy",
+        "limit": 2,
         "skip": 0
       }
     ],
@@ -19440,7 +19415,6 @@
     "test_examples": [
       {
         "safety_warning": "may cause drowsiness",
-        "indication": "Hypertension",
         "limit": 5,
         "skip": 0
       }

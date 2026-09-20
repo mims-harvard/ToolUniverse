@@ -1,7 +1,7 @@
 [
   {
     "name": "GWASSumStats_list_studies",
-    "description": "List GWAS studies that have deposited full summary statistics with the EBI GWAS Catalog. Unlike the main GWAS Catalog (which stores curated top hits), studies listed here have complete variant-level summary statistics available for download and query. Returns study accession IDs that can be used as filters in GWASSumStats_get_region_associations.",
+    "description": "DEPRECATED / non-functional: the EBI GWAS Catalog Summary Statistics REST API was retired (every request returns HTTP 410 \"This API has been deprecated\"; see https://www.ebi.ac.uk/gwas/docs/methods/summary-statistics), so this tool returns an error. For GWAS Catalog data use gwas_get_studies_for_trait (studies, including which have summary statistics), gwas_get_associations_for_trait / gwas_get_associations_for_snp (associations), or gwas_search_studies; full summary statistics are available only as file downloads. Original description: List GWAS studies that have deposited full summary statistics with the EBI GWAS Catalog. Unlike the main GWAS Catalog (which stores curated top hits), studies listed here have complete variant-level summary statistics available for download and query. Returns study accession IDs that can be used as filters in GWASSumStats_get_region_associations.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -33,7 +33,7 @@
   },
   {
     "name": "GWASSumStats_get_trait_studies",
-    "description": "Get GWAS studies with deposited summary statistics for a specific EFO trait. Returns study accession IDs for studies that have full variant-level summary statistics. Use EFO trait IDs like 'EFO_0000249' (Alzheimer disease), 'EFO_0001645' (coronary heart disease), 'EFO_0000253' (asthma), 'EFO_0001359' (type 2 diabetes). Get EFO IDs from ols_search_efo_terms or gwas_search_studies.",
+    "description": "DEPRECATED / non-functional: the EBI GWAS Catalog Summary Statistics REST API was retired (every request returns HTTP 410 \"This API has been deprecated\"; see https://www.ebi.ac.uk/gwas/docs/methods/summary-statistics), so this tool returns an error. For GWAS Catalog data use gwas_get_studies_for_trait (studies, including which have summary statistics), gwas_get_associations_for_trait / gwas_get_associations_for_snp (associations), or gwas_search_studies; full summary statistics are available only as file downloads. Original description: Get GWAS studies with deposited summary statistics for a specific EFO trait. Returns study accession IDs for studies that have full variant-level summary statistics. Use EFO trait IDs like 'EFO_0000249' (Alzheimer disease), 'EFO_0001645' (coronary heart disease), 'EFO_0000253' (asthma), 'EFO_0001359' (type 2 diabetes). Get EFO IDs from ols_search_efo_terms or gwas_search_studies.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -68,7 +68,7 @@
   },
   {
     "name": "GWASSumStats_get_region_associations",
-    "description": "Query full GWAS summary statistics for variants in a chromosomal region. Returns variant-level association data including p-values, effect sizes (beta/OR), allele frequencies, and study/trait information. Unlike gwas_search_associations (which returns curated top hits), this endpoint provides complete summary statistics from deposited studies. Filter by chromosome region, p-value threshold, and optionally by specific study. Results are sorted most-significant-first. Some deposited studies encode an unreported p-value as the GWAS Catalog missing-value sentinel -99; such rows cannot satisfy p_upper and are excluded when p_upper is set (the count is reported in metadata.sentinel_rows_excluded). Omit p_upper to retain them, flagged with p_value_reported = false.",
+    "description": "DEPRECATED / non-functional: the EBI GWAS Catalog Summary Statistics REST API was retired (every request returns HTTP 410 \"This API has been deprecated\"; see https://www.ebi.ac.uk/gwas/docs/methods/summary-statistics), so this tool returns an error. For GWAS Catalog data use gwas_get_studies_for_trait (studies, including which have summary statistics), gwas_get_associations_for_trait / gwas_get_associations_for_snp (associations), or gwas_search_studies; full summary statistics are available only as file downloads. Original description: Query full GWAS summary statistics for variants in a chromosomal region. Returns variant-level association data including p-values, effect sizes (beta/OR), allele frequencies, and study/trait information. Unlike gwas_search_associations (which returns curated top hits), this endpoint provides complete summary statistics from deposited studies. Filter by chromosome region, p-value threshold, and optionally by specific study. Results are sorted most-significant-first. Some deposited studies encode an unreported p-value as the GWAS Catalog missing-value sentinel -99; such rows cannot satisfy p_upper and are excluded when p_upper is set (the count is reported in metadata.sentinel_rows_excluded). Omit p_upper to retain them, flagged with p_value_reported = false.",
     "parameter": {
       "type": "object",
       "properties": {
