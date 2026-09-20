@@ -22,6 +22,9 @@ EUROPEPMC_ANNOTATIONS_URL = "https://www.ebi.ac.uk/europepmc/annotations_api"
 # are capped here to keep them usable.
 DEFAULT_ANNOTATION_CAP = 100
 
+# Single-article responses are not caller-capped; this bounds them instead.
+ARTICLE_ANNOTATION_CAP = 200
+
 
 @register_tool("EuroPMCAnnotationsTool")
 class EuroPMCAnnotationsTool(BaseTool):
@@ -131,6 +134,32 @@ class EuroPMCAnnotationsTool(BaseTool):
         return cap if cap > 0 else DEFAULT_ANNOTATION_CAP
 
     @staticmethod
+    def _unmatched_ids(requested, raw):
+        """Requested identifiers with no article in the response.
+
+        A request for PMC:PMC4353746 comes back keyed MED:25780448 with the
+        PMCID alongside, so matching is on either external id.
+        """
+        seen = set()
+        for article in raw:
+            source = str(article.get("source") or "").upper()
+            ext = str(article.get("extId") or "").upper()
+            pmcid = str(article.get("pmcid") or "").upper()
+            if ext:
+                seen.add(ext)
+                if source:
+                    seen.add(f"{source}:{ext}")
+            if pmcid:
+                seen.add(pmcid)
+        missing = []
+        for rid in requested:
+            upper = rid.upper()
+            _, _, ext = upper.partition(":")
+            if upper not in seen and ext not in seen:
+                missing.append(rid)
+        return missing
+
+    @staticmethod
     def _normalize_article_id(article_id: str) -> str:
         """Normalize bare PMC/PMID to API format: PMC:PMC4353746 or MED:25780448."""
         aid = article_id.strip()
@@ -211,8 +240,9 @@ class EuroPMCAnnotationsTool(BaseTool):
                 "article_id": article_id,
                 "pmcid": article.get("pmcid"),
                 "source": article.get("source"),
-                "annotation_count": len(annotations),
-                "annotations": annotations[:200],
+                "annotation_count": len(annotations[:ARTICLE_ANNOTATION_CAP]),
+                "total_annotations": len(annotations),
+                "annotations": annotations[:ARTICLE_ANNOTATION_CAP],
             },
             "metadata": {
                 "source": "Europe PMC Annotations API",
@@ -222,15 +252,31 @@ class EuroPMCAnnotationsTool(BaseTool):
 
     def _batch_by_type(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get annotations of a specific type from multiple articles."""
-        article_ids = arguments.get("article_ids", "")
+        raw_ids = arguments.get("article_ids", "")
         annotation_type = arguments.get("annotation_type", "")
         page_size = self._annotation_cap(arguments.get("page_size"))
 
-        if not article_ids:
+        if not str(raw_ids).strip():
             return {
                 "status": "error",
                 "error": "article_ids is required (e.g., 'PMC:PMC4353746,PMC:PMC3531190')",
             }
+
+        # The single-article tools accept bare 'PMC4353746' and raw PMIDs, and
+        # say so in their errors; the batch path used to send them unchanged and
+        # get a 400 back.
+        requested = [
+            self._normalize_article_id(part)
+            for part in str(raw_ids).split(",")
+            if part.strip()
+        ]
+        requested = [rid for rid in requested if rid]
+        if not requested:
+            return {
+                "status": "error",
+                "error": "article_ids contained no usable identifiers (e.g., 'PMC:PMC4353746').",
+            }
+        article_ids = ",".join(requested)
         if not annotation_type:
             return {
                 "status": "error",
@@ -279,6 +325,9 @@ class EuroPMCAnnotationsTool(BaseTool):
                 "article_count": len(articles),
                 "annotation_type": annotation_type,
                 "total_annotations": total_annotations,
+                # Europe PMC omits unknown identifiers rather than reporting
+                # them, so a typo in a 200-id list would vanish silently.
+                "not_found": self._unmatched_ids(requested, raw),
                 "articles": articles,
             },
             "metadata": {
@@ -351,8 +400,9 @@ class EuroPMCAnnotationsTool(BaseTool):
             "status": "success",
             "data": {
                 "article_id": article_id,
-                "chemical_count": len(chemicals),
-                "chemicals": chemicals[:200],
+                "chemical_count": len(chemicals[:ARTICLE_ANNOTATION_CAP]),
+                "total_chemicals": len(chemicals),
+                "chemicals": chemicals[:ARTICLE_ANNOTATION_CAP],
             },
             "metadata": {
                 "source": "Europe PMC Annotations API",
