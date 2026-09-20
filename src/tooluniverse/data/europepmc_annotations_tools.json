@@ -14,7 +14,21 @@
             "string",
             "null"
           ],
-          "description": "Filter by annotation type: 'Chemicals', 'Organisms', 'Gene Ontology', 'Diseases', 'Genes & Proteins', 'Accession Numbers'. Default: all types."
+          "enum": [
+            "Chemicals",
+            "Diseases",
+            "Organisms",
+            "Gene_Proteins",
+            "Gene Ontology",
+            "Accession Numbers",
+            "Experimental Methods",
+            "Gene Disease Relationship",
+            "Resources",
+            "Sequence",
+            "Cell Line",
+            null
+          ],
+          "description": "Filter by annotation type. Note 'Gene_Proteins' is spelled with an underscore. Default: all types."
         }
       },
       "required": [
@@ -93,7 +107,20 @@
         },
         "annotation_type": {
           "type": "string",
-          "description": "Annotation type to retrieve. One of: 'Chemicals', 'Organisms', 'Gene Ontology', 'Diseases', 'Genes & Proteins', 'Accession Numbers'."
+          "enum": [
+            "Chemicals",
+            "Diseases",
+            "Organisms",
+            "Gene_Proteins",
+            "Gene Ontology",
+            "Accession Numbers",
+            "Experimental Methods",
+            "Gene Disease Relationship",
+            "Resources",
+            "Sequence",
+            "Cell Line"
+          ],
+          "description": "Annotation type to retrieve. Note 'Gene_Proteins' is spelled with an underscore; Europe PMC returns an empty result rather than an error for an unrecognised type."
         },
         "page_size": {
           "type": [

@@ -57,10 +57,26 @@ class EuroPMCAnnotationsTool(BaseTool):
                 "error": "Failed to connect to Europe PMC Annotations API",
             }
         except requests.exceptions.HTTPError as e:
-            status = e.response.status_code if e.response else "unknown"
+            # requests.Response is falsy for any 4xx/5xx, so `if e.response`
+            # discards exactly the responses carrying the explanation.
+            response = e.response
+            if response is None:
+                return {
+                    "status": "error",
+                    "error": "Europe PMC Annotations API HTTP error: no response",
+                }
+            detail = ""
+            try:
+                detail = (response.json() or {}).get("message", "")
+            except ValueError:
+                detail = response.text.strip()[:200]
+            suffix = f": {detail}" if detail else ""
             return {
                 "status": "error",
-                "error": f"Europe PMC Annotations API HTTP error: {status}",
+                "error": (
+                    f"Europe PMC Annotations API HTTP error "
+                    f"{response.status_code}{suffix}"
+                ),
             }
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
