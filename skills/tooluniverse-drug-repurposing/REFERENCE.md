@@ -11,17 +11,19 @@ Detailed tool documentation and API reference for drug repurposing workflows.
 disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(
     diseaseName="Alzheimer's disease"
 )
-# Returns: {'data': {'id': 'EFO_0000249', 'name': '...', 'description': '...'}}
+# Returns: {'data': {'search': {'hits': [{'id': 'MONDO_0004975', 'name': '...', 'description': '...'}]}}}
+# disease_id = result['data']['search']['hits'][0]['id']
 ```
 **Use**: Initial disease lookup, get EFO ID for further queries
 
 #### OpenTargets_get_associated_targets_by_disease_efoId
 ```python
 targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(
-    efoId="EFO_0000249",
-    limit=20
+    efoId="MONDO_0004975",
+    size=20  # number of top-scored targets to return (default 50); `index` pages beyond that
 )
-# Returns: List of targets with association scores
+# Returns: data.disease.associatedTargets.rows[] -> {'target': {'id': 'ENSG...', 'approvedSymbol': '...'}, 'score': 0.75}
+# plus .count (total), .returned, .truncated
 ```
 **Use**: Find proteins/genes associated with disease (repurposing targets)
 
@@ -41,9 +43,9 @@ diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensembl(
 #### drugbank_get_drug_name_and_description_by_target_name
 ```python
 drugs = tu.tools.drugbank_get_drug_name_and_description_by_target_name(
-    query="BACE1"
+    query="Beta-secretase 1"  # protein NAME -- gene symbols like "BACE1" return 0 matches
 )
-# Returns: List of drugs targeting specified protein
+# Returns: data.results[] of drugs targeting the specified protein (+ total_matches)
 ```
 **Use**: Primary tool for finding drugs by target (target-based repurposing)
 
@@ -291,7 +293,8 @@ bioactivity = tu.tools.ChEMBL_search_activities(
 admet = tu.tools.ADMETAI_predict_physicochemical_properties(
     smiles="CC(C)Cc1ccc(cc1)C(C)C(O)=O"
 )
-# Returns: Absorption, distribution, metabolism, excretion, toxicity predictions
+# Returns: {smiles: {'molecular_weight': ..., 'logP': ..., 'hydrogen_bond_acceptors': ..., <property>_drugbank_approved_percentile: ...}}
+# (physicochemical properties only; use ADMETAI_predict_toxicity for toxicity endpoints)
 ```
 **Use**: Predict drug-like properties for candidates, filter early
 
@@ -396,10 +399,10 @@ Recommended limits by tool:
 - Real-time safety alerts
 
 ```python
-# Enable caching globally
-tu = ToolUniverse(use_cache=True)
-
-# Or per-call
+# The result cache is enabled by default (env TOOLUNIVERSE_CACHE_ENABLED, default true);
+# each call opts in with `use_cache=True`. It is a framework option on tools.X(...),
+# not a tool argument, and NOT a ToolUniverse() constructor argument.
+tu = ToolUniverse()
 result = tu.tools.ADMETAI_predict_physicochemical_properties(smiles="...", use_cache=True)
 ```
 

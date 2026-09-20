@@ -6,24 +6,36 @@
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `NvidiaNIM_rfdiffusion` | De novo backbone design | `diffusion_steps` |
+| `NvidiaNIM_rfdiffusion` | Backbone design (binders, motif scaffolding, de novo from a template PDB) | `contigs`, `input_pdb` (both required), `hotspot_res`, `diffusion_steps`, `random_seed` |
+
+> The `NvidiaNIM_rfdiffusion` / `NvidiaNIM_proteinmpnn` schemas declare no fixed return keys, and these
+> snippets were not live-run (no `NVIDIA_API_KEY` in the environment used to verify this file; the
+> arguments below were checked against the tool schemas only). The return keys used in the examples
+> (`structure`, `sequences`, `scores`) are placeholders: print `result.keys()` once and adapt.
 
 **Example - Generate backbones**:
 ```python
-# Generate de novo backbones
+# contigs (DSL) and input_pdb (PDB text, ATOM records only) are BOTH required
 result = tu.tools.NvidiaNIM_rfdiffusion(
+    contigs="A20-60/0 50-100",   # keep residues A20-60 of chain A, add a new 50-100 residue chain
+    input_pdb=target_pdb_text,
+    hotspot_res=["A50", "A51"],  # optional: binding-site hotspot residues for binder design
     diffusion_steps=50
 )
-# Returns: {"structure": "<PDB content>", "sequence": "GGG..."}
+# Returns a dict with the generated PDB coordinates (long-running async operation)
 ```
 
 **Parameters**:
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `diffusion_steps` | Number of denoising steps | 50 |
+| `contigs` | Contig specification DSL, e.g. `'A20-60/0 50-100'` | Required |
+| `input_pdb` | PDB text of the target/scaffold (ATOM records only) | Required |
+| `hotspot_res` | Hotspot residues, e.g. `['A50', 'A51']` | None |
+| `diffusion_steps` | Number of denoising steps (schema range 15-50) | 15 |
+| `random_seed` | Seed for reproducibility | None |
 
 **Notes**:
-- More steps (75-100) = higher quality but slower
+- More steps = slower; the schema accepts 15-50
 - Output is backbone-only (Gly residues)
 - Use with ProteinMPNN for sequence design
 
@@ -33,25 +45,27 @@ result = tu.tools.NvidiaNIM_rfdiffusion(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `NvidiaNIM_proteinmpnn` | Design sequences for backbone | `pdb_string`, `num_sequences` |
+| `NvidiaNIM_proteinmpnn` | Design sequences for backbone | `input_pdb`, `num_seq_per_target`, `sampling_temp` |
 
 **Example - Design sequences**:
 ```python
 # Design sequences for backbone
 result = tu.tools.NvidiaNIM_proteinmpnn(
-    pdb_string=backbone_pdb_content,
-    num_sequences=8,
-    temperature=0.1
+    input_pdb=backbone_pdb_content,
+    num_seq_per_target=8,
+    sampling_temp=[0.1]          # a LIST of temperatures
 )
-# Returns: {"sequences": ["MVLS...", "MKKT...", ...], "scores": [-1.89, -2.01, ...]}
+# Returns designed sequences in Multi-FASTA format with log-probabilities (per the tool description)
 ```
 
 **Parameters**:
 | Parameter | Description | Default |
 |-----------|-------------|---------|
-| `pdb_string` | PDB file content (backbone) | Required |
-| `num_sequences` | Number of sequences to generate | 8 |
-| `temperature` | Sampling temperature (lower = conservative) | 0.1 |
+| `input_pdb` | PDB file content (backbone, ATOM records) | Required |
+| `num_seq_per_target` | Number of sequences to generate | 1 |
+| `sampling_temp` | List of sampling temperatures (lower = conservative; 0.1-0.3 recommended) | `[0.1]` |
+| `ca_only` | Design using only CA atoms | False |
+| `use_soluble_model` | Use the model trained on soluble proteins | False |
 
 **Temperature Guide**:
 | Temperature | Use Case |
@@ -208,7 +222,7 @@ if with_model:
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `UniProt_get_sequence_by_accession` | Get target sequence | `accession` |
-| `InterPro_get_protein_domains` | Get domains | `accession` |
+| `InterPro_get_protein_domains` | Get domains | `protein_id` |
 
 ---
 
@@ -230,18 +244,24 @@ def design_protein_binder(tu, target_uniprot):
     )
     
     # Phase 2: Generate backbones
+    # RFdiffusion needs the target's PDB text (ATOM records) and a contigs string
+    target_pdb_text = ...   # e.g. downloaded PDB entry, or the structure from target_structure
+    contigs = "A1-150/0 60-100"   # keep target chain A residues 1-150, design a new 60-100 residue binder
     backbones = []
     for i in range(5):
-        bb = tu.tools.NvidiaNIM_rfdiffusion(diffusion_steps=50)
+        bb = tu.tools.NvidiaNIM_rfdiffusion(
+            contigs=contigs, input_pdb=target_pdb_text,
+            diffusion_steps=50, random_seed=i
+        )
         backbones.append(bb)
     
     # Phase 3: Design sequences
     all_sequences = []
     for bb in backbones:
         seqs = tu.tools.NvidiaNIM_proteinmpnn(
-            pdb_string=bb['structure'],
-            num_sequences=8,
-            temperature=0.1
+            input_pdb=bb['structure'],      # placeholder key - see note at top of this file
+            num_seq_per_target=8,
+            sampling_temp=[0.1]
         )
         all_sequences.extend(zip(seqs['sequences'], seqs['scores']))
     
@@ -275,19 +295,22 @@ def iterative_design(tu, initial_backbone, target_plddt=85):
     best_design = None
     best_plddt = 0
     
+    contigs = "A1-150/0 60-100"   # required by RFdiffusion; adapt to your target chain/residues
     for iteration in range(3):
-        # Increase diffusion steps each iteration
-        steps = 50 + iteration * 25
+        # Increase diffusion steps each iteration (30, 40, 50; the schema accepts 15-50)
+        steps = 30 + iteration * 10
         
         # Generate backbone
-        bb = tu.tools.NvidiaNIM_rfdiffusion(diffusion_steps=steps)
+        bb = tu.tools.NvidiaNIM_rfdiffusion(
+            contigs=contigs, input_pdb=initial_backbone, diffusion_steps=steps
+        )
         
         # Design sequences with decreasing temperature
         temp = 0.1 / (iteration + 1)
         seqs = tu.tools.NvidiaNIM_proteinmpnn(
-            pdb_string=bb['structure'],
-            num_sequences=16,
-            temperature=temp
+            input_pdb=bb['structure'],      # placeholder key - see note at top of this file
+            num_seq_per_target=16,
+            sampling_temp=[temp]
         )
         
         # Validate all
@@ -387,8 +410,8 @@ def assess_developability(sequence):
 
 | Tool | Wrong | Correct |
 |------|-------|---------|
-| `NvidiaNIM_rfdiffusion` | `num_steps=50` | `diffusion_steps=50` |
-| `NvidiaNIM_proteinmpnn` | `pdb=content` | `pdb_string=content` |
+| `NvidiaNIM_rfdiffusion` | `num_steps=50` | `diffusion_steps=50` (plus required `contigs` and `input_pdb`) |
+| `NvidiaNIM_proteinmpnn` | `pdb=content`, `pdb_string=content`, `num_sequences=8`, `temperature=0.1` | `input_pdb=content`, `num_seq_per_target=8`, `sampling_temp=[0.1]` |
 | `NvidiaNIM_esmfold` | `seq="MVLS..."` | `sequence="MVLS..."` |
 | `NvidiaNIM_alphafold2` | `seq="MVLS..."` | `sequence="MVLS..."` |
 
@@ -471,7 +494,9 @@ def batch_validate(tu, sequences, batch_size=5):
 # Generate diverse backbones
 backbones = []
 for _ in range(10):
-    bb = tu.tools.NvidiaNIM_rfdiffusion(diffusion_steps=50)
+    bb = tu.tools.NvidiaNIM_rfdiffusion(
+        contigs=contigs, input_pdb=target_pdb_text, diffusion_steps=50
+    )
     backbones.append(bb)
     time.sleep(1.5)  # Rate limit
 ```

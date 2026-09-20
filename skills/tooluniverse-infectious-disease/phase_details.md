@@ -70,16 +70,19 @@ def find_related_pathogens(tu, taxid, relative_names):
 ```python
 def identify_targets(tu, pathogen_name):
     """Identify essential druggable targets."""
+    # "reviewed" is a UniProt query field, not a tool parameter
     proteins = tu.tools.UniProt_search(
-        query=f"organism:{pathogen_name}", reviewed=True
-    )
+        query=f"organism:{pathogen_name} AND reviewed:true"
+    )['data']['results']  # [{accession, id, protein_name, gene_names, organism, length}]
     targets = []
     for protein in proteins:
-        chembl_target = tu.tools.ChEMBL_search_targets(query=protein['gene_name'])
+        # ChEMBL_search_targets filters by target NAME (pref_name__contains), not gene symbol
+        chembl_target = tu.tools.ChEMBL_search_targets(
+            pref_name__contains=protein['protein_name'], limit=5
+        )['data']['targets']
         targets.append({
             'uniprot': protein['accession'],
             'name': protein['protein_name'],
-            'function': protein['function'],
             'has_drug_precedent': len(chembl_target) > 0,
             'druggability': assess_druggability(protein)
         })
@@ -170,11 +173,12 @@ def dock_candidates(tu, target_structure, candidate_smiles_list):
 ```python
 def analyze_pathogen_pathways(tu, pathogen_name, pathogen_type):
     """Identify druggable metabolic pathways in pathogen."""
-    pathways = tu.tools.kegg_search_pathway(query=f"{pathogen_name} metabolism")
+    # Returns data: [{pathway_id, description}]
+    pathways = tu.tools.kegg_search_pathway(keyword=f"{pathogen_name} metabolism")['data']
     essential_genes = tu.tools.KEGG_get_pathway_genes(
         pathway_id=pathways[0]['pathway_id'])
     host_pathogen = tu.tools.kegg_search_pathway(
-        query=f"{pathogen_name} host interaction")
+        keyword=f"{pathogen_name} host interaction")['data']
     return {
         'metabolic_pathways': pathways,
         'essential_genes': essential_genes,
@@ -192,12 +196,15 @@ def comprehensive_outbreak_literature(tu, pathogen_name):
     pubmed = tu.tools.PubMed_search_articles(
         query=f"{pathogen_name} AND (outbreak OR treatment OR drug)",
         limit=50, sort="date")
-    biorxiv = tu.tools.BioRxiv_list_recent_preprints(
-        query=f"{pathogen_name} treatment mechanism", limit=20)
-    medrxiv = tu.tools.MedRxiv_get_preprint(
-        query=f"{pathogen_name} clinical trial", limit=20)
+    # bioRxiv/medRxiv tools have no keyword search (BioRxiv_list_recent_preprints needs a
+    # start/end date range; MedRxiv_get_preprint needs a DOI) - search preprints via Europe PMC
+    biorxiv = tu.tools.EuropePMC_search_articles(
+        query=f"SRC:PPR AND {pathogen_name} treatment mechanism", limit=20)['data']
+    medrxiv = tu.tools.EuropePMC_search_articles(
+        query=f"SRC:PPR AND {pathogen_name} clinical trial", limit=20)['data']
+    # ArXiv_search_papers has no category filter; put "q-bio" terms in the query if needed
     arxiv = tu.tools.ArXiv_search_papers(
-        query=f"{pathogen_name} drug discovery", category="q-bio", limit=10)
+        query=f"{pathogen_name} drug discovery", limit=10)['result']
     trials = tu.tools.search_clinical_trials(
         condition=pathogen_name, status="Recruiting")
 

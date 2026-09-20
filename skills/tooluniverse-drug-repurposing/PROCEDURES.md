@@ -10,18 +10,24 @@ disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(
     diseaseName="[disease_name]"
 )
 
-# 1.2 Find associated targets
+disease_id = disease_info['data']['search']['hits'][0]['id']  # data.search.hits[0].{id,name,description}
+
+# 1.2 Find associated targets (`size` = number of top-scored targets to return)
 targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(
-    efoId=disease_info['data']['id'],
-    limit=20
+    efoId=disease_id,
+    size=20
 )
+rows = targets['data']['disease']['associatedTargets']['rows']
+# each row: {'target': {'id': 'ENSG...', 'approvedSymbol': 'NOD2'}, 'score': 0.75}
 
 # 1.3 Get target details for top candidates
+# (Open Targets rows carry Ensembl IDs; get the UniProt accession from the target record)
 target_details = []
-for target in targets['data'][:10]:
-    details = tu.tools.UniProt_get_entry_by_accession(
-        accession=target['uniprot_id']
-    )
+for row in rows[:10]:
+    info = tu.tools.OpenTargets_get_target_info_by_ensemblID(ensemblId=row['target']['id'])
+    swissprot = [p['id'] for p in info['data']['target']['proteinIds']
+                 if p['source'] == 'uniprot_swissprot']
+    details = tu.tools.UniProt_get_entry_by_accession(accession=swissprot[0])
     target_details.append(details)
 ```
 
@@ -31,20 +37,25 @@ for target in targets['data'][:10]:
 # 2.1 Find drugs targeting disease-associated targets
 drug_candidates = []
 
-for target in targets['data'][:10]:
-    # Search DrugBank
+for row in rows[:10]:
+    symbol = row['target']['approvedSymbol']
+    info = tu.tools.OpenTargets_get_target_info_by_ensemblID(ensemblId=row['target']['id'])
+    protein_name = info['data']['target']['approvedName']
+
+    # Search DrugBank -- matches protein NAMES ("Epidermal growth factor receptor"),
+    # not gene symbols ("EGFR" returns 0 matches)
     drugbank_results = tu.tools.drugbank_get_drug_name_and_description_by_target_name(
-        query=target['gene_symbol']
+        query=protein_name
     )
 
-    # Search DGIdb
+    # Search DGIdb (gene symbols)
     dgidb_results = tu.tools.DGIdb_get_drug_gene_interactions(
-        gene_name=target['gene_symbol']
+        gene_name=symbol
     )
 
     # Search ChEMBL
     chembl_results = tu.tools.ChEMBL_search_drugs(
-        query=target['gene_symbol'],
+        query=symbol,
         limit=10
     )
 
@@ -84,8 +95,8 @@ for drug in top_candidates:
     if 'smiles' in drug:
         admet = tu.tools.ADMETAI_predict_physicochemical_properties(
             smiles=drug['smiles'],
-            use_cache=True
-        )
+            use_cache=True  # framework option (not a tool argument): reuse cached results
+        )  # returns {smiles: {molecular_weight, logP, ...}}
 ```
 
 ### Phase 4: Literature Evidence
@@ -198,13 +209,20 @@ adverse_as_therapeutic = tu.tools.FAERS_count_reactions_by_drug_event(
 ```python
 # Find drugs with multi-target activity matching disease network
 targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(
-    efoId=disease_id, limit=50
+    efoId=disease_id, size=50
 )
+disease_symbols = {r['target']['approvedSymbol']
+                   for r in targets['data']['disease']['associatedTargets']['rows']}
 for drug in candidate_drugs:
-    drug_targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(
+    res = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(
         query=drug
     )
-    overlap = len(set(drug_targets) & set(disease_targets))
+    # DrugBank targets are {'id', 'name' (protein name), 'organism', 'actions'} with no gene
+    # symbol, so map each protein name to a symbol first (your own step, e.g. via
+    # OpenTargets_get_target_id_description_by_name) before comparing with disease_symbols.
+    drug_target_names = [t['name'] for t in res['data']['results'][0]['targets']]
+    drug_symbols = map_protein_names_to_symbols(drug_target_names)
+    overlap = len(drug_symbols & disease_symbols)
     if overlap >= 3:
         print(f"{drug}: hits {overlap} disease targets")
 ```
@@ -243,10 +261,12 @@ viable_candidates = [r for r in admet_results if r['pass']]
 
 ### Pattern 1: Rapid Screening
 ```python
-targets = get_disease_targets(disease_id)[:10]
+targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(
+    efoId=disease_id, size=10
+)['data']['disease']['associatedTargets']['rows']
 all_drugs = []
-for target in targets:
-    drugs = tu.tools.DGIdb_get_drug_gene_interactions(gene_name=target['gene_symbol'])
+for row in targets:
+    drugs = tu.tools.DGIdb_get_drug_gene_interactions(gene_name=row['target']['approvedSymbol'])
     all_drugs.extend(drugs)
 approved_drugs = [d for d in all_drugs if d.get('approved')]
 ```
@@ -299,10 +319,12 @@ adverse_events = tu.tools.FAERS_count_reactions_by_drug_event(
 ### Use Case 3: Combination Therapy Discovery
 ```python
 disease_targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_id)
-primary_targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(
-    query=primary_drug
-)
-uncovered_targets = [t for t in disease_targets if t not in primary_targets]
+disease_symbols = {r['target']['approvedSymbol']
+                   for r in disease_targets['data']['disease']['associatedTargets']['rows']}
+res = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(query=primary_drug)
+# DrugBank targets carry protein names only; map to gene symbols (your own step) to compare
+primary_symbols = map_protein_names_to_symbols([t['name'] for t in res['data']['results'][0]['targets']])
+uncovered_targets = disease_symbols - primary_symbols
 # Find drugs for uncovered targets
 ```
 

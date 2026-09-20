@@ -68,7 +68,7 @@ tu.load_tools()
 disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(diseaseName="rheumatoid arthritis")
 # Response nests ID at data.search.hits[0].id
 disease_id = disease_info['data']['search']['hits'][0]['id']
-targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_id, limit=10)
+targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_id, size=10)
 
 # Step 2: Find drugs for each target
 # Response nests targets at data.disease.associatedTargets.rows

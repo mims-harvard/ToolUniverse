@@ -68,11 +68,16 @@ solubility = tu.tools.ADMETAI_predict_solubility_lipophilicity_hydration(smiles=
 
 ```python
 # ChEMBL bioactivity
-bioactivity = tu.tools.ChEMBL_search_activities(chembl_id="CHEMBL1431")
-# → Activity data
+bioactivity = tu.tools.ChEMBL_search_activities(molecule_chembl_id="CHEMBL1431", limit=10)
+# → data.activities[] (one row per measurement)
 
-targets = tu.tools.ChEMBL_get_target(chembl_id="CHEMBL1431")
-# → Target list with UniProt
+# Targets: CHEMBL1431 is a MOLECULE id, so go through its mechanisms, then fetch each target
+mechanisms = tu.tools.ChEMBL_get_drug_mechanisms(molecule_chembl_id="CHEMBL1431")
+# → data.mechanisms[] with target_chembl_id + mechanism_of_action
+target = tu.tools.ChEMBL_get_target(
+    target_chembl_id=mechanisms['data']['mechanisms'][0]['target_chembl_id']
+)
+# → data.target_components[] with UniProt accessions
 
 # DGIdb drug-gene interactions
 dgidb = tu.tools.DGIdb_get_drug_info(drugs=["metformin"])
@@ -210,8 +215,12 @@ pgkb_details = tu.tools.PharmGKB_get_drug_details(drug_id="PA450657")
 # Clinical annotations for related genes
 annotations = tu.tools.PharmGKB_get_clinical_annotations(gene_id="PA35858")  # SLC22A1
 
-# Dosing guidelines
-guidelines = tu.tools.PharmGKB_get_dosing_guidelines(gene="SLC22A1")
+# Dosing guidelines: PharmGKB_get_dosing_guidelines needs a guideline_id, taken from the
+# 'clinpgxid' field of CPIC_list_guidelines. CPIC has no metformin/SLC22A1 guideline
+# (this returns an empty list), so there is nothing to fetch for this drug.
+cpic = tu.tools.CPIC_list_guidelines(drug="metformin")
+if cpic['data']:
+    guidelines = tu.tools.PharmGKB_get_dosing_guidelines(guideline_id=cpic['data'][0]['clinpgxid'])
 ```
 
 **Update Section 7** with pharmacogene table, clinical annotations, guideline status.

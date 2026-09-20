@@ -406,19 +406,22 @@ quick = tu.tools.SpliceAI_get_max_delta(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `CELLxGENE_get_expression_data` | Cell-type specific expression | `gene`, `tissue` |
-| `CELLxGENE_get_cell_metadata` | Cell type annotations | `gene` |
+| `CELLxGENE_get_expression_data` | Expression summary for a cell/gene subset (AnnData dimensions + metadata) | `obs_value_filter` and/or `var_value_filter` (at least one required), `obs_column_names` |
+| `CELLxGENE_get_cell_metadata` | Cell type / tissue / disease annotations | `obs_value_filter` (required), `column_names` |
 | `CELLxGENE_download_h5ad` | Download full dataset | `dataset_id` |
 | `CELLxGENE_get_embeddings` | UMAP/tSNE coordinates | `dataset_id` |
 
 **Example - Get cell-type expression**:
 ```python
-# Get expression across cell types
+# Filters are SQL-like strings; unfiltered queries time out (50M+ cells)
 expression = tu.tools.CELLxGENE_get_expression_data(
-    gene="FBN1",
-    tissue="heart"
+    obs_value_filter='tissue_general == "heart"',
+    var_value_filter='feature_name in ["FBN1"]',
+    obs_column_names=["cell_type"]
 )
-# Returns: Expression values per cell type
+# Returns an AnnData summary (dimensions, metadata) - not per-cell-type mean expression.
+# Requires the cellxgene-census package; not live-run when this snippet was checked
+# (arguments verified against the tool schema only).
 ```
 
 **Why use it**: Validates that candidate genes are expressed in disease-relevant cell types (e.g., fibroblasts for connective tissue disorders).
@@ -503,8 +506,8 @@ pathways = tu.tools.ReactomeContent_search(query="TGF-beta signaling")
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `intact_search_interactions` | Search interactions | `query`, `species` |
-| `intact_get_interaction_network` | Network view | `gene`, `depth` |
+| `intact_search_interactions` | Search interactions | `query`, `first`, `max` |
+| `intact_get_interaction_network` | Network view | `gene_symbol` (or `identifier`/`uniprot_id`), `depth`, `limit` |
 | `intact_get_complex_details` | Protein complexes | `complex_id` |
 
 **Example - Get protein interactions**:
@@ -512,9 +515,10 @@ pathways = tu.tools.ReactomeContent_search(query="TGF-beta signaling")
 # Get interaction partners
 interactions = tu.tools.intact_search_interactions(
     query="FBN1",
-    species="human"
+    max=25
 )
-# Returns: Direct interaction partners with confidence scores
+# Returns data: [{id, source, interaction_name, interactor_descriptions}] - no confidence scores,
+# and no species parameter (results can include non-human interactors; filter interactor_descriptions)
 ```
 
 **Why use it**: Identifies protein complexes and pathways; variants may disrupt protein-protein interactions.

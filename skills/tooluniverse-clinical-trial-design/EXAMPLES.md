@@ -13,7 +13,7 @@ Concrete examples of trial feasibility assessments using ToolUniverse.
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # Trial parameters
@@ -577,7 +577,7 @@ Timeline: 24 months (first patient to primary analysis)
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 indication = "Niemann-Pick Type C"
@@ -918,7 +918,7 @@ TIMELINE: 48-60 months (enrollment + follow-up)
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 indication = "PD-L1 high (TPS ≥50%) non-small cell lung cancer, first-line"
@@ -1243,7 +1243,7 @@ BUDGET: $6-9M (higher cost due to comparator drug purchase + 2× monitoring)
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 indication = "Atrial fibrillation, stroke prevention"
@@ -1366,7 +1366,7 @@ print(f"  - Strategy: Partner with large pharma or seek CV outcomes specialist C
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 indication = "NTRK fusion-positive solid tumors (basket trial)"

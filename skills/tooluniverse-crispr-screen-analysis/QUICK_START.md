@@ -40,13 +40,15 @@ tu.load_tools()
 result = tu.tools.Pharos_get_target(gene="KRAS")
 
 # Druggability assessment (Pharos)
-result = tu.tools.Pharos_search_targets(query="KRAS", limit=1)
+result = tu.tools.Pharos_search_targets(query="KRAS", top=1)  # `top` = max results (1-100)
 
 # Clinical trials
 result = tu.tools.search_clinical_trials(
-    intervention="KRAS inhibitor",
-    recruitment_status="recruiting"
+    intervention="sotorasib",              # an intervention NAME; the phrase "KRAS inhibitor" matches nothing
+    overall_status=["RECRUITING"]          # uppercase enum values; lowercase is rejected (HTTP 400)
 )
+# Note: this tool filters to phase 2/3/4 by default (see result metadata); use
+# ClinicalTrials_search_studies for an unfiltered search.
 
 # Pathway enrichment (Enrichr)
 result = tu.tools.Enrichr_enrich(
@@ -131,8 +133,8 @@ Parameters:
 Tool: search_clinical_trials
 Parameters:
 {
-  "intervention": "KRAS inhibitor",
-  "recruitment_status": "recruiting"
+  "intervention": "sotorasib",
+  "overall_status": ["RECRUITING"]
 }
 ```
 

@@ -11,7 +11,7 @@ Detailed examples showing multi-step workflows for comprehensive target analysis
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # Resolve EGFR to all IDs
@@ -433,7 +433,7 @@ Recent Focus Areas:
 from tooluniverse import ToolUniverse
 from concurrent.futures import ThreadPoolExecutor
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # Resolve KRAS
@@ -581,7 +581,7 @@ def validate_target(gene_symbol, disease_area='cancer'):
     """
     Systematic target validation following industry best practices.
     """
-    tu = ToolUniverse(use_cache=True)
+    tu = ToolUniverse()
     tu.load_tools()
     
     validation_results = {}
@@ -690,27 +690,28 @@ New entrants would need differentiation (selectivity, CNS penetration, etc.)
 
 ```python
 def find_targets_for_disease(disease_name):
-    tu = ToolUniverse(use_cache=True)
+    tu = ToolUniverse()
     tu.load_tools()
     
     # 1. Get disease ID
     disease_search = tu.tools.OpenTargets_get_disease_ids_by_name(
-        diseaseName=disease_name
+        name=disease_name
     )
-    efo_id = disease_search.get('id')  # e.g., EFO_0000249 for Alzheimer's
+    # Ranked candidates at data.search.hits[]; take the top hit
+    efo_id = disease_search['data']['search']['hits'][0]['id']  # e.g., MONDO_0004975 for Alzheimer's
     
-    # 2. Get associated targets
+    # 2. Get associated targets (`size` = number of top-scored targets to return)
     targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(
-        efoId=efo_id
+        efoId=efo_id, size=10
     )
     
     # 3. For top targets, assess druggability
-    top_targets = targets.get('data', [])[:10]
+    top_targets = targets['data']['disease']['associatedTargets']['rows']
     
     target_assessments = []
     for target in top_targets:
-        ensembl_id = target.get('target_id')
-        symbol = target.get('gene_symbol')
+        ensembl_id = target['target']['id']
+        symbol = target['target']['approvedSymbol']
         
         # Druggability
         tract = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(
@@ -730,10 +731,10 @@ def find_targets_for_disease(disease_name):
         target_assessments.append({
             'symbol': symbol,
             'ensembl_id': ensembl_id,
-            'disease_score': target.get('score'),
+            'disease_score': target['score'],
             'tractability': tract,
-            'drug_count': len(drugs.get('data', [])),
-            'safety_flags': len(safety.get('data', []))
+            'drug_count': drugs['data']['target']['drugAndClinicalCandidates']['count'],
+            'safety_flags': len(safety['data']['target']['safetyLiabilities'])
         })
     
     return target_assessments
@@ -804,14 +805,15 @@ for lig in ligands:
 
 ```python
 # 1. Disease → EFO ID
-efo = tu.tools.OpenTargets_get_disease_ids_by_name(diseaseName='lung cancer')
+efo = tu.tools.OpenTargets_get_disease_ids_by_name(name='lung cancer')
+efo_id = efo['data']['search']['hits'][0]['id']
 
 # 2. EFO → Targets
-targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=efo['id'])
+targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=efo_id, size=5)
 
 # 3. Target → Drugs
-for target in targets['data'][:5]:
+for row in targets['data']['disease']['associatedTargets']['rows']:
     drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
-        ensemblId=target['target_id']
-    )
+        ensemblId=row['target']['id']
+    )  # data.target.drugAndClinicalCandidates.rows[]
 ```

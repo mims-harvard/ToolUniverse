@@ -58,7 +58,7 @@ results = tu.run_batch(calls)
 
 ```python
 def drug_discovery_pipeline(disease_id):
-    tu = ToolUniverse(use_cache=True)
+    tu = ToolUniverse()
     tu.load_tools()
     try:
         targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_id)
@@ -79,8 +79,10 @@ def drug_discovery_pipeline(disease_id):
 ## Configuration
 
 ```python
-# Caching
-tu = ToolUniverse(use_cache=True)
+# Caching: opt in per call (use_cache is a framework option on tools.X(...),
+# not an argument to ToolUniverse() or to the tool itself)
+tu = ToolUniverse()
+result = tu.tools.some_tool(param="value", use_cache=True)
 stats = tu.get_cache_stats()
 tu.clear_cache()
 

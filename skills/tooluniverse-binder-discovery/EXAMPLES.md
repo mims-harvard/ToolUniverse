@@ -112,12 +112,14 @@ probes = tu.tools.OpenTargets_get_chemical_probes_by_target_ensemblID(
 ### Phase 3: Structure Analysis
 
 ```python
-# Step 3.1: Find PDB structures
+# Step 3.1: Find PDB structures (the tool takes a PDB ID, a raw sequence, or text -- not a UniProt accession)
+egfr_sequence = tu.tools.UniProt_get_sequence_by_accession(accession="P00533")  # returns the sequence string
 pdb_list = tu.tools.PDB_search_similar_structures(
-    query="P00533",
-    type="sequence"
+    query=egfr_sequence,
+    search_type="sequence",
+    max_results=100
 )
-# → 156 structures
+# → pdb_list['data']['results'] = [{'pdb_id', 'rank', 'score'}, ...]; pdb_list['data']['total_found'] = total hits
 
 # Step 3.2: Get metadata for key structures
 key_pdbs = ["1M17", "4HJO", "5UG9", "6JX4"]
@@ -397,10 +399,10 @@ chembl_result = tu.tools.ChEMBL_search_targets(pref_name__contains="Cyclin-depen
 # → CHEMBL331 (SINGLE PROTEIN; CHEMBL1907601 is the CDK4/cyclin D1 complex)
 
 # Step 1.2: Get protein sequence
-cdk4_sequence = tu.tools.UniProt_get_sequence_by_accession(accession="P11802")['result']
+cdk4_sequence = tu.tools.UniProt_get_sequence_by_accession(accession="P11802")  # returns the sequence string
 
 # Step 1.3: Check for existing PDB structures
-pdb_structures = tu.tools.PDB_search_similar_structures(query="P11802", type="sequence")
+pdb_structures = tu.tools.PDB_search_similar_structures(query=cdk4_sequence, search_type="sequence")
 # → 25 structures, best: 2W9Z (2.0 Å, with palbociclib)
 
 # Step 1.4: Predict structure with NVIDIA NIM for comparison

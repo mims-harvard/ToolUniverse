@@ -133,15 +133,18 @@ benzene_smiles = "c1ccccc1"
 
 result = tu.tools.PubChem_search_compounds_by_substructure(
     smiles=benzene_smiles,
-    limit=100
+    max_results=100
 )
 
-print(f"Found {len(result['data'])} compounds with benzene ring")
+# Returns CIDs only: {data: {IdentifierList: {CID: [...]}}}
+cids = result["data"]["IdentifierList"]["CID"]
+print(f"Found {len(cids)} compounds with benzene ring")
 
 # Get properties of first 10
-for cid in result["data"][:10]:
+for cid in cids[:10]:
     props = tu.tools.PubChem_get_compound_properties_by_CID(cid=cid)
-    print(f"CID {cid}: {props['data']['IUPACName'][:50]}...")
+    row = props["data"]["PropertyTable"]["Properties"][0]
+    print(f"CID {cid}: {row['IUPACName'][:50]}...")
 ```
 
 ## Example 7: Drug Discovery Workflow

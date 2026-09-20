@@ -7,48 +7,54 @@ Concrete examples of drug repurposing workflows using ToolUniverse.
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # Step 1: Get disease information
 disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(
     diseaseName="Alzheimer's disease"
 )
-print(f"Disease ID: {disease_info['data']['id']}")
-print(f"Description: {disease_info['data']['description']}")
+disease = disease_info['data']['search']['hits'][0]  # {'id', 'name', 'description'}
+print(f"Disease ID: {disease['id']}")
+print(f"Description: {disease['description']}")
 
-# Step 2: Get top associated targets
+# Step 2: Get top associated targets (`size` = number of top-scored targets returned)
 targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(
-    efoId=disease_info['data']['id'],
-    limit=10
+    efoId=disease['id'],
+    size=10
 )
+rows = targets['data']['disease']['associatedTargets']['rows']
+# each row: {'target': {'id': 'ENSG...', 'approvedSymbol': 'NOD2'}, 'score': 0.75}
 
 print(f"\nTop 10 targets for Alzheimer's disease:")
-for i, target in enumerate(targets['data'], 1):
-    print(f"{i}. {target['gene_symbol']} - Score: {target['score']}")
+for i, row in enumerate(rows, 1):
+    print(f"{i}. {row['target']['approvedSymbol']} - Score: {row['score']}")
 
 # Step 3: Find drugs for top 3 targets
 repurposing_candidates = []
 
-for target in targets['data'][:3]:
-    gene_symbol = target['gene_symbol']
+for row in rows[:3]:
+    gene_symbol = row['target']['approvedSymbol']
     print(f"\nSearching drugs for target: {gene_symbol}")
     
-    # Search DGIdb
+    # Search DGIdb: data.genes.nodes[].interactions[] -> {'drug': {'name': ...}, 'interactionTypes': [...]}
     dgidb_results = tu.tools.DGIdb_get_drug_gene_interactions(
         gene_name=gene_symbol
     )
     
-    if dgidb_results and 'data' in dgidb_results:
-        for drug in dgidb_results['data']:
+    interactions = [i for n in dgidb_results.get('data', {}).get('genes', {}).get('nodes', [])
+                    for i in n.get('interactions', [])]
+    if interactions:
+        for drug in interactions:
+            drug_name = drug['drug']['name']
             # Get detailed drug information
             drug_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
-                query=drug['drug_name']
+                query=drug_name
             )
             
             # Get current indications
             indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(
-                query=drug['drug_name']
+                query=drug_name
             )
             
             # Check if already used for Alzheimer's
@@ -56,9 +62,9 @@ for target in targets['data'][:3]:
                                    if r.get('indication')]
             if not any('alzheimer' in ind.lower() for ind in current_indications):
                 repurposing_candidates.append({
-                    'drug_name': drug['drug_name'],
+                    'drug_name': drug_name,
                     'target': gene_symbol,
-                    'interaction_type': drug.get('interaction_type'),
+                    'interaction_type': [t['type'] for t in drug.get('interactionTypes', [])],
                     'current_indications': current_indications,
                     'approval_status': ((drug_info.get('data', {}).get('results') or [{}])[0]).get('approval_groups')
                 })
@@ -136,7 +142,7 @@ REPURPOSING CANDIDATES FOR ALZHEIMER'S DISEASE
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # Step 1: Get comprehensive drug information
@@ -303,7 +309,7 @@ Recommended Next Steps:
 from tooluniverse import ToolUniverse
 import json
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # Step 1: Define disease and get information
@@ -319,13 +325,15 @@ disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(
 
 # Step 2: Get viral-host interaction targets
 print("\nKEY HOST TARGETS:")
+disease_id = disease_info['data']['search']['hits'][0]['id']
 targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(
-    efoId=disease_info['data']['id'],
-    limit=20
+    efoId=disease_id,
+    size=20
 )
+rows = targets['data']['disease']['associatedTargets']['rows']  # [{'target': {'id', 'approvedSymbol'}, 'score'}]
 
-for i, target in enumerate(targets['data'][:10], 1):
-    print(f"{i}. {target['gene_symbol']} - {target['gene_name']}")
+for i, row in enumerate(rows[:10], 1):
+    print(f"{i}. {row['target']['approvedSymbol']} ({row['target']['id']}) - Score: {row['score']:.2f}")
 
 # Step 3: Rapid screening - find ALL approved drugs for these targets
 print(f"\n{'='*80}")
@@ -334,18 +342,20 @@ print("="*80)
 
 approved_candidates = []
 
-for target in targets['data'][:10]:
-    gene_symbol = target['gene_symbol']
+for row in rows[:10]:
+    gene_symbol = row['target']['approvedSymbol']
     
     # Search multiple databases
     dgidb = tu.tools.DGIdb_get_drug_gene_interactions(gene_name=gene_symbol)
-    # DrugBank matches target NAMES; some gene symbols hit (e.g. 'ABL1'), others do not (e.g. 'EGFR' -> use the protein name)
-    drugbank = tu.tools.drugbank_get_drug_name_and_description_by_target_name(query=gene_symbol)
+    # DrugBank matches protein NAMES, not gene symbols ('EGFR' -> 0 matches); use approvedName
+    info = tu.tools.OpenTargets_get_target_info_by_ensemblID(ensemblId=row['target']['id'])
+    drugbank = tu.tools.drugbank_get_drug_name_and_description_by_target_name(
+        query=info['data']['target']['approvedName'])
     
     # Combine results
     all_drugs = []
-    if dgidb and 'data' in dgidb:
-        all_drugs.extend([d['drug_name'] for d in dgidb['data']])
+    for node in dgidb.get('data', {}).get('genes', {}).get('nodes', []):
+        all_drugs.extend([i['drug']['name'] for i in node.get('interactions', [])])
     if drugbank and 'data' in drugbank:
         all_drugs.extend([d['drug_name'] for d in drugbank['data'].get('results', [])])
     
@@ -362,7 +372,7 @@ for target in targets['data'][:10]:
                 approved_candidates.append({
                     'drug': drug_name,
                     'target': gene_symbol,
-                    'target_score': target['score']
+                    'target_score': row['score']
                 })
         except:
             continue
@@ -484,7 +494,7 @@ NEXT STEPS:
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # Step 1: Analyze pathways affected by known effective drug
@@ -572,7 +582,7 @@ for i, candidate in enumerate(validated_candidates[:5], 1):
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # Step 1: Start with known active compound
@@ -677,7 +687,7 @@ for analog in approved_analogs[:5]:
 from tooluniverse import ToolUniverse
 from collections import Counter
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # Concept: Adverse effects can be therapeutic in different contexts
@@ -806,7 +816,7 @@ Next steps:
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 def comprehensive_repurposing_analysis(drug_name, new_indication):
@@ -865,8 +875,8 @@ def comprehensive_repurposing_analysis(drug_name, new_indication):
     )
     
     disease_targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(
-        efoId=disease_info['data']['id'],
-        limit=50
+        efoId=disease_info['data']['search']['hits'][0]['id'],
+        size=50
     )
     
     # Calculate target overlap
@@ -878,7 +888,8 @@ def comprehensive_repurposing_analysis(drug_name, new_indication):
         ).get('data', {}).get('search', {}).get('hits', [])
         if hits:
             drug_target_symbols.append(hits[0]['name'])
-    disease_target_symbols = [t['gene_symbol'] for t in disease_targets.get('data', [])]
+    disease_target_symbols = [r['target']['approvedSymbol']
+                              for r in disease_targets['data']['disease']['associatedTargets']['rows']]
     overlap = set(drug_target_symbols) & set(disease_target_symbols)
     
     print(f"Disease targets: {len(disease_target_symbols)}")
