@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def odphp_outlink_fetch(
     urls: list[str],
-    max_chars: int,
-    return_html: bool,
+    max_chars: Optional[int] = None,
+    return_html: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def SwissADME_check_druglikeness(
-    operation: str,
     smiles: str,
-    rules: Optional[list[str] | Any] = None,
+    operation: Optional[str] = "check_druglikeness",
+    rules: Optional[list[str]] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def SwissADME_check_druglikeness(
         Operation type
     smiles : str
         SMILES string of the molecule to check. Must be a valid small molecule SMILES.
-    rules : list[str] | Any
+    rules : list[str]
         Optional list of specific drug-likeness rules to check. If null, all 5 rules ...
     stream_callback : Callable, optional
         Callback for streaming output

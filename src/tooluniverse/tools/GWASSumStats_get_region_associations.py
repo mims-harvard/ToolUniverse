@@ -1,7 +1,7 @@
 """
 GWASSumStats_get_region_associations
 
-Query full GWAS summary statistics for variants in a chromosomal region. Returns variant-level as...
+DEPRECATED / non-functional: the EBI GWAS Catalog Summary Statistics REST API was retired (every ...
 """
 
 from typing import Any, Optional, Callable
@@ -12,16 +12,16 @@ def GWASSumStats_get_region_associations(
     chromosome: int,
     bp_lower: int,
     bp_upper: int,
-    p_upper: Optional[float | Any] = None,
-    study_accession: Optional[str | Any] = None,
-    size: Optional[int | Any] = None,
+    p_upper: Optional[float] = None,
+    study_accession: Optional[str] = None,
+    size: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Query full GWAS summary statistics for variants in a chromosomal region. Returns variant-level as...
+    DEPRECATED / non-functional: the EBI GWAS Catalog Summary Statistics REST API was retired (every ...
 
     Parameters
     ----------
@@ -31,11 +31,11 @@ def GWASSumStats_get_region_associations(
         Start position of the region (GRCh38 coordinates).
     bp_upper : int
         End position of the region (GRCh38 coordinates).
-    p_upper : float | Any
+    p_upper : float
         Maximum p-value threshold (default 5e-8 for genome-wide significance). Use la...
-    study_accession : str | Any
+    study_accession : str
         Filter by specific GWAS study accession (e.g., 'GCST002245'). Get study IDs f...
-    size : int | Any
+    size : int
         Maximum number of variants to return (default 50, max 1000).
     stream_callback : Callable, optional
         Callback for streaming output

@@ -1,7 +1,7 @@
 """
 eQTL_list_datasets
 
-List available eQTL (expression Quantitative Trait Loci) datasets from the EBI eQTL Catalogue. Ea...
+DEPRECATED / non-functional: the EBI eQTL Catalogue retired its REST API (every request now retur...
 """
 
 from typing import Any, Optional, Callable
@@ -10,23 +10,23 @@ from ._shared_client import get_shared_client
 
 def eQTL_list_datasets(
     size: Optional[int] = 20,
-    quant_method: Optional[str | Any] = None,
-    tissue_id: Optional[str | Any] = None,
+    quant_method: Optional[str] = None,
+    tissue_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    List available eQTL (expression Quantitative Trait Loci) datasets from the EBI eQTL Catalogue. Ea...
+    DEPRECATED / non-functional: the EBI eQTL Catalogue retired its REST API (every request now retur...
 
     Parameters
     ----------
     size : int
         Number of datasets to return (default 20)
-    quant_method : str | Any
+    quant_method : str
         Filter by quantification method: 'ge' (gene expression), 'exon', 'tx' (transc...
-    tissue_id : str | Any
+    tissue_id : str
         Filter by tissue ontology ID (e.g., 'CL_0000235' for macrophage, 'UBERON_0002...
     stream_callback : Callable, optional
         Callback for streaming output
