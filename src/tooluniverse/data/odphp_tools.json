@@ -31,8 +31,7 @@
         "lang",
         "age",
         "sex",
-        "pregnant",
-        "strip_html"
+        "pregnant"
       ]
     },
     "fields": {
@@ -495,11 +494,7 @@
         }
       },
       "required": [
-        "lang",
-        "topicId",
-        "categoryId",
-        "keyword",
-        "strip_html"
+        "lang"
       ]
     },
     "fields": {
@@ -619,9 +614,7 @@
         }
       },
       "required": [
-        "urls",
-        "max_chars",
-        "return_html"
+        "urls"
       ]
     },
     "fields": {
