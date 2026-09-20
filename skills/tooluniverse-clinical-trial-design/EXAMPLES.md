@@ -53,13 +53,15 @@ l858r_variants = [v for v in egfr_variants['data']
 print(f"\nEGFR L858R variants found: {len(l858r_variants)}")
 
 # 1.3: Cross-reference with population genetics
-gnomad_egfr = tu.tools.gnomad_search_variants(
-    gene="EGFR"
+# gnomad_search_variants takes a variant ID / rsID / ClinVar ID (not a gene
+# symbol). L858R is rs121434568; it is a somatic hotspot, so an error such as
+# "No data returned from gnomAD API" means it is absent from gnomAD.
+gnomad_l858r = tu.tools.gnomad_search_variants(
+    query="rs121434568",
+    dataset="gnomad_r4"
 )
-
-# Filter to L858R (c.2573T>G)
-l858r_gnomad = [v for v in gnomad_egfr['data']
-                if v.get('hgvs_c', '').startswith('c.2573T>G')]
+l858r_gnomad = (gnomad_l858r.get('data', {}).get('variant_search', [])
+                if gnomad_l858r.get('status') == 'success' else [])
 
 # 1.4: Search literature for epidemiology
 epi_papers = tu.tools.PubMed_search_articles(
@@ -186,11 +188,11 @@ for key, value in testing_strategy.items():
 comparator = "osimertinib"
 
 comparator_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
-    drug_name_or_drugbank_id=comparator
+    query=comparator
 )
 
 comparator_indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id=comparator
+    query=comparator
 )
 
 print(f"\nComparator: {comparator}")
@@ -208,19 +210,21 @@ if fda_approval and 'data' in fda_approval:
         print(f"  Indication: {approval.get('indication', 'N/A')}")
 
 # 3.3: Find historical control data from clinical trials
-historical_trials = tu.tools.search_clinical_trials(
+historical_trials = tu.tools.ClinicalTrials_search_studies(
     condition="EGFR positive non-small cell lung cancer",
     intervention=comparator,
-    status="completed",
-    phase="2|3"
+    filter_status="COMPLETED",
+    filter_phase="PHASE2,PHASE3",  # comma-separate multiple phases
+    page_size=20
 )
+historical_studies = historical_trials['data']['studies']
 
-print(f"\n{comparator} trials found: {len(historical_trials['data'])}")
+print(f"\n{comparator} trials found: {historical_trials['data']['total_count']}")
 
 # Extract ORR data from key trials
-for trial in historical_trials['data'][:3]:
-    print(f"\n  NCT: {trial.get('nct_number')}")
-    print(f"  Title: {trial.get('title')}")
+for trial in historical_studies[:3]:
+    print(f"\n  NCT: {trial.get('nct_id')}")
+    print(f"  Title: {trial.get('brief_title')}")
     print(f"  Status: {trial.get('status')}")
     # Note: Would parse results for ORR in real analysis
 
@@ -244,17 +248,23 @@ print(f"  - Acceptable for Phase 2; randomized Phase 3 if successful")
 
 ```python
 # 4.1: Search for precedent trials using ORR
-orr_precedent = tu.tools.search_clinical_trials(
+orr_precedent = tu.tools.ClinicalTrials_search_studies(
     condition="EGFR positive non-small cell lung cancer",
-    phase="2",
-    status="completed"
+    filter_phase="PHASE2",
+    filter_status="COMPLETED",
+    page_size=20
 )
+orr_studies = orr_precedent['data']['studies']
 
 orr_trials_count = 0
 pfs_trials_count = 0
 
-for trial in orr_precedent['data']:
-    primary_outcome = trial.get('primary_outcome', '').lower()
+for trial in orr_studies:
+    # Search results carry no outcome fields; primary outcomes come from ClinicalTrials_get_study
+    details = tu.tools.ClinicalTrials_get_study(nct_id=trial['nct_id'])
+    primary_outcome = ' '.join(
+        o.get('measure', '') for o in details['data'].get('primary_outcomes', [])
+    ).lower()
     if 'response rate' in primary_outcome or 'orr' in primary_outcome:
         orr_trials_count += 1
     if 'progression' in primary_outcome or 'pfs' in primary_outcome:
@@ -262,7 +272,7 @@ for trial in orr_precedent['data']:
 
 print("PRIMARY ENDPOINT ANALYSIS")
 print("="*80)
-print(f"Phase 2 trials in EGFR+ NSCLC: {len(orr_precedent['data'])}")
+print(f"Phase 2 trials in EGFR+ NSCLC: {orr_precedent['data']['total_count']} (analyzed first {len(orr_studies)})")
 print(f"  - Using ORR as primary: {orr_trials_count}")
 print(f"  - Using PFS as primary: {pfs_trials_count}")
 
@@ -322,7 +332,7 @@ print("  - Quality of life (EORTC QLQ-C30)")
 reference_drug = "erlotinib"  # Earlier-generation EGFR TKI
 
 reference_pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id=reference_drug
+    query=reference_drug
 )
 
 reference_warnings = tu.tools.FDA_get_warnings_and_cautions_by_drug_name(
@@ -335,16 +345,16 @@ print(f"Reference drug for class effects: {reference_drug}")
 print(f"FDA warnings: {len(reference_warnings.get('data', []))}")
 
 # 5.2: FAERS data for real-world AEs
-faers_egfr = tu.tools.FAERS_search_reports_by_drug_and_reaction(
-    drug_name=reference_drug,
-    limit=1000
+faers_egfr = tu.tools.FAERS_search_adverse_event_reports(
+    medicinalproduct=reference_drug.upper(),
+    limit=100  # capped at 100 per request; read total_available for the full count
 )
 
 ae_counts = tu.tools.FAERS_count_reactions_by_drug_event(
     medicinalproduct=reference_drug.upper()
 )
 
-print(f"\nFAERS reports for {reference_drug}: {len(faers_egfr.get('data', []))}")
+print(f"\nFAERS reports for {reference_drug}: {faers_egfr.get('total_available')}")
 print("\nTop 10 Adverse Events (FAERS):")
 for i, ae in enumerate(ae_counts.get('results', [])[:10], 1):
     print(f"  {i}. {ae['term']}: {ae['count']} reports")
@@ -666,19 +676,24 @@ print("="*80)
 print(f"Natural history papers: {len(nh_papers['data'])}")
 
 # 2.2: Search for existing clinical trials (learn from precedents)
-npc_trials = tu.tools.search_clinical_trials(
+npc_trials = tu.tools.ClinicalTrials_search_studies(
     condition="Niemann-Pick Disease Type C",
-    status="completed|active"
+    filter_status="COMPLETED,ACTIVE_NOT_RECRUITING",  # comma-separate multiple statuses
+    page_size=20
 )
+npc_studies = npc_trials['data']['studies']
 
-print(f"\nNPC clinical trials: {len(npc_trials['data'])}")
+print(f"\nNPC clinical trials: {npc_trials['data']['total_count']}")
 
 endpoints_used = {}
-for trial in npc_trials['data']:
-    primary = trial.get('primary_outcome', '')
-    if primary:
-        key = primary[:50]  # Truncate for grouping
-        endpoints_used[key] = endpoints_used.get(key, 0) + 1
+for trial in npc_studies:
+    # Search results carry no outcome fields; primary outcomes come from ClinicalTrials_get_study
+    details = tu.tools.ClinicalTrials_get_study(nct_id=trial['nct_id'])
+    for outcome in details['data'].get('primary_outcomes', []):
+        primary = outcome.get('measure', '')
+        if primary:
+            key = primary[:50]  # Truncate for grouping
+            endpoints_used[key] = endpoints_used.get(key, 0) + 1
 
 print("\nEndpoints used in prior NPC trials:")
 for endpoint, count in sorted(endpoints_used.items(), key=lambda x: x[1], reverse=True)[:5]:
@@ -966,11 +981,11 @@ print(f"  Enrollment timeline: {target_n / (monthly_enrollment * sites):.1f} mon
 ```python
 # 2.1: Get pembrolizumab info
 pembro_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
-    drug_name_or_drugbank_id=comparator
+    query=comparator
 )
 
 pembro_indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id=comparator
+    query=comparator
 )
 
 print("\nCOMPARATOR DRUG: PEMBROLIZUMAB")
@@ -984,14 +999,14 @@ pembro_approval = tu.tools.OpenFDA_get_approval_history(
 )
 
 # 2.3: Get pivotal trial data
-keynote_trials = tu.tools.search_clinical_trials(
+keynote_trials = tu.tools.ClinicalTrials_search_studies(
     intervention="pembrolizumab",
     condition="non-small cell lung cancer",
-    phase="3",
-    status="completed"
+    filter_phase="PHASE3",
+    filter_status="COMPLETED"
 )
 
-print(f"\nPembrolizumab Phase 3 trials in NSCLC: {len(keynote_trials['data'])}")
+print(f"\nPembrolizumab Phase 3 trials in NSCLC: {keynote_trials['data']['total_count']}")
 
 # Key trial: KEYNOTE-024 (1L, PD-L1 ≥50%)
 print("\n" + "="*80)
@@ -1250,7 +1265,7 @@ print(f"Eligible for trial: ~50% = {on_anticoagulation * 0.5:,.0f}")
 
 # Step 2: Comparator (Apixaban - Standard of Care)
 apixaban_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
-    drug_name_or_drugbank_id=comparator
+    query=comparator
 )
 
 print(f"\nComparator: {comparator}")

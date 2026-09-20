@@ -290,7 +290,7 @@ tu.load_tools()
 
 # Search HPA for tissue-specific markers
 result = tu.tools.HPA_search_genes_by_query(
-    query="T cell marker blood"
+    search_query="T cell marker blood"  # keyword search: verify hits are real markers (genes in result['data']['genes'])
 )
 ```
 

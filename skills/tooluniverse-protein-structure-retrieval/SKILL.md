@@ -38,7 +38,7 @@ Skip for: specific PDB IDs, UniProt accessions, unambiguous protein+organism.
 # By UniProt: get AlphaFold + search experimental structures
 af_structure = tu.tools.alphafold_get_prediction(uniprot_id=uniprot_id)
 # By protein name: search
-result = tu.tools.PDBeSearch_search_structures(protein_name=protein_name)
+result = tu.tools.PDBeSearch_search_structures(query=protein_name)
 ```
 
 ### Identity Checklist
@@ -55,12 +55,15 @@ Retrieve silently. Do NOT narrate the process.
 pdb_id = "4INS"
 
 # Search, metadata, quality, ligands, similar structures
-result = tu.tools.PDBeSearch_search_structures(protein_name=name)
+result = tu.tools.PDBeSearch_search_structures(query=name)
 metadata = tu.tools.get_protein_metadata_by_pdb_id(pdb_id=pdb_id)
 exp = tu.tools.RCSBData_get_entry(pdb_id=pdb_id)
 quality = tu.tools.PDBeValidation_get_quality_scores(pdb_id=pdb_id)
-ligands = tu.tools.PDBe_KB_get_ligand_sites(pdb_id=pdb_id)
-similar = tu.tools.PDBeSIFTS_get_all_structures(pdb_id=pdb_id, cutoff=2.0)
+ligands = tu.tools.PDBe_get_structure_ligands(pdb_id=pdb_id)  # data.ligands[]
+similar = tu.tools.PDB_search_similar_structures(query=pdb_id, search_type="structure")  # data.results[] with rank, score
+# By UniProt accession: all PDB entries, and ligand-binding residues across entries
+entries = tu.tools.PDBeSIFTS_get_all_structures(uniprot_accession=uniprot_id)  # data.pdb_entries[]
+sites = tu.tools.PDBe_KB_get_ligand_sites(uniprot_accession=uniprot_id)  # data.ligands[]
 
 # PDBe additional data
 summary = tu.tools.pdbe_get_entry_summary(pdb_id=pdb_id)
@@ -77,7 +80,7 @@ af = tu.tools.alphafold_get_prediction(uniprot_id=uniprot_id)
 | RCSB search | PDBe search |
 | get_protein_metadata | pdbe_get_entry_summary |
 | Experimental structure | AlphaFold prediction |
-| get_protein_ligands | PDBe_KB_get_ligand_sites |
+| get_protein_ligands | PDBe_get_structure_ligands (per PDB ID) or PDBe_KB_get_ligand_sites (per UniProt accession) |
 | No usable AlphaFold model (multi-domain protein, low pLDDT for a specific range) | `SwissModel_get_models` filtered to that residue `range` — the repository holds per-domain homology models AlphaFold's single full-length model may not resolve well |
 
 ### SWISS-MODEL Repository (Homology Models + Re-Indexed Experimental Structures)
@@ -158,7 +161,7 @@ Present as a **Structure Profile Report**. Hide search process. Include:
 
 ## Tool Reference
 
-**RCSB PDB**: `PDBeSearch_search_structures` (search), `get_protein_metadata_by_pdb_id` (basic info), `RCSBData_get_entry` (details), `PDBeValidation_get_quality_scores` (quality), `PDBe_KB_get_ligand_sites` (ligands), `PDBeSIFTS_get_all_structures` (homologs)
+**RCSB PDB**: `PDBeSearch_search_structures` (search), `get_protein_metadata_by_pdb_id` (basic info), `RCSBData_get_entry` (details), `PDBeValidation_get_quality_scores` (quality), `PDBe_get_structure_ligands` (ligands in an entry), `PDBe_KB_get_ligand_sites` (ligand-binding residues for a UniProt accession), `PDBeSIFTS_get_all_structures` (all PDB entries for a UniProt accession), `PDB_search_similar_structures` (similar structures)
 
 **PDBe**: `pdbe_get_entry_summary` (overview), `pdbe_get_entry_molecules` (entities), `pdbe_get_entry_experiment` (experimental), `PDBe_KB_get_ligand_sites` (pockets)
 

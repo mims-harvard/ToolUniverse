@@ -84,7 +84,7 @@ Phases in order:
 **CRITICAL**: Verify tool parameters before calling unfamiliar tools.
 
 ```python
-tool_info = tu.tools.get_tool_info(tool_name="ChEMBL_get_target_activities")
+tool_info = tu.tools.get_tool_info(tool_names="ChEMBL_get_target_activities")
 ```
 
 Common parameter corrections (verify with `get_tool_info` if uncertain):
@@ -102,8 +102,8 @@ Resolve all IDs upfront and store for downstream queries:
 
 ```
 1. UniProt_search(query=target_name, organism="human") -> UniProt accession
-2. MyGene_query_genes(q=gene_symbol, species="human") -> Ensembl gene ID
-3. ChEMBL_search_targets(query=target_name, organism="Homo sapiens") -> ChEMBL target ID
+2. MyGene_query_genes(query=gene_symbol, species="human") -> Ensembl gene ID
+3. ChEMBL_search_targets(pref_name__contains=target_name, organism="Homo sapiens") -> ChEMBL target ID
 4. GtoPdb_search_targets(query=target_name) -> GtoPdb ID (if GPCR/channel/enzyme)
 ```
 
@@ -120,9 +120,9 @@ Use multi-source triangulation:
 
 ### 1.3 Binding Site Analysis
 
-- `ChEMBL_search_binding_sites(target_chembl_id)`
+- `ChEMBL_search_binding_sites(site_name__contains=...)` (filters by site name only; cannot filter by target)
 - `get_binding_affinity_by_pdb_id(pdb_id)` for co-crystallized ligands
-- `InterPro_get_protein_domains(accession)` for domain architecture
+- `InterPro_get_protein_domains(protein_id=uniprot_accession)` for domain architecture
 
 ### 1.4 Structure Prediction (NVIDIA NIM)
 
@@ -164,7 +164,7 @@ Tools:
 
 ### Phase 3.5: Docking Validation (NVIDIA NIM)
 
-If PDB + SDF available: use `get_diffdock_info(protein=PDB, ligand=SDF, num_poses=10)`.
+If PDB + SDF available: use `NvidiaNIM_diffdock` (parameters in TOOLS_REFERENCE.md; requires `NVIDIA_API_KEY`). `get_diffdock_info(info_type="overview")` only returns documentation about DiffDock; it does not dock anything.
 If only sequence + SMILES: use `NvidiaNIM_boltz2(polymers=[...], ligands=[...])`.
 
 Dock a known reference inhibitor first to validate the binding pocket geometry before running candidates.
@@ -176,10 +176,10 @@ Dock a known reference inhibitor first to validate the binding pocket geometry b
 ### 4.1-4.3 Search-Based Expansion
 
 Use 3-5 diverse actives as seeds, similarity threshold 70-85%:
-- `ChEMBL_search_similar_molecules(molecule=SMILES, similarity=70)`
+- `ChEMBL_search_similar_molecules(query=SMILES, similarity_threshold=70)`
 - `PubChem_search_compounds_by_similarity(smiles, threshold=0.7)`
 - `ChEMBL_search_substructure(smiles=core_scaffold)`
-- `STITCH_get_chemical_protein_interactions(identifier=gene, species=9606)`
+- `STITCH_get_chemical_protein_interactions(identifiers=[gene], species=9606)`
 
 ### 4.4 De Novo Generation (NVIDIA NIM)
 
@@ -227,7 +227,7 @@ Deliver top 20 candidates with: Rank, ID, SMILES, docking score, ADMET score, ov
 ## Phase 6.5: Literature Evidence
 
 - `PubMed_search_articles(query="[TARGET] inhibitor SAR")` - peer-reviewed
-- `EuropePMC_search_articles(query, source="PPR")` - preprints (not peer-reviewed)
+- `EuropePMC_search_articles(query="SRC:PPR AND ...")` - preprints (not peer-reviewed)
 - `openalex_search_works(query)` - citation analysis
 
 ---

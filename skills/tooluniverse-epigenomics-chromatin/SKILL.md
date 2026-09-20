@@ -141,10 +141,10 @@ result = tu.tools.UCSC_get_encode_cCREs(chrom="chr17", start=7668421, end=768749
 
 ## Phase 4: eQTL Analysis
 
-**GTEx_get_single_tissue_eqtls**: `gene_symbol`. Returns all significant eQTLs across tissues with snpId, pValue, tissueSiteDetailId, nes (normalized effect size).
+**GTEx_get_single_tissue_eqtls**: `gencode_id` (list of Ensembl gene IDs, versioned or not), `tissue_site_detail_id`, `page`. It does not accept a gene symbol; use `GTEx_query_eqtl` below if you only have a symbol. Returns significant eQTLs across tissues with snpId, pValue, tissueSiteDetailId, nes (normalized effect size).
 
 ```python
-result = tu.tools.GTEx_get_single_tissue_eqtls(gene_symbol="BRCA1")
+result = tu.tools.GTEx_get_single_tissue_eqtls(gencode_id=["ENSG00000012048"])  # BRCA1
 from collections import Counter
 tissue_counts = Counter(e["tissueSiteDetailId"] for e in result["data"])
 ```

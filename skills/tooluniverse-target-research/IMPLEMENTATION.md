@@ -31,7 +31,7 @@ def resolve_target_ids(tu, query):
 
     # CRITICAL: Get versioned Ensembl ID for GTEx
     if ids['ensembl']:
-        gene_info = tu.tools.ensembl_lookup_gene(id=ids['ensembl'], species="human")
+        gene_info = tu.tools.ensembl_lookup_gene(gene_id=ids['ensembl'], species="human")
         if gene_info and gene_info.get('version'):
             ids['ensembl_versioned'] = f"{ids['ensembl']}.{gene_info['version']}"
 
@@ -289,16 +289,14 @@ def path_expression(tu, ids):
 
     # Try unversioned first
     gtex_result = tu.tools.GTEx_get_median_gene_expression(
-        gencode_id=ensembl_id,
-        operation="median"
+        gencode_id=ensembl_id
     )
 
     # Fallback to versioned if empty
     if not gtex_result or gtex_result.get('data') == []:
         if versioned_id:
             gtex_result = tu.tools.GTEx_get_median_gene_expression(
-                gencode_id=versioned_id,
-                operation="median"
+                gencode_id=versioned_id
             )
             if gtex_result and gtex_result.get('data'):
                 results['gtex'] = gtex_result

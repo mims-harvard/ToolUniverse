@@ -274,7 +274,7 @@ def get_drugbank_info(tu, drug_name):
 ```python
 def get_chembl_mechanism(tu, chembl_drug_id):
     """Get drug mechanism from ChEMBL."""
-    result = tu.tools.ChEMBL_get_drug_mechanisms(drug_chembl_id__exact=chembl_drug_id, limit=10)
+    result = tu.tools.ChEMBL_get_drug_mechanisms(drug_chembl_id=chembl_drug_id, limit=10)
     return result
 ```
 
@@ -315,7 +315,7 @@ def search_resistance_literature(tu, gene_symbol, drug_name):
 ```python
 def get_bypass_pathways(tu, uniprot_id):
     """Get pathways that could mediate bypass resistance."""
-    result = tu.tools.Reactome_map_uniprot_to_pathways(id=uniprot_id)
+    result = tu.tools.Reactome_map_uniprot_to_pathways(uniprot_id=uniprot_id)
     return result
 ```
 
@@ -380,7 +380,7 @@ def get_prognostic_literature(tu, gene_symbol, variant_name, cancer_type=None):
 ```python
 def get_pathway_context(tu, uniprot_id):
     """Get pathway context from Reactome."""
-    result = tu.tools.Reactome_map_uniprot_to_pathways(id=uniprot_id)
+    result = tu.tools.Reactome_map_uniprot_to_pathways(uniprot_id=uniprot_id)
     return result
 ```
 
@@ -394,7 +394,7 @@ def get_expression_context(tu, ensembl_id):
     version = data.get('version', 1)
     versioned_id = f"{ensembl_id}.{version}"
     result = tu.tools.GTEx_get_median_gene_expression(
-        gencode_id=versioned_id, operation='median'
+        gencode_id=versioned_id
     )
     return result
 ```

@@ -8,7 +8,7 @@ Detailed procedures, code patterns, and screening protocols for each phase.
 
 ```python
 # Check tool params to prevent silent failures
-tool_info = tu.tools.get_tool_info(tool_name="ChEMBL_get_target_activities")
+tool_info = tu.tools.get_tool_info(tool_names="ChEMBL_get_target_activities")
 ```
 
 ### Known Parameter Corrections
@@ -17,7 +17,7 @@ tool_info = tu.tools.get_tool_info(tool_name="ChEMBL_get_target_activities")
 |------|-----------------|-------------------|
 | `OpenTargets_get_target_tractability_by_ensemblID` | `ensembl_id` | `ensemblId` |
 | `ChEMBL_get_target_activities` | `chembl_target_id` | `target_chembl_id` |
-| `ChEMBL_search_similar_molecules` | `smiles` | `molecule` (accepts SMILES, ChEMBL ID, or name) |
+| `ChEMBL_search_similar_molecules` | `smiles` / `molecule` / `similarity` | `query` (accepts SMILES, ChEMBL ID, or name) / `similarity_threshold` |
 | `alphafold_get_prediction` | `uniprot` | `accession` |
 | `ADMETAI_*` | `smiles="..."` | `smiles=["..."]` (must be list) |
 | `NvidiaNIM_alphafold2` | `seq` | `sequence` |
@@ -34,10 +34,10 @@ tool_info = tu.tools.get_tool_info(tool_name="ChEMBL_get_target_activities")
 1. UniProt_search(query=target_name, organism="human")
    -> Extract: UniProt accession, gene name, protein name
 
-2. MyGene_query_genes(q=gene_symbol, species="human")
+2. MyGene_query_genes(query=gene_symbol, species="human")
    -> Extract: Ensembl gene ID, NCBI gene ID
 
-3. ChEMBL_search_targets(query=target_name, organism="Homo sapiens")
+3. ChEMBL_search_targets(pref_name__contains=target_name, organism="Homo sapiens")
    -> Extract: ChEMBL target ID, target type
 
 4. GtoPdb_search_targets(query=target_name)
@@ -144,13 +144,13 @@ def check_therapeutic_antibodies(tu, target_name):
 ### 1.3 Binding Site Analysis
 
 ```
-1. ChEMBL_search_binding_sites(target_chembl_id)
-   -> Extract: Binding site names, types
+1. ChEMBL_search_binding_sites(site_name__contains=protein_name)  # site-name filter only; cannot filter by target
+   -> Extract: Binding site names (data.binding_sites[])
 
 2. get_binding_affinity_by_pdb_id(pdb_id)  # For each PDB with ligand
    -> Extract: Kd, Ki, IC50 values for co-crystallized ligands
 
-3. InterPro_get_protein_domains(uniprot_accession)
+3. InterPro_get_protein_domains(protein_id=uniprot_accession)
    -> Extract: Domain architecture, active sites
 ```
 
@@ -199,13 +199,13 @@ def get_bindingdb_ligands(tu, uniprot_id, affinity_cutoff=10000):
     """Get ligands from BindingDB with measured affinities."""
 
     result = tu.tools.BindingDB_get_ligands_by_uniprot(
-        uniprot=uniprot_id,
+        uniprot_id=uniprot_id,
         affinity_cutoff=affinity_cutoff
     )
 
-    if result:
+    if result.get('status') == 'success':
         ligands = []
-        for entry in result:
+        for entry in result['data']['affinities']:
             ligands.append({
                 'smiles': entry.get('smile'),
                 'affinity_type': entry.get('affinity_type'),
@@ -288,15 +288,13 @@ def get_cryoem_structures(tu, target_name, uniprot_accession):
     )
 
     structures = []
-    for entry in emdb_results[:5]:
-        details = tu.tools.EMDB_get_structure(entry_id=entry['emdb_id'])
-        pdb_models = details.get('pdb_ids', [])
+    for entry in emdb_results['data'][:5]:
+        # Search hits already carry the full entry; EMDB_get_structure(emdb_id=...) returns the same record
+        pdb_refs = (entry.get('crossreferences') or {}).get('pdb_list', {}).get('pdb_reference', [])
         structures.append({
             'emdb_id': entry['emdb_id'],
-            'resolution': entry.get('resolution', 'N/A'),
-            'title': entry.get('title', 'N/A'),
-            'conformational_state': details.get('state', 'Unknown'),
-            'pdb_models': pdb_models
+            'title': entry.get('admin', {}).get('title', 'N/A'),
+            'pdb_models': [r['pdb_id'] for r in pdb_refs]  # empty if no atomic model
         })
     return structures
 ```
@@ -356,7 +354,7 @@ NvidiaNIM_boltz2(
 ### 4.1 Similarity Search
 
 ```
-1. ChEMBL_search_similar_molecules(molecule=top_active_smiles, similarity=70)
+1. ChEMBL_search_similar_molecules(query=top_active_smiles, similarity_threshold=70)
    -> Extract: Similar compounds not yet tested on target
 
 2. PubChem_search_compounds_by_similarity(smiles, threshold=0.7)
@@ -378,7 +376,7 @@ NvidiaNIM_boltz2(
 ### 4.3 Cross-Database Mining
 
 ```
-1. STITCH_get_chemical_protein_interactions(identifier=target_gene)
+1. STITCH_get_chemical_protein_interactions(identifiers=[target_gene])  # endpoint currently 404 upstream; STRING_get_network is the working alternative
 2. DGIdb_get_drug_gene_interactions(genes=[gene_symbol])
 ```
 
@@ -454,7 +452,7 @@ ADMETAI_predict_physicochemical_properties(smiles=[compound_list])
 ### 5.3 Structural Alerts
 
 ```
-ChEMBL_search_compound_structural_alerts(smiles=compound_smiles)
+ChEMBL_search_compound_structural_alerts(molecule_chembl_id=compound_chembl_id)
 -> Flag: PAINS, reactive groups, toxicophores
 ```
 
@@ -528,9 +526,8 @@ def search_binder_literature(tu, target_name, compound_scaffolds):
 
     # EuropePMC: Preprints (bioRxiv/medRxiv)
     preprints = tu.tools.EuropePMC_search_articles(
-        query=f"{target_name} small molecule discovery",
-        source="PPR",
-        pageSize=15
+        query=f"SRC:PPR AND {target_name} small molecule discovery",
+        limit=15
     )
 
     # Citation analysis
@@ -610,7 +607,7 @@ Primary: NvidiaNIM_genmol (specific position variation)
 ### Literature Search
 ```
 Primary: PubMed_search_articles (peer-reviewed)
--> Supplement: EuropePMC_search_articles (source='PPR' for preprints)
+-> Supplement: EuropePMC_search_articles (query with `SRC:PPR` for preprints)
 -> Supplement: openalex_search_works (citation analysis)
 ```
 

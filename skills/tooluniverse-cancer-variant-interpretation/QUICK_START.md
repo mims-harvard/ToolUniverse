@@ -113,7 +113,7 @@ resistance = tu.tools.PubMed_search_articles(
 )
 
 # Pathway context
-pathways = tu.tools.Reactome_map_uniprot_to_pathways(id='P00533')
+pathways = tu.tools.Reactome_map_uniprot_to_pathways(uniprot_id='P00533')
 ```
 
 ## Common Pitfalls
@@ -125,7 +125,7 @@ pathways = tu.tools.Reactome_map_uniprot_to_pathways(id='P00533')
 | DrugBank error | All 4 params required: `query`, `case_sensitive`, `exact_match`, `limit` |
 | MyGene param error | Use `query`, NOT `q` |
 | Clinical trials empty | Use broader `query_term` (e.g., "EGFR mutation" instead of "EGFR L858R") |
-| ChEMBL mechanisms error | Use `drug_chembl_id__exact`, NOT `chembl_id` |
+| ChEMBL mechanisms error | Use `drug_chembl_id` (`molecule_chembl_id`/`chembl_id` are accepted aliases); `drug_chembl_id__exact` is NOT a parameter |
 | GTEx empty results | Use versioned Ensembl ID (e.g., ENSG00000146648.12) |
 | OpenTargets drug lookup | Use `drugName` parameter, NOT `genericName` |
 

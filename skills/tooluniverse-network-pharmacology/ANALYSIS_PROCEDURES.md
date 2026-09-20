@@ -99,7 +99,7 @@ gwas_studies = tu.tools.OpenTargets_search_gwas_studies_by_disease(diseaseIds=[d
 ctd_diseases = tu.tools.CTD_get_gene_diseases(input_terms="PSEN1")
 
 for gene in ["PSEN1", "APP", "BACE1"]:
-    pharos = tu.tools.Pharos_get_target(target_name=gene)
+    pharos = tu.tools.Pharos_get_target(gene=gene)
 ```
 
 **Step 1.3**: Identify disease nodes and related conditions.
@@ -142,14 +142,16 @@ for gene_symbol in ["PSEN1", "APP", "APOE"]:
     gwas_assoc = tu.tools.GWAS_search_associations_by_gene(gene_name=gene_symbol)
 
 ctd_gene_diseases = tu.tools.CTD_get_gene_diseases(input_terms="PSEN1")
-pharmgkb_gene = tu.tools.PharmGKB_get_gene_details(gene_symbol="PSEN1")
+# PharmGKB_get_gene_details needs a PharmGKB accession (e.g. PA33855), so search by symbol first
+pharmgkb_hits = tu.tools.PharmGKB_search_genes(query="PSEN1")
+pharmgkb_gene = tu.tools.PharmGKB_get_gene_details(gene_id=pharmgkb_hits["data"][0]["id"])
 ```
 
 **Step 2.3**: Compound-disease edges (clinical evidence).
 
 ```python
 trials = tu.tools.search_clinical_trials(query_term="metformin", condition="Alzheimer", pageSize=20)
-trials2 = tu.tools.ClinicalTrials_search_studies(query="metformin Alzheimer disease", limit=20)
+trials2 = tu.tools.ClinicalTrials_search_studies(query="metformin Alzheimer disease", max_results=20)
 
 ctd_chem_diseases = tu.tools.CTD_get_chemical_diseases(input_terms="Metformin")
 
@@ -160,11 +162,13 @@ europepmc_results = tu.tools.EuropePMC_search_articles(query="metformin Alzheime
 **Step 2.4**: Target-target edges (PPI network).
 
 ```python
+# Partner list for ONE protein (STRING_get_interaction_partners is single-protein)
 string_ppi = tu.tools.STRING_get_interaction_partners(
-    protein_ids=["PSEN1", "APP", "APOE", "BACE1", "MAPT"], species=9606, limit=20
+    identifiers="PSEN1", species=9606, limit=20
 )
+# Network among several proteins: identifiers separated by "\r"
 string_network = tu.tools.STRING_get_network(
-    protein_ids=["PSEN1", "APP", "APOE", "BACE1", "MAPT"], species=9606
+    identifiers="\r".join(["PSEN1", "APP", "APOE", "BACE1", "MAPT"]), species=9606
 )
 intact_results = tu.tools.intact_search_interactions(query="PSEN1", max=20)
 
@@ -174,7 +178,7 @@ ot_interactions = tu.tools.OpenTargets_get_target_interactions_by_ensemblID(
 
 humanbase_ppi = tu.tools.humanbase_ppi_analysis(
     gene_list=["PSEN1", "APP", "APOE", "BACE1", "MAPT"],
-    tissue="brain", max_node=50, interaction="sn", string_mode="physical"
+    tissue="brain", max_node=50, interaction="interaction", string_mode=False
 )
 ```
 
@@ -307,7 +311,7 @@ for gene in drug_target_genes[:10]:
 ```python
 for gene in drug_target_genes[:10]:
     druggability = tu.tools.DGIdb_get_gene_druggability(genes=[gene])
-    pharos_info = tu.tools.Pharos_get_target(target_name=gene)
+    pharos_info = tu.tools.Pharos_get_target(gene=gene)
     tractability = tu.tools.OpenTargets_get_target_tractability_by_ensemblID(ensemblId=gene_ensembl_id)
 ```
 

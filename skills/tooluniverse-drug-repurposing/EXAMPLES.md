@@ -43,23 +43,24 @@ for target in targets['data'][:3]:
         for drug in dgidb_results['data']:
             # Get detailed drug information
             drug_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
-                drug_name_or_drugbank_id=drug['drug_name']
+                query=drug['drug_name']
             )
             
             # Get current indications
             indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(
-                drug_name_or_drugbank_id=drug['drug_name']
+                query=drug['drug_name']
             )
             
             # Check if already used for Alzheimer's
-            current_indications = [ind['indication'] for ind in indications.get('data', [])]
+            current_indications = [r['indication'] for r in indications.get('data', {}).get('results', [])
+                                   if r.get('indication')]
             if not any('alzheimer' in ind.lower() for ind in current_indications):
                 repurposing_candidates.append({
                     'drug_name': drug['drug_name'],
                     'target': gene_symbol,
                     'interaction_type': drug.get('interaction_type'),
                     'current_indications': current_indications,
-                    'approval_status': drug_info.get('data', {}).get('groups')
+                    'approval_status': ((drug_info.get('data', {}).get('results') or [{}])[0]).get('approval_groups')
                 })
 
 # Step 4: Score and rank candidates
@@ -86,8 +87,8 @@ if repurposing_candidates:
     )
     
     # Get adverse events
-    adverse_events = tu.tools.FAERS_search_reports_by_drug_and_reaction(
-        drug_name=top_drug,
+    adverse_events = tu.tools.FAERS_count_reactions_by_drug_event(
+        medicinalproduct=top_drug,
         limit=100
     )
     
@@ -146,30 +147,35 @@ print("="*80)
 
 # Basic info
 drug_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
-    drug_name_or_drugbank_id=drug_name
+    query=drug_name
 )
 
 # Current indications
 indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id=drug_name
+    query=drug_name
 )
 
 # Targets
 targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id=drug_name
+    query=drug_name
 )
 
 # Pharmacology
 pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id=drug_name
+    query=drug_name
 )
 
 print(f"\nCURRENT APPROVED INDICATIONS:")
-for ind in indications.get('data', [])[:5]:
-    print(f"  - {ind['indication']}")
+# DrugBank tools return data.results[]; each row has a free-text 'indication'
+current_indications = [r['indication'] for r in indications.get('data', {}).get('results', [])
+                       if r.get('indication')]
+for ind in current_indications[:5]:
+    print(f"  - {ind[:120]}")
 
 print(f"\nTARGETS:")
-for target in targets.get('data', [])[:5]:
+target_rows = targets.get('data', {}).get('results', [])
+drug_targets = target_rows[0].get('targets', []) if target_rows else []
+for target in drug_targets[:5]:
     print(f"  - {target['name']} ({target['organism']})")
 
 # Step 2: Find diseases associated with drug targets
@@ -179,19 +185,23 @@ print("="*80)
 
 potential_indications = []
 
-for target in targets.get('data', [])[:5]:
-    gene_symbol = target.get('gene_symbol')
+for target in drug_targets[:5]:
+    # DrugBank targets carry a protein name, not an Ensembl ID -- resolve it first
+    hits = tu.tools.OpenTargets_get_target_id_description_by_name(
+        targetName=target['name']
+    ).get('data', {}).get('search', {}).get('hits', [])
+    gene_symbol = hits[0]['name'] if hits else None
     if gene_symbol:
         # Search for diseases associated with this target
         target_diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensembl(
-            ensemblId=target['ensembl_id']
+            ensemblId=hits[0]['id']
         )
         rows = target_diseases['data']['target']['associatedDiseases']['rows']
         
         for row in rows[:3]:
             disease = row['disease']
             # Check if not already indicated
-            if disease['name'] not in [ind['indication'] for ind in indications.get('data', [])]:
+            if disease['name'] not in current_indications:
                 potential_indications.append({
                     'disease': disease['name'],
                     'target': gene_symbol,
@@ -241,7 +251,7 @@ adverse_events = tu.tools.FAERS_count_reactions_by_drug_event(
 
 # Drug interactions
 interactions = tu.tools.drugbank_get_drug_interactions_by_drug_name_or_id(
-    drug_name_or_id=drug_name
+    query=drug_name
 )
 
 print(f"\nFDA Warnings: {len(warnings.get('data', []))}")
@@ -249,7 +259,9 @@ print(f"Top Adverse Events:")
 for event in adverse_events.get('results', [])[:5]:
     print(f"  - {event['term']}: {event['count']} reports")
 
-print(f"\nDrug-Drug Interactions: {len(interactions.get('data', []))}")
+interaction_rows = interactions.get('data', {}).get('results', [])
+n_interactions = interaction_rows[0].get('interacting_drugs_total_count', 0) if interaction_rows else 0
+print(f"\nDrug-Drug Interactions: {n_interactions}")
 
 # Step 5: Generate repurposing recommendation
 print(f"\n{'='*80}")
@@ -327,23 +339,26 @@ for target in targets['data'][:10]:
     
     # Search multiple databases
     dgidb = tu.tools.DGIdb_get_drug_gene_interactions(gene_name=gene_symbol)
-    drugbank = tu.tools.drugbank_get_drug_name_and_description_by_target_name(target_name=gene_symbol)
+    # DrugBank matches target NAMES; some gene symbols hit (e.g. 'ABL1'), others do not (e.g. 'EGFR' -> use the protein name)
+    drugbank = tu.tools.drugbank_get_drug_name_and_description_by_target_name(query=gene_symbol)
     
     # Combine results
     all_drugs = []
     if dgidb and 'data' in dgidb:
         all_drugs.extend([d['drug_name'] for d in dgidb['data']])
     if drugbank and 'data' in drugbank:
-        all_drugs.extend([d['drug_name'] for d in drugbank['data']])
+        all_drugs.extend([d['drug_name'] for d in drugbank['data'].get('results', [])])
     
     # Filter to approved only
     for drug_name in set(all_drugs):
         try:
             drug_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
-                drug_name_or_drugbank_id=drug_name
+                query=drug_name
             )
             
-            if drug_info and 'approved' in drug_info.get('data', {}).get('groups', []):
+            info_rows = (drug_info or {}).get('data', {}).get('results', [])
+            # approval_groups is a ' | '-separated string, e.g. 'approved | vet_approved'
+            if info_rows and 'approved' in (info_rows[0].get('approval_groups') or ''):
                 approved_candidates.append({
                     'drug': drug_name,
                     'target': gene_symbol,
@@ -418,11 +433,13 @@ for i, candidate in enumerate(top_candidates, 1):
         
         # Get mechanism
         pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(
-            drug_name_or_drugbank_id=drug
+            query=drug
         )
         
         if pharmacology:
-            print(f"Mechanism: {pharmacology.get('data', {}).get('mechanism_of_action', 'N/A')[:200]}")
+            pharm_rows = pharmacology.get('data', {}).get('results', [])
+            moa = (pharm_rows[0].get('mechanism_of_action') if pharm_rows else None) or 'N/A'
+            print(f"Mechanism: {moa[:200]}")
     except:
         print("Safety data unavailable")
 
@@ -479,25 +496,27 @@ print("="*80)
 
 # Get drug pathways
 pathways = tu.tools.drugbank_get_pathways_reactions_by_drug_or_id(
-    drug_name_or_drugbank_id=known_drug
+    query=known_drug
 )
 
 print(f"\nPathways affected by {known_drug}:")
-for pathway in pathways.get('data', [])[:5]:
-    print(f"  - {pathway['pathway_name']}")
+pathway_rows = pathways.get('data', {}).get('results', [])
+drug_pathways = pathway_rows[0].get('pathways', []) if pathway_rows else []  # [{'id','name','category'}]
+for pathway in drug_pathways[:5]:
+    print(f"  - {pathway['name']}")
 
 # Step 2: Find other drugs affecting same pathways
 pathway_drugs = {}
 
-for pathway in pathways.get('data', [])[:3]:
-    pathway_name = pathway['pathway_name']
+for pathway in drug_pathways[:3]:
+    pathway_name = pathway['name']
     
     drugs = tu.tools.drugbank_get_drug_name_and_description_by_pathway_name(
-        pathway_name=pathway_name
+        query=pathway_name
     )
     
     if drugs and 'data' in drugs:
-        pathway_drugs[pathway_name] = [d['drug_name'] for d in drugs['data']]
+        pathway_drugs[pathway_name] = [d['drug_name'] for d in drugs['data'].get('results', [])]
 
 # Step 3: Score drugs by pathway overlap
 drug_scores = {}
@@ -527,7 +546,7 @@ for drug, overlap_score in ranked_drugs[:20]:
     
     # Get drug info
     drug_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
-        drug_name_or_drugbank_id=drug
+        query=drug
     )
     
     if papers.get('data'):
@@ -535,7 +554,7 @@ for drug, overlap_score in ranked_drugs[:20]:
             'drug': drug,
             'pathway_overlap': overlap_score,
             'evidence_papers': len(papers['data']),
-            'status': drug_info.get('data', {}).get('groups', [])
+            'status': ((drug_info.get('data', {}).get('results') or [{}])[0]).get('approval_groups')
         })
 
 # Print validated candidates
@@ -569,11 +588,11 @@ print(f"Target disease: {target_disease}\n")
 cid_result = tu.tools.PubChem_get_CID_by_compound_name(
     compound_name=known_active
 )
-cid = cid_result['data']['cid']
+cid = cid_result['data']['IdentifierList']['CID'][0]
 
 # Get SMILES
 props = tu.tools.PubChem_get_compound_properties_by_CID(cid=cid)
-smiles = props['data']['CanonicalSMILES']
+smiles = props['data']['PropertyTable']['Properties'][0]['ConnectivitySMILES']
 
 print(f"PubChem CID: {cid}")
 print(f"SMILES: {smiles}\n")
@@ -582,38 +601,40 @@ print(f"SMILES: {smiles}\n")
 print("Searching for similar structures...")
 similar_compounds = tu.tools.PubChem_search_compounds_by_similarity(
     smiles=smiles,
-    threshold=85,  # 85% similarity
-    limit=50
+    threshold=0.85,  # 85% Tanimoto similarity (0-1 scale)
+    max_results=50
 )
 
-print(f"Found {len(similar_compounds.get('data', []))} similar compounds")
+# Returns CIDs only (no per-compound similarity score)
+similar_cids = similar_compounds.get('data', {}).get('IdentifierList', {}).get('CID', [])
+print(f"Found {len(similar_cids)} similar compounds")
 
 # Step 3: Check which are approved drugs
 approved_analogs = []
 
-for compound in similar_compounds.get('data', [])[:20]:
-    compound_cid = compound['cid']
-    
+for compound_cid in similar_cids[:20]:
     # Get drug information
     # FDA labels are keyed by drug name, not CID -- resolve the name first
     _syn = tu.tools.PubChem_get_compound_synonyms_by_CID(cid=compound_cid)
-    _name = _syn['data'][0] if isinstance(_syn, dict) and _syn.get('data') else None
+    _info = _syn.get('data', {}).get('InformationList', {}).get('Information', [])
+    _name = _info[0]['Synonym'][0] if _info and _info[0].get('Synonym') else None
     drug_label = tu.tools.FDA_get_drug_label(drug_name=_name)
     
     if drug_label and 'data' in drug_label:
         # This is an approved drug
-        drug_name = drug_label['data'].get('drug_name')
+        drug_name = drug_label['data'].get('generic_name')
         
         # Get current indications
         drugbank_info = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(
-            drug_name_or_drugbank_id=drug_name
+            query=drug_name
         )
         
         approved_analogs.append({
             'drug_name': drug_name,
             'cid': compound_cid,
-            'similarity': compound.get('similarity_score', 'N/A'),
-            'indications': drugbank_info.get('data', [])
+            'similarity': 'N/A',  # the similarity tool returns CIDs only, no scores
+            'indications': [r['indication'] for r in drugbank_info.get('data', {}).get('results', [])
+                            if r.get('indication')]
         })
 
 print(f"\nFound {len(approved_analogs)} approved structural analogs\n")
@@ -626,7 +647,7 @@ for analog in approved_analogs[:5]:
     drug = analog['drug_name']
     
     # Check if already used for target disease
-    current_indications = [ind['indication'] for ind in analog['indications']]
+    current_indications = analog['indications']
     already_used = any(target_disease.lower() in ind.lower() for ind in current_indications)
     
     if not already_used:
@@ -636,14 +657,16 @@ for analog in approved_analogs[:5]:
         
         # Predict properties
         analog_props = tu.tools.PubChem_get_compound_properties_by_CID(
-            cid=analog['cid']
+            cid=analog['cid'],
+            properties=["MolecularWeight", "XLogP"]
         )
+        analog_row = analog_props['data']['PropertyTable']['Properties'][0]
         
         print(f"\n{drug}")
         print(f"  Structural similarity: {analog['similarity']}")
         print(f"  Current indications: {', '.join(current_indications[:2])}")
         print(f"  Literature evidence: {len(papers.get('data', []))} papers")
-        print(f"  MW: {analog_props['data']['MolecularWeight']}, LogP: {analog_props['data']['XLogP']}")
+        print(f"  MW: {analog_row['MolecularWeight']}, LogP: {analog_row.get('XLogP')}")
 ```
 
 ---
@@ -667,25 +690,24 @@ print("="*80)
 target_adverse_event = "weight loss"  # Could be therapeutic for obesity
 therapeutic_indication = "obesity"
 
-# Step 2: Find drugs with this adverse event
-print(f"\nSearching for drugs causing: {target_adverse_event}")
+# Step 2: Build the candidate drug list.
+# No FAERS tool ranks drugs by a reaction (FAERS_count_drugs_by_drug_event has no
+# reaction filter), so seed candidates from literature/DrugBank, then use FAERS
+# below to measure the reaction signal per drug.
+print(f"\nChecking candidate drugs for: {target_adverse_event}")
+top_drugs = ["liraglutide", "topiramate", "bupropion"]  # example seeds -- supply your own
 
-# Query FAERS for drugs associated with weight loss
-weight_loss_drugs = tu.tools.FAERS_count_drugs_by_drug_event(
-    patient_reaction=target_adverse_event
-)
-
-top_drugs = [drug['term'] for drug in weight_loss_drugs.get('results', [])[:20]]
-
-print(f"Found {len(top_drugs)} drugs with significant {target_adverse_event} reports")
+print(f"Evaluating {len(top_drugs)} candidate drugs for {target_adverse_event} reports")
 
 # Step 3: For each drug, validate the effect and check safety
 candidates = []
 
 for drug_name in top_drugs:
-    # Get full adverse event profile
-    all_reactions = tu.tools.FAERS_count_reactions_by_drug_event(
-        medicinalproduct=drug_name
+    # Count FAERS reports for this drug with the target reaction (MedDRA preferred term)
+    reaction_reports = tu.tools.FAERS_search_reports_by_drug_and_reaction(
+        medicinalproduct=drug_name.upper(),
+        reactionmeddrapt="WEIGHT DECREASED",
+        limit=1
     )
     
     # Check seriousness
@@ -696,23 +718,29 @@ for drug_name in top_drugs:
     # Get drug info
     try:
         drug_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
-            drug_name_or_drugbank_id=drug_name.lower()
+            query=drug_name.lower()
         )
         
         indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(
-            drug_name_or_drugbank_id=drug_name.lower()
+            query=drug_name.lower()
         )
         
+        # Results are under data.results[]; each has a free-text 'indication' string
+        current_uses = [r['indication'] for r in indications.get('data', {}).get('results', [])
+                        if r.get('indication')]
+        info_rows = drug_info.get('data', {}).get('results', [])
+        # approval_groups is a ' | '-separated string, e.g. 'approved | vet_approved'
+        groups = [g.strip() for g in (info_rows[0].get('approval_groups') or '').split('|')] if info_rows else []
+        
         # Check if already used for obesity
-        current_uses = [ind['indication'] for ind in indications.get('data', [])]
         if not any('obesity' in use.lower() for use in current_uses):
             candidates.append({
                 'drug': drug_name,
                 'current_indications': current_uses[:3],
-                'weight_loss_reports': next((r['count'] for r in all_reactions.get('results', []) 
-                                            if 'weight' in r['term'].lower()), 0),
-                'serious_reports': seriousness.get('meta', {}).get('serious_count', 0),
-                'status': drug_info.get('data', {}).get('groups', [])
+                'weight_loss_reports': reaction_reports.get('total_available') or 0,
+                'serious_reports': next((r['count'] for r in seriousness.get('results', [])
+                                         if r['term'] == 'Serious'), 0),
+                'status': groups
             })
     except:
         continue
@@ -741,9 +769,10 @@ for i, candidate in enumerate(ranked[:10], 1):
     # Check mechanism
     try:
         pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(
-            drug_name_or_drugbank_id=candidate['drug'].lower()
+            query=candidate['drug'].lower()
         )
-        moa = pharmacology.get('data', {}).get('mechanism_of_action', '')
+        pharm_rows = pharmacology.get('data', {}).get('results', [])
+        moa = pharm_rows[0].get('mechanism_of_action', '') if pharm_rows else ''
         if moa:
             print(f"   Mechanism: {moa[:150]}...")
     except:
@@ -800,25 +829,31 @@ def comprehensive_repurposing_analysis(drug_name, new_indication):
     print("-"*80)
     
     basic_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
-        drug_name_or_drugbank_id=drug_name
+        query=drug_name
     )
     
     targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(
-        drug_name_or_drugbank_id=drug_name
+        query=drug_name
     )
     
     indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(
-        drug_name_or_drugbank_id=drug_name
+        query=drug_name
     )
     
-    print(f"Status: {basic_info.get('data', {}).get('groups', [])}")
-    print(f"Targets: {len(targets.get('data', []))}")
-    print(f"Current indications: {len(indications.get('data', []))}")
+    # DrugBank tools return data.results[]; per-drug fields live on the row
+    basic_row = (basic_info.get('data', {}).get('results') or [{}])[0]
+    target_rows = targets.get('data', {}).get('results', [])
+    drug_targets = target_rows[0].get('targets', []) if target_rows else []
+    indication_rows = indications.get('data', {}).get('results', [])
+    
+    print(f"Status: {basic_row.get('approval_groups')}")
+    print(f"Targets: {len(drug_targets)}")
+    print(f"Current indications: {len(indication_rows)}")
     
     results['drugbank'] = {
-        'status': basic_info.get('data', {}).get('groups', []),
-        'targets': targets.get('data', []),
-        'indications': indications.get('data', [])
+        'status': basic_row.get('approval_groups'),
+        'targets': drug_targets,
+        'indications': indication_rows
     }
     
     # 2. TARGET-DISEASE ASSOCIATION (OpenTargets)
@@ -835,7 +870,14 @@ def comprehensive_repurposing_analysis(drug_name, new_indication):
     )
     
     # Calculate target overlap
-    drug_target_symbols = [t.get('gene_symbol') for t in targets.get('data', [])]
+    # DrugBank targets carry protein names (no gene symbols); resolve names -> symbols via OpenTargets
+    drug_target_symbols = []
+    for t in drug_targets:
+        hits = tu.tools.OpenTargets_get_target_id_description_by_name(
+            targetName=t['name']
+        ).get('data', {}).get('search', {}).get('hits', [])
+        if hits:
+            drug_target_symbols.append(hits[0]['name'])
     disease_target_symbols = [t['gene_symbol'] for t in disease_targets.get('data', [])]
     overlap = set(drug_target_symbols) & set(disease_target_symbols)
     
@@ -885,25 +927,28 @@ def comprehensive_repurposing_analysis(drug_name, new_indication):
         limit=1
     )
     
-    if chembl_drugs and 'data' in chembl_drugs:
-        chembl_id = chembl_drugs['data'][0]['molecule_chembl_id']
+    molecules = (chembl_drugs or {}).get('data', {}).get('molecules', [])
+    if molecules:
+        chembl_id = molecules[0]['molecule_chembl_id']
         
         mechanisms = tu.tools.ChEMBL_get_drug_mechanisms(
             chembl_id=chembl_id
         )
         
         bioactivity_chembl = tu.tools.ChEMBL_search_activities(
-            chembl_id=chembl_id
+            molecule_chembl_id=chembl_id
         )
         
         print(f"ChEMBL ID: {chembl_id}")
-        print(f"Mechanisms: {len(mechanisms.get('data', []))}")
-        print(f"Bioactivity records: {len(bioactivity_chembl.get('data', []))}")
+        mechanism_rows = mechanisms.get('data', {}).get('mechanisms', [])
+        activity_rows = bioactivity_chembl.get('data', {}).get('activities', [])
+        print(f"Mechanisms: {len(mechanism_rows)}")
+        print(f"Bioactivity records: {len(activity_rows)}")
         
         results['chembl'] = {
             'id': chembl_id,
-            'mechanisms': mechanisms.get('data', []),
-            'bioactivity': bioactivity_chembl.get('data', [])
+            'mechanisms': mechanism_rows,
+            'bioactivity': activity_rows
         }
     
     # 5. SAFETY PROFILE (FDA + FAERS)
