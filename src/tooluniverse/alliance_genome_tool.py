@@ -39,6 +39,65 @@ def _strip_html(text):
     return _HTML_TAG_RE.sub("", unescape(text)).strip()
 
 
+def _display(value):
+    """Alliance wraps names as {"displayText": ...}; return the text (or None)."""
+    if isinstance(value, dict):
+        return value.get("displayText") or value.get("name")
+    return value
+
+
+def _allele_summary(record):
+    """Flatten one /gene/{id}/alleles record.
+
+    The API nests the allele under ``allele`` (``primaryExternalId`` and
+    ``alleleSymbol.displayText`` for curated alleles such as zebrafish; only a
+    ``curie`` for the variant-only records returned for fly, mouse, rat, worm, yeast
+    and human) and lists variants under ``variantList``. The old code read ``id``,
+    ``symbol`` and ``symbolText`` from the top level, so every allele came back with
+    null identifiers.
+    """
+    allele = record.get("allele") or {}
+    symbol = _display(allele.get("alleleSymbol")) or record.get("symbol")
+    variants = []
+    for v in (record.get("variantList") or [])[:3]:
+        locations = v.get("curatedVariantGenomicLocations") or []
+        loc = locations[0] if locations else {}
+        consequence = loc.get("mostSevereConsequence")
+        variants.append(
+            {
+                "id": v.get("id") or v.get("primaryExternalId"),
+                "name": loc.get("hgvs"),
+                "type": _display(v.get("variantType")),
+                "location": {
+                    "chromosome": _display(
+                        loc.get("variantGenomicLocationAssociationObject")
+                    ),
+                    "start": loc.get("start"),
+                    "end": loc.get("end"),
+                    "hgvs": loc.get("hgvs"),
+                }
+                if loc
+                else None,
+                "most_severe_consequence": _display(consequence),
+            }
+        )
+    return {
+        "id": allele.get("primaryExternalId")
+        or allele.get("curie")
+        or record.get("id"),
+        "symbol": symbol,
+        "symbol_text": symbol or record.get("symbolText"),
+        "synonyms": [
+            _display(x) for x in allele.get("alleleSynonyms") or [] if _display(x)
+        ],
+        "category": record.get("category"),
+        "alteration_type": record.get("alterationType"),
+        "has_disease": record.get("hasDisease"),
+        "has_phenotype": record.get("hasPhenotype"),
+        "variants": variants,
+    }
+
+
 @register_tool("AllianceGenomeTool")
 class AllianceGenomeTool(BaseTool):
     """
@@ -582,30 +641,7 @@ class AllianceGenomeTool(BaseTool):
 
         total = data.get("total", 0)
         results = data.get("results", [])
-        alleles = []
-        for r in results:
-            variants = r.get("variants", [])
-            variant_info = []
-            for v in variants[:3]:
-                variant_info.append(
-                    {
-                        "id": v.get("id"),
-                        "name": v.get("name"),
-                        "type": v.get("variantType", {}).get("name"),
-                        "location": v.get("location"),
-                    }
-                )
-            alleles.append(
-                {
-                    "id": r.get("id"),
-                    "symbol": r.get("symbol"),
-                    "symbol_text": r.get("symbolText"),
-                    "category": r.get("category"),
-                    "has_disease": r.get("hasDisease"),
-                    "has_phenotype": r.get("hasPhenotype"),
-                    "variants": variant_info,
-                }
-            )
+        alleles = [_allele_summary(r) for r in results]
 
         return {
             "status": "success",
@@ -1003,7 +1039,7 @@ class AllianceGenomeTool(BaseTool):
         )
         alleles = []
         for r in allele_data.get("results", []):
-            allele = r.get("allele") or {}
+            summary = _allele_summary(r)
             variant_list = r.get("variantList") or []
             variant_locs = []
             for v in variant_list[:3]:
@@ -1011,8 +1047,8 @@ class AllianceGenomeTool(BaseTool):
                     variant_locs.append(loc.get("hgvs"))
             alleles.append(
                 {
-                    "allele_id": allele.get("curie") or r.get("id"),
-                    "symbol": r.get("symbol") or r.get("symbolText"),
+                    "allele_id": summary["id"],
+                    "symbol": summary["symbol"],
                     "category": r.get("category"),
                     "alteration_type": r.get("alterationType"),
                     "has_disease": r.get("hasDisease"),
