@@ -547,7 +547,8 @@
         "proteins": "P01137"
       },
       {
-        "proteins": "P00533"
+        "proteins": "P00533",
+        "databases": "CORUM"
       },
       {
         "proteins": "Q15116",
@@ -677,7 +678,7 @@
       },
       {
         "proteins": "EGFR",
-        "databases": "CellPhoneDB,CellChatDB,CellTalkDB"
+        "databases": "CellChatDB"
       },
       {
         "proteins": "P04637",

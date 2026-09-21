@@ -87,7 +87,7 @@
       },
       {
         "domain": "uniprot",
-        "query": "name:P53",
+        "query": "p53",
         "size": 10
       },
       {
