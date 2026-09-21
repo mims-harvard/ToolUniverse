@@ -1,7 +1,7 @@
 [
   {
     "name": "BioTools_search",
-    "type": "BaseRESTTool",
+    "type": "BioToolsRESTTool",
     "description": "Search the ELIXIR Bio.tools registry for bioinformatics software tools, databases, and web services. Bio.tools is the comprehensive registry of bioinformatics resources maintained by ELIXIR, containing 30,000+ entries. Returns tool names, descriptions, types, topics, and homepages. Use this to find software for specific bioinformatics tasks (e.g., 'sequence alignment', 'variant calling', 'protein structure prediction'). Example: search 'RNA-seq' to find RNA sequencing analysis tools.",
     "parameter": {
       "type": "object",
@@ -487,7 +487,7 @@
   },
   {
     "name": "BioTools_search_by_type",
-    "type": "BaseRESTTool",
+    "type": "BioToolsRESTTool",
     "description": "Search the ELIXIR Bio.tools registry for bioinformatics resources by tool type. Returns resources of a specific category. Available types: 'Command-line tool', 'Web application', 'Web API', 'Web service', 'Database portal', 'Desktop application', 'Library', 'Plug-in', 'Suite', 'Script', 'Workflow', 'Workbench', 'Ontology', 'Bioinformatics portal'. Use this to find, for example, all database portals or all web APIs for a research domain.",
     "parameter": {
       "type": "object",
