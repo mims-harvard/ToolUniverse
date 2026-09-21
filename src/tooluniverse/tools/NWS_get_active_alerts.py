@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def NWS_get_active_alerts(
-    area: Optional[str | Any] = None,
-    severity: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    area: Optional[str] = None,
+    severity: Optional[str] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,11 +22,11 @@ def NWS_get_active_alerts(
 
     Parameters
     ----------
-    area : str | Any
+    area : str
         US state/territory abbreviation to filter by (e.g., 'CA', 'TX', 'NY'). If not...
-    severity : str | Any
+    severity : str
         Filter by severity: Extreme, Severe, Moderate, Minor, Unknown
-    limit : int | Any
+    limit : int
         Maximum number of alerts to return (default: 50)
     stream_callback : Callable, optional
         Callback for streaming output

@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def Mcule_get_compound(
-    operation: str,
     mcule_id: str,
+    operation: Optional[str] = "get_compound",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

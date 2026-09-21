@@ -15,7 +15,7 @@ def MGI_search_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Search for mouse (Mus musculus) genes in MGI (Mouse Genome Informatics) by gene symbol, name, or ...
 
@@ -34,7 +34,7 @@ def MGI_search_genes(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

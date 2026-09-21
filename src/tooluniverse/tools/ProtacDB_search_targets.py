@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def ProtacDB_search_targets(
-    operation: str,
-    target_name: Optional[str | Any] = None,
-    uniprot_id: Optional[str | Any] = None,
+    operation: Optional[str] = "search_targets",
+    target_name: Optional[str] = None,
+    uniprot_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def ProtacDB_search_targets(
     ----------
     operation : str
         Operation type
-    target_name : str | Any
+    target_name : str
         Target protein name or gene symbol (e.g., 'BRD4', 'KRAS'). Returns all target...
-    uniprot_id : str | Any
+    uniprot_id : str
         UniProt accession ID (e.g., 'O60885' for BRD4). Mutually exclusive with targe...
     stream_callback : Callable, optional
         Callback for streaming output

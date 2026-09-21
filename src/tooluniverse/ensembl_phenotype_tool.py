@@ -157,7 +157,8 @@ class EnsemblPhenotypeTool(BaseTool):
                 "query": query,
                 "query_kind": query_kind,
                 "species": species,
-                "association_count": len(associations),
+                "association_count": len(associations[:500]),
+                "total_associations": len(associations),
                 "associations": associations[:500],
             },
             "metadata": {
@@ -226,7 +227,8 @@ class EnsemblPhenotypeTool(BaseTool):
             "data": {
                 "gene": gene,
                 "species": species,
-                "phenotype_count": len(unique_phenos),
+                "phenotype_count": len(unique_phenos[:200]),
+                "total_phenotypes": len(unique_phenos),
                 "phenotypes": unique_phenos[:200],
             },
             "metadata": {
@@ -288,7 +290,8 @@ class EnsemblPhenotypeTool(BaseTool):
             "data": {
                 "region": region,
                 "species": species,
-                "phenotype_count": len(phenotypes),
+                "phenotype_count": len(phenotypes[:200]),
+                "total_phenotypes": len(phenotypes),
                 "phenotypes": phenotypes[:200],
             },
             "metadata": {
@@ -343,7 +346,8 @@ class EnsemblPhenotypeTool(BaseTool):
             "data": {
                 "variant_id": variant_id,
                 "species": species,
-                "phenotype_count": len(phenotypes),
+                "phenotype_count": len(phenotypes[:200]),
+                "total_phenotypes": len(phenotypes),
                 "phenotypes": phenotypes[:200],
             },
             "metadata": {

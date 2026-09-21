@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def BiGG_search(
-    operation: str,
     query: str,
+    operation: Optional[str] = "search",
     search_type: Optional[str] = "reactions",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

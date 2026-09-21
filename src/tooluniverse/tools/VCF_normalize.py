@@ -9,15 +9,15 @@ from ._shared_client import get_shared_client
 
 
 def VCF_normalize(
-    operation: str,
     vcf_path: str,
+    operation: Optional[str] = None,
     multiallelics: Optional[str] = None,
     reference_fasta: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Normalize a local VCF/BCF with bcftools norm (split or join multiallelics; left-align indels agai...
 
@@ -40,7 +40,7 @@ def VCF_normalize(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

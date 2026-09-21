@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def SIDER_get_drug_indications(
-    operation: str,
-    drug_name: Optional[str | Any] = None,
-    sider_drug_id: Optional[str | Any] = None,
+    operation: Optional[str] = "get_indications",
+    drug_name: Optional[str] = None,
+    sider_drug_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def SIDER_get_drug_indications(
     ----------
     operation : str
         Operation type
-    drug_name : str | Any
+    drug_name : str
         Drug name (e.g., 'aspirin', 'metformin'). Will search SIDER and use first match.
-    sider_drug_id : str | Any
+    sider_drug_id : str
         SIDER drug ID (PubChem CID) from SIDER_search_drug (e.g., '2244' for aspirin)
     stream_callback : Callable, optional
         Callback for streaming output

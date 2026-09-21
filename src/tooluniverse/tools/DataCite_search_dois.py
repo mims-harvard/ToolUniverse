@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def DataCite_search_dois(
     query: str,
-    resource_type_general: Optional[str | Any] = None,
-    page_size: Optional[int | Any] = None,
-    page_number: Optional[int | Any] = None,
+    resource_type_general: Optional[str] = None,
+    page_size: Optional[int] = None,
+    page_number: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def DataCite_search_dois(
     ----------
     query : str
         Search query (e.g., 'RNA-seq transcriptomics', 'CRISPR knockout mouse', 'clim...
-    resource_type_general : str | Any
+    resource_type_general : str
         Filter by resource type: 'Dataset', 'Software', 'Text', 'Image', 'Workflow', ...
-    page_size : int | Any
+    page_size : int
         Number of results per page (default 10, max 100)
-    page_number : int | Any
+    page_number : int
         Page number for pagination (default 1)
     stream_callback : Callable, optional
         Callback for streaming output

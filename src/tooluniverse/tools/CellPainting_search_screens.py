@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def CellPainting_search_screens(
-    operation: str,
-    query: Optional[str | Any] = None,
+    operation: Optional[str] = "search_screens",
+    query: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def CellPainting_search_screens(
     ----------
     operation : str
         Operation type
-    query : str | Any
+    query : str
         Optional keyword to filter screens by name or description (e.g., 'JUMP', 'U2O...
     stream_callback : Callable, optional
         Callback for streaming output

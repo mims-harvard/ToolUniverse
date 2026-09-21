@@ -10,9 +10,10 @@ from ._shared_client import get_shared_client
 
 def Enrichr_get_top_enriched(
     gene_list: list[str],
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_top_enriched",
     libraries: Optional[list[str]] = None,
     top_n: Optional[int] = 5,
+    species: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +32,8 @@ def Enrichr_get_top_enriched(
         Libraries to query (default: GO_Biological_Process_2023, KEGG_2021_Human, Rea...
     top_n : int
         Number of top terms per library (default: 5)
+    species : str
+        Organism instance to query: 'human' (default), 'mouse', 'fly' (FlyEnrichr), '...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def Enrichr_get_top_enriched(
             "gene_list": gene_list,
             "libraries": libraries,
             "top_n": top_n,
+            "species": species,
         }.items()
         if v is not None
     }

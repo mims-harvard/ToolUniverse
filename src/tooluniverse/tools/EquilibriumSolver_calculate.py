@@ -9,12 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def EquilibriumSolver_calculate(
-    operation: str,
     Ksp: float,
-    Kf: Optional[float | Any] = None,
-    stoich_cation: Optional[int | Any] = 1,
-    stoich_anion: Optional[int | Any] = 1,
-    common_ion_conc: Optional[float | Any] = None,
+    operation: Optional[str] = "ksp_simple",
+    Kf: Optional[float] = None,
+    stoich_cation: Optional[int] = 1,
+    stoich_anion: Optional[int] = 1,
+    common_ion_conc: Optional[float] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -29,13 +29,13 @@ def EquilibriumSolver_calculate(
         Problem type: 'ksp_simple' for basic dissolution, 'ksp_complex' for dissoluti...
     Ksp : float
         Solubility product constant (Ksp).
-    Kf : float | Any
+    Kf : float
         Formation constant for complex ion (required for ksp_complex mode).
-    stoich_cation : int | Any
+    stoich_cation : int
         Stoichiometric coefficient 'a' for the cation in MaXb (default: 1).
-    stoich_anion : int | Any
+    stoich_anion : int
         Stoichiometric coefficient 'b' for the anion in MaXb (default: 1).
-    common_ion_conc : float | Any
+    common_ion_conc : float
         Common ion concentration in mol/L (required for common_ion mode).
     stream_callback : Callable, optional
         Callback for streaming output

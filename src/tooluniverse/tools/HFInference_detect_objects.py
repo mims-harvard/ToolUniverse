@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def HFInference_detect_objects(
-    operation: str,
     model_id: str,
+    operation: Optional[str] = "detect_objects",
     image_url: Optional[str] = None,
     image_path: Optional[str] = None,
     wait_for_model: Optional[bool] = None,
@@ -18,7 +18,7 @@ def HFInference_detect_objects(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Run object-detection on any HuggingFace-hosted vision model (serverless hf-inference provider) an...
 
@@ -43,7 +43,7 @@ def HFInference_detect_objects(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

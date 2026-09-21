@@ -111,6 +111,10 @@ def _extract_meaningful_terms(query):
     return meaningful if meaningful else tokens
 
 
+class _ContentUnavailable(Exception):
+    """A per-record content fetch failed; the record stays, without that text."""
+
+
 def _abstract_text_from_sections(element: ET.Element) -> str:
     """Flatten every structured abstract section, preserving inline text."""
     sections = element.findall(".//AbstractText")
@@ -572,15 +576,29 @@ class EuropePMCGuidelinesTool(BaseTool):
                 title = result.get("title", "")
                 pub_type = result.get("pubType", "")
 
-                # Get abstract from detailed API call
-                abstract = self._get_europepmc_abstract(result.get("pmid", ""))
+                # Get abstract from detailed API call. A failed fetch leaves the
+                # record without text and says so; it must neither sink the whole
+                # search nor put an error message where the abstract belongs.
+                content_unavailable = []
+                try:
+                    abstract = self._get_europepmc_abstract(result.get("pmid", ""))
+                except _ContentUnavailable as e:
+                    abstract = ""
+                    content_unavailable.append(str(e))
 
                 # If abstract is too short or just a question, try to get more content
                 if len(abstract) < 200 or abstract.endswith("?"):
-                    # Try to get full text or more detailed content
-                    abstract = self._get_europepmc_full_content(
-                        result.get("pmid", ""), result.get("pmcid", "")
-                    )
+                    # Try to get full text or more detailed content, keeping the
+                    # short abstract when there is nothing fuller to replace it.
+                    try:
+                        fuller = self._get_europepmc_full_content(
+                            result.get("pmid", ""), result.get("pmcid", "")
+                        )
+                    except _ContentUnavailable as e:
+                        fuller = ""
+                        content_unavailable.append(str(e))
+                    if fuller:
+                        abstract = fuller
 
                 # More strict guideline detection
                 title_lower = title.lower()
@@ -640,6 +658,8 @@ class EuropePMCGuidelinesTool(BaseTool):
                         "url": url,
                         "source": "Europe PMC",
                     }
+                    if content_unavailable:
+                        guideline_result["content_unavailable"] = content_unavailable
 
                     results.append(guideline_result)
 
@@ -685,9 +705,6 @@ class EuropePMCGuidelinesTool(BaseTool):
             response = self.session.get(base_url, params=params, timeout=15)
             response.raise_for_status()
 
-            # Parse XML response
-            import xml.etree.ElementTree as ET
-
             root = ET.fromstring(response.content)
 
             # PubMed structured abstracts may have multiple sections and
@@ -707,7 +724,9 @@ class EuropePMCGuidelinesTool(BaseTool):
         except ET.ParseError as e:
             raise ValueError(f"Failed to parse Europe PMC abstract XML: {e}") from e
         except Exception as e:
-            return f"Error fetching abstract: {str(e)}"
+            raise _ContentUnavailable(
+                f"abstract for PMID {pmid}: {type(e).__name__}: {e}"
+            ) from e
 
     def _get_europepmc_full_content(self, pmid, pmcid):
         """Get more detailed content from Europe PMC."""
@@ -724,8 +743,6 @@ class EuropePMCGuidelinesTool(BaseTool):
             response = self.session.get(full_text_url, timeout=15)
             if response.status_code == 200:
                 # Parse XML to extract meaningful content
-                import xml.etree.ElementTree as ET
-
                 root = ET.fromstring(response.content)
 
                 # Extract sections that might contain clinical recommendations
@@ -764,7 +781,9 @@ class EuropePMCGuidelinesTool(BaseTool):
             return ""
 
         except Exception as e:
-            return f"Error fetching full content: {str(e)}"
+            raise _ContentUnavailable(
+                f"full text for {pmcid or 'PMID ' + str(pmid)}: {type(e).__name__}: {e}"
+            ) from e
 
 
 @register_tool()
@@ -1800,7 +1819,10 @@ class NICEGuidelineFullTextTool(BaseTool):
                 "full_text_length": len(full_text),
                 "sections_count": len(content_sections),
                 "recommendations": recommendations[:20] if recommendations else None,
-                "recommendations_count": len(recommendations) if recommendations else 0,
+                "recommendations_count": len(recommendations[:20])
+                if recommendations
+                else 0,
+                "total_recommendations": len(recommendations) if recommendations else 0,
                 "source": "NICE",
                 "content_type": "full_guideline",
             }

@@ -16,7 +16,7 @@ def dynamic_package_discovery(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Dynamically searches PyPI and evaluates packages based on requirements
 
@@ -37,7 +37,7 @@ def dynamic_package_discovery(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

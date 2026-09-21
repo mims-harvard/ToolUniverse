@@ -32,7 +32,10 @@
           "description": "Optional list of tool categories to filter by (applies to all modes except 'categories')"
         },
         "fields": {
-          "type": "array",
+          "type": [
+            "array",
+            "string"
+          ],
           "items": {
             "type": "string"
           },

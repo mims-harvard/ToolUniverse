@@ -9,16 +9,16 @@ from ._shared_client import get_shared_client
 
 
 def Statistics_test(
-    operation: str,
-    observed: Optional[list[Any] | Any] = None,
-    expected: Optional[list[Any] | Any] = None,
-    a: Optional[int | Any] = None,
-    b: Optional[int | Any] = None,
-    c: Optional[int | Any] = None,
-    d: Optional[int | Any] = None,
-    alternative: Optional[str | Any] = "two-sided",
-    data_x: Optional[list[Any] | Any] = None,
-    data_y: Optional[list[Any] | Any] = None,
+    operation: Optional[str] = "chi_square",
+    observed: Optional[list[Any]] = None,
+    expected: Optional[list[Any]] = None,
+    a: Optional[int] = None,
+    b: Optional[int] = None,
+    c: Optional[int] = None,
+    d: Optional[int] = None,
+    alternative: Optional[str] = "two-sided",
+    data_x: Optional[list[Any]] = None,
+    data_y: Optional[list[Any]] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,23 +31,23 @@ def Statistics_test(
     ----------
     operation : str
         Test type: 'chi_square' for goodness-of-fit, 'fisher_exact' for 2x2 tables, '...
-    observed : list[Any] | Any
+    observed : list[Any]
         Observed counts/frequencies (required for chi_square).
-    expected : list[Any] | Any
+    expected : list[Any]
         Expected counts/frequencies (required for chi_square). Will be rescaled to ma...
-    a : int | Any
+    a : int
         Top-left cell of 2x2 table (required for fisher_exact).
-    b : int | Any
+    b : int
         Top-right cell of 2x2 table (required for fisher_exact).
-    c : int | Any
+    c : int
         Bottom-left cell of 2x2 table (required for fisher_exact).
-    d : int | Any
+    d : int
         Bottom-right cell of 2x2 table (required for fisher_exact).
-    alternative : str | Any
+    alternative : str
         Alternative hypothesis for Fisher's exact test (default: two-sided).
-    data_x : list[Any] | Any
+    data_x : list[Any]
         X values for linear_regression, or group 1 data for t_test.
-    data_y : list[Any] | Any
+    data_y : list[Any]
         Y values for linear_regression, or group 2 data for t_test.
     stream_callback : Callable, optional
         Callback for streaming output

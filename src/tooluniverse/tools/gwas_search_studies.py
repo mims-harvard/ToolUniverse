@@ -22,7 +22,7 @@ def gwas_search_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search for GWAS studies by various criteria including disease trait, cohort, GxE interactions, an...
 
@@ -55,7 +55,7 @@ def gwas_search_studies(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def eMolecules_search_smiles(
     smiles: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_smiles",
     search_type: Optional[str] = "similarity",
     max_results: Optional[int] = 20,
     *,

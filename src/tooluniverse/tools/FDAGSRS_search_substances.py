@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def FDAGSRS_search_substances(
     query: str,
-    substance_class: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    substance_class: Optional[str] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def FDAGSRS_search_substances(
     ----------
     query : str
         Search query: drug/chemical name, UNII code, InChIKey, or molecular formula. ...
-    substance_class : str | Any
+    substance_class : str
         Filter by substance class. Options: 'chemical', 'protein', 'mixture', 'polyme...
-    limit : int | Any
+    limit : int
         Maximum number of results to return (1-50, default 10).
     stream_callback : Callable, optional
         Callback for streaming output

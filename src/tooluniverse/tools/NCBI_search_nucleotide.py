@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def NCBI_search_nucleotide(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search",
     organism: Optional[str] = None,
     gene: Optional[str] = None,
     strain: Optional[str] = None,

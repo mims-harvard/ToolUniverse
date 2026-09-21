@@ -16,7 +16,7 @@ def gwas_get_associations_for_study(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get all associations for a specific study, sorted by p-value.
 
@@ -37,7 +37,7 @@ def gwas_get_associations_for_study(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

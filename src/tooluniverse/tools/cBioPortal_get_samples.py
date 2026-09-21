@@ -1,7 +1,7 @@
 """
 cBioPortal_get_samples
 
-Get all samples in a cancer study
+Get all samples in a cancer study. Returns the full cohort by default; the response is a bare arr...
 """
 
 from typing import Any, Optional, Callable
@@ -10,21 +10,24 @@ from ._shared_client import get_shared_client
 
 def cBioPortal_get_samples(
     study_id: str,
-    page_size: Optional[int] = 100,
+    page_size: Optional[int] = 100000,
+    page_number: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get all samples in a cancer study
+    Get all samples in a cancer study. Returns the full cohort by default; the response is a bare arr...
 
     Parameters
     ----------
     study_id : str
         Cancer study ID
     page_size : int
-        Number of samples to return
+        Maximum number of samples to return. Defaults high enough to return every sam...
+    page_number : int
+        0-based page index, used with `page_size` to page through very large studies.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def cBioPortal_get_samples(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"study_id": study_id, "page_size": page_size}.items()
+        for k, v in {
+            "study_id": study_id,
+            "page_size": page_size,
+            "page_number": page_number,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

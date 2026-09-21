@@ -6,8 +6,19 @@ from pathlib import Path
 from typing import Dict, Any, Set, Tuple
 
 # Fields excluded from hash calculation and comparison (metadata/timestamp fields)
+# `source_file` is the absolute path the config was loaded from, so including
+# it made every hash depend on the checkout directory: the stored metadata
+# never matched on another machine, and the first build anywhere rewrote all
+# of it. It says nothing about the tool's contract, so it is excluded.
 _EXCLUDED_FIELDS = frozenset(
-    {"timestamp", "last_updated", "created_at", "_cache", "_metadata"}
+    {
+        "timestamp",
+        "last_updated",
+        "created_at",
+        "_cache",
+        "_metadata",
+        "source_file",
+    }
 )
 
 

@@ -15,7 +15,7 @@ def IMPC_search_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search IMPC for mouse genes by symbol, name, synonym, or MGI ID. Returns matching genes with thei...
 
@@ -34,7 +34,7 @@ def IMPC_search_genes(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

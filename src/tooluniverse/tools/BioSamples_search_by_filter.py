@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def BioSamples_search_by_filter(
     attribute: str,
     value: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def BioSamples_search_by_filter(
         Attribute name to filter on. Common attributes: 'organism', 'tissue', 'diseas...
     value : str
         Value to match for the attribute. Examples: 'Homo sapiens', 'liver', 'melanom...
-    limit : int | Any
+    limit : int
         Maximum results to return (1-50, default 10).
     stream_callback : Callable, optional
         Callback for streaming output

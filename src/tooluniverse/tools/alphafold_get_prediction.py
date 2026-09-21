@@ -31,7 +31,7 @@ def alphafold_get_prediction(
     uniprot_accession : str
         Alias for qualifier: UniProt accession (e.g., 'P69905').
     accession : str
-        Alias for qualifier. UniProt accession (e.g., 'P04637') -- the...
+        Alias for qualifier. UniProt accession (e.g., 'P04637') -- the same parameter...
     sequence_checksum : str
         Optional CRC64 checksum of the UniProt sequence.
     stream_callback : Callable, optional

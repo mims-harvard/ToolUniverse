@@ -9,14 +9,14 @@ from ._shared_client import get_shared_client
 
 
 def OmniPath_get_signaling_interactions(
-    partners: Optional[str | Any] = None,
-    sources: Optional[str | Any] = None,
-    targets: Optional[str | Any] = None,
-    datasets: Optional[str | Any] = None,
-    directed: Optional[bool | Any] = None,
-    signed: Optional[bool | Any] = None,
-    organisms: Optional[int | Any] = None,
-    limit: Optional[int | Any] = None,
+    partners: Optional[str | list[Any]] = None,
+    sources: Optional[str | list[Any]] = None,
+    targets: Optional[str | list[Any]] = None,
+    datasets: Optional[str] = None,
+    directed: Optional[bool] = None,
+    signed: Optional[bool] = None,
+    organisms: Optional[int] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,21 +27,21 @@ def OmniPath_get_signaling_interactions(
 
     Parameters
     ----------
-    partners : str | Any
+    partners : str | list[Any]
         Gene symbol(s) or UniProt ID(s) to query. Comma-separated for multiple. Examp...
-    sources : str | Any
+    sources : str | list[Any]
         Gene symbol(s) or UniProt ID(s) for source/upstream proteins only.
-    targets : str | Any
+    targets : str | list[Any]
         Gene symbol(s) or UniProt ID(s) for target/downstream proteins only.
-    datasets : str | Any
+    datasets : str
         Which OmniPath dataset(s) to query, comma-separated. Options: 'omnipath' (cur...
-    directed : bool | Any
+    directed : bool
         Filter for directed interactions only (default: true for signaling).
-    signed : bool | Any
+    signed : bool
         Filter for interactions with known stimulation/inhibition sign.
-    organisms : int | Any
+    organisms : int
         NCBI taxonomy ID. Default: 9606 (human). Options: 9606, 10090, 10116.
-    limit : int | Any
+    limit : int
         Maximum number of interactions to return.
     stream_callback : Callable, optional
         Callback for streaming output

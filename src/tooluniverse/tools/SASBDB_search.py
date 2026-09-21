@@ -10,6 +10,7 @@ from ._shared_client import get_shared_client
 
 def SASBDB_search(
     query: str,
+    max_results: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +23,8 @@ def SASBDB_search(
     ----------
     query : str
         Search query: UniProt accession (e.g., 'P02769' for BSA) or free-text term. N...
+    max_results : int
+        Cap on entries returned when query is free-text and falls back to listing all...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +39,11 @@ def SASBDB_search(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"query": query}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"query": query, "max_results": max_results}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "SASBDB_search",

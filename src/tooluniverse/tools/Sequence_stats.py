@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def Sequence_stats(
-    operation: str,
+    operation: Optional[str] = "stats",
     sequence: Optional[str] = None,
     uniprot_id: Optional[str] = None,
     *,

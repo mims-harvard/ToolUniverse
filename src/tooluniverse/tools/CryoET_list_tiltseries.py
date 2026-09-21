@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def CryoET_list_tiltseries(
-    operation: str,
+    operation: Optional[str] = "list_tiltseries",
     run_id: Optional[int] = None,
     limit: Optional[int] = 10,
     offset: Optional[int] = 0,

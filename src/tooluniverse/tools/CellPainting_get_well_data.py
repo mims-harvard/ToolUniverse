@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def CellPainting_get_well_data(
-    operation: str,
     plate_id: int,
+    operation: Optional[str] = "get_well_data",
     limit: Optional[int] = 20,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

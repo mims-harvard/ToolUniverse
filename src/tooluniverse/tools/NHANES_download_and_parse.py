@@ -1,10 +1,11 @@
 """
 NHANES_download_and_parse
 
-Download and parse NHANES XPT data files from CDC into structured JSON (DataFrame-ready).
+Download and parse NHANES XPT data files from CDC into structured JSON (DataFrame-ready). Bridges...
 """
 
 from typing import Any, Optional, Callable
+from ._shared_client import get_shared_client
 
 
 def NHANES_download_and_parse(
@@ -14,32 +15,31 @@ def NHANES_download_and_parse(
     variables: Optional[list[str]] = None,
     age_min: Optional[float] = None,
     age_max: Optional[float] = None,
-    max_rows: int = 5000,
+    max_rows: Optional[int] = 5000,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Download and parse NHANES XPT data files from CDC into structured JSON.
+    Download and parse NHANES XPT data files from CDC into structured JSON (DataFrame-ready). Bridges...
 
     Parameters
     ----------
     component : str
-        NHANES component category (Demographics, Dietary, DietaryDay2,
-        Examination, Laboratory, Questionnaire, BodyMeasures)
+        NHANES component category. 'Dietary' = Day 1 intake totals (DR1TOT), 'Dietary...
     cycle : str
-        NHANES survey cycle (e.g., '2017-2018', '2015-2016')
-    dataset_name : str, optional
-        Exact dataset filename prefix. Required for Laboratory.
-    variables : list[str], optional
-        Variable names to select. SEQN always included.
-    age_min : float, optional
-        Minimum age filter (inclusive, by RIDAGEYR)
-    age_max : float, optional
-        Maximum age filter (inclusive, by RIDAGEYR)
-    max_rows : int, default 5000
-        Maximum data rows to return
+        NHANES survey cycle (e.g., '2017-2018', '2015-2016', '2013-2014', '2011-2012')
+    dataset_name : str
+        Exact NHANES dataset filename prefix (without cycle suffix). Required for Lab...
+    variables : list[str]
+        List of variable names to select (e.g., ['SEQN', 'DR1TIRON', 'DR1TKCAL']). SE...
+    age_min : float
+        Minimum age filter (inclusive). Filters by RIDAGEYR from Demographics. Auto-m...
+    age_max : float
+        Maximum age filter (inclusive). Filters by RIDAGEYR from Demographics.
+    max_rows : int
+        Maximum number of data rows to return (default: 5000). Set lower for faster r...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -51,20 +51,22 @@ def NHANES_download_and_parse(
     -------
     dict[str, Any]
     """
-    from ._shared_client import get_shared_client
+    # Handle mutable defaults to avoid B006 linting error
 
-    _args: dict[str, Any] = {"component": component, "cycle": cycle}
-    if dataset_name is not None:
-        _args["dataset_name"] = dataset_name
-    if variables is not None:
-        _args["variables"] = variables
-    if age_min is not None:
-        _args["age_min"] = age_min
-    if age_max is not None:
-        _args["age_max"] = age_max
-    if max_rows != 5000:
-        _args["max_rows"] = max_rows
-
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "component": component,
+            "cycle": cycle,
+            "dataset_name": dataset_name,
+            "variables": variables,
+            "age_min": age_min,
+            "age_max": age_max,
+            "max_rows": max_rows,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "NHANES_download_and_parse",

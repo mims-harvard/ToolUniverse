@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def Chem_sa_score(
-    operation: str,
     smiles: str,
+    operation: Optional[str] = "sa_score",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

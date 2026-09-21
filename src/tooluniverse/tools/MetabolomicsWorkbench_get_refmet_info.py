@@ -15,7 +15,7 @@ def MetabolomicsWorkbench_get_refmet_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get RefMet standardized nomenclature for a metabolite. RefMet provides consistent, standardized m...
 
@@ -34,7 +34,7 @@ def MetabolomicsWorkbench_get_refmet_info(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

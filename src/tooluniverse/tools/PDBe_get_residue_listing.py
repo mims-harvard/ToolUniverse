@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def PDBe_get_residue_listing(
     pdb_id: str,
-    chain_id: Optional[str | Any] = None,
+    chain_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def PDBe_get_residue_listing(
     ----------
     pdb_id : str
         PDB entry ID (4-character code). Examples: '4hhb', '3ert', '1tup', '6lu7'. Ca...
-    chain_id : str | Any
+    chain_id : str
         Optional chain ID to filter (e.g., 'A', 'B'). If not provided, all chains are...
     stream_callback : Callable, optional
         Callback for streaming output

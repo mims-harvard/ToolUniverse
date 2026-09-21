@@ -10,10 +10,10 @@ from ._shared_client import get_shared_client
 
 def ClinicalTrials_search_by_intervention(
     intervention: str,
-    condition: Optional[str | Any] = None,
-    status: Optional[str | Any] = None,
-    filter_status: Optional[str | Any] = None,
-    filter_phase: Optional[str | Any] = None,
+    condition: Optional[str] = None,
+    status: Optional[str] = None,
+    filter_status: Optional[str] = None,
+    filter_phase: Optional[str] = None,
     page_size: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -27,13 +27,13 @@ def ClinicalTrials_search_by_intervention(
     ----------
     intervention : str
         Drug, biologic, device, or intervention name (e.g., 'nivolumab', 'CRISPR', 'C...
-    condition : str | Any
+    condition : str
         Disease or condition to filter trials (e.g., 'HER2 breast cancer', 'NSCLC KRA...
-    status : str | Any
+    status : str
         Recruitment status filter: 'RECRUITING', 'COMPLETED', 'ACTIVE_NOT_RECRUITING'...
-    filter_status : str | Any
+    filter_status : str
         Filter by recruitment status: 'RECRUITING', 'COMPLETED', 'ACTIVE_NOT_RECRUITI...
-    filter_phase : str | Any
+    filter_phase : str
         Filter by trial phase: 'PHASE1', 'PHASE2', 'PHASE3', 'PHASE4'. Comma-separate...
     page_size : int
         Number of results per page (default 10, max 1000).

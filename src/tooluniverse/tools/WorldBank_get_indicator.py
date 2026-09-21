@@ -11,10 +11,10 @@ from ._shared_client import get_shared_client
 def WorldBank_get_indicator(
     country: str,
     indicator: str,
-    mrv: Optional[int | Any] = None,
-    date: Optional[str | Any] = None,
-    per_page: Optional[int | Any] = None,
-    page: Optional[int | Any] = None,
+    mrv: Optional[int] = None,
+    date: Optional[str] = None,
+    per_page: Optional[int] = None,
+    page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -29,14 +29,14 @@ def WorldBank_get_indicator(
         ISO 3166-1 alpha-3 country code (e.g., 'USA', 'GBR', 'DEU', 'CHN', 'IND', 'BR...
     indicator : str
         World Bank indicator code (e.g., 'NY.GDP.MKTP.CD' for GDP, 'SP.POP.TOTL' for ...
-    mrv : int | Any
+    mrv : int
         Most recent values - number of most recent years to return (e.g., 5 for last ...
-    date : str | Any
+    date : str
         Year or year range to filter data (e.g., '2020', '2015:2023' for a range)
-    per_page : int | Any
-        Rows returned per request (default 1000, maximum 32500). One row is one coun...
-    page : int | Any
-        1-based page number of the result set (default 1). Only needed when a result...
+    per_page : int
+        Rows returned per request (default 1000, maximum 32500). One row is one count...
+    page : int
+        1-based page number of the result set (default 1). Only needed when a result ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

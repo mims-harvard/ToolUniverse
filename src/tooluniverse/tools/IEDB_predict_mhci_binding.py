@@ -1,7 +1,7 @@
 """
 IEDB_predict_mhci_binding
 
-Predict MHC class I peptide binding using NetMHCpan via the IEDB Analysis Resource API. Given a p...
+Predict MHC class I peptide binding using NetMHCpan via the IEDB next-generation tools API (https...
 """
 
 from typing import Any, Optional, Callable
@@ -19,18 +19,18 @@ def IEDB_predict_mhci_binding(
     validate: bool = True,
 ) -> Any:
     """
-    Predict MHC class I peptide binding using NetMHCpan via the IEDB Analysis Resource API. Given a p...
+    Predict MHC class I peptide binding using NetMHCpan via the IEDB next-generation tools API (https...
 
     Parameters
     ----------
     sequence : str
         Protein sequence (amino acid letters, e.g., 'TYQRTRALVFQRTRALKMFAL'). Multipl...
     allele : str
-        MHC allele name. Human: 'HLA-A*02:01', 'HLA-B*07:02'. Mouse: 'H-2-Kd', 'H-2-D...
+        MHC allele name, validated upstream against the MHC Restriction Ontology. Hum...
     method : str
-        Prediction method. 'netmhcpan_el' (recommended, eluted ligand), 'netmhcpan_ba...
+        Prediction method: 'netmhcpan_el' (recommended, eluted ligand), 'netmhcpan_ba...
     length : int
-        Peptide length (8-14 for MHC-I, typically 9)
+        Peptide length (8-15 for MHC-I, typically 9)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

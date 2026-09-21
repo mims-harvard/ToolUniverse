@@ -1,7 +1,7 @@
 """
 OpenTargets_get_known_drugs_by_drug_chemblId
 
-Get a list of known drugs and associated information using the specified chemblId.
+Get a drug's known clinical information for the specified ChEMBL ID: its approved/investigational...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def OpenTargets_get_known_drugs_by_drug_chemblId(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get a list of known drugs and associated information using the specified chemblId.
+    Get a drug's known clinical information for the specified ChEMBL ID: its approved/investigational...
 
     Parameters
     ----------

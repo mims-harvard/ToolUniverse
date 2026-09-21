@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def run_deseq2_analysis(
-    operation: str,
+    operation: Optional[str] = "deseq2",
     counts_file: Optional[str] = None,
     metadata_file: Optional[str] = None,
     design: Optional[str] = None,
@@ -29,7 +29,7 @@ def run_deseq2_analysis(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Run R DESeq2 differential expression analysis on a count matrix + metadata. Returns gene counts, ...
 
@@ -76,7 +76,7 @@ def run_deseq2_analysis(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

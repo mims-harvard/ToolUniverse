@@ -15,7 +15,7 @@ def gnomad_get_sv_detail(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get detailed information for a specific gnomAD structural variant by its ID. Resolves IDs from bo...
 
@@ -34,17 +34,14 @@ def gnomad_get_sv_detail(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {
-            "variant_id": variant_id,
-            "dataset": dataset,
-        }.items()
+        for k, v in {"variant_id": variant_id, "dataset": dataset}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

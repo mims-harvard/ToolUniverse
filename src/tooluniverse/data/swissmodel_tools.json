@@ -387,7 +387,10 @@
       "type": "object",
       "properties": {
         "uniprot_ids": {
-          "type": "array",
+          "type": [
+            "array",
+            "string"
+          ],
           "items": {
             "type": "string"
           },

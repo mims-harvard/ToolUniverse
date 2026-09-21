@@ -1,7 +1,7 @@
 """
 AgingCohort_search
 
-Search a curated registry of ~30 major longitudinal cohort studies relevant to aging research worldwide.
+Search a curated registry of ~30 major longitudinal cohort studies relevant to aging research wor...
 """
 
 from typing import Any, Optional, Callable
@@ -20,24 +20,20 @@ def AgingCohort_search(
     validate: bool = True,
 ) -> Any:
     """
-    Search a curated registry of ~30 major longitudinal cohort studies
-    relevant to aging research worldwide.
+    Search a curated registry of ~30 major longitudinal cohort studies relevant to aging research wor...
 
     Parameters
     ----------
     query : str
-        Keyword search across study names, descriptions, variable categories,
-        and topics. Examples: 'iron intake longitudinal', 'grip strength aging
-        Europe', 'biomarkers elderly China'.
-    country : str, optional
-        Filter by country or region. Case-insensitive substring match.
-    design : str, optional
-        Filter by study design: 'longitudinal', 'cross-sectional', or 'both'.
-    min_sample_size : int, optional
-        Minimum sample size threshold.
-    has_variable : str, optional
-        Filter for cohorts that include a specific variable category.
-        Examples: 'iron', 'grip_strength', 'walking_speed', 'nutrition'.
+        Keyword search across study names, descriptions, variable categories, and top...
+    country : str
+        Filter by country or region. Examples: 'USA', 'UK', 'China', 'Europe', 'Nethe...
+    design : str
+        Filter by study design. One of: 'longitudinal', 'cross-sectional', 'both'.
+    min_sample_size : int
+        Minimum sample size threshold. Only returns cohorts with sample_size >= this ...
+    has_variable : str
+        Filter for cohorts that include a specific variable category. Substring match...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -49,6 +45,9 @@ def AgingCohort_search(
     -------
     Any
     """
+    # Handle mutable defaults to avoid B006 linting error
+
+    # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
         for k, v in {

@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def BioImageArchive_search_studies(
     query: str,
-    page_size: Optional[int | Any] = None,
-    page: Optional[int | Any] = None,
+    page_size: Optional[int] = None,
+    page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def BioImageArchive_search_studies(
     ----------
     query : str
         Search query - imaging modality, organism, technique, or topic. Examples: 'cr...
-    page_size : int | Any
+    page_size : int
         Number of results per page. Default: 10. Max: 100.
-    page : int | Any
+    page : int
         Page number (1-indexed). Default: 1.
     stream_callback : Callable, optional
         Callback for streaming output

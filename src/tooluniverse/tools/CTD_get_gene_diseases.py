@@ -1,7 +1,7 @@
 """
 CTD_get_gene_diseases
 
-Get curated gene-disease associations from CTD. Given a gene symbol, returns diseases associated ...
+PERMANENTLY UNAVAILABLE: this tool always returns an error. No live, free source of CTD's curated...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def CTD_get_gene_diseases(
     validate: bool = True,
 ) -> Any:
     """
-    Get curated gene-disease associations from CTD. Given a gene symbol, returns diseases associated ...
+    PERMANENTLY UNAVAILABLE: this tool always returns an error. No live, free source of CTD's curated...
 
     Parameters
     ----------

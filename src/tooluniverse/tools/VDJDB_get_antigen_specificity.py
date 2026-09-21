@@ -9,12 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def VDJDB_get_antigen_specificity(
-    operation: str,
     epitope: str,
-    species: Optional[str | Any] = None,
-    gene: Optional[str | Any] = None,
-    mhc_class: Optional[str | Any] = None,
-    min_score: Optional[int | Any] = None,
+    operation: Optional[str] = "get_antigen_specificity",
+    species: Optional[str] = None,
+    gene: Optional[str] = None,
+    mhc_class: Optional[str] = None,
+    min_score: Optional[int] = None,
     page: Optional[int] = 0,
     page_size: Optional[int] = 25,
     *,
@@ -31,13 +31,13 @@ def VDJDB_get_antigen_specificity(
         Operation type
     epitope : str
         Epitope peptide sequence to search (e.g., 'GILGFVFTL' for Influenza M1, 'GLCT...
-    species : str | Any
+    species : str
         Species filter: HomoSapiens, MusMusculus, or MacacaMulatta
-    gene : str | Any
+    gene : str
         TCR chain filter: TRA (alpha) or TRB (beta)
-    mhc_class : str | Any
+    mhc_class : str
         MHC class filter: MHCI or MHCII
-    min_score : int | Any
+    min_score : int
         Minimum VDJdb confidence score (0-3). Score 3 = highest confidence with multi...
     page : int
         Page number (0-indexed) for paginated results

@@ -9,12 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def PharmacoDB_get_biomarker_assoc(
-    operation: str,
-    compound_name: Optional[str | Any] = None,
-    compound_id: Optional[int | Any] = None,
-    gene_name: Optional[str | Any] = None,
-    tissue_name: Optional[str | Any] = None,
-    mdata_type: Optional[str | Any] = None,
+    operation: Optional[str] = "get_biomarker_associations",
+    compound_name: Optional[str] = None,
+    compound_id: Optional[int] = None,
+    gene_name: Optional[str] = None,
+    tissue_name: Optional[str] = None,
+    mdata_type: Optional[str] = None,
     per_page: Optional[int] = 20,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -28,15 +28,15 @@ def PharmacoDB_get_biomarker_assoc(
     ----------
     operation : str
         Operation type
-    compound_name : str | Any
+    compound_name : str
         Compound name (e.g., 'Paclitaxel', 'Erlotinib'). Either compound_name or comp...
-    compound_id : int | Any
+    compound_id : int
         PharmacoDB compound ID. Either compound_name or compound_id required.
-    gene_name : str | Any
+    gene_name : str
         Gene Ensembl ID to filter (e.g., 'ENSG00000141510' for TP53)
-    tissue_name : str | Any
+    tissue_name : str
         Tissue type to filter (e.g., 'Breast', 'Lung', 'Skin')
-    mdata_type : str | Any
+    mdata_type : str
         Molecular data type: 'rna' (gene expression), 'cnv' (copy number), 'mutation'
     per_page : int
         Number of results per page (default 20, max 100)

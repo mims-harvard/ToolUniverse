@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def SYNERGxDB_list_drugs(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "list_drugs",
     query: Optional[str] = None,
     name: Optional[str] = None,
     *,

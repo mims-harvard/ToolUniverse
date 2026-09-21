@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def MassBank_search_by_compound(
     compound_name: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def MassBank_search_by_compound(
     ----------
     compound_name : str
         Compound name to search for (e.g., 'aspirin', 'caffeine', 'glucose', 'PFAS')
-    limit : int | Any
+    limit : int
         Maximum number of spectra to return (default 10)
     stream_callback : Callable, optional
         Callback for streaming output

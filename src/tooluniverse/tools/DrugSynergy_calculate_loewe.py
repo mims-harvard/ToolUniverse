@@ -9,7 +9,6 @@ from ._shared_client import get_shared_client
 
 
 def DrugSynergy_calculate_loewe(
-    operation: str,
     doses_a_single: list[Any],
     effects_a_single: list[Any],
     doses_b_single: list[Any],
@@ -17,6 +16,7 @@ def DrugSynergy_calculate_loewe(
     dose_a_combo: float,
     dose_b_combo: float,
     effect_combo: float,
+    operation: Optional[str] = "calculate_loewe",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

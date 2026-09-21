@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def Rfam_accession_to_id(
-    operation: str,
     accession: str,
+    operation: Optional[str] = "get_family_id",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

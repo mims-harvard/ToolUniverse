@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def BiGG_get_reaction(
-    operation: str,
     reaction_id: str,
+    operation: Optional[str] = "get_reaction",
     model_id: Optional[str] = "universal",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

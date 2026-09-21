@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def NASAExoplanet_query_planets(
     query: str,
-    format: Optional[str | Any] = None,
+    format: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def NASAExoplanet_query_planets(
     ----------
     query : str
         ADQL/SQL query against the NASA Exoplanet Archive table 'ps'. Note: LIMIT is ...
-    format : str | Any
+    format : str
         Output format: 'json' (default), 'csv', 'tsv', 'votable'
     stream_callback : Callable, optional
         Callback for streaming output

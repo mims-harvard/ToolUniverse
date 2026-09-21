@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def RCSBGraphQL_get_polymer_entity(
-    pdb_id: Optional[str | Any] = None,
-    entity_num: Optional[int | Any] = None,
-    entity_ids: Optional[str | Any] = None,
+    pdb_id: Optional[str] = None,
+    entity_num: Optional[int] = None,
+    entity_ids: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,11 +22,11 @@ def RCSBGraphQL_get_polymer_entity(
 
     Parameters
     ----------
-    pdb_id : str | Any
+    pdb_id : str
         PDB ID (will fetch entity 1 by default). Examples: '4HHB' (hemoglobin), '1TUP...
-    entity_num : int | Any
+    entity_num : int
         Entity number within the PDB entry (default: 1). PDB entries can have multipl...
-    entity_ids : str | Any
+    entity_ids : str
         Comma-separated list of entity IDs for batch query. Format: 'PDB_ENTITY' (e.g...
     stream_callback : Callable, optional
         Callback for streaming output

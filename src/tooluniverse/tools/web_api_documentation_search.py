@@ -17,7 +17,7 @@ def web_api_documentation_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Specialized web search for API documentation, Python packages, and technical resources using DDGS...
 
@@ -30,7 +30,7 @@ def web_api_documentation_search(
     focus : str
         Focus area for the search
     backend : str
-        Search engine backend to use
+        Search engine backend to use. Selecting 'parallel' sends the query to https:/...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +40,7 @@ def web_api_documentation_search(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

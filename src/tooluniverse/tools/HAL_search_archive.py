@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def HAL_search_archive(
     query: str,
-    max_results: int,
+    max_results: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

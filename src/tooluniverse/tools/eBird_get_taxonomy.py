@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def eBird_get_taxonomy(
-    species: Optional[str | Any] = None,
-    taxonType: Optional[str | Any] = None,
-    locale: Optional[str | Any] = None,
+    species: Optional[str] = None,
+    taxonType: Optional[str] = None,
+    locale: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,11 +22,11 @@ def eBird_get_taxonomy(
 
     Parameters
     ----------
-    species : str | Any
+    species : str
         eBird species code to filter to a single species (e.g., 'amerob' for American...
-    taxonType : str | Any
+    taxonType : str
         Taxonomic category filter. Values: 'species' (full species only), 'issf' (ide...
-    locale : str | Any
+    locale : str
         Language code for common names (e.g., 'en' for English, 'es' for Spanish, 'fr...
     stream_callback : Callable, optional
         Callback for streaming output

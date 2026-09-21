@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def PopGen_inbreeding(
-    operation: str,
     pedigree: str,
+    operation: Optional[str] = "inbreeding",
     generations: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

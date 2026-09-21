@@ -9,6 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def TCDB_get_transporter(
+    uniprot_accession: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -19,7 +20,8 @@ def TCDB_get_transporter(
 
     Parameters
     ----------
-    No parameters
+    uniprot_accession : str
+        UniProt accession ID of the transporter protein (e.g., P11166 for GLUT1, P081...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,7 +36,11 @@ def TCDB_get_transporter(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"uniprot_accession": uniprot_accession}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "TCDB_get_transporter",

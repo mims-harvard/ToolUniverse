@@ -15,7 +15,7 @@ def enrichr_gene_enrichment_analysis(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> Optional[dict[str, Any]]:
     """
     Perform gene enrichment analysis using Enrichr to find biological pathways, processes, and molecu...
 
@@ -24,7 +24,7 @@ def enrichr_gene_enrichment_analysis(
     gene_list : list[str]
         List of gene names or symbols to analyze. At least 2 genes are required for p...
     libs : list[str]
-        List of enrichment libraries to use for analysis.
+        List of Enrichr enrichment libraries to query (e.g. 'KEGG_2021_Human', 'GO_Bi...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,7 +34,7 @@ def enrichr_gene_enrichment_analysis(
 
     Returns
     -------
-    str
+    Optional[dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
     if libs is None:

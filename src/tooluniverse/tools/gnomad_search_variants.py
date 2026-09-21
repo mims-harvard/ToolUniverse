@@ -15,7 +15,7 @@ def gnomad_search_variants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search for variants in gnomAD by free-text query (commonly an rsID like 'rs7412'). Returns matchi...
 
@@ -34,7 +34,7 @@ def gnomad_search_variants(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

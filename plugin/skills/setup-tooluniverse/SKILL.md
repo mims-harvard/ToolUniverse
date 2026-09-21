@@ -1,6 +1,6 @@
 ---
 name: setup-tooluniverse
-description: Install and configure ToolUniverse for any use case — MCP server (chat-based), CLI (command line with 9 subcommands), or Python SDK (Coding API with 3 calling patterns). Covers uv/uvx setup, MCP configuration for 12+ AI clients (Cursor, Claude Desktop, Windsurf, VS Code, Codex, Gemini CLI, Trae, Cline, etc.), full CLI reference (tu list/grep/find/info/run/test/status/build/serve), Coding API quickstart, agentic tools, code executor, API key walkthrough, skill installation, and upgrading. Use when user asks how to set up ToolUniverse, which access mode to use (MCP vs CLI vs SDK), configuring MCP servers, using the CLI, troubleshooting installation, upgrading, or mentions installing ToolUniverse or setting up scientific tools. Also triggers for "how do I use ToolUniverse", "what's the best way to access tools", "command line", "tu command", "coding API", "tu build".
+description: Install and configure ToolUniverse for any use case — MCP server (chat-based), CLI (command line with 14 subcommands), or Python SDK (Coding API with 3 calling patterns). Covers uv/uvx setup, MCP configuration for 12+ AI clients (Cursor, Claude Desktop, Windsurf, VS Code, Codex, Gemini CLI, Trae, Cline, etc.), full CLI reference (tu list/grep/info/find/run/test/status/build/remote/doctor/serve/connect/connections/disconnect), Coding API quickstart, agentic tools, code executor, API key walkthrough, skill installation, and upgrading. Use when user asks how to set up ToolUniverse, which access mode to use (MCP vs CLI vs SDK), configuring MCP servers, using the CLI, troubleshooting installation, upgrading, or mentions installing ToolUniverse or setting up scientific tools. Also triggers for "how do I use ToolUniverse", "what's the best way to access tools", "command line", "tu command", "coding API", "tu build".
 ---
 
 # Setup ToolUniverse
@@ -17,7 +17,7 @@ Guide the user step-by-step through setting up ToolUniverse.
 
 ## Internal Notes (do not show)
 
-ToolUniverse has 1200+ tools. The `tooluniverse` command enables compact mode automatically, exposing only 5 core MCP tools (list_tools, grep_tools, get_tool_info, execute_tool, find_tools) while keeping all tools accessible via execute_tool.
+ToolUniverse has 2,700+ tools. The `tooluniverse` command enables compact mode automatically, exposing only 5 core MCP tools (list_tools, grep_tools, get_tool_info, execute_tool, find_tools) while keeping all tools accessible via execute_tool.
 
 ## What is ToolUniverse?
 
@@ -173,7 +173,7 @@ codex plugin add tooluniverse -m tooluniverse
 See the `tooluniverse-codex-plugin` skill for verification, updates, and
 troubleshooting.
 
-Both install the MCP server plus 100+ skills in one step. Google Antigravity
+Both install the MCP server plus 180+ skills in one step. Google Antigravity
 users: see the `tooluniverse-antigravity-plugin` skill instead — its install
 flow differs (`agy plugin install`, not a marketplace add).
 
@@ -280,7 +280,7 @@ SDK — same as CLI (export or `.env` file).
 **Chat mode**: Ask user to restart app. Then run a test call yourself:
 1. `list_tools` or `grep_tools` with "PubMed" — confirm tools visible
 2. `execute_tool("PubMed_search_articles", {"query": "CRISPR", "max_results": 1})` — confirm it works
-3. Celebrate: "It works! You have access to 1200+ scientific tools."
+3. Celebrate: "It works! You have access to 2,700+ scientific tools."
 
 **CLI**: Run together:
 ```bash
@@ -379,7 +379,7 @@ After setup, write a reminder to the agent's memory file so future sessions know
 **Content:**
 ```markdown
 # ToolUniverse
-For any scientific research question (drugs, genes, proteins, diseases, literature, clinical trials, etc.), invoke the `tooluniverse` skill — it routes to specialized research skills and 1,200+ database tools.
+For any scientific research question (drugs, genes, proteins, diseases, literature, clinical trials, etc.), invoke the `tooluniverse` skill — it routes to specialized research skills and 2,700+ database tools.
 ```
 
 Append (don't overwrite). Check for existing section first. Ask user permission.

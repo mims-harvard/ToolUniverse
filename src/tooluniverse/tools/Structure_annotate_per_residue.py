@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def Structure_annotate_per_residue(
-    operation: str,
+    operation: Optional[str] = "annotate_per_residue",
     pdb_id: Optional[str] = None,
     pdb_content: Optional[str] = None,
     target_chain: Optional[str] = "A",

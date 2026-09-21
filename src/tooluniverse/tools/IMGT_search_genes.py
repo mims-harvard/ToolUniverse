@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def IMGT_search_genes(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_genes",
     query: Optional[str] = None,
     gene_type: Optional[str] = None,
     species: Optional[str] = "Homo sapiens",

@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def BioSamples_search(
     query: str,
-    limit: Optional[int | Any] = None,
-    page: Optional[int | Any] = None,
+    limit: Optional[int] = None,
+    page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def BioSamples_search(
     ----------
     query : str
         Free-text search query. Examples: 'breast cancer', 'liver tissue', 'CRISPR sc...
-    limit : int | Any
+    limit : int
         Maximum results to return (1-50, default 10).
-    page : int | Any
+    page : int
         Page number (0-indexed, default 0).
     stream_callback : Callable, optional
         Callback for streaming output

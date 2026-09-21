@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def PubMed_Guidelines_Search(
     query: str,
-    limit: int,
-    api_key: Optional[str | Any] = None,
+    limit: Optional[int] = 10,
+    api_key: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def PubMed_Guidelines_Search(
         Medical condition, treatment, or clinical topic to search for (e.g., 'diabete...
     limit : int
         Maximum number of guidelines to return (default: 10)
-    api_key : str | Any
+    api_key : str
         Optional NCBI API key for higher rate limits. Get your free key at https://ww...
     stream_callback : Callable, optional
         Callback for streaming output

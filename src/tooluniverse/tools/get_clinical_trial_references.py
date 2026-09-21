@@ -15,7 +15,7 @@ def get_clinical_trial_references(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> Any:
     """
     Retrieves the references (if any) for the clinical trials, using their NCT IDs.
 
@@ -34,7 +34,7 @@ def get_clinical_trial_references(
 
     Returns
     -------
-    str
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

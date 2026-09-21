@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def MassIVE_search_datasets(
     page_size: Optional[int] = 10,
-    species: Optional[str | Any] = None,
+    species: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def MassIVE_search_datasets(
     ----------
     page_size : int
         Number of results to return (max 100)
-    species : str | Any
+    species : str
         NCBI taxonomy ID to filter by species (e.g., '9606' for human, '10090' for mo...
     stream_callback : Callable, optional
         Callback for streaming output

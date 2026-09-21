@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GEO_search_atacseq_datasets(
-    query: Optional[str | Any] = None,
+    query: Optional[str] = None,
     organism: Optional[str] = "Homo sapiens",
     limit: Optional[int] = 20,
     *,
@@ -22,7 +22,7 @@ def GEO_search_atacseq_datasets(
 
     Parameters
     ----------
-    query : str | Any
+    query : str
         Search query (e.g., 'T cell differentiation', 'liver hepatocyte', 'hematopoie...
     organism : str
         Organism scientific name (e.g., 'Homo sapiens', 'Mus musculus').

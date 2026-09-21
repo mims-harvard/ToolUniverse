@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def InspireHEP_search_papers(
     q: str,
-    sort: Optional[str | Any] = None,
-    size: Optional[int | Any] = None,
-    fields: Optional[str | Any] = None,
+    sort: Optional[str] = None,
+    size: Optional[int] = None,
+    fields: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def InspireHEP_search_papers(
     ----------
     q : str
         INSPIRE search query. Examples: 'higgs boson discovery', 'author:einstein', '...
-    sort : str | Any
+    sort : str
         Sort order. Values: 'mostrecent' (default), 'mostcited'. Examples: 'mostcited...
-    size : int | Any
+    size : int
         Number of results (1-25). Default: 10
-    fields : str | Any
+    fields : str
         Comma-separated fields to return. Default includes titles, authors, abstract,...
     stream_callback : Callable, optional
         Callback for streaming output

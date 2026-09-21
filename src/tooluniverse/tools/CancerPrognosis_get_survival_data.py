@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def CancerPrognosis_get_survival_data(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_survival_data",
     cancer: Optional[str] = None,
     cancer_type: Optional[str] = None,
     study_id: Optional[str] = None,
-    max_patients: Optional[int | Any] = None,
+    max_patients: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -32,7 +32,7 @@ def CancerPrognosis_get_survival_data(
         Alias for cancer. TCGA cancer type abbreviation (e.g., 'BRCA', 'LUAD', 'COAD'...
     study_id : str
         Alias for cancer. cBioPortal study ID (e.g., 'brca_tcga', 'coadread_tcga', 'l...
-    max_patients : int | Any
+    max_patients : int
         Maximum number of patient records to return (default 500, max 2000)
     stream_callback : Callable, optional
         Callback for streaming output

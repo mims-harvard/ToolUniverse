@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def OrthoDB_get_orthologs(
     group_id: str,
-    species: Optional[str | Any] = None,
+    species: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def OrthoDB_get_orthologs(
     ----------
     group_id : str
         OrthoDB group ID. Format: 'numberATtaxid'. Get IDs from OrthoDB_search_groups.
-    species : str | Any
+    species : str
         Comma-separated NCBI taxonomy IDs to filter. Examples: '9606' (human only), '...
     stream_callback : Callable, optional
         Callback for streaming output

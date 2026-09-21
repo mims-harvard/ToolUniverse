@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def IGSR_search_samples(
     operation: Optional[str] = "search_samples",
-    population: Optional[str | Any] = None,
-    data_collection: Optional[str | Any] = None,
-    sample_name: Optional[str | Any] = None,
+    population: Optional[str] = None,
+    data_collection: Optional[str] = None,
+    sample_name: Optional[str] = None,
     limit: Optional[int] = 25,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -26,11 +26,11 @@ def IGSR_search_samples(
     ----------
     operation : str
         Operation type (fixed: search_samples).
-    population : str | Any
+    population : str
         Filter by population code (e.g., 'CHB', 'YRI', 'GBR', 'CEU'). Use IGSR_search...
-    data_collection : str | Any
+    data_collection : str
         Filter by data collection title (e.g., '1000 Genomes 30x on GRCh38', '1000 Ge...
-    sample_name : str | Any
+    sample_name : str
         Look up specific sample by name (e.g., 'HG00096', 'NA12878').
     limit : int
         Maximum number of results to return.

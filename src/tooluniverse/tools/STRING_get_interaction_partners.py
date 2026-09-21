@@ -12,7 +12,7 @@ def STRING_get_interaction_partners(
     identifiers: str,
     species: Optional[int] = 9606,
     limit: Optional[int] = 10,
-    required_score: Optional[int | Any] = None,
+    required_score: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -29,7 +29,7 @@ def STRING_get_interaction_partners(
         NCBI taxonomy ID (9606=human, 10090=mouse, 7227=fly, 6239=worm)
     limit : int
         Maximum number of interaction partners to return
-    required_score : int | Any
+    required_score : int
         Minimum combined STRING score (0-1000). 400=medium, 700=high, 900=highest con...
     stream_callback : Callable, optional
         Callback for streaming output

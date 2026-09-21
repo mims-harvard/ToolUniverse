@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def USGSWater_get_streamflow(
     sites: str,
-    period: Optional[str | Any] = None,
+    period: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def USGSWater_get_streamflow(
     ----------
     sites : str
         USGS site number(s), comma-separated (e.g., '01646500' for Potomac River near...
-    period : str | Any
+    period : str
         Time period for data in ISO 8601 duration format (e.g., 'PT2H' for 2 hours, '...
     stream_callback : Callable, optional
         Callback for streaming output

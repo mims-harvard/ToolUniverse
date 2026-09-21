@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ProteomicsDB_list_tissues(
-    operation: str,
+    operation: Optional[str] = "list_tissues",
     tissue_category: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

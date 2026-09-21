@@ -14,7 +14,7 @@ def UCSC_get_track(
     chrom: str,
     start: int,
     end: int,
-    maxItemsOutput: Optional[int | Any] = None,
+    maxItemsOutput: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -35,7 +35,7 @@ def UCSC_get_track(
         0-based start position (inclusive).
     end : int
         End position (exclusive). Must be > start.
-    maxItemsOutput : int | Any
+    maxItemsOutput : int
         Maximum number of items to return. Default: 100. Set to limit large result sets.
     stream_callback : Callable, optional
         Callback for streaming output

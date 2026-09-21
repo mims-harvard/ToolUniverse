@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def SunriseSunset_get_times(
     lat: float,
     lng: float,
-    date: Optional[str | Any] = None,
+    date: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def SunriseSunset_get_times(
         Latitude in decimal degrees (-90 to 90). Examples: 40.7128 (New York), 51.507...
     lng : float
         Longitude in decimal degrees (-180 to 180). Examples: -74.0060 (New York), -0...
-    date : str | Any
+    date : str
         Date in YYYY-MM-DD format, or 'today'. Default: today. Examples: '2024-06-21'...
     stream_callback : Callable, optional
         Callback for streaming output

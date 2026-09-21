@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def WorldBank_search_indicators(
     query: str,
-    per_page: Optional[int | Any] = None,
+    per_page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def WorldBank_search_indicators(
     ----------
     query : str
         Search keyword for indicators (e.g., 'GDP', 'mortality', 'literacy', 'CO2', '...
-    per_page : int | Any
+    per_page : int
         Number of results to return (default 10, max 1000)
     stream_callback : Callable, optional
         Callback for streaming output

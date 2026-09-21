@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def get_webpage_text_from_url(
     url: str,
-    timeout: int,
+    timeout: Optional[int] = 30,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

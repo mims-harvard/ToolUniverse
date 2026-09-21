@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def SYNERGxDB_get_drug(
     drug_id: int,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_drug",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

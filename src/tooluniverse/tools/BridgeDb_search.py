@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def BridgeDb_search(
     query: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search",
     organism: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

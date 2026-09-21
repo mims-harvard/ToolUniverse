@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def CryoET_list_annotations(
-    operation: str,
     run_id: int,
+    operation: Optional[str] = "list_annotations",
     curator_recommended_only: Optional[bool] = False,
     limit: Optional[int] = 20,
     offset: Optional[int] = 0,

@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def CancerPrognosis_get_study_summary(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_study_summary",
     cancer: Optional[str] = None,
     cancer_type: Optional[str] = None,
     study_id: Optional[str] = None,

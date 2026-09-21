@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def intact_get_interactions(
     identifier: str,
     format: Optional[str] = "json",
+    size: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,7 +25,9 @@ def intact_get_interactions(
     identifier : str
         IntAct identifier, UniProt ID, or gene name
     format : str
-
+        Response format. Only 'json' is produced by this endpoint.
+    size : int
+        Maximum number of interactions to return (default 25). IntAct entries commonl...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,7 @@ def intact_get_interactions(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"identifier": identifier, "format": format}.items()
+        for k, v in {"identifier": identifier, "format": format, "size": size}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

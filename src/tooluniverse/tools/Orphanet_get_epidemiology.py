@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def Orphanet_get_epidemiology(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_epidemiology",
     orpha_code: Optional[str | int] = None,
     orphacode: Optional[int | str] = None,
     orpha_id: Optional[int | str] = None,

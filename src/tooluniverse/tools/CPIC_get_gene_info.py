@@ -9,7 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def CPIC_get_gene_info(
-    symbol: str,
+    symbol: Optional[str] = None,
+    gene: Optional[str] = None,
+    gene_symbol: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +24,10 @@ def CPIC_get_gene_info(
     ----------
     symbol : str
         Gene symbol (e.g., 'CYP2D6', 'CYP2C19', 'SLCO1B1', 'TPMT', 'DPYD')
+    gene : str
+        Gene symbol alias -- alternative to symbol.
+    gene_symbol : str
+        Gene symbol alias -- alternative to symbol.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,11 @@ def CPIC_get_gene_info(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"symbol": symbol}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"symbol": symbol, "gene": gene, "gene_symbol": gene_symbol}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "CPIC_get_gene_info",

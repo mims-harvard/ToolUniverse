@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def GenCC_search_gene(
     gene_symbol: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_gene",
     classification: Optional[str] = "",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

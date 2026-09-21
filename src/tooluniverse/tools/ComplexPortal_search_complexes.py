@@ -16,7 +16,7 @@ def ComplexPortal_search_complexes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search for curated protein complexes by gene/protein name from the EBI Complex Portal (includes C...
 
@@ -25,7 +25,7 @@ def ComplexPortal_search_complexes(
     query : str
         Gene symbol, protein name, or complex name to search (e.g., 'WDR7', 'RAVE com...
     species : str
-        NCBI taxonomy ID to filter by species (default: '9606' for human). Use '10090...
+        NCBI taxonomy ID or common species name to filter by species (default: '9606'...
     number : int
         Maximum complexes to return (default: 25)
     stream_callback : Callable, optional
@@ -37,7 +37,7 @@ def ComplexPortal_search_complexes(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

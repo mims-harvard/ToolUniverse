@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def KLIFS_list_kinases(
-    kinase_group: Optional[str | Any] = None,
-    species: Optional[str | Any] = None,
+    kinase_group: Optional[str] = None,
+    species: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -21,9 +21,9 @@ def KLIFS_list_kinases(
 
     Parameters
     ----------
-    kinase_group : str | Any
+    kinase_group : str
         Filter by kinase group: 'TK' (tyrosine kinase), 'TKL' (TK-like), 'STE', 'CK1'...
-    species : str | Any
+    species : str
         Filter by species: 'Human', 'Mouse', 'Rat'
     stream_callback : Callable, optional
         Callback for streaming output

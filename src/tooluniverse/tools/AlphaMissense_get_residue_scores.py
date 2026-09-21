@@ -1,7 +1,7 @@
 """
 AlphaMissense_get_residue_scores
 
-Get AlphaMissense scores for all 20 possible amino acid substitutions at a specific protein posit...
+Get the AlphaMissense class breakdown for substitutions at a specific protein position: which res...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def AlphaMissense_get_residue_scores(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get AlphaMissense scores for all 20 possible amino acid substitutions at a specific protein posit...
+    Get the AlphaMissense class breakdown for substitutions at a specific protein position: which res...
 
     Parameters
     ----------

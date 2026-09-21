@@ -21,7 +21,7 @@ def Reactome_get_complex(
     Parameters
     ----------
     stId : str
-        Complex Stable ID (e.g., 'R-HSA-XXXXX'). To find complex IDs, use Reactome_ge...
+        Complex Stable ID (e.g., 'R-HSA-3209194', the TP53 Tetramer). To find complex...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

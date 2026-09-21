@@ -1,7 +1,7 @@
 """
 CPIC_list_drugs
 
-List all drugs in the CPIC database that have pharmacogenomic annotations. Returns drug names and...
+List every drug in the CPIC database that has pharmacogenomic annotations (324 as of the last cen...
 """
 
 from typing import Any, Optional, Callable
@@ -9,17 +9,22 @@ from ._shared_client import get_shared_client
 
 
 def CPIC_list_drugs(
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    List all drugs in the CPIC database that have pharmacogenomic annotations. Returns drug names and...
+    List every drug in the CPIC database that has pharmacogenomic annotations (324 as of the last cen...
 
     Parameters
     ----------
-    No parameters
+    limit : int
+        Optional: return at most this many drugs instead of the full list. Omit to ge...
+    offset : int
+        Optional: skip this many drugs before returning results. Only meaningful toge...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,7 +39,9 @@ def CPIC_list_drugs(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {}.items() if v is not None}
+    _args = {
+        k: v for k, v in {"limit": limit, "offset": offset}.items() if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "CPIC_list_drugs",

@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def iNaturalist_search_observations(
-    taxon_id: Optional[int | Any] = None,
-    query: Optional[str | Any] = None,
-    quality_grade: Optional[str | Any] = None,
-    place_id: Optional[int | Any] = None,
-    per_page: Optional[int | Any] = None,
+    taxon_id: Optional[int] = None,
+    query: Optional[str] = None,
+    quality_grade: Optional[str] = None,
+    place_id: Optional[int] = None,
+    per_page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,15 +24,15 @@ def iNaturalist_search_observations(
 
     Parameters
     ----------
-    taxon_id : int | Any
+    taxon_id : int
         iNaturalist taxon ID to filter by. Examples: 41482 (bottlenose dolphin), 4194...
-    query : str | Any
+    query : str
         Text search for species name. Alternative to taxon_id.
-    quality_grade : str | Any
+    quality_grade : str
         Observation quality: 'research' (community-verified), 'needs_id' (unverified)...
-    place_id : int | Any
+    place_id : int
         iNaturalist place ID to filter by location. Example: 10211 (Yellowstone Natio...
-    per_page : int | Any
+    per_page : int
         Number of results (1-200, default 10).
     stream_callback : Callable, optional
         Callback for streaming output

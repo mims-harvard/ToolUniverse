@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def HumanMine_search_pathways(
     q: str,
-    size: Optional[int | Any] = None,
+    size: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def HumanMine_search_pathways(
     ----------
     q : str
         Pathway search query: pathway name (e.g., 'apoptosis', 'cell cycle', 'PI3K-Ak...
-    size : int | Any
+    size : int
         Maximum number of results to return (default 10, max 100)
     stream_callback : Callable, optional
         Callback for streaming output

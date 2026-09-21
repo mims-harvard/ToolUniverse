@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def HPO_get_term_hierarchy(
     term_id: str,
-    direction: Optional[str | Any] = None,
+    direction: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def HPO_get_term_hierarchy(
     ----------
     term_id : str
         HPO term identifier (e.g., 'HP:0001250'). Must start with 'HP:' followed by 7...
-    direction : str | Any
+    direction : str
         Direction to traverse: 'children' (more specific terms, default) or 'parents'...
     stream_callback : Callable, optional
         Callback for streaming output

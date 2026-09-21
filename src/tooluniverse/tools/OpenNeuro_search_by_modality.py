@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def OpenNeuro_search_by_modality(
     modality: str,
-    first: Optional[int | Any] = None,
+    first: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def OpenNeuro_search_by_modality(
     ----------
     modality : str
         Imaging modality to filter by. Options: 'MRI', 'EEG', 'iEEG', 'MEG', 'PET'.
-    first : int | Any
+    first : int
         Number of datasets to return (default 10, max 25)
     stream_callback : Callable, optional
         Callback for streaming output

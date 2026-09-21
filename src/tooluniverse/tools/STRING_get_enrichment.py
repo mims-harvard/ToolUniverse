@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def STRING_get_enrichment(
     identifiers: str,
     species: Optional[int] = 9606,
-    background_string_identifiers: Optional[str | Any] = None,
+    background_string_identifiers: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def STRING_get_enrichment(
         Newline-separated list of protein identifiers (gene names or STRING IDs). Exa...
     species : int
         NCBI taxonomy ID (default 9606 for human). Examples: 9606 (human), 10090 (mou...
-    background_string_identifiers : str | Any
+    background_string_identifiers : str
         Optional newline-separated background gene set. If not provided, the entire g...
     stream_callback : Callable, optional
         Callback for streaming output

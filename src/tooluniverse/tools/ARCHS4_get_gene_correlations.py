@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ARCHS4_get_gene_correlations(
     gene: str,
-    count: Optional[int | Any] = 20,
+    count: Optional[int] = 20,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def ARCHS4_get_gene_correlations(
     ----------
     gene : str
         Gene symbol (e.g., TP53, BRCA1, EGFR, MYC)
-    count : int | Any
+    count : int
         Number of top correlated genes to return (default: 20, max: 200)
     stream_callback : Callable, optional
         Callback for streaming output

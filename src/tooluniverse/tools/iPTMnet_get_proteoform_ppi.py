@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def iPTMnet_get_proteoform_ppi(
-    operation: str,
     uniprot_id: str,
+    operation: Optional[str] = "get_proteoform_ppi",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

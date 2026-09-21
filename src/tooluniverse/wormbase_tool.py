@@ -563,9 +563,11 @@ class WormBaseTool(BaseTool):
         result = {
             "wormbase_id": gene_id,
             "total_interactions": len(edges),
-            "physical_count": len(physical),
+            "physical_count": len(physical[:150]),
+            "total_physical_interactions": len(physical),
             "physical_interactions": physical[:150],
-            "genetic_count": len(genetic),
+            "genetic_count": len(genetic[:150]),
+            "total_genetic_interactions": len(genetic),
             "genetic_interactions": genetic[:150],
         }
 

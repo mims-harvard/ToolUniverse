@@ -16,7 +16,7 @@ def ols_get_efo_term_descendants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List transitive DESCENDANTS of an EFO term (the full subtree, not just direct children). Provide ...
 
@@ -37,7 +37,7 @@ def ols_get_efo_term_descendants(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

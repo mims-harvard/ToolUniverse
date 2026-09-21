@@ -82,7 +82,7 @@
             "phylum": {"type": ["string", "null"], "description": "Phylum."},
             "class": {"type": ["string", "null"], "description": "Class."},
             "order": {"type": ["string", "null"], "description": "Order."},
-            "top_fields": {"type": ["string", "null"], "description": "Darwin Core field(s) to break down counts by, e.g. 'country', 'institutioncode', or 'recordedby'. Comma-separate multiple fields. If omitted, only the total count is returned."},
+            "top_fields": {"type": ["string", "array", "null"], "description": "Darwin Core field(s) to break down counts by, e.g. 'country', 'institutioncode', or 'recordedby'. Comma-separate multiple fields. If omitted, only the total count is returned."},
             "count": {"type": ["integer", "null"], "description": "Number of top values to return per facet field (default 10, max 100)."}
         }, "required": []},
         "fields": {"timeout": 30, "mode": "summary"},

@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def ELM_get_instances(
-    operation: str,
-    uniprot_id: Optional[str | Any] = None,
-    uniprot_acc: Optional[str | Any] = None,
-    motif_type: Optional[str | Any] = None,
+    operation: Optional[str] = "get_instances",
+    uniprot_id: Optional[str] = None,
+    uniprot_acc: Optional[str] = None,
+    motif_type: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def ELM_get_instances(
     ----------
     operation : str
         Operation type
-    uniprot_id : str | Any
+    uniprot_id : str
         UniProt accession, e.g., P04637 (TP53), P00533 (EGFR), P38398 (BRCA1), P42336...
-    uniprot_acc : str | Any
+    uniprot_acc : str
         Alias for uniprot_id. UniProt accession, e.g., P04637 (TP53)
-    motif_type : str | Any
+    motif_type : str
         Filter by motif functional type. CLV=cleavage sites, DEG=degradation motifs, ...
     stream_callback : Callable, optional
         Callback for streaming output

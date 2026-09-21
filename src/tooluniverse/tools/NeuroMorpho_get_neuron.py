@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def NeuroMorpho_get_neuron(
-    neuron_id: Optional[int | Any] = None,
-    neuron_name: Optional[str | Any] = None,
+    neuron_id: Optional[int] = None,
+    neuron_name: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -21,9 +21,9 @@ def NeuroMorpho_get_neuron(
 
     Parameters
     ----------
-    neuron_id : int | Any
+    neuron_id : int
         Numeric neuron ID in NeuroMorpho.Org database. Examples: 1, 102399, 50000.
-    neuron_name : str | Any
+    neuron_name : str
         Neuron name string (alternative to neuron_id). Example: 'cnic_001'.
     stream_callback : Callable, optional
         Callback for streaming output

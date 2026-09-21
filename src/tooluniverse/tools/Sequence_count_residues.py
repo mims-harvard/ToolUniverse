@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def Sequence_count_residues(
-    operation: str,
     residue: str,
+    operation: Optional[str] = "count_residues",
     sequence: Optional[str] = None,
     uniprot_id: Optional[str] = None,
     *,

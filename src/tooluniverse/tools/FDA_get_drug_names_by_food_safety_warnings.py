@@ -1,7 +1,7 @@
 """
 FDA_get_drug_names_by_food_safety_warnings
 
-Retrieve drug names based on specific food safety warnings.
+Retrieve drug names whose label discusses a food-drug interaction or food safety warning (e.g. 'g...
 """
 
 from typing import Any, Optional, Callable
@@ -19,12 +19,12 @@ def FDA_get_drug_names_by_food_safety_warnings(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve drug names based on specific food safety warnings.
+    Retrieve drug names whose label discusses a food-drug interaction or food safety warning (e.g. 'g...
 
     Parameters
     ----------
     field_info : str
-        Information related to food safety warnings.
+        Food/beverage or interaction keyword to search for, e.g. 'grapefruit', 'alcoh...
     indication : str
         The indication or usage of the drug.
     limit : int

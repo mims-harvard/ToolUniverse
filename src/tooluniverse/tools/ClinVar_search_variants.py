@@ -1,7 +1,7 @@
 """
 ClinVar_search_variants
 
-Search for variants in ClinVar database by gene name, condition, or variant ID. Returns variant i...
+Search for variants in ClinVar database by gene name, condition, variant ID, or variant name (pro...
 """
 
 from typing import Any, Optional, Callable
@@ -12,19 +12,20 @@ def ClinVar_search_variants(
     gene: Optional[str] = None,
     condition: Optional[str] = None,
     variant_id: Optional[str] = None,
+    variant_name: Optional[str | list[Any]] = None,
     max_results: Optional[int] = 20,
     limit: Optional[int] = None,
     clinical_significance: Optional[str] = None,
-    gene_symbol: Optional[str | Any] = None,
-    significance: Optional[str | Any] = None,
-    query: Optional[str | Any] = None,
+    gene_symbol: Optional[str] = None,
+    significance: Optional[str] = None,
+    query: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for variants in ClinVar database by gene name, condition, or variant ID. Returns variant i...
+    Search for variants in ClinVar database by gene name, condition, variant ID, or variant name (pro...
 
     Parameters
     ----------
@@ -34,17 +35,19 @@ def ClinVar_search_variants(
         Disease or condition name (e.g., 'breast cancer', 'diabetes') At least one of...
     variant_id : str
         ClinVar variant ID (e.g., '12345') At least one of gene, condition, or varian...
+    variant_name : str | list[Any]
+        Protein change or HGVS notation to search for (e.g., 'Glu6Val', 'V600E', 'c.2...
     max_results : int
         Maximum number of results to return (default: 20). Alias: limit.
     limit : int
         Alias for max_results: maximum number of results to return.
     clinical_significance : str
-        Filter by clinical significance (e.g., 'Pathogenic', 'Likely pathogenic', 'Be...
-    gene_symbol : str | Any
+        Filter by clinical significance. Must be one of the classes ClinVar's index a...
+    gene_symbol : str
         Alias for gene. HGNC gene symbol (e.g., "DPYD", "CYP2C19").
-    significance : str | Any
+    significance : str
         Alias for clinical_significance (e.g., "pathogenic", "benign", "uncertain_sig...
-    query : str | Any
+    query : str
         Alias for condition. Free-text search mapped to condition/disease field.
     stream_callback : Callable, optional
         Callback for streaming output
@@ -66,6 +69,7 @@ def ClinVar_search_variants(
             "gene": gene,
             "condition": condition,
             "variant_id": variant_id,
+            "variant_name": variant_name,
             "max_results": max_results,
             "limit": limit,
             "clinical_significance": clinical_significance,

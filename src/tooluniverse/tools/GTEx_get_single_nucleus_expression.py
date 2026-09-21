@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GTEx_get_single_nucleus_expression(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_single_nucleus_expression",
     result_type: Optional[str] = "detail",
     gencode_id: Optional[str | list[str]] = None,
     gene_symbol: Optional[str] = None,
