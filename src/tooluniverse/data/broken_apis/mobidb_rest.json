@@ -15,7 +15,7 @@
         "mobidb.bio.unipd.it/api/download?acc=P04637 - ConnectTimeout after 10s",
         "mobidb.org/api/entry/P04637 - 404 ResourceNotFound",
         "mobidb.bio.unipd.it is unreachable at TCP level (no connection established)",
-        "Previously worked in prior sessions (agent reports from Round 26A confirm 100% timeout)",
+        "Previously worked in prior sessions (agent reports from Round 26A confirm 100% timeout)"
     ],
     "attempted_config": {
         "name": "MobiDB_get_protein",
@@ -27,7 +27,7 @@
             "properties": {
                 "accession": {"type": "string", "description": "UniProt accession"}
             },
-            "required": ["accession"],
-        },
-    },
+            "required": ["accession"]
+        }
+    }
 }
