@@ -1,3 +1,4 @@
+import itertools
 import json
 import requests
 import urllib.parse
@@ -25,8 +26,17 @@ class EnrichrTool(BaseTool):
         "GO_Biological_Process_2023",
     ]
 
+    # The gene/term graph is almost complete bipartite, so the number of simple paths
+    # between two nodes grows factorially with the number of genes: 3 genes take
+    # ~2 s, 5 genes ~8 s, 7 genes run for minutes and 9 exhaust memory (the tool used
+    # to list() every path just to keep the best 20 or 5). Enumeration is capped; the
+    # result says so (metadata.paths_truncated) when a cap was hit.
+    MAX_PATHS_BETWEEN_GENES = 20000
+    MAX_PATHS_PER_TERM = 2000
+
     def __init__(self, tool_config):
         super().__init__(tool_config)
+        self._paths_truncated = False
         # Constants
         self.enrichr_url = "https://maayanlab.cloud/Enrichr/addList"
         self.enrichment_url = "https://maayanlab.cloud/Enrichr/enrich"
@@ -39,6 +49,7 @@ class EnrichrTool(BaseTool):
         # "use the default" rather than "query nothing" -- otherwise a valid
         # call would silently return an empty enrichment wrapped in success.
         libs = arguments.get("libs") or self.DEFAULT_LIBS
+        self._paths_truncated = False
         connected_path, connections = self.enrichr_api(genes, libs)
         return {
             "status": "success",
@@ -50,6 +61,7 @@ class EnrichrTool(BaseTool):
                 "source": "Enrichr (maayanlab.cloud)",
                 "libraries": list(libs),
                 "gene_count": len(genes) if genes else 0,
+                "paths_truncated": self._paths_truncated,
             },
         }
 
@@ -178,7 +190,18 @@ class EnrichrTool(BaseTool):
 
         return G
 
-    def rank_paths_by_weight(self, G, source, target):
+    def _simple_paths(self, G, source, target, max_paths=None):
+        """Simple paths from source to target, at most ``max_paths`` of them."""
+        paths = nx.all_simple_paths(G, source=source, target=target)
+        if max_paths is None:
+            return list(paths)
+        found = list(itertools.islice(paths, max_paths + 1))
+        if len(found) > max_paths:
+            self._paths_truncated = True
+            found = found[:max_paths]
+        return found
+
+    def rank_paths_by_weight(self, G, source, target, max_paths=None):
         """
         Find and rank paths between source and target based on total edge weight.
 
@@ -190,7 +213,7 @@ class EnrichrTool(BaseTool):
         Returns
             list: List of tuples (path, weight) sorted by weight descending.
         """
-        all_paths = list(nx.all_simple_paths(G, source=source, target=target))
+        all_paths = self._simple_paths(G, source, target, max_paths)
         path_weights = []
 
         for path in all_paths:
@@ -201,7 +224,7 @@ class EnrichrTool(BaseTool):
 
         return sorted(path_weights, key=lambda x: x[1], reverse=True)
 
-    def rank_paths_to_term(self, G, gene, term):
+    def rank_paths_to_term(self, G, gene, term, max_paths=None):
         """
         Find and rank paths from each gene to a specified term based on total edge weight.
 
@@ -213,7 +236,7 @@ class EnrichrTool(BaseTool):
         Returns
             list or None: List of tuples (path, weight) sorted by weight descending, or None if no paths.
         """
-        all_paths = list(nx.all_simple_paths(G, source=gene, target=term))
+        all_paths = self._simple_paths(G, gene, term, max_paths)
         path_weights = []
 
         for path in all_paths:
@@ -262,7 +285,9 @@ class EnrichrTool(BaseTool):
         G = self.build_graph(genes, enrichment_results)
 
         # Rank paths from the first gene to the second (limit to top 20)
-        ranked_paths = self.rank_paths_by_weight(G, genes[0], genes[1])
+        ranked_paths = self.rank_paths_by_weight(
+            G, genes[0], genes[1], self.MAX_PATHS_BETWEEN_GENES
+        )
         connected_path = {}
         for path, weight in ranked_paths[:20]:
             connected_path[f"Path: {path}"] = f"Total Weight: {weight}"
@@ -277,7 +302,9 @@ class EnrichrTool(BaseTool):
         connections = {}
         for gene in genes:
             for term in term_nodes:
-                paths_to_term = self.rank_paths_to_term(G, gene, term)
+                paths_to_term = self.rank_paths_to_term(
+                    G, gene, term, self.MAX_PATHS_PER_TERM
+                )
                 if paths_to_term is not None:
                     connections[f"Connectivity: {gene} - {term}"] = paths_to_term[:5]
 
