@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def Rfam_search_sequence(
-    operation: str,
     sequence: str,
+    operation: Optional[str] = "search_sequence",
     max_wait_seconds: Optional[int] = 120,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

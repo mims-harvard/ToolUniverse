@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def FourDN_search_data(
-    operation: str,
+    operation: Optional[str] = "search",
     query: Optional[str] = "*",
     item_type: Optional[str] = "File",
     file_type: Optional[str] = None,

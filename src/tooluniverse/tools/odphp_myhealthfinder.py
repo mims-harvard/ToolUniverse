@@ -18,7 +18,7 @@ def odphp_myhealthfinder(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     This tool provides personalized preventive-care recommendations and it is helpful for different a...
 
@@ -43,7 +43,7 @@ def odphp_myhealthfinder(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

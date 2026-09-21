@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def BiGG_get_database_version(
-    operation: str,
+    operation: Optional[str] = "get_database_version",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

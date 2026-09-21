@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def QuickGO_annotations_by_goterm(
     go_id: str,
-    taxon_id: Optional[int | Any] = None,
+    taxon_id: Optional[int] = None,
     limit: Optional[int] = 25,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -24,7 +24,7 @@ def QuickGO_annotations_by_goterm(
     ----------
     go_id : str
         Gene Ontology term accession. Examples: 'GO:0006915' (apoptotic process), 'GO...
-    taxon_id : int | Any
+    taxon_id : int
         Filter by NCBI taxonomy ID. Example: 9606 (human), 10090 (mouse), 7227 (fly).
     limit : int
         Maximum number of annotations to return. Default: 25, max: 100.

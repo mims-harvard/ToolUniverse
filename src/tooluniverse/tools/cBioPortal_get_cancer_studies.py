@@ -1,7 +1,7 @@
 """
 cBioPortal_get_cancer_studies
 
-Get one page of the cBioPortal study catalogue
+Get one page of the cBioPortal study catalogue. This returns a SLICE, not the whole catalogue: `l...
 """
 
 from typing import Any, Optional, Callable
@@ -17,16 +17,14 @@ def cBioPortal_get_cancer_studies(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get one page of the cBioPortal study catalogue. The response reports
-    `total_available` (full catalogue size) alongside `count` (studies
-    returned) and sets `truncated` when studies were left behind.
+    Get one page of the cBioPortal study catalogue. This returns a SLICE, not the whole catalogue: `l...
 
     Parameters
     ----------
     limit : int
-        Number of studies to return in this page
+        Number of studies to return in this page. The default of 20 covers only a sma...
     offset : int
-        0-based index of the first study to return
+        0-based index of the first study to return, for paging through the catalogue....
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

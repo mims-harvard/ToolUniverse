@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def OncoKB_annotate_copy_number(
     gene: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "annotate_copy_number",
     copy_number_type: Optional[str] = None,
     tumor_type: Optional[str] = None,
     copy_number_alteration: Optional[str] = None,
@@ -18,7 +18,7 @@ def OncoKB_annotate_copy_number(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Annotate copy number alterations (amplification/deletion) for oncogenic potential. Returns eviden...
 
@@ -43,7 +43,7 @@ def OncoKB_annotate_copy_number(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

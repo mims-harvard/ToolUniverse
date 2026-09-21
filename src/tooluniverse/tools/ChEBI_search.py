@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ChEBI_search(
     query: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def ChEBI_search(
     ----------
     query : str
         Search query string - compound name, synonym, formula, or keyword. Examples: ...
-    limit : int | Any
+    limit : int
         Maximum number of compounds to return. Default: 10. Max: 100. Values above 15...
     stream_callback : Callable, optional
         Callback for streaming output

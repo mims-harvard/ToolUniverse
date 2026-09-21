@@ -9,14 +9,14 @@ from ._shared_client import get_shared_client
 
 
 def CancerPrognosis_get_gene_expression(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_gene_expression",
     cancer: Optional[str] = None,
     cancer_type: Optional[str] = None,
     study_id: Optional[str] = None,
     gene: Optional[str] = None,
     gene_symbol: Optional[str] = None,
     gene_name: Optional[str] = None,
-    max_samples: Optional[int | Any] = None,
+    max_samples: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -41,7 +41,7 @@ def CancerPrognosis_get_gene_expression(
         Alias for gene. Gene symbol (e.g., 'TP53', 'BRCA1', 'EGFR').
     gene_name : str
         Alias for gene. Gene symbol or name (e.g., 'TP53', 'BRCA1').
-    max_samples : int | Any
+    max_samples : int
         Upper bound on sample records to return (default 500, max 2000). Actual count...
     stream_callback : Callable, optional
         Callback for streaming output

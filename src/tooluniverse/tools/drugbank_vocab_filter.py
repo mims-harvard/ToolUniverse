@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def drugbank_vocab_filter(
-    field: str,
-    condition: str,
-    limit: int,
+    field: Optional[str] = "Common name",
+    condition: Optional[str] = "contains",
     value: Optional[str] = None,
+    limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def drugbank_vocab_filter(
     Parameters
     ----------
     field : str
-        The field to filter on
+        The field to filter on. Defaults to 'Common name'.
     condition : str
-        The type of filtering condition to apply. Filter is case-insensitive.
+        The type of filtering condition to apply. Filter is case-insensitive. Default...
     value : str
         The value to filter by. Not required when condition is 'not_empty'. Examples:...
     limit : int

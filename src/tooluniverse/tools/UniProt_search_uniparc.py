@@ -15,7 +15,7 @@ def UniProt_search_uniparc(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search UniParc entries. Returns UniParc entries matching the query. Use this to find UniParc entr...
 
@@ -34,7 +34,7 @@ def UniProt_search_uniparc(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def Mcule_get_database(
-    operation: str,
     database_id: int,
+    operation: Optional[str] = "get_database",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

@@ -29,7 +29,7 @@ def FAERS_search_reports_by_drug_and_indication(
     medicinalproduct : str
         Drug name (required).
     drugindication : str
-        Optional: Filter by drug indication (e.g., 'Dementia Alzheimer\\'s type', 'Al...
+        Optional: Filter by drug indication (e.g., 'Dementia Alzheimer\\'s type', 'Alz...
     limit : int
         Maximum number of reports to return. Must be between 1 and 100.
     skip : int

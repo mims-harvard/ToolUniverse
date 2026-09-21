@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def AllenBrain_search_genes(
-    gene_acronym: Optional[str | Any] = None,
-    gene_name: Optional[str | Any] = None,
+    gene_acronym: Optional[str] = None,
+    gene_name: Optional[str] = None,
     num_rows: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -22,9 +22,9 @@ def AllenBrain_search_genes(
 
     Parameters
     ----------
-    gene_acronym : str | Any
+    gene_acronym : str
         Gene symbol/acronym for exact match. Examples: 'Gad1', 'Pvalb', 'Sst', 'Bdnf'...
-    gene_name : str | Any
+    gene_name : str
         Gene name for partial match search (alternative to gene_acronym). Example: 'g...
     num_rows : int
         Max results to return. Default: 50.

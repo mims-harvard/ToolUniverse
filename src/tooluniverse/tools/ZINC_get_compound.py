@@ -1,7 +1,7 @@
 """
 ZINC_get_compound
 
-Get detailed information for a ZINC compound by its ID, including SMILES structure, molecular pro...
+Get the structure and computed properties for a ZINC22 compound by its ZINC ID, via the CartBlanc...
 """
 
 from typing import Any, Optional, Callable
@@ -9,22 +9,22 @@ from ._shared_client import get_shared_client
 
 
 def ZINC_get_compound(
-    operation: str,
     zinc_id: str,
+    operation: Optional[str] = "get_compound",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Get detailed information for a ZINC compound by its ID, including SMILES structure, molecular pro...
+    Get the structure and computed properties for a ZINC22 compound by its ZINC ID, via the CartBlanc...
 
     Parameters
     ----------
     operation : str
         Operation type
     zinc_id : str
-        ZINC compound identifier, e.g., ZINC000000000053 (aspirin), ZINC000000001084 ...
+        ZINC compound identifier, e.g., ZINC000000000053 (aspirin). Both zinc20 numer...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,7 +34,7 @@ def ZINC_get_compound(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

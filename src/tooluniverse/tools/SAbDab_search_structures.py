@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def SAbDab_search_structures(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_structures",
     query: Optional[str] = None,
     antigen: Optional[str] = None,
     limit: Optional[int] = 50,

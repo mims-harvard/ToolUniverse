@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def Crossref_list_funders(
     query: Optional[str] = None,
     limit: Optional[int] = 20,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,7 +25,9 @@ def Crossref_list_funders(
     query : str
         Search query for funder names (e.g., 'National Science Foundation', 'NIH', 'E...
     limit : int
-        Maximum number of funders to return (default: 20, max: 100).
+        Maximum number of funders to return in this page (default: 20, max: 100). It ...
+    offset : int
+        Skip this many matching funders before returning results. Use with 'limit' to...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -39,7 +42,11 @@ def Crossref_list_funders(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"query": query, "limit": limit}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"query": query, "limit": limit, "offset": offset}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "Crossref_list_funders",

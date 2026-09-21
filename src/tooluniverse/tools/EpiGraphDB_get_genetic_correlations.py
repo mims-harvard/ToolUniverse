@@ -1,7 +1,7 @@
 """
 EpiGraphDB_get_genetic_correlations
 
-Get genetic correlations (rg) between a GWAS trait and all other traits in the IEU OpenGWAS datab...
+Get strong genetic correlations (|rg| > 0.8) between a GWAS trait and other traits in the IEU Ope...
 """
 
 from typing import Any, Optional, Callable
@@ -17,14 +17,14 @@ def EpiGraphDB_get_genetic_correlations(
     validate: bool = True,
 ) -> Any:
     """
-    Get genetic correlations (rg) between a GWAS trait and all other traits in the IEU OpenGWAS datab...
+    Get strong genetic correlations (|rg| > 0.8) between a GWAS trait and other traits in the IEU Ope...
 
     Parameters
     ----------
     trait : str
-        GWAS trait name to find genetic correlations for (e.g., 'Body mass index', 'D...
+        Exact, case-sensitive GWAS trait label (e.g., 'Waist circumference', 'Hip cir...
     pval_threshold : float
-        P-value threshold for genetic correlations (default 0.05).
+        Accepted for compatibility but NOT applied — the endpoint always returns the ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

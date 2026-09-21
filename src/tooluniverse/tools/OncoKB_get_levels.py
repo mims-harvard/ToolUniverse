@@ -9,12 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def OncoKB_get_levels(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_levels",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get OncoKB evidence level definitions. Returns descriptions of all therapeutic actionability leve...
 
@@ -31,7 +31,7 @@ def OncoKB_get_levels(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

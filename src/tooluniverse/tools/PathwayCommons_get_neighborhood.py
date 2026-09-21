@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def PathwayCommons_get_neighborhood(
     gene: str,
-    limit: Optional[int | Any] = 1,
-    datasource: Optional[str | Any] = None,
-    max_results: Optional[int | Any] = 100,
+    limit: Optional[int] = 1,
+    datasource: Optional[str] = None,
+    max_results: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def PathwayCommons_get_neighborhood(
     ----------
     gene : str
         Gene symbol (e.g., BRCA1, TP53, EGFR)
-    limit : int | Any
+    limit : int
         Graph search depth (1 = direct neighbors, 2 = neighbors of neighbors). Defaul...
-    datasource : str | Any
+    datasource : str
         Filter by data source: reactome, kegg, biogrid, intact, hprd, pid, corum, ctd...
-    max_results : int | Any
+    max_results : int
         Maximum number of interactions to return (default: 100)
     stream_callback : Callable, optional
         Callback for streaming output

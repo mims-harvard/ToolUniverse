@@ -16,7 +16,7 @@ def TDC_load_dataset(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Load a named Therapeutics Data Commons (TDC) benchmark dataset locally via the PyTDC package and ...
 
@@ -37,7 +37,7 @@ def TDC_load_dataset(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

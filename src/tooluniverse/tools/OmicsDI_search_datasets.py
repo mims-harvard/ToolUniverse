@@ -10,13 +10,13 @@ from ._shared_client import get_shared_client
 
 def OmicsDI_search_datasets(
     query: str,
-    start: Optional[int | Any] = None,
-    size: Optional[int | Any] = None,
-    omics_type: Optional[str | Any] = None,
-    organism: Optional[str | Any] = None,
-    tissue: Optional[str | Any] = None,
-    sortfield: Optional[str | Any] = None,
-    order: Optional[str | Any] = None,
+    start: Optional[int] = None,
+    size: Optional[int] = None,
+    omics_type: Optional[str] = None,
+    organism: Optional[str] = None,
+    tissue: Optional[str] = None,
+    sortfield: Optional[str] = None,
+    order: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -29,19 +29,19 @@ def OmicsDI_search_datasets(
     ----------
     query : str
         Search query text (e.g., 'Alzheimer brain', 'BRCA1 cancer', 'gut microbiome')
-    start : int | Any
+    start : int
         Offset for pagination (default 0)
-    size : int | Any
+    size : int
         Number of results to return (default 10, max 100)
-    omics_type : str | Any
+    omics_type : str
         Filter by omics type: 'Transcriptomics', 'Proteomics', 'Metabolomics', 'Genom...
-    organism : str | Any
+    organism : str
         Filter by organism (e.g., 'Homo sapiens', 'Mus musculus')
-    tissue : str | Any
+    tissue : str
         Filter by tissue/cell type (e.g., 'brain', 'liver', 'blood')
-    sortfield : str | Any
+    sortfield : str
         Sort field: 'publication_date', 'id', 'title', 'views', 'downloads'
-    order : str | Any
+    order : str
         Sort order: 'desc' or 'asc'
     stream_callback : Callable, optional
         Callback for streaming output

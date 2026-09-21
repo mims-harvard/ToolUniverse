@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def AHA_ACC_search_guidelines(
     query: str,
     limit: Optional[int] = 5,
-    year_from: Optional[int | Any] = None,
+    year_from: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def AHA_ACC_search_guidelines(
         Search topic (e.g., 'heart failure', 'atrial fibrillation management', 'hyper...
     limit : int
         Maximum number of results to return (default: 5)
-    year_from : int | Any
+    year_from : int
         Filter to guidelines published from this year onward (e.g., 2020). Null for n...
     stream_callback : Callable, optional
         Callback for streaming output

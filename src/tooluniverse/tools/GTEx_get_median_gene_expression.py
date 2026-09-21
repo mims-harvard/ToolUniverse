@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GTEx_get_median_gene_expression(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_median_gene_expression",
     gencode_id: Optional[str | list[str]] = None,
     tissue_site_detail_id: Optional[list[str]] = None,
     dataset_id: Optional[str] = "gtex_v8",
@@ -20,7 +20,7 @@ def GTEx_get_median_gene_expression(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get median gene expression levels across GTEx tissues. Returns median expression in TPM (Transcri...
 
@@ -33,7 +33,7 @@ def GTEx_get_median_gene_expression(
     tissue_site_detail_id : list[str]
         Optional: Tissue IDs to filter (e.g. ['Liver', 'Brain_Cortex']). Omit for all...
     dataset_id : str
-        GTEx dataset version (default: gtex_v8; v10 returns empty for most endpoints)
+        GTEx dataset version (default: gtex_v8, the most widely cited release). gtex_...
     page : int
         Page number for pagination (0-based)
     items_per_page : int
@@ -49,7 +49,7 @@ def GTEx_get_median_gene_expression(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

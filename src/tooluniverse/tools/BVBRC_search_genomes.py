@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def BVBRC_search_genomes(
     keyword: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def BVBRC_search_genomes(
     ----------
     keyword : str
         Search keyword - organism name, strain, or pathogen. Examples: 'Staphylococcu...
-    limit : int | Any
+    limit : int
         Maximum number of results to return. Default: 10. Max: 100.
     stream_callback : Callable, optional
         Callback for streaming output

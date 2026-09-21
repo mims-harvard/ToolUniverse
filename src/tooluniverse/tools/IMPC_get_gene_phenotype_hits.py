@@ -17,7 +17,7 @@ def IMPC_get_gene_phenotype_hits(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get detailed statistical results from IMPC phenotyping for a gene. Returns p-values, effect sizes...
 
@@ -40,7 +40,7 @@ def IMPC_get_gene_phenotype_hits(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

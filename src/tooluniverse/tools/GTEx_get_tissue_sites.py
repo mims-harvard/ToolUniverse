@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GTEx_get_tissue_sites(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_tissue_sites",
     dataset_id: Optional[str] = "gtex_v8",
     page: Optional[int] = 0,
     items_per_page: Optional[int] = 250,
@@ -17,7 +17,7 @@ def GTEx_get_tissue_sites(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get all available GTEx tissue sites with metadata. Returns tissue IDs, names, sample counts, eGen...
 
@@ -40,7 +40,7 @@ def GTEx_get_tissue_sites(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

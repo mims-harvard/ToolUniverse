@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def FAERS_rollup_meddra_hierarchy(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "rollup_meddra_hierarchy",
     drug_name: Optional[str] = None,
     drug: Optional[str] = None,
     *,

@@ -11,11 +11,12 @@ from ._shared_client import get_shared_client
 def Crossref_search_members(
     query: str,
     limit: Optional[int] = 20,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Search Crossref members (publishers / depositing organizations) by name. Returns each member's nu...
 
@@ -24,7 +25,9 @@ def Crossref_search_members(
     query : str
         Publisher / member name to search (e.g., 'plos', 'elsevier', 'springer', 'wil...
     limit : int
-        Maximum number of members to return. Max 100 per request.
+        Maximum number of members to return in this page. Max 100 per request. It doe...
+    offset : int
+        Skip this many matching members before returning results. Use with 'limit' to...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,12 +37,16 @@ def Crossref_search_members(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"query": query, "limit": limit}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"query": query, "limit": limit, "offset": offset}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "Crossref_search_members",

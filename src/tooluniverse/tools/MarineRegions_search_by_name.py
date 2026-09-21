@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def MarineRegions_search_by_name(
     name: str,
-    like: Optional[bool | Any] = None,
-    fuzzy: Optional[bool | Any] = None,
-    offset: Optional[int | Any] = None,
+    like: Optional[bool] = None,
+    fuzzy: Optional[bool] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def MarineRegions_search_by_name(
     ----------
     name : str
         Name of the marine geographic feature. Examples: 'North Sea', 'Pacific Ocean'...
-    like : bool | Any
+    like : bool
         If true, perform a partial/fuzzy name match (LIKE search). Default: true
-    fuzzy : bool | Any
+    fuzzy : bool
         If true, perform fuzzy matching for approximate name searches. Default: false
-    offset : int | Any
+    offset : int
         Pagination offset. Default: 0 (first page)
     stream_callback : Callable, optional
         Callback for streaming output

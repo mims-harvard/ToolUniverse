@@ -9,7 +9,6 @@ from ._shared_client import get_shared_client
 
 
 def CellMarker_list_cell_types(
-    operation: str,
     tissue_type: Optional[str] = None,
     species: Optional[str] = None,
     cell_class: Optional[str] = None,
@@ -23,8 +22,6 @@ def CellMarker_list_cell_types(
 
     Parameters
     ----------
-    operation : str
-        Operation type
     tissue_type : str
         Tissue type to list cell types for (e.g., 'Blood', 'Lung', 'Brain', 'Liver')....
     species : str
@@ -48,7 +45,6 @@ def CellMarker_list_cell_types(
     _args = {
         k: v
         for k, v in {
-            "operation": operation,
             "tissue_type": tissue_type,
             "species": species,
             "cell_class": cell_class,

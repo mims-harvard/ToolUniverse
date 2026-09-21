@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def ORCID_get_employments(
-    operation: str,
     orcid: str,
+    operation: Optional[str] = "get_employments",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

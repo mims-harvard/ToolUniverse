@@ -9,12 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def humanbase_ppi_analysis(
-    gene_list: Optional[list[str]] = None,
+    gene_list: Optional[list[str] | str] = None,
     tissue: Optional[str] = "brain",
     max_node: Optional[int] = 10,
     interaction: Optional[str] = None,
     string_mode: Optional[bool] = True,
-    genes: Optional[list[str]] = None,
+    genes: Optional[list[str] | str] = None,
     top_n: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -26,7 +26,7 @@ def humanbase_ppi_analysis(
 
     Parameters
     ----------
-    gene_list : list[str]
+    gene_list : list[str] | str
         Genes to analyze, as a list of symbols or a comma-separated string. Official ...
     tissue : str
         Tissue type for tissue-specific interactions. Use simple names like 'brain', ...
@@ -36,10 +36,10 @@ def humanbase_ppi_analysis(
         Specific interaction type to filter by. Available types: 'co-expression', 'in...
     string_mode : bool
         Whether to return the result in string mode. If True, the result will be a st...
-    genes : list[str]
+    genes : list[str] | str
         Alias for gene_list. A list of gene symbols or a comma-separated string.
     top_n : int
-        Alias for max_node. Number of interaction partners to retrieve per query gene...
+        Alias for max_node. Number of interaction partners to retrieve per query gene.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

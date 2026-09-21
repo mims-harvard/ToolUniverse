@@ -1,7 +1,7 @@
 """
 HPA_get_rna_expression_in_specific_tissues
 
-Query RNA expression levels (nTPM) for a specific gene in one or more user-specified tissues with...
+Query RNA expression levels (nTPM) for a specific gene in one or more user-specified tissues. Rea...
 """
 
 from typing import Any, Optional, Callable
@@ -17,14 +17,14 @@ def HPA_get_rna_expression_in_specific_tissues(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Query RNA expression levels (nTPM) for a specific gene in one or more user-specified tissues with...
+    Query RNA expression levels (nTPM) for a specific gene in one or more user-specified tissues. Rea...
 
     Parameters
     ----------
     ensembl_id : str
         Ensembl Gene ID for the gene, e.g., 'ENSG00000141510' for TP53.
     tissue_names : list[str]
-        List of tissue names to query, e.g., ['brain', 'liver', 'heart muscle', 'kidn...
+        List of tissue names to query, e.g., ['skin', 'liver', 'heart muscle', 'kidne...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

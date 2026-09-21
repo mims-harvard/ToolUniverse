@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def DrugSynergy_calculate_bliss(
-    operation: str,
     effect_a: float,
     effect_b: float,
     effect_combination: float,
+    operation: Optional[str] = "calculate_bliss",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

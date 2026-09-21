@@ -1,7 +1,7 @@
 """
 ZINC_search_compounds
 
-Search the ZINC database for commercially available compounds by name or keyword. Returns ZINC ID...
+NOT SUPPORTED by ZINC22 (CartBlanche22): free-text / compound-name search. ZINC has always been s...
 """
 
 from typing import Any, Optional, Callable
@@ -9,28 +9,22 @@ from ._shared_client import get_shared_client
 
 
 def ZINC_search_compounds(
-    operation: str,
-    query: str,
-    count: Optional[int] = 10,
-    purchasability: Optional[str | Any] = None,
+    operation: Optional[str] = "search_compounds",
+    query: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Search the ZINC database for commercially available compounds by name or keyword. Returns ZINC ID...
+    NOT SUPPORTED by ZINC22 (CartBlanche22): free-text / compound-name search. ZINC has always been s...
 
     Parameters
     ----------
     operation : str
         Operation type
     query : str
-        Search query: drug name (aspirin, ibuprofen, metformin), keyword, or partial ...
-    count : int
-        Maximum number of results to return (default: 10, max: 100)
-    purchasability : str | Any
-        Filter by purchasability tier. in-stock = ready to ship, for-sale = from vend...
+        Drug name or keyword (NOTE: name search is not supported by CartBlanche22; th...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,19 +34,14 @@ def ZINC_search_compounds(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {
-            "operation": operation,
-            "query": query,
-            "count": count,
-            "purchasability": purchasability,
-        }.items()
+        for k, v in {"operation": operation, "query": query}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

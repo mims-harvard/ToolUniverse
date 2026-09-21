@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def iPTMnet_get_ptm_sites(
-    operation: str,
     uniprot_id: str,
-    ptm_type: Optional[str | Any] = None,
+    operation: Optional[str] = "get_ptm_sites",
+    ptm_type: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def iPTMnet_get_ptm_sites(
         Operation type
     uniprot_id : str
         UniProt accession, e.g., P04637 (TP53), P00533 (EGFR), P31749 (AKT1), Q16539 ...
-    ptm_type : str | Any
+    ptm_type : str
         Filter by PTM type: Phosphorylation, Acetylation, Ubiquitination, Methylation...
     stream_callback : Callable, optional
         Callback for streaming output

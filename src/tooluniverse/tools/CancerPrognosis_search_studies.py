@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def CancerPrognosis_search_studies(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_studies",
     keyword: Optional[str] = None,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     cancer_type: Optional[str] = None,
     cancer: Optional[str] = None,
     query: Optional[str] = None,
@@ -29,7 +29,7 @@ def CancerPrognosis_search_studies(
         Operation type
     keyword : str
         Search keyword (e.g., 'breast', 'lung', 'TCGA', 'melanoma', 'glioblastoma')
-    limit : int | Any
+    limit : int
         Maximum number of results to return (default 20, max 100)
     cancer_type : str
         Cancer type to search for. Alias for keyword.

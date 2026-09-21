@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def PDC_get_gene_protein(
-    operation: str,
     gene_name: str,
+    operation: Optional[str] = "get_gene_protein",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

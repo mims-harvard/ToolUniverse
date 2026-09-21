@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def Survival_log_rank_test(
-    operation: str,
     durations_a: list[Any],
     events_a: list[Any],
     durations_b: list[Any],
     events_b: list[Any],
+    operation: Optional[str] = "log_rank_test",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

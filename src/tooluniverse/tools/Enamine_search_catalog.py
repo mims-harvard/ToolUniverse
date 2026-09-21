@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def Enamine_search_catalog(
     query: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_catalog",
     catalog: Optional[str] = "all",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

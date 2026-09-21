@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def EuroPMCAnnot_get_article_annotations(
     article_id: str,
-    annotation_type: Optional[str | Any] = None,
+    annotation_type: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def EuroPMCAnnot_get_article_annotations(
     ----------
     article_id : str
         Article identifier in format 'PMC:PMCXXXXXXX' or 'MED:PMID'. Examples: 'PMC:P...
-    annotation_type : str | Any
+    annotation_type : str
         Filter by annotation type. Note 'Gene_Proteins' is spelled with an underscore...
     stream_callback : Callable, optional
         Callback for streaming output

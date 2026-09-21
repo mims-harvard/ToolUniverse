@@ -10,10 +10,10 @@ from ._shared_client import get_shared_client
 
 def PathwayCommons_search(
     query: str,
-    type_: Optional[str | Any] = None,
-    datasource: Optional[str | Any] = None,
-    organism: Optional[str | Any] = None,
-    page: Optional[int | Any] = None,
+    type_: Optional[str] = None,
+    datasource: Optional[str] = None,
+    organism: Optional[str] = None,
+    page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,13 +26,13 @@ def PathwayCommons_search(
     ----------
     query : str
         Search query: gene symbol (BRCA1, TP53), protein name, pathway name, or keyword
-    type_ : str | Any
+    type_ : str
         BioPAX entity type filter (default: all types)
-    datasource : str | Any
+    datasource : str
         Data source filter: reactome, kegg, wikipathways, pid, biogrid, intact, hprd,...
-    organism : str | Any
+    organism : str
         Organism filter: taxonomy ID (9606 for human, 10090 for mouse) or organism name
-    page : int | Any
+    page : int
         Page number for pagination (0-based, 100 results per page)
     stream_callback : Callable, optional
         Callback for streaming output

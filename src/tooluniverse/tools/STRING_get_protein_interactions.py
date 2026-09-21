@@ -18,7 +18,7 @@ def STRING_get_protein_interactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> list[Any]:
     """
     Alternative method to retrieve protein interactions from STRING (Search Tool for Retrieval of Int...
 
@@ -43,7 +43,7 @@ def STRING_get_protein_interactions(
 
     Returns
     -------
-    dict[str, Any]
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

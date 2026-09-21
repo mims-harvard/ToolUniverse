@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ENCODE_search_hic_experiments(
     assay_type: Optional[str] = "intact Hi-C",
-    biosample_term_name: Optional[str | Any] = None,
+    biosample_term_name: Optional[str] = None,
     organism: Optional[str] = "Homo sapiens",
     limit: Optional[int] = 25,
     *,
@@ -25,7 +25,7 @@ def ENCODE_search_hic_experiments(
     ----------
     assay_type : str
         Hi-C assay type: 'intact Hi-C' (newer protocol, better resolution) or 'Hi-C' ...
-    biosample_term_name : str | Any
+    biosample_term_name : str
         Biosample name filter (e.g., 'K562', 'GM12878', 'H1'). Leave empty for all.
     organism : str
         Organism scientific name (e.g., 'Homo sapiens', 'Mus musculus').

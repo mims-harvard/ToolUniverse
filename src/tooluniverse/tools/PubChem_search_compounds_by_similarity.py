@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def PubChem_search_compounds_by_similarity(
     smiles: str,
-    threshold: float,
+    threshold: Optional[float] = 0.9,
     max_results: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
