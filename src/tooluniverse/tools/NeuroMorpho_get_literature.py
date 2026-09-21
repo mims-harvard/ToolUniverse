@@ -14,7 +14,7 @@ def NeuroMorpho_get_literature(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a single source-publication (literature) record by its NeuroMorpho article_id. Returns the fu...
 
@@ -31,7 +31,7 @@ def NeuroMorpho_get_literature(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

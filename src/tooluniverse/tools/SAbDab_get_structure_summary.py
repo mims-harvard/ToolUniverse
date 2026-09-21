@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def SAbDab_get_structure_summary(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_structure_summary",
     pdb_id: Optional[str] = None,
     pdb_code: Optional[str] = None,
     pdb: Optional[str] = None,

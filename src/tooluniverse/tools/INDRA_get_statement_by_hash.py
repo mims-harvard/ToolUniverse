@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def INDRA_get_statement_by_hash(
     hash: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_statement_by_hash",
     ev_limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

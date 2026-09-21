@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def BioPortal_search_ontology_terms(
     query: str,
-    ontologies: Optional[str | Any] = None,
-    page_size: Optional[int | Any] = None,
-    exact_match: Optional[bool | Any] = None,
+    ontologies: Optional[str] = None,
+    page_size: Optional[int] = None,
+    exact_match: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def BioPortal_search_ontology_terms(
     ----------
     query : str
         Search query for finding ontology terms. Can be disease names, gene functions...
-    ontologies : str | Any
+    ontologies : str
         Comma-separated list of ontology acronyms to search within. If null, searches...
-    page_size : int | Any
+    page_size : int
         Number of results to return (default: 10, max: 50).
-    exact_match : bool | Any
+    exact_match : bool
         If true, only return exact matches (default: false).
     stream_callback : Callable, optional
         Callback for streaming output

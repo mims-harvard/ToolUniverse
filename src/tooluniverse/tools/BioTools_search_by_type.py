@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def BioTools_search_by_type(
     toolType: str,
-    q: Optional[str | Any] = None,
+    q: Optional[str] = None,
     page: Optional[int] = 1,
     size: Optional[int] = 10,
     format: Optional[str] = "json",
@@ -26,7 +26,7 @@ def BioTools_search_by_type(
     ----------
     toolType : str
         Bio.tools resource type. Examples: 'Command-line tool', 'Web application', 'W...
-    q : str | Any
+    q : str
         Optional free-text query to further filter results. Example: 'proteomics' to ...
     page : int
         Page number (1-based). Default: 1.

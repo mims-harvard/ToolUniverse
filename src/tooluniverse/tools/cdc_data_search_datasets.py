@@ -17,7 +17,7 @@ def cdc_data_search_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Search for datasets on Data.CDC.gov (CDC's Socrata-based open data portal). Returns a list of ava...
 
@@ -40,7 +40,7 @@ def cdc_data_search_datasets(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

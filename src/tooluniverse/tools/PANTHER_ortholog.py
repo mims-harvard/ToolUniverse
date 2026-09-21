@@ -1,7 +1,7 @@
 """
 PANTHER_ortholog
 
-Find orthologs of a gene across species using PANTHER evolutionary classification. Returns the or...
+Find orthologs of a gene across species using PANTHER evolutionary classification. Returns EVERY ...
 """
 
 from typing import Any, Optional, Callable
@@ -10,26 +10,26 @@ from ._shared_client import get_shared_client
 
 def PANTHER_ortholog(
     gene_id: str,
-    organism: Optional[int | Any] = None,
-    target_organism: Optional[int | Any] = None,
-    ortholog_type: Optional[str | Any] = None,
+    organism: Optional[int] = None,
+    target_organism: Optional[int] = None,
+    ortholog_type: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Find orthologs of a gene across species using PANTHER evolutionary classification. Returns the or...
+    Find orthologs of a gene across species using PANTHER evolutionary classification. Returns EVERY ...
 
     Parameters
     ----------
     gene_id : str
         Gene identifier - UniProt accession, Ensembl ID, or gene symbol. Examples: 'P...
-    organism : int | Any
+    organism : int
         Source organism NCBI taxonomy ID. Default: 9606 (human).
-    target_organism : int | Any
+    target_organism : int
         Target organism NCBI taxonomy ID. Default: 10090 (mouse). Others: 10116 (rat)...
-    ortholog_type : str | Any
+    ortholog_type : str
         Ortholog type filter. Options: 'LDO' (least diverged ortholog, default), 'O' ...
     stream_callback : Callable, optional
         Callback for streaming output

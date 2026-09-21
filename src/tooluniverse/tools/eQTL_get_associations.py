@@ -11,9 +11,9 @@ from ._shared_client import get_shared_client
 def eQTL_get_associations(
     dataset_id: str,
     size: Optional[int] = 20,
-    gene_id: Optional[str | Any] = None,
-    variant: Optional[str | Any] = None,
-    molecular_trait_id: Optional[str | Any] = None,
+    gene_id: Optional[str] = None,
+    variant: Optional[str] = None,
+    molecular_trait_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,11 +28,11 @@ def eQTL_get_associations(
         Dataset identifier from eQTL_list_datasets (e.g., 'QTD000001', 'QTD000584')
     size : int
         Number of associations to return (default 20)
-    gene_id : str | Any
+    gene_id : str
         Filter by Ensembl gene ID (e.g., 'ENSG00000141510' for TP53). Returns all eQT...
-    variant : str | Any
+    variant : str
         Filter by variant in chr_pos_ref_alt format (e.g., 'chr1_791100_G_GGGA'). Ret...
-    molecular_trait_id : str | Any
+    molecular_trait_id : str
         Filter by molecular trait ID (usually same as gene_id for 'ge' datasets)
     stream_callback : Callable, optional
         Callback for streaming output

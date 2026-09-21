@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def FinnGen_list_phenotypes(
-    query: Optional[str | Any] = None,
-    category: Optional[str | Any] = None,
-    min_cases: Optional[int | Any] = None,
-    limit: Optional[int | Any] = None,
+    query: Optional[str] = None,
+    category: Optional[str] = None,
+    min_cases: Optional[int] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,13 +23,13 @@ def FinnGen_list_phenotypes(
 
     Parameters
     ----------
-    query : str | Any
+    query : str
         Search query to filter phenotypes by code, name, or category (e.g., 'diabetes...
-    category : str | Any
+    category : str
         Filter by disease category (e.g., 'Diabetes', 'circulatory', 'Neoplasms'). Ca...
-    min_cases : int | Any
+    min_cases : int
         Minimum number of cases required. Use to filter for well-powered phenotypes (...
-    limit : int | Any
+    limit : int
         Maximum number of results to return (default 50).
     stream_callback : Callable, optional
         Callback for streaming output

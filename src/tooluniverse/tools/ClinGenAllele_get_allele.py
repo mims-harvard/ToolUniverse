@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def ClinGenAllele_get_allele(
-    ca_id: Optional[str | Any] = None,
-    allele_id: Optional[str | Any] = None,
+    ca_id: Optional[str] = None,
+    allele_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -21,9 +21,9 @@ def ClinGenAllele_get_allele(
 
     Parameters
     ----------
-    ca_id : str | Any
+    ca_id : str
         ClinGen canonical allele identifier (e.g., 'CA000387'). Obtain from ClinGenAl...
-    allele_id : str | Any
+    allele_id : str
         Alias for ca_id. ClinGen canonical allele identifier (e.g., 'CA000387').
     stream_callback : Callable, optional
         Callback for streaming output

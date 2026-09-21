@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def Nextstrain_list_datasets(
-    pathogen: Optional[str | Any] = None,
-    datasets_per_pathogen: Optional[int | Any] = None,
+    pathogen: Optional[str] = None,
+    datasets_per_pathogen: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -21,10 +21,10 @@ def Nextstrain_list_datasets(
 
     Parameters
     ----------
-    pathogen : str | Any
+    pathogen : str
         Optional pathogen name filter. Examples: 'flu', 'ebola', 'zika', 'dengue', 'm...
-    datasets_per_pathogen : int | Any
-        Maximum dataset paths listed per pathogen (default 10; 0 lists every da...
+    datasets_per_pathogen : int
+        Maximum number of dataset paths listed per pathogen (default 10). Set to 0 to...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

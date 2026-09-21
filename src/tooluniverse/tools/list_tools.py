@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def list_tools(
     mode: Optional[str] = "names",
     categories: Optional[list[str]] = None,
-    fields: Optional[list[str]] = None,
+    fields: Optional[list[str] | str] = None,
     group_by_category: Optional[bool] = False,
     brief: Optional[bool] = False,
     limit: Optional[int] = None,
@@ -30,7 +30,7 @@ def list_tools(
         Output mode (default: 'names'). Warning: non-'names' modes like 'basic'/'summ...
     categories : list[str]
         Optional list of tool categories to filter by (applies to all modes except 'c...
-    fields : list[str]
+    fields : list[str] | str
         Required for mode='custom'. List of fields to include (e.g., ["name", "type",...
     group_by_category : bool
         Whether to group results by category (only for mode='names', 'basic', or 'sum...

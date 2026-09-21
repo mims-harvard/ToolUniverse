@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ACC_list_guidelines(
     limit: Optional[int] = 10,
-    year_from: Optional[int | Any] = None,
+    year_from: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def ACC_list_guidelines(
     ----------
     limit : int
         Maximum number of guidelines to return (default: 10)
-    year_from : int | Any
+    year_from : int
         Filter to guidelines published from this year onward (e.g., 2020). Null for n...
     stream_callback : Callable, optional
         Callback for streaming output

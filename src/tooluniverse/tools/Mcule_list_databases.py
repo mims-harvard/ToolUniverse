@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def Mcule_list_databases(
-    operation: str,
-    public_only: Optional[bool | Any] = True,
+    operation: Optional[str] = "list_databases",
+    public_only: Optional[bool] = True,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def Mcule_list_databases(
     ----------
     operation : str
         Operation type
-    public_only : bool | Any
+    public_only : bool
         If true (default), only return publicly accessible databases
     stream_callback : Callable, optional
         Callback for streaming output

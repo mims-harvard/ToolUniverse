@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def Epidemiology_vaccine_coverage(
-    operation: str,
     R0: float,
     PCV: float,
     PPV: float,
+    operation: Optional[str] = "vaccine_coverage",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

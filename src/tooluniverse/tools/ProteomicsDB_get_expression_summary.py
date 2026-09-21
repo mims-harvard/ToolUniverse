@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def ProteomicsDB_get_expression_summary(
-    operation: str,
     uniprot_id: str,
+    operation: Optional[str] = "get_expression_summary",
     top_n: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

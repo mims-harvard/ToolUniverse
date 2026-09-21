@@ -9,14 +9,14 @@ from ._shared_client import get_shared_client
 
 
 def VDJDB_search_cdr3(
-    operation: str,
     cdr3: str,
-    species: Optional[str | Any] = None,
-    gene: Optional[str | Any] = None,
+    operation: Optional[str] = "search_cdr3",
+    species: Optional[str] = None,
+    gene: Optional[str] = None,
     match_type: Optional[str] = "exact",
-    substitutions: Optional[int | Any] = None,
-    insertions: Optional[int | Any] = None,
-    deletions: Optional[int | Any] = None,
+    substitutions: Optional[int] = None,
+    insertions: Optional[int] = None,
+    deletions: Optional[int] = None,
     page: Optional[int] = 0,
     page_size: Optional[int] = 25,
     *,
@@ -33,17 +33,17 @@ def VDJDB_search_cdr3(
         Operation type
     cdr3 : str
         CDR3 amino acid sequence to search (e.g., 'CASSIRSSYEQYF', 'CAAAASGGSYIPTF')
-    species : str | Any
+    species : str
         Species filter: HomoSapiens, MusMusculus, or MacacaMulatta
-    gene : str | Any
+    gene : str
         TCR chain filter: TRA (alpha) or TRB (beta)
     match_type : str
         Match type: 'exact' for exact CDR3 match, 'fuzzy' for Levenshtein distance, '...
-    substitutions : int | Any
+    substitutions : int
         Max substitutions for fuzzy match (default: 1). Only used with match_type='fu...
-    insertions : int | Any
+    insertions : int
         Max insertions for fuzzy match (default: 1). Only used with match_type='fuzzy'
-    deletions : int | Any
+    deletions : int
         Max deletions for fuzzy match (default: 1). Only used with match_type='fuzzy'
     page : int
         Page number (0-indexed) for paginated results

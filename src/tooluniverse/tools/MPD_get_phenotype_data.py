@@ -1,7 +1,7 @@
 """
 MPD_get_phenotype_data
 
-Get mouse phenotype data from Mouse Phenome Database for specific strains and phenotypes
+Search ENCODE experiment records mentioning a given mouse strain (used as a Mouse Phenome Databas...
 """
 
 from typing import Any, Optional, Callable
@@ -9,23 +9,23 @@ from ._shared_client import get_shared_client
 
 
 def MPD_get_phenotype_data(
-    strain: str,
+    strain: Optional[str] = "C57BL/6J",
     phenotype_category: Optional[str] = "behavior",
     limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Get mouse phenotype data from Mouse Phenome Database for specific strains and phenotypes
+    Search ENCODE experiment records mentioning a given mouse strain (used as a Mouse Phenome Databas...
 
     Parameters
     ----------
     strain : str
         Mouse strain (e.g., C57BL/6J, BALB/c, DBA/2J)
     phenotype_category : str
-        Phenotype category (behavior, physiology, morphology)
+        Not currently applied to the query -- ENCODE (this tool's data source) has no...
     limit : int
         Number of results to return
     stream_callback : Callable, optional
@@ -37,7 +37,7 @@ def MPD_get_phenotype_data(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

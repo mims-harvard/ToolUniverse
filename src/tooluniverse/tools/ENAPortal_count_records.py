@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ENAPortal_count_records(
     query: str,
-    result_type: Optional[str | Any] = None,
+    result_type: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def ENAPortal_count_records(
     ----------
     query : str
         ENA search query. Examples: 'description="cancer"', 'tax_tree(9606)', 'descri...
-    result_type : str | Any
+    result_type : str
         Type of records to count. Options: 'study', 'sample', 'read_run', 'analysis',...
     stream_callback : Callable, optional
         Callback for streaming output

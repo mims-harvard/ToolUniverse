@@ -16,6 +16,8 @@ def FAERS_count_reactions_by_drug_event(
     serious: Optional[str] = None,
     seriousnessdeath: Optional[str] = None,
     reactionmeddraverse: Optional[str] = None,
+    manufacturer_name: Optional[str] = None,
+    receivedate: Optional[str] = None,
     limit: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -41,6 +43,10 @@ def FAERS_count_reactions_by_drug_event(
         Optional: Pass 'Yes' to filter for reports where death was an outcome. Omit t...
     reactionmeddraverse : str
         Optional: Filter by MedDRA reaction term (Lowest Level Term). When omitted, r...
+    manufacturer_name : str
+        Filter to reports where a drug's labeller/manufacturer matches, e.g. 'Pfizer'...
+    receivedate : str
+        Filter by the date FDA received the report. Accepts a single date 'YYYYMMDD' ...
     limit : int
         Optional: maximum number of ranked terms to return (default 100, which is ope...
     stream_callback : Callable, optional
@@ -67,6 +73,8 @@ def FAERS_count_reactions_by_drug_event(
             "serious": serious,
             "seriousnessdeath": seriousnessdeath,
             "reactionmeddraverse": reactionmeddraverse,
+            "manufacturer_name": manufacturer_name,
+            "receivedate": receivedate,
             "limit": limit,
         }.items()
         if v is not None

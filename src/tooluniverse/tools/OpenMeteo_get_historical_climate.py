@@ -13,8 +13,8 @@ def OpenMeteo_get_historical_climate(
     longitude: float,
     start_date: str,
     end_date: str,
-    daily: Optional[str | Any] = None,
-    models: Optional[str | Any] = None,
+    daily: Optional[str] = None,
+    models: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -33,9 +33,9 @@ def OpenMeteo_get_historical_climate(
         Start date in YYYY-MM-DD format. Data available from 1950-01-01. Examples: '1...
     end_date : str
         End date in YYYY-MM-DD format. Examples: '1980-12-31', '2000-06-30', '2023-12...
-    daily : str | Any
+    daily : str
         Comma-separated daily variables. Values: 'temperature_2m_mean', 'temperature_...
-    models : str | Any
+    models : str
         Climate model. Values: 'EC_Earth3P_HR' (Europe, high res), 'MPI_ESM1_2_XR', '...
     stream_callback : Callable, optional
         Callback for streaming output

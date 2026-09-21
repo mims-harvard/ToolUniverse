@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def AllenBrain_search_structures(
-    acronym: Optional[str | Any] = None,
-    name: Optional[str | Any] = None,
+    acronym: Optional[str] = None,
+    name: Optional[str] = None,
     num_rows: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -22,9 +22,9 @@ def AllenBrain_search_structures(
 
     Parameters
     ----------
-    acronym : str | Any
+    acronym : str
         Structure acronym for exact match. Examples: 'CA1', 'VISp', 'TH', 'HIP', 'CTX'.
-    name : str | Any
+    name : str
         Structure name for partial match (alternative to acronym). Example: 'hippocam...
     num_rows : int
         Max results to return. Default: 50.

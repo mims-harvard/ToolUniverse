@@ -15,7 +15,7 @@ def ebi_get_domain_fields(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get list of available searchable fields for a specific EBI domain. Useful for understanding what ...
 
@@ -34,7 +34,7 @@ def ebi_get_domain_fields(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

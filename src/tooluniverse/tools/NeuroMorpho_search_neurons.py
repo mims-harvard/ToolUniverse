@@ -11,8 +11,8 @@ from ._shared_client import get_shared_client
 def NeuroMorpho_search_neurons(
     query_value: str,
     query_field: Optional[str] = "species",
-    filter_field: Optional[str | Any] = None,
-    filter_value: Optional[str | Any] = None,
+    filter_field: Optional[str] = None,
+    filter_value: Optional[str] = None,
     page: Optional[int] = 0,
     size: Optional[int] = 20,
     *,
@@ -29,9 +29,9 @@ def NeuroMorpho_search_neurons(
         Field to search on. Common fields: 'species', 'brain_region', 'cell_type', 'a...
     query_value : str
         Value to search for. Examples: 'human', 'rat', 'mouse', 'hippocampus', 'pyram...
-    filter_field : str | Any
+    filter_field : str
         Optional additional filter field. Example: 'cell_type'.
-    filter_value : str | Any
+    filter_value : str
         Value for the filter field. Example: 'pyramidal'.
     page : int
         Page number (0-indexed). Default: 0.

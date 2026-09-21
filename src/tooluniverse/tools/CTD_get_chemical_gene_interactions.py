@@ -1,7 +1,7 @@
 """
 CTD_get_chemical_gene_interactions
 
-Get curated chemical-gene interactions from CTD (Comparative Toxicogenomics Database). Given a ch...
+PERMANENTLY UNAVAILABLE: this tool always returns an error. CTD's native batchQuery.go is CAPTCHA...
 """
 
 from typing import Any, Optional, Callable
@@ -16,12 +16,12 @@ def CTD_get_chemical_gene_interactions(
     validate: bool = True,
 ) -> Any:
     """
-    Get curated chemical-gene interactions from CTD (Comparative Toxicogenomics Database). Given a ch...
+    PERMANENTLY UNAVAILABLE: this tool always returns an error. CTD's native batchQuery.go is CAPTCHA...
 
     Parameters
     ----------
     input_terms : str
-        Chemical name, MeSH name, synonym, CAS RN, or MeSH ID. Examples: 'bisphenol A...
+        Chemical name, CAS RN, or MeSH ID. Unused -- this tool always returns an erro...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

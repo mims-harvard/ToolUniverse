@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def eMolecules_get_compound(
     emol_id: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_compound",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ReactomeInteractors_get_entity_pathways(
     entity_id: str,
-    species: Optional[int | Any] = None,
+    species: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def ReactomeInteractors_get_entity_pathways(
     ----------
     entity_id : str
         Reactome stable identifier for the entity. Use ReactomeInteractors_search_ent...
-    species : int | Any
+    species : int
         NCBI taxonomy ID for species filter (default: 9606 for human). Examples: 9606...
     stream_callback : Callable, optional
         Callback for streaming output

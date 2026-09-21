@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ols_find_similar_terms(
     ontology: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "find_similar_terms",
     term_iri: Optional[str] = None,
     size: Optional[int] = 10,
     term_id: Optional[str] = None,

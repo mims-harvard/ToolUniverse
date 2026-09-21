@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def CryoET_list_datasets(
-    operation: str,
-    organism_name: Optional[str | Any] = None,
-    tissue_name: Optional[str | Any] = None,
+    operation: Optional[str] = "list_datasets",
+    organism_name: Optional[str] = None,
+    tissue_name: Optional[str] = None,
     limit: Optional[int] = 10,
     offset: Optional[int] = 0,
     *,
@@ -26,9 +26,9 @@ def CryoET_list_datasets(
     ----------
     operation : str
         Operation type
-    organism_name : str | Any
+    organism_name : str
         Filter by organism name (case-insensitive substring match). Examples: 'Homo s...
-    tissue_name : str | Any
+    tissue_name : str
         Filter by tissue or cell type name (case-insensitive substring match). Exampl...
     limit : int
         Maximum number of datasets to return (default: 10, max recommended: 50).

@@ -16,7 +16,7 @@ def IMPC_get_phenotypes_by_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get all phenotype annotations for a mouse gene from IMPC knockout screens. Returns MP ontology te...
 
@@ -37,7 +37,7 @@ def IMPC_get_phenotypes_by_gene(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

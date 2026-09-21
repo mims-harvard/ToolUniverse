@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def Dryad_search_datasets(
     q: str,
-    per_page: Optional[int | Any] = None,
-    page: Optional[int | Any] = None,
+    per_page: Optional[int] = None,
+    page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def Dryad_search_datasets(
     ----------
     q : str
         Search query string for dataset title, abstract, or author (e.g., 'climate ch...
-    per_page : int | Any
+    per_page : int
         Number of results per page (default 10, max 100)
-    page : int | Any
+    page : int
         Page number for pagination (starts at 1)
     stream_callback : Callable, optional
         Callback for streaming output

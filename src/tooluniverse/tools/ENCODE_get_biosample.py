@@ -14,7 +14,7 @@ def ENCODE_get_biosample(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get detailed metadata for a specific ENCODE biosample by its accession ID. Returns comprehensive ...
 
@@ -31,7 +31,7 @@ def ENCODE_get_biosample(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

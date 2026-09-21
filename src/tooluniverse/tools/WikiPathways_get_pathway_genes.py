@@ -1,7 +1,7 @@
 """
 WikiPathways_get_pathway_genes
 
-Get all genes (as gene symbols) involved in a WikiPathways pathway. Returns the list of HGNC gene...
+Get the genes involved in a WikiPathways pathway. `gene_count` counts distinct gene products; `ge...
 """
 
 from typing import Any, Optional, Callable
@@ -9,22 +9,25 @@ from ._shared_client import get_shared_client
 
 
 def WikiPathways_get_pathway_genes(
-    pathway_id: str,
-    code: Optional[str] = "H",
+    pathway_id: Optional[str] = None,
+    wpid: Optional[str] = None,
+    code: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get all genes (as gene symbols) involved in a WikiPathways pathway. Returns the list of HGNC gene...
+    Get the genes involved in a WikiPathways pathway. `gene_count` counts distinct gene products; `ge...
 
     Parameters
     ----------
     pathway_id : str
-        WikiPathways pathway identifier. Examples: 'WP254' (Apoptosis, 88 genes), 'WP...
+        WikiPathways pathway identifier. Examples: 'WP254' (Apoptosis, 87 gene produc...
+    wpid : str
+        Alias for `pathway_id`, matching the parameter name used by the sibling WikiP...
     code : str
-        Identifier system code for returned genes. Options: 'H' (HGNC symbols, defaul...
+        Optional filter restricting results to gene products annotated from one ident...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,7 @@ def WikiPathways_get_pathway_genes(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"pathway_id": pathway_id, "code": code}.items()
+        for k, v in {"pathway_id": pathway_id, "wpid": wpid, "code": code}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

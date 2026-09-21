@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def MassBank_search_by_formula(
     formula: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def MassBank_search_by_formula(
     ----------
     formula : str
         Molecular formula (e.g., 'C9H8O4' for aspirin, 'C8H10N4O2' for caffeine, 'C6H...
-    limit : int | Any
+    limit : int
         Maximum number of spectra to return (default 10)
     stream_callback : Callable, optional
         Callback for streaming output

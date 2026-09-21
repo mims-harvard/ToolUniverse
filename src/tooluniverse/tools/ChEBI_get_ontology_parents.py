@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ChEBI_get_ontology_parents(
-    chebi_id: int,
+    chebi_id: int | str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -20,8 +20,8 @@ def ChEBI_get_ontology_parents(
 
     Parameters
     ----------
-    chebi_id : int
-        ChEBI numeric identifier (without 'CHEBI:' prefix). Examples: 15377 (water), ...
+    chebi_id : int | str
+        ChEBI numeric identifier (with or without the 'CHEBI:' prefix). Examples: 153...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

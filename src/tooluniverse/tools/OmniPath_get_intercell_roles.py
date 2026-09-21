@@ -9,13 +9,13 @@ from ._shared_client import get_shared_client
 
 
 def OmniPath_get_intercell_roles(
-    proteins: Optional[str | Any] = None,
-    categories: Optional[str | Any] = None,
-    scope: Optional[str | Any] = None,
-    transmitter: Optional[bool | Any] = None,
-    receiver: Optional[bool | Any] = None,
-    secreted: Optional[bool | Any] = None,
-    limit: Optional[int | Any] = None,
+    proteins: Optional[str | list[Any]] = None,
+    categories: Optional[str] = None,
+    scope: Optional[str] = None,
+    transmitter: Optional[bool] = None,
+    receiver: Optional[bool] = None,
+    secreted: Optional[bool] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,19 +26,19 @@ def OmniPath_get_intercell_roles(
 
     Parameters
     ----------
-    proteins : str | Any
+    proteins : str | list[Any]
         Gene symbol(s) or UniProt ID(s), comma-separated. Examples: 'EGFR', 'TGFB1,PD...
-    categories : str | Any
+    categories : str
         Filter by intercellular role category. Examples: 'ligand', 'receptor', 'adhes...
-    scope : str | Any
+    scope : str
         Filter by annotation scope: 'generic' (general role) or 'specific' (cell-type...
-    transmitter : bool | Any
+    transmitter : bool
         Filter for transmitter/sender proteins (true) or non-transmitters (false).
-    receiver : bool | Any
+    receiver : bool
         Filter for receiver proteins (true) or non-receivers (false).
-    secreted : bool | Any
+    secreted : bool
         Filter for secreted proteins (true) or non-secreted (false).
-    limit : int | Any
+    limit : int
         Maximum number of results to return. Default: no limit.
     stream_callback : Callable, optional
         Callback for streaming output

@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def IMGT_get_gene_info(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_gene_info",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

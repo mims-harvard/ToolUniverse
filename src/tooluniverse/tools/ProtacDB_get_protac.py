@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def ProtacDB_get_protac(
-    operation: str,
     protac_id: str,
+    operation: Optional[str] = "get_protac",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

@@ -9,15 +9,15 @@ from ._shared_client import get_shared_client
 
 
 def USGS_query_earthquakes(
-    minmagnitude: Optional[float | Any] = None,
-    maxmagnitude: Optional[float | Any] = None,
-    starttime: Optional[str | Any] = None,
-    endtime: Optional[str | Any] = None,
-    minlatitude: Optional[float | Any] = None,
-    maxlatitude: Optional[float | Any] = None,
-    minlongitude: Optional[float | Any] = None,
-    maxlongitude: Optional[float | Any] = None,
-    limit: Optional[int | Any] = None,
+    minmagnitude: Optional[float] = None,
+    maxmagnitude: Optional[float] = None,
+    starttime: Optional[str] = None,
+    endtime: Optional[str] = None,
+    minlatitude: Optional[float] = None,
+    maxlatitude: Optional[float] = None,
+    minlongitude: Optional[float] = None,
+    maxlongitude: Optional[float] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,23 +28,23 @@ def USGS_query_earthquakes(
 
     Parameters
     ----------
-    minmagnitude : float | Any
+    minmagnitude : float
         Minimum earthquake magnitude (e.g., 5.0, 6.5, 7.0)
-    maxmagnitude : float | Any
+    maxmagnitude : float
         Maximum earthquake magnitude
-    starttime : str | Any
+    starttime : str
         Start time in ISO 8601 format (e.g., '2024-01-01', '2020-01-01T00:00:00')
-    endtime : str | Any
+    endtime : str
         End time in ISO 8601 format (e.g., '2024-12-31'). Defaults to current time.
-    minlatitude : float | Any
+    minlatitude : float
         Minimum latitude for bounding box search (-90 to 90)
-    maxlatitude : float | Any
+    maxlatitude : float
         Maximum latitude for bounding box search
-    minlongitude : float | Any
+    minlongitude : float
         Minimum longitude (-180 to 360)
-    maxlongitude : float | Any
+    maxlongitude : float
         Maximum longitude
-    limit : int | Any
+    limit : int
         Maximum number of events (default 20000, max 20000)
     stream_callback : Callable, optional
         Callback for streaming output

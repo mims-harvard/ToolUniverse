@@ -18,7 +18,7 @@ def ZOOMA_annotate_text(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Map a free-text term (e.g. a sample attribute, phenotype, organism name, anatomical part, or dise...
 
@@ -43,7 +43,7 @@ def ZOOMA_annotate_text(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

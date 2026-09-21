@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def ArtIC_search_artworks(
     q: str,
-    limit: Optional[int | Any] = None,
-    fields: Optional[str | Any] = None,
+    limit: Optional[int] = None,
+    fields: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def ArtIC_search_artworks(
     ----------
     q : str
         Search query. Examples: 'monet water lilies', 'picasso cubism', 'ancient egyp...
-    limit : int | Any
+    limit : int
         Number of results (1-100). Default: 10
-    fields : str | Any
+    fields : str
         Comma-separated fields to return. Default: 'id,title,artist_display,date_disp...
     stream_callback : Callable, optional
         Callback for streaming output

@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GWASSumStats_list_studies(
-    size: Optional[int | Any] = None,
+    size: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -20,7 +20,7 @@ def GWASSumStats_list_studies(
 
     Parameters
     ----------
-    size : int | Any
+    size : int
         Number of studies to return (default 20, max 100).
     stream_callback : Callable, optional
         Callback for streaming output

@@ -12,13 +12,13 @@ def GTEx_calculate_eqtl(
     gencode_id: str,
     variant_id: str,
     tissue_site_detail_id: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "calculate_eqtl",
     dataset_id: Optional[str] = "gtex_v8",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Calculate custom eQTL for any gene-variant pair in any tissue. Dynamically calculates gene-varian...
 
@@ -43,7 +43,7 @@ def GTEx_calculate_eqtl(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -1,7 +1,7 @@
 """
 IEDB_predict_antigen_processing
 
-Predict MHC class I antigen processing using the IEDB Analysis Resource processing tool. Unlike r...
+Predict MHC class I antigen processing using the IEDB next-generation tools API (https://api-next...
 """
 
 from typing import Any, Optional, Callable
@@ -20,20 +20,20 @@ def IEDB_predict_antigen_processing(
     validate: bool = True,
 ) -> Any:
     """
-    Predict MHC class I antigen processing using the IEDB Analysis Resource processing tool. Unlike r...
+    Predict MHC class I antigen processing using the IEDB next-generation tools API (https://api-next...
 
     Parameters
     ----------
     sequence : str
-        Protein sequence (single-letter amino acids), e.g. 'SLYNTVATLYCVHQRIDV'. Alia...
+        Protein sequence (single-letter amino acids), e.g. 'SLYNTVATLYCVHQRIDVKQNTLKL...
     sequence_text : str
         Alias for sequence.
     allele : str
-        MHC class I allele. Human: 'HLA-A*02:01', 'HLA-B*07:02'. Mouse: 'H-2-Kd'. Def...
+        MHC class I allele, validated upstream against the MHC Restriction Ontology. ...
     method : str
-        MHC-I binding method used in the chain: 'netmhcpan' (default), 'ann', 'smm', ...
+        MHC-I binding method used in the chain: 'netmhcpan' (default), 'netmhcpan_ba'...
     length : int
-        Peptide length (8-14 for MHC-I, typically 9).
+        Peptide length (8-15 for MHC-I, typically 9).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

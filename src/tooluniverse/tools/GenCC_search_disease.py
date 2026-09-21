@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GenCC_search_disease(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_disease",
     disease: Optional[str] = None,
     disease_name: Optional[str] = None,
     classification: Optional[str] = "",

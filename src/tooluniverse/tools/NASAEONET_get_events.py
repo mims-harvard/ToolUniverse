@@ -9,14 +9,14 @@ from ._shared_client import get_shared_client
 
 
 def NASAEONET_get_events(
-    status: Optional[str | Any] = None,
-    category: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
-    days: Optional[int | Any] = None,
-    start: Optional[str | Any] = None,
-    end: Optional[str | Any] = None,
-    bbox: Optional[str | Any] = None,
-    source: Optional[str | Any] = None,
+    status: Optional[str] = None,
+    category: Optional[str] = None,
+    limit: Optional[int] = None,
+    days: Optional[int] = None,
+    start: Optional[str] = None,
+    end: Optional[str] = None,
+    bbox: Optional[str] = None,
+    source: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,21 +27,21 @@ def NASAEONET_get_events(
 
     Parameters
     ----------
-    status : str | Any
+    status : str
         Event status: 'open' (ongoing events) or 'closed' (past events). Default: both
-    category : str | Any
+    category : str
         Filter by event category. Values: 'wildfires', 'severeStorms', 'volcanoes', '...
-    limit : int | Any
+    limit : int
         Maximum number of events to return (default 10, max 1000)
-    days : int | Any
+    days : int
         Return events in the last N days. Example: 7 for last week. Ignored if start/...
-    start : str | Any
+    start : str
         Filter events starting from this date (YYYY-MM-DD). Example: '2024-01-01'
-    end : str | Any
+    end : str
         Filter events up to this date (YYYY-MM-DD). Example: '2024-12-31'
-    bbox : str | Any
+    bbox : str
         Bounding box filter: 'minLon,minLat,maxLon,maxLat'. Example: '-120,30,-100,50...
-    source : str | Any
+    source : str
         Filter by data source. Examples: 'GDACS', 'InciWeb', 'IRWIN'
     stream_callback : Callable, optional
         Callback for streaming output

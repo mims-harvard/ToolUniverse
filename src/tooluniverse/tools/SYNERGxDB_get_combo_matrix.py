@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def SYNERGxDB_get_combo_matrix(
     combo_id: int,
     source_id: int,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_combo_matrix",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

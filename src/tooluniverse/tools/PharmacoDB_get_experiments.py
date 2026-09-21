@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def PharmacoDB_get_experiments(
-    operation: str,
-    compound_name: Optional[str | Any] = None,
-    cell_line_name: Optional[str | Any] = None,
-    dataset_name: Optional[str | Any] = None,
+    operation: Optional[str] = "get_experiments",
+    compound_name: Optional[str] = None,
+    cell_line_name: Optional[str] = None,
+    dataset_name: Optional[str] = None,
     per_page: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -26,11 +26,11 @@ def PharmacoDB_get_experiments(
     ----------
     operation : str
         Operation type
-    compound_name : str | Any
+    compound_name : str
         Compound/drug name to filter experiments (e.g., 'Paclitaxel', 'Erlotinib')
-    cell_line_name : str | Any
+    cell_line_name : str
         Cell line name to filter experiments (e.g., 'MCF-7', 'A549')
-    dataset_name : str | Any
+    dataset_name : str
         Dataset name to filter (e.g., 'GDSC1', 'CCLE', 'CTRPv2', 'PRISM')
     per_page : int
         Number of experiments to return per page (default 10, max 100)

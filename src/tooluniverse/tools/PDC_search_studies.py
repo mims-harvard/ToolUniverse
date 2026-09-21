@@ -1,7 +1,7 @@
 """
 PDC_search_studies
 
-Search the NCI Proteomics Data Commons (PDC) for cancer proteomics studies by keyword. PDC houses...
+Search the NCI Proteomics Data Commons (PDC) for cancer proteomics studies. PDC houses annotated ...
 """
 
 from typing import Any, Optional, Callable
@@ -9,22 +9,22 @@ from ._shared_client import get_shared_client
 
 
 def PDC_search_studies(
-    operation: str,
     query: str,
+    operation: Optional[str] = "search_studies",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search the NCI Proteomics Data Commons (PDC) for cancer proteomics studies by keyword. PDC houses...
+    Search the NCI Proteomics Data Commons (PDC) for cancer proteomics studies. PDC houses annotated ...
 
     Parameters
     ----------
     operation : str
         Operation type
     query : str
-        Search keyword for studies. Can be disease name (Breast, Lung, Renal), progra...
+        Search term, matched case-insensitively as a substring against each study's d...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

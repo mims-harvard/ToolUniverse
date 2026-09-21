@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def NASACMR_search_granules(
-    concept_id: Optional[str | Any] = None,
-    short_name: Optional[str | Any] = None,
-    temporal: Optional[str | Any] = None,
-    bounding_box: Optional[str | Any] = None,
-    page_size: Optional[int | Any] = None,
+    concept_id: Optional[str] = None,
+    short_name: Optional[str] = None,
+    temporal: Optional[str] = None,
+    bounding_box: Optional[str] = None,
+    page_size: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,15 +24,15 @@ def NASACMR_search_granules(
 
     Parameters
     ----------
-    concept_id : str | Any
+    concept_id : str
         Parent collection concept ID (e.g., 'C2036882064-POCLOUD'). Get from NASACMR_...
-    short_name : str | Any
+    short_name : str
         Collection short name (e.g., 'MYD11A1', 'MODIS_A-JPL-L2P-v2019.0')
-    temporal : str | Any
+    temporal : str
         Temporal range in format 'YYYY-MM-DD,YYYY-MM-DD'. Examples: '2020-01-01,2020-...
-    bounding_box : str | Any
+    bounding_box : str
         Spatial bounding box: 'west,south,east,north' in decimal degrees. Example: '-...
-    page_size : int | Any
+    page_size : int
         Number of results (default 10, max 2000)
     stream_callback : Callable, optional
         Callback for streaming output

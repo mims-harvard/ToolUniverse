@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def GWAS_search_associations_by_gene(
     gene_name: str,
-    size: Optional[int] = 5,
+    size: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,7 +24,7 @@ def GWAS_search_associations_by_gene(
     gene_name : str
         Gene symbol (e.g., BRCA1).
     size : int
-        Max associations to return.
+        Max associations to return (default 100; results are sorted by p-value, most ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

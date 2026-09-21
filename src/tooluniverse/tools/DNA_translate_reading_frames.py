@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def DNA_translate_reading_frames(
-    operation: str,
     sequence: str,
-    frame: Optional[str | Any] = "all",
-    genetic_code: Optional[int | Any] = 1,
+    operation: Optional[str] = "translate_reading_frames",
+    frame: Optional[str] = "all",
+    genetic_code: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,9 +27,9 @@ def DNA_translate_reading_frames(
         Operation type
     sequence : str
         DNA sequence (A, T, G, C only). Case insensitive. Spaces and newlines are str...
-    frame : str | Any
+    frame : str
         Reading frame to translate: '1', '2', '3', or 'all' (default). Frame 1 starts...
-    genetic_code : int | Any
+    genetic_code : int
         NCBI genetic code number. Only 1 (the standard code) is implemented; any othe...
     stream_callback : Callable, optional
         Callback for streaming output
