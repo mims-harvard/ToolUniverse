@@ -32,8 +32,8 @@ def hill_4pl(x, emin, emax, ec50, n):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", required=True, help="CSV: concentration,response")
-    ap.add_argument("--normalize", action="store_true", help="convert raw signal to % of control")
-    ap.add_argument("--control", type=float, help="raw signal of the 100% control (with --normalize)")
+    ap.add_argument("--normalize", action="store_true", help="convert raw signal to %% of control")
+    ap.add_argument("--control", type=float, help="raw signal of the 100%% control (with --normalize)")
     ap.add_argument("--blank", type=float, default=0.0, help="raw blank/background (with --normalize)")
     args = ap.parse_args()
 
