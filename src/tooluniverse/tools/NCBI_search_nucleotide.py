@@ -45,7 +45,7 @@ def NCBI_search_nucleotide(
     limit : int
         Maximum number of results to return (default: 20, max: 100)
     sort : str
-        Sort order for results (default: relevance)
+        Sort order for results (default: relevance). pub_date sorts by NCBI's 'Date R...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

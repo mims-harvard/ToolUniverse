@@ -45,7 +45,7 @@ def NCBI_SRA_search_runs(
     limit : int
         Maximum number of results to return (default: 20, max: 100)
     sort : str
-        Sort order for results (default: relevance)
+        Result order. SRA's esearch supports relevance ordering only (default).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

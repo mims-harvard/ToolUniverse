@@ -91,7 +91,8 @@ class NCBISRATool(NCBIEUtilsTool):
                 "term": search_term,
                 "retmode": "json",
                 "retmax": arguments.get("limit", 20),
-                "sort": arguments.get("sort", "relevance"),
+                # SRA's esearch has no sort schemas: every name but relevance was
+                # answered with "Unknown sort schema ... ignored", so none is sent.
                 "usehistory": "y",  # Store results on server for large queries
             }
 
