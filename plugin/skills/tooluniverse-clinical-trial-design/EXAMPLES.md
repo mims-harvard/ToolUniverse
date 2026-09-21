@@ -41,14 +41,15 @@ phenotypes = tu.tools.OpenTargets_get_associated_phenotypes_by_disease_efoId(
 )
 
 # 1.2: Get biomarker prevalence from ClinVar
+# significance values are ClinVar's classes; join two with '/' (not ',')
 egfr_variants = tu.tools.ClinVar_search_variants(
     gene="EGFR",
-    significance="pathogenic,likely_pathogenic"
+    variant_name="L858R",
+    significance="Pathogenic/Likely pathogenic"
 )
 
-# Filter to L858R
-l858r_variants = [v for v in egfr_variants['data']
-                  if 'L858R' in v.get('name', '')]
+# data: {total_count, variants: [{variant_id, title, genes, clinical_significance, review_status}]}
+l858r_variants = egfr_variants['data']['variants']
 
 print(f"\nEGFR L858R variants found: {len(l858r_variants)}")
 

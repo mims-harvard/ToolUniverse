@@ -6,7 +6,7 @@
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `civic_search_variants` | Search variants by gene | `query` (gene symbol) |
+| `civic_search_variants` | Search variants | `gene` + optional `variant_name` (e.g. `gene="EGFR", variant_name="L858R"`), or `query` (variant name only, no gene prefix) |
 | `civic_get_variant` | Get variant details | `variant_id` (numeric variant ID) |
 | `civic_get_evidence_item` | Get evidence details | `id` (evidence item ID) |
 | `civic_search_genes` | Search genes | `query` (gene name) |
@@ -14,11 +14,13 @@
 
 **Example - Get EGFR L858R evidence**:
 ```python
-# 1. Search for variant
-variants = tu.tools.civic_search_variants(query="EGFR L858R")
-# 2. Get evidence items
-for v in variants:
-    evidence = tu.tools.civic_get_variant(variant_id=v['id'])
+# 1. Search for the variant (CIViC stores variant names without the gene prefix,
+#    so query="EGFR L858R" finds nothing; pass the gene separately)
+variants = tu.tools.civic_search_variants(gene="EGFR", variant_name="L858R")
+# 2. Get evidence items (with `gene` the nodes are under data.gene.variants.nodes;
+#    with only `query` they are under data.variants.nodes)
+for v in variants["data"]["gene"]["variants"]["nodes"]:
+    evidence = tu.tools.civic_get_variant(variant_id=v["id"])
 ```
 
 ### ClinVar

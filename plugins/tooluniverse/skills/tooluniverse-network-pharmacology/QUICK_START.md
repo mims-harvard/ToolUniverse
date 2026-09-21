@@ -147,6 +147,7 @@ egfr_ppi = tu.tools.OpenTargets_get_target_interactions_by_ensemblID(
 ppi_genes = [
     row['targetB']['approvedSymbol']
     for row in egfr_ppi['data']['target']['interactions']['rows']
+    if row.get('targetB')  # some interaction partners are not Open Targets targets
 ]
 
 # Step 4: Get drugs for PPI partners (expanding to pathway)

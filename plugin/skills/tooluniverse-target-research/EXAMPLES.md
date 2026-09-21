@@ -17,10 +17,10 @@ tu.load_tools()
 # Resolve EGFR to all IDs
 # Search UniProt for human EGFR
 search_result = tu.tools.UniProt_search(
-    query='gene:EGFR AND organism_id:9606',
+    query='gene:EGFR AND organism_id:9606 AND reviewed:true',
     limit=1
 )
-uniprot_id = search_result['results'][0]['primaryAccession']  # P00533
+uniprot_id = search_result['data']['results'][0]['accession']  # P00533
 
 # Map to Ensembl
 mapping = tu.tools.UniProt_id_mapping(
@@ -28,7 +28,7 @@ mapping = tu.tools.UniProt_id_mapping(
     from_db='UniProtKB_AC-ID',
     to_db='Ensembl'
 )
-ensembl_id = mapping['results'][0]['to']  # ENSG00000146648
+ensembl_id = mapping['data']['results'][0]['to'].split('.')[0]  # ENSG00000146648 (the tool returns the versioned ID)
 
 ids = {
     'symbol': 'EGFR',
@@ -270,12 +270,15 @@ drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
 
 # ChEMBL bioactivity
 # First get ChEMBL target ID
+# (a bare pref_name__contains='EGFR' returns a chimera entry first; the full
+#  protein name plus target_type pins the canonical target)
 chembl_target = tu.tools.ChEMBL_search_targets(
-    pref_name__contains='EGFR',
+    pref_name__contains='Epidermal growth factor receptor',
     organism='Homo sapiens',
+    target_type='SINGLE PROTEIN',
     limit=1
 )
-target_chembl_id = chembl_target['targets'][0]['target_chembl_id']  # CHEMBL203
+target_chembl_id = chembl_target['data']['targets'][0]['target_chembl_id']  # CHEMBL203
 
 activities = tu.tools.ChEMBL_get_target_activities(
     target_chembl_id__exact='CHEMBL203',

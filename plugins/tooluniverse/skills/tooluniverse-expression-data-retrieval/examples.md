@@ -16,9 +16,9 @@ result = tu.tools.arrayexpress_search_experiments(
 
 # Display results
 for exp in result["data"]["experiments"][:5]:
-    print(f"{exp['accession']}: {exp['name']}")
-    print(f"  Samples: {exp['samples']}")
-    print(f"  Type: {exp.get('experimenttype', 'N/A')}")
+    print(f"{exp['accession']}: {exp['title']}")
+    print(f"  Files: {exp['files']}, released: {exp['release_date']}, views: {exp['views']}")
+    # keys: accession, type, title, author, links, files, release_date, views, isPublic, content
 ```
 
 ## Example 2: Get Complete Experiment Details
@@ -65,7 +65,7 @@ result = tu.tools.arrayexpress_search_experiments(
 # Filter for RNA-seq specifically
 rnaseq_studies = [
     exp for exp in result["data"]["experiments"]
-    if "rna-seq" in exp.get("experimenttype", "").lower()
+    if "rna-seq" in exp.get("title", "").lower()
 ]
 
 print(f"Found {len(rnaseq_studies)} RNA-seq studies")
@@ -88,7 +88,9 @@ details = tu.tools.biostudies_get_study(
     accession=study_acc
 )
 
-print(f"Study: {details['data']['title']}")
+# the title is an entry in data['attributes'] ([{'name': 'Title', 'value': ...}, ...])
+title = next(a["value"] for a in details["data"]["attributes"] if a["name"] == "Title")
+print(f"Study: {title}")
 print(f"Type: {details['data']['type']}")
 
 # Get files

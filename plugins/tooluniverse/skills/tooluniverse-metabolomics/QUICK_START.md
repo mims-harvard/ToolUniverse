@@ -398,9 +398,11 @@ result = tu.tools.HMDB_search(
 result = tu.tools.HMDB_search(operation="search", query="metabolite_name")
 
 if result.get('status') == 'success':
-    data = result.get('data', [])
-    if data and len(data) > 0:
-        hmdb_id = data[0].get('accession', 'N/A')
+    results = (result.get('data') or {}).get('results', [])
+    if results:
+        # each result: name, formula, molecular_weight, smiles, pubchem_cid
+        first = results[0]
+        print(first.get('name'), first.get('pubchem_cid'))
         # Safe to access first result
     else:
         print("No results found - try different spelling or synonym")
