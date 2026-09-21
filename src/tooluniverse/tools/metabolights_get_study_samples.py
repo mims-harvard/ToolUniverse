@@ -1,7 +1,7 @@
 """
 metabolights_get_study_samples
 
-Get all samples associated with a MetaboLights study. Returns sample metadata including sample na...
+Get the samples of a MetaboLights study: one row per sample with its source name, characteristics...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def metabolights_get_study_samples(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get all samples associated with a MetaboLights study. Returns sample metadata including sample na...
+    Get the samples of a MetaboLights study: one row per sample with its source name, characteristics...
 
     Parameters
     ----------

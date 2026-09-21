@@ -1,7 +1,7 @@
 """
 ensembl_get_ontology_descendants
 
-Get descendant terms for a GO (Gene Ontology) term. Returns child terms down the ontology hierarc...
+WARNING (checked 2026-09-21): Ensembl's REST server currently answers this endpoint with the term...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def ensembl_get_ontology_descendants(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get descendant terms for a GO (Gene Ontology) term. Returns child terms down the ontology hierarc...
+    WARNING (checked 2026-09-21): Ensembl's REST server currently answers this endpoint with the term...
 
     Parameters
     ----------

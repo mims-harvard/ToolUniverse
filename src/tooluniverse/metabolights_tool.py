@@ -5,6 +5,9 @@ This tool provides access to the MetaboLights database, the largest repository
 of metabolomics experiments and raw data.
 """
 
+import csv
+import io
+import re
 import requests
 from typing import Any, Dict
 from .base_tool import BaseTool
@@ -13,6 +16,10 @@ from .tool_registry import register_tool
 # MetaboLights' own /ws/studies endpoint ignores keyword queries; EBI Search
 # indexes the same studies and honours them.
 EBI_SEARCH_URL = "https://www.ebi.ac.uk/ebisearch/ws/rest/metabolights"
+
+# Public archive copy of each study's ISA-Tab files (sample sheet s_<id>.txt).
+SAMPLE_TABLE_BASE = "https://ftp.ebi.ac.uk/pub/databases/metabolights/studies/public"
+MAX_SAMPLE_ROWS = 1000
 
 
 @register_tool("MetaboLightsRESTTool")
@@ -98,51 +105,31 @@ class MetaboLightsRESTTool(BaseTool):
 
         return params
 
-    def _extract_samples_from_study(self, study_id: str) -> Dict[str, Any]:
-        """Extract sample information from study endpoint as fallback"""
+    def _samples_from_sample_table(self, study_id: str) -> Dict[str, Any]:
+        """Read the study's ISA-Tab sample table (s_<id>.txt) from the public archive.
+
+        The /studies/{id}/samples endpoint answers HTTP 400 ("not a valid TSV or CSV
+        file") for every study, and the study record carries no sample rows, so the
+        archive copy of the sample sheet is the only place the samples can be read.
+        """
+        if not re.fullmatch(r"MTBLS\d+", study_id):
+            return {"error": f"'{study_id}' is not a MetaboLights study ID like MTBLS1"}
+        url = f"{SAMPLE_TABLE_BASE}/{study_id}/s_{study_id}.txt"
         try:
-            study_url = f"{self.base_url}/studies/{study_id}"
-            response = self.session.get(study_url, timeout=self.timeout)
+            response = self.session.get(url, timeout=self.timeout)
             response.raise_for_status()
-            study_data = response.json()
-
-            samples_info = {
-                "samples": [],
-                "note": "Samples extracted from study endpoint (samples API endpoint unavailable)",
-            }
-
-            # Extract samples from ISA investigation structure
-            if "isaInvestigation" in study_data:
-                isa = study_data["isaInvestigation"]
-
-                # Check studies array for materials/samples
-                if "studies" in isa and isinstance(isa["studies"], list):
-                    for study_item in isa["studies"]:
-                        if isinstance(study_item, dict):
-                            # Check for materials (samples)
-                            if "materials" in study_item:
-                                materials = study_item["materials"]
-                                if isinstance(materials, list):
-                                    for material in materials:
-                                        if isinstance(material, dict):
-                                            samples_info["samples"].append(material)
-
-                            # Check for samples directly
-                            if "samples" in study_item:
-                                samples = study_item["samples"]
-                                if isinstance(samples, list):
-                                    for sample in samples:
-                                        if isinstance(sample, dict):
-                                            samples_info["samples"].append(sample)
-
-            samples_info["count"] = len(samples_info["samples"])
-            return samples_info
-
+            rows = list(csv.DictReader(io.StringIO(response.text), delimiter="\t"))
         except Exception as e:
-            return {
-                "status": "error",
-                "error": f"Failed to extract samples from study endpoint: {str(e)}",
-            }
+            return {"error": f"Could not read the sample table {url}: {e}"}
+        return {
+            "samples": rows[:MAX_SAMPLE_ROWS],
+            "total_count": len(rows),
+            "url": url,
+            "note": (
+                "Samples read from the study's public ISA-Tab sample sheet "
+                "(the /samples API endpoint is unavailable)"
+            ),
+        }
 
     def _extract_files_from_study(self, study_id: str) -> Dict[str, Any]:
         """Extract file information from study endpoint as fallback"""
@@ -297,23 +284,24 @@ class MetaboLightsRESTTool(BaseTool):
             ):
                 study_id = arguments.get("study_id", "")
                 if study_id:
-                    # Try to extract samples from study endpoint
-                    fallback_data = self._extract_samples_from_study(study_id)
+                    fallback_data = self._samples_from_sample_table(study_id)
 
                     if "error" not in fallback_data:
+                        samples = fallback_data["samples"]
                         return {
                             "status": "success",
-                            "data": fallback_data.get("samples", []),
-                            "url": url,
-                            "count": fallback_data.get("count", 0),
-                            "note": fallback_data.get("note", ""),
+                            "data": samples,
+                            "url": fallback_data["url"],
+                            "count": len(samples),
+                            "total_count": fallback_data["total_count"],
+                            "truncated": fallback_data["total_count"] > len(samples),
+                            "note": fallback_data["note"],
                             "fallback_used": True,
-                            "original_error": "Samples endpoint returned 400 error, used study endpoint fallback",
                         }
                     else:
                         return {
                             "status": "error",
-                            "error": f"Samples endpoint returned 400 error for study {study_id}. Fallback to study endpoint also failed.",
+                            "error": f"Samples endpoint returned 400 error for study {study_id}. {fallback_data['error']}",
                             "url": url,
                             "suggestion": f"Access samples via MetaboLights website: https://www.ebi.ac.uk/metabolights/studies/{study_id}",
                         }
