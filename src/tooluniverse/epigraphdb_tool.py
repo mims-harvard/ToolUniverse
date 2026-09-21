@@ -316,20 +316,30 @@ class EpiGraphDBTool(BaseRESTTool):
 
         cor_results = []
         for r in results[:50]:
-            trait1 = r.get("trait1", {})
-            trait2 = r.get("trait2", {})
-            cor = r.get("cor", {})
+            # /genetic-cor now answers {trait, assoc_trait, gc: {rg, rg_SE, p, h2,
+            # ...}}; the older shape was {trait1, trait2, cor: {rg_se, rg_pval, ...}}.
+            # Reading only the old keys returned every field as null.
+            trait1 = r.get("trait") or r.get("trait1") or {}
+            trait2 = r.get("assoc_trait") or r.get("trait2") or {}
+            cor = r.get("gc") or r.get("cor") or {}
+
+            def pick(*keys):
+                for key in keys:
+                    if cor.get(key) is not None:
+                        return cor[key]
+                return None
+
             cor_results.append(
                 {
                     "trait1_id": trait1.get("id"),
                     "trait1_trait": trait1.get("trait"),
                     "trait2_id": trait2.get("id"),
                     "trait2_trait": trait2.get("trait"),
-                    "rg": cor.get("rg"),
-                    "rg_se": cor.get("rg_se"),
-                    "rg_pval": cor.get("rg_pval"),
-                    "h2": cor.get("h2"),
-                    "h2_intercept": cor.get("h2_intercept"),
+                    "rg": pick("rg"),
+                    "rg_se": pick("rg_SE", "rg_se"),
+                    "rg_pval": pick("p", "rg_pval"),
+                    "h2": pick("h2"),
+                    "h2_intercept": pick("h2_intercept"),
                 }
             )
 
