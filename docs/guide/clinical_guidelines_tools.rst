@@ -43,7 +43,7 @@ Quick Start
     full_text = tu.run({
         "name": "NICE_Guideline_Full_Text",
         "arguments": {
-            "url": results[0]['url']
+            "url": results['data'][0]['url']
         }
     })
 
@@ -92,7 +92,7 @@ Search NICE Guidelines
         }
     })
     
-    for guideline in results:
+    for guideline in results['data']:
         print(f"{guideline['title']}")
         print(f"URL: {guideline['url']}")
         print(f"Summary: {guideline['summary'][:200]}...")

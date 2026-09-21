@@ -35,7 +35,7 @@ result = tu.run({"name": "EuropePMC_search_articles", "arguments": {
 
 # Get full metadata from bioRxiv once you have the DOI
 if result and result.get('status') == 'success':
-   for article in result['data']['resultList']['result']:
+   for article in result['data']:
        doi = article.get('doi')
        if doi and doi.startswith('10.1101/'):
            preprint = tu.run({"name": "BioRxiv_get_preprint", "arguments": {"doi": doi}})
@@ -145,7 +145,7 @@ search_result = tu.run({"name": "EuropePMC_search_articles", "arguments": {
 
 # Step 2: Get full bioRxiv metadata for each result
 if search_result and search_result.get('status') == 'success':
-   for article in search_result['data']['resultList']['result']:
+   for article in search_result['data']:
        doi = article.get('doi')
        if doi and doi.startswith('10.1101/'):
            preprint = tu.run({"name": "BioRxiv_get_preprint", "arguments": {"doi": doi}})
@@ -188,7 +188,7 @@ search = tu.run({"name": "EuropePMC_search_articles", "arguments": {
 # 2. Get complete metadata for the most relevant ones
 preprints = []
 if search and search.get('status') == 'success':
-   for article in search['data']['resultList']['result'][:5]:
+   for article in search['data'][:5]:
        doi = article.get('doi')
        if doi and doi.startswith('10.1101/'):
            detailed = tu.run({"name": "BioRxiv_get_preprint", "arguments": {"doi": doi}})
