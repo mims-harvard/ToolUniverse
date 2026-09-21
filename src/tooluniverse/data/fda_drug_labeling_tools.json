@@ -1917,8 +1917,8 @@
     ],
     "test_examples": [
       {
-        "pharmacology_info": "Mechanism of Action",
-        "indication": "Hypertension",
+        "pharmacology_info": "toxicity",
+        "indication": "hypertension",
         "limit": 1,
         "skip": 0
       }
