@@ -13,7 +13,7 @@ Statistically decode human fMRI brain coordinates against ~14,000 published neur
 This skill downloads a real coordinate database and runs real statistics on it. It must never fabricate a term association, a study result, or a p-value.
 
 1. **Preflight before anything.** Run `scripts/download_data.py` first. If any file fails to download, STOP and report the failure — do not proceed with partial data or describe hypothetical decoding results.
-2. **Never guess a term.** `search_by_term.py` requires an exact (case-sensitive) vocabulary match. If the term isn't found, it returns substring-based suggestions — use those, don't invent a plausible-sounding term.
+2. **Never guess a term.** `search_by_term.py` requires an exact (case-sensitive) vocabulary match. If the term isn't found, it returns suggestions (substring matches, or close spellings when there are none, e.g. `hipocampus` → `hippocampus`) — use those, don't invent a plausible-sounding term.
 3. **Report the multiple-testing caveat every time.** `decode_coordinate.py` tests ~3,228 terms simultaneously per query. Uncorrected p-values will produce false positives at this scale — always surface the FDR-corrected `fdr_q_value`, not just the raw `p_value`, when characterizing how confident a result is.
 4. **This is a simplified reverse-inference test, not a full meta-analysis pipeline.** It does binary term-presence comparison (near-coordinate studies vs. rest of corpus) via a two-proportion z-test — a real, defensible statistical test, but not the same as running NiMARE's full activation-likelihood-estimation (ALE) or multilevel kernel density analysis (MKDA) methods. Say so if precision matters (e.g., the user is drafting something for publication).
 5. **Never overwrite the cached data files** — `download_data.py` writes to a dedicated cache directory and is idempotent (skips re-download if already cached, unless `--force`).
@@ -51,13 +51,23 @@ Finds every study with a reported peak within `--radius` mm of the query point, 
 
 **Verified example**: Broca's area, `(-50, 20, 10)`, radius 8mm → top terms were `language`, `inferior frontal`, `semantic`, `sentence`, `comprehension`, `linguistic`, `verb` — all with q≈0, matching well-established neuroanatomy. Use this as a sanity-check case if something looks wrong after a code change.
 
+**More landmarks (radius 8mm; verified 2026-09-20, all q < 1e-5):**
+
+| Region | MNI (x y z) | Top terms (z-score) |
+|---|---|---|
+| Fusiform face area | 40 -52 -20 | `face` 25.1, `fusiform` 23.5, `faces` 21.3, `ffa` 20.1 |
+| Left primary motor cortex (hand) | -38 -24 58 | `motor` 21.2, `finger` 20.4, `primary motor` 19.8, `hand` 18.4 |
+| Left hippocampus | -24 -18 -18 | `hippocampus` 24.1, `hippocampal` 18.8, `episodic` 14.5, `memory` 13.5 |
+| Left amygdala | -22 -4 -18 | `amygdala` 47.3, `emotional` 23.2, `emotion` 20.5, `faces` 18.1 |
+| Primary visual cortex (V1) | 0 -90 0 | `primary visual` 7.9, `visual` 7.7, `v1` 7.3 (fewer studies, 454, so a weaker but still correct signal) |
+
 ### Look up a term ("what studies/coordinates are about X?")
 
 ```bash
 python3 scripts/search_by_term.py "working memory" --top 10 --with-coordinates
 ```
 
-Returns the top-N studies with the highest tfidf weight for that exact term (title, authors, year, journal, weight), and optionally their reported MNI coordinates. If the term isn't an exact vocabulary match, returns substring-based `did_you_mean` suggestions instead of guessing. This is a simple ranking, not a statistical test — don't present a high tfidf weight as equivalent to the coordinate-decoding z-score/q-value above.
+Returns the top-N studies with the highest tfidf weight for that exact term (title, authors, year, journal, weight), and optionally their reported MNI coordinates. If the term isn't an exact vocabulary match, returns `did_you_mean` suggestions (substring matches, else close spellings) instead of guessing. This is a simple ranking, not a statistical test — don't present a high tfidf weight as equivalent to the coordinate-decoding z-score/q-value above.
 
 ## Reference
 

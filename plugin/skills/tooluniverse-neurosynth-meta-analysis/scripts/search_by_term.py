@@ -18,6 +18,7 @@ Usage:
 """
 
 import argparse
+import difflib
 import json
 import sys
 from pathlib import Path
@@ -38,7 +39,12 @@ def main():
 
     if args.term not in vocab:
         # Fuzzy suggestion, not a guess at the answer - just help find the right term
-        candidates = [v for v in vocab if args.term.lower() in v.lower()][:15]
+        # Substring matches first ("lang" -> "language"), then close spellings
+        # ("hipocampus" -> "hippocampus"), which substring matching cannot find.
+        needle = args.term.lower()
+        candidates = [v for v in vocab if needle in v.lower()][:15]
+        if not candidates:
+            candidates = difflib.get_close_matches(needle, vocab, n=5, cutoff=0.75)
         print(
             json.dumps(
                 {
