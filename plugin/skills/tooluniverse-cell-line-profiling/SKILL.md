@@ -134,7 +134,7 @@ Phase 5: Target Druggability & Recommendations
 
 **OUTPUT**: Gene validation + mutation status per cell line.
 
-**Per-cell-line Chronos scores** (what the API can't give you): use the bundled script `scripts/depmap_gene_dependency.py`. It pulls the current DepMap Public release (CRISPRGeneEffect.csv + Model.csv) once via the public download index, caches it, and answers the dependency question directly:
+**Per-cell-line Chronos scores** (what the API can't give you): use the bundled script `scripts/depmap_gene_dependency.py`. It pulls the current DepMap Public release (CRISPRGeneEffect.csv + Model.csv) once via the public download index, caches it, and answers the dependency question directly: NOTE (2026-09-21): DepMap's download index now answers with a bot-check page instead of the file list; the script reports that (exit 2) rather than bypassing it. Download `CRISPRGeneEffect.csv` and `Model.csv` from https://depmap.org/portal/download/all/ in a browser and put them in the cache directory (`$DEPMAP_CACHE_DIR`, default `<tmp>/depmap_cache`); cached files are used without contacting DepMap.
 
 ```bash
 # Cell lines most dependent on a gene (optionally within a lineage)
