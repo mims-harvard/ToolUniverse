@@ -84,7 +84,10 @@
                   "type": "null"
                 },
                 "canonicalTranscript": {
-                  "type": "null"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "germline": {
                   "type": "boolean"
@@ -554,7 +557,10 @@
                   "type": "null"
                 },
                 "canonicalTranscript": {
-                  "type": "null"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "germline": {
                   "type": "boolean"
@@ -1344,7 +1350,10 @@
                   "type": "null"
                 },
                 "canonicalTranscript": {
-                  "type": "null"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "germline": {
                   "type": "boolean"

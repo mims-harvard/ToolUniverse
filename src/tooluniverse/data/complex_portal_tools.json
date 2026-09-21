@@ -184,34 +184,59 @@
           "type": "object",
           "properties": {
             "complex_id": {
-              "type": "null"
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "name": {
-              "type": "null"
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "systematic_name": {
               "type": "string"
             },
             "species": {
-              "type": "null"
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "taxonomy_id": {
-              "type": "null"
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ]
             },
             "description": {
-              "type": "null"
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "properties": {
-              "type": "array",
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
                 "type": "string"
               }
             },
             "complex_type": {
-              "type": "null"
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "evidence_type": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
                 "identifier": {
                   "type": "string"
@@ -278,6 +303,18 @@
             },
             "go_annotations": {
               "type": "array"
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "predicted": {
+              "type": [
+                "boolean",
+                "null"
+              ]
             }
           },
           "required": [
