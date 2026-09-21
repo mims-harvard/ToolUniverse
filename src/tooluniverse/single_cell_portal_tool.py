@@ -144,6 +144,8 @@ class SingleCellPortalTool(BaseTool):
     def _search_studies(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Keyword search across study titles, descriptions, and metadata."""
         query = arguments.get("query")
+        if query is not None:
+            query = str(query).strip()
         if not query:
             return {
                 "status": "error",
