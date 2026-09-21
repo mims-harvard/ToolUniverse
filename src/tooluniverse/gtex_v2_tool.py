@@ -188,10 +188,24 @@ class GTExV2Tool(BaseTool):
             data = response.json()
             # clusteredMedianGeneExpression returns data under 'medianGeneExpression' key
             results = data.get("data", data.get("medianGeneExpression", []))
+            paging_info = data.get("paging_info", {})
+            if not tissue_ids:
+                # The clustered endpoint returns every tissue in one unpaged
+                # response and ignores page/itemsPerPage, so page client-side.
+                per_page = max(1, int(params["itemsPerPage"]))
+                page = max(0, int(params["page"]))
+                total = len(results)
+                results = results[page * per_page : (page + 1) * per_page]
+                paging_info = {
+                    "numberOfPages": -(-total // per_page),
+                    "page": page,
+                    "maxItemsPerPage": per_page,
+                    "totalNumberOfItems": total,
+                }
             return {
                 "status": "success",
                 "data": results,
-                "paging_info": data.get("paging_info", {}),
+                "paging_info": paging_info,
                 "num_results": len(results),
             }
         elif response.status_code == 422 and tissue_ids:
