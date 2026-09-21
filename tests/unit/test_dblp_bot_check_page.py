@@ -35,10 +35,14 @@ def _run(response):
 
 
 def test_bot_check_page_is_reported_as_html_not_as_a_parse_error():
-    result, get = _run(_response(text="<!doctype html><title>Making sure you're not a bot!"))
+    result, get = _run(
+        _response(text="<!doctype html><title>Making sure you're not a bot!")
+    )
     assert result["status"] == "error"
     assert "HTML page instead of JSON" in result["error"]
-    assert "bot-check" in result["reason"] and "Crossref_search_works" in result["reason"]
+    assert (
+        "bot-check" in result["reason"] and "Crossref_search_works" in result["reason"]
+    )
     assert get.call_count == 1  # no retry with other headers to get past the check
 
 

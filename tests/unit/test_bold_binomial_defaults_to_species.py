@@ -25,7 +25,10 @@ ROWS = [
 
 def _search(arguments):
     tool = BOLDSystemsTool(
-        {"name": "BOLDSystems_search_by_taxon", "fields": {"operation": "search_by_taxon"}}
+        {
+            "name": "BOLDSystems_search_by_taxon",
+            "fields": {"operation": "search_by_taxon"},
+        }
     )
     with patch(
         "tooluniverse.bold_systems_tool._run_query",
