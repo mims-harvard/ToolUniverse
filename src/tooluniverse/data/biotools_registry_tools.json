@@ -32,7 +32,10 @@
     },
     "fields": {
       "endpoint": "https://bio.tools/api/t/",
-      "return_format": "JSON"
+      "return_format": "JSON",
+      "params": {
+        "sort": "score"
+      }
     },
     "return_schema": {
       "oneOf": [
@@ -260,7 +263,7 @@
   },
   {
     "name": "BioTools_search_by_topic",
-    "type": "BaseRESTTool",
+    "type": "BioToolsRESTTool",
     "description": "Search the ELIXIR Bio.tools registry for bioinformatics tools by EDAM scientific topic. Returns tools classified under a specific research domain. Useful topics include: 'Proteomics', 'Genomics', 'Transcriptomics', 'Structural biology', 'Phylogenetics', 'Metabolomics', 'Metagenomics', 'Epigenomics', 'Sequence analysis', 'Systems biology', 'Machine learning', 'Molecular interactions', 'Population genetics'. Use this to discover all available software for a specific research field.",
     "parameter": {
       "type": "object",
@@ -372,7 +375,7 @@
   },
   {
     "name": "BioTools_search_by_operation",
-    "type": "BaseRESTTool",
+    "type": "BioToolsRESTTool",
     "description": "Search the ELIXIR Bio.tools registry for bioinformatics tools by EDAM operation (what the tool does). Returns tools that perform a specific computational operation. Useful operations include: 'Sequence alignment', 'Structure prediction', 'Variant calling', 'Gene expression analysis', 'Phylogenetic inference', 'Protein function prediction', 'Molecular docking', 'Genome annotation', 'Visualisation', 'Data retrieval', 'Statistical calculation', 'Clustering'. Use this to find software for a specific analysis task.",
     "parameter": {
       "type": "object",
@@ -522,7 +525,10 @@
     },
     "fields": {
       "endpoint": "https://bio.tools/api/t/",
-      "return_format": "JSON"
+      "return_format": "JSON",
+      "params": {
+        "sort": "score"
+      }
     },
     "return_schema": {
       "oneOf": [
