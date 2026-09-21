@@ -163,11 +163,22 @@ class EuroPMCAnnotationsTool(BaseTool):
     def _normalize_article_id(article_id: str) -> str:
         """Normalize bare PMC/PMID to API format: PMC:PMC4353746 or MED:25780448."""
         aid = article_id.strip()
-        if aid.startswith("PMC:") or aid.startswith("MED:"):
-            return aid
-        if aid.upper().startswith("PMC"):
+        upper = aid.upper()
+        if upper.startswith(("PMC:", "MED:")):
+            _, rest = aid.split(":", 1)
+            rest = rest.strip()
+            if not rest:
+                return ""
+            if upper.startswith("PMC:"):
+                if rest.upper().startswith("PMC"):
+                    rest = rest[3:]
+                if not rest:
+                    return ""
+                return f"PMC:PMC{rest}"
+            return f"MED:{rest}"
+        if upper.startswith("PMC"):
             num = aid[3:]
-            return f"PMC:PMC{num}"
+            return f"PMC:PMC{num}" if num else ""
         if aid.isdigit():
             return f"MED:{aid}"
         return aid
