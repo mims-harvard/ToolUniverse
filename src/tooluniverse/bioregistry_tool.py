@@ -10,6 +10,7 @@ No authentication required.
 """
 
 import requests
+from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -171,6 +172,19 @@ class BioregistryTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
+    def _registry_summary(self, prefix):
+        """(name, description[:200]) of one registry entry; blanks if unavailable."""
+        try:
+            resp = requests.get(
+                f"{BIOREGISTRY_API_URL}/registry/{prefix}", timeout=self.timeout
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                return data.get("name", "") or "", (data.get("description") or "")[:200]
+        except Exception:
+            pass
+        return "", ""
+
     def _search_registries(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search across all registered resources."""
         query = arguments.get("query", "")
@@ -191,28 +205,25 @@ class BioregistryTool(BaseTool):
             results = resp.json()
             if not isinstance(results, list):
                 results = []
-            trimmed = []
+            # The search endpoint only lists [prefix, matched alias] pairs (the alias
+            # is usually empty), so names and descriptions come from each prefix's
+            # registry record.
+            hits = []
             for item in results[:limit]:
-                if isinstance(item, list) and len(item) >= 1:
-                    trimmed.append(
-                        {
-                            "prefix": item[0],
-                            "name": item[1] if len(item) > 1 else "",
-                            "description": "",
-                        }
-                    )
+                if isinstance(item, list) and item:
+                    hits.append((item[0], item[1] if len(item) > 1 else ""))
                 elif isinstance(item, dict):
-                    trimmed.append(
-                        {
-                            "prefix": item.get("prefix", ""),
-                            "name": item.get("name", ""),
-                            "description": item.get("description", "")[:200]
-                            if item.get("description")
-                            else "",
-                        }
-                    )
+                    hits.append((item.get("prefix", ""), ""))
                 elif isinstance(item, str):
-                    trimmed.append({"prefix": item, "name": "", "description": ""})
+                    hits.append((item, ""))
+            with ThreadPoolExecutor(max_workers=5) as pool:
+                records = list(pool.map(lambda h: self._registry_summary(h[0]), hits))
+            trimmed = []
+            for (prefix, alias), (name, description) in zip(hits, records):
+                row = {"prefix": prefix, "name": name, "description": description}
+                if alias:
+                    row["matched_alias"] = alias
+                trimmed.append(row)
             return {
                 "status": "success",
                 "data": {
