@@ -1,13 +1,13 @@
 [
     {
         "name": "DisProt_search",
-        "description": "Search DisProt for intrinsically disordered proteins by text query (gene name, protein name, organism, or keyword). DisProt is a manually curated database providing experimentally validated disorder annotations with evidence codes and literature references. Returns DisProt ID, UniProt accession, protein name, organism, disorder content fraction, and number of annotated regions. Useful for finding disordered proteins in a specific pathway or organism. Example: searching 'TP53' returns DP00086 (p53, 37.7% disorder, 63 regions); searching 'amyloid' returns proteins associated with amyloid formation.",
+        "description": "Search DisProt for intrinsically disordered proteins by gene name, protein-name fragment, organism, DisProt ID or UniProt accession (case-insensitive substring match on gene, then protein name; organism is tried only when neither matches). Free-text keywords such as 'phase separation' are not supported by DisProt and return no hits. DisProt is a manually curated database providing experimentally validated disorder annotations with evidence codes and literature references. Returns DisProt ID, UniProt accession, protein name, organism, disorder content fraction, and number of annotated regions. Useful for finding disordered proteins in a specific pathway or organism. Example: searching 'TP53' returns DP00086 (p53, 37.7% disorder, 63 regions); searching 'amyloid' returns proteins with 'amyloid' in their name (e.g. amyloid-beta precursor protein, serum amyloid A).",
         "parameter": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Search term: gene name (e.g., 'TP53'), protein name (e.g., 'kinase'), organism (e.g., 'sapiens'), or keyword (e.g., 'amyloid', 'phase separation')."
+                    "description": "Gene name (e.g., 'TP53'), protein-name fragment (e.g., 'kinase', 'amyloid'), organism (e.g., 'Saccharomyces'), DisProt ID (e.g., 'DP00086') or UniProt accession (e.g., 'P04637'). Not a free-text keyword search."
                 },
                 "page_size": {
                     "type": "integer",
