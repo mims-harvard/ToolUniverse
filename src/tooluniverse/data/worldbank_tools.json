@@ -254,13 +254,13 @@
   },
   {
     "name": "WorldBank_search_indicators",
-    "description": "Search World Bank for development indicators by keyword. Returns indicator codes, names, descriptions, units, and source databases. Use this to discover indicator codes for WorldBank_get_indicator. The World Development Indicators (WDI) database contains 1400+ indicators covering health, education, economy, environment, infrastructure, poverty, and more.",
+    "description": "Search the World Development Indicators (WDI, ~1,500 indicators covering health, education, economy, environment, infrastructure, poverty and more) by keyword. Every word of the query must appear in the indicator's name, code or description; name matches rank first. Returns indicator codes, names, descriptions, units and the source database, as [metadata, indicators] with metadata.total = number of matches. Use it to discover indicator codes for WorldBank_get_indicator. Only the WDI database is searched, not the other ~29,000 indicators in World Bank's other databases.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
-          "description": "Search keyword for indicators (e.g., 'GDP', 'mortality', 'literacy', 'CO2', 'poverty', 'vaccination', 'life expectancy')"
+          "description": "Search words; all must occur in the indicator name, code or description (e.g., 'GDP', 'mortality', 'literacy', 'CO2', 'life expectancy')."
         },
         "per_page": {
           "type": [
@@ -280,7 +280,7 @@
         "format": "json"
       }
     },
-    "type": "BaseRESTTool",
+    "type": "WorldBankIndicatorSearchTool",
     "test_examples": [
       {
         "query": "mortality"
