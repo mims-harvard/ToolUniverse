@@ -146,7 +146,7 @@
   {
     "name": "ProtVar_get_population",
     "type": "ProtVarPopulationTool",
-    "description": "Get population observation data for a protein variant position from ProtVar. Returns co-located variants with population allele frequencies (gnomAD, 1000Genomes), clinical significance (ClinVar), and computational predictions (SIFT, PolyPhen).",
+    "description": "Get the known variants at a protein position from ProtVar's population observations: one row per amino-acid change with its consequence, clinical significance (ClinVar/UniProt/Ensembl), population allele frequencies (gnomAD, ClinVar MAF), SIFT/PolyPhen predictions, associated diseases and cross-references. Only accession and position are needed.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -160,17 +160,17 @@
         },
         "genomic_location": {
           "type": "integer",
-          "description": "Genomic coordinate (GRCh38) for the variant. Obtain from ProtVar_map_variant output."
+          "description": "Optional genomic coordinate (GRCh38); ProtVar answers for the whole protein position without it."
         }
       },
-      "required": ["accession", "position", "genomic_location"]
+      "required": ["accession", "position"]
     },
     "return_schema": {
       "type": "object",
       "properties": {
         "accession": {"type": "string"},
         "position": {"type": "integer"},
-        "genomic_location": {"type": "integer"},
+        "genomic_location": {"type": ["integer", "null"]},
         "colocated_variants": {
           "type": "array",
           "items": {
@@ -179,8 +179,17 @@
               "source": {"type": ["string", "null"]},
               "wild_type": {"type": ["string", "null"]},
               "alt_sequence": {"type": ["string", "null"]},
+              "consequence": {"type": ["string", "null"]},
+              "codon": {"type": ["string", "null"]},
               "genomic_location": {"type": ["string", "null"]},
+              "genomic_locations": {"type": "array", "items": {"type": "string"}},
               "cytogenetic_band": {"type": ["string", "null"]},
+              "clinical_significance": {
+                "type": "array",
+                "items": {"type": "object"}
+              },
+              "diseases": {"type": "array", "items": {"type": "string"}},
+              "xref_count": {"type": "integer"},
               "frequencies": {
                 "type": "array",
                 "items": {"type": "object"}
@@ -199,7 +208,7 @@
       }
     },
     "test_examples": [
-      {"accession": "P22304", "position": 149, "genomic_location": 149501011}
+      {"accession": "P04637", "position": 175}
     ],
     "label": ["ProtVar", "Population", "Frequency", "ClinVar", "SIFT", "PolyPhen"],
     "metadata": {
