@@ -47,7 +47,10 @@
               "description": "Molecular weight in Daltons"
             },
             "formal_charge": {
-              "type": "integer"
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "compound_type": {
               "type": "string",

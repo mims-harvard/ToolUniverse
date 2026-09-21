@@ -195,7 +195,10 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "object",
+      "type": [
+        "object",
+        "array"
+      ],
       "description": "Epitope record: accession, entryName, sequence, sequenceChecksum, taxid, and a `features` array of EPITOPE entries (type, description, begin, end, xrefs to IEDB, evidences).",
       "properties": {
         "accession": {"type": "string"},
