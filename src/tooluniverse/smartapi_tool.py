@@ -26,9 +26,7 @@ from .tool_registry import register_tool
 
 SMARTAPI_BASE_URL = "https://smart-api.info/api"
 
-_SEARCH_FIELDS = (
-    "_id,_meta.slug,info.title,info.description,info.contact,tags,servers"
-)
+_SEARCH_FIELDS = "_id,_meta.slug,info.title,info.description,info.contact,tags,servers"
 
 
 def _summarize_hit(hit: Dict[str, Any]) -> Dict[str, Any]:
@@ -60,9 +58,7 @@ class SmartAPITool(BaseTool):
     def __init__(self, tool_config: Dict[str, Any]):
         super().__init__(tool_config)
         self.timeout = tool_config.get("timeout", 30)
-        self.operation = tool_config.get("fields", {}).get(
-            "operation", "search_apis"
-        )
+        self.operation = tool_config.get("fields", {}).get("operation", "search_apis")
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the SmartAPI lookup."""
@@ -102,8 +98,7 @@ class SmartAPITool(BaseTool):
         if not query:
             return {
                 "status": "error",
-                "error": "query is required, e.g. 'variant' or "
-                "'tags.name:translator'.",
+                "error": "query is required, e.g. 'variant' or 'tags.name:translator'.",
             }
 
         limit = arguments.get("limit")
@@ -184,7 +179,8 @@ class SmartAPITool(BaseTool):
                 "tags": [
                     t.get("name") for t in spec.get("tags") or [] if t.get("name")
                 ],
-                "endpoint_count": len(endpoints),
+                "endpoint_count": len(endpoints[:50]),
+                "total_endpoints": len(endpoints),
                 "endpoints": endpoints[:50],
             },
             "metadata": {

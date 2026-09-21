@@ -1800,7 +1800,10 @@ class NICEGuidelineFullTextTool(BaseTool):
                 "full_text_length": len(full_text),
                 "sections_count": len(content_sections),
                 "recommendations": recommendations[:20] if recommendations else None,
-                "recommendations_count": len(recommendations) if recommendations else 0,
+                "recommendations_count": len(recommendations[:20])
+                if recommendations
+                else 0,
+                "total_recommendations": len(recommendations) if recommendations else 0,
                 "source": "NICE",
                 "content_type": "full_guideline",
             }

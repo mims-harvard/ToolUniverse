@@ -122,7 +122,8 @@ class EnsemblRegulationTool(BaseTool):
             "data": {
                 "region": region,
                 "species": species,
-                "motif_count": len(motifs),
+                "motif_count": len(motifs[:200]),
+                "total_motif_features": len(motifs),
                 "motif_features": motifs[:200],
             },
             "metadata": {
@@ -175,7 +176,8 @@ class EnsemblRegulationTool(BaseTool):
             "data": {
                 "region": region,
                 "species": species,
-                "element_count": len(elements),
+                "element_count": len(elements[:200]),
+                "total_constrained_elements": len(elements),
                 "constrained_elements": elements[:200],
             },
             "metadata": {
