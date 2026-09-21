@@ -83,6 +83,147 @@
     }
   },
   {
+    "name": "RxNorm_get_exact_concepts",
+    "description": "Look up a drug name by EXACT match in active RxNorm and return every matching concept with its name, term type (IN ingredient, PIN precise ingredient, BN brand name, SCD clinical drug, ...) and suppression status, plus an explicit resolution: 'unique_active_IN_concept' (exactly one active ingredient concept; canonical_ingredient_name is set), 'requires_identity_review' (one concept that is not an active ingredient, e.g. a brand or a salt), 'multiple_concepts' (ambiguous; none is selected) or 'no_exact_concept'. Unlike RxNorm_find_rxcui there is no approximate matching and no first-hit selection. Examples: 'acetaminophen' -> 161 (IN); 'paracetamol' -> 161, canonical 'acetaminophen'; 'Tylenol' -> 202433 (BN, requires_identity_review); 'ceftriaxon' -> no_exact_concept. No API key required.",
+    "type": "RxNormExtendedTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_name": {
+          "type": "string",
+          "description": "Drug name to match exactly (case-insensitive), e.g. 'acetaminophen', 'lidocaine hydrochloride', 'Tylenol'. Leading and trailing whitespace is ignored; nothing else is normalized."
+        }
+      },
+      "required": [
+        "drug_name"
+      ]
+    },
+    "fields": {
+      "operation": "get_exact_concepts",
+      "endpoint": "https://rxnav.nlm.nih.gov/REST/rxcui.json"
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "input_name": {
+              "type": "string"
+            },
+            "query_name": {
+              "type": "string"
+            },
+            "search_mode": {
+              "type": "string",
+              "enum": [
+                "exact_only"
+              ]
+            },
+            "all_rxcuis": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "concepts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rxcui": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "synonym": {
+                    "type": "string"
+                  },
+                  "tty": {
+                    "type": "string"
+                  },
+                  "term_type_label": {
+                    "type": "string"
+                  },
+                  "language": {
+                    "type": "string"
+                  },
+                  "suppress": {
+                    "type": "string"
+                  },
+                  "umlscui": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "canonical_ingredient_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "resolution": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                "unique_active_IN_concept",
+                "requires_identity_review",
+                "multiple_concepts",
+                "no_exact_concept",
+                null
+              ]
+            },
+            "properties_not_retrieved": {
+              "type": "string"
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "drug_name": "acetaminophen"
+      },
+      {
+        "drug_name": "paracetamol"
+      },
+      {
+        "drug_name": "Tylenol"
+      }
+    ],
+    "label": [
+      "RxNorm",
+      "RXCUI",
+      "drug",
+      "NLM",
+      "standardization",
+      "exact match"
+    ],
+    "metadata": {
+      "tags": [
+        "drug_standardization",
+        "drug_identifier",
+        "NLM",
+        "rxnorm"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
     "name": "RxNorm_get_drug_info",
     "description": "Fetch comprehensive drug properties from NLM RxNorm by RXCUI or drug name. Returns the canonical name, term type (ingredient, brand name, clinical drug product, etc.), synonym, and language. Term types include IN (Ingredient/generic), BN (Brand Name), SCD (Semantic Clinical Drug = generic product with dose), SBD (Semantic Branded Drug). No API key required. Example: RXCUI 860975 -> '24 HR metformin hydrochloride 500 MG Extended Release Oral Tablet' (SCD).",
     "type": "RxNormExtendedTool",

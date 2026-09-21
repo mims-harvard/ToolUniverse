@@ -7,6 +7,8 @@ U.S. National Library of Medicine (NLM) RxNorm API:
   - rxnorm_get_drug_info    : comprehensive properties for a drug by name or RXCUI
   - rxnorm_get_related_drugs: branded and generic products for an ingredient RXCUI
   - rxnorm_find_rxcui       : resolve a drug name to its RXCUI(s)
+  - rxnorm_get_exact_concepts: exact-name lookup that reports every matching
+                              concept with its term type, never picking one
 
 API base: https://rxnav.nlm.nih.gov/REST
 No authentication required.
@@ -18,6 +20,10 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 RXNORM_BASE = "https://rxnav.nlm.nih.gov/REST"
+
+# An exact lookup that matches more concepts than this is reported as ambiguous
+# without fetching each one's properties.
+MAX_EXACT_CONCEPTS = 5
 
 # Term-type (tty) labels used in RxNorm
 TTY_LABELS = {
@@ -41,8 +47,10 @@ class RxNormExtendedTool(BaseTool):
     """
     Extended RxNorm tools for drug information retrieval.
 
-    Supports three operations:
+    Supports these operations:
       - find_rxcui:      Resolve a drug name to its RXCUI identifier(s)
+      - get_exact_concepts: Exact-name lookup returning every matching concept
+                         with its term type and suppression status
       - get_drug_info:   Fetch full properties (name, TTY, synonym) by RXCUI or name
       - get_related_drugs: List all branded and generic clinical drug products
                           that share an active ingredient
@@ -57,6 +65,8 @@ class RxNormExtendedTool(BaseTool):
         op = self.operation
         if op == "find_rxcui":
             return self._find_rxcui(arguments)
+        elif op == "get_exact_concepts":
+            return self._get_exact_concepts(arguments)
         elif op == "get_drug_info":
             return self._get_drug_info(arguments)
         elif op == "get_related_drugs":
@@ -148,6 +158,113 @@ class RxNormExtendedTool(BaseTool):
             },
             "metadata": {"source": "NLM RxNorm API"},
         }
+
+    def _get_exact_concepts(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Look a name up exactly and report every concept it matches.
+
+        ``find_rxcui`` searches with normalization and offers the first hit as
+        ``primary_rxcui`` without its term type, so a misspelling resolves to a
+        different string's concept ('ceftriaxon' -> ceftriaxone) and a brand
+        name is indistinguishable from an ingredient ('Tylenol' is a BN).
+        Callers that must know *what* a name denotes need the opposite: exact
+        matching only, every match returned, the term type of each, and an
+        explicit verdict rather than a choice made on their behalf.
+        """
+        original = arguments.get("drug_name")
+        if not isinstance(original, str) or not original.strip():
+            return {"status": "error", "error": "drug_name is required"}
+        query = original.strip()
+        data: Dict[str, Any] = {
+            "input_name": original,
+            "query_name": query,
+            "search_mode": "exact_only",
+            "all_rxcuis": [],
+            "concepts": [],
+            "canonical_ingredient_name": None,
+            "resolution": None,
+        }
+        requests_made = []
+
+        def fetch(path, params):
+            url = f"{RXNORM_BASE}/{path}"
+            row = {"url": url, "params": params}
+            requests_made.append(row)
+            resp = requests.get(url, params=params, timeout=self.timeout)
+            row["status_code"] = resp.status_code
+            resp.raise_for_status()
+            payload = resp.json()
+            if not isinstance(payload, dict):
+                raise ValueError("RxNorm returned a non-object response")
+            return payload
+
+        def metadata():
+            return {"source": "NLM RxNorm API", "requests": requests_made}
+
+        try:
+            # search=0 is RxNorm's exact-match mode; allsrc=0 restricts the
+            # match to active RxNorm concepts.
+            payload = fetch("rxcui.json", {"name": query, "search": 0, "allsrc": 0})
+            ids = (payload.get("idGroup") or {}).get("rxnormId") or []
+            if not isinstance(ids, list) or not all(
+                isinstance(i, str) and i.isdigit() for i in ids
+            ):
+                raise ValueError("RxNorm returned a malformed identifier list")
+            data["all_rxcuis"] = ids
+            unique = list(dict.fromkeys(ids))
+            if not unique:
+                data["resolution"] = "no_exact_concept"
+                return {"status": "success", "data": data, "metadata": metadata()}
+            if len(unique) > MAX_EXACT_CONCEPTS:
+                data["resolution"] = "multiple_concepts"
+                data["properties_not_retrieved"] = (
+                    f"{len(unique)} concepts matched; properties are fetched for "
+                    f"at most {MAX_EXACT_CONCEPTS}, and none was selected"
+                )
+                return {"status": "success", "data": data, "metadata": metadata()}
+            for rxcui in unique:
+                props = fetch(f"rxcui/{rxcui}/properties.json", {}).get("properties")
+                if not isinstance(props, dict) or props.get("rxcui") != rxcui:
+                    raise ValueError(
+                        f"Missing or mismatched properties for RXCUI {rxcui}"
+                    )
+                if not all(
+                    isinstance(props.get(k), str) and props[k]
+                    for k in ("name", "tty", "suppress")
+                ):
+                    raise ValueError(f"Incomplete properties for RXCUI {rxcui}")
+                data["concepts"].append(
+                    {
+                        **props,
+                        "term_type_label": TTY_LABELS.get(props["tty"], props["tty"]),
+                    }
+                )
+        except requests.exceptions.RequestException as e:
+            return {
+                "status": "error",
+                "error": f"RxNorm API request failed: {e}",
+                "data": data,
+                "metadata": metadata(),
+            }
+        except (ValueError, TypeError) as e:
+            return {
+                "status": "error",
+                "error": f"Failed to parse response: {e}",
+                "data": data,
+                "metadata": metadata(),
+            }
+
+        if len(data["concepts"]) > 1:
+            data["resolution"] = "multiple_concepts"
+        else:
+            concept = data["concepts"][0]
+            # suppress == "N" is RxNorm's marker for a concept that is neither
+            # obsolete nor suppressed.
+            if concept["tty"] == "IN" and concept["suppress"] == "N":
+                data["resolution"] = "unique_active_IN_concept"
+                data["canonical_ingredient_name"] = concept["name"]
+            else:
+                data["resolution"] = "requires_identity_review"
+        return {"status": "success", "data": data, "metadata": metadata()}
 
     def _get_drug_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Fetch comprehensive drug properties by RXCUI or drug name."""
