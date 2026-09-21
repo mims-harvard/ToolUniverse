@@ -216,6 +216,17 @@ class CellMarkerTool(BaseTool):
                 "available_operations": list(handlers.keys()),
             }
 
+        if operation == "search_by_gene":
+            gene_symbol = arguments.get("gene_symbol")
+            if isinstance(gene_symbol, str):
+                gene_symbol = gene_symbol.strip()
+            if not gene_symbol:
+                return {
+                    "status": "error",
+                    "error": "Missing required parameter: gene_symbol",
+                }
+            arguments = {**arguments, "gene_symbol": gene_symbol}
+
         try:
             df = _load_dataframe(self.timeout)
             return handler(arguments, df)
