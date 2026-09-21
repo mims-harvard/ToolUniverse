@@ -287,6 +287,8 @@ DEPRECATED_PATTERNS = [
 ]
 ```
 
+It scans `docs/`, `README.md` and `skills/` (skipping `docs/dev_docs/` and this skill, whose examples quote the deprecated text on purpose), prints `file:line` for each hit and exits 1 if there are any. Mark a deliberate mention with `noqa: docs-validate` on the same line.
+
 ---
 
 ## Phase B: ToolUniverse-Specific Audit
