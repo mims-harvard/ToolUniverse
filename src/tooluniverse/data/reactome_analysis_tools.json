@@ -6,7 +6,10 @@
       "type": "object",
       "properties": {
         "identifiers": {
-          "type": "string",
+          "type": [
+            "string",
+            "array"
+          ],
           "description": "Newline-separated list of gene/protein identifiers. Supports gene symbols (TP53, BRCA1), UniProt IDs (P04637, P38398), or Ensembl IDs. Example: 'TP53\\nBRCA1\\nCDH1\\nEGFR\\nKRAS'."
         },
         "page_size": {
@@ -204,7 +207,10 @@
       "type": "object",
       "properties": {
         "identifiers": {
-          "type": "string",
+          "type": [
+            "string",
+            "array"
+          ],
           "description": "Newline-separated list of gene/protein identifiers from any species. Supports UniProt, Ensembl, or gene symbols. Example: 'Trp53\\nBrca1\\nCdh1' (mouse gene symbols)."
         },
         "species": {
@@ -390,7 +396,10 @@
       "type": "object",
       "properties": {
         "identifiers": {
-          "type": "string",
+          "type": [
+            "string",
+            "array"
+          ],
           "description": "Tab-delimited expression rows, one identifier per line as 'GENE<TAB>VALUE'. Newline-separated rows. Gene symbols, UniProt, or Ensembl IDs in the first column; numeric fold-change/expression value(s) in following tab-separated column(s). Example: 'PTEN\\t2.5\\nTP53\\t-1.8\\nEGFR\\t3.1'."
         },
         "page_size": {
@@ -836,7 +845,10 @@
               "type": "array"
             },
             "identifiers": {
-              "type": "array",
+              "type": [
+            "array",
+            "string"
+          ],
               "items": {
                 "type": "object",
                 "properties": {
