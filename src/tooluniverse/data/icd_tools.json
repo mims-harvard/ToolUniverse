@@ -241,6 +241,10 @@
         "linearization": "mms",
         "language": "en"
       }
+    ],
+    "optional_api_keys": [
+      "ICD_CLIENT_ID",
+      "ICD_CLIENT_SECRET"
     ]
   },
   {
@@ -312,6 +316,10 @@
         "linearization": "mms",
         "language": "en"
       }
+    ],
+    "optional_api_keys": [
+      "ICD_CLIENT_ID",
+      "ICD_CLIENT_SECRET"
     ]
   },
   {
