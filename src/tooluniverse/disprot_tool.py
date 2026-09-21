@@ -10,12 +10,19 @@ API: https://disprot.org/api/
 No authentication required.
 """
 
+import re
 import requests
-from typing import Dict, Any
+from typing import Dict, Any, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 DISPROT_BASE_URL = "https://www.disprot.org/api"
+
+_DISPROT_ID = re.compile(r"^DP\d{5}$", re.I)
+_UNIPROT_ACC = re.compile(
+    r"^(?:[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9](?:[A-Z][A-Z0-9]{2}[0-9]){1,2})$",
+    re.I,
+)
 
 
 @register_tool("DisProtTool")
@@ -70,52 +77,75 @@ class DisProtTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    def _search_fields(self, query: str) -> List[str]:
+        """Which DisProt filters to try for this query, in order.
+
+        DisProt's /search ignores a free-text ``q`` and returns every entry, so the
+        query has to be sent as a real filter: an exact identifier when it looks
+        like one, otherwise the gene and protein-name filters (substring,
+        case-insensitive), then the organism filter.
+        """
+        if _DISPROT_ID.match(query):
+            return ["disprot_id"]
+        if _UNIPROT_ACC.match(query):
+            return ["acc"]
+        return ["gene", "name", "organism"]
+
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search DisProt for disordered proteins."""
-        query = arguments.get("query", "")
+        query = (arguments.get("query") or "").strip()
         if not query:
             return {
                 "status": "error",
                 "error": "query is required (e.g., 'TP53', 'kinase', 'amyloid').",
             }
 
-        params = {
-            "q": query,
-            "release": "current",
-            "page_size": min(arguments.get("page_size", 10), 20),
-        }
-
+        page_size = min(arguments.get("page_size") or 10, 20)
         url = f"{DISPROT_BASE_URL}/search"
-        response = requests.get(url, params=params, timeout=self.timeout)
-        response.raise_for_status()
-        data = response.json()
-
-        results = data.get("data", [])
-        entries = []
-        for entry in results:
-            genes = entry.get("genes", [])
-            gene_name = genes[0].get("name", {}).get("value", "") if genes else ""
-            entries.append(
-                {
-                    "disprot_id": entry.get("disprot_id"),
-                    "acc": entry.get("acc"),
-                    "name": entry.get("name"),
-                    "gene": gene_name,
-                    "organism": entry.get("organism"),
-                    "length": entry.get("length"),
-                    "disorder_content": entry.get("disorder_content"),
-                    "regions_counter": entry.get("regions_counter"),
-                    "dataset": entry.get("dataset", []),
-                }
-            )
+        entries: List[Dict[str, Any]] = []
+        seen = set()
+        matches: Dict[str, int] = {}
+        for field in self._search_fields(query):
+            # The organism filter is only a fallback for queries that name no
+            # gene or protein; it would otherwise flood the list with a proteome.
+            if field == "organism" and entries:
+                break
+            value = query.upper() if field in ("disprot_id", "acc") else query
+            params = {field: value, "release": "current", "page_size": page_size}
+            response = requests.get(url, params=params, timeout=self.timeout)
+            response.raise_for_status()
+            data = response.json()
+            matches[field] = data.get("size", len(data.get("data", [])))
+            for entry in data.get("data", []):
+                key = entry.get("acc") or entry.get("disprot_id")
+                if key in seen:
+                    continue
+                seen.add(key)
+                genes = entry.get("genes", [])
+                gene_name = genes[0].get("name", {}).get("value", "") if genes else ""
+                entries.append(
+                    {
+                        "disprot_id": entry.get("disprot_id"),
+                        "acc": entry.get("acc"),
+                        "name": entry.get("name"),
+                        "gene": gene_name,
+                        "organism": entry.get("organism"),
+                        "length": entry.get("length"),
+                        "disorder_content": entry.get("disorder_content"),
+                        "regions_counter": entry.get("regions_counter"),
+                        "dataset": entry.get("dataset", []),
+                        "matched_on": field,
+                    }
+                )
 
         return {
             "status": "success",
-            "data": entries,
+            "data": entries[:page_size],
             "metadata": {
                 "source": "DisProt (disprot.org)",
                 "query": query,
-                "returned": len(entries),
+                "returned": len(entries[:page_size]),
+                "total_matches_by_filter": matches,
             },
         }
 
