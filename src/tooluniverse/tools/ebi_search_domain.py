@@ -36,7 +36,7 @@ def ebi_search_domain(
     fields : str
         Comma-separated list of fields to return (e.g., 'id,name,description'). If no...
     format : str
-        Response format: 'json' or 'xml'
+        Response format. Only 'json' is produced by this endpoint.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

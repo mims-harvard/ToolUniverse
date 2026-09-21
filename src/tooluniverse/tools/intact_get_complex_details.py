@@ -24,7 +24,7 @@ def intact_get_complex_details(
     complex_ac : str
         Complex AC (Complex Accession) in format 'CPX-XXXXX' (e.g., 'CPX-915', 'CPX-1...
     format : str
-
+        Response format. Only 'json' is produced by this endpoint.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

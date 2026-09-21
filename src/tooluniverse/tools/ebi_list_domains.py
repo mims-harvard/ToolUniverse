@@ -21,7 +21,7 @@ def ebi_list_domains(
     Parameters
     ----------
     format : str
-        Response format
+        Response format. Only 'json' is produced by this endpoint.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

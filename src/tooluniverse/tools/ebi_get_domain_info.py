@@ -24,7 +24,7 @@ def ebi_get_domain_info(
     domain : str
         EBI domain name (e.g., 'ensembl', 'uniprot', 'interpro')
     format : str
-
+        Response format. Only 'json' is produced by this endpoint.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

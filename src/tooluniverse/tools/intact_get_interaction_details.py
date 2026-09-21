@@ -24,7 +24,7 @@ def intact_get_interaction_details(
     interaction_id : str
         IntAct interaction ID in format 'EBI-XXXXXX-EBI-YYYYYY' (e.g., 'EBI-366083-EB...
     format : str
-
+        Response format. Only 'json' is produced by this endpoint.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

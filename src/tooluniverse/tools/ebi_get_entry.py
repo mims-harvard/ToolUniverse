@@ -30,7 +30,7 @@ def ebi_get_entry(
     fields : str
         Comma-separated list of specific fields to return. If not specified, returns ...
     format : str
-
+        Response format. Only 'json' is produced by this endpoint.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
