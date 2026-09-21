@@ -12,7 +12,7 @@
         },
         "category": {
           "type": "string",
-          "description": "Optional category filter (e.g., 'Health', 'Public Safety')"
+          "description": "Optional exact data.cdc.gov category name (e.g., 'National Center for Health Statistics', 'NNDSS'); each result reports its category."
         },
         "limit": {
           "type": "integer",
