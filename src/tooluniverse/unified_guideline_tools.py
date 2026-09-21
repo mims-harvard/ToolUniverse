@@ -1365,7 +1365,13 @@ class WHOGuidelinesTool(BaseTool):
         response = self.session.get(
             self.iris_search_url,
             params={"query": query, "size": size, "dsoType": "item"},
-            headers={"Accept": "application/json"},
+            # IRIS answers 403 to the browser-style User-Agent this session sends to
+            # www.who.int (and to python-requests' default one) but serves an
+            # identified API client, so say who is asking.
+            headers={
+                "Accept": "application/json",
+                "User-Agent": "ToolUniverse/1.0 (+https://github.com/mims-harvard/ToolUniverse)",
+            },
             timeout=30,
         )
         response.raise_for_status()
