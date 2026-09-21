@@ -98,7 +98,7 @@ class WorldBankIndicatorSearchTool(BaseRESTTool):
             "pages": 1,
             "per_page": str(limit),
             "total": len(scored),
-            "source": "World Development Indicators (source 2)",
+            "catalog": "World Development Indicators (source 2)",
         }
         return {
             "status": "success",
