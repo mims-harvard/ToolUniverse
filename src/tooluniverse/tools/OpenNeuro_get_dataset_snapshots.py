@@ -1,7 +1,7 @@
 """
 OpenNeuro_get_dataset_snapshots
 
-Get all version snapshots of a specific dataset on OpenNeuro. Returns snapshot tags, creation dat...
+Get all version snapshots of a specific dataset on OpenNeuro. Returns the snapshot id, tag, and c...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def OpenNeuro_get_dataset_snapshots(
     validate: bool = True,
 ) -> Any:
     """
-    Get all version snapshots of a specific dataset on OpenNeuro. Returns snapshot tags, creation dat...
+    Get all version snapshots of a specific dataset on OpenNeuro. Returns the snapshot id, tag, and c...
 
     Parameters
     ----------

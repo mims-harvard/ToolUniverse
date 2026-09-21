@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GPCRdb_get_structures(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_structures",
     protein: Optional[str] = None,
     state: Optional[str] = None,
     resolution: Optional[float] = None,

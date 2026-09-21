@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def OpenCRAVAT_list_annotators(
-    category: Optional[str | Any] = None,
+    category: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -20,8 +20,8 @@ def OpenCRAVAT_list_annotators(
 
     Parameters
     ----------
-    category : str | Any
-        Filter annotators by type/category substring (e.g., 'annotator', 'converter')...
+    category : str
+        Filter annotators by a case-insensitive substring match against the module's ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

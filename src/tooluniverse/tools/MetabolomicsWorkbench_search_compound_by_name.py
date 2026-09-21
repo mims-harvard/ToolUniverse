@@ -16,7 +16,7 @@ def MetabolomicsWorkbench_search_compound_by_name(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search for a metabolite/compound by its name using RefMet nomenclature. Returns standardized comp...
 
@@ -37,7 +37,7 @@ def MetabolomicsWorkbench_search_compound_by_name(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

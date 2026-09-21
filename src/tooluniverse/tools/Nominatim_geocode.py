@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def Nominatim_geocode(
     q: str,
-    limit: Optional[int | Any] = None,
-    countrycodes: Optional[str | Any] = None,
+    limit: Optional[int] = None,
+    countrycodes: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def Nominatim_geocode(
     ----------
     q : str
         Free-form address or place name query. Examples: 'Eiffel Tower Paris', '1600 ...
-    limit : int | Any
+    limit : int
         Maximum number of results to return (default 5, max 50)
-    countrycodes : str | Any
+    countrycodes : str
         Restrict to specific countries (comma-separated ISO 3166-1 alpha-2 codes). Ex...
     stream_callback : Callable, optional
         Callback for streaming output

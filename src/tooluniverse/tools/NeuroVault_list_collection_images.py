@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def NeuroVault_list_collection_images(
     collection_id: int,
-    limit: Optional[int | Any] = None,
-    offset: Optional[int | Any] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def NeuroVault_list_collection_images(
     ----------
     collection_id : int
         NeuroVault collection ID. Example: 457 (Human Connectome Project)
-    limit : int | Any
+    limit : int
         Maximum number of images to return (default 10, max 100)
-    offset : int | Any
+    offset : int
         Number of images to skip for pagination (default 0)
     stream_callback : Callable, optional
         Callback for streaming output

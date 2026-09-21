@@ -10,7 +10,8 @@ from ._shared_client import get_shared_client
 
 def CPIC_get_alleles(
     genesymbol: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,8 +24,10 @@ def CPIC_get_alleles(
     ----------
     genesymbol : str
         Gene symbol (e.g., 'CYP2D6', 'CYP2C19', 'TPMT', 'DPYD')
-    limit : int | Any
-        Maximum number of alleles to return (default 50)
+    limit : int
+        Maximum number of alleles to return per call (default 50, max 1000). Compare ...
+    offset : int
+        Zero-based index of the first allele to return, for paging through genes with...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,7 @@ def CPIC_get_alleles(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"genesymbol": genesymbol, "limit": limit}.items()
+        for k, v in {"genesymbol": genesymbol, "limit": limit, "offset": offset}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def drugbank_filter_drugs_by_name(
     condition: str,
     value: str,
-    limit: int,
+    limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

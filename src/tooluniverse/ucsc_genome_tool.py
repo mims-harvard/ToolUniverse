@@ -264,7 +264,8 @@ class UCSCGenomeTool(BaseTool):
         result = {
             "genome": genome,
             "search_term": search_term,
-            "match_count": len(matches),
+            "match_count": len(matches[:50]),
+            "total_matches": len(matches),
             "matches": matches[:50],
         }
 

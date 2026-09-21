@@ -145,11 +145,16 @@ class MyDiseaseTool(BaseTool):
                 ctd = ctd[0] if ctd else {}
             chems = ctd.get("chemical_related_to_disease", [])
             paths = ctd.get("pathway_related_to_disease", [])
+            # MyDisease returns a bare object when only one entry exists.
+            chems = chems if isinstance(chems, list) else [chems]
+            paths = paths if isinstance(paths, list) else [paths]
             result["ctd"] = {
-                "chemicals_count": len(chems) if isinstance(chems, list) else 1,
-                "chemicals": chems[:20] if isinstance(chems, list) else [chems],
-                "pathways_count": len(paths) if isinstance(paths, list) else 1,
-                "pathways": paths[:20] if isinstance(paths, list) else [paths],
+                "chemicals_count": len(chems[:20]),
+                "total_chemicals": len(chems),
+                "chemicals": chems[:20],
+                "pathways_count": len(paths[:20]),
+                "total_pathways": len(paths),
+                "pathways": paths[:20],
             }
 
         # Extract HPO data (API returns a list for diseases with multiple OMIM entries)
@@ -174,18 +179,21 @@ class MyDiseaseTool(BaseTool):
                 result["hpo"] = {
                     "disease_name": hpo_names[0] if hpo_names else None,
                     "omim": omim_ids,
-                    "phenotypes_count": len(all_phenos),
+                    "phenotypes_count": len(all_phenos[:20]),
+                    "total_phenotypes": len(all_phenos),
                     "phenotypes": all_phenos[:20],
                 }
             else:
                 phenos = hpo.get("phenotype_related_to_disease", [])
+                phenos = phenos if isinstance(phenos, list) else [phenos]
                 result["hpo"] = {
                     "disease_name": hpo.get("disease_name"),
                     "omim": hpo.get("omim"),
                     "inheritance": hpo.get("inheritance"),
                     "clinical_course": hpo.get("clinical_course"),
-                    "phenotypes_count": len(phenos) if isinstance(phenos, list) else 1,
-                    "phenotypes": phenos[:20] if isinstance(phenos, list) else [phenos],
+                    "phenotypes_count": len(phenos[:20]),
+                    "total_phenotypes": len(phenos),
+                    "phenotypes": phenos[:20],
                 }
 
         # Extract DisGeNET data

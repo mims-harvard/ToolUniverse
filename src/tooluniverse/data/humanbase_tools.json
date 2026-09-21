@@ -2,16 +2,19 @@
   {
     "type": "HumanBaseTool",
     "name": "humanbase_ppi_analysis",
-    "description": "Retrieve tissue-specific protein-protein interactions and biological processes from HumanBase. Returns a NetworkX graph of tissue specific protein-protein interactions and a list of associated biological processes involeed by the given genes from Gene Ontology.",
+    "description": "Retrieve tissue-specific protein-protein interactions and biological processes from HumanBase. Returns a NetworkX graph of tissue specific protein-protein interactions and a list of associated biological processes involved by the given genes from Gene Ontology.",
     "parameter": {
       "type": "object",
       "properties": {
         "gene_list": {
-          "type": "array",
+          "type": [
+            "array",
+            "string"
+          ],
           "items": {
             "type": "string"
           },
-          "description": "List of gene names or symbols to analyze for protein-protein interactions. The gene name should be the official gene symbol, not the synonym.",
+          "description": "Genes to analyze, as a list of symbols or a comma-separated string. Official symbols and common synonyms both resolve ('TP53' or 'p53'); the symbol actually used is reported back in resolved_genes.",
           "minItems": 1
         },
         "tissue": {
@@ -21,7 +24,7 @@
         },
         "max_node": {
           "type": "integer",
-          "description": "Maximum number of nodes to retrieve in the interaction network. Warning: the more nodes, the more time it takes to retrieve the data. Default is 10 (~30 seconds).",
+          "description": "Number of interaction partners to retrieve per query gene. The network also contains the query genes themselves, so it holds max_node + len(gene_list) proteins. Warning: the more nodes, the longer the retrieval. Default is 10 (~30 seconds).",
           "default": 10,
           "minimum": 1,
           "maximum": 100
@@ -43,15 +46,18 @@
           "default": true
         },
         "genes": {
-          "type": "array",
+          "type": [
+            "array",
+            "string"
+          ],
           "items": {
             "type": "string"
           },
-          "description": "Alias for gene_list. List of gene symbols to analyze."
+          "description": "Alias for gene_list. A list of gene symbols or a comma-separated string."
         },
         "top_n": {
           "type": "integer",
-          "description": "Alias for max_node. Maximum number of network nodes to retrieve.",
+          "description": "Alias for max_node. Number of interaction partners to retrieve per query gene.",
           "minimum": 1,
           "maximum": 100
         }

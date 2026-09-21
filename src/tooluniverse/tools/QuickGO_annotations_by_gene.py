@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def QuickGO_annotations_by_gene(
     gene_product_id: str,
-    aspect: Optional[str | Any] = None,
-    taxon_id: Optional[int | Any] = None,
+    aspect: Optional[str] = None,
+    taxon_id: Optional[int] = None,
     limit: Optional[int] = 25,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -25,9 +25,9 @@ def QuickGO_annotations_by_gene(
     ----------
     gene_product_id : str
         Gene product identifier, typically a UniProtKB accession. Format: 'UniProtKB:...
-    aspect : str | Any
+    aspect : str
         Filter by GO aspect: 'biological_process', 'molecular_function', or 'cellular...
-    taxon_id : int | Any
+    taxon_id : int
         Filter by NCBI taxonomy ID. Example: 9606 (human), 10090 (mouse).
     limit : int
         Maximum number of annotations to return. Default: 25, max: 100.

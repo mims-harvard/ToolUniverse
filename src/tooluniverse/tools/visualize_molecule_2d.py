@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def visualize_molecule_2d(
-    smiles: str,
-    inchi: str,
-    molecule_name: str,
+    smiles: Optional[str] = None,
+    inchi: Optional[str] = None,
+    molecule_name: Optional[str] = None,
     width: Optional[int] = 400,
     height: Optional[int] = 400,
     output_format: Optional[str] = "png",

@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def PDBeSearch_search_by_organism(
     organism: str,
-    query: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    query: Optional[str] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def PDBeSearch_search_by_organism(
     ----------
     organism : str
         Scientific name of organism. Examples: 'Homo sapiens', 'Escherichia coli', 'M...
-    query : str | Any
+    query : str
         Optional keyword query to combine with organism filter. Examples: 'kinase', '...
-    limit : int | Any
+    limit : int
         Maximum results to return (1-50, default 10).
     stream_callback : Callable, optional
         Callback for streaming output

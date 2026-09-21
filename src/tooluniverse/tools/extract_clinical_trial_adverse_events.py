@@ -16,7 +16,7 @@ def extract_clinical_trial_adverse_events(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> Any:
     """
     Extracts detailed adverse event results from clinicaltrials.gov, using their NCT IDs.
 
@@ -37,7 +37,7 @@ def extract_clinical_trial_adverse_events(
 
     Returns
     -------
-    str
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

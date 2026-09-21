@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def Orphanet_get_classification(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_classification",
     orpha_code: Optional[str | int] = None,
     lang: Optional[str] = "en",
     orphacode: Optional[int | str] = None,

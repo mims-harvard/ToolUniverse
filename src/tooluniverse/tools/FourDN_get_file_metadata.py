@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def FourDN_get_file_metadata(
-    operation: str,
     file_accession: str,
+    operation: Optional[str] = "get_file_metadata",
     include_full_metadata: Optional[bool] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

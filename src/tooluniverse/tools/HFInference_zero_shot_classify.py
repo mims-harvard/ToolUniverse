@@ -9,17 +9,17 @@ from ._shared_client import get_shared_client
 
 
 def HFInference_zero_shot_classify(
-    operation: str,
     model_id: str,
     text: str,
     candidate_labels: list[str],
+    operation: Optional[str] = "zero_shot_classify",
     multi_label: Optional[bool] = None,
     wait_for_model: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Classify text against a caller-supplied set of candidate labels using any HuggingFace zero-shot-c...
 
@@ -46,7 +46,7 @@ def HFInference_zero_shot_classify(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

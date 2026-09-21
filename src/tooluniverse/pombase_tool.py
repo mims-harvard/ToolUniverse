@@ -249,7 +249,8 @@ class PomBaseTool(BaseTool):
             "systematic_id": raw.get("uniquename"),
             "gene_name": gene_name,
             "deletion_viability": deletion_viability,
-            "phenotype_count": len(phenotypes),
+            "phenotype_count": len(phenotypes[:50]),
+            "total_phenotypes": len(phenotypes),
             "phenotypes": phenotypes[:50],
         }
 

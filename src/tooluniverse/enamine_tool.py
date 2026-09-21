@@ -103,7 +103,8 @@ class EnamineTool(BaseTool):
                         "query": query,
                         "catalog": catalog,
                         "results": results[:20],
-                        "count": len(results),
+                        "count": len(results[:20]),
+                        "total_results": len(results),
                     },
                     "metadata": {"source": "Enamine"},
                 }
@@ -219,7 +220,8 @@ class EnamineTool(BaseTool):
                         "query_smiles": smiles,
                         "search_type": search_type,
                         "results": results[:20],
-                        "count": len(results),
+                        "count": len(results[:20]),
+                        "total_results": len(results),
                     },
                     "metadata": {"source": "Enamine"},
                 }

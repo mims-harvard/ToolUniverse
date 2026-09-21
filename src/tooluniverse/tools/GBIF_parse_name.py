@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def GBIF_parse_name(
     name: Optional[str] = None,
-    names: Optional[list[str]] = None,
+    names: Optional[list[str] | str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def GBIF_parse_name(
     ----------
     name : str
         A single scientific name string to parse, e.g. 'Panthera leo (Linnaeus, 1758)...
-    names : list[str]
+    names : list[str] | str
         A list of scientific name strings to parse in one call, e.g. ['Homo sapiens L...
     stream_callback : Callable, optional
         Callback for streaming output

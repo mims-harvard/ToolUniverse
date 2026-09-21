@@ -10,11 +10,11 @@ from ._shared_client import get_shared_client
 
 def IDT_analyze_oligo(
     sequence: str,
-    na_concentration_mm: Optional[float | Any] = None,
-    mg_concentration_mm: Optional[float | Any] = None,
-    dntps_concentration_mm: Optional[float | Any] = None,
-    oligo_concentration_um: Optional[float | Any] = None,
-    oligo_type: Optional[str | Any] = None,
+    na_concentration_mm: Optional[float] = None,
+    mg_concentration_mm: Optional[float] = None,
+    dntps_concentration_mm: Optional[float] = None,
+    oligo_concentration_um: Optional[float] = None,
+    oligo_type: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,15 +27,15 @@ def IDT_analyze_oligo(
     ----------
     sequence : str
         Oligonucleotide sequence (5' to 3'). Must contain only A, T, C, G (DNA) or A,...
-    na_concentration_mm : float | Any
+    na_concentration_mm : float
         Sodium (Na+) concentration in millimolar (mM). Affects Tm calculation. Typica...
-    mg_concentration_mm : float | Any
+    mg_concentration_mm : float
         Magnesium (Mg2+) concentration in millimolar (mM). Stabilizes duplexes, raisi...
-    dntps_concentration_mm : float | Any
+    dntps_concentration_mm : float
         dNTPs concentration in millimolar (mM). dNTPs chelate Mg2+, reducing effectiv...
-    oligo_concentration_um : float | Any
+    oligo_concentration_um : float
         Oligo concentration in micromolar (uM). Affects Tm slightly. Default: 0.25 uM.
-    oligo_type : str | Any
+    oligo_type : str
         Type of oligonucleotide: 'DNA' or 'RNA'. Default: 'DNA'.
     stream_callback : Callable, optional
         Callback for streaming output

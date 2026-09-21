@@ -1,7 +1,7 @@
 """
 MetaAnalysis_run
 
-Run a fixed-effects or random-effects meta-analysis from effect sizes.
+Run a fixed-effects or random-effects meta-analysis from a set of effect sizes and standard error...
 """
 
 from typing import Any, Optional, Callable
@@ -9,22 +9,22 @@ from ._shared_client import get_shared_client
 
 
 def MetaAnalysis_run(
-    studies: list[dict],
+    studies: list[Any],
+    method: Optional[str] = None,
     *,
-    method: str | None = None,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Run a meta-analysis from a set of effect sizes and standard errors.
+    Run a fixed-effects or random-effects meta-analysis from a set of effect sizes and standard error...
 
     Parameters
     ----------
-    studies : list[dict]
+    studies : list[Any]
         List of studies, each with name, effect_size, se, and optional n.
-    method : str | None, optional
-        'fixed' or 'random' (default: 'random').
+    method : str
+        Meta-analysis method: 'fixed' for fixed-effects (inverse-variance), 'random' ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,8 +34,11 @@ def MetaAnalysis_run(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
+    # Handle mutable defaults to avoid B006 linting error
+
+    # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v for k, v in {"studies": studies, "method": method}.items() if v is not None
     }

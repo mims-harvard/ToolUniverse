@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def Orphanet_get_phenotypes(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_phenotypes",
     orpha_code: Optional[str | int] = None,
     orpha_id: Optional[str | int] = None,
     orphacode: Optional[int | str] = None,

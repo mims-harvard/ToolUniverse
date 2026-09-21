@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def iNaturalist_get_species_counts(
-    taxon_id: Optional[int | Any] = None,
-    place_id: Optional[int | Any] = None,
-    quality_grade: Optional[str | Any] = None,
-    per_page: Optional[int | Any] = None,
+    taxon_id: Optional[int] = None,
+    place_id: Optional[int] = None,
+    quality_grade: Optional[str] = None,
+    per_page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,13 +23,13 @@ def iNaturalist_get_species_counts(
 
     Parameters
     ----------
-    taxon_id : int | Any
+    taxon_id : int
         Parent taxon ID to get species counts within. Examples: 41479 (Delphinidae - ...
-    place_id : int | Any
+    place_id : int
         Place ID to filter by location. Example: 10211 (Yellowstone).
-    quality_grade : str | Any
+    quality_grade : str
         Quality filter: 'research', 'needs_id', or 'casual'. Default: 'research'.
-    per_page : int | Any
+    per_page : int
         Number of species to return (1-500, default 20).
     stream_callback : Callable, optional
         Callback for streaming output

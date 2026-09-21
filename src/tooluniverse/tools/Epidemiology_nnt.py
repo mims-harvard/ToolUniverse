@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def Epidemiology_nnt(
-    operation: str,
     control_rate: float,
     treatment_rate: float,
+    operation: Optional[str] = "nnt",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

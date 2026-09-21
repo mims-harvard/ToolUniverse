@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def PharmacoDB_list_datasets(
-    operation: str,
+    operation: Optional[str] = "list_datasets",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

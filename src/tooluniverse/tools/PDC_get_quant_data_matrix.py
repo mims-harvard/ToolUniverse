@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def PDC_get_quant_data_matrix(
-    operation: str,
     pdc_study_id: str,
+    operation: Optional[str] = "get_quant_data_matrix",
     data_type: Optional[str] = "log2_ratio",
     max_genes: Optional[int] = 50,
     *,

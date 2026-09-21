@@ -11,11 +11,11 @@ from ._shared_client import get_shared_client
 def OpenMeteo_get_weather_forecast(
     latitude: float,
     longitude: float,
-    current: Optional[str | Any] = None,
-    daily: Optional[str | Any] = None,
-    hourly: Optional[str | Any] = None,
-    forecast_days: Optional[int | Any] = None,
-    timezone: Optional[str | Any] = None,
+    current: Optional[str] = None,
+    daily: Optional[str] = None,
+    hourly: Optional[str] = None,
+    forecast_days: Optional[int] = None,
+    timezone: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,15 +30,15 @@ def OpenMeteo_get_weather_forecast(
         Latitude in decimal degrees (e.g., 51.5 for London, 40.7 for New York, 35.7 f...
     longitude : float
         Longitude in decimal degrees (e.g., -0.12 for London, -74.0 for New York, 139...
-    current : str | Any
+    current : str
         Comma-separated current weather variables (e.g., 'temperature_2m,wind_speed_1...
-    daily : str | Any
+    daily : str
         Comma-separated daily forecast variables (e.g., 'temperature_2m_max,temperatu...
-    hourly : str | Any
+    hourly : str
         Comma-separated hourly variables (e.g., 'temperature_2m,precipitation_probabi...
-    forecast_days : int | Any
+    forecast_days : int
         Number of forecast days (1-16, default 7)
-    timezone : str | Any
+    timezone : str
         Timezone for local time (e.g., 'Europe/London', 'America/New_York', 'Asia/Tok...
     stream_callback : Callable, optional
         Callback for streaming output

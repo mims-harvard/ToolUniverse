@@ -9,15 +9,15 @@ from ._shared_client import get_shared_client
 
 
 def OpenCRAVAT_annotate_variant(
-    chrom: Optional[str | Any] = None,
-    chromosome: Optional[str | Any] = None,
-    pos: Optional[int | Any] = None,
-    position: Optional[int | Any] = None,
-    ref_base: Optional[str | Any] = None,
-    ref: Optional[str | Any] = None,
-    alt_base: Optional[str | Any] = None,
-    alt: Optional[str | Any] = None,
-    annotators: Optional[str | Any] = None,
+    chrom: Optional[str] = None,
+    chromosome: Optional[str] = None,
+    pos: Optional[int] = None,
+    position: Optional[int] = None,
+    ref_base: Optional[str] = None,
+    ref: Optional[str] = None,
+    alt_base: Optional[str] = None,
+    alt: Optional[str] = None,
+    annotators: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,23 +28,23 @@ def OpenCRAVAT_annotate_variant(
 
     Parameters
     ----------
-    chrom : str | Any
+    chrom : str
         Chromosome (e.g., 'chr17', 'chr7', '17'). 'chr' prefix added automatically if...
-    chromosome : str | Any
+    chromosome : str
         Alias for chrom. Chromosome (e.g., 'chr17', 'chr7', '17').
-    pos : int | Any
+    pos : int
         Genomic position (1-based, GRCh38 coordinates)
-    position : int | Any
+    position : int
         Alias for pos. Genomic position (1-based, GRCh38 coordinates).
-    ref_base : str | Any
+    ref_base : str
         Reference allele (e.g., 'C', 'A', 'G', 'T')
-    ref : str | Any
+    ref : str
         Alias for ref_base. Reference allele.
-    alt_base : str | Any
+    alt_base : str
         Alternate allele (e.g., 'T', 'A', 'G', 'C')
-    alt : str | Any
+    alt : str
         Alias for alt_base. Alternate allele.
-    annotators : str | Any
+    annotators : str
         Comma-separated annotator names (e.g., 'clinvar,gnomad3,sift,polyphen2,revel,...
     stream_callback : Callable, optional
         Callback for streaming output

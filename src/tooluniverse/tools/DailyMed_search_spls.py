@@ -16,12 +16,13 @@ def DailyMed_search_spls(
     published_date_gte: Optional[str] = None,
     published_date_eq: Optional[str] = None,
     pagesize: Optional[int] = 100,
+    limit: Optional[int] = None,
     page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> list[Any]:
     """
     Search SPL list using multiple filter conditions (drug_name/ndc/rxcui/setid) and return metadata ...
 
@@ -41,6 +42,8 @@ def DailyMed_search_spls(
         Published date == specified date, format 'YYYY-MM-DD'.
     pagesize : int
         Number of items per page, maximum 100, default 100.
+    limit : int
+        Alias for pagesize.
     page : int
         Page number, starts from 1, default 1.
     stream_callback : Callable, optional
@@ -52,7 +55,7 @@ def DailyMed_search_spls(
 
     Returns
     -------
-    dict[str, Any]
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -67,6 +70,7 @@ def DailyMed_search_spls(
             "published_date_gte": published_date_gte,
             "published_date_eq": published_date_eq,
             "pagesize": pagesize,
+            "limit": limit,
             "page": page,
         }.items()
         if v is not None

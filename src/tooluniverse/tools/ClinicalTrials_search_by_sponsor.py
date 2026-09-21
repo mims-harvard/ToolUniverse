@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def ClinicalTrials_search_by_sponsor(
     sponsor: str,
-    query_cond: Optional[str | Any] = None,
-    filter_status: Optional[str | Any] = None,
-    filter_phase: Optional[str | Any] = None,
+    query_cond: Optional[str] = None,
+    filter_status: Optional[str] = None,
+    filter_phase: Optional[str] = None,
     page_size: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -26,11 +26,11 @@ def ClinicalTrials_search_by_sponsor(
     ----------
     sponsor : str
         Sponsor or lead organization name (e.g., 'Pfizer', 'National Cancer Institute...
-    query_cond : str | Any
+    query_cond : str
         Optional disease/condition filter (e.g., 'cancer', 'cardiovascular disease', ...
-    filter_status : str | Any
+    filter_status : str
         Filter by status: 'RECRUITING', 'COMPLETED', 'ACTIVE_NOT_RECRUITING'. Comma-s...
-    filter_phase : str | Any
+    filter_phase : str
         Filter by phase: 'PHASE1', 'PHASE2', 'PHASE3', 'PHASE4'. Comma-separate multi...
     page_size : int
         Number of results per page (default 10, max 1000).

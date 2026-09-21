@@ -1,7 +1,7 @@
 """
 OpenTargets_get_disease_ids_by_name
 
-Given a disease or phenotype name, find all cross-referenced external IDs (e.g., OMIM, MONDO, MeS...
+Given a disease or phenotype name, find candidate diseases and their cross-referenced external ID...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def OpenTargets_get_disease_ids_by_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Given a disease or phenotype name, find all cross-referenced external IDs (e.g., OMIM, MONDO, MeS...
+    Given a disease or phenotype name, find candidate diseases and their cross-referenced external ID...
 
     Parameters
     ----------

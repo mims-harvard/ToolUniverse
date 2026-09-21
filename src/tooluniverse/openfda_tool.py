@@ -216,6 +216,21 @@ NEVER_KEYWORD_TRIMMED = frozenset(
 )
 
 
+def contributes_content_keywords(field):
+    """Whether a searched field's value may also trim returned section text.
+
+    The keyword filter exists to cut a long label section down to the sentences
+    that match what was searched for. That only makes sense when the search term
+    is content. An identifier, a version stamp or a name block says nothing
+    about which sentences matter, so using it as a content filter can only
+    delete text: fetching a label by ``id`` and asking for its sections used to
+    come back empty for exactly this reason.
+    """
+    if isinstance(field, tuple):
+        return all(contributes_content_keywords(part) for part in field)
+    return str(field).split(".")[-1] not in NEVER_KEYWORD_TRIMMED
+
+
 def extract_nested_fields(
     records, fields, keywords=None, identity_fields=None, sibling_sections=None
 ):
@@ -642,11 +657,7 @@ def search_openfda(
                 continue
 
             # Merge multiple continuous black spaces into one and use one '+'
-            if (
-                keywords_filter
-                and field != "openfda.brand_name"
-                and field != "openfda.generic_name"
-            ):
+            if keywords_filter and contributes_content_keywords(field):
                 keywords_list.extend(value.split())
             if field == "openfda.generic_name":
                 value = value.upper()  # all generic names are in uppercase

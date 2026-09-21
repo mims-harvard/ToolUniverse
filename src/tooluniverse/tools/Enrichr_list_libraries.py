@@ -9,8 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def Enrichr_list_libraries(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "list_libraries",
     category: Optional[str] = None,
+    species: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +26,8 @@ def Enrichr_list_libraries(
         Operation type (fixed: list_libraries)
     category : str
         Optional keyword to filter libraries (e.g., 'GO', 'KEGG', 'Reactome', 'diseas...
+    species : str
+        Organism instance to query: 'human' (default), 'mouse', 'fly' (FlyEnrichr), '...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def Enrichr_list_libraries(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "category": category}.items()
+        for k, v in {
+            "operation": operation,
+            "category": category,
+            "species": species,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

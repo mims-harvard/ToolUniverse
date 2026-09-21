@@ -1,7 +1,7 @@
 """
 ExpressionAtlas_search_experiments
 
-Search all EBI Expression Atlas experiments (baseline + differential) by gene and/or condition. R...
+Search all EBI Expression Atlas experiments (baseline + differential) by condition text and/or a ...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,15 @@ def ExpressionAtlas_search_experiments(
     gene: Optional[str] = None,
     condition: Optional[str] = None,
     species: Optional[str] = None,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Search all EBI Expression Atlas experiments (baseline + differential) by gene and/or condition. R...
+    Search all EBI Expression Atlas experiments (baseline + differential) by condition text and/or a ...
 
     Parameters
     ----------
@@ -28,6 +30,10 @@ def ExpressionAtlas_search_experiments(
         Biological condition or tissue (e.g., 'brain', 'cancer', 'kidney')
     species : str
         Species name (optional, e.g., 'homo sapiens')
+    limit : int
+        Maximum number of experiments to return (default 50, max 500). Compare with t...
+    offset : int
+        Zero-based index of the first experiment to return, for paging through result...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -37,14 +43,20 @@ def ExpressionAtlas_search_experiments(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"gene": gene, "condition": condition, "species": species}.items()
+        for k, v in {
+            "gene": gene,
+            "condition": condition,
+            "species": species,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

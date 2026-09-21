@@ -1,7 +1,7 @@
 """
 CTD_get_disease_chemicals
 
-Get curated disease-chemical associations from CTD. Given a disease name, returns chemicals assoc...
+Get curated disease-chemical associations from CTD. Given a disease name, MONDO CURIE, or MeSH di...
 """
 
 from typing import Any, Optional, Callable
@@ -16,12 +16,12 @@ def CTD_get_disease_chemicals(
     validate: bool = True,
 ) -> Any:
     """
-    Get curated disease-chemical associations from CTD. Given a disease name, returns chemicals assoc...
+    Get curated disease-chemical associations from CTD. Given a disease name, MONDO CURIE, or MeSH di...
 
     Parameters
     ----------
     input_terms : str
-        Disease name, MeSH name, synonym, or MeSH/OMIM ID. Examples: 'Breast Neoplasm...
+        Disease name, MONDO CURIE (e.g. 'MONDO:0007254'), or MeSH disease ID (e.g. 'D...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

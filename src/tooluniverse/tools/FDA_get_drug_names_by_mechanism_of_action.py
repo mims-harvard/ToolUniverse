@@ -24,7 +24,7 @@ def FDA_get_drug_names_by_mechanism_of_action(
     Parameters
     ----------
     mechanism_info : str
-        Information related to the desired mechanism of action.
+        Free-text mechanism-of-action keyword to search for in the drug label's 'Mech...
     indication : str
         The indication or usage of the drug.
     limit : int

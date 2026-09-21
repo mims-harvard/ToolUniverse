@@ -15,14 +15,14 @@ def nhanes_get_dataset_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get information about NHANES (National Health and Nutrition Examination Survey) datasets. NHANES ...
 
     Parameters
     ----------
     year : str
-        NHANES cycle/year (e.g., '2017-2018', '2015-2016', '2013-2014')
+        NHANES cycle. Omit for the two most recent. There is no standalone 2019-2020 ...
     component : str
         Optional component type to filter datasets
     stream_callback : Callable, optional
@@ -34,7 +34,7 @@ def nhanes_get_dataset_info(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

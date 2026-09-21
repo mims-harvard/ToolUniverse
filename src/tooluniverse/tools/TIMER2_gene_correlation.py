@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def TIMER2_gene_correlation(
-    operation: str,
     cancer: str,
     gene1: str,
     gene2: str,
+    operation: Optional[str] = "gene_correlation",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

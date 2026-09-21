@@ -17,7 +17,7 @@ def PharmGKB_search_drugs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search for drugs in PharmGKB by name or PharmGKB ID. Returns drug name, ID, and basic metadata.
 
@@ -40,7 +40,7 @@ def PharmGKB_search_drugs(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

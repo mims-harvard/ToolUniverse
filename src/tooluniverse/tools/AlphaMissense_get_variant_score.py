@@ -1,7 +1,7 @@
 """
 AlphaMissense_get_variant_score
 
-Get AlphaMissense pathogenicity score for a specific missense variant. Input: UniProt ID and vari...
+Classify a specific missense variant with AlphaMissense. Input: UniProt ID and variant (e.g., 'p....
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def AlphaMissense_get_variant_score(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get AlphaMissense pathogenicity score for a specific missense variant. Input: UniProt ID and vari...
+    Classify a specific missense variant with AlphaMissense. Input: UniProt ID and variant (e.g., 'p....
 
     Parameters
     ----------

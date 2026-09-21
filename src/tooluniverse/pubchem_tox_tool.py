@@ -214,7 +214,8 @@ class PubChemToxTool(BaseTool):
             "data": {
                 "cid": cid,
                 "compound_name": title,
-                "toxicity_values_count": len(tox_values),
+                "toxicity_values_count": len(tox_values[:30]),
+                "total_toxicity_values": len(tox_values),
                 "toxicity_values": tox_values[:30],
             },
             "metadata": {
@@ -241,7 +242,8 @@ class PubChemToxTool(BaseTool):
             "data": {
                 "cid": cid,
                 "compound_name": title,
-                "ecotoxicity_values_count": len(eco_values),
+                "ecotoxicity_values_count": len(eco_values[:30]),
+                "total_ecotoxicity_values": len(eco_values),
                 "ecotoxicity_values": eco_values[:30],
             },
             "metadata": {
@@ -269,7 +271,8 @@ class PubChemToxTool(BaseTool):
             "data": {
                 "cid": cid,
                 "compound_name": title,
-                "human_toxicity_values_count": len(human_values),
+                "human_toxicity_values_count": len(human_values[:30]),
+                "total_human_toxicity_values": len(human_values),
                 "human_toxicity_values": human_values[:30],
             },
             "metadata": {
@@ -385,7 +388,8 @@ class PubChemToxTool(BaseTool):
             "data": {
                 "cid": cid,
                 "compound_name": title,
-                "effects_count": len(effects),
+                "effects_count": len(effects[:20]),
+                "total_acute_effects": len(effects),
                 "acute_effects": effects[:20],
             },
             "metadata": {

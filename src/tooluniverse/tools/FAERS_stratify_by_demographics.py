@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def FAERS_stratify_by_demographics(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "stratify_by_demographics",
     drug_name: Optional[str] = None,
     adverse_event: Optional[str] = None,
     stratify_by: Optional[str] = "sex",

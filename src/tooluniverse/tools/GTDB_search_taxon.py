@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def GTDB_search_taxon(
-    operation: str,
     query: str,
+    operation: Optional[str] = "search_taxon",
     limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

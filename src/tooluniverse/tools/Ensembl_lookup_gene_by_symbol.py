@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def Ensembl_lookup_gene_by_symbol(
     symbol: str,
     species: Optional[str] = None,
-    external_db: Optional[str | Any] = None,
+    external_db: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def Ensembl_lookup_gene_by_symbol(
         Gene symbol to look up. Examples: 'TP53', 'BRCA1', 'EGFR', 'BRAF', 'KRAS'.
     species : str
         Species name. Default: 'human'. Examples: 'human', 'mouse', 'rat', 'zebrafish'.
-    external_db : str | Any
+    external_db : str
         Optional: filter by external database. Examples: 'HGNC', 'EntrezGene'.
     stream_callback : Callable, optional
         Callback for streaming output

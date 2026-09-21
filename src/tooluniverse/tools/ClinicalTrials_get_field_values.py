@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ClinicalTrials_get_field_values(
     field: str,
-    query_cond: Optional[str | Any] = None,
+    query_cond: Optional[str] = None,
     page_size: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -24,7 +24,7 @@ def ClinicalTrials_get_field_values(
     ----------
     field : str
         Field name to get value counts for. Common fields: 'OverallStatus' (trial sta...
-    query_cond : str | Any
+    query_cond : str
         NOT SUPPORTED - passing this returns an error. ClinicalTrials.gov's field-val...
     page_size : int
         Maximum number of value rows to return, highest study count first (default 50...

@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ReactomeInteractors_get_protein_interactors(
     accession: str,
-    page_size: Optional[int | Any] = None,
+    page_size: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,8 +23,8 @@ def ReactomeInteractors_get_protein_interactors(
     ----------
     accession : str
         UniProt accession number for the query protein. Examples: 'P04637' (TP53), 'Q...
-    page_size : int | Any
-        Maximum number of interactors to return on this page (default: 20)...
+    page_size : int
+        Maximum number of interactors to return on this page (default: 20). Not cappe...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

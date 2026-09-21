@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def Anaconda_search_packages(
     name: str,
-    type_: Optional[str | Any] = None,
+    type_: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def Anaconda_search_packages(
     ----------
     name : str
         Package name to search for (e.g., 'numpy', 'samtools', 'biopython', 'r-ggplot2')
-    type_ : str | Any
+    type_ : str
         Package type filter: 'conda' (default), 'pypi', or 'standard_python'
     stream_callback : Callable, optional
         Callback for streaming output

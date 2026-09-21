@@ -33,7 +33,7 @@ def ChEMBL_search_drugs(
     offset : int
 
     molecule_chembl_id : str
-        Filter by ChEMBL molecule ID (e.g., "CHEMBL1201581" for adalimumab).
+        Filter by ChEMBL molecule ID (e.g., "CHEMBL1201580" for adalimumab).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
