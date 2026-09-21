@@ -58,7 +58,7 @@ results = tu.run({"name": "EuropePMC_search_articles", "arguments": {
 }})
 
 # Process results
-for article in results:
+for article in results["data"]:
    print(f"Title: {article['title']}")
    print(f"Open Access: {article['open_access']}")
 
@@ -222,7 +222,7 @@ for paper in oa_pdfs[:3]:
 Always verify `open_access: true` before attempting full-text extraction:
 
 ```python
-for article in results:
+for article in results["data"]:
    if article.get("open_access"):
        # Proceed with full-text extraction
        pass
@@ -243,7 +243,7 @@ results = tu.run({"name": "EuropePMC_search_articles", "arguments": {
 }})
 
 # Quickly scan which articles contain your terms
-relevant = [r for r in results if r.get("fulltext_snippets")]
+relevant = [r for r in results["data"] if r.get("fulltext_snippets")]
 print(f"Found {len(relevant)} articles with matching terms in full text")
 ```
 
@@ -333,7 +333,7 @@ terms before enabling it in a distributed or commercial deployment.
 ```python
 results = tu.run({"name": "EuropePMC_search_articles", "arguments": {"query": "...", "limit": 10}})
 
-for r in results:
+for r in results["data"]:
    print(f"Title: {r['title']}")
    print(f"  OA: {r['open_access']}")
    print(f"  XML URL: {r.get('fulltext_xml_url', 'N/A')}")
@@ -440,7 +440,7 @@ results = tu.run({"name": "EuropePMC_search_articles", "arguments": {
 
 # Step 2: Build context for LLM
 context = []
-for r in results:
+for r in results["data"]:
    if "fulltext_snippets" in r:
        context.append({
            "title": r["title"],
