@@ -230,7 +230,9 @@ class GTExEQTLTool:
             # User-facing page is 1-indexed; GTEx API is 0-indexed
             query["page"] = max(0, int(arguments["page"]) - 1)
         if "size" in arguments:
-            query["pageSize"] = int(arguments["size"])
+            # GTEx v2 pages with itemsPerPage; a pageSize parameter is ignored and
+            # the API then returns its default page (250) whatever size was asked.
+            query["itemsPerPage"] = int(arguments["size"])
 
         url = f"{base}/association/singleTissueEqtl?{urlencode(query)}"
         try:
