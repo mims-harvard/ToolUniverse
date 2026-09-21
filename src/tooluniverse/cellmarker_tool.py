@@ -223,7 +223,12 @@ class CellMarkerTool(BaseTool):
             if not gene_symbol:
                 return {
                     "status": "error",
-                    "error": "Missing required parameter: gene_symbol",
+                    # "Missing" invites an agent to resend the same blank value;
+                    # the parameter was present, it was empty.
+                    "error": (
+                        "gene_symbol is required and cannot be blank "
+                        "(e.g., 'CD19', 'PTPRC')."
+                    ),
                 }
             arguments = {**arguments, "gene_symbol": gene_symbol}
 
