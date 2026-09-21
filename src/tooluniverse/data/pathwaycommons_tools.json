@@ -320,7 +320,10 @@
       "type": "object",
       "properties": {
         "genes": {
-          "type": "array",
+          "type": [
+            "array",
+            "string"
+          ],
           "items": {
             "type": "string"
           },
