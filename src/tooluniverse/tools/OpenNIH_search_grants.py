@@ -37,9 +37,9 @@ def OpenNIH_search_grants(
     project_num : str
         Full NIH project number.
     fiscal_year_start : int
-
+        First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed f...
     fiscal_year_end : int
-
+        Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below ...
     activity_code : str
         NIH activity code such as R01 or K23.
     ic : str
@@ -47,9 +47,9 @@ def OpenNIH_search_grants(
     institution : str
         Case-insensitive substring over raw organization names. This can match multip...
     pi_name : str
-
+        Principal investigator name to filter by (2-64 characters).
     limit : int
-
+        Maximum number of rows to return (1-50, default 20).
     offset : int
         Zero-based row offset, capped at 100000. With limit=50 the largest fully retr...
     stream_callback : Callable, optional

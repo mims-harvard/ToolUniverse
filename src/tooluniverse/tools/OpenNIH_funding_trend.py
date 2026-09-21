@@ -25,9 +25,9 @@ def OpenNIH_funding_trend(
     Parameters
     ----------
     fiscal_year_start : int
-
+        First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed f...
     fiscal_year_end : int
-
+        Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below ...
     ic : str
         NIH Institute/Center filter.
     activity_code : str

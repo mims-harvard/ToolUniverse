@@ -25,9 +25,9 @@ def ChEMBL_get_assay_activities(
     assay_chembl_id__exact : str
         ChEMBL assay ID (e.g., 'CHEMBL615117'). To find an assay ID, use ChEMBL_searc...
     limit : int
-
+        Maximum number of results (default: 20, max: 1000)
     offset : int
-
+        Offset for pagination (default: 0)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

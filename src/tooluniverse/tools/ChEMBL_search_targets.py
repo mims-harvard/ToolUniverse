@@ -37,9 +37,9 @@ def ChEMBL_search_targets(
     fields : list[str]
         Optional list of ChEMBL target fields to include in each returned target obje...
     limit : int
-
+        Maximum number of results (default: 20, max: 1000)
     offset : int
-
+        Offset for pagination (default: 0)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

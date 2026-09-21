@@ -32,11 +32,11 @@ def GTEx_get_multi_tissue_eqtls(
     variant_id : str
         Optional: GTEx variant ID to filter specific variant
     dataset_id : str
-
+        GTEx dataset version (default gtex_v8)
     page : int
-
+        Page number (0-based)
     items_per_page : int
-
+        Results per page
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

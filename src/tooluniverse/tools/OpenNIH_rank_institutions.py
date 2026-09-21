@@ -26,17 +26,17 @@ def OpenNIH_rank_institutions(
     Parameters
     ----------
     fiscal_year_start : int
-
+        First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed f...
     fiscal_year_end : int
-
+        Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below ...
     ic : str
-
+        NIH Institute/Center abbreviation, code, or name. Prefer an exact abbreviation.
     sort_by : str
         Ranking objective. Use funding_scale for 'top-funded'; composite is a weighte...
     limit : int
-
+        Maximum number of rows to return (1-50, default 20).
     offset : int
-
+        Zero-based row offset for paging, capped at 100000.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

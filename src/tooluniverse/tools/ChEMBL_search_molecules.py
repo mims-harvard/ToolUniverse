@@ -45,7 +45,7 @@ def ChEMBL_search_molecules(
     offset : int
         Offset for pagination (default: 0)
     format : str
-
+        Response format (json, xml or yaml; default json)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

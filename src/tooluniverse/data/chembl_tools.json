@@ -199,6 +199,7 @@
         },
         "format": {
           "type": "string",
+          "description": "Response format (json, xml or yaml; default json)",
           "enum": [
             "json",
             "xml",
@@ -341,6 +342,7 @@
         },
         "format": {
           "type": "string",
+          "description": "Response format (json, xml or yaml; default json)",
           "enum": [
             "json",
             "xml",
@@ -414,11 +416,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         }
       },
@@ -521,11 +525,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         },
         "fields": {
@@ -641,11 +647,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         },
         "target_chembl_id": {
@@ -711,6 +719,7 @@
         },
         "format": {
           "type": "string",
+          "description": "Response format (json, xml or yaml; default json)",
           "enum": [
             "json",
             "xml",
@@ -782,11 +791,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         }
       },
@@ -887,11 +898,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         }
       },
@@ -984,11 +997,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         }
       },
@@ -1179,6 +1194,7 @@
         },
         "format": {
           "type": "string",
+          "description": "Response format (json, xml or yaml; default json)",
           "enum": [
             "json",
             "xml",
@@ -1229,11 +1245,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         },
         "molecule_chembl_id": {
@@ -1284,11 +1302,13 @@
       "properties": {
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         },
         "drug_chembl_id": {
@@ -1368,11 +1388,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         }
       },
@@ -1423,11 +1445,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         }
       },
@@ -1691,11 +1715,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         }
       },
@@ -1748,11 +1774,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         }
       },
@@ -1803,11 +1831,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         }
       },
@@ -1862,11 +1892,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         }
       },
@@ -1921,11 +1953,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         }
       },
@@ -1980,11 +2014,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         }
       },
@@ -2039,11 +2075,13 @@
         },
         "limit": {
           "type": "integer",
+          "description": "Maximum number of results (default: 20, max: 1000)",
           "default": 20,
           "maximum": 1000
         },
         "offset": {
           "type": "integer",
+          "description": "Offset for pagination (default: 0)",
           "default": 0
         }
       },

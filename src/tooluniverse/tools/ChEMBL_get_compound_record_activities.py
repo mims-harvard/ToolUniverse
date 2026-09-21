@@ -25,9 +25,9 @@ def ChEMBL_get_compound_record_activities(
     compound_record_id__exact : str
         ChEMBL compound record ID. To find a compound record ID, use ChEMBL_get_compo...
     limit : int
-
+        Maximum number of results (default: 20, max: 1000)
     offset : int
-
+        Offset for pagination (default: 0)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
