@@ -21,7 +21,7 @@ def DataAnalysisValidityReviewer(
     Parameters
     ----------
     analysis_section : str
-
+        Full text of the data-analysis / statistical-methods section to review
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

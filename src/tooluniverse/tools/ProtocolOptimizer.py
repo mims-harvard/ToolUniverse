@@ -21,7 +21,7 @@ def ProtocolOptimizer(
     Parameters
     ----------
     initial_protocol : str
-
+        Full text of the initial protocol to review and improve
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

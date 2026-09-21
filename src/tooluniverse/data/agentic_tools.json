@@ -333,7 +333,8 @@
       "type": "object",
       "properties": {
         "paper_title": {
-          "type": "string"
+          "type": "string",
+          "description": "Title of the paper under review"
         },
         "literature_review": {
           "type": "string",
@@ -408,7 +409,8 @@
       "type": "object",
       "properties": {
         "analysis_section": {
-          "type": "string"
+          "type": "string",
+          "description": "Full text of the data-analysis / statistical-methods section to review"
         }
       },
       "required": [
@@ -443,10 +445,12 @@
       "type": "object",
       "properties": {
         "results_section": {
-          "type": "string"
+          "type": "string",
+          "description": "Full text of the results section to review"
         },
         "discussion_section": {
-          "type": "string"
+          "type": "string",
+          "description": "Full text of the discussion section to review"
         }
       },
       "required": [
@@ -482,7 +486,8 @@
       "type": "object",
       "properties": {
         "manuscript_text": {
-          "type": "string"
+          "type": "string",
+          "description": "Full manuscript text to review"
         }
       },
       "required": [
@@ -516,7 +521,8 @@
       "type": "object",
       "properties": {
         "availability_statement": {
-          "type": "string"
+          "type": "string",
+          "description": "Full text of the data / code availability statement to review"
         }
       },
       "required": [
@@ -550,7 +556,8 @@
       "type": "object",
       "properties": {
         "ethics_section": {
-          "type": "string"
+          "type": "string",
+          "description": "Full text of the ethics / compliance section to review"
         }
       },
       "required": [
@@ -625,7 +632,8 @@
       "type": "object",
       "properties": {
         "initial_protocol": {
-          "type": "string"
+          "type": "string",
+          "description": "Full text of the initial protocol to review and improve"
         }
       },
       "required": [

@@ -21,7 +21,7 @@ def ReproducibilityTransparencyReviewer(
     Parameters
     ----------
     availability_statement : str
-
+        Full text of the data / code availability statement to review
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -27,7 +27,7 @@ def intact_get_interactions_by_organism(
     size : int
         Maximum number of results to return (default: 25, max: 100)
     format : str
-
+        Response format. Only 'json' is produced by this endpoint.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

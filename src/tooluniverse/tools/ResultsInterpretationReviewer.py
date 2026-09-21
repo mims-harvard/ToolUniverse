@@ -22,9 +22,9 @@ def ResultsInterpretationReviewer(
     Parameters
     ----------
     results_section : str
-
+        Full text of the results section to review
     discussion_section : str
-
+        Full text of the discussion section to review
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
