@@ -144,6 +144,9 @@
         "pageNumber": 1,
         "pageSize": 25
       }
+    ],
+    "optional_api_keys": [
+      "UMLS_API_KEY"
     ]
   },
   {
@@ -225,6 +228,9 @@
         "pageNumber": 1,
         "pageSize": 25
       }
+    ],
+    "optional_api_keys": [
+      "UMLS_API_KEY"
     ]
   },
   {
@@ -295,6 +301,9 @@
         "pageNumber": 1,
         "pageSize": 25
       }
+    ],
+    "optional_api_keys": [
+      "UMLS_API_KEY"
     ]
   },
   {
@@ -365,6 +374,9 @@
         "pageNumber": 1,
         "pageSize": 25
       }
+    ],
+    "optional_api_keys": [
+      "UMLS_API_KEY"
     ]
   }
 ]

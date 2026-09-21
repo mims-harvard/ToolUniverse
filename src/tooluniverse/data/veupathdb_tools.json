@@ -51,7 +51,7 @@
         "type": "secret",
         "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess",
         "purpose": "List VEuPathDB gene and organism search definitions (pathogen, vector and host genomics).",
-        "without": "VEuPathDB_list_gene_searches and VEuPathDB_list_organism_searches return HTTP 401 without a key; the other VEuPathDB tools work keyless."
+        "without": "VEuPathDB_list_gene_searches and VEuPathDB_list_organism_searches return HTTP 401 without a key. As of 2026-09-21 VEuPathDB_search_genes_by_organism and VEuPathDB_get_gene_record also return HTTP 401, and ToolUniverse does not send a key for those two yet; VEuPathDB_list_record_types works keyless."
       }
     },
     "description": "List all available gene search strategies in VEuPathDB. Returns the search types that can be used to query genes across pathogen, vector, and host genomes. Each search has a URL segment, display name, description, and the parameters it accepts. Common searches include: GenesByTaxonGene (by organism), GenesFromTranscripts (transform transcript results to genes), and single gene lookups. Use this to discover what types of gene queries are available before constructing searches. Requires a free VEUPATHDB_API_KEY (register on VEuPathDB; the endpoint returns HTTP 401 without one), sent in the Authorization header.",
@@ -146,7 +146,7 @@
         "type": "secret",
         "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess",
         "purpose": "List VEuPathDB gene and organism search definitions (pathogen, vector and host genomics).",
-        "without": "VEuPathDB_list_gene_searches and VEuPathDB_list_organism_searches return HTTP 401 without a key; the other VEuPathDB tools work keyless."
+        "without": "VEuPathDB_list_gene_searches and VEuPathDB_list_organism_searches return HTTP 401 without a key. As of 2026-09-21 VEuPathDB_search_genes_by_organism and VEuPathDB_get_gene_record also return HTTP 401, and ToolUniverse does not send a key for those two yet; VEuPathDB_list_record_types works keyless."
       }
     },
     "description": "List all available organism search strategies in VEuPathDB. Returns the search types that can be used to query organisms in the VEuPathDB database, covering 785+ pathogen, vector, and host organism genomes. Useful for discovering what organism queries are available. Common searches include: AllOrganisms (list all), GenomeDataTypes (genome statistics), GeneMetrics (gene counts), and OrganismsByText (text search). Requires a free VEUPATHDB_API_KEY (register on VEuPathDB; the endpoint returns HTTP 401 without one), sent in the Authorization header.",
@@ -216,7 +216,7 @@
   },
   {
     "name": "VEuPathDB_search_genes_by_organism",
-    "description": "Search a VEuPathDB pathogen-genome database for all genes belonging to a given organism/strain, using the EuPathDB WDK GenesByTaxonGene search (POST query). VEuPathDB is a family of sites that share one API: PlasmoDB (malaria, Plasmodium), ToxoDB (Toxoplasma), FungiDB (fungi), VectorBase (disease vectors), CryptoDB, GiardiaDB, MicrosporidiaDB, PiroplasmaDB, TrichDB, TriTrypDB and AmoebaDB. Choose the site with the 'project' parameter and give the full organism name (genus + species + strain). Returns one row per gene with primary key (gene ID), protein product, organism, gene type and genomic location. Example: organism='Plasmodium falciparum 3D7', project='plasmodb' returns the ~5,720 P. falciparum 3D7 genes.",
+    "description": "Search a VEuPathDB pathogen-genome database for all genes belonging to a given organism/strain, using the EuPathDB WDK GenesByTaxonGene search (POST query). VEuPathDB is a family of sites that share one API: PlasmoDB (malaria, Plasmodium), ToxoDB (Toxoplasma), FungiDB (fungi), VectorBase (disease vectors), CryptoDB, GiardiaDB, MicrosporidiaDB, PiroplasmaDB, TrichDB, TriTrypDB and AmoebaDB. Choose the site with the 'project' parameter and give the full organism name (genus + species + strain). Returns one row per gene with primary key (gene ID), protein product, organism, gene type and genomic location. Example: organism='Plasmodium falciparum 3D7', project='plasmodb' returns the ~5,720 P. falciparum 3D7 genes. NOTE (2026-09-21): VEuPathDB now answers this endpoint with HTTP 401 'Valid API Key required'. ToolUniverse does not send a key for this tool yet, so it currently returns that error; request a key at https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -335,7 +335,7 @@
   },
   {
     "name": "VEuPathDB_get_gene_record",
-    "description": "Retrieve the record for a single gene from a VEuPathDB pathogen-genome database by its gene identifier (primary key), via the EuPathDB WDK gene records endpoint (POST query). Pick the member site with the 'project' parameter (plasmodb, toxodb, fungidb, vectorbase, cryptodb, giardiadb, microsporidiadb, piroplasmadb, trichdb, tritrypdb, amoebadb). Returns gene attributes: protein product, organism, gene type, genomic location, chromosome and transcript count. Example: gene_id='PF3D7_0417200', project='plasmodb' returns the bifunctional dihydrofolate reductase-thymidylate synthase (DHFR-TS) gene of Plasmodium falciparum 3D7.",
+    "description": "Retrieve the record for a single gene from a VEuPathDB pathogen-genome database by its gene identifier (primary key), via the EuPathDB WDK gene records endpoint (POST query). Pick the member site with the 'project' parameter (plasmodb, toxodb, fungidb, vectorbase, cryptodb, giardiadb, microsporidiadb, piroplasmadb, trichdb, tritrypdb, amoebadb). Returns gene attributes: protein product, organism, gene type, genomic location, chromosome and transcript count. Example: gene_id='PF3D7_0417200', project='plasmodb' returns the bifunctional dihydrofolate reductase-thymidylate synthase (DHFR-TS) gene of Plasmodium falciparum 3D7. NOTE (2026-09-21): VEuPathDB now answers this endpoint with HTTP 401 'Valid API Key required'. ToolUniverse does not send a key for this tool yet, so it currently returns that error; request a key at https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess.",
     "parameter": {
       "type": "object",
       "properties": {
