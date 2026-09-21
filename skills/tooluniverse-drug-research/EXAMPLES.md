@@ -132,7 +132,7 @@ trials = tu.tools.search_clinical_trials(intervention="metformin", pageSize=100)
 # → Total: 500+ trials
 
 # Get trial details for top results
-nct_ids = [t['NCT ID'] for t in trials['studies'][:10]]
+nct_ids = [t['NCT ID'] for t in trials['data']['studies'][:10]]
 details = tu.tools.get_clinical_trial_conditions_and_interventions(nct_ids=nct_ids)
 
 # Extract outcomes from completed Phase 3
@@ -402,7 +402,7 @@ deaths = tu.tools.FAERS_count_death_related_by_drug(
 # Label for black box warnings
 # FDA labels are keyed by drug name, not CID -- resolve the name first
 _syn = tu.tools.PubChem_get_compound_synonyms_by_CID(cid=2764)
-_name = _syn['data'][0] if isinstance(_syn, dict) and _syn.get('data') else None
+_name = _syn['data']['InformationList']['Information'][0]['Synonym'][0] if isinstance(_syn, dict) and _syn.get('data') else None
 label = tu.tools.FDA_get_drug_label(drug_name=_name)
 
 # Literature on safety
@@ -495,12 +495,13 @@ sotorasib_trials = tu.tools.search_clinical_trials(intervention="sotorasib")
 adagrasib_trials = tu.tools.search_clinical_trials(intervention="adagrasib")
 
 # Get trial details
-nct_ids = [t['NCT ID'] for t in kras_trials['studies'][:20]]
+nct_ids = [t['NCT ID'] for t in kras_trials['data']['studies'][:20]]
 conditions = tu.tools.get_clinical_trial_conditions_and_interventions(nct_ids=nct_ids)
 status = tu.tools.get_clinical_trial_status_and_dates(nct_ids=nct_ids)
 
 # Outcomes from completed trials
-completed = [nct for nct in nct_ids if "Completed" in status[nct]]
+# status['data'] is a list: [{'NCT ID', 'overall_status', 'start_date', ...}]
+completed = [s['NCT ID'] for s in status['data'] if s['overall_status'] == 'COMPLETED']
 outcomes = tu.tools.extract_clinical_trial_outcomes(nct_ids=completed)
 ```
 

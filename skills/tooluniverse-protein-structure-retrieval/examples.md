@@ -76,7 +76,7 @@ with open(f"{pdb_id}.pdb", "w") as f:
 ## Example 4: Find Similar Structures
 
 ```python
-pdb_id = "1ABC"
+pdb_id = "1M17"  # EGFR kinase with erlotinib
 
 # Find structurally similar proteins (RCSB structure-similarity search)
 similar = tu.tools.PDB_search_similar_structures(
@@ -148,7 +148,7 @@ print(f"  Mean pLDDT: {af_structure['data'][0]['globalMetricValue']}")
 ## Example 7: Analyze Binding Sites
 
 ```python
-pdb_id = "1ABC"
+pdb_id = "1M17"  # EGFR kinase with erlotinib
 
 # Get ligands bound in this structure (with chain and residue number)
 ligands = tu.tools.PDBe_get_structure_ligands(pdb_id=pdb_id)

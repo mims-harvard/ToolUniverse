@@ -11,7 +11,7 @@ tu.load_tools()
 cid_result = tu.tools.PubChem_get_CID_by_compound_name(
     compound_name="aspirin"
 )
-cid = cid_result["data"]["cid"]  # 2244
+cid = cid_result["data"]["IdentifierList"]["CID"][0]  # 2244
 
 # Get properties
 props = tu.tools.PubChem_get_compound_properties_by_CID(
@@ -33,11 +33,11 @@ print(f"SMILES: {p['ConnectivitySMILES']}")
 smiles = "CC(=O)Oc1ccccc1C(=O)O"  # Aspirin
 
 cid_result = tu.tools.PubChem_get_CID_by_SMILES(smiles=smiles)
-cid = cid_result["data"]["cid"]
+cid = cid_result["data"]["IdentifierList"]["CID"][0]
 
 # Get compound details
 props = tu.tools.PubChem_get_compound_properties_by_CID(cid=cid)
-print(f"Found: {props['data']['IUPACName']}")
+print(f"Found: {props['data']['PropertyTable']['Properties'][0]['IUPACName']}")
 ```
 
 ## Example 3: Find Similar Compounds
@@ -73,19 +73,22 @@ for sim_cid in similar_cids[:5]:
 cid_result = tu.tools.PubChem_get_CID_by_compound_name(
     compound_name="ibuprofen"
 )
-cid = cid_result["data"]["cid"]
+cid = cid_result["data"]["IdentifierList"]["CID"][0]
 
 # Get bioactivity
 bioactivity = tu.tools.PubChem_get_compound_bioactivity(
     cid=cid
 )
 
-print(f"Active in {bioactivity['data']['active_assay_count']} assays")
+table = bioactivity['data']['Table']
+outcome = table['Columns']['Column'].index('Activity Outcome')
+active = sum(1 for row in table['Row'] if row['Cell'][outcome] == 'Active')
+print(f"Active in {active} of {len(table['Row'])} assay results")
 
 # Get drug label information
 # FDA labels are keyed by drug name, not CID -- resolve the name first
 _syn = tu.tools.PubChem_get_compound_synonyms_by_CID(cid=cid)
-_name = _syn['data'][0] if isinstance(_syn, dict) and _syn.get('data') else None
+_name = _syn['data']['InformationList']['Information'][0]['Synonym'][0] if isinstance(_syn, dict) and _syn.get('data') else None
 drug_info = tu.tools.FDA_get_drug_label(drug_name=_name)
 
 # Get patents
@@ -153,7 +156,7 @@ for cid in cids[:10]:
 # 1. Start with target compound
 cid = tu.tools.PubChem_get_CID_by_compound_name(
     compound_name="erlotinib"
-)["data"]["cid"]
+)["data"]["IdentifierList"]["CID"][0]
 
 # 2. Get properties (check drug-likeness)
 props = tu.tools.PubChem_get_compound_properties_by_CID(
@@ -166,7 +169,10 @@ print(f"MW: {mw}, LogP: {logp}")
 
 # 3. Get bioactivity
 bio = tu.tools.PubChem_get_compound_bioactivity(cid=cid)
-print(f"Active in {bio['data']['active_assay_count']} assays")
+table = bio['data']['Table']
+outcome = table['Columns']['Column'].index('Activity Outcome')
+active = sum(1 for row in table['Row'] if row['Cell'][outcome] == 'Active')
+print(f"Active in {active} of {len(table['Row'])} assay results")
 
 # 4. Find similar active compounds
 # Similarity search takes a SMILES (e.g. from PubChem_get_compound_properties_by_CID) and a 0-1 threshold
@@ -187,6 +193,6 @@ cid = 2244  # Aspirin
 # Get structure image
 image = tu.tools.PubChem_get_compound_2D_image_by_CID(cid=cid)
 
-print(f"Image URL: {image['data']['url']}")
+print(f"PNG image, {len(image['data']['image_base64'])} base64 characters")  # data: image_base64, encoding, format
 # Can be displayed or saved for documentation
 ```
