@@ -91,3 +91,40 @@ def test_mychem_schema_allows_pubchem_as_a_list():
     }
     jsonschema.validate(payload, schema)
     assert "array" in pubchem["type"]
+
+
+def _find(node, key):
+    if isinstance(node, dict):
+        for k, v in node.items():
+            if k == key and isinstance(v, dict):
+                yield v
+            else:
+                yield from _find(v, key)
+    elif isinstance(node, list):
+        for item in node:
+            yield from _find(item, key)
+
+
+@pytest.mark.parametrize(
+    "filename,name",
+    [
+        ("pdbe_compound_tools.json", "PDBe_get_compound_summary"),
+        ("pdbe_graph_tools.json", "PDBe_get_compound_details"),
+    ],
+)
+def test_pdbe_formal_charge_may_be_null(filename, name):
+    schema = _config(filename, name)["return_schema"]
+    declared = list(_find(schema, "formal_charge"))
+    assert declared, "formal_charge is no longer declared; update this test"
+    for prop in declared:
+        assert "null" in prop["type"] and "integer" in prop["type"]
+
+
+def test_epitopes_schema_accepts_the_batch_list_result():
+    """A list of accessions returns one {accession, status, data} entry per accession."""
+    schema = _config("proteins_api_tools.json", "proteins_api_get_epitopes")[
+        "return_schema"
+    ]
+    batch = [{"accession": "P04637", "status": "success", "data": {"features": []}}]
+    jsonschema.validate(batch, schema)
+    jsonschema.validate({"accession": "P04637", "entryName": "P53_HUMAN"}, schema)
