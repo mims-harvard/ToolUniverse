@@ -203,10 +203,10 @@
   "CancerPrognosis_get_survival_data": "44ab4c07d7e861c4399f622bfefcf801",
   "CancerPrognosis_search_studies": "8842456fbc6721e7ec1d4d670de09635",
   "CancerVar_classify_variant": "ae07f2ba2b1fc4a6e726bb1ac85a20b4",
-  "CellMarker_list_cell_types": "1a7686c588659b7625d5d0bf8e9c7e05",
-  "CellMarker_search_by_cell_type": "1868aa2595a05579396a9d149f3eba3b",
-  "CellMarker_search_by_gene": "761882023c8852be4f978cb234ba7299",
-  "CellMarker_search_cancer_markers": "6b431a6099e657896544c8a61c5ace28",
+  "CellMarker_list_cell_types": "6d597bd0b36eb093b3323441d01984b6",
+  "CellMarker_search_by_cell_type": "2bf01303f9ac59200df9fb105a500904",
+  "CellMarker_search_by_gene": "1a6d9ebf06e2e5152cc3a9ec5ba6ee9e",
+  "CellMarker_search_cancer_markers": "fe5d2e73baac08d71cef42cc64a0aa36",
   "CellPainting_get_screen_plates": "3b07a288594c229f4c69e3caa971d352",
   "CellPainting_get_well_data": "06dde082590ea675c9f2e78bd0a853f7",
   "CellPainting_search_screens": "f1e9edd17251ddc650ffd7e7a3ac09db",
@@ -2742,5 +2742,8 @@
   "visualize_molecule_3d": "e5100f88fef8ba65feb73c9e79aad240",
   "visualize_protein_structure_3d": "f61ef19dfd299ac92b3a339d6a429b39",
   "web_api_documentation_search": "5e85c7c25fc10fa8c05fe055ebca5e63",
-  "web_search": "c49904a4571f214bb4c39b73b4e866e8"
+  "web_search": "c49904a4571f214bb4c39b73b4e866e8",
+  "SCP_search_studies": "88a730f00b91972bce512efd84d25446",
+  "SCP_list_studies": "d77b4be40f3fd3ffa0fe7d0b8ab7c70f",
+  "SCP_get_study": "81b8b8b29017e88eb1f0abf340815a71"
 }

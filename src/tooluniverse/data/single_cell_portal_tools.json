@@ -14,7 +14,7 @@
       "properties": {
         "query": {
           "type": "string",
-          "description": "Search terms, e.g. 'lung', 'glioblastoma', 'COVID-19', 'pancreatic islet'. Case-insensitive."
+          "description": "Search terms, e.g. 'lung', 'glioblastoma', 'COVID-19', 'pancreatic islet'. Case-insensitive. The portal drops one- and two-letter tokens, so a query containing one ('B cell', 'NK cell') is searched as a quoted phrase; metadata.effective_query reports what was sent. Quote the query yourself to force a phrase search."
         },
         "limit": {
           "type": [
