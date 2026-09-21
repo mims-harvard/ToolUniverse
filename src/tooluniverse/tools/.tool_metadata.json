@@ -1851,6 +1851,7 @@
   "RxNorm_find_rxcui": "093871a3736c2ba5fed059a153d83869",
   "RxNorm_get_drug_info": "33f62b0398d2170525a30d91654cd9f9",
   "RxNorm_get_drug_names": "0c16e169ce5a9b94f662c84a971876e5",
+  "RxNorm_get_exact_concepts": "d6d4cfbb5ca9539101131cd12eea1d92",
   "RxNorm_get_ndc_properties": "6dda7c85461ea86dae2708d8c3311a6f",
   "RxNorm_get_ndc_status_history": "c97399b06cfd792f4590eae849cc1c2d",
   "RxNorm_get_related_drugs": "c221f2fb1f68f1b88c99cb38f299aeb5",

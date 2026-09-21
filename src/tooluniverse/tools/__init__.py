@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2718 scientific tools.
+Type-safe Python interface to 2719 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -2315,6 +2315,7 @@ from .RxClass_get_drug_classes import RxClass_get_drug_classes
 from .RxNorm_find_rxcui import RxNorm_find_rxcui
 from .RxNorm_get_drug_info import RxNorm_get_drug_info
 from .RxNorm_get_drug_names import RxNorm_get_drug_names
+from .RxNorm_get_exact_concepts import RxNorm_get_exact_concepts
 from .RxNorm_get_ndc_properties import RxNorm_get_ndc_properties
 from .RxNorm_get_ndc_status_history import RxNorm_get_ndc_status_history
 from .RxNorm_get_related_drugs import RxNorm_get_related_drugs
@@ -5135,6 +5136,7 @@ __all__ = [
     "RxNorm_find_rxcui",
     "RxNorm_get_drug_info",
     "RxNorm_get_drug_names",
+    "RxNorm_get_exact_concepts",
     "RxNorm_get_ndc_properties",
     "RxNorm_get_ndc_status_history",
     "RxNorm_get_related_drugs",
