@@ -28,9 +28,9 @@ def ChEMBL_search_compound_structural_alerts(
     alert__alert_name__icontains : str
         Filter by alert name, case-insensitive substring (e.g. 'nitro'). The alert na...
     limit : int
-
+        Maximum number of results (default: 20, max: 1000)
     offset : int
-
+        Offset for pagination (default: 0)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

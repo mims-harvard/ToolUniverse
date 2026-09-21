@@ -26,9 +26,9 @@ def ChEMBL_get_drug_mechanisms(
     Parameters
     ----------
     limit : int
-
+        Maximum number of results (default: 20, max: 1000)
     offset : int
-
+        Offset for pagination (default: 0)
     drug_chembl_id : str
         ChEMBL drug/molecule ID (e.g., "CHEMBL1201580" for adalimumab, "CHEMBL4535757...
     drug_name : str

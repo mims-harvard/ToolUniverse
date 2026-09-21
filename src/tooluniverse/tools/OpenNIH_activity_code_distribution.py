@@ -23,9 +23,9 @@ def OpenNIH_activity_code_distribution(
     Parameters
     ----------
     fiscal_year_start : int
-
+        First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed f...
     fiscal_year_end : int
-
+        Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below ...
     ic : str
         NIH Institute/Center filter.
     stream_callback : Callable, optional

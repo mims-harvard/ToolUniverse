@@ -33,7 +33,7 @@ def GTEx_calculate_eqtl(
     tissue_site_detail_id : str
         Required: Tissue ID (e.g. 'Whole_Blood')
     dataset_id : str
-
+        GTEx dataset version (default gtex_v8)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

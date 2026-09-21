@@ -35,11 +35,11 @@ def GTEx_get_single_tissue_eqtls(
     tissue_site_detail_id : list[str]
         Optional: Tissue ID(s) to filter. At least one of gencode_id, variant_id, or ...
     dataset_id : str
-
+        GTEx dataset version (default gtex_v8)
     page : int
-
+        Page number (0-based)
     items_per_page : int
-
+        Results per page
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

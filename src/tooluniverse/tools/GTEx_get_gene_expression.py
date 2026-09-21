@@ -35,11 +35,11 @@ def GTEx_get_gene_expression(
     attribute_subset : str
         Optional: Subset by donor sex or age bracket
     dataset_id : str
-
+        GTEx dataset version (default gtex_v8)
     page : int
-
+        Page number (0-based)
     items_per_page : int
-
+        Results per page
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

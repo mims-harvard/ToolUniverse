@@ -32,11 +32,11 @@ def GTEx_get_top_expressed_genes(
     filter_mt_genes : bool
         Exclude mitochondrial genes from results
     dataset_id : str
-
+        GTEx dataset version (default gtex_v8)
     page : int
-
+        Page number (0-based)
     items_per_page : int
-
+        Results per page
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -24,7 +24,7 @@ def ChEMBL_get_target(
     target_chembl_id : str
         ChEMBL target ID (e.g., 'CHEMBL2074'). To find a target ID, use ChEMBL_search...
     format : str
-
+        Response format (json, xml or yaml; default json)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

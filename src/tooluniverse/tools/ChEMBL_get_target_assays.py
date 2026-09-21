@@ -26,9 +26,9 @@ def ChEMBL_get_target_assays(
     target_chembl_id__exact : str
         ChEMBL target ID (e.g., 'CHEMBL2074'). To find a target ID, use ChEMBL_search...
     limit : int
-
+        Maximum number of results (default: 20, max: 1000)
     offset : int
-
+        Offset for pagination (default: 0)
     fields : list[str]
         Optional list of assay fields to include in each returned assay object (proje...
     stream_callback : Callable, optional

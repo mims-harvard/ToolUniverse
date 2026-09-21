@@ -29,9 +29,9 @@ def ChEMBL_search_drugs(
     max_phase : int
         Filter by maximum development phase (0-4)
     limit : int
-
+        Maximum number of results (default: 20, max: 1000)
     offset : int
-
+        Offset for pagination (default: 0)
     molecule_chembl_id : str
         Filter by ChEMBL molecule ID (e.g., "CHEMBL1201580" for adalimumab).
     stream_callback : Callable, optional

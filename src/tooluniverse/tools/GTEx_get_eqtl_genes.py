@@ -31,9 +31,9 @@ def GTEx_get_eqtl_genes(
     dataset_id : str
         GTEx dataset version
     page : int
-
+        Page number (0-based)
     items_per_page : int
-
+        Results per page
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
