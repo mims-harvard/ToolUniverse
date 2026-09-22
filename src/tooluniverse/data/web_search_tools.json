@@ -2,7 +2,7 @@
   {
     "type": "WebSearchTool",
     "name": "web_search",
-    "description": "General web search using DDGS (Dux Distributed Global Search) supporting multiple search engines including Google, Bing, Brave, Yahoo, and DuckDuckGo. No API keys required. Parallel Search MCP and SerpBase are opt-in; selecting either sends the query to that hosted third-party service, so do not submit sensitive or patient-identifying information. SerpBase additionally requires SERPBASE_API_KEY and returns real Google SERP results (billed per request), useful when DDGS's Google backend is unavailable or rate-limited.",
+    "description": "General web search using DDGS (Dux Distributed Global Search) supporting multiple search engines including Google, Bing, Brave, Yahoo, and DuckDuckGo. No API keys required. Parallel Search MCP, SerpBase, and Firecrawl Search are opt-in; selecting any of them sends the query to that hosted third-party service, so do not submit sensitive or patient-identifying information. SerpBase additionally requires SERPBASE_API_KEY and returns real Google SERP results (billed per request), useful when DDGS's Google backend is unavailable or rate-limited.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -30,11 +30,12 @@
         },
         "backend": {
           "type": "string",
-          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp; that backend does not apply ToolUniverse region or safesearch controls. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results; that backend applies region but not safesearch.",
+          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp; that backend does not apply ToolUniverse region or safesearch controls. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results; that backend applies region but not safesearch. Selecting 'firecrawl' sends the query to https://api.firecrawl.dev/v2/search (FIRECRAWL_API_KEY optional); that backend applies region as a country code only and safesearch as a two-state filter ('on' and 'moderate' filter, 'off' does not).",
           "enum": [
             "auto",
             "parallel",
             "serpbase",
+            "firecrawl",
             "google",
             "bing",
             "brave",
@@ -45,7 +46,7 @@
         },
         "region": {
           "type": "string",
-          "description": "Search region/locale for DDGS backends, and country/language for the SerpBase backend (split on the hyphen into gl/hl). Parallel does not support this control; only the default value is accepted with backend='parallel'.",
+          "description": "Search region/locale for DDGS backends, and country/language for the SerpBase backend (split on the hyphen into gl/hl). Firecrawl uses the country half only as an ISO code ('uk' maps to 'GB', 'ja' to 'JP'); the language half is not applied. Parallel does not support this control; only the default value is accepted with backend='parallel'.",
           "enum": [
             "us-en",
             "cn-zh",
@@ -58,7 +59,7 @@
         },
         "safesearch": {
           "type": "string",
-          "description": "Safe search level for DDGS backends. Parallel and SerpBase do not support this control; only the default value is accepted with those backends.",
+          "description": "Safe search level for DDGS backends. Parallel and SerpBase do not support this control; only the default value is accepted with those backends. Firecrawl has a two-state filter: 'on' and 'moderate' both enable it, 'off' leaves it unset.",
           "enum": [
             "on",
             "moderate",
@@ -71,7 +72,7 @@
         "query"
       ]
     },
-    "optional_api_keys": ["SERPBASE_API_KEY"],
+    "optional_api_keys": ["SERPBASE_API_KEY", "FIRECRAWL_API_KEY"],
     "api_key_info": {
       "SERPBASE_API_KEY": {
         "domain": "Other",
@@ -79,6 +80,13 @@
         "register_url": "https://serpbase.dev",
         "purpose": "Query the backend='serpbase' option for real Google SERP results (https://api.serpbase.dev), billed per request.",
         "without": "web_search still works via DDGS/Parallel/DuckDuckGo-HTML/Wikipedia; backend='serpbase' is blocked without it."
+      },
+      "FIRECRAWL_API_KEY": {
+        "domain": "Other",
+        "type": "secret",
+        "register_url": "https://www.firecrawl.dev/app/api-keys",
+        "purpose": "Authenticate the backend='firecrawl' option (Firecrawl Search, https://api.firecrawl.dev/v2/search). Searches are billed against the account's credits (a free key includes 1,000) and use the account's rate limits instead of the keyless cap.",
+        "without": "backend='firecrawl' still works keyless within Firecrawl's per-IP daily request and credit cap (HTTP 429 past it, then the normal DDGS fallback). The cap is per IP, so users behind one shared server or NAT share it. The default web_search chain is unaffected."
       }
     },
     "return_schema": {
@@ -192,7 +200,7 @@
   {
     "type": "WebAPIDocumentationSearchTool",
     "name": "web_api_documentation_search",
-    "description": "Specialized web search for API documentation, Python packages, and technical resources using DDGS with multiple search engines. Parallel Search MCP is opt-in; selecting it sends the query to Parallel's hosted third-party service, so do not submit sensitive information.",
+    "description": "Specialized web search for API documentation, Python packages, and technical resources using DDGS with multiple search engines. Parallel Search MCP, SerpBase, and Firecrawl Search are opt-in; selecting any of them sends the query to that hosted third-party service, so do not submit sensitive information.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -219,11 +227,12 @@
         },
         "backend": {
           "type": "string",
-          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results.",
+          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results. Selecting 'firecrawl' sends the query to https://api.firecrawl.dev/v2/search (FIRECRAWL_API_KEY optional).",
           "enum": [
             "auto",
             "parallel",
             "serpbase",
+            "firecrawl",
             "google",
             "bing",
             "brave",

@@ -10,7 +10,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from tooluniverse import web_search_tool
+from tooluniverse import credential_context, web_search_tool
 from tooluniverse.mcp_client_tool import BaseMCPClient
 from tooluniverse.web_search_tool import (
     WebAPIDocumentationSearchTool,
@@ -812,3 +812,693 @@ def test_auto_backend_does_not_call_serpbase(monkeypatch):
     assert result["data"]["backend_used"] == "duckduckgo"
     assert "serpbase" not in result["data"]["attempted_backends"]
     assert "provider_notice" not in result["data"]
+
+
+# Fixture shape from a live keyless call to https://api.firecrawl.dev/v2/search
+# on 2026-09-21 (success envelope, `data.web` items, `creditsUsed`, `id`).
+# The `id` below is a placeholder, not a real request id.
+_FIRECRAWL_LIVE_RESPONSE = {
+    "success": True,
+    "data": {
+        "web": [
+            {
+                "url": "https://docs.python.org/3/library/asyncio-eventloop.html",
+                "title": "Event Loop — Python 3 documentation",
+                "description": "The event loop is the core of every asyncio application.",
+                "position": 1,
+            }
+        ]
+    },
+    "creditsUsed": 2,
+    "id": "00000000-0000-7000-8000-000000000000",
+}
+
+
+class _FakeFirecrawlResponse:
+    def __init__(self, payload, status_code=200, reason=""):
+        self._payload = payload
+        self.status_code = status_code
+        self.reason = reason
+
+    def json(self):
+        return self._payload
+
+
+@pytest.mark.unit
+def test_firecrawl_search_works_without_api_key(monkeypatch):
+    monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["url"] = url
+        captured["json"] = json
+        captured["headers"] = headers
+        captured["timeout"] = timeout
+        return _FakeFirecrawlResponse(_FIRECRAWL_LIVE_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    results = _new_tool()._search_with_firecrawl(
+        query="python asyncio event loop", max_results=5
+    )
+
+    assert captured["url"] == "https://api.firecrawl.dev/v2/search"
+    assert captured["json"] == {
+        "query": "python asyncio event loop",
+        "limit": 5,
+        "sources": ["web"],
+        "country": "US",
+        "highlights": False,
+        "safe": True,
+    }
+    assert captured["headers"] == {}
+    assert captured["timeout"] == 30
+    assert results == [
+        {
+            "title": "Event Loop — Python 3 documentation",
+            "url": "https://docs.python.org/3/library/asyncio-eventloop.html",
+            "snippet": "The event loop is the core of every asyncio application.",
+            "rank": 1,
+        }
+    ]
+
+
+@pytest.mark.unit
+def test_firecrawl_search_sends_bearer_header_when_key_is_set(monkeypatch):
+    monkeypatch.setenv("FIRECRAWL_API_KEY", "fc-test-key")
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["headers"] = headers
+        return _FakeFirecrawlResponse(_FIRECRAWL_LIVE_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    _new_tool()._search_with_firecrawl(query="x", max_results=1)
+
+    assert captured["headers"] == {"Authorization": "Bearer fc-test-key"}
+
+
+@pytest.mark.unit
+def test_firecrawl_search_strips_whitespace_from_api_key(monkeypatch):
+    monkeypatch.setenv("FIRECRAWL_API_KEY", "  fc-test-key\n")
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["headers"] = headers
+        return _FakeFirecrawlResponse(_FIRECRAWL_LIVE_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    _new_tool()._search_with_firecrawl(query="x", max_results=1)
+
+    assert captured["headers"]["Authorization"] == "Bearer fc-test-key"
+
+
+@pytest.mark.unit
+def test_firecrawl_search_prefers_the_request_scoped_key(monkeypatch):
+    """A hosted process serves each request with that request's own key."""
+    monkeypatch.setenv("FIRECRAWL_API_KEY", "fc-operator-key")
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["headers"] = headers
+        return _FakeFirecrawlResponse(_FIRECRAWL_LIVE_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+    tool = _new_tool()
+
+    with credential_context({"FIRECRAWL_API_KEY": "fc-request-key"}):
+        tool._search_with_firecrawl(query="x", max_results=1)
+
+    assert captured["headers"] == {"Authorization": "Bearer fc-request-key"}
+
+
+@pytest.mark.unit
+def test_firecrawl_search_in_a_scope_without_the_key_stays_keyless(monkeypatch):
+    """Fail closed: a request that carries no Firecrawl key must not spend the
+    operator's environment key. Keyless is the documented tier, so the search
+    still runs, just without the Authorization header."""
+    monkeypatch.setenv("FIRECRAWL_API_KEY", "fc-operator-key")
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["headers"] = headers
+        return _FakeFirecrawlResponse(_FIRECRAWL_LIVE_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+    tool = _new_tool()
+
+    with credential_context({"SOME_OTHER_KEY": "unrelated"}):
+        results = tool._search_with_firecrawl(query="x", max_results=1)
+
+    assert captured["headers"] == {}
+    assert len(results) == 1
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("region", "expected_country"),
+    [
+        ("us-en", "US"),
+        ("uk-en", "GB"),
+        ("de-de", "DE"),
+        ("cn-zh", "CN"),
+        ("fr-fr", "FR"),
+        ("ja-jp", "JP"),
+        ("", "US"),
+    ],
+)
+def test_firecrawl_search_maps_region_country_half_to_iso_code(
+    monkeypatch, region, expected_country
+):
+    monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["json"] = json
+        return _FakeFirecrawlResponse({"success": True, "data": {"web": []}})
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    _new_tool()._search_with_firecrawl(query="x", max_results=1, region=region)
+
+    assert captured["json"]["country"] == expected_country
+    # The language half has no Firecrawl equivalent and must not leak through.
+    assert "location" not in captured["json"]
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("safesearch", "expected_safe"),
+    [("on", True), ("moderate", True), ("off", None)],
+)
+def test_firecrawl_search_maps_safesearch_to_two_state_filter(
+    monkeypatch, safesearch, expected_safe
+):
+    monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["json"] = json
+        return _FakeFirecrawlResponse({"success": True, "data": {"web": []}})
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    _new_tool()._search_with_firecrawl(query="x", max_results=1, safesearch=safesearch)
+
+    assert captured["json"].get("safe") == expected_safe
+
+
+@pytest.mark.unit
+def test_firecrawl_search_rate_limit_keyless_points_at_ip_cap(monkeypatch):
+    monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+
+    def fake_post(*args, **kwargs):
+        return _FakeFirecrawlResponse(
+            {"success": False, "error": "Rate limit exceeded"}, status_code=429
+        )
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    with pytest.raises(RuntimeError) as excinfo:
+        _new_tool()._search_with_firecrawl(query="x", max_results=1)
+
+    message = str(excinfo.value)
+    assert "429" in message
+    assert "Rate limit exceeded" in message
+    assert "per IP" in message
+    assert "FIRECRAWL_API_KEY" in message
+
+
+@pytest.mark.unit
+def test_firecrawl_search_surfaces_402_out_of_credits(monkeypatch):
+    monkeypatch.setenv("FIRECRAWL_API_KEY", "fc-test-key")
+
+    def fake_post(*args, **kwargs):
+        return _FakeFirecrawlResponse(
+            {"success": False, "error": "Payment Required: Insufficient credits"},
+            status_code=402,
+        )
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    with pytest.raises(RuntimeError) as excinfo:
+        _new_tool()._search_with_firecrawl(query="x", max_results=1)
+
+    message = str(excinfo.value)
+    assert "402" in message
+    assert "Insufficient credits" in message
+    assert "unset FIRECRAWL_API_KEY" not in message
+
+
+@pytest.mark.unit
+def test_firecrawl_search_rate_limit_with_key_does_not_blame_keyless_cap(
+    monkeypatch,
+):
+    monkeypatch.setenv("FIRECRAWL_API_KEY", "fc-test-key")
+
+    def fake_post(*args, **kwargs):
+        return _FakeFirecrawlResponse(
+            {"success": False, "error": "Rate limit exceeded"}, status_code=429
+        )
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    with pytest.raises(RuntimeError) as excinfo:
+        _new_tool()._search_with_firecrawl(query="x", max_results=1)
+
+    message = str(excinfo.value)
+    assert "429" in message
+    assert "per IP" not in message
+    assert "set FIRECRAWL_API_KEY" not in message
+
+
+@pytest.mark.unit
+def test_firecrawl_search_raises_on_http_error_status(monkeypatch):
+    """Firecrawl reports auth failures via the status code (401 + success:false),
+    confirmed live on 2026-09-21. The body's error text must survive into the
+    RuntimeError so provider_errors shows the real reason."""
+    monkeypatch.setenv("FIRECRAWL_API_KEY", "fc-wrong")
+
+    def fake_post(*args, **kwargs):
+        return _FakeFirecrawlResponse(
+            {"success": False, "error": "Unauthorized: Invalid token"},
+            status_code=401,
+        )
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    with pytest.raises(RuntimeError, match="401.*Unauthorized: Invalid token"):
+        _new_tool()._search_with_firecrawl(query="x", max_results=1)
+
+
+@pytest.mark.unit
+def test_firecrawl_search_surfaces_validation_details_on_400(monkeypatch):
+    monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+
+    def fake_post(*args, **kwargs):
+        return _FakeFirecrawlResponse(
+            {
+                "success": False,
+                "error": "Invalid request body",
+                "details": [{"code": "unrecognized_keys", "keys": ["foo"]}],
+            },
+            status_code=400,
+        )
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    with pytest.raises(
+        RuntimeError, match="400.*Invalid request body.*unrecognized_keys"
+    ):
+        _new_tool()._search_with_firecrawl(query="x", max_results=1)
+
+
+@pytest.mark.unit
+def test_firecrawl_search_raises_on_non_json_error_body(monkeypatch):
+    monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+
+    class _HtmlErrorResponse(_FakeFirecrawlResponse):
+        def json(self):
+            raise ValueError("not json")
+
+    monkeypatch.setattr(
+        web_search_tool.requests,
+        "post",
+        lambda *a, **k: _HtmlErrorResponse(None, status_code=502, reason="Bad Gateway"),
+    )
+
+    with pytest.raises(RuntimeError, match="502.*Bad Gateway"):
+        _new_tool()._search_with_firecrawl(query="x", max_results=1)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {"success": False, "error": "something went wrong"},
+        {"success": True},
+        {"success": True, "data": {"web": {}}},
+        {"success": True, "data": []},
+        "not a dict",
+    ],
+)
+def test_firecrawl_search_rejects_error_or_malformed_bodies(monkeypatch, payload):
+    monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+
+    def fake_post(*args, **kwargs):
+        return _FakeFirecrawlResponse(payload)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    with pytest.raises(RuntimeError):
+        _new_tool()._search_with_firecrawl(query="x", max_results=1)
+
+
+@pytest.mark.unit
+def test_firecrawl_search_skips_malformed_items_and_reassigns_ranks(monkeypatch):
+    monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+
+    def fake_post(*args, **kwargs):
+        return _FakeFirecrawlResponse(
+            {
+                "success": True,
+                "data": {
+                    "web": [
+                        None,
+                        {},
+                        {"url": ""},
+                        {"title": None, "url": "https://example.com/a", "position": 7},
+                        {"title": 12, "url": "https://example.com/b", "description": 3},
+                    ]
+                },
+            }
+        )
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    results = _new_tool()._search_with_firecrawl(query="x", max_results=10)
+
+    assert results == [
+        {"title": "", "url": "https://example.com/a", "snippet": "", "rank": 1},
+        {"title": "", "url": "https://example.com/b", "snippet": "", "rank": 2},
+    ]
+
+
+@pytest.mark.unit
+def test_firecrawl_search_truncates_to_max_results(monkeypatch):
+    monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+
+    def fake_post(*args, **kwargs):
+        return _FakeFirecrawlResponse(
+            {
+                "success": True,
+                "data": {
+                    "web": [
+                        {"title": f"R{i}", "url": f"https://example.com/{i}"}
+                        for i in range(10)
+                    ]
+                },
+            }
+        )
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    results = _new_tool()._search_with_firecrawl(query="x", max_results=3)
+
+    assert len(results) == 3
+
+
+@pytest.mark.unit
+def test_firecrawl_backend_reports_success(monkeypatch):
+    tool = _new_tool()
+    monkeypatch.setattr(
+        tool,
+        "_search_with_firecrawl",
+        lambda **kwargs: [
+            {
+                "title": "Firecrawl result",
+                "url": "https://example.com",
+                "snippet": "excerpt",
+                "rank": 1,
+            }
+        ],
+    )
+
+    result = tool.run(
+        {
+            "query": "test query",
+            "backend": "firecrawl",
+            "region": "us-en",
+            "safesearch": "moderate",
+        }
+    )
+
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "firecrawl"
+    assert result["data"]["attempted_backends"] == ["firecrawl"]
+    assert "api.firecrawl.dev" in result["data"]["provider_notice"]
+    assert "patient-identifying" in result["data"]["provider_notice"]
+
+
+@pytest.mark.unit
+def test_firecrawl_backend_receives_clamped_max_results(monkeypatch):
+    tool = _new_tool()
+    captured = {}
+
+    def fake_firecrawl(**kwargs):
+        captured.update(kwargs)
+        return [{"title": "R", "url": "https://example.com", "snippet": "", "rank": 1}]
+
+    monkeypatch.setattr(tool, "_search_with_firecrawl", fake_firecrawl)
+
+    result = tool.run(
+        {"query": "test query", "backend": "firecrawl", "max_results": 80}
+    )
+
+    assert result["status"] == "success"
+    assert captured["max_results"] == 50
+
+
+@pytest.mark.unit
+def test_firecrawl_backend_accepts_non_default_region_and_safesearch(monkeypatch):
+    """Unlike Parallel and SerpBase, Firecrawl takes both controls, so neither
+    is rejected up front; they are forwarded to the provider method."""
+    tool = _new_tool()
+    captured = {}
+
+    def fake_firecrawl(**kwargs):
+        captured.update(kwargs)
+        return [{"title": "R", "url": "https://example.com", "snippet": "", "rank": 1}]
+
+    monkeypatch.setattr(tool, "_search_with_firecrawl", fake_firecrawl)
+
+    result = tool.run(
+        {
+            "query": "test query",
+            "backend": "firecrawl",
+            "region": "uk-en",
+            "safesearch": "on",
+        }
+    )
+
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "firecrawl"
+    assert captured["region"] == "uk-en"
+    assert captured["safesearch"] == "on"
+
+
+@pytest.mark.unit
+def test_firecrawl_run_forwards_controls_to_request_body(monkeypatch):
+    """End-to-end through run(): only requests.post is faked, so the clamp,
+    region mapping, and safesearch handling are exercised together."""
+    monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["json"] = json
+        return _FakeFirecrawlResponse(_FIRECRAWL_LIVE_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    result = _new_tool().run(
+        {
+            "query": "x",
+            "backend": "firecrawl",
+            "region": "uk-en",
+            "safesearch": "off",
+            "max_results": 80,
+        }
+    )
+
+    body = captured["json"]
+    assert body["country"] == "GB"
+    assert body["limit"] == 50
+    assert "safe" not in body
+    assert body["highlights"] is False
+    assert body["sources"] == ["web"]
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "firecrawl"
+
+
+@pytest.mark.unit
+def test_firecrawl_run_empty_results_fall_back_without_provider_error(monkeypatch):
+    monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+    tool = _new_tool()
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        assert url == "https://api.firecrawl.dev/v2/search"
+        return _FakeFirecrawlResponse({"success": True, "data": {"web": []}})
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+    monkeypatch.setattr(
+        tool,
+        "_search_with_ddgs",
+        lambda **kwargs: [
+            {
+                "title": "Fallback result",
+                "url": "https://fallback.example",
+                "snippet": "from DDGS",
+                "rank": 1,
+            }
+        ],
+    )
+
+    result = tool.run({"query": "x", "backend": "firecrawl"})
+
+    data = result["data"]
+    assert result["status"] == "success"
+    assert data["attempted_backends"][0] == "firecrawl"
+    assert data["backend_used"] != "firecrawl"
+    assert "firecrawl" not in data.get("provider_errors", {})
+    assert data["provider_notice"] == web_search_tool.FIRECRAWL_PROVIDER_NOTICE
+
+
+@pytest.mark.unit
+def test_firecrawl_backend_failure_falls_back_to_auto(monkeypatch):
+    tool = _new_tool()
+
+    def firecrawl_fail(**kwargs):
+        raise RuntimeError("firecrawl failed")
+
+    monkeypatch.setattr(tool, "_search_with_firecrawl", firecrawl_fail)
+    monkeypatch.setattr(
+        tool,
+        "_search_with_ddgs",
+        lambda **kwargs: [
+            {
+                "title": "Fallback result",
+                "url": "https://fallback.example",
+                "snippet": "from DDGS",
+                "rank": 1,
+            }
+        ],
+    )
+
+    result = tool.run({"query": "test query", "backend": "firecrawl"})
+
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "auto"
+    assert result["data"]["attempted_backends"] == ["firecrawl", "auto"]
+    assert result["data"]["provider_errors"]["firecrawl"] == "firecrawl failed"
+    assert "api.firecrawl.dev" in result["data"]["provider_notice"]
+
+
+@pytest.mark.unit
+def test_firecrawl_all_provider_failure_keeps_disclosure(monkeypatch):
+    tool = _new_tool()
+
+    def always_fail(**kwargs):
+        raise RuntimeError("simulated provider failure")
+
+    monkeypatch.setattr(tool, "_search_with_firecrawl", always_fail)
+    monkeypatch.setattr(tool, "_search_with_ddgs", always_fail)
+    monkeypatch.setattr(tool, "_search_with_duckduckgo_html", always_fail)
+    monkeypatch.setattr(tool, "_search_with_wikipedia_api", always_fail)
+
+    result = tool.run({"query": "test query", "backend": "firecrawl"})
+
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "none"
+    assert result["data"]["all_providers_failed"] is True
+    assert result["data"]["attempted_backends"][0] == "firecrawl"
+    assert "api.firecrawl.dev" in result["data"]["provider_notice"]
+
+
+@pytest.mark.unit
+def test_auto_backend_does_not_call_firecrawl(monkeypatch):
+    tool = _new_tool()
+
+    def unexpected_call(**kwargs):
+        raise AssertionError("Firecrawl must remain opt-in")
+
+    monkeypatch.setattr(tool, "_search_with_firecrawl", unexpected_call)
+    monkeypatch.setattr(
+        tool,
+        "_search_with_ddgs",
+        lambda **kwargs: [
+            {
+                "title": "Default result",
+                "url": "https://default.example",
+                "snippet": "from default chain",
+                "rank": 1,
+            }
+        ],
+    )
+
+    result = tool.run({"query": "test query", "backend": "auto"})
+
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "duckduckgo"
+    assert "firecrawl" not in result["data"]["attempted_backends"]
+    assert "provider_notice" not in result["data"]
+
+
+@pytest.mark.unit
+def test_api_documentation_search_forwards_firecrawl_backend(monkeypatch):
+    tool = _new_api_docs_tool()
+    captured = {}
+
+    def fake_search(**kwargs):
+        captured.update(kwargs)
+        return (
+            [
+                {
+                    "title": "FastMCP Client",
+                    "url": "https://gofastmcp.com/clients/client",
+                    "snippet": "Client documentation",
+                    "rank": 1,
+                }
+            ],
+            "firecrawl",
+            ["firecrawl"],
+            None,
+            {},
+        )
+
+    monkeypatch.setattr(tool, "_search_with_fallback", fake_search)
+    monkeypatch.setattr(web_search_tool.time, "sleep", lambda _: None)
+
+    result = tool.run(
+        {"query": "FastMCP Client", "focus": "api_docs", "backend": "firecrawl"}
+    )
+
+    assert captured["backend"] == "firecrawl"
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "firecrawl"
+    assert "api.firecrawl.dev" in result["data"]["provider_notice"]
+
+
+@pytest.mark.integration
+@pytest.mark.network
+def test_firecrawl_backend_live_keyless_call(monkeypatch):
+    """Opt-in live check against the real endpoint (excluded by default via the
+    `network` marker). Always runs keyless so a developer's real key is never
+    spent by this test; the authenticated path is covered by unit tests.
+
+    Skips whenever Firecrawl did not serve the search, whatever the reason:
+    the keyless per-IP cap (429), an exhausted account (402), a blocked or
+    shared runner IP, or a provider outage. The backend falls back to DDGS in
+    all of those cases, which is correct behaviour and not something this test
+    should report as a failure."""
+    monkeypatch.delenv("FIRECRAWL_API_KEY", raising=False)
+    tool = _new_tool()
+
+    result = tool.run(
+        {"query": "python asyncio event loop", "backend": "firecrawl", "max_results": 3}
+    )
+
+    data = result["data"]
+    if data["backend_used"] != "firecrawl":
+        reason = data.get("provider_errors", {}).get(
+            "firecrawl", "no provider error reported"
+        )
+        pytest.skip(f"Firecrawl did not serve this search: {reason}")
+
+    assert result["status"] == "success"
+    assert 1 <= data["total_results"] <= 3
+    first = data["results"][0]
+    assert first["url"].startswith("http")
+    assert first["rank"] == 1
+    assert "api.firecrawl.dev" in data["provider_notice"]

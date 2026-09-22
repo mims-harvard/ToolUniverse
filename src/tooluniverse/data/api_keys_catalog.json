@@ -290,6 +290,18 @@
     ]
   },
   {
+    "name": "FIRECRAWL_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Other",
+    "register_url": "https://www.firecrawl.dev/app/api-keys",
+    "purpose": "Authenticate the backend='firecrawl' option (Firecrawl Search, https://api.firecrawl.dev/v2/search). Searches are billed against the account's credits (a free key includes 1,000) and use the account's rate limits instead of the keyless cap.",
+    "without": "backend='firecrawl' still works keyless within Firecrawl's per-IP daily request and credit cap (HTTP 429 past it, then the normal DDGS fallback). The cap is per IP, so users behind one shared server or NAT share it. The default web_search chain is unaffected.",
+    "used_by": [
+      "web_search_tools.json"
+    ]
+  },
+  {
     "name": "FOLKLORE_MCP_URL",
     "requirement": "required",
     "type": "endpoint",
