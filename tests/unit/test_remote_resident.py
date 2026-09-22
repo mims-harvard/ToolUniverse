@@ -136,7 +136,8 @@ class TestManifest:
     def test_a_weight_file_with_neither_size_nor_digest_is_refused(self, tmp_path):
         p = tmp_path / "provider.toml"
         p.write_text(
-            '[provider]\nslug = "x"\n\n[[weights.files]]\nname = "model.ckpt"\n'
+            '[provider]\nslug = "x"\n\n[runtime]\nmode = "subprocess"\nmode_reason = "t"\n\n'
+            '[[weights.files]]\nname = "model.ckpt"\n'
         )
         with pytest.raises(M.ManifestError, match="neither size nor"):
             M.load(p)
@@ -394,7 +395,9 @@ class TestSetup:
         from tooluniverse.remote_resident import setup as S
 
         p = tmp_path / "provider.toml"
-        p.write_text('[provider]\nslug = "x"\n')
+        p.write_text(
+            '[provider]\nslug = "x"\n\n[runtime]\nmode = "subprocess"\nmode_reason = "test"\n'
+        )
         assert S.kit_checkout(M.load(p)) is None
 
     @pytest.mark.parametrize(
@@ -422,6 +425,7 @@ class TestSetup:
         p = tmp_path / "provider.toml"
         p.write_text(
             '[provider]\nslug = "x"\n\n[runtime]\nmode = "resident"\n\n'
+            '[env]\npython = "$X_PY"\n\n'
             '[gpu]\npolicy = "required"\nvram_budget_gb = 1\n'
         )
         monkeypatch.setattr(S.shutil, "which", lambda name: None)
@@ -485,7 +489,7 @@ class TestKitLaunch:
 
         p = tmp_path / "provider.toml"
         p.write_text(
-            '[provider]\nslug = "chrombpnet"\n\n[kit]\n'
+            '[provider]\nslug = "chrombpnet"\n\n[runtime]\nmode = "subprocess"\nmode_reason = "t"\n\n[kit]\n'
             'upstream = "https://example.invalid/x"\n'
             f'commit = "{"a" * 40}"\nsubdir = "chrombpnet"\n'
         )
@@ -496,7 +500,7 @@ class TestKitLaunch:
 
         p = tmp_path / "provider.toml"
         p.write_text(
-            '[provider]\nslug = "protenix_v2"\n\n[kit]\n'
+            '[provider]\nslug = "protenix_v2"\n\n[runtime]\nmode = "subprocess"\nmode_reason = "t"\n\n[kit]\n'
             'upstream = "https://example.invalid/x"\n'
             f'commit = "{"a" * 40}"\nsubdir = "protenix_v2"\npackage = "protenix_opt"\n'
         )
@@ -583,3 +587,153 @@ class TestSecondProvider:
         (tmp_path / "kernel.so").write_bytes(head + b"\x00" * 64)
         found = _foreign_objects(tmp_path)
         assert bool(found) is (platform.machine() != foreign)
+
+
+# ------------------------------------------------------------------- exec_env
+class TestExecEnvironment:
+    """Three routes to the same stack; only the argv that starts a worker differs."""
+
+    def _env(self, kind, tmp_path, **kw):
+        from tooluniverse.remote_resident.exec_env import ExecEnvironment
+
+        (tmp_path / "weights").mkdir(exist_ok=True)
+        return ExecEnvironment(kind=kind, binds=[tmp_path / "weights"], **kw)
+
+    def test_a_venv_is_just_the_interpreter(self, tmp_path):
+        e = self._env("venv", tmp_path, python="/opt/py/bin/python")
+        argv, env = e.argv(["w.py", "--socket", "/s"], {"K": "V"})
+        assert argv == ["/opt/py/bin/python", "w.py", "--socket", "/s"]
+        assert env["K"] == "V"
+
+    def test_docker_maps_paths_identity(self, tmp_path):
+        """A path must mean the same thing on both sides, or everything needs translating."""
+        e = self._env("docker", tmp_path, image="kit:dev")
+        argv, _ = e.argv(["w.py"], {})
+        mount = f"{(tmp_path / 'weights').resolve()}:{(tmp_path / 'weights').resolve()}"
+        assert "-v" in argv and mount in argv
+
+    def test_docker_passes_the_environment_into_the_container(self, tmp_path):
+        """Popen's env would reach the client, not the model."""
+        e = self._env("docker", tmp_path, image="kit:dev")
+        argv, popen_env = e.argv(["w.py"], {"BOLTZ2_OPT": "fast"})
+        assert "-e" in argv and "BOLTZ2_OPT=fast" in argv
+        assert "BOLTZ2_OPT" not in popen_env
+
+    def test_docker_runs_as_the_calling_user(self, tmp_path):
+        """The kits' images create no unprivileged user; outputs land on a bind."""
+        e = self._env("docker", tmp_path, image="kit:dev")
+        argv, _ = e.argv(["w.py"], {})
+        assert "--user" in argv
+        assert f"{os.getuid()}:{os.getgid()}" in argv
+
+    def test_docker_asks_for_the_gpu_and_shared_memory(self, tmp_path):
+        e = self._env("docker", tmp_path, image="kit:dev", gpu=True)
+        argv, _ = e.argv(["w.py"], {})
+        assert "--gpus" in argv and "all" in argv
+        assert "--ipc=host" in argv
+
+    def test_a_missing_declaration_is_named(self, tmp_path):
+        from tooluniverse.remote_resident.exec_env import ExecEnvironmentError
+
+        with pytest.raises(ExecEnvironmentError, match="env. image"):
+            self._env("docker", tmp_path).argv(["w.py"], {})
+        with pytest.raises(ExecEnvironmentError, match="env. python"):
+            self._env("venv", tmp_path).argv(["w.py"], {})
+
+    def test_an_unknown_kind_is_refused(self, tmp_path):
+        from tooluniverse.remote_resident.exec_env import ExecEnvironmentError
+
+        with pytest.raises(ExecEnvironmentError, match="not one of"):
+            self._env("podman", tmp_path)
+
+    def test_nested_binds_collapse(self, tmp_path):
+        """A parent already bound carries its children; repeating them is noise."""
+        from tooluniverse.remote_resident.exec_env import ExecEnvironment
+
+        (tmp_path / "a" / "b").mkdir(parents=True)
+        e = ExecEnvironment(
+            kind="docker", image="x", binds=[tmp_path / "a", tmp_path / "a" / "b"]
+        )
+        argv, _ = e.argv(["w.py"], {})
+        # The identity files and the cache are bound too; count only these.
+        mine = [
+            argv[i + 1]
+            for i, a in enumerate(argv)
+            if a == "-v" and str(tmp_path) in argv[i + 1]
+        ]
+        assert len(mine) == 1 and str(tmp_path / "a") in mine[0]
+
+    def test_a_container_needs_a_work_root(self, tmp_path):
+        """Per-request output paths the caller invents are invisible without one."""
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "x"\n\n[runtime]\nmode = "resident"\n\n'
+            '[env]\nkind = "docker"\nimage = "kit:dev"\n'
+        )
+        with pytest.raises(M.ManifestError, match="work_root"):
+            M.load(p)
+
+
+class TestContainerHygiene:
+    """What a container needs before a scientific stack will run in it as you."""
+
+    def _docker(self, tmp_path):
+        from tooluniverse.remote_resident.exec_env import ExecEnvironment
+
+        return ExecEnvironment(kind="docker", image="kit:dev", binds=[tmp_path])
+
+    def test_the_calling_uid_is_given_a_passwd_entry(self, tmp_path, monkeypatch):
+        """pwd.getpwuid raises for a uid the image has never heard of."""
+        monkeypatch.setenv("TOOLUNIVERSE_CONTAINER_ID_DIR", str(tmp_path / "id"))
+        argv, _ = self._docker(tmp_path).argv(["w.py"], {})
+        mounts = [argv[i + 1] for i, a in enumerate(argv) if a == "-v"]
+        assert any(m.endswith("/etc/passwd:ro") for m in mounts)
+        assert any(m.endswith("/etc/group:ro") for m in mounts)
+        passwd = (tmp_path / "id" / "passwd").read_text()
+        assert f":{os.getuid()}:{os.getgid()}:" in passwd
+        # Only root and the caller: binding the host's own passwd would hand
+        # the model every account on the machine.
+        assert len(passwd.strip().splitlines()) == 2
+
+    def test_the_container_gets_a_home_of_its_own(self, tmp_path, monkeypatch):
+        """Not the host's: that path is a root-owned mount point inside."""
+        monkeypatch.setenv("TOOLUNIVERSE_CONTAINER_CACHE_DIR", str(tmp_path / "c"))
+        monkeypatch.setenv("TOOLUNIVERSE_CONTAINER_ID_DIR", str(tmp_path / "id"))
+        argv, _ = self._docker(tmp_path).argv(["w.py"], {})
+        home = [a for a in argv if a.startswith("HOME=")]
+        assert home and home[0] != f"HOME={os.path.expanduser('~')}"
+        assert str(tmp_path / "c") in home[0]
+
+    @pytest.mark.parametrize(
+        "var", ["NUMBA_CACHE_DIR", "TRITON_CACHE_DIR", "MPLCONFIGDIR", "XDG_CACHE_HOME"]
+    )
+    def test_every_compiler_cache_points_somewhere_writable(
+        self, tmp_path, monkeypatch, var
+    ):
+        """site-packages is root-owned; numba refuses with 'no locator available'."""
+        monkeypatch.setenv("TOOLUNIVERSE_CONTAINER_CACHE_DIR", str(tmp_path / "c"))
+        monkeypatch.setenv("TOOLUNIVERSE_CONTAINER_ID_DIR", str(tmp_path / "id"))
+        argv, _ = self._docker(tmp_path).argv(["w.py"], {})
+        value = [a for a in argv if a.startswith(f"{var}=")]
+        assert value, f"{var} is not set for the container"
+        assert str(tmp_path / "c") in value[0]
+
+    def test_a_host_user_site_cannot_shadow_the_pinned_stack(
+        self, tmp_path, monkeypatch
+    ):
+        """The kits' own Apptainer recipe sets this for the same reason."""
+        monkeypatch.setenv("TOOLUNIVERSE_CONTAINER_CACHE_DIR", str(tmp_path / "c"))
+        monkeypatch.setenv("TOOLUNIVERSE_CONTAINER_ID_DIR", str(tmp_path / "id"))
+        argv, _ = self._docker(tmp_path).argv(["w.py"], {})
+        assert "PYTHONNOUSERSITE=1" in argv
+
+    def test_the_worker_and_its_smoke_input_are_bound(self, tmp_path):
+        """They are resolved from the manifest but need not live beside it."""
+        from tooluniverse.remote_resident.exec_env import from_manifest
+
+        m = M.load(BOLTZ_MANIFEST)
+        object.__setattr__(m, "env_kind", "docker")
+        object.__setattr__(m, "work_root", str(tmp_path))
+        binds = {str(p) for p in from_manifest(m).binds}
+        assert str(m.resolve(m.worker).parent) in binds
+        assert str(m.resolve(m.smoke).parent) in binds

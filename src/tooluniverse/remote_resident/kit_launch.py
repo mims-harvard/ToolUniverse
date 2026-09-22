@@ -54,6 +54,8 @@ import subprocess
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+from .exec_env import from_manifest
+
 KIT_PROBE_TIMEOUT_S = 180.0
 
 # Runs in the model's interpreter. MODEL_OPT is the kit directory, derived from
@@ -117,10 +119,26 @@ def kit_package(manifest) -> str:
     return f"{subdir}_opt"
 
 
-def ask_kit(python: str, package: str, mode: str) -> Dict:
-    """The kit's own launch options and environment row, read in its interpreter."""
+def ask_kit(python_or_env, package: str, mode: str) -> Dict:
+    """The kit's own launch options and environment row, read in its interpreter.
+
+    ``python_or_env`` is an interpreter path or an :class:`ExecEnvironment`. The
+    probe has to run where the kit is installed, which for a container provider
+    is inside the container: asking this process's interpreter would report a
+    kit that is not the one the worker will load.
+    """
+    if isinstance(python_or_env, (str, os.PathLike)):
+        argv, env, python = (
+            [os.fspath(python_or_env), "-c", _PROBE, package, mode],
+            None,
+            str(python_or_env),
+        )
+    else:
+        argv, env = python_or_env.argv(["-c", _PROBE, package, mode])
+        python = python_or_env.describe()
     proc = subprocess.run(
-        [python, "-c", _PROBE, package, mode],
+        argv,
+        env=env,
         capture_output=True,
         text=True,
         timeout=KIT_PROBE_TIMEOUT_S,
@@ -139,11 +157,11 @@ def ask_kit(python: str, package: str, mode: str) -> Dict:
 def build_command(worker) -> Tuple[List[str], Dict[str, str]]:
     """``(argv, extra environment)`` for ``worker``. The supervisor calls this."""
     manifest = worker.manifest
-    python = manifest.python_executable()
-    if not Path(python).is_file():
+    exec_env = from_manifest(manifest)
+    if manifest.env_kind == "venv" and not Path(manifest.python_executable()).is_file():
         raise KitUnavailable(
-            f"[env] python points at {python}, which is not a file — it must be "
-            f"the interpreter of {manifest.slug}'s own environment"
+            f"[env] python points at {manifest.python_executable()}, which is not "
+            f"a file — it must be the interpreter of {manifest.slug}'s own environment"
         )
 
     root = manifest.weights_root()
@@ -160,7 +178,7 @@ def build_command(worker) -> Tuple[List[str], Dict[str, str]]:
         )
 
     package = kit_package(manifest)
-    row = ask_kit(python, package, manifest.kit.get("mode", "fast"))
+    row = ask_kit(exec_env, package, manifest.kit.get("mode", "fast"))
 
     worker_py = manifest.resolve(manifest.worker)
     shared = Path(__file__).resolve().parent
@@ -168,18 +186,19 @@ def build_command(worker) -> Tuple[List[str], Dict[str, str]]:
         "socket": worker.socket_path,
         "slug": manifest.slug,
         "weights_root": os.fspath(root) if root else "",
-        "python": python,
+        "python": manifest.python_executable(),
         "kit": row["model_opt"],
+        "work_root": manifest.work_root or "",
     }
     tail = [os.fspath(worker_py)] + [
         str(a).format(**fields) for a in (manifest.worker_args or ())
     ]
     if row.get("activation") == "worker_launch":
-        argv = [python, "-m", f"{package}.worker_launch", *row["opts"], "--", *tail]
+        python_args = ["-m", f"{package}.worker_launch", *row["opts"], "--", *tail]
     else:
         # The autoload path: the kit is engaged by its own mode variable and the
         # .pth it installed, so our script is run plainly.
-        argv = [python, *tail]
+        python_args = list(tail)
 
     env: Dict[str, str] = dict(row["env"])
     env["MODEL_OPT"] = row["model_opt"]
@@ -208,4 +227,8 @@ def build_command(worker) -> Tuple[List[str], Dict[str, str]]:
     )
     os.makedirs(jit_root, exist_ok=True)
     env["MODEL_OPT_JIT_ROOT"] = jit_root
-    return argv, env
+    # A container must also see the JIT cache it writes, and the work root the
+    # caller's output directories live under.
+    exec_env.binds.append(Path(jit_root))
+    argv, popen_env = exec_env.argv(python_args, env)
+    return argv, popen_env

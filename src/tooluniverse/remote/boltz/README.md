@@ -143,6 +143,35 @@ tu remote check boltz     # what will engage on this machine
 tu remote run   boltz     # serve it
 ```
 
+### Running it in a container instead
+
+The stack can be a venv, a Docker image or an Apptainer `.sif`, and the choice
+changes one thing: the argv that starts the worker. Same script, same model,
+same socket.
+
+```toml
+[env]
+kind = "docker"
+image = "tu-boltz2-kit:f4f62fa"
+work_root = "/srv/tooluniverse/work"      # required: see below
+```
+
+`tu remote setup boltz` then builds the image from the kit's own
+`environment/Dockerfile` and everything else is unchanged. Measured here: the
+same prediction, the same 3.21 GiB peak as the venv route, ~33 s against ~12 s
+once both caches are warm — the difference is container start-up.
+
+Two things a container needs that a venv does not. `work_root` must be
+declared, because a per-request output path the caller invents is not visible
+inside unless something bound it. And the container is run as you rather than
+as root, so it is given a synthetic two-line `passwd`, a home of its own, and
+writable compiler caches — the host's `passwd` would expose every account on
+the machine, and without the rest numba, Triton and Boltz-2's own parsing
+zygote each fail in their own way.
+
+Apptainer is implemented from the kits' documented invocation and is untested
+here; this machine has no Apptainer.
+
 ### The one thing setup does not do
 
 It installs into an interpreter, it does not build one — the outcome is what

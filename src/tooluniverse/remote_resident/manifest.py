@@ -62,6 +62,11 @@ GPU_POLICIES = ("required", "recommended", "none")
 # this project has it, and a word nobody can honour does not belong in a
 # vocabulary that a host reads to decide whether to accept other people's work.
 ISOLATION = ("process", "mps", "container")
+# How the model's environment is materialised. All three reach the same stack
+# -- the kits offer the same three and note that everything after getting the
+# stack is identical -- so this changes the argv that starts a worker and
+# nothing else.
+ENV_KINDS = ("venv", "docker", "apptainer")
 # Whether anyone has actually run this provider end to end. "verified" is a
 # claim about hardware, so it carries the hardware it was made on; "untested"
 # installs the same way and says so. Nothing here promises a provider works on a
@@ -83,7 +88,17 @@ _SECTIONS = {
         "worker_args",
     },
     "gpu": {"policy", "vram_budget_gb", "shareable", "isolation"},
-    "env": {"python", "lock", "kind", "verify"},
+    "env": {
+        "python",
+        "lock",
+        "kind",
+        "verify",
+        "image",
+        "sif",
+        "container_python",
+        "network",
+        "work_root",
+    },
     "weights": {"root_env", "root_default", "files", "fetch"},
     "kit": {
         "upstream",
@@ -214,6 +229,14 @@ class ProviderManifest:
     env_lock: Optional[str] = None
     env_kind: str = "venv"
     env_verify: Optional[str] = None
+    env_image: Optional[str] = None
+    env_sif: Optional[str] = None
+    env_container_python: str = "python"
+    env_network: Optional[str] = None
+    # Per-request output directories are created under this. A venv provider
+    # needs none; a container one does, because a path the caller invents is
+    # not visible inside unless something bound it.
+    work_root: Optional[str] = None
     smoke: Optional[str] = None
     smoke_timeout_s: float = 1800.0
     worker_args: tuple = ()
@@ -276,6 +299,10 @@ class ProviderManifest:
         deployment can point at its own venv without editing the manifest.
         """
         raw = self.env_python
+        if not raw and self.env_kind != "venv":
+            # A container carries its own interpreter; [env] container_python
+            # names it, and it is not a host path.
+            return self.env_container_python
         if not raw:
             raise ManifestError(
                 f'{self.path}: [env] python is required for mode = "resident": '
@@ -382,6 +409,21 @@ def load(path: os.PathLike | str) -> ProviderManifest:
             f"it is what a host adds up to decide how many models fit on one card"
         )
 
+    env_kind = doc.get("env", {}).get("kind", "venv")
+    if env_kind not in ENV_KINDS:
+        raise ManifestError(
+            f"{path}: [env] kind = {env_kind!r} is not one of {ENV_KINDS}"
+        )
+    needs = {"venv": "python", "docker": "image", "apptainer": "sif"}[env_kind]
+    if mode == "resident" and not doc.get("env", {}).get(needs):
+        raise ManifestError(f'{path}: [env] kind = "{env_kind}" needs [env] {needs}')
+    if env_kind != "venv" and not doc.get("env", {}).get("work_root"):
+        raise ManifestError(
+            f'{path}: [env] kind = "{env_kind}" needs [env] work_root — per-request '
+            f"output directories are created under it, and a path the caller "
+            f"invents is not visible inside a container unless something binds it"
+        )
+
     wt = doc.get("weights", {})
     files = []
     for entry in wt.get("files", []):
@@ -425,6 +467,11 @@ def load(path: os.PathLike | str) -> ProviderManifest:
         env_lock=env.get("lock"),
         env_kind=env.get("kind", "venv"),
         env_verify=env.get("verify"),
+        env_image=env.get("image"),
+        env_sif=env.get("sif"),
+        env_container_python=env.get("container_python", "python"),
+        env_network=env.get("network"),
+        work_root=env.get("work_root"),
         worker_args=tuple(rt.get("worker_args", ())),
         smoke=rt.get("smoke"),
         smoke_timeout_s=float(rt.get("smoke_timeout_s", 1800.0)),

@@ -131,7 +131,7 @@ anything about the model weights.
 
 ```toml
 [env]
-kind = "venv"                              # venv | conda-pack | pixi
+kind = "venv"                              # venv | docker | apptainer
 python = "$TOOLUNIVERSE_BOLTZ_PYTHON"      # a variable, never a path
 lock = "environment/requirements.lock"
 ```
@@ -149,9 +149,50 @@ promise the deployment can rebuild this environment.
 `pip install <pkg>==<version>`; the documented boltz setup is
 `pip install -e . && pip install fastmcp boltz` into one shared environment.
 
-**[n=1]** `kind` has three values but only `venv` has been exercised. The three
-R-backed providers (singler, monocle3, slingshot) will decide whether
-`conda-pack` and `pixi` survive as written.
+`kind` picks how the stack is materialised, and the kits offer the same three
+ways, noting that everything after getting the stack is identical. The same
+holds here: a resident worker is the same script, holding the same model,
+answering on the same socket. Only the argv that starts it differs, so only
+that is abstracted (`exec_env.py`).
+
+**Paths are mapped identity** in a container: every bind mounts a host path at
+the same path inside. A private layout would need translation for the socket,
+the weights, the worker script, the shared protocol file and every per-request
+output directory the caller names, in both directions, forever. Identity
+mapping costs one convention and removes all of it.
+
+**A container runs as the calling user**, and that is not free. The kits' own
+recipes note "Containers run as root ... do not create an unprivileged user",
+which for a model writing into a bind means root-owned output on the host. Run
+it as yourself and four things break, each of which this project hit in order:
+
+- `pwd.getpwuid` raises for a uid the image never heard of, which surfaced as a
+  Boltz-2 zygote preload failing and then a nanobind abort from the double
+  import that followed. A synthetic two-line `passwd` — root and the caller —
+  is bound; the host's own would hand the model every account on the machine.
+- `site-packages` is root-owned, and libraries that compile want to write
+  beside the module: numba refuses with "cannot cache function … no locator
+  available". Every compiler cache is pointed at one bound, writable place.
+- `$HOME` is a mount point the daemon created and owns, so `~/.triton` cannot
+  be made and Triton's probe fails with a permission error that reads as a
+  kernel refusal. The container gets a home of its own — it does not have the
+  host's.
+- A host user site-packages must not shadow the image's pinned stack
+  (`PYTHONNOUSERSITE`), which the kits' Apptainer recipe sets for the same
+  reason.
+
+**`work_root` is required for a container**, because a per-request output path
+the caller invents is not visible inside unless something bound it.
+
+**Images are built from the kit's own recipe**, in a hard-linked shadow of the
+checkout — the checkout must stay byte-identical to its pinned commit, and the
+Dockerfiles want an empty archive in a `_jitcache/` directory the checkout does
+not have. The archive's name has to satisfy the Dockerfile's own glob,
+`_jitcache/<kit>-*-jit.ta[r]`.
+
+**[n=1]** `apptainer` is implemented from the kits' documented invocation and
+has not run: this project's machine has none installed. `docker` and `venv` are
+both exercised, and give the same peak memory on the same input.
 
 ---
 

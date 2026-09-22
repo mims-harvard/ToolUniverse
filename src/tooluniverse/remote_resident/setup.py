@@ -35,6 +35,7 @@ nothing.
 
 from __future__ import annotations
 
+import contextlib
 import json
 import os
 import shutil
@@ -205,9 +206,197 @@ def step_preflight(manifest: ProviderManifest) -> StepResult:
 
 
 # ----------------------------------------------------------------- environment
+@contextlib.contextmanager
+def _build_context(dest: Path, dockerfile: Path):
+    """A build context that is the kit tree, without writing into the kit tree.
+
+    Two things are in tension. The kit checkout must stay byte-identical to its
+    pinned commit -- that is what the tamper check enforces, and it is
+    third-party code we execute. But the kits' Dockerfiles take an optional
+    pre-filled compile cache from a `_jitcache/` directory in the context, and
+    their own STOCK.md notes that "a builder that refuses an unmatched COPY glob
+    needs an empty archive there first". BuildKit is such a builder, and without
+    one the build stops at `lstat /_jitcache: no such file or directory`.
+
+    So the context is a hard-linked shadow of the checkout: no file is copied,
+    nothing in the checkout is touched, and the empty archive the builder wants
+    exists only in the shadow, which is removed afterwards.
+    """
+    import tarfile
+    import tempfile
+
+    root = Path(tempfile.mkdtemp(prefix="tu-build-ctx-"))
+    try:
+        shadow = root / "ctx"
+        link = subprocess.run(
+            ["cp", "-al", os.fspath(dest), os.fspath(shadow)],
+            capture_output=True,
+            text=True,
+        )
+        if link.returncode != 0:  # a different filesystem, or no hard links
+            shutil.copytree(dest, shadow, ignore=shutil.ignore_patterns(".git"))
+        if "_jitcache" in dockerfile.read_text():
+            jit = shadow / "_jitcache"
+            jit.mkdir(exist_ok=True)
+            # The name has to satisfy the Dockerfile's own glob, which is
+            # keyed on the kit: `COPY _jitcache/<kit>-*-jit.ta[r]`. An archive
+            # the glob does not match leaves the pattern unmatched, which is
+            # the failure this exists to prevent.
+            kit_name = dockerfile.resolve().parents[1].name
+            with tarfile.open(jit / f"{kit_name}-empty-jit.tar", "w"):
+                pass
+        yield shadow
+    finally:
+        shutil.rmtree(root, ignore_errors=True)
+
+
+def _build_image(manifest, dest: Path, t: float) -> Optional[StepResult]:
+    """Build the provider's image from the kit's own recipe, if it is absent.
+
+    The kits ship `environment/Dockerfile` and `environment/apptainer.def` for
+    every one of the thirty-six, and the Dockerfile expects the bundle root as
+    its build context (it copies `common/` as well as the kit). Neither recipe
+    is copied or rewritten here; the checkout is the context.
+    """
+    kit = manifest.kit
+    subdir = kit.get("subdir")
+    if not subdir:
+        return StepResult(
+            "environment",
+            REFUSED,
+            "a container environment needs [kit] subdir: the image is built from "
+            "that kit's own environment/ recipe",
+            reason="no_kit_subdir",
+            seconds=time.time() - t,
+        )
+
+    if manifest.env_kind == "docker":
+        if not shutil.which("docker"):
+            return StepResult(
+                "environment",
+                REFUSED,
+                "docker is not on PATH",
+                reason="docker_missing",
+                seconds=time.time() - t,
+            )
+        have = _run(["docker", "image", "inspect", manifest.env_image], timeout=120)
+        if "permission denied" in (have.stderr or "").lower():
+            return StepResult(
+                "environment",
+                REFUSED,
+                f"this process cannot reach the docker daemon. Being added to the "
+                f"docker group does not change a session already running: start a "
+                f"new login shell, or run this under `sg docker -c ...`",
+                reason="docker_permission",
+                seconds=time.time() - t,
+            )
+        if have.returncode == 0:
+            return StepResult(
+                "environment",
+                PRESENT,
+                f"docker image {manifest.env_image} is present",
+                seconds=time.time() - t,
+            )
+        dockerfile = dest / subdir / "environment" / "Dockerfile"
+        if not dockerfile.is_file():
+            return StepResult(
+                "environment",
+                REFUSED,
+                f"{dockerfile} does not exist",
+                reason="no_dockerfile",
+                seconds=time.time() - t,
+            )
+        with _build_context(dest, dockerfile) as context:
+            out = _run(
+                [
+                    "docker",
+                    "build",
+                    "-f",
+                    os.fspath(context / dockerfile.relative_to(dest)),
+                    "-t",
+                    manifest.env_image,
+                    os.fspath(context),
+                ],
+                timeout=14400,
+            )
+        if out.returncode != 0:
+            return StepResult(
+                "environment",
+                FAILED,
+                f"building {manifest.env_image} from {dockerfile} failed",
+                reason="docker_build_failed",
+                lines=_tail(out.stderr or out.stdout, 12),
+                seconds=time.time() - t,
+            )
+        return StepResult(
+            "environment",
+            OK,
+            f"built docker image {manifest.env_image}",
+            lines=_tail(out.stdout, 3),
+            seconds=time.time() - t,
+        )
+
+    runner = shutil.which("apptainer") or shutil.which("singularity")
+    if not runner:
+        return StepResult(
+            "environment",
+            REFUSED,
+            "neither apptainer nor singularity is on PATH",
+            reason="apptainer_missing",
+            seconds=time.time() - t,
+        )
+    sif = Path(manifest.env_sif).expanduser()
+    if sif.is_file():
+        return StepResult(
+            "environment", PRESENT, f"{sif} is present", seconds=time.time() - t
+        )
+    definition = dest / subdir / "environment" / "apptainer.def"
+    if not definition.is_file():
+        return StepResult(
+            "environment",
+            REFUSED,
+            f"{definition} does not exist",
+            reason="no_apptainer_def",
+            seconds=time.time() - t,
+        )
+    # The kits' .def bootstraps from the Docker image built first; a published
+    # tag would change its two header lines, which is the kit's business.
+    sif.parent.mkdir(parents=True, exist_ok=True)
+    out = _run(
+        [runner, "build", os.fspath(sif), os.fspath(definition)],
+        cwd=dest,
+        timeout=14400,
+    )
+    if out.returncode != 0:
+        return StepResult(
+            "environment",
+            FAILED,
+            f"building {sif} from {definition} failed",
+            reason="apptainer_build_failed",
+            lines=_tail(out.stderr or out.stdout, 12),
+            seconds=time.time() - t,
+        )
+    return StepResult("environment", OK, f"built {sif}", seconds=time.time() - t)
+
+
 def step_environment(manifest: ProviderManifest) -> StepResult:
     """Install the lock into the interpreter the manifest names. Never create one."""
     t = time.time()
+    if manifest.env_kind != "venv":
+        # A container carries the stack; there is no lock to install into it.
+        # What has to exist is the image, and the kit's own recipe builds it.
+        dest = kit_checkout(manifest)
+        if dest is None or not dest.is_dir():
+            return StepResult(
+                "environment",
+                REFUSED,
+                f'[env] kind = "{manifest.env_kind}" builds from the kit\'s recipe, '
+                f"which is not checked out yet — run the kit step first",
+                reason="kit_not_checked_out",
+                seconds=time.time() - t,
+            )
+        return _build_image(manifest, dest, t)
+
     try:
         python = manifest.python_executable()
     except ManifestError as exc:
@@ -492,6 +681,20 @@ def step_kit(manifest: ProviderManifest) -> StepResult:
             seconds=time.time() - t,
         )
 
+    if manifest.env_kind != "venv":
+        # The image carries the kit: its own Dockerfile ran the install step at
+        # build time, into the interpreter the image holds. Running it again on
+        # the host would install into whatever python is on the host's PATH,
+        # which is not where the model lives.
+        lines.append(f"install is the image's ({manifest.env_kind}); not re-run here")
+        return StepResult(
+            "kit",
+            OK,
+            f"checkout present for the image build at {dest}",
+            lines=lines,
+            seconds=time.time() - t,
+        )
+
     install = kit.get("install")
     if not install:
         return StepResult(
@@ -649,6 +852,12 @@ def step_smoke(manifest: ProviderManifest) -> StepResult:
     from . import backend  # imported late: starting nothing is the default
 
     worker = backend.worker_for(manifest.path)
+    smoke_out = (
+        Path(manifest.work_root).expanduser() / f"{manifest.slug}-smoke"
+        if manifest.work_root
+        else measured_path(manifest.slug).parent / f"{manifest.slug}-smoke"
+    )
+    smoke_out.mkdir(parents=True, exist_ok=True)
     record: Dict[str, Any] = {
         "slug": manifest.slug,
         "at": time.strftime("%Y-%m-%dT%H:%M:%S%z"),
@@ -666,9 +875,10 @@ def step_smoke(manifest: ProviderManifest) -> StepResult:
                 "op": "predict",
                 # Neutral: the provider decides what its input text means.
                 "input": smoke_input.read_text(),
-                "out_dir": os.fspath(
-                    measured_path(manifest.slug).parent / f"{manifest.slug}-smoke"
-                ),
+                # Under work_root when the provider declares one: a container
+                # sees only what was bound, and that is the path bound for
+                # exactly this.
+                "out_dir": os.fspath(smoke_out),
                 "name": "smoke",
                 "seed": 0,
                 "options": {},
@@ -734,6 +944,9 @@ def step_smoke(manifest: ProviderManifest) -> StepResult:
 
 # --------------------------------------------------------------------- driver
 STEPS = (step_preflight, step_environment, step_kit, step_weights, step_smoke)
+# A container image is built FROM the kit's recipe, so for those providers the
+# checkout has to come first. Everything else keeps the declared order.
+CONTAINER_STEPS = (step_preflight, step_kit, step_environment, step_weights, step_smoke)
 
 
 def run_setup(slug_or_path: str, *, only: Optional[str] = None) -> List[StepResult]:
@@ -750,7 +963,8 @@ def run_setup(slug_or_path: str, *, only: Optional[str] = None) -> List[StepResu
         else load_manifest(_provider_dir(slug_or_path))
     )
     results: List[StepResult] = []
-    for step in STEPS:
+    steps = STEPS if manifest.env_kind == "venv" else CONTAINER_STEPS
+    for step in steps:
         name = step.__name__.removeprefix("step_")
         if only and name != only:
             continue
