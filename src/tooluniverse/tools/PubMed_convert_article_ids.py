@@ -1,30 +1,30 @@
 """
-proteins_api_get_epitopes
+PubMed_convert_article_ids
 
-Get the epitope features for a protein from the EBI Proteins API epitope endpoint (IEDB-derived)....
+Convert between PubMed IDs (PMIDs), PubMed Central IDs (PMCIDs), DOIs and NIH manuscript IDs with...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def proteins_api_get_epitopes(
-    accession: str | list[Any],
-    format: Optional[str] = "json",
+def PubMed_convert_article_ids(
+    ids: list[str],
+    id_type: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
-    Get the epitope features for a protein from the EBI Proteins API epitope endpoint (IEDB-derived)....
+    Convert between PubMed IDs (PMIDs), PubMed Central IDs (PMCIDs), DOIs and NIH manuscript IDs with...
 
     Parameters
     ----------
-    accession : str | list[Any]
-        UniProt protein accession(s). Can be a single accession (e.g., 'P05067'), com...
-    format : str
-        Response format. JSON is recommended for most use cases.
+    ids : list[str]
+        Identifiers to convert (PMIDs, PMCIDs, DOIs, NIHMS IDs), e.g. ['23193287', 'P...
+    id_type : str
+        Force the identifier type for every id instead of auto-detecting it.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,19 +34,15 @@ def proteins_api_get_epitopes(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"accession": accession, "format": format}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {"ids": ids, "id_type": id_type}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
-            "name": "proteins_api_get_epitopes",
+            "name": "PubMed_convert_article_ids",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -55,4 +51,4 @@ def proteins_api_get_epitopes(
     )
 
 
-__all__ = ["proteins_api_get_epitopes"]
+__all__ = ["PubMed_convert_article_ids"]

@@ -73,7 +73,7 @@ Any statement about "no one has done this," "this would be fundable," or "this i
 2. Ask for: what exactly they want to do, how they'd currently do it, why it matters if it works, and what they think the biggest risks are.
 3. Run a precedent check (see below) before evaluating novelty or risk — do not rely on the user's or your own assumption that something is unstudied.
 4. Walk through `references/idea-evaluation.md`: sharpen the idea, assess risk (how many miracles), define the success metric, and decide what to fix vs. keep flexible.
-5. Close with a short written summary: the sharpened idea, the risk list with mitigation ideas, the success metric, and the one fixed parameter — 1-2 pages, not a full proposal.
+5. Close with a short written summary: the sharpened idea, the risk list with mitigation ideas, the success metric, and the one fixed parameter — 1-2 pages, not a full proposal. Use `references/communication-and-synthesis.md` for the layout, and to run the full framework in order if the user wants a complete workup.
 
 ### Troubleshooting a stuck project
 1. Get the one-to-two-sentence problem statement, reflect it back, and ask a clarifying question or two if the failure mode is unclear.
@@ -108,6 +108,7 @@ Keep outputs short and decision-oriented: a 1-2 page markdown summary per comple
 | `references/idea-evaluation.md` | Sharpening a new idea: intuition pumps, risk-as-miracle-count, success metrics, fixed-vs-flexible parameters |
 | `references/decision-tree-navigation.md` | Troubleshooting a stuck project: decision-tree mapping, fix/pivot/abandon, adversity reframing, problem inversion |
 | `references/precedent-checking.md` | Which real ToolUniverse tools to call for literature-precedent and funding-landscape grounding, and how to interpret the results |
+| `references/communication-and-synthesis.md` | Running the whole framework in order, the one-page decision summary, and how to tell it to an advisor, committee, collaborators or funders |
 
 ## Attribution
 

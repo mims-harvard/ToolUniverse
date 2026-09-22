@@ -1,0 +1,310 @@
+[
+  {
+    "type": "PubMedConvertIDsTool",
+    "name": "PubMed_convert_article_ids",
+    "description": "Convert between PubMed IDs (PMIDs), PubMed Central IDs (PMCIDs), DOIs and NIH manuscript IDs with the NCBI PMC ID Converter. Give any mix of up to 200 identifiers; the type of each is detected (digits = PMID, PMC123 = PMCID, 10.xxxx/... = DOI, NIHMS123 = manuscript ID) or forced with id_type. Returns one row per identifier with pmid, pmcid and doi. Only articles indexed in PubMed Central can be converted: a PubMed-only article comes back found=false with the converter's message, never a guessed mapping. Use the PMCID to fetch open full text (EuropePMC_get_full_text) or the PMID for PubMed_get_article.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Identifiers to convert (PMIDs, PMCIDs, DOIs, NIHMS IDs), e.g. ['23193287', 'PMC3531190', '10.1093/nar/gks1195']. A comma-separated string is also accepted. Maximum 200."
+        },
+        "id_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "pmid",
+            "pmcid",
+            "doi",
+            "mid",
+            null
+          ],
+          "description": "Force the identifier type for every id instead of auto-detecting it."
+        }
+      },
+      "required": [
+        "ids"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "One row per requested identifier",
+      "items": {
+        "type": "object",
+        "properties": {
+          "requested_id": {
+            "type": "string"
+          },
+          "found": {
+            "type": "boolean",
+            "description": "False when PMC has no record for the identifier"
+          },
+          "pmid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pmcid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "doi": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "ids": [
+          "23193287",
+          "PMC3531190",
+          "10.1093/nar/gks1195"
+        ]
+      },
+      {
+        "ids": [
+          "23193287",
+          "99999999999"
+        ],
+        "id_type": "pmid"
+      }
+    ],
+    "label": [
+      "PubMed",
+      "PMC",
+      "ID conversion",
+      "Literature"
+    ],
+    "metadata": {
+      "tags": [
+        "literature",
+        "pubmed",
+        "pmc",
+        "doi",
+        "identifier"
+      ],
+      "estimated_execution_time": "1-2 seconds"
+    }
+  },
+  {
+    "type": "PubMedCitationLookupTool",
+    "name": "PubMed_lookup_article_by_citation",
+    "description": "Find the PMID of an article from its citation details with NCBI ECitMatch: journal, year, volume, first page and first-author surname (with initials). Use it to resolve a reference-list entry or a partial citation to a PubMed record. Pass one citation through the individual fields or up to 100 through citations (each an object with journal, year, volume, first_page, author and an optional key). Each row is status found (with pmid), ambiguous (with candidate PMIDs) or not_found; the match is exact on the fields given, so a wrong page or a misspelt journal abbreviation gives not_found. For free-text searching use PubMed_search_articles.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "journal": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Journal title or abbreviation, e.g. 'Nature' or 'proc natl acad sci u s a'"
+        },
+        "year": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ],
+          "description": "Publication year, e.g. 2015"
+        },
+        "volume": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ],
+          "description": "Volume number"
+        },
+        "first_page": {
+          "type": [
+            "string",
+            "integer",
+            "null"
+          ],
+          "description": "First page (or article number)"
+        },
+        "author": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "First author surname and initials, e.g. 'lecun y'"
+        },
+        "citations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "journal": {
+                "type": "string"
+              },
+              "year": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "volume": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "first_page": {
+                "type": [
+                  "string",
+                  "integer"
+                ]
+              },
+              "author": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string",
+                "description": "Your own label, returned unchanged"
+              }
+            }
+          },
+          "description": "Several citations to resolve at once (maximum 100)"
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "One row per citation",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "journal": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "year": {
+            "type": [
+              "string",
+              "integer",
+              "null"
+            ]
+          },
+          "volume": {
+            "type": [
+              "string",
+              "integer",
+              "null"
+            ]
+          },
+          "first_page": {
+            "type": [
+              "string",
+              "integer",
+              "null"
+            ]
+          },
+          "author": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pmid": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "found",
+              "not_found",
+              "ambiguous",
+              "error"
+            ]
+          },
+          "candidates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "error": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "journal": "Nature",
+        "year": 2015,
+        "volume": 521,
+        "first_page": 436,
+        "author": "lecun y"
+      },
+      {
+        "citations": [
+          {
+            "journal": "proc natl acad sci u s a",
+            "year": 1991,
+            "volume": 88,
+            "first_page": 3248,
+            "author": "mann bj",
+            "key": "mann1991"
+          },
+          {
+            "journal": "science",
+            "year": 1987,
+            "volume": 235,
+            "first_page": 182,
+            "author": "palmenberg ac",
+            "key": "palmenberg1987"
+          }
+        ]
+      }
+    ],
+    "label": [
+      "PubMed",
+      "ECitMatch",
+      "Citation",
+      "Literature"
+    ],
+    "metadata": {
+      "tags": [
+        "literature",
+        "pubmed",
+        "citation",
+        "reference"
+      ],
+      "estimated_execution_time": "1-2 seconds"
+    }
+  }
+]

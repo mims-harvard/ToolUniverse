@@ -21,7 +21,7 @@ def FoodDataCentral_get_food(
     Parameters
     ----------
     fdc_id : int | str
-        FoodData Central food ID (e.g., 2344723 for bananas, 2012128 for branded bana...
+        FoodData Central food ID (e.g., 1105073 for raw bananas, 2012128 for a brande...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
