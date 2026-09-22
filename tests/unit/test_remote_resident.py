@@ -737,3 +737,64 @@ class TestContainerHygiene:
         binds = {str(p) for p in from_manifest(m).binds}
         assert str(m.resolve(m.worker).parent) in binds
         assert str(m.resolve(m.smoke).parent) in binds
+
+
+class TestApptainerRoute:
+    """The route whose build needs privilege and whose run does not."""
+
+    def _sif(self, tmp_path):
+        from tooluniverse.remote_resident.exec_env import ExecEnvironment
+
+        return ExecEnvironment(
+            kind="apptainer", sif=str(tmp_path / "k.sif"), binds=[tmp_path]
+        )
+
+    def test_it_asks_for_the_gpu_and_a_clean_environment(self, tmp_path):
+        import shutil
+
+        if not (shutil.which("apptainer") or shutil.which("singularity")):
+            pytest.skip("no apptainer or singularity on PATH")
+        argv, _ = self._sif(tmp_path).argv(["w.py"], {})
+        assert "--nv" in argv
+        # The kits' own recipe uses it: the host's variables stay out, and the
+        # ones the worker needs are passed explicitly.
+        assert "--cleanenv" in argv
+        assert "--bind" in argv
+
+    def test_either_implementation_satisfies_the_kind(self, tmp_path, monkeypatch):
+        """Apptainer (Linux Foundation, 1.x) and SingularityCE (Sylabs, 4.x) are
+        forks of one project and the kits treat them as interchangeable."""
+        import shutil
+
+        from tooluniverse.remote_resident.exec_env import ExecEnvironmentError
+
+        monkeypatch.setattr(
+            shutil,
+            "which",
+            lambda n: "/usr/bin/singularity" if n == "singularity" else None,
+        )
+        argv, _ = self._sif(tmp_path).argv(["w.py"], {})
+        assert argv[0].endswith("singularity")
+
+        monkeypatch.setattr(shutil, "which", lambda n: None)
+        with pytest.raises(ExecEnvironmentError, match="apptainer nor singularity"):
+            self._sif(tmp_path).argv(["w.py"], {})
+
+    def test_it_needs_no_synthetic_passwd(self, tmp_path):
+        """It runs as the caller already; there is no uid to introduce."""
+        import shutil
+
+        if not (shutil.which("apptainer") or shutil.which("singularity")):
+            pytest.skip("no apptainer or singularity on PATH")
+        argv, _ = self._sif(tmp_path).argv(["w.py"], {})
+        assert not any("/etc/passwd" in a for a in argv)
+        assert not any(a == "--user" for a in argv)
+
+    def test_the_manifest_records_which_implementation_ran(self):
+        """`kind = "apptainer"` covers two projects; a claim should say which."""
+        m = M.load(BOLTZ_MANIFEST)
+        if m.status == "verified" and "apptainer" in m.verified_on.lower():
+            assert any(
+                word in m.verified_on
+                for word in ("SingularityCE", "Apptainer", "singularity")
+            ), "an apptainer claim must name the implementation it ran under"

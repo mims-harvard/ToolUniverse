@@ -190,9 +190,37 @@ Dockerfiles want an empty archive in a `_jitcache/` directory the checkout does
 not have. The archive's name has to satisfy the Dockerfile's own glob,
 `_jitcache/<kit>-*-jit.ta[r]`.
 
-**[n=1]** `apptainer` is implemented from the kits' documented invocation and
-has not run: this project's machine has none installed. `docker` and `venv` are
-both exercised, and give the same peak memory on the same input.
+All three routes are exercised. On the same input and the same card they give
+the same peak reserved memory, 3.21 GiB, which is the useful check: it says the
+three are running the same model on the same stack rather than three things
+that merely all finish.
+
+| route | one prediction | peak |
+| --- | --- | --- |
+| venv | 15 s | 3.21 GiB |
+| docker | 13 s | 3.21 GiB |
+| apptainer | 22 s | 3.21 GiB |
+
+**Apptainer's build needs privilege; its run does not**, and that asymmetry is
+the point of the route rather than a wart. A `.def` with a `%post` section runs
+commands inside the image, which needs fakeroot, which needs unprivileged user
+namespaces — and Ubuntu 24.04 ships
+`kernel.apparmor_restrict_unprivileged_userns=1`, so `unshare --user` is denied
+even with `subuid`/`subgid` configured. Building therefore takes one root
+command. Running the resulting `.sif` takes none, and runs as the calling user
+rather than as root, which is what Docker needs `--user` and a synthetic
+`passwd` to achieve. That is the kits' own recommended shape: build the `.sif`
+once on a machine that has Docker, copy the one file to the cluster, and the
+cluster needs only Apptainer.
+
+**Which implementation is "apptainer"** is worth stating. Apptainer (Linux
+Foundation, 1.x) and SingularityCE (Sylabs, 4.x) are forks of the same project
+and the kits treat them as interchangeable — their `.def` headers read
+"Apptainer / Singularity". This standard's `kind = "apptainer"` covers both and
+the runner is whichever of the two is on `PATH`. What was exercised here is
+SingularityCE 4.1.1, because Ubuntu 24.04 packages that one and upstream
+Apptainer publishes no aarch64 build; a provider's `verified_on` should say
+which it ran under rather than let the vocabulary imply it.
 
 ---
 

@@ -157,9 +157,18 @@ work_root = "/srv/tooluniverse/work"      # required: see below
 ```
 
 `tu remote setup boltz` then builds the image from the kit's own
-`environment/Dockerfile` and everything else is unchanged. Measured here: the
-same prediction, the same 3.21 GiB peak as the venv route, ~33 s against ~12 s
-once both caches are warm — the difference is container start-up.
+`environment/Dockerfile` and everything else is unchanged.
+
+All three routes were measured here on the same input and the same card:
+
+| route | one prediction | peak reserved |
+| --- | --- | --- |
+| venv | 15 s | 3.21 GiB |
+| docker | 13 s | 3.21 GiB |
+| apptainer | 22 s | 3.21 GiB |
+
+The identical peak is the useful number: it says the three are running the same
+model on the same stack, rather than three things that merely all finish.
 
 Two things a container needs that a venv does not. `work_root` must be
 declared, because a per-request output path the caller invents is not visible
@@ -169,8 +178,29 @@ writable compiler caches — the host's `passwd` would expose every account on
 the machine, and without the rest numba, Triton and Boltz-2's own parsing
 zygote each fail in their own way.
 
-Apptainer is implemented from the kits' documented invocation and is untested
-here; this machine has no Apptainer.
+For Apptainer, `[env] sif` names the image instead:
+
+```toml
+[env]
+kind = "apptainer"
+sif = "~/sif/boltz2-kit.sif"
+work_root = "/srv/tooluniverse/work"
+```
+
+Its build needs privilege once and its run needs none, which is the point of
+the route rather than a wart: a `.def` with a `%post` runs commands inside the
+image, needing fakeroot, needing unprivileged user namespaces — and Ubuntu
+24.04 ships `kernel.apparmor_restrict_unprivileged_userns=1`, so `unshare
+--user` is denied even with `subuid`/`subgid` configured. So an administrator
+builds the `.sif` once on a machine with Docker, and everyone else runs it
+unprivileged, as themselves. That is also why Apptainer needs none of the
+`--user`, synthetic `passwd` and container-home machinery Docker does.
+
+`kind = "apptainer"` covers both Apptainer (Linux Foundation, 1.x) and
+SingularityCE (Sylabs, 4.x) — forks of one project, and the kits' own `.def`
+headers read "Apptainer / Singularity". Whichever is on `PATH` is used. What
+was measured here was SingularityCE 4.1.1, because Ubuntu 24.04 packages that
+one and upstream Apptainer publishes no aarch64 build.
 
 ### The one thing setup does not do
 

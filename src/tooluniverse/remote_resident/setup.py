@@ -306,6 +306,20 @@ def _build_image(manifest, dest: Path, t: float) -> Optional[StepResult]:
                 reason="no_dockerfile",
                 seconds=time.time() - t,
             )
+        # The kit's apptainer.def bootstraps from a Docker tag of its own
+        # choosing. Applying that tag here as well lets the Apptainer route use
+        # the kit's recipe unchanged -- its %post creates the libcuda symlinks
+        # Triton's launcher stub wants -- instead of editing a file in a
+        # checkout that has to stay byte-identical to its pinned commit.
+        tags = ["-t", manifest.env_image]
+        definition = dest / subdir / "environment" / "apptainer.def"
+        if definition.is_file():
+            for line in definition.read_text().splitlines():
+                if line.strip().lower().startswith("from:"):
+                    wanted = line.split(":", 1)[1].strip()
+                    if wanted and wanted != manifest.env_image:
+                        tags += ["-t", wanted]
+                    break
         with _build_context(dest, dockerfile) as context:
             out = _run(
                 [
@@ -313,8 +327,7 @@ def _build_image(manifest, dest: Path, t: float) -> Optional[StepResult]:
                     "build",
                     "-f",
                     os.fspath(context / dockerfile.relative_to(dest)),
-                    "-t",
-                    manifest.env_image,
+                    *tags,
                     os.fspath(context),
                 ],
                 timeout=14400,

@@ -12,7 +12,11 @@ operations = ["boltz2_docking"]
 # in this file was measured there; on anything else they are a reference to
 # re-measure against, not a prediction. See STANDARD.md section 9.
 status = "verified"
-verified_on = "NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02)"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02).
+All three execution routes, same peak reserved 3.21 GiB on the same input:
+venv 15 s, docker 13 s, apptainer 22 s. The apptainer run was SingularityCE
+4.1.1, not Linux Foundation Apptainer -- Ubuntu 24.04 packages that one and
+upstream Apptainer publishes no aarch64 build."""
 
 [runtime]
 mode = "resident"
