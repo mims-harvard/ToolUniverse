@@ -1,7 +1,7 @@
 """
 EOL_get_collection
 
-Get a curated collection from the Encyclopedia of Life. EOL collections are user-curated lists of...
+Get a curated collection from the Encyclopedia of Life: name, description and member items (speci...
 """
 
 from typing import Any, Optional, Callable
@@ -19,12 +19,12 @@ def EOL_get_collection(
     validate: bool = True,
 ) -> Any:
     """
-    Get a curated collection from the Encyclopedia of Life. EOL collections are user-curated lists of...
+    Get a curated collection from the Encyclopedia of Life: name, description and member items (speci...
 
     Parameters
     ----------
     collection_id : int
-        EOL collection ID. Example: 176 (Fingertip Fauna), 6 (a sample collection).
+        EOL collection ID. Verified examples: 4 (Backyard Animals in CT), 100 (Gulf o...
     page : int
         Page number for paginated results.
     per_page : int

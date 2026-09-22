@@ -525,13 +525,13 @@
   },
   {
     "name": "EOL_get_collection",
-    "description": "Get a curated collection from the Encyclopedia of Life. EOL collections are user-curated lists of species pages organized by theme (e.g., endangered species, invasive species, species of a region). Returns collection name, description, and member items with their page IDs. Supports pagination and filtering by object type (taxa, articles, etc.).",
+    "description": "Get a curated collection from the Encyclopedia of Life: name, description and member items (species pages, images, articles) with their page IDs. NOTE (checked 2026-09-22): every collection sampled from id 1-200 had 0 items ('total_items': 0, 'items': []) -- EOL's collection-membership listing looks abandoned/broken upstream, so expect an empty 'items' list even for a valid collection. IDs above roughly 200 mostly answer HTTP 500 (checked up to 55868). Use EOL_search or EOL_get_page for real species content.",
     "parameter": {
       "type": "object",
       "properties": {
         "collection_id": {
           "type": "integer",
-          "description": "EOL collection ID. Example: 176 (Fingertip Fauna), 6 (a sample collection)."
+          "description": "EOL collection ID. Verified examples: 4 (Backyard Animals in CT), 100 (Gulf of Mexico Sea Turtles), 50 (Recently Discovered Species) -- all real collections but with 0 items."
         },
         "page": {
           "type": "integer",
@@ -562,10 +562,10 @@
     "type": "EOLTool",
     "test_examples": [
       {
-        "collection_id": 176
+        "collection_id": 4
       },
       {
-        "collection_id": 6,
+        "collection_id": 100,
         "per_page": 10
       }
     ],
