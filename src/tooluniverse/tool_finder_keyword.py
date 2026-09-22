@@ -707,7 +707,7 @@ class ToolFinderKeyword(BaseTool):
                 # Force full load by clearing filters and loading everything
                 self.tooluniverse.load_tools(include_tools=None, tool_type=None)
 
-            all_tools = list(self.tooluniverse.return_all_loaded_tools())
+            all_tools = self.tooluniverse.return_all_loaded_tools(copy_tools=False)
 
             # Tools with unmet ``required_api_keys`` are deliberately excluded
             # from execution, but they must remain discoverable. Merge the
