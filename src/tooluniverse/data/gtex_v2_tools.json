@@ -1026,7 +1026,7 @@
   {
     "name": "GTEx_get_gene_expression",
     "type": "GTExV2Tool",
-    "description": "Get gene expression data at individual sample level (not aggregated). Returns normalized expression values (TPM) for each sample, allowing detailed distribution analysis. Can subset by donor attributes (sex, age_bracket) for demographic-specific analysis. Much more data than median expression. Use for: expression variability analysis, outlier detection, sample-level QC, demographic comparisons. Warning: large result sets for multiple genes/tissues.",
+    "description": "Get gene expression data at individual sample level (not aggregated). Returns normalized expression values (TPM) for each sample, allowing detailed distribution analysis. Can subset by donor attributes (sex, age_bracket) for demographic-specific analysis -- NOTE (checked 2026-09-22): attribute_subset only takes effect with dataset_id='gtex_v10'; with the default 'gtex_v8' the API silently ignores it and returns one unstratified row (subsetGroup: null) regardless of the value given. Much more data than median expression. Use for: expression variability analysis, outlier detection, sample-level QC, demographic comparisons. Warning: large result sets for multiple genes/tissues.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1061,7 +1061,7 @@
             "sex",
             "ageBracket"
           ],
-          "description": "Optional: Subset by donor sex or age bracket"
+          "description": "Optional: Subset by donor sex or age bracket. Only works with dataset_id='gtex_v10'; the default gtex_v8 dataset ignores this parameter."
         },
         "dataset_id": {
           "type": "string",
@@ -1148,7 +1148,8 @@
         "tissue_site_detail_id": [
           "Liver"
         ],
-        "attribute_subset": "sex"
+        "attribute_subset": "sex",
+        "dataset_id": "gtex_v10"
       }
     ],
     "fields": {

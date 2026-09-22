@@ -33,7 +33,7 @@ def GTEx_get_gene_expression(
     tissue_site_detail_id : list[str]
         Optional: Filter by tissues
     attribute_subset : str
-        Optional: Subset by donor sex or age bracket
+        Optional: Subset by donor sex or age bracket. Only works with dataset_id='gte...
     dataset_id : str
         GTEx dataset version (default gtex_v8)
     page : int
