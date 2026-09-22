@@ -253,7 +253,9 @@ def _rebuild_for_step_scale(step_scale: float) -> None:
 
 def _predict_one(req: dict) -> dict:
     """One structure prediction. Returns the reply body; raises on a defect."""
-    yaml_text = req["yaml"]
+    # "input" is the neutral key every provider receives; "yaml" is what the
+    # docking tool has always sent and keeps sending.
+    yaml_text = req.get("input") or req["yaml"]
     out_root = Path(req["out_dir"])
     seed = int(req.get("seed", 0))
     opts = dict(req.get("options") or {})

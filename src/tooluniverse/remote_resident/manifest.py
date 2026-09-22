@@ -84,7 +84,7 @@ _SECTIONS = {
     },
     "gpu": {"policy", "vram_budget_gb", "shareable", "isolation"},
     "env": {"python", "lock", "kind", "verify"},
-    "weights": {"root_env", "root_default", "files"},
+    "weights": {"root_env", "root_default", "files", "fetch"},
     "kit": {
         "upstream",
         "commit",
@@ -219,6 +219,7 @@ class ProviderManifest:
     worker_args: tuple = ()
     weights_root_env: Optional[str] = None
     weights_root_default: Optional[str] = None
+    weights_fetch: Optional[str] = None
     weights: tuple = ()
     kit: Dict[str, Any] = field(default_factory=dict)
 
@@ -429,6 +430,7 @@ def load(path: os.PathLike | str) -> ProviderManifest:
         smoke_timeout_s=float(rt.get("smoke_timeout_s", 1800.0)),
         weights_root_env=wt.get("root_env"),
         weights_root_default=wt.get("root_default"),
+        weights_fetch=wt.get("fetch"),
         weights=tuple(files),
         kit=dict(kit),
     )

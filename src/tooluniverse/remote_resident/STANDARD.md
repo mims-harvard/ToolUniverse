@@ -292,10 +292,48 @@ Therefore:
 | `isolation` excludes `mig` | measured: no MIG on this hardware |
 | Kit referenced, not vendored | measured: 473 MB, 297 MB of foreign-arch binaries |
 | Named refusals carry the fix | the kits' design; **ours: 2 of 16 do so today** |
+| Wrapping a kit without patching it | two kits, two mechanisms |
+| Three commands suffice for every provider | two providers |
+| `setup`'s five steps are the right five | two providers |
 | `[env] kind` beyond `venv` | **[n=1]** — untested |
-| Wrapping a kit without patching it | **[n=1]** — one kit |
-| `[runtime] launch` as the only per-provider hook | **[n=1]** — one provider |
-| Three commands suffice for every provider | **[n=1]** — `setup` exists and runs, on one provider |
-| `setup`'s five steps are the right five | **[n=1]** |
 
-The bottom four rows are what the second provider is for.
+## 11. What the second provider changed
+
+Enformer was brought onto the standard next, deliberately unlike the first, and
+four things that looked settled after one provider were not.
+
+**Activation is usually a variable, not a launcher.** Boltz-2 ships
+`worker_launch` and it is the only kit of the thirty-six that does. The common
+form (30 of 36) is a `.pth` that imports the kit's `_autoload` at interpreter
+start and patches the model package in place when the kit's mode variable is
+set; the worker is then just a script the model's interpreter runs. Which one a
+kit uses is detected, not declared. The variable's name is read from the kit —
+`modes.ENV` where there is a modes module, `_autoload.ENV` where there is not —
+because guessing it from the slug is how a renamed kit silently runs stock.
+
+**One kit cannot be made resident with its levers at all.** ChromBPNet says so
+itself: "THE ONE DEVIATION from an in-process hook: the kit's form is a
+replacement entry script; it offers no in-process patch." Its finder fires only
+for the stock console script and then runs a child. A provider like that
+declares `mode = "subprocess"` with the reason.
+
+**A kit's own `check` does not check its own architecture.** Enformer's reports
+`DRY mode=exact gpu=NVIDIA GB10(sm121) build=sm_90-ptx` on this box and exits 0
+— the GPU architecture its CUDA objects target, which says nothing about the
+ELF machine type of the file holding them. Both of its prebuilt objects are
+x86-64. Eight of the thirty-six kits carry prebuilt host objects; all thirty-nine
+such files are x86-64 and none is aarch64. `setup` now reads the ELF header
+before installing and refuses by name, instead of letting it surface as an
+`ImportError` reading "cannot open shared object file" — `dlopen`'s wording for
+a file that is sitting right there.
+
+**A lock can pin an architecture by URL.** Enformer's pins
+`nvidia-cudnn-frontend` by direct link to its x86-64 wheel, though the same
+version publishes an aarch64 one. A provider whose shipped lock deviates from
+its kit's says so in the lock's own header.
+
+Two more things generalised rather than broke. The weights step grew a declared
+`fetch`, because not every kit fetches weights in its install step and some
+models pull their own from a hub at first load — still without restating a URL.
+And the smoke request's input key became neutral, since `yaml` was only ever
+Boltz-2's word for it.

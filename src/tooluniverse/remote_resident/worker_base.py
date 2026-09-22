@@ -54,7 +54,9 @@ def _load_by_path(name: str, path: Path):
 def protocol():
     """The wire protocol module, by path — never as a ToolUniverse import."""
     override = os.environ.get(PROTOCOL_ENV)
-    path = Path(override) if override else Path(__file__).resolve().parent / "protocol.py"
+    path = (
+        Path(override) if override else Path(__file__).resolve().parent / "protocol.py"
+    )
     if not path.is_file():
         raise SystemExit(
             f"the wire protocol is not at {path}; set {PROTOCOL_ENV} to its path"
@@ -135,7 +137,9 @@ def serve(
     srv.bind(socket_path)
     os.chmod(socket_path, 0o600)  # this uid only; the MCP server runs as the same user
     srv.listen(16)
-    threading.Thread(target=orphan_watchdog, name="orphan-watchdog", daemon=True).start()
+    threading.Thread(
+        target=orphan_watchdog, name="orphan-watchdog", daemon=True
+    ).start()
     say(f"listening on {socket_path}")
 
     try:

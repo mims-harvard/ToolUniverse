@@ -514,3 +514,72 @@ class TestKitLaunch:
 
         with pytest.raises(KL.KitUnavailable, match="mode row"):
             KL.ask_kit(sys.executable, "no_such_kit_opt", "fast")
+
+
+# ---------------------------------------------------------------- two providers
+ENFORMER_MANIFEST = os.path.join(
+    os.path.dirname(BOLTZ_MANIFEST).replace("boltz", "enformer"), "provider.toml"
+)
+
+
+class TestSecondProvider:
+    """What stops the standard being a description of one provider."""
+
+    def test_both_providers_load_and_declare_what_they_measured(self):
+        for path in (BOLTZ_MANIFEST, ENFORMER_MANIFEST):
+            m = M.load(path)
+            assert m.mode == "resident"
+            assert m.vram_budget_gb and m.vram_budget_gb > 0
+            if m.status == "verified":
+                assert m.verified_on, f"{m.slug} claims verified without hardware"
+
+    def test_they_do_not_share_an_environment(self):
+        """The whole reason for the split: their stacks cannot coexist."""
+        pins = {}
+        for path in (BOLTZ_MANIFEST, ENFORMER_MANIFEST):
+            m = M.load(path)
+            lock = m.resolve(m.env_lock).read_text()
+            pins[m.slug] = {
+                line.split("==")[0]: line.split("==")[1]
+                for line in lock.splitlines()
+                if line and not line.startswith("#") and "==" in line
+            }
+        for pkg in ("torch", "numpy"):
+            assert pins["boltz"][pkg] != pins["enformer"][pkg], (
+                f"{pkg} happens to match; pick another to make the point"
+            )
+
+    def test_they_use_different_kit_activations(self):
+        """boltz2 is the only kit of 36 with worker_launch; the rest use a variable."""
+        boltz, enformer = M.load(BOLTZ_MANIFEST), M.load(ENFORMER_MANIFEST)
+        assert boltz.launch == enformer.launch, "one launcher serves both"
+        assert boltz.kit["package"] == "boltz2_opt"
+        assert enformer.kit["package"] == "enformer_opt"
+
+    def test_a_kit_turned_off_says_why(self):
+        """An architecture that cannot load a kit is recorded, not silently dropped."""
+        m = M.load(ENFORMER_MANIFEST)
+        if m.kit.get("mode") == "off":
+            assert m.kit.get("levers_declined"), (
+                "off with nothing declined reads as a preference"
+            )
+            assert "x86-64" in m.resolve("provider.toml").read_text()
+
+    @pytest.mark.parametrize(
+        "head,foreign",
+        [
+            (b"\x7fELF\x02\x01\x01" + b"\x00" * 11 + b"\x3e\x00", "x86_64"),
+            (b"\x7fELF\x02\x01\x01" + b"\x00" * 11 + b"\xb7\x00", "aarch64"),
+        ],
+    )
+    def test_foreign_objects_are_read_from_the_elf_header(
+        self, tmp_path, head, foreign
+    ):
+        """A kit's own check reports the GPU architecture, not the file's."""
+        import platform
+
+        from tooluniverse.remote_resident.setup import _foreign_objects
+
+        (tmp_path / "kernel.so").write_bytes(head + b"\x00" * 64)
+        found = _foreign_objects(tmp_path)
+        assert bool(found) is (platform.machine() != foreign)

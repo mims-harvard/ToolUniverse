@@ -315,6 +315,42 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
 _BYPRODUCTS = ("__pycache__/", ".egg-info/", ".pyc", ".pyo", ".jit/", "/.seeded")
 
 
+def _foreign_objects(root: Path, limit: int = 40) -> List[str]:
+    """Prebuilt shared objects in ``root`` that this machine cannot load.
+
+    Eight of the thirty-six upstream kits carry prebuilt host objects and all
+    of them are x86-64; none ships an aarch64 build. A kit's own `check` does
+    not catch this — it reports the GPU architecture its CUDA objects target,
+    which says nothing about the ELF machine type of the file holding them — so
+    the first sign is an ImportError reading "cannot open shared object file"
+    minutes into a smoke run, which is `dlopen`'s wording for a file that is
+    right there.
+    """
+    import platform
+    import struct
+
+    want = {"x86_64": 0x3E, "aarch64": 0xB7, "ppc64le": 0x15, "s390x": 0x16}.get(
+        platform.machine()
+    )
+    if want is None:
+        return []
+    foreign = []
+    for path in list(root.rglob("*.so"))[:limit]:
+        try:
+            with open(path, "rb") as f:
+                head = f.read(20)
+        except OSError:
+            continue
+        if len(head) < 20 or head[:4] != b"\x7fELF":
+            continue
+        machine = struct.unpack_from("<H", head, 18)[0]
+        if machine != want:
+            foreign.append(
+                f"{path.name}: ELF machine 0x{machine:02x}, this host is {platform.machine()}"
+            )
+    return foreign
+
+
 def _is_tampering(porcelain_line: str) -> bool:
     line = porcelain_line.rstrip()
     if not line:
@@ -339,6 +375,29 @@ def step_kit(manifest: ProviderManifest) -> StepResult:
     lines: List[str] = []
     if dest.is_dir() and (dest / ".git").is_dir():
         lines.append(f"present at {dest}")
+        # The checkout is shared by every provider pinning this commit, and each
+        # declares only the paths it needs. A second provider arriving at an
+        # existing checkout must widen the sparse set rather than find its kit
+        # missing from a directory that looks complete.
+        want = list(kit.get("sparse") or [])
+        subdir = kit.get("subdir")
+        if want and subdir and not (dest / subdir).is_dir():
+            have = _run(["git", "sparse-checkout", "list"], cwd=dest, timeout=300)
+            merged = sorted(set((have.stdout or "").split()) | set(want))
+            widen = _run(
+                ["git", "sparse-checkout", "set", *merged], cwd=dest, timeout=600
+            )
+            if widen.returncode != 0 or not (dest / subdir).is_dir():
+                return StepResult(
+                    "kit",
+                    FAILED,
+                    f"{subdir}/ is absent from the shared checkout at {dest} and the "
+                    f"sparse set could not be widened to {merged}",
+                    reason="kit_sparse_widen_failed",
+                    lines=_tail(widen.stderr),
+                    seconds=time.time() - t,
+                )
+            lines.append(f"sparse set widened to {' '.join(merged)}")
     else:
         if not shutil.which("git"):
             return StepResult(
@@ -413,6 +472,26 @@ def step_kit(manifest: ProviderManifest) -> StepResult:
             seconds=time.time() - t,
         )
 
+    subdir = kit.get("subdir")
+    # Under mode = "off" the kit installs no finder and loads none of its
+    # objects, so their architecture does not matter.
+    checking_objects = subdir and kit.get("mode", "fast") != "off"
+    foreign = _foreign_objects(dest / subdir) if checking_objects else []
+    if foreign:
+        return StepResult(
+            "kit",
+            REFUSED,
+            f"{subdir}/ carries prebuilt shared objects this machine cannot load; "
+            f"the kit's levers would fail at import, not at check",
+            reason="kit_foreign_objects",
+            lines=foreign[:6]
+            + [
+                'set [kit] mode = "off" to run the provider without the kit\'s '
+                "levers, or use a host of the architecture the kit was built for",
+            ],
+            seconds=time.time() - t,
+        )
+
     install = kit.get("install")
     if not install:
         return StepResult(
@@ -467,7 +546,39 @@ def step_weights(manifest: ProviderManifest) -> StepResult:
             seconds=time.time() - t,
         )
     root = manifest.weights_root()
+    lines: List[str] = []
     problems = manifest.verify_weights(deep=True)
+    if problems and manifest.weights_fetch:
+        # Not every kit fetches weights in its install step: some models pull
+        # their own from a hub at first load. The provider declares the command
+        # that does it, which calls upstream's own downloader -- no URL is
+        # restated in ToolUniverse, so a mirror change upstream cannot break us.
+        lines.append(f"{len(problems)} entr(ies) absent or off pin: fetching")
+        python = manifest.python_executable()
+        env = dict(os.environ)
+        if root is not None and manifest.weights_root_env:
+            env[manifest.weights_root_env] = os.fspath(root)
+        out = _run(
+            [
+                "bash",
+                "-lc",
+                manifest.weights_fetch.format(
+                    python=python, weights_root=os.fspath(root) if root else ""
+                ),
+            ],
+            env=env,
+            timeout=7200,
+        )
+        if out.returncode != 0:
+            return StepResult(
+                "weights",
+                FAILED,
+                f"the declared fetch command exited {out.returncode}",
+                reason="weights_fetch_failed",
+                lines=lines + _tail(out.stderr or out.stdout, 8),
+                seconds=time.time() - t,
+            )
+        problems = manifest.verify_weights(deep=True)
     if problems:
         return StepResult(
             "weights",
@@ -553,7 +664,8 @@ def step_smoke(manifest: ProviderManifest) -> StepResult:
         reply = worker.request(
             {
                 "op": "predict",
-                "yaml": smoke_input.read_text(),
+                # Neutral: the provider decides what its input text means.
+                "input": smoke_input.read_text(),
                 "out_dir": os.fspath(
                     measured_path(manifest.slug).parent / f"{manifest.slug}-smoke"
                 ),
