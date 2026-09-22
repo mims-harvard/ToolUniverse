@@ -36,11 +36,8 @@ import argparse
 import json
 import os
 import random
-import socket
 import sys
-import threading
 import time
-import traceback
 from pathlib import Path
 
 ap = argparse.ArgumentParser(description=__doc__)
@@ -93,32 +90,35 @@ from boltz.main import (  # noqa: E402
 from boltz.model.models.boltz2 import Boltz2  # noqa: E402  <- the hooks' trigger
 
 
-# The protocol module is loaded BY PATH, not as ``tooluniverse.remote_resident``.
+# The shared worker runtime is loaded BY PATH, not as a ToolUniverse import.
 # This process runs in the model's own isolated environment, which holds boltz
-# and its pinned stack and nothing of ToolUniverse -- importing the package
-# would pull in its whole dependency set and defeat the per-model environment.
-# One dependency-free file is the entire shared surface between the two sides;
-# the socket is the boundary.
-def _load_protocol():
+# and its pinned stack and nothing of ToolUniverse; importing the package would
+# pull in its whole dependency set and defeat the per-model environment. Two
+# dependency-free files are the entire shared surface, and the socket is the
+# boundary.
+def _load_worker_base():
     import importlib.util
 
+    override = os.environ.get("TOOLUNIVERSE_REMOTE_WORKER_BASE")
     here = Path(__file__).resolve()
     # <repo>/src/tooluniverse/remote/<slug>/resident/<this file>
-    candidate = here.parents[3] / "remote_resident" / "protocol.py"
-    override = os.environ.get("TOOLUNIVERSE_REMOTE_PROTOCOL")
-    path = Path(override) if override else candidate
+    path = (
+        Path(override)
+        if override
+        else here.parents[3] / "remote_resident" / "worker_base.py"
+    )
     if not path.is_file():
         raise SystemExit(
-            f"[boltz-resident] the wire protocol is not at {path} "
-            f"(set TOOLUNIVERSE_REMOTE_PROTOCOL to its path)"
+            f"[boltz-resident] the shared worker runtime is not at {path} "
+            f"(set TOOLUNIVERSE_REMOTE_WORKER_BASE to its path)"
         )
-    spec = importlib.util.spec_from_file_location("_tu_remote_protocol", path)
+    spec = importlib.util.spec_from_file_location("_tu_worker_base", path)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
 
 
-P = _load_protocol()
+WB = _load_worker_base()
 
 say(f"imports done t={time.time() - T0:.1f}s torch={torch.__version__}")
 
@@ -433,98 +433,22 @@ def _predict_one(req: dict) -> dict:
 
 
 # ----------------------------------------------------------------------- serve
-LAST_REQUEST = time.time()
-# How long an orphaned worker keeps the card before giving it back. Long enough
-# that a request in flight when the parent died still finishes and its answer is
-# written; short enough that a crashed MCP server does not strand several GiB.
-ORPHAN_GRACE_S = float(os.environ.get("TOOLUNIVERSE_RESIDENT_ORPHAN_GRACE_S", "120"))
+def _ready() -> dict:
+    return {"build_s": round(BUILD_S, 1), "step_scale": BUILT_STEP_SCALE}
 
 
-def _orphan_watchdog() -> None:
-    """Exit once the process that started this one is gone and nothing is in flight.
-
-    The supervisor starts the worker in a session of its own so that a Ctrl-C to
-    the MCP server does not kill a prediction halfway through. The cost of that
-    choice is that nothing reaps the worker when the server dies instead of
-    exiting cleanly -- and a model nobody can reach, still holding the device, is
-    the worst of both worlds on a box meant to share one GPU. Being reparented to
-    init is the signal; the grace period is what keeps it from firing on a
-    request that outlives a crash.
-    """
-    while True:
-        time.sleep(5)
-        if os.getppid() != 1:
-            continue
-        idle = time.time() - LAST_REQUEST
-        if idle < ORPHAN_GRACE_S:
-            continue
-        say(
-            f"orphaned (parent gone) and idle {idle:.0f}s >= {ORPHAN_GRACE_S:.0f}s: "
-            f"releasing the GPU and exiting"
-        )
-        os._exit(0)  # the serve loop is blocked in accept(); nothing to unwind
-
-
-def _handle(req: dict) -> dict:
-    op = req.get("op")
-    if op == P.OP_PING:
-        return {
-            "ok": True,
-            "model": args.slug,
-            "ready": True,
-            "uptime_s": round(time.time() - T0, 1),
-            "build_s": round(BUILD_S, 1),
-        }
-    if op == P.OP_SHUTDOWN:
-        return {"ok": True}
-    if op == P.OP_PREDICT:
-        globals()["LAST_REQUEST"] = time.time()
-        torch.cuda.reset_peak_memory_stats()
-        return {"ok": True, "result": _predict_one(req)}
-    return {"ok": False, "error": f"unknown op {op!r}", "reason": "unknown_op"}
-
-
-def main() -> int:
-    path = args.socket
-    if os.path.exists(path):
-        os.unlink(path)
-    srv = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    srv.bind(path)
-    os.chmod(path, 0o600)  # this uid only; the MCP server runs as the same user
-    srv.listen(16)
-    threading.Thread(target=_orphan_watchdog, name="orphan-watchdog", daemon=True).start()
-    say(f"listening on {path}")
-    try:
-        while True:
-            conn, _ = srv.accept()
-            buf = bytearray()
-            try:
-                while True:
-                    try:
-                        req = P.recv_line(conn, buf)
-                    except P.ProtocolError:
-                        break
-                    try:
-                        reply = _handle(req)
-                    except Exception as exc:  # a bad request must not kill the model
-                        reply = {
-                            "ok": False,
-                            "error": f"{type(exc).__name__}: {exc}",
-                            "reason": "request_failed",
-                            "traceback": traceback.format_exc(limit=8),
-                        }
-                    globals()["LAST_REQUEST"] = time.time()
-                    P.send_line(conn, reply)
-                    if req.get("op") == P.OP_SHUTDOWN:
-                        say("shutdown requested")
-                        return 0
-            finally:
-                conn.close()
-    finally:
-        srv.close()
-        if os.path.exists(path):
-            os.unlink(path)
+def _reset() -> None:
+    torch.cuda.reset_peak_memory_stats()
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(
+        WB.serve(
+            slug=args.slug,
+            socket_path=args.socket,
+            on_predict=_predict_one,
+            ready=_ready,
+            on_reset=_reset,
+            log=lambda msg: say(msg),
+        )
+    )

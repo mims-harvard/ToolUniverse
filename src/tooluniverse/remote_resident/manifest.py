@@ -80,6 +80,7 @@ _SECTIONS = {
         "request_timeout_s",
         "smoke",
         "smoke_timeout_s",
+        "worker_args",
     },
     "gpu": {"policy", "vram_budget_gb", "shareable", "isolation"},
     "env": {"python", "lock", "kind", "verify"},
@@ -92,6 +93,7 @@ _SECTIONS = {
         "mode",
         "levers_declined",
         "install",
+        "package",
     },
 }
 
@@ -214,6 +216,7 @@ class ProviderManifest:
     env_verify: Optional[str] = None
     smoke: Optional[str] = None
     smoke_timeout_s: float = 1800.0
+    worker_args: tuple = ()
     weights_root_env: Optional[str] = None
     weights_root_default: Optional[str] = None
     weights: tuple = ()
@@ -421,6 +424,7 @@ def load(path: os.PathLike | str) -> ProviderManifest:
         env_lock=env.get("lock"),
         env_kind=env.get("kind", "venv"),
         env_verify=env.get("verify"),
+        worker_args=tuple(rt.get("worker_args", ())),
         smoke=rt.get("smoke"),
         smoke_timeout_s=float(rt.get("smoke_timeout_s", 1800.0)),
         weights_root_env=wt.get("root_env"),

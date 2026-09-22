@@ -30,7 +30,17 @@ mode = "resident"
 # request -- a saving a per-call worker can never collect, since it exits before
 # the second request arrives.
 worker = "resident/boltz_resident_worker.py"
-launch = "tooluniverse.remote.boltz.resident.launch:build_command"
+# The generic launcher: it asks [kit] package's own interpreter for that kit's
+# mode row and launch options, so nothing about the kit is copied here.
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+# What the worker script itself is given. {socket}, {slug}, {weights_root},
+# {python} and {kit} are filled in by the launcher.
+worker_args = [
+    "--socket", "{socket}",
+    "--cache", "{weights_root}",
+    "--checkpoint", "{weights_root}/boltz2_conf.ckpt",
+    "--slug", "{slug}",
+]
 # The cold path is weights, CUDA context and a first-pass kernel compile.
 start_timeout_s = 900.0
 request_timeout_s = 3600.0
@@ -110,6 +120,9 @@ upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
 # abbreviation can collide as the upstream history grows.
 commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
 subdir = "boltz2"
+# 35 of the 36 kits name their package <kit>_opt, which is the default;
+# stating it keeps the one exception (protenix_v2 -> protenix_opt) expressible.
+package = "boltz2_opt"
 # A sparse checkout of these two is 402 MB against 473 MB for the whole tree --
 # the other four kits are skipped, but common/opt_core (308 MB) is required.
 sparse = ["boltz2", "common"]

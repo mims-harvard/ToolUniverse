@@ -475,3 +475,42 @@ class TestSetup:
         m = M.load(BOLTZ_MANIFEST)
         assert m.smoke, "a verified provider must declare how to prove itself"
         assert m.resolve(m.smoke).is_file()
+
+
+# -------------------------------------------------------------------- kit_launch
+class TestKitLaunch:
+    def test_the_package_name_defaults_to_the_convention(self, tmp_path):
+        """35 of the 36 kits name their package <kit>_opt."""
+        from tooluniverse.remote_resident import kit_launch as KL
+
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "chrombpnet"\n\n[kit]\n'
+            'upstream = "https://example.invalid/x"\n'
+            f'commit = "{"a" * 40}"\nsubdir = "chrombpnet"\n'
+        )
+        assert KL.kit_package(M.load(p)) == "chrombpnet_opt"
+
+    def test_the_one_kit_that_breaks_the_convention_can_say_so(self, tmp_path):
+        from tooluniverse.remote_resident import kit_launch as KL
+
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "protenix_v2"\n\n[kit]\n'
+            'upstream = "https://example.invalid/x"\n'
+            f'commit = "{"a" * 40}"\nsubdir = "protenix_v2"\npackage = "protenix_opt"\n'
+        )
+        assert KL.kit_package(M.load(p)) == "protenix_opt"
+
+    def test_boltz_uses_the_generic_launcher(self):
+        """The template is only a template if the first provider is on it."""
+        m = M.load(BOLTZ_MANIFEST)
+        assert m.launch == "tooluniverse.remote_resident.kit_launch:build_command"
+        assert "{socket}" in " ".join(m.worker_args)
+        assert "{weights_root}" in " ".join(m.worker_args)
+
+    def test_a_kit_that_is_not_installed_is_named_not_guessed(self, tmp_path):
+        from tooluniverse.remote_resident import kit_launch as KL
+
+        with pytest.raises(KL.KitUnavailable, match="mode row"):
+            KL.ask_kit(sys.executable, "no_such_kit_opt", "fast")
