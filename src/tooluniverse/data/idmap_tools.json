@@ -165,7 +165,7 @@
     "type": "OpenTarget",
     "test_examples": [
       {
-        "inputId": "1"
+        "inputId": "MONDO_0004975"
       }
     ],
     "return_schema": {

@@ -1,7 +1,7 @@
 ---
 
 name: tooluniverse-gene-disease-association
-description: "Gene-disease association analysis across DisGeNET, OpenTargets, Monarch, OMIM, GenCC, Orphanet. Cross-references multiple sources for evidence-graded association reports with concordance scoring (5/5 sources agree → strong, 1/5 → weak). Use for 'which diseases is gene X associated with' or 'which genes cause disease Y' queries with quantitative confidence."
+description: "Gene-disease association analysis across DisGeNET, OpenTargets, Monarch, OMIM, GenCC, Orphanet, Gene2Phenotype (G2P). Cross-references multiple sources for evidence-graded association reports with concordance scoring (5/5 sources agree → strong, 1/5 → weak). Use for 'which diseases is gene X associated with' or 'which genes cause disease Y' queries with quantitative confidence, including clinical-panel-based curation (developmental disorders, cancer, cardiac, skeletal, eye, skin panels)."
 ---
 
 # Gene-Disease Association Analysis
@@ -46,7 +46,8 @@ Phase 4: Monarch Initiative (cross-species evidence)
   Gene-disease associations integrating OMIM, ClinVar, model organisms
       |
 Phase 5: Mendelian Disease Evidence (curated)
-  OMIM gene-disease map, GenCC validity classifications, Orphanet rare diseases
+  OMIM gene-disease map, GenCC validity classifications, Orphanet rare diseases,
+  Gene2Phenotype (G2P) clinical-panel assertions
       |
 Phase 6: Variant-Disease Associations (optional, if gene query)
   DisGeNET variant-disease links, ClinVar pathogenic variants
@@ -120,6 +121,14 @@ histopheno = tu.tools.MonarchV3_get_histopheno(entity_id=mondo_id)  # phenotypes
 entity = tu.tools.MonarchV3_get_entity(entity_id=hgnc_curie)  # details, synonyms, xrefs
 ```
 
+Note: `EnsemblPheno_get_by_gene` is another multi-source gene->phenotype
+aggregator (GWAS catalog/ClinVar/OMIM/Orphanet), but is currently
+returning live HTTP 500 errors upstream at Ensembl — verified, not a
+ToolUniverse bug. Its variant-level counterpart, `EnsemblPheno_get_by_variant`,
+does work; see `tooluniverse-variant-analysis`'s "Ensembl Phenotype
+Associations" section. Prefer Monarch/G2P above until Ensembl's gene/term/
+region endpoints recover.
+
 ---
 
 ## Phase 5: Mendelian Disease Evidence
@@ -140,7 +149,31 @@ gencc_classifications = tu.tools.GenCC_get_classifications(gene_symbol="BRCA1", 
 
 # Orphanet: rare disease associations (filter results by exact gene.symbol match)
 orphanet_result = tu.tools.Orphanet_get_gene_diseases(gene_name=gene_symbol)
+
+# Gene2Phenotype (G2P): EBI-curated gene-disease pairs organized into clinical panels
+# (DD=developmental disorders, Cancer, Skeletal, Eye, Cardiac, Ear, Skin, Prenatal).
+# Distinct from GenCC/OMIM: G2P assertions carry genotype (monoallelic/biallelic),
+# molecular mechanism (loss/gain of function), and are grouped by clinical specialty panel
+# rather than by disease name alone -- useful when the query maps naturally onto a panel
+# (e.g. "what developmental-disorder genes are definitive-confidence" -> DD panel).
+g2p_hits = tu.tools.G2P_search(query=gene_symbol)  # -> list of stable_ids, one per gene-disease pair
+g2p_record = tu.tools.G2P_get_record(stable_id=g2p_hits["data"]["results"][0]["stable_id"])
+# g2p_record includes genotype, molecular_mechanism, disease.ontology_terms (MONDO + OMIM
+# cross-refs), confidence, and supporting publications (PMIDs) -- richer per-pair evidence
+# than G2P_search's summary row.
+
+# To enumerate every gene in a clinical panel (e.g. building a candidate gene list for a
+# developmental-disorder patient), download the full panel rather than searching gene-by-gene:
+g2p_panel_genes = tu.tools.G2P_download_panel(panel="DD")  # every curated DD gene-disease pair
+g2p_panel_stats = tu.tools.G2P_get_panel(panel="dd")  # just counts (total_records, total_genes, by_confidence)
 ```
+
+**G2P confidence tiers** (definitive > strong > moderate > limited) parallel GenCC's
+Definitive/Strong/Moderate/Limited/Disputed/Refuted scale -- when both sources classify the
+same gene-disease pair, concordant "definitive"/"Definitive" ratings from two independently
+curated resources is stronger evidence than either alone. When they disagree, check whether
+G2P's panel assignment matches the disease context: a gene rated "definitive" for the Cancer
+panel says nothing about its status for, say, a cardiac phenotype.
 
 ---
 
@@ -205,6 +238,8 @@ Compile all results into a single table per gene-disease pair:
 - **GenCC returns empty**: Not all genes have classifications. Check for gene renames.
 - **GenCC disease search misses**: Simplify query (e.g., "breast cancer" not "hereditary breast and ovarian cancer syndrome").
 - **Gene rename misses in non-GenCC tools**: Only GenCC handles renames automatically. Use MyGene_query_genes to confirm the current canonical symbol.
+- **G2P_search returns 0 results for a real disease gene**: G2P only covers genes with at least one clinically curated assertion in one of its panels (DD, Cancer, Skeletal, Eye, Cardiac, Ear, Skin, Prenatal) -- it is not a genome-wide resource like DisGeNET. A miss here does not mean no association exists elsewhere; fall back to the other Phase 5 sources.
+- **G2P panel name mismatch**: Panel names are case-insensitive short codes (`dd`, `cancer`, `cardiac`, `skeletal`, `eye`, `ear`, `skin`, `prenatal`), not full disease-area sentences -- check `G2P_get_panel` first if unsure of the exact code.
 
 ---
 

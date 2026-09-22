@@ -123,7 +123,7 @@
                     "default": 10,
                     "minimum": 1,
                     "maximum": 100,
-                    "description": "Maximum number of results (1-100)"
+                    "description": "Maximum number of results (1-100). Pharos' API currently returns at most 10 targets per request whatever this is; data.count gives the total matches and data.note appears when fewer than requested come back."
                 }
             },
             "required": ["query"]
@@ -218,7 +218,7 @@
                     "default": 20,
                     "minimum": 1,
                     "maximum": 100,
-                    "description": "Maximum number of results (1-100)"
+                    "description": "Maximum number of results (1-100). Pharos' API currently returns at most 10 targets per request whatever this is; data.count gives the total matches and data.note appears when fewer than requested come back."
                 }
             },
             "required": ["disease"]

@@ -215,7 +215,11 @@ donors = tu.tools.HuBMAP_search_donors(group_name="Stanford", limit=10)
 result = tu.tools.OmicsDI_search_datasets(query="spatial transcriptomics kidney Visium")
 
 # Use CELLxGENE for cell-level expression context
-result = tu.tools.CELLxGENE_get_cell_metadata(tissue="kidney")
+# obs_value_filter is required (unfiltered Census queries time out)
+result = tu.tools.CELLxGENE_get_cell_metadata(
+    obs_value_filter='tissue_general == "kidney"',
+    column_names=["cell_type", "tissue", "disease"],
+)
 ```
 
 ```python

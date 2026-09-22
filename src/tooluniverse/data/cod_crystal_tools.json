@@ -59,14 +59,14 @@
             "string",
             "null"
           ],
-          "description": "Common/trivial name search (partial match). Examples: 'quartz', 'perovskite', 'zeolite', 'diamond'"
+          "description": "Common/trivial compound name (partial, case-insensitive), applied client-side to each row's 'commonname' field after a free-text search. Examples: 'aspirin', 'perovskite', 'zeolite', 'diamond'"
         },
         "mineral": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Mineral name search (partial match). Examples: 'calcite', 'feldspar', 'pyrite', 'magnetite'"
+          "description": "Mineral name (partial, case-insensitive). COD's server has no working mineral filter, so this runs a free-text search and keeps rows whose own 'mineral' field contains the value. Examples: 'calcite', 'pyrite', 'quartz'"
         },
         "spacegroup": {
           "type": [

@@ -204,19 +204,28 @@ def quick_splice_check(tu, variant, genome="38"):
 def assess_regulatory_impact(tu, variant_position, gene_symbol):
     """Assess regulatory impact of non-coding variant."""
 
+    # Returns the ChIP-Atlas enrichment submission URL/parameters, not results
     tf_binding = tu.tools.ChIPAtlas_enrichment_analysis(
-        gene=gene_symbol,
-        cell_type="all"
+        gene_list=gene_symbol,
+        genome="hg38"
     )
 
-    peaks = tu.tools.ChIPAtlas_get_peak_data(
-        gene=gene_symbol,
-        experiment_type="TF"
+    # Peaks are per experiment: find experiment IDs first, then get a peak-file URL
+    datasets = tu.tools.ChIPAtlas_search_datasets(
+        operation="search_datasets",
+        antigen="CTCF",
+        genome="hg38"
     )
+    experiment_id = datasets['data']['results'][0]['experiment_ids'][0]
+    peaks = tu.tools.ChIPAtlas_get_peak_data(
+        experiment_id=experiment_id,
+        genome="hg38",
+        format="bed"
+    )  # Returns a BED download URL; fetch it to intersect with the variant position
 
     encode_data = tu.tools.ENCODE_search_experiments(
         assay_title="ATAC-seq",
-        biosample="all"
+        organism="Homo sapiens"
     )
 
     binding_disrupted = check_motif_disruption(variant_position, peaks)
@@ -374,8 +383,8 @@ protein_seq = tu.tools.UniProt_get_sequence_by_accession(accession=uniprot_id)
 
 # 2. Get/predict structure
 try:
-    pdb_hits = tu.tools.PDBe_get_uniprot_mappings(uniprot_id=uniprot_id)
-    structure = tu.tools.PDB_get_structure(pdb_id=pdb_hits[0]['pdb_id'])
+    pdb_hits = tu.tools.PDBeSIFTS_get_best_structures(uniprot_accession=uniprot_id, limit=5)
+    structure = tu.tools.RCSBData_get_entry(pdb_id=pdb_hits['data']['structures'][0]['pdb_id'])
 except:
     structure = tu.tools.NvidiaNIM_alphafold2(
         sequence=protein_seq['sequence'],
@@ -403,15 +412,17 @@ except:
 def validate_expression_context(tu, gene_symbol, phenotype_tissues):
     """Validate gene is expressed in phenotype-relevant tissues."""
 
-    sc_expression = tu.tools.CELLxGENE_get_expression_data(
-        gene=gene_symbol,
-        tissue=phenotype_tissues[0] if phenotype_tissues else "all"
-    )
+    sc_args = {"var_value_filter": f'feature_name == "{gene_symbol}"'}
+    if phenotype_tissues:
+        sc_args["obs_value_filter"] = f'tissue_general == "{phenotype_tissues[0]}"'
+    sc_expression = tu.tools.CELLxGENE_get_expression_data(**sc_args)
 
-    gtex = tu.tools.GTEx_get_median_gene_expression(gene=gene_symbol)
+    gtex = tu.tools.GTEx_get_median_gene_expression(gene_symbol=gene_symbol)
 
+    # data is a list of {"tissueSiteDetailId": "Liver", "median": 6.87, ...}
+    median_by_tissue = {row["tissueSiteDetailId"]: row["median"] for row in gtex["data"]}
     relevant_expression = {
-        tissue: gtex.get(tissue, 0)
+        tissue: median_by_tissue.get(tissue, 0)
         for tissue in phenotype_tissues
     }
 
@@ -435,13 +446,9 @@ def comprehensive_literature_search(tu, gene, variant, phenotype):
         max_results=30
     )
 
-    biorxiv = tu.tools.BioRxiv_list_recent_preprints(
-        query=f"{gene} {phenotype}",
-        limit=10
-    )
-
-    medrxiv = tu.tools.MedRxiv_get_preprint(
-        query=f"{gene} variant {phenotype}",
+    # bioRxiv/medRxiv have no keyword-search tool; search their preprints via Europe PMC
+    preprints = tu.tools.EuropePMC_search_articles(
+        query=f"{gene} {phenotype} AND SRC:PPR",
         limit=10
     )
 
@@ -455,7 +462,7 @@ def comprehensive_literature_search(tu, gene, variant, phenotype):
 
     return {
         'pubmed': pubmed,
-        'preprints': biorxiv + medrxiv,
+        'preprints': preprints,
         'key_papers_with_citations': key_papers
     }
 ```

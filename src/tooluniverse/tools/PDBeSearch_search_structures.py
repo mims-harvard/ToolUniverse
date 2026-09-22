@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def PDBeSearch_search_structures(
     query: str,
     limit: Optional[int] = None,
+    sort_by: Optional[str] = "relevance",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +26,8 @@ def PDBeSearch_search_structures(
         Search query - protein name, gene name, or keyword. Supports Solr syntax. Exa...
     limit : int
         Maximum results to return (1-50, default 10).
+    sort_by : str
+        Result ordering: 'relevance' (default) puts the best text match first with re...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -39,7 +42,11 @@ def PDBeSearch_search_structures(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"query": query, "limit": limit}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"query": query, "limit": limit, "sort_by": sort_by}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "PDBeSearch_search_structures",

@@ -21,7 +21,7 @@ def EthicalComplianceReviewer(
     Parameters
     ----------
     ethics_section : str
-
+        Full text of the ethics / compliance section to review
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

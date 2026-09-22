@@ -1,7 +1,7 @@
 """
 eQTL_list_datasets
 
-List available eQTL (expression Quantitative Trait Loci) datasets from the EBI eQTL Catalogue. Ea...
+DEPRECATED / non-functional: the EBI eQTL Catalogue retired its REST API (every request now retur...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def eQTL_list_datasets(
     validate: bool = True,
 ) -> Any:
     """
-    List available eQTL (expression Quantitative Trait Loci) datasets from the EBI eQTL Catalogue. Ea...
+    DEPRECATED / non-functional: the EBI eQTL Catalogue retired its REST API (every request now retur...
 
     Parameters
     ----------

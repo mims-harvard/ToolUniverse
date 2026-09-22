@@ -555,7 +555,10 @@
                 }
               },
               "pubchem": {
-                "type": "object",
+                "type": [
+                  "object",
+                  "array"
+                ],
                 "properties": {
                   "cid": {
                     "type": "integer"

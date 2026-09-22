@@ -214,7 +214,7 @@ tu.load_tools()
 
 # Annotate genes from differential methylation
 gene = "TP53"
-ens = tu.tools.ensembl_lookup_gene(id=gene, species='homo_sapiens')
+ens = tu.tools.ensembl_lookup_gene(gene_id=gene, species='homo_sapiens')
 
 # Get regulatory elements near a gene
 screen = tu.tools.SCREEN_get_regulatory_elements(

@@ -1087,7 +1087,8 @@
           "enum": [
             "Male",
             "Female"
-          ]
+          ],
+          "description": "Optional: Filter by patient sex. Omit this parameter if you don't want to filter by sex."
         },
         "patientagegroup": {
           "type": "string",
@@ -1098,11 +1099,13 @@
             "Adolescent",
             "Adult",
             "Elderly"
-          ]
+          ],
+          "description": "Optional: Filter by patient age group. Omit this parameter if you don't want to filter by age."
         },
         "occurcountry": {
           "type": "string",
-          "pattern": "^[A-Z]{2}$"
+          "pattern": "^[A-Z]{2}$",
+          "description": "Optional: Filter by country where event occurred (ISO2 code, e.g., 'US', 'GB'). Omit this parameter if you don't want to filter by country."
         },
         "manufacturer_name": {
           "type": "string",
@@ -2727,7 +2730,8 @@
           "enum": [
             "Male",
             "Female"
-          ]
+          ],
+          "description": "Optional: Filter by patient sex. Omit this parameter if you don't want to filter by sex."
         },
         "patientagegroup": {
           "type": "string",
@@ -2738,11 +2742,13 @@
             "Adolescent",
             "Adult",
             "Elderly"
-          ]
+          ],
+          "description": "Optional: Filter by patient age group. Omit this parameter if you don't want to filter by age."
         },
         "occurcountry": {
           "type": "string",
-          "pattern": "^[A-Z]{2}$"
+          "pattern": "^[A-Z]{2}$",
+          "description": "Optional: Filter by country where event occurred (ISO2 code, e.g., 'US', 'GB'). Omit this parameter if you don't want to filter by country."
         },
         "manufacturer_name": {
           "type": "string",

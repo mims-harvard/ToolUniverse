@@ -112,6 +112,16 @@ When multiple variants have similar posterior probabilities:
 - `gwas_get_associations_for_snp`: All trait associations for a variant
 - `gwas_search_studies`: Find studies by disease/trait
 
+### Do-It-Yourself Statistical Fine-Mapping, Colocalization, and TWAS
+
+This skill's "Limitations" section above already notes that Open Targets hasn't fine-mapped every published GWAS locus. When a locus has no precomputed `OpenTargets_get_variant_credible_sets`/`OpenTargets_get_study_credible_sets` result, three local calculator tools let you run the actual statistics yourself from raw per-SNP summary statistics (beta, standard error, SNP IDs) that you already have or pull from elsewhere:
+
+- `Finemap_credible_set(beta=[...], se=[...], snp=[...], coverage=0.95, sd_prior=...)` — single-causal-variant fine-mapping via Wakefield's approximate Bayes factor. Returns each SNP's posterior inclusion probability (PIP), the `top_snp`/`top_pip`, and the credible set at the requested coverage. Verified live: `{"n_snps": 6, "top_snp": "rs3", "top_pip": 1.0, "credible_set": [...]}`.
+- `Coloc_abf_test(beta1=[...], se1=[...], beta2=[...], se2=[...], snp=[...], p1=..., p2=..., p12=...)` — Bayesian colocalization (`coloc.abf`, Giambartolomei 2014) testing whether two signals over the same SNP set (e.g. a GWAS hit and an eQTL) share one causal variant. Returns the five posterior probabilities PP0-PP4 (PP4 = shared causal variant — the number to check first). Verified live: real posteriors returned for a 6-SNP toy region.
+- `SPrediXcan_associate(weight=[...], gwas_z=[...], snp_sd=[...], covariance=..., snp=[...])` — summary-based transcriptome-wide association (S-PrediXcan, Barbeira 2018): combines eQTL prediction weights for a gene with GWAS per-SNP z-scores to test whether the gene's *predicted expression* (not just nearby variants) associates with the trait. Returns a TWAS z-score/p-value and direction. Verified live: `{"twas_zscore": 4.73, "p_value": 2.2e-06, ...}`.
+
+**Where to get the raw inputs**: these three tools compute on arrays you supply — they do not fetch summary statistics themselves. `src/tooluniverse/data/gwas_sumstats_tools.json`'s 3 tools (`GWASSumStats_list_studies`, `GWASSumStats_get_trait_studies`, `GWASSumStats_get_region_associations`) were meant to supply exactly this, but **as of this writing all three are dead**: EBI deprecated its GWAS Summary Statistics REST API entirely — every call returns a clean `410 Gone` ("This API has been deprecated. For ways to access summary statistics see: https://www.ebi.ac.uk/gwas/docs/methods/summary-statistics"), confirmed both via `tu test` and an independent direct `curl` to the same endpoint. Do not route a workflow through `GWASSumStats_*` expecting it to work; get region-level summary statistics via the GWAS Catalog's current bulk-download/FTP method (linked from that docs page) or another source, then feed the resulting beta/SE/SNP arrays into the three calculator tools above.
+
 ## Understanding Fine-Mapping Output
 
 ### Interpreting Posterior Probabilities

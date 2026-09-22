@@ -7,9 +7,9 @@
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `HPO_search_terms` | Search HPO by text | `query` |
-| `HPO_get_term` | Get HPO term details | `hp_id` |
-| `HPO_get_genes_by_phenotype` | Genes associated with HPO term | `hp_id` |
-| `HPO_get_diseases_by_phenotype` | Diseases with HPO term | `hp_id` |
+| `HPO_get_term` | Get HPO term details | `term_id` |
+| `HPO_get_genes_by_phenotype` | Genes associated with HPO term | `term_id` |
+| `HPO_get_diseases_by_phenotype` | Diseases with HPO term | `term_id` |
 
 **Example - Convert symptom to HPO**:
 ```python
@@ -202,11 +202,11 @@ actionability = tu.tools.ClinGen_search_actionability(gene="BRCA1")
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `MyGene_query_genes` | Search genes | `q`, `species` |
-| `MyGene_get_gene_annotation` | Gene details | `geneid` |
-| `ensembl_lookup_gene` | Ensembl gene info | `id`, `species` |
+| `MyGene_query_genes` | Search genes | `query`, `species` |
+| `MyGene_get_gene_annotation` | Gene details | `gene_id` |
+| `ensembl_lookup_gene` | Ensembl gene info | `gene_id`, `species` |
 
-**Parameter Note**: Use `q` not `gene` for MyGene_query_genes.
+**Parameter Note**: Use `query` (not `q` or `gene`) for MyGene_query_genes; hits are in `data.hits[]`.
 
 ### Expression Validation
 
@@ -406,19 +406,22 @@ quick = tu.tools.SpliceAI_get_max_delta(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `CELLxGENE_get_expression_data` | Cell-type specific expression | `gene`, `tissue` |
-| `CELLxGENE_get_cell_metadata` | Cell type annotations | `gene` |
+| `CELLxGENE_get_expression_data` | Expression summary for a cell/gene subset (AnnData dimensions + metadata) | `obs_value_filter` and/or `var_value_filter` (at least one required), `obs_column_names` |
+| `CELLxGENE_get_cell_metadata` | Cell type / tissue / disease annotations | `obs_value_filter` (required), `column_names` |
 | `CELLxGENE_download_h5ad` | Download full dataset | `dataset_id` |
 | `CELLxGENE_get_embeddings` | UMAP/tSNE coordinates | `dataset_id` |
 
 **Example - Get cell-type expression**:
 ```python
-# Get expression across cell types
+# Filters are SQL-like strings; unfiltered queries time out (50M+ cells)
 expression = tu.tools.CELLxGENE_get_expression_data(
-    gene="FBN1",
-    tissue="heart"
+    obs_value_filter='tissue_general == "heart"',
+    var_value_filter='feature_name in ["FBN1"]',
+    obs_column_names=["cell_type"]
 )
-# Returns: Expression values per cell type
+# Returns an AnnData summary (dimensions, metadata) - not per-cell-type mean expression.
+# Requires the cellxgene-census package; not live-run when this snippet was checked
+# (arguments verified against the tool schema only).
 ```
 
 **Why use it**: Validates that candidate genes are expressed in disease-relevant cell types (e.g., fibroblasts for connective tissue disorders).
@@ -427,19 +430,19 @@ expression = tu.tools.CELLxGENE_get_expression_data(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `ChIPAtlas_enrichment_analysis` | TF binding enrichment | `gene`, `cell_type` |
-| `ChIPAtlas_get_peak_data` | ChIP-seq peaks | `gene`, `experiment_type` |
-| `ChIPAtlas_search_datasets` | Find experiments | `antigen`, `cell_type` |
-| `ChIPAtlas_get_experiments` | Experiment metadata | `experiment_id` |
+| `ChIPAtlas_enrichment_analysis` | TF binding enrichment (returns web-form submission details) | `gene_list`, `genome` |
+| `ChIPAtlas_get_peak_data` | ChIP-seq peak-file download URL for one experiment | `experiment_id`, `genome`, `format` |
+| `ChIPAtlas_search_datasets` | Find experiments | `antigen`, `cell_type`, `genome` |
+| `ChIPAtlas_get_experiments` | Experiment metadata | `antigen`, `cell_type`, `genome`, `limit` |
 
 **Example - Get regulatory context**:
 ```python
 # Find TFs that regulate gene
 tf_binding = tu.tools.ChIPAtlas_enrichment_analysis(
-    gene="FBN1",
-    cell_type="Fibroblast"
+    gene_list=["FBN1"],
+    genome="hg38"
 )
-# Returns: TFs with significant binding near gene
+# Returns: the ChIP-Atlas enrichment submission details (web-form URL), not computed TF results
 ```
 
 **Why use it**: Identifies regulatory mechanisms that may be disrupted; helps interpret regulatory variants.
@@ -448,7 +451,7 @@ tf_binding = tu.tools.ChIPAtlas_enrichment_analysis(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `ENCODE_search_experiments` | Find experiments | `assay_title`, `biosample` |
+| `ENCODE_search_experiments` | Find experiments | `assay_title`, `target`, `organism` |
 | `ENCODE_get_experiment` | Experiment details | `accession` |
 | `ENCODE_get_biosample` | Sample annotations | `accession` |
 | `ENCODE_list_files` | Get data files | `experiment_accession` |
@@ -458,7 +461,8 @@ tf_binding = tu.tools.ChIPAtlas_enrichment_analysis(
 # Search for regulatory data
 experiments = tu.tools.ENCODE_search_experiments(
     assay_title="ATAC-seq",
-    biosample="heart"
+    organism="Homo sapiens",
+    limit=5
 )
 ```
 
@@ -470,15 +474,15 @@ experiments = tu.tools.ENCODE_search_experiments(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `kegg_search_pathway` | Search pathways | `query` |
+| `kegg_search_pathway` | Search pathways | `keyword` |
 | `kegg_get_pathway_info` | Pathway details | `pathway_id` |
-| `kegg_find_genes` | Find gene in KEGG | `query` |
+| `kegg_find_genes` | Find gene in KEGG | `keyword`, `organism` |
 | `kegg_get_gene_info` | Gene pathway membership | `gene_id` |
 
 **Example - Get pathway context**:
 ```python
 # Find gene in KEGG
-kegg_gene = tu.tools.kegg_find_genes(query="hsa:FBN1")
+kegg_gene = tu.tools.kegg_find_genes(keyword="FBN1", organism="hsa")  # -> data[0].gene_id == "hsa:2200"
 # Get pathway membership
 gene_info = tu.tools.kegg_get_gene_info(gene_id="hsa:2200")
 # Returns: Pathways containing FBN1
@@ -502,8 +506,8 @@ pathways = tu.tools.ReactomeContent_search(query="TGF-beta signaling")
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `intact_search_interactions` | Search interactions | `query`, `species` |
-| `intact_get_interaction_network` | Network view | `gene`, `depth` |
+| `intact_search_interactions` | Search interactions | `query`, `first`, `max` |
+| `intact_get_interaction_network` | Network view | `gene_symbol` (or `identifier`/`uniprot_id`), `depth`, `limit` |
 | `intact_get_complex_details` | Protein complexes | `complex_id` |
 
 **Example - Get protein interactions**:
@@ -511,9 +515,10 @@ pathways = tu.tools.ReactomeContent_search(query="TGF-beta signaling")
 # Get interaction partners
 interactions = tu.tools.intact_search_interactions(
     query="FBN1",
-    species="human"
+    max=25
 )
-# Returns: Direct interaction partners with confidence scores
+# Returns data: [{id, source, interaction_name, interactor_descriptions}] - no confidence scores,
+# and no species parameter (results can include non-human interactors; filter interactor_descriptions)
 ```
 
 **Why use it**: Identifies protein complexes and pathways; variants may disrupt protein-protein interactions.
@@ -543,7 +548,7 @@ structure = tu.tools.NvidiaNIM_alphafold2(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `InterPro_get_protein_domains` | Domain architecture | `accession` |
+| `InterPro_get_protein_domains` | Domain architecture | `protein_id` |
 | `UniProt_get_features_by_accession` | Sequence features | `accession` |
 | `Pfam_get_protein_annotations` | Pfam domains | `uniprot_id` |
 
@@ -573,17 +578,16 @@ papers = tu.tools.PubMed_search_articles(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `EuropePMC_search_articles` | Search preprints (bioRxiv/medRxiv) | `query`, `source='PPR'`, `pageSize` |
+| `EuropePMC_search_articles` | Search preprints (bioRxiv/medRxiv) | `query` (prefix `SRC:PPR AND` for preprints only), `limit` |
 | `BioRxiv_get_preprint` | Get preprint by DOI | `doi` |
-| `ArXiv_search_papers` | Search ArXiv | `query`, `category`, `limit` |
+| `ArXiv_search_papers` | Search ArXiv | `query`, `limit` |
 
 **Example - Search preprints** (bioRxiv/medRxiv don't have search APIs, use EuropePMC):
 ```python
 # Search for recent preprints
 preprints = tu.tools.EuropePMC_search_articles(
-    query="Marfan syndrome genetics",
-    source="PPR",  # PPR = Preprints only
-    pageSize=10
+    query="SRC:PPR AND Marfan syndrome genetics",  # SRC:PPR = preprints only
+    limit=10
 )
 
 # Get full metadata if you have a DOI
@@ -640,25 +644,26 @@ def diagnose_rare_disease(tu, symptoms, patient_id):
     # Phase 1: Standardize phenotype
     hpo_terms = []
     for symptom in symptoms:
-        results = tu.tools.HPO_search_terms(query=symptom)
+        results = tu.tools.HPO_search_terms(query=symptom)['data']
         if results:
             hpo_terms.append(results[0])
     
     # Phase 2: Match diseases
     candidate_diseases = []
     for hpo in hpo_terms:
-        diseases = tu.tools.HPO_get_diseases_by_phenotype(hp_id=hpo['id'])
-        candidate_diseases.extend(diseases)
+        diseases = tu.tools.HPO_get_diseases_by_phenotype(term_id=hpo['id'])['data']['diseases']
+        # ids are prefixed (ORPHA:/OMIM:/DECIPHER:); keep Orphanet diseases for Orphanet_get_genes
+        candidate_diseases.extend(d for d in diseases if d['id'].startswith('ORPHA:'))
     
     # Rank by frequency
-    disease_counts = Counter(d['orpha_id'] for d in candidate_diseases)
+    disease_counts = Counter(d['id'].split(':', 1)[1] for d in candidate_diseases)
     top_diseases = disease_counts.most_common(10)
     
     # Phase 3: Build gene panel
     genes = set()
     for orpha_id, count in top_diseases:
-        disease_genes = tu.tools.Orphanet_get_disease_genes(orpha_code=orpha_id)
-        genes.update(disease_genes)
+        disease_genes = tu.tools.Orphanet_get_genes(orpha_code=str(orpha_id))
+        genes.update(g['Symbol'] for g in disease_genes['data']['genes'])
     
     return {
         'hpo_terms': hpo_terms,
@@ -670,7 +675,7 @@ def diagnose_rare_disease(tu, symptoms, patient_id):
 ### Example 2: Variant Interpretation
 
 ```python
-def interpret_variant(tu, variant_hgvs, gene_symbol):
+def interpret_variant(tu, variant_hgvs, gene_symbol, chrom, pos, ref, alt):
     """Interpret a variant using ACMG criteria."""
     
     evidence = {}
@@ -681,9 +686,10 @@ def interpret_variant(tu, variant_hgvs, gene_symbol):
         evidence['PM2'] = {'strength': 'Moderate', 'reason': 'Absent from gnomAD'}
     
     # PP3: Computational predictions
-    cadd = tu.tools.CADD_get_scores(variant=variant_hgvs)
-    if cadd['phred_score'] > 25:
-        evidence['PP3'] = {'strength': 'Supporting', 'reason': f'CADD={cadd["phred_score"]}'}
+    cadd = tu.tools.CADD_get_variant_score(chrom=chrom, pos=pos, ref=ref, alt=alt)
+    phred = (cadd.get('data') or {}).get('phred_score')
+    if phred is not None and phred > 25:
+        evidence['PP3'] = {'strength': 'Supporting', 'reason': f'CADD={phred}'}
     
     # ClinVar
     clinvar = tu.tools.ClinVar_search_variants(query=variant_hgvs)
@@ -710,14 +716,17 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
     )
     
     # Get domain annotations
-    domains = tu.tools.InterPro_get_protein_domains(accession=uniprot_id)
+    domains = tu.tools.InterPro_get_protein_domains(protein_id=uniprot_id)['data']
     
-    # Check if variant in domain
-    variant_domain = None
-    for domain in domains:
-        if domain['start'] <= variant_position <= domain['end']:
-            variant_domain = domain
-            break
+    # Check if variant in domain (positions live in proteins[].entry_protein_locations[].fragments[])
+    variant_domain = next(
+        (entry['metadata']
+         for entry in domains
+         for protein in entry['proteins']
+         for loc in protein['entry_protein_locations']
+         for frag in loc['fragments']
+         if frag['start'] <= variant_position <= frag['end']),
+        None)
     
     return {
         'structure': structure,
@@ -773,7 +782,7 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
 | Primary | Fallback 1 | Fallback 2 |
 |---------|------------|------------|
 | `PubMed_search_articles` | `EuropePMC_search_articles` | `SemanticScholar_search_papers` |
-| `EuropePMC_search_articles` (source='PPR') | `web_search` (site:biorxiv.org) | Skip preprints |
+| `EuropePMC_search_articles` (`SRC:PPR` query) | `web_search` (site:biorxiv.org) | Skip preprints |
 | `openalex_search_works` | `Crossref_search_works` | PubMed |
 
 ---
@@ -782,8 +791,8 @@ def analyze_vus_structure(tu, uniprot_id, variant_position):
 
 | Tool | Wrong | Correct |
 |------|-------|---------|
-| `MyGene_query_genes` | `gene="FBN1"` | `q="FBN1"` |
-| `ClinVar_get_variant_details` | `variant_id=123` | `id=123` |
+| `MyGene_query_genes` | `q="FBN1"` or `gene="FBN1"` | `query="FBN1"` |
+| `ClinVar_get_variant_details` | `id=123` | `variant_id=123` |
 | `OpenTargets_*` | `ensemblID` | `ensemblId` (camelCase) |
 | `GTEx_get_median_gene_expression` | `ensembl_id` | `gencode_id` (versioned) |
 | `gnomad_get_variant` | `variant="c.123A>G"` | `variant_id="1-123-A-G"` |

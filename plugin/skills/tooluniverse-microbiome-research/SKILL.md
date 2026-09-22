@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-microbiome-research
-description: Microbiome research using MGnify, GTDB, ENA, OLS (ENVO biomes), and EuropePMC. Covers study discovery, taxonomic profiling, host-microbe interaction analysis, and biome-by-condition queries. Use for microbiome study selection, organism-environment associations, and clinical-microbiome literature review. Distinct from analytical workflow (use tooluniverse-metagenomics-analysis for that).
+description: Microbiome research using MGnify, GTDB, ENA, OLS (ENVO biomes), EuropePMC, BacDive (strain phenotypes), MediaDive (growth media recipes), and GMrepo (gut microbiome disease-association counts). Covers study discovery, taxonomic profiling, host-microbe interaction analysis, biome-by-condition queries, strain culturing requirements, and phenotype/disease prevalence lookups. Use for microbiome study selection, organism-environment associations, clinical-microbiome literature review, and "how do I grow this organism" / "how prevalent is this species in condition X" questions. Distinct from analytical workflow (use tooluniverse-metagenomics-analysis for that).
 disable-model-invocation: true
 ---
 
@@ -30,6 +30,13 @@ Comprehensive microbiome analysis using MGnify (EBI metagenomics), GTDB (genome 
 | **ols_search_terms** | Search ENVO ontology for biome/environment terms | None |
 | **EuropePMC_search_articles** | Find microbiome publications | None |
 | **PubMed_search_articles** | Literature search (different coverage than EuropePMC) | None |
+| **BacDive_search_by_taxon** | List BacDive strain IDs for a genus (+ optional species) | None |
+| **BacDive_get_strain** | Curated strain phenotype: morphology, Gram stain, culture temp/media, oxygen tolerance, isolation source | None |
+| **MediaDive_search_media** | Find a cultivation medium by name substring | None |
+| **MediaDive_get_medium** | Full recipe (ingredients + amounts + prep steps) for a medium | None |
+| **MediaDive_search_ingredients** / **MediaDive_get_ingredient** | Look up a medium ingredient's chemical identifiers (CAS/ChEBI/PubChem) | None |
+| **GMrepo_search_species** | Gut-microbiome sample counts and phenotype breadth for a species (96,000+ curated samples) | None |
+| **GMrepo_get_phenotypes** | List/filter the 350+ health conditions GMrepo has gut-microbiome data for | None |
 
 **For drug-microbiome studies**, also use:
 - `PubChem_get_CID_by_compound_name` / `PubChem_get_compound_properties_by_CID` — drug identity
@@ -69,13 +76,13 @@ analyses = tu.run_one_function({
 # 4. Get taxonomic profile from an analysis
 taxonomy = tu.run_one_function({
     'name': 'MGnify_get_taxonomy',
-    'arguments': {'analysis_accession': 'MGYA00612683'}
+    'arguments': {'analysis_id': 'MGYA00793746'}
 })
 
 # 5. Get functional annotations
 go_terms = tu.run_one_function({
     'name': 'MGnify_get_go_terms',
-    'arguments': {'analysis_accession': 'MGYA00612683'}
+    'arguments': {'analysis_id': 'MGYA00793746'}
 })
 ```
 
@@ -119,7 +126,7 @@ analyses = tu.run_one_function({
 # Get taxonomy for a specific analysis
 taxonomy = tu.run_one_function({
     'name': 'MGnify_get_taxonomy',
-    'arguments': {'analysis_accession': 'MGYA00612683'}
+    'arguments': {'analysis_id': 'MGYA00793746'}
 })
 # Returns organisms with lineage, abundance counts, and taxonomy rank
 ```
@@ -132,13 +139,13 @@ Evaluate metagenome-assembled genomes (MAGs):
 # Search for genomes from a specific taxon
 genomes = tu.run_one_function({
     'name': 'MGnify_search_genomes',
-    'arguments': {'search': 'Faecalibacterium prausnitzii', 'size': 5}
+    'arguments': {'taxonomy': 'Faecalibacterium prausnitzii', 'page_size': 5}
 })
 
 # Get quality metrics for a genome
 genome = tu.run_one_function({
     'name': 'MGnify_get_genome',
-    'arguments': {'genome_accession': 'MGYG000000001'}
+    'arguments': {'genome_id': 'MGYG000000001'}
 })
 # Returns completeness, contamination, N50, genome length, taxonomy
 
@@ -157,13 +164,13 @@ Discover functional potential of a metagenome:
 # GO terms from an analysis
 go_terms = tu.run_one_function({
     'name': 'MGnify_get_go_terms',
-    'arguments': {'analysis_accession': 'MGYA00612683'}
+    'arguments': {'analysis_id': 'MGYA00793746'}
 })
 
 # InterPro domains
 interpro = tu.run_one_function({
     'name': 'MGnify_get_interpro',
-    'arguments': {'analysis_accession': 'MGYA00612683'}
+    'arguments': {'analysis_id': 'MGYA00793746'}
 })
 ```
 
@@ -185,6 +192,56 @@ ena_studies = tu.run_one_function({
 })
 ```
 
+### Workflow 6: Strain Phenotype, Culturing Requirements, and Disease-Association Prevalence
+
+Answer "what is this organism actually like and how prevalent is it in condition X" — a question MGnify/GTDB (composition and taxonomy only) can't answer:
+
+```python
+# 1. Find BacDive strain IDs for a taxon (genus required, species optional)
+strains = tu.run_one_function({
+    'name': 'BacDive_search_by_taxon',
+    'arguments': {'genus': 'Faecalibacterium', 'species': 'prausnitzii', 'limit': 3}
+})
+# -> [{'bacdive_id': 159475}, {'bacdive_id': 159476}, {'bacdive_id': 159477}]
+
+# 2. Get the curated phenotype for one strain
+strain = tu.run_one_function({
+    'name': 'BacDive_get_strain',
+    'arguments': {'bacdive_id': 159475}
+})
+# -> anaerobe, mesophilic (37C), isolated from human feces, grows on
+#    "YCFA-MEDIUM (MODIFIED) (DSMZ Medium 1611)" and chopped-meat medium
+
+# 3. Cross-reference the named medium in MediaDive for the actual recipe
+medium = tu.run_one_function({
+    'name': 'MediaDive_search_media',
+    'arguments': {'query': 'YCFA'}
+})
+# -> medium_id 1611 matches the BacDive culture_media entry exactly
+recipe = tu.run_one_function({
+    'name': 'MediaDive_get_medium',
+    'arguments': {'medium_id': 1611}
+})
+# -> full solution-by-solution ingredient list with amounts/units and prep steps
+
+# 4. Check GMrepo for how prevalent/associated the species is in human gut studies
+prevalence = tu.run_one_function({
+    'name': 'GMrepo_search_species',
+    'arguments': {'query': 'Faecalibacterium prausnitzii'}
+})
+# -> present in 21,286 of ~96,000 samples (22.0%), spanning 88 phenotypes
+
+conditions = tu.run_one_function({
+    'name': 'GMrepo_get_phenotypes',
+    'arguments': {'query': 'Crohn'}
+})
+# -> Crohn Disease (MeSH D003424): 5,636 samples across 1,440 species, 602 genera
+```
+
+**Reading BacDive's `culture_media` field**: it names the medium (e.g. `"YCFA-MEDIUM (MODIFIED) (DSMZ Medium 1611)"`) but gives no recipe — always follow up in MediaDive by searching the medium name to find its `medium_id`, then `MediaDive_get_medium` for the actual formulation. `oxygen_tolerance` can legitimately be an empty array (not curated for that strain) — don't infer aerobe/anaerobe status from an empty list.
+
+**GMrepo scope note**: `presented_samples`/`all_samples` are curated sample COUNTS from public studies, not a claim about true population prevalence — a species absent from GMrepo's phenotype list for a condition may simply not have been studied there yet, not proven absent from that condition's gut microbiome.
+
 ## MGnify Biome Hierarchy
 
 Key biome lineages (use `MGnify_list_biomes` to discover others):
@@ -196,7 +253,7 @@ Key biome lineages (use `MGnify_list_biomes` to discover others):
 
 ## Key Identifiers
 
-MGnify: studies=`MGYS*`, analyses=`MGYA*`, genomes=`MGYG*`. ENA studies=`PRJEB*`. GTDB genomes=`GCA_*`. ENVO terms=`ENVO:*` (e.g. ENVO:00002041).
+MGnify: studies=`MGYS*`, analyses=`MGYA*`, genomes=`MGYG*`. ENA studies=`PRJEB*`. GTDB genomes=`GCA_*`. ENVO terms=`ENVO:*` (e.g. ENVO:00002041). BacDive strain IDs and MediaDive medium/ingredient IDs are plain integers (occasionally suffixed, e.g. `"1a"`) with no fixed prefix — always resolve via search first. GMrepo phenotypes use MeSH IDs (e.g. `D003424` for Crohn Disease).
 
 ## Reasoning Framework
 

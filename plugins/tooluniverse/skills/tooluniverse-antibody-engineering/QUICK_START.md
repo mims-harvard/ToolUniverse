@@ -1,6 +1,6 @@
 # Antibody Engineering - Quick Start Guide
 
-**Status**: ✅ **WORKING** - Pipeline working with correct SOAP parameters
+**Status**: ✅ **WORKING** - Pipeline working; tool parameters verified against the live tool schemas
 **Last Updated**: 2026-02-09
 
 ---
@@ -41,41 +41,33 @@ from tooluniverse import ToolUniverse
 tu = ToolUniverse()
 tu.load_tools()
 
-# Clinical precedents (TheraSAbDab - SOAP tool)
-result = tu.tools.TheraSAbDab_search_by_target(
-    operation="search_by_target",  # ✅ Required for SOAP tools
-    target="PD-L1"
-)
+# Clinical precedents (TheraSAbDab) - takes only `target`
+result = tu.tools.TheraSAbDab_search_by_target(target="PD-L1")
 
-# Germline identification (IMGT - SOAP tool)
+# Germline identification (IMGT) - `operation` is optional and can be omitted
 result = tu.tools.IMGT_search_genes(
-    operation="search_genes",      # ✅ Required for SOAP tools
     gene_type="IGHV",
     species="Homo sapiens"
 )
 
 result = tu.tools.IMGT_search_genes(
-    operation="search_genes",
     gene_type="IGKV",
     species="Homo sapiens"
 )
 
-# Get germline sequences (IMGT - SOAP tool)
+# Get germline sequences (IMGT)
 result = tu.tools.IMGT_get_sequence(
-    operation="get_sequence",      # ✅ Required for SOAP tools
     accession="M99641",
     format="fasta"
 )
 
-# Antibody structures (SAbDab - SOAP tool)
-result = tu.tools.SAbDab_search_structures(
-    operation="search_structures", # ✅ Required for SOAP tools
-    query="PD-L1"
-)
+# Antibody structures (SAbDab) - returns a browse_url (SAbDab has no JSON API), not structure records
+result = tu.tools.SAbDab_search_structures(query="PD-L1")
 
-# Immunogenicity (IEDB - NOT SOAP, no 'operation' needed)
+# Immunogenicity (IEDB) - searches epitopes by peptide sequence, e.g. a framework fragment
+# (there is no antigen-name argument; unknown arguments are rejected or silently dropped)
 result = tu.tools.iedb_search_epitopes(
-    epitope_name="PD-L1",
+    sequence_contains="EVQLVESGG",
     limit=10
 )
 ```
@@ -97,14 +89,13 @@ Claude will follow the workflow from SKILL.md and use these tools:
 
 #### Option 2: Direct Tool Calls
 
-**CRITICAL FOR MCP**: SOAP tools (IMGT, SAbDab, TheraSAbDab) require 'operation' parameter!
+**Note for MCP**: parameter names are the same as in Python. IMGT and SAbDab accept an optional `operation` (works without it); TheraSAbDab takes only `target`.
 
 **Step 1: Clinical Precedent Search**
 ```json
 Tool: TheraSAbDab_search_by_target
 Parameters:
 {
-  "operation": "search_by_target",
   "target": "PD-L1"
 }
 ```
@@ -114,7 +105,6 @@ Parameters:
 Tool: IMGT_search_genes
 Parameters:
 {
-  "operation": "search_genes",
   "gene_type": "IGHV",
   "species": "Homo sapiens"
 }
@@ -125,7 +115,6 @@ Parameters:
 Tool: IMGT_search_genes
 Parameters:
 {
-  "operation": "search_genes",
   "gene_type": "IGKV",
   "species": "Homo sapiens"
 }
@@ -136,7 +125,6 @@ Parameters:
 Tool: IMGT_get_sequence
 Parameters:
 {
-  "operation": "get_sequence",
   "accession": "M99641",
   "format": "fasta"
 }
@@ -147,7 +135,6 @@ Parameters:
 Tool: SAbDab_search_structures
 Parameters:
 {
-  "operation": "search_structures",
   "query": "PD-L1"
 }
 ```
@@ -157,47 +144,37 @@ Parameters:
 Tool: iedb_search_epitopes
 Parameters:
 {
-  "epitope_name": "PD-L1",
+  "sequence_contains": "EVQLVESGG",
   "limit": 10
 }
 ```
-**Note**: IEDB is NOT a SOAP tool - no 'operation' parameter needed
+**Note**: `iedb_search_epitopes` filters by peptide sequence (`sequence_contains`) or PostgREST `filters`; it has no antigen-name argument
 
 ---
 
-## CRITICAL: SOAP Tool Parameters
+## Tool Parameters
 
-**IMPORTANT**: All SOAP-based tools (IMGT, SAbDab, TheraSAbDab) require an `operation` parameter. This applies to both Python SDK and MCP.
+`TheraSAbDab_search_by_target` takes only `target`. `IMGT_search_genes`, `IMGT_get_sequence`, and
+`SAbDab_search_structures` declare an optional `operation` argument, but every call in this guide works
+without it (verified live), so it is omitted. `iedb_search_epitopes` has no antigen-name argument.
 
 ### ✅ CORRECT Usage
 
 ```python
-# Python SDK
-result = tu.tools.IMGT_search_genes(
-    operation="search_genes",  # ✅ Required!
-    gene_type="IGHV",
-    species="Homo sapiens"
-)
-```
-
-```json
-// MCP
-{
-  "operation": "search_genes",
-  "gene_type": "IGHV",
-  "species": "Homo sapiens"
-}
+result = tu.tools.IMGT_search_genes(gene_type="IGHV", species="Homo sapiens")
+result = tu.tools.TheraSAbDab_search_by_target(target="PD-L1")
+result = tu.tools.iedb_search_epitopes(sequence_contains="EVQLVESGG", limit=10)
 ```
 
 ### ❌ WRONG Usage
 
 ```python
-# ❌ Missing 'operation' parameter - WILL FAIL!
-result = tu.tools.IMGT_search_genes(
-    gene_type="IGHV",
-    species="Homo sapiens"
-)
-# Error: "Parameter validation failed for 'root': 'operation' is a required property"
+# ❌ epitope_name is not a parameter of iedb_search_epitopes. Extra arguments are rejected,
+# or silently dropped when mixed with valid ones, so the search comes back unfiltered.
+result = tu.tools.iedb_search_epitopes(epitope_name="PD-L1", limit=10)
+
+# ❌ operation is not a parameter of TheraSAbDab_search_by_target
+result = tu.tools.TheraSAbDab_search_by_target(operation="search_by_target", target="PD-L1")
 ```
 
 ---
@@ -220,7 +197,7 @@ python python_implementation.py
 
 ## What Works ✅
 
-- ✅ SOAP tool calls (with correct 'operation' parameter)
+- ✅ Tool calls with schema-correct parameters
 - ✅ IMGT germline search
 - ✅ TheraSAbDab clinical precedent search
 - ✅ SAbDab structure search
@@ -237,10 +214,10 @@ python python_implementation.py
 - IMGT SOAP service may have limited responses
 - This is a data/API availability issue, not a code issue
 
-⚠️ **Missing Tools**: Some tools from original skill are not available:
-- `alphafold_get_prediction` - Structure modeling not available
-- `UniProt_get_entry_by_accession` - Target info not available
-- These block certain workflow phases but core humanization still works
+⚠️ **Limits**: Some tools behave differently than the original skill assumed:
+- `alphafold_get_prediction` only retrieves precomputed AlphaFold DB models by UniProt accession (`qualifier`); it cannot fold a VH:VL sequence. Use `ESMFold_predict_structure(sequence=...)` for an antibody Fv model.
+- `UniProt_get_entry_by_accession` exists and can be used for target characterization.
+- Core humanization works without either.
 
 ⚠️ **IEDB Search Specificity**: IEDB may return non-specific results
 - Search is broad and doesn't filter well by organism/target
@@ -254,16 +231,15 @@ These parameter names apply to **both Python SDK and MCP**:
 
 | Tool | Parameter | Correct Name | Notes |
 |------|-----------|--------------|-------|
-| IMGT_search_genes | **SOAP operation** | `operation="search_genes"` | **CRITICAL** - Required first parameter |
+| IMGT_search_genes | Operation | `operation="search_genes"` | Optional - works without it |
 | IMGT_search_genes | Gene type | `gene_type` | "IGHV", "IGKV", "IGLV" |
 | IMGT_search_genes | Species | `species` | "Homo sapiens" for human |
-| IMGT_get_sequence | **SOAP operation** | `operation="get_sequence"` | **CRITICAL** - Required first parameter |
+| IMGT_get_sequence | Operation | `operation="get_sequence"` | Optional - works without it |
 | IMGT_get_sequence | Accession | `accession` | Gene accession number |
-| SAbDab_search_structures | **SOAP operation** | `operation="search_structures"` | **CRITICAL** - Required first parameter |
+| SAbDab_search_structures | Operation | `operation="search_structures"` | Optional - works without it |
 | SAbDab_search_structures | Query | `query` | Target antigen name |
-| TheraSAbDab_search_by_target | **SOAP operation** | `operation="search_by_target"` | **CRITICAL** - Required first parameter |
 | TheraSAbDab_search_by_target | Target | `target` | Target antigen name |
-| iedb_search_epitopes | Epitope name | `epitope_name` | NOT SOAP - no 'operation' |
+| iedb_search_epitopes | Peptide sequence | `sequence_contains` | Substring match on the epitope's linear sequence; also `structure_type`, `limit`, `filters` |
 
 **Note**: Whether using Python SDK or MCP, the parameter names are the same
 
@@ -285,10 +261,7 @@ Example (Python):
 ```python
 # Try multiple names
 for name in ["PD-L1", "PDL1", "CD274", "B7-H1"]:
-    result = tu.tools.TheraSAbDab_search_by_target(
-        operation="search_by_target",
-        target=name
-    )
+    result = tu.tools.TheraSAbDab_search_by_target(target=name)
     if result.get('data', {}).get('therapeutics'):
         print(f"Found results with: {name}")
         break
@@ -298,7 +271,6 @@ Example (MCP):
 ```json
 // Try with different names if first fails
 {
-  "operation": "search_by_target",
   "target": "CD274"
 }
 ```
@@ -354,10 +326,10 @@ The working pipeline performs 5-step analysis:
 
 ## Key Fixes Applied
 
-### 1. SOAP Tool Parameters ✅
-- **Problem**: All SOAP tools failed with "missing 'operation' parameter" error
-- **Solution**: Added `operation` parameter to all IMGT, SAbDab, TheraSAbDab calls
-- **Impact**: SOAP tools now work without validation errors
+### 1. Tool Parameters ✅
+- **Problem**: Calls used arguments the tools do not declare (`operation` on TheraSAbDab, `epitope_name` on IEDB)
+- **Solution**: Use each tool's real parameters (`target`; `sequence_contains`); `operation` is optional on IMGT/SAbDab
+- **Impact**: No rejected calls, and IEDB results are actually filtered
 - **Applies to**: Both Python SDK and MCP
 
 ### 2. Alternative Target Names ✅
@@ -374,11 +346,9 @@ The working pipeline performs 5-step analysis:
 
 ## What Still Needs Work
 
-### Tools Not Available
-These tools from the original skill are not in ToolUniverse:
-- `alphafold_get_prediction` - Blocks structure modeling phase
-- `UniProt_get_entry_by_accession` - Blocks target characterization
-- `PubMed_search_articles` - Available as `PubMed_search_articles`
+### Tool Limits
+- `alphafold_get_prediction` exists but only retrieves precomputed models by UniProt accession; for an antibody Fv model use `ESMFold_predict_structure(sequence=...)`
+- `UniProt_get_entry_by_accession` and `PubMed_search_articles` exist and are usable
 
 ### Missing Implementations
 These analysis functions need to be implemented:
@@ -391,7 +361,7 @@ These analysis functions need to be implemented:
 ### Data Gaps
 - IMGT SOAP service returns no data (may be service issue)
 - TheraSAbDab requires exact target name matching
-- IEDB returns non-specific results (needs better filtering)
+- IEDB is searched by peptide sequence (`sequence_contains`) or PostgREST `filters`; there is no antigen-name argument
 
 ---
 

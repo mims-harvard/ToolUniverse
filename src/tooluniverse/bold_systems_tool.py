@@ -184,7 +184,11 @@ class BOLDSystemsTool(BaseTool):
                 "'Panthera leo' (species).",
             }
 
-        rank = (arguments.get("rank") or "genus").strip().lower()
+        # A genus is one word, so "Apis mellifera" with no rank given can only be
+        # a species; searching it at genus level would silently return nothing.
+        rank = (arguments.get("rank") or "").strip().lower() or (
+            "species" if " " in taxon_name else "genus"
+        )
         if rank not in _RANK_SCOPES:
             return {
                 "status": "error",

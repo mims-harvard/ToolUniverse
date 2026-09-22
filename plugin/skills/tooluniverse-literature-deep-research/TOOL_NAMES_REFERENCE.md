@@ -578,9 +578,23 @@
 ### Utility (1)
 123. `get_webpage_text_from_url`
 
+### Controlled Vocabulary & Text-Mined Entities (12)
+124. `MeSH_search_descriptors` (free text -> MeSH descriptor ID)
+125. `MeSH_search_terms` (free text -> MeSH entry term/synonym)
+126. `MeSH_get_descriptor` (descriptor detail by ID)
+127. `EuroPMCAnnot_get_article_annotations` (all text-mined entities in one article)
+128. `EuroPMCAnnot_get_chemicals_from_article` (chemical mentions only)
+129. `EuroPMCAnnot_get_annotations_by_type` (one entity type across multiple articles)
+130. `EPMC_get_citations` -- CAUTION: near-duplicate name of #25 `EuropePMC_get_citations`, different implementation, same endpoint family; both work
+131. `EPMC_get_references` -- CAUTION: near-duplicate of #26 `EuropePMC_get_references`; **both currently 503 "temporarily unavailable due to maintenance," live-verified** -- prefer #26 anyway (already documented above) and expect this outage on either
+132. `EuropePMC_get_article_datalinks` (data/database cross-refs a paper deposited) -- **live-verified currently broken (HTTP 500 after ~33s), confirmed via direct curl**
+133. `LitVar_search_variants` (rsID/gene/HGVS -> literature-known variants)
+134. `LitVar_get_variant_publications` (variant -> PMIDs mentioning it)
+135. `LitVar_get_variant_details` (structured LitVar2 record incl. ClinGen IDs)
+
 ---
 
-**Total Tools**: 123 (122 active, 1 deprecated: HPA_get_protein_interactions_by_gene)
+**Total Tools**: 135 (134 active, 1 deprecated: HPA_get_protein_interactions_by_gene; of the 134 active, 2 are live-verified currently broken upstream: EPMC_get_references and EuropePMC_get_article_datalinks)
 - Literature & Text Mining: 24
 - Citation & Impact: 19
 - Protein/Gene Annotation: 17
@@ -590,5 +604,6 @@
 - Variant/Disease: 17 (1 deprecated)
 - Drug/Chemical: 24 (incl. ChEMBL target tools, clinical trials)
 - Utility: 1
+- Controlled Vocabulary & Text-Mined Entities: 12
 
-*Last Updated: 2026-03-07*
+*Last Updated: 2026-09-17*

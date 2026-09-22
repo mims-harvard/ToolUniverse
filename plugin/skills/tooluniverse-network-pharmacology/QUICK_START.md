@@ -7,7 +7,7 @@ Build compound-target-disease networks for drug repurposing, polypharmacology, a
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 ```
 
@@ -39,7 +39,7 @@ for mech in drug_targets:
 
 # Step 3: Get disease genes
 disease_targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(
-    efoId=disease_id, limit=30
+    efoId=disease_id, size=30
 )
 disease_genes = [
     t['target']['approvedSymbol']
@@ -48,8 +48,9 @@ disease_genes = [
 
 # Step 4: Build PPI network between drug targets and disease genes
 combined_genes = list(set(drug_target_genes[:10] + disease_genes[:10]))
-ppi_network = tu.tools.STRING_get_interaction_partners(
-    protein_ids=combined_genes, species=9606, limit=50
+# STRING_get_network takes multiple proteins as one string separated by "\r"
+ppi_network = tu.tools.STRING_get_network(
+    identifiers="\r".join(combined_genes), species=9606
 )
 
 # Step 5: Calculate proximity (shared interactions)
@@ -88,30 +89,32 @@ chembl_id = drug_info['data']['search']['hits'][0]['id']
 
 # Step 2: Get ALL targets of sorafenib
 drug_targets = tu.tools.OpenTargets_get_associated_targets_by_drug_chemblId(
-    chemblId=chembl_id, size=50
+    chemblId=chembl_id
 )
+# Targets are nested under each mechanism-of-action row (no linkedTargets key)
+drug_target_rows = [t for m in drug_targets['data']['drug']['mechanismsOfAction']['rows']
+                    for t in (m.get('targets') or [])]
 
 # Step 3: Get current indications
 current_indications = tu.tools.OpenTargets_get_drug_indications_by_chemblId(
-    chemblId=chembl_id, size=50
+    chemblId=chembl_id
 )
 
 # Step 4: Get ALL diseases linked to drug (investigations + trials)
 all_diseases = tu.tools.OpenTargets_get_associated_diseases_by_drug_chemblId(
-    chemblId=chembl_id, size=100
+    chemblId=chembl_id
 )
 
 # Step 5: For each drug target, find additional diseases
 new_indications = []
-for target in drug_targets['data']['drug']['linkedTargets']['rows'][:15]:
+for target in drug_target_rows[:15]:
     target_diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensembl(
-        ensemblId=target['id'], size=20
+        ensemblId=target['id'], page={"index": 0, "size": 20}
     )
     # Add to new_indications if not in current_indications
 
 # Step 6: Rank by network proximity (shared pathway analysis)
-target_symbols = [t.get('approvedSymbol', '') for t in
-                  drug_targets['data']['drug']['linkedTargets']['rows'][:15]]
+target_symbols = [t.get('approvedSymbol', '') for t in drug_target_rows[:15]]
 enrichment = tu.tools.enrichr_gene_enrichment_analysis(
     gene_list=[s for s in target_symbols if s],
     libs=["KEGG_2021_Human", "Reactome_2022"]
@@ -134,16 +137,17 @@ ensembl_id = target_info['data']['search']['hits'][0]['id']
 
 # Step 2: Get compounds targeting EGFR
 egfr_drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
-    ensemblId=ensembl_id, size=50
+    ensemblId=ensembl_id
 )
 
 # Step 3: Get PPI partners of EGFR
 egfr_ppi = tu.tools.OpenTargets_get_target_interactions_by_ensemblID(
-    ensemblId=ensembl_id, size=30
+    ensemblId=ensembl_id, page={"index": 0, "size": 30}
 )
 ppi_genes = [
     row['targetB']['approvedSymbol']
     for row in egfr_ppi['data']['target']['interactions']['rows']
+    if row.get('targetB')  # some interaction partners are not Open Targets targets
 ]
 
 # Step 4: Get drugs for PPI partners (expanding to pathway)
@@ -177,12 +181,12 @@ disease_id = disease_info['data']['search']['hits'][0]['id']
 
 # Step 2: Get disease targets
 disease_targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(
-    efoId=disease_id, limit=30
+    efoId=disease_id, size=30
 )
 
 # Step 3: Get drugs already investigated for lupus
 lupus_drugs = tu.tools.OpenTargets_get_associated_drugs_by_disease_efoId(
-    efoId=disease_id, size=50
+    efoId=disease_id
 )
 
 # Step 4: Find NEW drugs for disease targets via DGIdb
@@ -196,8 +200,8 @@ new_drug_candidates = tu.tools.DGIdb_get_drug_gene_interactions(
 )
 
 # Step 5: Build disease PPI network
-string_ppi = tu.tools.STRING_get_interaction_partners(
-    protein_ids=disease_gene_symbols[:15], species=9606, limit=30
+string_ppi = tu.tools.STRING_get_network(
+    identifiers="\r".join(disease_gene_symbols[:15]), species=9606
 )
 
 # Step 6: Check CTD for chemical-disease links
@@ -230,7 +234,7 @@ moa = tu.tools.OpenTargets_get_drug_mechanisms_of_action_by_chemblId(chemblId=ch
 
 # OpenTargets linked targets
 all_targets = tu.tools.OpenTargets_get_associated_targets_by_drug_chemblId(
-    chemblId=chembl_id, size=100
+    chemblId=chembl_id
 )
 
 # DrugBank targets
@@ -243,8 +247,9 @@ ctd_genes = tu.tools.CTD_get_chemical_gene_interactions(input_terms="Aspirin")
 
 # Step 3: Classify targets (primary vs off-target)
 primary_targets = [row for row in moa['data']['drug']['mechanismsOfAction']['rows']]
-all_target_genes = [t.get('approvedSymbol', '') for t in
-                    all_targets['data']['drug']['linkedTargets']['rows']]
+all_target_genes = [t.get('approvedSymbol', '')
+                    for m in all_targets['data']['drug']['mechanismsOfAction']['rows']
+                    for t in (m.get('targets') or [])]
 
 # Step 4: Map targets to diseases
 for gene in all_target_genes[:10]:
@@ -252,7 +257,7 @@ for gene in all_target_genes[:10]:
     if target_info['data']['search']['hits']:
         eid = target_info['data']['search']['hits'][0]['id']
         diseases = tu.tools.OpenTargets_get_diseases_phenotypes_by_target_ensembl(
-            ensemblId=eid, size=10
+            ensemblId=eid, page={"index": 0, "size": 10}
         )
 
 # Step 5: Pathway coverage analysis
@@ -281,15 +286,16 @@ moa = tu.tools.OpenTargets_get_drug_mechanisms_of_action_by_chemblId(chemblId=ch
 
 # Step 3: Get all drug targets
 drug_targets = tu.tools.OpenTargets_get_associated_targets_by_drug_chemblId(
-    chemblId=chembl_id, size=50
+    chemblId=chembl_id
 )
-target_genes = [t.get('approvedSymbol', '') for t in
-                drug_targets['data']['drug']['linkedTargets']['rows']]
+target_genes = [t.get('approvedSymbol', '')
+                for m in drug_targets['data']['drug']['mechanismsOfAction']['rows']
+                for t in (m.get('targets') or [])]
 
 # Step 4: Build mTOR pathway network
-mtor_ppi = tu.tools.STRING_get_interaction_partners(
-    protein_ids=["MTOR", "RPTOR", "RICTOR", "TSC1", "TSC2"],
-    species=9606, limit=30
+mtor_ppi = tu.tools.STRING_get_network(
+    identifiers="\r".join(["MTOR", "RPTOR", "RICTOR", "TSC1", "TSC2"]),
+    species=9606
 )
 
 # Step 5: Pathway analysis for mTOR signaling
@@ -317,7 +323,7 @@ trials = tu.tools.search_clinical_trials(
 
 # Step 9: Drug indications (approved + investigational)
 indications = tu.tools.OpenTargets_get_drug_indications_by_chemblId(
-    chemblId=chembl_id, size=50
+    chemblId=chembl_id
 )
 
 # Step 10: Pharmacology

@@ -1,7 +1,7 @@
 """
 WorldBank_search_indicators
 
-Search World Bank for development indicators by keyword. Returns indicator codes, names, descript...
+Search the World Development Indicators (WDI, ~1,500 indicators covering health, education, econo...
 """
 
 from typing import Any, Optional, Callable
@@ -17,12 +17,12 @@ def WorldBank_search_indicators(
     validate: bool = True,
 ) -> Any:
     """
-    Search World Bank for development indicators by keyword. Returns indicator codes, names, descript...
+    Search the World Development Indicators (WDI, ~1,500 indicators covering health, education, econo...
 
     Parameters
     ----------
     query : str
-        Search keyword for indicators (e.g., 'GDP', 'mortality', 'literacy', 'CO2', '...
+        Search words; all must occur in the indicator name, code or description (e.g....
     per_page : int
         Number of results to return (default 10, max 1000)
     stream_callback : Callable, optional

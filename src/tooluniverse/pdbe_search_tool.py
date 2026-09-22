@@ -88,6 +88,15 @@ class PDBeSearchTool(BaseTool):
 
         limit = min(arguments.get("limit", 10), 50)
 
+        # Ordering: relevance first (best text match), resolution as the tie-breaker.
+        # Sorting purely by resolution put the best-resolved structure that merely
+        # *mentions* the query first -- "insulin" returned human heart fatty-acid-binding
+        # proteins, not insulin. sort_by="resolution" keeps the old behavior.
+        if arguments.get("sort_by", "relevance") == "resolution":
+            solr_sort = "resolution asc"
+        else:
+            solr_sort = "score desc,resolution asc"
+
         # PDBe's Solr index is entity-level, not deduplicated by PDB entry --
         # a single structure with multiple matching chains/entities can
         # appear as many docs sharing one pdb_id. For entity-dense queries
@@ -110,7 +119,7 @@ class PDBeSearchTool(BaseTool):
                 "start": start,
                 "fl": "pdb_id,title,resolution,experimental_method,deposition_date,number_of_entities,organism_scientific_name",
                 "wt": "json",
-                "sort": "resolution asc",
+                "sort": solr_sort,
             }
             response = requests.get(
                 PDBE_SEARCH_URL, params=params, timeout=self.timeout

@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-proteomics-data-retrieval
-description: Find and retrieve proteomics datasets from MassIVE and ProteomeXchange. Search by species, keyword, or accession; retrieve detailed metadata (instruments, publications, species, PTMs studied). Use for locating public proteomics datasets to reanalyze, comparing instrument/protocol coverage across studies, and pre-download dataset evaluation.
+description: Find and retrieve proteomics datasets from MassIVE, ProteomeXchange, PRIDE Archive, and the NCI Proteomics Data Commons (PDC). Search by species, keyword, accession, or protein; retrieve detailed metadata (instruments, publications, species, PTMs studied), real file-download URLs (PRIDE), or quantitative abundance matrices with clinical linkage (PDC/CPTAC). Use for locating public proteomics datasets to reanalyze, comparing instrument/protocol coverage across studies, pre-download dataset evaluation, and finding every dataset that identified a specific protein.
 disable-model-invocation: true
 ---
 
@@ -53,6 +53,84 @@ Dataset quality depends on instrument, sample preparation, and quantification me
 |-----------|----------|-----------|
 | **MassIVE** | 10,000+ datasets | Rich metadata (summaries, keywords, modifications, contacts), species filtering by taxonomy ID |
 | **ProteomeXchange** | Aggregates PRIDE, MassIVE, PeptideAtlas, jPOST, iProX | Broadest coverage, standardized PXD accessions |
+| **PDC (NCI Proteomics Data Commons)** | 250+ cancer proteomics studies (CPTAC, ICPC, APOLLO, CBTN, etc.) | Curated disease/site/analytical-fraction metadata, per-gene spectral-count coverage, clinical case linkage, and direct access to the quantitative abundance matrix (not just file listings) |
+| **PRIDE Archive** | EBI's proteomics repository -- one of the submission repositories ProteomeXchange aggregates | Full-text keyword search directly against title/description/species/tissue/disease (ProteomeXchange's own search is accession/keyword-only with thinner hits); the only one of these four with real FTP/Aspera **file download URLs**, not just metadata; a reverse protein->project lookup no other tool here provides |
+| **PeptideAtlas** | ISB's peptide-level observation atlas -- another ProteomeXchange-aggregated repository, but answers a different question than the dataset-level tools above | The canonical record of which tryptic peptides of a protein have actually been OBSERVED by mass spec, and how often -- not which datasets exist |
+
+## PeptideAtlas: Peptide-Level Observation Evidence
+
+Unlike the dataset-discovery tools above (which answer "what studies exist"),
+`PeptideAtlas_get_observed_peptides` answers "for this specific protein, which
+peptides have actually been detected, and with what confidence" -- a direct
+protein-level query, not a dataset search. Constrain by `biosequence_name` (a
+UniProt accession, e.g. `P02768` for serum albumin) to get that protein's
+peptides, or omit it with a small `row_limit` to sample the whole build (the
+default build indexes millions of peptides). Each result gives
+`peptide_sequence`, `n_observations` (spectral count across the whole atlas),
+`n_samples`, `best_probability` (PeptideProphet), and
+`empirical_proteotypic_score` (how uniquely this peptide identifies the
+protein, vs. one shared across a protein family) -- live-verified against real
+UniProt accessions. Use this to check whether a specific tryptic peptide is
+actually detectable before designing a targeted-MS (SRM/PRM) assay around it,
+or to gauge how well-characterized a protein is by MS overall.
+
+## Cancer Proteomics via PDC
+
+Unlike MassIVE/ProteomeXchange (general-purpose MS dataset registries returning
+metadata/file listings), PDC is scoped to cancer proteogenomics programs and can
+return the actual quantitative data and per-patient clinical metadata directly —
+useful when the goal is a cancer-cohort reanalysis rather than a generic dataset
+search.
+
+| Tool | Purpose |
+|------|---------|
+| `PDC_search_studies` | Substring match against curated `disease_type`, `primary_site`, `analytical_fraction` (Proteome/Phosphoproteome/Acetylome/Ubiquitylome/...), `experiment_type` (TMT10/TMT11/iTRAQ/LFQ), program/project name, or the study title. Program acronyms (`CPTAC`, `ICPC`, `APOLLO`) resolve against PDC's controlled vocabulary so they match every study in the program, not just title hits. Check `matched_curated_metadata` per result — `true` means a curated field matched, not just free-text title |
+| `PDC_get_gene_protein` | Given a gene symbol, returns NCBI/HGNC identifiers, all known protein accessions, and per-study spectral-count evidence (presence/abundance evidence — NOT the quantitative ratio) — use to see which PDC studies have measured a gene of interest before picking one to reanalyze |
+| `PDC_list_programs` | Enumerate all programs (CPTAC, ICPC, APOLLO, CBTN, Georgetown, Broad, ...) and their projects |
+| `PDC_get_study_summary` | Full metadata for one `pdc_study_id` (e.g. `PDC000127`): disease type, site, analytical fraction, experiment type, case/aliquot counts, embargo status, file counts by category — the PDC equivalent of `MassIVE_get_dataset`/`ProteomeXchange_get_dataset` |
+| `PDC_get_clinical_data` | Paginated per-case clinical metadata (case ID, disease type, site, demographics) for a study — use to link proteomic findings to patient characteristics |
+| `PDC_get_quant_data_matrix` | **The actual quantitative protein-abundance matrix** (gene x aliquot, `log2_ratio` by default) — this is the core CPTAC quantitative output, distinct from `PDC_get_gene_protein`'s spectral counts. Gene rows are truncated to `max_genes` (default 50; raise it to pull more) but the aliquot column header is always returned in full — verified live: `PDC000127` (CPTAC CCRCC) reports 9,591 total gene rows |
+
+**Workflow**: `PDC_search_studies(query="<disease/site/program>")` → confirm scope with
+`PDC_get_study_summary(pdc_study_id=...)` → `PDC_get_clinical_data` for patient context
+→ `PDC_get_quant_data_matrix` for the actual abundance values to analyze. Feed the
+resulting matrix into `tooluniverse-proteomics-analysis` (Phase 2 onward: preprocessing,
+differential expression, enrichment) rather than re-deriving that logic here.
+
+---
+
+## PRIDE Archive: Full-Text Search, File Downloads, and Reverse Protein Lookup
+
+PRIDE (EBI's proteomics repository) is one of the submission repositories
+ProteomeXchange indexes -- the same relationship MassIVE has to
+ProteomeXchange, just a different partner archive. Reach for PRIDE
+specifically (rather than, or in addition to, ProteomeXchange/MassIVE)
+when you need: **real full-text search** (ProteomeXchange's `query` param
+matches thinly against title/accession; PRIDE's `PRIDE_search_proteomics`
+matches against title, description, species, and tissue, so a query like
+`"phosphorylation"` or `"COVID-19 proteome"` returns far more relevant
+hits), **actual file download URLs** (FTP and Aspera links per file --
+none of MassIVE/ProteomeXchange/PDC's tools in this skill return
+downloadable links, only metadata), or a **protein-first search**
+("which datasets contain protein X" has no equivalent in MassIVE or
+ProteomeXchange here).
+
+| Tool | Purpose |
+|------|---------|
+| `PRIDE_search_proteomics` | Full-text keyword search (`query`, `page_size` default 20 max 100) across project title/description/species/tissue/disease. Returns rich per-hit metadata directly (organisms, organismParts, diseases, instruments, keywords, submitters, labPIs) -- often enough to shortlist without a follow-up detail call |
+| `PRIDE_get_project` | Full metadata for one `accession` (PXD######): adds `sampleProcessingProtocol`/`dataProcessingProtocol` (methods text), `doi`, `submissionType` (COMPLETE vs PARTIAL), `license`, full submitter records -- richer than either `MassIVE_get_dataset` or `ProteomeXchange_get_dataset` for methods detail |
+| `PRIDE_get_project_files` | Per-file listing for one `accession`: `fileName`, `fileCategory`, `fileSizeBytes`, and `publicFileLocations` with real **FTP and Aspera download URLs** -- the actual next step after `MassIVE`/`ProteomeXchange`/`PDC` metadata calls if the goal is downloading raw data, not just describing it |
+| `PRIDE_get_projects_for_protein` | Reverse lookup: given a UniProt `accession` (e.g. `P04637` for TP53), returns every PXD project accession that identified that protein. PRIDE's other tools are project-centric and cannot answer this; verified live that a well-studied protein like TP53 returns 30+ project accessions -- pair each with `PRIDE_get_project` for detail |
+
+**Workflow**: `PRIDE_search_proteomics(query="<keyword>")` → `PRIDE_get_project(accession=...)`
+for methods/DOI detail → `PRIDE_get_project_files(accession=...)` for actual download
+links. Or, protein-first: `PRIDE_get_projects_for_protein(accession="<UniProt AC>")` →
+`PRIDE_get_project` on each hit to evaluate relevance before downloading.
+
+Verified live: `PRIDE_search_proteomics(query="breast cancer", page_size=3)` returned
+real recent submissions (e.g. `PXD083320`, publication date 2026-08-28) with full
+instrument/organism/disease metadata already populated in the search response itself --
+no separate detail call needed to triage relevance.
 
 ---
 
@@ -228,6 +306,8 @@ Found N datasets matching [criteria].
 | MassIVE_get_dataset fails for PXD accession | Use ProteomeXchange_get_dataset instead |
 | Species taxonomy ID unknown | Search ProteomeXchange by keyword (organism name) |
 | No keyword search results | Try individual terms instead of multi-word queries |
+| Need real download links, not just metadata | Use `PRIDE_get_project_files` -- the only tool here that returns FTP/Aspera URLs |
+| Need "which datasets have protein X" | Use `PRIDE_get_projects_for_protein` -- no other tool here supports protein-first search |
 
 ---
 
@@ -272,7 +352,7 @@ Found N datasets matching [criteria].
 - **MassIVE**: No keyword/text search -- only species-based filtering via `species` parameter
 - **ProteomeXchange**: Limited metadata in search results (no summaries or keywords); get details via `Dataverse_get_dataset`
 - **No full-text search**: Cannot search within dataset descriptions or abstracts across repositories
-- **No download**: These tools retrieve metadata only, not raw data files
+- **No download via MassIVE/ProteomeXchange/PDC**: those tools retrieve metadata only, not raw data files. **PRIDE is the exception** -- `PRIDE_get_project_files` returns real FTP/Aspera URLs per file, verified live
 - **Rate limits**: Both APIs may throttle under heavy load; keep `page_size`/`limit` reasonable
 - **Coverage**: ProteomeXchange is the most comprehensive but may lag behind individual repositories for very recent submissions
 

@@ -22,6 +22,27 @@ from .tool_registry import register_tool
 # Base URL for Pharos GraphQL API
 PHAROS_GRAPHQL_URL = "https://pharos-api.ncats.io/graphql"
 
+
+def _apply_top(targets, top, count):
+    """Return (targets truncated to ``top``, note or None).
+
+    Pharos' GraphQL API currently ignores ``top`` and ``skip`` and answers every
+    ``targets`` query with a fixed page of 10, so a larger ``top`` cannot be
+    honoured (checked live: top 2/5/50 and skip 0/3/10 all returned the same 10).
+    Truncating covers a smaller ``top``; the note covers the shortfall.
+    """
+    shown = list(targets)[: max(1, int(top))]
+    note = None
+    if len(shown) < min(int(top), count or 0):
+        note = (
+            f"Pharos returned {len(shown)} of {count} matching targets: its API "
+            "currently ignores top/skip and returns at most 10 per request. Narrow "
+            "the query (search term, disease or Target Development Level) to reach "
+            "the others."
+        )
+    return shown, note
+
+
 # How many associated diseases / ligands a single-target lookup samples. The
 # full totals always travel alongside as diseaseCounts / ligandCounts, so this
 # only bounds response size, never the reported counts.
@@ -212,10 +233,12 @@ class PharosTool(BaseTool):
 
         if result["status"] == "success":
             targets_data = result["data"].get("targets", {})
-            result["data"] = {
-                "count": targets_data.get("count", 0),
-                "targets": targets_data.get("targets", []),
-            }
+            shown, note = _apply_top(
+                targets_data.get("targets", []), top, targets_data.get("count", 0)
+            )
+            result["data"] = {"count": targets_data.get("count", 0), "targets": shown}
+            if note:
+                result["data"]["note"] = note
 
         return result
 
@@ -310,11 +333,16 @@ class PharosTool(BaseTool):
 
         if result["status"] == "success":
             targets_data = result["data"].get("targets", {})
+            shown, note = _apply_top(
+                targets_data.get("targets", []), top, targets_data.get("count", 0)
+            )
             result["data"] = {
                 "disease": disease,
                 "count": targets_data.get("count", 0),
-                "targets": targets_data.get("targets", []),
+                "targets": shown,
             }
+            if note:
+                result["data"]["note"] = note
 
         return result
 

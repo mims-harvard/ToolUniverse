@@ -301,7 +301,7 @@ Load counts + metadata, ensure samples-as-rows/genes-as-columns, verify integer 
 
 ### Step 2.5: Inspect Metadata (REQUIRED)
 
-List ALL metadata columns and levels. Categorize as biological interest vs batch/block. Build design formula with covariates first, factor of interest last. See [design_formula_guide.md](references/design_formula_guide.md).
+List ALL metadata columns and levels. Categorize as biological interest vs batch/block. Build design formula with covariates first, factor of interest last.
 
 ### Step 3: Run PyDESeq2
 
@@ -385,13 +385,12 @@ See [troubleshooting.md](references/troubleshooting.md) for full debugging guide
 ## Known Limitations
 
 - **PyDESeq2 vs R DESeq2**: Numerical differences exist for very low dispersion genes (<1e-05). For exact R reproducibility, use rpy2.
-- **gseapy vs R clusterProfiler**: Results may differ. See [r_clusterprofiler_guide.md](references/r_clusterprofiler_guide.md).
+- **gseapy vs R clusterProfiler**: Results may differ.
 
 ## Reference Files
 
 - [question_parsing.md](references/question_parsing.md) - Extract parameters from questions
 - [data_loading.md](references/data_loading.md) - Data loading and validation
-- [design_formula_guide.md](references/design_formula_guide.md) - Multi-factor design decision tree
 - [pydeseq2_workflow.md](references/pydeseq2_workflow.md) - Complete PyDESeq2 code examples
 - [result_filtering.md](references/result_filtering.md) - Advanced filtering and extraction
 - [dispersion_analysis.md](references/dispersion_analysis.md) - Dispersion diagnostics
@@ -399,7 +398,6 @@ See [troubleshooting.md](references/troubleshooting.md) for full debugging guide
 - [output_formatting.md](references/output_formatting.md) - Format answers correctly
 - [worked_examples.md](references/worked_examples.md) - All 10 question patterns
 - [troubleshooting.md](references/troubleshooting.md) - Common issues and debugging
-- [r_clusterprofiler_guide.md](references/r_clusterprofiler_guide.md) - R clusterProfiler via rpy2
 - [edger_limma_voom.md](references/edger_limma_voom.md) - edgeR / limma-voom DE routes: command sequences, contracts, column crosswalk
 
 ## Utility Scripts

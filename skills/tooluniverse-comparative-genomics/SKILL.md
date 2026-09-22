@@ -105,9 +105,111 @@ For a species outside Ensembl's well-annotated set (most non-model organisms), c
 
 `OpenTargets_get_target_homologues_by_ensemblID` (takes `ensemblId`) provides supplementary ortholog data from OpenTargets, which can add druggability context and cross-reference with model organism phenotype data.
 
-**Reasoning**: Prioritize 1:1 orthologs as high-confidence functional equivalents. For 1:many cases, report all copies and flag the need for paralog-specific functional analysis. If no Ensembl Compara entry exists, try BLAST as a last resort (note: BLAST protein search against swissprot is slow, 5-30 minutes; against nr may take longer).
+**Reasoning**: Prioritize 1:1 orthologs as high-confidence functional equivalents. For 1:many cases, report all copies and flag the need for paralog-specific functional analysis. If no Ensembl Compara entry exists, try OMA (below) before BLAST — OMA's 2,600+ genome set covers far more invertebrates, fungi, and microbes than Ensembl Compara.
 
 Key model organisms to check: mouse (taxon 10090), rat (10116), zebrafish (7955), fruit fly (7227), C. elegans (6239), S. cerevisiae (4932).
+
+### OMA as a complementary/broader ortholog source
+
+Ensembl Compara is vertebrate-centric (see Limitations). **OMA (Orthologous MAtrix)** covers 2,600+ genomes spanning vertebrates, invertebrates, plants, fungi, and microbes, and additionally provides two things Ensembl Compara does not: **Hierarchical Orthologous Groups (HOGs)** — the full duplication/speciation history of a gene family across a taxonomic range, not just pairwise calls — and **OMA Groups**, the strictest possible orthology definition (each species contributes at most one gene). Use OMA when: the species of interest is outside Ensembl's well-annotated set, you need the duplication history of a gene family (not just a pairwise ortholog list), or you want the most conservative possible 1:1 ortholog set for a downstream analysis that can't tolerate false positives.
+
+**Entry point — resolving a gene symbol to an OMA identifier:**
+`OMA_get_protein` only accepts a UniProt accession (e.g. `P04637`) or an OMA ID (e.g. `HUMAN31534`) — it does not take a gene symbol. If you already resolved a UniProt accession in Phase 1/4, use it directly here; it is more reliable than the alternative below.
+
+If you only have a gene symbol, `OMA_resolve_xref(search=...)` can look it up, but **it does substring/fuzzy matching across all cross-reference databases (STRING, RefSeq, UniProt, etc.), not an exact gene-symbol match** — verified live: searching `search="TP53"` returns entries like `1109443.G4TP53` (a STRING ID for an unrelated fungal protein) and `29760.D7TP53` (*Vitis vinifera*) purely because "TP53" is a substring of the cross-reference string, not because they are TP53 orthologs. **Always filter the results**: keep only entries with `seq_match: "exact"` AND `source` starting with `UniProtKB` AND a `species_name` matching what you expect, before trusting an `oma_id`/`entry_nr` from this tool. For a well-known human gene, it is faster and safer to resolve the UniProt accession first (`tooluniverse-sequence-retrieval` / `UniProt_search`) and skip `OMA_resolve_xref` entirely.
+
+**Core OMA workflow once you have a UniProt accession or OMA ID:**
+
+```
+OMA_get_protein(protein_id="P04637")
+  -> oma_id (e.g. HUMAN31534), oma_group, oma_hog_id (e.g. HOG:F0782425.2c.7a),
+     roothog_id, chromosome/locus — the hub record for everything below
+
+OMA_get_orthologs(protein_id="P04637", rel_type="1:1"|"1:n"|"n:1"|"n:m"|omit, per_page=...)
+  -> pairwise orthologs with rel_type, evolutionary distance, alignment score.
+     OMA does not paginate internally — it fetches the whole set and ToolUniverse
+     slices it client-side — so metadata.total_count is the TRUE ortholog count
+     (e.g. 130 for human TP53) even when metadata.count (page size) is much
+     smaller; never report metadata.count as "the number of orthologs".
+
+OMA_get_hog(hog_id="HOG:F0782425")
+  -> full duplication/speciation tree: level (taxonomic rank of this HOG node,
+     e.g. "Euteleostomi"), children_hogs (lineage-specific sub-duplications,
+     each with its own hog_id and alternative_levels), completeness_score.
+     Use this — not OMA_get_orthologs — when the question is about *when and
+     where* a gene family duplicated, not just which species have a copy.
+     HOG IDs are reassigned between OMA releases; always get the current one
+     from OMA_get_protein's oma_hog_id, don't hardcode one from an old query.
+
+OMA_get_group(group_id="1458663")  # from OMA_get_protein's oma_group field
+  -> the strict 1:1-only cross-species group. Use the oma_group value FROM
+     THE PROTEIN RESPONSE, not from unrelated examples — group numbering is
+     dense and a group ID a few hundred thousand off from the right one
+     returns a completely unrelated gene family's group with no error
+     (verified live: group 1388790 returns "THO complex subunit 5 homolog",
+     not p53 — always confirm the group_nr in the response matches what you
+     expect, don't assume a group ID you were told is correct actually is).
+
+OMA_get_protein_go(protein_id="HUMAN31534", aspect="biological_process"|...)
+  -> GO annotations with per-term information_content (higher = more specific/
+     rarer term) and evidence code. This is OMA's own GO layer — use it
+     alongside (not instead of) the UniProt/OLS GO retrieval in Phase 4;
+     the two databases' annotation sets do not always match exactly.
+
+OMA_get_genome_pair_orthologs(genome1="HUMAN", genome2="MOUSE", per_page=..., page=...)
+  -> the FULL proteome-vs-proteome ortholog table between two species (not one
+     query protein) — the right tool for building a species-pair ortholog
+     table or synteny/dN-dS panel across many genes at once, rather than
+     calling OMA_get_orthologs one protein at a time. Species arguments accept
+     either a UniProt species code ("HUMAN", "MOUSE", "PANTR") or an NCBI
+     taxon ID.
+```
+
+**Reasoning**: Cross-check an Ensembl Compara 1:1 call against OMA's `OMA_get_orthologs(rel_type="1:1")` result for the same protein when the finding is load-bearing (e.g. selecting a model organism for a disease study) — the two databases use different orthology-inference algorithms (Compara: gene trees; OMA: pairwise + graph-based) and largely agree for well-conserved genes, but a disagreement is itself informative (it usually means the relationship is genuinely ambiguous, e.g. a recent duplication).
+
+### OrthoDB as a second group-based ortholog source
+
+**OrthoDB** is a third orthology database, distinct from both Ensembl Compara (gene-tree-based) and OMA (pairwise + strict-group-based): it defines orthologous groups **per taxonomic level** — the same gene family gets a *different* `group_id` at Eukaryota, Metazoa, Vertebrata, Primates, etc., each capturing the members and duplication pattern visible at that evolutionary depth. This is a genuinely different lens from OMA's HOG tree (one object encoding the whole duplication history) — OrthoDB instead gives you one flat member-list snapshot per level, plus (when populated) GO/KEGG/InterPro functional annotations attached directly to the group and, uniquely among the three, direct FASTA sequence retrieval for every member of a group in one call.
+
+**Entry point — searching by gene name is unreliable, verified live.** `OrthoDB_search_groups(query="TP53", species=9606, limit=20)` does NOT return the actual p53 gene group anywhere in its top 20 (of 100 total) results — it returns "TP53-target gene 3 protein", "TP53-binding protein 1", and unrelated groups like "phosphoglycerate mutase", because the search matches loosely against group consensus names/text, not an exact gene-symbol index. The actual group only surfaced when searching the group's real OrthoDB consensus name instead: `OrthoDB_search_groups(query="cellular tumor antigen p53")` → `"tumor protein p53"` at `group_id="4289813at2759"` (Eukaryota level). This is the same class of failure mode as `OMA_resolve_xref`'s substring matching (see above) — **never trust the first search hit as "the gene's group" without confirming the returned `name` and, via `OrthoDB_get_orthologs`, that it actually contains the expected species/gene_id.**
+
+**Core OrthoDB workflow (verified live on the same TP53 example as the OMA section above, for direct comparison):**
+
+```
+OrthoDB_search_groups(query=..., species=9606, level=..., limit=...)
+  -> candidate group_ids. Prefer a descriptive/consensus-name query over a bare
+     gene symbol (see above). `level` narrows to one taxonomic depth (7742 =
+     Vertebrata, 33208 = Metazoa, 2759 = Eukaryota) if you already know which
+     scope you want; omit it to see the gene's group at every level OrthoDB
+     tracks separately.
+
+OrthoDB_get_group_details(group_id="4289813at2759")
+  -> name, level_name, tax_id, plus go_terms/kegg_pathways/interpro_domains
+     WHEN POPULATED. Verified live: this TP53 (Eukaryota-level) group returned
+     `go_terms: null, kegg_pathways: null, interpro_domains: null` -- these
+     enrichment fields are not populated for every group, do not assume their
+     absence means "no known function," just that OrthoDB hasn't attached
+     that layer at this particular group/level.
+
+OrthoDB_get_orthologs(group_id="4289813at2759", species="9606,10090")
+  -> per-organism member list. Verified live: returned 2 entries EACH for
+     human and mouse (gene_id "TP53"/"7157" for human, "Trp53"/"22059" for
+     mouse) -- OrthoDB can list more than one record per organism per group
+     (alternate gene-model annotations for the same locus), so
+     `total_orthologs` is a record count, not a species count; group by
+     `organism_name` (or use `organisms_summary`) to get the actual per-species
+     tally.
+
+OrthoDB_get_group_fasta(group_id="4289813at2759", species="9606", limit=...)
+  -> the one thing OMA and Ensembl Compara tool calls in this skill don't give
+     you directly: real amino-acid sequences for every member of a group in
+     one call, with `pub_gene_id`/`organism_name` parsed out of each header.
+     Verified live: returned 2 human sequences (410 aa and 393 aa -- different
+     isoform-level records, not an error) ready for MSA/phylogenetic input
+     without a separate NCBI/Ensembl sequence-retrieval round-trip.
+```
+
+**Reasoning**: Use OrthoDB alongside OMA (not instead of it) when you specifically need (a) per-taxonomic-level group snapshots rather than one merged duplication tree, (b) group-level GO/KEGG/InterPro enrichment when populated, or (c) direct FASTA sequences for an entire orthogroup in one call for downstream alignment. For raw ortholog-count and 1:1/1:n relationship-type queries, OMA's `OMA_get_orthologs` is more directly comparable across the same result you'd get from Ensembl Compara; treat OrthoDB as a complementary data layer, not a replacement decision point.
 
 ---
 
@@ -165,7 +267,8 @@ When interpreting the assembled evidence, work through these questions:
 
 ## Fallback Strategies
 
-- **Ortholog not found in Ensembl Compara**: Try `ensembl_get_homology`, then `OpenTargets_get_target_homologues_by_ensemblID`, then BLAST as last resort. If a species is absent from Compara, confirm a reference assembly exists via `NCBIDatasets_list_genomes_by_taxon` and check its contiguity with `NCBIDatasets_get_genome_assembly` before concluding the gene is truly absent
+- **Ortholog not found in Ensembl Compara**: Try `ensembl_get_homology`, then `OpenTargets_get_target_homologues_by_ensemblID`, then **`OMA_get_orthologs`** (broader taxonomic coverage, especially invertebrates/fungi/microbes — see the OMA section in Phase 2), then BLAST as last resort. If a species is absent from Compara AND from OMA, confirm a reference assembly exists via `NCBIDatasets_list_genomes_by_taxon` and check its contiguity with `NCBIDatasets_get_genome_assembly` before concluding the gene is truly absent
+- **Need duplication/speciation history, not just a pairwise ortholog list**: `OMA_get_hog` gives the full HOG tree; Ensembl Compara's gene tree (`EnsemblCompara_get_gene_tree`) gives a comparable view — cross-check both if the duplication timing is load-bearing for the conclusion
 - **Sequence retrieval fails**: Use `ensembl_get_homology` with `sequence="cdna"` as alternative to NCBI
 - **UniProt returns empty with reviewed:true**: Try without that filter; organism may have only TrEMBL entries
 - **Monarch returns no data**: Use `MonarchV3_get_associations` with `category="biolink:GeneToPhenotypicFeatureAssociation"` as alternative
@@ -175,7 +278,11 @@ When interpreting the assembled evidence, work through these questions:
 
 ## Limitations
 
-- **Ensembl Compara**: Best for vertebrates; invertebrate and plant coverage is limited for some gene families
+- **Ensembl Compara**: Best for vertebrates; invertebrate and plant coverage is limited for some gene families. **OMA** covers 2,600+ genomes including many more invertebrates/fungi/microbes, but has its own gaps (no plant-specific gene-tree curation like Ensembl Plants) — treat the two as complementary, not one strictly superseding the other
+- **OMA_resolve_xref**: Does substring/fuzzy matching, not exact gene-symbol resolution — a bare gene symbol (e.g. "TP53") returns unrelated cross-references that merely contain the string. Always filter for `seq_match: "exact"` and the expected `species_name`/source, or resolve a UniProt accession first and skip this tool
+- **OMA group/HOG IDs**: Numbering is dense with no bounds-checking — an incorrect ID a few hundred thousand off from the right one silently returns a different, unrelated gene family with no error. Always take the ID from a live `OMA_get_protein` response, never assume one from memory or an old query is still correct
+- **OrthoDB_search_groups**: Matches loosely against group consensus names, not gene symbols — searching a bare gene symbol like "TP53" can fail to surface the actual gene's group anywhere in the top 20+ results (verified live), returning similarly-named but unrelated groups instead ("TP53-target gene 3 protein", "TP53-binding protein 1"). Confirm the returned group's members via `OrthoDB_get_orthologs` before trusting it, or search a descriptive name (e.g. "cellular tumor antigen p53") instead of the bare symbol
+- **OrthoDB group/level split**: The same gene has a different `group_id` at every taxonomic level OrthoDB tracks (Eukaryota, Metazoa, Vertebrata, ...) — there is no single canonical group ID for a gene the way OMA has one `oma_group`. Also, `OrthoDB_get_group_details`'s GO/KEGG/InterPro fields are `null` for many groups (verified live) — absence there is a data-population gap, not evidence the gene lacks that annotation elsewhere
 - **BLAST_protein_search**: Very slow (5-30 min); use only as last resort for ortholog discovery
 - **Monarch**: Phenotype coverage varies by organism; mouse and zebrafish are best covered; fly and worm data are sparser
 - **UniProt GO annotations**: Bias toward well-studied organisms; absence of annotation does not mean absence of function

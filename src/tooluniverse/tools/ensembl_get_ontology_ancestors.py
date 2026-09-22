@@ -1,7 +1,7 @@
 """
 ensembl_get_ontology_ancestors
 
-Get ancestor terms for a GO (Gene Ontology) term. Returns parent terms up the ontology hierarchy ...
+WARNING (checked 2026-09-21): Ensembl's REST server currently answers this endpoint with the term...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def ensembl_get_ontology_ancestors(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get ancestor terms for a GO (Gene Ontology) term. Returns parent terms up the ontology hierarchy ...
+    WARNING (checked 2026-09-21): Ensembl's REST server currently answers this endpoint with the term...
 
     Parameters
     ----------

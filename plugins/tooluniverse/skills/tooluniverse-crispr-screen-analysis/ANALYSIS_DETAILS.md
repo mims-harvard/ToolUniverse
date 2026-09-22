@@ -295,23 +295,15 @@ def enrich_essential_genes(gene_scores, top_n=100, databases=['KEGG_2021_Human',
     tu = ToolUniverse()
 
     top_genes = gene_scores.head(top_n).index.tolist()
-    result = tu.run_one_function({
-        "name": "enrichr_gene_enrichment_analysis",
-        "arguments": {"gene_list": top_genes, "description": "CRISPR_screen_essential_genes"}
-    })
-    if 'data' not in result or 'userListId' not in result['data']:
-        return None
-
-    user_list_id = result['data']['userListId']
     all_results = {}
     for db in databases:
         enrich_result = tu.run_one_function({
-            "name": "Enrichr_get_results",
-            "arguments": {"userListId": user_list_id, "backgroundType": db}
+            "name": "Enrichr_enrich",
+            "arguments": {"gene_list": top_genes, "library": db, "top_n": 20}
         })
-        if 'data' in enrich_result and db in enrich_result['data']:
-            all_results[db] = pd.DataFrame(enrich_result['data'][db])
-    return all_results
+        if enrich_result.get('status') == 'success':
+            all_results[db] = pd.DataFrame(enrich_result['data']['enriched_terms'])
+    return all_results or None
 ```
 
 ---

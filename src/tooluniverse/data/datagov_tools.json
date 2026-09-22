@@ -2,7 +2,7 @@
   {
     "type": "DataGovTool",
     "name": "DataGov_search_datasets",
-    "description": "Search the US federal open data catalog (Data.gov) for datasets from agencies like EPA, CDC, Census Bureau, NIH, USDA, NOAA, and more. Data.gov uses the CKAN API and indexes over 300,000 federal datasets. Returns dataset titles, descriptions, organizations, download resource URLs, tags, and last-modified dates. Use organization filter (e.g. 'epa-gov', 'cdc-gov', 'usda-gov', 'nih-gov', 'census-gov', 'noaa-gov') to narrow results to a specific agency.",
+    "description": "Search the US federal open data catalog (Data.gov) for datasets from agencies like EPA, CDC, Census Bureau, NIH, USDA, NOAA, and more. Data.gov uses the CKAN API and indexes over 300,000 federal datasets. Returns dataset titles, descriptions, organizations, download resource URLs, tags, and last-modified dates. Use the organization filter (an agency slug such as 'epa', 'noaa', 'nasa', 'hhs', 'usda', 'census', 'doi', 'energy') to narrow results to one agency; NIH, CDC and FDA datasets are filed under 'hhs'.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12,7 +12,7 @@
         },
         "organization": {
           "type": ["string", "null"],
-          "description": "Optional CKAN organization slug to filter by federal agency. Examples: 'epa-gov', 'cdc-gov', 'usda-gov', 'nih-gov', 'census-gov', 'noaa-gov', 'nasa-gov', 'nsf-gov', 'doe-gov', 'hhs-gov'. Leave null to search all agencies.",
+          "description": "Optional organization slug to filter by agency. Examples: 'epa', 'noaa', 'nasa', 'hhs', 'usda', 'census', 'nsf', 'doi', 'energy', 'dot' (a legacy '-gov' suffix such as 'epa-gov' is accepted). NIH, CDC and FDA datasets are filed under 'hhs'. Leave null to search all agencies.",
           "default": null
         },
         "rows": {
@@ -103,7 +103,7 @@
     "test_examples": [
       {
         "query": "air quality monitoring",
-        "organization": "epa-gov",
+        "organization": "epa",
         "rows": 3
       },
       {
@@ -112,7 +112,7 @@
       },
       {
         "query": "census population demographics",
-        "organization": "census-gov",
+        "organization": "census",
         "rows": 2
       }
     ]

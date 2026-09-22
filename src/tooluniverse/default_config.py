@@ -355,6 +355,8 @@ default_tool_files = {
         current_dir, "data", "uspto_downloader_tools.json"
     ),
     "uspto": os.path.join(current_dir, "data", "uspto_tools.json"),
+    # protocols.io - public repository of peer-reviewed/community lab protocols.
+    "protocolsio": os.path.join(current_dir, "data", "protocolsio_tools.json"),
     "xml": os.path.join(current_dir, "data", "xml_tools.json"),
     "mcp_auto_loader_boltz": os.path.join(
         current_dir, "data", "boltz_mcp_loader_tools.json"
@@ -952,6 +954,9 @@ default_tool_files = {
     ),
     # TCIA - The Cancer Imaging Archive (medical imaging datasets)
     "tcia": os.path.join(current_dir, "data", "tcia_tools.json"),
+    # EPA CompTox/CCTE - chemical identity, hazard, and ToxCast/Tox21
+    # high-throughput bioactivity screening data.
+    "comptox": os.path.join(current_dir, "data", "comptox_tools.json"),
     # OpenNeuro - Neuroimaging data repository (BIDS datasets)
     "openneuro": os.path.join(current_dir, "data", "openneuro_tools.json"),
     # ModelDB - Computational neuroscience model repository (Yale/SenseLab)
@@ -1068,6 +1073,14 @@ default_tool_files = {
     "biorxiv_ext": os.path.join(current_dir, "data", "biorxiv_ext_tools.json"),
     # World Bank - World Development Indicators (GDP, population, health, education, 200+ countries)
     "worldbank": os.path.join(current_dir, "data", "worldbank_tools.json"),
+    # PubMed ID conversion (PMC ID Converter) and citation lookup (ECitMatch)
+    "pubmed_utils": os.path.join(current_dir, "data", "pubmed_utils_tools.json"),
+    # Synapse.org (Sage Bionetworks) public search / entity metadata
+    "synapse": os.path.join(current_dir, "data", "synapse_tools.json"),
+    # Open Targets Platform free-form GraphQL query + schema
+    "opentargets_graphql": os.path.join(
+        current_dir, "data", "opentargets_graphql_tools.json"
+    ),
     # IMF - World Economic Outlook macroeconomic data (GDP growth, inflation, unemployment, debt)
     # Open-Meteo - Free weather forecast, historical climate, air quality, and geocoding
     "open_meteo": os.path.join(current_dir, "data", "open_meteo_tools.json"),
@@ -1096,9 +1109,7 @@ default_tool_files = {
     "nih_reporter": os.path.join(current_dir, "data", "nih_reporter_tools.json"),
     # SciCrunch RRID resolver - any RRID prefix beyond the existing
     # antibody-specific AntibodyRegistry tool
-    "scicrunch_rrid": os.path.join(
-        current_dir, "data", "scicrunch_rrid_tools.json"
-    ),
+    "scicrunch_rrid": os.path.join(current_dir, "data", "scicrunch_rrid_tools.json"),
     # CMS Open Payments - drug/device manufacturer payments to physicians,
     # a health-economics/conflict-of-interest layer with no prior coverage
     "cms_open_payments": os.path.join(
@@ -1117,9 +1128,7 @@ default_tool_files = {
     "nci_evs": os.path.join(current_dir, "data", "nci_evs_tools.json"),
     # openFDA device - recalls and MAUDE adverse events, the device side of
     # openFDA (existing tools cover only drug/label, drug/event, drugsfda)
-    "openfda_device": os.path.join(
-        current_dir, "data", "openfda_device_tools.json"
-    ),
+    "openfda_device": os.path.join(current_dir, "data", "openfda_device_tools.json"),
     # FHIR Terminology Service - SNOMED CT code lookup and hierarchy
     # expansion (LOINC/RxNorm/ICD-10-CM already have dedicated tools)
     "fhir_terminology": os.path.join(

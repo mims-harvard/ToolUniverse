@@ -34,11 +34,10 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
           "default": "json",
-          "description": "Response format: 'json' or 'xml'"
+          "description": "Response format. Only 'json' is produced by this endpoint."
         }
       },
       "required": [
@@ -88,7 +87,7 @@
       },
       {
         "domain": "uniprot",
-        "query": "name:P53",
+        "query": "p53",
         "size": 10
       },
       {
@@ -130,10 +129,10 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
-          "default": "json"
+          "default": "json",
+          "description": "Response format. Only 'json' is produced by this endpoint."
         }
       },
       "required": [
@@ -264,10 +263,10 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
-          "default": "json"
+          "default": "json",
+          "description": "Response format. Only 'json' is produced by this endpoint."
         }
       },
       "required": [
@@ -341,11 +340,10 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
           "default": "json",
-          "description": "Response format"
+          "description": "Response format. Only 'json' is produced by this endpoint."
         }
       },
       "required": []
@@ -595,10 +593,10 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
-          "default": "json"
+          "default": "json",
+          "description": "Response format. Only 'json' is produced by this endpoint."
         }
       },
       "required": [
@@ -786,10 +784,10 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
-          "default": "json"
+          "default": "json",
+          "description": "Response format. Only 'json' is produced by this endpoint."
         }
       },
       "required": [
@@ -821,7 +819,7 @@
     },
     "test_examples": [
       {
-        "domain": "ensembl"
+        "domain": "ensembl_gene"
       },
       {
         "domain": "uniprot"
@@ -851,10 +849,10 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
-          "default": "json"
+          "default": "json",
+          "description": "Response format. Only 'json' is produced by this endpoint."
         }
       },
       "required": [
@@ -887,8 +885,8 @@
     },
     "test_examples": [
       {
-        "domain": "ensembl",
-        "query": "xref_uniprot:P04637",
+        "domain": "ensembl_gene",
+        "query": "UNIPROT_SWISSPROT:P04637",
         "size": 10
       }
     ]

@@ -25,6 +25,14 @@ from .tool_registry import register_tool
 BRENDA_WSDL = "https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl"
 
 
+try:
+    from zeep.exceptions import Fault
+except ImportError:  # zeep is optional; _get_client() reports that clearly
+
+    class Fault(Exception):
+        """Placeholder so ``except Fault`` stays valid when zeep is not installed."""
+
+
 def _get_client():
     """Return a zeep SOAP client for BRENDA."""
     try:
@@ -120,8 +128,6 @@ class BRENDATool(BaseTool):
         organism = arguments.get("organism", "")
 
         try:
-            from zeep.exceptions import Fault
-
             client = _get_client()
             raw = client.service.getKmValue(
                 email=email,
@@ -178,8 +184,6 @@ class BRENDATool(BaseTool):
         organism = arguments.get("organism", "")
 
         try:
-            from zeep.exceptions import Fault
-
             client = _get_client()
             raw = client.service.getTurnoverNumber(
                 email=email,
@@ -240,8 +244,6 @@ class BRENDATool(BaseTool):
         organism = arguments.get("organism", "")
 
         try:
-            from zeep.exceptions import Fault
-
             client = _get_client()
             raw = client.service.getInhibitors(
                 email=email,
@@ -294,8 +296,6 @@ class BRENDATool(BaseTool):
         email, pw_hash = creds
 
         try:
-            from zeep.exceptions import Fault
-
             client = _get_client()
             raw = client.service.getSystematicName(
                 email=email,
@@ -557,8 +557,6 @@ class BRENDATool(BaseTool):
         creds = self._credentials()
         if creds:
             try:
-                from zeep.exceptions import Fault
-
                 email, pw_hash = creds
                 client = _get_client()
 

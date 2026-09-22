@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2719 scientific tools.
+Type-safe Python interface to 2726 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -1865,6 +1865,7 @@ from .OpenTargets_get_evidence_by_datasource import (
 from .OpenTargets_get_gene_ontology_terms_by_goID import (
     OpenTargets_get_gene_ontology_terms_by_goID,
 )
+from .OpenTargets_get_graphql_schema import OpenTargets_get_graphql_schema
 from .OpenTargets_get_gwas_study import OpenTargets_get_gwas_study
 from .OpenTargets_get_known_drugs_by_drug_chemblId import (
     OpenTargets_get_known_drugs_by_drug_chemblId,
@@ -1960,6 +1961,7 @@ from .OpenTargets_map_any_disease_id_to_all_other_ids import (
 from .OpenTargets_multi_entity_search_by_query_string import (
     OpenTargets_multi_entity_search_by_query_string,
 )
+from .OpenTargets_query_graphql import OpenTargets_query_graphql
 from .OpenTargets_search_category_counts_by_query_string import (
     OpenTargets_search_category_counts_by_query_string,
 )
@@ -2194,10 +2196,12 @@ from .PubChem_search_compounds_by_substructure import (
     PubChem_search_compounds_by_substructure,
 )
 from .PubMed_Guidelines_Search import PubMed_Guidelines_Search
+from .PubMed_convert_article_ids import PubMed_convert_article_ids
 from .PubMed_get_article import PubMed_get_article
 from .PubMed_get_cited_by import PubMed_get_cited_by
 from .PubMed_get_links import PubMed_get_links
 from .PubMed_get_related import PubMed_get_related
+from .PubMed_lookup_article_by_citation import PubMed_lookup_article_by_citation
 from .PubMed_search_articles import PubMed_search_articles
 from .PubTator3_EntityAutocomplete import PubTator3_EntityAutocomplete
 from .PubTator3_GetEntityRelations import PubTator3_GetEntityRelations
@@ -2439,6 +2443,9 @@ from .SwissTargetPrediction_predict import SwissTargetPrediction_predict
 from .SynBioHub_get_collections import SynBioHub_get_collections
 from .SynBioHub_get_part import SynBioHub_get_part
 from .SynBioHub_search_parts import SynBioHub_search_parts
+from .Synapse_get_entity import Synapse_get_entity
+from .Synapse_list_children import Synapse_list_children
+from .Synapse_search_entities import Synapse_search_entities
 from .T3DB_get_toxin import T3DB_get_toxin
 from .T3DB_search_toxins import T3DB_search_toxins
 from .TCDB_get_transporter import TCDB_get_transporter
@@ -4786,6 +4793,7 @@ __all__ = [
     "OpenTargets_get_drug_warnings_by_chemblId",
     "OpenTargets_get_evidence_by_datasource",
     "OpenTargets_get_gene_ontology_terms_by_goID",
+    "OpenTargets_get_graphql_schema",
     "OpenTargets_get_gwas_study",
     "OpenTargets_get_known_drugs_by_drug_chemblId",
     "OpenTargets_get_parent_child_molecules_by_chembl_ID",
@@ -4821,6 +4829,7 @@ __all__ = [
     "OpenTargets_get_variant_transcript_consequences",
     "OpenTargets_map_any_disease_id_to_all_other_ids",
     "OpenTargets_multi_entity_search_by_query_string",
+    "OpenTargets_query_graphql",
     "OpenTargets_search_category_counts_by_query_string",
     "OpenTargets_search_gwas_studies_by_disease",
     "OpenTargets_target_disease_evidence",
@@ -5029,10 +5038,12 @@ __all__ = [
     "PubChem_search_compounds_by_similarity",
     "PubChem_search_compounds_by_substructure",
     "PubMed_Guidelines_Search",
+    "PubMed_convert_article_ids",
     "PubMed_get_article",
     "PubMed_get_cited_by",
     "PubMed_get_links",
     "PubMed_get_related",
+    "PubMed_lookup_article_by_citation",
     "PubMed_search_articles",
     "PubTator3_EntityAutocomplete",
     "PubTator3_GetEntityRelations",
@@ -5258,6 +5269,9 @@ __all__ = [
     "SynBioHub_get_collections",
     "SynBioHub_get_part",
     "SynBioHub_search_parts",
+    "Synapse_get_entity",
+    "Synapse_list_children",
+    "Synapse_search_entities",
     "T3DB_get_toxin",
     "T3DB_search_toxins",
     "TCDB_get_transporter",

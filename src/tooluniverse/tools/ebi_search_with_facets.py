@@ -36,7 +36,7 @@ def ebi_search_with_facets(
     size : int
         Number of results to return (default: 10)
     format : str
-
+        Response format. Only 'json' is produced by this endpoint.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

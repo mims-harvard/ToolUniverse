@@ -46,7 +46,21 @@ class DBLPTool(BaseTool):
                 "reason": response.reason,
             }
 
-        hits = response.json().get("result", {}).get("hits", {}).get("hit", [])
+        try:
+            payload = response.json()
+        except ValueError:
+            return {
+                "status": "error",
+                "error": "DBLP returned an HTML page instead of JSON",
+                "reason": (
+                    "dblp.org answers programmatic clients with a bot-check page "
+                    "('Making sure you're not a bot!'), which this tool does not "
+                    "bypass. Use Crossref_search_works, SemanticScholar_search_papers "
+                    "or openalex_search_works instead."
+                ),
+            }
+
+        hits = payload.get("result", {}).get("hits", {}).get("hit", [])
         results = []
         for hit in hits:
             info = hit.get("info", {})

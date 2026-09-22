@@ -119,7 +119,7 @@
   },
   {
     "name": "FoodDataCentral_get_food",
-    "description": "Get detailed food information by FDC ID from USDA FoodData Central. Returns complete nutrient profile, ingredients, serving size, and food attributes. Example: FDC ID 2344723 returns 'Bananas, raw' with 70+ nutrients.",
+    "description": "Get detailed food information by FDC ID from USDA FoodData Central. Returns complete nutrient profile, ingredients, serving size, and food attributes. Example: FDC ID 1105073 returns 'Bananas, overripe, raw' with 70+ nutrients.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -128,7 +128,7 @@
             "integer",
             "string"
           ],
-          "description": "FoodData Central food ID (e.g., 2344723 for bananas, 2012128 for branded banana product). Get IDs from FoodDataCentral_search_foods."
+          "description": "FoodData Central food ID (e.g., 1105073 for raw bananas, 2012128 for a branded banana product). Get IDs from FoodDataCentral_search_foods."
         }
       },
       "required": [
@@ -144,7 +144,7 @@
     ],
     "test_examples": [
       {
-        "fdc_id": 2344723
+        "fdc_id": 1105073
       },
       {
         "fdc_id": 2012128

@@ -219,16 +219,18 @@ def analyze_mutation_distribution(mutations, target_variant):
 ### 4.1 OpenTargets Drug-Target Associations (PRIMARY)
 
 ```python
-def get_target_drugs(tu, ensembl_id, size=50):
+def get_target_drugs(tu, ensembl_id):
     """Get all drugs associated with a target from OpenTargets."""
+    # The tool has no size/paging parameter: all rows come back in one call
     result = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
-        ensemblId=ensembl_id, size=size
+        ensemblId=ensembl_id
     )
-    drugs = result.get('data', {}).get('target', {}).get('knownDrugs', {})
-    rows = drugs.get('rows', [])
-    approved = [r for r in rows if r.get('drug', {}).get('isApproved')]
-    phase3 = [r for r in rows if r.get('phase') == 3 and not r.get('drug', {}).get('isApproved')]
-    phase2 = [r for r in rows if r.get('phase') == 2]
+    drugs = result.get('data', {}).get('target', {}).get('drugAndClinicalCandidates', {})
+    rows = drugs.get('rows', [])  # {drug: {id, name}, maxClinicalStage, diseases[]}
+    # maxClinicalStage values seen live: APPROVAL, PHASE_3, PHASE_2_3, PHASE_2, PHASE_1_2, PHASE_1, UNKNOWN
+    approved = [r for r in rows if r.get('maxClinicalStage') == 'APPROVAL']
+    phase3 = [r for r in rows if r.get('maxClinicalStage') in ('PHASE_3', 'PHASE_2_3')]
+    phase2 = [r for r in rows if r.get('maxClinicalStage') in ('PHASE_2', 'PHASE_1_2')]
     return {
         'total': drugs.get('count', 0),
         'approved': approved,
@@ -274,17 +276,20 @@ def get_drugbank_info(tu, drug_name):
 ```python
 def get_chembl_mechanism(tu, chembl_drug_id):
     """Get drug mechanism from ChEMBL."""
-    result = tu.tools.ChEMBL_get_drug_mechanisms(drug_chembl_id__exact=chembl_drug_id, limit=10)
+    result = tu.tools.ChEMBL_get_drug_mechanisms(drug_chembl_id=chembl_drug_id, limit=10)
     return result
 ```
 
 ### 4.6 Disease-Specific Drug Filtering
 
 ```python
-def get_disease_specific_drugs(tu, efo_id, size=30):
+def get_disease_specific_drugs(tu, efo_id, limit=30):
     """Get drugs associated with a specific disease/cancer type."""
-    result = tu.tools.OpenTargets_get_associated_drugs_by_disease_efoId(efoId=efo_id, size=size)
-    return result
+    # No size/paging parameter: all rows come back (1072 for MONDO_0005233 at time of writing),
+    # so cap client-side. Rows: data.disease.drugAndClinicalCandidates.rows[] -> {drug, maxClinicalStage}
+    result = tu.tools.OpenTargets_get_associated_drugs_by_disease_efoId(efoId=efo_id)
+    rows = result.get('data', {}).get('disease', {}).get('drugAndClinicalCandidates', {}).get('rows', [])
+    return rows[:limit]
 ```
 
 ---
@@ -315,7 +320,7 @@ def search_resistance_literature(tu, gene_symbol, drug_name):
 ```python
 def get_bypass_pathways(tu, uniprot_id):
     """Get pathways that could mediate bypass resistance."""
-    result = tu.tools.Reactome_map_uniprot_to_pathways(id=uniprot_id)
+    result = tu.tools.Reactome_map_uniprot_to_pathways(uniprot_id=uniprot_id)
     return result
 ```
 
@@ -380,7 +385,7 @@ def get_prognostic_literature(tu, gene_symbol, variant_name, cancer_type=None):
 ```python
 def get_pathway_context(tu, uniprot_id):
     """Get pathway context from Reactome."""
-    result = tu.tools.Reactome_map_uniprot_to_pathways(id=uniprot_id)
+    result = tu.tools.Reactome_map_uniprot_to_pathways(uniprot_id=uniprot_id)
     return result
 ```
 
@@ -394,7 +399,7 @@ def get_expression_context(tu, ensembl_id):
     version = data.get('version', 1)
     versioned_id = f"{ensembl_id}.{version}"
     result = tu.tools.GTEx_get_median_gene_expression(
-        gencode_id=versioned_id, operation='median'
+        gencode_id=versioned_id
     )
     return result
 ```

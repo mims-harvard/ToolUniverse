@@ -7,12 +7,11 @@
       "properties": {
         "limit": {
           "type": "integer",
-          "description": "Maximum number of datasets to return (default 20, max 10000). Controls pagination page size."
+          "description": "Maximum number of datasets to return (default 20, max 10000). Controls pagination page size.",
+          "default": 20
         }
       },
-      "required": [
-        "limit"
-      ]
+      "required": []
     },
     "fields": {
       "endpoint": "https://www.openml.org/api/v1/json/data/list/limit/{limit}"

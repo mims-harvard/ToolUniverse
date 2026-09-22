@@ -29,11 +29,11 @@ def FAERS_count_additive_reaction_outcomes(
     medicinalproducts : list[str]
         Array of medicinal product names.
     patientsex : str
-
+        Optional: Filter by patient sex. Omit this parameter if you don't want to fil...
     patientagegroup : str
-
+        Optional: Filter by patient age group. Omit this parameter if you don't want ...
     occurcountry : str
-
+        Optional: Filter by country where event occurred (ISO2 code, e.g., 'US', 'GB'...
     manufacturer_name : str
         Filter to reports where a drug's labeller/manufacturer matches, e.g. 'Pfizer'...
     receivedate : str

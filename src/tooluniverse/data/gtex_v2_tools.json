@@ -428,13 +428,15 @@
         "page": {
           "type": "integer",
           "minimum": 0,
-          "default": 0
+          "default": 0,
+          "description": "Page number (0-based)"
         },
         "items_per_page": {
           "type": "integer",
           "minimum": 1,
           "maximum": 100000,
-          "default": 250
+          "default": 250,
+          "description": "Results per page"
         }
       },
       "required": []
@@ -547,18 +549,21 @@
             "gtex_v10",
             "gtex_snrnaseq_pilot"
           ],
-          "default": "gtex_v8"
+          "default": "gtex_v8",
+          "description": "GTEx dataset version (default gtex_v8)"
         },
         "page": {
           "type": "integer",
           "minimum": 0,
-          "default": 0
+          "default": 0,
+          "description": "Page number (0-based)"
         },
         "items_per_page": {
           "type": "integer",
           "minimum": 1,
           "maximum": 100000,
-          "default": 250
+          "default": 250,
+          "description": "Results per page"
         }
       },
       "required": []
@@ -677,7 +682,8 @@
             "gtex_v10",
             "gtex_snrnaseq_pilot"
           ],
-          "default": "gtex_v8"
+          "default": "gtex_v8",
+          "description": "GTEx dataset version (default gtex_v8)"
         }
       },
       "required": [
@@ -816,18 +822,21 @@
             "gtex_v10",
             "gtex_snrnaseq_pilot"
           ],
-          "default": "gtex_v8"
+          "default": "gtex_v8",
+          "description": "GTEx dataset version (default gtex_v8)"
         },
         "page": {
           "type": "integer",
           "minimum": 0,
-          "default": 0
+          "default": 0,
+          "description": "Page number (0-based)"
         },
         "items_per_page": {
           "type": "integer",
           "minimum": 1,
           "maximum": 100000,
-          "default": 250
+          "default": 250,
+          "description": "Results per page"
         }
       },
       "required": [
@@ -1061,18 +1070,21 @@
             "gtex_v10",
             "gtex_snrnaseq_pilot"
           ],
-          "default": "gtex_v8"
+          "default": "gtex_v8",
+          "description": "GTEx dataset version (default gtex_v8)"
         },
         "page": {
           "type": "integer",
           "minimum": 0,
-          "default": 0
+          "default": 0,
+          "description": "Page number (0-based)"
         },
         "items_per_page": {
           "type": "integer",
           "minimum": 1,
           "maximum": 100000,
-          "default": 250
+          "default": 250,
+          "description": "Results per page"
         }
       },
       "required": [
@@ -1209,18 +1221,21 @@
             "gtex_v10",
             "gtex_snrnaseq_pilot"
           ],
-          "default": "gtex_v8"
+          "default": "gtex_v8",
+          "description": "GTEx dataset version (default gtex_v8)"
         },
         "page": {
           "type": "integer",
           "minimum": 0,
-          "default": 0
+          "default": 0,
+          "description": "Page number (0-based)"
         },
         "items_per_page": {
           "type": "integer",
           "minimum": 1,
           "maximum": 100000,
-          "default": 250
+          "default": 250,
+          "description": "Results per page"
         }
       },
       "required": []
@@ -1358,18 +1373,21 @@
             "gtex_v10",
             "gtex_snrnaseq_pilot"
           ],
-          "default": "gtex_v8"
+          "default": "gtex_v8",
+          "description": "GTEx dataset version (default gtex_v8)"
         },
         "page": {
           "type": "integer",
           "minimum": 0,
-          "default": 0
+          "default": 0,
+          "description": "Page number (0-based)"
         },
         "items_per_page": {
           "type": "integer",
           "minimum": 1,
           "maximum": 100000,
-          "default": 250
+          "default": 250,
+          "description": "Results per page"
         }
       },
       "required": [

@@ -19,7 +19,9 @@ Usage:
     python depmap_gene_dependency.py cell-line A375 --top 25   # genes A375 most depends on
 
 First call downloads CRISPRGeneEffect.csv (large, ~0.5 GB) + Model.csv and caches
-them under the OS temp dir; later calls are fast. Requires pandas.
+them under the OS temp dir (override with DEPMAP_CACHE_DIR); later calls are fast.
+Requires pandas. If DepMap's index serves a bot-check page the script says so and
+asks for the two files to be placed in the cache directory by hand.
 """
 
 from __future__ import annotations
@@ -33,13 +35,30 @@ import tempfile
 import urllib.request
 
 DEPMAP_INDEX = "https://depmap.org/portal/api/download/files"
-CACHE_DIR = os.path.join(tempfile.gettempdir(), "depmap_cache")
+CACHE_DIR = os.environ.get("DEPMAP_CACHE_DIR") or os.path.join(
+    tempfile.gettempdir(), "depmap_cache"
+)
+
+
+class DepMapUnavailable(RuntimeError):
+    """DepMap's download index could not be read (e.g. it served a bot-check page)."""
 
 
 def _latest_url(filename: str) -> str:
     """Resolve the freshest signed download URL for a DepMap file (URLs expire)."""
     with urllib.request.urlopen(DEPMAP_INDEX, timeout=60) as fh:
-        rows = list(csv.DictReader(fh.read().decode("utf-8", "ignore").splitlines()))
+        body = fh.read().decode("utf-8", "ignore")
+    # The index is a CSV. DepMap now answers with an HTML "Verification" (bot-check)
+    # page instead; do not try to get past it, and say how to proceed by hand.
+    if body.lstrip().startswith("<") or "filename" not in body[:500]:
+        raise DepMapUnavailable(
+            f"DepMap's download index ({DEPMAP_INDEX}) returned a web page instead of "
+            f"the file list, so {filename} cannot be fetched automatically. Download "
+            f"CRISPRGeneEffect.csv and Model.csv from https://depmap.org/portal/download/all/ "
+            f"in a browser, put them in {CACHE_DIR} (or set DEPMAP_CACHE_DIR), and rerun; "
+            "cached files are used without contacting DepMap."
+        )
+    rows = list(csv.DictReader(body.splitlines()))
 
     def ver(r):
         m = re.search(r"(\d\d)Q(\d)", r["release"])
@@ -130,7 +149,15 @@ def main(argv=None):
     p.add_argument("--top", type=int, default=25)
     args = p.parse_args(argv)
 
-    out = by_gene(args.value, args.lineage, args.top) if args.mode == "gene" else by_cell_line(args.value, args.top)
+    try:
+        out = (
+            by_gene(args.value, args.lineage, args.top)
+            if args.mode == "gene"
+            else by_cell_line(args.value, args.top)
+        )
+    except DepMapUnavailable as exc:
+        sys.stderr.write(f"{exc}\n")
+        return 2
     if out is None or out.empty:
         sys.stderr.write(
             f"No DepMap data for {args.mode}='{args.value}'. Use the gene SYMBOL "

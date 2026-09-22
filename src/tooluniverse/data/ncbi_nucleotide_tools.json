@@ -53,9 +53,9 @@
           "enum": [
             "relevance",
             "pub_date",
-            "title"
+            "length"
           ],
-          "description": "Sort order for results (default: relevance)",
+          "description": "Sort order for results (default: relevance). pub_date sorts by NCBI's 'Date Released', length by 'Sequence Length'.",
           "default": "relevance"
         }
       }

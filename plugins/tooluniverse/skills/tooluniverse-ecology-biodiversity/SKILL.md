@@ -89,6 +89,64 @@ tu.run_tool("GBIF_parse_name", {"name": "Quercus robur L."})     # canonicalName
 All five tools hit the public GBIF API with no key. Get the starting `taxon_key`
 from `GBIF_match_name` or `GBIF_search_species`.
 
+## Additional Taxonomy & Biodiversity Sources
+
+GBIF/WoRMS/BOLDSystems/iDigBio (above) are the primary sources. These eight
+add authority-specific, phylogenetic, and observational coverage GBIF alone
+doesn't provide — use them when GBIF is ambiguous, when you need a
+phylogenetic tree rather than a flat classification, or when you need
+citizen-science occurrence density rather than museum-specimen records.
+
+| Tool | Use For |
+|------|---------|
+| `EOL_search_species` / `EOL_get_page` / `EOL_get_hierarchy_entry` / `EOL_get_collection` | Encyclopedia of Life — aggregated species pages (images, text, multiple classification systems per page), curated topical collections |
+| `ITIS_search_by_scientific_name` / `_search_by_common_name` / `ITIS_get_hierarchy` / `ITIS_get_full_record` | ITIS (Integrated Taxonomic Information System) — the authoritative North American taxonomy standard; returns a `tsn` (Taxonomic Serial Number) |
+| `CoL_search_species` / `CoL_get_taxon` / `CoL_get_children` | Catalogue of Life — the broadest single global species checklist (consolidates 190+ source databases); good first stop when GBIF's backbone doesn't have a clean match |
+| `OpenTree_match_names` / `OpenTree_get_taxon` / `OpenTree_get_mrca` / `OpenTree_get_induced_subtree` | Open Tree of Life — a synthetic **phylogenetic** tree (not just a rank hierarchy) across all of life; use when the question is about evolutionary relationships/branch order, not just classification |
+| `iNaturalist_search_taxa` / `_get_taxon` / `_search_observations` / `_get_species_counts` | iNaturalist — citizen-science observation records with photos/location/date; use for occurrence density and recent sightings, not authoritative taxonomy |
+| `OBIS_search_taxa` / `OBIS_search_occurrences` | OBIS (Ocean Biodiversity Information System) — marine-species occurrence records with coordinates/time, resolved to AphiaID (WoRMS' identifier); the marine analog of GBIF occurrence search |
+| `eBird_get_taxonomy` / `eBird_get_taxon_groups` | eBird (Cornell Lab) — bird-specific taxonomy and species groupings; use for bird questions instead of generic taxonomy sources, which are shallower on avian subspecies/hybrid codes |
+| `MarineRegions_search_by_name` / `MarineRegions_get_record` | Marine Regions Gazetteer (VLIZ) — geographic/political marine boundaries (seas, EEZs, bays) by `MRGID`; pairs with OBIS for "which occurrences fall inside this named sea" questions |
+
+**Choosing among the identity/taxonomy sources** (EOL, ITIS, CoL, GBIF all
+answer "what is this species"):
+- **ITIS** if you need the North American regulatory-standard identifier (`tsn`).
+- **CoL** for the broadest global checklist coverage when GBIF's backbone misses a match.
+- **EOL** when you want an aggregated page (images, multiple hierarchies, curated collections) rather than a bare taxonomic record.
+- **Open Tree of Life** only when the question is genuinely phylogenetic (MRCA, branch order, a Newick subtree) — none of the others return evolutionary relationships.
+- Cross-check IDs are NOT interchangeable: the same species has a different key in each system (GBIF `usageKey`, ITIS `tsn`, CoL `taxon_id`, EOL `page_id`, Open Tree `ott_id`, iNaturalist `taxon_id`, OBIS `AphiaID`) — always resolve within one system, don't mix an ID from one database into another's lookup call.
+
+**Example: cross-checking a species across four identity systems** (verified live, real IDs):
+```python
+tu.run_tool("EOL_search_species", {"query": "Panthera leo"})            # page_id 1270491
+tu.run_tool("ITIS_search_by_scientific_name", {"scientific_name": "Panthera leo"})  # tsn 183803
+tu.run_tool("CoL_search_species", {"q": "Panthera leo"})                # 293 CoL-database matches
+tu.run_tool("OpenTree_match_names", {"names": "Panthera leo,Panthera tigris"})
+# -> ott_id 563151 (leo), 42314 (tigris); note `names` is a comma-separated
+# STRING, not a JSON array, even though it takes multiple names
+```
+
+**Example: phylogenetic MRCA and subtree** (verified live):
+```python
+tu.run_tool("OpenTree_get_mrca", {"ott_ids": "417950,770315"})
+# -> mrca_name "Homininae", mrca_ott_id 312031, num_tips 19
+tu.run_tool("OpenTree_get_induced_subtree", {"ott_ids": "417950,770315,312031"})
+# -> real Newick tree with supporting_studies citations (pg_2741@tree6645, ...)
+```
+
+**Example: marine species + region** (verified live):
+```python
+tu.run_tool("OBIS_search_taxa", {"scientificname": "Rhincodon typus"})   # whale shark occurrence-resolved AphiaID
+tu.run_tool("MarineRegions_search_by_name", {"name": "Mediterranean Sea"})  # MRGID 25180
+```
+
+**Example: citizen-science occurrence density** (verified live):
+```python
+tu.run_tool("iNaturalist_search_taxa", {"query": "Panthera leo"})
+# -> genus-level hit "Panthera" (59,036 observations) if the exact binomial
+# isn't the top match — check the returned `rank` before assuming species-level
+```
+
 ## LOOK UP DON'T GUESS
 
 Ecology questions often have counter-intuitive answers. For example:

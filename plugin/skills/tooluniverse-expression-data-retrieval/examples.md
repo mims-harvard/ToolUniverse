@@ -16,9 +16,9 @@ result = tu.tools.arrayexpress_search_experiments(
 
 # Display results
 for exp in result["data"]["experiments"][:5]:
-    print(f"{exp['accession']}: {exp['name']}")
-    print(f"  Samples: {exp['samples']}")
-    print(f"  Type: {exp.get('experimenttype', 'N/A')}")
+    print(f"{exp['accession']}: {exp['title']}")
+    print(f"  Files: {exp['files']}, released: {exp['release_date']}, views: {exp['views']}")
+    # keys: accession, type, title, author, links, files, release_date, views, isPublic, content
 ```
 
 ## Example 2: Get Complete Experiment Details
@@ -28,21 +28,28 @@ for exp in result["data"]["experiments"][:5]:
 accession = "E-MTAB-5214"
 
 details = tu.tools.arrayexpress_get_experiment(
-    accession=accession
+    experiment_id=accession
 )
 
-print(f"Title: {details['data']['title']}")
-print(f"Description: {details['data']['description']}")
-print(f"Samples: {details['data']['samples']}")
+# Study fields are name/value pairs under data.section.attributes
+section = {a["name"]: a["value"] for a in details["data"]["section"]["attributes"]}
+print(f"Title: {section['Title']}")
+print(f"Description: {section['Description']}")
 
-# Get associated files
+samples = tu.tools.arrayexpress_get_experiment_samples(
+    experiment_id=accession
+)
+print(f"Samples: {samples['count']}")  # data is a list of per-sample annotation dicts
+
+# Get associated files (data is a list; it came back empty for every experiment
+# tested, so fall back to the BioStudies/GEO pages if it is empty)
 files = tu.tools.arrayexpress_get_experiment_files(
-    accession=accession
+    experiment_id=accession
 )
 
 print("\nAvailable files:")
-for file in files["data"]["files"]:
-    print(f"  {file['name']} ({file['size']})")
+for file in files["data"]:
+    print(f"  {file}")
 ```
 
 ## Example 3: Search RNA-seq Experiments
@@ -58,7 +65,7 @@ result = tu.tools.arrayexpress_search_experiments(
 # Filter for RNA-seq specifically
 rnaseq_studies = [
     exp for exp in result["data"]["experiments"]
-    if "rna-seq" in exp.get("experimenttype", "").lower()
+    if "rna-seq" in exp.get("title", "").lower()
 ]
 
 print(f"Found {len(rnaseq_studies)} RNA-seq studies")
@@ -70,18 +77,20 @@ print(f"Found {len(rnaseq_studies)} RNA-seq studies")
 # Search BioStudies for proteomics
 result = tu.tools.biostudies_search(
     query="proteomics breast cancer",
-    limit=10
+    pageSize=10
 )
 
 # Get first study
-study_acc = result["data"]["studies"][0]["accession"]
+study_acc = result["data"]["hits"][0]["accession"]
 
 # Get detailed information
 details = tu.tools.biostudies_get_study(
     accession=study_acc
 )
 
-print(f"Study: {details['data']['title']}")
+# the title is an entry in data['attributes'] ([{'name': 'Title', 'value': ...}, ...])
+title = next(a["value"] for a in details["data"]["attributes"] if a["name"] == "Title")
+print(f"Study: {title}")
 print(f"Type: {details['data']['type']}")
 
 # Get files
@@ -104,12 +113,16 @@ result = tu.tools.arrayexpress_search_experiments(
 experiments = []
 for exp in result["data"]["experiments"][:5]:
     details = tu.tools.arrayexpress_get_experiment(
-        accession=exp["accession"]
+        experiment_id=exp["accession"]
     )
+    samples = tu.tools.arrayexpress_get_experiment_samples(
+        experiment_id=exp["accession"]
+    )
+    section = {a["name"]: a["value"] for a in details["data"]["section"]["attributes"]}
     experiments.append({
         "accession": exp["accession"],
-        "samples": details["data"]["samples"],
-        "type": details["data"].get("experimenttype")
+        "samples": samples["count"],
+        "type": section.get("Study type")
     })
 
 # Compare sample sizes
@@ -124,12 +137,12 @@ for exp in experiments:
 accession = "E-MTAB-1234"
 
 files = tu.tools.arrayexpress_get_experiment_files(
-    accession=accession
+    experiment_id=accession
 )
 
-# Find processed data file
-for file in files["data"]["files"]:
-    if "processed" in file["name"].lower():
-        print(f"Processed data: {file['url']}")
-        # Use file download tool to get actual file
+# data is a list of file records (empty for every experiment tested - if so,
+# there is nothing to download through this tool)
+for file in files["data"]:
+    print(file)
+    # Use file download tool to get actual file
 ```

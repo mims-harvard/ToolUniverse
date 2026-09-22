@@ -1,7 +1,7 @@
 [
   {
     "name": "WormBase_get_gene",
-    "description": "Get detailed gene overview from WormBase for C. elegans (nematode worm) by WormBase gene ID. Returns gene name, sequence name, species, description, gene type, and status. C. elegans is one of the most important model organisms for genetics, neuroscience, and developmental biology. Example: WBGene00006763 returns unc-26 (synaptojanin, a polyphosphoinositide phosphatase required for synaptic vesicle recycling).",
+    "description": "Get detailed gene overview from WormBase for C. elegans (nematode worm) by WormBase gene ID. Returns gene name, sequence name, species, description, gene type, and status. C. elegans is one of the most important model organisms for genetics, neuroscience, and developmental biology. Example: WBGene00006763 returns unc-26 (synaptojanin, a polyphosphoinositide phosphatase required for synaptic vesicle recycling). NOTE: rest.wormbase.org currently serves a Cloudflare bot challenge to automated clients, so this tool returns HTTP 403; ToolUniverse does not attempt to bypass it. For C. elegans genes use the Alliance of Genome Resources tools (Alliance_get_gene with a 'WB:WBGene...' ID, Alliance_get_gene_phenotypes, Alliance_get_gene_orthologs, Alliance_get_disease) instead.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -88,7 +88,7 @@
   },
   {
     "name": "WormBase_get_phenotypes",
-    "description": "Get phenotype annotations for a C. elegans gene from WormBase. Returns observed phenotypes (from RNAi, mutation, transgene experiments), phenotypes not observed, and total counts. Phenotype data uses the WormBase Phenotype Ontology (WPO). Example: WBGene00006763 (unc-26) has 125+ observed phenotypes including locomotion defects, synaptic vesicle recycling abnormalities, and pharyngeal pumping defects.",
+    "description": "Get phenotype annotations for a C. elegans gene from WormBase. Returns observed phenotypes (from RNAi, mutation, transgene experiments), phenotypes not observed, and total counts. Phenotype data uses the WormBase Phenotype Ontology (WPO). Example: WBGene00006763 (unc-26) has 125+ observed phenotypes including locomotion defects, synaptic vesicle recycling abnormalities, and pharyngeal pumping defects. NOTE: rest.wormbase.org currently serves a Cloudflare bot challenge to automated clients, so this tool returns HTTP 403; ToolUniverse does not attempt to bypass it. For C. elegans genes use the Alliance of Genome Resources tools (Alliance_get_gene with a 'WB:WBGene...' ID, Alliance_get_gene_phenotypes, Alliance_get_gene_orthologs, Alliance_get_disease) instead.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -197,7 +197,7 @@
   },
   {
     "name": "WormBase_get_expression",
-    "description": "Get expression data for a C. elegans gene from WormBase. Returns tissues where the gene is expressed, developmental stages, subcellular localization, and expression clusters. Expression data is curated from GFP reporters, antibody staining, RNA in situ, and microarray experiments. Example: WBGene00006763 (unc-26) is expressed in 38 tissues including neurons, pharynx, and body wall muscle.",
+    "description": "Get expression data for a C. elegans gene from WormBase. Returns tissues where the gene is expressed, developmental stages, subcellular localization, and expression clusters. Expression data is curated from GFP reporters, antibody staining, RNA in situ, and microarray experiments. Example: WBGene00006763 (unc-26) is expressed in 38 tissues including neurons, pharynx, and body wall muscle. NOTE: rest.wormbase.org currently serves a Cloudflare bot challenge to automated clients, so this tool returns HTTP 403; ToolUniverse does not attempt to bypass it. For C. elegans genes use the Alliance of Genome Resources tools (Alliance_get_gene with a 'WB:WBGene...' ID, Alliance_get_gene_phenotypes, Alliance_get_gene_orthologs, Alliance_get_disease) instead.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -340,7 +340,7 @@
   },
   {
     "name": "WormBase_get_orthologs",
-    "description": "Get orthologs and homologs of a C. elegans gene across species from WormBase (Inparanoid/EnsEMBL-Compara/OrthoFinder etc.), plus nematode orthologs and within-worm paralogs. Accepts a WBGene ID or gene name (auto-resolved). Example: WBGene00006818 (unc-86) returns cross-species orthologs like zebrafish pou4f4 and nematode orthologs like CSP40.g8217 (c_tribulationis).",
+    "description": "Get orthologs and homologs of a C. elegans gene across species from WormBase (Inparanoid/EnsEMBL-Compara/OrthoFinder etc.), plus nematode orthologs and within-worm paralogs. Accepts a WBGene ID or gene name (auto-resolved). Example: WBGene00006818 (unc-86) returns cross-species orthologs like zebrafish pou4f4 and nematode orthologs like CSP40.g8217 (c_tribulationis). NOTE: rest.wormbase.org currently serves a Cloudflare bot challenge to automated clients, so this tool returns HTTP 403; ToolUniverse does not attempt to bypass it. For C. elegans genes use the Alliance of Genome Resources tools (Alliance_get_gene with a 'WB:WBGene...' ID, Alliance_get_gene_phenotypes, Alliance_get_gene_orthologs, Alliance_get_disease) instead.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -445,7 +445,7 @@
   },
   {
     "name": "WormBase_get_interactions",
-    "description": "Get physical and genetic interactions for a C. elegans gene from WormBase, split into physical and genetic lists with interactor names, IDs, interaction type, and citation. Accepts a WBGene ID or gene name. Example: WBGene00006818 (unc-86) has a physical interactor die-1 (WBGene00000995) and a genetic interactor ttx-3 (WBGene00006654).",
+    "description": "Get physical and genetic interactions for a C. elegans gene from WormBase, split into physical and genetic lists with interactor names, IDs, interaction type, and citation. Accepts a WBGene ID or gene name. Example: WBGene00006818 (unc-86) has a physical interactor die-1 (WBGene00000995) and a genetic interactor ttx-3 (WBGene00006654). NOTE: rest.wormbase.org currently serves a Cloudflare bot challenge to automated clients, so this tool returns HTTP 403; ToolUniverse does not attempt to bypass it. For C. elegans genes use the Alliance of Genome Resources tools (Alliance_get_gene with a 'WB:WBGene...' ID, Alliance_get_gene_phenotypes, Alliance_get_gene_orthologs, Alliance_get_disease) instead.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -556,7 +556,7 @@
   },
   {
     "name": "WormBase_get_human_diseases",
-    "description": "Get human disease models (Disease Ontology / DOID) for a C. elegans gene from WormBase, inferred by orthology to human disease genes. Accepts a WBGene ID or gene name. Example: WBGene00006818 (unc-86) is a potential model for DOID:0110546 'autosomal dominant nonsyndromic deafness 15', inferred by orthology to human HGNC:9220.",
+    "description": "Get human disease models (Disease Ontology / DOID) for a C. elegans gene from WormBase, inferred by orthology to human disease genes. Accepts a WBGene ID or gene name. Example: WBGene00006818 (unc-86) is a potential model for DOID:0110546 'autosomal dominant nonsyndromic deafness 15', inferred by orthology to human HGNC:9220. NOTE: rest.wormbase.org currently serves a Cloudflare bot challenge to automated clients, so this tool returns HTTP 403; ToolUniverse does not attempt to bypass it. For C. elegans genes use the Alliance of Genome Resources tools (Alliance_get_gene with a 'WB:WBGene...' ID, Alliance_get_gene_phenotypes, Alliance_get_gene_orthologs, Alliance_get_disease) instead.",
     "parameter": {
       "type": "object",
       "properties": {

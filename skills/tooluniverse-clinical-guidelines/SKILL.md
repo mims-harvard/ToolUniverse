@@ -165,6 +165,14 @@ All CPIC tools return **dict-wrapped**: use `r.get('data', [])`.
 - `CPIC_search_gene_drug_pairs` requires PostgREST syntax: `genesymbol='eq.CYP2D6'`
 - Deduplicate recommendations by phenotype before presenting (many duplicate records per allele combo)
 
+### Personalized Prevention Recommendations (ODPHP MyHealthfinder)
+
+For "what preventive care/screenings does this patient need" (as opposed to "what does the guideline for condition X say"), `odphp_myhealthfinder` returns a curated, plain-language recommendation list sourced from USPSTF + CDC ACIP + HRSA for a specific demographic — verified live: a 45-year-old woman query returned 28 real recommendations (screenings, immunizations, counseling topics) each traceable back to its issuing body. This complements rather than replaces guideline lookup: use it to get the checklist for a patient profile, then pull the full guideline (NICE/USPSTF/etc. above) for the clinical detail behind any specific item.
+
+**All 5 parameters are required (pass explicit values, not omitted, even when not applicable)**: `lang` ("en"/"es"), `age` (integer), `sex` ("Male"/"Female"), `pregnant` ("Yes"/"No"/pass "No" if not applicable), `strip_html` (bool). `odphp_itemlist(lang=..., type=...)` and `odphp_topicsearch(lang=..., topicId=..., categoryId=..., keyword=..., strip_html=...)` support browsing/filtering the same content by topic or keyword instead of by demographic profile.
+
+**`odphp_outlink_fetch` caveat, verified live**: this tool fetches a URL referenced by a MyHealthfinder result for more detail, but the health.gov API v3 endpoints it can be pointed at are being retired (a canned example URL returned HTTP 410 Gone live) — check the returned `status` field before treating a fetch as successful, and prefer the current v4 MyHealthfinder response content over following an old outlink.
+
 ### Full-Text Retrieval
 
 | Source | Tool | Input |

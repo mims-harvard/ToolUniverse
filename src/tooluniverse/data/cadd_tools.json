@@ -49,8 +49,8 @@
             {
                 "chrom": "17",
                 "pos": 7674220,
-                "ref": "G",
-                "alt": "A",
+                "ref": "C",
+                "alt": "T",
                 "version": "GRCh38-v1.7"
             }
         ],

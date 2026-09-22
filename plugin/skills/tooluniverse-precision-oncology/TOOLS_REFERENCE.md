@@ -6,19 +6,21 @@
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `civic_search_variants` | Search variants by gene | `query` (gene symbol) |
-| `civic_get_variant` | Get variant details | `id` (numeric variant ID) |
+| `civic_search_variants` | Search variants | `gene` + optional `variant_name` (e.g. `gene="EGFR", variant_name="L858R"`), or `query` (variant name only, no gene prefix) |
+| `civic_get_variant` | Get variant details | `variant_id` (numeric variant ID) |
 | `civic_get_evidence_item` | Get evidence details | `id` (evidence item ID) |
 | `civic_search_genes` | Search genes | `query` (gene name) |
-| `civic_search_evidence_items` | Search evidence | `drug`, `disease`, `evidence_type` |
+| `civic_search_evidence_items` | Search evidence | `therapy`, `disease`, `evidence_type`, `significance` |
 
 **Example - Get EGFR L858R evidence**:
 ```python
-# 1. Search for variant
-variants = tu.tools.civic_search_variants(query="EGFR L858R")
-# 2. Get evidence items
-for v in variants:
-    evidence = tu.tools.civic_get_variant(id=v['id'])
+# 1. Search for the variant (CIViC stores variant names without the gene prefix,
+#    so query="EGFR L858R" finds nothing; pass the gene separately)
+variants = tu.tools.civic_search_variants(gene="EGFR", variant_name="L858R")
+# 2. Get evidence items (with `gene` the nodes are under data.gene.variants.nodes;
+#    with only `query` they are under data.variants.nodes)
+for v in variants["data"]["gene"]["variants"]["nodes"]:
+    evidence = tu.tools.civic_get_variant(variant_id=v["id"])
 ```
 
 ### ClinVar
@@ -347,7 +349,7 @@ cells = tu.tools.DepMap_get_cell_lines(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `MyGene_query_genes` | Search genes | `q`, `species` |
+| `MyGene_query_genes` | Search genes | `query`, `species`, `size` |
 | `MyGene_get_gene_annotation` | Get gene info | `geneid` |
 
 ### UniProt
@@ -401,17 +403,17 @@ cells = tu.tools.DepMap_get_cell_lines(
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `CELLxGENE_get_expression_data` | Cell-type expression | `gene`, `tissue` |
-| `CELLxGENE_get_cell_metadata` | Cell annotations | `gene` |
+| `CELLxGENE_get_expression_data` | Cell-type expression (AnnData; needs the cellxgene_census package) | `var_value_filter`, `obs_value_filter` |
+| `CELLxGENE_get_cell_metadata` | Cell annotations | `obs_value_filter` (required), `column_names` |
 
 **Example - Tumor expression**:
 ```python
 # Get expression in lung cancer
 expression = tu.tools.CELLxGENE_get_expression_data(
-    gene="EGFR",
-    tissue="lung"
+    var_value_filter='feature_name == "EGFR"',
+    obs_value_filter='tissue_general == "lung"'
 )
-# Returns: Expression per cell type (tumor, CAF, immune, etc.)
+# Returns: expression data with per-cell metadata (cell type, disease, ...)
 ```
 
 ### IntAct - Protein Interactions
@@ -419,16 +421,16 @@ expression = tu.tools.CELLxGENE_get_expression_data(
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
 | `intact_search_interactions` | Find interactions | `query`, `species` |
-| `intact_get_interaction_network` | Network view | `gene`, `depth` |
+| `intact_get_interaction_network` | Network view | `gene_symbol`, `depth`, `limit` |
 
 **Example - Resistance network**:
 ```python
 # Get EGFR interaction partners
 network = tu.tools.intact_get_interaction_network(
-    gene="EGFR",
+    gene_symbol="EGFR",
     depth=1  # Direct interactors
 )
-# Returns: MET, ERBB2, ERBB3, etc.
+# Returns: network['data'], a list of interaction records with interactor_descriptions
 ```
 
 ### KEGG - Cancer Pathways
@@ -459,7 +461,7 @@ pathways = tu.tools.kegg_get_gene_info(gene_id="hsa:1956")  # EGFR
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
-| `EuropePMC_search_articles` | Search preprints (bioRxiv/medRxiv) | `query`, `source='PPR'`, `pageSize` |
+| `EuropePMC_search_articles` | Search preprints (bioRxiv/medRxiv) by adding `AND SRC:PPR` to the query | `query`, `limit` |
 | `BioRxiv_get_preprint` | Get preprint by DOI | `doi` |
 | `MedRxiv_get_preprint` | Get preprint by DOI | `doi`, `server='medrxiv'` |
 
@@ -469,10 +471,10 @@ pathways = tu.tools.kegg_get_gene_info(gene_id="hsa:1956")  # EGFR
 ```python
 # bioRxiv/medRxiv don't have search APIs, use EuropePMC
 preprints = tu.tools.EuropePMC_search_articles(
-    query="EGFR inhibitor resistance",
-    source="PPR",  # PPR = Preprints only
-    pageSize=20
+    query="EGFR inhibitor resistance AND SRC:PPR",  # SRC:PPR = preprints only
+    limit=20
 )
+# Note: a separate source="PPR" argument is silently ignored and returns peer-reviewed PubMed records
 
 ### OpenAlex - Citation Analysis
 
@@ -512,9 +514,9 @@ trials = tu.tools.search_clinical_trials(
 ```python
 # 1. Get known resistance mechanisms for osimertinib
 resistance = tu.tools.civic_search_evidence_items(
-    drug="osimertinib",
-    evidence_type="Predictive",
-    clinical_significance="Resistance"
+    therapy="osimertinib",
+    evidence_type="PREDICTIVE",
+    significance="RESISTANCE"
 )
 
 # 2. Literature on C797S

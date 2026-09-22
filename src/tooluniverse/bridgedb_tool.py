@@ -255,6 +255,17 @@ class BridgeDbTool(BaseTool):
             }
 
         results = self._parse_tsv_xrefs(response.text)
+        # The service lists matches in no useful order; put the identifiers that
+        # equal the query first, then those that start with it (stable sort).
+        wanted = str(query).strip().lower()
+
+        def closeness(row):
+            identifier = str(row.get("identifier", "")).lower()
+            return (
+                0 if identifier == wanted else 1 if identifier.startswith(wanted) else 2
+            )
+
+        results.sort(key=closeness)
         return {
             "status": "success",
             "data": {

@@ -50,6 +50,9 @@ For any ncRNA query: first identify the class from the name/sequence, then selec
 | `LNCipedia_get_lncrna_publications` | lncRNA sequence (FASTA format) |
 | `RNAcentral_search` | Search all ncRNA types across databases |
 | `RNAcentral_get_by_accession` | Detailed ncRNA annotations from 40+ databases |
+| `RNAcentral_get_genome_locations` | Genomic coordinates (chrom/strand/start/end, assembly) of a URS accession in a given organism — different question from `get_by_accession` (annotation, not coordinates) |
+| `RNAcentral_get_sequence` | Raw FASTA nucleotide sequence for a URS accession |
+| `MODOMICS_search_modifications` / `MODOMICS_list_modifications` | Look up RNA chemical modifications (m6A, pseudouridine, m5C, etc.) by name/formula, or browse all 430+ | 
 | `Rfam_get_family` | RNA family details (structure, alignment, species distribution) |
 | `Rfam_search_sequence` | Search RNA families by keyword |
 | `DisGeNET_search_gene` | ncRNA-disease associations |
@@ -94,6 +97,43 @@ ncRNA classes by size and database:
 - Name starts with `LINC`, `MALAT`, `HOTAIR`, `XIST`, or ends in `-AS1` → search LNCipedia
 - Any ncRNA type → search RNAcentral (aggregates all databases)
 - RNA family question → search Rfam
+
+**Genomic location and raw sequence** (once you have a URS accession from
+`RNAcentral_search`): `RNAcentral_get_by_accession` gives cross-database
+*annotation*; `RNAcentral_get_genome_locations`/`RNAcentral_get_sequence`
+are the separate tools for genomic *coordinates* and the raw *FASTA
+sequence* respectively — verified live:
+
+```
+tu.run_tool("RNAcentral_get_genome_locations", {"urs_id": "URS00003B7674", "taxid": 9606})
+#   -> locations[] with chromosome, strand, start, end, assembly_id (GRCh38), gca_accession
+tu.run_tool("RNAcentral_get_sequence", {"urs_id": "URS00003B7674"})
+#   -> real verified response for let-7a-5p:
+#      {"fasta_header": "URS00003B7674 ncRNA from 61 species",
+#       "sequence": "UGAGGUAGUAGAUUGUAUAGUU", "length": 22}
+```
+
+**RNA chemical modifications (MODOMICS)** — for epitranscriptomic questions
+(m6A, pseudouridine, m5C, etc.), especially relevant for snoRNA-guided rRNA
+modification and mass-spec-based modification identification:
+
+```
+tu.run_tool("MODOMICS_search_modifications", {"query": "pseudouridine"})
+#   -> matches by name/short-name/formula, e.g. id 8 "1-methyl-3-(3-amino-
+#      3-carboxypropyl)pseudouridine"
+tu.run_tool("MODOMICS_list_modifications", {"limit": 20})
+#   -> browse all 430+ known modifications with formula/mass/reference_moiety
+```
+
+**`MODOMICS_get_modification` is broken — verified live, do not use for a
+specific ID lookup.** Calling it with `modification_id` 58, 78, or 22 (all
+distinct, well-known modifications per the tool's own description: m6A,
+pseudouridine, m5C) returns the identical hardcoded record every time (id 2,
+"5,2'-O-dimethylcytidine") — the parameter is silently ignored. `search`/
+`list` correctly vary by query and return `name`/`short_name`/`formula`/
+`mass_avg`, which covers most needs; only SMILES/monoisotopic-mass/
+product-ion detail (unique to `get_modification`) is currently unobtainable
+for a specific ID — say so rather than fabricating those fields.
 
 ### Phase 1: Target & Interaction Analysis
 

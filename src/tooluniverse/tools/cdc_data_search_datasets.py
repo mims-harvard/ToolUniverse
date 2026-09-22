@@ -26,7 +26,7 @@ def cdc_data_search_datasets(
     search_query : str
         Search term to find datasets (e.g., 'mortality', 'vaccination', 'covid')
     category : str
-        Optional category filter (e.g., 'Health', 'Public Safety')
+        Optional exact data.cdc.gov category name (e.g., 'National Center for Health ...
     limit : int
         Maximum number of datasets to return (default: 50, max: 1000)
     offset : int

@@ -1,7 +1,7 @@
 """
 ProtVar_get_population
 
-Get population observation data for a protein variant position from ProtVar. Returns co-located v...
+Get the known variants at a protein position from ProtVar's population observations: one row per ...
 """
 
 from typing import Any, Optional, Callable
@@ -11,14 +11,14 @@ from ._shared_client import get_shared_client
 def ProtVar_get_population(
     accession: str,
     position: int,
-    genomic_location: int,
+    genomic_location: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get population observation data for a protein variant position from ProtVar. Returns co-located v...
+    Get the known variants at a protein position from ProtVar's population observations: one row per ...
 
     Parameters
     ----------
@@ -27,7 +27,7 @@ def ProtVar_get_population(
     position : int
         Amino acid position in the protein (1-based).
     genomic_location : int
-        Genomic coordinate (GRCh38) for the variant. Obtain from ProtVar_map_variant ...
+        Optional genomic coordinate (GRCh38); ProtVar answers for the whole protein p...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

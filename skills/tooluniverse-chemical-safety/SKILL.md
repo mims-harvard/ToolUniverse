@@ -151,6 +151,9 @@ See **phase-procedures-detailed.md** for complete tool parameters, decision logi
 
 ### Phase 7: Structural Alerts
 - `ChEMBL_search_compound_structural_alerts` (`molecule_chembl_id`: str)
+- `DrugProps_pains_filter` (`smiles`: str) — direct RDKit FilterCatalog screen for PAINS/Brenk/NIH-alert substructures from a SMILES string; use this when there's no ChEMBL ID yet (novel/investigational compounds), since it needs only a SMILES. Live-verified response: `{"is_clean": bool, "pains": {"pass": bool, "matches": [...], "count": int}}` (plus Brenk/NIH sub-objects) — a compound can be `is_clean: false` while `pains.pass: true` if the hit came from a different filter, so check each sub-filter's own `pass` field rather than only the top-level flag.
+- `DrugProps_lipinski_filter` (`smiles`: str) — Rule-of-Five plus Veber/Pfizer-3-75/Egan/Ghose drug-likeness filters in one call (MW, cLogP, HBD, HBA, TPSA, rotatable bonds, Csp3 fraction, pass/fail per rule set). Add to Phase 0/2 as a quick oral-druglikeness screen alongside ADMET-AI.
+- `DrugProps_calculate_qed` (`smiles`: str) — Quantitative Estimate of Drug-likeness (Bickerton et al. 2012), a single 0-1 score integrating 8 descriptors; live-verified categories include `"Medium (borderline)"` and `"High"` — useful as one summary number when comparing multiple candidate structures rather than reading 8 separate descriptors per compound.
 
 ---
 

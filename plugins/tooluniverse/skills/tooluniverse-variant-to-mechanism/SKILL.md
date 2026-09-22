@@ -178,7 +178,7 @@ expression = tu.tools.GTEx_get_median_gene_expression(gene_symbol="TCF7L2")
 ```python
 # Get credible sets and L2G predictions
 credible = tu.tools.OpenTargets_get_variant_credible_sets(
-    variant_id="10_112998590_C_T"  # chr_pos_ref_alt format
+    variantId="10_112998590_C_T"  # chr_pos_ref_alt format
 )
 # Returns: credible set membership, L2G scores for causal genes
 # L2G > 0.5: high confidence causal gene
@@ -219,9 +219,10 @@ Once target gene(s) identified, characterize molecular function.
 ppi = tu.tools.STRING_get_interaction_partners(
     identifiers="TCF7L2", species=9606, required_score=700)
 
-# STRING functional enrichment (GO, KEGG, Reactome)
-enrichment = tu.tools.STRING_get_functional_enrichment(
-    identifiers="TCF7L2", species=9606)
+# STRING functional enrichment (GO, KEGG, Reactome) — needs a gene SET,
+# newline-separated; results are in data["enrichments"]
+enrichment = tu.tools.STRING_get_enrichment(
+    identifiers="TCF7L2\nCTNNB1\nAPC\nLEF1", species=9606)
 
 # Reactome pathway enrichment — space-separated STRING, NOT array
 reactome = tu.tools.ReactomeAnalysis_pathway_enrichment(
@@ -259,7 +260,7 @@ disgenet = tu.tools.DisGeNET_search_gene(gene="TCF7L2", limit=20)
 
 # OpenTargets GWAS studies — use MONDO IDs, NOT EFO
 ot_gwas = tu.tools.OpenTargets_search_gwas_studies_by_disease(
-    diseaseIds=["MONDO_0005148"], size=20)
+    diseaseIds=["MONDO_0005148"])
 ```
 
 ---

@@ -27,7 +27,7 @@ def Pharos_search_targets(
     tdl : str
         Filter by Target Development Level. Tdark=understudied, Tbio=biological annot...
     top : int
-        Maximum number of results (1-100)
+        Maximum number of results (1-100). Pharos' API currently returns at most 10 t...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

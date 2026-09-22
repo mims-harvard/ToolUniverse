@@ -13,7 +13,7 @@ def odphp_myhealthfinder(
     age: int,
     sex: str,
     pregnant: str,
-    strip_html: bool,
+    strip_html: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

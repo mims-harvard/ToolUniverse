@@ -1,7 +1,7 @@
 """
 eQTL_get_associations
 
-Get eQTL associations (variant-gene expression correlations) from a specific dataset in the EBI e...
+DEPRECATED / non-functional: the EBI eQTL Catalogue retired its REST API (every request now retur...
 """
 
 from typing import Any, Optional, Callable
@@ -20,7 +20,7 @@ def eQTL_get_associations(
     validate: bool = True,
 ) -> Any:
     """
-    Get eQTL associations (variant-gene expression correlations) from a specific dataset in the EBI e...
+    DEPRECATED / non-functional: the EBI eQTL Catalogue retired its REST API (every request now retur...
 
     Parameters
     ----------

@@ -39,6 +39,7 @@ Search from broadest to most specific. Use `find_tools` to discover available da
 Search tools that index datasets across thousands of repositories. These find datasets you didn't know existed.
 - Search by: research topic keywords, variable names, population descriptors
 - Look for: DOI-registered datasets, repository listings, government data portals
+- `re3data_search_repositories`/`re3data_get_repository` — a registry of 3,000+ research data REPOSITORIES themselves (not individual datasets), covering every discipline; use this one level up from a dataset search when the question is "what repository should I even be looking in for this kind of data" (verified live: searching returns real health-research repositories, e.g. the "EPIC study" cohort and "Pacific Islands Families Study"). Once you've identified the right repository from re3data, go search *inside* it with the domain-specific tools in Layer 2 below.
 
 **Layer 2 — Domain-specific repositories:**
 Search repositories specialized for your data type.
@@ -48,6 +49,7 @@ Search repositories specialized for your data type.
 - Proteomics: PRIDE, MassIVE
 - Metabolomics: MetaboLights, Metabolomics Workbench
 - Clinical: ClinicalTrials.gov (for trial data with results)
+- Consortium research portals (AD Knowledge Portal, NF-OSI, PsychENCODE, HTAN, DREAM challenges and others): `Synapse_search_entities` finds public Synapse projects/folders/files/tables/datasets by keyword (`node_type` narrows it), `Synapse_get_entity` returns the curated annotations (assay, species, tissue, disease), and `Synapse_list_children` browses a project. Anonymous and read-only: restricted entities return a clear "not public" error and file contents are not downloaded -- data access still goes through synapse.org.
 
 **Layer 3 — Literature-based discovery:**
 Many datasets aren't in any repository — they're described in paper methods sections.

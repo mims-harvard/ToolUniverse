@@ -1,9 +1,14 @@
 import json
+import re
 from typing import Any, Dict
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from tooluniverse.tool_registry import register_tool
+
+
+_EBI_SEARCH = "https://www.ebi.ac.uk/ebisearch/ws/rest/rnacentral"
+_URS = re.compile(r"^(URS[0-9A-F]{10})(?:[_/](\d+))?$", re.I)
 
 
 def _http_get(
@@ -23,11 +28,14 @@ def _http_get(
     config={
         "name": "RNAcentral_search",
         "type": "RNAcentralSearchTool",
-        "description": "Search RNA records via RNAcentral API",
+        "description": "Search ncRNA records by keyword (RNA or gene name) or fetch one by RNAcentral accession.",
         "parameter": {
             "type": "object",
             "properties": {
-                "query": {"type": "string", "description": "Keyword or accession"},
+                "query": {
+                    "type": "string",
+                    "description": "RNA or gene name (e.g. 'MALAT1', 'let-7') or an RNAcentral accession (URS0000D5CD72 or URS0000D5CD72_9606).",
+                },
                 "page_size": {
                     "type": "integer",
                     "default": 10,
@@ -51,18 +59,65 @@ class RNAcentralSearchTool:
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
 
         query = {
-            "query": arguments.get("query"),
-            "page_size": int(arguments.get("page_size", 10)),
+            "query": (arguments.get("query") or "").strip(),
+            "page_size": int(arguments.get("page_size") or 10),
         }
-        url = f"{base}/rna/?{urlencode(query)}"
+        if not query["query"]:
+            return {
+                "status": "error",
+                "error": "query is required (e.g. 'MALAT1', 'let-7', 'URS0000D5CD72').",
+                "source": "RNAcentral",
+                "success": False,
+            }
+
+        # The RNAcentral /rna endpoint has no text search: it ignores ``query`` and
+        # lists the same records for every value. Keyword searches therefore go
+        # through EBI Search's RNAcentral index; only an accession is fetched from
+        # the RNAcentral API itself.
+        accession = _URS.match(query["query"])
         try:
-            data = _http_get(
-                url, headers={"Accept": "application/json"}, timeout=timeout
-            )
+            if accession:
+                urs, taxid = accession.group(1).upper(), accession.group(2)
+                url = f"{base}/rna/{urs}" + (f"/{taxid}" if taxid else "")
+                record = _http_get(
+                    url, headers={"Accept": "application/json"}, timeout=timeout
+                )
+                data = {"count": 1, "next": None, "previous": None, "results": [record]}
+                endpoint = "rna"
+            else:
+                params = {
+                    "query": query["query"],
+                    "format": "json",
+                    "size": max(1, min(query["page_size"], 100)),
+                    "fields": "description,rna_type,length",
+                }
+                found = _http_get(f"{_EBI_SEARCH}?{urlencode(params)}", timeout=timeout)
+                results = []
+                for entry in found.get("entries", []):
+                    fields = entry.get("fields", {})
+                    rid = entry.get("id", "")
+                    urs, _, taxid = rid.partition("_")
+                    length = (fields.get("length") or [None])[0]
+                    results.append(
+                        {
+                            "rnacentral_id": rid,
+                            "url": f"{base}/rna/{urs}" + (f"/{taxid}" if taxid else ""),
+                            "description": (fields.get("description") or [""])[0],
+                            "rna_type": (fields.get("rna_type") or [""])[0],
+                            "length": int(length) if length else None,
+                        }
+                    )
+                data = {
+                    "count": found.get("hitCount", len(results)),
+                    "next": None,
+                    "previous": None,
+                    "results": results,
+                }
+                endpoint = "ebisearch"
             return {
                 "status": "success",
                 "source": "RNAcentral",
-                "endpoint": "rna",
+                "endpoint": endpoint,
                 "query": query,
                 "data": data,
                 "success": True,
@@ -72,7 +127,7 @@ class RNAcentralSearchTool:
                 "status": "error",
                 "error": str(e),
                 "source": "RNAcentral",
-                "endpoint": "rna",
+                "endpoint": "ebisearch" if not accession else "rna",
                 "success": False,
             }
 

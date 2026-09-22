@@ -444,8 +444,10 @@ class SGDTool(BaseTool):
         offset = arguments.get("offset", 0)
         category = arguments.get("category", "")
 
+        # The endpoint reads ``q``; a ``query`` parameter is ignored and the call
+        # then lists all 348k records (every category) whatever the text was.
         params = {
-            "query": query,
+            "q": query,
             "limit": limit,
             "offset": offset,
         }

@@ -88,6 +88,13 @@ This skill uses ToolUniverse GWAS tools to query:
    - `MyVariant_query_variants` — CADD, SIFT, PolyPhen, ClinVar, gnomAD in one call
    - `gnomad_get_gene_constraints` — gene constraint metrics (pLI, oe_lof) for target prioritization
 
+4. **PGS Catalog** (pgscatalog.org, EMBL-EBI) — **check this FIRST, before building anything from raw GWAS associations**
+   - This skill's own Best Practices already say "use validated PRS from PGS Catalog when available" — these are the tools that do it. No API key needed.
+   - `PGSCatalog_search_traits(query=...)` — resolve a free-text trait name to its real EFO/MONDO `trait_id` (e.g. "type 2 diabetes" -> `MONDO_0005148`) and see how many published scores exist. **Always use the `trait_id` the tool returns** — don't guess or reuse a remembered EFO/MONDO id, since the search can resolve to a different (but correct) ontology term than expected.
+   - `PGSCatalog_get_scores_by_trait(trait_id=...)` — list every published PGS for that trait: PGS id, variant count, development method (LDpred, P+T, genome-wide-significant-variants, etc.), genome build, and source publication. A trait can have 50+ scores of wildly different size and quality (e.g. type 2 diabetes: from a 62-variant 2014-era score to a 6.9-million-variant LDpred model) — don't assume the first result is the best one.
+   - `PGSCatalog_get_score(pgs_id=...)` — full metadata for one score, including its `ancestry_distribution` for both the development (GWAS) and evaluation cohorts. **Read this before trusting a score**: a score developed on 100% European samples (`ancestry_distribution.dev.dist: {"EUR": 100}`) is exactly the transferability risk this skill warns about above, even if it was later evaluated in more diverse cohorts.
+   - `PGSCatalog_get_performance_metrics(pgs_id=...)` — the actual published validation numbers per evaluation cohort: AUROC/C-index, hazard/odds ratios (including "top 10% vs. rest" comparisons), R², **each tied to the specific ancestry and sample size it was measured in**. This is how you judge whether a score is trustworthy for a given population — a high AUROC measured only in a European cohort tells you nothing about performance in other ancestries; look for an evaluation row matching your population of interest, or note its absence.
+
 ## Key Concepts
 
 ### Polygenic Risk Scores (PRS)
@@ -178,6 +185,19 @@ Consumer genetic testing (23andMe, Ancestry DNA) provides raw genotypes. Users c
 - **Ethical**: Genetic data is permanent and familial. GINA protects employment/health insurance in the US, but not life insurance. Provide genetic counseling context.
 
 ## Workflow
+
+### 0. Check PGS Catalog Before Building From Raw GWAS
+
+Before extracting associations and building a PRS from scratch (steps 1-5 below), check whether a validated score already exists:
+
+```
+PGSCatalog_search_traits(query="<trait>")            # resolve to a real trait_id
+PGSCatalog_get_scores_by_trait(trait_id="<from above>")   # list candidate scores
+PGSCatalog_get_score(pgs_id="<candidate>")                 # check dev-cohort ancestry
+PGSCatalog_get_performance_metrics(pgs_id="<candidate>")   # check validated AUROC/OR/R2 by ancestry
+```
+
+If a well-validated score exists for the target population's ancestry, use its published weights (`scoring_file` URL) directly rather than re-deriving a cruder PRS from raw GWAS Catalog associations — this is exactly the "winner's curse" and LD-clumping problem the raw-GWAS path (steps 1-5) has to work around manually. Only fall back to building from raw associations when PGS Catalog has no score for the trait, or when every existing score was developed and evaluated in an ancestry that doesn't match the population you're scoring.
 
 ### 1. Trait Selection
 

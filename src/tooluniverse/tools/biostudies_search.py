@@ -31,7 +31,7 @@ def biostudies_search(
     page : int
         Page number for pagination (default: 1, 1-based)
     sortBy : str
-        Sort field (e.g., 'relevance', 'accession', 'release_date')
+        Sort field: 'relevance' (default), 'release_date', 'views', 'files' or 'links...
     sortOrder : str
         Sort order: 'ascending' or 'descending'
     stream_callback : Callable, optional

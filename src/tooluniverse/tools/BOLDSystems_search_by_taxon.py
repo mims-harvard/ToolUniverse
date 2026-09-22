@@ -26,7 +26,7 @@ def BOLDSystems_search_by_taxon(
     taxon_name : str
         Taxon name matching rank, e.g. 'Panthera' (genus), 'Felidae' (family), 'Carni...
     rank : str
-        Taxonomic rank of taxon_name. Default 'genus'.
+        Taxonomic rank of taxon_name. Default 'genus', or 'species' when taxon_name h...
     country : str
         Optional country/ocean name to narrow results, e.g. 'Canada'.
     limit : int
