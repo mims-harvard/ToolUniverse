@@ -288,15 +288,18 @@ print(json.dumps(results))
         """Search with Firecrawl's Search API and normalize its web results.
 
         Works without a key: Firecrawl caps keyless requests per IP per day
-        (requests and credits) and answers HTTP 429 past the cap. With
-        FIRECRAWL_API_KEY set, searches are billed against the account's
-        credits and get the account's higher rate limits. Firecrawl reports
+        (requests and credits) and answers HTTP 429 past the cap. When
+        FIRECRAWL_API_KEY resolves -- from the request's credential scope when
+        one is active, otherwise from the environment -- searches are billed
+        against that account's credits and get its higher rate limits.
+        Resolving per call rather than at construction is what lets one hosted
+        process serve several users' keys. Firecrawl reports
         failures through the HTTP status code with ``{"success": false,
         "error": ...}`` in the body, so the body is read first to keep that
         message, then the status is enforced.
         """
         headers: Dict[str, str] = {}
-        api_key = os.environ.get("FIRECRAWL_API_KEY", "").strip()
+        api_key = (self.credential("FIRECRAWL_API_KEY") or "").strip()
         if api_key:
             headers["Authorization"] = f"Bearer {api_key}"
 

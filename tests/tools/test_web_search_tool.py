@@ -10,7 +10,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from tooluniverse import web_search_tool
+from tooluniverse import credential_context, web_search_tool
 from tooluniverse.mcp_client_tool import BaseMCPClient
 from tooluniverse.web_search_tool import (
     WebAPIDocumentationSearchTool,
@@ -913,6 +913,47 @@ def test_firecrawl_search_strips_whitespace_from_api_key(monkeypatch):
     _new_tool()._search_with_firecrawl(query="x", max_results=1)
 
     assert captured["headers"]["Authorization"] == "Bearer fc-test-key"
+
+
+@pytest.mark.unit
+def test_firecrawl_search_prefers_the_request_scoped_key(monkeypatch):
+    """A hosted process serves each request with that request's own key."""
+    monkeypatch.setenv("FIRECRAWL_API_KEY", "fc-operator-key")
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["headers"] = headers
+        return _FakeFirecrawlResponse(_FIRECRAWL_LIVE_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+    tool = _new_tool()
+
+    with credential_context({"FIRECRAWL_API_KEY": "fc-request-key"}):
+        tool._search_with_firecrawl(query="x", max_results=1)
+
+    assert captured["headers"] == {"Authorization": "Bearer fc-request-key"}
+
+
+@pytest.mark.unit
+def test_firecrawl_search_in_a_scope_without_the_key_stays_keyless(monkeypatch):
+    """Fail closed: a request that carries no Firecrawl key must not spend the
+    operator's environment key. Keyless is the documented tier, so the search
+    still runs, just without the Authorization header."""
+    monkeypatch.setenv("FIRECRAWL_API_KEY", "fc-operator-key")
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["headers"] = headers
+        return _FakeFirecrawlResponse(_FIRECRAWL_LIVE_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+    tool = _new_tool()
+
+    with credential_context({"SOME_OTHER_KEY": "unrelated"}):
+        results = tool._search_with_firecrawl(query="x", max_results=1)
+
+    assert captured["headers"] == {}
+    assert len(results) == 1
 
 
 @pytest.mark.unit
