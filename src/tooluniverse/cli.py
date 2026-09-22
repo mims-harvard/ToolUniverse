@@ -2363,13 +2363,13 @@ def _print_remote_check(result: dict, *, as_json: bool) -> None:
     print(f"  Python 3.12: {python_label}")
     module_available = provider.get("module_available")
     module_label = (
-        "unknown"
-        if module_available is None
-        else ("yes" if module_available else "no")
+        "unknown" if module_available is None else ("yes" if module_available else "no")
     )
     print(f"  provider module: {module_label}")
-    for command, available in (provider.get("commands") or {}).items():
-        print(f"  command {command}: {'yes' if available else 'no'}")
+    model_env = result.get("model_environment")
+    if model_env is None:
+        for command, available in (provider.get("commands") or {}).items():
+            print(f"  command {command}: {'yes' if available else 'no'}")
     for variable in result.get("provider_environment") or []:
         ready = variable.get("set") and variable.get("path_exists", True)
         print(f"  environment {variable['name']}: {'ready' if ready else 'missing'}")
@@ -2381,9 +2381,54 @@ def _print_remote_check(result: dict, *, as_json: bool) -> None:
         print(f"  provider credential {credentials['name']}: {state}{suffix}")
         if credentials.get("detail"):
             print(f"    {credentials['detail']}")
+    manifest = result.get("manifest")
+    if manifest:
+        budget = manifest.get("vram_budget_gb")
+        budget_label = "unstated" if budget is None else f"{budget} GiB"
+        print(
+            f"  manifest: mode={manifest['mode']} vram_budget={budget_label} "
+            f"isolation={manifest['isolation']}"
+        )
+    weights = result.get("weights")
+    if weights:
+        if weights.get("ok"):
+            print(
+                f"  weights: {len(weights['declared'])}/{len(weights['declared'])} "
+                f"at their pins under {weights['root']}"
+            )
+        else:
+            print(
+                f"  weights: NOT at their pins under {weights.get('root') or '(unset)'}"
+            )
+            for problem in weights.get("problems") or []:
+                print(f"    {problem}")
+    if model_env is not None:
+        mark = "✓" if model_env.get("ok") else "✗"
+        print(
+            f"  {mark} model environment: {model_env.get('python') or '(unresolved)'}"
+        )
+        if model_env.get("error"):
+            print(f"    error: {model_env['error']}")
+        for command, available in (model_env.get("commands") or {}).items():
+            print(f"    command {command}: {'yes' if available else 'no'}")
+        for name, state in (model_env.get("modules") or {}).items():
+            print(f"    module {name}: {'yes' if state is True else state}")
+        mgpu = model_env.get("gpu") or {}
+        if mgpu.get("device"):
+            print(
+                f"    GPU: {mgpu['device']} (cc {mgpu.get('capability', '?')}, "
+                f"torch {mgpu.get('torch_version', '?')})"
+            )
+        if mgpu.get("error"):
+            print(f"    GPU error: {mgpu['error']}")
+        print(
+            f"    CUDA tensor check: "
+            f"{'passed' if mgpu.get('tensor_sum') == 28.0 else 'failed'}"
+        )
+
     gpu = provider.get("gpu") or {}
     gpu_policy = result.get("gpu_policy")
-    if gpu_policy != "none":
+    if gpu_policy != "none" and model_env is None:
         passed = gpu.get("tensor_sum") == 28.0
         label = (
             "passed"

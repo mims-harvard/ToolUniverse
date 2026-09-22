@@ -64,67 +64,124 @@ Use `tu remote logout` to remove only the locally stored key.
 
 ## Overview
 
-This directory contains the following MCP server implementations:
-- **boltz_MCP.py**: Provides molecular docking capabilities using Boltz2
+Two processes, in two environments, on purpose.
+
+```
+agent ──MCP──> boltz_mcp_server.py          ToolUniverse's environment, CPU only
+                      │
+                      │  Unix socket, one request at a time
+                      ▼
+               resident/boltz_resident_worker.py   the model's own environment
+                 run under the optimization kit's worker_launch;
+                 Boltz-2 built once and held on the GPU
+```
+
+They are separated because their pinned stacks conflict: the model needs torch
+2.12.0+cu130, triton 3.7.0 and numpy 1.26.4, which ToolUniverse cannot install
+alongside the rest of its 600+ tools. `provider.toml` in this directory declares
+the split, the weights and their digests, the measured device budget, and what
+the deployment can and cannot isolate.
+
+Holding the model is what makes it fast. Measured here (330-residue protein +
+aspirin with an affinity pass, NVIDIA GB10):
+
+| | per request |
+| --- | --- |
+| `boltz predict` in a subprocess, as this tool used to run it | 110 s |
+| optimization kit `--mode fast`, a fresh worker per call | 102 s |
+| **this worker, held, steady state** | **~54 s** |
+
+Most of that is not the kit's kernels -- they are worth ~8 % on this card, and
+three of its levers decline by name on compute capability 12.1 -- but the
+holding: the structure pass alone falls from ~23 s to 5.8 s, because CUDA graphs
+captured on one request are replayed on the next, which a worker that exits
+after every call can never collect. Outputs are bit-for-bit those of
+`run.sh pred --mode fast`: structure mean |dCA| 0.000 A, affinity identical.
+
+If no resident worker is configured, the tool runs `boltz predict` in a
+subprocess exactly as before. That path is slower, not different.
 
 ## Prerequisites
 
 ### Hardware Requirements
-- **GPU**: a CUDA-capable GPU is strongly recommended; measure memory and
-  concurrency with the model/input sizes used by your deployment.
+- A CUDA-capable GPU with at least the `vram_budget_gb` in `provider.toml`
+  (5.54 GiB measured peak) free, plus head-room for anything sharing the card.
+- An NVIDIA driver of the 580 series or newer (the pinned stack is CUDA 13.0).
+- No CUDA toolkit: the CUDA libraries are wheels in the lock file.
 
 ### System Requirements
-- Linux-based system (tested on Ubuntu/CentOS)
-- CUDA-compatible GPU drivers
-- Network access for API calls
+- Linux. A C compiler on `PATH` in the model environment (Triton compiles the
+  kit's kernels at first use).
+- Python 3.11 for the model environment; ToolUniverse's own may differ.
 
 ## Setup Instructions
 
-### 1. Environment Setup
-```bash
-# Create and activate conda environment for Boltz2
-conda create -n tooluniverse-env python=3.11 -c conda-forge -y
-conda activate tooluniverse-env
+### 1. Build the model's environment
 
-# Navigate to the Boltz repository
-git clone https://github.com/jwohlwend/boltz.git
-cd boltz
-
-# Install Boltz2 in editable mode with CUDA support
-pip install -e ".[cuda]"
-```
-
-### 2. Verify Boltz2 Installation
+This environment is **not** ToolUniverse's and must not be installed into it.
+`environment/requirements.lock` is the exact stack the numbers above were
+measured on; its header carries the full recipe. In short:
 
 ```bash
-# Test Boltz2 installation
-python -c "import boltz; print('Boltz2 installed successfully')"
-
-# Verify CUDA support
-python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}')"
+uv venv --seed --managed-python --python 3.11.12 ~/boltz2-venv
+. ~/boltz2-venv/bin/activate
+cd src/tooluniverse/remote/boltz/environment
+grep -E '^(pip|wheel)==' requirements.lock > /tmp/pip.txt
+python -m pip install --no-deps -r /tmp/pip.txt
+printf 'setuptools==82.0.1\n' > /tmp/bc.txt
+grep -v -E '^(#|pip==|wheel==)' requirements.lock > /tmp/stack.txt
+python -m pip install --no-deps --build-constraint /tmp/bc.txt -r /tmp/stack.txt
+export LD_LIBRARY_PATH=$(python -c 'import site; print(site.getsitepackages()[0])')/nvidia/cu13/lib
 ```
 
-### 3. Install ToolUniverse and MCP Dependencies
+`--no-deps` is deliberate: the list is complete, and letting a resolver
+re-derive it is how a stack stops being the one that was measured.
+
+### 2. Install the optimization kit into it
 
 ```bash
-# Return to parent directory from boltz subdirectory
-cd ..
+git clone https://github.com/anthropics/uplifting-biomolecular-modeling
+cd uplifting-biomolecular-modeling/boltz2
+bash run.sh install --weights ~/.boltz     # also fetches and digest-checks the cache
 ```
+
+The commit this provider was verified against is in `provider.toml` under
+`[kit]`. Nothing in the kit is patched or vendored: the resident worker is
+simply a different script in the position the kit's own batch worker occupies,
+so its import hooks attach the levers of `--mode fast` to the model the worker
+builds. 25 of the 28 arrive that way.
+
+### 3. Point ToolUniverse at it
 
 ```bash
-# Install compatible NumPy version first
-pip install "numpy==2.0"
-
-# Install ToolUniverse
-git clone https://github.com/mims-harvard/ToolUniverse.git
-cd ToolUniverse
-
-python -m pip install . --no-cache-dir
-
-# Install additional dependencies
-pip install pyarrow fastparquet lxml
-pip install -U sentence-transformers
+export TOOLUNIVERSE_BOLTZ_PYTHON=~/boltz2-venv/bin/python
+export BOLTZ_CACHE=~/.boltz
+# Optional: keep compiled Triton kernels across worker restarts. Worth ~22 s on
+# the first request after one.
+export MODEL_OPT_JIT_ROOT=~/.cache/tooluniverse/boltz-jit
 ```
+
+Then check the whole deployment, both environments and the weights, in one
+command:
+
+```bash
+tu remote check boltz
+```
+
+```
+✓ implementation: boltz
+  manifest: mode=resident vram_budget=5.54 GiB isolation=process
+  weights: 4/4 at their pins under /home/you/.boltz
+  ✓ model environment: /home/you/boltz2-venv/bin/python
+    command boltz: yes
+    module boltz2_opt: yes
+    GPU: NVIDIA GB10 (cc 12.1, torch 2.12.0+cu130)
+    CUDA tensor check: passed
+```
+
+The weights check is not ceremony. A `boltz2_conf.ckpt` on this box was once a
+28.5 MB truncation of a 2,286 MB file and served predictions from it for over a
+month, because nothing compared it to anything.
 
 ### 4. Environment Configuration
 
@@ -148,6 +205,18 @@ hostname
 # - compute-a100-001.cluster.edu
 # - localhost (if running locally)
 ```
+
+### Turning the resident worker off
+
+`TOOLUNIVERSE_BOLTZ_RESIDENT=0` forces the subprocess path. The tool also falls
+back to it on its own, logging the reason, whenever the worker cannot start.
+
+### Giving the GPU back
+
+The worker retires after `idle_timeout_s` (15 minutes) with no requests, so a
+provider nobody is calling stops occupying the card. It also exits on its own if
+the MCP server that started it dies without stopping it -- being reparented to
+init, plus two minutes idle, is the signal.
 
 ## Running the MCP Server
 

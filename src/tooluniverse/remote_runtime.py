@@ -503,6 +503,128 @@ def _check_provider_credentials(
     }
 
 
+def provider_manifest(deployment: RemoteDeployment):
+    """The provider's ``provider.toml``, or None when it declares none yet.
+
+    Providers are being moved onto that manifest one at a time; one without it
+    is checked exactly as before, so this returns None rather than raising.
+    """
+    try:
+        from tooluniverse.remote_resident import manifest as _m
+    except Exception:  # noqa: BLE001 - a missing TOML parser must not fail a check
+        return None
+    package = ".".join(deployment.module.split(".")[:-1])
+    spec = importlib.util.find_spec(package)
+    if spec is None or not spec.submodule_search_locations:
+        return None
+    path = Path(list(spec.submodule_search_locations)[0]) / _m.MANIFEST_NAME
+    if not path.is_file():
+        return None
+    try:
+        return _m.load(path)
+    except Exception:  # noqa: BLE001 - reported by the caller as a named problem
+        return None
+
+
+_MODEL_ENV_PROBE = """
+import json, shutil, sys
+result = {"python_version": list(sys.version_info[:3]),
+          "commands": {name: shutil.which(name) is not None for name in COMMANDS}}
+gpu = {"torch_available": False, "cuda_available": False}
+try:
+    import torch
+    gpu["torch_available"] = True
+    gpu["torch_version"] = str(torch.__version__)
+    gpu["cuda_available"] = bool(torch.cuda.is_available())
+    if gpu["cuda_available"]:
+        gpu["device"] = str(torch.cuda.get_device_name(0))
+        gpu["capability"] = "%d.%d" % torch.cuda.get_device_capability(0)
+        gpu["tensor_sum"] = float(torch.arange(8, device="cuda").sum().item())
+except Exception as exc:
+    gpu["error"] = "%s: %s" % (type(exc).__name__, exc)
+result["gpu"] = gpu
+for name in LAUNCH_MODULES:
+    try:
+        __import__(name)
+        result.setdefault("modules", {})[name] = True
+    except Exception as exc:
+        result.setdefault("modules", {})[name] = "%s: %s" % (type(exc).__name__, exc)
+print(json.dumps(result, sort_keys=True))
+"""
+
+
+def check_model_environment(
+    manifest, *, launch_modules: tuple[str, ...] = (), timeout: float = 60
+) -> dict[str, Any]:
+    """Probe the interpreter the model itself runs in.
+
+    A resident provider splits in two: a light MCP server in ToolUniverse's
+    environment and the model in its own, because their pinned stacks do not
+    coexist. `boltz` on PATH and a working CUDA tensor are properties of the
+    second, and checking them in the first reports a broken deployment that is
+    in fact correctly separated.
+    """
+    out: dict[str, Any] = {"declared_python": manifest.env_python}
+    try:
+        python = manifest.python_executable()
+    except Exception as exc:  # noqa: BLE001 - the reason is the answer
+        return {**out, "ok": False, "error": str(exc)}
+    out["python"] = python
+    if not Path(python).is_file():
+        return {**out, "ok": False, "error": f"{python}: not a file"}
+    code = _MODEL_ENV_PROBE.replace(
+        "COMMANDS", json.dumps(list(_model_commands(manifest)))
+    ).replace("LAUNCH_MODULES", json.dumps(list(launch_modules)))
+    # The model environment's console scripts sit beside its interpreter; a
+    # probe inheriting only this process's PATH would not see them and would
+    # report a correctly installed model as missing its command.
+    env = dict(os.environ)
+    # NOT resolve(): a venv's bin/python is a symlink to the interpreter it was
+    # created from, and following it lands in that interpreter's bin directory
+    # instead of the venv's -- where the console scripts actually are.
+    bin_dir = str(Path(python).expanduser().absolute().parent)
+    env["PATH"] = bin_dir + (os.pathsep + env["PATH"] if env.get("PATH") else "")
+    try:
+        completed = subprocess.run(
+            [python, "-c", code],
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {**out, "ok": False, "error": f"{type(exc).__name__}"}
+    lines = completed.stdout.strip().splitlines()
+    try:
+        probe = json.loads(lines[-1] if lines else "")
+    except (json.JSONDecodeError, TypeError):
+        return {
+            **out,
+            "ok": False,
+            "error": "the model environment's probe returned invalid output",
+            "exit_code": completed.returncode,
+        }
+    gpu = probe.get("gpu") or {}
+    gpu_ok = manifest.gpu_policy != "required" or (
+        gpu.get("cuda_available") is True and gpu.get("tensor_sum") == 28.0
+    )
+    modules_ok = all(v is True for v in (probe.get("modules") or {}).values())
+    return {
+        **out,
+        "ok": bool(
+            gpu_ok and modules_ok and all((probe.get("commands") or {}).values())
+        ),
+        **probe,
+    }
+
+
+def _model_commands(manifest) -> tuple[str, ...]:
+    """Commands the model environment must carry, from its slug's deployment."""
+    deployment = REMOTE_BY_SLUG.get(manifest.slug)
+    return tuple(deployment.required_commands) if deployment else ()
+
+
 def check_environment(
     deployment: RemoteDeployment,
     *,
@@ -585,6 +707,33 @@ def check_environment(
         gpu.get("cuda_available") is True and gpu.get("tensor_sum") == 28.0
     )
 
+    # A provider that declares `mode = "resident"` runs the model in its own
+    # environment, so `boltz` on PATH and a working CUDA tensor are properties
+    # of THAT interpreter, not of the one serving MCP. Checking them here would
+    # fail a deployment that is separated exactly as the manifest asks.
+    manifest = provider_manifest(deployment)
+    model_env: dict[str, Any] | None = None
+    weights: dict[str, Any] | None = None
+    if manifest is not None:
+        problems = manifest.verify_weights()
+        weights = {
+            "root": str(manifest.weights_root() or ""),
+            "declared": [w.name for w in manifest.weights],
+            "problems": problems,
+            "ok": not problems,
+        }
+        if manifest.mode == "resident":
+            launch_modules = ()
+            if manifest.launch:
+                # The kit (or whatever the launcher imports) has to be present
+                # in the model environment, not in this one.
+                launch_modules = ("boltz2_opt",) if manifest.slug == "boltz" else ()
+            model_env = check_model_environment(
+                manifest, launch_modules=launch_modules, timeout=timeout
+            )
+            commands_ok = True  # asked of the model environment instead
+            gpu_ok = True if not gpu_required else bool(model_env.get("ok"))
+
     sdk_available = importlib.util.find_spec("tuplatform_connect") is not None
     key_set = (
         bool(os.getenv("TOOLUNIVERSE_SERVICE_KEY", "").strip())
@@ -601,10 +750,24 @@ def check_environment(
         and credentials_ok
         and gpu_ok
         and share_ok
+        and (weights is None or weights["ok"])
+        and (model_env is None or model_env.get("ok") is True)
     )
     return {
         "ok": ok,
         "implementation": deployment.slug,
+        "manifest": (
+            None
+            if manifest is None
+            else {
+                "mode": manifest.mode,
+                "vram_budget_gb": manifest.vram_budget_gb,
+                "isolation": manifest.isolation,
+                "path": str(manifest.path),
+            }
+        ),
+        "weights": weights,
+        "model_environment": model_env,
         "python": provider_python,
         "python_supported_3_12": python_supported,
         "provider": provider,
