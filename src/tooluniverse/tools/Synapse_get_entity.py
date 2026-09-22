@@ -1,30 +1,27 @@
 """
-proteins_api_get_epitopes
+Synapse_get_entity
 
-Get the epitope features for a protein from the EBI Proteins API epitope endpoint (IEDB-derived)....
+Get metadata and annotations of one public Synapse entity by its Synapse ID (e.g. syn22364283): n...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def proteins_api_get_epitopes(
-    accession: str | list[Any],
-    format: Optional[str] = "json",
+def Synapse_get_entity(
+    entity_id: str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
-    Get the epitope features for a protein from the EBI Proteins API epitope endpoint (IEDB-derived)....
+    Get metadata and annotations of one public Synapse entity by its Synapse ID (e.g. syn22364283): n...
 
     Parameters
     ----------
-    accession : str | list[Any]
-        UniProt protein accession(s). Can be a single accession (e.g., 'P05067'), com...
-    format : str
-        Response format. JSON is recommended for most use cases.
+    entity_id : str
+        Synapse ID, e.g. 'syn22364283'
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,19 +31,15 @@ def proteins_api_get_epitopes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v
-        for k, v in {"accession": accession, "format": format}.items()
-        if v is not None
-    }
+    _args = {k: v for k, v in {"entity_id": entity_id}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
-            "name": "proteins_api_get_epitopes",
+            "name": "Synapse_get_entity",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -55,4 +48,4 @@ def proteins_api_get_epitopes(
     )
 
 
-__all__ = ["proteins_api_get_epitopes"]
+__all__ = ["Synapse_get_entity"]

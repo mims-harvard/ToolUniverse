@@ -147,6 +147,7 @@ Run OpenTargets endpoints first to populate baseline data before specialized que
 - `OpenTargets_get_biological_mouse_models_by_ensemblID` → mouse KO phenotypes (Sections 8/10)
 - `OpenTargets_get_chemical_probes_by_target_ensemblID` → chemical probes (Section 9)
 - `OpenTargets_get_associated_drugs_by_target_ensemblID` → known drugs (Section 9)
+- Anything the dedicated tools above do not return (variants, GWAS credible sets, evidence by datasource, clinical reports ...): `OpenTargets_get_graphql_schema {}` lists the root queries, `OpenTargets_get_graphql_schema {"type_name": "Target"}` lists a type's fields, and `OpenTargets_query_graphql {"query": "{ target(ensemblId: \"ENSG00000141510\") { approvedSymbol biotype } }"}` runs any read-only query
 
 ---
 
