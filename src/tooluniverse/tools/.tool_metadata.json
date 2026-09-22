@@ -2250,8 +2250,6 @@
   "eMolecules_get_vendors": "383cc46595bba3c766ada4037509f493",
   "eMolecules_search": "6ef3197e25b7bc985be0d04a7861c2ef",
   "eMolecules_search_smiles": "d4fd890de17c2df9b2a5543e70876682",
-  "eQTL_get_associations": "c685ff353767add52f38f5d8aec1e654",
-  "eQTL_list_datasets": "d6f66eb11acc3cd7a890743e2a1db27c",
   "ebi_cross_reference_search": "e8bf380f8a75f3726318cf495c23cbad",
   "ebi_get_domain_fields": "e2b62f3b7c99f079ae33e38f02cff29c",
   "ebi_get_domain_info": "d9c939cc207a525c90d31cd631dfd5c4",
