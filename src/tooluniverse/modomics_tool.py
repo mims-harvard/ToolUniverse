@@ -116,6 +116,11 @@ class MODOMICSTool(BaseTool):
                 "error": "modification_id parameter is required",
             }
 
+        # MODOMICS's own {mod_id} path segment is decorative: the endpoint
+        # ignores it and always answers with the full ~433-entry catalog
+        # (confirmed live: modifications/78, /2 and /58 all return the same
+        # 433-key dict), so mod_id must be looked up client-side instead of
+        # taking whatever happens to come first.
         url = f"{MODOMICS_BASE}/modifications/{mod_id}"
         resp = requests.get(url, timeout=self.timeout)
         if resp.status_code != 200:
@@ -125,14 +130,12 @@ class MODOMICSTool(BaseTool):
             }
 
         data = resp.json()
-        # Response is a dict keyed by ID, even for single item
-        if not data:
+        mod_data = data.get(str(mod_id))
+        if not mod_data:
             return {
                 "status": "error",
                 "error": f"No modification found with ID {mod_id}",
             }
-
-        mod_data = list(data.values())[0]
         return {
             "status": "success",
             "data": {

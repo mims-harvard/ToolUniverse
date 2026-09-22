@@ -331,15 +331,25 @@ class EOLTool(BaseTool):
         per_page = int(arguments.get("per_page", 50))
         filter_type = arguments.get("filter", "")
 
+        # EOL puts the collection ID in the URL path, not a query parameter --
+        # unlike /search/1.0.json and /pages/1.0.json, where "1.0" really is an
+        # API version. A literal "id=" query parameter here is ignored, so
+        # every call returned collection 1 ("Fingertip Fauna") regardless of
+        # collection_id (confirmed live: id=176, id=55869 and no id all gave
+        # the same response; /collections/2.0.json?id=176 returned collection
+        # 2, "Test_Collection", proving the path segment decides the result).
         params = {
-            "id": int(collection_id),
             "page": page,
             "per_page": min(per_page, 500),
         }
         if filter_type:
             params["filter"] = filter_type
 
-        url = "%s/collections/1.0.json?%s" % (EOL_BASE_URL, urlencode(params))
+        url = "%s/collections/%d.json?%s" % (
+            EOL_BASE_URL,
+            int(collection_id),
+            urlencode(params),
+        )
         data = _eol_http_get(url, timeout=self.timeout)
 
         items = []
