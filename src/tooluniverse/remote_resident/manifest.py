@@ -78,11 +78,21 @@ _SECTIONS = {
         "idle_timeout_s",
         "start_timeout_s",
         "request_timeout_s",
+        "smoke",
+        "smoke_timeout_s",
     },
     "gpu": {"policy", "vram_budget_gb", "shareable", "isolation"},
-    "env": {"python", "lock", "kind"},
+    "env": {"python", "lock", "kind", "verify"},
     "weights": {"root_env", "root_default", "files"},
-    "kit": {"upstream", "commit", "subdir", "sparse", "mode", "levers_declined"},
+    "kit": {
+        "upstream",
+        "commit",
+        "subdir",
+        "sparse",
+        "mode",
+        "levers_declined",
+        "install",
+    },
 }
 
 
@@ -201,6 +211,9 @@ class ProviderManifest:
     env_python: Optional[str] = None
     env_lock: Optional[str] = None
     env_kind: str = "venv"
+    env_verify: Optional[str] = None
+    smoke: Optional[str] = None
+    smoke_timeout_s: float = 1800.0
     weights_root_env: Optional[str] = None
     weights_root_default: Optional[str] = None
     weights: tuple = ()
@@ -407,6 +420,9 @@ def load(path: os.PathLike | str) -> ProviderManifest:
         env_python=env.get("python"),
         env_lock=env.get("lock"),
         env_kind=env.get("kind", "venv"),
+        env_verify=env.get("verify"),
+        smoke=rt.get("smoke"),
+        smoke_timeout_s=float(rt.get("smoke_timeout_s", 1800.0)),
         weights_root_env=wt.get("root_env"),
         weights_root_default=wt.get("root_default"),
         weights=tuple(files),

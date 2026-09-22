@@ -25,9 +25,16 @@ first `run` and after anything changes, and it prints what a host needs to decid
 whether to proceed: the mode, the device budget, the weights' state, and which
 interpreter actually holds the model.
 
+`setup` is five steps, each idempotent and each reporting `present` when it has
+nothing to do, so re-running after a failure continues rather than restarts:
+preflight (refuse for a host reason before downloading gigabytes) → environment
+(install the lock into the interpreter the manifest names; never create one) →
+kit (fetch the pinned commit, refuse a modified tree, run its own install) →
+weights (deep, so what it certifies it read) → smoke.
+
 *Evidence:* the pattern is the optimization kits' (`install` → `check` → run),
-where `check` is step 3 of 4. `check` and `run` exist and work; `setup` does not
-exist yet and is the main gap this standard opens.
+where `check` is step 3 of 4. All three commands exist. On the first provider a
+complete re-run of all five steps with everything already in place takes 23 s.
 
 ---
 
@@ -266,7 +273,9 @@ Therefore:
   `provider.toml` are the reference they were measured against, not a claim about
   the host reading them. A scheduler reads the measured file.
 - **A provider is `verified` only on hardware where that smoke test has run.**
-  Everything else is `untested`: installable, and said so.
+  Everything else is `untested`: installable, and said so. `[provider] status =
+  "verified"` must carry `verified_on` naming that hardware — a bare "verified"
+  claims every machine.
 
 ---
 
@@ -286,6 +295,7 @@ Therefore:
 | `[env] kind` beyond `venv` | **[n=1]** — untested |
 | Wrapping a kit without patching it | **[n=1]** — one kit |
 | `[runtime] launch` as the only per-provider hook | **[n=1]** — one provider |
-| Three commands suffice for every provider | **[n=1]** — and `setup` is unwritten |
+| Three commands suffice for every provider | **[n=1]** — `setup` exists and runs, on one provider |
+| `setup`'s five steps are the right five | **[n=1]** |
 
 The bottom four rows are what the second provider is for.

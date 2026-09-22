@@ -2469,6 +2469,31 @@ def cmd_remote_list(args: argparse.Namespace) -> None:
         )
 
 
+def cmd_remote_setup(args: argparse.Namespace) -> None:
+    """Install one provider's environment, kit and weights, then run it once."""
+    from tooluniverse.remote_resident import setup as rs
+
+    results = rs.run_setup(args.implementation, only=args.only)
+    if args.json:
+        print(json.dumps([vars(r) for r in results], indent=2, ensure_ascii=False))
+    else:
+        for r in results:
+            mark = "\u2713" if r.ok else "\u2717"
+            print(f"{mark} {r.step}: {r.verdict}{f' ({r.reason})' if r.reason else ''}")
+            if r.detail:
+                for line in str(r.detail).splitlines():
+                    print(f"    {line}")
+            for line in r.lines:
+                print(f"    {line}")
+        last = results[-1] if results else None
+        if last is not None and last.ok and not args.only:
+            print(
+                f"\n{args.implementation} is ready: "
+                f"tu remote check {args.implementation} \u2192 tu remote run {args.implementation}"
+            )
+    raise SystemExit(rs.exit_code(results))
+
+
 def cmd_remote_check(args: argparse.Namespace) -> None:
     """Check a reviewed provider environment and current endpoint."""
     from tooluniverse.remote_runtime import (
@@ -3218,6 +3243,19 @@ def main() -> None:
             default=30,
             help="provider-environment check timeout in seconds (default: 30)",
         )
+
+    p = remote_sub.add_parser(
+        "setup",
+        help="install one provider's environment, kit and weights, then run it once",
+    )
+    p.add_argument("implementation", help="provider slug, e.g. boltz")
+    p.add_argument(
+        "--only",
+        choices=("preflight", "environment", "kit", "weights", "smoke"),
+        help="run one step instead of all of them",
+    )
+    p.add_argument("--json", action="store_true", help="output machine-readable JSON")
+    p.set_defaults(func=cmd_remote_setup)
 
     p = remote_sub.add_parser(
         "check",

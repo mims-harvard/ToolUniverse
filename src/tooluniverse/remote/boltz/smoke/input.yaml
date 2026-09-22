@@ -1,0 +1,14 @@
+# The smallest input that still exercises everything that can go wrong on a new
+# machine: the parser, the featurizer, the model build, every attached lever,
+# one predict_step and the writer. Villin headpiece HP36 (PDB 1VII), 36
+# residues, in single-sequence mode so setup needs no MSA service.
+#
+# Deliberately no `properties: affinity`. That pass is stock's second model on
+# stock's own code path, which no lever touches and which costs ~41 s here; the
+# levers, and every failure seen so far, are on the structure side.
+version: 1
+sequences:
+  - protein:
+      id: A
+      msa: empty
+      sequence: MLSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF

@@ -34,6 +34,11 @@ launch = "tooluniverse.remote.boltz.resident.launch:build_command"
 # The cold path is weights, CUDA context and a first-pass kernel compile.
 start_timeout_s = 900.0
 request_timeout_s = 3600.0
+# `tu remote setup` ends here: one real prediction, under a deadline. Three of
+# the four problems this provider hit on its first machine appeared only at run
+# time, and one of them presented as a stall rather than an error.
+smoke = "smoke/input.yaml"
+smoke_timeout_s = 900.0
 # Retire the worker after 15 minutes with no requests, so an idle provider stops
 # occupying the card. Set to 0 on a box dedicated to this one model.
 idle_timeout_s = 900.0
@@ -60,6 +65,11 @@ kind = "venv"
 # and the MCP server talks to this one over a socket.
 python = "$TOOLUNIVERSE_BOLTZ_PYTHON"
 lock = "environment/requirements.lock"
+# What setup runs in that interpreter to decide the lock is already satisfied,
+# so a re-run costs a second rather than reinstalling 99 distributions. It
+# checks the outcome, not the route: uv, python -m venv, conda and pixi all
+# reach the same tree and all pass.
+verify = "import boltz, torch, boltz2_opt; assert boltz.__version__ == '2.2.1'"
 
 [weights]
 root_env = "BOLTZ_CACHE"
@@ -104,6 +114,11 @@ subdir = "boltz2"
 # the other four kits are skipped, but common/opt_core (308 MB) is required.
 sparse = ["boltz2", "common"]
 mode = "fast"
+# The kit's own install step, run in `subdir` with the model environment's
+# interpreter first on PATH. It installs the kit editable, checks the boltz pin
+# file-for-file, and fetches the weights through upstream's own downloader.
+# {weights_root} is this manifest's; no URL is restated anywhere in ToolUniverse.
+install = "bash run.sh install --weights {weights_root}"
 # Declined on sm121, each by its own name on the worker's lines:
 #   exactln  — "cc:12.1_not_proven_(9.0,_8.0)": a deliberate step-aside, the
 #              core LayerNorm provider is certified for 9.0 and 8.0 only.

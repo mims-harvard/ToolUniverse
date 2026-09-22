@@ -116,95 +116,59 @@ subprocess exactly as before. That path is slower, not different.
 
 ## Setup Instructions
 
-### 1. Build the model's environment
+### One command
 
-This environment is **not** ToolUniverse's and must not be installed into it.
-`environment/requirements.lock` is the exact stack the numbers above were
-measured on; its header carries the full recipe. In short:
+```bash
+export TOOLUNIVERSE_BOLTZ_PYTHON=~/boltz2-venv/bin/python   # where the model's own environment is
+export BOLTZ_CACHE=~/.boltz                                 # where its weights are
+
+tu remote setup boltz
+```
+
+Five steps, each idempotent — a re-run reports `present` for what is already
+done and continues from wherever the last one stopped:
+
+| | |
+| --- | --- |
+| **preflight** | driver, compute capability, a compiler for Triton, free disk. Refused here costs a second, not 16 GB. |
+| **environment** | installs `environment/requirements.lock` into the interpreter above, `--no-deps`. It does not create the venv: see below. |
+| **kit** | clones the pinned commit of the optimization kit into `~/.cache/tooluniverse/kits/<repo>@<sha>/`, refuses a modified tree, runs the kit's own install — which fetches the weights through upstream's downloader. |
+| **weights** | every declared file re-read and compared to its SHA-256. |
+| **smoke** | one real prediction under a deadline, recorded in `~/.cache/tooluniverse/measured/boltz.json`. |
+
+Then:
+
+```bash
+tu remote check boltz     # what will engage on this machine
+tu remote run   boltz     # serve it
+```
+
+### The one thing setup does not do
+
+It installs into an interpreter, it does not build one — the outcome is what
+matters, and uv, `python -m venv`, conda and pixi all reach it. If
+`TOOLUNIVERSE_BOLTZ_PYTHON` is unset, setup refuses and prints the recipe. The
+short version, with the full one in the lock file's own header:
 
 ```bash
 uv venv --seed --managed-python --python 3.11.12 ~/boltz2-venv
-. ~/boltz2-venv/bin/activate
-cd src/tooluniverse/remote/boltz/environment
-grep -E '^(pip|wheel)==' requirements.lock > /tmp/pip.txt
-python -m pip install --no-deps -r /tmp/pip.txt
-printf 'setuptools==82.0.1\n' > /tmp/bc.txt
-grep -v -E '^(#|pip==|wheel==)' requirements.lock > /tmp/stack.txt
-python -m pip install --no-deps --build-constraint /tmp/bc.txt -r /tmp/stack.txt
-export LD_LIBRARY_PATH=$(python -c 'import site; print(site.getsitepackages()[0])')/nvidia/cu13/lib
-```
-
-`--no-deps` is deliberate: the list is complete, and letting a resolver
-re-derive it is how a stack stops being the one that was measured.
-
-### 2. Install the optimization kit into it
-
-```bash
-git clone https://github.com/anthropics/uplifting-biomolecular-modeling
-cd uplifting-biomolecular-modeling/boltz2
-bash run.sh install --weights ~/.boltz     # also fetches and digest-checks the cache
-```
-
-The commit this provider was verified against is in `provider.toml` under
-`[kit]`. Nothing in the kit is patched or vendored: the resident worker is
-simply a different script in the position the kit's own batch worker occupies,
-so its import hooks attach the levers of `--mode fast` to the model the worker
-builds. 25 of the 28 arrive that way.
-
-### 3. Point ToolUniverse at it
-
-```bash
 export TOOLUNIVERSE_BOLTZ_PYTHON=~/boltz2-venv/bin/python
-export BOLTZ_CACHE=~/.boltz
-# Optional: keep compiled Triton kernels across worker restarts. Worth ~22 s on
-# the first request after one.
-export MODEL_OPT_JIT_ROOT=~/.cache/tooluniverse/boltz-jit
 ```
 
-Then check the whole deployment, both environments and the weights, in one
-command:
+This environment is **not** ToolUniverse's and must not be installed into it:
+torch 2.12.0+cu130, triton 3.7.0 and numpy 1.26.4 do not coexist with the rest
+of the package. That separation is why the MCP server talks to the model over a
+socket instead of importing it.
 
-```bash
-tu remote check boltz
-```
+### What `setup` cannot promise
 
-```
-✓ implementation: boltz
-  manifest: mode=resident vram_budget=5.54 GiB isolation=process
-  weights: 4/4 at their pins under /home/you/.boltz
-  ✓ model environment: /home/you/boltz2-venv/bin/python
-    command boltz: yes
-    module boltz2_opt: yes
-    GPU: NVIDIA GB10 (cc 12.1, torch 2.12.0+cu130)
-    CUDA tensor check: passed
-```
-
-The weights check is not ceremony. A `boltz2_conf.ckpt` on this box was once a
-28.5 MB truncation of a 2,286 MB file and served predictions from it for over a
-month, because nothing compared it to anything.
-
-### 4. Environment Configuration
-
-#### Set Environment Variables
-Set the required environment variables on the **client machine** where you're calling the MCP tool from ToolUniverse (not on the GPU server where the tool is running):
-
-```bash
-# For Boltz2 server (running on port 8080)
-export BOLTZ_MCP_SERVER_HOST="your-gpu-hostname"
-```
-
-**Important**: Set this variable on the machine where you're executing your ToolUniverse code, even if the MCP server is running on a different GPU machine.
-
-**Finding your GPU hostname:**
-```bash
-# Get current hostname by running this command on the GPU where your MCP server will run.
-hostname
-
-# Example hostnames:
-# - gpu-node-01
-# - compute-a100-001.cluster.edu
-# - localhost (if running locally)
-```
+The bytes are deterministic and the host checks are exhaustive, but whether a
+model *runs well* on an unseen card is not knowable before it runs. Three of the
+four problems this provider hit on its first machine appeared only at run time,
+and one of them presented as a stall. That is what the smoke step is for, and
+why its record — not `provider.toml`'s numbers — is what a scheduler should
+read. `provider.toml` says what was measured elsewhere; the record says what
+this machine did.
 
 ### Turning the resident worker off
 

@@ -375,3 +375,103 @@ class TestSupervisor:
         w._proc.wait(timeout=10)
         assert os.path.exists(w.socket_path), "a killed worker leaves its socket"
         assert w.request({"op": "predict"})["result"]["pid"] != pid
+
+
+# ------------------------------------------------------------------------ setup
+class TestSetup:
+    def test_the_kit_checkout_is_addressed_by_its_commit(self, monkeypatch, tmp_path):
+        from tooluniverse.remote_resident import setup as S
+
+        monkeypatch.setenv("TOOLUNIVERSE_KIT_ROOT", str(tmp_path))
+        m = M.load(BOLTZ_MANIFEST)
+        path = S.kit_checkout(m)
+        assert path.parent == tmp_path
+        assert path.name.endswith("@" + m.kit["commit"])
+        # Two providers pinning the same commit must land on one checkout.
+        assert S.kit_checkout(m) == path
+
+    def test_a_provider_without_a_kit_has_no_checkout(self, tmp_path):
+        from tooluniverse.remote_resident import setup as S
+
+        p = tmp_path / "provider.toml"
+        p.write_text('[provider]\nslug = "x"\n')
+        assert S.kit_checkout(M.load(p)) is None
+
+    @pytest.mark.parametrize(
+        "line,tampering",
+        [
+            (" M boltz2/opt/boltz2_opt/modes.py", True),
+            ("?? boltz2/opt/forward/waste/__pycache__/", False),
+            ("?? common/opt_core/opt_core.egg-info/", False),
+            ("?? boltz2/opt/boltz2_opt/backdoor.py", True),
+            ("?? boltz2/.jit/torch2.12.0-cu130-sm121/", False),
+            ("", False),
+        ],
+    )
+    def test_byproducts_are_not_tampering_but_new_code_is(self, line, tampering):
+        """Running the kit leaves caches; refusing those would refuse every used tree."""
+        from tooluniverse.remote_resident.setup import _is_tampering
+
+        assert _is_tampering(line) is tampering
+
+    def test_preflight_refuses_a_host_that_cannot_run_it(self, monkeypatch, tmp_path):
+        import shutil as _shutil
+
+        from tooluniverse.remote_resident import setup as S
+
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "x"\n\n[runtime]\nmode = "resident"\n\n'
+            '[gpu]\npolicy = "required"\nvram_budget_gb = 1\n'
+        )
+        monkeypatch.setattr(S.shutil, "which", lambda name: None)
+        monkeypatch.setattr(
+            _shutil,
+            "disk_usage",
+            lambda p: type("U", (), {"free": 1 << 40, "total": 1 << 40})(),
+        )
+        r = S.step_preflight(M.load(p))
+        assert r.verdict == S.REFUSED
+        assert not r.ok
+        # The first named reason is what a skill's table keys on.
+        assert r.reason in ("no_nvidia_smi", "compiler_missing")
+
+    def test_the_driver_stops_at_the_first_step_that_is_not_ok(self, monkeypatch):
+        from tooluniverse.remote_resident import setup as S
+
+        calls = []
+
+        def ok(name):
+            def step(manifest):
+                calls.append(name)
+                return S.StepResult(name, S.OK)
+
+            step.__name__ = f"step_{name}"
+            return step
+
+        def bad(name):
+            def step(manifest):
+                calls.append(name)
+                return S.StepResult(name, S.REFUSED, reason="nope")
+
+            step.__name__ = f"step_{name}"
+            return step
+
+        monkeypatch.setattr(S, "STEPS", (ok("a"), bad("b"), ok("c")))
+        results = S.run_setup(BOLTZ_MANIFEST)
+        assert calls == ["a", "b"], "a cascade would bury the step that mattered"
+        assert S.exit_code(results) == S.EXIT_REFUSED
+
+    def test_exit_codes_are_branchable(self):
+        from tooluniverse.remote_resident import setup as S
+
+        assert S.exit_code([S.StepResult("a", S.OK)]) == S.EXIT_OK
+        assert S.exit_code([S.StepResult("a", S.PRESENT)]) == S.EXIT_OK
+        assert S.exit_code([S.StepResult("a", S.REFUSED)]) == S.EXIT_REFUSED
+        assert S.exit_code([S.StepResult("a", S.FAILED)]) == S.EXIT_FAILED
+
+    def test_boltz_declares_a_smoke_input_that_exists(self):
+        """A provider with no smoke step can never be more than `untested`."""
+        m = M.load(BOLTZ_MANIFEST)
+        assert m.smoke, "a verified provider must declare how to prove itself"
+        assert m.resolve(m.smoke).is_file()

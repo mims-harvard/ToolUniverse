@@ -257,6 +257,7 @@ tooluniverse = [
     "remote/*/*.R",           # the R half of the R-backed providers
     "remote/*/*.txt",         # per-provider requirements, read by setup
     "remote/*/environment/*", # pinned lock files, read by setup
+    "remote/*/smoke/*",       # the input `tu remote setup` proves the model with
 ]
 
 [dependency-groups]
