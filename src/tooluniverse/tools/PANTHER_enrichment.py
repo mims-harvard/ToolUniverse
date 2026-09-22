@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def PANTHER_enrichment(
     gene_list: str,
-    organism: Optional[int | Any] = None,
-    annotation_dataset: Optional[str | Any] = None,
+    organism: Optional[int] = None,
+    annotation_dataset: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def PANTHER_enrichment(
     ----------
     gene_list : str
         Comma-separated list of gene symbols, UniProt IDs, or Ensembl IDs. Example: '...
-    organism : int | Any
+    organism : int
         NCBI taxonomy ID. Default: 9606 (human). Others: 10090 (mouse), 7227 (fly), 5...
-    annotation_dataset : str | Any
+    annotation_dataset : str
         Annotation dataset for enrichment. Options: 'GO:0008150' (biological_process,...
     stream_callback : Callable, optional
         Callback for streaming output

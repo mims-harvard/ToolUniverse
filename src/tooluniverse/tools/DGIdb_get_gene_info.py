@@ -1,7 +1,7 @@
 """
 DGIdb_get_gene_info
 
-Get detailed gene information from DGIdb including aliases, categories, and interaction counts.
+Get detailed gene information from DGIdb including aliases, categories, and interaction counts. G...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def DGIdb_get_gene_info(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get detailed gene information from DGIdb including aliases, categories, and interaction counts.
+    Get detailed gene information from DGIdb including aliases, categories, and interaction counts. G...
 
     Parameters
     ----------

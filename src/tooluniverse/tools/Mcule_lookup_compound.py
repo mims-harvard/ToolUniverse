@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def Mcule_lookup_compound(
-    operation: str,
     query: str,
+    operation: Optional[str] = "lookup_compound",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

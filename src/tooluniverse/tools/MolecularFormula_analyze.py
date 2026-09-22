@@ -9,13 +9,13 @@ from ._shared_client import get_shared_client
 
 
 def MolecularFormula_analyze(
-    operation: str,
-    formula: Optional[str | Any] = None,
-    sample_g: Optional[float | Any] = None,
-    CO2_g: Optional[float | Any] = None,
-    H2O_g: Optional[float | Any] = None,
-    N2_g: Optional[float | Any] = 0.0,
-    molar_mass: Optional[float | Any] = None,
+    operation: Optional[str] = "analyze_formula",
+    formula: Optional[str] = None,
+    sample_g: Optional[float] = None,
+    CO2_g: Optional[float] = None,
+    H2O_g: Optional[float] = None,
+    N2_g: Optional[float] = 0.0,
+    molar_mass: Optional[float] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,17 +28,17 @@ def MolecularFormula_analyze(
     ----------
     operation : str
         Operation: 'analyze_formula' to analyze a known formula, or 'combustion_analy...
-    formula : str | Any
+    formula : str
         Molecular formula string (e.g., 'C6H12O6', 'C8H9NO2'). Required for analyze_f...
-    sample_g : float | Any
+    sample_g : float
         Mass of sample burned in grams. Required for combustion_analysis mode.
-    CO2_g : float | Any
+    CO2_g : float
         Mass of CO2 collected in grams. Required for combustion_analysis mode.
-    H2O_g : float | Any
+    H2O_g : float
         Mass of H2O collected in grams. Required for combustion_analysis mode.
-    N2_g : float | Any
+    N2_g : float
         Mass of N2 collected in grams (optional, default 0).
-    molar_mass : float | Any
+    molar_mass : float
         Known molar mass in g/mol to determine molecular formula from empirical formu...
     stream_callback : Callable, optional
         Callback for streaming output

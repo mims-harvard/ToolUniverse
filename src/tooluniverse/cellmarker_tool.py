@@ -107,10 +107,35 @@ def _load_dataframe(timeout: int = 180):
         return _DF
 
 
-def _records(df, limit: int = 200) -> List[Dict[str, Any]]:
+DEFAULT_RECORD_LIMIT = 200
+
+
+def _page(arguments):
+    """Resolve limit/offset, defaulting to the long-standing 200-row cap.
+
+    A non-positive limit would return nothing next to a non-zero
+    total_records, so it falls back to the default; the schema refuses those
+    values before they reach here.
+    """
+    try:
+        limit = int(arguments.get("limit"))
+    except (TypeError, ValueError):
+        limit = DEFAULT_RECORD_LIMIT
+    if limit <= 0:
+        limit = DEFAULT_RECORD_LIMIT
+    try:
+        offset = int(arguments.get("offset"))
+    except (TypeError, ValueError):
+        offset = 0
+    return limit, max(offset, 0)
+
+
+def _records(
+    df, limit: int = DEFAULT_RECORD_LIMIT, offset: int = 0
+) -> List[Dict[str, Any]]:
     """Convert a filtered DataFrame to the tool's record dict list."""
     out = []
-    for _, row in df.head(limit).iterrows():
+    for _, row in df.iloc[offset : offset + limit].iterrows():
         out.append(
             {
                 "species": row["species"],
@@ -159,9 +184,21 @@ class CellMarkerTool(BaseTool):
         self.parameter = tool_config.get("parameter", {})
         self.required = self.parameter.get("required", [])
         self.timeout = 180
+        # Each config pins one operation, so the tool knows its own without the
+        # caller restating it through a single-value enum.
+        fields = tool_config.get("fields", {}) or {}
+        operation_schema = (self.parameter.get("properties", {}) or {}).get(
+            "operation", {}
+        )
+        choices = operation_schema.get("enum") or []
+        self.default_operation = (
+            fields.get("operation")
+            or operation_schema.get("default")
+            or (choices[0] if len(choices) == 1 else None)
+        )
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        operation = arguments.get("operation")
+        operation = arguments.get("operation") or self.default_operation
         if not operation:
             return {"status": "error", "error": "Missing required parameter: operation"}
 
@@ -179,6 +216,22 @@ class CellMarkerTool(BaseTool):
                 "available_operations": list(handlers.keys()),
             }
 
+        if operation == "search_by_gene":
+            gene_symbol = arguments.get("gene_symbol")
+            if isinstance(gene_symbol, str):
+                gene_symbol = gene_symbol.strip()
+            if not gene_symbol:
+                return {
+                    "status": "error",
+                    # "Missing" invites an agent to resend the same blank value;
+                    # the parameter was present, it was empty.
+                    "error": (
+                        "gene_symbol is required and cannot be blank "
+                        "(e.g., 'CD19', 'PTPRC')."
+                    ),
+                }
+            arguments = {**arguments, "gene_symbol": gene_symbol}
+
         try:
             df = _load_dataframe(self.timeout)
             return handler(arguments, df)
@@ -187,25 +240,37 @@ class CellMarkerTool(BaseTool):
 
     def _search_by_gene(self, arguments, df) -> Dict[str, Any]:
         gene_symbol = arguments.get("gene_symbol")
+        if isinstance(gene_symbol, str):
+            gene_symbol = gene_symbol.strip()
         if not gene_symbol:
             return {
                 "status": "error",
-                "error": "Missing required parameter: gene_symbol",
+                "error": (
+                    "gene_symbol is required and cannot be blank "
+                    "(e.g., 'CD19', 'PTPRC')."
+                ),
             }
         species = arguments.get("species")
         tissue_type = arguments.get("tissue_type")
+        limit, offset = _page(arguments)
 
-        sub = df[df["cell_marker"].str.lower() == gene_symbol.strip().lower()]
+        sub = df[df["cell_marker"].str.lower() == gene_symbol.lower()]
         sub = _apply_species(sub, species)
         sub = _apply_tissue(sub, tissue_type)
+        records = _records(sub, limit, offset)
 
         return {
             "status": "success",
             "data": {
                 "gene_symbol": gene_symbol,
                 "species": species if species else "all",
+                # Echo every filter, so a caller can tell a filter was applied
+                # rather than silently dropped.
+                "tissue_type": tissue_type if tissue_type else "all",
                 "total_records": int(len(sub)),
-                "records": _records(sub),
+                "returned_records": len(records),
+                "offset": offset,
+                "records": records,
             },
         }
 
@@ -235,13 +300,18 @@ class CellMarkerTool(BaseTool):
         marker_genes = sorted(
             s for s in sub["Symbol"].dropna().astype(str).str.strip().unique() if s
         )
+        limit, offset = _page(arguments)
+        records = _records(sub, limit, offset)
         data = {
             "cell_name": cell_name,
             "species": species if species else "all",
+            "tissue_type": tissue_type if tissue_type else "all",
             "total_records": int(len(sub)),
+            "returned_records": len(records),
+            "offset": offset,
             "unique_markers": len(marker_genes),
             "marker_genes": marker_genes[:500],
-            "records": _records(sub),
+            "records": records,
         }
         if len(sub) == 0:
             # Distinguish "no data for this cell type" from "likely a typo":
@@ -314,11 +384,15 @@ class CellMarkerTool(BaseTool):
         if cell_type:
             query["cell_type"] = cell_type
 
+        limit, offset = _page(arguments)
+        records = _records(sub, limit, offset)
         return {
             "status": "success",
             "data": {
                 "query": query,
                 "total_records": int(len(sub)),
-                "records": _records(sub),
+                "returned_records": len(records),
+                "offset": offset,
+                "records": records,
             },
         }

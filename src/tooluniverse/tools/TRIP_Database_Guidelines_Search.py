@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def TRIP_Database_Guidelines_Search(
     query: str,
-    limit: int,
-    search_type: str,
+    limit: Optional[int] = 10,
+    search_type: Optional[str] = "guideline",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

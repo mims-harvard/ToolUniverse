@@ -9,20 +9,20 @@ from ._shared_client import get_shared_client
 
 
 def COD_search_structures(
-    query: Optional[str | Any] = None,
-    text: Optional[str | Any] = None,
-    formula: Optional[str | Any] = None,
-    el1: Optional[str | Any] = None,
-    el2: Optional[str | Any] = None,
-    el3: Optional[str | Any] = None,
-    nel: Optional[str | Any] = None,
-    commonname: Optional[str | Any] = None,
-    mineral: Optional[str | Any] = None,
-    spacegroup: Optional[str | Any] = None,
-    sg: Optional[str | Any] = None,
-    sgNumber: Optional[str | Any] = None,
-    max_results: Optional[int | Any] = None,
-    results: Optional[int | Any] = None,
+    query: Optional[str] = None,
+    text: Optional[str] = None,
+    formula: Optional[str] = None,
+    el1: Optional[str] = None,
+    el2: Optional[str] = None,
+    el3: Optional[str] = None,
+    nel: Optional[str] = None,
+    commonname: Optional[str] = None,
+    mineral: Optional[str] = None,
+    spacegroup: Optional[str] = None,
+    sg: Optional[str] = None,
+    sgNumber: Optional[str] = None,
+    max_results: Optional[int] = None,
+    results: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -33,33 +33,33 @@ def COD_search_structures(
 
     Parameters
     ----------
-    query : str | Any
+    query : str
         Alias for 'text'. Free text search across titles, keywords, and compound name...
-    text : str | Any
+    text : str
         Free text search across titles, keywords, and compound names. Examples: 'aspi...
-    formula : str | Any
+    formula : str
         Chemical formula to search (use spaces between elements). Examples: 'Fe2 O3',...
-    el1 : str | Any
+    el1 : str
         First required element (chemical symbol). Examples: 'Cu', 'Fe', 'Si', 'C', 'N'
-    el2 : str | Any
+    el2 : str
         Second required element (chemical symbol)
-    el3 : str | Any
+    el3 : str
         Third required element (chemical symbol)
-    nel : str | Any
+    nel : str
         Number of distinct elements in formula (e.g., '2' for binary compounds, '3' f...
-    commonname : str | Any
+    commonname : str
         Common/trivial name search (partial match). Examples: 'quartz', 'perovskite',...
-    mineral : str | Any
+    mineral : str
         Mineral name search (partial match). Examples: 'calcite', 'feldspar', 'pyrite...
-    spacegroup : str | Any
+    spacegroup : str
         Alias for 'sg'. Space group symbol (Hermann-Mauguin notation). Examples: 'P 2...
-    sg : str | Any
+    sg : str
         Space group symbol (Hermann-Mauguin notation). Examples: 'P 21/c', 'Fm -3 m',...
-    sgNumber : str | Any
+    sgNumber : str
         Space group number (1-230). Examples: '225' (Fm-3m, FCC metals), '62' (Pnma, ...
-    max_results : int | Any
+    max_results : int
         Alias for 'results'. Maximum number of results to return (default 100, use sm...
-    results : int | Any
+    results : int
         Maximum number of results to return (default 100, use smaller values for spee...
     stream_callback : Callable, optional
         Callback for streaming output

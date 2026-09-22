@@ -1,7 +1,7 @@
 """
 PopGen_fst
 
-Calculate simplified Weir-Cockerham Fst between two populations given allele frequencies and samp...
+Calculate the Weir-Cockerham (1984) theta Fst estimator between two populations given allele freq...
 """
 
 from typing import Any, Optional, Callable
@@ -9,18 +9,18 @@ from ._shared_client import get_shared_client
 
 
 def PopGen_fst(
-    operation: str,
     p1: float,
     p2: float,
     n1: int,
     n2: int,
+    operation: Optional[str] = "fst",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Calculate simplified Weir-Cockerham Fst between two populations given allele frequencies and samp...
+    Calculate the Weir-Cockerham (1984) theta Fst estimator between two populations given allele freq...
 
     Parameters
     ----------

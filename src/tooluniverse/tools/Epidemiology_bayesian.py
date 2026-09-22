@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def Epidemiology_bayesian(
-    operation: str,
     prevalence: float,
     sensitivity: float,
     specificity: float,
+    operation: Optional[str] = "bayesian",
     test_result: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

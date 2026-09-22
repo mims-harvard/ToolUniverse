@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def SwissModel_get_models_batch(
-    uniprot_ids: list[str],
+    uniprot_ids: list[str] | str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -20,7 +20,7 @@ def SwissModel_get_models_batch(
 
     Parameters
     ----------
-    uniprot_ids : list[str]
+    uniprot_ids : list[str] | str
         List of up to 250 UniProt accessions, e.g. ['P04637', 'P00533', 'P38398']. A ...
     stream_callback : Callable, optional
         Callback for streaming output

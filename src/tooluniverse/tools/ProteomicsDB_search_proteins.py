@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def ProteomicsDB_search_proteins(
-    operation: str,
     query: str,
+    operation: Optional[str] = "search_proteins",
     organism_id: Optional[int] = None,
     max_results: Optional[int] = None,
     *,

@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def PDBeSearch_search_structures(
     query: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def PDBeSearch_search_structures(
     ----------
     query : str
         Search query - protein name, gene name, or keyword. Supports Solr syntax. Exa...
-    limit : int | Any
+    limit : int
         Maximum results to return (1-50, default 10).
     stream_callback : Callable, optional
         Callback for streaming output

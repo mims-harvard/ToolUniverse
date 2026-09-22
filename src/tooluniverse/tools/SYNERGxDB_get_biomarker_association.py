@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def SYNERGxDB_get_biomarker_association(
-    operation: str,
+    operation: Optional[str] = "get_biomarker_association",
     gene: Optional[str] = None,
     gene_name: Optional[str] = None,
     *,

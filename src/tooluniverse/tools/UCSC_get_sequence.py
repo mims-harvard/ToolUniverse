@@ -1,7 +1,7 @@
 """
 UCSC_get_sequence
 
-Get DNA sequence from the UCSC Genome Browser for a specified genomic region. Returns the nucleot...
+Get DNA sequence from the UCSC Genome Browser for a genomic region. Pass 'region' as a written lo...
 """
 
 from typing import Any, Optional, Callable
@@ -10,16 +10,18 @@ from ._shared_client import get_shared_client
 
 def UCSC_get_sequence(
     genome: str,
-    chrom: str,
-    start: int,
-    end: int,
+    chrom: Optional[str] = None,
+    start: Optional[int] = None,
+    end: Optional[int] = None,
+    region: Optional[str] = None,
+    coordinate_system: Optional[str] = "0-based",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get DNA sequence from the UCSC Genome Browser for a specified genomic region. Returns the nucleot...
+    Get DNA sequence from the UCSC Genome Browser for a genomic region. Pass 'region' as a written lo...
 
     Parameters
     ----------
@@ -28,9 +30,13 @@ def UCSC_get_sequence(
     chrom : str
         Chromosome name. Examples: 'chr1', 'chr17', 'chrX', 'chrM'.
     start : int
-        0-based start position (inclusive). Example: 7668421.
+        Start position. Interpreted per 'coordinate_system' (default 0-based, inclusi...
     end : int
-        End position (exclusive). Must be > start and span <= 100000 bp. Example: 766...
+        End position. Exclusive when coordinate_system is 0-based, inclusive when 1-b...
+    region : str
+        Genomic region written the usual way, 1-based INCLUSIVE on both ends, e.g. 'c...
+    coordinate_system : str
+        Which convention chrom/start/end are given in. '0-based' (default) is half-op...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def UCSC_get_sequence(
             "chrom": chrom,
             "start": start,
             "end": end,
+            "region": region,
+            "coordinate_system": coordinate_system,
         }.items()
         if v is not None
     }

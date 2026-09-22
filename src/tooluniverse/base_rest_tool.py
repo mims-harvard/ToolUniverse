@@ -35,15 +35,36 @@ class BaseRESTTool(BaseTool):
     - `_handle_special_endpoint()` - for endpoint-specific logic
     """
 
+    #: Sent on every request unless a tool's ``fields.headers`` overrides it.
+    #: requests defaults to ``python-requests/<version>``, which some public
+    #: APIs refuse outright -- Harvard Dataverse answers 403 to it and 200 to
+    #: anything else, for the same URL and parameters. Identifying the client
+    #: is also what these APIs ask of automated callers.
+    USER_AGENT = (
+        "ToolUniverse/{version} (+https://github.com/mims-harvard/ToolUniverse)"
+    )
+
     def __init__(self, tool_config):
         super().__init__(tool_config)
         # Keep cookies/headers/auth isolated per tool instance while sharing only the underlying
         # identity-free TCP/TLS transport pools across instances and tenants.
         self.session = create_shared_pool_session()
+        self.session.headers["User-Agent"] = self._user_agent()
         self.timeout = 30
         self.api_name = tool_config.get(
             "name", self.__class__.__name__.replace("RESTTool", "")
         )
+
+    @classmethod
+    def _user_agent(cls) -> str:
+        """Build the User-Agent, tolerating an uninstalled package."""
+        try:
+            from importlib.metadata import version
+
+            pkg_version = version("tooluniverse")
+        except Exception:
+            pkg_version = "dev"
+        return cls.USER_AGENT.format(version=pkg_version)
 
     def _get_param_mapping(self) -> Dict[str, str]:
         """

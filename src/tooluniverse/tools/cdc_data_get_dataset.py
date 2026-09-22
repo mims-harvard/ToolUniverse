@@ -18,7 +18,7 @@ def cdc_data_get_dataset(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Retrieve data from a specific CDC dataset on Data.CDC.gov. Requires a dataset ID (view ID) which ...
 
@@ -43,7 +43,7 @@ def cdc_data_get_dataset(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

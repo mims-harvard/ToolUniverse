@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def Metabolite_search(
     query: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search",
     search_type: Optional[str] = "name",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

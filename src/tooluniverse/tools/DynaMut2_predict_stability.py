@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def DynaMut2_predict_stability(
-    operation: str,
     pdb_id: str,
     chain: str,
     mutation: str,
+    operation: Optional[str] = "predict_stability",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

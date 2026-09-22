@@ -18,7 +18,7 @@ def odphp_topicsearch(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Find specific health topics and get their full content. Use when the user mentions a keyword (e.g...
 
@@ -43,7 +43,7 @@ def odphp_topicsearch(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

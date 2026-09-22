@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def BVBRC_search_specialty_genes(
-    gene: Optional[str | Any] = None,
-    property: Optional[str | Any] = None,
-    source: Optional[str | Any] = None,
-    taxon_id: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    gene: Optional[str] = None,
+    property: Optional[str] = None,
+    source: Optional[str] = None,
+    taxon_id: Optional[str] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,15 +24,15 @@ def BVBRC_search_specialty_genes(
 
     Parameters
     ----------
-    gene : str | Any
+    gene : str
         Gene name to search. Examples: 'mecA' (methicillin resistance), 'katG' (isoni...
-    property : str | Any
+    property : str
         Specialty gene property category. Options: 'Antibiotic Resistance', 'Virulenc...
-    source : str | Any
+    source : str
         Source database for annotation. Options: 'CARD', 'NDARO', 'PATRIC_VF', 'VFDB'...
-    taxon_id : str | Any
+    taxon_id : str
         NCBI Taxonomy ID. Examples: '1280' (S. aureus), '1773' (M. tuberculosis), '56...
-    limit : int | Any
+    limit : int
         Maximum number of results. Default: 25. Max: 100.
     stream_callback : Callable, optional
         Callback for streaming output

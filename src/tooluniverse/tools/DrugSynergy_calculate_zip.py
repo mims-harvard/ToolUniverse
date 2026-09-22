@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def DrugSynergy_calculate_zip(
-    operation: str,
     doses_a: list[Any],
     doses_b: list[Any],
     viability_matrix: list[Any],
+    operation: Optional[str] = "calculate_zip",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

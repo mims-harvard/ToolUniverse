@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def SIDER_get_drug_side_effects(
-    operation: str,
-    drug_name: Optional[str | Any] = None,
-    sider_drug_id: Optional[str | Any] = None,
+    operation: Optional[str] = "get_side_effects",
+    drug_name: Optional[str] = None,
+    sider_drug_id: Optional[str] = None,
     limit: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -25,9 +25,9 @@ def SIDER_get_drug_side_effects(
     ----------
     operation : str
         Operation type
-    drug_name : str | Any
+    drug_name : str
         Drug name (e.g., 'ibuprofen', 'metformin'). Will search SIDER and use first m...
-    sider_drug_id : str | Any
+    sider_drug_id : str
         SIDER drug ID (PubChem CID) from SIDER_search_drug results (e.g., '3672' for ...
     limit : int
         Maximum number of side effects to return (default: 50)

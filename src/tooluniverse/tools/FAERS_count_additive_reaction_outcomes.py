@@ -13,6 +13,8 @@ def FAERS_count_additive_reaction_outcomes(
     patientsex: Optional[str] = None,
     patientagegroup: Optional[str] = None,
     occurcountry: Optional[str] = None,
+    manufacturer_name: Optional[str] = None,
+    receivedate: Optional[str] = None,
     limit: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -32,6 +34,10 @@ def FAERS_count_additive_reaction_outcomes(
 
     occurcountry : str
 
+    manufacturer_name : str
+        Filter to reports where a drug's labeller/manufacturer matches, e.g. 'Pfizer'...
+    receivedate : str
+        Filter by the date FDA received the report. Accepts a single date 'YYYYMMDD' ...
     limit : int
         Optional: maximum number of ranked terms to return (default 100, which is ope...
     stream_callback : Callable, optional
@@ -55,6 +61,8 @@ def FAERS_count_additive_reaction_outcomes(
             "patientsex": patientsex,
             "patientagegroup": patientagegroup,
             "occurcountry": occurcountry,
+            "manufacturer_name": manufacturer_name,
+            "receivedate": receivedate,
             "limit": limit,
         }.items()
         if v is not None

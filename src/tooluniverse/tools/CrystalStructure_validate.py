@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def CrystalStructure_validate(
-    operation: str,
     a: float,
     Z: int,
     mw: float,
+    operation: Optional[str] = "validate",
     b: Optional[float] = None,
     c: Optional[float] = None,
     alpha: Optional[float] = None,

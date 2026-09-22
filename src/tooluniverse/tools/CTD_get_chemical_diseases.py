@@ -21,7 +21,7 @@ def CTD_get_chemical_diseases(
     Parameters
     ----------
     input_terms : str
-        Chemical name, MeSH name, synonym, CAS RN, or MeSH ID. Examples: 'arsenic', '...
+        Chemical name, CAS Registry Number, or CTD/MeSH chemical ID (e.g., 'C006780',...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

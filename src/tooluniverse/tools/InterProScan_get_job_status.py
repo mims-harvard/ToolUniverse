@@ -14,7 +14,7 @@ def InterProScan_get_job_status(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Check status of an InterProScan analysis job. Use if scan_sequence returns before completion. Sta...
 
@@ -31,7 +31,7 @@ def InterProScan_get_job_status(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

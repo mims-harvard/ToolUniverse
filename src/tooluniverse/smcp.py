@@ -996,7 +996,7 @@ class SMCP(FastMCP):
             str: Tool name to use for search
         """
         # Get available tools
-        all_tools = self.tooluniverse.return_all_loaded_tools()
+        all_tools = self.tooluniverse.return_all_loaded_tools(copy_tools=False)
         available_tool_names = [tool.get("name", "") for tool in all_tools]
 
         # Handle specific method requests
@@ -1251,7 +1251,7 @@ class SMCP(FastMCP):
 
         # Check if ToolFinderLLM is available in loaded tools
         try:
-            all_tools = self.tooluniverse.return_all_loaded_tools()
+            all_tools = self.tooluniverse.return_all_loaded_tools(copy_tools=False)
             available_tool_names = [tool.get("name", "") for tool in all_tools]
 
             # Try ToolFinderLLM first (more advanced)
@@ -1297,7 +1297,7 @@ class SMCP(FastMCP):
                     self.logger.debug(f"Could not load tool_finder category: {e}")
 
             # Re-check availability after potential loading
-            all_tools = self.tooluniverse.return_all_loaded_tools()
+            all_tools = self.tooluniverse.return_all_loaded_tools(copy_tools=False)
             available_tool_names = [tool.get("name", "") for tool in all_tools]
 
             if "Tool_Finder_LLM" in available_tool_names:

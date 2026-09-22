@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def TCIA_get_series(
-    Collection: Optional[str | Any] = None,
-    PatientID: Optional[str | Any] = None,
-    StudyInstanceUID: Optional[str | Any] = None,
-    Modality: Optional[str | Any] = None,
-    BodyPartExamined: Optional[str | Any] = None,
+    Collection: Optional[str] = None,
+    PatientID: Optional[str] = None,
+    StudyInstanceUID: Optional[str] = None,
+    Modality: Optional[str] = None,
+    BodyPartExamined: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,15 +24,15 @@ def TCIA_get_series(
 
     Parameters
     ----------
-    Collection : str | Any
+    Collection : str
         Collection name (e.g., 'TCGA-GBM', 'LIDC-IDRI', 'TCGA-LUAD')
-    PatientID : str | Any
+    PatientID : str
         Patient identifier
-    StudyInstanceUID : str | Any
+    StudyInstanceUID : str
         DICOM Study Instance UID
-    Modality : str | Any
+    Modality : str
         Imaging modality (e.g., 'CT', 'MR', 'PT', 'CR', 'DX')
-    BodyPartExamined : str | Any
+    BodyPartExamined : str
         Body part examined (e.g., 'CHEST', 'BRAIN', 'ABDOMEN')
     stream_callback : Callable, optional
         Callback for streaming output

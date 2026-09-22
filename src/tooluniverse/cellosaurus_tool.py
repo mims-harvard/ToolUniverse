@@ -8,6 +8,72 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 
+# Cellosaurus query-field abbreviations accepted by the API's `fields`
+# parameter. These are query tags, not JSON response keys.
+CELLOSAURUS_FIELDS = {
+    "id",
+    "sy",
+    "idsy",
+    "ac",
+    "acas",
+    "dr",
+    "ref",
+    "rx",
+    "ra",
+    "rt",
+    "rl",
+    "ww",
+    "anc",
+    "hla",
+    "reg",
+    "var",
+    "anec",
+    "biot",
+    "breed",
+    "caution",
+    "cell",
+    "char",
+    "donor",
+    "site",
+    "disc",
+    "time",
+    "from",
+    "group",
+    "kar",
+    "ko",
+    "msi",
+    "misc",
+    "miss",
+    "mabi",
+    "mabt",
+    "omics",
+    "part",
+    "pop",
+    "prob",
+    "res",
+    "sen",
+    "int",
+    "tfor",
+    "vir",
+    "cc",
+    "str",
+    "di",
+    "din",
+    "dio",
+    "ox",
+    "sx",
+    "ag",
+    "oi",
+    "hi",
+    "ch",
+    "ca",
+    "dt",
+    "dtc",
+    "dtu",
+    "dtv",
+}
+
+
 @register_tool("CellosaurusSearchTool")
 class CellosaurusSearchTool(BaseTool):
     """
@@ -27,9 +93,23 @@ class CellosaurusSearchTool(BaseTool):
         if q is None or not str(q).strip():
             return {"status": "error", "error": "`q` parameter is required."}
 
-        return self._search_cell_lines(str(q).strip(), offset, size)
+        fields = arguments.get("fields")
+        if isinstance(fields, str):
+            fields = [part.strip() for part in fields.split(",") if part.strip()]
+        if fields:
+            invalid = [f for f in fields if f not in CELLOSAURUS_FIELDS]
+            if invalid:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Invalid fields: {invalid}. Valid abbreviations: "
+                        f"{sorted(CELLOSAURUS_FIELDS)}"
+                    ),
+                }
 
-    def _search_cell_lines(self, query, offset, size):
+        return self._search_cell_lines(str(q).strip(), offset, size, fields)
+
+    def _search_cell_lines(self, query, offset, size, fields=None):
         """
         Search Cellosaurus cell lines using the /search/cell-line endpoint.
         """
@@ -38,6 +118,10 @@ class CellosaurusSearchTool(BaseTool):
             # the cursor is ``start``. The tool's public ``size`` / ``offset``
             # names are preserved; ``size`` and ``offset`` are ignored by the API.
             params = {"q": query.strip(), "start": offset, "rows": size}
+            # A full record runs to hundreds of kilobytes -- one HeLa hit is
+            # ~670 KB -- so trimming is what makes the result usable at all.
+            if fields:
+                params["fields"] = ",".join(fields)
 
             url = f"{self.base_url}/search/cell-line"
             headers = {"Accept": "application/json"}
@@ -1195,71 +1279,8 @@ class CellosaurusGetCellLineInfoTool(BaseTool):
                         "error": "Fields must be a list of field names",
                     }
 
-                # Valid Cellosaurus field tags
-                valid_fields = {
-                    "id",
-                    "sy",
-                    "idsy",
-                    "ac",
-                    "acas",
-                    "dr",
-                    "ref",
-                    "rx",
-                    "ra",
-                    "rt",
-                    "rl",
-                    "ww",
-                    "anc",
-                    "hla",
-                    "reg",
-                    "var",
-                    "anec",
-                    "biot",
-                    "breed",
-                    "caution",
-                    "cell",
-                    "char",
-                    "donor",
-                    "site",
-                    "disc",
-                    "time",
-                    "from",
-                    "group",
-                    "kar",
-                    "ko",
-                    "msi",
-                    "misc",
-                    "miss",
-                    "mabi",
-                    "mabt",
-                    "omics",
-                    "part",
-                    "pop",
-                    "prob",
-                    "res",
-                    "sen",
-                    "int",
-                    "tfor",
-                    "vir",
-                    "cc",
-                    "str",
-                    "di",
-                    "din",
-                    "dio",
-                    "ox",
-                    "sx",
-                    "ag",
-                    "oi",
-                    "hi",
-                    "ch",
-                    "ca",
-                    "dt",
-                    "dtc",
-                    "dtu",
-                    "dtv",
-                }
+                invalid_fields = set(fields) - CELLOSAURUS_FIELDS
 
-                invalid_fields = set(fields) - valid_fields
                 if invalid_fields:
                     return {
                         "status": "error",
@@ -1303,13 +1324,10 @@ class CellosaurusGetCellLineInfoTool(BaseTool):
                         "error": (f"No cell line data found for accession {accession}"),
                     }
 
-                # Apply field filtering if requested
-                if fields:
-                    filtered_data = {}
-                    for field in fields:
-                        if field in cell_line_data:
-                            filtered_data[field] = cell_line_data[field]
-                    cell_line_data = filtered_data
+                # `fields` is applied by the API (fields=id,ox,ca returns
+                # category/name-list/species-list). Filtering the reply again
+                # against those abbreviations matched no JSON key and emptied
+                # every record, including this tool's own test example.
 
                 return {
                     "success": True,

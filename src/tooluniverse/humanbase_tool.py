@@ -1,8 +1,40 @@
+import sys
+
 import networkx as nx
 import requests
 import urllib.parse
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+
+
+def _coerce_gene_list(raw):
+    """Turn agent-supplied gene input into a list of symbols.
+
+    LLMs often pass a single string such as ``"TP53"`` or ``"BRCA1,TP53"``.
+    Iterating that string would query one character at a time.
+    """
+    if raw is None:
+        return None
+    if isinstance(raw, str):
+        genes = [
+            part.strip() for part in raw.replace(";", ",").split(",") if part.strip()
+        ]
+        return genes or None
+    if isinstance(raw, (list, tuple)):
+        genes = []
+        for item in raw:
+            if item is None:
+                continue
+            # A list element can itself carry several symbols, e.g.
+            # ["BRCA1,TP53"]. Left whole it is fuzzy-resolved to one unrelated
+            # gene (BRIP1), returning a network the caller never asked for.
+            for part in str(item).replace(";", ",").split(","):
+                text = part.strip()
+                if text:
+                    genes.append(text)
+        return genes or None
+    text = str(raw).strip()
+    return [text] if text else None
 
 
 @register_tool("HumanBaseTool")
@@ -13,41 +45,86 @@ class HumanBaseTool(BaseTool):
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
+        self._resolutions = {}
+        self._unresolved = []
+
+    def _note_resolution(self, requested, symbol):
+        """Record a symbol substitution and report it away from stdout.
+
+        The substitution is the only signal that the network returned is not
+        the one asked for, so it also travels back in the payload rather than
+        living solely in a printed line.
+        """
+        self._resolutions[requested] = symbol
+        if symbol.upper() != requested.upper():
+            print(
+                f"[humanbase_tool] Using the official gene name: "
+                f"'{symbol}' instead of {requested}",
+                file=sys.stderr,
+                flush=True,
+            )
 
     def run(self, arguments):
         """Main entry point for the tool."""
+        self._resolutions = {}
+        self._unresolved = []
         # Feature-111A-007: 'genes' as alias for 'gene_list'
-        gene_list = arguments.get("gene_list") or arguments.get("genes")
+        gene_list = _coerce_gene_list(arguments.get("gene_list")) or _coerce_gene_list(
+            arguments.get("genes")
+        )
         tissue = arguments.get("tissue", "brain")
         max_node = arguments.get("max_node") or arguments.get("top_n") or 10
         interaction = arguments.get("interaction", None)
         string_mode = arguments.get("string_mode", True)
+
+        if not gene_list:
+            return {
+                "status": "error",
+                "error": "`gene_list` is required (gene symbols, or a comma-separated string).",
+            }
 
         graph, bp_collection = self.humanbase_ppi_retrieve(
             gene_list, tissue, max_node, interaction
         )
 
         if graph.number_of_nodes() == 0:
-            return {
-                "status": "error",
-                "error": (
+            if self._unresolved:
+                # Blaming the API or the tissue for what is almost always a
+                # mistyped symbol sends the caller after the wrong problem.
+                unresolved = ", ".join(repr(name) for name in self._unresolved)
+                error = (
+                    f"Could not resolve {unresolved} to a human gene. Check the "
+                    "symbol (official symbols and common synonyms both work, "
+                    "e.g. 'TP53' or 'p53')."
+                )
+            else:
+                error = (
                     "HumanBase network API returned no interaction data. "
                     "The API may be temporarily unavailable or the tissue "
                     f"'{tissue}' may not be supported. Try "
                     "STRING_get_interaction_partners as an alternative."
-                ),
+                )
+            return {
+                "status": "error",
+                "error": error,
                 "query": {"genes": gene_list, "tissue": tissue},
+                "unresolved_genes": self._unresolved,
                 "biological_processes": bp_collection,
             }
 
         if string_mode:
             result = self._convert_to_string(graph, bp_collection, gene_list, tissue)
-            return {"status": "success", "data": result}
+            return {
+                "status": "success",
+                "data": result,
+                "resolved_genes": dict(self._resolutions),
+            }
         else:
             # For non-string mode, return structured data
             return {
                 "status": "success",
                 "data": {"graph": graph, "biological_processes": bp_collection},
+                "resolved_genes": dict(self._resolutions),
             }
 
     def get_official_gene_name(self, gene_name):
@@ -75,26 +152,17 @@ class HumanBaseTool(BaseTool):
         for hit in hits:
             symbol = hit.get("symbol", "")
             if symbol.upper() == gene_name.upper():
-                print(
-                    f"[humanbase_tool] Using the official gene name: '{symbol}' instead of {gene_name}",
-                    flush=True,
-                )
+                self._note_resolution(gene_name, symbol)
                 return symbol
             aliases = hit.get("alias", [])
             if any(gene_name.upper() == alias.upper() for alias in aliases):
-                print(
-                    f"[humanbase_tool] Using the official gene name: '{symbol}' instead of {gene_name}",
-                    flush=True,
-                )
+                self._note_resolution(gene_name, symbol)
                 return symbol
 
         top_hit = hits[0]
         symbol = top_hit.get("symbol", None)
         if symbol:
-            print(
-                f"[humanbase_tool] Using the official gene name: '{symbol}' instead of {gene_name}",
-                flush=True,
-            )
+            self._note_resolution(gene_name, symbol)
             return symbol
         else:
             return f"No official gene symbol found for: {gene_name}. Please ensure it is correct."
@@ -150,13 +218,18 @@ class HumanBaseTool(BaseTool):
         Returns
             tuple: (NetworkX Graph of interactions, list of biological processes)
         """
+        requested = list(genes)
         entrez_result = self.get_entrez_ids(genes)
 
         # get_entrez_ids may return a string error message instead of a list
         if isinstance(entrez_result, str):
+            self._unresolved = requested
             return nx.Graph(), None
 
         # Filter out None values (genes that could not be resolved)
+        self._unresolved = [
+            name for name, entrez in zip(requested, entrez_result) if entrez is None
+        ]
         genes = [g for g in entrez_result if g is not None]
         if not genes:
             return nx.Graph(), None
@@ -240,7 +313,7 @@ class HumanBaseTool(BaseTool):
                     G.add_edge(source, target, weight=weight, interaction=edge_info)
 
         except requests.exceptions.RequestException as exc:
-            print(f"Error retrieving PPI data: {exc}")
+            print(f"Error retrieving PPI data: {exc}", file=sys.stderr, flush=True)
 
         bp_url = f"https://hb.flatironinstitute.org/api/terms/annotated/?database=gene-ontology-bp&entrez={gene_id}&max_term_size=20"
 
@@ -253,10 +326,18 @@ class HumanBaseTool(BaseTool):
                 # Grab the top 20 common pathways
                 bp_collection = [bp_entity["title"] for bp_entity in data]
             else:
-                print(f"[{genes}] No Gene Ontology Process recorded.")
+                print(
+                    f"[{genes}] No Gene Ontology Process recorded.",
+                    file=sys.stderr,
+                    flush=True,
+                )
 
         except requests.exceptions.RequestException as exc:
-            print(f"Error retrieving biological process data: {exc}")
+            print(
+                f"Error retrieving biological process data: {exc}",
+                file=sys.stderr,
+                flush=True,
+            )
 
         return G, bp_collection
 
@@ -279,6 +360,14 @@ class HumanBaseTool(BaseTool):
         output.append("🧬 HUMANBASE PROTEIN-PROTEIN INTERACTION NETWORK")
         output.append("=" * 50)
         output.append(f"Query Genes: {', '.join(original_genes)}")
+        substitutions = [
+            f"{requested} -> {symbol}"
+            for requested, symbol in sorted(self._resolutions.items())
+            if symbol.upper() != requested.upper()
+        ]
+        if substitutions:
+            # Without this line the network silently belongs to another gene.
+            output.append(f"Resolved To: {', '.join(substitutions)}")
         output.append(f"Tissue: {tissue.capitalize()}")
         output.append(f"Analysis Date: {self._get_current_timestamp()}")
         output.append("")
@@ -291,10 +380,6 @@ class HumanBaseTool(BaseTool):
         output.append("-" * 20)
         output.append(f"Total Proteins: {num_nodes}")
         output.append(f"Total Interactions: {num_edges}")
-
-        if num_nodes > 0:
-            density = nx.density(graph)
-            output.append(f"Network Density: {density:.3f}")
 
         output.append("")
 
@@ -353,37 +438,39 @@ class HumanBaseTool(BaseTool):
             output.append("📈 NETWORK ANALYSIS")
             output.append("-" * 18)
 
-            # Most connected proteins
+            # HumanBase returns a weighted graph in which every pair is joined,
+            # so degree, density, diameter, path length and clustering are the
+            # same numbers for every query (1.000 / 1 / 1.00) and say nothing
+            # about the biology. Rank on the confidence weights instead, which
+            # is the part that actually varies.
             if num_nodes > 0:
-                degrees = [(node, graph.degree(node)) for node in graph.nodes()]
-                degrees.sort(key=lambda x: x[1], reverse=True)
+                strengths = [
+                    (
+                        node,
+                        sum(
+                            data.get("weight", 0.0)
+                            for _, _, data in graph.edges(node, data=True)
+                        ),
+                    )
+                    for node in graph.nodes()
+                ]
+                strengths.sort(key=lambda item: item[1], reverse=True)
 
-                output.append("Most Connected Proteins:")
-                for i, (node, degree) in enumerate(degrees[:5], 1):
-                    output.append(f"  {i}. {node}: {degree} connections")
+                output.append("Most Strongly Connected Proteins (summed confidence):")
+                for i, (node, strength) in enumerate(strengths[:5], 1):
+                    output.append(f"  {i}. {node}: {strength:.2f}")
                 output.append("")
 
-            # Connectivity
-            is_connected = nx.is_connected(graph)
-            output.append(
-                f"Network Connectivity: {'Fully connected' if is_connected else 'Disconnected components'}"
-            )
-
-            if is_connected and num_nodes > 1:
-                try:
-                    diameter = nx.diameter(graph)
-                    avg_path_length = nx.average_shortest_path_length(graph)
-                    output.append(f"Network Diameter: {diameter}")
-                    output.append(f"Average Path Length: {avg_path_length:.2f}")
-                except Exception:
-                    pass
-
-            # Clustering
-            try:
-                clustering = nx.average_clustering(graph)
-                output.append(f"Average Clustering: {clustering:.3f}")
-            except Exception:
-                pass
+            weights = [data.get("weight", 0.0) for _, _, data in graph.edges(data=True)]
+            if weights:
+                output.append(
+                    f"Interaction Confidence: mean {sum(weights) / len(weights):.3f}, "
+                    f"max {max(weights):.3f}, min {min(weights):.3f}"
+                )
+                strong = sum(1 for weight in weights if weight >= 0.5)
+                output.append(
+                    f"High-confidence Interactions (weight >= 0.5): {strong} of {len(weights)}"
+                )
 
             output.append("")
 

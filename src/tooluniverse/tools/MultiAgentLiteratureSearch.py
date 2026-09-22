@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def MultiAgentLiteratureSearch(
     query: str,
-    max_iterations: int,
-    quality_threshold: float,
+    max_iterations: Optional[int] = 3,
+    quality_threshold: Optional[float] = 0.7,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,9 +25,9 @@ def MultiAgentLiteratureSearch(
     query : str
         The research query to search for
     max_iterations : int
-        Maximum number of iterations (default: 3)
+        Not currently applied -- the search always runs a single pass. Retained for f...
     quality_threshold : float
-        Quality threshold for completion (default: 0.7)
+        Not currently applied -- QualityCheckerAgent is registered as a dependency bu...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

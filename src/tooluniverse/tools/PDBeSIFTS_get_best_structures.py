@@ -10,6 +10,8 @@ from ._shared_client import get_shared_client
 
 def PDBeSIFTS_get_best_structures(
     uniprot_accession: str,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +24,10 @@ def PDBeSIFTS_get_best_structures(
     ----------
     uniprot_accession : str
         UniProt accession for the protein. Examples: 'P04637' (TP53), 'P00533' (EGFR)...
+    limit : int
+        Maximum number of entries to return (default 50, max 500). Proteins such as P...
+    offset : int
+        Zero-based index of the first entry to return, for paging through the ranked ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -38,7 +44,11 @@ def PDBeSIFTS_get_best_structures(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"uniprot_accession": uniprot_accession}.items()
+        for k, v in {
+            "uniprot_accession": uniprot_accession,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

@@ -14,7 +14,7 @@ def PharmGKB_search_variants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> list[Any]:
     """
     Search for genetic variants in PharmGKB by rsID or name. Returns variant IDs and associated gene ...
 
@@ -31,7 +31,7 @@ def PharmGKB_search_variants(
 
     Returns
     -------
-    dict[str, Any]
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

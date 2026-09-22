@@ -20,8 +20,8 @@ def AOPWiki_list_aops(
 
     Parameters
     ----------
-    search : str, optional
-        Case-insensitive keyword to filter AOPs by title or short name. Omit t...
+    search : str
+        Case-insensitive keyword to filter AOPs by title or short name. Omit to retur...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

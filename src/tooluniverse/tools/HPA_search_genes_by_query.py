@@ -10,6 +10,7 @@ from ._shared_client import get_shared_client
 
 def HPA_search_genes_by_query(
     search_query: str,
+    max_results: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +23,8 @@ def HPA_search_genes_by_query(
     ----------
     search_query : str
         Gene name, alias, keyword, or cell line name to search for, e.g., 'EGFR', 'TP...
+    max_results : int
+        Maximum number of gene matches to return (default: 50). This search does a br...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +39,11 @@ def HPA_search_genes_by_query(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"search_query": search_query}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"search_query": search_query, "max_results": max_results}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "HPA_search_genes_by_query",

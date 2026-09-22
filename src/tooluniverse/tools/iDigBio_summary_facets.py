@@ -18,7 +18,7 @@ def iDigBio_summary_facets(
     phylum: Optional[str] = None,
     class_: Optional[str] = None,
     order: Optional[str] = None,
-    top_fields: Optional[str] = None,
+    top_fields: Optional[str | list[Any]] = None,
     count: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -48,7 +48,7 @@ def iDigBio_summary_facets(
         Class.
     order : str
         Order.
-    top_fields : str
+    top_fields : str | list[Any]
         Darwin Core field(s) to break down counts by, e.g. 'country', 'institutioncod...
     count : int
         Number of top values to return per facet field (default 10, max 100).

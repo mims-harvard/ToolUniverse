@@ -10,9 +10,10 @@ from ._shared_client import get_shared_client
 
 def Enrichr_gene_to_genesets(
     gene: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "gene_to_genesets",
     include_metadata: Optional[bool] = False,
     max_terms_per_library: Optional[int] = 0,
+    species: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +32,8 @@ def Enrichr_gene_to_genesets(
         If true, also return library category/description metadata (Enrichr setup=tru...
     max_terms_per_library : int
         Optional cap on the number of term names returned per library (0 = no cap, re...
+    species : str
+        Organism instance to query: 'human' (default), 'mouse', 'fly' (FlyEnrichr), '...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def Enrichr_gene_to_genesets(
             "gene": gene,
             "include_metadata": include_metadata,
             "max_terms_per_library": max_terms_per_library,
+            "species": species,
         }.items()
         if v is not None
     }

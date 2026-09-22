@@ -18,7 +18,7 @@ def Tool_Finder_Keyword(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> list[Any]:
     """
     Simple keyword-based tool finder for discovering relevant tools using text matching
 
@@ -43,7 +43,7 @@ def Tool_Finder_Keyword(
 
     Returns
     -------
-    dict[str, Any]
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

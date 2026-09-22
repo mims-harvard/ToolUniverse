@@ -9,30 +9,30 @@ from ._shared_client import get_shared_client
 
 
 def GtoPdb_get_interactions(
-    gene_symbol: Optional[str | Any] = None,
-    targetId: Optional[int | Any] = None,
-    target_id: Optional[int | Any] = None,
-    ligandId: Optional[int | Any] = None,
-    species: Optional[str | Any] = None,
+    gene_symbol: Optional[str] = None,
+    targetId: Optional[int] = None,
+    target_id: Optional[int] = None,
+    ligandId: Optional[int] = None,
+    species: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get pharmacological interactions between targets and ligands from the Guide to Pharmacology datab...
 
     Parameters
     ----------
-    gene_symbol : str | Any
+    gene_symbol : str
         Gene symbol convenience parameter — automatically resolves to GtoPdb targetId...
-    targetId : int | Any
+    targetId : int
         GtoPdb target ID. Get from GtoPdb_search_targets. Examples: 2486 (dopamine be...
-    target_id : int | Any
+    target_id : int
         Alias for targetId. GtoPdb target ID.
-    ligandId : int | Any
+    ligandId : int
         GtoPdb ligand ID. Get from GtoPdb_search_ligands. Examples: 5765 (aspirin), 7...
-    species : str | Any
+    species : str
         Filter by species. Examples: 'Human', 'Mouse', 'Rat'
     stream_callback : Callable, optional
         Callback for streaming output
@@ -43,7 +43,7 @@ def GtoPdb_get_interactions(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

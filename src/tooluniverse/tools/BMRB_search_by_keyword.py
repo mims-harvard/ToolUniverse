@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def BMRB_search_by_keyword(
     term: str,
-    database: Optional[str | Any] = None,
+    database: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def BMRB_search_by_keyword(
     ----------
     term : str
         Search term (protein name, molecule name, or keyword). Examples: 'ubiquitin',...
-    database : str | Any
+    database : str
         Database to search: 'macromolecules' (proteins/nucleic acids) or 'metabolomic...
     stream_callback : Callable, optional
         Callback for streaming output

@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def ELIXIRTeSS_search_events(
-    q: Optional[str | Any] = None,
-    country: Optional[str | Any] = None,
-    event_type: Optional[str | Any] = None,
-    online: Optional[bool | Any] = None,
-    page_size: Optional[int | Any] = None,
+    q: Optional[str] = None,
+    country: Optional[str] = None,
+    event_type: Optional[str] = None,
+    online: Optional[bool] = None,
+    page_size: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,15 +24,15 @@ def ELIXIRTeSS_search_events(
 
     Parameters
     ----------
-    q : str | Any
+    q : str
         Search query for events. Examples: 'metagenomics workshop', 'NGS training', '...
-    country : str | Any
+    country : str
         Filter by country. Examples: 'United Kingdom', 'Germany', 'Netherlands', 'Onl...
-    event_type : str | Any
+    event_type : str
         Filter by event type. Values: 'workshops_and_courses', 'conferences', 'webinars'
-    online : bool | Any
+    online : bool
         Filter to online events only (true/false)
-    page_size : int | Any
+    page_size : int
         Number of results to return (default 10)
     stream_callback : Callable, optional
         Callback for streaming output

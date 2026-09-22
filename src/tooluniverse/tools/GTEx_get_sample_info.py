@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GTEx_get_sample_info(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_sample_info",
     sample_id: Optional[list[str]] = None,
     subject_id: Optional[list[str]] = None,
     tissue_site_detail_id: Optional[list[str]] = None,
@@ -22,7 +22,7 @@ def GTEx_get_sample_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get detailed GTEx sample and subject metadata. Returns sample IDs, tissue types, donor demographi...
 
@@ -55,7 +55,7 @@ def GTEx_get_sample_info(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GTEx_get_single_tissue_sqtls(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_single_tissue_sqtls",
     result_type: Optional[str] = "sqtl",
     gencode_id: Optional[str | list[str]] = None,
     gene_symbol: Optional[str] = None,

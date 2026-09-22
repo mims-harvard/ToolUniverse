@@ -9,13 +9,13 @@ from ._shared_client import get_shared_client
 
 
 def ELIXIRTeSS_search_materials(
-    q: Optional[str | Any] = None,
-    scientific_topics: Optional[str | Any] = None,
-    target_audience: Optional[str | Any] = None,
-    difficulty_level: Optional[str | Any] = None,
-    licence: Optional[str | Any] = None,
-    page_size: Optional[int | Any] = None,
-    page: Optional[int | Any] = None,
+    q: Optional[str] = None,
+    scientific_topics: Optional[str] = None,
+    target_audience: Optional[str] = None,
+    difficulty_level: Optional[str] = None,
+    licence: Optional[str] = None,
+    page_size: Optional[int] = None,
+    page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,19 +26,19 @@ def ELIXIRTeSS_search_materials(
 
     Parameters
     ----------
-    q : str | Any
+    q : str
         Search query for training materials. Examples: 'CRISPR', 'protein structure p...
-    scientific_topics : str | Any
+    scientific_topics : str
         Filter by EDAM scientific topic. Examples: 'Genomics', 'Proteomics', 'Sequenc...
-    target_audience : str | Any
+    target_audience : str
         Filter by target audience. Examples: 'Researchers', 'Graduate students', 'Bio...
-    difficulty_level : str | Any
+    difficulty_level : str
         Filter by difficulty: 'Beginner', 'Intermediate', 'Advanced'
-    licence : str | Any
+    licence : str
         Filter by license type. Example: 'CC-BY'
-    page_size : int | Any
+    page_size : int
         Number of results to return (default 10, max 100)
-    page : int | Any
+    page : int
         Page number for pagination
     stream_callback : Callable, optional
         Callback for streaming output

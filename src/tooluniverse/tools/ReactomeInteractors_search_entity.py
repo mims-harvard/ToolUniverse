@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def ReactomeInteractors_search_entity(
     query: str,
-    species: Optional[str | Any] = None,
-    types: Optional[str | Any] = None,
+    species: Optional[str] = None,
+    types: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def ReactomeInteractors_search_entity(
     ----------
     query : str
         Search query - gene name, protein name, pathway name, or Reactome ID. Example...
-    species : str | Any
+    species : str
         Species name filter (default: 'Homo sapiens'). Examples: 'Homo sapiens', 'Mus...
-    types : str | Any
+    types : str
         Entity type filter. Options: 'Protein', 'Complex', 'Reaction', 'Pathway', 'Sm...
     stream_callback : Callable, optional
         Callback for streaming output

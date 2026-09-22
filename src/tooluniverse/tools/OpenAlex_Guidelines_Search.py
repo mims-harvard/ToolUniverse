@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def OpenAlex_Guidelines_Search(
     query: str,
-    limit: int,
-    year_from: Optional[int | Any] = None,
-    year_to: Optional[int | Any] = None,
+    limit: Optional[int] = 10,
+    year_from: Optional[int] = None,
+    year_to: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,9 +27,9 @@ def OpenAlex_Guidelines_Search(
         Medical condition or clinical topic to search for guidelines (e.g., 'diabetes...
     limit : int
         Maximum number of guidelines to return (default: 10)
-    year_from : int | Any
+    year_from : int
         Filter for guidelines published from this year onwards (optional) (optional, ...
-    year_to : int | Any
+    year_to : int
         Filter for guidelines published up to this year (optional) (optional, default...
     stream_callback : Callable, optional
         Callback for streaming output

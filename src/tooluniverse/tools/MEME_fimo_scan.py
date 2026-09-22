@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def MEME_fimo_scan(
-    operation: str,
     sequences: str,
     motif_text: str,
-    pvalue_threshold: Optional[float | Any] = 0.0001,
-    scan_rc: Optional[bool | Any] = True,
+    operation: Optional[str] = "fimo_scan",
+    pvalue_threshold: Optional[float] = 0.0001,
+    scan_rc: Optional[bool] = True,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,9 +30,9 @@ def MEME_fimo_scan(
         DNA sequences in FASTA format to scan for motif occurrences. Example: '>seq1\\...
     motif_text : str
         Motif(s) in MEME format. Must include the full MEME header (MEME version 5, A...
-    pvalue_threshold : float | Any
+    pvalue_threshold : float
         P-value threshold for reporting motif occurrences. Default 1e-4. Lower values...
-    scan_rc : bool | Any
+    scan_rc : bool
         If true (default), scan both strands. Set false to scan only the given strand.
     stream_callback : Callable, optional
         Callback for streaming output

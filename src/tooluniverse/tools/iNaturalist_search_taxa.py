@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def iNaturalist_search_taxa(
     query: str,
-    per_page: Optional[int | Any] = None,
+    per_page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def iNaturalist_search_taxa(
     ----------
     query : str
         Search query for taxon name (scientific or common). Examples: 'Panthera tigri...
-    per_page : int | Any
+    per_page : int
         Number of results to return (1-200, default 10).
     stream_callback : Callable, optional
         Callback for streaming output

@@ -10,13 +10,13 @@ from ._shared_client import get_shared_client
 
 def ols_search_terms(
     query: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_terms",
     rows: Optional[int] = 10,
     size: Optional[int] = 10,
     ontology: Optional[str] = None,
     exact_match: Optional[bool] = False,
     include_obsolete: Optional[bool] = False,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -41,7 +41,7 @@ def ols_search_terms(
         Restrict results to exact matches (default: false). The query must equal a te...
     include_obsolete : bool
         Include obsolete terms (default: false)
-    limit : int | Any
+    limit : int
         Alias for rows. Maximum number of results to return (default: 10, max: 100).
     stream_callback : Callable, optional
         Callback for streaming output

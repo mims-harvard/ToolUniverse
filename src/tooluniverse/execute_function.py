@@ -2726,13 +2726,25 @@ class ToolUniverse:
             lst, return_message=return_message, verbose=verbose, format=format
         )
 
-    def return_all_loaded_tools(self):
+    def return_all_loaded_tools(self, copy_tools=True):
         """
-        Return a deep copy of all loaded tools.
+        Return all loaded tools.
+
+        Args:
+            copy_tools (bool): When True (the default) return a deep copy, so callers
+                cannot modify the live catalogue. Callers on a request path that only
+                read the configurations should pass False: the deep copy walks every
+                tool's parameter schema, which costs hundreds of milliseconds once the
+                catalogue holds a few thousand tools, and it is paid again on every
+                call.
 
         Returns:
-            list: A deep copy of the all_tools list to prevent external modification.
+            list: The loaded tool configurations. With ``copy_tools=False`` the list is
+                a fresh list but the dictionaries in it are the live ones, so they must
+                be treated as read-only.
         """
+        if not copy_tools:
+            return list(self.all_tools)
         return copy.deepcopy(self.all_tools)
 
     def _execute_function_call_list(

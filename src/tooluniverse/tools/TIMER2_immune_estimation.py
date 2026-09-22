@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def TIMER2_immune_estimation(
-    operation: str,
     cancer: str,
-    gene: Optional[str | Any] = None,
+    operation: Optional[str] = "immune_estimation",
+    gene: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def TIMER2_immune_estimation(
         Operation type
     cancer : str
         TCGA cancer type abbreviation (e.g., 'BRCA', 'LUAD', 'COAD', 'SKCM', 'GBM')
-    gene : str | Any
+    gene : str
         Optional gene symbol to correlate with immune infiltration (e.g., 'CD8A', 'PD...
     stream_callback : Callable, optional
         Callback for streaming output

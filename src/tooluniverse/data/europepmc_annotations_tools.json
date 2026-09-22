@@ -14,7 +14,21 @@
             "string",
             "null"
           ],
-          "description": "Filter by annotation type: 'Chemicals', 'Organisms', 'Gene Ontology', 'Diseases', 'Genes & Proteins', 'Accession Numbers'. Default: all types."
+          "enum": [
+            "Chemicals",
+            "Diseases",
+            "Organisms",
+            "Gene_Proteins",
+            "Gene Ontology",
+            "Accession Numbers",
+            "Experimental Methods",
+            "Gene Disease Relationship",
+            "Resources",
+            "Sequence",
+            "Cell Line",
+            null
+          ],
+          "description": "Filter by annotation type. Note 'Gene_Proteins' is spelled with an underscore. Default: all types."
         }
       },
       "required": [
@@ -43,7 +57,8 @@
             "article_id": {"type": "string"},
             "pmcid": {"type": ["string", "null"]},
             "source": {"type": ["string", "null"]},
-            "annotation_count": {"type": "integer"},
+            "annotation_count": {"type": "integer", "description": "Annotations returned, capped at 200."},
+            "total_annotations": {"type": "integer", "description": "Annotations this article has in total."},
             "annotations": {
               "type": "array",
               "items": {
@@ -93,14 +108,28 @@
         },
         "annotation_type": {
           "type": "string",
-          "description": "Annotation type to retrieve. One of: 'Chemicals', 'Organisms', 'Gene Ontology', 'Diseases', 'Genes & Proteins', 'Accession Numbers'."
+          "enum": [
+            "Chemicals",
+            "Diseases",
+            "Organisms",
+            "Gene_Proteins",
+            "Gene Ontology",
+            "Accession Numbers",
+            "Experimental Methods",
+            "Gene Disease Relationship",
+            "Resources",
+            "Sequence",
+            "Cell Line"
+          ],
+          "description": "Annotation type to retrieve. Note 'Gene_Proteins' is spelled with an underscore; Europe PMC returns an empty result rather than an error for an unrecognised type."
         },
         "page_size": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Number of results per page. Default: 25. Max: 1000."
+          "minimum": 1,
+          "description": "Maximum annotations returned per article. Default: 100. The Europe PMC endpoint returns every annotation for the requested articles in one response, so this caps how many are included per article; each article's total_annotations still reports its full count."
         }
       },
       "required": [
@@ -130,6 +159,7 @@
             "article_count": {"type": "integer"},
             "annotation_type": {"type": "string"},
             "total_annotations": {"type": "integer"},
+            "not_found": {"type": "array", "items": {"type": "string"}, "description": "Requested identifiers Europe PMC returned no article for."},
             "articles": {
               "type": "array",
               "items": {
@@ -137,7 +167,8 @@
                 "properties": {
                   "article_id": {"type": "string"},
                   "pmcid": {"type": ["string", "null"]},
-                  "annotation_count": {"type": "integer"},
+                  "annotation_count": {"type": "integer", "description": "Annotations returned for this article, after the page_size cap."},
+                  "total_annotations": {"type": "integer", "description": "Annotations this article has in total, before the cap."},
                   "annotations": {"type": "array"}
                 }
               }
@@ -188,7 +219,8 @@
           "type": "object",
           "properties": {
             "article_id": {"type": "string"},
-            "chemical_count": {"type": "integer"},
+            "chemical_count": {"type": "integer", "description": "Chemicals returned, capped at 200."},
+            "total_chemicals": {"type": "integer", "description": "Chemicals this article mentions in total."},
             "chemicals": {
               "type": "array",
               "items": {

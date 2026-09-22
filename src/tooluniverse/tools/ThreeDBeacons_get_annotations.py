@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ThreeDBeacons_get_annotations(
     accession: str,
-    type_: Optional[str] = None,
+    type_: str,
     provider: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -25,7 +25,7 @@ def ThreeDBeacons_get_annotations(
     accession : str
         UniProt protein accession. Examples: 'P38398' (BRCA1), 'P04637' (TP53), 'P005...
     type_ : str
-        Filter to one annotation type. Valid values: CARBOHYD, DOMAIN, ACT_SITE, META...
+        Annotation type to filter to -- required by the upstream 3D Beacons API (it 4...
     provider : str
         Optional model provider to source annotations from: 'pdbe' or 'alphafold'.
     stream_callback : Callable, optional

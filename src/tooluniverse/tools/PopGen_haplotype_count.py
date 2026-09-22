@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def PopGen_haplotype_count(
-    operation: str,
     n_snps: int,
+    operation: Optional[str] = "haplotype_count",
     generations: Optional[int] = None,
     recomb_rate: Optional[float] = None,
     *,

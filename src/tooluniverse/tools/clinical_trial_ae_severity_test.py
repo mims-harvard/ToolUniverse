@@ -19,7 +19,7 @@ def clinical_trial_ae_severity_test(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Merge clinical trial demographics (DM) and adverse-events (AE) CSVs and run a statistical test on...
 
@@ -46,7 +46,7 @@ def clinical_trial_ae_severity_test(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

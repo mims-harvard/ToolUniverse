@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def Metabolite_get_info(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_info",
     hmdb_id: Optional[str] = None,
     compound_name: Optional[str] = None,
     pubchem_cid: Optional[int | str] = None,

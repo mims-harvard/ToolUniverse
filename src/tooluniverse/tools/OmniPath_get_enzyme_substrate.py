@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def OmniPath_get_enzyme_substrate(
-    enzymes: Optional[str | Any] = None,
-    substrates: Optional[str | Any] = None,
-    types: Optional[str | Any] = None,
-    organisms: Optional[int | Any] = None,
-    limit: Optional[int | Any] = None,
+    enzymes: Optional[str | list[Any]] = None,
+    substrates: Optional[str | list[Any]] = None,
+    types: Optional[str] = None,
+    organisms: Optional[int] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,15 +24,15 @@ def OmniPath_get_enzyme_substrate(
 
     Parameters
     ----------
-    enzymes : str | Any
+    enzymes : str | list[Any]
         Gene symbol(s) or UniProt ID(s) for enzyme/kinase. Comma-separated for multip...
-    substrates : str | Any
+    substrates : str | list[Any]
         Gene symbol(s) or UniProt ID(s) for substrate. Examples: 'STAT3', 'P40763'.
-    types : str | Any
+    types : str
         Modification type filter. Options include: phosphorylation, ubiquitination, a...
-    organisms : int | Any
+    organisms : int
         NCBI taxonomy ID. Default: 9606 (human).
-    limit : int | Any
+    limit : int
         Maximum number of results to return.
     stream_callback : Callable, optional
         Callback for streaming output
