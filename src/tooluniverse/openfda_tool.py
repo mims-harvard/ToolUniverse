@@ -10,7 +10,6 @@ from .base_rest_tool import BaseRESTTool
 from .base_tool import BaseTool
 from .openfda_adv_tool import faers_drug_name_clause
 from .tool_registry import register_tool
-import os
 import urllib.parse
 
 # Cache for GraphQL query to avoid repeated string operations
@@ -214,6 +213,21 @@ NEVER_KEYWORD_TRIMMED = frozenset(
         "unii",
     }
 )
+
+
+def contributes_content_keywords(field):
+    """Whether a searched field's value may also trim returned section text.
+
+    The keyword filter exists to cut a long label section down to the sentences
+    that match what was searched for. That only makes sense when the search term
+    is content. An identifier, a version stamp or a name block says nothing
+    about which sentences matter, so using it as a content filter can only
+    delete text: fetching a label by ``id`` and asking for its sections used to
+    come back empty for exactly this reason.
+    """
+    if isinstance(field, tuple):
+        return all(contributes_content_keywords(part) for part in field)
+    return str(field).split(".")[-1] not in NEVER_KEYWORD_TRIMMED
 
 
 def extract_nested_fields(
@@ -642,11 +656,7 @@ def search_openfda(
                 continue
 
             # Merge multiple continuous black spaces into one and use one '+'
-            if (
-                keywords_filter
-                and field != "openfda.brand_name"
-                and field != "openfda.generic_name"
-            ):
+            if keywords_filter and contributes_content_keywords(field):
                 keywords_list.extend(value.split())
             if field == "openfda.generic_name":
                 value = value.upper()  # all generic names are in uppercase
@@ -2034,7 +2044,16 @@ class FDATool(BaseTool):
         if self.exists is None:
             self.exists = self.return_fields
         self.endpoint_url = endpoint_url
-        self.api_key = api_key or os.getenv("FDA_API_KEY")
+        self._explicit_api_key = api_key
+
+    @property
+    def api_key(self):
+        return self.credential("FDA_API_KEY") or self._explicit_api_key
+
+    @api_key.setter
+    def api_key(self, value):
+        # Keep direct assignment working for callers that configure a key in code.
+        self._explicit_api_key = value
 
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)
@@ -2476,7 +2495,16 @@ class FDADrugLabelFieldValueTool(BaseTool):
     def __init__(self, tool_config, api_key=None):
         super().__init__(tool_config)
         self.endpoint_url = "https://api.fda.gov/drug/label.json"
-        self.api_key = api_key or os.getenv("FDA_API_KEY")
+        self._explicit_api_key = api_key
+
+    @property
+    def api_key(self):
+        return self.credential("FDA_API_KEY") or self._explicit_api_key
+
+    @api_key.setter
+    def api_key(self, value):
+        # Keep direct assignment working for callers that configure a key in code.
+        self._explicit_api_key = value
 
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)

@@ -1074,7 +1074,11 @@ default_tool_files = {
     # EVA - European Variation Archive (EBI) for population variant data
     "eva": os.path.join(current_dir, "data", "eva_tools.json"),
     # eQTL Catalogue - Expression quantitative trait loci associations
-    "eqtl": os.path.join(current_dir, "data", "eqtl_tools.json"),
+    # Archived at: src/tooluniverse/data/broken_apis/eqtl_tools.json
+    # EBI retired the REST API: every path and version answers 410 Gone. The data
+    # moved to FTP/HDF5/Tabix (ftp.ebi.ac.uk/pub/databases/spot/eQTL/), so there is
+    # no endpoint to repoint at; use OpenTargets for eQTL evidence per gene/variant.
+    # "eqtl": os.path.join(current_dir, "data", "eqtl_tools.json"),
     # OSDR - NASA Open Science Data Repository (space biology studies).
     # Re-added: the domain from the prior attempt (genelab-data.ndc.nasa.gov)
     # is dead, but OSDR has since migrated to osdr.nasa.gov, verified live.
@@ -1229,7 +1233,7 @@ default_tool_files = {
     "usgs_water": os.path.join(current_dir, "data", "usgs_water_tools.json"),
     # Spaceflight News API - 30K+ space news articles from major sites
     # Launch Library 2 - upcoming rocket launches worldwide (all providers)
-    # US Census Bureau - population and demographic data (no key required)
+    # US Census Bureau - population and demographic data (free key required)
     "uscensus": os.path.join(current_dir, "data", "uscensus_tools.json"),
     # Open-Meteo Marine - ocean wave/swell forecasts for any coastal location
     "open_meteo_marine": os.path.join(

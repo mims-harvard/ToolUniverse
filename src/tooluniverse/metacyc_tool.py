@@ -8,11 +8,11 @@ Website: https://metacyc.org/
 BioCyc: https://biocyc.org/
 """
 
-import os
 import re
 import requests
 from typing import Any, Dict, List, Optional
 from .base_tool import BaseTool
+from .credentials import has_credential_context
 from .tool_registry import register_tool
 
 BIOCYC_BASE_URL = "https://biocyc.org"
@@ -67,8 +67,8 @@ class MetaCycTool(BaseTool):
         if self._logged_in:
             return None
 
-        email = os.environ.get("BIOCYC_EMAIL", "")
-        password = os.environ.get("BIOCYC_PASSWORD", "")
+        email = self.credential("BIOCYC_EMAIL") or ""
+        password = self.credential("BIOCYC_PASSWORD") or ""
         if not email or not password:
             return _AUTH_WALL_ERROR
 
@@ -96,6 +96,12 @@ class MetaCycTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute MetaCyc query based on operation type."""
+        if has_credential_context():
+            # An authenticated BioCyc session cookie is tenant-specific.
+            self.session = requests.Session()
+            self.session.headers.update({"User-Agent": "ToolUniverse/MetaCyc"})
+            self._logged_in = False
+
         operation = arguments.get("operation", "")
         # Auto-fill operation from tool config const if not provided by user
         if not operation:

@@ -17,7 +17,6 @@ model-generated, so treat them as an appraisal aid, not curated ground truth.
 Requested in mims-harvard/ToolUniverse issue #204.
 """
 
-import os
 from typing import Any, Dict
 
 import requests
@@ -73,7 +72,7 @@ class BGPTPaperEvidenceTool(BaseTool):
                 }
 
         # api_key is optional: explicit argument first, then BGPT_API_KEY env var.
-        api_key = arguments.get("api_key") or os.environ.get("BGPT_API_KEY")
+        api_key = self.credential("BGPT_API_KEY") or arguments.get("api_key")
         if api_key:
             payload["api_key"] = api_key
 

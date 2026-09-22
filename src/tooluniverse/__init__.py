@@ -21,6 +21,8 @@ from pkgutil import extend_path
 
 __path__ = extend_path(__path__, __name__)
 
+from .credentials import credential_context, current_credentials, get_credential
+
 if not _LIGHT_IMPORT:
     from .execute_function import ToolUniverse
     from .base_tool import BaseTool
@@ -184,6 +186,9 @@ __all__ = [
     "__version__",
     "ToolUniverse",
     "BaseTool",
+    "credential_context",
+    "current_credentials",
+    "get_credential",
     "register_tool",
     "remote_tool",
     "register_remote_tool",

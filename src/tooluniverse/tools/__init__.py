@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2718 scientific tools.
+Type-safe Python interface to 2717 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -2315,6 +2315,7 @@ from .RxClass_get_drug_classes import RxClass_get_drug_classes
 from .RxNorm_find_rxcui import RxNorm_find_rxcui
 from .RxNorm_get_drug_info import RxNorm_get_drug_info
 from .RxNorm_get_drug_names import RxNorm_get_drug_names
+from .RxNorm_get_exact_concepts import RxNorm_get_exact_concepts
 from .RxNorm_get_ndc_properties import RxNorm_get_ndc_properties
 from .RxNorm_get_ndc_status_history import RxNorm_get_ndc_status_history
 from .RxNorm_get_related_drugs import RxNorm_get_related_drugs
@@ -2761,8 +2762,6 @@ from .eMolecules_get_compound import eMolecules_get_compound
 from .eMolecules_get_vendors import eMolecules_get_vendors
 from .eMolecules_search import eMolecules_search
 from .eMolecules_search_smiles import eMolecules_search_smiles
-from .eQTL_get_associations import eQTL_get_associations
-from .eQTL_list_datasets import eQTL_list_datasets
 from .ebi_cross_reference_search import ebi_cross_reference_search
 from .ebi_get_domain_fields import ebi_get_domain_fields
 from .ebi_get_domain_info import ebi_get_domain_info
@@ -5135,6 +5134,7 @@ __all__ = [
     "RxNorm_find_rxcui",
     "RxNorm_get_drug_info",
     "RxNorm_get_drug_names",
+    "RxNorm_get_exact_concepts",
     "RxNorm_get_ndc_properties",
     "RxNorm_get_ndc_status_history",
     "RxNorm_get_related_drugs",
@@ -5533,8 +5533,6 @@ __all__ = [
     "eMolecules_get_vendors",
     "eMolecules_search",
     "eMolecules_search_smiles",
-    "eQTL_get_associations",
-    "eQTL_list_datasets",
     "ebi_cross_reference_search",
     "ebi_get_domain_fields",
     "ebi_get_domain_info",

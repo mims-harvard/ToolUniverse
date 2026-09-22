@@ -2,7 +2,6 @@
 (Parallel Search MCP, SerpBase, Firecrawl Search)."""
 
 import json
-import os
 import re
 import subprocess
 import sys
@@ -231,7 +230,7 @@ print(json.dumps(results))
         body's ``error`` field rather than the status code, so that field is
         checked explicitly rather than relying on ``raise_for_status()`` alone.
         """
-        api_key = os.environ.get("SERPBASE_API_KEY", "")
+        api_key = self.credential("SERPBASE_API_KEY") or ""
         if not api_key:
             raise RuntimeError(
                 "SERPBASE_API_KEY environment variable is not set. "
