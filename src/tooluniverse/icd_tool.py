@@ -6,13 +6,13 @@ Official API: https://icd.who.int/icdapi
 Requires ICD_CLIENT_ID / ICD_CLIENT_SECRET environment variables.
 """
 
-import os
 import time
 from urllib.parse import quote as url_quote
 
 import requests
 from typing import Any, Dict, Optional
 from .base_tool import BaseTool
+from .credentials import has_credential_context
 from .tool_registry import register_tool
 
 ICD_API_BASE = "https://id.who.int/icd"
@@ -34,11 +34,15 @@ class ICDTool(BaseTool):
 
     def _get_access_token(self) -> Optional[str]:
         """Get OAuth2 access token for ICD API (cached until near expiry)."""
-        if self._access_token and time.time() < self._token_expiry:
+        if (
+            not has_credential_context()
+            and self._access_token
+            and time.time() < self._token_expiry
+        ):
             return self._access_token
 
-        client_id = os.getenv("ICD_CLIENT_ID")
-        client_secret = os.getenv("ICD_CLIENT_SECRET")
+        client_id = self.credential("ICD_CLIENT_ID")
+        client_secret = self.credential("ICD_CLIENT_SECRET")
 
         if not client_id or not client_secret:
             return None
@@ -54,10 +58,12 @@ class ICDTool(BaseTool):
             resp.raise_for_status()
             token_data = resp.json()
 
-            self._access_token = token_data.get("access_token")
-            expires_in = token_data.get("expires_in", 3600)
-            self._token_expiry = time.time() + (expires_in - 60)
-            return self._access_token
+            access_token = token_data.get("access_token")
+            if not has_credential_context():
+                self._access_token = access_token
+                expires_in = token_data.get("expires_in", 3600)
+                self._token_expiry = time.time() + (expires_in - 60)
+            return access_token
         except Exception:
             return None
 

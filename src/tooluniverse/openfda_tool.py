@@ -10,7 +10,6 @@ from .base_rest_tool import BaseRESTTool
 from .base_tool import BaseTool
 from .openfda_adv_tool import faers_drug_name_clause
 from .tool_registry import register_tool
-import os
 import urllib.parse
 
 # Cache for GraphQL query to avoid repeated string operations
@@ -2045,7 +2044,16 @@ class FDATool(BaseTool):
         if self.exists is None:
             self.exists = self.return_fields
         self.endpoint_url = endpoint_url
-        self.api_key = api_key or os.getenv("FDA_API_KEY")
+        self._explicit_api_key = api_key
+
+    @property
+    def api_key(self):
+        return self.credential("FDA_API_KEY") or self._explicit_api_key
+
+    @api_key.setter
+    def api_key(self, value):
+        # Keep direct assignment working for callers that configure a key in code.
+        self._explicit_api_key = value
 
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)
@@ -2487,7 +2495,16 @@ class FDADrugLabelFieldValueTool(BaseTool):
     def __init__(self, tool_config, api_key=None):
         super().__init__(tool_config)
         self.endpoint_url = "https://api.fda.gov/drug/label.json"
-        self.api_key = api_key or os.getenv("FDA_API_KEY")
+        self._explicit_api_key = api_key
+
+    @property
+    def api_key(self):
+        return self.credential("FDA_API_KEY") or self._explicit_api_key
+
+    @api_key.setter
+    def api_key(self, value):
+        # Keep direct assignment working for callers that configure a key in code.
+        self._explicit_api_key = value
 
     def run(self, arguments):
         arguments = copy.deepcopy(arguments)

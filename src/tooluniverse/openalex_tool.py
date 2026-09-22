@@ -1,8 +1,8 @@
-import os
 import requests
 from typing import Any, Dict, Optional
 from .base_tool import BaseTool
-from .http_utils import request_with_retry
+from .credentials import get_credential
+from .http_utils import redact_url_secrets, request_with_retry
 from .logging_config import get_logger
 from .tool_registry import register_tool
 
@@ -17,7 +17,7 @@ def _with_api_key(params):
     key is a query parameter named `api_key` (free at openalex.org/settings/api)
     and is read from the OPENALEX_API_KEY environment variable.
     """
-    key = os.environ.get("OPENALEX_API_KEY")
+    key = get_credential("OPENALEX_API_KEY")
     if key:
         params = dict(params or {})
         params["api_key"] = key
@@ -160,7 +160,9 @@ class OpenAlexTool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {
                 "status": "error",
-                "error": f"Error retrieving data from OpenAlex: {e}",
+                "error": redact_url_secrets(
+                    f"Error retrieving data from OpenAlex: {e}"
+                ),
             }
 
     def _extract_paper_info(self, work):
@@ -292,7 +294,11 @@ class OpenAlexTool(BaseTool):
             return self._extract_paper_info(work)
 
         except requests.exceptions.RequestException as e:
-            logger.warning("Error retrieving paper by DOI %s: %s", doi, e)
+            logger.warning(
+                "Error retrieving paper by DOI %s: %s",
+                doi,
+                redact_url_secrets(str(e)),
+            )
             return None
 
     def get_papers_by_author(self, author_name, max_results=10):
@@ -329,7 +335,9 @@ class OpenAlexTool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {
                 "status": "error",
-                "error": f"Error retrieving papers by author {author_name}: {e}",
+                "error": redact_url_secrets(
+                    f"Error retrieving papers by author {author_name}: {e}"
+                ),
             }
 
 
@@ -481,7 +489,7 @@ class OpenAlexRESTTool(BaseTool):
                 timeout=self.timeout,
                 max_attempts=3,
             )
-            final_url = getattr(resp, "url", None) or url
+            final_url = redact_url_secrets(getattr(resp, "url", None) or url)
 
             if resp.status_code != 200:
                 return {
@@ -489,13 +497,13 @@ class OpenAlexRESTTool(BaseTool):
                     "error": "OpenAlex API error",
                     "url": final_url,
                     "status_code": resp.status_code,
-                    "detail": (resp.text or "")[:500],
+                    "detail": redact_url_secrets((resp.text or "")[:500]),
                 }
 
             return {"status": "success", "data": resp.json(), "url": final_url}
         except Exception as e:
             return {
                 "status": "error",
-                "error": f"OpenAlex API error: {str(e)}",
+                "error": redact_url_secrets(f"OpenAlex API error: {str(e)}"),
                 "url": url,
             }

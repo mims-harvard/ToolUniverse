@@ -1,4 +1,3 @@
-import os
 import requests
 from typing import Dict, Any, Optional
 from .base_tool import BaseTool
@@ -19,8 +18,8 @@ class UMLSRESTTool(BaseTool):
         self.default_sabs = fields.get("sabs")
 
     def _get_api_key(self) -> Optional[str]:
-        """Get UMLS API key from environment variable."""
-        api_key = os.getenv("UMLS_API_KEY")
+        """Resolve the UMLS key for the active request."""
+        api_key = self.credential("UMLS_API_KEY")
         if not api_key:
             return None
         return api_key
@@ -44,7 +43,7 @@ class UMLSRESTTool(BaseTool):
                 "status": "error",
                 "error": (
                     "UMLS API key required. "
-                    "Please set UMLS_API_KEY environment variable. "
+                    "Provide UMLS_API_KEY as a request credential or environment variable. "
                     "Register for a free API key at: "
                     "https://uts.nlm.nih.gov/uts/"
                 ),

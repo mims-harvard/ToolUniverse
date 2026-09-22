@@ -36,7 +36,7 @@ import warnings
 import threading
 from pathlib import Path
 from contextlib import nullcontext
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import as_completed
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 from .utils import read_json_list, evaluate_function_call, extract_function_call_json
@@ -67,6 +67,15 @@ from .logging_config import (
 from .cache.result_cache_manager import ResultCacheManager
 from .output_hook import HookManager
 from .default_config import default_tool_files, get_default_hook_config
+from .credentials import (
+    ContextThreadPoolExecutor,
+    credential_context,
+    current_credentials,
+    get_credential,
+    has_credential_context,
+    is_credential_name,
+)
+from .credential_instance_cache import CredentialInstanceCache
 
 # Determine the directory where the current file is located
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -357,6 +366,8 @@ class ToolUniverse:
         workspace: Optional[str] = None,
         use_global: bool = False,
         load_workspace: bool = True,
+        credential_instance_cache_size: Optional[int] = None,
+        credential_instance_cache_ttl: Optional[float] = None,
     ):
         """
         Initialize the ToolUniverse with tool file configurations.
@@ -389,6 +400,12 @@ class ToolUniverse:
                                             Profile, or user tools during initialization.
                                             Provider servers use this isolation mode so they
                                             expose only explicitly registered tools.
+            credential_instance_cache_size (int, optional): Maximum request-credential-isolated
+                tool instances retained per ToolUniverse object. Defaults to 256 or
+                ``TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_SIZE``. Set to 0 to disable reuse.
+            credential_instance_cache_ttl (float, optional): Idle expiration in seconds for
+                request-credential-isolated tool instances. Defaults to 900 or
+                ``TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_TTL``. Set to 0 to disable reuse.
         """
         # Set log level if specified
         if log_level is not None:
@@ -424,6 +441,8 @@ class ToolUniverse:
         # ``tu find``.  Gated tools must stay out of ``all_tool_dict`` so agents cannot
         # execute them, but dropping their metadata made real tools undiscoverable.
         self._excluded_api_key_tool_configs: Dict[str, Dict[str, Any]] = {}
+        self._excluded_any_api_key_tools: Dict[str, List[str]] = {}
+        self._credential_tool_load_lock = threading.RLock()
         self.tool_finder = None
         if tool_files is None:
             tool_files = default_tool_files
@@ -436,6 +455,20 @@ class ToolUniverse:
         self.logger.debug("Tool files:")
         self.logger.debug(json.dumps(tool_files, indent=2))
         self.callable_functions = {}
+        credential_cache_size = (
+            int(os.getenv("TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_SIZE", "256"))
+            if credential_instance_cache_size is None
+            else credential_instance_cache_size
+        )
+        credential_cache_ttl = (
+            float(os.getenv("TOOLUNIVERSE_CREDENTIAL_INSTANCE_CACHE_TTL", "900"))
+            if credential_instance_cache_ttl is None
+            else credential_instance_cache_ttl
+        )
+        self._credential_instance_cache = CredentialInstanceCache(
+            max_size=credential_cache_size,
+            idle_ttl_seconds=credential_cache_ttl,
+        )
 
         # Refresh the global tool_type_mappings to include any tools registered during imports
         global tool_type_mappings
@@ -813,8 +846,12 @@ class ToolUniverse:
         return list(self.tool_files.keys())
 
     def _get_api_key(self, key_name: str):
-        """Get API key from environment variables."""
-        return os.getenv(key_name)
+        """Get an API key from the active request or the environment fallback."""
+        if is_credential_name(key_name):
+            return get_credential(key_name)
+        # required_api_keys historically also contains server URLs, package flags, and other
+        # deployment configuration. Those are not tenant secrets and remain process-scoped.
+        return os.environ.get(key_name)
 
     def _check_api_key_requirements(self, tool_config):
         """
@@ -852,6 +889,53 @@ class ToolUniverse:
         all_valid = len(missing_keys) == 0
 
         return all_valid, missing_keys
+
+    def _activate_credential_tool(self, function_name: str) -> None:
+        """Load a previously gated tool when this request supplies its credentials.
+
+        Tools are still skipped during the initial load for backward compatibility and to
+        avoid constructing clients that require credentials in ``__init__``. A request-scoped
+        credential can activate just the requested tool without changing process environment.
+        Once loaded, execution-time checks keep later requests fail-closed.
+        """
+        missing_keys = self._excluded_api_key_tools.get(function_name)
+        alternative_keys = self._excluded_any_api_key_tools.get(function_name)
+        required_ready = bool(missing_keys) and all(
+            self._get_api_key(key) for key in missing_keys
+        )
+        alternative_ready = bool(alternative_keys) and any(
+            self._get_api_key(key) for key in alternative_keys
+        )
+        if not required_ready and not alternative_ready:
+            return
+
+        with self._credential_tool_load_lock:
+            if function_name in self.all_tool_dict:
+                self._excluded_api_key_tools.pop(function_name, None)
+                self._excluded_any_api_key_tools.pop(function_name, None)
+                return
+            self.load_tools(include_tools=[function_name], quiet=True)
+            if function_name in self.all_tool_dict:
+                self._excluded_api_key_tools.pop(function_name, None)
+                self._excluded_any_api_key_tools.pop(function_name, None)
+
+    def _missing_required_credentials(self, function_name: str) -> List[str]:
+        """Return missing credentials for a loaded or initially gated tool."""
+        tool_config = self.all_tool_dict.get(function_name)
+        if tool_config is not None:
+            return [
+                key
+                for key in tool_config.get("required_api_keys", [])
+                if not self._get_api_key(key)
+            ]
+        return list(self._excluded_api_key_tools.get(function_name, []))
+
+    def _missing_alternative_credentials(self, function_name: str) -> List[str]:
+        """Return an any-of credential group when none of its choices is available."""
+        alternatives = self._excluded_any_api_key_tools.get(function_name, [])
+        if alternatives and not any(self._get_api_key(key) for key in alternatives):
+            return list(alternatives)
+        return []
 
     def generate_env_template(
         self, all_missing_keys, output_file: str = ".env.template"
@@ -1056,6 +1140,7 @@ class ToolUniverse:
             self.tool_category_dicts = {}
             self._excluded_api_key_tools = {}
             self._excluded_api_key_tool_configs = {}
+            self._excluded_any_api_key_tools = {}
 
         # Handle tools_file parameter (alternative to include_tools)
         if tools_file:
@@ -1432,6 +1517,12 @@ class ToolUniverse:
                         "LLM API keys (AZURE_OPENAI_API_KEY, OPENAI_API_KEY, "
                         "OPENROUTER_API_KEY, GEMINI_API_KEY, or VLLM_SERVER_URL)"
                     )
+                    self._excluded_any_api_key_tools[tool_name] = [
+                        "AZURE_OPENAI_API_KEY",
+                        "OPENAI_API_KEY",
+                        "OPENROUTER_API_KEY",
+                        "GEMINI_API_KEY",
+                    ]
                     continue
 
             # Last-seen wins: user tools loaded after built-ins naturally override them
@@ -2740,7 +2831,10 @@ class ToolUniverse:
         results: List[Any],
     ) -> List[_BatchJob]:
         if not (
-            use_cache and self.cache_manager is not None and self.cache_manager.enabled
+            use_cache
+            and not has_credential_context()
+            and self.cache_manager is not None
+            and self.cache_manager.enabled
         ):
             return jobs
 
@@ -2833,7 +2927,7 @@ class ToolUniverse:
                 results[idx] = result
 
         if max_workers and max_workers > 1:
-            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            with ContextThreadPoolExecutor(max_workers=max_workers) as executor:
                 futures = [executor.submit(run_job, job) for job in jobs_to_run]
                 for future in as_completed(futures):
                     future.result()
@@ -3176,7 +3270,12 @@ class ToolUniverse:
         return None
 
     def run_one_function(
-        self, function_call_json, stream_callback=None, use_cache=False, validate=True
+        self,
+        function_call_json,
+        stream_callback=None,
+        use_cache=False,
+        validate=True,
+        credentials=None,
     ):
         """
         Execute a single function call.
@@ -3190,12 +3289,26 @@ class ToolUniverse:
             stream_callback (callable, optional): Callback for streaming responses.
             use_cache (bool, optional): Whether to use result caching. Defaults to False.
             validate (bool, optional): Whether to validate parameters against schema. Defaults to True.
+            credentials (mapping, optional): Request-scoped credentials. Values remain hidden from
+                tool schemas/arguments and are restored after this call.
 
         Returns:
             str or dict: Result from the tool execution, or error message if validation fails.
         """
+        if credentials is not None:
+            with credential_context(credentials):
+                return self.run_one_function(
+                    function_call_json,
+                    stream_callback=stream_callback,
+                    use_cache=use_cache,
+                    validate=validate,
+                )
+
         function_name = function_call_json.get("name", "")
         arguments = function_call_json.get("arguments", {})
+
+        # A tool gated during process startup can be activated by this request's credentials.
+        self._activate_credential_tool(function_name)
 
         # Resolve original names to shortened names (all_tool_dict uses shortened as keys)
         function_name = self._resolve_tool_name(function_name)
@@ -3213,6 +3326,32 @@ class ToolUniverse:
                 )
             )
 
+        missing_credentials = self._missing_required_credentials(function_name)
+        if missing_credentials:
+            return self._create_dual_format_error(
+                ToolUnavailableError(
+                    f"Tool '{function_name}' requires API key(s): "
+                    f"{', '.join(missing_credentials)}. Provide them as request "
+                    "credentials or environment variables.",
+                    retriable=False,
+                    next_steps=[
+                        "Pass the missing keys in run_one_function(credentials={...})",
+                        "Or set them as local environment variables",
+                    ],
+                )
+            )
+
+        alternative_credentials = self._missing_alternative_credentials(function_name)
+        if alternative_credentials:
+            return self._create_dual_format_error(
+                ToolUnavailableError(
+                    f"Tool '{function_name}' requires at least one API key: "
+                    f"{', '.join(alternative_credentials)}. Provide one as a request "
+                    "credential or environment variable.",
+                    retriable=False,
+                )
+            )
+
         tool_instance = None
         cache_namespace = None
         cache_version = None
@@ -3220,8 +3359,13 @@ class ToolUniverse:
         composed_cache_key = None
         cache_guard = nullcontext()
 
+        # Credential-scoped results must never be reused by another tenant. Disable result caching
+        # rather than putting secret material into a cache key.
         cache_enabled = (
-            use_cache and self.cache_manager is not None and self.cache_manager.enabled
+            use_cache
+            and not has_credential_context()
+            and self.cache_manager is not None
+            and self.cache_manager.enabled
         )
 
         if cache_enabled:
@@ -3294,7 +3438,9 @@ class ToolUniverse:
             tool_arguments = arguments
             try:
                 if tool_instance is None:
-                    tool_instance = self._get_tool_instance(function_name, cache=True)
+                    tool_instance = self._get_tool_instance(
+                        function_name, cache=not has_credential_context()
+                    )
 
                 if tool_instance:
                     result, tool_arguments = self._execute_tool_with_stream(
@@ -3315,7 +3461,9 @@ class ToolUniverse:
                         )
 
                     # Try to get the tool instance again after loading
-                    tool_instance = self._get_tool_instance(function_name, cache=True)
+                    tool_instance = self._get_tool_instance(
+                        function_name, cache=not has_credential_context()
+                    )
                     if tool_instance:
                         result, tool_arguments = self._execute_tool_with_stream(
                             tool_instance,
@@ -3394,7 +3542,12 @@ class ToolUniverse:
             return result
 
     async def run_one_function_async(
-        self, function_call_json, stream_callback=None, use_cache=False, validate=True
+        self,
+        function_call_json,
+        stream_callback=None,
+        use_cache=False,
+        validate=True,
+        credentials=None,
     ):
         """
         Async version of run_one_function.
@@ -3402,8 +3555,19 @@ class ToolUniverse:
         Execute a single function call asynchronously (non-blocking).
         Handles both sync and async tools intelligently.
         """
+        if credentials is not None:
+            with credential_context(credentials):
+                return await self.run_one_function_async(
+                    function_call_json,
+                    stream_callback=stream_callback,
+                    use_cache=use_cache,
+                    validate=validate,
+                )
+
         function_name = function_call_json.get("name", "")
         arguments = function_call_json.get("arguments", {})
+
+        self._activate_credential_tool(function_name)
 
         # Resolve original names to shortened names
         function_name = self._resolve_tool_name(function_name)
@@ -3421,13 +3585,41 @@ class ToolUniverse:
                 )
             )
 
+        missing_credentials = self._missing_required_credentials(function_name)
+        if missing_credentials:
+            return self._create_dual_format_error(
+                ToolUnavailableError(
+                    f"Tool '{function_name}' requires API key(s): "
+                    f"{', '.join(missing_credentials)}. Provide them as request "
+                    "credentials or environment variables.",
+                    retriable=False,
+                    next_steps=[
+                        "Pass the missing keys in run_one_function_async(credentials={...})",
+                        "Or set them as local environment variables",
+                    ],
+                )
+            )
+        alternative_credentials = self._missing_alternative_credentials(function_name)
+        if alternative_credentials:
+            return self._create_dual_format_error(
+                ToolUnavailableError(
+                    f"Tool '{function_name}' requires at least one API key: "
+                    f"{', '.join(alternative_credentials)}. Provide one as a request "
+                    "credential or environment variable.",
+                    retriable=False,
+                )
+            )
+
         tool_instance = None
         cache_namespace = None
         cache_version = None
         cache_key = None
 
         cache_enabled = (
-            use_cache and self.cache_manager is not None and self.cache_manager.enabled
+            use_cache
+            and not has_credential_context()
+            and self.cache_manager is not None
+            and self.cache_manager.enabled
         )
 
         if cache_enabled:
@@ -3482,7 +3674,9 @@ class ToolUniverse:
         tool_arguments = arguments
         try:
             if tool_instance is None:
-                tool_instance = self._get_tool_instance(function_name, cache=True)
+                tool_instance = self._get_tool_instance(
+                    function_name, cache=not has_credential_context()
+                )
 
             if tool_instance:
                 result, tool_arguments = await self._execute_tool_with_stream_async(
@@ -3504,7 +3698,9 @@ class ToolUniverse:
                     )
 
                 # Try to get the tool instance again after loading
-                tool_instance = self._get_tool_instance(function_name, cache=True)
+                tool_instance = self._get_tool_instance(
+                    function_name, cache=not has_credential_context()
+                )
                 if tool_instance:
                     result, tool_arguments = await self._execute_tool_with_stream_async(
                         tool_instance,
@@ -3835,12 +4031,29 @@ class ToolUniverse:
             return None  # Return None instead of raising
 
     def _get_tool_instance(self, function_name: str, cache: bool = True):
-        """Get or create tool instance with optional caching."""
+        """Get or create a tool instance with process or credential-partitioned caching."""
         # Resolve original names to shortened names (all_tool_dict uses shortened as keys)
         function_name = self._resolve_tool_name(function_name)
 
-        # Check cache first
-        if function_name in self.callable_functions:
+        scoped_credentials = current_credentials()
+        if scoped_credentials is not None and function_name in self.all_tool_dict:
+            tool_config = self.all_tool_dict[function_name]
+            config_payload = json.dumps(
+                tool_config,
+                sort_keys=True,
+                separators=(",", ":"),
+                default=repr,
+            ).encode("utf-8")
+            config_version = hashlib.sha256(config_payload).hexdigest()
+            return self._credential_instance_cache.get_or_create(
+                tool_name=function_name,
+                config_version=config_version,
+                credentials=scoped_credentials,
+                factory=lambda: self.init_tool(tool_config, add_to_cache=False),
+            )
+
+        # Local/single-user execution keeps the original fast process-level instance cache.
+        if cache and function_name in self.callable_functions:
             return self.callable_functions[function_name]
 
         # Check if known unavailable
@@ -4277,7 +4490,7 @@ class ToolUniverse:
             tu.load_tools(include_tools=["UniProt_get_entry_by_accession"])
 
         Note:
-            - This does not affect tool instances in callable_functions cache
+            - This clears process-level and credential-partitioned tool instances
             - Subsequent tool access will trigger on-demand loading
             - Use clear_cache=True if you also want to clear result cache
         """
@@ -4285,6 +4498,10 @@ class ToolUniverse:
         self.all_tools = []
         self.all_tool_dict = {}
         self.tool_category_dicts = {}
+        self._excluded_api_key_tools = {}
+        self._excluded_api_key_tool_configs = {}
+        self._excluded_any_api_key_tools = {}
+        self._credential_instance_cache.clear()
 
         # Clear instantiated tool instances
         self.callable_functions = {}
@@ -4301,6 +4518,11 @@ class ToolUniverse:
             return {"enabled": False}
         return self.cache_manager.stats()
 
+    def get_credential_instance_cache_stats(self) -> Dict[str, Any]:
+        """Return non-secret BYOK tool-instance cache telemetry."""
+
+        return self._credential_instance_cache.stats()
+
     def dump_cache(self, namespace: Optional[str] = None):
         """Iterate over cached entries (persistent layer only)."""
         if not self.cache_manager:
@@ -4309,6 +4531,7 @@ class ToolUniverse:
 
     def close(self):
         """Release resources."""
+        self._credential_instance_cache.clear()
         if self.cache_manager:
             self.cache_manager.close()
 
@@ -4906,7 +5129,9 @@ class ToolUniverse:
         self.tool_category_dicts = {}
         self._excluded_api_key_tools = {}
         self._excluded_api_key_tool_configs = {}
+        self._excluded_any_api_key_tools = {}
         self.callable_functions = {}
+        self._credential_instance_cache.clear()
 
         # Load tools from external sources declared in the Profile
         sources = config.get("sources", [])

@@ -97,7 +97,6 @@ import functools
 import json
 import os
 import sys
-from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List, Optional, Union, Callable, Literal
 
 from fastmcp import FastMCP
@@ -105,6 +104,7 @@ from fastmcp import FastMCP
 FASTMCP_AVAILABLE = True
 
 from .execute_function import ToolUniverse
+from .credentials import ContextThreadPoolExecutor
 from .logging_config import (
     get_logger,
 )
@@ -500,7 +500,10 @@ class SMCP(FastMCP):
         self.profile_metadata = None
 
         # Thread pool for concurrent tool execution
-        self.executor = ThreadPoolExecutor(max_workers=max_workers)
+        # Preserve request-scoped credentials and tracing context across the async-to-sync
+        # boundary. Standard ThreadPoolExecutor drops ContextVars and can therefore make a hosted
+        # request silently fall back to process-global credentials.
+        self.executor = ContextThreadPoolExecutor(max_workers=max_workers)
 
         # Track exposed tools to avoid duplicates
         self._exposed_tools = set()

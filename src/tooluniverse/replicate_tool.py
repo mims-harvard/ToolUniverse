@@ -42,7 +42,6 @@ The tool never raises: every path returns a ``{"status": ...}`` dict. A missing
 token returns a clean, actionable error.
 """
 
-import os
 import time
 from typing import Any, Dict, Optional
 
@@ -96,7 +95,7 @@ class ReplicateTool(BaseTool):
                 f"Expected one of {sorted(handlers)}."
             )
 
-        token = os.environ.get("REPLICATE_API_TOKEN", "")
+        token = self.credential("REPLICATE_API_TOKEN") or ""
         if not token:
             return _err(
                 "Missing REPLICATE_API_TOKEN. Replicate requires an API token. "
