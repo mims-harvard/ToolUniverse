@@ -1,7 +1,7 @@
 """
 GWASSumStats_get_region_associations
 
-Query full GWAS summary statistics for variants in a chromosomal region. Returns variant-level as...
+RETIRED: region-level summary statistics are no longer served over REST. EBI retired /gwas/summar...
 """
 
 from typing import Any, Optional, Callable
@@ -21,7 +21,7 @@ def GWASSumStats_get_region_associations(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Query full GWAS summary statistics for variants in a chromosomal region. Returns variant-level as...
+    RETIRED: region-level summary statistics are no longer served over REST. EBI retired /gwas/summar...
 
     Parameters
     ----------
