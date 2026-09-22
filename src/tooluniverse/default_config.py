@@ -12,6 +12,11 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 
 default_tool_files = {
     "special_tools": os.path.join(current_dir, "data", "special_tools.json"),
+    # Unified interface over interchangeable ML model backends: one canonical
+    # input/output contract per task (variant effect, protein structure, ADMET,
+    # binding affinity) with many models behind it, so they can be compared and
+    # benchmarked against each other.
+    "unified_models": os.path.join(current_dir, "data", "unified_model_tools.json"),
     "tooluniverse_page": os.path.join(
         current_dir, "data", "tooluniverse_page_tools.json"
     ),

@@ -227,3 +227,11 @@ TOOL_SWEEP_TRIAGE.md
 
 # Local-only runtime artifact from test_new_tools.py
 tool_relationship_graph.json
+
+# PyTDC writes its synthetic-accessibility fragment table here, relative to the
+# working directory. Generated data restored from RDKit at runtime; never commit.
+oracle/
+
+# TDC writes benchmark tables here, relative to the working directory
+# (herg.tab, caco2_wang.tab and friends). Downloaded data; never commit.
+/data/

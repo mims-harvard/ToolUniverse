@@ -1,0 +1,2179 @@
+{
+  "_readme": [
+    "Declarative registry for the unified ML-model interface. Each entry under",
+    "'backends' adapts one existing ToolUniverse tool to one task's canonical",
+    "input/output contract. Adding a model is normally an entry here and no",
+    "Python at all; see unified_model_spec.py for the field semantics.",
+    "",
+    "'calibration' is load-bearing and must be honest. 'published' means the",
+    "threshold and range come from the model's own paper or documentation.",
+    "'heuristic' means we set them from observed score ranges so that the",
+    "0-1 normalized_score is monotone and roughly sensible -- it is NOT a",
+    "calibrated probability. Benchmark rank metrics deliberately use the",
+    "native score and the transform's direction only, never normalized_score,",
+    "so a heuristic calibration can never change a leaderboard ordering."
+  ],
+  "tasks": {
+    "variant_effect": {
+      "title": "Variant effect prediction",
+      "description": "Score how damaging a genetic variant is. Backends disagree on coordinate system, scale and direction; the unified layer resolves one input into all of them and puts every score on a common axis.",
+      "prediction_type": "binary_score",
+      "positive_class": "deleterious",
+      "resolver": "variant_effect",
+      "output_fields": {
+        "score": "Backend-native score, unmodified",
+        "score_type": "What that number is (CADD PHRED, log-likelihood ratio, ...)",
+        "normalized_score": "Monotone rescaling to 0-1, higher = more deleterious",
+        "call": "deleterious | tolerated | uncertain -- one vocabulary across all backends",
+        "classification": "The backend's own class label where it emits one"
+      },
+      "default_metrics": [
+        "auroc",
+        "auprc",
+        "accuracy",
+        "mcc",
+        "spearman",
+        "coverage"
+      ],
+      "primary_metric": "auroc",
+      "datasets": [
+        "clinvar_missense",
+        "proteingym_dms"
+      ]
+    },
+    "structure_prediction": {
+      "title": "Protein structure prediction",
+      "description": "Fold a sequence. Canonical output is a structure plus mean pLDDT on a 0-100 scale, which several backends natively report on 0-1.",
+      "prediction_type": "structure",
+      "resolver": "structure_prediction",
+      "output_fields": {
+        "structure": "Coordinates as PDB or mmCIF text",
+        "format": "pdb | mmcif",
+        "mean_plddt": "Mean per-residue confidence, always 0-100",
+        "ptm": "Predicted TM-score where the backend reports one",
+        "n_residues": "Residues modelled",
+        "call": "confident | low_confidence (mean pLDDT >= 70)",
+        "lddt": "Measured C\u03b1 lDDT against an experimental reference, 0-1, when 'reference_pdb_id' is supplied. This is accuracy; mean_plddt is only the model's own confidence.",
+        "calibration_gap": "mean_plddt minus lDDT*100. Positive means the model was more confident than it was accurate.",
+        "dockq": "DockQ interface quality (0-1) against a multi-chain reference: >0.80 high, >0.49 medium, >0.23 acceptable. Reported only when the reference has more than one chain. lDDT judges the fold; DockQ judges whether the chains were docked together correctly."
+      },
+      "default_metrics": [
+        "lddt",
+        "dockq",
+        "mean_plddt",
+        "calibration_gap",
+        "coverage",
+        "latency"
+      ],
+      "primary_metric": "lddt",
+      "datasets": [
+        "cameo_targets",
+        "casp15_targets"
+      ],
+      "positive_class": "confident"
+    },
+    "molecular_property": {
+      "title": "Molecular property / ADMET prediction",
+      "description": "Predict an ADMET endpoint from a SMILES string. Canonical property ids are the Therapeutics Data Commons ADMET Benchmark Group dataset names, so a prediction and its public benchmark share one vocabulary.",
+      "prediction_type": "mixed",
+      "resolver": "molecular_property",
+      "output_fields": {
+        "score": "Predicted value: probability for a classification endpoint, the physical quantity for a regression endpoint",
+        "score_units": "Units of the value, or 'probability'",
+        "call": "Uniform verdict across every backend and endpoint: positive | negative. This is what benchmark threshold metrics are scored against.",
+        "property": "Canonical (TDC) property id",
+        "call_label": "The endpoint's own word for that verdict (penetrant, mutagenic, inhibitor, ...). Present only where it differs from 'call'."
+      },
+      "default_metrics": [
+        "auroc",
+        "auprc",
+        "spearman",
+        "rmse",
+        "mae",
+        "coverage"
+      ],
+      "primary_metric": "auroc",
+      "datasets": [
+        "tdc_admet_group"
+      ],
+      "positive_class": "positive"
+    },
+    "binding_affinity": {
+      "title": "Protein-ligand binding affinity and docking",
+      "description": "Score or pose a ligand against a receptor. Backends report genuinely different quantities (kcal/mol, pIC50, a diffusion confidence logit), so this task keeps units explicit and refuses to average across them.",
+      "prediction_type": "affinity",
+      "resolver": "binding_affinity",
+      "output_fields": {
+        "score": "Backend-native affinity or confidence",
+        "score_units": "kcal/mol | pIC50 | confidence",
+        "pose": "Predicted complex where the backend returns one",
+        "dockq": "DockQ interface quality against a reference complex, when one is supplied. The only measure here that is comparable across backends -- their native scores are in incompatible units."
+      },
+      "default_metrics": [
+        "spearman",
+        "rmse",
+        "coverage",
+        "latency"
+      ],
+      "primary_metric": "spearman",
+      "datasets": [
+        "pdbbind_core",
+        "posebusters"
+      ]
+    }
+  },
+  "backends": [
+    {
+      "id": "alphamissense",
+      "task": "variant_effect",
+      "tool": "ProtVar_map_variant",
+      "from_context": "protvar_canonical",
+      "model": {
+        "name": "AlphaMissense",
+        "family": "protein language model + structure",
+        "citation": "Cheng et al., Science 2023",
+        "url": "https://www.science.org/doi/10.1126/science.adg7492"
+      },
+      "needs": [
+        "protvar_canonical"
+      ],
+      "output_map": {
+        "score": "$.alphamissense.score",
+        "classification": "$.alphamissense.class",
+        "uniprot": "$.accession",
+        "protein_position": "$.position"
+      },
+      "score_type": "AlphaMissense pathogenicity",
+      "score_units": "probability",
+      "transform": {
+        "kind": "identity"
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 0.564,
+        "above": "deleterious",
+        "below": "tolerated"
+      },
+      "calibration": "published",
+      "cost": "free",
+      "notes": "Threshold 0.564 is the paper's own likely-pathogenic cutoff. Scored via ProtVar, which serves AlphaMissense's precomputed table for the canonical isoform.",
+      "output_verified": true
+    },
+    {
+      "id": "eve",
+      "task": "variant_effect",
+      "tool": "ProtVar_map_variant",
+      "from_context": "protvar_canonical",
+      "model": {
+        "name": "EVE",
+        "family": "evolutionary VAE",
+        "citation": "Frazer et al., Nature 2021",
+        "url": "https://evemodel.org"
+      },
+      "needs": [
+        "protvar_canonical"
+      ],
+      "output_map": {
+        "score": "$.eve_score"
+      },
+      "score_type": "EVE evolutionary index",
+      "transform": {
+        "kind": "logistic",
+        "x0": 3.0,
+        "k": 1.2
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 3.0,
+        "above": "deleterious",
+        "below": "tolerated"
+      },
+      "calibration": "heuristic",
+      "cost": "free",
+      "notes": "ProtVar serves EVE's unbounded evolutionary index, not the 0-1 EVE score from the paper, so the midpoint here is our estimate (observed: 1.84 for benign TP53 P72L, 5.98 for pathogenic R175H) rather than a published cutoff.",
+      "score_units": "evolutionary index",
+      "output_verified": true
+    },
+    {
+      "id": "esm1v",
+      "task": "variant_effect",
+      "tool": "ProtVar_map_variant",
+      "from_context": "protvar_canonical",
+      "model": {
+        "name": "ESM-1v",
+        "family": "protein language model",
+        "citation": "Meier et al., NeurIPS 2021",
+        "url": "https://github.com/facebookresearch/esm"
+      },
+      "needs": [
+        "protvar_canonical"
+      ],
+      "output_map": {
+        "score": "$.esm1v_score"
+      },
+      "score_type": "ESM-1v log-likelihood ratio",
+      "transform": {
+        "kind": "logistic",
+        "x0": -5.0,
+        "k": 2.0,
+        "invert": true
+      },
+      "call": {
+        "from": "raw",
+        "threshold": -5.0,
+        "above": "tolerated",
+        "below": "deleterious"
+      },
+      "calibration": "heuristic",
+      "cost": "free",
+      "notes": "Negative LLR means the model disfavours the mutant. ESM-1v has no official cutoff; -5 is a common working threshold.",
+      "score_units": "log-likelihood ratio",
+      "output_verified": true
+    },
+    {
+      "id": "popeve",
+      "task": "variant_effect",
+      "tool": "ProtVar_map_variant",
+      "from_context": "protvar_canonical",
+      "model": {
+        "name": "popEVE",
+        "family": "evolutionary + population model",
+        "citation": "Orenbuch et al., 2023",
+        "url": "https://pop.evemodel.org"
+      },
+      "needs": [
+        "protvar_canonical"
+      ],
+      "output_map": {
+        "score": "$.popeve_score"
+      },
+      "score_type": "popEVE score",
+      "transform": {
+        "kind": "logistic",
+        "x0": -2.0,
+        "k": 0.8,
+        "invert": true
+      },
+      "call": {
+        "from": "raw",
+        "threshold": -2.0,
+        "above": "tolerated",
+        "below": "deleterious"
+      },
+      "calibration": "heuristic",
+      "cost": "free",
+      "score_units": "log-likelihood ratio",
+      "output_verified": true
+    },
+    {
+      "id": "cadd",
+      "task": "variant_effect",
+      "tool": "CADD_get_variant_score",
+      "model": {
+        "name": "CADD",
+        "family": "supervised ensemble",
+        "citation": "Rentzsch et al., NAR 2019",
+        "url": "https://cadd.gs.washington.edu"
+      },
+      "needs": [
+        "genomic.pos"
+      ],
+      "input_map": {
+        "chrom": "{genomic.chrom}",
+        "pos": "{genomic.pos}",
+        "ref": "{genomic.ref}",
+        "alt": "{genomic.alt}"
+      },
+      "output_map": {
+        "score": "$.data.phred_score",
+        "raw_score": "$.data.raw_score",
+        "model_version": "$.data.version",
+        "interpretation": "$.data.interpretation",
+        "classification": "$.data.interpretation"
+      },
+      "score_type": "CADD PHRED",
+      "transform": {
+        "kind": "linear",
+        "lo": 0.0,
+        "hi": 40.0
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 20.0,
+        "above": "deleterious",
+        "below": "tolerated"
+      },
+      "calibration": "published",
+      "cost": "free",
+      "notes": "PHRED >= 20 is CADD's documented top-1%-deleterious cutoff. The 0-40 normalization range is deliberate: PHRED is defined up to 99, but scaling over 0-99 would compress every real call into the bottom third.",
+      "score_units": "PHRED",
+      "output_verified": true
+    },
+    {
+      "id": "esm2",
+      "task": "variant_effect",
+      "tool": "ESM2_score_missense_variant",
+      "model": {
+        "name": "ESM-2 650M",
+        "family": "protein language model",
+        "citation": "Lin et al., Science 2023 (masked-marginal scoring: Meier et al. 2021)",
+        "url": "https://huggingface.co/facebook/esm2_t33_650M_UR50D"
+      },
+      "needs": [
+        "sequence",
+        "seq_position",
+        "seq_alt_aa"
+      ],
+      "input_map": {
+        "sequence": "{sequence}",
+        "position": "{seq_position}",
+        "mutant": "{seq_alt_aa}",
+        "wild_type": "{seq_ref_aa}"
+      },
+      "output_map": {
+        "score": "$.data.log_likelihood_ratio",
+        "p_wild_type": "$.data.p_wild_type",
+        "p_mutant": "$.data.p_mutant",
+        "model_version": "$.data.model_id",
+        "variant": "$.data.variant"
+      },
+      "score_type": "ESM-2 masked-marginal LLR",
+      "transform": {
+        "kind": "logistic",
+        "x0": -4.0,
+        "k": 2.0,
+        "invert": true
+      },
+      "call": {
+        "from": "raw",
+        "threshold": -4.0,
+        "above": "tolerated",
+        "below": "deleterious"
+      },
+      "calibration": "heuristic",
+      "cost": "local_model",
+      "notes": "Computed live from the sequence, so unlike every other backend here it works for ANY sequence -- engineered, synthetic or non-human -- with no database entry. It is the only model that can score a sequence-only input. HuggingFace now requires a token for this model, so the tool tries the hosted endpoint first and falls back to running ESM-2 locally via transformers when the refusal is an auth one (a 'loading' reply is passed through instead, since that means retry remotely). The first auth refusal is remembered for the process, so a batch does not pay a doomed round trip per variant.",
+      "score_units": "log-likelihood ratio",
+      "thread_safe": false,
+      "output_verified": true
+    },
+    {
+      "id": "sift",
+      "task": "variant_effect",
+      "tool": "EnsemblVEP_annotate_hgvs",
+      "from_context": "vep",
+      "model": {
+        "name": "SIFT",
+        "family": "alignment conservation",
+        "citation": "Ng & Henikoff, NAR 2003"
+      },
+      "needs": [
+        "vep"
+      ],
+      "score_type": "SIFT score",
+      "transform": {
+        "kind": "logistic",
+        "x0": 0.05,
+        "k": 0.03,
+        "invert": true
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 0.05,
+        "above": "tolerated",
+        "below": "deleterious"
+      },
+      "calibration": "published",
+      "cost": "free",
+      "notes": "Lower is more damaging; <= 0.05 is SIFT's standard deleterious cutoff, and the logistic midpoint is placed there so the normalized score and the call agree. A linear rescale would have mapped that cutoff to 0.95 and made nearly every variant read as damaging.",
+      "normalizer": "normalize_vep_predictor",
+      "params": {
+        "score_field": "sift_score",
+        "pred_field": "sift_prediction",
+        "pick": "min"
+      },
+      "score_units": "probability (0-1, low = damaging)",
+      "output_verified": true
+    },
+    {
+      "id": "polyphen2",
+      "task": "variant_effect",
+      "tool": "EnsemblVEP_annotate_hgvs",
+      "from_context": "vep",
+      "model": {
+        "name": "PolyPhen-2",
+        "family": "supervised sequence + structure features",
+        "citation": "Adzhubei et al., Nat Methods 2010"
+      },
+      "needs": [
+        "vep"
+      ],
+      "score_type": "PolyPhen-2 HumVar probability",
+      "transform": {
+        "kind": "identity"
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 0.446,
+        "above": "deleterious",
+        "below": "tolerated"
+      },
+      "calibration": "published",
+      "cost": "free",
+      "notes": "0.446 is PolyPhen-2's possibly-damaging boundary; >= 0.908 is probably damaging. VEP carries PolyPhen-2 on only a minority of transcripts (2 of 12 for TP53 R175H), so the value is taken from the MANE/canonical transcript when VEP flags one and from the most damaging scored transcript otherwise.",
+      "normalizer": "normalize_vep_predictor",
+      "params": {
+        "score_field": "polyphen_score",
+        "pred_field": "polyphen_prediction",
+        "pick": "max"
+      },
+      "score_units": "probability",
+      "output_verified": true
+    },
+    {
+      "id": "revel",
+      "task": "variant_effect",
+      "tool": "MyVariant_get_pathogenicity_scores",
+      "from_context": "dbnsfp",
+      "model": {
+        "name": "REVEL",
+        "family": "supervised ensemble of 13 predictors",
+        "citation": "Ioannidis et al., AJHG 2016"
+      },
+      "needs": [
+        "dbnsfp"
+      ],
+      "output_map": {
+        "score": {
+          "path": "$.dbnsfp.revel.score",
+          "agg": "max"
+        }
+      },
+      "score_type": "REVEL score",
+      "transform": {
+        "kind": "identity"
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 0.5,
+        "above": "deleterious",
+        "below": "tolerated"
+      },
+      "calibration": "published",
+      "cost": "free",
+      "notes": "dbNSFP returns one score per overlapping transcript; the maximum is taken, which is the conservative choice for a pathogenicity call.",
+      "score_units": "probability",
+      "output_verified": true
+    },
+    {
+      "id": "vest4",
+      "task": "variant_effect",
+      "tool": "MyVariant_get_pathogenicity_scores",
+      "from_context": "dbnsfp",
+      "model": {
+        "name": "VEST4",
+        "family": "supervised random forest",
+        "citation": "Carter et al., BMC Genomics 2013"
+      },
+      "needs": [
+        "dbnsfp"
+      ],
+      "output_map": {
+        "score": {
+          "path": "$.dbnsfp.vest4.score",
+          "agg": "max"
+        }
+      },
+      "score_type": "VEST4 score",
+      "transform": {
+        "kind": "identity"
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 0.5,
+        "above": "deleterious",
+        "below": "tolerated"
+      },
+      "calibration": "heuristic",
+      "cost": "free",
+      "score_units": "probability",
+      "output_verified": true
+    },
+    {
+      "id": "metarnn",
+      "task": "variant_effect",
+      "tool": "MyVariant_get_pathogenicity_scores",
+      "from_context": "dbnsfp",
+      "model": {
+        "name": "MetaRNN",
+        "family": "supervised deep ensemble",
+        "citation": "Li et al., Genome Medicine 2022"
+      },
+      "needs": [
+        "dbnsfp"
+      ],
+      "output_map": {
+        "score": {
+          "path": "$.dbnsfp.metarnn.score",
+          "agg": "max"
+        },
+        "classification": {
+          "path": "$.dbnsfp.metarnn.pred",
+          "agg": "first"
+        }
+      },
+      "score_type": "MetaRNN score",
+      "transform": {
+        "kind": "identity"
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 0.5,
+        "above": "deleterious",
+        "below": "tolerated"
+      },
+      "calibration": "published",
+      "cost": "free",
+      "score_units": "probability",
+      "output_verified": true
+    },
+    {
+      "id": "spliceai",
+      "task": "variant_effect",
+      "tool": "SpliceAI_get_max_delta",
+      "model": {
+        "name": "SpliceAI",
+        "family": "deep convolutional splice model",
+        "citation": "Jaganathan et al., Cell 2019"
+      },
+      "needs": [
+        "genomic.pos"
+      ],
+      "input_map": {
+        "variant": "{genomic.chrom}-{genomic.pos}-{genomic.ref}-{genomic.alt}"
+      },
+      "output_map": {
+        "score": "$.data.max_delta_score",
+        "interpretation": "$.data.interpretation",
+        "classification": "$.data.interpretation"
+      },
+      "score_type": "SpliceAI max delta score",
+      "transform": {
+        "kind": "identity"
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 0.5,
+        "above": "deleterious",
+        "below": "tolerated"
+      },
+      "calibration": "published",
+      "cost": "free",
+      "notes": "Answers a different question from the missense models: splicing disruption, not protein-function damage. A near-zero SpliceAI score on a confidently deleterious missense variant is agreement, not conflict -- the compare layer reports it in its own group for that reason.",
+      "group": "splicing",
+      "score_units": "delta score (0-1)",
+      "output_verified": true
+    },
+    {
+      "id": "genebe_acmg",
+      "task": "variant_effect",
+      "tool": "GeneBe_classify_variant",
+      "model": {
+        "name": "GeneBe ACMG",
+        "family": "rule-based ACMG/AMP classifier",
+        "url": "https://genebe.net"
+      },
+      "needs": [
+        "genomic.pos"
+      ],
+      "input_map": {
+        "chr": "{genomic.chrom}",
+        "pos": "{genomic.pos}",
+        "ref": "{genomic.ref}",
+        "alt": "{genomic.alt}"
+      },
+      "output_map": {
+        "score": "$.data.acmg_classification",
+        "classification": "$.data.acmg_classification",
+        "acmg_criteria": "$.data.acmg_criteria",
+        "acmg_score": "$.data.acmg_score",
+        "clinvar_classification": "$.data.clinvar_classification",
+        "gene": "$.data.gene_symbol",
+        "hgvs_p": "$.data.hgvs_p"
+      },
+      "score_type": "ACMG/AMP classification",
+      "transform": {
+        "kind": "categorical",
+        "map": {
+          "Pathogenic": 1.0,
+          "Likely_pathogenic": 0.85,
+          "Likely pathogenic": 0.85,
+          "Uncertain_significance": 0.5,
+          "Uncertain significance": 0.5,
+          "VUS": 0.5,
+          "Likely_benign": 0.15,
+          "Likely benign": 0.15,
+          "Benign": 0.0
+        }
+      },
+      "call": {
+        "from": "field",
+        "field": "classification",
+        "map": {
+          "Pathogenic": "deleterious",
+          "Likely_pathogenic": "deleterious",
+          "Likely pathogenic": "deleterious",
+          "Uncertain_significance": "uncertain",
+          "Uncertain significance": "uncertain",
+          "Likely_benign": "tolerated",
+          "Likely benign": "tolerated",
+          "Benign": "tolerated"
+        },
+        "default": "uncertain"
+      },
+      "calibration": "published",
+      "cost": "free",
+      "notes": "Not a model in the same sense as the others: it applies ACMG/AMP rules and consults ClinVar, so on a well-studied variant it is partly reporting known truth rather than predicting. Treat it as a strong baseline, and exclude it from any benchmark whose labels come from ClinVar -- that would be label leakage. The benchmark runner warns when this pairing occurs.",
+      "group": "clinical_rules",
+      "score_units": "ACMG class",
+      "output_verified": true
+    },
+    {
+      "id": "cancervar",
+      "task": "variant_effect",
+      "tool": "CancerVar_classify_variant",
+      "model": {
+        "name": "CancerVar",
+        "family": "somatic oncogenicity classifier (AMP/ASCO/CAP tiers)",
+        "citation": "Li et al., Sci Adv 2022"
+      },
+      "needs": [
+        "genomic.pos"
+      ],
+      "input_map": {
+        "chrom": "{genomic.chrom}",
+        "pos": "{genomic.pos}",
+        "ref": "{genomic.ref}",
+        "alt": "{genomic.alt}",
+        "build": "{ucsc_build}"
+      },
+      "output_map": {
+        "score": "$.data.opai",
+        "classification": "$.data.tier",
+        "tier_description": "$.data.tier_description"
+      },
+      "score_type": "CancerVar OPAI (oncogenicity)",
+      "transform": {
+        "kind": "identity"
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 0.5,
+        "above": "deleterious",
+        "below": "tolerated"
+      },
+      "calibration": "heuristic",
+      "cost": "free",
+      "notes": "Scores somatic oncogenicity, not germline pathogenicity. Relevant for cancer variants; expect disagreement with the germline predictors elsewhere. The 'build' argument is passed explicitly because CancerVar defaults to hg19 and answers a GRCh38 coordinate with an empty body, which surfaced as a JSON parse error ('Expecting value: line 1 column 1') and looked like a dead upstream service -- the same failure shape as MyVariant's hg19 default.",
+      "group": "somatic_oncogenicity",
+      "score_units": "probability",
+      "output_verified": true
+    },
+    {
+      "id": "esmfold",
+      "task": "structure_prediction",
+      "tool": "ESMFold_predict_structure",
+      "model": {
+        "name": "ESMFold",
+        "family": "protein language model folding",
+        "citation": "Lin et al., Science 2023"
+      },
+      "needs": [
+        "sequence"
+      ],
+      "input_map": {
+        "sequence": "{sequence}"
+      },
+      "output_map": {
+        "mean_plddt": {
+          "path": "$.data.mean_plddt",
+          "mul": 100
+        },
+        "score": {
+          "path": "$.data.mean_plddt",
+          "mul": 100
+        },
+        "n_residues": "$.data.sequence_length",
+        "confident_fraction": "$.data.confident_fraction",
+        "structure": "$.data.pdb_text",
+        "format": {
+          "const": "pdb"
+        },
+        "ptm": "$.data.ptm"
+      },
+      "score_type": "mean pLDDT",
+      "score_units": "pLDDT (0-100)",
+      "transform": {
+        "kind": "linear",
+        "lo": 0.0,
+        "hi": 100.0
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 70.0,
+        "above": "confident",
+        "below": "low_confidence"
+      },
+      "calibration": "published",
+      "cost": "free",
+      "supports": {
+        "complex": false,
+        "ligand": false
+      },
+      "notes": "Reports mean pLDDT on a 0-1 scale natively; multiplied to 0-100 here so it is directly comparable with AlphaFold and the NIM backends. pLDDT >= 70 is the usual confident-fold threshold.",
+      "output_verified": true
+    },
+    {
+      "id": "esm3",
+      "task": "structure_prediction",
+      "tool": "ESM_fold_protein",
+      "model": {
+        "name": "ESM3",
+        "family": "multimodal protein language model",
+        "url": "https://www.evolutionaryscale.ai"
+      },
+      "needs": [
+        "sequence"
+      ],
+      "api_key": "ESM_API_KEY",
+      "input_map": {
+        "sequence": "{sequence}"
+      },
+      "output_map": {
+        "mean_plddt": "$..mean_plddt",
+        "score": "$..mean_plddt",
+        "structure": "$..[\"pdb_text\",\"pdb\",\"structure\"]",
+        "format": {
+          "const": "pdb"
+        },
+        "n_residues": "$..n_residues",
+        "ptm": "$..ptm"
+      },
+      "score_type": "mean pLDDT",
+      "score_units": "pLDDT (0-100)",
+      "transform": {
+        "kind": "linear",
+        "lo": 0.0,
+        "hi": 100.0
+      },
+      "calibration": "published",
+      "cost": "api_key",
+      "supports": {
+        "complex": false,
+        "ligand": false
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 70.0,
+        "above": "confident",
+        "below": "low_confidence"
+      },
+      "output_verified": false,
+      "output_unverified_reason": "No ESM_API_KEY available; the reply shape is inferred from the tool's schema."
+    },
+    {
+      "id": "nim_esmfold",
+      "task": "structure_prediction",
+      "tool": "NvidiaNIM_esmfold",
+      "model": {
+        "name": "ESMFold (NVIDIA NIM)",
+        "family": "protein language model folding"
+      },
+      "needs": [
+        "sequence"
+      ],
+      "api_key": "NVIDIA_API_KEY",
+      "input_map": {
+        "sequence": "{sequence}"
+      },
+      "normalizer": "normalize_pdb_structure",
+      "score_type": "mean pLDDT",
+      "score_units": "pLDDT (0-100)",
+      "transform": {
+        "kind": "linear",
+        "lo": 0.0,
+        "hi": 100.0
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 70.0,
+        "above": "confident",
+        "below": "low_confidence"
+      },
+      "calibration": "published",
+      "cost": "api_key",
+      "supports": {
+        "complex": false,
+        "ligand": false
+      },
+      "notes": "Returns raw PDB text; mean pLDDT is read out of the B-factor column by the normalizer.",
+      "output_verified": false,
+      "output_unverified_reason": "Model not provisioned for the NVIDIA account tested; shares normalize_pdb_structure with nim_openfold2, which IS verified."
+    },
+    {
+      "id": "nim_alphafold2",
+      "task": "structure_prediction",
+      "tool": "NvidiaNIM_alphafold2",
+      "model": {
+        "name": "AlphaFold2 (NVIDIA NIM)",
+        "family": "MSA-based folding",
+        "citation": "Jumper et al., Nature 2021"
+      },
+      "needs": [
+        "sequence"
+      ],
+      "api_key": "NVIDIA_API_KEY",
+      "input_map": {
+        "sequence": "{sequence}"
+      },
+      "normalizer": "normalize_pdb_structure",
+      "score_type": "mean pLDDT",
+      "score_units": "pLDDT (0-100)",
+      "transform": {
+        "kind": "linear",
+        "lo": 0.0,
+        "hi": 100.0
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 70.0,
+        "above": "confident",
+        "below": "low_confidence"
+      },
+      "calibration": "published",
+      "cost": "api_key",
+      "supports": {
+        "complex": false,
+        "ligand": false
+      },
+      "notes": "Builds an MSA, so it is far slower than the language-model folders but usually more accurate on sequences with deep homolog coverage.",
+      "output_verified": false,
+      "output_unverified_reason": "NVIDIA returned 'NVCF function status: errored' on every attempt; shares normalize_pdb_structure with nim_openfold2, which IS verified."
+    },
+    {
+      "id": "nim_openfold2",
+      "task": "structure_prediction",
+      "tool": "NvidiaNIM_openfold2",
+      "model": {
+        "name": "OpenFold2 (NVIDIA NIM)",
+        "family": "MSA-based folding"
+      },
+      "needs": [
+        "sequence"
+      ],
+      "api_key": "NVIDIA_API_KEY",
+      "input_map": {
+        "sequence": "{sequence}"
+      },
+      "normalizer": "normalize_pdb_structure",
+      "score_type": "mean pLDDT",
+      "score_units": "pLDDT (0-100)",
+      "transform": {
+        "kind": "linear",
+        "lo": 0.0,
+        "hi": 100.0
+      },
+      "calibration": "published",
+      "cost": "api_key",
+      "supports": {
+        "complex": false,
+        "ligand": false
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 70.0,
+        "above": "confident",
+        "below": "low_confidence"
+      },
+      "output_verified": true
+    },
+    {
+      "id": "nim_boltz2",
+      "task": "structure_prediction",
+      "tool": "NvidiaNIM_boltz2",
+      "model": {
+        "name": "Boltz-2 (NVIDIA NIM)",
+        "family": "co-folding (protein + ligand)"
+      },
+      "needs": [
+        "sequence"
+      ],
+      "api_key": "NVIDIA_API_KEY",
+      "input_map": {
+        "polymers": [
+          {
+            "id": "A",
+            "molecule_type": "protein",
+            "sequence": "{sequence}"
+          }
+        ]
+      },
+      "normalizer": "normalize_boltz_structure",
+      "score_type": "mean pLDDT",
+      "score_units": "pLDDT (0-100)",
+      "transform": {
+        "kind": "linear",
+        "lo": 0.0,
+        "hi": 100.0
+      },
+      "calibration": "published",
+      "cost": "api_key",
+      "supports": {
+        "complex": true,
+        "ligand": true
+      },
+      "notes": "The only structure backend here that co-folds a ligand with the receptor, which is also why it doubles as a binding_affinity backend.",
+      "call": {
+        "from": "raw",
+        "threshold": 70.0,
+        "above": "confident",
+        "below": "low_confidence"
+      },
+      "output_verified": true
+    },
+    {
+      "id": "admet_ai",
+      "task": "molecular_property",
+      "tool": "ADMETAI_predict_physicochemical_properties",
+      "model": {
+        "name": "ADMET-AI",
+        "family": "Chemprop-RDKit multitask GNN trained on TDC",
+        "citation": "Swanson et al., Bioinformatics 2024",
+        "url": "https://admet.ai.greenstonebio.com"
+      },
+      "needs": [
+        "smiles"
+      ],
+      "input_map": {
+        "smiles": [
+          "{smiles}"
+        ]
+      },
+      "score_type": "ADMET-AI prediction",
+      "calibration": "published",
+      "cost": "local_model",
+      "notes": "Requires the optional 'admet-ai' package (pip install tooluniverse[ml]). Its output column names are the TDC dataset names, which is why they are this task's canonical property ids.",
+      "property_map": {
+        "bbb_martins": {
+          "tool": "ADMETAI_predict_BBB_penetrance",
+          "path": "$..BBB_Martins",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "penetrant",
+            "below_label": "non_penetrant"
+          }
+        },
+        "ames": {
+          "tool": "ADMETAI_predict_toxicity",
+          "path": "$..AMES",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "mutagenic",
+            "below_label": "non_mutagenic"
+          }
+        },
+        "herg": {
+          "tool": "ADMETAI_predict_toxicity",
+          "path": "$..hERG",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "blocker",
+            "below_label": "non_blocker"
+          }
+        },
+        "dili": {
+          "tool": "ADMETAI_predict_toxicity",
+          "path": "$..DILI",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "hepatotoxic",
+            "below_label": "non_hepatotoxic"
+          }
+        },
+        "clintox": {
+          "tool": "ADMETAI_predict_toxicity",
+          "path": "$..ClinTox",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "carcinogens_lagunin": {
+          "tool": "ADMETAI_predict_toxicity",
+          "path": "$..Carcinogens_Lagunin",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "skin_reaction": {
+          "tool": "ADMETAI_predict_toxicity",
+          "path": "$..Skin_Reaction",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "ld50_zhu": {
+          "tool": "ADMETAI_predict_toxicity",
+          "path": "$..LD50_Zhu",
+          "units": "log(1/(mol/kg))",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "caco2_wang": {
+          "tool": "ADMETAI_predict_bioavailability",
+          "path": "$..Caco2_Wang",
+          "units": "log cm/s",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "hia_hou": {
+          "tool": "ADMETAI_predict_bioavailability",
+          "path": "$..HIA_Hou",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "pampa_ncats": {
+          "tool": "ADMETAI_predict_bioavailability",
+          "path": "$..PAMPA_NCATS",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "bioavailability_ma": {
+          "tool": "ADMETAI_predict_bioavailability",
+          "path": "$..Bioavailability_Ma",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "pgp_broccatelli": {
+          "tool": "ADMETAI_predict_bioavailability",
+          "path": "$..Pgp_Broccatelli",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "solubility_aqsoldb": {
+          "tool": "ADMETAI_predict_solubility_lipophilicity_hydration",
+          "path": "$..Solubility_AqSolDB",
+          "units": "log mol/L",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "lipophilicity_astrazeneca": {
+          "tool": "ADMETAI_predict_solubility_lipophilicity_hydration",
+          "path": "$..Lipophilicity_AstraZeneca",
+          "units": "logD7.4",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "hydrationfreeenergy_freesolv": {
+          "tool": "ADMETAI_predict_solubility_lipophilicity_hydration",
+          "path": "$..HydrationFreeEnergy_FreeSolv",
+          "units": "kcal/mol",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "clearance_hepatocyte_az": {
+          "tool": "ADMETAI_predict_clearance_distribution",
+          "path": "$..Clearance_Hepatocyte_AZ",
+          "units": "uL/min/10^6 cells",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "clearance_microsome_az": {
+          "tool": "ADMETAI_predict_clearance_distribution",
+          "path": "$..Clearance_Microsome_AZ",
+          "units": "mL/min/g",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "half_life_obach": {
+          "tool": "ADMETAI_predict_clearance_distribution",
+          "path": "$..Half_Life_Obach",
+          "units": "hours",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "vdss_lombardo": {
+          "tool": "ADMETAI_predict_clearance_distribution",
+          "path": "$..VDss_Lombardo",
+          "units": "L/kg",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "ppbr_az": {
+          "tool": "ADMETAI_predict_clearance_distribution",
+          "path": "$..PPBR_AZ",
+          "units": "percent",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "cyp1a2_veith": {
+          "tool": "ADMETAI_predict_CYP_interactions",
+          "path": "$..CYP1A2_Veith",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "inhibitor",
+            "below_label": "non_inhibitor"
+          }
+        },
+        "cyp2c19_veith": {
+          "tool": "ADMETAI_predict_CYP_interactions",
+          "path": "$..CYP2C19_Veith",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "inhibitor",
+            "below_label": "non_inhibitor"
+          }
+        },
+        "cyp2c9_veith": {
+          "tool": "ADMETAI_predict_CYP_interactions",
+          "path": "$..CYP2C9_Veith",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "inhibitor",
+            "below_label": "non_inhibitor"
+          }
+        },
+        "cyp2d6_veith": {
+          "tool": "ADMETAI_predict_CYP_interactions",
+          "path": "$..CYP2D6_Veith",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "inhibitor",
+            "below_label": "non_inhibitor"
+          }
+        },
+        "cyp3a4_veith": {
+          "tool": "ADMETAI_predict_CYP_interactions",
+          "path": "$..CYP3A4_Veith",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "inhibitor",
+            "below_label": "non_inhibitor"
+          }
+        },
+        "cyp2c9_substrate_carbonmangels": {
+          "tool": "ADMETAI_predict_CYP_interactions",
+          "path": "$..CYP2C9_Substrate_CarbonMangels",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "cyp2d6_substrate_carbonmangels": {
+          "tool": "ADMETAI_predict_CYP_interactions",
+          "path": "$..CYP2D6_Substrate_CarbonMangels",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "cyp3a4_substrate_carbonmangels": {
+          "tool": "ADMETAI_predict_CYP_interactions",
+          "path": "$..CYP3A4_Substrate_CarbonMangels",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "logp": {
+          "tool": "ADMETAI_predict_physicochemical_properties",
+          "path": "$..logP",
+          "units": "logP",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "qed": {
+          "tool": "ADMETAI_predict_physicochemical_properties",
+          "path": "$..QED",
+          "units": "QED",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "molecular_weight": {
+          "tool": "ADMETAI_predict_physicochemical_properties",
+          "path": "$..molecular_weight",
+          "units": "g/mol",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "tpsa": {
+          "tool": "ADMETAI_predict_physicochemical_properties",
+          "path": "$..tpsa",
+          "units": "A^2",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "nr-ar": {
+          "tool": "ADMETAI_predict_nuclear_receptor_activity",
+          "path": "$..\"NR-AR\"",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "active",
+            "below_label": "inactive"
+          }
+        },
+        "nr-ar-lbd": {
+          "tool": "ADMETAI_predict_nuclear_receptor_activity",
+          "path": "$..\"NR-AR-LBD\"",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "active",
+            "below_label": "inactive"
+          }
+        },
+        "nr-ahr": {
+          "tool": "ADMETAI_predict_nuclear_receptor_activity",
+          "path": "$..\"NR-AhR\"",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "active",
+            "below_label": "inactive"
+          }
+        },
+        "nr-aromatase": {
+          "tool": "ADMETAI_predict_nuclear_receptor_activity",
+          "path": "$..\"NR-Aromatase\"",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "active",
+            "below_label": "inactive"
+          }
+        },
+        "nr-er": {
+          "tool": "ADMETAI_predict_nuclear_receptor_activity",
+          "path": "$..\"NR-ER\"",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "active",
+            "below_label": "inactive"
+          }
+        },
+        "nr-er-lbd": {
+          "tool": "ADMETAI_predict_nuclear_receptor_activity",
+          "path": "$..\"NR-ER-LBD\"",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "active",
+            "below_label": "inactive"
+          }
+        },
+        "nr-ppar-gamma": {
+          "tool": "ADMETAI_predict_nuclear_receptor_activity",
+          "path": "$..\"NR-PPAR-gamma\"",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "active",
+            "below_label": "inactive"
+          }
+        },
+        "sr-are": {
+          "tool": "ADMETAI_predict_stress_response",
+          "path": "$..\"SR-ARE\"",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "active",
+            "below_label": "inactive"
+          }
+        },
+        "sr-atad5": {
+          "tool": "ADMETAI_predict_stress_response",
+          "path": "$..\"SR-ATAD5\"",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "active",
+            "below_label": "inactive"
+          }
+        },
+        "sr-hse": {
+          "tool": "ADMETAI_predict_stress_response",
+          "path": "$..\"SR-HSE\"",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "active",
+            "below_label": "inactive"
+          }
+        },
+        "sr-mmp": {
+          "tool": "ADMETAI_predict_stress_response",
+          "path": "$..\"SR-MMP\"",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "active",
+            "below_label": "inactive"
+          }
+        },
+        "sr-p53": {
+          "tool": "ADMETAI_predict_stress_response",
+          "path": "$..\"SR-p53\"",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          },
+          "call": {
+            "from": "raw",
+            "threshold": 0.5,
+            "above": "positive",
+            "below": "negative",
+            "above_label": "active",
+            "below_label": "inactive"
+          }
+        }
+      },
+      "thread_safe": false,
+      "output_verified": true
+    },
+    {
+      "id": "swissadme",
+      "task": "molecular_property",
+      "tool": "SwissADME_calculate_adme",
+      "model": {
+        "name": "SwissADME",
+        "family": "rule-based / QSAR web service",
+        "citation": "Daina et al., Sci Rep 2017",
+        "url": "http://www.swissadme.ch"
+      },
+      "needs": [
+        "smiles"
+      ],
+      "input_map": {
+        "smiles": "{smiles}"
+      },
+      "score_type": "SwissADME prediction",
+      "calibration": "published",
+      "cost": "free",
+      "notes": "Returns HTTP 403 to every request from this network -- root and index.php, http and https, with a full browser header set and a session -- so it is blocked server-side rather than bot-detected. Kept registered so it rejoins comparisons automatically if access is restored; until then it reports as a failed backend rather than being silently dropped. Its property paths have never been checked against a real reply.",
+      "property_map": {
+        "logp": {
+          "path": "$..[\"iLOGP\",\"consensus_logp\",\"logp\"]",
+          "units": "logP",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "bbb_martins": {
+          "path": "$..bbb_permeant",
+          "units": "boolean",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "pgp_broccatelli": {
+          "path": "$..pgp_substrate",
+          "units": "boolean",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "tpsa": {
+          "path": "$..tpsa",
+          "units": "A^2",
+          "transform": {
+            "kind": "none"
+          }
+        }
+      },
+      "output_verified": false,
+      "output_unverified_reason": "Service returns HTTP 403 to every request from this network; the property paths are inferred, not observed."
+    },
+    {
+      "id": "tdc_oracle",
+      "task": "molecular_property",
+      "tool": "TDC_predict_oracle_score",
+      "model": {
+        "name": "TDC Oracles",
+        "family": "Therapeutics Data Commons scoring oracles",
+        "url": "https://tdcommons.ai/functions/oracles"
+      },
+      "needs": [
+        "smiles"
+      ],
+      "score_type": "TDC oracle score",
+      "calibration": "published",
+      "cost": "local_model",
+      "notes": "Covers a small set of endpoints, but they are the exact oracles TDC's own leaderboards score against, which makes it the natural reference point for the other backends on those properties.",
+      "property_map": {
+        "qed": {
+          "input_map": {
+            "smiles": "{smiles}",
+            "oracle": "QED"
+          },
+          "path": "$..score",
+          "units": "QED",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "logp": {
+          "input_map": {
+            "smiles": "{smiles}",
+            "oracle": "LogP"
+          },
+          "path": "$..score",
+          "units": "logP",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "sa": {
+          "input_map": {
+            "smiles": "{smiles}",
+            "oracle": "SA"
+          },
+          "path": "$..score",
+          "units": "synthetic accessibility",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "gsk3b": {
+          "input_map": {
+            "smiles": "{smiles}",
+            "oracle": "GSK3B"
+          },
+          "path": "$..score",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "jnk3": {
+          "input_map": {
+            "smiles": "{smiles}",
+            "oracle": "JNK3"
+          },
+          "path": "$..score",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "drd2": {
+          "input_map": {
+            "smiles": "{smiles}",
+            "oracle": "DRD2"
+          },
+          "path": "$..score",
+          "units": "probability",
+          "transform": {
+            "kind": "identity"
+          }
+        }
+      },
+      "thread_safe": false,
+      "output_verified": true
+    },
+    {
+      "id": "rdkit_descriptors",
+      "task": "molecular_property",
+      "tool": "DrugProps_calculate_qed",
+      "model": {
+        "name": "RDKit descriptors",
+        "family": "deterministic cheminformatics"
+      },
+      "needs": [
+        "smiles"
+      ],
+      "score_type": "RDKit descriptor",
+      "calibration": "published",
+      "cost": "free",
+      "notes": "Not a learned model: exact computed descriptors from RDKit. Included as the null baseline every ML property predictor should be expected to beat on the endpoints it covers -- a GNN that cannot beat a deterministic calculation of logP is not adding anything there. Needs the optional 'rdkit' package.",
+      "property_map": {
+        "qed": {
+          "tool": "DrugProps_calculate_qed",
+          "input_map": {
+            "smiles": "{smiles}"
+          },
+          "path": "$.data.qed_score",
+          "units": "QED",
+          "transform": {
+            "kind": "identity"
+          }
+        },
+        "logp": {
+          "tool": "DrugProps_lipinski_filter",
+          "input_map": {
+            "smiles": "{smiles}"
+          },
+          "path": "$.data.descriptors.cLogP",
+          "units": "cLogP",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "tpsa": {
+          "tool": "DrugProps_lipinski_filter",
+          "input_map": {
+            "smiles": "{smiles}"
+          },
+          "path": "$.data.descriptors.TPSA_A2",
+          "units": "A^2",
+          "transform": {
+            "kind": "none"
+          }
+        },
+        "molecular_weight": {
+          "tool": "DrugProps_lipinski_filter",
+          "input_map": {
+            "smiles": "{smiles}"
+          },
+          "path": "$.data.descriptors.molecular_weight_Da",
+          "units": "g/mol",
+          "transform": {
+            "kind": "none"
+          }
+        }
+      },
+      "output_verified": true
+    },
+    {
+      "id": "nim_diffdock",
+      "task": "binding_affinity",
+      "tool": "NvidiaNIM_diffdock",
+      "model": {
+        "name": "DiffDock (NVIDIA NIM)",
+        "family": "diffusion generative docking",
+        "citation": "Corso et al., ICLR 2023"
+      },
+      "needs": [
+        "protein_structure"
+      ],
+      "api_key": "NVIDIA_API_KEY",
+      "input_map": {
+        "protein": "{protein_structure}",
+        "ligand": "{ligand_sdf}",
+        "ligand_file_type": "sdf"
+      },
+      "output_map": {
+        "score": {
+          "path": "$.data.position_confidence",
+          "agg": "first"
+        },
+        "pose": {
+          "path": "$.data.ligand_positions",
+          "agg": "first"
+        },
+        "all_pose_confidences": {
+          "path": "$.data.position_confidence",
+          "agg": "list"
+        }
+      },
+      "score_type": "DiffDock confidence",
+      "score_units": "confidence",
+      "transform": {
+        "kind": "none"
+      },
+      "calibration": "heuristic",
+      "cost": "api_key",
+      "notes": "Emits a diffusion pose-confidence logit, not an affinity. Deliberately left un-normalized: putting a confidence logit on the same 0-1 axis as a kcal/mol binding free energy would invent a comparison that does not exist. DiffDock returns its poses already ranked best-first, and the first entry was confirmed to be the maximum-confidence one, so 'first' is used for both score and pose -- taking the max confidence independently could report a score belonging to a different pose than the one returned. Requires receptor PDB text and a 3D ligand SDF, both built by the binding-affinity resolver (RCSB fetch + RDKit conformer).",
+      "output_verified": true
+    },
+    {
+      "id": "swissdock",
+      "task": "binding_affinity",
+      "tool": "SwissDock_dock_ligand",
+      "model": {
+        "name": "SwissDock (AutoDock Vina)",
+        "family": "physics-based docking",
+        "url": "http://www.swissdock.ch"
+      },
+      "needs": [
+        "pdb_id"
+      ],
+      "input_map": {
+        "ligand_smiles": "{ligand_smiles}",
+        "pdb_id": "{pdb_id}"
+      },
+      "output_map": {
+        "score": {
+          "path": "$..binding_energy",
+          "agg": "min"
+        },
+        "session_id": "$..session_id"
+      },
+      "score_type": "Vina binding energy",
+      "score_units": "kcal/mol",
+      "transform": {
+        "kind": "linear",
+        "lo": -14.0,
+        "hi": -4.0,
+        "invert": true
+      },
+      "calibration": "heuristic",
+      "cost": "free",
+      "notes": "More negative is tighter binding, hence the inverted transform. Requires a PDB id: it docks into an existing experimental structure. Three protocol faults were fixed here -- the session number is assigned by the server in the preplig reply (it was being invented locally as a UUID), the receptor must be uploaded as a 'myTarget' file (posting 'pdbid' returned HTTP 200 with 'No target provided'), and a box centre is mandatory despite the schema calling it optional, so one is derived from the receptor's bounding box. All four stages now succeed; the remaining failure is SwissDock's own queue rejecting the job.",
+      "output_verified": false,
+      "output_unverified_reason": "All four API stages now succeed, but SwissDock's queue rejects the job ('The job could not be submitted to the queuing system'), so no result payload has ever been seen and the output paths are inferred."
+    },
+    {
+      "id": "boltz2_interface",
+      "task": "binding_affinity",
+      "tool": "NvidiaNIM_boltz2",
+      "model": {
+        "name": "Boltz-2 (co-folding interface confidence)",
+        "family": "co-folding with affinity head"
+      },
+      "needs": [
+        "protein_sequence"
+      ],
+      "api_key": "NVIDIA_API_KEY",
+      "input_map": {
+        "polymers": [
+          {
+            "id": "A",
+            "molecule_type": "protein",
+            "sequence": "{protein_sequence}"
+          }
+        ],
+        "ligands": [
+          {
+            "id": "L",
+            "smiles": "{ligand_smiles}"
+          }
+        ]
+      },
+      "output_map": {
+        "score": {
+          "path": "$.data.ligand_iptm_scores",
+          "agg": "mean"
+        },
+        "complex_plddt": {
+          "path": "$.data.complex_plddt_scores",
+          "agg": "mean",
+          "mul": 100
+        },
+        "iptm": {
+          "path": "$.data.iptm_scores",
+          "agg": "mean"
+        },
+        "pose": {
+          "path": "$.data.structures[0].structure",
+          "agg": "first"
+        }
+      },
+      "score_type": "Boltz-2 ligand interface pTM",
+      "score_units": "confidence",
+      "transform": {
+        "kind": "none"
+      },
+      "calibration": "heuristic",
+      "cost": "api_key",
+      "notes": "Reports ligand interface pTM, NOT a binding affinity. Verified against a live NVIDIA NIM response: ToolUniverse's NvidiaNIM_boltz2 wrapper exposes no affinity parameter (polymers, ligands, recycling_steps, sampling_steps, diffusion_samples, output_format only), so the reply's 'affinities' object is always empty and no affinity_pred_value is ever returned. This backend previously mapped a pIC50 that could not exist. What Boltz-2 does give for a protein-ligand complex is co-folding confidence -- observed ligand_iptm 0.678 for aspirin against a 33-residue peptide -- which says how confidently the model placed the ligand, not how tightly it binds. Deliberately un-normalized: it shares no axis with a kcal/mol docking energy.",
+      "output_verified": true
+    },
+    {
+      "id": "pangolin",
+      "task": "variant_effect",
+      "tool": "SpliceAI_predict_pangolin",
+      "model": {
+        "name": "Pangolin",
+        "family": "deep splice model",
+        "citation": "Zeng & Li, Genome Biology 2022"
+      },
+      "needs": [
+        "genomic.pos"
+      ],
+      "group": "splicing",
+      "input_map": {
+        "variant": "{genomic.chrom}-{genomic.pos}-{genomic.ref}-{genomic.alt}"
+      },
+      "output_map": {
+        "score": {
+          "path": "$.data.scores[*].DS_SG",
+          "agg": "abs_max"
+        }
+      },
+      "score_type": "Pangolin splice-gain delta",
+      "score_units": "delta score (0-1)",
+      "transform": {
+        "kind": "identity"
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 0.5,
+        "above": "deleterious",
+        "below": "tolerated"
+      },
+      "calibration": "heuristic",
+      "cost": "free",
+      "output_verified": true,
+      "notes": "A second, architecturally different splice model alongside SpliceAI, trained across multiple tissues and species. Grouped with SpliceAI under 'splicing' because both answer a different question from the missense predictors."
+    },
+    {
+      "id": "evo2",
+      "task": "variant_effect",
+      "tool": "Evo2_score_variant",
+      "model": {
+        "name": "Evo 2 40B",
+        "family": "genome foundation model",
+        "citation": "Arc Institute, 2025"
+      },
+      "needs": [
+        "dna_window",
+        "evo2_position"
+      ],
+      "api_key": "NVIDIA_API_KEY",
+      "input_map": {
+        "sequence": "{dna_window.dna}",
+        "position": "{evo2_position}",
+        "reference": "{genomic.ref}",
+        "alternate": "{genomic.alt}"
+      },
+      "output_map": {
+        "score": "$.data.delta_loglik",
+        "ref_loglik": "$.data.ref_loglik",
+        "alt_loglik": "$.data.alt_loglik"
+      },
+      "score_type": "Evo 2 delta log-likelihood",
+      "score_units": "log-likelihood ratio",
+      "transform": {
+        "kind": "logistic",
+        "x0": -4.0,
+        "k": 3.0,
+        "invert": true
+      },
+      "call": {
+        "from": "raw",
+        "threshold": -4.0,
+        "above": "tolerated",
+        "below": "deleterious"
+      },
+      "calibration": "heuristic",
+      "cost": "api_key",
+      "output_verified": true,
+      "notes": "Reads DNA rather than a protein change, so it scores variants the protein-level models cannot see at all -- non-coding, regulatory, splice-region. Needs a reference genome window, fetched from UCSC only when this backend is selected. Threshold is our estimate, not published."
+    },
+    {
+      "id": "nim_alphafold2_multimer",
+      "task": "structure_prediction",
+      "tool": "NvidiaNIM_alphafold2_multimer",
+      "model": {
+        "name": "AlphaFold2-Multimer (NVIDIA NIM)",
+        "family": "MSA-based complex folding"
+      },
+      "needs": [
+        "sequences"
+      ],
+      "api_key": "NVIDIA_API_KEY",
+      "input_map": {
+        "sequences": "{sequences}"
+      },
+      "normalizer": "normalize_pdb_structure",
+      "score_type": "mean pLDDT",
+      "score_units": "pLDDT (0-100)",
+      "transform": {
+        "kind": "linear",
+        "lo": 0.0,
+        "hi": 100.0
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 70.0,
+        "above": "confident",
+        "below": "low_confidence"
+      },
+      "calibration": "published",
+      "cost": "api_key",
+      "supports": {
+        "complex": true,
+        "ligand": false
+      },
+      "output_verified": false,
+      "output_unverified_reason": "Requires NVIDIA_API_KEY and a multi-chain input; not exercised. Shares normalize_pdb_structure with nim_openfold2, which IS verified.",
+      "notes": "Handles multi-chain complexes, which the single-sequence folders cannot. The task advertises a 'sequences' input for complexes, and before this only Boltz-2 could honour it."
+    },
+    {
+      "id": "nim_openfold3",
+      "task": "structure_prediction",
+      "tool": "NvidiaNIM_openfold3",
+      "model": {
+        "name": "OpenFold3 (NVIDIA NIM)",
+        "family": "biomolecular complex folding (protein/DNA/RNA/ligand)"
+      },
+      "needs": [
+        "of3_molecules"
+      ],
+      "api_key": "NVIDIA_API_KEY",
+      "input_map": {
+        "inputs": [
+          {
+            "input_id": "query",
+            "molecules": "{of3_molecules}",
+            "output_format": "pdb"
+          }
+        ]
+      },
+      "normalizer": "normalize_pdb_structure",
+      "score_type": "mean pLDDT",
+      "score_units": "pLDDT (0-100)",
+      "transform": {
+        "kind": "linear",
+        "lo": 0.0,
+        "hi": 100.0
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 70.0,
+        "above": "confident",
+        "below": "low_confidence"
+      },
+      "calibration": "published",
+      "cost": "api_key",
+      "supports": {
+        "complex": true,
+        "ligand": true
+      },
+      "output_verified": false,
+      "output_unverified_reason": "Requires NVIDIA_API_KEY and a multi-chain input; not exercised. Shares normalize_pdb_structure with nim_openfold2, which IS verified.",
+      "notes": "Handles multi-chain complexes, which the single-sequence folders cannot. The task advertises a 'sequences' input for complexes, and before this only Boltz-2 could honour it. Takes a nested 'inputs' spec with per-molecule entries, not a flat sequence list; the resolver builds that shape."
+    },
+    {
+      "id": "mutation_assessor",
+      "task": "variant_effect",
+      "tool": "FAVOR_annotate_variant",
+      "from_context": "favor",
+      "needs": [
+        "favor"
+      ],
+      "model": {
+        "name": "MutationAssessor",
+        "family": "evolutionary conservation of functional sites",
+        "citation": "Reva et al., NAR 2011"
+      },
+      "output_map": {
+        "score": "$.deleteriousness.mutation_assessor_score"
+      },
+      "score_type": "MutationAssessor score",
+      "score_units": "functional impact score",
+      "transform": {
+        "kind": "linear",
+        "lo": 0.0,
+        "hi": 6.0
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 1.9,
+        "above": "deleterious",
+        "below": "tolerated"
+      },
+      "calibration": "heuristic",
+      "cost": "free",
+      "output_verified": true,
+      "notes": "Read from one keyless FAVOR call that also serves the other FAVOR-backed models here, so these cost one request between them. FAVOR additionally reports FATHMM-XF and GERP on scales this registry does not map, because the values observed (24.7 and 18.8) do not match those models' published ranges and a guessed calibration would be worse than none."
+    },
+    {
+      "id": "mutation_taster",
+      "task": "variant_effect",
+      "tool": "FAVOR_annotate_variant",
+      "from_context": "favor",
+      "needs": [
+        "favor"
+      ],
+      "model": {
+        "name": "MutationTaster",
+        "family": "Bayesian classifier",
+        "citation": "Schwarz et al., Nat Methods 2014"
+      },
+      "output_map": {
+        "score": "$.deleteriousness.mutation_taster_score"
+      },
+      "score_type": "MutationTaster score",
+      "score_units": "probability",
+      "transform": {
+        "kind": "identity"
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 0.5,
+        "above": "deleterious",
+        "below": "tolerated"
+      },
+      "calibration": "heuristic",
+      "cost": "free",
+      "output_verified": true,
+      "notes": "Read from one keyless FAVOR call that also serves the other FAVOR-backed models here, so these cost one request between them. FAVOR additionally reports FATHMM-XF and GERP on scales this registry does not map, because the values observed (24.7 and 18.8) do not match those models' published ranges and a guessed calibration would be worse than none."
+    },
+    {
+      "id": "linsight",
+      "task": "variant_effect",
+      "tool": "FAVOR_annotate_variant",
+      "from_context": "favor",
+      "needs": [
+        "favor"
+      ],
+      "model": {
+        "name": "LINSIGHT",
+        "family": "non-coding fitness-consequence model",
+        "citation": "Huang et al., Nat Genet 2017"
+      },
+      "output_map": {
+        "score": "$.deleteriousness.linsight"
+      },
+      "score_type": "LINSIGHT score",
+      "score_units": "probability",
+      "transform": {
+        "kind": "identity"
+      },
+      "call": {
+        "from": "raw",
+        "threshold": 0.4,
+        "above": "deleterious",
+        "below": "tolerated"
+      },
+      "calibration": "heuristic",
+      "cost": "free",
+      "output_verified": true,
+      "notes": "Read from one keyless FAVOR call that also serves the other FAVOR-backed models here, so these cost one request between them. FAVOR additionally reports FATHMM-XF and GERP on scales this registry does not map, because the values observed (24.7 and 18.8) do not match those models' published ranges and a guessed calibration would be worse than none. Grouped as non_coding: LINSIGHT models fitness consequences in non-coding DNA, so a low score on a coding missense variant means the question does not apply, not that the variant is benign. Averaging it into the protein-function consensus turned a unanimous call into a contested one.",
+      "group": "non_coding"
+    },
+    {
+      "id": "metasvm",
+      "task": "variant_effect",
+      "tool": "FAVOR_annotate_variant",
+      "from_context": "favor",
+      "needs": [
+        "favor"
+      ],
+      "model": {
+        "name": "MetaSVM",
+        "family": "supervised ensemble of 10 predictors",
+        "citation": "Dong et al., Hum Mol Genet 2015"
+      },
+      "output_map": {
+        "score": "$.deleteriousness.metasvm_pred",
+        "classification": "$.deleteriousness.metasvm_pred"
+      },
+      "score_type": "MetaSVM prediction",
+      "score_units": "class (D/T)",
+      "transform": {
+        "kind": "categorical",
+        "map": {
+          "D": 1.0,
+          "T": 0.0
+        }
+      },
+      "call": {
+        "from": "field",
+        "field": "classification",
+        "map": {
+          "D": "deleterious",
+          "T": "tolerated"
+        },
+        "default": "uncertain"
+      },
+      "calibration": "published",
+      "cost": "free",
+      "output_verified": true,
+      "notes": "Read from one keyless FAVOR call that also serves the other FAVOR-backed models here, so these cost one request between them. FAVOR additionally reports FATHMM-XF and GERP on scales this registry does not map, because the values observed (24.7 and 18.8) do not match those models' published ranges and a guessed calibration would be worse than none. MetaSVM is itself an ensemble over ten predictors, several of which appear separately here, so it is not independent evidence."
+    },
+    {
+      "id": "alphagenome",
+      "task": "variant_effect",
+      "tool": "AlphaGenome_atlas_lookup_variant",
+      "model": {
+        "name": "AlphaGenome Atlas",
+        "family": "regulatory genomics foundation model",
+        "citation": "Google DeepMind, 2026"
+      },
+      "needs": [
+        "genomic.pos"
+      ],
+      "api_key": "ALPHA_GENOME_API_KEY",
+      "input_map": {
+        "chromosome": "chr{genomic.chrom}",
+        "position": "{genomic.pos}",
+        "reference_bases": "{genomic.ref}",
+        "alternate_bases": "{genomic.alt}",
+        "scorers": [
+          "AVI_SCORE"
+        ]
+      },
+      "output_map": {
+        "score": "$..AVI_SCORE"
+      },
+      "score_type": "AlphaGenome unified variant impact (AVI)",
+      "score_units": "impact score",
+      "transform": {
+        "kind": "none"
+      },
+      "calibration": "heuristic",
+      "cost": "api_key",
+      "output_verified": false,
+      "output_unverified_reason": "Requires ALPHA_GENOME_API_KEY, which was not available; the score path and the AVI scale are taken from the tool's schema, not observed.",
+      "notes": "Precomputed scores for all ~9 billion human SNVs, so unlike the protein-level predictors it covers non-coding and regulatory variants. Left un-normalized until the AVI scale has been seen on a real reply -- a guessed 0-1 mapping would put an unverified number on the same axis as verified ones."
+    }
+  ]
+}

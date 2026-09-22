@@ -28,6 +28,11 @@ Tool Discovery & Usage
 * **Tool Discovery** → :doc:`finding_tools` - Tutorial to ToolUniverse's three tool finder methods: keyword, LLM, and embedding search
 * **Tools Overview** → :doc:`tools` - Comprehensive overview of all available tools
 
+Comparing & Benchmarking Models
+-------------------------------
+
+* **Unified Model Interface** → :doc:`unified_model_interface` - One input/output contract per prediction task (variant effect, protein structure, ADMET, binding affinity) with many interchangeable model backends behind it: swap models without rewriting the call, or run them all at once and see where they agree, disagree, and cannot answer
+
 AI Agent Platform Setup
 -----------------------
 

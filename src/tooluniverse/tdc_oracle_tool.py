@@ -62,6 +62,74 @@ def _install_rdkit_six_shim():
         pass
 
 
+_sa_scores_checked = False
+
+
+def _ensure_sa_fragment_scores_once():
+    """Run the repair at most once, and only when an oracle is actually used.
+
+    This must not happen at import time. PyTDC reads its table from a *relative*
+    ``oracle/`` path, so repairing it eagerly wrote a 4.3 MB pickle into
+    whatever directory the process happened to start in -- for anyone who
+    merely imported ToolUniverse, including test runs and unrelated tools.
+    A library import should not create files.
+    """
+    global _sa_scores_checked
+    if _sa_scores_checked:
+        return
+    _sa_scores_checked = True
+    _ensure_sa_fragment_scores()
+
+
+def _ensure_sa_fragment_scores():
+    """Repair PyTDC's synthetic-accessibility table from RDKit's bundled copy.
+
+    PyTDC fetches ``fpscores.pkl`` from Harvard Dataverse into a relative
+    ``oracle/`` directory. That download currently returns **403 Forbidden**,
+    and PyTDC saves the HTML error page as the pickle without checking, so the
+    next read dies on ``invalid load key, '<'``. The ``Oracle`` wrapper then
+    swallows the exception and returns **0.0** -- a number that looks like a
+    perfectly ordinary score. Aspirin came back with a LogP of 0.0 (it is
+    ~1.3) and an SA of 0.0 (the scale starts at 1), and nothing anywhere
+    reported a failure.
+
+    The authoritative table ships inside RDKit, which is already installed for
+    any environment that can run these oracles, so use that instead of the
+    broken download. Only a corrupt or absent file is replaced.
+    """
+    import gzip
+    import os
+    import pickle
+
+    target = os.path.join("oracle", "fpscores.pkl")
+    try:
+        if os.path.exists(target):
+            with open(target, "rb") as handle:
+                pickle.load(handle)
+            return  # already valid
+    except Exception:
+        pass  # corrupt -- fall through and rewrite
+
+    try:
+        import rdkit
+
+        source = os.path.join(
+            os.path.dirname(rdkit.__file__), "Contrib", "SA_Score", "fpscores.pkl.gz"
+        )
+        if not os.path.exists(source):
+            return
+        with gzip.open(source, "rb") as handle:
+            scores = pickle.load(handle)
+        os.makedirs("oracle", exist_ok=True)
+        tmp = target + ".part"
+        with open(tmp, "wb") as handle:
+            pickle.dump(scores, handle)
+        os.replace(tmp, target)  # atomic: never leave a half-written pickle
+    except Exception:
+        # Best effort. A failure here leaves the original behaviour intact.
+        return
+
+
 # Attempt the optional import at module load so missing-dependency handling is
 # a clean error rather than an exception. Mirrors the framework's optional-dep
 # pattern (try/except ImportError -> AVAILABLE flag).
@@ -128,6 +196,9 @@ class TDCOracleTool(BaseTool):
     def _get_oracle(cls, name):
         """Return a cached or newly constructed TDC Oracle for ``name``."""
         if name not in cls._oracle_cache:
+            # Repair the SA fragment table here, not at import: this is the
+            # first point at which the caller has actually asked for a score.
+            _ensure_sa_fragment_scores_once()
             cls._oracle_cache[name] = _TDCOracle(name=name)
         return cls._oracle_cache[name]
 

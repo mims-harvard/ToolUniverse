@@ -264,6 +264,32 @@ class TestNvidiaNIMToolUnit:
         assert "Authentication failed" in result["error"]
     
     @patch("requests.post")
+    def test_forbidden_error(self, mock_post, nvidia_nim_tool):
+        """403 must be distinguished from 401 and explain what to do.
+
+        Confirmed against the live API: a real nvapi- key with no entitlement
+        for health.api.nvidia.com returns 403 Forbidden, not 401. Before this
+        branch existed it fell through to a bare "API returned status 403",
+        which reads as an outage rather than an account setting and leaves the
+        caller with nothing to act on.
+        """
+        mock_response = MagicMock()
+        mock_response.status_code = 403
+        mock_response.text = (
+            '{"status":403,"title":"Forbidden","detail":"Authorization failed"}'
+        )
+        mock_post.return_value = mock_response
+
+        result = nvidia_nim_tool.run({"sequence": "MVLSPADKTNVKAAWGKVG"})
+
+        assert "error" in result
+        assert "Authorization failed" in result["error"]
+        assert result["status_code"] == 403
+        # The guidance has to name the actual cause, not just restate the code.
+        assert "entitlement" in result["detail"] or "expired" in result["detail"]
+        assert "build.nvidia.com" in result["detail"]
+
+    @patch("requests.post")
     def test_server_error(self, mock_post, nvidia_nim_tool):
         """Test handling of server (500) error."""
         mock_response = MagicMock()

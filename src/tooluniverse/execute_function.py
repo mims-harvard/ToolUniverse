@@ -3776,6 +3776,12 @@ class ToolUniverse:
                     "GrepTools",
                     "GetToolInfo",
                     "ExecuteTool",
+                    # The unified-model tools dispatch to other tools, so they
+                    # need the live ToolUniverse rather than building their own.
+                    "UnifiedModelPredictTool",
+                    "UnifiedModelCompareTool",
+                    "UnifiedModelListTool",
+                    "UnifiedModelBenchmarkTool",
                 ]:
                     # Tool discovery tools need tooluniverse parameter
                     new_tool = tool_class(tool_config=tool, tooluniverse=self)
