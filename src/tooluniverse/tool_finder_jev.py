@@ -35,7 +35,6 @@ key-gated tool.
 import collections
 import json
 import math
-import os
 import re
 import time
 import urllib.error
@@ -184,9 +183,10 @@ class ToolFinderJev(BaseTool):
         return [self._index_names[i] for i in self._index.top(expanded, depth)]
 
     # ------------------------------------------------------------------ grading
-    @staticmethod
-    def _api_key():
-        key = os.environ.get("TYPESAFE_API_KEY")
+    def _api_key(self):
+        # Resolved per request, not once at construction, so a hosted multi-tenant
+        # deployment keeps each caller's key to that caller.
+        key = self.credential("TYPESAFE_API_KEY")
         if not key:
             raise RuntimeError(
                 "TYPESAFE_API_KEY is not set; Tool_Finder_Jev needs it to grade candidates"

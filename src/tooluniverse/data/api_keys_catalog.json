@@ -609,6 +609,18 @@
     ]
   },
   {
+    "name": "TYPESAFE_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Tool Discovery",
+    "register_url": "https://typesafe.ai/",
+    "purpose": "Grade retrieved tool candidates for relevance so Tool_Finder_Jev can rank them.",
+    "without": "Tool_Finder_Jev is not loaded; the other tool finders are unaffected.",
+    "used_by": [
+      "finder_tools.json"
+    ]
+  },
+  {
     "name": "UMLS_API_KEY",
     "requirement": "optional",
     "type": "secret",
