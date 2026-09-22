@@ -7,6 +7,13 @@ relevance judge would use. Grading a hundred candidates costs one round trip, be
 the model answers every question in the request in parallel, so widening the shortlist
 costs tokens but not latency.
 
+The comparison that matters is not against the embedding finder, which answers in
+milliseconds; it is against ``Tool_Finder_LLM``, the other finder that thinks. That one
+prefilters with keywords and asks an LLM to choose among ten candidates, and takes about
+0.67 s. This one grades a hundred candidates in about 0.64 s and ranks them 52% better
+by NDCG@10. Latency grows slowly with the shortlist: 0.35 s at ten candidates, 0.43 s at
+thirty, 0.64 s at a hundred, 0.93 s at two hundred.
+
 Two stages:
 
 1. **Retrieval.** BM25 over the tool documents, with stop words and JSON schema
