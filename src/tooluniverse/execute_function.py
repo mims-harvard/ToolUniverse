@@ -2414,11 +2414,13 @@ class ToolUniverse:
             dict: Tool configuration with only essential keys for prompting.
         """
         valid_keys = ["name", "description", "parameter", "required"]
-        tool = copy.deepcopy(tool)
-        for key in list(tool.keys()):
-            if key not in valid_keys:
-                del tool[key]
-        return tool
+        # Copy the four keys that survive rather than copying the whole config and
+        # deleting the rest: the discarded keys (return_schema, test_examples,
+        # settings and so on) are the larger part of a tool config, and this runs on
+        # every tool the finders return.
+        return {
+            key: copy.deepcopy(tool[key]) for key in valid_keys if key in tool
+        }
 
     def prepare_tool_prompts(self, tool_list, mode="prompt", valid_keys=None):
         """
@@ -2456,13 +2458,13 @@ class ToolUniverse:
                 f"Invalid mode: {mode}. Must be 'prompt', 'example', or 'custom'"
             )
 
-        copied_list = copy.deepcopy(tool_list)
-        for tool in copied_list:
-            # Create a list of keys to avoid modifying the dictionary during iteration
-            for key in list(tool.keys()):
-                if key not in valid_keys:
-                    del tool[key]
-        return copied_list
+        # Copy only the keys that survive the filter. Deep-copying each tool and
+        # then deleting most of its keys spends the bulk of the work on data that is
+        # thrown away.
+        return [
+            {key: copy.deepcopy(tool[key]) for key in valid_keys if key in tool}
+            for tool in tool_list
+        ]
 
     def get_tool_specification_by_names(self, tool_names, format="default"):
         """
@@ -2628,35 +2630,48 @@ class ToolUniverse:
         if return_prompt:
             return self.prepare_one_tool_prompt(tool_config)
 
-        import copy
-
-        # Process parameter schema based on format
+        # Process parameter schema based on format.
+        #
+        # The only thing written here is a ``required`` flag on each property, so
+        # only the dictionaries on the way to those flags are copied. Deep-copying
+        # the whole configuration also copied the return schema, the test examples
+        # and everything else, on every call, to change one key per property. The
+        # remaining fields are shared with the loaded configuration, as they already
+        # were on the path below that returns ``tool_config`` unchanged.
         if "parameter" in tool_config and isinstance(tool_config["parameter"], dict):
-            processed_config = copy.deepcopy(tool_config)
-            parameter_schema = processed_config["parameter"]
+            parameter_schema = tool_config["parameter"]
 
             if format == "openai":
                 # Recursively sanitize for OpenAI: removes legacy required:bool flags
                 # from nested property schemas, rebuilds required arrays, and strips
-                # additionalProperties:True which OpenAI rejects.
+                # additionalProperties:True which OpenAI rejects. The sanitizer
+                # rebuilds every dictionary it touches, so it needs no copy.
                 sanitized = self._sanitize_schema_for_openai(parameter_schema)
                 return {
-                    "name": processed_config["name"],
-                    "description": processed_config["description"],
+                    "name": tool_config["name"],
+                    "description": tool_config["description"],
                     "parameters": sanitized,
                 }
 
-            if (
-                "properties" in parameter_schema
-                and parameter_schema["properties"] is not None
-            ):
+            properties = parameter_schema.get("properties")
+            if properties is not None:
                 required_properties = parameter_schema.get("required", [])
                 # For default format: add required fields to properties
-                for prop_name, prop_config in parameter_schema["properties"].items():
-                    if isinstance(prop_config, dict):
-                        prop_config["required"] = prop_name in required_properties
-
-                return processed_config
+                processed_properties = {
+                    prop_name: (
+                        {**prop_config, "required": prop_name in required_properties}
+                        if isinstance(prop_config, dict)
+                        else prop_config
+                    )
+                    for prop_name, prop_config in properties.items()
+                }
+                return {
+                    **tool_config,
+                    "parameter": {
+                        **parameter_schema,
+                        "properties": processed_properties,
+                    },
+                }
 
         if format == "openai":
             # Tool has no structured parameter schema — return a valid empty spec
