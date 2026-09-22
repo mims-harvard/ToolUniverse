@@ -322,7 +322,7 @@ Requirements:
             # Filter by categories if specified
             if categories:
                 # Get full tool information for category filtering
-                all_tools = self.tooluniverse.return_all_loaded_tools()
+                all_tools = self.tooluniverse.return_all_loaded_tools(copy_tools=False)
                 category_filtered_tools = []
 
                 for tool_info in available_tools:
