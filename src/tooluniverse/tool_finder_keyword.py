@@ -174,6 +174,8 @@ class ToolFinderKeyword(BaseTool):
 
         # Initialize tool index for TF-IDF scoring
         self._tool_index = None
+        # Identity of the tool set the current index was built from.
+        self._index_key = None
         self._document_frequencies = None
         self._total_documents = 0
         self._avg_token_count = (
@@ -266,6 +268,26 @@ class ToolFinderKeyword(BaseTool):
 
         return phrases
 
+    def _make_index_key(self, tools: List[Dict]) -> frozenset:
+        """
+        Identity of the tool set an index is built from.
+
+        Used to decide whether a cached index can be reused. Tool counts are
+        not enough: two different category filters can select the same number
+        of tools.
+
+        Args:
+            tools (List[Dict]): List of tool configurations
+
+        Returns
+            frozenset: Names of the tools that would be indexed
+        """
+        return frozenset(
+            name
+            for tool in tools
+            if (name := tool.get("name", "")) not in self.exclude_tools
+        )
+
     def _build_tool_index(self, tools: List[Dict]) -> None:
         """
         Build TF-IDF index for all tools to enable efficient relevance scoring.
@@ -274,6 +296,7 @@ class ToolFinderKeyword(BaseTool):
             tools (List[Dict]): List of tool configurations
         """
         self._tool_index = {}
+        self._index_key = self._make_index_key(tools)
         term_doc_count = defaultdict(int)
         self._total_documents = 0
 
@@ -708,13 +731,12 @@ class ToolFinderKeyword(BaseTool):
             else:
                 filtered_tools = all_tools
 
-            # Build search index if not already built or if tools changed
-            if self._tool_index is None or self._total_documents != len(
-                [
-                    t
-                    for t in filtered_tools
-                    if t.get("name", "") not in self.exclude_tools
-                ]
+            # Build search index if not already built or if tools changed.
+            # The comparison is on the indexed tool set, not its size: two
+            # `categories=[...]` filters of equal size used to reuse each
+            # other's index, so every tool in the second category scored 0.0.
+            if self._tool_index is None or self._index_key != self._make_index_key(
+                filtered_tools
             ):
                 self._build_tool_index(filtered_tools)
 
