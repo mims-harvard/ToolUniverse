@@ -968,10 +968,11 @@
                 "type": "boolean"
               },
               "dorothea_level": {
-                "type": [
-                  "string",
-                  "null"
-                ]
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "DoRothEA confidence letters this interaction has evidence at (e.g. ['A'], ['A','D']); empty if the interaction has no DoRothEA-scored evidence (CollecTRI-only)."
               },
               "curation_effort": {
                 "type": "integer"

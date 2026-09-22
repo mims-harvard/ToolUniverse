@@ -599,7 +599,14 @@ class OmniPathTool(BaseTool):
 
         params = {
             "genesymbols": "yes",
-            "fields": "sources,references,curation_effort,type",
+            # dorothea_level must be requested explicitly: OmniPath only
+            # includes a field in the response when it's named here, so
+            # without it every item.get("dorothea_level") was None and the
+            # confidence_level filter below never had anything to compare
+            # against. The API also answers it as a *list* of letters (a
+            # TF-target pair can have evidence at more than one level, e.g.
+            # ["A", "D"]), not a single string -- confirmed live for TP53.
+            "fields": "sources,references,curation_effort,type,dorothea_level",
             "datasets": "dorothea,collectri",
         }
 
@@ -618,11 +625,11 @@ class OmniPathTool(BaseTool):
 
         interactions = []
         for item in data:
-            dorothea_level = item.get("dorothea_level")
+            dorothea_levels = item.get("dorothea_level") or []
             if (
                 confidence_level
-                and dorothea_level
-                and dorothea_level != confidence_level
+                and dorothea_levels
+                and confidence_level not in dorothea_levels
             ):
                 continue
 
@@ -634,7 +641,7 @@ class OmniPathTool(BaseTool):
                     "target_genesymbol": item.get("target_genesymbol"),
                     "is_stimulation": bool(item.get("is_stimulation", 0)),
                     "is_inhibition": bool(item.get("is_inhibition", 0)),
-                    "dorothea_level": dorothea_level,
+                    "dorothea_level": dorothea_levels,
                     "sources": item.get("sources", []),
                     "curation_effort": item.get("curation_effort"),
                 }
