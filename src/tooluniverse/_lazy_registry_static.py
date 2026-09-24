@@ -704,6 +704,7 @@ STATIC_LAZY_REGISTRY = {
     "TheraSAbDabTool": "therasabdab_tool",
     "ThreeDBeaconsTool": "three_d_beacons_tool",
     "ToolFinderEmbedding": "tool_finder_embedding",
+    "ToolFinderJev": "tool_finder_jev",
     "ToolFinderKeyword": "tool_finder_keyword",
     "ToolFinderLLM": "tool_finder_llm",
     "ToolUniversePageTool": "tooluniverse_page_tool",

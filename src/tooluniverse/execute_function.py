@@ -3998,6 +3998,7 @@ class ToolUniverse:
                     "ComposeTool",
                     "ToolFinderLLM",
                     "ToolFinderKeyword",
+                    "ToolFinderJev",
                     "SmolAgentTool",
                     "ListTools",
                     "GrepTools",
