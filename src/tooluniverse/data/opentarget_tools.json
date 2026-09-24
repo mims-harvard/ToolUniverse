@@ -626,7 +626,7 @@
     },
     {
         "name": "OpenTargets_get_associated_drugs_by_disease_efoId",
-        "description": "Retrieve known drugs associated with a specific disease by disease efoId.",
+        "description": "Retrieve the known drugs and clinical candidates for a disease by its ID (EFO, MONDO or HP). Each row gives the highest clinical stage the drug has reached for THIS disease (maxClinicalStage, e.g. APPROVAL, PHASE_3, PHASE_2, EARLY_PHASE_1, UNKNOWN), the highest stage it has reached for any indication (drug.maximumClinicalStage), its drug type, and its mechanisms of action with their targets. A stage is development status, not evidence that the drug suits a particular patient.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -639,7 +639,7 @@
                 "efoId"
             ]
         },
-        "query_schema": "\n  query diseaseKnownDrugs($efoId: String!) {\n    disease(efoId: $efoId) {\n      id\n      name\n      drugAndClinicalCandidates {\n        count\n        rows {\n          drug {\n            id\n            name\n            maximumClinicalStage\n          }\n          maxClinicalStage\n        }\n      }\n    }\n  }\n  ",
+        "query_schema": "\n  query diseaseKnownDrugs($efoId: String!) {\n    disease(efoId: $efoId) {\n      id\n      name\n      drugAndClinicalCandidates {\n        count\n        rows {\n          drug {\n            id\n            name\n            drugType\n            maximumClinicalStage\n            mechanismsOfAction {\n              rows {\n                mechanismOfAction\n                targets {\n                  id\n                  approvedSymbol\n                }\n              }\n            }\n          }\n          maxClinicalStage\n        }\n      }\n    }\n  }\n  ",
         "label": [
             "OpenTarget",
             "Disease",
@@ -691,48 +691,69 @@
                                                         "type": "object",
                                                         "properties": {
                                                             "id": {
-                                                                "type": "string"
+                                                                "type": "string",
+                                                                "description": "ChEMBL ID of the drug."
                                                             },
                                                             "name": {
                                                                 "type": "string"
                                                             },
-                                                            "tradeNames": {
-                                                                "type": "array",
-                                                                "items": {
-                                                                    "type": "string"
+                                                            "drugType": {
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ],
+                                                                "description": "e.g. Small molecule, Antibody, Protein."
+                                                            },
+                                                            "maximumClinicalStage": {
+                                                                "type": [
+                                                                    "string",
+                                                                    "null"
+                                                                ],
+                                                                "description": "Highest clinical stage the drug has reached for any indication (e.g. APPROVAL)."
+                                                            },
+                                                            "mechanismsOfAction": {
+                                                                "type": [
+                                                                    "object",
+                                                                    "null"
+                                                                ],
+                                                                "description": "Null when Open Targets records no mechanism for the drug.",
+                                                                "properties": {
+                                                                    "rows": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "object",
+                                                                            "properties": {
+                                                                                "mechanismOfAction": {
+                                                                                    "type": "string"
+                                                                                },
+                                                                                "targets": {
+                                                                                    "type": "array",
+                                                                                    "items": {
+                                                                                        "type": "object",
+                                                                                        "properties": {
+                                                                                            "id": {
+                                                                                                "type": "string",
+                                                                                                "description": "Ensembl gene ID."
+                                                                                            },
+                                                                                            "approvedSymbol": {
+                                                                                                "type": "string"
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
                                                                 }
-                                                            },
-                                                            "maximumClinicalTrialPhase": {
-                                                                "type": "integer"
-                                                            },
-                                                            "isApproved": {
-                                                                "type": "boolean"
-                                                            },
-                                                            "hasBeenWithdrawn": {
-                                                                "type": "boolean"
                                                             }
                                                         }
                                                     },
                                                     "maxClinicalStage": {
                                                         "type": [
-                                                            "integer",
                                                             "string",
                                                             "null"
-                                                        ]
-                                                    },
-                                                    "mechanismOfAction": {
-                                                        "type": "string"
-                                                    },
-                                                    "target": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "string"
-                                                            },
-                                                            "approvedSymbol": {
-                                                                "type": "string"
-                                                            }
-                                                        }
+                                                        ],
+                                                        "description": "Highest clinical stage the drug has reached for this disease (e.g. APPROVAL, PHASE_3, PHASE_2_3, PHASE_2, PHASE_1_2, PHASE_1, EARLY_PHASE_1, IND, PRECLINICAL, UNKNOWN)."
                                                     }
                                                 }
                                             }
