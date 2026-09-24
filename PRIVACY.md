@@ -17,8 +17,10 @@ ToolUniverse maintainers and are never seen by us.
 ## What leaves your machine, and when
 
 When you run a tool, the arguments you supplied for that tool are sent to that
-tool's data provider so it can answer. Nothing else is transmitted, and nothing
-is transmitted until a tool runs.
+tool's data provider so it can answer. No conversation content, file or prompt
+is sent beyond those arguments, and nothing is sent until a tool runs. The two
+exceptions are installation and optional model downloads, described below, and
+neither carries your data.
 
 For example, asking for a protein's function sends the accession you named to
 UniProt; asking for adverse event reports sends the drug name to openFDA. The
@@ -31,6 +33,21 @@ https://aiscientist.tools .
 Data sent to a provider is governed by that provider's own privacy policy and
 terms. ToolUniverse neither controls those services nor receives a copy of
 what they return to you.
+
+## Network activity that is not a tool call
+
+Two things reach the network without being a tool call, and neither sends your
+data anywhere:
+
+* **Installation.** On first launch the extension installs its Python
+  dependencies from PyPI, and downloads a Python 3.12 interpreter if your
+  machine has none. This is package installation; nothing about you is sent.
+* **Optional model and index downloads.** If you choose an embedding-based
+  tool finder, its encoder and the tool index are fetched from Hugging Face
+  the first time and then cached locally. The default keyword finder needs no
+  download.
+
+## Opt-in hosted backends
 
 Some tools are opt-in hosted services that are only reached when you select
 them explicitly — for example the `parallel`, `serpbase` and `firecrawl`
