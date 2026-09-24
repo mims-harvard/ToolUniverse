@@ -1468,7 +1468,7 @@
   "OpenTargets_drug_pharmacogenomics_data": "54904d90c667757d43b697ff0c58cd0b",
   "OpenTargets_get_approved_indications_by_drug_chemblId": "fd7153c0e91b4228766c17551be6eb5d",
   "OpenTargets_get_associated_diseases_by_drug_chemblId": "5dce307f904e48ce5a60229ecaf40969",
-  "OpenTargets_get_associated_drugs_by_disease_efoId": "c28ee2e57fed7237dc319b025b2a932b",
+  "OpenTargets_get_associated_drugs_by_disease_efoId": "e69865f1a9803d995a663b2e79513ac1",
   "OpenTargets_get_associated_drugs_by_target_ensemblID": "d1ef9b1a8be5cca1de2f8b469c9a2062",
   "OpenTargets_get_associated_phenotypes_by_disease_efoId": "3b0a69209afb6f111d5f091f4bf68354",
   "OpenTargets_get_associated_targets_by_disease_efoId": "f6ef4f73490eb589d49662a5988070c9",
