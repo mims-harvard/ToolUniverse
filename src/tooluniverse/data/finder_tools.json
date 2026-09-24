@@ -277,7 +277,7 @@
   {
     "type": "ToolFinderJev",
     "name": "Tool_Finder_Jev",
-    "description": "Tool finder that retrieves a wide BM25 shortlist and grades every candidate with a decision model, for higher accuracy than embedding search without a GPU. Requires TYPESAFE_API_KEY.",
+    "description": "Tool finder that retrieves a wide BM25 shortlist and grades every candidate with a hosted decision model, for higher accuracy than embedding search without a GPU. Requires TYPESAFE_API_KEY. Grading sends the search text and the descriptions of the retrieved tools to TypeSafe's hosted service at https://api.typesafe.ai/v1/systemone, so do not submit sensitive or patient-identifying information. If grading is unavailable the BM25 retrieval order is returned instead, flagged with graded=false.",
     "required_api_keys": [
       "TYPESAFE_API_KEY"
     ],
@@ -356,6 +356,54 @@
         "register_url": "https://typesafe.ai/",
         "purpose": "Grade retrieved tool candidates for relevance so Tool_Finder_Jev can rank them.",
         "without": "Tool_Finder_Jev is not loaded; the other tool finders are unaffected."
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Ranked tools plus how they were ranked. On failure only 'error' is set.",
+      "properties": {
+        "tools": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tool names, best first."
+        },
+        "tool_prompts": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Tool specifications for the returned names."
+        },
+        "candidate_depth": {
+          "type": "integer",
+          "description": "How many candidates BM25 retrieved before grading."
+        },
+        "seconds": {
+          "type": "number",
+          "description": "Wall clock for the search."
+        },
+        "graded": {
+          "type": "boolean",
+          "description": "True when the hosted model graded the shortlist. False means grading was unavailable and the BM25 retrieval order is returned."
+        },
+        "grading_error": {
+          "type": "string",
+          "description": "Why grading was unavailable. Present only when graded is false."
+        },
+        "note": {
+          "type": "string",
+          "description": "Plain-language statement of the degraded ranking, when graded is false."
+        },
+        "provider_notice": {
+          "type": "string",
+          "description": "Disclosure that the search reached TypeSafe's hosted service."
+        },
+        "error": {
+          "type": "string",
+          "description": "Why the search could not run at all."
+        }
       }
     }
   }

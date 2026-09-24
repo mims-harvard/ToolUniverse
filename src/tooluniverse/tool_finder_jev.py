@@ -46,6 +46,15 @@ from .tool_registry import register_tool
 ENDPOINT = "https://api.typesafe.ai/v1/systemone"
 DEFAULT_MODEL = "jev-latest"
 
+# Grading is a hosted third-party call, so every response says so, the way the
+# opt-in web_search backends do. What leaves the process is the search text and
+# the descriptions of the retrieved candidates.
+PROVIDER_NOTICE = (
+    "Candidates were graded by TypeSafe's hosted decision model at " + ENDPOINT + ". "
+    "The search text and the descriptions of the retrieved tools are sent there; "
+    "do not submit sensitive or patient-identifying information."
+)
+
 # The three levels a pooled relevance judge uses. The wording is deliberately the
 # wording of the judging guideline rather than a paraphrase: the point of the middle
 # level is to give the model somewhere to put a tool that does the right thing to the
@@ -223,34 +232,53 @@ class ToolFinderJev(BaseTool):
         with urllib.request.urlopen(request, timeout=self.timeout) as response:
             payload = json.loads(response.read())
         answers = payload.get("answers", {})
-        return [float(answers.get(f"c{i}", {}).get("score", 0.0)) for i in range(len(candidates))]
+        return [
+            float(answers.get(f"c{i}", {}).get("score", 0.0))
+            for i in range(len(candidates))
+        ]
 
     # ------------------------------------------------------------------ search
     def _search(self, query, limit, categories=None):
+        """Return ``(tool_names, grading_error)``.
+
+        ``grading_error`` is None when the shortlist was graded. When the grading
+        call fails the retrieval order is returned instead of nothing: BM25 has
+        already produced a usable shortlist, and a provider outage should degrade
+        the ranking rather than leave the caller with no tools. A missing
+        credential is not degraded this way -- that is a configuration error the
+        caller has to see.
+        """
         tools = self._catalogue()
         if categories:
             wanted = set(categories)
             tools = [t for t in tools if t.get("category") in wanted]
         if not tools:
-            return []
+            return [], None
         self._ensure_index(tools)
         by_name = {t.get("name", ""): t for t in tools}
 
         candidates = self._retrieve(query, self.candidate_depth)
         if not candidates:
-            return []
+            return [], None
         descriptions = {
             n: (by_name[n].get("description", "") or "").replace("\n", " ")[
                 : self.description_chars
             ]
             for n in candidates
         }
-        scores = self._grade(query, candidates, descriptions)
+        try:
+            scores = self._grade(query, candidates, descriptions)
+        except RuntimeError:
+            # Raised for a missing credential, which is a configuration error the
+            # caller has to see rather than a provider outage to rank around.
+            raise
+        except urllib.error.HTTPError as exc:
+            return candidates[:limit], f"HTTP {exc.code}: {exc.reason}"
+        except Exception as exc:  # noqa: BLE001 - any provider-side failure degrades
+            return candidates[:limit], str(exc)
         # Sort by graded relevance; equal scores keep the retrieval order.
-        ranked = sorted(
-            range(len(candidates)), key=lambda i: (-scores[i], i)
-        )
-        return [candidates[i] for i in ranked[:limit]]
+        ranked = sorted(range(len(candidates)), key=lambda i: (-scores[i], i))
+        return [candidates[i] for i in ranked[:limit]], None
 
     # ------------------------------------------------------------------ interface
     def find_tools(
@@ -264,7 +292,7 @@ class ToolFinderJev(BaseTool):
         """Match the interface of the other finders so this is a drop-in replacement."""
         if picked_tool_names is None:
             assert message is not None, "message or picked_tool_names is required"
-            picked_tool_names = self._search(message, rag_num, categories)
+            picked_tool_names, _ = self._search(message, rag_num, categories)
 
         picked = [n for n in picked_tool_names if n not in self.exclude_tools][:rag_num]
         specs = self.tooluniverse.get_tool_specification_by_names(picked)
@@ -281,25 +309,37 @@ class ToolFinderJev(BaseTool):
         picked = arguments.get("picked_tool_names")
         try:
             started = time.time()
-            result = self.find_tools(
-                message=query if not picked else None,
+            grading_error = None
+            if picked is None:
+                picked, grading_error = self._search(
+                    query, limit, arguments.get("categories")
+                )
+            prompts, names = self.find_tools(
                 picked_tool_names=picked,
                 rag_num=limit,
                 return_call_result=True,
-                categories=arguments.get("categories"),
             )
-            prompts, names = result
-            if arguments.get("return_call_result", True):
-                return {
-                    "tools": names,
-                    "tool_prompts": prompts,
-                    "candidate_depth": self.candidate_depth,
-                    "seconds": round(time.time() - started, 2),
-                }
-            return prompts
+            if not arguments.get("return_call_result", True):
+                return prompts
+            payload = {
+                "tools": names,
+                "tool_prompts": prompts,
+                "candidate_depth": self.candidate_depth,
+                "seconds": round(time.time() - started, 2),
+            }
+            if arguments.get("picked_tool_names") is None:
+                # Only a search reaches the grader, so only a search discloses it.
+                payload["graded"] = grading_error is None
+                payload["provider_notice"] = PROVIDER_NOTICE
+                if grading_error is not None:
+                    payload["grading_error"] = grading_error
+                    payload["note"] = (
+                        "Grading was unavailable, so these are the BM25 retrieval "
+                        "results in retrieval order rather than graded relevance "
+                        "order."
+                    )
+            return payload
         except RuntimeError as exc:
             return {"error": str(exc)}
-        except urllib.error.HTTPError as exc:
-            return {"error": f"Jev request failed with HTTP {exc.code}: {exc.reason}"}
         except Exception as exc:  # noqa: BLE001
             return {"error": f"Tool_Finder_Jev failed: {exc}"}
