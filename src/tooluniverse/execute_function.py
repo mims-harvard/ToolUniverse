@@ -4164,6 +4164,26 @@ class ToolUniverse:
         Returns:
             The coerced value (or original if coercion fails or not applicable)
         """
+        # Handle array types. This has to run before the string-only guard
+        # below: a list never gets past that guard, so the per-item recursion
+        # would never be reached and array elements would stay strings while
+        # the same scalar was coerced. As with Fix-R3-06 further down, "type"
+        # may be a union such as ["array", "null"], so accept any union that
+        # offers "array". A list can only ever satisfy the "array" member, so
+        # there is nothing to disambiguate.
+        declared_type = schema.get("type")
+        if (
+            (
+                declared_type == "array"
+                or (isinstance(declared_type, list) and "array" in declared_type)
+            )
+            and isinstance(value, list)
+            and isinstance(schema.get("items"), dict)
+        ):
+            # Recursively coerce array items
+            items_schema = schema["items"]
+            return [self._coerce_value_to_type(item, items_schema) for item in value]
+
         # Only coerce string values
         if not isinstance(value, str):
             return value
@@ -4183,18 +4203,9 @@ class ToolUniverse:
                     return coerced
             return value
 
-        # Handle array types
-        if schema.get("type") == "array" and "items" in schema:
-            if isinstance(value, list):
-                # Recursively coerce array items
-                items_schema = schema["items"]
-                return [
-                    self._coerce_value_to_type(item, items_schema) for item in value
-                ]
-            return value
-
-        # Get the expected type
-        expected_type = schema.get("type")
+        # Get the expected type. Same lookup as declared_type above, and
+        # nothing between them rebinds schema, so reuse that read.
+        expected_type = declared_type
 
         # Fix-R3-06: JSON Schema permits "type" to be a LIST of types, and
         # ["integer", "null"] is this project's own convention for an optional
