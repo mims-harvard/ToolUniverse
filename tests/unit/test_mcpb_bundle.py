@@ -14,6 +14,7 @@ Two defects motivated these tests:
 """
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -84,8 +85,78 @@ def test_mcpb_launcher_command_preserved():
         "server never starts"
     )
     assert "--with" not in config["args"]
-    assert "--python" not in config["args"]  # Shared via .python-version instead.
+    # The interpreter is pinned on the command line as well as in
+    # .python-version. The file alone is not enough: uv lets the environment
+    # win, so a user with UV_PYTHON=3.14 exported gets a 3.14 interpreter for
+    # the bundle, and the dependency set has no solution there (onnxruntime
+    # publishes no cp314 wheels), which fails the install and presents in
+    # Desktop as "Server disconnected" -- the same symptom as the fitz
+    # breakage. Verified: with UV_PYTHON=3.14 the bundle resolves to 3.14 and
+    # fails; adding --python 3.12 overrides the variable and it starts.
+    args = config["args"]
+    assert "--python" in args, (
+        "pin the interpreter; UV_PYTHON overrides .python-version"
+    )
+    assert args[args.index("--python") + 1] == "3.12"
     assert (MCPB_DIR / ".python-version").read_text().strip() == "3.12"
+
+
+def test_mcpb_user_config_fields_match_the_env_block():
+    """Every credential field Desktop collects must reach the server, and the
+    reverse: an env entry referencing a field that does not exist would be
+    passed through literally as "${user_config.x}"."""
+    manifest = json.loads(MANIFEST.read_text())
+    user_config = manifest.get("user_config", {})
+    env = manifest["server"]["mcp_config"]["env"]
+
+    referenced = {
+        value[len("${user_config.") : -1]
+        for value in env.values()
+        if isinstance(value, str) and value.startswith("${user_config.")
+    }
+    assert referenced, "no credential fields are wired into the server env"
+    assert referenced <= set(user_config), (
+        f"env references fields that do not exist: {sorted(referenced - set(user_config))}"
+    )
+    assert set(user_config) <= referenced, (
+        f"fields collected but never passed to the server: {sorted(set(user_config) - referenced)}"
+    )
+    for name, field in user_config.items():
+        assert field.get("required") is False, f"{name} must not block installation"
+        assert {"type", "title", "description"} <= set(field), name
+        if field["type"] == "string":
+            assert field.get("sensitive") is True, (
+                f"{name} holds a key; mark it sensitive"
+            )
+
+
+def test_mcpb_launcher_drops_blank_user_config_values():
+    """A field the user left empty must not shadow a key from their .env.
+
+    Desktop substitutes every ${user_config.*} entry, blank ones included, and
+    ToolUniverse loads .env files with override=False -- so an empty
+    BOLTZ_API_KEY in the environment would silently disable those tools for a
+    user who had set the key in ~/.tooluniverse/.env.
+    """
+    launcher = (MCPB_DIR / "src" / "run_stdio.py").read_text()
+    guard = launcher.split("# Enable compact mode")[0]
+    namespace = {"__name__": "launcher_guard"}
+    env_backup = dict(os.environ)
+    try:
+        os.environ.update(
+            {
+                "TU_TEST_BLANK": "",
+                "TU_TEST_PLACEHOLDER": "${user_config.something}",
+                "TU_TEST_REAL": "keep-me",
+            }
+        )
+        exec(compile(guard, "run_stdio.py", "exec"), namespace)
+        assert "TU_TEST_BLANK" not in os.environ
+        assert "TU_TEST_PLACEHOLDER" not in os.environ
+        assert os.environ["TU_TEST_REAL"] == "keep-me"
+    finally:
+        os.environ.clear()
+        os.environ.update(env_backup)
 
 
 def test_mcpb_python_range_has_semver_syntax_and_matching_bounds():

@@ -25,6 +25,8 @@
             "command": "uv",
             "args": [
                 "run",
+                "--python",
+                "3.12",
                 "--directory",
                 "${__dirname}",
                 "${__dirname}${/}src${/}run_stdio.py"
@@ -32,7 +34,14 @@
             "env": {
                 "PYTHONPATH": "${__dirname}${/}src",
                 "TOOLUNIVERSE_STDIO_MODE": "1",
-                "PYTHONIOENCODING": "utf-8"
+                "PYTHONIOENCODING": "utf-8",
+                "TOOLUNIVERSE_ENV_FILE": "${user_config.tooluniverse_env_file}",
+                "BOLTZ_API_KEY": "${user_config.boltz_api_key}",
+                "NVIDIA_API_KEY": "${user_config.nvidia_api_key}",
+                "ALPHA_GENOME_API_KEY": "${user_config.alpha_genome_api_key}",
+                "ESM_API_KEY": "${user_config.esm_api_key}",
+                "NCBI_API_KEY": "${user_config.ncbi_api_key}",
+                "FDA_API_KEY": "${user_config.fda_api_key}"
             }
         }
     },
@@ -53,5 +62,55 @@
         "bioinformatics",
         "mcp"
     ],
-    "license": "MIT"
+    "license": "MIT",
+    "user_config": {
+        "tooluniverse_env_file": {
+            "type": "file",
+            "title": "API key file (.env)",
+            "description": "Optional path to a .env file holding any of ToolUniverse's API keys. Every key the catalogue knows about can be set this way; the fields below are shortcuts for the most used ones. Leave empty to use ~/.tooluniverse/.env if you have one.",
+            "required": false
+        },
+        "boltz_api_key": {
+            "type": "string",
+            "title": "Boltz API key",
+            "description": "Unlocks 72 structure-prediction, binding and ADME tools. Leave empty to skip them.",
+            "required": false,
+            "sensitive": true
+        },
+        "nvidia_api_key": {
+            "type": "string",
+            "title": "NVIDIA API key",
+            "description": "Unlocks 17 hosted NVIDIA model tools. Leave empty to skip them.",
+            "required": false,
+            "sensitive": true
+        },
+        "alpha_genome_api_key": {
+            "type": "string",
+            "title": "AlphaGenome API key",
+            "description": "Unlocks 10 AlphaGenome variant-effect tools. Leave empty to skip them.",
+            "required": false,
+            "sensitive": true
+        },
+        "esm_api_key": {
+            "type": "string",
+            "title": "ESM API key",
+            "description": "Unlocks 10 ESM protein-language-model tools. Leave empty to skip them.",
+            "required": false,
+            "sensitive": true
+        },
+        "ncbi_api_key": {
+            "type": "string",
+            "title": "NCBI API key",
+            "description": "Optional. Raises NCBI rate limits for 34 tools that work without it.",
+            "required": false,
+            "sensitive": true
+        },
+        "fda_api_key": {
+            "type": "string",
+            "title": "openFDA API key",
+            "description": "Optional. Raises openFDA rate limits for 18 tools that work without it.",
+            "required": false,
+            "sensitive": true
+        }
+    }
 }
