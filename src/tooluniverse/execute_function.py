@@ -349,6 +349,12 @@ class ToolUniverse:
         callable_functions (dict): Cache of instantiated tool objects
     """
 
+    #: Serialises lazy tool initialisation (see ``_get_tool_instance``). Shared by
+    #: every instance: overlapping model loads interfere process-wide, whichever
+    #: instance starts them. Re-entrant because one tool's initialisation can
+    #: initialise another.
+    _tool_init_lock = threading.RLock()
+
     # Maximum tool name length for MCP compatibility
     # 50 chars for tool name + 14 chars for 'tooluniverse__' prefix = 64 chars (Claude's limit)
     MAX_TOOL_NAME_LENGTH = 45
@@ -2418,9 +2424,7 @@ class ToolUniverse:
         # deleting the rest: the discarded keys (return_schema, test_examples,
         # settings and so on) are the larger part of a tool config, and this runs on
         # every tool the finders return.
-        return {
-            key: copy.deepcopy(tool[key]) for key in valid_keys if key in tool
-        }
+        return {key: copy.deepcopy(tool[key]) for key in valid_keys if key in tool}
 
     def prepare_tool_prompts(self, tool_list, mode="prompt", valid_keys=None):
         """
@@ -4072,15 +4076,27 @@ class ToolUniverse:
         if cache and function_name in self.callable_functions:
             return self.callable_functions[function_name]
 
-        # Check if known unavailable
-        tool_errors = get_tool_errors()
-        if function_name in tool_errors:
-            self.logger.debug(f"Tool {function_name} is unavailable")
-            return None
+        # One initialisation at a time. Callers that asked for the same
+        # uninitialised tool concurrently (the HTTP server's thread pool, batch
+        # runs) each built their own instance; for a model-backed tool such as
+        # Tool_RAG the overlapping loads failed with "Cannot copy out of meta
+        # tensor", and init_tool then removed the tool for the rest of the
+        # process. A caller that waited finds the instance the first one cached.
+        with self._tool_init_lock:
+            if cache and function_name in self.callable_functions:
+                return self.callable_functions[function_name]
 
-        # Try to initialize
-        if function_name in self.all_tool_dict:
-            return self.init_tool(self.all_tool_dict[function_name], add_to_cache=cache)
+            # Check if known unavailable
+            tool_errors = get_tool_errors()
+            if function_name in tool_errors:
+                self.logger.debug(f"Tool {function_name} is unavailable")
+                return None
+
+            # Try to initialize
+            if function_name in self.all_tool_dict:
+                return self.init_tool(
+                    self.all_tool_dict[function_name], add_to_cache=cache
+                )
 
         return None
 

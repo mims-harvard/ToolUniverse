@@ -1713,6 +1713,19 @@ class SMCP(FastMCP):
         """Translate common JSON Schema limits into Pydantic Field limits."""
         constraints: Dict[str, Any] = {}
         param_type = param_info.get("type")
+        # "type" may be a list. ["integer", "null"] is how an optional parameter
+        # is spelled across the shipped configs, and it is also what
+        # mcp_tool_registry._py_type_to_json_schema infers for Optional[int].
+        # The set membership test below hashes its left operand, so a list
+        # raised TypeError: unhashable type: 'list'. Narrow to the first
+        # non-null member, the same way _resolve_param_type does in its
+        # non-strict branch, so the limits are still applied. The first
+        # non-null member is the right one to read: of the 1674 list typed
+        # parameters under data/, the 59 that carry a limit are either nullable
+        # or ["array", "string"], so that member is what the limit describes.
+        if isinstance(param_type, list):
+            non_null = [item for item in param_type if item != "null"]
+            param_type = non_null[0] if non_null else None
         if param_type == "string":
             mapping = {
                 "minLength": "min_length",
