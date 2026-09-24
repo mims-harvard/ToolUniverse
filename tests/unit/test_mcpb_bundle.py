@@ -14,6 +14,7 @@ Two defects motivated these tests:
 """
 
 import json
+import re
 import os
 import subprocess
 import sys
@@ -258,3 +259,33 @@ def test_version_falls_back_when_dist_metadata_absent():
     assert proc.stdout.strip() == "0.0.0+source", (
         f"expected source fallback, got {proc.stdout.strip()!r}\n{proc.stderr}"
     )
+
+
+def test_the_bundle_declares_tooluniverse_instead_of_carrying_it():
+    """The bundle ships a launcher, not the library.
+
+    A desktop extension has no self-serve update: every change to the published
+    artifact is a manual submission to the directory. Carrying the source meant
+    a submission per fix. Declaring the dependency and refreshing it at launch
+    means a resubmission is needed only when the bundle itself changes.
+    """
+    bundle_pyproject = (MCPB_DIR / "pyproject.toml").read_text()
+
+    assert re.search(r'"tooluniverse(\[[^]]*\])?>=[0-9][^"]*<2"', bundle_pyproject), (
+        "the bundle must depend on tooluniverse with a major-version ceiling"
+    )
+    assert not (MCPB_DIR / "src" / "tooluniverse").exists(), (
+        "the package is installed from PyPI, not copied into the bundle"
+    )
+    assert "src/tooluniverse" not in (MCPB_DIR / "build.sh").read_text()
+
+
+def test_the_launcher_refreshes_that_dependency_on_every_start():
+    """Without the flag uv reuses whatever it resolved the first time, so a
+    published release would never reach an installed bundle. Verified on the
+    built artifact: 1.5.2 comes up as 1.5.3 at the next launch with the flag,
+    and stays on 1.5.2 without it."""
+    args = json.loads(MANIFEST.read_text())["server"]["mcp_config"]["args"]
+
+    assert "--upgrade-package" in args
+    assert args[args.index("--upgrade-package") + 1] == "tooluniverse"

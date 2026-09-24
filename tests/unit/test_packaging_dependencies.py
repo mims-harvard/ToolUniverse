@@ -137,55 +137,36 @@ def test_pymupdf_is_an_explicit_root_extra_only():
     assert "pdf" not in all_extra
 
 
-def test_mcpb_dependencies_mirror_root():
-    """The bundle list is documented as a mirror of the root list."""
-    root_requirements = _requirements_by_name(ROOT_PYPROJECT)
+def test_mcpb_declares_the_package_rather_than_mirroring_its_dependency_list():
+    """The bundle installs ToolUniverse from PyPI, so its metadata is the list.
+
+    This test used to require the bundle's dependency list to mirror the root
+    package's, which was the right invariant while the bundle carried the
+    source: nothing else would have installed what that source imports. The
+    bundle now declares ``tooluniverse`` itself, so the package's own metadata
+    supplies those, and duplicating them here would only create a second list
+    to keep in sync.
+
+    What still has to hold is the part that is not carried by the package
+    metadata: the sealed runtime needs the LLM-provider extras, which are
+    optional in the root package, because a Desktop user has no way to install
+    an extra into the bundle.
+    """
     mcpb_requirements = _requirements_by_name(MCPB_PYPROJECT)
-    root = set(root_requirements)
-    mcpb = set(mcpb_requirements)
 
-    missing = root - mcpb
-    assert not missing, (
-        f"mcpb/pyproject.toml is missing dependencies present in the root "
-        f"pyproject.toml: {sorted(missing)}. Add them to the bundle dependency "
-        f"list."
+    assert set(mcpb_requirements) == {"tooluniverse"}, (
+        "the bundle should declare tooluniverse and nothing else; its "
+        f"dependencies are supplied by the package metadata: {sorted(mcpb_requirements)}"
     )
 
-    extra = mcpb - root - KNOWN_MCPB_ADDITIONS
-    assert not extra, (
-        f"mcpb/pyproject.toml declares dependencies absent from the root "
-        f"pyproject.toml: {sorted(extra)}. Add them to the root list, or record "
-        f"them in KNOWN_MCPB_ADDITIONS with a reason."
-    )
-
-    # A bundle-only dependency must still track the constraint of the root
-    # extra it mirrors, so the two cannot drift apart silently.
-    root_extra_requirements = {
-        _distribution_name(requirement): requirement
-        for requirements in _load_pyproject(ROOT_PYPROJECT)[
-            "optional-dependencies"
-        ].values()
-        for requirement in requirements
-    }
-    drifted = {
-        name: (root_extra_requirements[name], mcpb_requirements[name])
-        for name in KNOWN_MCPB_ADDITIONS & mcpb
-        if name in root_extra_requirements
-        and root_extra_requirements[name] != mcpb_requirements[name]
-    }
-    assert not drifted, (
-        "mcpb/pyproject.toml pins a bundle-only dependency differently from the "
-        f"root extra that declares it: {drifted}."
-    )
-
-    mismatched = {
-        name: (root_requirements[name], mcpb_requirements[name])
-        for name in root & mcpb
-        if root_requirements[name] != mcpb_requirements[name]
-    }
-    assert not mismatched, (
-        "mcpb/pyproject.toml has dependency constraints that differ from the "
-        f"root pyproject.toml: {mismatched}."
+    requirement = mcpb_requirements["tooluniverse"]
+    for extra in ("openai", "gemini"):
+        assert extra in requirement, (
+            f"the {extra} extra is optional upstream but mandatory in a sealed "
+            f"bundle -- without it that client is unavailable in Desktop: {requirement}"
+        )
+    assert "<2" in requirement, (
+        f"a major-version ceiling keeps an unreviewed major release out: {requirement}"
     )
 
 

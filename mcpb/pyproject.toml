@@ -1,10 +1,6 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "tooluniverse-mcpb-native"
-version = "1.5.3"
+version = "1.5.4"
 description = "ToolUniverse MCP Server (Native MCPB bundle)"
 # Upper bound tracks the tightest Requires-Python among the resolved
 # dependencies, currently youtube-transcript-api (>=3.8,<3.15) pulled in by
@@ -20,65 +16,38 @@ description = "ToolUniverse MCP Server (Native MCPB bundle)"
 # runtime version check even when a compatible Python is installed.
 requires-python = ">=3.10,<3.15"
 
-# Pattern 2: DIRECT dependencies (bundled source code).
-# We don't depend on `tooluniverse` from PyPI; the source is bundled inside
-# `src/tooluniverse/` and these are its runtime deps. Keep this list in sync
-# with the root pyproject.toml `dependencies` section.
+# The bundle declares ToolUniverse as a dependency instead of carrying its
+# source. This is the shape the MCPB docs describe for `server.type = "uv"`
+# ("include pyproject.toml with dependencies, no bundled packages needed") and
+# the shape of the official hello-world-uv example, whose bundle holds its own
+# entry point and nothing else.
 #
-# Deliberate exception: `openai` and `google-genai` are optional extras in the
-# root pyproject.toml but stay unconditional here. This bundle is a sealed
-# Claude Desktop runtime — nothing resolves against it, so the downstream
-# resolver problem that made them extras upstream does not apply, and an end
-# user has no way to install an extra into the bundle. Dropping them would just
-# make the Gemini/OpenAI clients permanently unavailable in Desktop. Do not
-# "re-sync" these two away.
+# The reason is the update path. A bundle that carries the source has to be
+# rebuilt and resubmitted to the Claude Desktop extensions directory for every
+# change, and a desktop extension has no self-serve update: each submission is
+# a manual review. With the dependency declared here and
+# `--upgrade-package tooluniverse` in the launch command, a user picks up each
+# release at the next launch. Measured on the prototype: a plain launch keeps
+# the resolved version, the flag moves 1.5.1 to 1.5.2, it costs about 0.2 s per
+# launch, and an offline launch still starts from the cached environment.
+#
+# The floor is the release that introduced this bundle shape; the ceiling keeps
+# a future major version from arriving unreviewed. Everything ToolUniverse
+# needs at runtime is declared by its own package metadata, so the long list
+# that used to live here is gone.
+# The openai and gemini extras are deliberate. They are optional in the root
+# package, because a downstream resolver should not be forced onto
+# google-genai's websockets bound (issue #526), but this bundle is a sealed
+# runtime: a user has no way to install an extra into it, so leaving them out
+# would make the OpenAI and Gemini clients permanently unavailable in Desktop.
+# The old bundled dependency list carried both unconditionally for the same
+# reason; naming the extras here preserves that exactly.
 dependencies = [
-    "requests>=2.32.0",
-    "boltz-api>=0.46.0,<0.47.0",
-    "numpy>=2.2.0",
-    "sympy>=1.12.0",
-    "graphql-core>=3.2.0",
-    "fastapi>=0.116.0",
-    "uvicorn>=0.36.0",
-    "pydantic>=2.11.0",
-    "epam.indigo>=1.34.0",
-    "networkx>=3.4.0",
-    "openai>=1.107.0",
-    "pyyaml>=6.0.0",
-    "google-genai>=1.36.0",
-    "mcp[cli]>=1.29.0,<2.0.0",
-    "fastmcp>=3.4.5,<4.0.0",
-    "xmltodict>=1.0.0",
-    "lxml>=6.0.0",
-    "huggingface_hub>=0.34.0",
-    "jsonpath-ng>=1.6.0",
-    "rcsb-api>=1.4.0",
-    "websockets>=13.0", # Module-scope import in mcp_client_tool.py
-    "urllib3>=1.26", # Module-scope import in uspto_tool.py and euhealth_live.py
-    "scipy>=1.7.0",
-    "pandas>=2.2.3",
-    "openpyxl>=3.1.0", # Read .xlsx bulk downloads (CellMarker, dataset tools)
-    "setuptools>=70.0.0",
-    "pdfplumber>=0.11.0",
-    "playwright>=1.55.0",
-    "faiss-cpu==1.12.0",
-    "flask>=2.0.0",
-    "aiohttp",
-    "beautifulsoup4>=4.12.0",
-    "python-dotenv>=1.0.0",
-    # Named converter extras rather than `all`, mirroring the root package: the
-    # `all` extra pins youtube-transcript-api~=1.0.0 (Requires-Python <3.14) and
-    # pulls a prerelease-only Azure dependency. See the root pyproject.toml
-    # comment and issue #527.
-    "markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx,youtube-transcription]>=0.1.0",
-    "psutil>=5.9.0",
-    "ddgs>=9.0.0",
-    "pip>=25.3",
-    "jsonschema>=4.23.0",
+    "tooluniverse[openai,gemini]>=1.5.3,<2",
 ]
 
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.package-data]
-tooluniverse = ["data/*", "data/packages/*"]
+[tool.uv]
+# Nothing here is a package to build; the directory exists to declare what the
+# launcher needs. Without this uv tries to build "tooluniverse-mcpb-native"
+# itself and fails once there is no source tree under src/.
+package = false
