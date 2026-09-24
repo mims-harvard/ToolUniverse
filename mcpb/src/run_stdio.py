@@ -8,7 +8,9 @@ This prevents context window overflow from the massive tool list.
 """
 
 import os
+import subprocess
 import sys
+import time
 
 # Claude Desktop substitutes every ``${user_config.*}`` entry in the manifest's
 # env block, including the ones the user left blank. An empty string still
@@ -39,6 +41,85 @@ if _env_file and os.path.isfile(_env_file):
                     os.environ[_key] = _val
     except OSError as _exc:  # pragma: no cover - unreadable file, keep starting
         print(f"Could not read TOOLUNIVERSE_ENV_FILE: {_exc}", file=sys.stderr)
+
+
+# Pick up a published ToolUniverse release, without letting the network decide
+# whether the server starts.
+#
+# The obvious way to do this is --upgrade-package on the launch command itself,
+# and it is wrong: uv then has to reach the index before it runs anything, so an
+# unreachable index stops a bundle that was already installed and working.
+# Measured with a blackholed index: the launch failed after 49 s, which Desktop
+# shows as "Server disconnected" -- the symptom this bundle exists to avoid.
+#
+# So the refresh happens here instead, bounded and optional. It runs before the
+# first tooluniverse import, so replacing files under site-packages is safe, and
+# any failure -- offline, hung proxy, index outage, uv missing -- leaves the
+# installed version in place and the server starts anyway. A release therefore
+# arrives at the first launch with a working network rather than never.
+def _refresh_tooluniverse(timeout_seconds=8, http_timeout_seconds="3"):
+    bundle_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if os.environ.get("TOOLUNIVERSE_SKIP_SELF_UPDATE", "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+    ):
+        return
+
+    # Check at most once a day. Releases do not arrive hourly, and the cost of
+    # checking is only ever paid by the launch that checks: on a machine that
+    # cannot reach the index that is the difference between every launch waiting
+    # out the timeout and one launch a day doing so.
+    stamp = os.path.join(bundle_dir, ".last-update-check")
+    try:
+        interval_hours = float(
+            os.environ.get("TOOLUNIVERSE_UPDATE_INTERVAL_HOURS", "24")
+        )
+    except ValueError:
+        interval_hours = 24.0
+    try:
+        if time.time() - os.path.getmtime(stamp) < interval_hours * 3600:
+            return
+    except OSError:
+        pass  # never checked, or the stamp is unreadable: check now
+    try:
+        with open(stamp, "w", encoding="utf-8") as handle:
+            handle.write(str(int(time.time())))
+    except OSError:
+        # A read-only bundle directory means no stamp and therefore a check on
+        # every launch. That is the bounded path below, so it stays safe.
+        pass
+    # Two bounds, because they fail differently: uv's own HTTP timeout ends a
+    # hanging connection, and the process timeout covers anything uv does not
+    # bound itself. Both are small on purpose -- an update that cannot finish
+    # quickly is simply retried at the next launch, while a startup that waits
+    # is a startup the user experiences as broken. Measured against a
+    # blackholed index: 26 s with a single 25 s bound, ~4 s with these.
+    child_env = dict(os.environ)
+    child_env.setdefault("UV_HTTP_TIMEOUT", http_timeout_seconds)
+    try:
+        subprocess.run(
+            [
+                "uv",
+                "sync",
+                "--python",
+                "3.12",
+                "--upgrade-package",
+                "tooluniverse",
+                "--directory",
+                bundle_dir,
+            ],
+            timeout=timeout_seconds,
+            env=child_env,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+    except Exception as exc:  # noqa: BLE001 - never fatal, this is opportunistic
+        print(f"ToolUniverse update check skipped: {exc}", file=sys.stderr)
+
+
+_refresh_tooluniverse()
 
 # Enable compact mode by default
 sys.argv = [

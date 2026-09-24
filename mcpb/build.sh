@@ -21,6 +21,14 @@ cp "$MCPB_SRC/icon.png"        "$BUILD_DIR/icon.png"
 cp "$REPO_ROOT/.env.template"  "$BUILD_DIR/.env.template"
 cp "$MCPB_SRC/src/run_stdio.py" "$BUILD_DIR/src/run_stdio.py"
 
+# Resolve once, at build time, and ship the result. Without a lock `uv run` has
+# to reach the index on every launch to resolve the dependency, so an index that
+# hangs stops a bundle that is already installed and working -- measured at 44 s
+# to failure against a blackholed index, which Desktop shows as "Server
+# disconnected". With the lock and --frozen, startup touches no network at all,
+# and the update is the launcher's bounded refresh instead.
+( cd "$BUILD_DIR" && uv lock --quiet )
+
 # The package itself is NOT copied in. mcpb/pyproject.toml declares
 # "tooluniverse" as a dependency and the manifest launches uv with
 # --upgrade-package tooluniverse, so each release reaches users at their next

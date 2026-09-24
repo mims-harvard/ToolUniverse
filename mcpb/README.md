@@ -7,22 +7,41 @@ Model Context Protocol Bundle published at
 ## How this bundle updates itself
 
 The bundle does not carry ToolUniverse's source. `pyproject.toml` declares
-`tooluniverse` as a dependency and `manifest.json` launches uv with
-`--upgrade-package tooluniverse`, so a user picks up each PyPI release at their
-next launch.
+`tooluniverse` as a dependency, the build resolves it into `uv.lock`, and the
+launcher refreshes that dependency in the background of startup. A user picks
+up each PyPI release without a new directory submission.
 
 That matters because a desktop extension has no self-serve update path: every
-change to the published artifact is a manual submission to the Claude Desktop
-extensions directory, reviewed by hand. With the source bundled, every fix
-meant another submission. Now a resubmission is needed only when the bundle
-itself changes -- the manifest metadata, the launcher, or the Python floor.
+change to the published artifact is a manual submission, reviewed by hand. With
+the source bundled, every fix meant another submission. Now a resubmission is
+needed only when the bundle itself changes -- the manifest metadata, the
+launcher, or the Python floor.
 
-Measured on the built bundle: an installed copy running 1.5.2 comes up on
-1.5.3 at the next launch, the flag costs about 0.2 s per launch, and a launch
-with no network still starts from the cached environment.
+**Startup never depends on the network.** The manifest launches
+`uv run --frozen`, which installs from the shipped lock and contacts no index.
+The refresh is a separate, bounded `uv sync --upgrade-package tooluniverse`
+inside `run_stdio.py`, before the first ToolUniverse import, with uv's HTTP
+timeout at 3 s, a process timeout at 8 s, and at most one check a day
+(`TOOLUNIVERSE_UPDATE_INTERVAL_HOURS`, or `TOOLUNIVERSE_SKIP_SELF_UPDATE=1` to
+turn it off). Anything that fails there leaves the installed version in place.
 
-The dependency carries a `<2` ceiling so a future major release cannot reach
-users without review.
+Measured on the built bundle:
+
+| scenario | result |
+|---|---|
+| locked to 1.5.2, next launch | starts on **1.5.3**, lock and venv both updated |
+| cold install, empty uv cache | 8.5 s |
+| warm launch | 1.2-1.5 s |
+| package index unreachable | starts in **1.2 s** (9 s on the one launch a day that checks) |
+| no network at all | starts from the cached environment |
+| install killed mid-way, relaunched | starts |
+| two launches at once | both start |
+| bundle directory read-only | starts |
+
+An earlier revision put `--upgrade-package` on the launch command itself. That
+made startup require the index: against a blackholed index the launch failed
+after 44 s, which Desktop reports as "Server disconnected". The lock plus the
+bounded refresh is what avoids that.
 
 ## Contents
 

@@ -140,7 +140,7 @@ def test_mcpb_launcher_drops_blank_user_config_values():
     user who had set the key in ~/.tooluniverse/.env.
     """
     launcher = (MCPB_DIR / "src" / "run_stdio.py").read_text()
-    guard = launcher.split("# Enable compact mode")[0]
+    guard = launcher.split("# Pick up a published ToolUniverse release")[0]
     namespace = {"__name__": "launcher_guard"}
     env_backup = dict(os.environ)
     try:
@@ -280,12 +280,36 @@ def test_the_bundle_declares_tooluniverse_instead_of_carrying_it():
     assert "src/tooluniverse" not in (MCPB_DIR / "build.sh").read_text()
 
 
-def test_the_launcher_refreshes_that_dependency_on_every_start():
-    """Without the flag uv reuses whatever it resolved the first time, so a
-    published release would never reach an installed bundle. Verified on the
-    built artifact: 1.5.2 comes up as 1.5.3 at the next launch with the flag,
-    and stays on 1.5.2 without it."""
+def test_startup_never_depends_on_reaching_an_index():
+    """The launch must install from the shipped lock, not resolve over the network.
+
+    Putting --upgrade-package on the launch command made uv reach the index
+    before running anything, so an index that hangs stopped a bundle that was
+    already installed: measured at 44 s to failure against a blackholed index,
+    which Desktop shows as "Server disconnected". With --frozen and a shipped
+    lock the same scenario starts in 1.2 s.
+    """
     args = json.loads(MANIFEST.read_text())["server"]["mcp_config"]["args"]
 
-    assert "--upgrade-package" in args
-    assert args[args.index("--upgrade-package") + 1] == "tooluniverse"
+    assert "--frozen" in args, "startup must install from the lock, not re-resolve"
+    assert "--upgrade-package" not in args, (
+        "the refresh belongs in the launcher, where it is bounded and optional"
+    )
+    assert "uv lock" in (MCPB_DIR / "build.sh").read_text(), (
+        "build.sh must resolve the lock that --frozen then installs from"
+    )
+
+
+def test_the_refresh_is_bounded_and_optional():
+    """Every failure mode of the update check has to end in a started server."""
+    launcher = (MCPB_DIR / "src" / "run_stdio.py").read_text()
+
+    assert "--upgrade-package" in launcher and "tooluniverse" in launcher
+    assert "UV_HTTP_TIMEOUT" in launcher, "bound the hanging-connection case"
+    assert "timeout=timeout_seconds" in launcher, "bound the whole subprocess"
+    assert "TOOLUNIVERSE_SKIP_SELF_UPDATE" in launcher, "give operators a switch"
+    assert "TOOLUNIVERSE_UPDATE_INTERVAL_HOURS" in launcher, (
+        "a machine that cannot reach the index should pay the timeout once a "
+        "day, not on every launch"
+    )
+    assert "except Exception" in launcher, "a failed check must not be fatal"

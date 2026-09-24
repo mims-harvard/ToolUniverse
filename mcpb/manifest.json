@@ -27,8 +27,7 @@
                 "run",
                 "--python",
                 "3.12",
-                "--upgrade-package",
-                "tooluniverse",
+                "--frozen",
                 "--directory",
                 "${__dirname}",
                 "${__dirname}${/}src${/}run_stdio.py"
