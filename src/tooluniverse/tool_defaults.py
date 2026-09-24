@@ -209,6 +209,13 @@ def get_annotations_for_tool(
                 annotations["readOnlyHint"] = tool_override["readOnlyHint"]
             if "destructiveHint" in tool_override:
                 annotations["destructiveHint"] = tool_override["destructiveHint"]
+            # The connectors directory requires a title on every tool. It is
+            # not a hint, but it travels in the same block and is dropped here
+            # unless it is carried through: a tool that spells out its own
+            # title would otherwise fall back to its name with the underscores
+            # removed.
+            if tool_override.get("title"):
+                annotations["title"] = tool_override["title"]
 
         # Also support top-level fields
         if "readOnlyHint" in tool_config:

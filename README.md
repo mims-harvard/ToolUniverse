@@ -137,6 +137,15 @@ Full documentation: [zitniklab.hms.harvard.edu/ToolUniverse](https://zitniklab.h
 
 **Contributors:** [Shanghua Gao](https://shgao.site) · [Richard Zhu](https://www.linkedin.com/in/richard-zhu-4236901a7/) · [Pengwei Sui](https://psui3905.github.io/) · [Zhenglun Kong](https://zlkong.github.io/homepage/) · [Sufian Aldogom](mailto:saldogom@mit.edu) · [Yepeng Huang](https://yepeng.notion.site/Yepeng-Huang-16ad8dd1740080c28d4bd3e3d7c1080c) · [Ayush Noori](https://www.ayushnoori.com/) · [Reza Shamji](mailto:reza_shamji@hms.harvard.edu) · [Krishna Parvataneni](mailto:krishna_parvataneni@hms.harvard.edu) · [Theodoros Tsiligkaridis](https://sites.google.com/view/theo-t) · [Marinka Zitnik](https://zitniklab.hms.harvard.edu/)
 
+## Privacy Policy
+
+ToolUniverse runs locally and collects nothing: no telemetry, no analytics, no
+conversation data. When you run a tool, that tool's arguments are sent to that
+tool's data provider (UniProt, openFDA, Open Targets and so on) so it can
+answer, and nothing else leaves your machine. API keys stay local and are sent
+only to the service they belong to. Full policy:
+https://github.com/mims-harvard/ToolUniverse/blob/main/PRIVACY.md
+
 ## Citation
 
 ```
