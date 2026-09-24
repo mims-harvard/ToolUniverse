@@ -60,3 +60,12 @@ download URL stays stable for marketplaces (e.g. `anthropics/life-sciences`).
 
 Bump `version` in BOTH `mcpb/manifest.json` and `mcpb/pyproject.toml` to match
 the repo root `pyproject.toml` when shipping a new bundle.
+
+## Privacy Policy
+
+ToolUniverse runs locally and collects nothing: no telemetry, no analytics, no
+conversation data. When you run a tool, that tool's arguments are sent to that
+tool's data provider (UniProt, openFDA, Open Targets and so on) so it can
+answer, and nothing else leaves your machine. API keys stay local and are sent
+only to the service they belong to. Full policy:
+https://github.com/mims-harvard/ToolUniverse/blob/main/PRIVACY.md

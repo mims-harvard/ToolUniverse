@@ -209,6 +209,17 @@ def _truncate_response(
     return serialized[:max_chars] + suffix
 
 
+def _readable_tool_title(name: str) -> str:
+    """Human-readable title for a tool that declares none.
+
+    The directory requires ``title`` on every tool. Registered names read
+    ``Vendor_verb_what``, so replacing the separators is enough to give a
+    reviewer and a user something legible without inventing wording that could
+    drift from the description.
+    """
+    return name.replace("_", " ").strip() or name
+
+
 class SMCP(FastMCP):
     """
     Scientific Model Context Protocol (SMCP) Server
@@ -1185,6 +1196,7 @@ class SMCP(FastMCP):
 
         @self.tool(
             annotations=ToolAnnotations(
+                title="Find tools by description",
                 readOnlyHint=True,  # Search tool is read-only
                 destructiveHint=False,
             )
@@ -1681,7 +1693,9 @@ class SMCP(FastMCP):
                 for option in alternatives
                 if isinstance(option, dict)
             ]
-            return Union[tuple(types)] if len(types) > 1 else (types[0] if types else Any)
+            return (
+                Union[tuple(types)] if len(types) > 1 else (types[0] if types else Any)
+            )
 
         param_type = param_info.get("type", "string")
         if isinstance(param_type, list):
@@ -2202,6 +2216,14 @@ Returns:
             from mcp.types import ToolAnnotations
 
             tool_annotations = ToolAnnotations(
+                # The connectors directory requires a title on every tool, and
+                # rejects a submission without one. Tools that set their own in
+                # ``mcp_annotations`` keep it; the rest get their registered
+                # name made readable, which beats shipping no title at all.
+                title=annotations_dict.get("title")
+                or _readable_tool_title(
+                    tool_config.get("original_name") or tool_config.get("name", "")
+                ),
                 readOnlyHint=annotations_dict.get("readOnlyHint"),
                 destructiveHint=annotations_dict.get("destructiveHint"),
             )
@@ -2233,9 +2255,7 @@ Returns:
                     # metadata. Bypass that normalization after construction; the
                     # callable's strict signature remains the runtime validator.
                     strict_parameters = copy.deepcopy(parameters)
-                    object.__setattr__(
-                        registered_tool, "parameters", strict_parameters
-                    )
+                    object.__setattr__(registered_tool, "parameters", strict_parameters)
                     # FastMCP 3 stores a validated copy in its local provider.
                     # Update that copy as well; get_tool()/tools/list read it.
                     local_provider = getattr(self, "_local_provider", None)

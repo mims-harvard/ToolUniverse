@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tooluniverse-mcpb-native"
-version = "1.5.2"
+version = "1.5.3"
 description = "ToolUniverse MCP Server (Native MCPB bundle)"
 # Upper bound tracks the tightest Requires-Python among the resolved
 # dependencies, currently youtube-transcript-api (>=3.8,<3.15) pulled in by
