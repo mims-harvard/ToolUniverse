@@ -69,8 +69,19 @@ requires-python = ">=3.10,<3.14"
 # would make the OpenAI and Gemini clients permanently unavailable in Desktop.
 # The old bundled dependency list carried both unconditionally for the same
 # reason; naming the extras here preserves that exactly.
+# scipy and networkx are named here for the same reason as the extras above.
+# They left the package's base dependencies (128 MB for 27 of the 2717
+# tools, and both were already declared in the graph/visualization extras), so
+# a plain `pip install tooluniverse` no longer carries them. In a sealed bundle
+# that would silently remove 23 scipy-backed tools and 4 networkx-backed ones
+# from Desktop at the next self-update, with no way for the user to add them
+# back. Naming them keeps Desktop at the coverage it has today. The `graph`
+# extra would also supply them, but it drags in pygraphviz, which has no wheels
+# and would fail the build's no-compiler check.
 dependencies = [
     "tooluniverse[openai,gemini]>=1.5.3,<2",
+    "scipy>=1.7.0",
+    "networkx>=3.4.0",
 ]
 
 [tool.uv]

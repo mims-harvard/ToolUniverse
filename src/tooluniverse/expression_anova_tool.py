@@ -13,7 +13,13 @@ from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
-from scipy import stats
+
+try:
+    from scipy import stats
+
+    HAS_SCIPY = True
+except ImportError:  # pragma: no cover - optional dependency
+    HAS_SCIPY = False
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -143,6 +149,12 @@ class ExpressionANOVAPerGeneTool(BaseTool):
         super().__init__(tool_config)
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        if not HAS_SCIPY:
+            return {
+                "status": "error",
+                "error": "scipy is required for this tool. Install with: "
+                "pip install 'tooluniverse[visualization]' (or: pip install scipy)",
+            }
         counts_file = arguments.get("counts_file", "")
         meta_file = arguments.get("meta_file", "")
         group_col = arguments.get("group_col", "")

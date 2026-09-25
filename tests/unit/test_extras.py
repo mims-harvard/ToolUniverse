@@ -288,3 +288,117 @@ class TestDoctorOutput:
 
         with patch("tooluniverse.ToolUniverse", side_effect=Exception("nope")):
             assert doctor.main() == 1
+
+
+# --- base dependencies vs. runtime extras -----------------------------------
+#
+# An extra can only gate a tool if the package it names is *not* also a base
+# dependency. Four packages were declared in both places at once -- scipy and
+# networkx (graph, visualization), faiss-cpu (embedding, ml) and flask (graph)
+# -- so those extras could never mean anything, everyone paid for 145 MB of
+# them, and ``missing_extras()`` could never report them. These two tests keep
+# that from coming back.
+
+SRC = Path(__file__).resolve().parents[2] / "src" / "tooluniverse"
+
+# huggingface_hub is imported while ToolUniverse itself imports, so it has to be
+# a base dependency; naming it in embedding/ml/space as well is redundant but
+# harmless. Anything else appearing here means an extra that cannot gate.
+BASE_AND_EXTRA_EXEMPT = {"huggingface-hub"}
+
+
+def _base_dependency_names():
+    with open(PYPROJECT, "rb") as fh:
+        import tomllib
+
+        data = tomllib.load(fh)
+    return {
+        re.split(r"[<>=!~;\[]", requirement, maxsplit=1)[0]
+        .strip()
+        .lower()
+        .replace("_", "-")
+        for requirement in data["project"]["dependencies"]
+    }
+
+
+def _runtime_extra_distributions():
+    return {
+        pypi_name.lower().replace("_", "-")
+        for packages in EXTRA_PACKAGES.values()
+        for pypi_name in packages.values()
+    }
+
+
+def test_no_package_is_both_a_base_dependency_and_a_runtime_extra():
+    overlap = _base_dependency_names() & _runtime_extra_distributions()
+    assert overlap == BASE_AND_EXTRA_EXEMPT, (
+        "these packages are declared as base dependencies and inside a runtime "
+        f"extra: {sorted(overlap - BASE_AND_EXTRA_EXEMPT)}. A base dependency is "
+        "always installed, so the extra naming it cannot gate anything and "
+        "missing_extras() can never report it. Put the package in one place."
+    )
+
+
+def test_extras_only_packages_are_never_imported_unguarded_at_module_level():
+    """A package behind an extra may not be imported at module scope unguarded.
+
+    A bare module-level import of an uninstalled package makes the whole tool
+    module unimportable, and the failure surfaces as "Tool ... not found even
+    after loading tools" with "Check tool name spelling" -- the real cause,
+    ``No module named 'x'``, only reaches the log. Wrapping the import (either
+    setting a HAS_* flag or re-raising with the extra named) is what turns that
+    into an answer the caller can act on.
+    """
+    import ast
+
+    import_to_dist = {
+        "scipy": "scipy",
+        "networkx": "networkx",
+        "faiss": "faiss-cpu",
+        "flask": "flask",
+        "matplotlib": "matplotlib",
+        "plotly": "plotly",
+        "rdkit": "rdkit",
+        "Bio": "biopython",
+        "sentence_transformers": "sentence-transformers",
+        "easyocr": "easyocr",
+        "fitz": "pymupdf",
+    }
+    gated = _runtime_extra_distributions() - _base_dependency_names()
+    watched = {
+        import_name: dist
+        for import_name, dist in import_to_dist.items()
+        if dist in gated
+    }
+    assert watched, "expected at least one extras-only package to watch"
+
+    offenders = []
+    for path in SRC.rglob("*.py"):
+        # src/tooluniverse/remote/* are separate deployables: each directory
+        # ships its own requirements.txt and starts its own MCP server on a
+        # remote worker. They import packages this project never declares at
+        # all (scanpy, for one), which is only possible because nothing here
+        # imports them.
+        if "remote" in path.relative_to(SRC).parts:
+            continue
+        try:
+            tree = ast.parse(path.read_text(errors="ignore"))
+        except SyntaxError:  # pragma: no cover - not our concern here
+            continue
+        for node in tree.body:  # module scope only; a try block is nested
+            if isinstance(node, ast.Import):
+                modules = [alias.name for alias in node.names]
+            elif isinstance(node, ast.ImportFrom):
+                modules = [node.module or ""]
+            else:
+                continue
+            for module in modules:
+                top = module.split(".")[0]
+                if top in watched:
+                    offenders.append(f"{path.relative_to(SRC)}:{node.lineno} ({top})")
+
+    assert not offenders, (
+        "these module-level imports of extras-only packages are unguarded, so "
+        "the tools behind them disappear with a misleading error when the extra "
+        f"is absent: {offenders}"
+    )

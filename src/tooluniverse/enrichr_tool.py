@@ -1,7 +1,13 @@
 import json
 import requests
 import urllib.parse
-import networkx as nx
+
+try:
+    import networkx as nx
+
+    HAS_NETWORKX = True
+except ImportError:  # pragma: no cover - optional dependency
+    HAS_NETWORKX = False
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 from .logging_config import get_logger
@@ -33,6 +39,12 @@ class EnrichrTool(BaseTool):
 
     def run(self, arguments):
         """Main entry point for the tool."""
+        if not HAS_NETWORKX:
+            return {
+                "status": "error",
+                "error": "networkx is required for this tool. Install with: "
+                "pip install 'tooluniverse[visualization]' (or: pip install networkx)",
+            }
         genes = arguments.get("gene_list")
         # ``libs`` defaults to a broad set of pathway/ontology libraries. An
         # explicitly-supplied empty list (e.g. ``"libs": []``) is treated as

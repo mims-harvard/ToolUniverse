@@ -20,7 +20,15 @@ See also
 - search.py : orchestrates keyword/embedding/hybrid queries
 """
 
-import faiss
+try:
+    import faiss
+except ImportError as _exc:  # pragma: no cover - optional dependency
+    # The vector store is FAISS; there is nothing to degrade to, so fail here
+    # and name the extra rather than leaving the caller with "No module named".
+    raise ImportError(
+        "The embedding vector store needs FAISS. Install with: "
+        "pip install 'tooluniverse[embedding]' (or: pip install faiss-cpu)"
+    ) from _exc
 import numpy as np
 import sqlite3
 from pathlib import Path

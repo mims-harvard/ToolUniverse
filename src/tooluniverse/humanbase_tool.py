@@ -1,6 +1,11 @@
 import sys
 
-import networkx as nx
+try:
+    import networkx as nx
+
+    HAS_NETWORKX = True
+except ImportError:  # pragma: no cover - optional dependency
+    HAS_NETWORKX = False
 import requests
 import urllib.parse
 from .base_tool import BaseTool
@@ -66,6 +71,12 @@ class HumanBaseTool(BaseTool):
 
     def run(self, arguments):
         """Main entry point for the tool."""
+        if not HAS_NETWORKX:
+            return {
+                "status": "error",
+                "error": "networkx is required for this tool. Install with: "
+                "pip install 'tooluniverse[visualization]' (or: pip install networkx)",
+            }
         self._resolutions = {}
         self._unresolved = []
         # Feature-111A-007: 'genes' as alias for 'gene_list'

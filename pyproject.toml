@@ -19,7 +19,6 @@ dependencies = [
     "uvicorn>=0.36.0",
     "pydantic>=2.11.0",
     "epam.indigo>=1.34.0",
-    "networkx>=3.4.0",
     # openai / google-genai are NOT here on purpose: they are optional extras
     # (`tooluniverse[openai]`, `tooluniverse[gemini]`), both covered by [all].
     "pyyaml>=6.0.0",
@@ -42,20 +41,10 @@ dependencies = [
     # requires urllib3>=1.26,<3, so this adds no new constraint; it just stops
     # a direct import from depending on another package's dependency.
     "urllib3>=1.26",
-    # Imported by dose_response, survival, nca, drug_synergy, metaboanalyst,
-    # timer and two remote tools. It was previously reaching installs only as a
-    # transitive of that `fitz` placeholder (which required nibabel, nipype,
-    # pyxnat, scipy and more), so removing it left these modules without their
-    # dependency. It stays listed in the graph/visualization extras as well.
-    "scipy>=1.7.0",
     "pandas>=2.2.3",
     "openpyxl>=3.1.0", # Read .xlsx bulk downloads (CellMarker, dataset tools)
-    "setuptools>=70.0.0", # Fix pkg_resources deprecation warnings
     "pdfplumber>=0.11.0",
     "playwright>=1.55.0",
-    "faiss-cpu==1.12.0",
-    "flask>=2.0.0",
-    "aiohttp",
     "beautifulsoup4>=4.12.0",
     "python-dotenv>=1.0.0",
     # MarkItDown (~32 MB: SpeechRecognition, youtube-transcript-api, pydub,
@@ -77,10 +66,32 @@ dependencies = [
     # Add `az-content-understanding` back once that dependency ships a stable
     # release; adding it today makes the whole requirement unresolvable.
     "markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx,youtube-transcription]>=0.1.0",
-    "psutil>=5.9.0",
     "ddgs>=9.0.0",
     "pip>=25.3",
     "jsonschema>=4.23.0",
+    # Six packages that used to be listed here are gone, and none was needed to
+    # start: importing ToolUniverse and loading all 2717 tools pulls in
+    # none of them, because a tool module is imported when that tool is
+    # instantiated.
+    #
+    # setuptools was unused outright -- the `pkg_resources` references in this
+    # package are `import importlib.resources as pkg_resources` aliases. psutil
+    # is used by four test modules and aiohttp by
+    # examples/mcp/mcp_server_example.py, so both moved to `dev`.
+    #
+    # scipy, networkx, faiss-cpu and flask were listed here *and* in the extras
+    # that already declare them (graph, visualization, embedding, ml), which
+    # made those extras unable to mean anything. Every module that imports them
+    # now guards the import and says what to install, and the blast radius is
+    # small: faiss-cpu and flask back no registered tool at all
+    # (database_setup/vector_store.py and the tool-graph web UI), networkx backs
+    # 4 of the 2717 tools ToolUniverse loads, and scipy 23.
+    #
+    # scipy is the judgement call. Its entry here was a deliberate fix after the
+    # `fitz` removal took away its transitive provider, so dropping it reverses
+    # that on purpose: 121 MB of a 751 MB install for 0.8% of the catalogue,
+    # against modules that already degrade gracefully. The six together take a
+    # default install from 751 MB to 586 MB.
 ]
 requires-python = ">=3.10"
 readme = "README.md"
@@ -129,6 +140,11 @@ singlecell = [
     "tiledbsoma>=1.15.3",  # Required for spatial data
 ]
 dev = [
+    # Not imported by the package itself: psutil by four test modules, aiohttp
+    # by examples/mcp/mcp_server_example.py. A contributor install needs them;
+    # everyone who runs a tool does not.
+    "psutil>=5.9.0",
+    "aiohttp",
     "pytest>=7.0",
     "pytest-cov>=4.0",
     "pytest-timeout>=2.3.1",
