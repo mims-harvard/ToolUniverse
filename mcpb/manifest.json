@@ -30,10 +30,9 @@
                 "--frozen",
                 "--directory",
                 "${__dirname}",
-                "${__dirname}${/}src${/}run_stdio.py"
+                "src/run_stdio.py"
             ],
             "env": {
-                "PYTHONPATH": "${__dirname}${/}src",
                 "TOOLUNIVERSE_STDIO_MODE": "1",
                 "PYTHONIOENCODING": "utf-8",
                 "TOOLUNIVERSE_ENV_FILE": "${user_config.tooluniverse_env_file}",

@@ -103,6 +103,37 @@ def test_mcpb_launcher_command_preserved():
     assert (MCPB_DIR / ".python-version").read_text().strip() == "3.12"
 
 
+def test_mcpb_launch_path_does_not_depend_on_host_substitution(tmp_path):
+    """The entry point must not be spelled with ${/}.
+
+    ``--directory ${__dirname}`` already puts uv in the bundle, so the script
+    can be named relative to it, exactly as the official hello-world-uv example
+    does. Spelling it "${__dirname}${/}src${/}run_stdio.py" instead makes the
+    launch depend on the host expanding ${/} -- and a host that does not leaves
+    uv trying to spawn a literal "...${/}src${/}run_stdio.py", which fails with
+    "No such file or directory" and no server at all. Verified both ways: the
+    relative form starts (including from a path with spaces and CJK
+    characters), the unexpanded form dies on spawn.
+    """
+    manifest = json.loads(MANIFEST.read_text())
+    config = manifest["server"]["mcp_config"]
+    args = config["args"]
+
+    assert "--directory" in args
+    assert args[args.index("--directory") + 1] == "${__dirname}"
+
+    script = args[-1]
+    assert script == "src/run_stdio.py", (
+        "name the entry point relative to --directory so the launch does not "
+        f"rely on the host expanding path variables (got {script!r})"
+    )
+    assert "${/}" not in " ".join(args), (
+        "no launch argument may depend on ${/} expansion"
+    )
+    assert (MCPB_DIR / script).is_file()
+    assert manifest["server"]["entry_point"] == script
+
+
 def test_mcpb_user_config_fields_match_the_env_block():
     """Every credential field Desktop collects must reach the server, and the
     reverse: an env entry referencing a field that does not exist would be
