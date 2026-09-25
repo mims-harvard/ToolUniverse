@@ -160,11 +160,23 @@ def test_mcpb_launcher_drops_blank_user_config_values():
         os.environ.update(env_backup)
 
 
-def test_mcpb_python_range_has_semver_syntax_and_matching_bounds():
-    """Desktop rejects PEP 440 commas even when the installed Python fits."""
+def test_mcpb_python_range_is_semver_and_no_stricter_than_the_bundle_needs():
+    """The two Python ranges answer different questions, so they may differ.
+
+    ``manifest.json`` gates installation against the Python the *user* has;
+    the bundle never runs it, because uv provisions its own interpreter. The
+    bundle's ``requires-python`` is that provisioning range, and it has to
+    exclude interpreters the locked graph cannot install on -- 3.14 today,
+    via markitdown -> magika 0.6.3 -> onnxruntime with no cp314 wheels.
+
+    So the invariant is containment, not equality: the manifest must not be
+    stricter than the bundle (that would block users whose own Python is
+    irrelevant), and the pinned interpreter must satisfy both.
+    """
     import re
 
     from packaging.specifiers import SpecifierSet
+    from packaging.version import Version
 
     manifest = json.loads(MANIFEST.read_text())
     runtime_range = manifest["compatibility"]["runtimes"]["python"]
@@ -175,9 +187,29 @@ def test_mcpb_python_range_has_semver_syntax_and_matching_bounds():
         re.MULTILINE,
     )
     assert declared
-    # For the bundle's simple comparison bounds, translate the separator only.
-    assert SpecifierSet(",".join(runtime_range.split())) == SpecifierSet(
-        declared.group(1)
+    manifest_spec = SpecifierSet(",".join(runtime_range.split()))
+    bundle_spec = SpecifierSet(declared.group(1))
+
+    # Anything the bundle can provision, Desktop must allow to install.
+    probes = [Version(f"3.{minor}") for minor in range(8, 20)]
+    allowed_by_bundle = {v for v in probes if v in bundle_spec}
+    allowed_by_manifest = {v for v in probes if v in manifest_spec}
+    assert allowed_by_bundle <= allowed_by_manifest, (
+        "manifest.json is stricter than mcpb/pyproject.toml for "
+        f"{sorted(str(v) for v in allowed_by_bundle - allowed_by_manifest)}; "
+        "the manifest gates on the user's own Python, which the bundle does "
+        "not use, so it must not be the tighter of the two"
+    )
+
+    pinned = MCPB_DIR / ".python-version"
+    pinned_version = Version(pinned.read_text().strip())
+    assert pinned_version in bundle_spec, (
+        f"mcpb/.python-version pins {pinned_version}, outside the bundle's "
+        f"own requires-python ({bundle_spec})"
+    )
+    assert pinned_version in manifest_spec, (
+        f"mcpb/.python-version pins {pinned_version}, which Desktop's "
+        f"declared range ({runtime_range}) would reject"
     )
 
 
