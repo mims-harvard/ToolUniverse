@@ -315,6 +315,31 @@ def test_the_refresh_is_bounded_and_optional():
     assert "except Exception" in launcher, "a failed check must not be fatal"
 
 
+def test_the_update_uses_the_uv_that_launched_the_server():
+    """PATH is not a reliable way to find uv here.
+
+    Desktop may invoke uv by absolute path with a PATH that does not contain
+    it, and `subprocess.run(["uv", ...])` then raises FileNotFoundError -- the
+    bundle keeps working but never updates again, quietly, for the life of the
+    install. `uv run` exports its own path as UV, so use that first. Verified
+    with uv removed from PATH: the check used to be skipped and now runs.
+    """
+    launcher = (MCPB_DIR / "src" / "run_stdio.py").read_text()
+
+    assert 'os.environ.get("UV")' in launcher, "prefer the uv that launched us"
+    assert "shutil.which" in launcher, "then PATH"
+    assert '"uv",\n                "sync"' not in launcher, (
+        "the hardcoded name is what fails when PATH lacks uv"
+    )
+
+
+def test_a_backwards_clock_does_not_disable_updates():
+    """A stamp dated in the future would otherwise read as a recent check."""
+    launcher = (MCPB_DIR / "src" / "run_stdio.py").read_text()
+
+    assert "abs(time.time() - os.path.getmtime(stamp))" in launcher
+
+
 def test_a_refused_update_is_reported_not_swallowed():
     """A release can be uninstallable for reasons the user cannot guess -- it may
     need a newer Python than the 3.12 this bundle pins, or a dependency with no

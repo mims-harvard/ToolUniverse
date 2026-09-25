@@ -12,6 +12,7 @@ extensions directory. This file is therefore the only code that ships.
 """
 
 import os
+import shutil
 import subprocess
 import sys
 import time
@@ -82,7 +83,11 @@ def _refresh_tooluniverse(timeout_seconds=8, http_timeout_seconds="3"):
     except ValueError:
         interval_hours = 24.0
     try:
-        if time.time() - os.path.getmtime(stamp) < interval_hours * 3600:
+        # abs(), because a clock that moved backwards leaves a stamp dated in
+        # the future, and a plain subtraction would then read as "checked
+        # moments ago" for as long as the clock takes to catch up -- switching
+        # updates off without saying so.
+        if abs(time.time() - os.path.getmtime(stamp)) < interval_hours * 3600:
             return
     except OSError:
         pass  # never checked, or the stamp is unreadable: check now
@@ -101,6 +106,13 @@ def _refresh_tooluniverse(timeout_seconds=8, http_timeout_seconds="3"):
     # blackholed index: 26 s with a single 25 s bound, ~4 s with these.
     child_env = dict(os.environ)
     child_env.setdefault("UV_HTTP_TIMEOUT", http_timeout_seconds)
+    # Use the uv that launched this process rather than whatever PATH offers.
+    # `uv run` exports its own absolute path as UV, and Desktop may well invoke
+    # uv by absolute path with a PATH that does not contain it -- in which case
+    # looking up "uv" fails with FileNotFoundError and the bundle never updates
+    # again, quietly, for the life of the install. Verified: with uv removed
+    # from PATH the check used to be skipped; with UV it runs.
+    uv_binary = os.environ.get("UV") or shutil.which("uv") or "uv"
     # Report a refused update rather than swallowing it. A release can be
     # uninstallable here for reasons the user cannot guess: it may require a
     # newer Python than the 3.12 this bundle pins, or pull a dependency with no
@@ -111,7 +123,7 @@ def _refresh_tooluniverse(timeout_seconds=8, http_timeout_seconds="3"):
     try:
         completed = subprocess.run(
             [
-                "uv",
+                uv_binary,
                 "sync",
                 "--python",
                 "3.12",
