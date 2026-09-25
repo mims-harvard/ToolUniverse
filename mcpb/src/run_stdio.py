@@ -62,6 +62,55 @@ if _env_file and os.path.isfile(_env_file):
 # any failure -- offline, hung proxy, index outage, uv missing -- leaves the
 # installed version in place and the server starts anyway. A release therefore
 # arrives at the first launch with a working network rather than never.
+def _hold_update_lock(path, wait_seconds, stale_seconds=60.0):
+    """Take the update lock, or wait for whoever has it and report failure.
+
+    Two clients can share one install -- the extension in Desktop and a
+    `claude mcp add` pointing at the same directory -- and they start
+    independently. Without this, the second process reads the stamp the first
+    one just wrote, decides an update is not due, and walks straight into a
+    site-packages tree that `uv sync` is in the middle of replacing. Measured:
+    one of two simultaneous launches died with dozens of "Error reading
+    .../tooluniverse/<module>.py: No such file or directory" while the other
+    upgraded 1.4.1 to 1.5.3 successfully.
+
+    So the wait has to happen before the stamp is consulted, not after. A
+    caller that does not get the lock has still waited for the tree to settle,
+    which is the part that matters; skipping its own check costs nothing,
+    because the process it waited for just did it.
+    """
+    deadline = time.time() + wait_seconds
+    while True:
+        try:
+            handle = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            pass
+        except OSError:
+            # Nowhere to put a lock, so no safe way to update. A read-only
+            # bundle directory lands here, and it could not be synced anyway.
+            return False
+        else:
+            try:
+                os.write(handle, str(os.getpid()).encode("ascii"))
+            finally:
+                os.close(handle)
+            return True
+
+        # A process killed mid-update leaves the file behind. Without this the
+        # install would never update again. abs() for the same reason as the
+        # stamp: a clock that moved backwards must not make it look recent.
+        try:
+            if abs(time.time() - os.path.getmtime(path)) > stale_seconds:
+                os.remove(path)
+                continue
+        except OSError:
+            continue
+
+        if time.time() >= deadline:
+            return False
+        time.sleep(0.2)
+
+
 def _refresh_tooluniverse(timeout_seconds=8, http_timeout_seconds="3"):
     bundle_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     if os.environ.get("TOOLUNIVERSE_SKIP_SELF_UPDATE", "").strip().lower() in (
@@ -71,6 +120,22 @@ def _refresh_tooluniverse(timeout_seconds=8, http_timeout_seconds="3"):
     ):
         return
 
+    # Wait a little longer than the sync is allowed to take, so a launch that
+    # collides with one still sees a settled tree afterwards.
+    update_lock = os.path.join(bundle_dir, ".update.lock")
+    if not _hold_update_lock(update_lock, wait_seconds=timeout_seconds + 2):
+        return
+    try:
+        _refresh_locked(bundle_dir, timeout_seconds, http_timeout_seconds)
+    finally:
+        try:
+            os.remove(update_lock)
+        except OSError:
+            pass
+
+
+def _refresh_locked(bundle_dir, timeout_seconds, http_timeout_seconds):
+    """The update itself, with the update lock held."""
     # Check at most once a day. Releases do not arrive hourly, and the cost of
     # checking is only ever paid by the launch that checks: on a machine that
     # cannot reach the index that is the difference between every launch waiting

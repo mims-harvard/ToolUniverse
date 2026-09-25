@@ -18,6 +18,7 @@ import re
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 import pytest
@@ -177,6 +178,17 @@ def _load_launcher_refresh(bundle_dir):
     return namespace["_refresh_tooluniverse"]
 
 
+def _load_launcher_namespace(bundle_dir):
+    launcher = (MCPB_DIR / "src" / "run_stdio.py").read_text()
+    head = launcher.split("\n_refresh_tooluniverse()")[0]
+    namespace = {
+        "__name__": "launcher_refresh",
+        "__file__": str(bundle_dir / "src" / "run_stdio.py"),
+    }
+    exec(compile(head, "run_stdio.py", "exec"), namespace)
+    return namespace
+
+
 def _fake_bundle(tmp_path, lock_text="tooluniverse==1.4.1\n"):
     (tmp_path / "src").mkdir()
     (tmp_path / "uv.lock").write_text(lock_text)
@@ -281,6 +293,68 @@ def test_mcpb_refresh_discards_a_leftover_snapshot(tmp_path, monkeypatch):
         "a stale snapshot must not roll the installed lock back"
     )
     assert not (bundle / "uv.lock.pre-update").exists()
+
+
+def test_mcpb_refresh_waits_for_a_concurrent_update_instead_of_importing(
+    tmp_path, monkeypatch
+):
+    """Two clients can share one install, and they start independently.
+
+    The stamp is written before the sync, so without a lock the second process
+    reads a fresh stamp, decides no update is due and returns straight into a
+    site-packages tree the first one is still replacing. Measured on the real
+    bundle: one of two simultaneous launches died with dozens of "Error reading
+    .../tooluniverse/<module>.py: No such file or directory" while the other
+    upgraded. So the wait has to come before the stamp is consulted.
+    """
+    import subprocess as real_subprocess
+
+    bundle = _fake_bundle(tmp_path)
+    namespace = _load_launcher_namespace(bundle)
+    # a fresh stamp, as the process holding the lock would have just written
+    (bundle / ".last-update-check").write_text("0")
+    os.utime(bundle / ".last-update-check", None)
+    (bundle / ".update.lock").write_text("99999")
+
+    calls = []
+    monkeypatch.setattr(
+        "subprocess.run",
+        lambda cmd, **kw: calls.append(cmd)
+        or real_subprocess.CompletedProcess(cmd, 0, "", ""),
+    )
+
+    started = time.monotonic()
+    namespace["_refresh_tooluniverse"](timeout_seconds=0)
+    waited = time.monotonic() - started
+
+    assert not calls, "two syncs must not run against one environment"
+    assert waited >= 1.5, (
+        "the launcher returned immediately and would import a tree that the "
+        f"other process is still replacing (waited {waited:.2f}s)"
+    )
+    assert (bundle / ".update.lock").exists(), "someone else's lock must survive"
+
+
+def test_mcpb_refresh_breaks_a_stale_update_lock(tmp_path, monkeypatch):
+    """A process killed mid-update must not disable updates for good."""
+    import subprocess as real_subprocess
+
+    bundle = _fake_bundle(tmp_path)
+    namespace = _load_launcher_namespace(bundle)
+    stale = bundle / ".update.lock"
+    stale.write_text("1")
+    os.utime(stale, (time.time() - 3600, time.time() - 3600))
+
+    calls = []
+    monkeypatch.setattr(
+        "subprocess.run",
+        lambda cmd, **kw: calls.append(cmd)
+        or real_subprocess.CompletedProcess(cmd, 0, "", ""),
+    )
+    namespace["_refresh_tooluniverse"](timeout_seconds=0)
+
+    assert calls, "a stale lock must not block the update forever"
+    assert not stale.exists(), "the lock must be released"
 
 
 def test_mcpb_python_range_is_semver_and_no_stricter_than_the_bundle_needs():
