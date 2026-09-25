@@ -160,6 +160,129 @@ def test_mcpb_launcher_drops_blank_user_config_values():
         os.environ.update(env_backup)
 
 
+def _load_launcher_refresh(bundle_dir):
+    """Exec the launcher up to its call site and hand back the refresh.
+
+    The module runs the server at import, so the test compiles the part above
+    the call and pulls the function out of the resulting namespace. ``__file__``
+    decides which directory the function treats as the bundle.
+    """
+    launcher = (MCPB_DIR / "src" / "run_stdio.py").read_text()
+    head = launcher.split("\n_refresh_tooluniverse()")[0]
+    namespace = {
+        "__name__": "launcher_refresh",
+        "__file__": str(bundle_dir / "src" / "run_stdio.py"),
+    }
+    exec(compile(head, "run_stdio.py", "exec"), namespace)
+    return namespace["_refresh_tooluniverse"]
+
+
+def _fake_bundle(tmp_path, lock_text="tooluniverse==1.4.1\n"):
+    (tmp_path / "src").mkdir()
+    (tmp_path / "uv.lock").write_text(lock_text)
+    return tmp_path
+
+
+def test_mcpb_refresh_restores_the_lock_when_the_sync_fails(tmp_path, monkeypatch):
+    """A failed update must not leave uv.lock ahead of the environment.
+
+    ``uv sync`` writes the lock before it installs, so an install that fails
+    leaves the lock naming a release the environment does not have. The launch
+    command is --frozen, so the next start has to reach that release -- and
+    offline, with nothing cached, uv refuses and the server never comes up. The
+    bundle worked a minute earlier, which makes this the one failure the update
+    path must not be able to cause.
+    """
+    import subprocess as real_subprocess
+
+    bundle = _fake_bundle(tmp_path)
+    refresh = _load_launcher_refresh(bundle)
+    lock = bundle / "uv.lock"
+    original = lock.read_text()
+
+    def fake_run(cmd, **kwargs):
+        # what uv does: resolve and write the lock, then fail to install
+        lock.write_text("tooluniverse==1.5.3\n")
+        return real_subprocess.CompletedProcess(cmd, 1, "", "error: permission denied")
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    refresh()
+
+    assert lock.read_text() == original, (
+        "uv.lock was left pointing at a release the environment does not have"
+    )
+    assert not (bundle / "uv.lock.pre-update").exists()
+
+
+def test_mcpb_refresh_restores_the_lock_when_the_sync_times_out(tmp_path, monkeypatch):
+    """The process bound is 8 s, which a slow connection reaches easily."""
+    import subprocess as real_subprocess
+
+    bundle = _fake_bundle(tmp_path)
+    refresh = _load_launcher_refresh(bundle)
+    lock = bundle / "uv.lock"
+    original = lock.read_text()
+
+    def fake_run(cmd, **kwargs):
+        lock.write_text("tooluniverse==1.5.3\n")
+        raise real_subprocess.TimeoutExpired(cmd, 8)
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    refresh()
+
+    assert lock.read_text() == original
+    assert not (bundle / "uv.lock.pre-update").exists()
+
+
+def test_mcpb_refresh_keeps_the_new_lock_when_the_sync_succeeds(tmp_path, monkeypatch):
+    """The guard must not undo the upgrade it exists to protect."""
+    import subprocess as real_subprocess
+
+    bundle = _fake_bundle(tmp_path)
+    refresh = _load_launcher_refresh(bundle)
+    lock = bundle / "uv.lock"
+
+    def fake_run(cmd, **kwargs):
+        lock.write_text("tooluniverse==1.5.3\n")
+        return real_subprocess.CompletedProcess(cmd, 0, "", "")
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    refresh()
+
+    assert lock.read_text() == "tooluniverse==1.5.3\n"
+    assert not (bundle / "uv.lock.pre-update").exists()
+
+
+def test_mcpb_refresh_discards_a_leftover_snapshot(tmp_path, monkeypatch):
+    """A snapshot left by a killed run describes nothing worth going back to.
+
+    uv brings the environment up to the lock before this file executes, so if
+    the launcher is running at all, the current lock is installed. Restoring an
+    older copy would downgrade a working environment and re-upgrade it at the
+    next check.
+    """
+    import subprocess as real_subprocess
+
+    bundle = _fake_bundle(tmp_path, lock_text="tooluniverse==1.5.3\n")
+    (bundle / "uv.lock.pre-update").write_text("tooluniverse==1.4.1\n")
+    refresh = _load_launcher_refresh(bundle)
+
+    calls = []
+
+    def fake_run(cmd, **kwargs):
+        calls.append(cmd)
+        return real_subprocess.CompletedProcess(cmd, 0, "", "")
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    refresh()
+
+    assert calls, "the refresh should still run"
+    assert (bundle / "uv.lock").read_text() == "tooluniverse==1.5.3\n", (
+        "a stale snapshot must not roll the installed lock back"
+    )
+    assert not (bundle / "uv.lock.pre-update").exists()
+
+
 def test_mcpb_python_range_is_semver_and_no_stricter_than_the_bundle_needs():
     """The two Python ranges answer different questions, so they may differ.
 

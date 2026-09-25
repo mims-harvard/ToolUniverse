@@ -113,6 +113,66 @@ def _refresh_tooluniverse(timeout_seconds=8, http_timeout_seconds="3"):
     # again, quietly, for the life of the install. Verified: with uv removed
     # from PATH the check used to be skipped; with UV it runs.
     uv_binary = os.environ.get("UV") or shutil.which("uv") or "uv"
+
+    # Keep uv.lock describing something that is actually installed.
+    #
+    # `uv sync` resolves and writes the lock *before* it installs, so a sync
+    # that dies partway leaves the lock naming the new release while the
+    # environment still holds the old one. The launch command is `--frozen`, so
+    # the next start has to make the environment match that lock -- and if the
+    # machine is offline and the new wheels are not cached, it cannot, and uv
+    # refuses to run. A bundle that worked offline a minute ago is then dead,
+    # showing the "Server disconnected" this design exists to avoid. Verified
+    # end to end: with the lock at 1.5.3, the venv at 1.4.1 and an empty cache,
+    # an offline launch fails with "Network connectivity is disabled, but the
+    # requested data wasn't found in the cache".
+    #
+    # The kill window is not narrow. uv writes the lock within a second or two
+    # of starting, and the process bound below is 8 s; a slow connection, a
+    # sleeping laptop, a full disk or a scanner holding a file open all land in
+    # it. Verified by making the venv unwritable: the install failed and the
+    # lock had already moved to 1.5.3.
+    #
+    # So snapshot the lock and put it back unless the sync reports success.
+    #
+    # What this cannot cover is this whole process being killed between uv's
+    # write and the restore below -- power loss, the OOM killer, Desktop
+    # stopping the server. That window is one call wide, where before the fix
+    # every ordinary sync failure left the install poisoned. It cannot be
+    # closed from here: uv brings the environment up to the lock before this
+    # file is executed, so on the next launch there is no code of ours left to
+    # run. Verified -- with a leftover snapshot in place and the lock ahead of
+    # the venv, an offline launch still fails inside uv.
+    #
+    # The same ordering says a leftover snapshot is always stale: if this code
+    # is running, uv already satisfied the current lock, so the lock is
+    # installed and the older copy describes nothing worth going back to.
+    # Restoring it would downgrade a working environment and then upgrade it
+    # again on the next check. Drop it instead.
+    lock_path = os.path.join(bundle_dir, "uv.lock")
+    lock_snapshot = os.path.join(bundle_dir, "uv.lock.pre-update")
+
+    def _restore_lock():
+        try:
+            os.replace(lock_snapshot, lock_path)
+        except OSError:
+            pass
+
+    try:
+        os.remove(lock_snapshot)
+    except OSError:
+        pass
+    try:
+        shutil.copy2(lock_path, lock_snapshot)
+    except OSError as exc:
+        # Without a snapshot there is no way back, so do not start. The reasons
+        # a copy fails here -- no disk, no write permission -- are the same ones
+        # that would strand the sync halfway.
+        print(
+            f"ToolUniverse update check skipped: cannot protect uv.lock ({exc})",
+            file=sys.stderr,
+        )
+        return
     # Report a refused update rather than swallowing it. A release can be
     # uninstallable here for reasons the user cannot guess: it may require a
     # newer Python than the 3.12 this bundle pins, or pull a dependency with no
@@ -139,6 +199,7 @@ def _refresh_tooluniverse(timeout_seconds=8, http_timeout_seconds="3"):
             check=False,
         )
         if completed.returncode != 0:
+            _restore_lock()
             detail = (completed.stderr or completed.stdout or "").strip()
             detail = detail[-500:].replace("\n", " ")
             print(
@@ -146,12 +207,19 @@ def _refresh_tooluniverse(timeout_seconds=8, http_timeout_seconds="3"):
                 f"not be applied ({detail})",
                 file=sys.stderr,
             )
+        else:
+            try:
+                os.remove(lock_snapshot)
+            except OSError:
+                pass
     except subprocess.TimeoutExpired:
+        _restore_lock()
         print(
             "ToolUniverse update check timed out; keeping the installed version",
             file=sys.stderr,
         )
     except Exception as exc:  # noqa: BLE001 - never fatal, this is opportunistic
+        _restore_lock()
         print(f"ToolUniverse update check skipped: {exc}", file=sys.stderr)
 
 
