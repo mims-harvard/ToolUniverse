@@ -402,3 +402,61 @@ def test_extras_only_packages_are_never_imported_unguarded_at_module_level():
         "the tools behind them disappear with a misleading error when the extra "
         f"is absent: {offenders}"
     )
+
+
+# The guards above only take their False branch when the package is absent, and
+# `[dev]` installs all three so CI never gets there on its own. Flip the flag
+# instead, so the message a user would actually see is covered either way.
+@pytest.mark.parametrize(
+    "module_name, flag, class_name, arguments, expected_package",
+    [
+        (
+            "tooluniverse.humanbase_tool",
+            "HAS_NETWORKX",
+            "HumanBaseTool",
+            {"gene_list": ["TP53", "EGFR", "BRCA1"]},
+            "networkx",
+        ),
+        (
+            "tooluniverse.coexpression_module_tool",
+            "HAS_NETWORKX",
+            "CoexpressionModuleTool",
+            {"expression": {"TP53": [1.0, 2.0, 3.0], "EGFR": [2.0, 1.0, 3.0]}},
+            "networkx",
+        ),
+        (
+            "tooluniverse.expression_anova_tool",
+            "HAS_SCIPY",
+            "ExpressionANOVAPerGeneTool",
+            {
+                "counts_file": "/nonexistent.csv",
+                "meta_file": "/nonexistent.csv",
+                "group_col": "g",
+                "mode": "anova",
+            },
+            "scipy",
+        ),
+    ],
+)
+def test_a_tool_whose_extra_is_absent_says_what_to_install(
+    monkeypatch, module_name, flag, class_name, arguments, expected_package
+):
+    """The error has to name the package and the extra, not just fail.
+
+    Without the guard the module is unimportable, the tool never registers, and
+    the caller is told "Tool ... not found even after loading tools" with
+    "Check tool name spelling" while the real cause stays in the log.
+    """
+    import importlib
+
+    module = importlib.import_module(module_name)
+    monkeypatch.setattr(module, flag, False)
+    tool = getattr(module, class_name)({"name": "t", "type": class_name})
+
+    result = tool.run(arguments)
+
+    assert result["status"] == "error"
+    assert expected_package in result["error"]
+    assert "pip install" in result["error"], (
+        f"the error must say how to fix it, got: {result['error']}"
+    )

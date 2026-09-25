@@ -159,6 +159,15 @@ dev = [
     # the provider SDKs stay part of `[dev]` now that they left the base set.
     # This keeps `pip install -e .[dev] && pytest` green, as CI runs exactly that.
     "tooluniverse[openai,gemini]",
+    # Same reason, for the packages that just left the base set. The suite
+    # exercises the tools they back: test_coexpression_module_tool and
+    # test_humanbase_* (networkx), test_dms_pipeline_e2e_kras (scipy),
+    # test_datastore_cli (faiss). Named directly rather than pulling
+    # `tooluniverse[visualization,embedding]`, which would drag rdkit,
+    # matplotlib and sentence-transformers into every CI run.
+    "scipy>=1.7.0",
+    "networkx>=3.4.0",
+    "faiss-cpu==1.12.0",
 ]
 docs = [
     "sphinx>=4.0",
