@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
 """Entry point for ToolUniverse MCP Server (stdio transport for Claude Desktop).
 
-This wrapper calls run_stdio_server with compact mode enabled.
-Compact mode exposes only 5 core tools (list_tools, grep_tools, get_tool_info, execute_tool, find_tools)
-while loading all 764+ tools in the background for execute_tool to access.
-This prevents context window overflow from the massive tool list.
+Compact mode exposes five tools -- list_tools, grep_tools, get_tool_info,
+find_tools and execute_tool -- and keeps the whole catalogue (2,700+ tools)
+behind execute_tool. Exposing them all would overflow the context window before
+the conversation started.
+
+The bundle carries no ToolUniverse source: mcpb/pyproject.toml declares it and
+uv installs it, so a release reaches users without a new submission to the
+extensions directory. This file is therefore the only code that ships.
 """
 
 import os
