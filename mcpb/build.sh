@@ -29,11 +29,71 @@ cp "$MCPB_SRC/src/run_stdio.py" "$BUILD_DIR/src/run_stdio.py"
 # and the update is the launcher's bounded refresh instead.
 ( cd "$BUILD_DIR" && uv lock --quiet )
 
+PYTHON_PIN=$(tr -d "[:space:]" < "$MCPB_SRC/.python-version")
+
 # The package itself is NOT copied in. mcpb/pyproject.toml declares
-# "tooluniverse" as a dependency and the manifest launches uv with
-# --upgrade-package tooluniverse, so each release reaches users at their next
-# launch instead of requiring a rebuilt bundle and a fresh directory
-# submission. See the comment in mcpb/pyproject.toml.
+# "tooluniverse" as a dependency and src/run_stdio.py moves the install forward
+# on its own, so each release reaches users at their next launch instead of
+# requiring a rebuilt bundle and a fresh directory submission. See the comment
+# in mcpb/pyproject.toml.
+
+# Guard: the lock is resolved here, on one machine, but installed on every
+# platform the manifest advertises. A dependency that publishes no wheel for one
+# of them fails at install time, not at lock time -- `uv lock` happily resolves
+# a version whose metadata is fine and whose wheels are not. That reaches the
+# user as "Server disconnected" on a fresh install, and we would hear about it
+# from them rather than from CI. --dry-run resolves the install plan for a
+# target without needing that machine.
+#
+# --no-build is part of the check, not a detail: without it a dry-run "passes"
+# for a package that has no wheel for the target but does have an sdist, because
+# planning an install is not building one. uvloop is the shape to remember --
+# linux and macOS wheels, an sdist, and nothing for Windows. The plain dry-run
+# reported "Would install 168 packages"; with --no-build it says uvloop "has no
+# binary distribution". No user of a desktop extension should need a compiler,
+# so requiring a wheel everywhere is the property we actually want.
+#
+# The macOS floor is 14, set through MACOSX_DEPLOYMENT_TARGET because
+# --python-platform carries an architecture and not an OS version. faiss-cpu
+# publishes macosx_14_0 wheels and nothing older, for every release it still
+# ships, so 14 is where a Mac can install without a toolchain. uv assumes a
+# lower default and reports faiss-cpu as unbuildable without this.
+MACOS_FLOOR=14.0
+for PLATFORM in aarch64-apple-darwin x86_64-pc-windows-msvc \
+                x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu; do
+  if ! ( cd "$BUILD_DIR" && MACOSX_DEPLOYMENT_TARGET="$MACOS_FLOOR" \
+           uv sync --frozen --quiet --dry-run --no-build \
+           --python "$PYTHON_PIN" --python-platform "$PLATFORM" >/dev/null 2>&1 ); then
+    echo "ERROR: the locked dependencies do not install on $PLATFORM," >&2
+    echo "which mcpb/manifest.json advertises. Re-run for the detail:" >&2
+    echo "  (cd $BUILD_DIR && MACOSX_DEPLOYMENT_TARGET=$MACOS_FLOOR uv sync --frozen --dry-run --no-build --python $PYTHON_PIN --python-platform $PLATFORM)" >&2
+    exit 1
+  fi
+done
+
+# Checked, but deliberately not enforced. Both are retired configurations, and
+# the fix in each case would be pinning a dependency back below the version its
+# maintainers ship -- against the directory policy's own requirement that a
+# local MCP server "must be built with reasonably current versions of all
+# dependencies", and in aid of hardware essentially nobody still runs.
+#
+#   x86_64-apple-darwin      Intel Macs. cryptography stopped publishing
+#                            macOS x86_64 and universal2 wheels at 49.0.0;
+#                            48.0.1 was the last with them.
+#   aarch64-pc-windows-msvc  Windows on ARM. epam-indigo publishes win32 and
+#                            win_amd64 and no win_arm64. Unreachable today
+#                            because uv ships no ARM64 Windows CPython (0.12.2
+#                            offers windows-x86_64 only), so those machines get
+#                            the x64 interpreter and the win_amd64 wheels:
+#                              uv python list --all-platforms | grep -i windows
+#                            It becomes real the day uv ships one.
+for PLATFORM in x86_64-apple-darwin aarch64-pc-windows-msvc; do
+  if ! ( cd "$BUILD_DIR" && MACOSX_DEPLOYMENT_TARGET="$MACOS_FLOOR" \
+           uv sync --frozen --quiet --dry-run --no-build \
+           --python "$PYTHON_PIN" --python-platform "$PLATFORM" >/dev/null 2>&1 ); then
+    echo "NOTE: not installable on $PLATFORM without a compiler (known, see build.sh)" >&2
+  fi
+done
 
 # Guard: the bundle version must track the package release version. Without this
 # the published bundle can silently lag the root pyproject.toml after a bump.
