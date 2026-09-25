@@ -97,8 +97,15 @@ def _refresh_tooluniverse(timeout_seconds=8, http_timeout_seconds="3"):
     # blackholed index: 26 s with a single 25 s bound, ~4 s with these.
     child_env = dict(os.environ)
     child_env.setdefault("UV_HTTP_TIMEOUT", http_timeout_seconds)
+    # Report a refused update rather than swallowing it. A release can be
+    # uninstallable here for reasons the user cannot guess: it may require a
+    # newer Python than the 3.12 this bundle pins, or pull a dependency with no
+    # wheel for their platform. Silently staying on the old version would look
+    # like the update mechanism working. stderr is the MCP log channel, so the
+    # reason lands in Desktop's logs; stdout must stay clean because the
+    # protocol runs over it.
     try:
-        subprocess.run(
+        completed = subprocess.run(
             [
                 "uv",
                 "sync",
@@ -111,15 +118,44 @@ def _refresh_tooluniverse(timeout_seconds=8, http_timeout_seconds="3"):
             ],
             timeout=timeout_seconds,
             env=child_env,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            capture_output=True,
+            text=True,
             check=False,
+        )
+        if completed.returncode != 0:
+            detail = (completed.stderr or completed.stdout or "").strip()
+            detail = detail[-500:].replace("\n", " ")
+            print(
+                "ToolUniverse stayed on the installed version: the update could "
+                f"not be applied ({detail})",
+                file=sys.stderr,
+            )
+    except subprocess.TimeoutExpired:
+        print(
+            "ToolUniverse update check timed out; keeping the installed version",
+            file=sys.stderr,
         )
     except Exception as exc:  # noqa: BLE001 - never fatal, this is opportunistic
         print(f"ToolUniverse update check skipped: {exc}", file=sys.stderr)
 
 
+def _report_running_version():
+    """Name the version in the log, so a support question has an answer.
+
+    Desktop shows the bundle's manifest version, which is the launcher's, not
+    the library's -- the two diverge by design as soon as the first update
+    lands.
+    """
+    try:
+        from importlib.metadata import version
+
+        print(f"ToolUniverse {version('tooluniverse')}", file=sys.stderr)
+    except Exception:  # noqa: BLE001 - a log line is never worth failing over
+        pass
+
+
 _refresh_tooluniverse()
+_report_running_version()
 
 # Enable compact mode by default
 sys.argv = [

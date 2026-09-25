@@ -313,3 +313,25 @@ def test_the_refresh_is_bounded_and_optional():
         "day, not on every launch"
     )
     assert "except Exception" in launcher, "a failed check must not be fatal"
+
+
+def test_a_refused_update_is_reported_not_swallowed():
+    """A release can be uninstallable for reasons the user cannot guess -- it may
+    need a newer Python than the 3.12 this bundle pins, or a dependency with no
+    wheel for their platform. Discarding uv's output would make that look like
+    the update mechanism working, and leave a support question unanswerable.
+    Verified against an unsatisfiable requirement: the server starts on the
+    installed version and the log carries both the reason and that version.
+    """
+    launcher = (MCPB_DIR / "src" / "run_stdio.py").read_text()
+
+    assert "stderr=subprocess.DEVNULL" not in launcher, (
+        "uv's diagnosis is the only clue a stuck user leaves behind"
+    )
+    assert "capture_output=True" in launcher
+    assert "returncode != 0" in launcher, "report a refused update"
+    assert "file=sys.stderr" in launcher, "stdout carries the protocol; log to stderr"
+    assert "_report_running_version" in launcher, (
+        "Desktop shows the manifest version, which stops matching the library "
+        "as soon as the first update lands"
+    )
