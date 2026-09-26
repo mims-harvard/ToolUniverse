@@ -42,6 +42,14 @@ dependencies = [
     "pandas>=2.2.3",
     "openpyxl>=3.1.0", # Read .xlsx bulk downloads (CellMarker, dataset tools)
     "pdfplumber>=0.11.0",
+    # 14 MB for 24 tools, which is the same value as pdfplumber and lxml, so it
+    # stays. It reads as optional -- nothing imports it directly except
+    # database_setup/vector_store.py -- but embedding_database_* and the 21
+    # euhealthinfo_* tools reach it through that module, and a sweep that
+    # imports every tool module is what showed it: removing it took those 24
+    # out of the catalogue entirely. The embedding and ml extras name it too,
+    # which is redundant but keeps them self-describing.
+    "faiss-cpu==1.12.0",
     "beautifulsoup4>=4.12.0",
     "python-dotenv>=1.0.0",
     "pip>=25.3",
@@ -56,13 +64,14 @@ dependencies = [
     # is used by four test modules and aiohttp by
     # examples/mcp/mcp_server_example.py, so both moved to `dev`.
     #
-    # scipy, networkx, faiss-cpu and flask were listed here *and* in the extras
-    # that already declare them (graph, visualization, embedding, ml), which
-    # made those extras unable to mean anything. Every module that imports them
-    # now guards the import and says what to install, and the blast radius is
-    # small: faiss-cpu and flask back no registered tool at all
-    # (database_setup/vector_store.py and the tool-graph web UI), networkx backs
-    # 4 of the 2717 tools ToolUniverse loads, and scipy 23.
+    # scipy, networkx and flask were listed here *and* in the extras that
+    # already declare them (graph, visualization), which made those extras
+    # unable to mean anything. Every module that imports them now guards the
+    # import and says what to install, and the blast radius is small: flask
+    # backs no registered tool at all (the tool-graph web UI), networkx backs 4
+    # of the 2717 tools ToolUniverse loads, and scipy 23. faiss-cpu was in that
+    # list until a module-import sweep showed it backs 24 through
+    # database_setup/vector_store.py; it stays in the base set.
     #
     # scipy is the judgement call. Its entry here was a deliberate fix after the
     # `fitz` removal took away its transitive provider, so dropping it reverses
@@ -157,13 +166,11 @@ dev = [
     "tooluniverse[openai,gemini]",
     # Same reason, for the packages that just left the base set. The suite
     # exercises the tools they back: test_coexpression_module_tool and
-    # test_humanbase_* (networkx), test_dms_pipeline_e2e_kras (scipy),
-    # test_datastore_cli (faiss). Named directly rather than pulling
-    # `tooluniverse[visualization,embedding]`, which would drag rdkit,
-    # matplotlib and sentence-transformers into every CI run.
+    # test_humanbase_* (networkx), test_dms_pipeline_e2e_kras (scipy). Named
+    # directly rather than pulling `tooluniverse[visualization]`, which would
+    # drag rdkit, matplotlib and plotly into every CI run.
     "scipy>=1.7.0",
     "networkx>=3.4.0",
-    "faiss-cpu==1.12.0",
     # tests/unit/test_core_pdf_default_backend.py asserts extractor_used ==
     # "markitdown", so the suite needs the converter even though no tool
     # requires it by default any more.

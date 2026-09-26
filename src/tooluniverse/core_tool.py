@@ -293,7 +293,7 @@ class CorePDFSnippetsTool(BaseTool):
         ):
             return {
                 "status": "error",
-                "error": "No PDF text extractor available (need pymupdf, pypdf, or markitdown).",
+                "error": "No PDF text extractor available. Install one with: pip install 'tooluniverse[documents]' (markitdown) or pip install 'tooluniverse[pdf]' (pymupdf).",
                 "retryable": False,
             }
 
@@ -501,7 +501,7 @@ class CorePDFSnippetsTool(BaseTool):
                 if not MARKITDOWN_AVAILABLE:
                     return {
                         "status": "error",
-                        "error": "No PDF text extractor available (need pymupdf, pypdf, or markitdown).",
+                        "error": "No PDF text extractor available. Install one with: pip install 'tooluniverse[documents]' (markitdown) or pip install 'tooluniverse[pdf]' (pymupdf).",
                         "retryable": False,
                         "retrieval_trace": retrieval_trace,
                     }

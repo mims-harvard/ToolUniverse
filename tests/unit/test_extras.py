@@ -304,7 +304,15 @@ SRC = Path(__file__).resolve().parents[2] / "src" / "tooluniverse"
 # huggingface_hub is imported while ToolUniverse itself imports, so it has to be
 # a base dependency; naming it in embedding/ml/space as well is redundant but
 # harmless. Anything else appearing here means an extra that cannot gate.
-BASE_AND_EXTRA_EXEMPT = {"huggingface-hub"}
+BASE_AND_EXTRA_EXEMPT = {
+    # Imported while ToolUniverse itself imports, so it has to be base.
+    "huggingface-hub",
+    # Base too: embedding_database_* and the 21 euhealthinfo_* tools reach
+    # faiss through database_setup/vector_store.py, so taking it out of the
+    # base set removed 24 tools from the catalogue. The embedding and ml extras
+    # still name it, which is redundant but keeps them self-describing.
+    "faiss-cpu",
+}
 
 
 def _base_dependency_names():
@@ -563,3 +571,83 @@ def test_a_plain_download_still_works_without_the_browser_extra(monkeypatch):
 
     assert "browser" not in str(result).lower()
     assert "plain text content" in str(result)
+
+
+def test_a_module_importing_a_gated_package_declares_a_guard_flag():
+    """Module scope is not the only place a missing extra can surface.
+
+    The scan above only looks at the top level, and an import inside a method
+    is just as fatal on the call that reaches it -- ``run_chi_square`` in
+    clinical_trial_stats_tool.py did ``from scipy import stats`` with nothing
+    anywhere in that module to fall back on. So: wherever a gated package is
+    imported outside a ``try``, the module has to declare the matching flag
+    (``HAS_SCIPY``, ``MARKITDOWN_AVAILABLE``, ...) and consult it, which is the
+    pattern the guarded modules already use.
+    """
+    import ast
+
+    import_to_dist = {
+        "scipy": "scipy",
+        "networkx": "networkx",
+        "flask": "flask",
+        "playwright": "playwright",
+        "markitdown": "markitdown",
+        "indigo": "epam.indigo",
+        "ddgs": "ddgs",
+        "matplotlib": "matplotlib",
+        "plotly": "plotly",
+        "rdkit": "rdkit",
+    }
+    gated = _runtime_extra_distributions() - _base_dependency_names()
+    watched = {i: d for i, d in import_to_dist.items() if d in gated}
+
+    class _Unguarded(ast.NodeVisitor):
+        """Collect imports of watched packages that no ``try`` covers."""
+
+        def __init__(self):
+            self.depth = 0
+            self.found = []
+
+        def visit_Try(self, node):
+            self.depth += 1
+            for child in node.body:
+                self.visit(child)
+            self.depth -= 1
+            for group in (node.handlers, node.orelse, node.finalbody):
+                for child in group:
+                    self.visit(child)
+
+        def _record(self, node, modules):
+            if self.depth:
+                return
+            for module in modules:
+                top = (module or "").split(".")[0]
+                if top in watched:
+                    self.found.append((node.lineno, top))
+
+        def visit_Import(self, node):
+            self._record(node, [alias.name for alias in node.names])
+
+        def visit_ImportFrom(self, node):
+            self._record(node, [node.module or ""])
+
+    offenders = []
+    for path in SRC.rglob("*.py"):
+        if "remote" in path.relative_to(SRC).parts:
+            continue
+        source = path.read_text(errors="ignore")
+        try:
+            tree = ast.parse(source)
+        except SyntaxError:  # pragma: no cover - not our concern here
+            continue
+        visitor = _Unguarded()
+        visitor.visit(tree)
+        for line, top in visitor.found:
+            flags = (f"HAS_{top.upper()}", f"{top.upper()}_AVAILABLE")
+            if not any(flag in source for flag in flags):
+                offenders.append(
+                    f"{path.relative_to(SRC)}:{line} imports {top} with no "
+                    f"{flags[0]} or {flags[1]} to fall back on"
+                )
+
+    assert not offenders, offenders

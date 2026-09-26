@@ -16,6 +16,13 @@ from typing import Any, Dict
 
 import pandas as pd
 
+try:
+    from scipy import stats as _scipy_stats  # noqa: F401
+
+    HAS_SCIPY = True
+except ImportError:  # pragma: no cover - optional dependency
+    HAS_SCIPY = False
+
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -152,6 +159,12 @@ class ClinicalTrialAESeverityTestTool(BaseTool):
         super().__init__(tool_config)
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        if not HAS_SCIPY:
+            return {
+                "status": "error",
+                "error": "scipy is required for this tool. Install with: "
+                "pip install 'tooluniverse[visualization]' (or: pip install scipy)",
+            }
         dm_file = arguments.get("dm_file", "")
         ae_file = arguments.get("ae_file", "")
         test = arguments.get("test", "prepare")
