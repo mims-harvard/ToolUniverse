@@ -1,0 +1,11 @@
+# Codex configuration for the WITHOUT-ToolUniverse baseline condition.
+#
+#   codex exec --config /abs/path/to/baseline.toml - < prompt.txt
+#
+# No MCP servers are attached, so the agent runs on the base model alone. Every
+# other setting must match with_tooluniverse.toml exactly.
+
+# Must be identical to the model in with_tooluniverse.toml.
+model = "gpt-5.5"
+
+# No [mcp_servers.*] entries: that absence is what makes this the baseline.
