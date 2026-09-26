@@ -2073,6 +2073,161 @@ class FDATool(BaseTool):
         )
 
 
+# Dosage-form and formulation words callers often attach to a drug name
+# ("verapamil SR", "cyanocobalamin nasal spray", "dalfampridine extended-release").
+# openFDA matches on product names, so such a name can miss every label. Longest
+# first, so "nasal spray" is removed before "spray" would strand "nasal". These
+# are generic words, never drug names: no brand-to-generic mapping is added.
+_NAME_FORM_WORDS = sorted(
+    {
+        "extended-release",
+        "extended release",
+        "delayed-release",
+        "delayed release",
+        "orally disintegrating",
+        "ophthalmic solution",
+        "ophthalmic suspension",
+        "oral solution",
+        "oral suspension",
+        "nasal spray",
+        "vaginal cream",
+        "rectal foam",
+        "topical cream",
+        "eye drops",
+        "ear drops",
+        "for injection",
+        "injection",
+        "infusion",
+        "tablets",
+        "tablet",
+        "capsules",
+        "capsule",
+        "cream",
+        "ointment",
+        "gel",
+        "foam",
+        "patch",
+        "spray",
+        "drops",
+        "solution",
+        "suspension",
+        "lotion",
+        "powder",
+        "syrup",
+        "elixir",
+        "inhaler",
+        "inhalation",
+        "film",
+        "nasal",
+        "vaginal",
+        "rectal",
+        "ophthalmic",
+        "topical",
+        "oral",
+        "transdermal",
+    },
+    key=len,
+    reverse=True,
+)
+_NAME_FORM_ABBREVIATIONS = ("sr", "er", "xr", "xl", "cr", "dr", "la", "odt", "ir")
+
+
+def _strip_form_words(text):
+    previous = None
+    while text != previous:
+        previous = text
+        text = re.sub(
+            r"\s+\d+(?:\.\d+)?\s*(?:mg|mcg|g|ml|%|units?|iu)(?:/\S+)?\s*$",
+            "",
+            text,
+            flags=re.I,
+        )
+        for word in _NAME_FORM_WORDS:
+            text = re.sub(r"[\s-]+" + re.escape(word) + r"$", "", text, flags=re.I)
+        text = re.sub(
+            r"\s+(?:" + "|".join(_NAME_FORM_ABBREVIATIONS) + r")\.?$",
+            "",
+            text,
+            flags=re.I,
+        )
+        text = text.strip(" ,-")
+    return text
+
+
+def _drug_name_candidates(name):
+    """Shorter names to retry after a NOT_FOUND, most specific first.
+
+    "BETHKIS (tobramycin)" -> ["BETHKIS", "tobramycin"]; "verapamil SR" ->
+    ["verapamil"]. A name that yields nothing shorter returns an empty list, so
+    a supplement or a drug class is never turned into a guessed product.
+    """
+    original = re.sub(r"\s+", " ", name).strip()
+    bases = [original]
+    bracket = re.match(r"^(.*?)\s*\(([^()]+)\)\s*$", original)
+    if bracket:
+        bases = [bracket.group(1), bracket.group(2)]
+    out = []
+    for base in bases:
+        for candidate in (_strip_form_words(base), base.strip(" ,-")):
+            if (
+                len(candidate) >= 3
+                and candidate.lower() != original.lower()
+                and candidate.lower() not in [c.lower() for c in out]
+            ):
+                out.append(candidate)
+    return out
+
+
+def _is_not_found(result):
+    if isinstance(result, str):
+        try:
+            result = json.loads(result)
+        except Exception:
+            return False
+    return (
+        isinstance(result, dict)
+        and isinstance(result.get("error"), dict)
+        and result["error"].get("code") == "NOT_FOUND"
+    )
+
+
+def _retry_with_normalised_names(result, arguments, run, max_retries=3):
+    """After a NOT_FOUND, retry the same call with a shorter drug name.
+
+    Only a NOT_FOUND is retried; any other outcome, including an error, is
+    returned untouched. The first retry that finds a label wins, and says
+    which name was searched, because a shorter name can match other forms of
+    the same drug. Never raises: it may only add a result, never lose one.
+    """
+    try:
+        if not _is_not_found(result):
+            return result
+        name = arguments.get("drug_name")
+        if not isinstance(name, str) or not name.strip():
+            return result
+        for candidate in _drug_name_candidates(name)[:max_retries]:
+            retry = run(dict(arguments, drug_name=candidate))
+            if not isinstance(retry, dict) or _is_not_found(retry):
+                continue
+            if retry.get("error") and not retry.get("results"):
+                continue
+            retry = dict(retry)
+            retry["name_normalised_from"] = name
+            retry["name_searched_as"] = candidate
+            note = (
+                f"No label matched the name '{name}'. Matched after shortening it "
+                f"(dropping a bracketed second name or dosage-form and strength "
+                f"words): searched as '{candidate}'. The results can therefore "
+                f"include other forms or formulations of the same drug -- check the "
+                f"route and dosage form on each record before relying on it."
+            )
+            retry["note"] = (retry["note"] + " " + note) if retry.get("note") else note
+            return retry
+        return result
+    except Exception:
+        return result
+
+
 @register_tool("FDADrugLabel")
 class FDADrugLabelTool(FDATool):
     def __init__(self, tool_config, api_key=None):
@@ -2164,8 +2319,12 @@ class FDADrugLabelTool(FDATool):
                 # Not a ChEMBL ID, use original value (strip whitespace)
                 arguments["drug_name"] = drug_name
 
-        # Call parent run method
-        return super().run(arguments)
+        # Call parent run method; a NOT_FOUND caused only by dosage-form words or
+        # a bracketed second name is retried with the shorter name.
+        run_parent = super().run
+        return _retry_with_normalised_names(
+            run_parent(arguments), arguments, run_parent
+        )
 
 
 @register_tool("FDADrugLabelSearchTool")
