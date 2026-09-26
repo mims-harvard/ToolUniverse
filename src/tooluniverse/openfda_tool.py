@@ -1529,6 +1529,7 @@ def search_openfda(
             # advice would send the reader to fix something that is not broken.
             section_hits = 0
             sections_present = []
+            probe = None
             if section and section_exists_clause:
                 probe = _run_search(
                     params["search"].replace(section_exists_clause, ""),
@@ -1548,6 +1549,12 @@ def search_openfda(
                             # this message exists to correct.
                             if row.get(key) and key not in sections_present:
                                 sections_present.append(key)
+
+            # Hand over the corresponding sections the probe already fetched,
+            # rather than an empty result a caller rarely recovers from.
+            redirected = _redirect_to_neighbour_sections(section, probe, params)
+            if redirected:
+                return redirected
 
             suggestion = _build_not_found_suggestion(
                 query_text=query_text,
@@ -1867,6 +1874,214 @@ def _build_request_error_suggestion(err):
         "label section requested. Retry; if it persists, check "
         "https://open.fda.gov/ for service status."
     )
+
+
+# For each section a tool reads, the sections that hold the same kind of content
+# on the OTHER label format, most relevant first. openFDA files content by label
+# format (PLR versus legacy/OTC), not by drug, so a tool that reads one section
+# finds nothing on a label written in the other format: `teratogenic_effects`
+# and `risks` are legacy/OTC fields, while a PLR label keeps that content in
+# `pregnancy`, `use_in_specific_populations` and `warnings_and_cautions`.
+# Ordered by relevance on purpose -- an alphabetical cut would put `abuse` and
+# `animal_pharmacology_and_or_toxicology` ahead of `warnings_and_cautions`.
+NEIGHBOUR_SECTIONS = {
+    "risks": [
+        "warnings_and_cautions",
+        "warnings",
+        "boxed_warning",
+        "use_in_specific_populations",
+        "pregnancy",
+        "nursing_mothers",
+    ],
+    "summary_of_safety_and_effectiveness": [
+        "warnings_and_cautions",
+        "warnings",
+        "boxed_warning",
+        "adverse_reactions",
+        "indications_and_usage",
+    ],
+    "when_using": [
+        "warnings_and_cautions",
+        "warnings",
+        "precautions",
+        "do_not_use",
+        "adverse_reactions",
+    ],
+    "instructions_for_use": [
+        "dosage_and_administration",
+        "information_for_patients",
+        "how_supplied",
+        "dosage_forms_and_strengths",
+    ],
+    "ask_doctor": [
+        "warnings_and_cautions",
+        "precautions",
+        "contraindications",
+        "drug_interactions",
+        "warnings",
+    ],
+    "ask_doctor_or_pharmacist": [
+        "drug_interactions",
+        "warnings_and_cautions",
+        "precautions",
+        "warnings",
+    ],
+    "teratogenic_effects": [
+        "pregnancy",
+        "use_in_specific_populations",
+        "pregnancy_or_breast_feeding",
+        "warnings_and_cautions",
+    ],
+    "nonteratogenic_effects": [
+        "pregnancy",
+        "use_in_specific_populations",
+        "pregnancy_or_breast_feeding",
+    ],
+    "pregnancy_or_breast_feeding": [
+        "pregnancy",
+        "nursing_mothers",
+        "use_in_specific_populations",
+        "teratogenic_effects",
+    ],
+    "pregnancy": [
+        "use_in_specific_populations",
+        "pregnancy_or_breast_feeding",
+        "teratogenic_effects",
+        "nursing_mothers",
+    ],
+    "nursing_mothers": [
+        "use_in_specific_populations",
+        "pregnancy_or_breast_feeding",
+        "pregnancy",
+    ],
+    "pediatric_use": [
+        "use_in_specific_populations",
+        "dosage_and_administration",
+        "warnings_and_cautions",
+        "keep_out_of_reach_of_children",
+    ],
+    "geriatric_use": [
+        "use_in_specific_populations",
+        "dosage_and_administration",
+        "clinical_pharmacology",
+    ],
+    "use_in_specific_populations": [
+        "pregnancy",
+        "nursing_mothers",
+        "pediatric_use",
+        "geriatric_use",
+        "pregnancy_or_breast_feeding",
+    ],
+    "pharmacokinetics": [
+        "clinical_pharmacology",
+        "drug_interactions",
+        "use_in_specific_populations",
+    ],
+    "stop_use": [
+        "warnings_and_cautions",
+        "warnings",
+        "adverse_reactions",
+        "precautions",
+    ],
+    "laboratory_tests": [
+        "warnings_and_cautions",
+        "precautions",
+        "clinical_pharmacology",
+        "drug_and_or_laboratory_test_interactions",
+    ],
+    "drug_and_or_laboratory_test_interactions": [
+        "drug_interactions",
+        "precautions",
+        "laboratory_tests",
+        "clinical_pharmacology",
+    ],
+    "spl_medguide": [
+        "information_for_patients",
+        "dosage_and_administration",
+        "warnings_and_cautions",
+    ],
+    "patient_medication_information": [
+        "information_for_patients",
+        "spl_medguide",
+        "dosage_and_administration",
+    ],
+    "dosage_forms_and_strengths": [
+        "how_supplied",
+        "dosage_and_administration",
+        "description",
+    ],
+    "purpose": ["indications_and_usage"],
+    "references": ["clinical_studies"],
+}
+
+
+def _redirect_to_neighbour_sections(section, probe, params):
+    """Return the same label's corresponding sections instead of an empty result.
+
+    `probe` is the query the NOT_FOUND branch already ran with the
+    `_exists_:<section>` guard removed, so it holds the drug's full label records
+    and this costs no extra request. Only sections that are present and
+    non-empty on those records are returned, under their own names; nothing is
+    relabelled as the requested section. Returns None to fall back to the
+    existing NOT_FOUND response whenever there is nothing to hand over, and
+    never raises -- it may only add content, never break a call.
+    """
+    try:
+        neighbours = NEIGHBOUR_SECTIONS.get(section)
+        if not neighbours or not isinstance(probe, dict) or probe.get("error"):
+            return None
+        rows = probe.get("results")
+        if not isinstance(rows, list):
+            return None
+        try:
+            limit = int(params.get("limit") or 0)
+        except (TypeError, ValueError):
+            limit = 0
+        records, returned = [], []
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            content = {key: row[key] for key in neighbours if row.get(key)}
+            if not content:
+                continue
+            for key in neighbours:
+                if key in content and key not in returned:
+                    returned.append(key)
+            openfda = row.get("openfda") if isinstance(row.get("openfda"), dict) else {}
+            content["openfda.brand_name"] = openfda.get("brand_name")
+            content["openfda.generic_name"] = openfda.get("generic_name")
+            content["openfda.route"] = openfda.get("route")
+            records.append(content)
+        if not records:
+            return None
+        if limit > 0:
+            records = records[:limit]
+        return {
+            "status": "redirected",
+            "requested_section": section,
+            "returned_sections": returned,
+            "meta": {
+                "skip": params.get("skip", 0) or 0,
+                "limit": params.get("limit", 0) or 0,
+                "total": len(records),
+            },
+            "results": records,
+            "result_count": len(records),
+            "duplicates_removed": 0,
+            "note": (
+                f"This drug's label has no '{section}' section. openFDA files this kind "
+                f"of content under different section names depending on the label's "
+                f"FORMAT (PLR versus legacy/OTC), not the drug, so the empty result was "
+                f"not evidence that the information is missing. Returned instead: the "
+                f"sections of the same label that hold that kind of content -- "
+                f"{', '.join(returned)}. These are NOT the '{section}' section; they are "
+                f"the label's own text under their own names. Check the brand, generic "
+                f"name and route on each record before relying on it, and judge whether "
+                f"it answers the question."
+            ),
+        }
+    except Exception:
+        return None
 
 
 def _build_not_found_suggestion(
