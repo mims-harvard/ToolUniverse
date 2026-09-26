@@ -483,8 +483,8 @@ class SemanticScholarPDFSnippetsTool(BaseTool):
             return {
                 "status": "error",
                 "error": (
-                    "markitdown library not available. Install with: "
-                    "pip install 'markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx,youtube-transcription]'"
+                    "markitdown is required to extract text from this PDF. "
+                    "Install with: pip install 'tooluniverse[documents]'"
                 ),
                 "retryable": False,
             }

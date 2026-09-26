@@ -78,6 +78,22 @@ requires-python = ">=3.10,<3.14"
 # back. Naming them keeps Desktop at the coverage it has today. The `graph`
 # extra would also supply them, but it drags in pygraphviz, which has no wheels
 # and would fail the build's no-compiler check.
+# The browser, documents, chem and websearch extras are deliberately NOT named
+# here, unlike openai and gemini. They are 275 MB of the install for a handful
+# of tools, and what a Desktop user actually loses was measured rather than
+# assumed, in a lean environment:
+#   get_webpage_text_from_url / get_webpage_title  gone (playwright, 141 MB);
+#       Claude Desktop can already fetch a URL itself.
+#   ChEMBL_search_similar_molecules  gone (epam.indigo, 23 MB). The other 28
+#       ChEMBL tools are ChEMBLRESTTool and never touch it -- verified,
+#       ChEMBL_get_molecule returns success without it installed.
+#   *_get_pdf_snippets / CORE_get_fulltext_snippets  report that markitdown is
+#       needed (91 MB). ArXiv_search_papers, CORE_search_papers and
+#       SemanticScholar_search_papers keep working; only extraction stops.
+#   web_search  keeps working -- DDGS is one backend of several, and `auto`
+#       returned results with ddgs absent.
+# That is about six tools of 2717, against 325 MB off the first launch. Adding
+# any of them back is one entry in this list.
 dependencies = [
     "tooluniverse[openai,gemini]>=1.5.3,<2",
     "scipy>=1.7.0",

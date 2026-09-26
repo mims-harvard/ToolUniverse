@@ -363,6 +363,11 @@ def test_extras_only_packages_are_never_imported_unguarded_at_module_level():
         "sentence_transformers": "sentence-transformers",
         "easyocr": "easyocr",
         "fitz": "pymupdf",
+        "playwright": "playwright",
+        "markitdown": "markitdown",
+        "indigo": "epam.indigo",
+        "ddgs": "ddgs",
+        "sympy": "sympy",
     }
     gated = _runtime_extra_distributions() - _base_dependency_names()
     watched = {
@@ -408,7 +413,7 @@ def test_extras_only_packages_are_never_imported_unguarded_at_module_level():
 # `[dev]` installs all three so CI never gets there on its own. Flip the flag
 # instead, so the message a user would actually see is covered either way.
 @pytest.mark.parametrize(
-    "module_name, flag, class_name, arguments, expected_package",
+    "module_name, flag, class_name, arguments, expected_package, config",
     [
         (
             "tooluniverse.humanbase_tool",
@@ -416,6 +421,7 @@ def test_extras_only_packages_are_never_imported_unguarded_at_module_level():
             "HumanBaseTool",
             {"gene_list": ["TP53", "EGFR", "BRCA1"]},
             "networkx",
+            {},
         ),
         (
             "tooluniverse.coexpression_module_tool",
@@ -423,6 +429,15 @@ def test_extras_only_packages_are_never_imported_unguarded_at_module_level():
             "CoexpressionModuleTool",
             {"expression": {"TP53": [1.0, 2.0, 3.0], "EGFR": [2.0, 1.0, 3.0]}},
             "networkx",
+            {},
+        ),
+        (
+            "tooluniverse.chem_tool",
+            "HAS_INDIGO",
+            "ChEMBLTool",
+            {"query": "CC(=O)Oc1ccccc1C(=O)O"},
+            "epam.indigo",
+            {},
         ),
         (
             "tooluniverse.expression_anova_tool",
@@ -435,11 +450,12 @@ def test_extras_only_packages_are_never_imported_unguarded_at_module_level():
                 "mode": "anova",
             },
             "scipy",
+            {},
         ),
     ],
 )
 def test_a_tool_whose_extra_is_absent_says_what_to_install(
-    monkeypatch, module_name, flag, class_name, arguments, expected_package
+    monkeypatch, module_name, flag, class_name, arguments, expected_package, config
 ):
     """The error has to name the package and the extra, not just fail.
 
@@ -451,7 +467,7 @@ def test_a_tool_whose_extra_is_absent_says_what_to_install(
 
     module = importlib.import_module(module_name)
     monkeypatch.setattr(module, flag, False)
-    tool = getattr(module, class_name)({"name": "t", "type": class_name})
+    tool = getattr(module, class_name)({"name": "t", "type": class_name, **config})
 
     result = tool.run(arguments)
 
@@ -460,3 +476,90 @@ def test_a_tool_whose_extra_is_absent_says_what_to_install(
     assert "pip install" in result["error"], (
         f"the error must say how to fix it, got: {result['error']}"
     )
+
+
+def test_web_search_says_what_to_install_before_spawning_ddgs(monkeypatch):
+    """DDGS runs in a subprocess, so nothing imports it in this process.
+
+    Without the check the failure arrives as "DDGS subprocess failed with exit
+    code 1: ModuleNotFoundError: No module named 'ddgs'", which names the cause
+    but not the cure.
+    """
+    import importlib.util
+
+    from tooluniverse.web_search_tool import WebSearchTool
+
+    real_find_spec = importlib.util.find_spec
+    monkeypatch.setattr(
+        importlib.util,
+        "find_spec",
+        lambda name, *a, **kw: None
+        if name == "ddgs"
+        else real_find_spec(name, *a, **kw),
+    )
+    tool = WebSearchTool({"name": "web_search", "type": "WebSearchTool"})
+
+    with pytest.raises(RuntimeError, match=r"tooluniverse\[websearch\]"):
+        tool._search_with_ddgs("anything")
+
+
+def test_a_guideline_extraction_without_markitdown_names_the_extra(monkeypatch):
+    """The three call sites sit in `except Exception: return str(e)` handlers,
+    so the helper has to carry the instruction in the exception itself."""
+    from tooluniverse import unified_guideline_tools as module
+
+    monkeypatch.setattr(module, "MARKITDOWN_AVAILABLE", False)
+
+    with pytest.raises(RuntimeError, match=r"tooluniverse\[documents\]"):
+        module._markitdown()
+
+
+def test_only_the_rendering_path_of_url_tool_needs_the_browser_extra(monkeypatch):
+    """get_webpage_title and plain downloads run on requests alone.
+
+    Guarding ``run`` wholesale was wrong and a test caught it: URLHTMLTagTool
+    fetches with requests and only falls back to a browser for pages requests
+    cannot turn into text. The check belongs where the rendering starts.
+    """
+    from unittest.mock import MagicMock
+
+    from tooluniverse import url_tool
+
+    monkeypatch.setattr(url_tool, "HAS_PLAYWRIGHT", False)
+
+    html_head = MagicMock()
+    html_head.headers = {"Content-Type": "text/html; charset=utf-8"}
+    monkeypatch.setattr(url_tool.requests, "head", lambda *a, **kw: html_head)
+
+    tool = url_tool.URLToPDFTextTool(
+        {"name": "t", "type": "URLToPDFTextTool", "fields": {"return_key": "text"}}
+    )
+    result = tool.run({"url": "https://example.com"})
+
+    assert result["status"] == "error"
+    assert "tooluniverse[browser]" in result["error"]
+
+
+def test_a_plain_download_still_works_without_the_browser_extra(monkeypatch):
+    """The non-HTML path must not be blocked by a missing browser."""
+    from unittest.mock import MagicMock
+
+    from tooluniverse import url_tool
+
+    monkeypatch.setattr(url_tool, "HAS_PLAYWRIGHT", False)
+
+    head = MagicMock()
+    head.headers = {"Content-Type": "text/plain"}
+    body = MagicMock()
+    body.status_code = 200
+    body.text = "plain text content"
+    monkeypatch.setattr(url_tool.requests, "head", lambda *a, **kw: head)
+    monkeypatch.setattr(url_tool.requests, "get", lambda *a, **kw: body)
+
+    tool = url_tool.URLToPDFTextTool(
+        {"name": "t", "type": "URLToPDFTextTool", "fields": {"return_key": "text"}}
+    )
+    result = tool.run({"url": "https://example.com"})
+
+    assert "browser" not in str(result).lower()
+    assert "plain text content" in str(result)

@@ -13,12 +13,10 @@ dependencies = [
     "requests>=2.32.0",
     "boltz-api>=0.46.0,<0.47.0",
     "numpy>=2.2.0",
-    "sympy>=1.12.0", # Symbolic mathematics for Python executor
     "graphql-core>=3.2.0",
     "fastapi>=0.116.0",
     "uvicorn>=0.36.0",
     "pydantic>=2.11.0",
-    "epam.indigo>=1.34.0",
     # openai / google-genai are NOT here on purpose: they are optional extras
     # (`tooluniverse[openai]`, `tooluniverse[gemini]`), both covered by [all].
     "pyyaml>=6.0.0",
@@ -44,29 +42,8 @@ dependencies = [
     "pandas>=2.2.3",
     "openpyxl>=3.1.0", # Read .xlsx bulk downloads (CellMarker, dataset tools)
     "pdfplumber>=0.11.0",
-    "playwright>=1.55.0",
     "beautifulsoup4>=4.12.0",
     "python-dotenv>=1.0.0",
-    # MarkItDown (~32 MB: SpeechRecognition, youtube-transcript-api, pydub,
-    # azure-ai-documentintelligence). The broad converter set is deliberate:
-    # unified_guideline_tools.py imports markitdown at module scope and
-    # convert_to_markdown takes an unconstrained URI with no format allowlist.
-    #
-    # These are MarkItDown's own converter extras listed one by one instead of
-    # its `all` extra, and that difference is load-bearing (issue #527):
-    #   * `all` pins youtube-transcript-api~=1.0.0, and every 1.0.x release
-    #     declares Requires-Python <3.14, which transitively capped the Python
-    #     versions tooluniverse could be installed on. The `youtube-transcription`
-    #     extra leaves that dependency unpinned, so 1.2.3+ (Requires-Python
-    #     <3.15) resolves and the cap is gone.
-    #   * Since markitdown 0.1.6 `all` also requires
-    #     azure-ai-contentunderstanding>=1.2.0b1, which has no stable release on
-    #     PyPI, so default resolvers silently backtrack `markitdown[all]` to
-    #     0.1.5. Naming the extras keeps installs on current MarkItDown.
-    # Add `az-content-understanding` back once that dependency ships a stable
-    # release; adding it today makes the whole requirement unresolvable.
-    "markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx,youtube-transcription]>=0.1.0",
-    "ddgs>=9.0.0",
     "pip>=25.3",
     "jsonschema>=4.23.0",
     # Six packages that used to be listed here are gone, and none was needed to
@@ -92,6 +69,25 @@ dependencies = [
     # that on purpose: 121 MB of a 751 MB install for 0.8% of the catalogue,
     # against modules that already degrade gracefully. The six together take a
     # default install from 751 MB to 586 MB.
+    # Five more moved out behind extras, on the same measurement: none is
+    # imported at start-up, and the cost per tool they unlock is wildly uneven.
+    #   playwright    141 MB for 2 tools (browser)
+    #   markitdown     91 MB for 10 (documents)
+    #   sympy          29 MB for 0 -- it is only an entry in the Python
+    #                  executor's sandbox allowlist, beside scipy and
+    #                  matplotlib, which are already extras-only (visualization)
+    #   epam.indigo    23 MB for 1: ChEMBL_search_similar_molecules is the only
+    #                  tool of the 29 in chem_tool.py that needs it; the other
+    #                  28 are ChEMBLRESTTool and never touch it (chem)
+    #   ddgs           14 MB for 2 (websearch)
+    # Against that, the ones that stay are cheap per tool: graphql-core is
+    # 0.8 MB for 84 tools, rcsb-api 7 MB for 39, lxml 12 MB for 30, pdfplumber
+    # 9 MB for 12, pandas 42 MB for 20.
+    #
+    # Two of these also unblock a platform. markitdown is what drags in magika
+    # and its onnxruntime, the package with no cp314 wheel that forces
+    # mcpb/pyproject.toml down to requires-python <3.14; epam.indigo publishes
+    # no win_arm64 wheel and is why Windows-on-ARM cannot install.
 ]
 requires-python = ">=3.10"
 readme = "README.md"
@@ -168,6 +164,10 @@ dev = [
     "scipy>=1.7.0",
     "networkx>=3.4.0",
     "faiss-cpu==1.12.0",
+    # tests/unit/test_core_pdf_default_backend.py asserts extractor_used ==
+    # "markitdown", so the suite needs the converter even though no tool
+    # requires it by default any more.
+    "tooluniverse[documents]",
 ]
 docs = [
     "sphinx>=4.0",
@@ -188,12 +188,20 @@ docs = [
 embedding = [
     "sentence-transformers>=5.1.0",
     "faiss-cpu==1.12.0",
+    # tests/unit/test_core_pdf_default_backend.py asserts extractor_used ==
+    # "markitdown", so the suite needs the converter even though no tool
+    # requires it by default any more.
+    "tooluniverse[documents]",
     "huggingface_hub>=0.34.0",
 ]
 ml = [
     "admet-ai>=1.2.0",
     "sentence-transformers>=5.1.0",
     "faiss-cpu==1.12.0",
+    # tests/unit/test_core_pdf_default_backend.py asserts extractor_used ==
+    # "markitdown", so the suite needs the converter even though no tool
+    # requires it by default any more.
+    "tooluniverse[documents]",
     "huggingface_hub>=0.34.0",
 ]
 graph = [
@@ -214,6 +222,9 @@ visualization = [
     "scipy>=1.7.0",
     "matplotlib>=3.5.0",
     "networkx>=3.4.0",
+    # The Python executor's sandbox allows sympy, numpy, scipy and matplotlib.
+    # numpy is a base dependency; the other three live here.
+    "sympy>=1.12.0",
 ]
 space = [
     "huggingface_hub>=0.34.0",
@@ -225,8 +236,47 @@ bioinformatics = [
     "freesasa>=2.2.0",
 ]
 # circuit: install manually with `pip install git+https://github.com/tooluniverse/circuit.git`
+browser = [
+    # url_tool.py: get_webpage_text_from_url and get_webpage_title render the
+    # page in a real browser. 141 MB, and Claude Desktop can already fetch a
+    # URL itself, so this is the least-missed thing in a sealed bundle.
+    "playwright>=1.55.0",
+]
+documents = [
+    # MarkItDown (~32 MB: SpeechRecognition, youtube-transcript-api, pydub,
+    # azure-ai-documentintelligence). The broad converter set is deliberate:
+    # unified_guideline_tools.py imports markitdown at module scope and
+    # convert_to_markdown takes an unconstrained URI with no format allowlist.
+    #
+    # These are MarkItDown's own converter extras listed one by one instead of
+    # its `all` extra, and that difference is load-bearing (issue #527):
+    #   * `all` pins youtube-transcript-api~=1.0.0, and every 1.0.x release
+    #     declares Requires-Python <3.14, which transitively capped the Python
+    #     versions tooluniverse could be installed on. The `youtube-transcription`
+    #     extra leaves that dependency unpinned, so 1.2.3+ (Requires-Python
+    #     <3.15) resolves and the cap is gone.
+    #   * Since markitdown 0.1.6 `all` also requires
+    #     azure-ai-contentunderstanding>=1.2.0b1, which has no stable release on
+    #     PyPI, so default resolvers silently backtrack `markitdown[all]` to
+    #     0.1.5. Naming the extras keeps installs on current MarkItDown.
+    # Add `az-content-understanding` back once that dependency ships a stable
+    # release; adding it today makes the whole requirement unresolvable.
+    "markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx,youtube-transcription]>=0.1.0",
+]
+chem = [
+    # chem_tool.py's ChEMBLTool builds an Indigo fingerprint for
+    # ChEMBL_search_similar_molecules. The other 28 ChEMBL tools are
+    # ChEMBLRESTTool and do not import it.
+    "epam.indigo>=1.34.0",
+]
+websearch = [
+    # web_search_tool.py runs DDGS in a subprocess, so nothing imports it here;
+    # the tool checks for it before spawning.
+    "ddgs>=9.0.0",
+]
+
 all = [
-    "tooluniverse[dev,docs,graph,visualization,space,embedding,ml,bioinformatics,openai,gemini]",
+    "tooluniverse[dev,docs,graph,visualization,space,embedding,ml,bioinformatics,openai,gemini,browser,documents,chem,websearch]",
 ]
 build = [
     "pyinstaller>=6.0.0",

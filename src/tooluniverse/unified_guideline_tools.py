@@ -9,7 +9,13 @@ import time
 import re
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
-from markitdown import MarkItDown
+
+try:
+    from markitdown import MarkItDown
+
+    MARKITDOWN_AVAILABLE = True
+except ImportError:  # pragma: no cover - optional dependency
+    MARKITDOWN_AVAILABLE = False
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -109,6 +115,20 @@ def _extract_meaningful_terms(query):
     }
     meaningful = [token for token in tokens if token not in stop_terms]
     return meaningful if meaningful else tokens
+
+
+def _markitdown():
+    """Build a converter, or say which extra supplies it.
+
+    The three call sites sit inside ``except Exception`` handlers that return
+    ``str(e)``, so raising here reaches the caller with the instruction intact.
+    """
+    if not MARKITDOWN_AVAILABLE:
+        raise RuntimeError(
+            "markitdown is required to extract this guideline. Install with: "
+            "pip install 'tooluniverse[documents]' (or: pip install markitdown)"
+        )
+    return MarkItDown()
 
 
 class _ContentUnavailable(Exception):
@@ -947,7 +967,7 @@ class TRIPDatabaseTool(BaseTool):
                 return self._extract_dmj_guideline_content(url)
 
             # Fallback: generic MarkItDown extraction
-            md = MarkItDown()
+            md = _markitdown()
             result = md.convert(url)
 
             if not result or not getattr(result, "text_content", None):
@@ -1032,7 +1052,7 @@ class TRIPDatabaseTool(BaseTool):
     def _extract_bmj_guideline_content(self, url):
         """Fetch BMJ Rapid Recommendation content with key recommendations."""
         try:
-            md = MarkItDown()
+            md = _markitdown()
             result = md.convert(url)
             if not result or not getattr(result, "text_content", None):
                 return {
@@ -1115,7 +1135,7 @@ class TRIPDatabaseTool(BaseTool):
     def _extract_dmj_guideline_content(self, url):
         """Fetch Diabetes & Metabolism Journal guideline content and GRADE statements."""
         try:
-            md = MarkItDown()
+            md = _markitdown()
             result = md.convert(url)
             if not result or not getattr(result, "text_content", None):
                 return {

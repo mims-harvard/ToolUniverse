@@ -52,6 +52,19 @@ EXTRA_PACKAGES: dict[str, dict[str, str]] = {
         "scipy": "scipy",
         "matplotlib": "matplotlib",
         "networkx": "networkx",
+        "sympy": "sympy",
+    },
+    "browser": {
+        "playwright": "playwright",
+    },
+    "documents": {
+        "markitdown": "markitdown",
+    },
+    "chem": {
+        "indigo": "epam.indigo",
+    },
+    "websearch": {
+        "ddgs": "ddgs",
     },
     "graph": {
         "flask": "flask",
