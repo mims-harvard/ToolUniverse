@@ -239,7 +239,7 @@ def extract_nested_fields(
     :param records: List of dictionaries from which to extract fields
     :param fields: List of nested fields to extract, each specified with dot notation (e.g., 'openfda.brand_name')
     :param keywords: Optional keyword list used to trim long sections down to
-        matching sentences.
+        matching sentences. ``*_table`` fields are never trimmed.
     :param identity_fields: Optional extra fields copied verbatim (never keyword
         trimmed) onto every kept record. They exist so a caller can identify the
         product when the ``openfda`` block is empty. They deliberately do NOT
@@ -267,11 +267,28 @@ def extract_nested_fields(
             try:
                 for key in keys:
                     value = value[key]
-                if key not in NEVER_KEYWORD_TRIMMED and keywords:
+                if (
+                    key not in NEVER_KEYWORD_TRIMMED
+                    and not field.endswith("_table")
+                    and keywords
+                ):
                     value = extract_sentences_with_keywords(value, keywords)
                 extracted_record[field] = value
             except KeyError:
                 extracted_record[field] = None
+        # openFDA files a section's tables separately, under `<section>_table`
+        # (dose by renal function, adverse-reaction incidence, ...). Asking for a
+        # section returned its prose, which often just says "see Table 1", and
+        # dropped the table. Copy the tables of the requested sections from this
+        # same record, HTML intact and never keyword-trimmed: sentence trimming
+        # would cut a table's rows apart from its header.
+        if isinstance(record, dict):
+            for field in fields:
+                if "." in field or field.endswith("_table"):
+                    continue
+                table_field = field + "_table"
+                if record.get(table_field):
+                    extracted_record[table_field] = copy.deepcopy(record[table_field])
         keep = any(extracted_record.values())
         for field in identity_fields or []:
             if field in extracted_record:
