@@ -1,6 +1,7 @@
 """Web search tools for ToolUniverse using DDGS plus opt-in hosted backends
 (Parallel Search MCP, SerpBase, Firecrawl Search)."""
 
+import importlib.util
 import json
 import re
 import subprocess
@@ -14,6 +15,7 @@ import requests
 
 from .base_tool import BaseTool
 from .mcp_client_tool import BaseMCPClient
+from .extras import install_hint
 from .tool_registry import register_tool
 
 PARALLEL_SEARCH_MCP_URL = "https://search.parallel.ai/mcp"
@@ -117,6 +119,15 @@ results = list(
 )
 print(json.dumps(results))
 """
+
+        # The script above imports ddgs, and it runs under this interpreter, so
+        # find_spec here predicts the child exactly. Checking first turns
+        # "DDGS subprocess failed with exit code 1: ModuleNotFoundError: No
+        # module named 'ddgs'" into something the caller can act on.
+        if importlib.util.find_spec("ddgs") is None:
+            raise RuntimeError(
+                f"ddgs is required for web search. {install_hint('websearch', 'ddgs')}"
+            )
 
         completed = subprocess.run(
             [sys.executable, "-c", ddgs_script, json.dumps(payload)],

@@ -1,84 +1,103 @@
-[build-system]
-requires = ["setuptools", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "tooluniverse-mcpb-native"
-version = "1.5.3"
+version = "1.5.4"
 description = "ToolUniverse MCP Server (Native MCPB bundle)"
-# Upper bound tracks the tightest Requires-Python among the resolved
-# dependencies, currently youtube-transcript-api (>=3.8,<3.15) pulled in by
-# markitdown's youtube-transcription extra. It is NOT a ToolUniverse limit --
-# the root pyproject declares ">=3.10" with no cap. Claude Desktop shows this
-# range as an install requirement (mcpb/manifest.json keeps the same bounds),
-# so leaving it stale blocks users on a Python we actually support: a stale
-# "<3.14" did exactly that after issue #527 lifted the real cap. Re-check with
-#   uv pip compile mcpb/pyproject.toml --python-version 3.X
-# before widening, and keep manifest.json in sync. The manifest uses semver
-# syntax (">=3.10 <3.15", space-separated); this file uses PEP 440 syntax
-# (">=3.10,<3.15", comma-separated). A comma in the manifest fails Desktop's
-# runtime version check even when a compatible Python is installed.
-requires-python = ">=3.10,<3.15"
-
-# Pattern 2: DIRECT dependencies (bundled source code).
-# We don't depend on `tooluniverse` from PyPI; the source is bundled inside
-# `src/tooluniverse/` and these are its runtime deps. Keep this list in sync
-# with the root pyproject.toml `dependencies` section.
+# This bound and manifest.json's compatibility.runtimes.python look like the
+# same fact stated twice. They are not, and keeping them identical is what put
+# a Python 3.14 failure one missing flag away.
 #
-# Deliberate exception: `openai` and `google-genai` are optional extras in the
-# root pyproject.toml but stay unconditional here. This bundle is a sealed
-# Claude Desktop runtime — nothing resolves against it, so the downstream
-# resolver problem that made them extras upstream does not apply, and an end
-# user has no way to install an extra into the bundle. Dropping them would just
-# make the Gemini/OpenAI clients permanently unavailable in Desktop. Do not
-# "re-sync" these two away.
+#   manifest.json  -- Desktop's install gate, checked against the Python the
+#                     *user* happens to have. The bundle never runs that
+#                     interpreter (uv provisions its own), so this stays as
+#                     permissive as the package itself: a stale "<3.14" here
+#                     blocked users on a Python we support, after issue #527
+#                     lifted the real cap.
+#   this file      -- the range uv resolves and provisions *for the bundle*.
+#                     It must exclude any interpreter the locked graph cannot
+#                     install on.
+#
+# 3.14 is such an interpreter: tooluniverse's markitdown extra pulls magika,
+# markitdown 0.1.8 caps it at 0.6.3, and that release requires onnxruntime with
+# no per-version markers, which resolves to 1.20.1 -- a release that publishes
+# no cp314 wheels. magika 1.0.3 fixed this upstream (it asks for
+# onnxruntime>=1.24.1 on 3.14) but markitdown has not moved to it yet.
+#
+# Capping here makes uv pick a working interpreter on its own, which matters
+# because --python 3.12 in the manifest is not guaranteed to be applied: the
+# MCPB spec calls mcp_config optional for server.type "uv" ("host manages
+# execution"). Verified on this graph: with "<3.15" uv selects 3.14 and the
+# install fails with "onnxruntime==1.20.1 ... doesn't have a source
+# distribution or wheel for the current platform"; with "<3.14" uv selects
+# 3.12 unprompted and the server starts. The manifest's --python 3.12 and
+# .python-version remain the first two layers; this is the one that holds when
+# neither is consulted.
+#
+# Re-check before widening -- the cap is a property of the resolved graph, not
+# of ToolUniverse, so a markitdown release can lift it:
+#   uv lock && uv sync --frozen --python 3.14
+requires-python = ">=3.10,<3.14"
+
+# The bundle declares ToolUniverse as a dependency instead of carrying its
+# source. This is the shape the MCPB docs describe for `server.type = "uv"`
+# ("include pyproject.toml with dependencies, no bundled packages needed") and
+# the shape of the official hello-world-uv example, whose bundle holds its own
+# entry point and nothing else.
+#
+# The reason is the update path. A bundle that carries the source has to be
+# rebuilt and resubmitted to the Claude Desktop extensions directory for every
+# change, and a desktop extension has no self-serve update: remote servers get
+# a submissions dashboard, MCPB submissions go through a form and a manual
+# review. With the dependency declared here, src/run_stdio.py can move the
+# install forward on its own (at most once a day, bounded, never fatal) and a
+# user picks up each release without another submission.
+#
+# The upgrade has to be asked for explicitly -- it is not a side effect of
+# dropping --frozen. Verified: with a lock pinning 1.4.1 and the constraint
+# relaxed to >=1.4.0,<2, a plain `uv run` re-used 1.4.1 and left the lock
+# untouched, because uv only re-resolves a lock that no longer satisfies
+# pyproject.toml. That is also why the lock ships: --frozen keeps the launch
+# itself off the network, so a hostile or absent index cannot delay startup.
+#
+# The floor is the release that introduced this bundle shape; the ceiling keeps
+# a future major version from arriving unreviewed. Everything ToolUniverse
+# needs at runtime is declared by its own package metadata, so the long list
+# that used to live here is gone.
+# The openai and gemini extras are deliberate. They are optional in the root
+# package, because a downstream resolver should not be forced onto
+# google-genai's websockets bound (issue #526), but this bundle is a sealed
+# runtime: a user has no way to install an extra into it, so leaving them out
+# would make the OpenAI and Gemini clients permanently unavailable in Desktop.
+# The old bundled dependency list carried both unconditionally for the same
+# reason; naming the extras here preserves that exactly.
+# The stats extra is named for the same reason as openai and gemini: scipy and
+# networkx left the package's base dependencies, and in a sealed bundle their
+# absence would silently take 15 tools off Desktop at the next self-update --
+# survival analysis, Cox regression, dose-response and synergy fitting,
+# enrichment, per-gene ANOVA, co-expression, network proximity -- with no way
+# for a user to add them back. 128 MB for those 15.
+# chem is named too: 23 MB buys back ChEMBL_search_similar_molecules, which a
+# Desktop user cannot obtain any other way, and it is the cheapest of the four.
+#
+# browser, documents and websearch are deliberately NOT named
+# here, unlike openai and gemini. They are 275 MB of the install for a handful
+# of tools, and what a Desktop user actually loses was measured rather than
+# assumed, in a lean environment:
+#   get_webpage_text_from_url / get_webpage_title  gone (playwright, 141 MB);
+#       Claude Desktop can already fetch a URL itself.
+#   *_get_pdf_snippets / CORE_get_fulltext_snippets  report that markitdown is
+#       needed (91 MB). ArXiv_search_papers, CORE_search_papers and
+#       SemanticScholar_search_papers keep working; only extraction stops.
+#   web_search  keeps working -- DDGS is one backend of several, and `auto`
+#       returned results with ddgs absent.
+# That is five tools of 2717, against 288 MB off the first launch (775 -> 487,
+# measured). Adding documents costs 121 MB more and puts onnxruntime back, which
+# is what holds requires-python at <3.14. Each is one name in the list above.
 dependencies = [
-    "requests>=2.32.0",
-    "boltz-api>=0.46.0,<0.47.0",
-    "numpy>=2.2.0",
-    "sympy>=1.12.0",
-    "graphql-core>=3.2.0",
-    "fastapi>=0.116.0",
-    "uvicorn>=0.36.0",
-    "pydantic>=2.11.0",
-    "epam.indigo>=1.34.0",
-    "networkx>=3.4.0",
-    "openai>=1.107.0",
-    "pyyaml>=6.0.0",
-    "google-genai>=1.36.0",
-    "mcp[cli]>=1.29.0,<2.0.0",
-    "fastmcp>=3.4.5,<4.0.0",
-    "xmltodict>=1.0.0",
-    "lxml>=6.0.0",
-    "huggingface_hub>=0.34.0",
-    "jsonpath-ng>=1.6.0",
-    "rcsb-api>=1.4.0",
-    "websockets>=13.0", # Module-scope import in mcp_client_tool.py
-    "urllib3>=1.26", # Module-scope import in uspto_tool.py and euhealth_live.py
-    "scipy>=1.7.0",
-    "pandas>=2.2.3",
-    "openpyxl>=3.1.0", # Read .xlsx bulk downloads (CellMarker, dataset tools)
-    "setuptools>=70.0.0",
-    "pdfplumber>=0.11.0",
-    "playwright>=1.55.0",
-    "faiss-cpu==1.12.0",
-    "flask>=2.0.0",
-    "aiohttp",
-    "beautifulsoup4>=4.12.0",
-    "python-dotenv>=1.0.0",
-    # Named converter extras rather than `all`, mirroring the root package: the
-    # `all` extra pins youtube-transcript-api~=1.0.0 (Requires-Python <3.14) and
-    # pulls a prerelease-only Azure dependency. See the root pyproject.toml
-    # comment and issue #527.
-    "markitdown[audio-transcription,az-doc-intel,docx,outlook,pdf,pptx,xls,xlsx,youtube-transcription]>=0.1.0",
-    "psutil>=5.9.0",
-    "ddgs>=9.0.0",
-    "pip>=25.3",
-    "jsonschema>=4.23.0",
+    "tooluniverse[openai,gemini,stats,chem]>=1.5.3,<2",
 ]
 
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.setuptools.package-data]
-tooluniverse = ["data/*", "data/packages/*"]
+[tool.uv]
+# Nothing here is a package to build; the directory exists to declare what the
+# launcher needs. Without this uv tries to build "tooluniverse-mcpb-native"
+# itself and fails once there is no source tree under src/.
+package = false

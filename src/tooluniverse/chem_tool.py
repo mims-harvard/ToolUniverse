@@ -13,9 +13,16 @@ from typing import Any, Dict, Optional
 
 # from rdkit import Chem
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 from .http_utils import request_with_retry
-from indigo import Indigo
+
+try:
+    from indigo import Indigo
+
+    HAS_INDIGO = True
+except ImportError:  # pragma: no cover - optional dependency
+    HAS_INDIGO = False
 
 # Query parameters that shape the response rather than filter it, so they are
 # absent from ChEMBL's per-resource "filtering" list by design.
@@ -767,7 +774,7 @@ class ChEMBLTool(BaseTool):
     def __init__(self, tool_config, base_url="https://www.ebi.ac.uk/chembl/api/data"):
         super().__init__(tool_config)
         self.base_url = base_url
-        self.indigo = Indigo()
+        self.indigo = Indigo() if HAS_INDIGO else None
         # Match ChEMBLRESTTool: a pooled session and an explicit timeout, so no
         # request can hang indefinitely when the upstream service stops
         # responding rather than returning an error.
@@ -775,6 +782,13 @@ class ChEMBLTool(BaseTool):
         self.timeout = 30
 
     def run(self, arguments):
+        if not HAS_INDIGO:
+            return {
+                "status": "error",
+                "error": f"epam.indigo is required for structure similarity search. "
+                f"{install_hint('chem', 'epam.indigo')} The other ChEMBL tools "
+                "do not need it.",
+            }
         query = arguments.get("query")
         similarity_threshold = arguments.get("similarity_threshold", 80)
         max_results = arguments.get("max_results", 20)

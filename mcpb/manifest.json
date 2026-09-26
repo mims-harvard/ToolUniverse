@@ -2,7 +2,7 @@
     "manifest_version": "0.4",
     "name": "tooluniverse",
     "display_name": "ToolUniverse",
-    "version": "1.5.3",
+    "version": "1.5.4",
     "description": "ToolUniverse: an ecosystem for democratizing AI scientists with 2,500+ scientific tools.",
     "long_description": "ToolUniverse is an ecosystem for creating AI scientist systems from any large language model (LLM). It standardizes how LLMs interact with tools, integrating thousands of machine learning models, datasets, APIs, and scientific packages for data analysis, knowledge retrieval, and experimental design. This bundle exposes ToolUniverse capability via the Model Context Protocol (MCP), enabling AI assistants to perform complex scientific tasks.",
     "author": {
@@ -27,12 +27,12 @@
                 "run",
                 "--python",
                 "3.12",
+                "--frozen",
                 "--directory",
                 "${__dirname}",
-                "${__dirname}${/}src${/}run_stdio.py"
+                "src/run_stdio.py"
             ],
             "env": {
-                "PYTHONPATH": "${__dirname}${/}src",
                 "TOOLUNIVERSE_STDIO_MODE": "1",
                 "PYTHONIOENCODING": "utf-8",
                 "TOOLUNIVERSE_ENV_FILE": "${user_config.tooluniverse_env_file}",

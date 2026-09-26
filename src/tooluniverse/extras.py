@@ -18,6 +18,7 @@ distribution names shown to users.  The mapping is kept in sync with
 from __future__ import annotations
 
 import importlib.util
+import os
 import re
 from collections.abc import Iterable
 from pathlib import Path
@@ -51,6 +52,23 @@ EXTRA_PACKAGES: dict[str, dict[str, str]] = {
         "kaleido": "kaleido",
         "scipy": "scipy",
         "matplotlib": "matplotlib",
+        "networkx": "networkx",
+        "sympy": "sympy",
+    },
+    "browser": {
+        "playwright": "playwright",
+    },
+    "documents": {
+        "markitdown": "markitdown",
+    },
+    "chem": {
+        "indigo": "epam.indigo",
+    },
+    "websearch": {
+        "ddgs": "ddgs",
+    },
+    "stats": {
+        "scipy": "scipy",
         "networkx": "networkx",
     },
     "graph": {
@@ -89,6 +107,34 @@ EXTRA_PACKAGES: dict[str, dict[str, str]] = {
 # Extras NOT covered by ``tooluniverse[all]`` — worth telling users about,
 # because "all" reads like it means all.
 EXTRAS_NOT_IN_ALL = ("pdf", "ocr", "singlecell", "smolagents", "client", "build")
+
+
+def in_sealed_runtime() -> bool:
+    """True inside the Claude Desktop extension, where pip cannot help.
+
+    The MCPB bundle runs from its own uv-managed environment in the extension
+    directory. "pip install tooluniverse[x]" in a user's shell installs into
+    *their* Python and does nothing for that environment, so a message telling
+    them to run it is wrong advice, not merely unhelpful. src/run_stdio.py sets
+    the variable this reads.
+    """
+    return os.environ.get("TOOLUNIVERSE_SEALED_RUNTIME", "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+    )
+
+
+def install_hint(extra: str, package: str | None = None) -> str:
+    """Say how to obtain an optional dependency, phrased for where we run."""
+    if in_sealed_runtime():
+        return (
+            f"This tool needs the '{extra}' extra. The Claude Desktop extension "
+            "runs from a sealed environment and cannot install extras, so run "
+            "ToolUniverse as a Python package to use this tool."
+        )
+    hint = f"Install with: pip install 'tooluniverse[{extra}]'"
+    return f"{hint} (or: pip install {package})" if package else hint
 
 
 def _is_importable(import_name: str) -> bool:

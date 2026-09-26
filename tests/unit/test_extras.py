@@ -288,3 +288,401 @@ class TestDoctorOutput:
 
         with patch("tooluniverse.ToolUniverse", side_effect=Exception("nope")):
             assert doctor.main() == 1
+
+
+# --- base dependencies vs. runtime extras -----------------------------------
+#
+# An extra can only gate a tool if the package it names is *not* also a base
+# dependency. Four packages were declared in both places at once -- scipy and
+# networkx (graph, visualization), faiss-cpu (embedding, ml) and flask (graph)
+# -- so those extras could never mean anything, everyone paid for 145 MB of
+# them, and ``missing_extras()`` could never report them. These two tests keep
+# that from coming back.
+
+SRC = Path(__file__).resolve().parents[2] / "src" / "tooluniverse"
+MCPB_DIR = Path(__file__).resolve().parents[2] / "mcpb"
+
+# huggingface_hub is imported while ToolUniverse itself imports, so it has to be
+# a base dependency; naming it in embedding/ml/space as well is redundant but
+# harmless. Anything else appearing here means an extra that cannot gate.
+BASE_AND_EXTRA_EXEMPT = {
+    # Imported while ToolUniverse itself imports, so it has to be base.
+    "huggingface-hub",
+    # Base too: embedding_database_* and the 21 euhealthinfo_* tools reach
+    # faiss through database_setup/vector_store.py, so taking it out of the
+    # base set removed 24 tools from the catalogue. The embedding and ml extras
+    # still name it, which is redundant but keeps them self-describing.
+    "faiss-cpu",
+}
+
+
+def _base_dependency_names():
+    with open(PYPROJECT, "rb") as fh:
+        import tomllib
+
+        data = tomllib.load(fh)
+    return {
+        re.split(r"[<>=!~;\[]", requirement, maxsplit=1)[0]
+        .strip()
+        .lower()
+        .replace("_", "-")
+        for requirement in data["project"]["dependencies"]
+    }
+
+
+def _runtime_extra_distributions():
+    return {
+        pypi_name.lower().replace("_", "-")
+        for packages in EXTRA_PACKAGES.values()
+        for pypi_name in packages.values()
+    }
+
+
+def test_no_package_is_both_a_base_dependency_and_a_runtime_extra():
+    overlap = _base_dependency_names() & _runtime_extra_distributions()
+    assert overlap == BASE_AND_EXTRA_EXEMPT, (
+        "these packages are declared as base dependencies and inside a runtime "
+        f"extra: {sorted(overlap - BASE_AND_EXTRA_EXEMPT)}. A base dependency is "
+        "always installed, so the extra naming it cannot gate anything and "
+        "missing_extras() can never report it. Put the package in one place."
+    )
+
+
+def test_extras_only_packages_are_never_imported_unguarded_at_module_level():
+    """A package behind an extra may not be imported at module scope unguarded.
+
+    A bare module-level import of an uninstalled package makes the whole tool
+    module unimportable, and the failure surfaces as "Tool ... not found even
+    after loading tools" with "Check tool name spelling" -- the real cause,
+    ``No module named 'x'``, only reaches the log. Wrapping the import (either
+    setting a HAS_* flag or re-raising with the extra named) is what turns that
+    into an answer the caller can act on.
+    """
+    import ast
+
+    import_to_dist = {
+        "scipy": "scipy",
+        "networkx": "networkx",
+        "faiss": "faiss-cpu",
+        "flask": "flask",
+        "matplotlib": "matplotlib",
+        "plotly": "plotly",
+        "rdkit": "rdkit",
+        "Bio": "biopython",
+        "sentence_transformers": "sentence-transformers",
+        "easyocr": "easyocr",
+        "fitz": "pymupdf",
+        "playwright": "playwright",
+        "markitdown": "markitdown",
+        "indigo": "epam.indigo",
+        "ddgs": "ddgs",
+        "sympy": "sympy",
+    }
+    gated = _runtime_extra_distributions() - _base_dependency_names()
+    watched = {
+        import_name: dist
+        for import_name, dist in import_to_dist.items()
+        if dist in gated
+    }
+    assert watched, "expected at least one extras-only package to watch"
+
+    offenders = []
+    for path in SRC.rglob("*.py"):
+        # src/tooluniverse/remote/* are separate deployables: each directory
+        # ships its own requirements.txt and starts its own MCP server on a
+        # remote worker. They import packages this project never declares at
+        # all (scanpy, for one), which is only possible because nothing here
+        # imports them.
+        if "remote" in path.relative_to(SRC).parts:
+            continue
+        try:
+            tree = ast.parse(path.read_text(errors="ignore"))
+        except SyntaxError:  # pragma: no cover - not our concern here
+            continue
+        for node in tree.body:  # module scope only; a try block is nested
+            if isinstance(node, ast.Import):
+                modules = [alias.name for alias in node.names]
+            elif isinstance(node, ast.ImportFrom):
+                modules = [node.module or ""]
+            else:
+                continue
+            for module in modules:
+                top = module.split(".")[0]
+                if top in watched:
+                    offenders.append(f"{path.relative_to(SRC)}:{node.lineno} ({top})")
+
+    assert not offenders, (
+        "these module-level imports of extras-only packages are unguarded, so "
+        "the tools behind them disappear with a misleading error when the extra "
+        f"is absent: {offenders}"
+    )
+
+
+# The guards above only take their False branch when the package is absent, and
+# `[dev]` installs all three so CI never gets there on its own. Flip the flag
+# instead, so the message a user would actually see is covered either way.
+@pytest.mark.parametrize(
+    "module_name, flag, class_name, arguments, expected_package, config",
+    [
+        (
+            "tooluniverse.humanbase_tool",
+            "HAS_NETWORKX",
+            "HumanBaseTool",
+            {"gene_list": ["TP53", "EGFR", "BRCA1"]},
+            "networkx",
+            {},
+        ),
+        (
+            "tooluniverse.coexpression_module_tool",
+            "HAS_NETWORKX",
+            "CoexpressionModuleTool",
+            {"expression": {"TP53": [1.0, 2.0, 3.0], "EGFR": [2.0, 1.0, 3.0]}},
+            "networkx",
+            {},
+        ),
+        (
+            "tooluniverse.chem_tool",
+            "HAS_INDIGO",
+            "ChEMBLTool",
+            {"query": "CC(=O)Oc1ccccc1C(=O)O"},
+            "epam.indigo",
+            {},
+        ),
+        (
+            "tooluniverse.expression_anova_tool",
+            "HAS_SCIPY",
+            "ExpressionANOVAPerGeneTool",
+            {
+                "counts_file": "/nonexistent.csv",
+                "meta_file": "/nonexistent.csv",
+                "group_col": "g",
+                "mode": "anova",
+            },
+            "scipy",
+            {},
+        ),
+    ],
+)
+def test_a_tool_whose_extra_is_absent_says_what_to_install(
+    monkeypatch, module_name, flag, class_name, arguments, expected_package, config
+):
+    """The error has to name the package and the extra, not just fail.
+
+    Without the guard the module is unimportable, the tool never registers, and
+    the caller is told "Tool ... not found even after loading tools" with
+    "Check tool name spelling" while the real cause stays in the log.
+    """
+    import importlib
+
+    module = importlib.import_module(module_name)
+    monkeypatch.setattr(module, flag, False)
+    tool = getattr(module, class_name)({"name": "t", "type": class_name, **config})
+
+    result = tool.run(arguments)
+
+    assert result["status"] == "error"
+    assert expected_package in result["error"]
+    assert "pip install" in result["error"], (
+        f"the error must say how to fix it, got: {result['error']}"
+    )
+
+
+def test_web_search_says_what_to_install_before_spawning_ddgs(monkeypatch):
+    """DDGS runs in a subprocess, so nothing imports it in this process.
+
+    Without the check the failure arrives as "DDGS subprocess failed with exit
+    code 1: ModuleNotFoundError: No module named 'ddgs'", which names the cause
+    but not the cure.
+    """
+    import importlib.util
+
+    from tooluniverse.web_search_tool import WebSearchTool
+
+    real_find_spec = importlib.util.find_spec
+    monkeypatch.setattr(
+        importlib.util,
+        "find_spec",
+        lambda name, *a, **kw: None
+        if name == "ddgs"
+        else real_find_spec(name, *a, **kw),
+    )
+    tool = WebSearchTool({"name": "web_search", "type": "WebSearchTool"})
+
+    with pytest.raises(RuntimeError, match=r"tooluniverse\[websearch\]"):
+        tool._search_with_ddgs("anything")
+
+
+def test_a_guideline_extraction_without_markitdown_names_the_extra(monkeypatch):
+    """The three call sites sit in `except Exception: return str(e)` handlers,
+    so the helper has to carry the instruction in the exception itself."""
+    from tooluniverse import unified_guideline_tools as module
+
+    monkeypatch.setattr(module, "MARKITDOWN_AVAILABLE", False)
+
+    with pytest.raises(RuntimeError, match=r"tooluniverse\[documents\]"):
+        module._markitdown()
+
+
+def test_only_the_rendering_path_of_url_tool_needs_the_browser_extra(monkeypatch):
+    """get_webpage_title and plain downloads run on requests alone.
+
+    Guarding ``run`` wholesale was wrong and a test caught it: URLHTMLTagTool
+    fetches with requests and only falls back to a browser for pages requests
+    cannot turn into text. The check belongs where the rendering starts.
+    """
+    from unittest.mock import MagicMock
+
+    from tooluniverse import url_tool
+
+    monkeypatch.setattr(url_tool, "HAS_PLAYWRIGHT", False)
+
+    html_head = MagicMock()
+    html_head.headers = {"Content-Type": "text/html; charset=utf-8"}
+    monkeypatch.setattr(url_tool.requests, "head", lambda *a, **kw: html_head)
+
+    tool = url_tool.URLToPDFTextTool(
+        {"name": "t", "type": "URLToPDFTextTool", "fields": {"return_key": "text"}}
+    )
+    result = tool.run({"url": "https://example.com"})
+
+    assert result["status"] == "error"
+    assert "tooluniverse[browser]" in result["error"]
+
+
+def test_a_plain_download_still_works_without_the_browser_extra(monkeypatch):
+    """The non-HTML path must not be blocked by a missing browser."""
+    from unittest.mock import MagicMock
+
+    from tooluniverse import url_tool
+
+    monkeypatch.setattr(url_tool, "HAS_PLAYWRIGHT", False)
+
+    head = MagicMock()
+    head.headers = {"Content-Type": "text/plain"}
+    body = MagicMock()
+    body.status_code = 200
+    body.text = "plain text content"
+    monkeypatch.setattr(url_tool.requests, "head", lambda *a, **kw: head)
+    monkeypatch.setattr(url_tool.requests, "get", lambda *a, **kw: body)
+
+    tool = url_tool.URLToPDFTextTool(
+        {"name": "t", "type": "URLToPDFTextTool", "fields": {"return_key": "text"}}
+    )
+    result = tool.run({"url": "https://example.com"})
+
+    assert "browser" not in str(result).lower()
+    assert "plain text content" in str(result)
+
+
+def test_a_module_importing_a_gated_package_declares_a_guard_flag():
+    """Module scope is not the only place a missing extra can surface.
+
+    The scan above only looks at the top level, and an import inside a method
+    is just as fatal on the call that reaches it -- ``run_chi_square`` in
+    clinical_trial_stats_tool.py did ``from scipy import stats`` with nothing
+    anywhere in that module to fall back on. So: wherever a gated package is
+    imported outside a ``try``, the module has to declare the matching flag
+    (``HAS_SCIPY``, ``MARKITDOWN_AVAILABLE``, ...) and consult it, which is the
+    pattern the guarded modules already use.
+    """
+    import ast
+
+    import_to_dist = {
+        "scipy": "scipy",
+        "networkx": "networkx",
+        "flask": "flask",
+        "playwright": "playwright",
+        "markitdown": "markitdown",
+        "indigo": "epam.indigo",
+        "ddgs": "ddgs",
+        "matplotlib": "matplotlib",
+        "plotly": "plotly",
+        "rdkit": "rdkit",
+    }
+    gated = _runtime_extra_distributions() - _base_dependency_names()
+    watched = {i: d for i, d in import_to_dist.items() if d in gated}
+
+    class _Unguarded(ast.NodeVisitor):
+        """Collect imports of watched packages that no ``try`` covers."""
+
+        def __init__(self):
+            self.depth = 0
+            self.found = []
+
+        def visit_Try(self, node):
+            self.depth += 1
+            for child in node.body:
+                self.visit(child)
+            self.depth -= 1
+            for group in (node.handlers, node.orelse, node.finalbody):
+                for child in group:
+                    self.visit(child)
+
+        def _record(self, node, modules):
+            if self.depth:
+                return
+            for module in modules:
+                top = (module or "").split(".")[0]
+                if top in watched:
+                    self.found.append((node.lineno, top))
+
+        def visit_Import(self, node):
+            self._record(node, [alias.name for alias in node.names])
+
+        def visit_ImportFrom(self, node):
+            self._record(node, [node.module or ""])
+
+    offenders = []
+    for path in SRC.rglob("*.py"):
+        if "remote" in path.relative_to(SRC).parts:
+            continue
+        source = path.read_text(errors="ignore")
+        try:
+            tree = ast.parse(source)
+        except SyntaxError:  # pragma: no cover - not our concern here
+            continue
+        visitor = _Unguarded()
+        visitor.visit(tree)
+        for line, top in visitor.found:
+            flags = (f"HAS_{top.upper()}", f"{top.upper()}_AVAILABLE")
+            if not any(flag in source for flag in flags):
+                offenders.append(
+                    f"{path.relative_to(SRC)}:{line} imports {top} with no "
+                    f"{flags[0]} or {flags[1]} to fall back on"
+                )
+
+    assert not offenders, offenders
+
+
+def test_install_hint_does_not_tell_a_desktop_user_to_run_pip(monkeypatch):
+    """Inside the bundle, "pip install tooluniverse[x]" is wrong advice.
+
+    The MCPB extension runs from its own uv-managed environment in the
+    extension directory. A pip command in the user's shell installs into their
+    Python and does nothing for that environment, so the message has to say
+    where the tool *is* available instead of handing out a command that cannot
+    work. Verified by hand in both modes against a default install.
+    """
+    from tooluniverse import extras as extras_module
+
+    monkeypatch.delenv("TOOLUNIVERSE_SEALED_RUNTIME", raising=False)
+    plain = extras_module.install_hint("stats", "scipy")
+    assert "pip install 'tooluniverse[stats]'" in plain
+    assert "pip install scipy" in plain
+
+    monkeypatch.setenv("TOOLUNIVERSE_SEALED_RUNTIME", "1")
+    sealed = extras_module.install_hint("stats", "scipy")
+    assert "pip install" not in sealed, (
+        f"a sealed runtime cannot act on a pip command: {sealed}"
+    )
+    assert "stats" in sealed and "Desktop" in sealed
+
+
+def test_the_bundle_launcher_declares_the_sealed_runtime():
+    """Without this the messages above never switch, and the bundle is the one
+    place they matter."""
+    launcher = (MCPB_DIR / "src" / "run_stdio.py").read_text()
+    assert 'setdefault("TOOLUNIVERSE_SEALED_RUNTIME", "1")' in launcher, (
+        "mcpb/src/run_stdio.py must mark the sealed runtime, or a Desktop user "
+        "is told to run pip"
+    )

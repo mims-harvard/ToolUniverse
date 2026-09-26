@@ -17,7 +17,8 @@ A low value (and low empirical p vs a degree-matched null) means the two sets si
 closer / more overlapping than chance. For `separation`, s_AB < 0 ⇒ overlapping
 modules, s_AB > 0 ⇒ topologically separated.
 
-Pure networkx + NumPy (both core deps); no network call, no API key. The caller
+Pure networkx + NumPy; no network call, no API key. NumPy is a core
+dependency, networkx ships in the visualization extra. The caller
 supplies the graph (inline `edges` or a 2-column `edgelist_path`), so no
 particular interactome or species is baked in.
 """
@@ -187,8 +188,11 @@ class NetworkProximityTool(BaseTool):
         try:
             import networkx as nx
             import numpy as np
-        except Exception:  # pragma: no cover - core deps, defensive
-            return _err("networkx/numpy not available (both are core dependencies).")
+        except Exception:  # pragma: no cover - optional dependency
+            return _err(
+                "networkx is required for this tool. Install with: "
+                "pip install 'tooluniverse[stats]' (or: pip install networkx)"
+            )
 
         measure = arguments.get("measure") or "closest"
         if measure not in _MEASURES:

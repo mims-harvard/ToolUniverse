@@ -2,6 +2,7 @@ import requests
 import re
 from .base_tool import BaseTool
 from html import unescape
+from .extras import install_hint
 from .tool_registry import register_tool
 
 # Many sites (Wikipedia, Cloudflare-protected hosts, etc.) reject the default
@@ -19,7 +20,16 @@ import sys
 import subprocess
 import time
 import pdfplumber
-from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+
+try:
+    from playwright.sync_api import (
+        sync_playwright,
+        TimeoutError as PlaywrightTimeoutError,
+    )
+
+    HAS_PLAYWRIGHT = True
+except ImportError:  # pragma: no cover - optional dependency
+    HAS_PLAYWRIGHT = False
 
 
 @register_tool("URLHTMLTagTool")
@@ -266,6 +276,17 @@ class URLToPDFTextTool(BaseTool):
             }
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Failed to check content type: {e}"}
+
+        # Everything above this point runs on requests alone; Playwright is only
+        # needed to render a page requests could not turn into text. Checking
+        # here keeps get_webpage_title and the plain-PDF path working without
+        # the browser extra, and names it for the path that does need it.
+        if not HAS_PLAYWRIGHT:
+            return {
+                "status": "error",
+                "error": f"rendering this page needs a browser. {install_hint('browser', 'playwright')} "
+                "Then run: playwright install chromium",
+            }
 
         # Ensure browsers are installed (auto-install if needed)
         remaining_install_seconds = int(deadline - time.monotonic())
