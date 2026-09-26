@@ -15,6 +15,7 @@ import requests
 
 from .base_tool import BaseTool
 from .mcp_client_tool import BaseMCPClient
+from .extras import install_hint
 from .tool_registry import register_tool
 
 PARALLEL_SEARCH_MCP_URL = "https://search.parallel.ai/mcp"
@@ -125,8 +126,7 @@ print(json.dumps(results))
         # module named 'ddgs'" into something the caller can act on.
         if importlib.util.find_spec("ddgs") is None:
             raise RuntimeError(
-                "ddgs is required for web search. Install with: "
-                "pip install 'tooluniverse[websearch]' (or: pip install ddgs)"
+                f"ddgs is required for web search. {install_hint('websearch', 'ddgs')}"
             )
 
         completed = subprocess.run(

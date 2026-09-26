@@ -17,6 +17,7 @@ from math import log2
 from typing import Any, Dict, List, Optional, Tuple
 
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 
 try:
@@ -405,7 +406,7 @@ class MetaboAnalystTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for enrichment analysis. Install with: pip install 'tooluniverse[stats]'",
+                "error": f"scipy is required for enrichment analysis. {install_hint('stats', 'scipy')}",
             }
 
         metabolites = arguments.get("metabolites", [])
@@ -635,7 +636,7 @@ class MetaboAnalystTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for enrichment analysis. Install with: pip install 'tooluniverse[stats]'",
+                "error": f"scipy is required for enrichment analysis. {install_hint('stats', 'scipy')}",
             }
 
         metabolites = arguments.get("metabolites", [])

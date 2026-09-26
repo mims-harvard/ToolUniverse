@@ -6,6 +6,7 @@ import requests
 from .base_tool import BaseTool
 from .http_utils import request_with_retry
 from .provider_rate_limit import enforce_provider_rate_limit
+from .extras import install_hint
 from .tool_registry import register_tool
 
 try:
@@ -483,8 +484,8 @@ class SemanticScholarPDFSnippetsTool(BaseTool):
             return {
                 "status": "error",
                 "error": (
-                    "markitdown is required to extract text from this PDF. "
-                    "Install with: pip install 'tooluniverse[documents]'"
+                    f"markitdown is required to extract text from this PDF. "
+                    f"{install_hint('documents')}"
                 ),
                 "retryable": False,
             }

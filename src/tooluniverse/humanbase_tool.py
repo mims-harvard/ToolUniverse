@@ -9,6 +9,7 @@ except ImportError:  # pragma: no cover - optional dependency
 import requests
 import urllib.parse
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 
 
@@ -74,8 +75,7 @@ class HumanBaseTool(BaseTool):
         if not HAS_NETWORKX:
             return {
                 "status": "error",
-                "error": "networkx is required for this tool. Install with: "
-                "pip install 'tooluniverse[stats]' (or: pip install networkx)",
+                "error": f"networkx is required for this tool. {install_hint('stats', 'networkx')}",
             }
         self._resolutions = {}
         self._unresolved = []

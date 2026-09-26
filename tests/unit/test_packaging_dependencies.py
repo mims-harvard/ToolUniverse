@@ -154,20 +154,17 @@ def test_mcpb_declares_the_package_rather_than_mirroring_its_dependency_list():
     """
     mcpb_requirements = _requirements_by_name(MCPB_PYPROJECT)
 
-    # The bundle may add exactly what a sealed runtime needs and a Desktop user
-    # cannot install for themselves. scipy and networkx are that: both left the
-    # package's base dependencies, and without them here the next self-update
-    # would quietly drop 23 scipy-backed and 4 networkx-backed tools from an
-    # install nobody can add an extra to. Anything else belongs in the package.
-    sealed_runtime_additions = {"scipy", "networkx"}
-    assert set(mcpb_requirements) == {"tooluniverse"} | sealed_runtime_additions, (
+    # The bundle declares tooluniverse and nothing else; what a sealed runtime
+    # needs beyond the defaults it asks for as extras on that one requirement,
+    # which is checked below.
+    assert set(mcpb_requirements) == {"tooluniverse"}, (
         "the bundle should declare tooluniverse plus only what a sealed runtime "
         "cannot get any other way; everything else is supplied by the package "
         f"metadata: {sorted(mcpb_requirements)}"
     )
 
     requirement = mcpb_requirements["tooluniverse"]
-    for extra in ("openai", "gemini"):
+    for extra in ("openai", "gemini", "stats", "chem"):
         assert extra in requirement, (
             f"the {extra} extra is optional upstream but mandatory in a sealed "
             f"bundle -- without it that client is unavailable in Desktop: {requirement}"

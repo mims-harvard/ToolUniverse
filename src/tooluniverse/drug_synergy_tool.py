@@ -14,6 +14,7 @@ No external API calls. Uses numpy/scipy for computation.
 import math
 from typing import Dict, Any
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 
 try:
@@ -635,7 +636,7 @@ class DrugSynergyTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for Loewe calculations. Install with: pip install 'tooluniverse[stats]'",
+                "error": f"scipy is required for Loewe calculations. {install_hint('stats', 'scipy')}",
             }
 
         doses_a_single = arguments.get("doses_a_single", [])
@@ -888,7 +889,7 @@ class DrugSynergyTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for CI calculations. Install with: pip install 'tooluniverse[stats]'",
+                "error": f"scipy is required for CI calculations. {install_hint('stats', 'scipy')}",
             }
 
         doses_a_single = arguments.get("doses_a_single", [])

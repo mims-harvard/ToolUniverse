@@ -300,6 +300,7 @@ class TestDoctorOutput:
 # that from coming back.
 
 SRC = Path(__file__).resolve().parents[2] / "src" / "tooluniverse"
+MCPB_DIR = Path(__file__).resolve().parents[2] / "mcpb"
 
 # huggingface_hub is imported while ToolUniverse itself imports, so it has to be
 # a base dependency; naming it in embedding/ml/space as well is redundant but
@@ -651,3 +652,37 @@ def test_a_module_importing_a_gated_package_declares_a_guard_flag():
                 )
 
     assert not offenders, offenders
+
+
+def test_install_hint_does_not_tell_a_desktop_user_to_run_pip(monkeypatch):
+    """Inside the bundle, "pip install tooluniverse[x]" is wrong advice.
+
+    The MCPB extension runs from its own uv-managed environment in the
+    extension directory. A pip command in the user's shell installs into their
+    Python and does nothing for that environment, so the message has to say
+    where the tool *is* available instead of handing out a command that cannot
+    work. Verified by hand in both modes against a default install.
+    """
+    from tooluniverse import extras as extras_module
+
+    monkeypatch.delenv("TOOLUNIVERSE_SEALED_RUNTIME", raising=False)
+    plain = extras_module.install_hint("stats", "scipy")
+    assert "pip install 'tooluniverse[stats]'" in plain
+    assert "pip install scipy" in plain
+
+    monkeypatch.setenv("TOOLUNIVERSE_SEALED_RUNTIME", "1")
+    sealed = extras_module.install_hint("stats", "scipy")
+    assert "pip install" not in sealed, (
+        f"a sealed runtime cannot act on a pip command: {sealed}"
+    )
+    assert "stats" in sealed and "Desktop" in sealed
+
+
+def test_the_bundle_launcher_declares_the_sealed_runtime():
+    """Without this the messages above never switch, and the bundle is the one
+    place they matter."""
+    launcher = (MCPB_DIR / "src" / "run_stdio.py").read_text()
+    assert 'setdefault("TOOLUNIVERSE_SEALED_RUNTIME", "1")' in launcher, (
+        "mcpb/src/run_stdio.py must mark the sealed runtime, or a Desktop user "
+        "is told to run pip"
+    )

@@ -32,6 +32,7 @@ except ImportError:  # pragma: no cover - optional dependency
 import numpy as np
 
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 
 
@@ -48,8 +49,7 @@ class CoexpressionModuleTool(BaseTool):
         if not HAS_NETWORKX:
             return {
                 "status": "error",
-                "error": "networkx is required for this tool. Install with: "
-                "pip install 'tooluniverse[stats]' (or: pip install networkx)",
+                "error": f"networkx is required for this tool. {install_hint('stats', 'networkx')}",
             }
         args = arguments or {}
         parsed = self._parse_expression(args)

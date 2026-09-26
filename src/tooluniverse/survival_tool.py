@@ -11,6 +11,7 @@ References: Kaplan & Meier (1958), Mantel (1966), Cox (1972).
 import math
 from typing import Dict, Any, List
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 
 try:
@@ -372,7 +373,7 @@ class SurvivalTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for the log-rank test. Install with: pip install 'tooluniverse[stats]'",
+                "error": f"scipy is required for the log-rank test. {install_hint('stats', 'scipy')}",
             }
 
         for field in ("durations_a", "events_a", "durations_b", "events_b"):
@@ -533,7 +534,7 @@ class SurvivalTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for Cox regression. Install with: pip install 'tooluniverse[stats]'",
+                "error": f"scipy is required for Cox regression. {install_hint('stats', 'scipy')}",
             }
 
         durations = arguments.get("durations", [])

@@ -306,6 +306,13 @@ def _report_running_version():
 _refresh_tooluniverse()
 _report_running_version()
 
+# Tell the library it is running where pip cannot reach, so a tool that needs
+# an extra says so instead of printing an install command that would land in a
+# different Python. It only has to be set before tooluniverse is imported, which
+# happens below; keeping it out of the block the tests exec also stops it
+# leaking into the rest of the suite. See tooluniverse.extras.install_hint.
+os.environ.setdefault("TOOLUNIVERSE_SEALED_RUNTIME", "1")
+
 # Enable compact mode by default
 sys.argv = [
     sys.argv[0],

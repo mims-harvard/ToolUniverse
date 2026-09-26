@@ -9,6 +9,7 @@ try:
 except ImportError:  # pragma: no cover - optional dependency
     HAS_NETWORKX = False
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 from .logging_config import get_logger
 
@@ -42,8 +43,7 @@ class EnrichrTool(BaseTool):
         if not HAS_NETWORKX:
             return {
                 "status": "error",
-                "error": "networkx is required for this tool. Install with: "
-                "pip install 'tooluniverse[stats]' (or: pip install networkx)",
+                "error": f"networkx is required for this tool. {install_hint('stats', 'networkx')}",
             }
         genes = arguments.get("gene_list")
         # ``libs`` defaults to a broad set of pathway/ontology libraries. An

@@ -2,6 +2,7 @@ import requests
 import re
 from .base_tool import BaseTool
 from html import unescape
+from .extras import install_hint
 from .tool_registry import register_tool
 
 # Many sites (Wikipedia, Cloudflare-protected hosts, etc.) reject the default
@@ -283,9 +284,8 @@ class URLToPDFTextTool(BaseTool):
         if not HAS_PLAYWRIGHT:
             return {
                 "status": "error",
-                "error": "rendering this page needs a browser. Install with: "
-                "pip install 'tooluniverse[browser]' (or: pip install playwright), "
-                "then: playwright install chromium",
+                "error": f"rendering this page needs a browser. {install_hint('browser', 'playwright')} "
+                "Then run: playwright install chromium",
             }
 
         # Ensure browsers are installed (auto-install if needed)

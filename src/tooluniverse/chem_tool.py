@@ -13,6 +13,7 @@ from typing import Any, Dict, Optional
 
 # from rdkit import Chem
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 from .http_utils import request_with_retry
 
@@ -784,9 +785,9 @@ class ChEMBLTool(BaseTool):
         if not HAS_INDIGO:
             return {
                 "status": "error",
-                "error": "epam.indigo is required for structure similarity search. "
-                "Install with: pip install 'tooluniverse[chem]' (or: pip install "
-                "epam.indigo). The other ChEMBL tools do not need it.",
+                "error": f"epam.indigo is required for structure similarity search. "
+                f"{install_hint('chem', 'epam.indigo')} The other ChEMBL tools "
+                "do not need it.",
             }
         query = arguments.get("query")
         similarity_threshold = arguments.get("similarity_threshold", 80)

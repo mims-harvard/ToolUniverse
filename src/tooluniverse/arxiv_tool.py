@@ -5,6 +5,7 @@ import tempfile
 import time
 import xml.etree.ElementTree as ET
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 from .http_utils import request_with_retry
 
@@ -277,8 +278,8 @@ class ArXivPDFSnippetsTool(BaseTool):
             return {
                 "status": "error",
                 "error": (
-                    "markitdown is required to extract text from this PDF. "
-                    "Install with: pip install 'tooluniverse[documents]'"
+                    f"markitdown is required to extract text from this PDF. "
+                    f"{install_hint('documents')}"
                 ),
                 "retryable": False,
             }

@@ -17,6 +17,7 @@ try:
 except ImportError:  # pragma: no cover - optional dependency
     MARKITDOWN_AVAILABLE = False
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 
 
@@ -125,8 +126,8 @@ def _markitdown():
     """
     if not MARKITDOWN_AVAILABLE:
         raise RuntimeError(
-            "markitdown is required to extract this guideline. Install with: "
-            "pip install 'tooluniverse[documents]' (or: pip install markitdown)"
+            f"markitdown is required to extract this guideline. "
+            f"{install_hint('documents', 'markitdown')}"
         )
     return MarkItDown()
 

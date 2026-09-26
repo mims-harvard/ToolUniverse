@@ -69,35 +69,31 @@ requires-python = ">=3.10,<3.14"
 # would make the OpenAI and Gemini clients permanently unavailable in Desktop.
 # The old bundled dependency list carried both unconditionally for the same
 # reason; naming the extras here preserves that exactly.
-# scipy and networkx are named here for the same reason as the extras above.
-# They left the package's base dependencies (128 MB for 27 of the 2717
-# tools, and both were already declared in the graph/visualization extras), so
-# a plain `pip install tooluniverse` no longer carries them. In a sealed bundle
-# that would silently remove 23 scipy-backed tools and 4 networkx-backed ones
-# from Desktop at the next self-update, with no way for the user to add them
-# back. Naming them keeps Desktop at the coverage it has today. The `graph`
-# extra would also supply them, but it drags in pygraphviz, which has no wheels
-# and would fail the build's no-compiler check.
-# The browser, documents, chem and websearch extras are deliberately NOT named
+# The stats extra is named for the same reason as openai and gemini: scipy and
+# networkx left the package's base dependencies, and in a sealed bundle their
+# absence would silently take 15 tools off Desktop at the next self-update --
+# survival analysis, Cox regression, dose-response and synergy fitting,
+# enrichment, per-gene ANOVA, co-expression, network proximity -- with no way
+# for a user to add them back. 128 MB for those 15.
+# chem is named too: 23 MB buys back ChEMBL_search_similar_molecules, which a
+# Desktop user cannot obtain any other way, and it is the cheapest of the four.
+#
+# browser, documents and websearch are deliberately NOT named
 # here, unlike openai and gemini. They are 275 MB of the install for a handful
 # of tools, and what a Desktop user actually loses was measured rather than
 # assumed, in a lean environment:
 #   get_webpage_text_from_url / get_webpage_title  gone (playwright, 141 MB);
 #       Claude Desktop can already fetch a URL itself.
-#   ChEMBL_search_similar_molecules  gone (epam.indigo, 23 MB). The other 28
-#       ChEMBL tools are ChEMBLRESTTool and never touch it -- verified,
-#       ChEMBL_get_molecule returns success without it installed.
 #   *_get_pdf_snippets / CORE_get_fulltext_snippets  report that markitdown is
 #       needed (91 MB). ArXiv_search_papers, CORE_search_papers and
 #       SemanticScholar_search_papers keep working; only extraction stops.
 #   web_search  keeps working -- DDGS is one backend of several, and `auto`
 #       returned results with ddgs absent.
-# That is about six tools of 2717, against 325 MB off the first launch. Adding
-# any of them back is one entry in this list.
+# That is five tools of 2717, against 288 MB off the first launch (775 -> 487,
+# measured). Adding documents costs 121 MB more and puts onnxruntime back, which
+# is what holds requires-python at <3.14. Each is one name in the list above.
 dependencies = [
-    "tooluniverse[openai,gemini]>=1.5.3,<2",
-    "scipy>=1.7.0",
-    "networkx>=3.4.0",
+    "tooluniverse[openai,gemini,stats,chem]>=1.5.3,<2",
 ]
 
 [tool.uv]

@@ -20,6 +20,7 @@ import math
 from typing import Dict, Any
 
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 
 try:
@@ -764,7 +765,7 @@ class NCATool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for model fitting. Install with: pip install 'tooluniverse[stats]'",
+                "error": f"scipy is required for model fitting. {install_hint('stats', 'scipy')}",
             }
 
         times = arguments.get("times", [])

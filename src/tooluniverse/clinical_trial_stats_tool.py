@@ -24,6 +24,7 @@ except ImportError:  # pragma: no cover - optional dependency
     HAS_SCIPY = False
 
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 
 
@@ -162,8 +163,7 @@ class ClinicalTrialAESeverityTestTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for this tool. Install with: "
-                "pip install 'tooluniverse[stats]' (or: pip install scipy)",
+                "error": f"scipy is required for this tool. {install_hint('stats', 'scipy')}",
             }
         dm_file = arguments.get("dm_file", "")
         ae_file = arguments.get("ae_file", "")

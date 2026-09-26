@@ -22,6 +22,7 @@ except ImportError:  # pragma: no cover - optional dependency
     HAS_SCIPY = False
 
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 
 
@@ -152,8 +153,7 @@ class ExpressionANOVAPerGeneTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for this tool. Install with: "
-                "pip install 'tooluniverse[stats]' (or: pip install scipy)",
+                "error": f"scipy is required for this tool. {install_hint('stats', 'scipy')}",
             }
         counts_file = arguments.get("counts_file", "")
         meta_file = arguments.get("meta_file", "")
