@@ -1,7 +1,7 @@
 """
 FDA_get_pediatric_use_info_by_drug_name
 
-Retrieve pediatric use information based on drug names.
+Retrieve the FDA label's pediatric_use section by drug name. Use this section for statements abou...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def FDA_get_pediatric_use_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve pediatric use information based on drug names.
+    Retrieve the FDA label's pediatric_use section by drug name. Use this section for statements abou...
 
     Parameters
     ----------

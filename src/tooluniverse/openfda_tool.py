@@ -239,7 +239,7 @@ def extract_nested_fields(
     :param records: List of dictionaries from which to extract fields
     :param fields: List of nested fields to extract, each specified with dot notation (e.g., 'openfda.brand_name')
     :param keywords: Optional keyword list used to trim long sections down to
-        matching sentences.
+        matching sentences. ``*_table`` fields are never trimmed.
     :param identity_fields: Optional extra fields copied verbatim (never keyword
         trimmed) onto every kept record. They exist so a caller can identify the
         product when the ``openfda`` block is empty. They deliberately do NOT
@@ -267,11 +267,28 @@ def extract_nested_fields(
             try:
                 for key in keys:
                     value = value[key]
-                if key not in NEVER_KEYWORD_TRIMMED and keywords:
+                if (
+                    key not in NEVER_KEYWORD_TRIMMED
+                    and not field.endswith("_table")
+                    and keywords
+                ):
                     value = extract_sentences_with_keywords(value, keywords)
                 extracted_record[field] = value
             except KeyError:
                 extracted_record[field] = None
+        # openFDA files a section's tables separately, under `<section>_table`
+        # (dose by renal function, adverse-reaction incidence, ...). Asking for a
+        # section returned its prose, which often just says "see Table 1", and
+        # dropped the table. Copy the tables of the requested sections from this
+        # same record, HTML intact and never keyword-trimmed: sentence trimming
+        # would cut a table's rows apart from its header.
+        if isinstance(record, dict):
+            for field in fields:
+                if "." in field or field.endswith("_table"):
+                    continue
+                table_field = field + "_table"
+                if record.get(table_field):
+                    extracted_record[table_field] = copy.deepcopy(record[table_field])
         keep = any(extracted_record.values())
         for field in identity_fields or []:
             if field in extracted_record:
@@ -1529,6 +1546,7 @@ def search_openfda(
             # advice would send the reader to fix something that is not broken.
             section_hits = 0
             sections_present = []
+            probe = None
             if section and section_exists_clause:
                 probe = _run_search(
                     params["search"].replace(section_exists_clause, ""),
@@ -1548,6 +1566,12 @@ def search_openfda(
                             # this message exists to correct.
                             if row.get(key) and key not in sections_present:
                                 sections_present.append(key)
+
+            # Hand over the corresponding sections the probe already fetched,
+            # rather than an empty result a caller rarely recovers from.
+            redirected = _redirect_to_neighbour_sections(section, probe, params)
+            if redirected:
+                return redirected
 
             suggestion = _build_not_found_suggestion(
                 query_text=query_text,
@@ -1618,6 +1642,15 @@ def search_openfda(
     # Extract results and return only the specified return fields
     results = response_data.get("results", [])
     if return_fields == "ALL":
+        # Whole labels skip the projection below, and with it the cut back to
+        # the caller's limit, so a fallback's larger candidate page (at least
+        # 25) came back in full while `meta.limit` above said otherwise.
+        try:
+            caller_limit = int(params.get("limit") or 0)
+        except (TypeError, ValueError):
+            caller_limit = 0
+        if caller_limit > 0:
+            results = results[:caller_limit]
         return _attach_notes(
             {
                 "meta": meta_info,
@@ -1874,6 +1907,214 @@ def _build_request_error_suggestion(err):
         "label section requested. Retry; if it persists, check "
         "https://open.fda.gov/ for service status."
     )
+
+
+# For each section a tool reads, the sections that hold the same kind of content
+# on the OTHER label format, most relevant first. openFDA files content by label
+# format (PLR versus legacy/OTC), not by drug, so a tool that reads one section
+# finds nothing on a label written in the other format: `teratogenic_effects`
+# and `risks` are legacy/OTC fields, while a PLR label keeps that content in
+# `pregnancy`, `use_in_specific_populations` and `warnings_and_cautions`.
+# Ordered by relevance on purpose -- an alphabetical cut would put `abuse` and
+# `animal_pharmacology_and_or_toxicology` ahead of `warnings_and_cautions`.
+NEIGHBOUR_SECTIONS = {
+    "risks": [
+        "warnings_and_cautions",
+        "warnings",
+        "boxed_warning",
+        "use_in_specific_populations",
+        "pregnancy",
+        "nursing_mothers",
+    ],
+    "summary_of_safety_and_effectiveness": [
+        "warnings_and_cautions",
+        "warnings",
+        "boxed_warning",
+        "adverse_reactions",
+        "indications_and_usage",
+    ],
+    "when_using": [
+        "warnings_and_cautions",
+        "warnings",
+        "precautions",
+        "do_not_use",
+        "adverse_reactions",
+    ],
+    "instructions_for_use": [
+        "dosage_and_administration",
+        "information_for_patients",
+        "how_supplied",
+        "dosage_forms_and_strengths",
+    ],
+    "ask_doctor": [
+        "warnings_and_cautions",
+        "precautions",
+        "contraindications",
+        "drug_interactions",
+        "warnings",
+    ],
+    "ask_doctor_or_pharmacist": [
+        "drug_interactions",
+        "warnings_and_cautions",
+        "precautions",
+        "warnings",
+    ],
+    "teratogenic_effects": [
+        "pregnancy",
+        "use_in_specific_populations",
+        "pregnancy_or_breast_feeding",
+        "warnings_and_cautions",
+    ],
+    "nonteratogenic_effects": [
+        "pregnancy",
+        "use_in_specific_populations",
+        "pregnancy_or_breast_feeding",
+    ],
+    "pregnancy_or_breast_feeding": [
+        "pregnancy",
+        "nursing_mothers",
+        "use_in_specific_populations",
+        "teratogenic_effects",
+    ],
+    "pregnancy": [
+        "use_in_specific_populations",
+        "pregnancy_or_breast_feeding",
+        "teratogenic_effects",
+        "nursing_mothers",
+    ],
+    "nursing_mothers": [
+        "use_in_specific_populations",
+        "pregnancy_or_breast_feeding",
+        "pregnancy",
+    ],
+    "pediatric_use": [
+        "use_in_specific_populations",
+        "dosage_and_administration",
+        "warnings_and_cautions",
+        "keep_out_of_reach_of_children",
+    ],
+    "geriatric_use": [
+        "use_in_specific_populations",
+        "dosage_and_administration",
+        "clinical_pharmacology",
+    ],
+    "use_in_specific_populations": [
+        "pregnancy",
+        "nursing_mothers",
+        "pediatric_use",
+        "geriatric_use",
+        "pregnancy_or_breast_feeding",
+    ],
+    "pharmacokinetics": [
+        "clinical_pharmacology",
+        "drug_interactions",
+        "use_in_specific_populations",
+    ],
+    "stop_use": [
+        "warnings_and_cautions",
+        "warnings",
+        "adverse_reactions",
+        "precautions",
+    ],
+    "laboratory_tests": [
+        "warnings_and_cautions",
+        "precautions",
+        "clinical_pharmacology",
+        "drug_and_or_laboratory_test_interactions",
+    ],
+    "drug_and_or_laboratory_test_interactions": [
+        "drug_interactions",
+        "precautions",
+        "laboratory_tests",
+        "clinical_pharmacology",
+    ],
+    "spl_medguide": [
+        "information_for_patients",
+        "dosage_and_administration",
+        "warnings_and_cautions",
+    ],
+    "patient_medication_information": [
+        "information_for_patients",
+        "spl_medguide",
+        "dosage_and_administration",
+    ],
+    "dosage_forms_and_strengths": [
+        "how_supplied",
+        "dosage_and_administration",
+        "description",
+    ],
+    "purpose": ["indications_and_usage"],
+    "references": ["clinical_studies"],
+}
+
+
+def _redirect_to_neighbour_sections(section, probe, params):
+    """Return the same label's corresponding sections instead of an empty result.
+
+    `probe` is the query the NOT_FOUND branch already ran with the
+    `_exists_:<section>` guard removed, so it holds the drug's full label records
+    and this costs no extra request. Only sections that are present and
+    non-empty on those records are returned, under their own names; nothing is
+    relabelled as the requested section. Returns None to fall back to the
+    existing NOT_FOUND response whenever there is nothing to hand over, and
+    never raises -- it may only add content, never break a call.
+    """
+    try:
+        neighbours = NEIGHBOUR_SECTIONS.get(section)
+        if not neighbours or not isinstance(probe, dict) or probe.get("error"):
+            return None
+        rows = probe.get("results")
+        if not isinstance(rows, list):
+            return None
+        try:
+            limit = int(params.get("limit") or 0)
+        except (TypeError, ValueError):
+            limit = 0
+        records, returned = [], []
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            content = {key: row[key] for key in neighbours if row.get(key)}
+            if not content:
+                continue
+            for key in neighbours:
+                if key in content and key not in returned:
+                    returned.append(key)
+            openfda = row.get("openfda") if isinstance(row.get("openfda"), dict) else {}
+            content["openfda.brand_name"] = openfda.get("brand_name")
+            content["openfda.generic_name"] = openfda.get("generic_name")
+            content["openfda.route"] = openfda.get("route")
+            records.append(content)
+        if not records:
+            return None
+        if limit > 0:
+            records = records[:limit]
+        return {
+            "status": "redirected",
+            "requested_section": section,
+            "returned_sections": returned,
+            "meta": {
+                "skip": params.get("skip", 0) or 0,
+                "limit": params.get("limit", 0) or 0,
+                "total": len(records),
+            },
+            "results": records,
+            "result_count": len(records),
+            "duplicates_removed": 0,
+            "note": (
+                f"This drug's label has no '{section}' section. openFDA files this kind "
+                f"of content under different section names depending on the label's "
+                f"FORMAT (PLR versus legacy/OTC), not the drug, so the empty result was "
+                f"not evidence that the information is missing. Returned instead: the "
+                f"sections of the same label that hold that kind of content -- "
+                f"{', '.join(returned)}. These are NOT the '{section}' section; they are "
+                f"the label's own text under their own names. Check the brand, generic "
+                f"name and route on each record before relying on it, and judge whether "
+                f"it answers the question."
+            ),
+        }
+    except Exception:
+        return None
 
 
 def _build_not_found_suggestion(
@@ -2156,6 +2397,161 @@ class FDATool(BaseTool):
         )
 
 
+# Dosage-form and formulation words callers often attach to a drug name
+# ("verapamil SR", "cyanocobalamin nasal spray", "dalfampridine extended-release").
+# openFDA matches on product names, so such a name can miss every label. Longest
+# first, so "nasal spray" is removed before "spray" would strand "nasal". These
+# are generic words, never drug names: no brand-to-generic mapping is added.
+_NAME_FORM_WORDS = sorted(
+    {
+        "extended-release",
+        "extended release",
+        "delayed-release",
+        "delayed release",
+        "orally disintegrating",
+        "ophthalmic solution",
+        "ophthalmic suspension",
+        "oral solution",
+        "oral suspension",
+        "nasal spray",
+        "vaginal cream",
+        "rectal foam",
+        "topical cream",
+        "eye drops",
+        "ear drops",
+        "for injection",
+        "injection",
+        "infusion",
+        "tablets",
+        "tablet",
+        "capsules",
+        "capsule",
+        "cream",
+        "ointment",
+        "gel",
+        "foam",
+        "patch",
+        "spray",
+        "drops",
+        "solution",
+        "suspension",
+        "lotion",
+        "powder",
+        "syrup",
+        "elixir",
+        "inhaler",
+        "inhalation",
+        "film",
+        "nasal",
+        "vaginal",
+        "rectal",
+        "ophthalmic",
+        "topical",
+        "oral",
+        "transdermal",
+    },
+    key=len,
+    reverse=True,
+)
+_NAME_FORM_ABBREVIATIONS = ("sr", "er", "xr", "xl", "cr", "dr", "la", "odt", "ir")
+
+
+def _strip_form_words(text):
+    previous = None
+    while text != previous:
+        previous = text
+        text = re.sub(
+            r"\s+\d+(?:\.\d+)?\s*(?:mg|mcg|g|ml|%|units?|iu)(?:/\S+)?\s*$",
+            "",
+            text,
+            flags=re.I,
+        )
+        for word in _NAME_FORM_WORDS:
+            text = re.sub(r"[\s-]+" + re.escape(word) + r"$", "", text, flags=re.I)
+        text = re.sub(
+            r"\s+(?:" + "|".join(_NAME_FORM_ABBREVIATIONS) + r")\.?$",
+            "",
+            text,
+            flags=re.I,
+        )
+        text = text.strip(" ,-")
+    return text
+
+
+def _drug_name_candidates(name):
+    """Shorter names to retry after a NOT_FOUND, most specific first.
+
+    "BETHKIS (tobramycin)" -> ["BETHKIS", "tobramycin"]; "verapamil SR" ->
+    ["verapamil"]. A name that yields nothing shorter returns an empty list, so
+    a supplement or a drug class is never turned into a guessed product.
+    """
+    original = re.sub(r"\s+", " ", name).strip()
+    bases = [original]
+    bracket = re.match(r"^(.*?)\s*\(([^()]+)\)\s*$", original)
+    if bracket:
+        bases = [bracket.group(1), bracket.group(2)]
+    out = []
+    for base in bases:
+        for candidate in (_strip_form_words(base), base.strip(" ,-")):
+            if (
+                len(candidate) >= 3
+                and candidate.lower() != original.lower()
+                and candidate.lower() not in [c.lower() for c in out]
+            ):
+                out.append(candidate)
+    return out
+
+
+def _is_not_found(result):
+    if isinstance(result, str):
+        try:
+            result = json.loads(result)
+        except Exception:
+            return False
+    return (
+        isinstance(result, dict)
+        and isinstance(result.get("error"), dict)
+        and result["error"].get("code") == "NOT_FOUND"
+    )
+
+
+def _retry_with_normalised_names(result, arguments, run, max_retries=3):
+    """After a NOT_FOUND, retry the same call with a shorter drug name.
+
+    Only a NOT_FOUND is retried; any other outcome, including an error, is
+    returned untouched. The first retry that finds a label wins, and says
+    which name was searched, because a shorter name can match other forms of
+    the same drug. Never raises: it may only add a result, never lose one.
+    """
+    try:
+        if not _is_not_found(result):
+            return result
+        name = arguments.get("drug_name")
+        if not isinstance(name, str) or not name.strip():
+            return result
+        for candidate in _drug_name_candidates(name)[:max_retries]:
+            retry = run(dict(arguments, drug_name=candidate))
+            if not isinstance(retry, dict) or _is_not_found(retry):
+                continue
+            if retry.get("error") and not retry.get("results"):
+                continue
+            retry = dict(retry)
+            retry["name_normalised_from"] = name
+            retry["name_searched_as"] = candidate
+            note = (
+                f"No label matched the name '{name}'. Matched after shortening it "
+                f"(dropping a bracketed second name or dosage-form and strength "
+                f"words): searched as '{candidate}'. The results can therefore "
+                f"include other forms or formulations of the same drug -- check the "
+                f"route and dosage form on each record before relying on it."
+            )
+            retry["note"] = (retry["note"] + " " + note) if retry.get("note") else note
+            return retry
+        return result
+    except Exception:
+        return result
+
+
 @register_tool("FDADrugLabel")
 class FDADrugLabelTool(FDATool):
     def __init__(self, tool_config, api_key=None):
@@ -2247,9 +2643,16 @@ class FDADrugLabelTool(FDATool):
                 # Not a ChEMBL ID, use original value (strip whitespace)
                 arguments["drug_name"] = drug_name
 
-        # Call parent run method; without a caller limit, show the first labels
-        # and an inventory of the rest.
-        return _default_label_window(super().run(arguments), arguments)
+        # Call parent run method. A NOT_FOUND caused only by dosage-form words or
+        # a bracketed second name is retried with the shorter name (#660), and
+        # the window is applied to whatever that finally returns -- so a caller
+        # who gave no limit gets the first labels plus an inventory of the rest
+        # whether the match came from their spelling or from the retry.
+        run_parent = super().run
+        result = _retry_with_normalised_names(
+            run_parent(arguments), arguments, run_parent
+        )
+        return _default_label_window(result, arguments)
 
 
 @register_tool("FDADrugLabelSearchTool")
