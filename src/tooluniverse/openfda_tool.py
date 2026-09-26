@@ -1618,6 +1618,15 @@ def search_openfda(
     # Extract results and return only the specified return fields
     results = response_data.get("results", [])
     if return_fields == "ALL":
+        # Whole labels skip the projection below, and with it the cut back to
+        # the caller's limit, so a fallback's larger candidate page (at least
+        # 25) came back in full while `meta.limit` above said otherwise.
+        try:
+            caller_limit = int(params.get("limit") or 0)
+        except (TypeError, ValueError):
+            caller_limit = 0
+        if caller_limit > 0:
+            results = results[:caller_limit]
         return _attach_notes(
             {
                 "meta": meta_info,
