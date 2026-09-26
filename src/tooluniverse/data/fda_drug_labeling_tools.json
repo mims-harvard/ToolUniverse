@@ -10213,7 +10213,7 @@
   },
   {
     "name": "FDA_get_child_safety_info_by_drug_name",
-    "description": "Retrieve child safety information for a specific drug based on its name.",
+    "description": "Retrieve the FDA label's keep_out_of_reach_of_children section by drug name. This section contains child-access and accidental-ingestion warnings; it does not provide a general assessment of pediatric use. For pediatric-use labeling, use FDA_get_pediatric_use_info_by_drug_name. A missing section does not establish safety or lack of risk.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13408,7 +13408,7 @@
   },
   {
     "name": "FDA_get_pediatric_use_info_by_drug_name",
-    "description": "Retrieve pediatric use information based on drug names.",
+    "description": "Retrieve the FDA label's pediatric_use section by drug name. Use this section for statements about use in pediatric populations, including age-specific evidence or limitations when present. It is distinct from keep_out_of_reach_of_children access warnings. A missing section does not establish safety or lack of risk; relevant information may appear in other label sections.",
     "parameter": {
       "type": "object",
       "properties": {
