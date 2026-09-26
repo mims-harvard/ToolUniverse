@@ -200,7 +200,7 @@ Detailed guide for every API key used by ToolUniverse. Use this when walking use
 
 These keys power ToolUniverse's **agentic features** -- tools that use LLMs to synthesize results, plan multi-step analyses, and generate reports. At least one LLM provider key is needed for these features.
 
-The system checks providers in this order: **Azure OpenAI -> OpenRouter -> Gemini**. Configure whichever you prefer.
+The system checks providers in this order: **Azure OpenAI -> OpenRouter -> Gemini**. OrcaRouter is also supported as an alternative LLM provider. Configure whichever you prefer.
 
 ### GEMINI_API_KEY
 
@@ -227,6 +227,18 @@ The system checks providers in this order: **Azure OpenAI -> OpenRouter -> Gemin
   4. Click "Create Key"
   5. Add credits to your account for usage
 - **Env variable**: `OPENROUTER_API_KEY`
+
+### ORCAROUTER_API_KEY
+
+- **Service**: OrcaRouter
+- **Required**: No (alternative LLM provider)
+- **What it does**: Routes chat completions through the OrcaRouter gateway with smart routing (`orcarouter/auto`). It also runs gateway-level, zero-trust security for AI agents on the same endpoint.
+- **How to get it**:
+  1. Go to https://www.orcarouter.ai
+  2. Sign up or log in
+  3. Go to the API Keys section
+  4. Create a new API key
+- **Env variable**: `ORCAROUTER_API_KEY`
 
 ### OPENAI_API_KEY
 
@@ -295,5 +307,5 @@ The system checks providers in this order: **Azure OpenAI -> OpenRouter -> Gemin
 | **Drug safety** | `FDA_API_KEY`, `UMLS_API_KEY` |
 | **Patents** | `USPTO_API_KEY` |
 | **Electronic components/IC design** | `MOUSER_API_KEY`, `DIGIKEY_CLIENT_ID` + `DIGIKEY_CLIENT_SECRET` |
-| **AI-powered analysis** | Any one of: `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENAI_API_KEY` |
+| **AI-powered analysis** | Any one of: `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `OPENAI_API_KEY`, `ORCAROUTER_API_KEY` |
 | **Full setup (all features)** | All Tier 1 + relevant Tier 2 + one Tier 3 key |
