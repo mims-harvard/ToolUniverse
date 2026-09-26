@@ -1699,6 +1699,13 @@ def search_openfda(
         and "spl_product_data_elements" not in required_fields
     ):
         identity_fields.append("spl_product_data_elements")
+    # The route travels with every label as identity, so a caller can tell an
+    # oral label from an injectable one, and the default label window can say
+    # which routes the labels it left out cover.
+    if any(
+        x in {"openfda.brand_name", "openfda.generic_name"} for x in required_fields
+    ):
+        identity_fields.append("openfda.route")
     # PLR-vs-legacy sibling annotation. Only armed when the tool actually asks
     # for one of the interchangeable safety sections, so no other FDADrugLabel
     # tool changes shape.
@@ -2274,6 +2281,82 @@ def _build_section_note(sibling_map, extracted_results):
     )
 
 
+# Without a caller limit a label tool fetches up to 100 labels, most of them the
+# same drug from other manufacturers; for ibuprofen that is 100 labels and over
+# half a million characters from one call. The caller now sees the first
+# DEFAULT_LABEL_WINDOW labels (openFDA's order, as before) and an inventory of
+# every label that matched, so another route or formulation is one call away.
+DEFAULT_LABEL_WINDOW = 8
+
+
+def _label_route(row):
+    route = row.get("openfda.route")
+    if isinstance(route, list) and route:
+        return "/".join(str(r) for r in route)
+    return "not stated"
+
+
+def _label_names(row):
+    parts = []
+    for key in ("openfda.generic_name", "openfda.brand_name"):
+        value = row.get(key)
+        parts.append(
+            " ".join(str(v) for v in value)
+            if isinstance(value, list)
+            else str(value or "")
+        )
+    return " ".join(parts).lower()
+
+
+def _default_label_window(result, arguments, window=DEFAULT_LABEL_WINDOW):
+    """Show the first ``window`` labels when the caller gave no limit, and say what else matched.
+
+    Never raises and never adds a label: it can only shorten the list, and the
+    inventory it attaches counts every label that matched.
+    """
+    try:
+        if not isinstance(arguments, dict) or arguments.get("limit") is not None:
+            return result
+        if not isinstance(result, dict) or not isinstance(result.get("results"), list):
+            return result
+        rows = result["results"]
+        if len(rows) <= window:
+            return result
+        labels = [r for r in rows if isinstance(r, dict)]
+        routes = {}
+        for r in labels:
+            routes[_label_route(r)] = routes.get(_label_route(r), 0) + 1
+        routes = dict(sorted(routes.items(), key=lambda kv: (-kv[1], kv[0])))
+        combination = sum(
+            " and " in _label_names(r) or "/" in _label_names(r) for r in labels
+        )
+        no_identity = sum(not _label_names(r).strip() for r in labels)
+        out = dict(result)
+        out["results"] = rows[:window]
+        out["result_count"] = window
+        out["label_inventory"] = {
+            "labels_matched": len(rows),
+            "labels_shown": window,
+            "routes_of_all_matched_labels": routes,
+            "routes_of_shown_labels": sorted(
+                {_label_route(r) for r in rows[:window] if isinstance(r, dict)}
+            ),
+            "combination_products_matched": combination,
+            "labels_without_product_identity": no_identity,
+        }
+        out["label_window_note"] = (
+            f"Showing the first {window} of {len(rows)} labels that matched; most matched labels are the "
+            "same drug from other manufacturers. Routes among all matched labels: "
+            + ", ".join(f"{k} {v}" for k, v in routes.items())
+            + f". {combination} are combination products and {no_identity} carry no product identity. "
+            "To see other labels, for example another route or formulation, call again with limit "
+            "(up to 100) and skip."
+        )
+        return out
+    except Exception:
+        return result
+
+
 @register_tool("FDATool")
 class FDATool(BaseTool):
     def __init__(self, tool_config, endpoint_url, api_key=None):
@@ -2560,12 +2643,16 @@ class FDADrugLabelTool(FDATool):
                 # Not a ChEMBL ID, use original value (strip whitespace)
                 arguments["drug_name"] = drug_name
 
-        # Call parent run method; a NOT_FOUND caused only by dosage-form words or
-        # a bracketed second name is retried with the shorter name.
+        # Call parent run method. A NOT_FOUND caused only by dosage-form words or
+        # a bracketed second name is retried with the shorter name (#660), and
+        # the window is applied to whatever that finally returns -- so a caller
+        # who gave no limit gets the first labels plus an inventory of the rest
+        # whether the match came from their spelling or from the retry.
         run_parent = super().run
-        return _retry_with_normalised_names(
+        result = _retry_with_normalised_names(
             run_parent(arguments), arguments, run_parent
         )
+        return _default_label_window(result, arguments)
 
 
 @register_tool("FDADrugLabelSearchTool")
