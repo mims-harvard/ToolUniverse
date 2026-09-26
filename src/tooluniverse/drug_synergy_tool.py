@@ -635,7 +635,7 @@ class DrugSynergyTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for Loewe calculations. Install with: pip install scipy",
+                "error": "scipy is required for Loewe calculations. Install with: pip install 'tooluniverse[stats]'",
             }
 
         doses_a_single = arguments.get("doses_a_single", [])
@@ -888,7 +888,7 @@ class DrugSynergyTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for CI calculations. Install with: pip install scipy",
+                "error": "scipy is required for CI calculations. Install with: pip install 'tooluniverse[stats]'",
             }
 
         doses_a_single = arguments.get("doses_a_single", [])

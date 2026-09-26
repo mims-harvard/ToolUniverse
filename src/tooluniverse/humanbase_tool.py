@@ -75,7 +75,7 @@ class HumanBaseTool(BaseTool):
             return {
                 "status": "error",
                 "error": "networkx is required for this tool. Install with: "
-                "pip install 'tooluniverse[visualization]' (or: pip install networkx)",
+                "pip install 'tooluniverse[stats]' (or: pip install networkx)",
             }
         self._resolutions = {}
         self._unresolved = []

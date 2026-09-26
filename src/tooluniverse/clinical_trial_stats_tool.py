@@ -163,7 +163,7 @@ class ClinicalTrialAESeverityTestTool(BaseTool):
             return {
                 "status": "error",
                 "error": "scipy is required for this tool. Install with: "
-                "pip install 'tooluniverse[visualization]' (or: pip install scipy)",
+                "pip install 'tooluniverse[stats]' (or: pip install scipy)",
             }
         dm_file = arguments.get("dm_file", "")
         ae_file = arguments.get("ae_file", "")

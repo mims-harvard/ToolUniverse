@@ -370,7 +370,10 @@ class SurvivalTool(BaseTool):
         durations_b, events_b: Group B survival data
         """
         if not HAS_SCIPY:
-            return {"status": "error", "error": "scipy is required for log-rank test"}
+            return {
+                "status": "error",
+                "error": "scipy is required for the log-rank test. Install with: pip install 'tooluniverse[stats]'",
+            }
 
         for field in ("durations_a", "events_a", "durations_b", "events_b"):
             if not arguments.get(field):
@@ -528,7 +531,10 @@ class SurvivalTool(BaseTool):
         covariates: dict of {covariate_name: [values]}
         """
         if not HAS_SCIPY:
-            return {"status": "error", "error": "scipy is required for Cox regression"}
+            return {
+                "status": "error",
+                "error": "scipy is required for Cox regression. Install with: pip install 'tooluniverse[stats]'",
+            }
 
         durations = arguments.get("durations", [])
         event_observed = arguments.get("event_observed", [])

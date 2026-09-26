@@ -405,7 +405,7 @@ class MetaboAnalystTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for enrichment analysis. Install: pip install scipy",
+                "error": "scipy is required for enrichment analysis. Install with: pip install 'tooluniverse[stats]'",
             }
 
         metabolites = arguments.get("metabolites", [])
@@ -635,7 +635,7 @@ class MetaboAnalystTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for enrichment analysis. Install: pip install scipy",
+                "error": "scipy is required for enrichment analysis. Install with: pip install 'tooluniverse[stats]'",
             }
 
         metabolites = arguments.get("metabolites", [])

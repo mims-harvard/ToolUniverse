@@ -49,7 +49,7 @@ class DoseResponseTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy and numpy are required. Install with: pip install scipy numpy",
+                "error": "scipy is required. Install with: pip install 'tooluniverse[stats]'",
             }
 
         operation = arguments.get("operation")

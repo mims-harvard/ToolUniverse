@@ -153,7 +153,7 @@ class ExpressionANOVAPerGeneTool(BaseTool):
             return {
                 "status": "error",
                 "error": "scipy is required for this tool. Install with: "
-                "pip install 'tooluniverse[visualization]' (or: pip install scipy)",
+                "pip install 'tooluniverse[stats]' (or: pip install scipy)",
             }
         counts_file = arguments.get("counts_file", "")
         meta_file = arguments.get("meta_file", "")

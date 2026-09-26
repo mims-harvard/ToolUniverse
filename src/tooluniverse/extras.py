@@ -66,6 +66,10 @@ EXTRA_PACKAGES: dict[str, dict[str, str]] = {
     "websearch": {
         "ddgs": "ddgs",
     },
+    "stats": {
+        "scipy": "scipy",
+        "networkx": "networkx",
+    },
     "graph": {
         "flask": "flask",
         "matplotlib": "matplotlib",

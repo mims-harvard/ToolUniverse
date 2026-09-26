@@ -191,7 +191,7 @@ class NetworkProximityTool(BaseTool):
         except Exception:  # pragma: no cover - optional dependency
             return _err(
                 "networkx is required for this tool. Install with: "
-                "pip install 'tooluniverse[visualization]' (or: pip install networkx)"
+                "pip install 'tooluniverse[stats]' (or: pip install networkx)"
             )
 
         measure = arguments.get("measure") or "closest"

@@ -282,8 +282,18 @@ websearch = [
     "ddgs>=9.0.0",
 ]
 
+stats = [
+    # What the statistical and network-analysis tools import: log-rank and Cox
+    # regression, dose-response and synergy fitting, enrichment, per-gene ANOVA,
+    # co-expression modules, network proximity. scipy and networkx are also
+    # listed in graph/visualization, which are about drawing things; a tool that
+    # needs a chi-square test should not have to install a plotting stack.
+    "scipy>=1.7.0",
+    "networkx>=3.4.0",
+]
+
 all = [
-    "tooluniverse[dev,docs,graph,visualization,space,embedding,ml,bioinformatics,openai,gemini,browser,documents,chem,websearch]",
+    "tooluniverse[dev,docs,graph,visualization,space,embedding,ml,bioinformatics,openai,gemini,browser,documents,chem,websearch,stats]",
 ]
 build = [
     "pyinstaller>=6.0.0",

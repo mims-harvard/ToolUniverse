@@ -764,7 +764,7 @@ class NCATool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy is required for model fitting. Install with: pip install scipy",
+                "error": "scipy is required for model fitting. Install with: pip install 'tooluniverse[stats]'",
             }
 
         times = arguments.get("times", [])

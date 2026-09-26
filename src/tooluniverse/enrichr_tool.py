@@ -43,7 +43,7 @@ class EnrichrTool(BaseTool):
             return {
                 "status": "error",
                 "error": "networkx is required for this tool. Install with: "
-                "pip install 'tooluniverse[visualization]' (or: pip install networkx)",
+                "pip install 'tooluniverse[stats]' (or: pip install networkx)",
             }
         genes = arguments.get("gene_list")
         # ``libs`` defaults to a broad set of pathway/ontology libraries. An
