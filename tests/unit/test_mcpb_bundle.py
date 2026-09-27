@@ -123,10 +123,14 @@ def test_mcpb_launch_path_does_not_depend_on_host_substitution(tmp_path):
     assert args[args.index("--directory") + 1] == "${__dirname}"
 
     script = args[-1]
-    assert script == "src/run_stdio.py", (
+    assert script == "src/bootstrap.py", (
         "name the entry point relative to --directory so the launch does not "
         f"rely on the host expanding path variables (got {script!r})"
     )
+    # The bootstrap hands off to the server the same way.
+    bootstrap = (MCPB_DIR / "src" / "bootstrap.py").read_text()
+    assert 'os.path.join("src", "run_stdio.py")' in bootstrap
+    assert "${/}" not in bootstrap
     assert "${/}" not in " ".join(args), (
         "no launch argument may depend on ${/} expansion"
     )
@@ -551,7 +555,16 @@ def test_startup_never_depends_on_reaching_an_index():
     """
     args = json.loads(MANIFEST.read_text())["server"]["mcp_config"]["args"]
 
-    assert "--frozen" in args, "startup must install from the lock, not re-resolve"
+    # The manifest's own hop must not sync at all -- it runs the repair before
+    # uv touches the environment -- and the hop it execs is the frozen one.
+    assert "--no-project" in args, (
+        "the first hop must not build an environment; it exists to repair a "
+        "lock left ahead of one"
+    )
+    bootstrap = (MCPB_DIR / "src" / "bootstrap.py").read_text()
+    assert '"--frozen"' in bootstrap, (
+        "startup must install from the lock, not re-resolve"
+    )
     assert "--upgrade-package" not in args, (
         "the refresh belongs in the launcher, where it is bounded and optional"
     )
@@ -620,3 +633,62 @@ def test_a_refused_update_is_reported_not_swallowed():
         "Desktop shows the manifest version, which stops matching the library "
         "as soon as the first update lands"
     )
+
+
+def test_bootstrap_restores_a_lock_left_ahead_of_the_environment(tmp_path):
+    """The one failure src/run_stdio.py cannot repair, repaired before uv runs.
+
+    `uv sync` writes uv.lock before it installs, so a process killed in that
+    gap leaves the lock naming a release the environment does not have. The
+    next launch is --frozen and has to reach it; offline with a cold cache uv
+    refuses and the extension never starts. run_stdio.py cannot fix that,
+    because uv brings the environment up to the lock before running it.
+
+    Measured on the real bundle -- watching the lock's mtime and killing the
+    process group 0.2 s after it moved -- both SIGTERM and SIGKILL produce
+    lock=1.5.3 with 1.4.1 installed, and always leave the snapshot behind. The
+    bootstrap runs under `uv run --no-project`, which needs no environment, and
+    puts the snapshot back.
+    """
+    import importlib.util
+
+    bundle = tmp_path
+    (bundle / "src").mkdir()
+    (bundle / "src" / "bootstrap.py").write_text(
+        (MCPB_DIR / "src" / "bootstrap.py").read_text()
+    )
+    (bundle / "uv.lock").write_text("tooluniverse==1.5.3\n")
+    (bundle / "uv.lock.pre-update").write_text("tooluniverse==1.4.1\n")
+
+    spec = importlib.util.spec_from_file_location(
+        "mcpb_bootstrap", bundle / "src" / "bootstrap.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module._repair_lock()
+
+    assert (bundle / "uv.lock").read_text() == "tooluniverse==1.4.1\n", (
+        "the lock must go back to the version that is actually installed"
+    )
+    assert not (bundle / "uv.lock.pre-update").exists(), "the snapshot is consumed"
+
+
+def test_bootstrap_is_a_no_op_without_a_snapshot(tmp_path):
+    """Every ordinary launch goes through it, so it must not touch anything."""
+    import importlib.util
+
+    bundle = tmp_path
+    (bundle / "src").mkdir()
+    (bundle / "src" / "bootstrap.py").write_text(
+        (MCPB_DIR / "src" / "bootstrap.py").read_text()
+    )
+    (bundle / "uv.lock").write_text("tooluniverse==1.5.3\n")
+
+    spec = importlib.util.spec_from_file_location(
+        "mcpb_bootstrap_noop", bundle / "src" / "bootstrap.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module._repair_lock()
+
+    assert (bundle / "uv.lock").read_text() == "tooluniverse==1.5.3\n"

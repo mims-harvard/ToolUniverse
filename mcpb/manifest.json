@@ -20,17 +20,17 @@
     "icon": "icon.png",
     "server": {
         "type": "uv",
-        "entry_point": "src/run_stdio.py",
+        "entry_point": "src/bootstrap.py",
         "mcp_config": {
             "command": "uv",
             "args": [
                 "run",
                 "--python",
                 "3.12",
-                "--frozen",
+                "--no-project",
                 "--directory",
                 "${__dirname}",
-                "src/run_stdio.py"
+                "src/bootstrap.py"
             ],
             "env": {
                 "TOOLUNIVERSE_STDIO_MODE": "1",

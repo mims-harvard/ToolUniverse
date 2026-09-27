@@ -20,6 +20,7 @@ cp "$MCPB_SRC/README.md"       "$BUILD_DIR/README.md"
 cp "$MCPB_SRC/icon.png"        "$BUILD_DIR/icon.png"
 cp "$REPO_ROOT/.env.template"  "$BUILD_DIR/.env.template"
 cp "$MCPB_SRC/src/run_stdio.py" "$BUILD_DIR/src/run_stdio.py"
+cp "$MCPB_SRC/src/bootstrap.py"  "$BUILD_DIR/src/bootstrap.py"
 
 # Resolve once, at build time, and ship the result. Without a lock `uv run` has
 # to reach the index on every launch to resolve the dependency, so an index that
