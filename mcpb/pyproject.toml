@@ -3,39 +3,30 @@ name = "tooluniverse-mcpb-native"
 version = "1.5.4"
 description = "ToolUniverse MCP Server (Native MCPB bundle)"
 # This bound and manifest.json's compatibility.runtimes.python look like the
-# same fact stated twice. They are not, and keeping them identical is what put
-# a Python 3.14 failure one missing flag away.
+# same fact stated twice. They are not:
 #
 #   manifest.json  -- Desktop's install gate, checked against the Python the
 #                     *user* happens to have. The bundle never runs that
-#                     interpreter (uv provisions its own), so this stays as
-#                     permissive as the package itself: a stale "<3.14" here
-#                     blocked users on a Python we support, after issue #527
-#                     lifted the real cap.
+#                     interpreter, because uv provisions its own.
 #   this file      -- the range uv resolves and provisions *for the bundle*.
 #                     It must exclude any interpreter the locked graph cannot
 #                     install on.
 #
-# 3.14 is such an interpreter: tooluniverse's markitdown extra pulls magika,
-# markitdown 0.1.8 caps it at 0.6.3, and that release requires onnxruntime with
-# no per-version markers, which resolves to 1.20.1 -- a release that publishes
-# no cp314 wheels. magika 1.0.3 fixed this upstream (it asks for
-# onnxruntime>=1.24.1 on 3.14) but markitdown has not moved to it yet.
+# They agree again as of 1.5.4. The cap was "<3.14" because markitdown pulled
+# magika 0.6.3, which asks for onnxruntime with no per-version markers and so
+# resolved to 1.20.1 -- a release with no cp314 wheels. 1.5.4 moved markitdown
+# behind the `documents` extra, which the bundle does not ask for, so magika
+# and onnxruntime are no longer in the lock at all and 3.14 installs. Verified
+# against the published 1.5.4: `uv sync --frozen --python 3.14` installs and
+# `import tooluniverse` succeeds on 3.14.7.
 #
-# Capping here makes uv pick a working interpreter on its own, which matters
-# because --python 3.12 in the manifest is not guaranteed to be applied: the
-# MCPB spec calls mcp_config optional for server.type "uv" ("host manages
-# execution"). Verified on this graph: with "<3.15" uv selects 3.14 and the
-# install fails with "onnxruntime==1.20.1 ... doesn't have a source
-# distribution or wheel for the current platform"; with "<3.14" uv selects
-# 3.12 unprompted and the server starts. The manifest's --python 3.12 and
-# .python-version remain the first two layers; this is the one that holds when
-# neither is consulted.
-#
-# Re-check before widening -- the cap is a property of the resolved graph, not
-# of ToolUniverse, so a markitdown release can lift it:
+# Keeping the cap honest still matters, because --python 3.12 in the manifest
+# is not guaranteed to be applied -- the MCPB spec calls mcp_config optional
+# for server.type "uv" ("host manages execution"), so this bound is what makes
+# uv pick a working interpreter when nothing else is consulted. Re-check before
+# changing it; the cap is a property of the resolved graph, not of ToolUniverse:
 #   uv lock && uv sync --frozen --python 3.14
-requires-python = ">=3.10,<3.14"
+requires-python = ">=3.10,<3.15"
 
 # The bundle declares ToolUniverse as a dependency instead of carrying its
 # source. This is the shape the MCPB docs describe for `server.type = "uv"`
