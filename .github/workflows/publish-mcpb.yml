@@ -66,14 +66,39 @@ jobs:
           except Exception:
               print('')
           ")
+            # The manifest version is not the whole story. The bundle installs
+            # whatever its uv.lock pins, and that is resolved at build time --
+            # so a build that lands in the minute before the release reaches
+            # PyPI pins the *previous* release, and keeps pinning it until the
+            # next version bump, because the two manifest versions agree.
+            # 1.5.4 shipped exactly that way: manifest 1.5.4, lock 1.5.3, and a
+            # fresh install therefore got the older dependency set until the
+            # launcher's daily refresh moved it.
+            LOCKED=$(python3 -c "
+          import re, zipfile
+          try:
+              lock = zipfile.ZipFile('/tmp/published.mcpb').read('uv.lock').decode()
+              print(re.search(r'name = \"tooluniverse\"\nversion = \"([^\"]+)\"', lock).group(1))
+          except Exception:
+              print('')
+          ")
           fi
           echo "published bundle version: ${PUBLISHED:-<unavailable>}"
+          echo "published bundle installs: ${LOCKED:-<unavailable>}"
 
           # Republish on any disagreement, not just "newer". A published bundle
           # ahead of the repo is also wrong, and that is precisely the stale
           # hand-built state this is meant to correct.
-          if [ "$REPO_VERSION" != "$PUBLISHED" ]; then
+          # A manual run means someone wants the artifact rebuilt; asking it to
+          # decide for itself defeats the point of the button.
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual run — rebuilding regardless"
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          elif [ "$REPO_VERSION" != "$PUBLISHED" ]; then
             echo "Bundle is out of date — will rebuild and publish"
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          elif [ -n "$LOCKED" ] && [ "$LOCKED" != "$REPO_VERSION" ]; then
+            echo "Bundle installs $LOCKED but this is $REPO_VERSION — will rebuild"
             echo "should_publish=true" >> "$GITHUB_OUTPUT"
           else
             echo "Published bundle already matches — nothing to do"
