@@ -257,6 +257,8 @@ def test_populated_warnings_return_exactly_what_they_did_before():
             "warnings": ["Warnings Reye's syndrome: Children and teenagers ..."],
             "boxed_warning": None,
             "spl_product_data_elements": ["Low Dose Aspirin Aspirin ASPIRIN"],
+            # identity only, carried by every name-based label tool
+            "openfda.route": None,
         }
     ]
     assert "section_note" not in result
@@ -295,6 +297,7 @@ def test_tools_that_request_no_safety_section_are_untouched():
         "openfda.generic_name",
         "indications_and_usage",
         "spl_product_data_elements",
+        "openfda.route",
     }
     assert "section_note" not in result
 

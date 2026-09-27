@@ -624,8 +624,8 @@ Getting Help
 
 If you encounter issues with API keys or authentication:
 
-1. Check the `Troubleshooting Guide <https://tooluniverse.readthedocs.io/help/troubleshooting>`_
-2. Review the `FAQ <https://tooluniverse.readthedocs.io/faq>`_
+1. Check the :doc:`Troubleshooting Guide <../help/troubleshooting>`
+2. Review the :doc:`FAQ <../help/faq>`
 3. Search `GitHub Issues <https://github.com/mims-harvard/ToolUniverse/issues>`_
 4. Open a new issue with:
    
