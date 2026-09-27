@@ -110,7 +110,14 @@ jobs:
         run: python docs/validate_examples.py --check-imports
 
       - name: Run core tests (unit + integration)
-        timeout-minutes: 15
+        # The suite runs 10-14 minutes against a 15 minute cap, so main has been
+        # passing with no margin -- one slower runner and it goes red. It did,
+        # on the two bundle branches, at 16 minutes; the slowest tests are the
+        # pre-existing stdio-hooks integration ones at ~22 s each, and the tests
+        # those branches add come to about 10 s in total. Coverage and `-n auto`
+        # are already on, so this is the cap being too tight rather than the
+        # suite being slow. 30 still catches a hang.
+        timeout-minutes: 30
         run: |
           pytest tests/unit/ tests/integration/ -v \
             --cov=tooluniverse \
