@@ -3,7 +3,7 @@
     "name": "tooluniverse",
     "display_name": "ToolUniverse",
     "version": "1.5.4",
-    "description": "ToolUniverse: an ecosystem for democratizing AI scientists with 2,500+ scientific tools.",
+    "description": "ToolUniverse: an ecosystem for democratizing AI scientists with 2,700+ scientific tools.",
     "long_description": "ToolUniverse is an ecosystem for creating AI scientist systems from any large language model (LLM). It standardizes how LLMs interact with tools, integrating thousands of machine learning models, datasets, APIs, and scientific packages for data analysis, knowledge retrieval, and experimental design. This bundle exposes ToolUniverse capability via the Model Context Protocol (MCP), enabling AI assistants to perform complex scientific tasks.",
     "author": {
         "name": "ToolUniverse Team",
@@ -15,7 +15,7 @@
         "url": "https://github.com/mims-harvard/ToolUniverse"
     },
     "homepage": "https://github.com/mims-harvard/ToolUniverse",
-    "documentation": "https://zitniklab.hms.harvard.edu/ToolUniverse/",
+    "documentation": "https://aiscientist.tools",
     "support": "https://github.com/mims-harvard/ToolUniverse/issues",
     "icon": "icon.png",
     "server": {
@@ -62,7 +62,7 @@
         "bioinformatics",
         "mcp"
     ],
-    "license": "MIT",
+    "license": "Apache-2.0",
     "user_config": {
         "tooluniverse_env_file": {
             "type": "file",

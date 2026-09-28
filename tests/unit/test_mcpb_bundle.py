@@ -470,6 +470,18 @@ def test_mcpb_version_tracks_root_pyproject():
     )
 
 
+def test_mcpb_license_matches_the_repository_license():
+    """The manifest licence is what the extensions directory displays.
+
+    It said MIT while the repository is Apache-2.0, so the listing
+    contradicted the project it points at.
+    """
+    manifest = json.loads(MANIFEST.read_text())
+    license_text = (REPO_ROOT / "LICENSE").read_text()
+    assert "Apache License" in license_text and "Version 2.0" in license_text
+    assert manifest["license"] == "Apache-2.0"
+
+
 # ── Bug #2: version resolution must not crash on import ──────────────────────
 
 
