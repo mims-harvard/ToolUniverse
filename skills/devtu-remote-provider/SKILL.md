@@ -93,6 +93,19 @@ few lines in the *model's* interpreter to read `modes.resolve(mode)["env"]` and
 **An adapter in `--attach` whose switch is missing from the row refuses the whole
 launch.** Keep the row intact and let the adapter decline by name instead.
 
+## Choosing which kit to bring up
+
+The thirty-six upstream kits are uniform in structure and varied in the three
+things that decide whether one runs on a given machine. Read each before
+committing to a download:
+
+| question | how many fail it | what `setup` does |
+| --- | --- | --- |
+| Can its pinned torch drive this card? | 5 pin torch < 2.7 (sm_90 ceiling): flashzoi, proteinmpnn, rfdiffusion1, caliby; borzoi is TensorFlow | refuses `torch_arch_unsupported` after install, by binary compatibility — an sm_120 cubin runs on sm_121 |
+| Does it carry prebuilt host objects? | 8 do; all 39 such files are x86-64, none aarch64 | refuses `kit_foreign_objects` from the ELF header, before installing |
+| Does its lock pin an architecture by URL? | ~20 name a wheel by direct x86-64 link | ship a lock pinning by version instead, and say so in its header |
+| How does it activate? | 30 by mode variable + `.pth`, 1 by `worker_launch` (boltz2), 1 not in-process at all (chrombpnet) | detected, not declared |
+
 ## Reading a refusal
 
 Every step names itself. Exit codes: `0` ok · `1` failed · `2` usage · `3`
@@ -108,6 +121,8 @@ refused · `5` accelerator absent.
 | `lock_install_failed` | the pinned stack did not install | read the tail; usually a wheel missing for this architecture |
 | `kit_wrong_commit` / `kit_modified` | the checkout is not the pin, or has been edited | left in place; remove by hand and re-run |
 | `weights_off_pin` | a file is absent, short, or a different digest | **never deleted automatically**: upstream writes straight to the final name, so a truncated transfer and a corrupt file look alike. Remove the named file yourself and re-run |
+| `torch_arch_unsupported` | the stack installed and cannot emit code for this card | the kit needs newer hardware, or a host of the architecture it was pinned for |
+| `kit_foreign_objects` | prebuilt `.so` of another architecture | `[kit] mode = "off"`, or a host of that architecture |
 | `smoke_*` | it installed and then did not run | the transcript is in `~/.cache/tooluniverse/remote-logs/<slug>-resident.log` |
 
 ## What only running reveals

@@ -392,6 +392,82 @@ def _build_image(manifest, dest: Path, t: float) -> Optional[StepResult]:
     return StepResult("environment", OK, f"built {sif}", seconds=time.time() - t)
 
 
+_ARCH_PROBE = r"""
+import json, sys
+out = {}
+try:
+    import torch
+    out["torch"] = torch.__version__
+    out["arch_list"] = list(torch.cuda.get_arch_list())
+    if torch.cuda.is_available():
+        out["device_sm"] = "sm_%d%d" % torch.cuda.get_device_capability(0)
+        out["device"] = torch.cuda.get_device_name(0)
+except Exception as exc:
+    out["error"] = "%s: %s" % (type(exc).__name__, exc)
+sys.stdout.write("ARCH " + json.dumps(out))
+"""
+
+
+def _check_torch_targets_this_gpu(exec_env, gpu_required: bool) -> Optional[str]:
+    """Why the installed torch cannot drive this card, or None.
+
+    A pinned stack can be perfectly installable and still unable to emit code
+    for the GPU in front of it. Five of the thirty-six kits pin torch below 2.7
+    -- flashzoi 2.5.1, proteinmpnn 2.5.1, rfdiffusion1 2.4.0, caliby 2.6.0 --
+    whose CUDA builds stop at sm_90, and this project's card is sm_121. Without
+    this the first sign is a kernel error after several gigabytes have been
+    downloaded and an environment built.
+
+    Read from torch rather than inferred from a version: ``get_arch_list`` is
+    what the build actually carries, and a build can carry PTX for an older
+    architecture that the driver then compiles forward, which a version
+    comparison would call a failure.
+    """
+    argv, env = exec_env.argv(["-c", _ARCH_PROBE])
+    try:
+        out = _run(argv, env=env, timeout=600)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return f"the installed torch could not be probed ({type(exc).__name__})"
+    for line in (out.stdout or "").splitlines():
+        if line.startswith("ARCH "):
+            info = json.loads(line[5:])
+            break
+    else:
+        return None  # no torch in this environment: not every provider has one
+    if info.get("error") or not info.get("device_sm"):
+        return (
+            None
+            if not gpu_required
+            else f"torch reports no usable GPU: {info.get('error', 'no device')}"
+        )
+    sm, arches = info["device_sm"], info.get("arch_list") or []
+
+    def parse(name):
+        digits = "".join(c for c in name.split("_")[-1] if c.isdigit())
+        return (int(digits[:-1]), int(digits[-1])) if len(digits) >= 2 else None
+
+    want = parse(sm)
+    if want is None:
+        return None
+    for arch in arches:
+        got = parse(arch)
+        if got is None:
+            continue
+        # CUDA binaries are compatible within one major compute capability,
+        # later minor versions included: an sm_120 cubin runs on sm_121, which
+        # is how both of this project's stacks drive a card neither lists.
+        if got[0] == want[0] and got[1] <= want[1]:
+            return None
+        # PTX for an earlier architecture is compiled forward by the driver.
+        if (arch.endswith("+PTX") or "compute_" in arch) and got <= want:
+            return None
+    return (
+        f"torch {info.get('torch')} was built for {', '.join(arches) or 'nothing'} "
+        f"and this card is {sm} ({info.get('device')}); nothing there is binary "
+        f"compatible with it and there is no PTX to compile forward from"
+    )
+
+
 def step_environment(manifest: ProviderManifest) -> StepResult:
     """Install the lock into the interpreter the manifest names. Never create one."""
     t = time.time()
@@ -442,6 +518,19 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
     if manifest.env_verify:
         probe = _run([python, "-c", manifest.env_verify], timeout=300)
         if probe.returncode == 0:
+            from .exec_env import from_manifest
+
+            problem = _check_torch_targets_this_gpu(
+                from_manifest(manifest), manifest.gpu_policy == "required"
+            )
+            if problem:
+                return StepResult(
+                    "environment",
+                    REFUSED,
+                    problem,
+                    reason="torch_arch_unsupported",
+                    seconds=time.time() - t,
+                )
             return StepResult(
                 "environment",
                 PRESENT,
@@ -499,6 +588,26 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
                 seconds=time.time() - t,
             )
         lines.append(f"{label}: {len(batch)} distributions")
+
+    from .exec_env import from_manifest
+
+    problem = _check_torch_targets_this_gpu(
+        from_manifest(manifest), manifest.gpu_policy == "required"
+    )
+    if problem:
+        return StepResult(
+            "environment",
+            REFUSED,
+            problem,
+            reason="torch_arch_unsupported",
+            lines=lines
+            + [
+                "the stack installed correctly; it simply cannot emit code for "
+                "this card. A kit pinning an older torch needs newer hardware, "
+                "or a host of the architecture it was pinned for",
+            ],
+            seconds=time.time() - t,
+        )
 
     return StepResult(
         "environment",

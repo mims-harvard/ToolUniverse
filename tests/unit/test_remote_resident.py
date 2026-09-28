@@ -798,3 +798,67 @@ class TestApptainerRoute:
                 word in m.verified_on
                 for word in ("SingularityCE", "Apptainer", "singularity")
             ), "an apptainer claim must name the implementation it ran under"
+
+
+class TestTorchTargetsThisGpu:
+    """A stack can install perfectly and still not be able to drive the card."""
+
+    def _verdict(self, arch_list, device_sm, monkeypatch, torch_version="2.13.0+cu130"):
+        import json as _json
+
+        from tooluniverse.remote_resident import setup as S
+
+        payload = _json.dumps(
+            {
+                "torch": torch_version,
+                "arch_list": arch_list,
+                "device_sm": device_sm,
+                "device": "TEST GPU",
+            }
+        )
+        monkeypatch.setattr(
+            S,
+            "_run",
+            lambda *a, **k: type(
+                "P", (), {"stdout": "ARCH " + payload, "returncode": 0}
+            )(),
+        )
+        env = type("E", (), {"argv": lambda self, args: (["python"], {})})()
+        return S._check_torch_targets_this_gpu(env, True)
+
+    def test_a_later_minor_of_the_same_major_is_binary_compatible(self, monkeypatch):
+        """An sm_120 cubin runs on sm_121 — which is how both of this project's
+        stacks drive a card neither of them lists. Getting this wrong refuses a
+        provider that demonstrably works."""
+        assert (
+            self._verdict(
+                ["sm_80", "sm_90", "sm_100", "sm_110", "sm_120"], "sm_121", monkeypatch
+            )
+            is None
+        )
+
+    def test_an_older_major_is_not(self, monkeypatch):
+        """flashzoi pins torch 2.5.1, whose CUDA build stops at sm_90."""
+        problem = self._verdict(
+            ["sm_50", "sm_80", "sm_90"], "sm_121", monkeypatch, "2.5.1"
+        )
+        assert problem and "sm_121" in problem and "2.5.1" in problem
+
+    def test_ptx_for_an_earlier_architecture_compiles_forward(self, monkeypatch):
+        assert self._verdict(["sm_80", "compute_80"], "sm_90", monkeypatch) is None
+
+    def test_an_exact_match_is_fine(self, monkeypatch):
+        assert self._verdict(["sm_90"], "sm_90", monkeypatch) is None
+
+    def test_a_newer_minor_in_the_build_than_the_card_is_not_claimed(self, monkeypatch):
+        """sm_121 code does not run on an sm_120 card."""
+        assert self._verdict(["sm_121"], "sm_120", monkeypatch) is not None
+
+    def test_an_environment_without_torch_is_not_judged(self, monkeypatch):
+        from tooluniverse.remote_resident import setup as S
+
+        monkeypatch.setattr(
+            S, "_run", lambda *a, **k: type("P", (), {"stdout": "", "returncode": 0})()
+        )
+        env = type("E", (), {"argv": lambda self, args: (["python"], {})})()
+        assert S._check_torch_targets_this_gpu(env, True) is None

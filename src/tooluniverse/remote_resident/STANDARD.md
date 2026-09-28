@@ -348,7 +348,35 @@ Therefore:
 
 ---
 
-## 10. Evidence status
+## 10. Choosing which kit to bring up next
+
+The thirty-six upstream kits are uniform in structure — all carry `run.sh`,
+`environment/`, `opt/` and `stock/PINS.json` — and unhelpfully varied in the
+three things that decide whether one can run on a given machine at all. Each is
+cheap to read before committing to a download:
+
+**Can its pinned torch drive this card?** Five kits pin torch below 2.7, whose
+CUDA builds stop at sm_90: flashzoi (2.5.1), proteinmpnn (2.5.1), rfdiffusion1
+(2.4.0), caliby (2.6.0), plus borzoi which is TensorFlow. Seventeen pin 2.7 or
+later. `setup` now reads `torch.cuda.get_arch_list()` after installing and
+refuses `torch_arch_unsupported` rather than letting it arrive as a kernel
+error — but the rule is binary compatibility, not equality: an sm_120 cubin
+runs on sm_121, which is how both of this project's stacks drive a card neither
+of them lists.
+
+**Does it carry prebuilt host objects?** Eight do, and all thirty-nine such
+files are x86-64; none is aarch64. `setup` reads the ELF header before
+installing (`kit_foreign_objects`).
+
+**Does its lock pin an architecture by URL?** About twenty name at least one
+wheel by direct link to an x86-64 file. The shipped lock pins it by version
+instead and its header says so, as Enformer's does.
+
+**How does it activate?** 30 of 36 through the mode variable and their own
+`.pth`; one (boltz2) through an explicit `worker_launch`; one (chrombpnet) not
+in-process at all, which makes it `mode = "subprocess"`.
+
+## 11. Evidence status
 
 | Rule | Evidence |
 | --- | --- |
@@ -366,7 +394,7 @@ Therefore:
 | `setup`'s five steps are the right five | two providers |
 | `[env] kind` beyond `venv` | **[n=1]** — untested |
 
-## 11. What the second provider changed
+## 12. What the second provider changed
 
 Enformer was brought onto the standard next, deliberately unlike the first, and
 four things that looked settled after one provider were not.
