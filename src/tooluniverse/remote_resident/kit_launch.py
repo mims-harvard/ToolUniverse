@@ -87,11 +87,22 @@ except Exception as exc:
 else:
     out["modes"] = list(getattr(modes, "MODES", ()) or ())
     try:
-        out["env"] = {k: str(v) for k, v in dict(modes.resolve(mode)["env"]).items()}
+        out["env"].update({k: str(v) for k, v in dict(modes.resolve(mode)["env"]).items()})
     except Exception as exc:
         out["row_error"] = "%s: %s" % (type(exc).__name__, exc)
     try:
         out["stack_key"] = modes.jit_cache_key()
+    except Exception:
+        pass
+# Some kits put the child's environment somewhere other than a mode row:
+# chai1_opt keeps the allocator setting in alloc.env_row(), and it has to be in
+# place BEFORE the process makes its first CUDA allocation, so the kit cannot
+# apply it to itself. Each accessor below is the kit's own; only the names of
+# the places to look are written here.
+for _mod_name, _fn_name in ((".alloc", "env_row"),):
+    try:
+        _m = __import__(pkg_name + _mod_name, fromlist=["x"])
+        out["env"].update({k: str(v) for k, v in dict(getattr(_m, _fn_name)()).items()})
     except Exception:
         pass
 try:
@@ -213,6 +224,13 @@ def build_command(worker) -> Tuple[List[str], Dict[str, str]]:
         env[mode_env] = manifest.kit.get("mode", "fast")
     if row.get("stack_key"):
         env["MODEL_OPT_STACK_KEY"] = row["stack_key"]
+    off = manifest.kit.get("levers_off") or ()
+    if off:
+        # A lever the provider asks the kit not to attempt. The kits read this
+        # themselves (MODEL_OPT_LEVERS_OFF) and say so on their ACTIVE line as
+        # a PARTIAL activation, which is the honest record: the run is an
+        # ablation of the mode, not the mode.
+        env["MODEL_OPT_LEVERS_OFF"] = ",".join(str(x) for x in off)
     if root is not None and manifest.weights_root_env:
         env[manifest.weights_root_env] = os.fspath(root)
     # Both shared files are found by path: this process's package is not

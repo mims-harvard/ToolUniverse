@@ -1,0 +1,127 @@
+# Chai-1 — protein-ligand cofolding, held resident.
+#
+# The third provider on the standard, and the first whose upstream loads its
+# model inside the call that uses it: chai_lab's `load_exported` is not
+# memoised, so a plain `run_inference` re-reads all six TorchScript modules --
+# 5.4 GB of traced ESM among them -- every time. Residency is therefore not a
+# refinement here, it is the difference between a usable provider and one that
+# spends most of every request on disk: three folds of the same input in one
+# held worker took 67.6 s, 26.6 s and 25.7 s. The 2.6x is the largest of the
+# three providers on this standard, and it is the one whose upstream does the
+# least to help.
+#
+# Measured on the same GB10 box; re-measure anywhere else.
+
+[provider]
+slug = "chai1"
+description = "Chai-1 protein-ligand cofolding from a FASTA of chains"
+operations = ["chai1_fold"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02),
+venv route, kit mode fast with the alloc lever off (see [kit]). Three folds of
+an 89-residue chain in one held worker: 67.6 s, 26.6 s, 25.7 s."""
+
+[runtime]
+mode = "resident"
+worker = "resident/chai1_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
+# Six TorchScript modules and the traced ESM: minutes, not seconds.
+start_timeout_s = 1800.0
+request_timeout_s = 3600.0
+idle_timeout_s = 900.0
+smoke = "smoke/input.fasta"
+smoke_timeout_s = 1800.0
+
+[gpu]
+policy = "required"
+# Measured over three consecutive folds in one held worker: 9.55, 9.76, 9.80
+# GiB. The later figure is the one to budget, as with Boltz-2 -- it grows a
+# little as the allocator settles, which is also why expandable_segments is
+# worth keeping (see [kit] levers_off).
+vram_budget_gb = 9.8
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_CHAI1_PYTHON"
+lock = "environment/requirements.lock"
+verify = "import torch, chai_lab, chai1_opt; assert chai_lab.__version__ == '0.6.1'"
+
+[weights]
+root_env = "CHAI_DOWNLOADS_DIR"
+root_default = "~/.chai"
+# Upstream's own downloader through the kit's install step; no URL is restated
+# in ToolUniverse. Nothing is fetched at request time: the package refuses when
+# a file is missing rather than reaching for the CDN mid-fold.
+fetch = "cd {kit}/chai1 && PYTHON={python} bash run.sh install --weights {weights_root}"
+
+[[weights.files]]
+name = "esm/traced_sdpa_esm2_t36_3B_UR50D_fp16.pt"
+size = 5678940466
+sha256 = "074673b97e1c1ff9c3cf949294749dd446ad1c83cee50a466b4841bb4d89c27a"
+
+[[weights.files]]
+name = "models_v2/trunk.pt"
+size = 633042135
+sha256 = "b7a08e104455f76491088a5eeaea9bb95a08168c48969b0b892971346e51ccbc"
+
+[[weights.files]]
+name = "models_v2/diffusion_module.pt"
+size = 476546304
+sha256 = "bd77cf4095ad6b8a4eae7e390d01d24be1ebd819922ca3f28e8744f9945c9cad"
+
+[[weights.files]]
+name = "conformers_v1.apkl"
+size = 124726115
+sha256 = "f2161256b565bbd84198da8b3e3d3978ae2f179f778d0995cd135c4c0c57c41f"
+
+[[weights.files]]
+name = "models_v2/confidence_head.pt"
+size = 55259496
+sha256 = "82a4ac9f934fdd0e73870150f508cecbe010c1383234bdadcaa70d57323deb6b"
+
+[[weights.files]]
+name = "models_v2/token_embedder.pt"
+size = 6286772
+sha256 = "60cada19fd9c77d8298131a00368d162b6bc7d3c836dd36c715db04d21f7bbde"
+
+[[weights.files]]
+name = "models_v2/feature_embedding.pt"
+size = 4587962
+sha256 = "58600fb282827ee105b4bf33845c2eb2dce2a7d2ba7582951f76c9290c66c019"
+
+[[weights.files]]
+name = "models_v2/bond_loss_input_proj.pt"
+size = 5502
+sha256 = "98f3b2e415d11e460a684cdbfc213ca80447308022b1953cc5326ad468948851"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "chai1"
+sparse = ["chai1", "common"]
+package = "chai1_opt"
+mode = "fast"
+install = "bash run.sh install --weights {weights_root}"
+# The kit replaces chai1.load_exported with its own loader, and refuses to
+# activate if anything else has replaced it first (stack.py's check). So the
+# worker must not memoise that function itself while the kit is on -- the kit
+# is what holds the modules between folds.
+levers_declined = []
+# The one lever this provider asks the kit not to attempt, and the reason is a
+# race it cannot win rather than a preference. `alloc` exports
+# PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True, and opt_core checks "CUDA
+# already initialised in this process" BEFORE it checks "the variable already
+# holds exactly this value" (mem/torch_alloc.py export(), lines 153-163). The
+# kit's trigger is `chai_lab.chai1`, whose own module body initialises CUDA, so
+# by the time the lever runs the answer is always yes and one opt-in refusal
+# takes the whole mode to NOT ACTIVE.
+#
+# Nothing is lost by turning it off: kit_launch puts the variable in the
+# environment before the process starts, which is what the policy needs, and
+# the kit's own EXIT line then reads `alloc_effective=true
+# alloc_source=snapshot`. What changes is the bookkeeping, and the kit records
+# the run as PARTIAL, which is accurate.
+levers_off = ["alloc"]

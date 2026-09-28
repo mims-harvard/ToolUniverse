@@ -107,6 +107,7 @@ _SECTIONS = {
         "sparse",
         "mode",
         "levers_declined",
+        "levers_off",
         "install",
         "package",
     },

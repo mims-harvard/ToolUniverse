@@ -392,9 +392,44 @@ in-process at all, which makes it `mode = "subprocess"`.
 | Wrapping a kit without patching it | two kits, two mechanisms |
 | Three commands suffice for every provider | two providers |
 | `setup`'s five steps are the right five | two providers |
-| `[env] kind` beyond `venv` | **[n=1]** — untested |
+| `[env] kind` beyond `venv` | three routes, one provider each way |
+| The worker/manifest/launch contract | three providers, three upstreams |
 
-## 12. What the second provider changed
+## 12. What the third provider changed
+
+Chai-1 is the first whose upstream loads its model inside the call that uses
+it. `chai_lab.load_exported` is not memoised and `run_folding_on_context` calls
+it six times per fold, on top of a 5.4 GB traced ESM, so a per-request process
+re-reads all of it every time. Three folds of one input in a held worker took
+67.6 s, 26.6 s, 25.7 s — the largest residency gain of the three providers, on
+the upstream that does least to help.
+
+**Who holds the weights is a decision, not a detail.** Under a kit mode the kit
+replaces `load_exported` with its own loader and refuses to activate if
+anything replaced it first, so a worker that memoises it itself silently turns
+the whole kit off. Under `mode = "off"` nothing replaces it and the worker
+should. A provider wrapping a kit must know which of the two it is doing and
+say so — Chai-1's worker reports `weights_held_by` on its ready line and in
+every reply.
+
+**A kit's environment row is not always in its mode table.** `chai1_opt` keeps
+the allocator setting in `alloc.env_row()`, documented as the row for a *child*
+process, and `boltz2_opt` keeps a 23-variable row in `modes.resolve()`. The
+probe reads both, because what is written here is where to look, never what the
+value is.
+
+**`[kit] levers_off` exists for a lever that cannot win.** Chai-1's `alloc`
+lever exports `PYTORCH_CUDA_ALLOC_CONF`, and `opt_core` checks "CUDA already
+initialised in this process" before it checks "the variable already holds
+exactly this value" (`mem/torch_alloc.py` `export()`). The kit's trigger is
+`chai_lab.chai1`, whose own module body initialises CUDA, so the answer is
+always yes — and one opt-in refusal takes the whole mode to NOT ACTIVE. Setting
+the variable before the process starts and declaring the lever off keeps the
+policy in force (`alloc_effective=true` on the kit's own EXIT line) and costs
+only the bookkeeping, which the kit then records as a PARTIAL activation. That
+is the accurate word and the manifest says why.
+
+## 13. What the second provider changed
 
 Enformer was brought onto the standard next, deliberately unlike the first, and
 four things that looked settled after one provider were not.
