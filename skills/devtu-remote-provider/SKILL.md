@@ -60,6 +60,21 @@ is one dependency-free file (`remote_resident/protocol.py`) loaded by path.
    kit's threads initialised long before a request arrives. Set
    `num_workers = 0` unconditionally — it is a property of the resident route,
    not of one kit.
+11. **Accepting a smoke as verification.** One request is not a test of a
+   resident provider. openfold3 produced five real structures and then failed
+   deterministically on the SECOND request of the same shape, because a lever
+   dropped a CUDA graph on moved storage while keeping its emptied pool handle.
+   Run **at least four consecutive identical requests**, then a mixed-shape
+   sequence. Four *different* shapes pass on a build that cannot serve a repeat.
+12. **Assuming `levers_off` reaches the kit.** boltzgen's `modes.py` never
+   reads `MODEL_OPT_LEVERS_OFF`, and its `stack.activate()` overwrites a
+   caller's value for any switch the mode exports. Check the ACTIVE line: if
+   the lever is still listed the door did not open, and shipping the setting
+   anyway is worse than saying so.
+13. **Quoting wall times from a contended card.** The same fold read 15-19 s
+   quiet and 28-56 s with another session on the GPU. Peak reserved reproduced
+   to the hundredth of a GiB in both. Report peaks from any run; report wall
+   times only from an idle card.
 
 ## What six providers cost, and where the time went
 
@@ -70,6 +85,17 @@ is one dependency-free file (`remote_resident/protocol.py`) loaded by path.
 | peak reserved | 5.54 GiB | 4.12 | 9.8 | 12.49 @ 400aa×4 | 25.28 @ 800aa | not yet real |
 | residency | 110→55 s | in-process | 67.6→25.7 s | **19.4→1.6 s** | 2.7→1.1 s | pending |
 | what it keeps | checkpoint | nothing | 6 TorchScript modules | compile + CUDA graph | 25.6 GiB weights | — |
+
+Ten providers in, there are four shapes of activation (`.pth` autoload; `worker_launch`; a
+replacement entry script; and autoload **plus a patched tree on disk**, which rosettafold3 verifies
+by sha256 and which costs that provider `mode = "off"` entirely) and four answers to who holds the
+weights (the worker; the kit; upstream's own memo; and boltzgen's **nobody** — upstream reloads
+each pipeline step's checkpoint inside the step, so residency buys the process, not the weights).
+
+Two manifest keys came out of that: `[kit] env_row`, because four of eight kits return an empty
+environment row and "empty" means both "this kit keeps none" and "we failed to read one"; and
+`[kit.env]`, for a kit's own documented knobs — a size gate, a cap — which `levers_off` cannot
+express because they are not levers.
 
 Residency's payoff ranges 2.0x to 12x and the ranking does not follow model size — it follows what
 the kit does at import and at first call. RFdiffusion3 wins biggest because its `fast` mode traces
@@ -136,7 +162,7 @@ committing to a download:
 | Does its lock pin an architecture by URL? | ~20 name a wheel by direct x86-64 link | ship a lock pinning by version instead, and say so in its header |
 | How does it activate? | 30 by mode variable + `.pth`, 1 by `worker_launch` (boltz2), 1 not in-process at all (chrombpnet) | detected, not declared |
 
-## Five things to read out of the kit, never guess
+## Six things to read out of the kit, never guess
 
 Each of these was a wrong assumption that cost a debugging round.
 
@@ -162,7 +188,14 @@ and one opt-in refusal takes the whole mode to NOT ACTIVE. `[kit] levers_off = [
 variable set before the process starts keeps the policy (`alloc_effective=true` on the kit's own
 EXIT line) and costs only the bookkeeping.
 
-**5. What `modes.resolve()` takes and returns.** Three kits, three signatures, and guessing
+**5. Whether the kit degrades or refuses.** esmc's `fused` lever needs flash-attn; with it absent
+the kit does not fall back, it prints `NOT ACTIVE: partial activation — ... a mode is all of its
+levers: the load is refused` and raises. Three options then: build the missing piece, run
+`mode = "off"`, or declare the lever — and which is cheapest is a question the kit answers, not one
+to guess. (flash-attn 2.7.4.post1 ignores `TORCH_CUDA_ARCH_LIST` and reads its own
+`FLASH_ATTN_CUDA_ARCHS`; at its default it builds four architectures and takes most of a day.)
+
+**6. What `modes.resolve()` takes and returns.** Three kits, three signatures, and guessing
 yields a silent zero rather than an error: boltz2's `resolve(mode)` returns a mapping with `env`;
 openfold3's takes `(mode, home, ...)` and returns a `Resolution` carrying `exports`; esmfold2's
 takes `(mode, variant, kit_home)` and carries neither, keeping its variables in per-card

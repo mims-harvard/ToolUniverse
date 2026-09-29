@@ -428,8 +428,119 @@ in-process at all, which makes it `mode = "subprocess"`.
 | A budget needs its envelope when peak tracks input size | measured: 2.12 GiB smoke vs 12.49 GiB request |
 | A resident worker must not fork loader children | measured: openfold3 crash; boltz named it first |
 | Residency gain ranges 2.0x–12x | measured, five providers |
+| Four identical requests, not two warm calls | measured: openfold3 passed the smoke and died on request two |
+| `[kit] env_row` must be declared | measured: 4 of 8 kits return an empty row, for two different reasons |
+| `levers_off` is not universal | measured: boltzgen's modes.py never reads it |
+| Four activation shapes, not three | rosettafold3: autoload + a patched tree on disk |
+| Four answers to "who holds the weights" | boltzgen: nobody; upstream reloads per step |
+| Wall times need an idle card | measured: 15-19 s quiet, 28-56 s contended, same fold |
 
-## 12. What providers four, five and six changed
+## 12. What providers seven through ten changed
+
+RoseTTAFold3, BoltzGen, ESM Cambrian and AF3-torch, brought up by one agent
+each in parallel, with the GPU serialized by the caller. The four together
+broke more of this document's assumptions than the six before them.
+
+**A one-request smoke cannot verify a resident provider.** OpenFold3 passed its
+smoke producing five real structures and then failed, deterministically, on the
+SECOND request of the same shape: `RuntimeError: Offset increment outside graph
+capture encountered unexpectedly`. The chain is worth reading because nothing
+in it is exotic. Lightning moves the module to the CPU between requests, so
+every parameter address changes; the `trunk_graph` lever correctly refuses to
+replay over moved storage and deletes the graph entry — but keeps the graph
+POOL handle that the deleted graph had just emptied. The re-capture hands that
+dead handle to `torch.cuda.graph(...)` and fails inside the allocator. A
+capture that began and never ended leaves the CUDA generator's `capturing_`
+flag set, and the next eager `torch.randint` reports it, three call frames
+away in a different lever. The kit names this exact aftermath in
+`opt_core/capture/graphs.py::reset_generator_capture_state`; the cell that
+caused it calls neither that recovery nor its own `release()`.
+
+A ladder of four DIFFERENT shapes passed throughout, because a new token count
+makes the lever call `release()`, which does clear the pool. **So the
+acceptance test for a resident provider is at least four consecutive IDENTICAL
+requests, then a mixed-shape sequence.** "Cold start and two warm calls" — what
+the setup skills said — passes on a build that cannot serve a repeat.
+
+The fix was the kit's own gate knob rather than an ablation, and it was chosen
+by measuring the alternative:
+
+| | 35 res, 4 requests | peak @ 800 res |
+| --- | --- | --- |
+| `post_release` forced on every item | 18.4 / 15.7 / 18.3 / 17.6 s | **9.12 GiB** |
+| `trunk_graph` off | 16.6 / 13.3 / 15.3 / 15.8 s | 11.13 GiB |
+
+Two seconds for two gigabytes is the right trade for a provider held resident,
+and it leaves one fewer lever ablated.
+
+**Two new manifest keys came out of this batch, both for the same reason: an
+absence and a failure to read look identical from here.**
+
+`[kit] env_row` is `"probe"` or `"none"`, and `"none"` needs `env_row_reason`.
+Four of eight kits return an empty row and it means two different things —
+esmfold2, esmc and rosettafold3 keep no row at all (their variables live in
+`configs/<card>.env` files shipped for h100/h200/a100), while boltzgen has an
+eight-switch row it applies to itself in `stack.activate()`. OpenFold3 meant to
+get 37 variables, got zero, and said nothing.
+
+`[kit.env]` is a table of settings the provider states for its kit, applied
+before the process starts. It exists because OpenFold3's fix is a size gate,
+not a lever, so `levers_off` could not express it and it would otherwise live
+as a line of Python in a worker no reviewer reads.
+
+**`levers_off` is not universal.** BoltzGen ignores `MODEL_OPT_LEVERS_OFF`
+entirely — its `modes.py` never reads it — and its `stack.activate()` overrides
+a caller's value for any switch the mode exports, which its own tests state
+("the caller's `SZ_TD_CHUNK=8` is dropped for the mode's own 64"). So neither
+door reaches it. A provider cannot assume the kits' shared vocabulary is
+implemented by the kit it is wrapping; check, and if neither door works, say so
+in the manifest rather than shipping a setting that silently does nothing.
+
+**A fourth activation shape.** The taxonomy was `.pth` autoload (30 of 36),
+`worker_launch` (boltz2), replacement entry script (chrombpnet). RoseTTAFold3
+adds *autoload plus a patched tree on disk*: five files of the installed `rf3`
+package must be byte-equal to the kit's copies, checked by sha256 in
+`stack.activate`, and the kit's own installer refuses to patch an interpreter
+that shares site-packages with a pristine one ("two interpreters, never one
+switched in place"). The provider therefore runs the four lines `run.sh
+install` runs for the patched interpreter, and gives up `[kit] mode = "off"` —
+a stock pass on a patched tree is not a stock pass — which the manifest states
+rather than leaving to be discovered.
+
+**A fourth answer to "who holds the weights": nobody.** BoltzGen's pipeline
+runs one interpreter per step and upstream calls `load_from_checkpoint` inside
+every step. The kit replaces no loader, so memoising would mean patching
+upstream on top of the kit and racing its `fastinit` lever. Its ready line says
+`weights_held_by=upstream-per-step`, and residency there buys the process —
+imports, CUDA context, JIT caches — rather than the weights. That is still
+worth having, but it is a different claim and the manifest makes it.
+
+**A kit may refuse to degrade, and that is the design.** ESM Cambrian's `fused`
+lever needs flash-attn. With flash-attn absent the kit does not fall back: it
+prints `NOT ACTIVE: partial activation — fused: flash_attn is not importable; a
+mode is all of its levers: the load is refused` and raises. A provider wrapping
+such a kit has exactly three options — build the missing piece, run `mode =
+"off"`, or declare the lever — and guessing which is cheapest without reading
+the kit wastes hours. (flash-attn 2.7.4.post1 ignores `TORCH_CUDA_ARCH_LIST`
+and reads its own `FLASH_ATTN_CUDA_ARCHS`; left at its default it builds four
+architectures and takes most of a day.)
+
+**`[env]` assumes one interpreter and one kit needs two.** AF3-torch's
+featuriser and its output writers run CPU-only under a second pinned
+environment, and the weights file it loads has no URL anywhere — it is
+*produced* by a converter running in that second environment. The provider
+cannot be smoke-tested on a machine that has only the first, and the honest
+form of that is a named refusal at the weights step carrying the recipe, which
+is why a fetch exiting 3 is now reported as REFUSED rather than FAILED. This is
+one kit in ten; the fix is recorded as a gap, not built.
+
+**Timings on a shared card are not measurements.** Two of this batch's
+acceptance runs shared the GPU with another session and read 28-56 s for a fold
+that takes 15-19 s quiet. Peak reserved reproduced to the hundredth of a GiB
+across both; wall time did not. Report peaks from any run, and wall times only
+from an idle card.
+
+## 13. What providers four, five and six changed
 
 Three at once — RFdiffusion3, ESMFold2 and OpenFold3 — brought up in parallel
 by one agent each, with the GPU serialized by the caller. Two passed; the third
@@ -513,7 +624,7 @@ a shared scratchpad is shared: one agent's `weights.log` was overwritten
 mid-download by a sibling writing the same filename. Neither is deep; both cost
 an hour.
 
-## 13. What the third provider changed
+## 14. What the third provider changed
 
 Chai-1 is the first whose upstream loads its model inside the call that uses
 it. `chai_lab.load_exported` is not memoised and `run_folding_on_context` calls
@@ -547,7 +658,7 @@ policy in force (`alloc_effective=true` on the kit's own EXIT line) and costs
 only the bookkeeping, which the kit then records as a PARTIAL activation. That
 is the accurate word and the manifest says why.
 
-## 14. What the second provider changed
+## 15. What the second provider changed
 
 Enformer was brought onto the standard next, deliberately unlike the first, and
 four things that looked settled after one provider were not.
