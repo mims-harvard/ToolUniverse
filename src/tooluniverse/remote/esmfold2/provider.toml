@@ -172,6 +172,14 @@ size = 2338
 sha256 = "d24456b797ddcfb60ac6c53621b550db5e14b1575ee2d9ab5a380eb5b09902f2"
 
 [kit]
+# This kit keeps NO mode environment row, and that is a fact about the kit
+# rather than a gap in the probe: `modes.resolve(mode, variant, kit_home)`
+# returns a Resolution with no `env` and no `exports` attribute at all. Its
+# deployment variables live in `configs/<card>.env`, shipped for h100, h200 and
+# a100 and not for this one, so there is nothing here to read even with the
+# right call. What the provider therefore supplies itself is listed below.
+env_row = "none"
+env_row_reason = "modes.resolve(mode, variant, kit_home) returns a Resolution with neither env nor exports; the kit's variables live in configs/<card>.env and it ships none for GB10"
 upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
 commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
 subdir = "esmfold2"

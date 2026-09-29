@@ -73,6 +73,18 @@ ENV_KINDS = ("venv", "docker", "apptainer")
 # machine nobody has tried it on -- see STANDARD.md section 9.
 STATUSES = ("verified", "untested")
 
+# Whether the kit's own environment row is something the probe reads, or
+# something this provider states is not there to read. Four of the eight kits
+# brought up so far return an empty row, and "empty" means two different
+# things: esmfold2, esmc and rosettafold3 keep no row at all (their deployment
+# variables live in per-card `configs/*.env` files that ship for h100/h200/a100
+# and not for this hardware), while boltzgen has an eight-switch row that
+# `stack.activate()` applies to itself in-process. Both are fine. What is not
+# fine is a provider that MEANT to get a row and got nothing, which is what
+# happened to openfold3: 0 variables instead of 37, no error, and its
+# allocator lever reading `skipped reason=pending` for a week.
+KIT_ENV_ROWS = ("probe", "none")
+
 _SECTIONS = {
     "provider": {"slug", "description", "operations", "status", "verified_on"},
     "runtime": {
@@ -112,6 +124,8 @@ _SECTIONS = {
         "levers_off",
         "install",
         "package",
+        "env_row",
+        "env_row_reason",
     },
 }
 
@@ -403,6 +417,18 @@ def load(path: os.PathLike | str) -> ProviderManifest:
         raise ManifestError(
             f'{path}: [runtime] mode = "subprocess" needs mode_reason — a provider '
             f"that pays the start-up cost on every request states why it must"
+        )
+    kit_row = doc.get("kit", {}).get("env_row", "probe")
+    if kit_row not in KIT_ENV_ROWS:
+        raise ManifestError(
+            f"{path}: [kit] env_row = {kit_row!r} is not one of {KIT_ENV_ROWS}"
+        )
+    if kit_row == "none" and not doc.get("kit", {}).get("env_row_reason"):
+        raise ManifestError(
+            f'{path}: [kit] env_row = "none" needs env_row_reason \u2014 a kit whose '
+            f"mode row the probe cannot read looks exactly like a kit whose row we "
+            f"failed to read, and openfold3 silently ran with 0 of its 37 variables "
+            f"until someone noticed"
         )
     outputs = tuple(rt.get("outputs", ()))
     output_keys = tuple(rt.get("output_keys", ()))

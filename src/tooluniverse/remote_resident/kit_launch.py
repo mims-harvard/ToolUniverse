@@ -124,8 +124,12 @@ else:
         out["row_error"] = "; ".join(out.get("row_errors") or ["no resolve() shape matched"])
     try:
         out["stack_key"] = modes.jit_cache_key()
-    except Exception:
-        pass
+    except Exception as _exc:
+        # Recorded, not swallowed: some kits' jit_cache_key takes
+        # (torch_version, cc) -- their configs/<card>.env calls it that way --
+        # and a kit that HAS one and raised looked identical to a kit that
+        # never had one.
+        out["stack_key_error"] = "%s: %s" % (type(_exc).__name__, _exc)
 # Some kits put the child's environment somewhere other than a mode row:
 # chai1_opt keeps the allocator setting in alloc.env_row(), and it has to be in
 # place BEFORE the process makes its first CUDA allocation, so the kit cannot
@@ -244,6 +248,18 @@ def build_command(worker) -> Tuple[List[str], Dict[str, str]]:
         python_args = list(tail)
 
     env: Dict[str, str] = dict(row["env"])
+    # An empty row is either a fact about the kit or a failure to read one, and
+    # they are indistinguishable from here -- so the manifest says which.
+    if not env and manifest.kit.get("env_row", "probe") != "none":
+        raise KitUnavailable(
+            f"{package}: the kit returned no environment row"
+            + (f" ({row['row_error']})" if row.get("row_error") else "")
+            + f". If this kit genuinely keeps none, declare it:\n"
+            f'  [kit] env_row = "none"\n'
+            f'  env_row_reason = "<where its variables live instead>"\n'
+            f"Otherwise the probe needs the shape this kit's resolve() takes; "
+            f"openfold3 ran with 0 of its 37 variables until this was checked"
+        )
     env["MODEL_OPT"] = row["model_opt"]
     mode_env = row.get("mode_env")
     if row.get("activation") != "worker_launch":

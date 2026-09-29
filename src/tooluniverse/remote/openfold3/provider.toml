@@ -11,9 +11,9 @@
 # between requests, and only the output directory, the query set and the
 # Lightning trainer are rebuilt per call.
 #
-# THIS PROVIDER DOES NOT YET FOLD, and the way that was missed is worth
-# recording. It was marked `verified` on a smoke run that exited 0 in 29 s and
-# reported a GPU peak -- but its output directory held only
+# FOR A WHILE THIS PROVIDER FOLDED NOTHING, and the way that was missed is
+# worth recording. It was marked `verified` on a smoke run that exited 0 in
+# 29 s and reported a GPU peak -- but its output directory held only
 # `inference_query_set.json` and a `summary.txt` reading "Successful Queries:
 # 0, Failed Queries: 1". Upstream catches a per-query exception, counts the
 # query as failed, and returns normally; the worker saw a successful call and
@@ -22,19 +22,45 @@
 # provider produced what [runtime] outputs says it produces, and this manifest
 # declares that assertion.
 #
-# The underlying exception is still being run down. What is known: it is not
-# the DataLoader fork, which was a real and separate crash fixed by forcing
-# `num_workers = 0` (upstream defaults to 10, the kit's cap floors it at 1, and
-# a resident worker has CUDA initialised in the parent long before a request
-# arrives -- `boltz_tool.py` names the same shape). That fix turned a raised
-# RuntimeError into this silent failure, so it moved the problem forward
-# without solving it.
+# The exception itself was not in the worker transcript because upstream does
+# not log it there. `of3_all_atom/runner.py` `predict_step` catches everything,
+# logs one ERROR line, and appends the traceback to a rank file --
+# `<log_dir>/predict_err_rank0.log`, where `log_dir` defaults to
+# `<output_dir>/logs`. A resident worker binds `log_dir` once, at
+# construction, to the scratch directory the runner is born with (the
+# `_BIRTH_DIR` in the worker), so every traceback this provider ever produced
+# was written to `/tmp/openfold3-resident-*/logs/predict_err_rank0.log` and
+# none of them to the request's own output directory. That is where the
+# diagnosis came from.
+#
+# The cause was a kit lever that cannot run on this card; see `levers_off`
+# under [kit]. It is not the DataLoader fork, which was a real and separate
+# crash fixed by forcing `num_workers = 0` (upstream defaults to 10, the kit's
+# cap floors it at 1, and a resident worker has CUDA initialised in the parent
+# long before a request arrives -- `boltz_tool.py` names the same shape). That
+# fix turned a raised RuntimeError into this silent failure, so it moved the
+# problem forward without solving it.
 
 [provider]
 slug = "openfold3"
 description = "OpenFold3 all-atom structure prediction from a query JSON of chains"
 operations = ["openfold3_predict"]
 status = "untested"
+# Reverted from "verified" on 2026-09-29. The evidence behind that claim was a
+# single smoke that genuinely produced five mmCIF models -- the fold works. But
+# a held worker fails on the SECOND request of the same shape, which is the one
+# property a resident provider exists for:
+#
+#   req 0: 16.4 s, peak 2.27 GiB, five structures
+#   req 1: RuntimeError: Offset increment outside graph capture encountered
+#          unexpectedly   (openfold3_opt/cells/sync_hoist.py:198, torch.randint
+#          inside a CUDA-graph replay)
+#
+# Deterministic, and invisible to a one-request smoke. A length ladder of four
+# DIFFERENT shapes in one worker passed, which is consistent with a graph
+# captured per shape and replayed on the repeat. Under diagnosis; this file
+# goes back to "verified" only against a run of four consecutive identical
+# requests that all produce structures.
 
 [runtime]
 mode = "resident"
@@ -52,7 +78,24 @@ request_timeout_s = 3600.0
 # EXISTS: it exited 0 in 29 s, reported a GPU peak, and wrote only a summary
 # saying "Failed Queries: 1", because upstream catches the per-query exception
 # itself. The smoke step now refuses when no file matched.
+#
+# An EXTENSION SET, not a count and not an exact name. A count is wrong here
+# because the number of structures is a request option -- five samples on the
+# smoke run, `num_diffusion_samples` x `num_model_seeds` in general -- so the
+# only count that holds for every request is "at least one", which is what a
+# glob already asserts. An exact name would be a second copy of upstream's
+# naming (`<query>_seed_<n>_sample_<m>_model.cif`) and would fail a good run
+# the day upstream renames it. The extension set is the smallest thing that
+# separates a fold from a failure, because the two files a FAILED run does
+# write -- `inference_query_set.json` and `summary.txt` -- share no extension
+# with a structure. Exactly what was missing: both of those were present on
+# every run this provider ever made.
 outputs = ["*.cif", "*.pdb"]
+# And the reply-side half of the same assertion, which catches the other
+# direction: a worker that wrote structures and reported none. Belt and braces
+# now that the worker raises on an empty list, but it costs nothing and it is
+# the key a provider answering with arrays instead of files would use alone.
+output_keys = ["structures"]
 idle_timeout_s = 900.0
 smoke = "smoke/input.json"
 smoke_timeout_s = 1800.0
@@ -72,16 +115,25 @@ smoke_timeout_s = 1800.0
 
 [gpu]
 policy = "required"
-# NOT A USABLE MEASUREMENT. A ladder was run and its numbers looked orderly --
-# 1.45 GiB at 100 residues rising to 4.24 at 800 -- but every one of those runs
-# failed the query the way the header describes, so they measure how much a
-# failing fold allocates before it gives up, which is not a budget. The figure
-# below is the derived reserve this manifest carried before, kept until a run
-# that actually produces a structure can replace it.
+# ONE POINT OF THE LADDER IS MEASURED, and it is the small end. The earlier
+# ladder -- 1.45 GiB at 100 residues rising to 4.24 at 800 -- is discarded:
+# every one of those runs raised inside the trunk and never reached the
+# sampler, so what it measured is how much a failing fold allocates before it
+# gives up, not a budget. (Its four tracebacks are in one of the
+# `/tmp/openfold3-resident-*/logs/predict_err_rank0.log` files, one per rung.)
 #
-# When it is replaced it must state the ENVELOPE it applies to, not just a
-# number: peak is a function of chain length for a folding model. See the
-# `[gpu]` block of remote/esmfold2/provider.toml for the form.
+# What a fold that produces structures costs, measured here, is 2.24 GiB
+# reserved for 35 residues and 5 diffusion samples, 2.30 GiB for two such
+# queries in one request and 2.39 GiB on the third request of a held worker --
+# i.e. 2.4 GiB at the bottom of the envelope, still climbing slightly with
+# worker age. The figure below is the derived reserve this manifest carried
+# before, kept because 35 residues says nothing about 800: peak is a function
+# of chain length for a folding model, and the pair track grows as N^2.
+#
+# A host that wants a tighter number re-runs the ladder (100 / 200 / 400 / 800
+# residues, one held worker, steady state) now that a fold completes, and
+# states the ENVELOPE with it rather than just a number. See the `[gpu]` block
+# of remote/esmfold2/provider.toml for the form.
 vram_budget_gb = 16.0
 shareable = true
 isolation = "process"
@@ -178,6 +230,15 @@ mode = "fast"
 # the transition runs upstream's own statement, as it does on any card the
 # core has no cell for.
 levers_off = ["pair_transition"]
+#
+# The other fork out of a CUDA-initialised parent, checked rather than assumed.
+# `writer_overlap` runs with `route=process`, and until a fold completed it had
+# never been exercised -- a single-item request writes its one item inline
+# (`inline=last_item:1`, no worker at all). A two-query request does start it,
+# and it survives: `LEVER name=writer_overlap state=on route=process items=3
+# overlapped=1 inline=last_item:2 write_exc=0 worker=835534`, with all ten
+# mmCIFs on disk. So the DataLoader's death was about the loader's own fork,
+# not about forking from this process as such, and this lever stays on.
 # openfold3's run.sh drives whatever `python` is on PATH; it does not read a
 # PYTHON variable the way chai1's and enformer's do. `tu remote setup` puts the
 # manifest's interpreter first on PATH for exactly this step, so the plain form

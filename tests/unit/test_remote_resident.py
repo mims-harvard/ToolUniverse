@@ -173,6 +173,34 @@ class TestManifest:
         )
         assert M.load(p).status == "untested"
 
+    def test_an_undeclared_absent_kit_row_is_not_silently_accepted(self, tmp_path):
+        """openfold3 ran with 0 of its 37 variables and said nothing."""
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "x"\n\n[runtime]\nmode = "resident"\n\n'
+            '[env]\npython = "python3"\n\n[kit]\nenv_row = "none"\n'
+        )
+        with pytest.raises(M.ManifestError, match="env_row_reason"):
+            M.load(p)
+
+    def test_a_declared_absent_kit_row_states_where_the_variables_live(self, tmp_path):
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "x"\n\n[runtime]\nmode = "resident"\n\n'
+            '[env]\npython = "python3"\n\n[kit]\nenv_row = "none"\n'
+            'env_row_reason = "configs/<card>.env, and none ships for this card"\n'
+        )
+        assert M.load(p).kit["env_row"] == "none"
+
+    def test_an_unknown_env_row_value_is_refused(self, tmp_path):
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "x"\n\n[runtime]\nmode = "resident"\n\n'
+            '[env]\npython = "python3"\n\n[kit]\nenv_row = "maybe"\n'
+        )
+        with pytest.raises(M.ManifestError, match="env_row"):
+            M.load(p)
+
     def test_a_weight_file_with_neither_size_nor_digest_is_refused(self, tmp_path):
         p = tmp_path / "provider.toml"
         p.write_text(

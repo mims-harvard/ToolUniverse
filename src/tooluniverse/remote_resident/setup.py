@@ -843,7 +843,7 @@ def step_kit(manifest: ProviderManifest) -> StepResult:
         python=python,
         kit=os.fspath(workdir),
     )
-    out = _run(["bash", "-lc", command], cwd=workdir, env=env, timeout=7200)
+    out = _run(["bash", "-c", command], cwd=workdir, env=env, timeout=7200)
     lines += _tail(out.stdout, 6)
     if out.returncode != 0:
         return StepResult(
@@ -897,7 +897,7 @@ def step_weights(manifest: ProviderManifest) -> StepResult:
         out = _run(
             [
                 "bash",
-                "-lc",
+                "-c",
                 # The same fields [kit] install and [runtime] worker_args get.
                 # A placeholder the caller can write but this cannot fill is a
                 # KeyError at the moment the weights are actually missing,
@@ -912,6 +912,21 @@ def step_weights(manifest: ProviderManifest) -> StepResult:
             env=env,
             timeout=7200,
         )
+        if out.returncode == 3:
+            # The kits' own vocabulary, which STANDARD.md section 8 adopts: 3 is
+            # "refused, and here is the fix", 1 is "it broke". Reporting a
+            # refusal as a failure loses that distinction at the exit code a
+            # caller branches on -- af3_torch's fetch refuses by name because
+            # its weights are produced by a second interpreter, which is a
+            # correct answer, not a fault.
+            return StepResult(
+                "weights",
+                REFUSED,
+                "the declared fetch command refused (exit 3); its own words follow",
+                reason="weights_fetch_refused",
+                lines=lines + _tail(out.stderr or out.stdout, 8),
+                seconds=time.time() - t,
+            )
         if out.returncode != 0:
             return StepResult(
                 "weights",
