@@ -90,6 +90,15 @@ REMOTE_DEPLOYMENTS = (
         ("TOOLUNIVERSE_REMOTE_DATA_ROOT", "CELLTYPIST_SAFE_MODEL_DIR"),
     ),
     RemoteDeployment(
+        "chai1",
+        "tooluniverse.remote.chai1.chai1_tool",
+        8033,
+        ("chai1_fold",),
+        ("CHAI_DOWNLOADS_DIR", "TOOLUNIVERSE_CHAI1_PYTHON"),
+        ("CHAI_DOWNLOADS_DIR",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "chrombpnet",
         "tooluniverse.remote.chrombpnet.chrombpnet_tool",
         8032,

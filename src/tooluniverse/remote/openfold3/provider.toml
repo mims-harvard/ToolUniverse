@@ -1,0 +1,143 @@
+# OpenFold3 — all-atom biomolecular structure prediction, held resident.
+#
+# The fourth provider on the standard, and the first whose upstream entry point
+# is a PyTorch Lightning experiment runner rather than a function: stock
+# OpenFold3 0.4.1 is driven by `run_openfold predict`, which builds an
+# `InferenceExperimentRunner`, loads 2.3 GB of fp32 checkpoint into it, runs
+# `Trainer.predict` once and exits. Everything except the prediction itself is
+# per-process cost, and the kit measures model construction alone at 68 s
+# before its `fast_init` lever and 14 s after. Residency here means holding the
+# runner: its `lightning_module`, its checkpoint and its CUDA context survive
+# between requests, and only the output directory, the query set and the
+# Lightning trainer are rebuilt per call.
+#
+# Every number below was measured on the card named in `verified_on`. The one
+# thing this provider does that the others do not is force the data loader to
+# 0 workers: upstream defaults to 10 and the kit's own cap floors that at 1,
+# but a resident worker has CUDA initialised in the parent long before the
+# request arrives, and the forked loader child died on the first attempt
+# (`DataLoader worker (pid 778073) exited unexpectedly`, no child traceback).
+# `boltz_tool.py` names the same shape. See [runtime].
+
+[provider]
+slug = "openfold3"
+description = "OpenFold3 all-atom structure prediction from a query JSON of chains"
+operations = ["openfold3_predict"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02),
+venv route, kit mode fast, with the data loader forced to 0 workers (see
+[runtime]). Three folds of the 35-residue smoke in one held worker: 9.5 s,
+6.3 s, 9.0 s after a 5.9 s build. The VRAM ladder under [gpu] was measured in
+one further held worker on the same card."""
+
+[runtime]
+mode = "resident"
+worker = "resident/openfold3_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
+# The build reads a 2.3 GB checkpoint and constructs the model; the kit's own
+# figure for the construction alone is 68 s stock / 14 s with `fast_init`, and
+# the first request additionally compiles Triton kernels and captures CUDA
+# graphs. Generous on purpose: a deadline that fires during a first-run
+# compile reports a stall that is not one.
+start_timeout_s = 1800.0
+request_timeout_s = 3600.0
+idle_timeout_s = 900.0
+smoke = "smoke/input.json"
+smoke_timeout_s = 1800.0
+# The worker runs the featurisation DataLoader in-process (num_workers = 0).
+# The first smoke on a GB10 failed without it: upstream configures 10 workers,
+# the kit's `loader_workers` lever capped that to 1 rather than 0 (its rule is
+# max(1, min(items, configured))), and that one forked child died by signal --
+# `DataLoader worker (pid(s) 778073) exited unexpectedly`, no traceback, 61 GB
+# of host memory and 61 GB of /dev/shm free. Forking out of a long-lived
+# process that has already initialised CUDA is the shape boltz_tool.py names
+# and boltz's provider avoids with `--num_workers 0`. The kit sanctions the
+# value -- its plan() returns a configured count of 0 unchanged -- so nothing
+# is patched; the worker's docstring carries the full reasoning and the one
+# consequence, which is that featurisation's RNG draws move into this process.
+
+
+
+[gpu]
+policy = "required"
+# MEASURED, with the envelope stated: this is a folding model, so peak is a
+# function of chain length and a budget quoted from the smoke (35 residues,
+# 1.41 GiB) would not survive a real request. Ladder, one held worker, steady
+# state, single chain:
+#
+#     residues   peak reserved
+#          100       1.45 GiB
+#          200       1.61 GiB
+#          400       2.27 GiB
+#          800       4.24 GiB   <- the reference this budget declares
+#
+# The pair track's N^2 growth is visible but the base is small: the estimate
+# this line replaced reasoned from weights plus a [N, N, 128] pair tensor and
+# arrived at 16 GiB, which is 3.8x what 800 residues actually costs -- the kit
+# keeps far less of the trunk resident than the arithmetic assumed. A host
+# folding chains longer than 800 residues re-measures; `[kit] mode = "big"`
+# is what upstream offers for those.
+vram_budget_gb = 4.24
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_OPENFOLD3_PYTHON"
+lock = "environment/requirements.lock"
+# openfold3 0.4.1 carries no __version__ attribute, so the installed
+# distribution is what is asked. openfold3_opt is the kit, installed editable
+# on top of the lock and deliberately absent from it.
+verify = "import torch, openfold3, openfold3_opt; from importlib.metadata import version; assert version('openfold3') == '0.4.1'"
+
+[weights]
+# Upstream's own cache root (openfold3/entry_points/parameters.py: OPENFOLD_CACHE,
+# else ~/.openfold3). The kit's install step writes the checkpoint here and the
+# worker points OPENFOLD3_CKPT at it; nothing is fetched at request time.
+root_env = "OPENFOLD_CACHE"
+root_default = "~/.openfold3"
+# The kit's own fetcher, which goes through upstream's unsigned public-S3
+# client (openfold3.core.utils.s3) for the URL its PINS.json pins and then
+# hash-checks the result. No URL is restated in ToolUniverse. It needs no
+# MODEL_OPT: openfold3_opt is installed editable from the kit tree, so the
+# package derives the tree from its own location.
+fetch = "{python} -m openfold3_opt.weights {weights_root}"
+
+# Generated from the kit's stock/PINS.json `weights` entry, which names one
+# file and carries its sha256 but NO size. The size below is the length of the
+# file the kit's own fetch produced, recorded only after the digest was
+# recomputed and matched. The checkpoint is OpenFold3 preview-2, Apache-2.0,
+# served from a public bucket: no credential, no licence acceptance.
+[[weights.files]]
+name = "of3-p2-155k.pt"
+size = 2287928519
+sha256 = "3ae79a701f55dbc184002d010c92d347a35faabb981314c2fd1325211af40b77"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "openfold3"
+# The kit's kernels come from common/opt_core, which this checkout shares with
+# the Boltz-2, Enformer and Chai-1 providers; the sparse set is the union of
+# what its providers declare.
+sparse = ["openfold3", "common"]
+package = "openfold3_opt"
+# Activation is the common form: the kit's own .pth imports openfold3_opt._autoload
+# at interpreter start, and with the mode variable set a meta-path finder waits
+# for `import openfold3` and patches the package in place. The variable's name
+# is read from the kit, not guessed: openfold3_opt.modes has no module-level
+# ENV, so kit_launch falls through to _autoload.ENV = "OPENFOLD3_OPT".
+#
+# `fast` resolves on this card. The kit's own dry run says so and refuses
+# nothing: `DRY-RUN mode=fast ... gpu=NVIDIA GB10(cc12.1) levers_requested=<32>
+# ... card_support=uncertified:sm121(...)`, rc 0. "uncertified" is a statement
+# about where the timing and identity runs were made (H100-class), not a
+# switch. A plain `import openfold3` under OPENFOLD3_OPT=fast prints the kit's
+# ACTIVE line in this environment, so the levers are armed in-process.
+mode = "fast"
+# openfold3's run.sh drives whatever `python` is on PATH; it does not read a
+# PYTHON variable the way chai1's and enformer's do. `tu remote setup` puts the
+# manifest's interpreter first on PATH for exactly this step, so the plain form
+# is the correct one here.
+install = "bash run.sh install --weights {weights_root}"

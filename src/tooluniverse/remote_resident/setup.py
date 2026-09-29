@@ -881,14 +881,31 @@ def step_weights(manifest: ProviderManifest) -> StepResult:
         lines.append(f"{len(problems)} entr(ies) absent or off pin: fetching")
         python = manifest.python_executable()
         env = dict(os.environ)
+        # The same PATH the kit step gives its install command. A kit's own
+        # fetcher runs through its run.sh, and those look for `python` on PATH
+        # rather than reading a PYTHON= variable -- chai1's and openfold3's
+        # both do. Without this the fetch fails with "no python on PATH" at
+        # exactly the moment a weight file is missing.
+        if manifest.env_kind == "venv":
+            bin_dir = str(Path(python).expanduser().absolute().parent)
+            env["PATH"] = bin_dir + (
+                os.pathsep + env["PATH"] if env.get("PATH") else ""
+            )
         if root is not None and manifest.weights_root_env:
             env[manifest.weights_root_env] = os.fspath(root)
         out = _run(
             [
                 "bash",
                 "-lc",
+                # The same fields [kit] install and [runtime] worker_args get.
+                # A placeholder the caller can write but this cannot fill is a
+                # KeyError at the moment the weights are actually missing,
+                # which is the worst moment to discover it.
                 manifest.weights_fetch.format(
-                    python=python, weights_root=os.fspath(root) if root else ""
+                    python=python,
+                    weights_root=os.fspath(root) if root else "",
+                    kit=os.fspath(kit_checkout(manifest) or ""),
+                    slug=manifest.slug,
                 ),
             ],
             env=env,

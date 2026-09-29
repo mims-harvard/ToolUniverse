@@ -80,16 +80,48 @@ for _holder in (".modes", "._autoload"):
     if getattr(_mod, "ENV", None):
         out["mode_env"] = _mod.ENV
         break
+def _row_of(resolution):
+    # resolve() returns a mapping in some kits and a dataclass in others, and
+    # the field holding the child's variables is spelled `env` in one and
+    # `exports` in another. Neither spelling is wrong; only assuming one of
+    # them is. Try what the kits actually use and give up visibly.
+    for name in ("env", "exports"):
+        value = getattr(resolution, name, None)
+        if value is None:
+            try:
+                value = resolution[name]
+            except Exception:
+                continue
+        if value is not None:
+            return {k: str(v) for k, v in dict(value).items()}
+    return None
+
+
 try:
     modes = __import__(pkg_name + ".modes", fromlist=["modes"])
 except Exception as exc:
     out["modes_error"] = "%s: %s" % (type(exc).__name__, exc)
 else:
     out["modes"] = list(getattr(modes, "MODES", ()) or ())
-    try:
-        out["env"].update({k: str(v) for k, v in dict(modes.resolve(mode)["env"]).items()})
-    except Exception as exc:
-        out["row_error"] = "%s: %s" % (type(exc).__name__, exc)
+    # resolve()'s signature differs too: openfold3_opt's takes a required
+    # `home` after the mode. Try the shapes the kits actually use, in order,
+    # and record which one answered so a silent empty row is impossible.
+    _home = out["model_opt"]
+    for _label, _call in (
+        ("resolve(mode)", lambda: modes.resolve(mode)),
+        ("resolve(mode, home)", lambda: modes.resolve(mode, _home)),
+    ):
+        try:
+            _row = _row_of(_call())
+        except Exception as _exc:
+            out.setdefault("row_errors", []).append("%s: %s: %s" % (_label, type(_exc).__name__, _exc))
+            continue
+        if _row is not None:
+            out["env"].update(_row)
+            out["row_source"] = _label
+            break
+    else:
+        out["row_error"] = "; ".join(out.get("row_errors") or ["no resolve() shape matched"])
     try:
         out["stack_key"] = modes.jit_cache_key()
     except Exception:
