@@ -147,16 +147,31 @@ _MIN_VENDORS_PER_VERB = 10
 
 
 def _tool_name_verbs(names):
-    """Second-position segments shared across at least 10 vendor prefixes.
+    """Second-position segments that many vendors share and that are not nouns.
 
     This is the discriminator between a tool name and a response field:
     ToolUniverse tool names read `<Vendor>_<verb>_<what>`. Deriving the verbs
-    from the registry means the rule cannot drift out of date, and requiring a
-    verb to be used by many vendors keeps domain nouns out of the set -- `gene`
-    and `disease` sit in second position often enough to look verb-like within
-    one vendor, and admitting them flags ordinary prose like "call
-    get_gene_info". Measured over the current registry this yields exactly
-    {API, find, get, list, predict, query, search}, and all 9 pins below pass.
+    from the registry means the rule cannot drift out of date. Measured over the
+    current registry this yields exactly {API, find, get, list, predict, query,
+    search}, and all 9 pins below pass.
+
+    Two conditions, because the vendor count alone is not enough. Requiring many
+    vendors was meant to keep domain nouns out -- `gene` and `disease` sit in
+    second position often enough to look verb-like, and admitting `gene` flags
+    ordinary prose like "call get_gene_info" and the OpenTargets datasource
+    `cancer_gene_census`, which is a datasource identifier and not a tool. But
+    `gene` reached 9 vendors against a threshold of 10, so a single new
+    `<Vendor>_gene_<what>` tool anywhere in the registry would have admitted it
+    and broken this test from unrelated data.
+
+    The second condition is what actually separates the two, so the margin no
+    longer has to. A verb is rare outside second position, while a noun is
+    common there: counting trailing uses (position 3 onward) against the vendor
+    count gives get 398/36, search 271/29, list 92/4, API 30/4, predict 14/4,
+    query 11/8, find 10/0 -- every real verb above 1.0, the weakest being query
+    at 1.38 -- versus gene at 9/125, a ratio of 0.07. That is a factor of ~20
+    between the weakest verb and the strongest noun, so `gene` stays out no
+    matter how many vendors adopt it.
 
     It replaced a `difflib.get_close_matches(cutoff=0.85)` near-miss filter,
     which was measured to miss 5 of those 9 pins (DGIdb_search_interactions,
@@ -169,14 +184,18 @@ def _tool_name_verbs(names):
     `MSigDB_Hallmark_2020` -- all fail the verb rule.
     """
     vendors_per_verb = collections.defaultdict(set)
+    trailing_uses = collections.Counter()
     for name in names:
         segments = name.split("_")
         if len(segments) >= 3:
             vendors_per_verb[segments[1]].add(segments[0])
+        for segment in segments[2:]:
+            trailing_uses[segment] += 1
     return frozenset(
         verb
         for verb, vendors in vendors_per_verb.items()
         if len(vendors) >= _MIN_VENDORS_PER_VERB
+        and len(vendors) > trailing_uses[verb]
     )
 
 
@@ -262,3 +281,48 @@ def test_gtopdb_no_longer_advertises_a_parameter_chembl_rejects():
         if config["name"] == "ChEMBL_get_drug_mechanisms"
     )
     assert "target_name" not in mechanisms["parameter"]["properties"]
+
+
+def test_a_domain_noun_stays_out_of_the_verb_set_however_many_vendors_use_it():
+    """`gene` had a margin of one tool, and the margin was the only thing holding.
+
+    Before the trailing-use condition, a verb was any second-position segment
+    used by 10+ vendors. `gene` sat at 9. One new `<Vendor>_gene_<what>` tool --
+    in any unrelated part of the registry -- would have made `gene` a verb, and
+    this file would then flag `cancer_gene_census`, an OpenTargets datasource
+    identifier that is not a tool and is not meant to be one.
+
+    Twenty synthetic vendors here, far past the threshold, so the assertion
+    fails on the vendor count alone if the noun guard is removed.
+    """
+    real = _registered_tool_names()
+    flooded = real | {f"Vendor{index}_gene_records" for index in range(20)}
+
+    assert "gene" not in _tool_name_verbs(flooded)
+    assert _tool_name_verbs(flooded) == _tool_name_verbs(real)
+
+
+def test_a_real_verb_is_still_admitted_when_vendors_adopt_it():
+    """The guard must not reject verbs; `annotate` sits at 9 vendors today.
+
+    It is a verb, it is rare in trailing position, and it should become one the
+    moment a tenth vendor uses it. Asserting that keeps the noun guard from
+    being tightened into something that rejects every new verb.
+    """
+    real = _registered_tool_names()
+    assert "annotate" not in _tool_name_verbs(real)
+
+    promoted = real | {"NewVendor_annotate_variants"}
+    assert "annotate" in _tool_name_verbs(promoted)
+
+
+def test_the_opentargets_datasource_is_not_a_registered_tool():
+    """Pins the premise of the guard: `cancer_gene_census` is data, not a tool.
+
+    If it ever is registered, the guard above is arguing about nothing and this
+    test says so directly rather than leaving the reasoning stale.
+    """
+    names = _registered_tool_names()
+
+    assert "cancer_gene_census" not in names
+    assert "cancer" in {name.split("_")[0] for name in names if "_" in name}
