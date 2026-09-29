@@ -1066,6 +1066,13 @@ def step_smoke(manifest: ProviderManifest) -> StepResult:
         if manifest.work_root
         else measured_path(manifest.slug).parent / f"{manifest.slug}-smoke"
     )
+    # Emptied, not reused. The outputs assertion walks this directory, so a
+    # structure left by an earlier run would keep a provider green after it
+    # stopped producing one -- the same false pass the assertion exists to
+    # catch, arriving through the back door. Guarded on the "-smoke" suffix
+    # because this removes a tree.
+    if smoke_out.name.endswith("-smoke") and smoke_out.is_dir():
+        shutil.rmtree(smoke_out, ignore_errors=True)
     smoke_out.mkdir(parents=True, exist_ok=True)
     record: Dict[str, Any] = {
         "slug": manifest.slug,
