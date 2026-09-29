@@ -582,12 +582,21 @@ class CompoundDrugProfileTool(BaseTool):
             )
         approved_n = indications.get("approved_count")
         total_n = indications.get("total_investigated_count")
+        if approved_n:
+            notes.append(
+                f"'approved' lists {approved_n} disease(s) whose highest recorded "
+                "clinical stage for this drug is approval. That is not the same as "
+                "the drug being approved to treat them: the records cover "
+                "combination products and historical labels, so aspirin's list "
+                "contains gastric ulcer and dyspepsia, which it is contraindicated "
+                "in. Read it as where the drug has reached approved use, and check "
+                "the label before treating any single entry as an indication."
+            )
         if approved_n is not None and total_n is not None and total_n > approved_n:
             notes.append(
-                f"'approved' lists the {approved_n} indication(s) that reached "
-                f"approval. 'total_investigated_count' is {total_n}, which counts "
-                "every disease the drug has been studied in at any phase — being "
-                "in that larger set is not evidence of efficacy or of approval."
+                f"'total_investigated_count' is {total_n}, which counts every "
+                "disease the drug has been studied in at any phase — being in that "
+                "larger set is not evidence of efficacy or of approval."
             )
 
         if data.get("sources_failed"):

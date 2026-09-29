@@ -341,6 +341,11 @@ def test_indications_lead_with_approved_uses():
     )
     # Being studied in 248 diseases must not read as being approved for them.
     assert "not evidence of efficacy" in notes
+    # Nor may the approved list read as "what this drug treats": OpenTargets
+    # flags gastric ulcer and dyspepsia APPROVAL for aspirin, which it is
+    # contraindicated in, because the records cover combination products and
+    # historical labels.
+    assert "not the same as" in notes and "contraindicated" in notes
 
     # With no ChEMBL id the section is empty and says why, rather than guessing.
     skipped = []
