@@ -48,6 +48,21 @@ is one dependency-free file (`remote_resident/protocol.py`) loaded by path.
    `remote/`. Provider JSON, `provider.toml`, lock files, smoke inputs and the R
    halves of R-backed providers need globs in `pyproject.toml`.
 
+## What three providers cost, and where the time went
+
+| | boltz | enformer | chai1 |
+| --- | --- | --- | --- |
+| upstream | boltz 2.2.1 | enformer-pytorch 0.8.12 | chai_lab 0.6.1 |
+| kit activation | `worker_launch` (1 of 36) | `.pth` autoload | `.pth` autoload |
+| kit mode here | fast | **off** (x86-only objects) | fast, `alloc` lever off |
+| worker | 456 lines | 183 | 184 |
+| peak reserved | 5.54 GiB | 4.12 | 9.8 |
+| residency | 110 s to 55 s | already in-process | **67.6 s to 25.7 s** |
+
+The worker shrank from 456 lines to ~184 once the shared half was extracted. Nearly all the
+remaining time per provider goes on facts that have to be read out of the kit rather than assumed,
+which is what the rest of this page is for.
+
 ## Adding a provider
 
 ```
@@ -105,6 +120,49 @@ committing to a download:
 | Does it carry prebuilt host objects? | 8 do; all 39 such files are x86-64, none aarch64 | refuses `kit_foreign_objects` from the ELF header, before installing |
 | Does its lock pin an architecture by URL? | ~20 name a wheel by direct x86-64 link | ship a lock pinning by version instead, and say so in its header |
 | How does it activate? | 30 by mode variable + `.pth`, 1 by `worker_launch` (boltz2), 1 not in-process at all (chrombpnet) | detected, not declared |
+
+## Four things to read out of the kit, never guess
+
+Each of these was a wrong assumption that cost a debugging round.
+
+**1. The mode variable's name.** `boltz2_opt` has none at module level; `chai1_opt` has no
+`modes.resolve` at all and keeps `ENV` in `_autoload`; `enformer_opt` has no `modes` module. Read
+`modes.ENV`, then `_autoload.ENV`. Deriving `<SLUG>_OPT` from the slug is how a renamed kit silently
+runs stock.
+
+**2. Where the child environment lives.** `boltz2_opt` returns 23 variables from
+`modes.resolve(mode)["env"]`; `chai1_opt` keeps one in `alloc.env_row()`, documented as the row for
+a *child* process. Both are read. Write down where to look, never what the value is.
+
+**3. Who holds the model between calls.** Under a kit mode the kit usually replaces the upstream's
+loader and **refuses to activate if anything replaced it first**, so a worker that memoises it turns
+the whole kit off silently. Under `mode = "off"` nothing replaces it and the worker should. Decide
+which case you are in, and report it: chai1's worker puts `weights_held_by` on its ready line and in
+every reply.
+
+**4. Whether a lever can win at all.** chai1's `alloc` exports `PYTORCH_CUDA_ALLOC_CONF`, and
+`opt_core` checks "CUDA already initialised" *before* "the variable already holds this value"
+(`mem/torch_alloc.py` `export()`). Its trigger module initialises CUDA, so the lever always loses,
+and one opt-in refusal takes the whole mode to NOT ACTIVE. `[kit] levers_off = ["alloc"]` plus the
+variable set before the process starts keeps the policy (`alloc_effective=true` on the kit's own
+EXIT line) and costs only the bookkeeping.
+
+## Generate the manifest, do not transcribe it
+
+The weight declarations come out of the kit's own `stock/PINS.json`. Write a few lines that read it
+and emit `[[weights.files]]`; chai1's eight entries were generated that way. The schema varies:
+`weights.files` as a dict (boltz2), as a list of `{local,url,sha256,bytes}` (chai1), keyed by
+filename (rfdiffusion1), nested under a Hugging Face repo with a `snapshot_commit` (enformer,
+esmfold2), or absent with a `checkpoints` key instead (evo2). Expect to add a shape, not to reuse
+one unchanged.
+
+## Parallelising the rollout
+
+Everything except the smoke step parallelises: reading the kit, writing the manifest and worker,
+building the environment, fetching weights. The smoke does not, because there is one GPU. Give each
+agent one kit, its own `~/<slug>-venv`, and only `src/tooluniverse/remote/<slug>/` to write in; tell
+it explicitly not to run `git sparse-checkout` in the shared kit checkout, which races, and not to
+run `--only smoke`. Widen the checkout once, up front, for every slug the round covers.
 
 ## Reading a refusal
 
