@@ -11,6 +11,7 @@ https://claude.com/docs/connectors/building/review-criteria
 """
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -86,3 +87,85 @@ def test_a_declared_title_survives_annotation_resolution():
     )
 
     assert resolved["title"] == "Curated title"
+
+
+# ── Listing metadata must not drift away from the catalogue ──────────────────
+#
+# PR #667 fixed a manifest that claimed MIT while the repository is Apache-2.0,
+# and the same file advertised "2,500+" tools. The licence got a guard; the
+# counts did not, and the same stale numbers turned out to be published in two
+# more places: server.json (the MCP Registry listing) said "2,500+" and
+# "only exposes 4 core tools" when the server exposes five, and
+# marketplace.json said "1000+" tools with "115" skills in one sentence and
+# "120+" in the next.
+#
+# An exact count would fail on every tool added, so these check the floor a
+# listing advertises is neither above the real catalogue nor far below it.
+
+SERVER_JSON = json.loads((REPO / "server.json").read_text())
+MARKETPLACE = json.loads((REPO / ".claude-plugin" / "marketplace.json").read_text())
+COMPACT_TOOLS = json.loads(
+    (REPO / "src" / "tooluniverse" / "data" / "compact_mode_tools.json").read_text()
+)
+
+
+def _tool_config_count():
+    """Tools the catalogue actually defines."""
+    data_dir = REPO / "src" / "tooluniverse" / "data"
+    names = set()
+    for path in data_dir.glob("*.json"):
+        try:
+            entries = json.loads(path.read_text())
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            continue
+        if isinstance(entries, list):
+            names.update(
+                e["name"] for e in entries if isinstance(e, dict) and "name" in e
+            )
+    return len(names)
+
+
+def _advertised_floors(text):
+    """Every "N+ tools" style claim in a listing string."""
+    return [
+        int(match.replace(",", ""))
+        for match in re.findall(r"([\d,]{3,})\+?\s+(?:scientific\s+)?(?:research\s+)?tools", text)
+    ]
+
+
+@pytest.mark.parametrize(
+    "label, text",
+    [
+        ("mcpb/manifest.json", MANIFEST["description"]),
+        ("server.json", json.dumps(SERVER_JSON)),
+        (".claude-plugin/marketplace.json", json.dumps(MARKETPLACE)),
+    ],
+)
+def test_a_listing_never_advertises_more_tools_than_exist_nor_far_fewer(label, text):
+    actual = _tool_config_count()
+    floors = _advertised_floors(text)
+    assert floors, f"{label} advertises no tool count; it used to"
+    for floor in floors:
+        assert floor <= actual, (
+            f"{label} advertises {floor} tools but the catalogue defines {actual}"
+        )
+        assert floor >= actual * 0.8, (
+            f"{label} advertises {floor} tools against a catalogue of {actual} -- "
+            "stale enough to undersell the project; round down to the nearest hundred"
+        )
+
+
+def test_the_registry_listing_states_the_number_of_tools_it_exposes():
+    """server.json describes compact mode to users of the MCP Registry.
+
+    It said four. ``find_tools`` is registered separately in smcp.py rather
+    than in compact_mode_tools.json, so the server exposes one more than that
+    file holds -- five. If that registration changes, this is the assertion
+    that should be revisited.
+    """
+    exposed = len(COMPACT_TOOLS) + 1  # + find_tools, registered in smcp.py
+    stated = re.search(r"exposes (\d+) core tools", json.dumps(SERVER_JSON))
+    assert stated, "server.json no longer states how many tools it exposes"
+    assert int(stated.group(1)) == exposed, (
+        f"server.json says {stated.group(1)} core tools, the server exposes {exposed}"
+    )

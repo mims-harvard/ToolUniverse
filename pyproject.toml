@@ -110,7 +110,7 @@ pdf = [
 ]
 ocr = [
     # Scanned-PDF text extraction for the USPTO downloader. EasyOCR pulls in
-    # PyTorch, a very large addition none of the other 600+ tools need, so keep
+    # PyTorch, a very large addition none of the other 2,700+ tools need, so keep
     # it opt-in like `pdf` and out of the aggregate `all` extra.
     "easyocr>=1.7",
     "python-docx>=1.1",

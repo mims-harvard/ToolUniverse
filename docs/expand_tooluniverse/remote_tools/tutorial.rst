@@ -330,4 +330,4 @@ Next Steps
 * **Architecture**: :doc:`../reference/architecture` - Understand ToolUniverse internals
 
 .. tip::
-   **Integration tip**: Start with simple MCP servers and gradually add complexity. The ToolUniverse ecosystem supports over 1000 tools including machine learning models, datasets, and APIs!
+   **Integration tip**: Start with simple MCP servers and gradually add complexity. The ToolUniverse ecosystem supports over 2,700 tools including machine learning models, datasets, and APIs!
