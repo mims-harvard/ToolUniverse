@@ -337,6 +337,24 @@ class BaseTool:
         )
         return norm_to_prop[match[0]] if match else None
 
+    @staticmethod
+    def _format_instance_path(path) -> str:
+        """Render a jsonschema instance path as the caller wrote it.
+
+        ``['responses', 4]`` becomes ``responses[4]`` and
+        ``['options', 'mode']`` becomes ``options.mode``. An empty path is
+        ``root``.
+        """
+        rendered = ""
+        for part in path:
+            if isinstance(part, int):
+                rendered += f"[{part}]"
+            elif rendered:
+                rendered += f".{part}"
+            else:
+                rendered = str(part)
+        return rendered or "root"
+
     def validate_parameters(self, arguments: Dict[str, Any]) -> Optional[ToolError]:
         """
         Validate parameters against tool schema.
@@ -475,8 +493,16 @@ class BaseTool:
                         )
             return None
         except jsonschema.ValidationError as e:
-            # Create a more agent-friendly error message
-            error_msg = f"Parameter validation failed for '{e.path[-1] if e.path else 'root'}': {e.message}"
+            # Name the failure by its whole path. The last path element alone
+            # is an array index for a bad list element ('4' for responses[4])
+            # and drops the parent for a nested key. absolute_path, not path:
+            # under anyOf/oneOf, jsonschema reports a sub-error whose `path`
+            # is relative to the parameter, so it starts at the index.
+            instance_path = list(e.absolute_path)
+            error_msg = (
+                f"Parameter validation failed for "
+                f"'{self._format_instance_path(instance_path)}': {e.message}"
+            )
 
             # Add type hint if it's a type error
             if e.validator == "type":
@@ -575,7 +601,9 @@ class BaseTool:
                     "validation_error": str(e),
                     "path": list(e.absolute_path) if e.absolute_path else [],
                     "schema": schema,
-                    "parameter": str(e.path[-1]) if e.path else "root",
+                    # The top level argument the caller passed; the full
+                    # path stays in "path" above.
+                    "parameter": str(instance_path[0]) if instance_path else "root",
                     "expected": str(e.validator_value)
                     if hasattr(e, "validator_value")
                     else None,
