@@ -1,0 +1,224 @@
+# RoseTTAFold3's model environment -- the stack this provider was built
+# against, as `pip freeze --all --exclude-editable` of the interpreter
+# [env] python names, on Python 3.12.1 (uv-managed CPython), linux-aarch64.
+#
+# The seventh distinct stack in this repository and it coexists with none of
+# the others: RoseTTAFold3 pins torch 2.13.0+cu130 / triton 3.7.1 / numpy
+# 2.4.4 / cuEquivariance 0.11.1 on Python 3.12, where OpenFold3 pins torch
+# 2.10.0+cu128 on 3.11 and Boltz-2 torch 2.12.0+cu130 with numpy 1.26.4.
+# One model, one environment, one socket each.
+#
+# Rebuild (an NVIDIA driver that runs CUDA 13.0 -- 580 or newer -- git, and a
+# C compiler on PATH: Triton builds the kit's kernels at first use):
+#
+#   uv venv --seed --managed-python --python 3.12.1 ~/rosettafold3-venv
+#   export TOOLUNIVERSE_ROSETTAFOLD3_PYTHON=~/rosettafold3-venv/bin/python
+#   grep -v '^#' requirements.lock > /tmp/rf3.txt
+#   $TOOLUNIVERSE_ROSETTAFOLD3_PYTHON -m pip install --no-deps -r /tmp/rf3.txt
+#   $TOOLUNIVERSE_ROSETTAFOLD3_PYTHON -m pip install --no-deps --force-reinstall \
+#       nvidia-cudnn-cu13==9.20.0.48 nvidia-nccl-cu13==2.29.7
+#   tu remote setup rosettafold3          # the kit, the add-on and the weights
+#
+# The second pip pass is the kit's own route-C recipe (its README.md
+# "Setup", route C) and it is not optional: nvidia-cudnn-cu12/-cu13 and
+# nvidia-nccl-cu12/-cu13 unpack into the SAME nvidia/cudnn and nvidia/nccl
+# directories, and the tested tree holds the cu13 files there, so the cu13
+# pair has to be laid down last. `pip install -r` of this file alone leaves
+# whichever pair pip happened to install second.
+#
+# --no-deps is deliberate: the list is complete, and letting a resolver
+# re-derive it is how a stack stops being the one that was measured. The kit
+# (rosettafold3_opt) and its shared core (opt_core) install editable on top
+# and are not here -- `--exclude-editable` leaves them out by construction.
+#
+# DEVIATIONS from the kit's own rosettafold3/environment/requirements.lock:
+#
+# 1. NONE. Not one. This file is the kit's 148 lines, distribution for
+#    distribution and version for version; `diff` of the two sorted pin sets
+#    is empty. Nothing had to be substituted by name, because no pin in the
+#    kit's lock is a direct `name @ https://...x86_64...whl` URL -- it names
+#    exactly one URL, `rc-foundry @ git+https://github.com/RosettaCommons/
+#    foundry.git@4010e3e2e...`, which is a source checkout and therefore
+#    architecture-neutral. It is reproduced here exactly, and it has to be:
+#    the kit's pin check (stock/check_pins.py) reads pip's own
+#    direct_url.json and requires `vcs_info.commit_id` to equal the pin, so
+#    installing rc-foundry any other way makes every kit mode refuse.
+#
+# 2. `pip==26.2.1` is NOT listed, for the same reason the kit's lock omits
+#    its own pip 23.3.2: the interpreter's installer is not part of the
+#    stack. `uv venv --seed` puts it there. That single line is the whole
+#    difference between this freeze and the kit's file.
+#
+# 3. Three pins that a static read of the kit says are x86-64 and are not,
+#    checked rather than assumed on this box:
+#      * torch==2.13.0 resolves to the manylinux_2_28_aarch64 wheel and
+#        reports `2.13.0+cu130`, `torch.version.cuda == '13.0'` and
+#        get_arch_list() == [sm_80, sm_90, sm_100, sm_110, sm_120]. An
+#        sm_120 cubin runs on this box's sm_121. (OpenFold3 needed an
+#        --extra-index-url for its version because PyPI's aarch64 build of
+#        2.10.0 is +cpu; 2.13.0's is not.)
+#      * triton==3.7.1 publishes manylinux_2_28_aarch64.
+#      * cuequivariance-ops-cu13 / -torch-cu13 0.11.1 install and
+#        `import cuequivariance_torch` succeeds here, although
+#        stock/PINS.json records only the two x86-64 wheels' digests. The
+#        kit's dry run reports cueq=0.11.1 on this interpreter.
+#
+# 4. NOT `uv venv` avoidance. OpenFold3 must use the stdlib `venv` because
+#    `uv venv` seeds `_virtualenv.pth`, whose `_Finder` class is one of the
+#    four names in that kit's HOOK_FINDER_CLASSES and is read as a rival kit
+#    hook. rosettafold3_opt has no such check -- grep for
+#    HOOK_FINDER_CLASSES / "one route per process" over
+#    rosettafold3/opt/ and common/opt_core/ finds nothing -- and the only
+#    .pth scan it does (run.sh's env-route gate) looks for a file named
+#    `rosettafold3_opt_autoload.pth` and ignores every other .pth. The kit's
+#    own README route C uses `uv venv --seed --managed-python --python
+#    3.12.1`, and that is what was used here.
+#
+absl-py==2.5.0
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.3
+aiosignal==1.4.0
+annotated-doc==0.0.5
+annotated-types==0.8.0
+antlr4-python3-runtime==4.9.3
+assertpy==1.1
+asttokens==3.0.2
+atomworks==2.2.1
+attrs==26.1.0
+beartype==0.22.9
+biopython==1.85
+biotite==1.4.0
+biotraj==1.2.2
+certifi==2026.7.22
+charset-normalizer==3.4.9
+click==8.4.2
+comm==0.2.3
+cuda-bindings==13.3.1
+cuda-pathfinder==1.6.0
+cuda-toolkit==13.0.3.0
+cuequivariance==0.11.1
+cuequivariance-ops-cu13==0.11.1
+cuequivariance-ops-torch-cu13==0.11.1
+cuequivariance-torch==0.11.1
+Cython==3.2.9
+cytoolz==1.1.0
+debugpy==1.8.21
+dm-tree==0.1.10
+einops==0.8.2
+einx==0.4.3
+environs==15.1.0
+executing==2.2.1
+filelock==3.29.0
+frozendict==2.4.7
+frozenlist==1.8.0
+fsspec==2026.4.0
+gemmi==0.7.3
+hydra-core==1.3.5
+hydride==1.2.3
+idna==3.18
+ipykernel==7.3.0
+ipython==9.16.1
+ipython_pygments_lexers==1.1.1
+jaxtyping==0.3.11
+jedi==0.20.0
+Jinja2==3.1.6
+jupyter_client==8.9.1
+jupyter_core==5.9.1
+lightning==2.6.5
+lightning-utilities==0.15.3
+loralib==0.1.2
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+marshmallow==4.3.1
+matplotlib-inline==0.2.2
+mdurl==0.1.2
+mpmath==1.3.0
+msgpack==1.2.1
+multidict==6.7.1
+nest-asyncio2==1.7.2
+networkx==3.6.1
+numpy==2.4.4
+nvidia-cublas==13.1.1.3
+nvidia-cublas-cu12==12.6.4.1
+nvidia-cuda-cupti==13.0.85
+nvidia-cuda-cupti-cu12==12.6.80
+nvidia-cuda-nvrtc==13.0.88
+nvidia-cuda-nvrtc-cu12==12.6.77
+nvidia-cuda-runtime==13.0.96
+nvidia-cuda-runtime-cu12==12.6.77
+nvidia-cudnn-cu12==9.5.1.17
+nvidia-cudnn-cu13==9.20.0.48
+nvidia-cufft==12.0.0.61
+nvidia-cufft-cu12==11.3.0.4
+nvidia-cufile==1.15.1.6
+nvidia-cufile-cu12==1.11.1.6
+nvidia-curand==10.4.0.35
+nvidia-curand-cu12==10.3.7.77
+nvidia-cusolver==12.0.4.66
+nvidia-cusolver-cu12==11.7.1.2
+nvidia-cusparse==12.6.3.3
+nvidia-cusparse-cu12==12.5.4.2
+nvidia-cusparselt-cu12==0.6.3
+nvidia-cusparselt-cu13==0.8.1
+nvidia-ml-py==13.610.43
+nvidia-nccl-cu12==2.26.2
+nvidia-nccl-cu13==2.29.7
+nvidia-nvjitlink==13.3.33
+nvidia-nvjitlink-cu12==12.6.85
+nvidia-nvshmem-cu13==3.4.5
+nvidia-nvtx==13.0.85
+nvidia-nvtx-cu12==12.6.77
+omegaconf==2.3.1
+opt_einsum==3.4.0
+packaging==26.3
+pandas==3.0.5
+parso==0.8.7
+pexpect==4.9.0
+pillow==12.2.0
+platformdirs==4.11.1
+prompt_toolkit==3.0.53
+propcache==0.5.2
+protobuf==7.35.1
+psutil==7.2.2
+ptyprocess==0.7.0
+pure_eval==0.2.3
+py3Dmol==2.5.5
+pyarrow==25.0.0
+pydantic==2.13.4
+pydantic_core==2.46.4
+Pygments==2.20.0
+pymol_remote==1.1.0
+python-dateutil==2.9.0.post0
+python-dotenv==1.2.2
+pytorch-lightning==2.6.5
+PyYAML==6.0.3
+pyzmq==27.1.0
+rc-foundry @ git+https://github.com/RosettaCommons/foundry.git@4010e3e2e7350edada3e25a45c908c6bf407df4d
+rdkit==2026.3.5
+requests==2.34.2
+rich==15.0.0
+rootutils==1.0.7
+scipy==1.18.0
+sentry-sdk==2.66.1
+setuptools==84.0.0
+shellingham==1.5.4
+six==1.17.0
+stack-data==0.6.3
+sympy==1.14.0
+toolz==1.1.0
+torch==2.13.0
+torchmetrics==1.9.0
+tornado==6.5.8
+tqdm==4.70.0
+traitlets==5.16.1
+triton==3.7.1
+typer==0.27.1
+typing-inspection==0.4.2
+typing_extensions==4.15.0
+urllib3==2.7.0
+wadler_lindig==0.1.7
+wandb==0.28.1
+wcwidth==0.8.2
+wrapt==2.3.0
+yarl==1.24.5
+zstandard==0.25.0

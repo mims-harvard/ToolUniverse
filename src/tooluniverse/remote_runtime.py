@@ -251,6 +251,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "rosettafold3",
+        "tooluniverse.remote.rosettafold3.rosettafold3_tool",
+        8034,
+        ("rosettafold3_predict",),
+        ("TOOLUNIVERSE_ROSETTAFOLD3_PYTHON",),
+        (),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "scanvi",
         "tooluniverse.remote.scanvi.scanvi_tool",
         8027,

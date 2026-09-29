@@ -191,6 +191,12 @@ DEPLOYMENTS = (
         path_env=("FOUNDRY_CHECKPOINT_DIRS",),
     ),
     Deployment(
+        "rosettafold3",
+        8034,
+        ("rosettafold3_predict",),
+        ("TOOLUNIVERSE_ROSETTAFOLD3_PYTHON",),
+    ),
+    Deployment(
         "scanvi",
         8027,
         ("run_scanvi_annotate",),
