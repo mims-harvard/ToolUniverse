@@ -74,8 +74,84 @@ would mean patching Lightning's teardown, which also releases what the kit's
 ``post_release`` lever expects to release, so it is left alone until a
 measurement says it is worth the argument.
 
-Three orderings in this file are load-bearing rather than stylistic:
+**The second request in a held worker, and why the first one proves nothing.**
+A single smoke passes on a provider that cannot serve twice. This one did: the
+first request folded, the second raised ``Offset increment outside graph
+capture encountered unexpectedly`` from the ``torch.randint`` in the kit's
+``sync_hoist`` cell, deterministically, for every repeat of a shape already
+folded. ``sync_hoist`` is the messenger, not the cause; the chain, each step
+read from a log line rather than inferred:
 
+1. Lightning moves the module to the CPU at the end of every ``predict`` and
+   back to the device at the next one, so every parameter's address changes
+   between requests. The kit's ``trunk_graph`` cell checks exactly that
+   (``_storage_signature``) and refuses to replay a graph over moved storage:
+   the second request's first trunk call is counted ``storage_moved`` and the
+   captured graph is dropped -- correctly.
+2. Dropping it deletes the only CUDA graph in the cell's process-wide graph
+   pool, but the cell keeps the pool HANDLE (``release()`` clears it; the
+   ``storage_moved`` path does not). The re-capture two calls later hands that
+   handle to ``torch.cuda.graph(...)``, the allocator finds the pool with a use
+   count of zero and the capture dies inside ``capture_begin``::
+
+       [openfold3-opt/trunk_graph] capture FAILED for n_tok=35 (RuntimeError:
+       it->second->use_count > 0 INTERNAL ASSERT FAILED at
+       ".../c10/cuda/CUDACachingAllocator.cpp":2731 ...) — this key runs eager
+
+3. ``trunk_graph`` catches that, marks the key uncapturable and runs the call
+   eagerly, so nothing raises YET. But a capture that began and never ended
+   leaves the default CUDA generator with its ``capturing_`` flag set, and the
+   next eager draw from it is the one that reports the damage. The kit names
+   this failure itself, in
+   ``opt_core.capture.graphs.reset_generator_capture_state``: "clearing the
+   'capturing' flag a failed capture leaves behind ('Offset increment outside
+   graph capture' on every later eager draw)". ``trunk_graph`` does not call
+   that recovery, so the exception surfaces at the next request's first MSA
+   depth draw -- ``sync_hoist.py``'s ``torch.randint`` -- and upstream catches
+   it per query, which is why it arrives as "wrote no structure".
+
+A length ladder hides all of this: a new token count makes ``trunk_graph``
+call its own ``release()``, which clears the pool, so consecutive requests of
+DIFFERENT shapes never reach step 2. Only a repeated shape does.
+
+**So this worker forces the kit's item boundary.** ``post_release`` already
+drops every between-items resident of the graph machinery -- ``of3_graphs``'s
+generation and pool, ``of3t_paircache``'s static buffers, ``trunk_graph``'s
+graphs (through the ``release()`` that clears the pool handle) -- and already
+states that above its gate "every item re-captures by design" and that the
+result is "bitwise with the gate forced on every item". It simply never fires
+here: its gate is ``n_tok >= 2400`` or free memory below 16 GB, and a 35- or
+800-residue fold on a 128 GB card is neither (measured: ``pre_confidence=0
+post_forward=0 kept=1``). ``OPENFOLD3_OPT_POST_RELEASE_NTOK = 0`` puts the
+gate on every item. That is the kit's own knob, not a patched cell and not an
+ablation: the fast line exports ``OPENFOLD3_OPT_POST_RELEASE``, and the kit's
+conflict rule says in so many words that the line carrying a cell lever leaves
+the family's parameters -- "size gates, caps, core pins" -- to the caller
+(``modes.resolve`` under this setting returns no conflicts). What it costs is
+one re-capture per request instead of a replayed graph; see ``[gpu]`` in
+``provider.toml`` for the measurement.
+
+**Where upstream puts the exception.** ``predict_step`` catches everything a
+fold raises, logs one ``ERROR`` line and appends the traceback to
+``<log_dir>/predict_err_rank0.log`` (``_log_predict_exception``); the writer
+callback then counts the query failed, writes its summary and the run returns
+normally. ``log_dir`` is ``<output_dir>/logs`` and the lightning module is
+handed it once, at construction -- so in a resident worker every traceback
+lands under ``_BIRTH_DIR`` below, not under the request's own output
+directory. That is the file to read when a request comes back with
+``structures: []``; the module docstring of ``provider.toml`` records what it
+held the first time.
+
+Four orderings in this file are load-bearing rather than stylistic:
+
+* ``_reconcile_kit_row()`` comes before the trigger import, because the kit's
+  conflict check reads ``os.environ`` at activation and the row this process
+  inherited was resolved without the manifest's ablation. Its own docstring
+  has the refusal it prevents.
+
+* ``_force_item_boundary_release()`` comes before the trigger import too: the
+  ``post_release`` cell reads its gate out of ``os.environ`` once, at
+  activation, and activation is what the trigger import runs.
 * ``import openfold3`` comes before anything that could touch the GPU. That
   import is the kit's trigger: the ``.pth`` installed at interpreter start arms
   a finder which patches the package the moment its body has run, and the
@@ -137,6 +213,105 @@ def _load_worker_base():
 WB = _load_worker_base()
 
 MODE = (os.environ.get("OPENFOLD3_OPT") or "off").strip().lower()
+
+# The kit's gate knob for `post_release`, the one setting that makes a held
+# worker able to serve the same shape twice. See _force_item_boundary_release.
+_POST_RELEASE_NTOK = "OPENFOLD3_OPT_POST_RELEASE_NTOK"
+
+
+def _reconcile_kit_row() -> None:
+    """Make this process's environment agree with the line the kit will run.
+
+    The launcher reads the kit's mode row in a probe interpreter
+    (``kit_launch._PROBE`` -> ``modes.resolve(mode, home)``) and exports it, and
+    it reads that row *before* it adds ``MODEL_OPT_LEVERS_OFF``. So under an
+    ablation the two disagree: the inherited row still names every lever of the
+    unablated line, and the kit's own conflict rule -- "the modes set their own
+    switches" -- refuses the whole activation on the difference::
+
+        [openfold3-opt] NOT ACTIVE: OPENFOLD3_OPT_PAIR='trimul_v4:triatt_block:
+        pair_transition' preset, the fast line sets 'trimul_v4:triatt_block'
+        (mode=fast)
+
+    and the process exits 3 before it binds its socket. This provider declares
+    ``[kit] levers_off = ["pair_transition"]`` (see ``provider.toml`` for why),
+    so it meets that refusal on every start.
+
+    Nothing here decides anything. The resolution is the kit's own, computed in
+    this process, where ``MODEL_OPT_LEVERS_OFF`` is set; applying its
+    ``exports`` and ``unsets`` is what ``openfold3_opt.stack.activate`` does a
+    moment later anyway. Doing it before the trigger import only means the
+    conflict check, which reads ``os.environ``, sees the row this process will
+    actually run instead of the stale one it inherited. A conflict that
+    survives is a real one and is said out loud rather than left for the
+    NOT ACTIVE line.
+
+    ``openfold3_opt.modes`` imports neither ``torch`` nor ``openfold3``
+    (measured: both absent from ``sys.modules`` after it), so this runs ahead of
+    the trigger without arming or disarming anything.
+    """
+    if MODE == "off":
+        return
+    try:
+        from openfold3_opt import env as kit_env
+        from openfold3_opt import modes as kit_modes
+    except ImportError as exc:  # noqa: BLE001 - a kitless environment still serves
+        say(f"the optimization kit is not importable ({exc}); nothing to reconcile")
+        return
+    resolution = kit_modes.resolve(MODE, kit_env.tree_home())
+    before = dict(os.environ)
+    for name in resolution.unsets:
+        os.environ.pop(name, None)
+    os.environ.update(resolution.exports)
+    changed = sorted(
+        k for k in set(before) | set(os.environ) if before.get(k) != os.environ.get(k)
+    )
+    off = os.environ.get("MODEL_OPT_LEVERS_OFF") or "none"
+    say(
+        f"kit row reconciled for levers_off={off}: "
+        f"{', '.join(changed) if changed else 'the inherited row already agreed'}"
+    )
+    if resolution.conflicts:
+        say(f"the kit still reports conflicts: {'; '.join(resolution.conflicts)}")
+
+
+_reconcile_kit_row()
+
+
+def _force_item_boundary_release() -> None:
+    """Put the kit's ``post_release`` gate on every item, which is what makes
+    this worker able to answer a second request at a shape it has already
+    folded.
+
+    The module docstring has the chain in full. In one line: a resident worker
+    hands the same shape to ``trunk_graph`` twice with a Lightning CPU round
+    trip in between, the cell drops its graph for the moved storage but keeps
+    the emptied pool handle, the re-capture into that handle trips the
+    allocator's use-count assertion, and a capture that began and never ended
+    leaves the CUDA generator flagged as capturing -- so the NEXT eager draw
+    raises ``Offset increment outside graph capture encountered unexpectedly``.
+
+    ``post_release`` releases ``trunk_graph``'s graphs through the cell's own
+    ``release()``, which clears the pool handle with them, so a forced gate
+    means no request ever meets a pool its graphs have left. The kit calls the
+    forced gate exact ("bitwise with the gate forced on every item") and leaves
+    the knob to the caller (the fast line carries the lever; its parameters are
+    then ours). ``setdefault`` so an operator who has set it keeps their value
+    -- and the ready line says which value is in force, because a worker
+    running with the kit's 2400 default is a worker that fails on request two.
+    """
+    if MODE == "off":
+        return
+    os.environ.setdefault(_POST_RELEASE_NTOK, "0")
+    say(
+        f"{_POST_RELEASE_NTOK}={os.environ[_POST_RELEASE_NTOK]}: the kit's "
+        f"item-boundary release fires on every item, so each request captures "
+        f"its own trunk graph instead of meeting the last request's emptied "
+        f"graph pool (see the module docstring)"
+    )
+
+
+_force_item_boundary_release()
 
 # The kit's trigger package, first and whole. Everything the kit patches lives
 # under it, and the finder disarms once this import returns.
@@ -333,6 +508,47 @@ def _scores(out_dir: Path) -> dict:
     return found
 
 
+def _upstream_failure(out_dir: Path, from_byte: int) -> str:
+    """Why a fold that returned normally produced nothing, in upstream's words.
+
+    ``predict_step`` catches every exception a fold raises, appends the
+    traceback to ``<log_dir>/predict_err_rank<rank>.log`` and lets the run
+    finish; the writer then records the query as failed in ``summary.txt``. A
+    resident worker's ``log_dir`` is fixed at construction, so that file is
+    under ``_BIRTH_DIR`` and grows across requests -- ``from_byte`` is where
+    this request started writing, so only its own traceback is quoted.
+
+    This exists because the alternative is what this provider shipped with: a
+    reply of ``structures: []`` and a timing, from a call that raised.
+    """
+    parts = []
+    summary = out_dir / "summary.txt"
+    if summary.is_file():
+        try:
+            parts.append(summary.read_text().strip())
+        except OSError:
+            pass
+    log = _BIRTH_DIR / "logs" / "predict_err_rank0.log"
+    if log.is_file():
+        try:
+            with open(log, "r", errors="replace") as handle:
+                handle.seek(from_byte)
+                fresh = handle.read().strip()
+            if fresh:
+                parts.append(f"{log}:\n{fresh}")
+        except OSError:
+            pass
+    return "\n\n".join(parts)
+
+
+def _err_log_size() -> int:
+    log = _BIRTH_DIR / "logs" / "predict_err_rank0.log"
+    try:
+        return log.stat().st_size
+    except OSError:
+        return 0
+
+
 def _predict_one(req: dict) -> dict:
     """One prediction. The request carries the query JSON text."""
     text = req.get("input") or req.get("query_json")
@@ -357,6 +573,7 @@ def _predict_one(req: dict) -> dict:
 
     if DEVICE == "cuda":
         torch.cuda.reset_peak_memory_stats()
+    err_from = _err_log_size()
     t = time.time()
     RUNNER.run(query_set)
     if DEVICE == "cuda":
@@ -364,10 +581,24 @@ def _predict_one(req: dict) -> dict:
     timing = {"predict_s": round(time.time() - t, 2)}
 
     files = sorted(str(p) for p in out_dir.rglob("*") if p.is_file())
+    structures = [f for f in files if f.endswith((".cif", ".pdb"))]
+    if not structures:
+        # A fold that raises returns normally from RUNNER.run: upstream caught
+        # it per query. Answering with an empty list would make the caller's
+        # success the caller's problem, so the reason is raised instead, in
+        # upstream's own words.
+        detail = _upstream_failure(out_dir, err_from) or (
+            "upstream left neither a summary nor a traceback; the worker "
+            "transcript is the only record"
+        )
+        raise RuntimeError(
+            f"OpenFold3 wrote no structure for {name!r}: the fold raised and "
+            f"upstream caught it per query.\n\n{detail}"
+        )
     body = {
         "out_dir": str(out_dir),
         "files": files,
-        "structures": [f for f in files if f.endswith((".cif", ".pdb"))],
+        "structures": structures,
         "seeds": list(RUNNER.seeds),
         "timing": timing,
         "weights_held_by": HOLDER,
@@ -377,6 +608,10 @@ def _predict_one(req: dict) -> dict:
     scores = _scores(out_dir)
     if scores:
         body["scores"] = scores
+    if _err_log_size() > err_from:
+        # Some query of this set failed while others produced structures. The
+        # reply says so rather than letting the short list speak for itself.
+        body["failed"] = _upstream_failure(out_dir, err_from)
     if DEVICE == "cuda":
         body["peak_reserved_gib"] = round(torch.cuda.max_memory_reserved() / 2**30, 2)
     return body
@@ -392,6 +627,7 @@ def _ready() -> dict:
         "checkpoint": str(CKPT),
         "loader_workers": 0,
         "loader_workers_configured": LOADER_WORKERS_CONFIGURED,
+        "post_release_ntok": os.environ.get(_POST_RELEASE_NTOK, "kit default"),
     }
 
 

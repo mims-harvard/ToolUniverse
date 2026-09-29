@@ -5,7 +5,7 @@ description: Set up, launch, validate, and troubleshoot the OpenFold3 ToolUniver
 
 # Set up OpenFold3 as a remote tool
 
-> Validation status (2026-09-29): THIS DEPLOYMENT DOES NOT YET FOLD. The stack installs, the kit activates in-process with 37 environment variables and its full lever census, the checkpoint is at its pin, and a request returns in 29 s having produced no structure: upstream catches the per-query exception itself and writes `Failed Queries: 1` to a summary file. The provider manifest is `status = "untested"` and its VRAM figure is a derived reserve, not a measurement. Do not deploy this one; it is listed so the work in progress is visible rather than hidden.
+> Validation status (2026-09-29): OpenFold3 under the optimization kit's `fast` mode ran on the NVIDIA GB10 (aarch64, cc 12.1), with `pair_transition` switched off through the kit's own MODEL_OPT_LEVERS_OFF door, the kit's `post_release` gate forced on every item, and the data loader forced to 0 workers. Verified on FOUR CONSECUTIVE IDENTICAL REQUESTS in one held worker -- not on a single smoke, which this provider passed while being unable to answer a second request at the same shape. Five mmCIF models per request; peak reserved 2.22 GiB rising to 2.35 by the fourth, and 9.12 GiB measured at 800 residues. Public publication, cross-user isolation, concurrency, recovery and biological accuracy are untested; keep this deployment private.
 
 ## Prerequisites
 
@@ -186,7 +186,7 @@ asyncio.run(main())
 PY
 ~~~
 
-Expected success shape: `n_structures` above zero with structure paths. At present it returns `"OpenFold3 produced no structure for this query."`, which is the honest reply and the reason this deployment is not ready. Check scientific meaning, output bounds, invalid-input behavior, and absence of paths, secrets, and traces.
+Expected success shape: `n_structures` above zero and a `scores` object carrying each sample's confidence JSON (`avg_plddt` among them) -- with five diffusion samples, ranking them on those scores is the one thing a caller must do. A fold that fails on its input comes back as "OpenFold3 could not fold this query: ..." carrying upstream's own words, which is different from the worker being unavailable. Check scientific meaning, output bounds, invalid-input behavior, and absence of paths, secrets, and traces.
 
 ## Tune GPU and concurrency
 
@@ -201,6 +201,7 @@ Expected success shape: `n_structures` above zero with structure paths. At prese
 
 - Read the refusal. Every step of `tu remote setup` names what is wrong and carries the fix; exit 3 is a refusal and exit 1 is a failure.
 - The worker's own transcript is at `~/.cache/tooluniverse/remote-logs/openfold3-resident.log`, and it holds the kit's full lever census. A lever reading `state=off reason=...` is the kit declining something, which is usually correct.
+- Tracebacks are NOT in the request's output directory. Upstream binds `log_dir` to the lightning module at construction, so a resident worker's failures all land in its BIRTH directory, `/tmp/openfold3-resident-*/logs/predict_err_rank0.log`. This has cost two debugging rounds.
 - Import/executable failure in the model half: re-run `tu remote setup openfold3 --only environment`. It rebuilds from the lock with `--no-deps` and will not silently resolve a different version.
 - Weights off their pin: the named file is left in place for inspection rather than deleted, because a truncated transfer and a corrupt file look alike. Remove it by hand and re-run `--only weights`.
 - 401/403 on deliberate network binding: configure matching TOOLUNIVERSE_API_TOKEN bearer auth; prefer loopback plus relay.

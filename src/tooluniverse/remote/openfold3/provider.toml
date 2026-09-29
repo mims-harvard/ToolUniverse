@@ -45,22 +45,66 @@
 slug = "openfold3"
 description = "OpenFold3 all-atom structure prediction from a query JSON of chains"
 operations = ["openfold3_predict"]
-status = "untested"
-# Reverted from "verified" on 2026-09-29. The evidence behind that claim was a
-# single smoke that genuinely produced five mmCIF models -- the fold works. But
-# a held worker fails on the SECOND request of the same shape, which is the one
-# property a resident provider exists for:
-#
-#   req 0: 16.4 s, peak 2.27 GiB, five structures
-#   req 1: RuntimeError: Offset increment outside graph capture encountered
-#          unexpectedly   (openfold3_opt/cells/sync_hoist.py:198, torch.randint
-#          inside a CUDA-graph replay)
-#
-# Deterministic, and invisible to a one-request smoke. A length ladder of four
-# DIFFERENT shapes in one worker passed, which is consistent with a graph
-# captured per shape and replayed on the repeat. Under diagnosis; this file
-# goes back to "verified" only against a run of four consecutive identical
-# requests that all produce structures.
+status = "verified"
+# Set back to "verified" on 2026-09-29 against the run this file's previous
+# comment demanded: four consecutive identical requests in one held worker,
+# all producing structures. It had been reverted because a "verified" taken
+# from a one-request smoke was contradicted by request 1, which raised
+# `Offset increment outside graph capture encountered unexpectedly`. That
+# crash is fixed at its cause -- see [kit] -- and the acceptance evidence is
+# below. What the episode leaves behind for every provider on this standard:
+# the smoke proves a fold, and only a repeat proves a resident worker.
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, driver 580.173.02), venv
+route, kit mode fast with `pair_transition` switched off through the kit's
+MODEL_OPT_LEVERS_OFF door and the kit's `post_release` gate forced on every
+item (see [kit] and the worker's module docstring), data loader forced to 0
+workers (see [runtime]).
+
+VERIFIED ON 4 CONSECUTIVE IDENTICAL REQUESTS IN ONE HELD WORKER, not on one
+fold. The single smoke is not the test: this provider passed it while being
+unable to answer a second request at the same shape, and a length ladder of
+four DIFFERENT shapes passed too, because only a REPEATED shape reached the
+defect. The acceptance runs, each one worker held from start to stop, every
+request asserted to carry structures:
+
+  * 4 x the 35-residue smoke  ->  4/4, five mmCIF models each, peak reserved
+                                  2.22 GiB rising to 2.35 by the fourth.
+  * 35, 35, 200, 35 residues  ->  4/4, five models each: a shape change and a
+                                  shape repeat both survive.
+  * 100, 200, 400, 800, 800   ->  5/5 (the ladder under [gpu]).
+
+Re-run independently by the caller on a CONTENDED card (another session holding
+~8.5 GiB): 4/4, peaks 2.22 / 2.29 / 2.33 / 2.35 GiB -- identical to the hundredth
+of a GiB. Wall times were 42.6 / 46.8 / 76.4 / 76.6 s against 18.4 / 15.7 /
+18.3 / 17.6 s quiet, which is the standing rule in one measurement: peak
+reserved reproduces under contention, wall time does not.
+
+The kit's census for the first of those reads `trunk_graph state=on
+captures=4 replays=12 replayed_block_calls=576 drops=4 fallback=none` and
+`post_release state=on ntok=0 pre_confidence=4 post_forward=4 kept=0` -- four
+requests, four clean captures (`capture_ms=96,90,92,94`), nothing refused.
+The same run before the fix read
+`fallback=capture_failed:RuntimeError:1,storage_moved:1` and died on request
+1. The pair cells over those four requests: `trimul_v4 state=on served=500
+fallback=0`, `triatt_block state=on served=500 fallback=0`,
+`pair_transition state=off reason=levers_off`, and `sync_hoist state=on
+... fallback=none` -- the cell the exception used to come out of, serving
+every call it was offered.
+
+COLD AND WARM, one held worker on an otherwise idle card, the 35-residue
+smoke four times: 18.4 s, then 15.7, 18.3, 17.6 s. The 6.0 s model build is
+paid once and is not in those figures; what residency saves is that build plus
+the Triton compiles and the first captures, and what it does NOT save is a
+per-request graph capture, because Lightning moves the module off the device
+between requests (see [kit]). The ladder on the same card reads 22.8 s at 100
+residues, 24.8 at 200, 48.0 at 400, 96.1 at 800 and 95.9 on an immediate
+repeat of 800.
+
+Two of the acceptance runs were made earlier while another job held 76-95 % of
+the card and read 28-56 s for the same 35-residue fold. Those are not the
+numbers above, and the difference is the reason they are named here: peak
+reserved reproduced to the hundredth of a GiB across contended and quiet runs
+(it is this process's own allocator bookkeeping), wall time did not."""
 
 [runtime]
 mode = "resident"
@@ -115,26 +159,37 @@ smoke_timeout_s = 1800.0
 
 [gpu]
 policy = "required"
-# ONE POINT OF THE LADDER IS MEASURED, and it is the small end. The earlier
-# ladder -- 1.45 GiB at 100 residues rising to 4.24 at 800 -- is discarded:
-# every one of those runs raised inside the trunk and never reached the
-# sampler, so what it measured is how much a failing fold allocates before it
-# gives up, not a budget. (Its four tracebacks are in one of the
-# `/tmp/openfold3-resident-*/logs/predict_err_rank0.log` files, one per rung.)
+# MEASURED, and the ladder that used to sit here is void twice over. The first
+# one (1.45 GiB at 100 residues rising to 4.24 at 800) measured folds that
+# raised inside the trunk and never reached the sampler. The second (2.73 /
+# 3.82 / 6.93 / 12.0 GiB) measured a build whose graph machinery stayed
+# resident across requests, so every rung after the first was carrying the
+# previous rung's graphs -- which is why its numbers are HIGHER than the ones
+# below, not lower.
 #
-# What a fold that produces structures costs, measured here, is 2.24 GiB
-# reserved for 35 residues and 5 diffusion samples, 2.30 GiB for two such
-# queries in one request and 2.39 GiB on the third request of a held worker --
-# i.e. 2.4 GiB at the bottom of the envelope, still climbing slightly with
-# worker age. The figure below is the derived reserve this manifest carried
-# before, kept because 35 residues says nothing about 800: peak is a function
-# of chain length for a folding model, and the pair track grows as N^2.
+# Ladder, one held worker, five consecutive requests, one protein chain,
+# upstream's default five diffusion samples, peak reserved as this process's
+# allocator reports it:
 #
-# A host that wants a tighter number re-runs the ladder (100 / 200 / 400 / 800
-# residues, one held worker, steady state) now that a fold completes, and
-# states the ENVELOPE with it rather than just a number. See the `[gpu]` block
-# of remote/esmfold2/provider.toml for the form.
-vram_budget_gb = 16.0
+#     residues   peak reserved
+#           35       2.35 GiB   (the smoke, fourth request of a held worker;
+#                                2.22 GiB on the first)
+#          100       2.52 GiB
+#          200       3.12 GiB
+#          400       5.01 GiB
+#          800       8.69 GiB
+#          800       9.12 GiB   <- an immediate repeat: the figure declared
+#
+# The envelope: 800 residues costs 3.6x what 100 does, because the pair track
+# grows as N^2 and there is no large constant term to flatten it (contrast
+# esmfold2, 1.8x over the same span, where a 6B language model dominates).
+# The figure below is the SECOND 800-residue request, not the first: a held
+# worker's high-water mark still climbs a few per cent with age (2.22 -> 2.35
+# GiB over four identical 35-residue requests), so a budget taken from a cold
+# worker under-declares. A host that will not fold past 400 residues can hold
+# this provider in 6 GiB; one that accepts chains longer than 800 re-measures
+# and should expect roughly N^2.
+vram_budget_gb = 9.12
 shareable = true
 isolation = "process"
 
@@ -231,14 +286,73 @@ mode = "fast"
 # core has no cell for.
 levers_off = ["pair_transition"]
 #
-# The other fork out of a CUDA-initialised parent, checked rather than assumed.
-# `writer_overlap` runs with `route=process`, and until a fold completed it had
-# never been exercised -- a single-item request writes its one item inline
-# (`inline=last_item:1`, no worker at all). A two-query request does start it,
-# and it survives: `LEVER name=writer_overlap state=on route=process items=3
-# overlapped=1 inline=last_item:2 write_exc=0 worker=835534`, with all ten
-# mmCIFs on disk. So the DataLoader's death was about the loader's own fork,
-# not about forking from this process as such, and this lever stays on.
+# THE SECOND REQUEST, and the one kit setting here that is not an ablation.
+# With `pair_transition` off this provider folded -- once. The second request
+# at a shape it had already folded raised `Offset increment outside graph
+# capture encountered unexpectedly` from the kit's `sync_hoist` cell,
+# deterministically, and only for a REPEATED shape, which is why a length
+# ladder passed and hid it. `sync_hoist` is where the exception surfaces, not
+# where it comes from: `trunk_graph` owns the capture. The worker's module
+# docstring has the chain step by step with the log lines that show each step.
+#
+# In short: Lightning moves the module to the CPU between requests, so
+# `trunk_graph` correctly refuses to replay its captured graph over moved
+# storage (`storage_moved`) and deletes the entry -- but keeps the graph POOL
+# handle that the deleted graph had emptied. The next capture into that handle
+# dies inside the allocator (`it->second->use_count > 0 INTERNAL ASSERT
+# FAILED`), and a capture that began and never ended leaves the CUDA generator
+# flagged as capturing, so the next eager draw is the one that raises. The kit
+# names this exact aftermath in
+# `opt_core.capture.graphs.reset_generator_capture_state` ("clearing the
+# 'capturing' flag a failed capture leaves behind"), but
+# `of3_trunk/trunk_graph.py` calls neither that recovery nor its own
+# `release()`, which would have cleared the pool. The sampler's graph lever
+# does it right: `of3_graphs` meets the same moved storage every request
+# (`storage_moved_recaptures=3` in a four-request census) and drops its whole
+# generation, pool included. This is a defect of one branch of one kit cell,
+# worth reporting upstream; nothing here patches it.
+#
+# The door taken is the kit's own gate knob, set by the worker because [kit]
+# has no environment passthrough: OPENFOLD3_OPT_POST_RELEASE_NTOK = 0.
+# `post_release` already drops every between-items resident of the graph
+# machinery -- including `trunk_graph`'s graphs, through the `release()` that
+# clears the pool with them -- and already states that above its gate "every
+# item re-captures by design" and that the result is "bitwise with the gate
+# forced on every item". It simply never fired here: the gate is n_tok >= 2400
+# or free memory below 16 GB, and a 35-residue fold on a 128 GB card is
+# neither (measured: `pre_confidence=0 post_forward=0 kept=1`). Forcing it is
+# not an ablation -- the fast line keeps every lever it had, `trunk_graph`
+# included -- and the kit permits it by rule: the line that carries a cell
+# lever leaves that family's parameters, "size gates, caps, core pins", to the
+# caller, and `modes.resolve` under this setting returns no conflicts.
+#
+# The alternative, gating `trunk_graph` off, was measured rather than assumed.
+# It also survives four repeats -- so the defect is `trunk_graph`'s alone, not
+# a general disease of graphs in a held worker -- and it is faster on a small
+# fold. It is not what ships, and the reason is memory. One held worker per
+# row, idle card, four 35-residue requests and then the ladder:
+#
+#                            35 res, 4 requests        800 res   peak @ 800
+#   post_release forced      18.4 15.7 18.3 17.6 s      96.1 s     9.12 GiB
+#   trunk_graph off          16.6 13.3 15.3 15.8 s      98.5 s    11.13 GiB
+#
+# Turning `trunk_graph` off is about 2 s (13 %) faster on a 35-residue fold,
+# no faster at 800, and costs 2.0 GiB (22 %) more at 800 residues and 1.3 GiB
+# more at 400 -- because the item-boundary release is also what returns the
+# sampler's generation and the pair cache's static buffers, which nothing else
+# frees between requests. A provider held resident exists to be schedulable on
+# a shared card, so two seconds is the right thing to spend for two gigabytes,
+# and it leaves one fewer lever of the fast line ablated.
+#
+# What the forced gate costs in capture, from the kit's own `capture_ms`
+# census over the ladder: 110 ms at 100 tokens, 190 at 200, 503 at 400 and
+# 1724 at 800 for the 48-block trunk stack, plus ~150 ms for the confidence
+# head's 4-block stack at 800 (and 90-96 ms at the smoke's 35). A host that
+# folds only long chains and wants those seconds back has the kit's own token
+# gate OPENFOLD3_OPT_TRUNK_GRAPH_NMAX, below its 1024 default; it is not set here
+# because at 800 residues the two configurations measured within noise of each
+# other and the memory went the other way.
+#
 # openfold3's run.sh drives whatever `python` is on PATH; it does not read a
 # PYTHON variable the way chai1's and enformer's do. `tu remote setup` puts the
 # manifest's interpreter first on PATH for exactly this step, so the plain form
