@@ -70,6 +70,13 @@ DEPLOYMENTS = (
         path_env=("TOOLUNIVERSE_REMOTE_DATA_ROOT", "CELLTYPIST_SAFE_MODEL_DIR"),
     ),
     Deployment(
+        "chai1",
+        8033,
+        ("chai1_fold",),
+        ("CHAI_DOWNLOADS_DIR", "TOOLUNIVERSE_CHAI1_PYTHON"),
+        path_env=("CHAI_DOWNLOADS_DIR",),
+    ),
+    Deployment(
         "chrombpnet",
         8032,
         ("run_chrombpnet_predict", "run_chrombpnet_variant_effect"),
@@ -87,6 +94,13 @@ DEPLOYMENTS = (
         "enformer", 8011, ("run_enformer_predict", "run_enformer_variant_effect")
     ),
     Deployment("esm", 8008, ("esm_embed_sequence",)),
+    Deployment(
+        "esmfold2",
+        8038,
+        ("esmfold2_fold",),
+        ("HF_HOME", "TOOLUNIVERSE_ESMFOLD2_PYTHON"),
+        path_env=("HF_HOME",),
+    ),
     Deployment(
         "expert-feedback",
         9876,
@@ -150,6 +164,12 @@ DEPLOYMENTS = (
         ("TOOLUNIVERSE_REMOTE_DATA_ROOT",),
     ),
     Deployment(
+        "openfold3",
+        8039,
+        ("openfold3_fold",),
+        ("TOOLUNIVERSE_OPENFOLD3_PYTHON",),
+    ),
+    Deployment(
         "paga",
         8022,
         ("run_paga_trajectory",),
@@ -162,6 +182,13 @@ DEPLOYMENTS = (
         ("run_pinnacle_ppi_retrieval",),
         ("PINNACLE_DATA_PATH",),
         path_env=("PINNACLE_DATA_PATH",),
+    ),
+    Deployment(
+        "rfdiffusion3",
+        8040,
+        ("rfdiffusion3_design",),
+        ("FOUNDRY_CHECKPOINT_DIRS", "TOOLUNIVERSE_RFDIFFUSION3_PYTHON"),
+        path_env=("FOUNDRY_CHECKPOINT_DIRS",),
     ),
     Deployment(
         "scanvi",
