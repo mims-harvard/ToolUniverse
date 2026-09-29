@@ -48,6 +48,11 @@ worker_args = [
 # The cold path is weights, CUDA context and a first-pass kernel compile.
 start_timeout_s = 900.0
 request_timeout_s = 3600.0
+# What a run that actually worked leaves behind. The smoke step matches these
+# globs against the files the run produced and refuses if none matched -- see
+# openfold3, which exited 0 and folded nothing because upstream caught its own
+# per-query exception.
+outputs = ["*.cif"]
 # `tu remote setup` ends here: one real prediction, under a deadline. Three of
 # the four problems this provider hit on its first machine appeared only at run
 # time, and one of them presented as a stall rather than an error.

@@ -30,6 +30,11 @@ launch = "tooluniverse.remote_resident.kit_launch:build_command"
 worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
 start_timeout_s = 900.0
 request_timeout_s = 1800.0
+# What a run that actually worked leaves behind. Enformer writes no files at
+# all -- it answers with arrays -- so the assertion is on the reply instead:
+# `centre` is the centre bin across every track, and an empty one means the
+# model produced nothing whatever the exit code said.
+output_keys = ["centre"]
 idle_timeout_s = 900.0
 smoke = "smoke/input.txt"
 smoke_timeout_s = 900.0

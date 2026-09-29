@@ -239,6 +239,36 @@ consecutive requests in one held worker — the later requests, not the first:
 Boltz-2 measured 4.31, 5.15, 5.54 GiB over three. It is what a host adds up to
 decide how many providers may be resident at once.
 
+**When peak depends on the input, the budget states the envelope it was
+measured at.** The first three providers hid this, because a folding smoke is
+roughly a folding request. The fourth broke it: RFdiffusion3's smoke is a
+60-residue unconditional design and reserves 2.12 GiB, while a 400-residue,
+4-design request — an ordinary thing to ask it for — reserves 12.49. A budget
+quoted from the smoke would have under-budgeted a real request by 6x, and
+under-budgeting is precisely the failure multi-tenancy cannot absorb. So the
+manifest carries the ladder and names the row it declares:
+
+| model | 100 aa | 200 aa | 400 aa | 800 aa | declared at |
+| --- | --- | --- | --- | --- | --- |
+| OpenFold3 | 1.45 | 1.61 | 2.27 | 4.24 | 800 aa |
+| ESMFold2 | 14.14 | 15.07 | 17.70 | 25.28 | 800 aa |
+| RFdiffusion3 | 2.62 | 2.92 (1 design) | 12.49 (4 designs) | — | 400 aa, 4 designs |
+
+Reading the ladder is as useful as reading the number. ESMFold2 costs 1.8x
+going from 100 to 800 residues where OpenFold3 costs 2.9x, because almost all
+of ESMFold2's footprint is the constant ESMC-6B term; a host that will not fold
+past ~200 residues can hold it in 16 GiB rather than 26. RFdiffusion3's peak is
+driven by length and barely by count — doubling designs at 400 residues adds
+5%. None of that is derivable from the architecture on paper; all of it comes
+from one held worker and seven requests.
+
+**A derived estimate is worth writing down and worth distrusting.** Both
+estimates made before measuring were off in different directions: OpenFold3 was
+budgeted at 16 GiB from weights-plus-pair-tensor arithmetic and measures 4.24,
+because the kit keeps far less of the trunk resident than the arithmetic
+assumed; ESMFold2 was budgeted at 16 GiB and measures 25.28. An estimate that
+is 3.8x high wastes a card; one that is 1.6x low overcommits it.
+
 `isolation` states what the deployment actually provides, never what one would
 like. The vocabulary deliberately excludes `mig`: the development box reports
 "No MIG-supported devices found", gVisor's nvproxy carries no Blackwell ABI, and
@@ -393,9 +423,97 @@ in-process at all, which makes it `mode = "subprocess"`.
 | Three commands suffice for every provider | two providers |
 | `setup`'s five steps are the right five | two providers |
 | `[env] kind` beyond `venv` | three routes, one provider each way |
-| The worker/manifest/launch contract | three providers, three upstreams |
+| The worker/manifest/launch contract | six providers, six upstreams |
+| `outputs` / `output_keys` required to claim `verified` | measured: openfold3 exited 0 and folded nothing |
+| A budget needs its envelope when peak tracks input size | measured: 2.12 GiB smoke vs 12.49 GiB request |
+| A resident worker must not fork loader children | measured: openfold3 crash; boltz named it first |
+| Residency gain ranges 2.0x–12x | measured, five providers |
 
-## 12. What the third provider changed
+## 12. What providers four, five and six changed
+
+Three at once — RFdiffusion3, ESMFold2 and OpenFold3 — brought up in parallel
+by one agent each, with the GPU serialized by the caller. Two passed; the third
+taught the most.
+
+**An exit code is not evidence that a model ran.** OpenFold3's smoke exited 0
+in 29 s, reported `peak reserved 1.41 GiB`, and was recorded as verified. Its
+output directory held `inference_query_set.json` and a `summary.txt` reading
+"Successful Queries: 0, Failed Queries: 1". Upstream catches the per-query
+exception itself, writes the summary and returns normally, so nothing raised
+and nothing was produced. The smoke step had counted files and checked for an
+exception, and neither of those is the question.
+
+So a manifest now declares what a successful run leaves behind, and the smoke
+step refuses when it is absent:
+
+```toml
+[runtime]
+outputs = ["*.cif.gz"]        # globs matched against what the run wrote
+output_keys = ["centre"]      # or, for a provider that writes no files
+```
+
+`status = "verified"` requires one of the two — the manifest refuses the claim
+without it, the way it already refuses a bare `verified` with no `verified_on`.
+`output_keys` exists because Enformer answers with arrays and writes nothing;
+a file glob would have refused it forever. `outputs` is matched against both
+the paths the worker reported and a walk of the output directory, because a
+provider is not obliged to list what it wrote, and against the file *name*, so
+RFdiffusion3's compound `*.cif.gz` matches.
+
+**A resident worker must not fork data-loader children.** OpenFold3's first
+failure was a real crash: `DataLoader worker (pid 778073) exited unexpectedly`,
+no traceback from the child. Upstream defaults to 10 workers and the kit's own
+cap floors that at 1 — a floor a resident worker cannot use, because the parent
+has CUDA initialised and its kit hooks, cuEquivariance, DeepSpeed and Triton
+threads long before a request arrives, and `fork()` copies only the calling
+thread. `boltz_tool.py` had named the same shape a year earlier. The fix is
+`num_workers = 0`, which the kit's own `plan()` short-circuits on, and its
+stated cost is that featurisation's RNG draws move in-process, so runs are not
+bit-comparable with a forked run at the same seed. This is a property of the
+resident route rather than of any one kit, so it is unconditional.
+
+**Residency's payoff varies by an order of magnitude, and the reason is the
+kit, not the model.** RFdiffusion3 returns 19.4 s, 1.6 s, 1.6 s over three
+designs — 12x — because its `fast` mode traces the denoiser through
+torch.compile and captures it as a CUDA graph, both per process. ESMFold2
+returns 2.7 s, 1.1 s, 1.1 s because 25.6 GiB of weights are read once instead
+of three times. OpenFold3 would save the least: a 2.1 GiB checkpoint and a
+5.9 s build. The ranking is not predictable from model size; it is predictable
+from reading what the kit does at import and at first call.
+
+| provider | cold | held | gain | what residency actually keeps |
+| --- | --- | --- | --- | --- |
+| RFdiffusion3 | 19.4 s | 1.6 s | 12x | compile trace + CUDA graph |
+| Chai-1 | 67.6 s | 25.7 s | 2.6x | six TorchScript modules |
+| ESMFold2 | 2.7 s | 1.1 s | 2.5x | 25.6 GiB of weights |
+| Boltz-2 | 110 s | 55 s | 2.0x | checkpoint + featurizer |
+| Enformer | — | — | in-process | nothing to reload |
+
+**A kit's `resolve()` has no single shape, and guessing costs a silent
+zero.** Three kits, three signatures: Boltz-2's `resolve(mode)` returns a
+mapping with `env`; OpenFold3's takes `(mode, home, ...)` and returns a
+`Resolution` carrying `exports`; ESMFold2's takes `(mode, variant, kit_home)`
+and returns one carrying neither, because that kit keeps its deployment
+variables in per-card `configs/*.env` files and ships none for this card. The
+probe tries the shapes it knows and *records the TypeError* when none fits,
+which is how the fourth shape will be found. Before this, OpenFold3 silently
+yielded a zero-variable row and its `alloc_expandable` lever read
+`skipped reason=pending`; after, 37 variables and `state=on`.
+
+**A third answer to "who holds the weights".** The first three providers split
+between the worker holding them and the kit holding them. RFdiffusion3 gives a
+third: upstream already memoises, so nobody should add another cache, and the
+ready line says `engine:fast` rather than `worker` or `kit`. A provider still
+has to know which of the three it is, and still has to say so.
+
+**Two things that only appear when agents work in parallel.** `uv venv` writes
+a `_virtualenv.pth` that broke OpenFold3's kit-hook detection, so a kit that
+finds its hook by scanning `.pth` files needs the stdlib `python -m venv`. And
+a shared scratchpad is shared: one agent's `weights.log` was overwritten
+mid-download by a sibling writing the same filename. Neither is deep; both cost
+an hour.
+
+## 13. What the third provider changed
 
 Chai-1 is the first whose upstream loads its model inside the call that uses
 it. `chai_lab.load_exported` is not memoised and `run_folding_on_context` calls
@@ -429,7 +547,7 @@ policy in force (`alloc_effective=true` on the kit's own EXIT line) and costs
 only the bookkeeping, which the kit then records as a PARTIAL activation. That
 is the accurate word and the manifest says why.
 
-## 13. What the second provider changed
+## 14. What the second provider changed
 
 Enformer was brought onto the standard next, deliberately unlike the first, and
 four things that looked settled after one provider were not.

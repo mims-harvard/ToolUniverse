@@ -18,6 +18,7 @@ import pytest
 
 from tooluniverse.remote_resident import protocol as P
 from tooluniverse.remote_resident import manifest as M
+from tooluniverse.remote_resident import setup as S
 from tooluniverse.remote_resident.supervisor import (
     ResidentWorker,
     WorkerRequestError,
@@ -132,6 +133,45 @@ class TestManifest:
         )
         with pytest.raises(M.ManifestError, match="vram_budget_gb"):
             M.load(p)
+
+    def test_verified_without_a_success_condition_is_refused(self, tmp_path):
+        """The gap that let openfold3 be marked verified having folded nothing."""
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "x"\nstatus = "verified"\n'
+            'verified_on = "a card"\n\n[runtime]\nmode = "resident"\n'
+        )
+        with pytest.raises(M.ManifestError, match="outputs or output_keys"):
+            M.load(p)
+
+    def test_outputs_satisfies_the_success_condition(self, tmp_path):
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "x"\nstatus = "verified"\n'
+            'verified_on = "a card"\n\n[runtime]\nmode = "resident"\n'
+            'outputs = ["*.cif"]\n\n[env]\npython = "python3"\n'
+        )
+        assert M.load(p).outputs == ("*.cif",)
+
+    def test_output_keys_satisfies_it_for_a_provider_that_writes_no_files(
+        self, tmp_path
+    ):
+        """Enformer answers with arrays; a file glob would refuse it forever."""
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "x"\nstatus = "verified"\n'
+            'verified_on = "a card"\n\n[runtime]\nmode = "resident"\n'
+            'output_keys = ["centre"]\n\n[env]\npython = "python3"\n'
+        )
+        assert M.load(p).output_keys == ("centre",)
+
+    def test_untested_needs_no_success_condition(self, tmp_path):
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "x"\n\n[runtime]\nmode = "resident"\n\n'
+            '[env]\npython = "python3"\n'
+        )
+        assert M.load(p).status == "untested"
 
     def test_a_weight_file_with_neither_size_nor_digest_is_refused(self, tmp_path):
         p = tmp_path / "provider.toml"
@@ -905,3 +945,83 @@ class TestRemoteListShowsTheStandard:
                 "an unregistered provider should say why it has no endpoint"
             )
             assert r.get("manifest"), "it is only listed because it declares one"
+
+
+class TestWhatItProduced:
+    """The check that an exit code is not evidence a model ran.
+
+    OpenFold3's runner catches its own per-query exception, writes a summary
+    reading "Failed Queries: 1" and returns normally. The smoke step saw a
+    reply, a timing and a GPU peak, and recorded the provider as verified
+    having produced no structure at all. These tests pin the assertion that
+    now stands between those two things.
+    """
+
+    @staticmethod
+    def _manifest(tmp_path, **runtime):
+        rows = "".join(f"{k} = {v}\n" for k, v in runtime.items())
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "x"\n\n[runtime]\nmode = "resident"\n'
+            f"{rows}\n"
+            '[env]\npython = "python3"\n'
+        )
+        return M.load(p)
+
+    def test_a_declared_output_that_appeared_passes(self, tmp_path):
+        out = tmp_path / "out"
+        out.mkdir()
+        (out / "pred.cif").write_text("data_")
+        m = self._manifest(tmp_path, outputs='["*.cif"]')
+        matched, refusal = S._what_it_produced(m, {"files": []}, out)
+        assert refusal == ""
+        assert matched["outputs"]
+
+    def test_a_declared_output_that_never_appeared_is_refused(self, tmp_path):
+        """openfold3's exact shape: a summary file and no structure."""
+        out = tmp_path / "out"
+        out.mkdir()
+        (out / "summary.txt").write_text("Failed Queries: 1")
+        m = self._manifest(tmp_path, outputs='["*.cif"]')
+        _, refusal = S._what_it_produced(m, {"files": []}, out)
+        assert "produced none of" in refusal
+        # The refusal names what it DID write, so the reader can see the
+        # summary file and go read it.
+        assert "summary.txt" in refusal
+
+    def test_the_worker_s_own_file_list_counts_too(self, tmp_path):
+        """A provider need not write into out_dir for its output to be real."""
+        elsewhere = tmp_path / "pred.cif"
+        elsewhere.write_text("data_")
+        m = self._manifest(tmp_path, outputs='["*.cif"]')
+        _, refusal = S._what_it_produced(
+            m, {"files": [str(elsewhere)]}, tmp_path / "empty"
+        )
+        assert refusal == ""
+
+    def test_a_compound_extension_is_matched(self, tmp_path):
+        """RFdiffusion3 gzips its backbones; "*.cif" would match nothing."""
+        out = tmp_path / "out"
+        out.mkdir()
+        (out / "design_0.cif.gz").write_bytes(b"\x1f\x8b")
+        m = self._manifest(tmp_path, outputs='["*.cif.gz"]')
+        _, refusal = S._what_it_produced(m, {}, out)
+        assert refusal == ""
+
+    def test_an_empty_reply_key_is_refused(self, tmp_path):
+        """Enformer writes no files, so its assertion is on the reply."""
+        m = self._manifest(tmp_path, output_keys='["centre"]')
+        _, refusal = S._what_it_produced(m, {"centre": []}, tmp_path)
+        assert "centre" in refusal
+
+    def test_a_filled_reply_key_passes(self, tmp_path):
+        m = self._manifest(tmp_path, output_keys='["centre"]')
+        matched, refusal = S._what_it_produced(m, {"centre": [0.1, 0.2]}, tmp_path)
+        assert refusal == ""
+        assert matched["output_keys"] == ["centre"]
+
+    def test_a_provider_declaring_nothing_is_not_blocked(self, tmp_path):
+        """status = "untested" needs no condition; the manifest enforces that."""
+        m = self._manifest(tmp_path)
+        _, refusal = S._what_it_produced(m, {}, tmp_path)
+        assert refusal == ""

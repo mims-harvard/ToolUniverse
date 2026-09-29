@@ -86,6 +86,8 @@ _SECTIONS = {
         "smoke",
         "smoke_timeout_s",
         "worker_args",
+        "outputs",
+        "output_keys",
     },
     "gpu": {"policy", "vram_budget_gb", "shareable", "isolation"},
     "env": {
@@ -215,6 +217,16 @@ class ProviderManifest:
     operations: tuple = ()
     status: str = "untested"
     verified_on: str = ""
+    # What a run that actually worked leaves behind. Without this the smoke
+    # step can only check that nothing raised, and that is not the question:
+    # openfold3 exited 0 in 29 s, reported a GPU peak, and folded nothing,
+    # because upstream caught the per-query exception and wrote a summary
+    # saying "Failed Queries: 1". `outputs` are glob patterns matched against
+    # the files a run produced; `output_keys` are reply fields that must be
+    # present and non-empty, for a provider like enformer that returns arrays
+    # and writes no files at all.
+    outputs: tuple = ()
+    output_keys: tuple = ()
     mode: str = "resident"
     mode_reason: str = ""
     worker: Optional[str] = None
@@ -392,6 +404,15 @@ def load(path: os.PathLike | str) -> ProviderManifest:
             f'{path}: [runtime] mode = "subprocess" needs mode_reason — a provider '
             f"that pays the start-up cost on every request states why it must"
         )
+    outputs = tuple(rt.get("outputs", ()))
+    output_keys = tuple(rt.get("output_keys", ()))
+    if status == "verified" and not (outputs or output_keys):
+        raise ManifestError(
+            f'{path}: [runtime] status = "verified" needs outputs or output_keys \u2014 '
+            f"what a successful run leaves behind. Without one the smoke step can "
+            f"only check that nothing raised, and a provider whose upstream catches "
+            f"its own per-query exception passes that check having produced nothing"
+        )
 
     gpu = doc.get("gpu", {})
     policy = gpu.get("policy", "none")
@@ -453,6 +474,8 @@ def load(path: os.PathLike | str) -> ProviderManifest:
         operations=tuple(prov.get("operations", ())),
         status=status,
         verified_on=prov.get("verified_on", ""),
+        outputs=outputs,
+        output_keys=output_keys,
         mode=mode,
         mode_reason=rt.get("mode_reason", ""),
         worker=rt.get("worker"),

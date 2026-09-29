@@ -36,6 +36,7 @@ nothing.
 from __future__ import annotations
 
 import contextlib
+import fnmatch
 import json
 import os
 import shutil
@@ -956,6 +957,75 @@ def measured_path(slug: str) -> Path:
     return Path(root) / f"{slug}.json"
 
 
+def _write_measured(slug: str, record: Dict[str, Any]) -> str:
+    """Persist one smoke record; return the phrase describing where it went."""
+    path = measured_path(slug)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(record, indent=1, sort_keys=True))
+        return f"; recorded in {path}"
+    except OSError as exc:
+        return f"; the record could not be written ({exc})"
+
+
+def _what_it_produced(
+    manifest: ProviderManifest, result: Dict[str, Any], out_dir: Path
+) -> tuple:
+    """``(matched, refusal)`` for the manifest's declared success condition.
+
+    An exit code is not evidence that a model ran. OpenFold3's runner catches
+    a per-query exception, writes a summary saying "Failed Queries: 1" and
+    returns normally; the smoke step saw a reply, a timing and a GPU peak, and
+    called that verified. What it had never asked was whether a structure came
+    out. This asks.
+
+    Files are matched against ``[runtime] outputs`` -- both the paths the
+    worker reported and a walk of the output directory, because a provider is
+    not obliged to list what it wrote. ``[runtime] output_keys`` covers the
+    providers that answer with arrays and write nothing at all.
+    """
+    matched: Dict[str, Any] = {}
+
+    if manifest.outputs:
+        seen = [Path(f) for f in (result.get("files") or [])]
+        if out_dir.is_dir():
+            seen.extend(q for q in out_dir.rglob("*") if q.is_file())
+        hits = sorted(
+            {
+                os.fspath(q)
+                for q in seen
+                for pattern in manifest.outputs
+                if fnmatch.fnmatch(q.name, pattern)
+            }
+        )
+        matched["outputs"] = hits
+        if not hits:
+            listing = sorted({q.name for q in seen})[:8] or ["nothing at all"]
+            return matched, (
+                f"the model answered but produced none of {list(manifest.outputs)} "
+                f"\u2014 what it wrote was {listing}. An exit code is not evidence "
+                f"that a model ran: upstream may have caught its own per-request "
+                f"exception and returned normally. Read the worker transcript and "
+                f"any summary file in {out_dir}"
+            )
+
+    missing = [
+        k
+        for k in manifest.output_keys
+        if result.get(k) is None or result.get(k) == [] or result.get(k) == {}
+    ]
+    if manifest.output_keys:
+        matched["output_keys"] = [k for k in manifest.output_keys if k not in missing]
+    if missing:
+        return matched, (
+            f"the model answered but its reply has nothing under {missing} "
+            f"\u2014 the keys [runtime] output_keys says a successful run fills. "
+            f"Read the worker transcript"
+        )
+
+    return matched, ""
+
+
 def step_smoke(manifest: ProviderManifest) -> StepResult:
     """Run the model once, under a deadline, and record what this machine did.
 
@@ -1046,6 +1116,18 @@ def step_smoke(manifest: ProviderManifest) -> StepResult:
             "files": len(result.get("files") or []),
         }
     )
+    produced, refusal = _what_it_produced(manifest, result, smoke_out)
+    record["produced"] = produced
+    if refusal:
+        where = f" (its transcript is in {worker.log_path})" if worker.log_path else ""
+        _write_measured(manifest.slug, record)
+        return StepResult(
+            "smoke",
+            FAILED,
+            refusal + where,
+            reason="smoke_produced_nothing",
+            seconds=time.time() - t,
+        )
     gpu = _run(
         [
             "nvidia-smi",
@@ -1057,13 +1139,7 @@ def step_smoke(manifest: ProviderManifest) -> StepResult:
     if gpu.returncode == 0 and gpu.stdout.strip():
         record["gpu"] = gpu.stdout.strip().splitlines()[0]
 
-    path = measured_path(manifest.slug)
-    try:
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps(record, indent=1, sort_keys=True))
-        written = f"; recorded in {path}"
-    except OSError as exc:
-        written = f"; the record could not be written ({exc})"
+    written = _write_measured(manifest.slug, record)
 
     budget = record.get("peak_reserved_gib")
     over = (

@@ -130,6 +130,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="recommended",
     ),
     RemoteDeployment(
+        "esmfold2",
+        "tooluniverse.remote.esmfold2.esmfold2_tool",
+        8038,
+        ("esmfold2_fold",),
+        ("HF_HOME", "TOOLUNIVERSE_ESMFOLD2_PYTHON"),
+        ("HF_HOME",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "expert-feedback",
         "tooluniverse.remote.expert_feedback.human_expert_mcp_tools",
         9876,
@@ -208,6 +217,15 @@ REMOTE_DEPLOYMENTS = (
         ("Rscript",),
     ),
     RemoteDeployment(
+        "openfold3",
+        "tooluniverse.remote.openfold3.openfold3_tool",
+        8039,
+        ("openfold3_fold",),
+        ("TOOLUNIVERSE_OPENFOLD3_PYTHON",),
+        (),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "paga",
         "tooluniverse.remote.paga.paga_tool",
         8022,
@@ -222,6 +240,15 @@ REMOTE_DEPLOYMENTS = (
         ("run_pinnacle_ppi_retrieval",),
         ("PINNACLE_DATA_PATH",),
         ("PINNACLE_DATA_PATH",),
+    ),
+    RemoteDeployment(
+        "rfdiffusion3",
+        "tooluniverse.remote.rfdiffusion3.rfdiffusion3_tool",
+        8040,
+        ("rfdiffusion3_design",),
+        ("FOUNDRY_CHECKPOINT_DIRS", "TOOLUNIVERSE_RFDIFFUSION3_PYTHON"),
+        ("FOUNDRY_CHECKPOINT_DIRS",),
+        gpu_policy="required",
     ),
     RemoteDeployment(
         "scanvi",

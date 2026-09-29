@@ -29,6 +29,10 @@ worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
 # Six TorchScript modules and the traced ESM: minutes, not seconds.
 start_timeout_s = 1800.0
 request_timeout_s = 3600.0
+# What a run that actually worked leaves behind; the smoke step refuses if no
+# file matched. Chai-1 samples several structures and ranks them, so a run that
+# produced no .cif produced no answer whatever its exit code said.
+outputs = ["*.cif"]
 idle_timeout_s = 900.0
 smoke = "smoke/input.fasta"
 smoke_timeout_s = 1800.0

@@ -42,6 +42,10 @@ start_timeout_s = 1800.0
 # process also pays the compile trace.
 request_timeout_s = 7200.0
 idle_timeout_s = 900.0
+# What a run that actually worked leaves behind; the smoke step refuses if no
+# file matched. Upstream gzips its backbones, hence the compound extension --
+# a glob of "*.cif" would match nothing here.
+outputs = ["*.cif.gz"]
 # The smallest thing that exercises the design path: one unconditional 60-mer,
 # one design, one roll-out, 20 steps. See smoke/input.json.
 smoke = "smoke/input.json"

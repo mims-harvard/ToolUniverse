@@ -38,6 +38,9 @@ worker_args = ["--socket", "{socket}", "--slug", "{slug}", "--variant", "fast"]
 # Sixteen files, 25.6 GiB, and the 6B language model among them.
 start_timeout_s = 1800.0
 request_timeout_s = 3600.0
+# What a run that actually worked leaves behind; the smoke step refuses if no
+# file matched.
+outputs = ["*.cif"]
 idle_timeout_s = 900.0
 smoke = "smoke/input.json"
 smoke_timeout_s = 3600.0

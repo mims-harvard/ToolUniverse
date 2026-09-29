@@ -11,24 +11,30 @@
 # between requests, and only the output directory, the query set and the
 # Lightning trainer are rebuilt per call.
 #
-# Every number below was measured on the card named in `verified_on`. The one
-# thing this provider does that the others do not is force the data loader to
-# 0 workers: upstream defaults to 10 and the kit's own cap floors that at 1,
-# but a resident worker has CUDA initialised in the parent long before the
-# request arrives, and the forked loader child died on the first attempt
-# (`DataLoader worker (pid 778073) exited unexpectedly`, no child traceback).
-# `boltz_tool.py` names the same shape. See [runtime].
+# THIS PROVIDER DOES NOT YET FOLD, and the way that was missed is worth
+# recording. It was marked `verified` on a smoke run that exited 0 in 29 s and
+# reported a GPU peak -- but its output directory held only
+# `inference_query_set.json` and a `summary.txt` reading "Successful Queries:
+# 0, Failed Queries: 1". Upstream catches a per-query exception, counts the
+# query as failed, and returns normally; the worker saw a successful call and
+# reported `structures: []`. The smoke step counted files and checked for an
+# exception, and neither of those is the question. It now asserts that the
+# provider produced what [runtime] outputs says it produces, and this manifest
+# declares that assertion.
+#
+# The underlying exception is still being run down. What is known: it is not
+# the DataLoader fork, which was a real and separate crash fixed by forcing
+# `num_workers = 0` (upstream defaults to 10, the kit's cap floors it at 1, and
+# a resident worker has CUDA initialised in the parent long before a request
+# arrives -- `boltz_tool.py` names the same shape). That fix turned a raised
+# RuntimeError into this silent failure, so it moved the problem forward
+# without solving it.
 
 [provider]
 slug = "openfold3"
 description = "OpenFold3 all-atom structure prediction from a query JSON of chains"
 operations = ["openfold3_predict"]
-status = "verified"
-verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02),
-venv route, kit mode fast, with the data loader forced to 0 workers (see
-[runtime]). Three folds of the 35-residue smoke in one held worker: 9.5 s,
-6.3 s, 9.0 s after a 5.9 s build. The VRAM ladder under [gpu] was measured in
-one further held worker on the same card."""
+status = "untested"
 
 [runtime]
 mode = "resident"
@@ -42,6 +48,11 @@ worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
 # compile reports a stall that is not one.
 start_timeout_s = 1800.0
 request_timeout_s = 3600.0
+# What a run that actually worked leaves behind. THIS PROVIDER IS WHY THIS KEY
+# EXISTS: it exited 0 in 29 s, reported a GPU peak, and wrote only a summary
+# saying "Failed Queries: 1", because upstream catches the per-query exception
+# itself. The smoke step now refuses when no file matched.
+outputs = ["*.cif", "*.pdb"]
 idle_timeout_s = 900.0
 smoke = "smoke/input.json"
 smoke_timeout_s = 1800.0
@@ -61,24 +72,17 @@ smoke_timeout_s = 1800.0
 
 [gpu]
 policy = "required"
-# MEASURED, with the envelope stated: this is a folding model, so peak is a
-# function of chain length and a budget quoted from the smoke (35 residues,
-# 1.41 GiB) would not survive a real request. Ladder, one held worker, steady
-# state, single chain:
+# NOT A USABLE MEASUREMENT. A ladder was run and its numbers looked orderly --
+# 1.45 GiB at 100 residues rising to 4.24 at 800 -- but every one of those runs
+# failed the query the way the header describes, so they measure how much a
+# failing fold allocates before it gives up, which is not a budget. The figure
+# below is the derived reserve this manifest carried before, kept until a run
+# that actually produces a structure can replace it.
 #
-#     residues   peak reserved
-#          100       1.45 GiB
-#          200       1.61 GiB
-#          400       2.27 GiB
-#          800       4.24 GiB   <- the reference this budget declares
-#
-# The pair track's N^2 growth is visible but the base is small: the estimate
-# this line replaced reasoned from weights plus a [N, N, 128] pair tensor and
-# arrived at 16 GiB, which is 3.8x what 800 residues actually costs -- the kit
-# keeps far less of the trunk resident than the arithmetic assumed. A host
-# folding chains longer than 800 residues re-measures; `[kit] mode = "big"`
-# is what upstream offers for those.
-vram_budget_gb = 4.24
+# When it is replaced it must state the ENVELOPE it applies to, not just a
+# number: peak is a function of chain length for a folding model. See the
+# `[gpu]` block of remote/esmfold2/provider.toml for the form.
+vram_budget_gb = 16.0
 shareable = true
 isolation = "process"
 
@@ -136,6 +140,44 @@ package = "openfold3_opt"
 # switch. A plain `import openfold3` under OPENFOLD3_OPT=fast prints the kit's
 # ACTIVE line in this environment, so the levers are armed in-process.
 mode = "fast"
+# The one lever of the fast line that cannot run on this card, switched off
+# through the kits' own ablation door (MODEL_OPT_LEVERS_OFF) rather than
+# patched. It is why this provider folded nothing: every trunk pair transition
+# raised, upstream caught the exception per query, and the run "succeeded"
+# with zero structures. The full traceback, from the runner's own
+# `<output>/logs/predict_err_rank0.log`:
+#
+#   opt_core.attn.pair_fused.Unsupported: v2:arch-sm121-not-measured
+#   ... -> RuntimeError: [openfold3-opt/pairfused] pair_transition: the core
+#   refused the trunk shape (c_z=128, N=35): fold:v2:arch-sm121-not-measured
+#   — OPENFOLD3_OPT_PAIR_STRICT=1
+#
+# Two kit tables disagree on this GPU. `opt_core/attn/pair_fused_cells.json`
+# has no cc 12.1 row for the transition piece, so resolution inherits one --
+# for the caller's preference ('v2_fold', 'v1') it lands on r88, a cc 9.0
+# `v2_fold` row -- while the kernel that row names declares
+# `fpf_transition_v2.kernel.SERVED_CC = {(9, 0)}` and refuses every other
+# capability by name. Measured here: `pairfused.preflight(...)` answers
+# `pair_transition {'served': True, 'cells': '10.3|*;inherited_cc:
+# unmeasured(12.1->10.3)'}` while `V2.served(128, 512, cuda:0)` answers
+# `(False, 'arch-sm121-not-measured')`. `arch-…` is not in the kit's
+# STRICT_EXEMPT prefixes ("n<", "chunk", "training", "no-cell:", "cell:"), and
+# the fast line exports OPENFOLD3_OPT_PAIR_STRICT=1, so what would otherwise
+# be a counted fallback to upstream's own SwiGLUTransition raises instead.
+# The refusal is per call on the trunk shape, so it fires on every input:
+# c_z is 128 at N=35 and at N=800 alike.
+#
+# Switching the lever off is the kit's sanctioned move, not a workaround of
+# one: `modes.apply_levers_off` removes it from the line before anything is
+# exported (OPENFOLD3_OPT_PAIR becomes `trimul_v4:triatt_block`), the ACTIVE
+# line then reads `levers_off=pair_transition` and the activation is recorded
+# as PARTIAL -- an ablation of the mode, which is the honest word. The other
+# two pair cells stay on: preflight serves `trimul_v4` from its safe cell and
+# `triatt_block` from the inherited cc 10.3 rows, and both were exercised in
+# the fold this setting made possible. What is forgone is one fused kernel;
+# the transition runs upstream's own statement, as it does on any card the
+# core has no cell for.
+levers_off = ["pair_transition"]
 # openfold3's run.sh drives whatever `python` is on PATH; it does not read a
 # PYTHON variable the way chai1's and enformer's do. `tu remote setup` puts the
 # manifest's interpreter first on PATH for exactly this step, so the plain form

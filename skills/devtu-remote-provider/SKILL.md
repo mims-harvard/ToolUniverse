@@ -47,21 +47,36 @@ is one dependency-free file (`remote_resident/protocol.py`) loaded by path.
 7. **Forgetting package data.** A built wheel carries only `.py` under
    `remote/`. Provider JSON, `provider.toml`, lock files, smoke inputs and the R
    halves of R-backed providers need globs in `pyproject.toml`.
+8. **Believing exit 0.** OpenFold3's smoke exited 0 in 29 s, reported a GPU
+   peak, and produced no structure: upstream caught the per-query exception,
+   wrote "Failed Queries: 1" to a summary file and returned normally. Declare
+   `[runtime] outputs` (globs) or `output_keys` (reply fields); the manifest
+   refuses `status = "verified"` without one and the smoke step refuses when
+   nothing matched.
+9. **Quoting a budget from the smoke.** RFdiffusion3's 60-mer smoke reserves
+   2.12 GiB; a 400-residue, 4-design request reserves 12.49. When peak tracks
+   input size, measure a ladder and declare the envelope alongside the number.
+10. **Forking a loader out of a resident worker.** The parent has CUDA and the
+   kit's threads initialised long before a request arrives. Set
+   `num_workers = 0` unconditionally — it is a property of the resident route,
+   not of one kit.
 
-## What three providers cost, and where the time went
+## What six providers cost, and where the time went
 
-| | boltz | enformer | chai1 |
-| --- | --- | --- | --- |
-| upstream | boltz 2.2.1 | enformer-pytorch 0.8.12 | chai_lab 0.6.1 |
-| kit activation | `worker_launch` (1 of 36) | `.pth` autoload | `.pth` autoload |
-| kit mode here | fast | **off** (x86-only objects) | fast, `alloc` lever off |
-| worker | 456 lines | 183 | 184 |
-| peak reserved | 5.54 GiB | 4.12 | 9.8 |
-| residency | 110 s to 55 s | already in-process | **67.6 s to 25.7 s** |
+| | boltz | enformer | chai1 | rfdiffusion3 | esmfold2 | openfold3 |
+| --- | --- | --- | --- | --- | --- | --- |
+| kit activation | `worker_launch` (1 of 36) | `.pth` | `.pth` | `.pth` + file overlay | `.pth` | `.pth` |
+| kit mode here | fast | **off** (x86-only objects) | fast, `alloc` off | fast | fast | fast |
+| peak reserved | 5.54 GiB | 4.12 | 9.8 | 12.49 @ 400aa×4 | 25.28 @ 800aa | not yet real |
+| residency | 110→55 s | in-process | 67.6→25.7 s | **19.4→1.6 s** | 2.7→1.1 s | pending |
+| what it keeps | checkpoint | nothing | 6 TorchScript modules | compile + CUDA graph | 25.6 GiB weights | — |
 
-The worker shrank from 456 lines to ~184 once the shared half was extracted. Nearly all the
-remaining time per provider goes on facts that have to be read out of the kit rather than assumed,
-which is what the rest of this page is for.
+Residency's payoff ranges 2.0x to 12x and the ranking does not follow model size — it follows what
+the kit does at import and at first call. RFdiffusion3 wins biggest because its `fast` mode traces
+the denoiser through torch.compile and captures a CUDA graph, both per process.
+
+Nearly all the remaining time per provider goes on facts that have to be read out of the kit rather
+than assumed, which is what the rest of this page is for.
 
 ## Adding a provider
 
@@ -121,7 +136,7 @@ committing to a download:
 | Does its lock pin an architecture by URL? | ~20 name a wheel by direct x86-64 link | ship a lock pinning by version instead, and say so in its header |
 | How does it activate? | 30 by mode variable + `.pth`, 1 by `worker_launch` (boltz2), 1 not in-process at all (chrombpnet) | detected, not declared |
 
-## Four things to read out of the kit, never guess
+## Five things to read out of the kit, never guess
 
 Each of these was a wrong assumption that cost a debugging round.
 
@@ -147,6 +162,15 @@ and one opt-in refusal takes the whole mode to NOT ACTIVE. `[kit] levers_off = [
 variable set before the process starts keeps the policy (`alloc_effective=true` on the kit's own
 EXIT line) and costs only the bookkeeping.
 
+**5. What `modes.resolve()` takes and returns.** Three kits, three signatures, and guessing
+yields a silent zero rather than an error: boltz2's `resolve(mode)` returns a mapping with `env`;
+openfold3's takes `(mode, home, ...)` and returns a `Resolution` carrying `exports`; esmfold2's
+takes `(mode, variant, kit_home)` and carries neither, keeping its variables in per-card
+`configs/*.env` files that may not include this card. `kit_launch`'s probe tries the known shapes
+and records the TypeError when none fits — read that record rather than patching around it. Before
+this was handled, openfold3 yielded a zero-variable row and its `alloc_expandable` lever read
+`skipped reason=pending`; after, 37 variables and `state=on`.
+
 ## Generate the manifest, do not transcribe it
 
 The weight declarations come out of the kit's own `stock/PINS.json`. Write a few lines that read it
@@ -163,6 +187,20 @@ building the environment, fetching weights. The smoke does not, because there is
 agent one kit, its own `~/<slug>-venv`, and only `src/tooluniverse/remote/<slug>/` to write in; tell
 it explicitly not to run `git sparse-checkout` in the shared kit checkout, which races, and not to
 run `--only smoke`. Widen the checkout once, up front, for every slug the round covers.
+
+Three more things learned running four agents at once:
+
+* **Shared files belong to the caller.** `remote_runtime.py`, `remote_resident/*` and
+  `pyproject.toml` are edited by one hand. Let each agent write its own `<slug>_tool.py` inside its
+  own directory and *report* the `RemoteDeployment` entry it needs; add the entries yourself and
+  assign the ports up front so two agents cannot pick the same one.
+* **The scratchpad is shared too.** One agent's `weights.log` was overwritten mid-download by a
+  sibling writing the same filename. Tell each agent to prefix its scratch files with its slug.
+* **`uv venv` is not always safe.** It writes a `_virtualenv.pth`, which broke openfold3's
+  kit-hook detection; a kit that finds its hook by scanning `.pth` files needs the stdlib
+  `python -m venv`.
+* **Stage by path, never `git add -A`.** With agents writing concurrently, `-A` sweeps their
+  half-finished trees into your commit.
 
 ## Reading a refusal
 
