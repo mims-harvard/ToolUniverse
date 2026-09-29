@@ -862,3 +862,46 @@ class TestTorchTargetsThisGpu:
         )
         env = type("E", (), {"argv": lambda self, args: (["python"], {})})()
         assert S._check_torch_targets_this_gpu(env, True) is None
+
+
+class TestRemoteListShowsTheStandard:
+    """A rollout is only legible if you can see who is on the standard."""
+
+    def _rows(self, capsys):
+        import json as _json
+        import sys as _sys
+
+        from tooluniverse.cli import main
+
+        argv = _sys.argv
+        _sys.argv = ["tu", "remote", "list", "--json"]
+        try:
+            main()
+        except SystemExit:
+            pass
+        finally:
+            _sys.argv = argv
+        return _json.loads(capsys.readouterr().out)["implementations"]
+
+    def test_a_provider_with_a_manifest_reports_what_it_declares(self, capsys):
+        rows = {r["implementation"]: r for r in self._rows(capsys)}
+        assert "boltz" in rows
+        m = rows["boltz"].get("manifest")
+        assert m, "boltz declares a manifest and the listing should say so"
+        assert m["mode"] == "resident"
+        assert m["vram_budget_gb"] and m["status"] in ("verified", "untested")
+
+    def test_a_provider_without_one_is_still_listed(self, capsys):
+        rows = {r["implementation"]: r for r in self._rows(capsys)}
+        plain = [r for r in rows.values() if "manifest" not in r]
+        assert plain, "the providers not yet on the standard must not disappear"
+
+    def test_a_manifest_without_an_entry_point_is_not_invisible(self, capsys):
+        """Manifest first, entry point second, is the order a rollout goes in."""
+        rows = self._rows(capsys)
+        orphans = [r for r in rows if r.get("endpoint") is None]
+        for r in orphans:
+            assert r.get("note"), (
+                "an unregistered provider should say why it has no endpoint"
+            )
+            assert r.get("manifest"), "it is only listed because it declares one"

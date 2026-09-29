@@ -2447,26 +2447,85 @@ def _print_remote_check(result: dict, *, as_json: bool) -> None:
 
 
 def cmd_remote_list(args: argparse.Namespace) -> None:
-    """List reviewed provider entry points."""
-    from tooluniverse.remote_runtime import REMOTE_DEPLOYMENTS
+    """List reviewed provider entry points, and what each declares about itself."""
+    from tooluniverse.remote_runtime import REMOTE_DEPLOYMENTS, provider_manifest
 
-    rows = [
-        {
+    rows = []
+    seen = set()
+    for deployment in REMOTE_DEPLOYMENTS:
+        seen.add(deployment.slug)
+        row = {
             "implementation": deployment.slug,
             "endpoint": deployment.endpoint,
             "operations": list(deployment.operations),
             "gpu_policy": deployment.gpu_policy,
             "relay_workers": deployment.relay_workers,
         }
-        for deployment in REMOTE_DEPLOYMENTS
-    ]
+        manifest = provider_manifest(deployment)
+        if manifest is not None:
+            row["manifest"] = {
+                "mode": manifest.mode,
+                "status": manifest.status,
+                "vram_budget_gb": manifest.vram_budget_gb,
+                "isolation": manifest.isolation,
+                "env_kind": manifest.env_kind,
+            }
+        rows.append(row)
+
+    # A provider can carry a manifest before it has an entry point -- that is
+    # the order a rollout goes in -- and it would otherwise be invisible here.
+    for manifest in _manifests_without_deployment(seen):
+        rows.append(
+            {
+                "implementation": manifest.slug,
+                "endpoint": None,
+                "operations": list(manifest.operations),
+                "gpu_policy": manifest.gpu_policy,
+                "relay_workers": 1,
+                "manifest": {
+                    "mode": manifest.mode,
+                    "status": manifest.status,
+                    "vram_budget_gb": manifest.vram_budget_gb,
+                    "isolation": manifest.isolation,
+                    "env_kind": manifest.env_kind,
+                },
+                "note": "no entry point registered yet",
+            }
+        )
+
     if args.json:
         print(json.dumps({"implementations": rows}, indent=2))
         return
     for row in rows:
-        print(
-            f"{row['implementation']:<22} {row['endpoint']:<32} gpu={row['gpu_policy']}"
-        )
+        m = row.get("manifest")
+        endpoint = row["endpoint"] or "(not registered)"
+        tail = f"gpu={row['gpu_policy']}"
+        if m:
+            budget = "" if m["vram_budget_gb"] is None else f" {m['vram_budget_gb']}GiB"
+            tail += f"  {m['env_kind']}/{m['mode']}{budget}  {m['status']}"
+        print(f"{row['implementation']:<22} {endpoint:<32} {tail}")
+
+
+def _manifests_without_deployment(registered):
+    """Providers that declare a manifest but have no entry point yet."""
+    import importlib.util
+
+    from tooluniverse.remote_resident.manifest import MANIFEST_NAME
+    from tooluniverse.remote_resident.manifest import load as load_manifest
+
+    spec = importlib.util.find_spec("tooluniverse.remote")
+    if spec is None or not spec.submodule_search_locations:
+        return []
+    root = Path(list(spec.submodule_search_locations)[0])
+    out = []
+    for path in sorted(root.glob(f"*/{MANIFEST_NAME}")):
+        if path.parent.name in registered:
+            continue
+        try:
+            out.append(load_manifest(path))
+        except Exception:  # noqa: BLE001 - a broken manifest is `check`'s to report
+            continue
+    return out
 
 
 def cmd_remote_setup(args: argparse.Namespace) -> None:
