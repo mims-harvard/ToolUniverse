@@ -173,6 +173,25 @@ class TestManifest:
         )
         assert M.load(p).status == "untested"
 
+    def test_kit_env_carries_a_kit_knob_the_provider_states(self, tmp_path):
+        """openfold3 needs POST_RELEASE_NTOK=0 or it dies on request two."""
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "x"\n\n[runtime]\nmode = "resident"\n\n'
+            '[env]\npython = "python3"\n\n[kit.env]\n'
+            'OPENFOLD3_OPT_POST_RELEASE_NTOK = "0"\n'
+        )
+        assert M.load(p).kit["env"]["OPENFOLD3_OPT_POST_RELEASE_NTOK"] == "0"
+
+    def test_kit_env_refuses_a_nested_table(self, tmp_path):
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            '[provider]\nslug = "x"\n\n[runtime]\nmode = "resident"\n\n'
+            '[env]\npython = "python3"\n\n[kit.env.nested]\na = 1\n'
+        )
+        with pytest.raises(M.ManifestError, match="scalar"):
+            M.load(p)
+
     def test_an_undeclared_absent_kit_row_is_not_silently_accepted(self, tmp_path):
         """openfold3 ran with 0 of its 37 variables and said nothing."""
         p = tmp_path / "provider.toml"

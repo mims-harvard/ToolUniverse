@@ -126,6 +126,7 @@ _SECTIONS = {
         "package",
         "env_row",
         "env_row_reason",
+        "env",
     },
 }
 
@@ -418,6 +419,16 @@ def load(path: os.PathLike | str) -> ProviderManifest:
             f'{path}: [runtime] mode = "subprocess" needs mode_reason — a provider '
             f"that pays the start-up cost on every request states why it must"
         )
+    kit_env = doc.get("kit", {}).get("env", {})
+    if not isinstance(kit_env, dict) or not all(
+        isinstance(k, str) and isinstance(v, (str, int, float, bool))
+        for k, v in kit_env.items()
+    ):
+        raise ManifestError(
+            f"{path}: [kit.env] must be a table of scalar values \u2014 it is "
+            f"passed to the model process verbatim"
+        )
+
     kit_row = doc.get("kit", {}).get("env_row", "probe")
     if kit_row not in KIT_ENV_ROWS:
         raise ManifestError(

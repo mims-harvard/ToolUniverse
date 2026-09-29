@@ -40,7 +40,14 @@ python -m pip install -e .
 python -m pip install fastmcp
 ~~~
 
-The model half is built by `tu remote setup`, which reads
+The model half lives at the path `TOOLUNIVERSE_ESMFOLD2_PYTHON` names,
+and nothing above creates it. Create an empty interpreter there first --
+`python3 -m venv ~/esmfold2-venv`, or `uv venv` unless this provider's
+lock header says otherwise -- and `tu remote setup --only environment` fills
+it from `src/tooluniverse/remote/esmfold2/environment/requirements.lock`
+with `--no-deps`, so no version is silently resolved to something else.
+
+The rest is built by `tu remote setup`, which reads
 `src/tooluniverse/remote/esmfold2/provider.toml` and runs five steps: preflight,
 environment, kit, weights, smoke. Each refuses by name and carries its fix.
 
@@ -186,7 +193,8 @@ Expected success shape: `variant`, `n_structures`, and a `scores` array carrying
 
 - Use one worker. The resident worker serves one request at a time by design; a second in-flight request queues on its lock rather than doubling peak VRAM.
 - Read `vram_budget_gb` from the provider manifest and the measured file before co-tenanting anything else on the card. For a model whose peak depends on input size, the manifest states the envelope the figure was measured at; a larger request exceeds it.
-- Measure cold start, two warm calls, then parallel levels 1, 2, 4, 8, and only 16 if memory permits.
+- Measure cold start, then **at least four consecutive identical requests**, then a mixed-shape sequence (small, small, large, small). Two warm calls of different shapes is not enough: openfold3 passed exactly that and still died on the second request of the same shape, because a CUDA graph captured on the first replay attempt left a failed capture behind. A repeat and a shape change are different tests and a resident provider has to survive both.
+- Then parallel levels 1, 2, 4, 8, and only 16 if memory permits.
 - Record successes/errors, p50/p95, peak RAM/VRAM, utilization, queueing, cancellation cleanup, and recovery.
 - Increase workers only after single-flight initialization and sanitized recoverable OOM/timeout behavior are proven.
 

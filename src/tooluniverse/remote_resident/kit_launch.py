@@ -272,6 +272,20 @@ def build_command(worker) -> Tuple[List[str], Dict[str, str]]:
         env[mode_env] = manifest.kit.get("mode", "fast")
     if row.get("stack_key"):
         env["MODEL_OPT_STACK_KEY"] = row["stack_key"]
+    # Settings the provider states for this kit, applied before the process
+    # starts. This is for a kit's own documented knobs -- a size gate, a cap, a
+    # core pin -- which `levers_off` cannot express because they are not
+    # levers. openfold3 needs OPENFOLD3_OPT_POST_RELEASE_NTOK = "0" or it dies
+    # on the second request of a shape, and that belongs next to `levers_off`
+    # in a file a reviewer reads, not in a line of Python in the worker.
+    #
+    # Not validated against the kit: a kit that polices its own namespace
+    # (rosettafold3 exits 3 on any undeclared ROSETTAFOLD3_OPT_* name) will
+    # refuse a wrong one by name, which is the better error than any guess
+    # this could make.
+    for key, value in (manifest.kit.get("env") or {}).items():
+        env[str(key)] = str(value)
+
     off = manifest.kit.get("levers_off") or ()
     if off:
         # A lever the provider asks the kit not to attempt. The kits read this

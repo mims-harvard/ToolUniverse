@@ -5,26 +5,42 @@ all-atom structure. This server is the thin, CPU-only half of the provider;
 the model runs in its own environment (torch 2.10 + cu128, a stack this one
 cannot import) and is held resident between requests.
 
-Residency here buys less than it does for Chai-1 or RFdiffusion3, and the
-manifest says so honestly: the checkpoint is only ~2.1 GiB and the build takes
-5.9 s, so a held worker turns a ~15 s cold fold into a ~6-9 s warm one rather
-than a 3x saving. It is still the right shape, because the alternative is
-paying that build on every request and because the resident route is what
-makes the provider schedulable -- 4.24 GiB reserved at 800 residues, declared
-in the manifest, is a number a host can add up.
+Measured on one card, 35-residue query, five diffusion samples: build 6.0 s,
+first fold 18.8 s, warm folds 15.2-17.8 s, peak reserved 2.22-2.35 GiB rising
+to 9.12 GiB at 800 residues. Residency saves the build and the Triton compiles
+but NOT a per-request graph capture, because Lightning moves the module off the
+device between requests -- so the saving here is real but smaller than for the
+providers that hold weights on the card.
+
+Two things an operator needs and will not guess:
+
+* **Tracebacks are not in the request's output directory.** Upstream binds
+  `log_dir` to the lightning module at construction, so a resident worker's
+  failures all land in its BIRTH directory,
+  `/tmp/openfold3-resident-*/logs/predict_err_rank0.log`. This cost two
+  debugging rounds before it was written down.
+* **Upstream catches per-query exceptions itself**, counts the query failed in
+  a `summary.txt`, and returns normally. A fold that produced nothing is
+  therefore not an exception in the ordinary sense; the worker reconstructs the
+  reason from that summary plus its own slice of the traceback file and raises
+  with it, and this server passes that text through rather than flattening it.
 
 There is no subprocess fallback. When the worker cannot start, this says so
-and names the reason rather than quietly running something slower.
+and names the reason.
 """
 
 import os
 from typing import Any, Dict, List
 
 from tooluniverse.mcp_tool_registry import register_mcp_tool, start_mcp_server
+from tooluniverse.remote_resident.supervisor import (
+    WorkerRequestError,
+    WorkerStartError,
+)
 
 PROVIDER_DIR = os.path.dirname(os.path.abspath(__file__))
 MAX_CHAINS = 16
-MAX_RESIDUES_TOTAL = 4000
+MAX_RESIDUES_TOTAL = 800
 MAX_STRUCTURE_BYTES = 32 * 1024 * 1024
 _MOLECULE_TYPES = ("protein", "dna", "rna", "ligand")
 _ALPHABET = {
@@ -89,12 +105,20 @@ def _validate_chains(chains: Any) -> List[Dict[str, Any]]:
     if total > MAX_RESIDUES_TOTAL:
         raise ValueError(
             f"{total} polymer residues exceeds this server's {MAX_RESIDUES_TOTAL} "
-            f"limit; the provider's declared VRAM budget is measured at 800."
+            f"limit, which is where the provider's VRAM budget was "
+            f"measured (9.12 GiB). Peak grows as N^2 here -- 800 residues "
+            f"costs 3.6x what 100 does -- so a longer chain needs the "
+            f"budget re-measured, not just a larger limit."
         )
     return out
 
 
-def _fold(chains: List[Dict[str, Any]], return_structures: bool) -> Dict[str, Any]:
+def _fold(
+    chains: List[Dict[str, Any]],
+    seed: int,
+    options: Dict[str, Any],
+    return_structures: bool,
+) -> Dict[str, Any]:
     """One fold on the resident worker, or a named reason why not."""
     import json
     import tempfile
@@ -107,8 +131,8 @@ def _fold(chains: List[Dict[str, Any]], return_structures: bool) -> Dict[str, An
                 "input": json.dumps(query),
                 "out_dir": work,
                 "name": "fold",
-                "seed": 0,
-                "options": {},
+                "seed": seed,
+                "options": options,
             }
         )
         result = reply["result"]
@@ -119,15 +143,14 @@ def _fold(chains: List[Dict[str, Any]], return_structures: bool) -> Dict[str, An
             "model": "OpenFold3",
             "n_structures": len(structures),
             "seeds": result.get("seeds"),
+            # The confidence JSONs upstream writes beside each structure. With
+            # five diffusion samples the one thing a caller must do is rank
+            # them, and avg_plddt is how; dropping these made that impossible.
+            "scores": result.get("scores"),
             "timing": result.get("timing"),
             "weights_held_by": result.get("weights_held_by"),
             "kit_mode": result.get("kit_mode"),
         }
-        if not structures:
-            return {
-                "error": "OpenFold3 produced no structure for this query.",
-                "timing": out["timing"],
-            }
 
         # Off by default: an all-atom mmCIF of a few hundred residues is
         # megabytes, and a reply that large is what a transport truncates --
@@ -205,11 +228,36 @@ def _fold(chains: List[Dict[str, Any]], return_structures: bool) -> Dict[str, An
                         "required": ["sequence"],
                     },
                 },
+                "seed": {
+                    "type": "integer",
+                    "description": "Random seed; the same seed reproduces the fold.",
+                    "default": 0,
+                    "minimum": 0,
+                },
+                "num_diffusion_samples": {
+                    "type": "integer",
+                    "description": (
+                        "Structures to sample per seed (upstream's default is "
+                        "5). Each is scored separately, so this is how to "
+                        "compare conformations; rank them on `scores`."
+                    ),
+                    "minimum": 1,
+                    "maximum": 10,
+                },
+                "num_model_seeds": {
+                    "type": "integer",
+                    "description": (
+                        "How many model seeds to run (default 1). Total "
+                        "structures is this times num_diffusion_samples."
+                    ),
+                    "minimum": 1,
+                    "maximum": 5,
+                },
                 "return_structures": {
                     "type": "boolean",
                     "description": (
-                        "Return the mmCIF text as well as the paths "
-                        "(default false: megabytes)."
+                        "Return the mmCIF text (default false: megabytes). "
+                        "The confidence scores come back either way."
                     ),
                     "default": False,
                 },
@@ -224,6 +272,8 @@ def _fold(chains: List[Dict[str, Any]], return_structures: bool) -> Dict[str, An
                 "structures": {"type": "array", "items": {"type": "object"}},
                 "structures_note": {"type": "string"},
                 "seeds": {"type": "array", "items": {"type": "integer"}},
+                "scores": {"type": "object"},
+                "note": {"type": "string"},
                 "timing": {"type": "object"},
                 "weights_held_by": {"type": "string"},
                 "kit_mode": {"type": "string"},
@@ -253,9 +303,32 @@ class OpenFold3FoldTool:
         if not isinstance(return_structures, bool):
             return {"error": "'return_structures' must be a boolean."}
 
+        seed = arguments.get("seed", 0)
+        if not isinstance(seed, int) or isinstance(seed, bool) or seed < 0:
+            return {"error": "'seed' must be a non-negative integer."}
+
+        # The worker takes four options. Two are compute knobs and are the
+        # caller's; `use_msa_server` and `use_templates` are not exposed here
+        # because they make the provider reach out to an external service, or
+        # read template files it has none of, on somebody else's request --
+        # a deployment decision rather than a per-call parameter.
+        options: Dict[str, Any] = {}
+        for name, low, high in (
+            ("num_diffusion_samples", 1, 10),
+            ("num_model_seeds", 1, 5),
+        ):
+            if name not in arguments:
+                continue
+            value = arguments[name]
+            if not isinstance(value, int) or isinstance(value, bool):
+                return {"error": f"'{name}' must be an integer."}
+            if not low <= value <= high:
+                return {"error": f"'{name}' must be between {low} and {high}."}
+            options[name] = value
+
         try:
-            return _fold(chains, return_structures)
-        except Exception as exc:  # noqa: BLE001 - the reason is the answer
+            return _fold(chains, seed, options, return_structures)
+        except WorkerStartError as exc:  # the provider, not the request
             reason = getattr(exc, "reason", "") or type(exc).__name__
             return {
                 "error": (
@@ -264,6 +337,22 @@ class OpenFold3FoldTool:
                     f"refusal; this provider has no subprocess fallback."
                 )
             }
+        except WorkerRequestError as exc:
+            # The request, not the provider. The worker composes this text from
+            # upstream's own summary.txt plus its slice of the traceback file
+            # -- flattening it to a type name, and telling the caller to re-run
+            # setup, threw away the only account of what went wrong.
+            return {
+                "error": f"OpenFold3 could not fold this query: {exc}",
+                "note": (
+                    "upstream catches per-query exceptions itself; the text "
+                    "above is its own. The full traceback is in the worker's "
+                    "birth directory, /tmp/openfold3-resident-*/logs/"
+                    "predict_err_rank0.log, not in this request's output."
+                ),
+            }
+        except Exception as exc:  # noqa: BLE001 - the reason is the answer
+            return {"error": f"OpenFold3 failed: {type(exc).__name__}: {exc}"}
 
 
 if __name__ == "__main__":
