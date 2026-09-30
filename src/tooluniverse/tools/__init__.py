@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2717 scientific tools.
+Type-safe Python interface to 2718 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -2855,6 +2855,7 @@ from .gProfiler_find_orthologs import gProfiler_find_orthologs
 from .gather_disease_profile import gather_disease_profile
 from .gather_drug_profile import gather_drug_profile
 from .gather_gene_disease_associations import gather_gene_disease_associations
+from .gather_target_profile import gather_target_profile
 from .genomics_england_disease_target_score import genomics_england_disease_target_score
 from .geo_get_dataset_info import geo_get_dataset_info
 from .geo_get_sample_info import geo_get_sample_info
@@ -5608,6 +5609,7 @@ __all__ = [
     "gather_disease_profile",
     "gather_drug_profile",
     "gather_gene_disease_associations",
+    "gather_target_profile",
     "genomics_england_disease_target_score",
     "geo_get_dataset_info",
     "geo_get_sample_info",
