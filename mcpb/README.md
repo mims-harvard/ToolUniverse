@@ -4,6 +4,28 @@ This directory is the source of truth for `tooluniverse.mcpb` — the
 Model Context Protocol Bundle published at
 `https://github.com/mims-harvard/ToolUniverse/releases/download/mcpb/tooluniverse.mcpb`.
 
+## Requirements
+
+| | |
+|---|---|
+| Host | Claude Desktop, or another loader with MCPB 0.4 `uv` runtime support |
+| Python | 3.10-3.14, selected by the host; the bundle itself runs on 3.12 |
+| macOS on Apple Silicon | **14 or newer** |
+| macOS on Intel, Windows, Linux | no minimum OS version |
+
+The macOS floor comes from one dependency. `faiss-cpu` backs the vector-search
+tools and publishes no arm64 wheel older than `macosx_14_0` for any release we
+can ship -- it moved from `macosx_11_0` to `macosx_14_0` at 1.11.0 and has
+stayed there. Below macOS 14 the install falls back to the sdist and tries to
+compile faiss, which needs a C++ toolchain and SWIG and will normally fail
+inside Claude Desktop's install step. `build.sh` enforces this by dry-running
+the locked environment with `MACOSX_DEPLOYMENT_TARGET=14.0`, so a dependency
+bump that lost arm64 wheels would fail the build rather than ship.
+
+Everything else in the lock resolves from wheels on `aarch64-apple-darwin`,
+`x86_64-pc-windows-msvc`, `x86_64-unknown-linux-gnu` and
+`aarch64-unknown-linux-gnu`, with no compiler on the user's machine.
+
 ## How this bundle updates itself
 
 The bundle does not carry ToolUniverse's source. `pyproject.toml` declares

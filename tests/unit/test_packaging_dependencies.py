@@ -391,3 +391,54 @@ def test_sources_use_canonical_pymupdf_import():
         "Use `import pymupdf as fitz` instead of the deprecated `fitz` alias:\n"
         + "\n".join(offenders)
     )
+
+
+def test_the_documented_macos_floor_matches_the_one_the_build_enforces():
+    """One dependency sets a minimum macOS, and three docs repeat the number.
+
+    `faiss-cpu` backs the vector-search tools and is pinned exactly. It moved
+    its arm64 wheels from `macosx_11_0` to `macosx_14_0` at 1.11.0, so below
+    macOS 14 an Apple Silicon install falls back to the sdist and tries to
+    compile faiss. Nothing else in the dependency set has that floor: overriding
+    faiss-cpu alone makes the whole base install resolve from wheels at
+    macOS 11.
+
+    build.sh encodes the floor as MACOS_FLOOR and dry-runs the locked
+    environment against it, so a bump that lost arm64 wheels fails the build.
+    That check cannot tell anyone what to do about it -- the docs do that -- and
+    a silent divergence between the enforced number and the documented one is
+    how a user ends up compiling faiss on a machine we said was supported.
+    """
+    build_sh = (REPO_ROOT / "mcpb" / "build.sh").read_text(encoding="utf-8")
+    floor_match = re.search(r"^MACOS_FLOOR=(\d+)\.0$", build_sh, re.MULTILINE)
+    assert floor_match, "mcpb/build.sh no longer defines MACOS_FLOOR=<major>.0"
+    floor = floor_match.group(1)
+
+    assert f"macosx_{floor}_0" in build_sh, (
+        f"build.sh enforces macOS {floor} but does not say which wheel tag that "
+        "is; the comment above MACOS_FLOOR is what explains the number."
+    )
+
+    documents = {
+        "README.md": REPO_ROOT / "README.md",
+        "mcpb/README.md": REPO_ROOT / "mcpb" / "README.md",
+        "docs/help/troubleshooting.rst": (
+            REPO_ROOT / "docs" / "help" / "troubleshooting.rst"
+        ),
+    }
+    for label, path in documents.items():
+        text = path.read_text(encoding="utf-8")
+        assert f"macOS {floor}" in text, (
+            f"{label} does not state the macOS {floor} requirement that "
+            "mcpb/build.sh enforces via MACOS_FLOOR."
+        )
+        assert "faiss-cpu" in text or "faiss_cpu" in text, (
+            f"{label} states a macOS floor without naming faiss-cpu as the "
+            "reason, so a reader cannot tell what would lift it."
+        )
+
+    assert "faiss-cpu" in _names(ROOT_PYPROJECT), (
+        "faiss-cpu is no longer a base dependency. If it moved to an extra the "
+        "macOS floor no longer applies to the default install, and these docs "
+        "plus MACOS_FLOOR in build.sh need revisiting."
+    )

@@ -66,6 +66,8 @@ uv venv --python 3.12 && source .venv/bin/activate
 uv pip install tooluniverse
 ```
 
+Needs Python 3.10 or newer. On an Apple Silicon Mac it also needs **macOS 14 or newer**: `faiss-cpu`, which backs the vector-search tools, publishes no arm64 wheel older than `macosx_14_0`, so macOS 13 and earlier would have to compile it. Intel Macs, Windows and Linux have no such floor.
+
 The base install covers the API and database tools. Local ML, cheminformatics, and plotting tools need extras — `uv pip install 'tooluniverse[all]'`, or a single group such as `[ml]`, `[visualization]`, `[bioinformatics]`. Note `[all]` excludes `pdf`, `singlecell`, `smolagents`, `client`, and `build`, which install by name. Run `tooluniverse-doctor` to see which groups are missing.
 
 **[`tu` CLI](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tu_cli.html)** — discover, inspect, run, and test tools from the terminal.
