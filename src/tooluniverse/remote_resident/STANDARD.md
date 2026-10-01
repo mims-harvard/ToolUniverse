@@ -474,8 +474,111 @@ in-process at all, which makes it `mode = "subprocess"`.
 | Turning a kit off can cost VRAM, not just speed | measured: esmc `off` costs 9.6 GiB -- `pipe` was the device-side loader |
 | No CUDA aarch64 torch below 2.7 | measured: 4 wheels inspected, `libtorch_cpu.so` only, nvidia deps marked x86_64 |
 | `peak_reserved_gib` is a high-water mark, so ladders ascend first | measured: 24.44 vs 24.08 GiB for the same 100-residue rung |
+| Fork has three shapes; a library's pool is one | measured: boltzgen 0 designs in 420 s, 31.6 s with OMP_NUM_THREADS=1 |
+| An `outputs` glob must not match a file written anyway | measured: boltzgen's `design_spec.cif` would have passed a design-less run |
+| An ablation is sized for the largest input, not the smoke | measured: atlasfold 7 levers folds 35 aa, aborts at 600; 13 folds both |
+| A pinned dependency can ship kernels the pinned compiler cannot build | measured: cuEquivariance's Triton kernels abort atlasfold's stock path |
+| Compile the Triton question, do not read strings at it | measured: atlasfold passed both static reads and still aborted |
+| A reserve can ratchet | measured: atlasfold reports 38.63 GiB for a 3-second request after one 800 aa fold |
+| Utilisation alone is not evidence of progress | measured: a 40-minute stall read as 86-91% busy, which was another session |
 
-## 12. What providers seven through ten changed
+## 12. What providers eleven through fourteen changed
+
+AF3-torch, Evo 2, ESMFold2-binder-design, AtlasFold and BoltzGen — brought up by
+one agent each, with the GPU serialized. Fourteen providers are verified now.
+Three of these five were expected not to run on this hardware at all.
+
+**Fork has three shapes, not one, and `num_workers = 0` covers only the first.**
+
+| provider | what forked | how it failed |
+| --- | --- | --- |
+| OpenFold3 | upstream's DataLoader worker | child died, no traceback |
+| AtlasFold | the kit's writer child (spawn, not fork) | never reached; would reload the model |
+| BoltzGen | **nothing of ours** — a library's thread pool | worker alive, 0% CPU, waiting forever |
+
+BoltzGen's is the one that generalises. Its DataLoader worker sits in
+`torch.cdist` → `at::parallel_for` → an OpenMP parallel region, waiting on a
+pool `fork()` did not carry over. The kit's levers do host-tensor work during
+activation, so the pool is already up when upstream forks; stock has not touched
+it yet, which is why **stock computes at 95% GPU and the kit mode sits at 0%**.
+Unset, zero designs after 420 s; `[kit.env] OMP_NUM_THREADS = "1"`, 31.6 s.
+
+So the rule is not "set `num_workers = 0`" and not "no model-sized child by any
+start method" — it is: **a resident worker that has run any host-tensor work
+must not let a library fork**, and making the OpenMP pool not exist is the
+cheapest way to guarantee it.
+
+**An `outputs` glob must not match a file the provider writes regardless of
+success.** BoltzGen's `configure` writes `design_spec.cif` — a picture of the
+*specification* — whether or not anything is designed, so the obvious `*.cif`
+would have passed a run that produced nothing, which is the exact failure the
+key exists to catch. The shipped glob is `*_[0-9]*.cif`, tested against a real
+run and a design-less one.
+
+**A smoke may not reach the kit's levers at all.** Every kernel lever of the
+AtlasFold kit is gated at `min_tokens = 512`, so its 35-residue smoke exercises
+none of them: a seven-lever ablation folds 35 residues and aborts at 600, while
+thirteen folds both. **An ablation must be sized for the largest input the
+provider accepts, not for the smoke.** Worse, stock AtlasFold under upstream's
+own `--kernel auto` folds 35 residues and aborts at 200 — so the one length that
+works is the smoke's, and a green smoke would have been the most misleading
+result that provider could produce.
+
+**A pinned runtime dependency can ship kernels the pinned compiler cannot
+build.** That is a third kind of stack-versus-card failure, after "no aarch64
+CUDA wheel below torch 2.7" and "the kit's own levers cannot run": cuEquivariance
+0.10.0 carries its own Triton kernels, and AtlasFold's `--kernel auto` resolves
+to them on nothing more than the Python package importing.
+
+**So the Triton question is measured, not read.** `step_environment` compiles one
+`tl.sum` kernel in the model interpreter — the construct that emits the warp
+shuffle — and reports what happened; the target-string reads stay to *explain* a
+failure rather than to predict it. AtlasFold passed every static read and still
+aborted. Two implementation details each cost an agent an hour: the kernel must
+be written to a FILE and run as a CHILD, because `@triton.jit` reads its own body
+with `inspect.getsource` and because the failure under test is an `abort()`.
+
+The Triton version boundary, established by reading each `libtriton.so` and then
+running the intrinsic:
+
+| triton | LLVM knows `sm_121a` | bundled ptxas | verdict |
+| --- | --- | --- | --- |
+| 3.3.x | no | 12.4 + a 12.8 `ptxas-blackwell` | aborts on any cross-lane reduction |
+| 3.4.0 | yes | 12.8 only | `ptxas fatal`, fixable with a 12.9 ptxas |
+| 3.6.0 / 3.7.1 | yes | + 12.9 / 13.1 `ptxas-blackwell` | works as shipped |
+
+And the variable name is derived, not literal: Triton builds it as
+`TRITON_<BINARY>_PATH` and selects `ptxas-blackwell` above cc 100, so on this
+card it reads `TRITON_PTXAS-BLACKWELL_PATH`, hyphen included. A worker sets both.
+
+**A reserve can ratchet and not come back.** After one 800-residue fold,
+AtlasFold's worker reports 38.63 GiB for every later request including a
+3-second one, because the figure is `max_memory_reserved` and the caching
+allocator keeps the segments it grew. A deployment capped at 400 residues holds
+that provider in 14 GiB rather than 39 — the cap is the budget.
+
+**`[env]` assumes one interpreter and two providers need two.** AF3-torch's
+weights file has no URL anywhere: it is *produced* by a converter in a second
+pinned environment, whose one C++ extension nobody had built on aarch64. It
+built — 236 targets, no portability patch — and the converted file is bit-exact
+against a digest the kit measured on x86-64. ESMFold2-binder-design needs its
+second interpreter too. Both carry it in environment variables and refuse by
+name without it; `[env] aux` is recorded as a gap rather than built for two in
+fourteen.
+
+**An envelope may be the DEVICE rather than the input.** ESMFold2-binder-design's
+checkpointing planner budgets 0.90 × the card's total memory and grows to fill
+whatever card it is on above ~500 tokens, so a ladder would measure the host. It
+declares its budget at the one point it was measured, sets `shareable = false`,
+and names a different kit MODE as the bounded alternative.
+
+**On a shared card, GPU utilisation alone is not evidence that a process is
+computing.** A 40-minute BoltzGen stall was read as progress because the card
+showed 86-91% — which belonged to an unrelated session. The usable signal is
+utilisation *plus* `/proc/<pid>/stat` CPU, on a quiet card. Peaks reproduce under
+contention; wall times do not.
+
+## 13. What providers seven through ten changed
 
 RoseTTAFold3, BoltzGen, ESM Cambrian and AF3-torch, brought up by one agent
 each in parallel, with the GPU serialized by the caller. The four together
@@ -580,7 +683,7 @@ that takes 15-19 s quiet. Peak reserved reproduced to the hundredth of a GiB
 across both; wall time did not. Report peaks from any run, and wall times only
 from an idle card.
 
-## 13. What providers four, five and six changed
+## 14. What providers four, five and six changed
 
 Three at once — RFdiffusion3, ESMFold2 and OpenFold3 — brought up in parallel
 by one agent each, with the GPU serialized by the caller. Two passed; the third
@@ -664,7 +767,7 @@ a shared scratchpad is shared: one agent's `weights.log` was overwritten
 mid-download by a sibling writing the same filename. Neither is deep; both cost
 an hour.
 
-## 14. What the third provider changed
+## 15. What the third provider changed
 
 Chai-1 is the first whose upstream loads its model inside the call that uses
 it. `chai_lab.load_exported` is not memoised and `run_folding_on_context` calls
@@ -698,7 +801,7 @@ policy in force (`alloc_effective=true` on the kit's own EXIT line) and costs
 only the bookkeeping, which the kit then records as a PARTIAL activation. That
 is the accurate word and the manifest says why.
 
-## 15. What the second provider changed
+## 16. What the second provider changed
 
 Enformer was brought onto the standard next, deliberately unlike the first, and
 four things that looked settled after one provider were not.

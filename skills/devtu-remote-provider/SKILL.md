@@ -74,7 +74,27 @@ is one dependency-free file (`remote_resident/protocol.py`) loaded by path.
 13. **Quoting wall times from a contended card.** The same fold read 15-19 s
    quiet and 28-56 s with another session on the GPU. Peak reserved reproduced
    to the hundredth of a GiB in both. Report peaks from any run; report wall
-   times only from an idle card.
+   times only from an idle card. **And utilisation alone is not evidence that
+   YOUR process is computing** — a 40-minute boltzgen stall was read as progress
+   because the card showed 86-91%, which belonged to someone else. The usable
+   signal is utilisation *plus* `/proc/<pid>/stat` CPU, on a quiet card.
+14. **Letting a library fork.** `num_workers = 0` covers the loader and nothing
+   else. boltzgen's DataLoader worker sat in `torch.cdist` → `at::parallel_for`
+   → an OpenMP region, alive and at 0% CPU, waiting on a pool `fork()` did not
+   carry over — up only because the kit's levers had done host-tensor work
+   during activation. The rule that covers all three observed shapes: **a
+   resident worker that has run any host-tensor work must not let a library
+   fork**, and `[kit.env] OMP_NUM_THREADS = "1"` is the cheapest guarantee.
+15. **An `outputs` glob that matches a file written regardless of success.**
+   boltzgen's `configure` writes `design_spec.cif` — a picture of the
+   *specification* — whether or not anything is designed, so `*.cif` would have
+   passed a run that produced nothing. Test the glob against a failing run, not
+   only a passing one.
+16. **Sizing an ablation to the smoke.** Every kernel lever of the atlasfold kit
+   is gated at `min_tokens = 512`; its 35-residue smoke exercises none. Seven
+   ablated levers fold 35 residues and abort at 600; thirteen fold both. Size
+   the ablation for the largest input the provider accepts — and check whether
+   stock itself survives that size, because atlasfold's does not.
 
 ## What eight verified providers cost, and where the time went
 
@@ -186,6 +206,16 @@ committing to a download:
 | Does it carry prebuilt host objects? | 8 do; all 39 such files are x86-64, none aarch64 | refuses `kit_foreign_objects` from the ELF header, before installing |
 | Does its lock pin an architecture by URL? | ~20 name a wheel by direct x86-64 link | ship a lock pinning by version instead, and say so in its header |
 | How does it activate? | 30 by mode variable + `.pth`, 1 by `worker_launch` (boltz2), 1 not in-process at all (chrombpnet) | detected, not declared |
+
+**Triton is a second toolchain, and a third party may be a third.** A stack whose
+`torch.cuda.get_arch_list()` covers the card can still fail every kernel, in two separate places:
+Triton's LLVM must know `sm_<cc>a` (3.3.x does not — a cross-lane reduction then aborts the process
+uncatchably) and its bundled `ptxas` must target the card (3.4.0's does not — fixable with
+`nvidia-cuda-nvcc-cu12==12.9.86`). `step_environment` now compiles one `tl.sum` kernel and reports
+what happened, because the static reads are insufficient: atlasfold passed both and still died, since
+**cuEquivariance ships Triton kernels of its own**. Note the env-var name is derived —
+`TRITON_<BINARY>_PATH`, and `ptxas-blackwell` is selected above cc 100 — so `TRITON_PTXAS_PATH` alone
+is the wrong name on every Blackwell-class card.
 
 **On aarch64, the torch floor is harder than it looks.** Six kits pin torch below 2.7, and PyPI
 publishes **no CUDA-enabled aarch64 torch wheel below 2.7 at all** — checked by inspecting the
