@@ -58,6 +58,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "af3_torch",
+        "tooluniverse.remote.af3_torch.af3_torch_tool",
+        8036,
+        ("af3_torch_predict",),
+        ("TOOLUNIVERSE_AF3_TORCH_PYTHON", "AF3_TORCH_JAX_PY", "AF3_TORCH_JAX_REPO"),
+        ("AF3_TORCH_PARAMS_DIR", "AF3_TORCH_JAX_REPO"),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "borzoi",
         "tooluniverse.remote.borzoi.borzoi_tool",
         8012,

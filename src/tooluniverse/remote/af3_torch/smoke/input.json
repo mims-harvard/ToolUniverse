@@ -1,0 +1,18 @@
+{
+  "name": "smoke",
+  "dialect": "alphafold3",
+  "version": 2,
+  "sequences": [
+    {
+      "protein": {
+        "id": "A",
+        "sequence": "LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF",
+        "modifications": [],
+        "templates": [],
+        "unpairedMsa": ">query\nLSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF\n",
+        "pairedMsa": ""
+      }
+    }
+  ],
+  "modelSeeds": [1]
+}
