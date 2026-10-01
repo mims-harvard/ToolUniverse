@@ -865,6 +865,18 @@ def _foreign_objects(root: Path, limit: int = 40) -> List[str]:
     the first sign is an ImportError reading "cannot open shared object file"
     minutes into a smoke run, which is `dlopen`'s wording for a file that is
     right there.
+
+    **This scans one directory, and the message says so.** The caller passes
+    ``dest / subdir``, not the whole sparse set, so objects under ``common/``
+    are not examined — and that is where the shared core keeps 48 x86-64 ``.so``
+    files and 113 cubins that ten providers' levers reach. Widening the scan
+    would refuse all ten, because those files sit under
+    ``...x86_64-linux-gnu-sm90/`` paths that are never selected on aarch64 and
+    the core falls back to NVRTC. A false refusal on ten working providers is
+    worse than a narrow check, so the check stays narrow and stops claiming
+    more than it did. The question it cannot answer — "will this interpreter's
+    kernels actually build for this card" — is answered by the Triton compile
+    probe instead.
     """
     import platform
     import struct
@@ -1021,13 +1033,20 @@ def step_kit(manifest: ProviderManifest) -> StepResult:
         return StepResult(
             "kit",
             REFUSED,
-            f"{subdir}/ carries prebuilt shared objects this machine cannot load; "
-            f"the kit's levers would fail at import, not at check",
+            f"{subdir}/ carries prebuilt shared objects this machine cannot "
+            f"load; a lever that dlopens one fails at import, not at check",
             reason="kit_foreign_objects",
             lines=foreign[:6]
             + [
                 'set [kit] mode = "off" to run the provider without the kit\'s '
                 "levers, or use a host of the architecture the kit was built for",
+                "note this scanned only "
+                f"{subdir}/: objects under common/ are not examined, because the "
+                "shared core's x86-64 files sit under paths never selected on "
+                "this architecture and refusing on them would refuse every "
+                "provider that works. Whether the kernels actually build is a "
+                "different question, answered by the Triton compile probe in the "
+                "environment step",
             ],
             seconds=time.time() - t,
         )
@@ -1066,6 +1085,14 @@ def step_kit(manifest: ProviderManifest) -> StepResult:
         + env.get("PATH", "")
     )
     root = manifest.weights_root()
+    # The weights root is exported here as well as in the weights step. A kit's
+    # own `run.sh install --weights DIR` often reads the root from the
+    # environment rather than from its argument, and without this every such
+    # manifest has to restate it on the command line -- atlasfold had to write
+    # `ATLASFOLD_WEIGHTS_DIR={weights_root} bash run.sh install ...`. The
+    # placeholder is computed two lines below either way, so this costs nothing.
+    if root is not None and manifest.weights_root_env:
+        env[manifest.weights_root_env] = os.fspath(root)
     command = install.format(
         weights_root=os.fspath(root) if root else "",
         python=python,
