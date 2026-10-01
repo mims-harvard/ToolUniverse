@@ -264,9 +264,14 @@ decide how many providers may be resident at once.
 
 **It is not always the same kind of number, and the column does not say so.**
 On JAX the analogue is `jax.local_devices()[0].memory_stats()["peak_pool_bytes"]`
-(`peak_bytes_reserved` is a trap: it reads 0), and that figure is **quantised to
-powers of two** — af3_jax's ladder reports 2.0 / 4.0 / 4.0 / 8.0 GiB over a
-working set that moves 2.00 / 2.32 / 3.38 / 6.37. So a JAX provider's budget is
+(`peak_bytes_reserved` is a trap: it reads 0), and that figure is **coarse** —
+af3_jax's ladder reports 2.0 / 4.0 / 4.0 / 8.0 GiB over a working set that moves
+2.00 / 2.32 / 3.38 / 6.37. This used to say "quantised to powers of two", with
+the BFC pool doubling its arena as the mechanism; af2ig reports 0.5 / 1.0 / 2.0
+/ **6.0** on the same stack, so neither the rule nor the mechanism holds. One
+provider's ladder is not a rule. What survives is the part a host acts on: the
+figure is a rounded-up ceiling of unpredictable tightness, and
+`peak_bytes_in_use` is what answers "what does this input cost". So a JAX provider's budget is
 a rounded-up ceiling sitting beside a torch provider's near-exact one; two
 providers both declaring 8.0 have not told a host the same thing. Read it as a
 ceiling, never read the gap between two rungs as headroom, and do not let a
@@ -602,7 +607,12 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | A config switch can exist and be unreachable | measured: `use_glu_kernel` is a function default no call site passes |
 | The fix may be upstream's own flag | measured: `--tokamax_autotuning_cache_miss_fallback=autotune` |
 | An arch gate must ask every framework, not torch | measured: af3_jax refused while JAX drove the card |
-| A JAX budget is quantised; a torch one is not | measured: 2.0/4.0/4.0/8.0 reported over 2.00/2.32/3.38/6.37 actual |
+| A JAX budget is coarse; a torch one is not | measured: af3_jax 2.0/4.0/4.0/8.0 over 2.00/2.32/3.38/6.37 |
+| ...and not by powers of two | measured: af2ig reports 0.5/1.0/2.0/6.0, which refuted the rule and its mechanism |
+| An equivalence check needs determinism ON | measured: two XLA processes differ in the 5th figure; --det 1 gives one sha256 across three routes |
+| Read the kit's timers before declining a lever | measured: t_output 45-57 s against t_model 14-17 s, a 5x misjudgement |
+| Vary the ENGINE KEY, not the input | measured: af2ig rebuilds on (num_recycle, initial_guess), not on length |
+| A reply must not name a path the server deletes | measured: `structure_path` pointed into a removed temp dir |
 | A framework default can claim the whole card | measured: 91.22 GiB vs 2.0 on `XLA_PYTHON_CLIENT_PREALLOCATE` |
 | A digest authenticates bytes, not entitlement | measured: protenix_v2's checkpoint 403s; exact-digest mirrors exist |
 | HEAD the checkpoint URL before anything else | measured: 40 ms would have replaced a whole investigation |
@@ -616,12 +626,13 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | A residency multiple is largest at the smallest input | measured: af3_jax 26x at 35 aa, 3.5x at its budget row |
 | A launch must STRIP undeclared names, not merely not set them | measured: af3_jax's `.pth` exits 3 on an inherited variable |
 
-## 12. What providers nineteen through twenty-one changed: three checks that passed where the defect was invisible
+## 12. What providers nineteen through twenty-two changed: four checks that passed where the defect was invisible
 
-ESM-IF1, ColabFold and OpenFold3-OpenBind-0. Twenty-one verified. The findings
-that matter most here are not about any of the three models: each turned up a
-check that had already been run and passed while the thing it was supposed to
-catch was broken.
+ESM-IF1, ColabFold, OpenFold3-OpenBind-0 and AF2-initial-guess. Twenty-two
+verified. The findings that matter most here are not about any of the four
+models: each turned up a check that had already been run and passed while the
+thing it was supposed to catch was broken — and the fourth's catch is a rule
+written in this document two sections below.
 
 **A launcher could not remove an environment variable, and the test that said
 it could read the one place the defect was invisible.** af3_jax's kit refuses
@@ -794,6 +805,64 @@ each omitted file with its size, the ~270-byte aggregated scores always come
 back, and the description no longer claims what the cap prevents.
 
 
+**An equivalence check needs determinism turned ON, or it fails for a reason
+that is not a defect.** af2ig compares its resident worker's output against the
+kit's own CLI, which is the strongest claim a wrapper can make. Two ordinary
+runs cannot make it: two PROCESSES disagree in the fifth significant figure,
+because XLA's default autotuning picks algorithms by timing and two workers make
+different picks. Inside one worker everything is bit-identical. Under the kit's
+own `--det 1` (`XLA_FLAGS=--xla_gpu_autotune_level=0`) three routes produce one
+sha256 — the kit's CLI as a subprocess, the resident worker stock, and the
+resident worker with its one lever on. Without that flag the comparison fails
+and the honest conclusion would have been wrong in both directions: the wrapper
+would look unfaithful, and a real divergence would be indistinguishable from the
+noise. (Re-running the provider's documented example here produced
+`pae_interaction 21.4225` against the bringup's 21.4196, which is that same
+fifth-figure spread observed live.)
+
+**Read the kit's own timers before declining a lever.** A first pass at af2ig
+declined every lever including `-host_outputs`, reasoning that the model call is
+where the time goes. Upstream's per-design instrumentation says otherwise by
+**5x**: on a warm 195-residue request `t_model` is 14–17 s while `t_output` is
+45–57 s, because the output step is numpy and scipy walking a tree of jax
+DEVICE arrays and pulling each lazily. Stock measures 70 / 61 / 76 s warm
+against 13.3 / 12.8 s with the lever. The instrumentation was already in the kit;
+reasoning about which call dominates was the wrong move when measuring it cost
+one run.
+
+**A sixth activation shape: no hook at all, and an entry point that is a
+script.** af2ig's kit installs no `.pth` and no import hook — its own
+`pyproject.toml` says so. Upstream's `predict_pdb.py` parses argv at module
+level, builds the model at module level and runs its loop as the last statement,
+so nothing in it is importable. The worker imports it anyway, with its own argv
+and an EMPTY input directory: the module runs exactly as written, enumerates
+zero inputs, and leaves a fully built AlphaFold 2 and upstream's own I/O object
+in the namespace, after which each request calls the same `process_struct` the
+loop would have called. Nothing of upstream is modified, copied or shadowed.
+**When a kit's entry point is a script, consider running it with nothing to do
+rather than reimplementing what it sets up.**
+
+**And the shape of the acceptance test flips again, for a third reason.**
+af2ig has NO padding buckets at all — the jit cache is keyed on shapes that are
+a pure function of the exact residue count, so every distinct length is its own
+XLA program. Four identical requests therefore exercise exactly one program, and
+the mixed phase is the whole test. But its engine key is `(num_recycle,
+initial_guess)` rather than length, so a length ladder does not rebuild anything
+either: the rebuild had to be exercised on its own axis (recycle 3 → 5 → 3,
+`config_rebuilt=True` twice, request three reproducing request one byte for
+byte). **"Vary the input" is not the instruction; "vary the engine key" is**, and
+the two are the same thing only by accident.
+
+**A reply must not name a path the server is about to delete.** af2ig's
+advertised a `structure_path` inside the per-request temporary directory the
+server removes before answering — confirmed gone on disk. A path that was true
+for a millisecond is worse than an absent field; the bytes are now opt-in and
+nothing else is offered. From the same provider: a worker whose orphan watchdog
+exits through `os._exit(0)` skips `atexit` by design, so it must sweep its own
+stale temp trees at START-UP as well as removing them at exit, checking whether
+the pid in each name is alive.
+
+
 ## 13. What the eighteenth provider changed: the first one that is not PyTorch
 
 AF3-JAX. Eighteen verified. Seventeen of the eighteen are PyTorch, and five of
@@ -884,7 +953,8 @@ provider's, and a scheduler cannot tell.** Two measurements, both load-bearing:
 
   * `peak_pool_bytes` is the analogue of torch's `max_memory_reserved`, and
     `peak_bytes_reserved` is a trap that reads 0. But `peak_pool_bytes` is
-    **quantised to powers of two**: the ladder read 2.0 / 4.0 / 4.0 / 8.0 GiB
+    **coarse** (an earlier draft said "quantised to powers of two"; af2ig's
+    0.5 / 1.0 / 2.0 / 6.0 refuted that): the ladder read 2.0 / 4.0 / 4.0 / 8.0 GiB
     while the working set moved 2.00 / 2.32 / 3.38 / 6.37. So `vram_budget_gb`
     for a JAX provider is a rounded-up allocator high-water mark sitting in the
     same column as a torch provider's near-exact one. Schedule on it as a
