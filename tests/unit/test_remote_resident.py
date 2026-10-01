@@ -1372,3 +1372,77 @@ class TestArchCheckAcrossFrameworks:
         prog = S._ARCH_PROBE
         assert "jax_backend" in prog and "local_devices" in prog
         compile(prog, "<probe>", "exec")
+
+
+class TestRefusalsExitThree:
+    """STANDARD section 8: `0` ok, `1` failed, `2` usage, `3` refused.
+
+    `raise SystemExit("message")` prints the message and exits **1**, so every
+    worker that refused that way was reporting a crash. These tests hold the
+    corrected contract across all of them at once, by reading the source rather
+    than by starting eighteen model environments.
+    """
+
+    @staticmethod
+    def _workers():
+        root = Path(__file__).resolve().parents[2] / "src" / "tooluniverse" / "remote"
+        found = sorted(root.glob("*/resident/*_resident_worker.py"))
+        assert found, root
+        return found
+
+    def test_no_worker_refuses_with_a_bare_message(self):
+        """A string argument to SystemExit is an exit-1 refusal, which is wrong.
+
+        `raise SystemExit(WB.serve(...))` is fine -- it passes the server's own
+        return code through -- and so is an explicit integer.
+        """
+        import ast
+
+        offenders = []
+        for path in self._workers():
+            tree = ast.parse(path.read_text())
+            for node in ast.walk(tree):
+                if not (isinstance(node, ast.Raise) and isinstance(node.exc, ast.Call)):
+                    continue
+                func = node.exc.func
+                name = getattr(func, "id", getattr(func, "attr", None))
+                if name != "SystemExit" or not node.exc.args:
+                    continue
+                arg = node.exc.args[0]
+                if isinstance(arg, ast.Call):
+                    continue
+                if isinstance(arg, ast.Constant) and isinstance(arg.value, int):
+                    continue
+                offenders.append(f"{path.name}:{node.lineno}")
+        assert not offenders, (
+            "these refusals exit 1, which the standard reserves for "
+            f'"failed"; raise _refuse(...) instead: {offenders}'
+        )
+
+    def test_every_worker_that_refuses_has_the_helper(self):
+        for path in self._workers():
+            src = path.read_text()
+            if "raise _refuse(" not in src:
+                continue
+            assert "def _refuse(" in src, path
+            assert "return SystemExit(3)" in src, path
+            assert "import sys" in src, path
+
+    def test_the_helper_exits_three_and_writes_the_message(self, capsys):
+        namespace: dict = {"sys": sys}
+        src = (self._workers()[0]).read_text()
+        start = src.index("def _refuse(")
+        end = src.index("return SystemExit(3)", start) + len("return SystemExit(3)")
+        exec(compile(src[start:end], "<helper>", "exec"), namespace)
+        exc = namespace["_refuse"]("nope: do the thing")
+        assert isinstance(exc, SystemExit) and exc.code == 3
+        assert "nope: do the thing" in capsys.readouterr().err
+
+    def test_the_supervisor_names_a_refusal(self):
+        import inspect
+
+        from tooluniverse.remote_resident import supervisor
+
+        src = inspect.getsource(supervisor)
+        assert "rc == 3" in src, "a refusal and a crash read the same otherwise"
+        assert "exited {rc} before it bound" in src

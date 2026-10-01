@@ -45,6 +45,18 @@ args = ap.parse_args()
 T0 = time.time()
 
 
+def _refuse(message: str) -> SystemExit:
+    """A refusal exits 3, per STANDARD section 8; its message goes to stderr.
+
+    `raise SystemExit("text")` would print the text and exit **1**, which the
+    standard reserves for "failed" -- a distinction a caller branches on, and
+    the whole point of a named refusal is that a caller can.
+    """
+    sys.stderr.write(str(message).rstrip("\n") + "\n")
+    sys.stderr.flush()
+    return SystemExit(3)
+
+
 def say(msg: str) -> None:
     print(f"[enformer-resident] {msg}", flush=True)
 
@@ -63,7 +75,7 @@ def _load_worker_base():
         else here.parents[3] / "remote_resident" / "worker_base.py"
     )
     if not path.is_file():
-        raise SystemExit(
+        raise _refuse(
             f"[enformer-resident] the shared worker runtime is not at {path} "
             f"(set TOOLUNIVERSE_REMOTE_WORKER_BASE to its path)"
         )
@@ -153,9 +165,7 @@ def _predict_one(req: dict) -> dict:
     }
     if tracks:
         wanted = [int(i) for i in tracks if 0 <= int(i) < pred.shape[1]]
-        body["profiles"] = {
-            str(i): [float(v) for v in pred[:, i]] for i in wanted
-        }
+        body["profiles"] = {str(i): [float(v) for v in pred[:, i]] for i in wanted}
     if DEVICE.type == "cuda":
         body["peak_reserved_gib"] = round(torch.cuda.max_memory_reserved() / 2**30, 2)
     return body

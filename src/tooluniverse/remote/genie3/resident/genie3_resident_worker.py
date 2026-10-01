@@ -102,6 +102,18 @@ T0 = time.time()
 TAG = "genie3-resident"
 
 
+def _refuse(message: str) -> SystemExit:
+    """A refusal exits 3, per STANDARD section 8; its message goes to stderr.
+
+    `raise SystemExit("text")` would print the text and exit **1**, which the
+    standard reserves for "failed" -- a distinction a caller branches on, and
+    the whole point of a named refusal is that a caller can.
+    """
+    sys.stderr.write(str(message).rstrip("\n") + "\n")
+    sys.stderr.flush()
+    return SystemExit(3)
+
+
 def say(msg: str) -> None:
     print(f"[{TAG}] {msg}", flush=True)
 
@@ -140,7 +152,7 @@ def _load_worker_base():
         else here.parents[3] / "remote_resident" / "worker_base.py"
     )
     if not path.is_file():
-        raise SystemExit(
+        raise _refuse(
             f"[{TAG}] the shared worker runtime is not at {path} "
             f"(set TOOLUNIVERSE_REMOTE_WORKER_BASE to its path)"
         )

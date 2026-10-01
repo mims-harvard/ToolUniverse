@@ -80,6 +80,18 @@ args = ap.parse_args()
 T0 = time.time()
 
 
+def _refuse(message: str) -> SystemExit:
+    """A refusal exits 3, per STANDARD section 8; its message goes to stderr.
+
+    `raise SystemExit("text")` would print the text and exit **1**, which the
+    standard reserves for "failed" -- a distinction a caller branches on, and
+    the whole point of a named refusal is that a caller can.
+    """
+    sys.stderr.write(str(message).rstrip("\n") + "\n")
+    sys.stderr.flush()
+    return SystemExit(3)
+
+
 def say(msg: str) -> None:
     print(f"[esmfold2-resident] {msg}", flush=True)
 
@@ -97,7 +109,7 @@ def _load_worker_base():
         else here.parents[3] / "remote_resident" / "worker_base.py"
     )
     if not path.is_file():
-        raise SystemExit(
+        raise _refuse(
             f"[esmfold2-resident] the shared worker runtime is not at {path} "
             f"(set TOOLUNIVERSE_REMOTE_WORKER_BASE to its path)"
         )
@@ -116,7 +128,7 @@ MODE = (os.environ.get("ESMFOLD2_OPT") or "off").strip().lower() or "off"
 # refusal, so we do not overwrite a caller's choice silently.
 declared = (os.environ.get("ESMFOLD2_VARIANT") or "").strip()
 if declared and declared != VARIANT:
-    raise SystemExit(
+    raise _refuse(
         f"[esmfold2-resident] --variant {VARIANT} disagrees with "
         f"ESMFOLD2_VARIANT={declared} in the environment; one variant per process"
     )

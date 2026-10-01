@@ -137,9 +137,19 @@ class ResidentWorker:
                 where = (
                     f" (its transcript is in {self.log_path})" if self.log_path else ""
                 )
+                # 3 is "refused" per STANDARD section 8, and the distinction is
+                # worth saying out loud: a refusal has a cause an operator can
+                # act on and its last stderr line names it, where any other
+                # non-zero code is a crash whose transcript has to be read.
+                why = (
+                    " \u2014 that is a refusal (exit 3), so its last line names "
+                    "what it refused and why"
+                    if rc == 3
+                    else ""
+                )
                 raise WorkerStartError(
                     f"{self.slug}: the resident worker exited {rc} before it bound "
-                    f"{self.socket_path}{where}"
+                    f"{self.socket_path}{where}{why}"
                 )
             if time.time() > deadline:
                 self._terminate()

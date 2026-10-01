@@ -80,6 +80,18 @@ args = ap.parse_args()
 T0 = time.time()
 
 
+def _refuse(message: str) -> SystemExit:
+    """A refusal exits 3, per STANDARD section 8; its message goes to stderr.
+
+    `raise SystemExit("text")` would print the text and exit **1**, which the
+    standard reserves for "failed" -- a distinction a caller branches on, and
+    the whole point of a named refusal is that a caller can.
+    """
+    sys.stderr.write(str(message).rstrip("\n") + "\n")
+    sys.stderr.flush()
+    return SystemExit(3)
+
+
 def say(msg: str) -> None:
     print(f"[rfdiffusion3-resident] {msg}", flush=True)
 
@@ -98,7 +110,7 @@ def _load_worker_base():
         else here.parents[3] / "remote_resident" / "worker_base.py"
     )
     if not path.is_file():
-        raise SystemExit(
+        raise _refuse(
             f"[rfdiffusion3-resident] the shared worker runtime is not at {path} "
             f"(set TOOLUNIVERSE_REMOTE_WORKER_BASE to its path)"
         )
@@ -144,7 +156,7 @@ def _checkpoint() -> str:
         candidate = Path(root).expanduser() / "rfd3_latest.ckpt"
         if candidate.is_file():
             return os.fspath(candidate)
-    raise SystemExit(
+    raise _refuse(
         "[rfdiffusion3-resident] no checkpoint: set RFD3_CKPT, or run "
         "`tu remote setup rfdiffusion3 --only weights`"
     )

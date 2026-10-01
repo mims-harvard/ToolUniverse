@@ -84,6 +84,18 @@ args = ap.parse_args()
 T0 = time.time()
 
 
+def _refuse(message: str) -> SystemExit:
+    """A refusal exits 3, per STANDARD section 8; its message goes to stderr.
+
+    `raise SystemExit("text")` would print the text and exit **1**, which the
+    standard reserves for "failed" -- a distinction a caller branches on, and
+    the whole point of a named refusal is that a caller can.
+    """
+    sys.stderr.write(str(message).rstrip("\n") + "\n")
+    sys.stderr.flush()
+    return SystemExit(3)
+
+
 def say(msg: str) -> None:
     print(f"[boltzgen-resident] {msg}", flush=True)
 
@@ -101,7 +113,7 @@ def _load_worker_base():
         else here.parents[3] / "remote_resident" / "worker_base.py"
     )
     if not path.is_file():
-        raise SystemExit(
+        raise _refuse(
             f"[boltzgen-resident] the shared worker runtime is not at {path} "
             f"(set TOOLUNIVERSE_REMOTE_WORKER_BASE to its path)"
         )
@@ -119,7 +131,7 @@ MODE = (os.environ.get("BOLTZGEN_OPT") or "off").strip().lower() or "off"
 # process, and kit_launch put the directory here under the kit's own name.
 CACHE = (os.environ.get("BOLTZGEN_CACHE") or "").strip()
 if not CACHE:
-    raise SystemExit(
+    raise _refuse(
         "[boltzgen-resident] BOLTZGEN_CACHE is unset: run "
         "`tu remote setup boltzgen --only weights`"
     )
@@ -250,9 +262,7 @@ _LIST_OPTIONS = {"steps": "--steps"}
 _CONFIG_STEP = "design"
 MIN_SAMPLING_STEPS = 2
 OPTION_NAMES = tuple(
-    sorted(
-        {*_INT_OPTIONS, *_STR_OPTIONS, *_LIST_OPTIONS, "mode", "sampling_steps"}
-    )
+    sorted({*_INT_OPTIONS, *_STR_OPTIONS, *_LIST_OPTIONS, "mode", "sampling_steps"})
 )
 
 # Upstream's own default is --num_designs 10000, which is a campaign rather

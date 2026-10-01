@@ -152,6 +152,18 @@ args = ap.parse_args()
 T0 = time.time()
 
 
+def _refuse(message: str) -> SystemExit:
+    """A refusal exits 3, per STANDARD section 8; its message goes to stderr.
+
+    `raise SystemExit("text")` would print the text and exit **1**, which the
+    standard reserves for "failed" -- a distinction a caller branches on, and
+    the whole point of a named refusal is that a caller can.
+    """
+    sys.stderr.write(str(message).rstrip("\n") + "\n")
+    sys.stderr.flush()
+    return SystemExit(3)
+
+
 def say(msg: str) -> None:
     print(f"[ef2inv-resident] {msg}", flush=True)
 
@@ -169,7 +181,7 @@ def _load_worker_base():
         else here.parents[3] / "remote_resident" / "worker_base.py"
     )
     if not path.is_file():
-        raise SystemExit(
+        raise _refuse(
             f"[ef2inv-resident] the shared worker runtime is not at {path} "
             f"(set TOOLUNIVERSE_REMOTE_WORKER_BASE to its path)"
         )
@@ -184,7 +196,7 @@ WB = _load_worker_base()
 KIT = Path(args.kit).expanduser().resolve()
 PINS_PATH = KIT / "stock" / "PINS.json"
 if not PINS_PATH.is_file():
-    raise SystemExit(
+    raise _refuse(
         f"[ef2inv-resident] {PINS_PATH} is not there: --kit must be the kit's "
         f"own directory (<checkout>/ef2inv)"
     )
@@ -211,7 +223,7 @@ from ef2inv_opt.launch import (  # noqa: E402
 )
 
 if args.mode not in M.MODES:
-    raise SystemExit(
+    raise _refuse(
         f"[ef2inv-resident] --mode {args.mode!r} is not one of {sorted(M.MODES)}"
     )
 MODE = M.MODES[args.mode]
@@ -308,7 +320,7 @@ PROOF = envproof.prove(
 )
 say(envproof.line(PROOF))
 if not PROOF["clean"]:
-    raise SystemExit(
+    raise _refuse(
         "[ef2inv-resident] the kit's environment proof failed in this process: "
         + "; ".join(PROOF["problems"])
         + ". launch.py strips every forbidden prefix from the inherited "
@@ -333,7 +345,7 @@ def _cookbook_path() -> Path:
     try:
         dist = md.distribution("esm")
     except md.PackageNotFoundError:
-        raise SystemExit(
+        raise _refuse(
             "[ef2inv-resident] esm is not installed in this environment: it must "
             "be the editable checkout of github.com/Biohub/esm at "
             + PINS["upstream"]["commit"][:12]
@@ -348,7 +360,7 @@ def _cookbook_path() -> Path:
     url = str(info.get("url") or "")
     editable = bool((info.get("dir_info") or {}).get("editable"))
     if not url.startswith("file://") or not editable:
-        raise SystemExit(
+        raise _refuse(
             "[ef2inv-resident] esm is installed but not as the editable checkout "
             "the pin requires (PEP 610 dir_info.editable); the cookbook file "
             "ships in the repository, not in a wheel"
@@ -361,7 +373,7 @@ COOKBOOK = _cookbook_path()
 _REF = KIT / "stock" / "src" / "cookbook" / "tutorials" / "binder_design.py"
 _got, _want = SD.sha256_file(os.fspath(COOKBOOK)), SD.sha256_file(os.fspath(_REF))
 if _got != _want:
-    raise SystemExit(
+    raise _refuse(
         f"[ef2inv-resident] REFUSED cookbook file {COOKBOOK} sha256 {_got} != "
         f"tree copy {_REF} sha256 {_want}"
     )
@@ -381,7 +393,7 @@ say(f"cookbook imported t={time.time() - T0:.1f}s torch={torch.__version__}")
 
 _bad = S.check_shipped(BD)
 if _bad:
-    raise SystemExit(
+    raise _refuse(
         f"[ef2inv-resident] REFUSED the cookbook module's constants differ from "
         f"the shipped ones: {_bad}"
     )
@@ -394,7 +406,7 @@ try:
         else FK.record_off()
     )
 except FK.LeversOffError as exc:
-    raise SystemExit(f"[ef2inv-resident] REFUSED {exc}") from None
+    raise _refuse(f"[ef2inv-resident] REFUSED {exc}") from None
 say(
     f"PATCH {KIT_REC['name']} applied={KIT_REC['applied']}"
     + (
@@ -409,7 +421,7 @@ say(
     )
 )
 if not torch.cuda.is_available():
-    raise SystemExit(
+    raise _refuse(
         "[ef2inv-resident] REFUSED no CUDA device (the recipe folds on cuda, "
         "stock file l.215/701)"
     )
@@ -445,7 +457,7 @@ try:
         critic_kernel_backend=CMODE.critic_kernel_backend,
     )
 except SD.ModelSwitchError as exc:
-    raise SystemExit(f"[ef2inv-resident] NOT ACTIVE: {exc}") from None
+    raise _refuse(f"[ef2inv-resident] NOT ACTIVE: {exc}") from None
 torch.cuda.synchronize()
 LOAD_S = round(time.time() - _t, 3)
 
@@ -478,13 +490,13 @@ if MODE.is_kit:
     try:
         import ef2_autograd_kernels as agk  # noqa: E402
     except Exception as exc:  # noqa: BLE001 - the kit's own refusal wording
-        raise SystemExit(
+        raise _refuse(
             f"[ef2inv-resident] REFUSED the kit's lever module does not import: {exc!r}"
         ) from None
     AGK = agk
     BEFORE = EV.probe_before(MODE.name, agk=AGK, torch=torch)
     if BEFORE["refusals"]:
-        raise SystemExit(
+        raise _refuse(
             f"[ef2inv-resident] REFUSED before the loop: {BEFORE['refusals']}"
         )
     # ONE counter for the life of the worker: its install rebinds the kit's

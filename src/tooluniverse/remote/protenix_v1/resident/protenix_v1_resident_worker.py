@@ -71,6 +71,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import sys
 import time
 from pathlib import Path
 
@@ -80,6 +81,18 @@ ap.add_argument("--slug", default="protenix_v1", help="provider slug, echoed in 
 args = ap.parse_args()
 
 T0 = time.time()
+
+
+def _refuse(message: str) -> SystemExit:
+    """A refusal exits 3, per STANDARD section 8; its message goes to stderr.
+
+    `raise SystemExit("text")` would print the text and exit **1**, which the
+    standard reserves for "failed" -- a distinction a caller branches on, and
+    the whole point of a named refusal is that a caller can.
+    """
+    sys.stderr.write(str(message).rstrip("\n") + "\n")
+    sys.stderr.flush()
+    return SystemExit(3)
 
 
 def say(msg: str) -> None:
@@ -100,7 +113,7 @@ def _load_worker_base():
         else here.parents[3] / "remote_resident" / "worker_base.py"
     )
     if not path.is_file():
-        raise SystemExit(
+        raise _refuse(
             f"[protenix_v1-resident] the shared worker runtime is not at {path} "
             f"(set TOOLUNIVERSE_REMOTE_WORKER_BASE to its path)"
         )
@@ -167,7 +180,7 @@ def _refuse_fast_layernorm() -> None:
     built = {(7, 0), (8, 0), (8, 6), (8, 9), (9, 0), (10, 0)}
     if (major, minor) in built:
         return
-    raise SystemExit(
+    raise _refuse(
         f"[protenix_v1-resident] LAYERNORM_TYPE=fast_layernorm on compute "
         f"capability {major}.{minor}: stock's fast-LayerNorm extension emits "
         f"SASS for {sorted(built)} and no PTX, so its kernels cannot launch "
@@ -184,7 +197,7 @@ import torch  # noqa: E402  after the LayerNorm gate, which must precede any pro
 
 ROOT = os.environ.get("PROTENIX_ROOT_DIR")
 if not ROOT:
-    raise SystemExit(
+    raise _refuse(
         "[protenix_v1-resident] PROTENIX_ROOT_DIR is not set: it is the weights "
         "and data root upstream reads (<root>/checkpoint/ + <root>/common/). "
         "`tu remote setup protenix_v1` exports it from [weights] root_env."

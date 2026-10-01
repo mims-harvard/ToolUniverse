@@ -129,6 +129,18 @@ args = ap.parse_args()
 T0 = time.time()
 
 
+def _refuse(message: str) -> SystemExit:
+    """A refusal exits 3, per STANDARD section 8; its message goes to stderr.
+
+    `raise SystemExit("text")` would print the text and exit **1**, which the
+    standard reserves for "failed" -- a distinction a caller branches on, and
+    the whole point of a named refusal is that a caller can.
+    """
+    sys.stderr.write(str(message).rstrip("\n") + "\n")
+    sys.stderr.flush()
+    return SystemExit(3)
+
+
 def say(msg: str) -> None:
     print(f"[rosettafold3-resident] {msg}", flush=True)
 
@@ -147,7 +159,7 @@ def _load_worker_base():
         else here.parents[3] / "remote_resident" / "worker_base.py"
     )
     if not path.is_file():
-        raise SystemExit(
+        raise _refuse(
             f"[rosettafold3-resident] the shared worker runtime is not at {path} "
             f"(set TOOLUNIVERSE_REMOTE_WORKER_BASE to its path)"
         )
@@ -170,7 +182,7 @@ CKPT = os.environ.get("ROSETTAFOLD3_OPT_CKPT") or (
     else ""
 )
 if not CKPT or not os.path.isfile(CKPT):
-    raise SystemExit(
+    raise _refuse(
         f"[rosettafold3-resident] the pinned checkpoint is not at {CKPT or '<unset>'}: "
         f"pass --weights-root <dir> holding {CKPT_NAME}, or set "
         f"ROSETTAFOLD3_OPT_CKPT; `tu remote setup rosettafold3` fetches it"

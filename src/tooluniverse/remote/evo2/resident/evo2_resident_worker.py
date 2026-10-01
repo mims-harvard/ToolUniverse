@@ -104,6 +104,18 @@ args = ap.parse_args()
 T0 = time.time()
 
 
+def _refuse(message: str) -> SystemExit:
+    """A refusal exits 3, per STANDARD section 8; its message goes to stderr.
+
+    `raise SystemExit("text")` would print the text and exit **1**, which the
+    standard reserves for "failed" -- a distinction a caller branches on, and
+    the whole point of a named refusal is that a caller can.
+    """
+    sys.stderr.write(str(message).rstrip("\n") + "\n")
+    sys.stderr.flush()
+    return SystemExit(3)
+
+
 def say(msg: str) -> None:
     print(f"[evo2-resident] {msg}", flush=True)
 
@@ -121,7 +133,7 @@ def _load_worker_base():
         else here.parents[3] / "remote_resident" / "worker_base.py"
     )
     if not path.is_file():
-        raise SystemExit(
+        raise _refuse(
             f"[evo2-resident] the shared worker runtime is not at {path} "
             f"(set TOOLUNIVERSE_REMOTE_WORKER_BASE to its path)"
         )
@@ -277,7 +289,7 @@ def _checkpoint() -> str:
     """
     root = os.environ.get("EVO2_OPT_WEIGHTS")
     if not root:
-        raise SystemExit(
+        raise _refuse(
             "[evo2-resident] EVO2_OPT_WEIGHTS is not set, and this worker will "
             "not let upstream download 13.8 GiB at request time: set it to the "
             "directory holding "
@@ -285,7 +297,7 @@ def _checkpoint() -> str:
         )
     path = Path(root).expanduser() / CHECKPOINT[MODEL_NAME]
     if not path.is_file():
-        raise SystemExit(
+        raise _refuse(
             f"[evo2-resident] {path} is not there. EVO2_OPT_WEIGHTS is set, "
             f"which the kit does NOT treat as an error -- STOCK.md: such a "
             f"directory 'is not refused: score then also takes upstream's own "

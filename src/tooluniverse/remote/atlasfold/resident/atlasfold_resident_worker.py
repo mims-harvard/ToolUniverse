@@ -203,6 +203,18 @@ args = ap.parse_args()
 T0 = time.time()
 
 
+def _refuse(message: str) -> SystemExit:
+    """A refusal exits 3, per STANDARD section 8; its message goes to stderr.
+
+    `raise SystemExit("text")` would print the text and exit **1**, which the
+    standard reserves for "failed" -- a distinction a caller branches on, and
+    the whole point of a named refusal is that a caller can.
+    """
+    sys.stderr.write(str(message).rstrip("\n") + "\n")
+    sys.stderr.flush()
+    return SystemExit(3)
+
+
 def say(msg: str) -> None:
     print(f"[atlasfold-resident] {msg}", flush=True)
 
@@ -220,7 +232,7 @@ def _load_worker_base():
         else here.parents[3] / "remote_resident" / "worker_base.py"
     )
     if not path.is_file():
-        raise SystemExit(
+        raise _refuse(
             f"[atlasfold-resident] the shared worker runtime is not at {path} "
             f"(set TOOLUNIVERSE_REMOTE_WORKER_BASE to its path)"
         )
@@ -421,14 +433,14 @@ def _weights_paths() -> dict:
 
     root = W.weights_dir(WEIGHTS_ROOT or None)
     if not root:
-        raise SystemExit(
+        raise _refuse(
             "[atlasfold-resident] no weights root: ATLASFOLD_WEIGHTS_DIR is unset "
             "(the launcher exports it from [weights] root_env)"
         )
     paths = W.paths(root)
     missing = [p for p in paths.values() if not os.path.isfile(p)]
     if missing:
-        raise SystemExit(
+        raise _refuse(
             "[atlasfold-resident] weights absent under "
             f"{root}: {missing} — run `tu remote setup atlasfold`"
         )
@@ -506,7 +518,7 @@ def _build() -> dict:
     say(f"libnvrtc preload: {facts['nvrtc']}")
 
     if MODE not in ("exact", "fast", "big"):
-        raise SystemExit(
+        raise _refuse(
             f"[atlasfold-resident] ATLASFOLD_OPT={MODE!r} cannot be served "
             f"resident. This kit's `off` runs the stock CLI in a clean "
             f"subprocess by construction (atlasfold_opt.stock_pred), which is a "
@@ -529,7 +541,7 @@ def _build() -> dict:
 
     report = atlasfold_opt.status()
     if not report.get("active"):
-        raise SystemExit(
+        raise _refuse(
             f"[atlasfold-resident] the kit did not activate under "
             f"ATLASFOLD_OPT={MODE!r}: {report.get('reason') or report}"
         )
@@ -556,7 +568,7 @@ def _build() -> dict:
     if not triton_ok:
         live = sorted(TRITON_LEVERS.intersection(facts["levers"]))
         if live:
-            raise SystemExit(
+            raise _refuse(
                 "[atlasfold-resident] this interpreter's Triton cannot compile a "
                 f"warp-shuffle kernel for this GPU ({triton_detail}), and the kit "
                 f"mode {MODE!r} still carries Triton-backed lever(s): "
@@ -590,7 +602,7 @@ def _build() -> dict:
 
     facts["device"] = "cuda" if torch.cuda.is_available() else "cpu"
     if facts["device"] != "cuda":
-        raise SystemExit(
+        raise _refuse(
             "[atlasfold-resident] no CUDA device; this provider declares "
             '[gpu] policy = "required" and the kit\'s levers are CUDA kernels'
         )
