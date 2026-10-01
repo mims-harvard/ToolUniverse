@@ -95,6 +95,13 @@ DEPLOYMENTS = (
     ),
     Deployment("esm", 8008, ("esm_embed_sequence",)),
     Deployment(
+        "e1",
+        8044,
+        ("run_e1_score_variants", "run_e1_embed"),
+        ("HF_HOME", "TOOLUNIVERSE_E1_PYTHON"),
+        path_env=("HF_HOME",),
+    ),
+    Deployment(
         "esmc",
         8037,
         ("run_esmc_embed", "run_esmc_logits"),
