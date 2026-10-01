@@ -105,6 +105,13 @@ DEPLOYMENTS = (
         path_env=("DEPMAP_DATA_PATH",),
     ),
     Deployment(
+        "ef2inv",
+        8042,
+        ("ef2inv_design",),
+        ("HF_HOME", "TOOLUNIVERSE_EF2INV_PYTHON"),
+        path_env=("HF_HOME",),
+    ),
+    Deployment(
         "enformer", 8011, ("run_enformer_predict", "run_enformer_variant_effect")
     ),
     Deployment("esm", 8008, ("esm_embed_sequence",)),

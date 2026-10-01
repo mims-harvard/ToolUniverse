@@ -134,6 +134,15 @@ REMOTE_DEPLOYMENTS = (
         ("DEPMAP_DATA_PATH",),
     ),
     RemoteDeployment(
+        "ef2inv",
+        "tooluniverse.remote.ef2inv.ef2inv_tool",
+        8042,
+        ("ef2inv_design",),
+        ("HF_HOME", "TOOLUNIVERSE_EF2INV_PYTHON"),
+        ("HF_HOME",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "enformer",
         "tooluniverse.remote.enformer.enformer_tool",
         8011,
