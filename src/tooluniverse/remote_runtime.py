@@ -76,6 +76,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "af3_jax",
+        "tooluniverse.remote.af3_jax.af3_jax_tool",
+        8045,
+        ("af3_jax_predict",),
+        ("TOOLUNIVERSE_AF3_JAX_PYTHON", "AF3_JAX_REPO"),
+        ("AF3_JAX_PARAMS_ROOT", "AF3_JAX_REPO"),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "af3_torch",
         "tooluniverse.remote.af3_torch.af3_torch_tool",
         8036,

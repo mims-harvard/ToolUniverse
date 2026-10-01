@@ -61,6 +61,13 @@ DEPLOYMENTS = (
         ("TOOLUNIVERSE_ATLASFOLD_PYTHON",),
     ),
     Deployment(
+        "af3_jax",
+        8045,
+        ("af3_jax_predict",),
+        ("TOOLUNIVERSE_AF3_JAX_PYTHON", "AF3_JAX_REPO"),
+        path_env=("AF3_JAX_PARAMS_ROOT", "AF3_JAX_REPO"),
+    ),
+    Deployment(
         "af3_torch",
         8036,
         ("af3_torch_predict",),
