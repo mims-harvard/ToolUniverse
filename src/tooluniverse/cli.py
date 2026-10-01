@@ -22,6 +22,8 @@ import difflib
 import json
 import os
 import sys
+import threading
+import time
 from pathlib import Path
 from typing import Any
 
@@ -2576,6 +2578,163 @@ def cmd_remote_run(args: argparse.Namespace) -> None:
         stop_provider(managed)
 
 
+def cmd_remote_pool(args: argparse.Namespace) -> None:
+    """Serve several reviewed providers from one process, starting each on demand."""
+    from tooluniverse.remote_pool import (
+        PoolError,
+        ProviderPool,
+        SchemaStore,
+        serve_pool,
+        start_reaper,
+    )
+    from tooluniverse.remote_runtime import (
+        REMOTE_BY_SLUG,
+        check_environment,
+        resolve_python,
+    )
+
+    requested = [slug.strip() for slug in args.allow.split(",") if slug.strip()]
+    if not requested:
+        print("Error: --allow must name at least one provider.", file=sys.stderr)
+        raise SystemExit(2)
+    unknown = [slug for slug in requested if slug not in REMOTE_BY_SLUG]
+    if unknown:
+        print(
+            f"Error: unknown provider(s): {', '.join(unknown)}. "
+            f"Run `tu remote list` to see reviewed providers.",
+            file=sys.stderr,
+        )
+        raise SystemExit(2)
+
+    try:
+        key = (
+            _connection_key_for_share(args.service, no_browser=args.no_browser)
+            if args.share
+            else ""
+        )
+    except (OSError, RuntimeError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+    if args.share and (not key or not _valid_remote_key(key)):
+        print(
+            "Error: no usable private connection key. "
+            "Run `tu remote login` once, then retry this command.",
+            file=sys.stderr,
+        )
+        raise SystemExit(2)
+
+    # Check every named provider before advertising any of them. A provider whose
+    # environment is broken is dropped with its reason rather than failing the whole
+    # pool: the remaining models stay shareable, and callers never see a tool that
+    # could only ever answer with a start failure.
+    usable: list[str] = []
+    for slug in requested:
+        deployment = REMOTE_BY_SLUG[slug]
+        check = check_environment(
+            deployment,
+            python=args.python,
+            share=args.share,
+            service_key_available=bool(key),
+            allow_cpu=args.allow_cpu,
+            timeout=args.timeout,
+        )
+        if check.get("ok"):
+            usable.append(slug)
+            print(f"  {slug}: environment ok")
+            continue
+        reasons = "; ".join(
+            str(item.get("detail") or item.get("name") or "failed")
+            for item in check.get("checks", [])
+            if not item.get("ok")
+        )
+        print(f"  {slug}: EXCLUDED -- {reasons or 'environment check failed'}")
+    if not usable:
+        print(
+            "Error: none of the named providers passed their environment check.",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
+
+    try:
+        pool = ProviderPool(
+            allow=tuple(usable),
+            python=resolve_python(args.python, REMOTE_BY_SLUG[usable[0]]),
+            log_dir=args.log_dir,
+            schemas=SchemaStore(args.schema_dir),
+            max_active=args.max_active,
+            idle_ttl=args.idle_ttl,
+            startup_timeout=args.startup_timeout,
+        )
+    except PoolError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+
+    # Discovery answers from cached tools/list snapshots, so a provider with no snapshot
+    # would be invisible to callers even though the pool can route to it. Sharing without
+    # a manifest publishes an online server with zero tools, so fill the gaps first.
+    if args.warm or (args.share and pool.missing_snapshots()):
+        pending = (
+            pool.deployments if args.warm else pool.missing_snapshots()
+        )
+        print(f"Warming {len(pending)} provider(s) to snapshot their tool schemas.")
+        if args.warm:
+            for deployment in pending:
+                try:
+                    pool.schemas._path(deployment.slug).unlink()
+                except OSError:
+                    pass
+        for slug, outcome in pool.warm(report=lambda line: print(f"  {line}")).items():
+            print(f"  {slug}: {outcome}")
+
+    tools = pool.known_tools()
+    print(
+        f"Pool ready: {len(usable)} provider(s), {len(tools)} tool(s) advertised, "
+        f"{args.max_active} resident at a time, idle stop after {args.idle_ttl:.0f}s."
+    )
+    if not tools:
+        print(
+            "  Note: no tool schemas are cached yet. Run with --warm so callers can "
+            "discover what this host shares."
+        )
+
+    server = serve_pool(pool, port=args.port)
+    bound_port = server.server_address[1]
+    endpoint = f"http://127.0.0.1:{bound_port}/mcp"
+    threading.Thread(
+        target=server.serve_forever, name="tu-remote-pool", daemon=True
+    ).start()
+    stop_reaper = start_reaper(pool)
+    try:
+        if not args.share:
+            print(f"Serving multiplexed MCP on {endpoint}; press Ctrl-C to stop.")
+            while True:
+                time.sleep(3600)
+        from tuplatform_connect.relay import RelayAgent, RelayError
+
+        print("Sharing privately; press Ctrl-C to stop the relay.")
+        try:
+            RelayAgent(
+                args.service,
+                key,
+                endpoint,
+                args.name or "tu-remote-pool",
+                workers=args.workers or 2,
+            ).run_forever()
+        except RelayError as exc:
+            raise RuntimeError(str(exc)) from exc
+    except KeyboardInterrupt:
+        print("Stopping pool.")
+    except (ImportError, OSError, RuntimeError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
+    finally:
+        stop_reaper.set()
+        server.shutdown()
+        server.server_close()
+        # Only providers this pool started are stopped; an adopted one keeps running.
+        pool.shutdown()
+
+
 def _platform_request(
     base_url: str,
     path: str,
@@ -3241,6 +3400,78 @@ def main() -> None:
     _add_remote_common(p, include_share=False)
     _add_remote_run_options(p)
     p.set_defaults(func=cmd_remote_run, share=True)
+
+    p = remote_sub.add_parser(
+        "pool",
+        help="serve several providers from one process, starting each on demand",
+    )
+    p.add_argument(
+        "--allow",
+        required=True,
+        metavar="SLUG,SLUG",
+        help="comma-separated reviewed providers this host may start",
+    )
+    p.add_argument(
+        "--max-active",
+        type=_bounded_int(1, 16),
+        default=1,
+        help=(
+            "providers kept resident at once; the rest are stopped least-recently-used "
+            "first (default: 1, because one large model usually fills a GPU)"
+        ),
+    )
+    p.add_argument(
+        "--idle-ttl",
+        type=float,
+        default=900.0,
+        help="stop a provider after this many idle seconds (default: 900)",
+    )
+    p.add_argument(
+        "--port",
+        type=_bounded_int(0, 65535),
+        default=7999,
+        help="loopback port for the multiplexed MCP endpoint (default: 7999)",
+    )
+    p.add_argument(
+        "--schema-dir",
+        default=os.getenv(
+            "TOOLUNIVERSE_REMOTE_SCHEMA_DIR", ".tooluniverse/remote-pool-schemas"
+        ),
+        help="tools/list snapshot cache (default: .tooluniverse/remote-pool-schemas)",
+    )
+    p.add_argument(
+        "--warm",
+        action="store_true",
+        help="re-snapshot every provider's tools/list before serving",
+    )
+    p.add_argument(
+        "--share",
+        action="store_true",
+        help="also publish the pool through TU Platform relay",
+    )
+    p.add_argument(
+        "--python",
+        metavar="PATH",
+        help="Python executable from the provider environment",
+    )
+    p.add_argument(
+        "--no-browser",
+        action="store_true",
+        help="print login links without trying to open a browser",
+    )
+    p.add_argument(
+        "--allow-cpu",
+        action="store_true",
+        help="allow CPU execution when a provider normally requires CUDA",
+    )
+    p.add_argument(
+        "--timeout",
+        type=float,
+        default=30,
+        help="provider-environment check timeout in seconds (default: 30)",
+    )
+    _add_remote_run_options(p)
+    p.set_defaults(func=cmd_remote_pool)
 
     # ── doctor ────────────────────────────────────────────────────────────────
     p = sub.add_parser(
