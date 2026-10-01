@@ -67,6 +67,13 @@ DEPLOYMENTS = (
         ("TOOLUNIVERSE_AF3_TORCH_PYTHON", "AF3_TORCH_JAX_PY", "AF3_TORCH_JAX_REPO"),
         path_env=("AF3_TORCH_PARAMS_DIR", "AF3_TORCH_JAX_REPO"),
     ),
+    Deployment(
+        "boltzgen",
+        8035,
+        ("boltzgen_design",),
+        ("BOLTZGEN_CACHE", "TOOLUNIVERSE_BOLTZGEN_PYTHON"),
+        path_env=("BOLTZGEN_CACHE",),
+    ),
     Deployment("borzoi", 8012, ("run_borzoi_predict", "run_borzoi_variant_effect")),
     Deployment(
         "cell2location",

@@ -43,8 +43,8 @@ def test_catalog_matches_setup_skills_and_covers_all_operations():
         for item in DEPLOYMENTS
     }
     assert runtime == skills
-    assert len(runtime) == 41
-    assert sum(len(item.operations) for item in REMOTE_DEPLOYMENTS) == 55
+    assert len(runtime) == 42
+    assert sum(len(item.operations) for item in REMOTE_DEPLOYMENTS) == 56
     assert {
         item.slug: item.relay_workers
         for item in REMOTE_DEPLOYMENTS

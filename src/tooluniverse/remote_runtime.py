@@ -85,6 +85,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "boltzgen",
+        "tooluniverse.remote.boltzgen.boltzgen_tool",
+        8035,
+        ("boltzgen_design",),
+        ("BOLTZGEN_CACHE", "TOOLUNIVERSE_BOLTZGEN_PYTHON"),
+        ("BOLTZGEN_CACHE",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "borzoi",
         "tooluniverse.remote.borzoi.borzoi_tool",
         8012,
