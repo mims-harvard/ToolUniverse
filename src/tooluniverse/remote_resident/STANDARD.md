@@ -585,6 +585,10 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | A reserve can ratchet | measured: atlasfold reports 38.63 GiB for a 3-second request after one 800 aa fold |
 | Utilisation alone is not evidence of progress | measured: a 40-minute stall read as 86-91% busy, which was another session |
 | The repeats test cannot see a second BUILD | measured: genie3 passes 4 identical and raises on the first rebuild |
+| ...and a shape change cannot see a per-request leak | measured: openfold3_ob0 carries both, in two different layers |
+| A sibling release can need its own provider | measured: version-gated checkpoints, one distribution, kits refuse to share a process |
+| Residency gain ranges 1.13x-26x | measured: ob0's per-request floor is ~30 s of framework, not model |
+| A reply size cap can silently drop the answer | measured: 29 MB of confidence JSON dropped under a 64 KiB cap |
 | A worker may have to reset UPSTREAM's module state | measured: one sampling config per process, OK/TypeError/TypeError |
 | An input ceiling must agree with the budget | measured: progen2's 16x1024 permits a 116.93 GiB request |
 | A CUDA failure can surface somewhere else | measured: protenix's LayerNorm, 24/24 shapes, next op raises |
@@ -602,11 +606,195 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | A framework default can claim the whole card | measured: 91.22 GiB vs 2.0 on `XLA_PYTHON_CLIENT_PREALLOCATE` |
 | A digest authenticates bytes, not entitlement | measured: protenix_v2's checkpoint 403s; exact-digest mirrors exist |
 | HEAD the checkpoint URL before anything else | measured: 40 ms would have replaced a whole investigation |
-| Residency gain ranges 2.0x-26x | measured, seven providers; the 24-26x is an unpersistable autotune |
+| A launcher cannot remove a variable by pruning a copy | measured: af3_jax's stripping did nothing; a stray name exited the worker 3 |
+| A check must observe the thing that executes | measured: the stripping test read `build_command`'s return, where the defect is invisible |
+| Fixing one framework-naming gate is not fixing it | measured: `_arch_problem` fixed, `tu remote check`'s two probes not |
+| jaxlib ships aarch64 from 0.4.18, not 0.7.2 | measured: jax 0.5.3 drives this card; the wrong premise was in a brief |
+| An instruction selector can refuse a conversion | measured: bf16->f16 at ColabFold's recycle boundary, uncatchable abort |
+| `idle_timeout_s` follows upstream's caching, not model size | measured: colabfold 300 s because XLA persists; af3_jax 900 s because tokamax does not |
+| A worker can die between requests invisibly | measured: 6 starts, 5 clean shutdowns, one silent exit |
 | A residency multiple is largest at the smallest input | measured: af3_jax 26x at 35 aa, 3.5x at its budget row |
 | A launch must STRIP undeclared names, not merely not set them | measured: af3_jax's `.pth` exits 3 on an inherited variable |
 
-## 12. What the eighteenth provider changed: the first one that is not PyTorch
+## 12. What providers nineteen through twenty-one changed: three checks that passed where the defect was invisible
+
+ESM-IF1, ColabFold and OpenFold3-OpenBind-0. Twenty-one verified. The findings
+that matter most here are not about any of the three models: each turned up a
+check that had already been run and passed while the thing it was supposed to
+catch was broken.
+
+**A launcher could not remove an environment variable, and the test that said
+it could read the one place the defect was invisible.** af3_jax's kit refuses
+the first `import alphafold3` under any undeclared `AF3_JAX_*` name, so its
+launcher built a child environment with every such name stripped and returned
+it. `supervisor._start` then did:
+
+```python
+argv, extra_env = self.build_command(self)
+env = dict(os.environ)
+env.update(extra_env)
+```
+
+The first line starts from the operator's environment, so every name the
+launcher had removed came straight back. An operator with a stray
+`AF3_JAX_BOGUS` exported got a worker that exited 3 at import — exactly the
+failure the stripping existed to prevent. This was committed as verified,
+because the check that was run inspected `build_command`'s RETURN VALUE, where
+a pruned copy looks perfectly correct. **A launcher's intent has to be
+expressed in something the executor acts on, and a check has to observe the
+thing that executes.** The contract is now explicit — a `None` value REMOVES a
+name — the assembly is a separate function `supervisor.child_env` so it can be
+tested without starting a process, and the end-to-end test is the one that
+should have been run first: export three hostile variables and start a real
+worker.
+
+**And the same class of mistake was sitting in `tu remote check`.** §12's
+earlier entry records `_arch_problem` refusing af3_jax because it judged the
+card by torch while JAX drove it. The fix went into `remote_resident.setup`
+and into nothing else, so `remote_runtime`'s two probes kept asking torch
+alone and `tu remote check af3_jax` printed `CUDA tensor check: failed` for a
+working provider. Two lessons, and the second is the useful one: a gate naming
+one framework will be wrong as soon as a second appears, **and fixing one
+instance of it is not fixing it** — grep for the others the same hour. Both
+probes now fall through to `jax.default_backend()` and do real device work
+(`jnp.arange(8).sum()`, the same 28.0 the torch branch produces); the summary
+line names which framework found the card, because
+`GPU: NVIDIA GB10 (cc 12.1, torch 2.7.1+cpu)` invites exactly the wrong
+conclusion; and a provider declaring `policy = "none"` is no longer told its
+GPU check failed, because it has said it does not use one.
+
+**A premise in a brief is worth as much as a premise in the code, and this one
+was wrong.** The round's instructions told the ColabFold work that "jaxlib
+aarch64 wheels begin at 0.7.2". jaxlib publishes `manylinux2014_aarch64` from
+**0.4.18**; 0.5.3 publishes four, and so do `jax-cuda12-plugin` and
+`jax-cuda12-pjrt` at that version. Measured afterwards in the model
+interpreter: jax 0.5.3 reports backend `gpu`, `CudaDevice(id=0)`, device_kind
+"NVIDIA GB10", compute capability 12.1, and computes a correct 2048² matmul. **A
+two-year-old JAX line drives this card.** Taken on trust, that premise would
+have refused a working provider in its first hour. Check the index per file;
+it costs one request.
+
+**A fifth kind of stack-versus-card failure: the target's instruction selector
+cannot select a conversion the model asks for.** Stock ColabFold, mode `off`,
+no kit lever anywhere near it:
+
+    Unsupported conversion from bf16 to f16
+    LLVM ERROR: Unsupported rounding mode for conversion.
+
+Both strings live in `jax_plugins/xla_cuda12/xla_cuda_plugin.so` — LLVM's
+NVPTX instruction selector inside jaxlib, refusing one (src, dst, rounding)
+triple on this target. It aborts through `report_fatal_error`, so it is
+uncatchable and nameless: a compile failure of the whole module with no
+traceback. §12's HLO method found it again — the dump stops at
+`before_optimizations.txt` with no PTX and no LLVM IR where every module that
+compiled has all three — and two lines out of 17,010 explain why those dtypes
+meet at all. ColabFold keeps its two recycle-state tensors in **float16** to
+save host memory while the trunk is **bfloat16** under AlphaFold's global
+config, and they meet at the recycle boundary. Nothing in a dependency list
+predicts a model mixed between those two types. The fix is upstream's own
+`use_bfloat16=False` — configuration, the af3_jax shape again — **and it has no
+command-line flag**, so `colabfold_batch` on this card exits 134 (SIGABRT)
+having written logs and no structure. That is worth stating plainly: for this
+provider the resident wrapper is not a faster route to the model, it is the
+only one.
+
+**The first provider that argues `idle_timeout_s` DOWN, because upstream
+persists the expensive part.** af3_jax holds its worker 900 s because nothing
+persists its tokamax autotune and a restart pays it again per bucket.
+ColabFold's `jax_compilation_cache_dir` keeps the executable for every length
+ever compiled, so a restart RELOADS in ~10 s what it first COMPILED in ~70.
+Residency still keeps the imports, the 1.86 GB parameter read and the model
+trace — about 12–22 s against 73 s of work, which is **1.16x**, the smallest
+gain on this standard and honestly so. The rule this yields is not "hold
+longer": **`idle_timeout_s` should be argued from what is lost when the worker
+dies, and that is a property of the upstream's caching rather than of the
+model's size.** 27x was also measured on the same provider, in one process with
+the compile cache empty — the same number means different things before and
+after a cache exists, and a provider should say which it is quoting.
+
+**`[gpu] policy = "none"` is a measurement.** ESM-IF1 is the first, and the
+reasoning is in §10: the artifact exists, the PTX exists, and the route was
+declined for three stated reasons rather than an impossibility proof. What the
+field means is what the deployment PROVIDES — `none` was true, `required`
+would have promised a path nobody had run. On the CPU the provider still earns
+residency (2.3x over the kit's own CLI, which is what a per-request subprocess
+would pay) and it occupies **one of twenty cores**, because one thread measured
+1.6x faster than torch's default of twenty.
+
+**A setting can be right for an unrelated reason, so write the reason down.**
+`OMP_NUM_THREADS = "1"` now appears in two providers: boltzgen needs it because
+a library's OpenMP pool does not survive `fork()` (0 designs in 420 s → 31.6
+s), and esm_if1 needs it because its decoder is sequential over tensors too
+small for a thread barrier to pay for itself. Nothing forks in esm_if1. Which
+argument supports a setting decides whether it survives the next host.
+
+**A worker can die between requests and the supervisor cannot tell.** One
+ColabFold worker exited silently during validation — no log line, no traceback,
+no refusal — and the supervisor restarted it transparently on the next request,
+which is the behaviour one wants. The consequence for measurement is not: a
+"warm" timing taken across such a restart is a cold one. It did not reproduce
+and the exit code was unrecoverable (core dumps off, kernel log root-only), and
+it is recorded rather than smoothed over. **`grep -c "ready device"` the
+worker's transcript before believing a residency number.**
+
+**The HEAD-first rule paid for itself immediately, and the answer was yes.**
+§10's new first question — one HEAD request against the checkpoint URL in
+`stock/PINS.json` — was written because protenix_v2 passes every other
+pre-check and has no released weights. openfold3_ob0 was the first provider to
+run it before anything else: 200 OK, `Content-Length: 2287872989`, exactly the
+byte count in the kit's pins, from upstream's own bucket. Forty milliseconds to
+know the rest of the work is worth doing.
+
+**A sibling of an existing provider can still need its own port, and the test
+is not "is the model different".** openfold3_ob0 is OpenFold3 **0.5.0** on the
+OpenBind-0 checkpoint where `openfold3` is **0.4.1** on preview-2, and the
+tempting move is a checkpoint option on the existing provider. Four facts rule
+it out, and they are the ones to check in this order: the checkpoints are
+version-gated against each other in upstream's own
+`parameters.py` (`>=0.5.0` against `>=0.4,<0.4.4dev0`, with the older pair in
+`LEGACY_CHECKPOINTS` which 0.5.0 refuses to download); both releases are the
+same PyPI distribution, so one interpreter holds one of them; each kit installs
+its own autoload `.pth` and the shared core refuses a process already carrying
+another kit's hook; and the kits differ in substance rather than name. What
+made the second provider cheap is the mirror image of the same fact: the two
+locks differ in **two of 115 lines**, so the first provider's aarch64 adaptation
+transferred whole.
+
+**The lowest residency gain on this standard is 1.13x, and it is a measurement
+of the framework rather than of the model.** 257.9 s per fresh process against
+228.1 s held, at the budget row. The kit's own phase census says why: at 800
+residues the forward pass is 186–215 s of a 222–248 s request, so **~30 s of
+every request is not the model** — in-process featurisation, a Lightning
+`Trainer` rebuilt per call, the host-to-device weight upload Lightning's
+teardown forces by moving the module to the CPU between calls, and the output
+writers. Residency holds the 2.3 GB checkpoint read, the model construction and
+the CUDA context. A provider whose per-request floor is thirty seconds of
+framework cannot show a 12x, and quoting one would mean quoting the wrong
+thing. The range on this standard is now **1.13x to 26x**, and both ends are
+explained rather than apologised for.
+
+**An honest negative, predicted before it was measured.** esm_if1 can say its
+held worker, its smoke and the kit's own CLI produce byte-identical output;
+openfold3_ob0 cannot, and says so: 0 of 5 structures match the CLI's at the same
+seed, because the resident route forces zero loader workers where the kit's CLI
+runs one, and the kit itself documents that this moves featurisation's RNG draws
+in-process. Writing that prediction down BEFORE the run is what makes the result
+evidence rather than an excuse. So this provider is a wrap of the kit's
+*configuration* — same levers, same census, same kernels, all asked of the kit
+rather than copied — and not a bitwise reproduction of its CLI, and `verified_on`
+says which.
+
+**A size cap can silently drop the thing a caller asked for.** Upstream's
+per-sample `confidences.json` carries the full N×N PDE matrix: 61 KB at 35
+residues, **29 MB at 800**, five per request. A 64 KiB reply cap dropped it
+without a word, while the tool's description promised "the confidence scores
+come back either way". Both were wrong together, which is the usual shape — the
+cap was reasonable and the promise was written beside it. The reply now names
+each omitted file with its size, the ~270-byte aggregated scores always come
+back, and the description no longer claims what the cap prevents.
+
+
+## 13. What the eighteenth provider changed: the first one that is not PyTorch
 
 AF3-JAX. Eighteen verified. Seventeen of the eighteen are PyTorch, and five of
 the seven findings below exist only because this one is not.
@@ -739,7 +927,7 @@ residues paid 234.8 / 269.9 / 468.7 s, one compile-plus-autotune each, and a
 mixed sequence of 100, 100, 200, 100 afterwards paid 14.4 / 13.2 / 31.1 / 13.3
 because every one of those buckets was already held. Four identical requests
 exercise ONE bucket and ONE compile, which is why they are the cheap half here.
-§13's blind-spot finding, which came from genie3, lands here as a measurement
+§14's blind-spot finding, which came from genie3, lands here as a measurement
 rather than a hazard — and note what the mixed sequence actually proves that
 repeats cannot: the engine switched 100 → 200 → 100 and the third request was
 not slower than the first, so the worker holds both and chooses, rather than
@@ -770,7 +958,7 @@ worker exit 3 on import. Not setting a variable and removing it are different
 operations, and only one of them is safe against an environment you did not
 build.
 
-## 13. What providers fifteen through seventeen changed
+## 14. What providers fifteen through seventeen changed
 
 ProGen2, Protenix and Genie 3, plus the two still in flight. Seventeen verified.
 Five of this batch's findings change what the acceptance test is for.
@@ -791,9 +979,29 @@ is now sharper. **The rebuild is the danger, not the new shape.** A provider wit
 no way to vary its input cannot be accepted on repeats alone, and the
 verification script says so and exits non-zero rather than printing 4/4.
 
+**And the other half earned its own reason, from one provider carrying both
+defects at once.** openfold3_ob0 has two "the second request fails" bugs of the
+same observable shape in two different layers. One is the kit's: a CUDA graph
+pool handle kept after a dropped graph, reachable only by REPEATING a shape, and
+invisible to a mixed sequence. The other is upstream 0.5.0's: `InferenceExperimentRunner`
+binds its MSA record root once at construction and then
+`mkdir(..., exist_ok=False)` on that one path per request, so request one folds
+and every request after it — **of any shape** — raises `FileExistsError`, caught
+per query and arriving as "wrote no structure". That one is invisible to a
+one-request smoke and invisible to four identical requests too, because it does
+not care about shape; it showed up on ladder rung two. The sibling at 0.4.1 never
+saw it, because 0.4.1 has no MSA settings object.
+
+So the two halves of the acceptance sequence are now defended by two different
+arguments rather than one: repeats catch what only recurrence exposes, a shape
+change catches what only a rebuild exposes, and **"the second request" is a
+property of residency itself rather than of any one kit** — which is why neither
+half is optional and why a provider that passes one and skips the other has
+tested nothing it did not already know.
+
 **A resident worker may have to reset UPSTREAM's module state, not just the
 kit's.** This is the sixth resident-worker hazard and the first that is neither a
-fork, a lever, nor a graph. Section 14 names the kit's own recovery for a failed
+fork, a lever, nor a graph. Section 15 names the kit's own recovery for a failed
 capture; this is the same shape one layer down, with nobody naming it, in a
 library that is entitled to assume one model per process because the kits' own
 determinism contracts say one process per request. The cheap generalisable check
@@ -839,7 +1047,7 @@ preloads. The result imports fine and is simply not the stack that was measured.
 A lock may now declare ordered passes with `# --- pass break ---`.
 
 **Residency's payoff tracks the ratio of fixed cost to work, not the kind of
-fixed cost.** Section 15 explains the 2.0x–12x range by what a kit does at import
+fixed cost.** Section 16 explains the 2.0x–12x range by what a kit does at import
 and at first call. Genie 3 reaches 12x with no compile trace and no held-weights
 advantage over Boltz-2, purely because a 20-step 50-residue pass is *shorter than
 the per-process set-up it is compared against*. Both terms matter, and the
@@ -872,7 +1080,7 @@ true of the providers already shipped will refuse the next one shaped
 differently, and that costs more than a missing check, because a refusal is
 believed.** Each was fixed by measuring instead of asserting.
 
-## 14. What providers eleven through fourteen changed
+## 15. What providers eleven through fourteen changed
 
 AF3-torch, Evo 2, ESMFold2-binder-design, AtlasFold and BoltzGen — brought up by
 one agent each, with the GPU serialized. Fourteen providers are verified now.
@@ -968,7 +1176,7 @@ showed 86-91% — which belonged to an unrelated session. The usable signal is
 utilisation *plus* `/proc/<pid>/stat` CPU, on a quiet card. Peaks reproduce under
 contention; wall times do not.
 
-## 15. What providers seven through ten changed
+## 16. What providers seven through ten changed
 
 RoseTTAFold3, BoltzGen, ESM Cambrian and AF3-torch, brought up by one agent
 each in parallel, with the GPU serialized by the caller. The four together
@@ -1073,7 +1281,7 @@ that takes 15-19 s quiet. Peak reserved reproduced to the hundredth of a GiB
 across both; wall time did not. Report peaks from any run, and wall times only
 from an idle card.
 
-## 16. What providers four, five and six changed
+## 17. What providers four, five and six changed
 
 Three at once — RFdiffusion3, ESMFold2 and OpenFold3 — brought up in parallel
 by one agent each, with the GPU serialized by the caller. Two passed; the third
@@ -1157,7 +1365,7 @@ a shared scratchpad is shared: one agent's `weights.log` was overwritten
 mid-download by a sibling writing the same filename. Neither is deep; both cost
 an hour.
 
-## 17. What the third provider changed
+## 18. What the third provider changed
 
 Chai-1 is the first whose upstream loads its model inside the call that uses
 it. `chai_lab.load_exported` is not memoised and `run_folding_on_context` calls
@@ -1191,7 +1399,7 @@ policy in force (`alloc_effective=true` on the kit's own EXIT line) and costs
 only the bookkeeping, which the kit then records as a PARTIAL activation. That
 is the accurate word and the manifest says why.
 
-## 18. What the second provider changed
+## 19. What the second provider changed
 
 Enformer was brought onto the standard next, deliberately unlike the first, and
 four things that looked settled after one provider were not.
