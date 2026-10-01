@@ -76,6 +76,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "af2ig",
+        "tooluniverse.remote.af2ig.af2ig_tool",
+        8053,
+        ("af2ig_predict",),
+        ("TOOLUNIVERSE_AF2IG_PYTHON",),
+        ("AF2_PARAMS", "AF2IG_DIR"),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "af3_jax",
         "tooluniverse.remote.af3_jax.af3_jax_tool",
         8045,

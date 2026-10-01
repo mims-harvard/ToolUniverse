@@ -364,13 +364,20 @@ policy = "required"
 # analogue of torch's *allocated*, and the field the kit's own instrument
 # samples) comes back beside it as `peak_in_use_gib`.
 #
-# A JAX PROVIDER'S "RESERVED" IS QUANTISED, which is new and matters to anything
-# adding budgets up. The BFC pool grows by doubling its arena, so
-# `peak_pool_bytes` reads 2.0 / 4.0 / 8.0 GiB across the ladder below while the
-# true working set moves 2.00 / 2.32 / 3.38 / 6.37. A torch provider's
-# `max_memory_reserved` tracks its allocator's segments and lands on arbitrary
-# values; this one lands on powers of two. The declared budget is therefore
-# coarser than the model's actual appetite BY CONSTRUCTION, and
+# A JAX PROVIDER'S "RESERVED" IS COARSE, which is new and matters to anything
+# adding budgets up. `peak_pool_bytes` reads 2.0 / 4.0 / 8.0 GiB across the
+# ladder below while the true working set moves 2.00 / 2.32 / 3.38 / 6.37. A
+# torch provider's `max_memory_reserved` tracks its allocator's segments and
+# lands on arbitrary values; this one lands on powers of two.
+#
+# CORRECTION, from af2ig: "lands on powers of two" is true OF THIS LADDER and is
+# not a property of the pool. af2ig on the same jax line reads 0.5 / 1.0 / 2.0 /
+# 6.0, and 6.0 is not a power of two -- so "the BFC pool grows by doubling its
+# arena", which an earlier version of this comment gave as the mechanism, is
+# wrong. The standard generalised from this one ladder and has been corrected
+# too. What is true is coarse rounding of unpredictable tightness. The declared
+# budget is therefore coarser than the model's actual appetite BY CONSTRUCTION,
+# and
 # `peak_in_use_gib` is the number to read when asking "what does this input
 # cost" rather than "what does this worker hold".
 #

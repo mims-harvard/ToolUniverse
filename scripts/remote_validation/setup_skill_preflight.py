@@ -61,6 +61,13 @@ DEPLOYMENTS = (
         ("TOOLUNIVERSE_ATLASFOLD_PYTHON",),
     ),
     Deployment(
+        "af2ig",
+        8053,
+        ("af2ig_predict",),
+        ("TOOLUNIVERSE_AF2IG_PYTHON",),
+        path_env=("AF2_PARAMS", "AF2IG_DIR"),
+    ),
+    Deployment(
         "af3_jax",
         8045,
         ("af3_jax_predict",),

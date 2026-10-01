@@ -1,0 +1,115 @@
+# af2ig (AlphaFold 2 initial guess, dl_binder_design) -- the model environment,
+# installed with --no-deps into the interpreter $TOOLUNIVERSE_AF2IG_PYTHON.
+#
+# This is the kit's own environment/requirements.lock at commit
+# f4f62fa6592ae4938d49b1757bea0cfeff9f468e, line for line, WITH ONE
+# SUBSTITUTION, named here because the standard asks a deviating lock to say
+# which line moved and why:
+#
+#   tensorflow_cpu==2.21.0   ->   tensorflow==2.21.0
+#
+# WHY. `tensorflow-cpu` 2.21.0 publishes eight wheels and every one of them is
+# `manylinux_2_27_x86_64` or `win_amd64`; there is no aarch64 wheel for that
+# distribution at any version. `tensorflow` 2.21.0 -- the same release, the
+# same source tree -- publishes
+# `tensorflow-2.21.0-cp311-cp311-manylinux_2_27_aarch64.whl` at 281,828,020
+# bytes. That wheel IS the CPU-only build: TensorFlow ships no aarch64 GPU
+# artifact, which the sizes say on their own (the x86_64 `tensorflow` wheel is
+# 572,440,367 bytes against `tensorflow-cpu`'s 273,829,956, and the aarch64
+# one sits with the second number, not the first).
+#
+# MEASURED RATHER THAN ARGUED, because the property the kit pins
+# `tensorflow-cpu` FOR is that TensorFlow must not touch the GPU -- AlphaFold's
+# feature pipeline runs on the host while JAX holds the card, and a TF that
+# grabbed device memory would be a second tenant nobody declared. In this
+# interpreter:
+#
+#   tf 2.21.0
+#   tf.config.list_physical_devices('GPU') -> []
+#   tf.config.list_physical_devices('CPU') -> [PhysicalDevice(CPU:0)]
+#
+# so the substitution preserves the pin's intent exactly. What it does NOT
+# preserve is the pin's NAME, and that is visible: the kit's own
+# `stock/check_pins.py --gpu` reports `tensorflow-cpu: not installed; want
+# 2.21.0`. [kit] install permits that ONE line and no other -- see the
+# comment there.
+#
+# NOTHING ELSE MOVED. All 56 other lines installed unchanged on aarch64,
+# including the whole jax 0.5.3 CUDA stack. One pass; no ordered passes are
+# needed (this lock carries one CUDA generation, 12.9, so none of the
+# `nvidia/{cudnn,nccl,cusparselt}` path collisions that made protenix need
+# `# --- pass break ---` can arise).
+#
+# THE JAX LINE IS TWO YEARS OLD AND DRIVES THIS CARD. jax/jaxlib 0.5.3 was
+# expected to be the blocker for an AlphaFold-2-era kit on a Blackwell-class
+# part and is not: `jaxlib` publishes `manylinux2014_aarch64` from 0.4.18
+# onward, 0.5.3 publishes four of them (cp310-cp313), and
+# `jax-cuda12-plugin` / `jax-cuda12-pjrt` 0.5.3 publish aarch64 wheels too.
+# Measured in this interpreter on an NVIDIA GB10:
+#   jax 0.5.3 jaxlib 0.5.3 | default_backend() 'gpu' | [CudaDevice(id=0)]
+#   device_kind 'NVIDIA GB10' | compute_capability '12.1'
+#   a 2048x2048 float32 matmul returns 2048.0 | no PTX JIT message
+# An old pinned framework version is a question to measure against the index
+# and the card, never a conclusion to reach from the version number.
+#
+# The two packages that are NOT here install editable from the kit checkout in
+# the kit step, as the kit's own README requires: `common/opt_core` and
+# `af2ig/opt` (af2ig_opt). The pinned upstream tree (dl_binder_design at
+# cafa3853, patched with the kit's 13-diff series) is not a Python
+# distribution either; the kit step unpacks it.
+absl-py==2.3.1
+astunparse==1.6.3
+attrs==26.1.0
+biopython==1.85
+certifi==2026.7.22
+charset-normalizer==3.5.1
+dm-haiku==0.0.16
+dm-tree==0.1.9
+flatbuffers==25.12.19
+gast==0.7.0
+google-pasta==0.2.0
+grpcio==1.83.1
+h5py==3.14.0
+idna==3.19
+immutabledict==4.2.1
+jax==0.5.3
+jax-cuda12-pjrt==0.5.3
+jax-cuda12-plugin==0.5.3
+jaxlib==0.5.3
+jmp==0.0.4
+keras==3.15.1
+libclang==18.1.1
+markdown-it-py==4.2.0
+mdurl==0.1.2
+ml_collections==1.1.0
+ml_dtypes==0.5.4
+namex==0.1.0
+numpy==1.26.4
+nvidia-cublas-cu12==12.9.2.10
+nvidia-cuda-cupti-cu12==12.9.79
+nvidia-cuda-nvcc-cu12==12.9.86
+nvidia-cuda-nvrtc-cu12==12.9.86
+nvidia-cuda-runtime-cu12==12.9.79
+nvidia-cudnn-cu12==9.23.2.1
+nvidia-cufft-cu12==11.4.1.4
+nvidia-cusolver-cu12==11.7.5.82
+nvidia-cusparse-cu12==12.5.10.65
+nvidia-nccl-cu12==2.30.7
+nvidia-nvjitlink-cu12==12.9.86
+opt_einsum==3.4.0
+optree==0.20.0
+packaging==26.3
+protobuf==7.36.0
+Pygments==2.21.0
+PyYAML==6.0.3
+requests==2.34.2
+rich==15.0.0
+scipy==1.17.1
+six==1.17.0
+tabulate==0.10.0
+tensorflow==2.21.0
+termcolor==3.3.0
+typing_extensions==4.16.0
+urllib3==2.7.0
+wheel==0.48.0
+wrapt==2.3.0
