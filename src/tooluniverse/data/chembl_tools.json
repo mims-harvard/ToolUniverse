@@ -817,53 +817,53 @@
     },
     "test_examples": [
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 10
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "assay_chembl_id"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "description"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "assay_type"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "confidence_score"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "target_chembl_id"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "assay_organism"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "bao_label"
@@ -1042,11 +1042,11 @@
     },
     "test_examples": [
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 3
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "activity_id",
@@ -1055,70 +1055,70 @@
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "activity_id"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "molecule_chembl_id"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "target_chembl_id"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "assay_chembl_id"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "standard_type"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "standard_value"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "standard_units"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "pchembl_value"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "standard_relation"
         ]
       },
       {
-        "target_chembl_id__exact": "CHEMBL2074",
+        "target_chembl_id": "CHEMBL2074",
         "limit": 1,
         "fields": [
           "standard_flag"

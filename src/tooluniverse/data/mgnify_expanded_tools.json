@@ -111,7 +111,7 @@
         "page_size": 5
       },
       {
-        "genome_type": "Isolate",
+        "taxonomy": "Bacteria",
         "page_size": 5
       }
     ],
