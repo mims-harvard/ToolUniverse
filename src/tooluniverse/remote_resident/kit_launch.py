@@ -72,13 +72,21 @@ out = {"model_opt": os.environ["MODEL_OPT"], "env": {}, "opts": [], "activation"
 # renamed kit would silently run stock, so it is read from wherever the kit
 # keeps it: modes.ENV in the kits that have a modes module, _autoload.ENV in
 # those that do not (enformer_opt is one).
-for _holder in (".modes", "._autoload"):
+# Two holders and two spellings. The ATTRIBUTE name varies as much as the
+# value does: af3_torch and genie3 both keep it as `ENV_MODE`, and genie3
+# cannot start at all without it being found -- the probe used to refuse with
+# "exposes no modes.ENV ... the provider belongs in mode = subprocess", which
+# is the wrong diagnosis for a kit whose mode is an in-process driver.
+for _holder in (".modes", "._autoload", ".stack"):
     try:
         _mod = __import__(pkg_name + _holder, fromlist=["x"])
     except Exception:
         continue
-    if getattr(_mod, "ENV", None):
-        out["mode_env"] = _mod.ENV
+    for _attr in ("ENV", "ENV_MODE"):
+        if getattr(_mod, _attr, None):
+            out["mode_env"] = getattr(_mod, _attr)
+            break
+    if out.get("mode_env"):
         break
 def _row_of(resolution):
     # resolve() returns a mapping in some kits and a dataclass in others, and
@@ -123,7 +131,13 @@ else:
     else:
         out["row_error"] = "; ".join(out.get("row_errors") or ["no resolve() shape matched"])
     try:
-        out["stack_key"] = modes.jit_cache_key()
+        try:
+            out["stack_key"] = modes.jit_cache_key()
+        except AttributeError:
+            # e1 and genie3 keep it on <pkg>.stack, which is where their own
+            # configs/<card>.env call it from.
+            _stack = __import__(pkg_name + ".stack", fromlist=["x"])
+            out["stack_key"] = _stack.jit_cache_key()
     except Exception as _exc:
         # Recorded, not swallowed: some kits' jit_cache_key takes
         # (torch_version, cc) -- their configs/<card>.env calls it that way --
