@@ -171,3 +171,80 @@ def test_error_payload_short_circuits_schema_validation(
     assert tu.exit_code == 1
     assert "tool returned error: upstream is down" in out
     assert "return_schema mismatch" not in out
+
+
+# A paged result that uses `status` as one of its own fields and never emits a
+# `data` key. FAERS is the real case: openFDA adverse-event tools return
+# {"status", "reports", "total_available", ...} and their return_schema lists
+# `status` among its properties, so the schema describes the whole object.
+_PAGED_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "status": {"type": "string"},
+        "reports": {"type": "array", "items": {"type": "object"}},
+        "total_available": {"type": "integer"},
+    },
+    "required": ["status", "reports"],
+}
+
+
+@pytest.mark.parametrize(
+    "case,result,exit_code,expected",
+    [
+        # The bug: `status` alone was treated as an envelope, so validation ran
+        # against result["data"] -- absent, therefore None -- and every healthy
+        # call was reported as "None is not of type 'object'".
+        (
+            "status without data is validated whole",
+            {"status": "success", "reports": [{"safetyreportid": "1"}], "total_available": 1},
+            0,
+            "All 1 test(s) passed",
+        ),
+        # An empty page is still a valid page, not a failure to unwrap.
+        (
+            "empty page still validates",
+            {"status": "success", "reports": [], "total_available": 0},
+            0,
+            "All 1 test(s) passed",
+        ),
+        # And the schema still has teeth on that whole object.
+        (
+            "whole-object schema still catches a real mismatch",
+            {"status": "success", "reports": "not-an-array"},
+            1,
+            "return_schema mismatch",
+        ),
+    ],
+)
+def test_status_result_without_data_key_is_not_unwrapped(
+    monkeypatch, capsys, disable_network, case, result, exit_code, expected
+):
+    tu = _run_cmd_test(monkeypatch, result, return_schema=_PAGED_SCHEMA)
+
+    assert tu.exit_code == exit_code, case
+    assert expected in capsys.readouterr().out, case
+
+
+def test_status_with_data_key_still_validates_the_inner_payload(
+    monkeypatch, capsys, disable_network
+):
+    """The {"status", "data"} envelope must keep unwrapping (issue #246).
+
+    The envelope here carries `reports` only on the inside, so it satisfies
+    `_PAGED_SCHEMA` after unwrapping and fails it without. Stop unwrapping and
+    this test fails, which is what keeps the fix above from overshooting into
+    "never unwrap".
+    """
+    tu = _run_cmd_test(
+        monkeypatch,
+        {
+            "status": "success",
+            "data": {"status": "success", "reports": [], "total_available": 0},
+        },
+        return_schema=_PAGED_SCHEMA,
+    )
+    out = capsys.readouterr().out
+
+    assert tu.exit_code == 0, out
+    assert "All 1 test(s) passed" in out
+    assert "return_schema mismatch" not in out

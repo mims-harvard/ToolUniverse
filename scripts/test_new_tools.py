@@ -271,7 +271,15 @@ def run_tests(
                         # Check for status field (new API style)
                         if "status" in result:
                             success = result["status"] == "success"
-                            data = result.get("data")
+                            # Only unwrap when a `data` key is actually there.
+                            # Plenty of tools use `status` as a field of their
+                            # own payload and never emit `data`: FAERS returns
+                            # {"status", "reports", "total_available", ...} and
+                            # its return_schema lists `status` among its own
+                            # properties. Unwrapping those gave None, and every
+                            # healthy call was reported as
+                            # "Schema Mismatch: None is not of type 'object'".
+                            data = result["data"] if "data" in result else result
                             error = result.get("error")
                         # Check for success field (old style)
                         elif "success" in result:

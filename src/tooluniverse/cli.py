@@ -1561,6 +1561,14 @@ def cmd_test(args: argparse.Namespace) -> None:
         is_success_envelope = (
             isinstance(result, dict) and result.get("status") == "success"
         )
+        # Only a result that actually carries a `data` key is a wrapper around
+        # an inner payload. Many tools use `status` as a field of their own
+        # payload and never emit `data` at all: FAERS returns
+        # {"status", "reports", "total_available", ...} and its return_schema
+        # lists `status` among its own properties, so the schema describes the
+        # whole object. Unwrapping those produced None and reported every
+        # healthy call as "None is not of type 'object'".
+        wraps_inner_payload = is_success_envelope and "data" in result
 
         if t["expect_status"] and isinstance(result, dict):
             got = result.get("status")
@@ -1585,7 +1593,8 @@ def cmd_test(args: argparse.Namespace) -> None:
 
         # return_schema validation (auto, from tool definition).
         # For the {"status", "data"} envelope the schema describes the inner
-        # `data` payload, not the envelope (issue #246). Tools returning a bare
+        # `data` payload, not the envelope (issue #246); a `status` result with
+        # no `data` key is not that envelope and is validated whole. Tools returning a bare
         # list from run() have no envelope and their configs declare the list
         # itself (top-level {"type": "array"}, e.g. CORE_search_papers), so the
         # whole result is the payload there. Reaching here with a list also
@@ -1595,7 +1604,7 @@ def cmd_test(args: argparse.Namespace) -> None:
                 tool_def.get("return_schema") if isinstance(tool_def, dict) else None
             )
             if return_schema:
-                payload = result.get("data") if is_success_envelope else result
+                payload = result["data"] if wraps_inner_payload else result
                 try:
                     import jsonschema
 
