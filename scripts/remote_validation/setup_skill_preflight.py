@@ -232,6 +232,13 @@ DEPLOYMENTS = (
         path_env=("PINNACLE_DATA_PATH",),
     ),
     Deployment(
+        "progen2",
+        8047,
+        ("run_progen2_score", "run_progen2_generate"),
+        ("PROGEN2_WEIGHTS", "TOOLUNIVERSE_PROGEN2_PYTHON"),
+        path_env=("PROGEN2_WEIGHTS",),
+    ),
+    Deployment(
         "rfdiffusion3",
         8040,
         ("rfdiffusion3_design",),

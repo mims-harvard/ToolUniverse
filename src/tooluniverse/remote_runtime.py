@@ -305,6 +305,15 @@ REMOTE_DEPLOYMENTS = (
         ("PINNACLE_DATA_PATH",),
     ),
     RemoteDeployment(
+        "progen2",
+        "tooluniverse.remote.progen2.progen2_tool",
+        8047,
+        ("run_progen2_score", "run_progen2_generate"),
+        ("PROGEN2_WEIGHTS", "TOOLUNIVERSE_PROGEN2_PYTHON"),
+        ("PROGEN2_WEIGHTS",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "rfdiffusion3",
         "tooluniverse.remote.rfdiffusion3.rfdiffusion3_tool",
         8040,
