@@ -405,8 +405,119 @@ try:
         out["device"] = torch.cuda.get_device_name(0)
 except Exception as exc:
     out["error"] = "%s: %s" % (type(exc).__name__, exc)
+try:
+    import glob as _glob, os as _os, re as _re, subprocess as _sp
+    import triton as _triton
+    _d = _os.path.dirname(_triton.__file__)
+    out["triton"] = _triton.__version__
+    _llvm = set()
+    for _lib in (_glob.glob(_os.path.join(_d, "_C", "libtriton*.so"))
+                 + _glob.glob(_os.path.join(_d, "**", "libtriton*.so"), recursive=True))[:2]:
+        with open(_lib, "rb") as _f:
+            _llvm |= {m.decode() for m in _re.findall(rb"sm_\d+a?", _f.read())}
+    out["triton_llvm"] = sorted(_llvm)
+    _ptx = {}
+    for _p in sorted(_glob.glob(_os.path.join(_d, "backends", "nvidia", "bin", "ptxas*"))):
+        try:
+            _r = _sp.run([_p, "--help"], capture_output=True, text=True, timeout=60)
+            _ptx[_os.path.basename(_p)] = sorted(
+                set(_re.findall(r"sm_\d+a?", (_r.stdout or "") + (_r.stderr or ""))))
+        except Exception:
+            _ptx[_os.path.basename(_p)] = []
+    out["triton_ptxas"] = _ptx
+except Exception:
+    pass
 sys.stdout.write("ARCH " + json.dumps(out))
 """
+
+
+def _probe_arch(exec_env) -> Optional[Dict[str, Any]]:
+    """What the model interpreter says about torch and Triton, probed once.
+
+    Both toolchain checks read this, so the interpreter is started once rather
+    than once per check.
+    """
+    argv, env = exec_env.argv(["-c", _ARCH_PROBE])
+    try:
+        out = _run(argv, env=env, timeout=600)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {"probe_error": type(exc).__name__}
+    for line in (out.stdout or "").splitlines():
+        if line.startswith("ARCH "):
+            return json.loads(line[5:])
+    return None
+
+
+def _toolchain_problems(exec_env, gpu_required: bool) -> tuple:
+    """``(refusal, reason, warning)`` across torch's cubins and Triton's two stages."""
+    info = _probe_arch(exec_env)
+    if info is None:
+        return None, "", None
+    if "probe_error" in info:
+        return (
+            f"the installed torch could not be probed ({info['probe_error']})",
+            "torch_arch_unsupported",
+            None,
+        )
+    problem = _arch_problem(info, gpu_required)
+    if problem:
+        return problem, "torch_arch_unsupported", None
+    refusal, warning = _check_triton_targets_this_gpu(info)
+    if refusal:
+        return refusal, "triton_llvm_arch_unsupported", None
+    return None, "", warning
+
+
+def _check_triton_targets_this_gpu(info: Dict[str, Any]) -> tuple:
+    """``(refusal, warning)`` for Triton's two separate ability to emit code.
+
+    Triton is a SECOND toolchain beside torch's cubins, and the existing arch
+    check cannot see it: a stack whose ``torch.cuda.get_arch_list()`` covers
+    this card can still fail every kernel. It fails in two places, one
+    recoverable and one not, and telling them apart is the whole point:
+
+    * **LLVM.** Triton's own target machine must know ``sm_<cc>a``. triton
+      3.3.1 does not, and the failure is ``LLVM ERROR: Cannot select:
+      intrinsic %llvm.nvvm.shfl.sync.bfly.i32`` -- a process abort, not an
+      exception, so no worker can catch it and no later configuration helps.
+      That is a refusal.
+    * **ptxas.** Triton shells out to the ``ptxas`` bundled in its own wheel.
+      triton 3.4.0's is CUDA 12.8, which has no sm_121 of any spelling, while
+      Triton asks for ``sm_121a`` above cc 90: ``ptxas fatal: Value 'sm_121a'
+      is not defined``. A provider CAN fix this -- e1 adds
+      ``nvidia-cuda-nvcc-cu12==12.9.86`` and points ``TRITON_PTXAS_PATH`` at
+      its 12.9 binary -- so refusing would be a false refusal on a working
+      provider. That is a warning carrying the recipe.
+
+    Measured across twelve provider environments on one card: ten pass both,
+    atlasfold (3.3.1) fails both, e1 (3.4.0) fails only ptxas and ships the
+    fix. triton 3.6.0 onward bundles a ``ptxas-blackwell`` and needs nothing.
+    """
+    sm = info.get("device_sm")
+    if not sm or "triton" not in info:
+        return None, None
+    wanted = {sm, sm + "a"}
+    llvm = set(info.get("triton_llvm") or ())
+    if llvm and not (wanted & llvm):
+        return (
+            f"triton {info['triton']}'s LLVM target machine does not know {sm}: "
+            f"every kernel this stack compiles would abort the process with "
+            f'"LLVM ERROR: Cannot select", which no worker can catch. The '
+            f"first Triton to know it is 3.4.0; raising it means deviating "
+            f"from the kit's lock, which is a decision, not a fix"
+        ), None
+    ptxas = info.get("triton_ptxas") or {}
+    if ptxas and not any(wanted & set(v) for v in ptxas.values()):
+        return None, (
+            f"triton {info['triton']} bundles no ptxas that targets {sm} "
+            f"({', '.join(sorted(ptxas)) or 'none found'}), so kernels will "
+            f"fail with \"ptxas fatal: Value '{sm}a' is not defined\" unless "
+            f"the provider supplies one. The known fix is "
+            f"nvidia-cuda-nvcc-cu12==12.9.86 in the lock and TRITON_PTXAS_PATH "
+            f"set by the worker when triton's own does not list this card "
+            f"(see remote/e1). triton 3.6.0 onward bundles its own 12.9"
+        )
+    return None, None
 
 
 def _check_torch_targets_this_gpu(exec_env, gpu_required: bool) -> Optional[str]:
@@ -424,17 +535,16 @@ def _check_torch_targets_this_gpu(exec_env, gpu_required: bool) -> Optional[str]
     architecture that the driver then compiles forward, which a version
     comparison would call a failure.
     """
-    argv, env = exec_env.argv(["-c", _ARCH_PROBE])
-    try:
-        out = _run(argv, env=env, timeout=600)
-    except (OSError, subprocess.TimeoutExpired) as exc:
-        return f"the installed torch could not be probed ({type(exc).__name__})"
-    for line in (out.stdout or "").splitlines():
-        if line.startswith("ARCH "):
-            info = json.loads(line[5:])
-            break
-    else:
+    info = _probe_arch(exec_env)
+    if info is None:
         return None  # no torch in this environment: not every provider has one
+    if "probe_error" in info:
+        return f"the installed torch could not be probed ({info['probe_error']})"
+    return _arch_problem(info, gpu_required)
+
+
+def _arch_problem(info: Dict[str, Any], gpu_required: bool) -> Optional[str]:
+    """Why torch's own cubins cannot drive this card, or None."""
     if info.get("error") or not info.get("device_sm"):
         return (
             None
@@ -521,7 +631,7 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
         if probe.returncode == 0:
             from .exec_env import from_manifest
 
-            problem = _check_torch_targets_this_gpu(
+            problem, why, warning = _toolchain_problems(
                 from_manifest(manifest), manifest.gpu_policy == "required"
             )
             if problem:
@@ -529,13 +639,14 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
                     "environment",
                     REFUSED,
                     problem,
-                    reason="torch_arch_unsupported",
+                    reason=why,
                     seconds=time.time() - t,
                 )
             return StepResult(
                 "environment",
                 PRESENT,
                 f"{python} already satisfies [env] verify",
+                lines=[f"NOTE: {warning}"] if warning else [],
                 seconds=time.time() - t,
             )
 
@@ -592,7 +703,7 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
 
     from .exec_env import from_manifest
 
-    problem = _check_torch_targets_this_gpu(
+    problem, why, warning = _toolchain_problems(
         from_manifest(manifest), manifest.gpu_policy == "required"
     )
     if problem:
@@ -600,7 +711,7 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
             "environment",
             REFUSED,
             problem,
-            reason="torch_arch_unsupported",
+            reason=why,
             lines=lines
             + [
                 "the stack installed correctly; it simply cannot emit code for "
@@ -614,7 +725,7 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
         "environment",
         OK,
         f"{len(pins)} pinned distributions in {python}",
-        lines=lines,
+        lines=lines + ([f"NOTE: {warning}"] if warning else []),
         seconds=time.time() - t,
     )
 

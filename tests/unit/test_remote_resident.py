@@ -1072,3 +1072,67 @@ class TestWhatItProduced:
         m = self._manifest(tmp_path)
         _, refusal = S._what_it_produced(m, {}, tmp_path)
         assert refusal == ""
+
+
+class TestTritonTargetsThisGpu:
+    """Triton is a second toolchain and the torch arch check cannot see it.
+
+    Two failures, one recoverable and one not. Telling them apart is the point:
+    refusing the recoverable one would be a false refusal on a provider that
+    works (e1 ships the fix), and warning about the unrecoverable one would let
+    a worker abort in LLVM where nothing can catch it.
+    """
+
+    SM = "sm_121"
+
+    def _info(self, version, llvm, ptxas):
+        return {
+            "device_sm": self.SM,
+            "triton": version,
+            "triton_llvm": llvm,
+            "triton_ptxas": ptxas,
+        }
+
+    def test_a_triton_whose_llvm_knows_the_card_and_ships_a_ptxas_passes(self):
+        """triton 3.6.0+ needs nothing: it bundles its own ptxas-blackwell."""
+        refusal, warning = S._check_triton_targets_this_gpu(
+            self._info(
+                "3.7.1",
+                ["sm_90", "sm_120", "sm_121", "sm_121a"],
+                {
+                    "ptxas": ["sm_90", "sm_120"],
+                    "ptxas-blackwell": ["sm_121", "sm_121a"],
+                },
+            )
+        )
+        assert refusal is None and warning is None
+
+    def test_an_llvm_that_does_not_know_the_card_is_refused(self):
+        """atlasfold's triton 3.3.1: LLVM ERROR, which no worker can catch."""
+        refusal, warning = S._check_triton_targets_this_gpu(
+            self._info(
+                "3.3.1",
+                ["sm_90", "sm_120", "sm_120a"],
+                {"ptxas": ["sm_90"], "ptxas-blackwell": ["sm_120", "sm_120a"]},
+            )
+        )
+        assert refusal and "LLVM" in refusal and "3.4.0" in refusal
+        assert warning is None
+
+    def test_a_missing_ptxas_target_warns_rather_than_refusing(self):
+        """e1's triton 3.4.0 works, because its worker supplies a 12.9 ptxas."""
+        refusal, warning = S._check_triton_targets_this_gpu(
+            self._info("3.4.0", ["sm_120", "sm_121", "sm_121a"], {"ptxas": ["sm_120"]})
+        )
+        assert refusal is None
+        assert warning and "nvidia-cuda-nvcc-cu12" in warning
+
+    def test_an_environment_without_triton_says_nothing(self):
+        refusal, warning = S._check_triton_targets_this_gpu({"device_sm": self.SM})
+        assert refusal is None and warning is None
+
+    def test_no_gpu_means_no_opinion(self):
+        refusal, warning = S._check_triton_targets_this_gpu(
+            {"triton": "3.3.1", "triton_llvm": ["sm_90"], "triton_ptxas": {}}
+        )
+        assert refusal is None and warning is None
