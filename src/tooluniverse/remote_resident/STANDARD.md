@@ -434,6 +434,9 @@ in-process at all, which makes it `mode = "subprocess"`.
 | Four activation shapes, not three | rosettafold3: autoload + a patched tree on disk |
 | Four answers to "who holds the weights" | boltzgen: nobody; upstream reloads per step |
 | Wall times need an idle card | measured: 15-19 s quiet, 28-56 s contended, same fold |
+| The ladder's SHAPE decides co-tenancy | measured: esmc 1.19x over 16x the length, rosettafold3 3.7x over 8x |
+| Derived estimates err both ways | measured: openfold3 3.8x high, esmfold2 1.6x low |
+| Turning a kit off can cost VRAM, not just speed | measured: esmc `off` costs 9.6 GiB -- `pipe` was the device-side loader |
 
 ## 12. What providers seven through ten changed
 

@@ -76,18 +76,42 @@ is one dependency-free file (`remote_resident/protocol.py`) loaded by path.
    to the hundredth of a GiB in both. Report peaks from any run; report wall
    times only from an idle card.
 
-## What six providers cost, and where the time went
+## What eight verified providers cost, and where the time went
 
-| | boltz | enformer | chai1 | rfdiffusion3 | esmfold2 | openfold3 |
-| --- | --- | --- | --- | --- | --- | --- |
-| kit activation | `worker_launch` (1 of 36) | `.pth` | `.pth` | `.pth` + file overlay | `.pth` | `.pth` |
-| kit mode here | fast | **off** (x86-only objects) | fast, `alloc` off | fast | fast | fast |
-| peak reserved | 5.54 GiB | 4.12 | 9.8 | 12.49 @ 400aa×4 | 25.28 @ 800aa | not yet real |
-| residency | 110→55 s | in-process | 67.6→25.7 s | **19.4→1.6 s** | 2.7→1.1 s | pending |
-| what it keeps | checkpoint | nothing | 6 TorchScript modules | compile + CUDA graph | 25.6 GiB weights | — |
+Every figure measured on one GB10 (aarch64, cc 12.1), held worker, steady state. "cold → warm" is
+the first request against the later ones in ONE worker; peaks are declared at the envelope named.
 
-Ten providers in, there are four shapes of activation (`.pth` autoload; `worker_launch`; a
-replacement entry script; and autoload **plus a patched tree on disk**, which rosettafold3 verifies
+| provider | activation | mode | cold → warm | peak reserved | what residency keeps |
+| --- | --- | --- | --- | --- | --- |
+| rfdiffusion3 | `.pth` + file overlay | fast | **19.4 → 1.6 s (12x)** | 12.49 GiB @ 400aa × 4 | compile trace + CUDA graph |
+| esmc | `.pth` | **off** (needs flash-attn) | 0.69 → 0.076 s, build 142 s | 28.75 GiB @ 1600aa | 23.7 GiB of weights |
+| chai1 | `.pth` | fast, `alloc` off | 67.6 → 25.7 s (2.6x) | 9.8 GiB | 6 TorchScript modules |
+| esmfold2 | `.pth` | fast | 2.7 → 1.1 s | 25.28 GiB @ 800aa | 25.6 GiB of weights |
+| boltz | `worker_launch` (1 of 36) | fast | 110 → 55 s (2.0x) | 5.54 GiB | checkpoint + featurizer |
+| rosettafold3 | `.pth` + **patched tree** | fast | 20.7 → 16.1 s | 13.25 GiB @ 800aa | checkpoint + engine |
+| openfold3 | `.pth` | fast, 2 gates | 18.8 → 15.2 s | 9.12 GiB @ 800aa | build + Triton compiles |
+| enformer | `.pth` | **off** (x86-only objects) | in-process | 4.12 GiB | nothing to reload |
+
+**The VRAM ladder's SHAPE matters as much as the number**, because it decides what a host can
+co-tenant. Two families:
+
+| | 100 aa | 800 aa | ratio | why |
+| --- | --- | --- | --- | --- |
+| esmc | 24.08 | 26.29 (28.75 @ 1600) | **1.19x** | a constant 6B parameter term dominates |
+| esmfold2 | 14.14 | 25.28 | 1.8x | constant ESMC-6B term, plus a real trunk |
+| openfold3 | 1.45 | 4.24 → 9.12 | 3.6x | N² pair track, small constant |
+| rosettafold3 | 3.59 | 13.25 | 3.7x | N² pair track |
+
+So esmc is a fixed ~29 GiB tenant for any sequence it will realistically see, while openfold3 fits
+in 6 GiB if the host caps chains at 400 residues. Neither fact is derivable from parameter count.
+
+**Derived estimates were wrong in both directions**, which is why the ladder is not optional:
+openfold3's arithmetic said 16 GiB and measured 4.24 (3.8x high, wasting a card); esmfold2's said
+16 and measured 25.28 (1.6x low, overcommitting one); esmc's said 14.5 and measured 24.07 — and
+*that* one was right about `exact` and wrong only because this machine cannot run `exact`.
+
+Ten providers attempted, eight verified, four shapes of activation (`.pth` autoload; `worker_launch`;
+a replacement entry script; and autoload **plus a patched tree on disk**, which rosettafold3 verifies
 by sha256 and which costs that provider `mode = "off"` entirely) and four answers to who holds the
 weights (the worker; the kit; upstream's own memo; and boltzgen's **nobody** — upstream reloads
 each pipeline step's checkpoint inside the step, so residency buys the process, not the weights).
@@ -99,7 +123,8 @@ express because they are not levers.
 
 Residency's payoff ranges 2.0x to 12x and the ranking does not follow model size — it follows what
 the kit does at import and at first call. RFdiffusion3 wins biggest because its `fast` mode traces
-the denoiser through torch.compile and captures a CUDA graph, both per process.
+the denoiser through torch.compile and captures a CUDA graph, both per process; esmc wins on a
+different axis entirely, because 142 s of weight reading buys a 0.076 s forward pass.
 
 Nearly all the remaining time per provider goes on facts that have to be read out of the kit rather
 than assumed, which is what the rest of this page is for.
