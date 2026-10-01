@@ -118,6 +118,13 @@ DEPLOYMENTS = (
         path_env=("CHROMBPNET_MODEL_PATH",),
     ),
     Deployment(
+        "colabfold",
+        8051,
+        ("colabfold_predict",),
+        ("TOOLUNIVERSE_COLABFOLD_PYTHON",),
+        path_env=("COLABFOLD_OPT_DATA_DIR",),
+    ),
+    Deployment(
         "depmap-24q2",
         7002,
         ("compute_depmap24q2_gene_correlations",),
@@ -236,6 +243,12 @@ DEPLOYMENTS = (
         8039,
         ("openfold3_fold",),
         ("TOOLUNIVERSE_OPENFOLD3_PYTHON",),
+    ),
+    Deployment(
+        "openfold3_ob0",
+        8052,
+        ("openfold3_ob0_fold",),
+        ("TOOLUNIVERSE_OPENFOLD3_OB0_PYTHON",),
     ),
     Deployment(
         "paga",

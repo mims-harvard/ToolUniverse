@@ -45,10 +45,20 @@ its lifetime. If this provider ever moves to ``exact`` or ``fast``, the lever
 row must be READ from ``modes.resolve(mode)["env"]`` in a subprocess rather than
 copied here; a hard-coded copy drifts the first time the kit moves.
 
-**Exercised on the host without starting a model**: with ``AF3_JAX_OPT=fast``
-and ``AF3_JAX_BOGUS=1`` deliberately exported in the parent, this function
-produced an argv and a child environment carrying no ``AF3_JAX_*`` name except
-the three it sets on purpose.
+**Exercised by starting a real worker, which is the only layer that can show
+it.** An earlier version of this note said the function had been "exercised on
+the host without starting a model" by inspecting the argv and mapping it
+returned -- and that check passed while the stripping did nothing at all,
+because `supervisor._start` built the child's environment as
+``dict(os.environ)`` updated with this mapping, so every name pruned from the
+returned copy came straight back. With ``AF3_JAX_BOGUS=1`` exported, the worker
+exited 3 at ``import alphafold3``: precisely the failure the stripping exists to
+prevent. The supervisor now honours a ``None`` value as a REMOVAL, this function
+returns removals rather than a pruned copy, and the test is
+``AF3_JAX_BOGUS=1 AF3_JAX_OPT=fast AF3P_WHATEVER=1`` exported with a worker that
+starts and answers. The lesson is general enough to be worth the paragraph: a
+launcher's intent has to be expressed in something the executor acts on, and a
+check has to observe the thing that executes.
 """
 
 from __future__ import annotations
@@ -244,21 +254,24 @@ def build_command(worker) -> Tuple[List[str], Dict[str, str]]:
             f"AF3_JAX_* name. Declared: {', '.join(DECLARED_ENV)}"
         )
 
-    popen_env = dict(os.environ)
-    # STRIP, do not merely omit. Every AF3_JAX_* name the operator exported is
-    # removed before ours are written back: one that is not in the kit's
-    # DECLARED_ENV would make the start-up hook exit the worker 3 at
-    # `import alphafold3`, and one that IS declared (AF3_JAX_OPT=fast, say)
+    # STRIP, do not merely omit -- and say it the one way the supervisor acts on.
+    # Every AF3_JAX_* name the operator exported must be REMOVED from the child:
+    # one outside the kit's DECLARED_ENV makes the start-up hook exit the worker
+    # 3 at `import alphafold3`, and one that IS declared (AF3_JAX_OPT=fast, say)
     # would either arm the same refusal or contradict this manifest. The kit's
-    # own model process does exactly this -- stack.model_process_env strips
-    # four prefixes -- and stock_pred.proof() asserts the result is empty.
-    for name in [k for k in popen_env if k.startswith("AF3_JAX_")]:
-        popen_env.pop(name)
-    # The other three prefixes the kit insists must be absent from a stock model
-    # process (stock/PINS.json stock_proof.must_be_absent_prefixes). They are
-    # the add-ons' lever switches; under `off` they must not be there.
-    for prefix in ("AF3P_", "AF3_FLASHPAIRFORMER", "AF3_DIFFUSION_HOIST"):
-        for name in [k for k in popen_env if k.startswith(prefix)]:
-            popen_env.pop(name)
-    popen_env.update(env)
-    return argv, popen_env
+    # own model process does exactly this -- stack.model_process_env strips four
+    # prefixes -- and stock_pred.proof() asserts the result is empty.
+    #
+    # This used to be written as a pruned copy of os.environ, which DID NOT
+    # WORK: `supervisor._start` built the child's environment as
+    # `dict(os.environ)` updated with this mapping, so a name left out of the
+    # copy came straight back and an exported AF3_JAX_BOGUS killed the worker.
+    # Mapping a name to None is the removal the supervisor now honours, and it
+    # is also the only form that can be checked by reading this return value --
+    # which is how the earlier version passed a test it should have failed.
+    removals = {}
+    for prefix in ("AF3_JAX_", "AF3P_", "AF3_FLASHPAIRFORMER", "AF3_DIFFUSION_HOIST"):
+        for name in os.environ:
+            if name.startswith(prefix) and name not in env:
+                removals[name] = None
+    return argv, {**removals, **env}

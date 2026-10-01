@@ -50,7 +50,36 @@ class WorkerRequestError(RuntimeError):
 # (argv, extra environment) for one worker process. A provider builds it: the
 # interpreter must be the model environment's own, never the one running
 # ToolUniverse, because the two do not share a dependency set.
-CommandBuilder = Callable[["ResidentWorker"], Tuple[List[str], Dict[str, str]]]
+# The mapping is applied over the operator's environment; a None value
+# REMOVES that name from the child's environment rather than setting it.
+def child_env(
+    extra_env: Dict[str, Optional[str]], environ: Dict[str, str]
+) -> Dict[str, str]:
+    """The child's environment: `environ`, with `extra_env` applied over it.
+
+    **A launcher removes a name by mapping it to None.** It cannot remove one by
+    returning a pruned copy of `environ`, and this function exists as a separate,
+    testable thing because that distinction was got wrong and the wrong version
+    passed review. af3_jax's launcher pruned a copy; the supervisor then rebuilt
+    the child's environment from `os.environ` and applied the pruned copy over
+    it, so every name the launcher had removed came straight back. An operator
+    with a stray `AF3_JAX_BOGUS` exported got a worker that exited 3 at
+    `import alphafold3` -- exactly the failure the pruning existed to prevent.
+
+    The check that missed it read `build_command`'s RETURN VALUE, which is the
+    one place a pruned copy looks correct. A launcher's intent has to be
+    expressed in something the supervisor acts on.
+    """
+    env = dict(environ)
+    env.update({k: v for k, v in extra_env.items() if v is not None})
+    for name in [k for k, v in extra_env.items() if v is None]:
+        env.pop(name, None)
+    return env
+
+
+CommandBuilder = Callable[
+    ["ResidentWorker"], Tuple[List[str], Dict[str, Optional[str]]]
+]
 
 
 @dataclass
@@ -107,8 +136,7 @@ class ResidentWorker:
 
     def _start(self) -> None:
         argv, extra_env = self.build_command(self)
-        env = dict(os.environ)
-        env.update(extra_env)
+        env = child_env(extra_env, os.environ)
 
         # A socket left by a previous process would be connected to and never
         # answer; the worker unlinks it too, but not if it was killed.

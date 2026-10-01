@@ -2415,16 +2415,35 @@ def _print_remote_check(result: dict, *, as_json: bool) -> None:
             print(f"    module {name}: {'yes' if state is True else state}")
         mgpu = model_env.get("gpu") or {}
         if mgpu.get("device"):
+            # Name the framework that found the device. A provider may hold the
+            # card with JAX while its torch is CPU-only by design, and printing
+            # "GPU: NVIDIA GB10 (cc 12.1, torch 2.7.1+cpu)" invites exactly the
+            # wrong conclusion about which of the two is driving it.
+            if mgpu.get("jax_backend") == "gpu":
+                via = f"jax {mgpu.get('jax_version', '?')}"
+            else:
+                via = f"torch {mgpu.get('torch_version', '?')}"
             print(
                 f"    GPU: {mgpu['device']} (cc {mgpu.get('capability', '?')}, "
-                f"torch {mgpu.get('torch_version', '?')})"
+                f"via {via})"
             )
-        if mgpu.get("error"):
-            print(f"    GPU error: {mgpu['error']}")
-        print(
-            f"    CUDA tensor check: "
-            f"{'passed' if mgpu.get('tensor_sum') == 28.0 else 'failed'}"
-        )
+        # A provider that declares `[gpu] policy = "none"` is not failing a GPU
+        # check; it has said it does not use one. Printing "failed" at it, and
+        # a "no module named jax" from a probe it never asked for, is noise that
+        # reads as a defect -- and this block ran before `gpu_policy` was even
+        # read, so it could not tell the difference.
+        model_gpu_policy = result.get("gpu_policy")
+        if model_gpu_policy == "none":
+            print("    GPU: not used (policy = none)")
+        else:
+            if mgpu.get("error") and mgpu.get("jax_backend") != "gpu":
+                print(f"    GPU error: {mgpu['error']}")
+            if mgpu.get("jax_error") and not mgpu.get("cuda_available"):
+                print(f"    GPU error (jax): {mgpu['jax_error']}")
+            print(
+                f"    CUDA tensor check: "
+                f"{'passed' if mgpu.get('tensor_sum') == 28.0 else 'failed'}"
+            )
 
     gpu = provider.get("gpu") or {}
     gpu_policy = result.get("gpu_policy")

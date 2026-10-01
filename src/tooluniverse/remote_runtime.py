@@ -153,6 +153,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="recommended",
     ),
     RemoteDeployment(
+        "colabfold",
+        "tooluniverse.remote.colabfold.colabfold_tool",
+        8051,
+        ("colabfold_predict",),
+        ("TOOLUNIVERSE_COLABFOLD_PYTHON",),
+        ("COLABFOLD_OPT_DATA_DIR",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "depmap-24q2",
         "tooluniverse.remote.depmap_24q2.depmap_24q2_mcp_tool",
         7002,
@@ -312,6 +321,15 @@ REMOTE_DEPLOYMENTS = (
         8039,
         ("openfold3_fold",),
         ("TOOLUNIVERSE_OPENFOLD3_PYTHON",),
+        (),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "openfold3_ob0",
+        "tooluniverse.remote.openfold3_ob0.openfold3_ob0_tool",
+        8052,
+        ("openfold3_ob0_fold",),
+        ("TOOLUNIVERSE_OPENFOLD3_OB0_PYTHON",),
         (),
         gpu_policy="required",
     ),
@@ -577,6 +595,34 @@ if {check_gpu}:
             gpu["tensor_sum"] = float(torch.arange(8, device="cuda").sum().item())
     except Exception as exc:
         gpu["error"] = f"{{type(exc).__name__}}: {{exc}}"
+    if not gpu["cuda_available"]:
+        # ASK EVERY FRAMEWORK, NOT TORCH. A provider may hold the card with JAX
+        # and carry a CPU-only torch on purpose -- af3_jax's lock does, for its
+        # weights converter -- and a check that reads torch alone then reports a
+        # working provider as broken. `_arch_problem` in remote_resident.setup
+        # had this same defect and refused af3_jax outright; this one only made
+        # `tu remote check` print a red line, which is the quieter and therefore
+        # longer-lived version of the same mistake.
+        try:
+            import jax
+            import jax.numpy as jnp
+            gpu["jax_version"] = str(jax.__version__)
+            gpu["jax_backend"] = str(jax.default_backend())
+            devs = (
+                jax.local_devices(backend="gpu")
+                if gpu["jax_backend"] == "gpu"
+                else []
+            )
+            if devs:
+                gpu["device"] = str(devs[0].device_kind)
+                gpu["capability"] = str(getattr(devs[0], "compute_capability", ""))
+                # The same 28.0 the torch branch produces, and real device work
+                # rather than a capability read: a CUDA context that reports
+                # itself healthy can still fail on the first kernel.
+                gpu["tensor_sum"] = float(jnp.arange(8).sum())
+                gpu["cuda_available"] = True
+        except Exception as exc:
+            gpu["jax_error"] = f"{{type(exc).__name__}}: {{exc}}"
     result["gpu"] = gpu
 print(json.dumps(result, sort_keys=True))
 """
@@ -695,6 +741,22 @@ try:
         gpu["tensor_sum"] = float(torch.arange(8, device="cuda").sum().item())
 except Exception as exc:
     gpu["error"] = "%s: %s" % (type(exc).__name__, exc)
+if not gpu["cuda_available"]:
+    # See the note in _provider_probe_code: a provider may drive the card with
+    # JAX while its torch is CPU-only by design.
+    try:
+        import jax
+        import jax.numpy as jnp
+        gpu["jax_version"] = str(jax.__version__)
+        gpu["jax_backend"] = str(jax.default_backend())
+        devs = jax.local_devices(backend="gpu") if gpu["jax_backend"] == "gpu" else []
+        if devs:
+            gpu["device"] = str(devs[0].device_kind)
+            gpu["capability"] = str(getattr(devs[0], "compute_capability", ""))
+            gpu["tensor_sum"] = float(jnp.arange(8).sum())
+            gpu["cuda_available"] = True
+    except Exception as exc:
+        gpu["jax_error"] = "%s: %s" % (type(exc).__name__, exc)
 result["gpu"] = gpu
 for name in LAUNCH_MODULES:
     try:

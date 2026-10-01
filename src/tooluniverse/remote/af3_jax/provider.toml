@@ -146,6 +146,17 @@
 # must import alphafold3, so [runtime] launch below is this provider's own and
 # it STRIPS undeclared AF3_JAX_* names rather than merely not setting them.
 #
+# AND THAT STRIPPING DID NOT WORK WHEN THIS PROVIDER WAS FIRST COMMITTED, which
+# is recorded here because the way it passed review is the interesting part. The
+# launcher pruned a copy of os.environ and returned it; `supervisor._start`
+# built the child's environment as `dict(os.environ)` updated with that mapping,
+# so every pruned name came straight back. The check that was run read the
+# RETURNED MAPPING, which is the one place a pruned copy looks correct, and with
+# `AF3_JAX_BOGUS=1` exported the worker in fact exited 3 at `import alphafold3`.
+# The supervisor now treats a None value as a removal, this launcher returns
+# removals, and the test is three hostile names exported with a worker that
+# starts and answers. See STANDARD section 12.
+#
 # The levers themselves are reachable in principle: the kit's `levers_launch.py`
 # and `fpf_launch.py` run an arbitrary script after applying their patches, so
 # a resident worker could sit where `run_alphafold_fast.py` sits -- boltz2's

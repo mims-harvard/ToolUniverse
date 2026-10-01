@@ -1446,3 +1446,55 @@ class TestRefusalsExitThree:
         src = inspect.getsource(supervisor)
         assert "rc == 3" in src, "a refusal and a crash read the same otherwise"
         assert "exited {rc} before it bound" in src
+
+
+class TestLauncherCanRemoveAVariable:
+    """`build_command` maps a name to None to REMOVE it from the child.
+
+    The supervisor builds the child's environment from `os.environ` and then
+    applies the launcher's mapping, so a launcher cannot remove a name by
+    returning a pruned copy: the pruned name comes back from `os.environ`.
+    af3_jax's launcher did exactly that and its stripping silently did nothing
+    -- an exported `AF3_JAX_BOGUS` made the worker exit 3 at
+    `import alphafold3`, which is the failure the stripping existed to prevent.
+    It passed review because the check read `build_command`'s RETURN VALUE,
+    which is the one place the defect is invisible.
+    """
+
+    def test_a_none_value_removes_the_name(self):
+        from tooluniverse.remote_resident.supervisor import child_env
+
+        env = child_env({"KEEP": "1", "DROP": None}, {"DROP": "stray", "PATH": "/x"})
+        assert "DROP" not in env
+        assert env["KEEP"] == "1"
+        assert env["PATH"] == "/x"
+
+    def test_a_set_value_still_overrides(self):
+        from tooluniverse.remote_resident.supervisor import child_env
+
+        assert child_env({"MODE": "off"}, {"MODE": "fast"})["MODE"] == "off"
+
+    def test_removing_a_name_that_is_not_set_is_not_an_error(self):
+        from tooluniverse.remote_resident.supervisor import child_env
+
+        assert "ABSENT" not in child_env({"ABSENT": None}, {"PATH": "/x"})
+
+    def test_the_supervisor_uses_it(self):
+        """Not a reimplementation: _start must call the function under test."""
+        import inspect
+
+        from tooluniverse.remote_resident import supervisor
+
+        src = inspect.getsource(supervisor.ResidentWorker._start)
+        assert "child_env(extra_env, os.environ)" in src
+
+    def test_af3_jax_asks_for_removals_rather_than_pruning(self):
+        """The provider that needs it must use the form the supervisor honours."""
+        src = (
+            Path(__file__).resolve().parents[2]
+            / "src/tooluniverse/remote/af3_jax/launch.py"
+        ).read_text()
+        assert "removals" in src
+        assert "popen_env = dict(os.environ)" not in src, (
+            "a pruned copy of os.environ cannot remove anything"
+        )
