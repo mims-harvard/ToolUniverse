@@ -232,6 +232,8 @@ policy = "required"
 # re-measured rather than extrapolated, because 5.3x over 8x the length is
 # already super-quadratic in practice.
 vram_budget_gb = 9.21
+driver_min = 580
+driver_min_reason = "its model stack is CUDA 13.0 (torch 2.13.0+cu130)"
 shareable = true
 isolation = "process"
 

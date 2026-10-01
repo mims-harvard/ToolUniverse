@@ -153,11 +153,22 @@ def step_preflight(manifest: ProviderManifest) -> StepResult:
             else:
                 name, driver, cap = (c.strip() for c in row[0].split(",")[:3])
                 notes.append(f"GPU {name}, driver {driver}, compute capability {cap}")
+                # The floor comes from the manifest, not from a constant. It
+                # is a property of the provider's pinned CUDA and only the
+                # provider knows it: cu130 needs the 580 series, cu128 runs on
+                # 570. A hard-coded 580 refused three providers that work, with
+                # a message asserting a CUDA version they do not pin.
+                floor = manifest.driver_min
                 try:
-                    if float(driver.split(".")[0]) < 580:
+                    if floor is not None and float(driver.split(".")[0]) < floor:
                         problems.append(
-                            f"driver_old: {driver}; the pinned stack is CUDA 13.0 "
-                            f"and needs the 580 series or newer"
+                            f"driver_old: {driver}; this provider declares a "
+                            f"floor of {floor:.0f} because {manifest.driver_min_reason}"
+                        )
+                    elif floor is None:
+                        notes.append(
+                            "no [gpu] driver_min declared, so the driver is "
+                            "reported and not judged"
                         )
                 except ValueError:
                     pass

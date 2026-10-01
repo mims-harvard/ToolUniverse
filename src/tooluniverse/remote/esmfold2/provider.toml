@@ -66,6 +66,8 @@ policy = "required"
 # can hold this provider in 16 GiB; one that accepts long chains budgets the
 # figure below and re-measures past 800.
 vram_budget_gb = 25.28
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.13.0+cu130)"
 shareable = true
 isolation = "process"
 

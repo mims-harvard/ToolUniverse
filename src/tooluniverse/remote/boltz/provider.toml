@@ -68,6 +68,8 @@ policy = "required"
 # (torch.cuda.max_memory_reserved): 4.31, 5.15, 5.54 GiB. The highest is the
 # number a host should budget, not the first.
 vram_budget_gb = 5.54
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.12.0+cu130)"
 shareable = true
 # What this deployment actually provides, not what one would wish for. GB10
 # reports "No MIG-supported devices found" and gVisor's nvproxy carries no

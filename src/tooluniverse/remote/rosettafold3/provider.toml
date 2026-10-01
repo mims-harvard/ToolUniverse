@@ -111,6 +111,8 @@ policy = "required"
 # is a second instance of the unified-memory hole STANDARD.md section 9 records
 # for `nvidia-smi --query-gpu=memory.total`.
 vram_budget_gb = 13.25
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.13.0+cu130)"
 shareable = true
 isolation = "process"
 

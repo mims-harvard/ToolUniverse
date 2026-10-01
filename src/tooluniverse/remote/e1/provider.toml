@@ -255,6 +255,8 @@ policy = "required"
 # switching to 150m or 300m is in a different budget and must re-measure, not
 # scale: the parameter term moves 4x while the activation term does not.
 vram_budget_gb = 4.84
+driver_min = 575
+driver_min_reason = "its stack resolved to CUDA 12.9 (torch 2.8.0+cu129), the only CUDA aarch64 build of that version"
 shareable = true
 isolation = "process"
 

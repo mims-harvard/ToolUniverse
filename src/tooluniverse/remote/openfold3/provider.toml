@@ -190,6 +190,8 @@ policy = "required"
 # this provider in 6 GiB; one that accepts chains longer than 800 re-measures
 # and should expect roughly N^2.
 vram_budget_gb = 9.12
+driver_min = 570
+driver_min_reason = "its pinned stack is CUDA 12.8 (torch 2.10.0+cu128)"
 shareable = true
 isolation = "process"
 

@@ -101,7 +101,14 @@ _SECTIONS = {
         "outputs",
         "output_keys",
     },
-    "gpu": {"policy", "vram_budget_gb", "shareable", "isolation"},
+    "gpu": {
+        "policy",
+        "vram_budget_gb",
+        "shareable",
+        "isolation",
+        "driver_min",
+        "driver_min_reason",
+    },
     "env": {
         "python",
         "lock",
@@ -251,6 +258,14 @@ class ProviderManifest:
     request_timeout_s: float = 3600.0
     gpu_policy: str = "none"
     vram_budget_gb: Optional[float] = None
+    # The NVIDIA driver series this provider's pinned CUDA needs. There is no
+    # default, because the right floor is a property of the pin and only the
+    # provider knows it: boltz2 pins cu130 and needs 580, while evo2, openfold3
+    # and atlasfold pin cu128 and run on 570. A hard-coded 580 refused those
+    # three with a message asserting "the pinned stack is CUDA 13.0", which was
+    # false for seven of eleven providers.
+    driver_min: Optional[float] = None
+    driver_min_reason: str = ""
     shareable: bool = True
     isolation: str = "process"
     env_python: Optional[str] = None
@@ -419,6 +434,15 @@ def load(path: os.PathLike | str) -> ProviderManifest:
             f'{path}: [runtime] mode = "subprocess" needs mode_reason — a provider '
             f"that pays the start-up cost on every request states why it must"
         )
+    if doc.get("gpu", {}).get("driver_min") is not None and not doc["gpu"].get(
+        "driver_min_reason"
+    ):
+        raise ManifestError(
+            f"{path}: [gpu] driver_min needs driver_min_reason naming the CUDA "
+            f"version that sets the floor \u2014 a bare number in a refusal is "
+            f"what made the hard-coded one wrong for seven of eleven providers"
+        )
+
     kit_env = doc.get("kit", {}).get("env", {})
     if not isinstance(kit_env, dict) or not all(
         isinstance(k, str) and isinstance(v, (str, int, float, bool))
@@ -522,6 +546,10 @@ def load(path: os.PathLike | str) -> ProviderManifest:
         request_timeout_s=float(rt.get("request_timeout_s", 3600.0)),
         gpu_policy=policy,
         vram_budget_gb=gpu.get("vram_budget_gb"),
+        driver_min=(
+            float(gpu["driver_min"]) if gpu.get("driver_min") is not None else None
+        ),
+        driver_min_reason=gpu.get("driver_min_reason", ""),
         shareable=bool(gpu.get("shareable", True)),
         isolation=isolation,
         env_python=env.get("python"),

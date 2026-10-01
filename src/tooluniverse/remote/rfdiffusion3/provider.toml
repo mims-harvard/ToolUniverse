@@ -72,6 +72,8 @@ policy = "required"
 # below is the 400-residue, 4-design reference -- a request larger than that
 # exceeds this budget, and a host that accepts longer chains re-measures.
 vram_budget_gb = 12.49
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.13.0+cu130)"
 shareable = true
 isolation = "process"
 

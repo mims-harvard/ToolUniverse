@@ -1147,3 +1147,56 @@ class TestTritonTargetsThisGpu:
             )
             == []
         )
+
+
+class TestDriverFloor:
+    """The driver floor is a property of the pin, so the manifest declares it.
+
+    It used to be the constant 580 with a message asserting "the pinned stack is
+    CUDA 13.0". That sentence was false for seven of eleven providers -- cu128
+    stacks run on the 570 series -- so a host that could run three of them would
+    have been refused by a claim about a CUDA version they do not pin.
+    """
+
+    def _toml(self, extra):
+        return (
+            '[provider]\nslug = "x"\n\n[runtime]\nmode = "resident"\n\n'
+            '[env]\npython = "python3"\n\n[gpu]\npolicy = "required"\n'
+            "vram_budget_gb = 1.0\n" + extra
+        )
+
+    def test_a_declared_floor_needs_its_reason(self, tmp_path):
+        p = tmp_path / "provider.toml"
+        p.write_text(self._toml("driver_min = 570\n"))
+        with pytest.raises(M.ManifestError, match="driver_min_reason"):
+            M.load(p)
+
+    def test_a_declared_floor_with_a_reason_loads(self, tmp_path):
+        p = tmp_path / "provider.toml"
+        p.write_text(
+            self._toml(
+                "driver_min = 570\n"
+                'driver_min_reason = "its pinned stack is CUDA 12.8"\n'
+            )
+        )
+        m = M.load(p)
+        assert m.driver_min == 570.0 and "12.8" in m.driver_min_reason
+
+    def test_no_floor_is_allowed_and_means_report_not_judge(self, tmp_path):
+        p = tmp_path / "provider.toml"
+        p.write_text(self._toml(""))
+        assert M.load(p).driver_min is None
+
+    def test_every_gpu_provider_here_declares_one_or_says_why(self):
+        """Not a rule the loader enforces, but a fact worth pinning."""
+        import glob
+        import os
+
+        undeclared = []
+        for f in sorted(glob.glob("src/tooluniverse/remote/*/provider.toml")):
+            m = M.load(f)
+            if m.gpu_policy == "required" and m.driver_min is None:
+                undeclared.append(os.path.basename(os.path.dirname(f)))
+        assert undeclared == [], (
+            f"these GPU-required providers declare no driver floor: {undeclared}"
+        )

@@ -106,6 +106,8 @@ policy = "required"
 # budget (0.6 / 1.1 GiB of parameters), must fetch those weights, and must
 # re-measure rather than scale this number.
 vram_budget_gb = 28.75
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.11.0+cu130)"
 shareable = true
 isolation = "process"
 
