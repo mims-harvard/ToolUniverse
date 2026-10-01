@@ -449,75 +449,88 @@ def _probe_arch(exec_env) -> Optional[Dict[str, Any]]:
 
 
 def _toolchain_problems(exec_env, gpu_required: bool) -> tuple:
-    """``(refusal, reason, warning)`` across torch's cubins and Triton's two stages."""
+    """``(refusal, reason, notes)``: torch's cubins refuse; Triton's two stages note."""
     info = _probe_arch(exec_env)
     if info is None:
-        return None, "", None
+        return None, "", []
     if "probe_error" in info:
         return (
             f"the installed torch could not be probed ({info['probe_error']})",
             "torch_arch_unsupported",
-            None,
+            [],
         )
     problem = _arch_problem(info, gpu_required)
     if problem:
-        return problem, "torch_arch_unsupported", None
-    refusal, warning = _check_triton_targets_this_gpu(info)
-    if refusal:
-        return refusal, "triton_llvm_arch_unsupported", None
-    return None, "", warning
+        return problem, "torch_arch_unsupported", []
+    return None, "", _check_triton_targets_this_gpu(info)
 
 
-def _check_triton_targets_this_gpu(info: Dict[str, Any]) -> tuple:
-    """``(refusal, warning)`` for Triton's two separate ability to emit code.
+def _check_triton_targets_this_gpu(info: Dict[str, Any]) -> List[str]:
+    """Notes on Triton's two separate abilities to emit code for this card.
 
     Triton is a SECOND toolchain beside torch's cubins, and the existing arch
     check cannot see it: a stack whose ``torch.cuda.get_arch_list()`` covers
-    this card can still fail every kernel. It fails in two places, one
-    recoverable and one not, and telling them apart is the whole point:
+    this card can still fail its kernels. There are two places it fails:
 
-    * **LLVM.** Triton's own target machine must know ``sm_<cc>a``. triton
-      3.3.1 does not, and the failure is ``LLVM ERROR: Cannot select:
-      intrinsic %llvm.nvvm.shfl.sync.bfly.i32`` -- a process abort, not an
-      exception, so no worker can catch it and no later configuration helps.
-      That is a refusal.
+    * **LLVM.** Triton's target machine must list ``sm_<cc>a``. triton 3.3.1
+      does not, and a kernel reducing ACROSS LANES then aborts the process:
+      ``LLVM ERROR: Cannot select: intrinsic %llvm.nvvm.shfl.sync.bfly.i32``.
     * **ptxas.** Triton shells out to the ``ptxas`` bundled in its own wheel.
       triton 3.4.0's is CUDA 12.8, which has no sm_121 of any spelling, while
-      Triton asks for ``sm_121a`` above cc 90: ``ptxas fatal: Value 'sm_121a'
-      is not defined``. A provider CAN fix this -- e1 adds
-      ``nvidia-cuda-nvcc-cu12==12.9.86`` and points ``TRITON_PTXAS_PATH`` at
-      its 12.9 binary -- so refusing would be a false refusal on a working
-      provider. That is a warning carrying the recipe.
+      Triton asks for ``sm_121a`` above cc 90.
 
-    Measured across twelve provider environments on one card: ten pass both,
-    atlasfold (3.3.1) fails both, e1 (3.4.0) fails only ptxas and ships the
-    fix. triton 3.6.0 onward bundles a ``ptxas-blackwell`` and needs nothing.
+    **Both are notes and neither is a refusal, and the first version of this
+    check got that wrong.** It refused the LLVM case on the grounds that "every
+    kernel this stack compiles would abort", which is false. evo2 runs on triton
+    3.3.1 on this card: its kit spells its reductions out by hand for bitwise
+    reproducibility, and nothing on its path calls ``tl.sum``, ``tl.reduce`` or
+    ``tl.dot``. atlasfold, on the identical triton, dies. A bare ``tl.sum``
+    kernel probed in both environments core-dumps in both -- so the stack's
+    inability is real, and whether it matters is a property of the provider's
+    kernels, which this layer cannot see. It reports what it measured and names
+    the audit. A refusal was a false refusal on a provider that works, which is
+    worse than having no check.
+
+    Measured across twelve provider environments on one card: ten clean, e1
+    (3.4.0) ptxas only, atlasfold and evo2 (3.3.1) both -- and of those two, one
+    runs. triton 3.6.0 onward bundles a ``ptxas-blackwell`` and needs nothing.
     """
     sm = info.get("device_sm")
     if not sm or "triton" not in info:
-        return None, None
+        return []
+    notes: List[str] = []
     wanted = {sm, sm + "a"}
     llvm = set(info.get("triton_llvm") or ())
     if llvm and not (wanted & llvm):
-        return (
-            f"triton {info['triton']}'s LLVM target machine does not know {sm}: "
-            f"every kernel this stack compiles would abort the process with "
-            f'"LLVM ERROR: Cannot select", which no worker can catch. The '
-            f"first Triton to know it is 3.4.0; raising it means deviating "
-            f"from the kit's lock, which is a decision, not a fix"
-        ), None
+        notes.append(
+            f"triton {info['triton']}'s LLVM target machine does not list {sm} "
+            f"and ignores it. A kernel that reduces ACROSS LANES -- tl.sum, "
+            f"tl.max, tl.dot -- then aborts the process with \"LLVM ERROR: "
+            f"Cannot select: intrinsic %llvm.nvvm.shfl.sync.bfly.i32\", which "
+            f"no worker can catch. A kernel that does not reduce compiles and "
+            f"runs correctly: on this card atlasfold dies and evo2 does not, on "
+            f"the same triton 3.3.1, because evo2's kit spells its reductions "
+            f"out by hand. So AUDIT the kernels on this provider's path for "
+            f"tl.sum, tl.reduce and tl.dot, and record the audit in the "
+            f"manifest. The first Triton to list {sm} is 3.4.0; raising it "
+            f"deviates from the kit's lock, which is a decision, not a fix"
+        )
     ptxas = info.get("triton_ptxas") or {}
     if ptxas and not any(wanted & set(v) for v in ptxas.values()):
-        return None, (
+        notes.append(
             f"triton {info['triton']} bundles no ptxas that targets {sm} "
-            f"({', '.join(sorted(ptxas)) or 'none found'}), so kernels will "
-            f"fail with \"ptxas fatal: Value '{sm}a' is not defined\" unless "
-            f"the provider supplies one. The known fix is "
-            f"nvidia-cuda-nvcc-cu12==12.9.86 in the lock and TRITON_PTXAS_PATH "
-            f"set by the worker when triton's own does not list this card "
-            f"(see remote/e1). triton 3.6.0 onward bundles its own 12.9"
+            f"({', '.join(sorted(ptxas)) or 'none found'}), so kernels fail "
+            f"with \"ptxas fatal: Value '{sm}a' is not defined\" unless the "
+            f"provider supplies one. The fix is nvidia-cuda-nvcc-cu12==12.9.86 "
+            f"in the lock, pointed at by the worker only when triton's own does "
+            f"not list this card (see remote/e1 and remote/evo2). The variable "
+            f"name is derived rather than literal: triton builds it as "
+            f"TRITON_<BINARY>_PATH and selects ptxas-blackwell above cc 100, so "
+            f"on this card it reads TRITON_PTXAS-BLACKWELL_PATH, hyphen "
+            f"included, and a worker should set both spellings. triton 3.6.0 "
+            f"onward bundles its own 12.9 and needs none of this"
         )
-    return None, None
+    return notes
 
 
 def _check_torch_targets_this_gpu(exec_env, gpu_required: bool) -> Optional[str]:
@@ -631,7 +644,7 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
         if probe.returncode == 0:
             from .exec_env import from_manifest
 
-            problem, why, warning = _toolchain_problems(
+            problem, why, notes = _toolchain_problems(
                 from_manifest(manifest), manifest.gpu_policy == "required"
             )
             if problem:
@@ -646,7 +659,7 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
                 "environment",
                 PRESENT,
                 f"{python} already satisfies [env] verify",
-                lines=[f"NOTE: {warning}"] if warning else [],
+                lines=[f"NOTE: {n}" for n in notes],
                 seconds=time.time() - t,
             )
 
@@ -703,7 +716,7 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
 
     from .exec_env import from_manifest
 
-    problem, why, warning = _toolchain_problems(
+    problem, why, notes = _toolchain_problems(
         from_manifest(manifest), manifest.gpu_policy == "required"
     )
     if problem:
@@ -725,7 +738,7 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
         "environment",
         OK,
         f"{len(pins)} pinned distributions in {python}",
-        lines=lines + ([f"NOTE: {warning}"] if warning else []),
+        lines=lines + [f"NOTE: {n}" for n in notes],
         seconds=time.time() - t,
     )
 

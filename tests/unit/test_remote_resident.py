@@ -1077,10 +1077,12 @@ class TestWhatItProduced:
 class TestTritonTargetsThisGpu:
     """Triton is a second toolchain and the torch arch check cannot see it.
 
-    Two failures, one recoverable and one not. Telling them apart is the point:
-    refusing the recoverable one would be a false refusal on a provider that
-    works (e1 ships the fix), and warning about the unrecoverable one would let
-    a worker abort in LLVM where nothing can catch it.
+    Both findings are NOTES. The first version of this check refused the LLVM
+    one and that was a false refusal: evo2 runs on triton 3.3.1 on this card
+    while atlasfold dies on the identical triton, because whether the abort
+    happens depends on the provider's kernels and not on the version. A bare
+    tl.sum kernel core-dumps in both environments, so the stack's inability is
+    real -- it is the consequence that differs, and this layer cannot see it.
     """
 
     SM = "sm_121"
@@ -1093,46 +1095,55 @@ class TestTritonTargetsThisGpu:
             "triton_ptxas": ptxas,
         }
 
-    def test_a_triton_whose_llvm_knows_the_card_and_ships_a_ptxas_passes(self):
+    def test_a_triton_that_knows_the_card_and_ships_a_ptxas_says_nothing(self):
         """triton 3.6.0+ needs nothing: it bundles its own ptxas-blackwell."""
-        refusal, warning = S._check_triton_targets_this_gpu(
-            self._info(
-                "3.7.1",
-                ["sm_90", "sm_120", "sm_121", "sm_121a"],
-                {
-                    "ptxas": ["sm_90", "sm_120"],
-                    "ptxas-blackwell": ["sm_121", "sm_121a"],
-                },
+        assert (
+            S._check_triton_targets_this_gpu(
+                self._info(
+                    "3.7.1",
+                    ["sm_90", "sm_120", "sm_121", "sm_121a"],
+                    {
+                        "ptxas": ["sm_90", "sm_120"],
+                        "ptxas-blackwell": ["sm_121", "sm_121a"],
+                    },
+                )
             )
+            == []
         )
-        assert refusal is None and warning is None
 
-    def test_an_llvm_that_does_not_know_the_card_is_refused(self):
-        """atlasfold's triton 3.3.1: LLVM ERROR, which no worker can catch."""
-        refusal, warning = S._check_triton_targets_this_gpu(
+    def test_an_llvm_that_ignores_the_card_is_noted_not_refused(self):
+        """atlasfold and evo2 share this triton; only one of them dies."""
+        notes = S._check_triton_targets_this_gpu(
             self._info(
                 "3.3.1",
                 ["sm_90", "sm_120", "sm_120a"],
                 {"ptxas": ["sm_90"], "ptxas-blackwell": ["sm_120", "sm_120a"]},
             )
         )
-        assert refusal and "LLVM" in refusal and "3.4.0" in refusal
-        assert warning is None
+        joined = " ".join(notes)
+        assert "LLVM ERROR" in joined and "AUDIT" in joined
+        # Both stages fail for this version, and the ptxas half is the half a
+        # provider can fix -- the first version short-circuited and hid it.
+        assert "nvidia-cuda-nvcc-cu12" in joined
+        assert len(notes) == 2
 
-    def test_a_missing_ptxas_target_warns_rather_than_refusing(self):
+    def test_a_missing_ptxas_target_names_the_derived_variable(self):
         """e1's triton 3.4.0 works, because its worker supplies a 12.9 ptxas."""
-        refusal, warning = S._check_triton_targets_this_gpu(
+        notes = S._check_triton_targets_this_gpu(
             self._info("3.4.0", ["sm_120", "sm_121", "sm_121a"], {"ptxas": ["sm_120"]})
         )
-        assert refusal is None
-        assert warning and "nvidia-cuda-nvcc-cu12" in warning
+        assert len(notes) == 1
+        # The name is built as TRITON_<BINARY>_PATH, so on this card it carries
+        # a hyphen and a literal TRITON_PTXAS_PATH alone would do nothing.
+        assert "TRITON_PTXAS-BLACKWELL_PATH" in notes[0]
 
     def test_an_environment_without_triton_says_nothing(self):
-        refusal, warning = S._check_triton_targets_this_gpu({"device_sm": self.SM})
-        assert refusal is None and warning is None
+        assert S._check_triton_targets_this_gpu({"device_sm": self.SM}) == []
 
     def test_no_gpu_means_no_opinion(self):
-        refusal, warning = S._check_triton_targets_this_gpu(
-            {"triton": "3.3.1", "triton_llvm": ["sm_90"], "triton_ptxas": {}}
+        assert (
+            S._check_triton_targets_this_gpu(
+                {"triton": "3.3.1", "triton_llvm": ["sm_90"], "triton_ptxas": {}}
+            )
+            == []
         )
-        assert refusal is None and warning is None
