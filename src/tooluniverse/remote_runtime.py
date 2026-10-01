@@ -130,6 +130,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="recommended",
     ),
     RemoteDeployment(
+        "esmc",
+        "tooluniverse.remote.esmc.esmc_tool",
+        8037,
+        ("run_esmc_embed", "run_esmc_logits"),
+        ("HF_HOME", "TOOLUNIVERSE_ESMC_PYTHON"),
+        ("HF_HOME",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "esmfold2",
         "tooluniverse.remote.esmfold2.esmfold2_tool",
         8038,
