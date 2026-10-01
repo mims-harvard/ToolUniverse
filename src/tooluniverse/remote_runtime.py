@@ -58,6 +58,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "evo2",
+        "tooluniverse.remote.evo2.evo2_tool",
+        8041,
+        ("run_evo2_score", "run_evo2_embed"),
+        ("EVO2_OPT_WEIGHTS", "TOOLUNIVERSE_EVO2_PYTHON"),
+        ("EVO2_OPT_WEIGHTS",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "af3_torch",
         "tooluniverse.remote.af3_torch.af3_torch_tool",
         8036,

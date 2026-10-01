@@ -48,6 +48,13 @@ DEPLOYMENTS = (
         required_commands=("boltz",),
     ),
     Deployment(
+        "evo2",
+        8041,
+        ("run_evo2_score", "run_evo2_embed"),
+        ("EVO2_OPT_WEIGHTS", "TOOLUNIVERSE_EVO2_PYTHON"),
+        path_env=("EVO2_OPT_WEIGHTS",),
+    ),
+    Deployment(
         "af3_torch",
         8036,
         ("af3_torch_predict",),
