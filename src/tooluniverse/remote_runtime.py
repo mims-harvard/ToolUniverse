@@ -193,6 +193,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "esm_if1",
+        "tooluniverse.remote.esm_if1.esm_if1_tool",
+        8050,
+        ("esm_if1_design",),
+        ("TOOLUNIVERSE_ESM_IF1_PYTHON",),
+        (),
+        gpu_policy="none",
+    ),
+    RemoteDeployment(
         "esmc",
         "tooluniverse.remote.esmc.esmc_tool",
         8037,

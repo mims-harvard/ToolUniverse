@@ -143,6 +143,12 @@ DEPLOYMENTS = (
         path_env=("HF_HOME",),
     ),
     Deployment(
+        "esm_if1",
+        8050,
+        ("esm_if1_design",),
+        ("TOOLUNIVERSE_ESM_IF1_PYTHON",),
+    ),
+    Deployment(
         "esmc",
         8037,
         ("run_esmc_embed", "run_esmc_logits"),

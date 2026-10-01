@@ -454,9 +454,42 @@ aarch64 the reason they cannot run is sharper than a cubin-coverage argument.
 Checked, not assumed: the `manylinux*_aarch64` wheels for 2.3.1, 2.4.0, 2.5.1
 and 2.6.0 each contain `libtorch_cpu.so` and no `libtorch_cuda.so`, and every
 `nvidia-*` dependency in their metadata carries the marker
-`platform_machine == "x86_64"`. So forward PTX JIT — the usual escape when a
-cubin set stops short of a new architecture — does not apply: there is no CUDA
-code in the artifact to JIT.
+`platform_machine == "x86_64"`.
+
+**This paragraph used to continue "so forward PTX JIT does not apply: there is
+no CUDA code in the artifact to JIT", and that was wrong.** It is a statement
+about PyPI being used as a statement about the world. `download.pytorch.org`
+publishes CUDA-enabled aarch64 builds at these versions: its cu124 index carries
+`torch-2.4.0-cp311-cp311-linux_aarch64.whl` at 2,355,105,760 bytes against
+PyPI's CPU-only 89,850,473. So the artifact exists, and whether an old CUDA
+generation can drive a new card is a question to be measured per library rather
+than dismissed per index. Measured, with `cuobjdump`, on the two libraries every
+transformer's GEMMs go through:
+
+| aarch64 cuBLAS | cubins | PTX |
+| --- | --- | --- |
+| 12.4.5.8 `libcublas.so.12` | sm_50 60 61 70 75 80 86 90 | **sm_90** |
+| 12.4.5.8 `libcublasLt.so.12` | sm_50 60 61 70 75 80 86 89 90 | **sm_90** |
+| 12.9.1.4 `libcublas.so.12` | … sm_100 sm_120 | sm_120 |
+
+The modern stack needs no JIT at all — an sm_120 cubin runs on sm_121, which is
+why every verified provider here drives a card none of its builds lists. The old
+one has no sm_12x cubin but does carry sm_90 PTX, and PTX is forward-compatible,
+so the driver can in principle compile it for this part. The honest status of a
+CUDA 12.4 stack on this card is therefore **unmeasured**, not impossible, and a
+provider declining it should say which it is. esm_if1 declines it and says so:
+the PyG companions its kit pins have no aarch64 build at any version so a GPU
+route must drop them anyway, cross-generation JIT of cuBLAS in the hot path of
+every GEMM would be a new untested unknown, and `[gpu] policy` is a declaration
+of what a deployment provides — `none` is true today where `required` would
+promise a path nobody has run.
+
+The general rule this replaces a wrong one with: **do not infer the absence of a
+capability from the absence of an artifact in one index, and do not infer it from
+a cubin list alone — read the PTX too.** The two questions are "does any build
+of this exist for my architecture" and "does the code inside it cover, or JIT
+to, my compute capability", and they have different answers and different
+commands.
 
 Three ways out, in descending honesty:
 
@@ -541,7 +574,8 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | The ladder's SHAPE decides co-tenancy | measured: esmc 1.19x over 16x the length, rosettafold3 3.7x over 8x |
 | Derived estimates err both ways | measured: openfold3 3.8x high, esmfold2 1.6x low |
 | Turning a kit off can cost VRAM, not just speed | measured: esmc `off` costs 9.6 GiB -- `pipe` was the device-side loader |
-| No CUDA aarch64 torch below 2.7 | measured: 4 wheels inspected, `libtorch_cpu.so` only, nvidia deps marked x86_64 |
+| No CUDA aarch64 torch below 2.7 **on PyPI** | measured: 4 wheels, `libtorch_cpu.so` only — but download.pytorch.org has cu124 aarch64 2.4.0 |
+| Read the PTX, not only the cubin list | measured: cuBLAS 12.4 aarch64 has no sm_12x cubin and does carry sm_90 PTX |
 | `peak_reserved_gib` is a high-water mark, so ladders ascend first | measured: 24.44 vs 24.08 GiB for the same 100-residue rung |
 | Fork has three shapes; a library's pool is one | measured: boltzgen 0 designs in 420 s, 31.6 s with OMP_NUM_THREADS=1 |
 | An `outputs` glob must not match a file written anyway | measured: boltzgen's `design_spec.cif` would have passed a design-less run |
