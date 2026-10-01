@@ -385,14 +385,36 @@ The thirty-six upstream kits are uniform in structure — all carry `run.sh`,
 three things that decide whether one can run on a given machine at all. Each is
 cheap to read before committing to a download:
 
-**Can its pinned torch drive this card?** Five kits pin torch below 2.7, whose
-CUDA builds stop at sm_90: flashzoi (2.5.1), proteinmpnn (2.5.1), rfdiffusion1
-(2.4.0), caliby (2.6.0), plus borzoi which is TensorFlow. Seventeen pin 2.7 or
-later. `setup` now reads `torch.cuda.get_arch_list()` after installing and
-refuses `torch_arch_unsupported` rather than letting it arrive as a kernel
-error — but the rule is binary compatibility, not equality: an sm_120 cubin
-runs on sm_121, which is how both of this project's stacks drive a card neither
-of them lists.
+**Can its pinned torch drive this card?** Six kits pin torch below 2.7 —
+pxdesign (2.3.1+cu121), chrombpnet (2.4.1+cu124), rfdiffusion1 (2.4.0),
+proteinmpnn (2.5.1+cu124), flashzoi (2.5.1), caliby (2.6.0+cu124) — and on
+aarch64 the reason they cannot run is sharper than a cubin-coverage argument.
+**PyPI publishes no CUDA-enabled aarch64 torch wheel below 2.7 at all.**
+Checked, not assumed: the `manylinux*_aarch64` wheels for 2.3.1, 2.4.0, 2.5.1
+and 2.6.0 each contain `libtorch_cpu.so` and no `libtorch_cuda.so`, and every
+`nvidia-*` dependency in their metadata carries the marker
+`platform_machine == "x86_64"`. So forward PTX JIT — the usual escape when a
+cubin set stops short of a new architecture — does not apply: there is no CUDA
+code in the artifact to JIT.
+
+Three ways out, in descending honesty:
+
+1. **Run it on the CPU.** Legitimate, and for a small model it is the right
+   answer rather than a consolation: `[gpu] policy = "none"`, and residency
+   still earns its place because the import graph and the weight read dominate.
+   proteinmpnn's entire weight set is 10 MB.
+2. **Build torch from source** for aarch64 + CUDA 13 + sm_121 at the pinned
+   version. Days, and the pinned version may predate CUDA 13 support.
+3. **Deviate from the pin** and install torch ≥ 2.7. This breaks what the lock
+   is for, and the kit's own pin check will refuse the mode — so it is only
+   reachable through `[kit] mode = "off"`, which is to say by not using the kit.
+
+Seventeen kits pin 2.7 or later and are the normal queue. For those, `setup`
+reads `torch.cuda.get_arch_list()` after installing and refuses
+`torch_arch_unsupported` rather than letting it arrive as a kernel error — but
+the rule there is binary compatibility, not equality: an sm_120 cubin runs on
+sm_121, which is how every verified provider here drives a card none of their
+builds lists.
 
 **Does it carry prebuilt host objects?** Eight do, and all thirty-nine such
 files are x86-64; none is aarch64. `setup` reads the ELF header before
@@ -437,6 +459,7 @@ in-process at all, which makes it `mode = "subprocess"`.
 | The ladder's SHAPE decides co-tenancy | measured: esmc 1.19x over 16x the length, rosettafold3 3.7x over 8x |
 | Derived estimates err both ways | measured: openfold3 3.8x high, esmfold2 1.6x low |
 | Turning a kit off can cost VRAM, not just speed | measured: esmc `off` costs 9.6 GiB -- `pipe` was the device-side loader |
+| No CUDA aarch64 torch below 2.7 | measured: 4 wheels inspected, `libtorch_cpu.so` only, nvidia deps marked x86_64 |
 
 ## 12. What providers seven through ten changed
 

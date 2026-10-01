@@ -187,6 +187,16 @@ committing to a download:
 | Does its lock pin an architecture by URL? | ~20 name a wheel by direct x86-64 link | ship a lock pinning by version instead, and say so in its header |
 | How does it activate? | 30 by mode variable + `.pth`, 1 by `worker_launch` (boltz2), 1 not in-process at all (chrombpnet) | detected, not declared |
 
+**On aarch64, the torch floor is harder than it looks.** Six kits pin torch below 2.7, and PyPI
+publishes **no CUDA-enabled aarch64 torch wheel below 2.7 at all** — checked by inspecting the
+2.3.1 / 2.4.0 / 2.5.1 / 2.6.0 `manylinux*_aarch64` wheels, which each carry `libtorch_cpu.so` and
+no `libtorch_cuda.so`, with every `nvidia-*` dependency marked
+`platform_machine == "x86_64"`. Forward PTX JIT does not rescue this: there is no CUDA code in the
+artifact to JIT. The honest ways out are to run the model on the CPU (`[gpu] policy = "none"` —
+right rather than consolation for a small model; proteinmpnn's whole weight set is 10 MB), to build
+torch from source for this architecture at the pinned version (days), or to abandon the pin and
+reach `[kit] mode = "off"`, which is to say to stop using the kit.
+
 ## Six things to read out of the kit, never guess
 
 Each of these was a wrong assumption that cost a debugging round.
