@@ -289,7 +289,14 @@ def run_test_for_pattern(
             capture_output=True,
             text=True,
             cwd=repo_root,
-            timeout=300  # 5 minute timeout per pattern
+            # 10 minutes per pattern. 5 was enough only while failures were
+            # cheap: fda_drug_labeling's 156 tests fit inside 300 s because 27
+            # of them died instantly on a NOT_FOUND from an impossible example
+            # query. With those examples repaired the tests fetch real label
+            # sections, and the category measured 255.89 s -- 85% of the old
+            # budget -- so normal network variance tipped it into TIMEOUT,
+            # which reads as a tool failure and is worse signal than before.
+            timeout=600
         )
         
         # Parse output to extract statistics

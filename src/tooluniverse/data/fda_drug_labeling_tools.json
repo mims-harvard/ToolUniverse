@@ -319,7 +319,6 @@
     "test_examples": [
       {
         "abuse_info": "Addiction",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -592,7 +591,6 @@
     "test_examples": [
       {
         "accessory_name": "Syringe",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -865,7 +863,6 @@
     "test_examples": [
       {
         "active_ingredient": "Ibuprofen",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -1657,7 +1654,6 @@
     "test_examples": [
       {
         "alarm_type": "Hepatotoxicity",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -1688,7 +1684,11 @@
             "type": "object",
             "properties": {
               "alarms": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -1922,7 +1922,6 @@
     "test_examples": [
       {
         "pharmacology_info": "Mechanism of Action",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -2455,7 +2454,6 @@
     "test_examples": [
       {
         "interaction_info": "Alcohol",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -2732,7 +2730,6 @@
     "test_examples": [
       {
         "field_info": "Instructions",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -2763,7 +2760,11 @@
             "type": "object",
             "properties": {
               "assembly_or_installation_instructions": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -3308,8 +3309,7 @@
     ],
     "test_examples": [
       {
-        "carcinogenic_info": "E11.9",
-        "indication": "Hypertension",
+        "carcinogenic_info": "carcinogenic potential",
         "limit": 5,
         "skip": 0
       }
@@ -5133,7 +5133,6 @@
     "test_examples": [
       {
         "disposal_info": "Waste",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -5164,7 +5163,11 @@
             "type": "object",
             "properties": {
               "disposal_and_waste_handling": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -6051,8 +6054,7 @@
     ],
     "test_examples": [
       {
-        "lab_test_interference": "E11.9",
-        "indication": "Hypertension",
+        "lab_test_interference": "false positive",
         "limit": 5,
         "skip": 0
       }
@@ -6083,7 +6085,11 @@
             "type": "object",
             "properties": {
               "drug_and_or_laboratory_test_interactions": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -6638,8 +6644,7 @@
     ],
     "test_examples": [
       {
-        "effective_time": "E11.9",
-        "indication": "Hypertension",
+        "effective_time": "20210902",
         "limit": 5,
         "skip": 0
       }
@@ -7321,8 +7326,7 @@
     ],
     "test_examples": [
       {
-        "precaution_info": "E11.9",
-        "indication": "Hypertension",
+        "precaution_info": "superinfection",
         "limit": 5,
         "skip": 0
       }
@@ -8049,7 +8053,6 @@
     "test_examples": [
       {
         "letter_info": "safety alert",
-        "indication": "Hypertension",
         "limit": 5,
         "skip": 0
       }
@@ -8080,7 +8083,11 @@
             "type": "object",
             "properties": {
               "health_care_provider_letter": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -8186,8 +8193,7 @@
     ],
     "test_examples": [
       {
-        "health_claim": "E11.9",
-        "indication": "Hypertension",
+        "health_claim": "homeopathic",
         "limit": 5,
         "skip": 0
       }
@@ -8218,7 +8224,11 @@
             "type": "object",
             "properties": {
               "health_claim": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -9207,7 +9217,6 @@
     "test_examples": [
       {
         "field_info": "Instructions",
-        "indication": "Hypertension",
         "limit": 1,
         "skip": 0
       }
@@ -9238,7 +9247,11 @@
             "type": "object",
             "properties": {
               "information_for_owners_or_caregivers": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -9603,8 +9616,7 @@
     ],
     "test_examples": [
       {
-        "instructions_for_use": "E11.9",
-        "indication": "Hypertension",
+        "instructions_for_use": "Instructions for Use",
         "limit": 5,
         "skip": 0
       }
@@ -9635,7 +9647,11 @@
             "type": "object",
             "properties": {
               "instructions_for_use": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -10116,8 +10132,7 @@
     ],
     "test_examples": [
       {
-        "child_safety_info": "E11.9",
-        "indication": "Hypertension",
+        "child_safety_info": "out of reach of children",
         "limit": 5,
         "skip": 0
       }
@@ -11448,8 +11463,7 @@
     ],
     "test_examples": [
       {
-        "toxicology_info": "E11.9",
-        "indication": "Hypertension",
+        "toxicology_info": "Carcinogenesis",
         "limit": 5,
         "skip": 0
       }
@@ -11720,8 +11734,7 @@
     ],
     "test_examples": [
       {
-        "nonteratogenic_effects": "E11.9",
-        "indication": "Hypertension",
+        "nonteratogenic_effects": "fetal development",
         "limit": 5,
         "skip": 0
       }
@@ -11752,7 +11765,11 @@
             "type": "object",
             "properties": {
               "nonteratogenic_effects": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -15712,8 +15729,7 @@
     ],
     "test_examples": [
       {
-        "residue_warning": "1",
-        "indication": "Hypertension",
+        "residue_warning": "excessive heat",
         "limit": 1,
         "skip": 0
       }
@@ -15858,7 +15874,6 @@
     "test_examples": [
       {
         "risk_info": "pregnancy category C",
-        "indication": "Hypertension",
         "limit": 5,
         "skip": 0
       }
@@ -15889,7 +15904,11 @@
             "type": "object",
             "properties": {
               "risks": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -16153,7 +16172,11 @@
             "type": "object",
             "properties": {
               "route": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "openfda.route": {
                 "type": [
@@ -16313,7 +16336,11 @@
                 }
               },
               "route": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "openfda.route": {
                 "type": [
@@ -16402,7 +16429,6 @@
     "test_examples": [
       {
         "safe_handling_warning": "cytotoxic",
-        "indication": "Hypertension",
         "limit": 5,
         "skip": 0
       }
@@ -16794,7 +16820,6 @@
     "test_examples": [
       {
         "spl_indexing_data_elements": "NDC",
-        "indication": "Hypertension",
         "limit": 5,
         "skip": 0
       }
@@ -16825,7 +16850,11 @@
             "type": "object",
             "properties": {
               "spl_indexing_data_elements": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -17584,7 +17613,6 @@
     "test_examples": [
       {
         "ingredient_name": "acetaminophen",
-        "indication": "Hypertension",
         "limit": 5,
         "skip": 0
       }
@@ -18473,8 +18501,7 @@
     ],
     "test_examples": [
       {
-        "summary_text": "The quick brown fox jumps over the lazy dog.",
-        "indication": "Hypertension",
+        "summary_text": "Sun Protection",
         "limit": 1,
         "skip": 0
       }
@@ -18505,7 +18532,11 @@
             "type": "object",
             "properties": {
               "summary_of_safety_and_effectiveness": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -18734,8 +18765,7 @@
     ],
     "test_examples": [
       {
-        "teratogenic_effects": "E11.9",
-        "indication": "Hypertension",
+        "teratogenic_effects": "Pregnancy Category C",
         "limit": 5,
         "skip": 0
       }
@@ -18766,7 +18796,11 @@
             "type": "object",
             "properties": {
               "teratogenic_effects": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -19440,7 +19474,6 @@
     "test_examples": [
       {
         "safety_warning": "may cause drowsiness",
-        "indication": "Hypertension",
         "limit": 5,
         "skip": 0
       }
@@ -19471,7 +19504,11 @@
             "type": "object",
             "properties": {
               "user_safety_warnings": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
