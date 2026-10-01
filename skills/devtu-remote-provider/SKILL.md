@@ -90,7 +90,32 @@ is one dependency-free file (`remote_resident/protocol.py`) loaded by path.
    *specification* — whether or not anything is designed, so `*.cif` would have
    passed a run that produced nothing. Test the glob against a failing run, not
    only a passing one.
-16. **Sizing an ablation to the smoke.** Every kernel lever of the atlasfold kit
+16. **Reading four identical requests as the acceptance test.** They are the
+   WEAKER half. A held engine is built once and replayed, so N identical requests
+   exercise exactly one build — they cannot show the worker can build a SECOND
+   one. genie3 would have passed four and raised on the first request that
+   changed its engine key, because upstream's sampling config is a module-level
+   mutable permitting one build per process. Run four identical requests **then at
+   least one that changes the engine key**; the rebuild is the danger, not the new
+   shape. Before writing a worker, **call the upstream config or model builder
+   twice in one process** — one minute, and invisible to the repeats test.
+17. **An input ceiling that the budget cannot cover.** progen2's tool allowed 16
+   sequences × 1024 tokens; each is sane, the product costs **116.93 GiB**,
+   essentially the whole card. Bound the product, and check the ceilings against
+   the budget rather than only against each other.
+18. **Trusting a probe that does nothing afterwards.** protenix's stock LayerNorm
+   emits SASS with no PTX above sm_100, so the call returns, `synchronize()`
+   PASSES, and the *next unrelated* op raises `no kernel image is available`. The
+   first probe printed "LAUNCH OK" twice because it stopped there.
+19. **Assuming a wheel that installs will run.** tokenizers 0.10.x publishes
+   well-formed aarch64 wheels that `Illegal instruction (core dumped)` at import.
+   In a worker that is a `smoke_protocolerror` with no traceback, because SIGILL
+   is uncatchable. Import every compiled pin in `[env] verify`.
+20. **Assuming pip honours requirement order.** A lock with two CUDA generations
+   gets whichever of a colliding pair pip reaches last — measured, `libcudnn.so.9`
+   at 124,920 bytes instead of 6,328,728. Declare ordered passes with
+   `# --- pass break ---`.
+21. **Sizing an ablation to the smoke.** Every kernel lever of the atlasfold kit
    is gated at `min_tokens = 512`; its 35-residue smoke exercises none. Seven
    ablated levers fold 35 residues and abort at 600; thirteen fold both. Size
    the ablation for the largest input the provider accepts — and check whether
@@ -141,8 +166,15 @@ environment row and "empty" means both "this kit keeps none" and "we failed to r
 `[kit.env]`, for a kit's own documented knobs — a size gate, a cap — which `levers_off` cannot
 express because they are not levers.
 
+**Residency's payoff tracks the ratio of fixed cost to work, not the kind of fixed cost.** genie3
+reaches 12x with no compile trace and no held-weights advantage over Boltz-2, purely because a
+20-step 50-residue pass is shorter than the set-up it is compared against — a prediction made from
+"what the kit does at import" alone was wrong by 6x. And residency **need not change the answer**:
+genie3's four identical requests produce byte-identical PDBs, the only provider where that has been
+shown rather than assumed, and only because the claim was written down falsifiably first.
+
 Residency's payoff ranges 2.0x to 12x and the ranking does not follow model size — it follows what
-the kit does at import and at first call. RFdiffusion3 wins biggest because its `fast` mode traces
+the kit does at import and at first call, and how small the request is. RFdiffusion3 wins biggest because its `fast` mode traces
 the denoiser through torch.compile and captures a CUDA graph, both per process; esmc wins on a
 different axis entirely, because 142 s of weight reading buys a 0.076 s forward pass.
 

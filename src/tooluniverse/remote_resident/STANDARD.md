@@ -481,8 +481,119 @@ in-process at all, which makes it `mode = "subprocess"`.
 | Compile the Triton question, do not read strings at it | measured: atlasfold passed both static reads and still aborted |
 | A reserve can ratchet | measured: atlasfold reports 38.63 GiB for a 3-second request after one 800 aa fold |
 | Utilisation alone is not evidence of progress | measured: a 40-minute stall read as 86-91% busy, which was another session |
+| The repeats test cannot see a second BUILD | measured: genie3 passes 4 identical and raises on the first rebuild |
+| A worker may have to reset UPSTREAM's module state | measured: one sampling config per process, OK/TypeError/TypeError |
+| An input ceiling must agree with the budget | measured: progen2's 16x1024 permits a 116.93 GiB request |
+| A CUDA failure can surface somewhere else | measured: protenix's LayerNorm, 24/24 shapes, next op raises |
+| A wheel can install and then SIGILL | measured: tokenizers 0.10.x aarch64, `Illegal instruction` |
+| pip ignores requirement order | measured: libcudnn 124,920 vs 6,328,728 bytes |
+| Residency can be shown not to change the output | measured: genie3 byte-identical over four requests |
+| Residency tracks fixed-cost-to-work, not its kind | measured: genie3 12x with no compile trace |
+| `cudaMemGetInfo` free is system-wide here | measured: every rung refused with a co-tenant up |
 
-## 12. What providers eleven through fourteen changed
+## 12. What providers fifteen through seventeen changed
+
+ProGen2, Protenix and Genie 3, plus the two still in flight. Seventeen verified.
+Five of this batch's findings change what the acceptance test is for.
+
+**The four-identical-request test has a blind spot, and it is the half everyone
+would skip.** It proves a held engine serves repeats. It cannot prove the worker
+can build a SECOND engine, because a held engine is built once. Genie 3 would
+have passed four identical requests and raised on the first request that changed
+its engine key — which the tool makes the second real user request — because
+upstream's sampling config is a module-level mutable `ConfigDict` holding
+`FieldReference` objects and `registry.get_config()` can only run once per
+process. Reproduced on the CPU with the identical document three times: OK,
+TypeError, TypeError.
+
+So the acceptance sequence is four identical requests **then at least one that
+changes the engine key**. The mixed-shape phase was already asked for; the reason
+is now sharper. **The rebuild is the danger, not the new shape.** A provider with
+no way to vary its input cannot be accepted on repeats alone, and the
+verification script says so and exits non-zero rather than printing 4/4.
+
+**A resident worker may have to reset UPSTREAM's module state, not just the
+kit's.** This is the sixth resident-worker hazard and the first that is neither a
+fork, a lever, nor a graph. Section 13 names the kit's own recovery for a failed
+capture; this is the same shape one layer down, with nobody naming it, in a
+library that is entitled to assume one model per process because the kits' own
+determinism contracts say one process per request. The cheap generalisable check
+before writing a worker: **call the upstream config or model builder twice in one
+process.** One minute, and invisible to the identical-request test.
+
+**A declared input ceiling can admit a request no budget covers.** ProGen2's tool
+allowed 16 sequences of up to 1024 tokens; each ceiling is sane and the product
+is not. Measured, fresh worker per point: 4096 tokens costs 5.81 GiB, 8192 costs
+29.2, and 16384 — which the two ceilings permit together — costs **116.93 GiB**,
+essentially the whole device, because peak is roughly quadratic in
+`num_samples x max_length` and nothing caps the K/V cache. The bound must be on
+the product, and it must exist in the tool as well as in the budget: a ceiling
+that admits an unschedulable request is not a bound. Check the ceilings against
+the budget, not only against each other.
+
+**A CUDA failure can be latent and surface somewhere else.** Protenix's stock
+fast-LayerNorm extension hard-codes the architectures it emits — 70, 80, 86, 89,
+90, 100 — as SASS with no PTX row. On a newer card the extension call returns,
+`torch.cuda.synchronize()` after it PASSES, and the *next unrelated* torch
+operation raises `no kernel image is available for execution on the device`, with
+an output in hand that was never written. The first probe printed "LAUNCH OK"
+twice because it did not touch the card again. A probe for this class has to do
+something afterwards.
+
+**A prebuilt wheel can be the right file, install cleanly, and kill the
+interpreter.** `tokenizers` 0.10.0/0.10.1/0.10.2 publish well-formed
+`manylinux2014_aarch64` artifacts that `pip install` accepts and that raise
+`Illegal instruction (core dumped)` at import on this core; 0.10.3, the pin,
+publishes no aarch64 wheel at all. In a worker that surfaces only as
+`smoke_protocolerror` with no traceback, because SIGILL is uncatchable. The
+standard already covers "no wheel for this architecture" and "the kernels cannot
+build"; this is a third: the wheel exists, installs, and does not run. The only
+way to find it is to import every compiled pin, which is what `[env] verify` is
+for.
+
+**pip does not honour requirement order.** A lock carrying two CUDA generations
+gets whichever of a colliding pair pip reaches last. Protenix's keeps both the
+12.9 and 13.0 runtimes and 27 paths collide under `nvidia/{cudnn,nccl,cusparselt}`;
+one pass leaves `libcudnn.so.9` at 124,920 bytes where two passes with CUDA 13
+last leave 6,328,728, and that single path is the one torch 2.13.0+cu130
+preloads. The result imports fine and is simply not the stack that was measured.
+A lock may now declare ordered passes with `# --- pass break ---`.
+
+**Residency's payoff tracks the ratio of fixed cost to work, not the kind of
+fixed cost.** Section 14 explains the 2.0x–12x range by what a kit does at import
+and at first call. Genie 3 reaches 12x with no compile trace and no held-weights
+advantage over Boltz-2, purely because a 20-step 50-residue pass is *shorter than
+the per-process set-up it is compared against*. Both terms matter, and the
+prediction made from the first one alone was wrong by 6x.
+
+**And residency need not change the answer, which has now been shown rather than
+assumed.** Genie 3's four identical requests produce byte-identical PDB files,
+sha256 over every file, on a kit whose own contract claims byte-identity only for
+one process per request. Its worker snapshots four RNG generator states when the
+engine is built and restores them before every later request. It is the only one
+of the seventeen where this has been measured, and it is measurable only because
+the claim was written down in a falsifiable form first.
+
+**Two measurement notes.** A kit's recorded probe constant is a portable
+cross-check for any provider that deviates from a pin: Genie 3's kit records
+2.02 GB at 670 padded tokens on an H100 and this substituted cu128/aarch64 stack
+measures 1.983 GB, 1.8% apart — the role the three container routes' identical
+3.21 GiB peak plays in section 5. And `cudaMemGetInfo`'s `free` is **system-wide**
+on unified memory, so a co-tenant's host allocations make a kit's own capacity
+guard refuse requests needing a hundredth of the card. That is the second place
+unified memory breaks a kit's arithmetic, after `nvidia-smi memory.total`
+returning `[N/A]`, and the first that reaches the resident path rather than only
+the kit's CLI.
+
+**One about this layer's own checks.** Three of them have now refused a provider
+that works: the Triton LLVM version check, `kit_foreign_objects`'s message, and
+`_arch_problem` judging a JAX provider by an incidental CPU-only torch. The
+pattern is worth naming, because it will recur: **a check that encodes what was
+true of the providers already shipped will refuse the next one shaped
+differently, and that costs more than a missing check, because a refusal is
+believed.** Each was fixed by measuring instead of asserting.
+
+## 13. What providers eleven through fourteen changed
 
 AF3-torch, Evo 2, ESMFold2-binder-design, AtlasFold and BoltzGen — brought up by
 one agent each, with the GPU serialized. Fourteen providers are verified now.
@@ -578,7 +689,7 @@ showed 86-91% — which belonged to an unrelated session. The usable signal is
 utilisation *plus* `/proc/<pid>/stat` CPU, on a quiet card. Peaks reproduce under
 contention; wall times do not.
 
-## 13. What providers seven through ten changed
+## 14. What providers seven through ten changed
 
 RoseTTAFold3, BoltzGen, ESM Cambrian and AF3-torch, brought up by one agent
 each in parallel, with the GPU serialized by the caller. The four together
@@ -683,7 +794,7 @@ that takes 15-19 s quiet. Peak reserved reproduced to the hundredth of a GiB
 across both; wall time did not. Report peaks from any run, and wall times only
 from an idle card.
 
-## 14. What providers four, five and six changed
+## 15. What providers four, five and six changed
 
 Three at once — RFdiffusion3, ESMFold2 and OpenFold3 — brought up in parallel
 by one agent each, with the GPU serialized by the caller. Two passed; the third
@@ -767,7 +878,7 @@ a shared scratchpad is shared: one agent's `weights.log` was overwritten
 mid-download by a sibling writing the same filename. Neither is deep; both cost
 an hour.
 
-## 15. What the third provider changed
+## 16. What the third provider changed
 
 Chai-1 is the first whose upstream loads its model inside the call that uses
 it. `chai_lab.load_exported` is not memoised and `run_folding_on_context` calls
@@ -801,7 +912,7 @@ policy in force (`alloc_effective=true` on the kit's own EXIT line) and costs
 only the bookkeeping, which the kit then records as a PARTIAL activation. That
 is the accurate word and the manifest says why.
 
-## 16. What the second provider changed
+## 17. What the second provider changed
 
 Enformer was brought onto the standard next, deliberately unlike the first, and
 four things that looked settled after one provider were not.
