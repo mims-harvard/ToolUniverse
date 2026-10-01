@@ -156,7 +156,10 @@ Prefer browser device authorization. For CI or migration, supply
 `tu remote login --manual-key`; never put a key in shell arguments.
 
 This implementation was added after the authenticated 2026-08-16 Platform
-matrix and was not part of it. It has not been exercised through the Platform
+matrix and was not part of it. That matrix imported each implementation it
+covered as unpublished owner drafts and invoked them through
+`/expert-sessions/{id}/test`; this provider was imported as no such draft and
+invoked through no such route. It has not been exercised through the Platform
 at all: the evidence above is local, on one card, through the loopback
 endpoint. Public publication, independent-caller authorization/isolation,
 saturation, and persistent supervision are untested.
@@ -166,7 +169,7 @@ saturation, and persistent supervision are untested.
 Operation: ef2inv_design
 
 ~~~json
-{"length":"60","n_designs":1,"seed":0}
+{"target_name": "pd-l1", "binder_len": 60, "n_designs": 1, "seed": 0}
 ~~~
 
 Invoke the example through the live local MCP endpoint:
@@ -178,7 +181,7 @@ import json
 from fastmcp import Client
 
 async def main():
-    arguments = json.loads(r'''{"length":"60","n_designs":1,"seed":0}''')
+    arguments = json.loads(r'''{"target_name": "pd-l1", "binder_len": 60, "n_designs": 1, "seed": 0}''')
     async with Client("http://127.0.0.1:8042/mcp") as client:
         result = await client.call_tool("ef2inv_design", arguments)
         print(result)

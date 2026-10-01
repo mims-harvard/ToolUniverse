@@ -125,6 +125,29 @@ The download had "succeeded". Nothing compared it to anything. Across the 30
 existing setup skills, 30/30 pin a SHA-256 for the relay SDK wheel and 0/30 pin
 anything about the model weights.
 
+**A digest authenticates bytes. It says nothing about entitlement, and the place
+that distinction bites is exactly where it is least welcome.** protenix_v2 is a
+complete, correct, installable kit whose one checkpoint has never been released:
+its only declared URL — the sole entry in upstream's own URL table — answers
+HTTP 403 while its v1 sibling in the same bucket answers 200, and upstream's
+issue tracker says in as many words that the checkpoint's accessibility is under
+internal review. There is no recipe to carry, so the refusal at the weights step
+cannot be made actionable, and §10's four pre-checks all PASS for this kit.
+
+What makes this a rule rather than an anecdote: a withheld checkpoint is
+precisely the case where an exact-digest third-party copy turns up, and the
+digest match is what makes taking it feel rigorous. Two public dataset repos
+held a `protenix-v2.pt` whose byte count and sha256 matched the kit's pins
+exactly — so the bytes were almost certainly upstream's, and that settles
+nothing. `[weights] fetch` must name a URL upstream or the kit names, and a
+digest is not a licence. Two further details of that episode belong in the
+record because this standard is worked by agents: the repos described themselves
+as caches for an unrelated tool, carried byte-identical manifests under two
+different accounts, and were surfaced by a search result that paraphrased the
+investigating session's own commands back at it. Content shaped to be found by
+an agent, holding a 1.9 GB tensor file, pointed at a weights root. Declining to
+download it was the correct call and is the one this standard asks for.
+
 ---
 
 ## 5. Environments are rebuilt from a lock, not resolved
@@ -239,6 +262,18 @@ consecutive requests in one held worker — the later requests, not the first:
 Boltz-2 measured 4.31, 5.15, 5.54 GiB over three. It is what a host adds up to
 decide how many providers may be resident at once.
 
+**It is not always the same kind of number, and the column does not say so.**
+On JAX the analogue is `jax.local_devices()[0].memory_stats()["peak_pool_bytes"]`
+(`peak_bytes_reserved` is a trap: it reads 0), and that figure is **quantised to
+powers of two** — af3_jax's ladder reports 2.0 / 4.0 / 4.0 / 8.0 GiB over a
+working set that moves 2.00 / 2.32 / 3.38 / 6.37. So a JAX provider's budget is
+a rounded-up ceiling sitting beside a torch provider's near-exact one; two
+providers both declaring 8.0 have not told a host the same thing. Read it as a
+ceiling, never read the gap between two rungs as headroom, and do not let a
+framework's own preallocation into the figure: `XLA_PYTHON_CLIENT_PREALLOCATE`
+left at its default reports 91.22 GiB where the model needs 2.0, which would
+make a small provider look unschedulable on any card.
+
 **When peak depends on the input, the budget states the envelope it was
 measured at.** The first three providers hid this, because a folding smoke is
 roughly a folding request. The fourth broke it: RFdiffusion3's smoke is a
@@ -336,6 +371,19 @@ run.sh: boltz2_opt is not installed on /path/python: /path/run.sh install
 Exit codes are stable and branchable: `0` ok · `1` failed · `2` usage · `3` not
 active or refused · `5` an expected accelerator absent.
 
+**Our own workers got this wrong for eighteen providers, in a way worth naming
+because the language invites it.** `raise SystemExit("message")` prints the
+message and exits **1**. It reads like a refusal and reports a crash, and
+fifty-four sites across all eighteen resident workers did it — every one of
+them with a correct, fix-bearing message. The code is the part a caller can
+branch on, so a right message behind a wrong code is not a cosmetic problem: it
+is the half of the contract that machines read. Every worker now carries a
+`_refuse(message)` that writes to stderr and returns `SystemExit(3)`, the
+supervisor says what a 3 means rather than printing a bare number, and three
+tests read the source so it cannot drift back one worker at a time. A standard
+that states a convention and ships code violating it everywhere is evidence
+that the convention needs a test, not a sentence.
+
 This is why there is no troubleshooting narrative in this standard, and why the
 per-provider skill is a **table from refusal name to action**, not prose. A
 narrative drifts to whatever its author remembered that day — which is how 30
@@ -429,6 +477,13 @@ the rule there is binary compatibility, not equality: an sm_120 cubin runs on
 sm_121, which is how every verified provider here drives a card none of their
 builds lists.
 
+**Are its weights actually served?** One HEAD request against the checkpoint URL
+in `stock/PINS.json`, before anything else. It costs about 40 ms and it is now
+the FIRST question, ahead of the three below, because protenix_v2 passes all
+three and cannot run: its checkpoint has never been released and answers 403.
+Everything downstream — lock audit, foreign-object scan, environment build — is
+wasted on a kit with no model, and §4 has what not to do about that.
+
 **Does it carry prebuilt host objects?** Eight do, and all thirty-nine such
 files are x86-64; none is aarch64. `setup` reads the ELF header before
 installing (`kit_foreign_objects`).
@@ -439,7 +494,22 @@ instead and its header says so, as Enformer's does.
 
 **How does it activate?** 30 of 36 through the mode variable and their own
 `.pth`; one (boltz2) through an explicit `worker_launch`; one (chrombpnet) not
-in-process at all, which makes it `mode = "subprocess"`.
+in-process at all, which makes it `mode = "subprocess"`. Reading the `.pth` is
+not optional even when it is the common shape, because two of the kits install
+one that does the opposite of patching: genie3's re-execs a CLI and kills any
+in-process importer, and af3_jax's exists only to refuse. For those, a shape
+that looks like the majority behaves like nothing in it.
+
+**And one question that cannot be answered this way.** The three above are all
+answerable by reading a wheel, an ELF header or a table. A kernel that compiles
+for this architecture and then asks for more shared memory per block than the
+part provides is not visible in any of them — the code is correct, the compiler
+targets the card, and the arch lists agree. §12 has the case and the method for
+finding it. Budget for it when a kit's own kernels (Triton, Pallas, CUTLASS)
+carry tile tables rather than compiling from shapes, and read the kit's flag
+list before writing anything: both times a kit's own kernels have failed on this
+card, the way out was a flag its CLI already offered -- atlasfold's
+`--kernel torch`, af3_jax's tokamax autotune fallback.
 
 ## 11. Evidence status
 
@@ -462,7 +532,6 @@ in-process at all, which makes it `mode = "subprocess"`.
 | `outputs` / `output_keys` required to claim `verified` | measured: openfold3 exited 0 and folded nothing |
 | A budget needs its envelope when peak tracks input size | measured: 2.12 GiB smoke vs 12.49 GiB request |
 | A resident worker must not fork loader children | measured: openfold3 crash; boltz named it first |
-| Residency gain ranges 2.0x–12x | measured, five providers |
 | Four identical requests, not two warm calls | measured: openfold3 passed the smoke and died on request two |
 | `[kit] env_row` must be declared | measured: 4 of 8 kits return an empty row, for two different reasons |
 | `levers_off` is not universal | measured: boltzgen's modes.py never reads it |
@@ -490,8 +559,184 @@ in-process at all, which makes it `mode = "subprocess"`.
 | Residency can be shown not to change the output | measured: genie3 byte-identical over four requests |
 | Residency tracks fixed-cost-to-work, not its kind | measured: genie3 12x with no compile trace |
 | `cudaMemGetInfo` free is system-wide here | measured: every rung refused with a co-tenant up |
+| A kernel can BUILD and not FIT | measured: 110592 bytes wanted, 101376 available, 9% over |
+| An invariant error across switch-flips names where it is NOT | measured: 3 flips, byte-identical 110592 |
+| A config switch can exist and be unreachable | measured: `use_glu_kernel` is a function default no call site passes |
+| The fix may be upstream's own flag | measured: `--tokamax_autotuning_cache_miss_fallback=autotune` |
+| An arch gate must ask every framework, not torch | measured: af3_jax refused while JAX drove the card |
+| A JAX budget is quantised; a torch one is not | measured: 2.0/4.0/4.0/8.0 reported over 2.00/2.32/3.38/6.37 actual |
+| A framework default can claim the whole card | measured: 91.22 GiB vs 2.0 on `XLA_PYTHON_CLIENT_PREALLOCATE` |
+| A digest authenticates bytes, not entitlement | measured: protenix_v2's checkpoint 403s; exact-digest mirrors exist |
+| HEAD the checkpoint URL before anything else | measured: 40 ms would have replaced a whole investigation |
+| Residency gain ranges 2.0x-26x | measured, seven providers; the 24-26x is an unpersistable autotune |
+| A residency multiple is largest at the smallest input | measured: af3_jax 26x at 35 aa, 3.5x at its budget row |
+| A launch must STRIP undeclared names, not merely not set them | measured: af3_jax's `.pth` exits 3 on an inherited variable |
 
-## 12. What providers fifteen through seventeen changed
+## 12. What the eighteenth provider changed: the first one that is not PyTorch
+
+AF3-JAX. Eighteen verified. Seventeen of the eighteen are PyTorch, and five of
+the seven findings below exist only because this one is not.
+
+**There is a fourth kind of stack-versus-card failure, and it is the one no
+inventory predicts: the kernel builds, and it does not fit.** The three already
+on this standard are all knowable before you run anything — no CUDA aarch64
+torch below 2.7 (read the wheel), the kit's levers have no tile table for this
+compute capability (read the table), a pinned dependency ships kernels the
+pinned compiler cannot build (read the compiler's target list). This one is
+none of them:
+
+    JaxRuntimeError: RESOURCE_EXHAUSTED: Shared memory size limit exceeded:
+      requested 110592, available: 101376, context: []
+
+108 KiB wanted against 99 KiB available, about 9% over. The code is correct,
+the compiler targets the card, the arch lists all agree. A tile tuned for a
+part with 227 KiB of shared memory per block simply lands the wrong side of a
+line on a part with 99. Nothing in a dependency list says so, and the only
+place to learn it is a run. The entry in §10's table for this class therefore
+cannot be a pre-check; it is "expect it, and know how to find it".
+
+**Finding it: an invariant error number across independent switch-flips is
+itself the diagnostic.** This arrives from XLA's own compiler, during
+`backend_compile_and_load`, as a failure of the whole module — so it is a
+COMPILE failure, the Python traceback cannot name the kernel, and `context: []`
+is empty. Three attempts to turn the suspect off each left the number
+**byte-identical** at 110592: the attention implementation switched to cudnn
+and to triton, `use_glu_kernel = False` set on all fifteen sites in the config
+tree, and the kit's own `--xla_gpu_enable_triton_gemm=false`. The temptation is
+to read three dead ends as three dead ends. The correct reading is that the
+culprit is insensitive to every knob tried, which is a strong statement about
+where it is not. The method that then named it, and which generalises to any
+XLA stack:
+
+  1. Dump the HLO. XLA's own emitted kernels are exonerated by their PTX
+     shared-memory annotations — of 477 PTX modules here the largest asked
+     8,320 bytes, three orders off the number in the error.
+  2. That leaves the custom calls. The 175 `__gpu$xla.gpu.triton` calls are the
+     Pallas kernels, and each carries `metadata={op_name="..."}` naming its op
+     and its scope.
+  3. Partition them by dtype and scope. Every FlashAttention call was bf16
+     inside a named pairformer scope; every f32 call was a
+     `PallasTritonGatedLinearUnit` under `vmap(diffusion_head)`. One printed
+     its config: `block_m=128, block_n=32, block_k=32, num_warps=4,
+     num_stages=4` over `f32[1536,128]` and `f32[128,2,256]`.
+     `(128*32 + 32*2*32) x 4 bytes x 4 stages = 98,304` before the epilogue —
+     the right size class, in the right dtype, at four stages.
+
+**A config field can exist, be documented, have an exact fallback, and be
+unreachable.** `use_glu_kernel` is a real upstream field on
+`TransitionBlock.Config` and `TriangleMultiplication.Config` with an equivalent
+XLA else-branch. But `diffusion_transformer.transition_block` takes it as a
+**function default** (`use_glu_kernel: bool = True`) and none of its three call
+sites passes it. So the only GLUs that could not be turned off were exactly the
+f32 ones that were too big. When a config switch provably does nothing, check
+that the call site reads it before concluding the switch is not the issue.
+
+**The fix for a card the upstream has never seen may be upstream's own flag.**
+tokamax registers absl flags at import, so `run_alphafold.py --helpfull` lists:
+
+    --tokamax_autotuning_cache_miss_fallback=<heuristics|autotune|error>
+
+Default `heuristics` — synthesise a config, which here means synthesise one
+sized for a bigger card. `autotune` measures tokamax's own default config set
+on the device present and keeps the fastest one that compiles and runs. It is
+public, documented, flag-backed, and its entire purpose is an unseen device. It
+is not a tile override, not a reach into internals, and not a patch, so it
+stays inside §7. Before writing a patch for a stack-versus-card failure, read
+the flag list: a project that ships kernels has usually thought about the case
+where its tile table has no row for you.
+
+**The arch check asks the card, not torch.** `setup.step_environment` refused
+this provider `torch_arch_unsupported` — "torch reports no usable GPU: no
+device" — and was wrong. The torch in this environment is 2.7.1+**cpu** by
+design: it is present for the weights converter and because `check_pins.py`
+lists it, while JAX drives the card. The probe now also reports
+`jax.default_backend()` and `jax.local_devices(backend="gpu")`, and
+`_arch_problem` returns None when another framework holds the device. The
+manifest was not weakened to buy a green step — `[gpu] policy` stayed
+`required`, because the GPU is required. The general rule: a gate that names
+one framework is a gate that will refuse a correct provider as soon as a second
+framework appears, and the refusal will be confident and specific and wrong.
+
+**A JAX provider's VRAM number is not the same kind of number as a torch
+provider's, and a scheduler cannot tell.** Two measurements, both load-bearing:
+
+  * `peak_pool_bytes` is the analogue of torch's `max_memory_reserved`, and
+    `peak_bytes_reserved` is a trap that reads 0. But `peak_pool_bytes` is
+    **quantised to powers of two**: the ladder read 2.0 / 4.0 / 4.0 / 8.0 GiB
+    while the working set moved 2.00 / 2.32 / 3.38 / 6.37. So `vram_budget_gb`
+    for a JAX provider is a rounded-up allocator high-water mark sitting in the
+    same column as a torch provider's near-exact one. Schedule on it as a
+    ceiling; do not read the gap between two rungs as headroom, and do not
+    compare 8.0 here with 8.0 elsewhere as though they measured the same thing.
+  * `XLA_PYTHON_CLIENT_PREALLOCATE=false` is worth **45x on the reported
+    figure**: 91.22 GiB without it against 2.0 with it. That is JAX claiming
+    the card up front, not the model needing it. A framework default can make a
+    5 GiB model unschedulable, and the default is the one that does it.
+
+**Residency's largest gain on this standard is 24-26x, and the reason is a cost
+upstream intends to persist and does not.** Four identical requests, measured
+twice: 170.5 / 8.3 / 7.0 / 7.0 s on an idle card, and 179.1 / 6.8 / 6.8 / 6.8 s
+on a card with three other provider builds competing for it — 26.3x rather than
+24x. The ratio went UP under contention, and the reason is worth keeping in mind
+when reading any such figure: contention slows work and a replay is almost no
+work, so the cold request absorbs nearly all of it. A residency multiple measured
+on a busy card flatters itself. (The ladder's wall times, by contrast,
+reproduced rung for rung within a few percent and in both directions — 234.8
+against 228.5 at 100 residues, 468.7 against 503.0 at 400 — so "contended" was
+not a blanket excuse for every number that moved.) Three things are held — the 1.37 GB zstd
+weight read, the XLA executables, and tokamax's per-shape autotune, which this
+provider must turn on to run at all. The third is the bulk of it, and it is
+unpersisted *by accident*: `ModelRunner._load_autotune_cache` reads
+`<cache_dir>/tokamax_autotune.json` at construction, and the call that would
+write it (`tokamax.autotune(...)` at the top of `run_inference`) is wrapped in
+`except Exception: pass` and does not succeed here, so no file is ever
+produced. This is the residency argument in its purest form: the only copy of a
+very expensive artifact lives in a process's memory, and the alternative design
+would recompute it per request because the cache it looks for will never be
+there. It also sets `idle_timeout_s` — 900 s, not something shorter, because a
+restart pays the full first-request price again, per bucket.
+
+**The cost is per bucket, which makes the repeats test cheap here and the shape
+change the whole test.** This fork pads every input to a bucket (every multiple
+of 64 up to 5120) and every featurised batch's shape is a pure function of the
+bucket, not of the token count, MSA depth, chain count or template count. So
+the cost is per bucket, not per request: an ascending ladder of 100 / 200 / 400
+residues paid 234.8 / 269.9 / 468.7 s, one compile-plus-autotune each, and a
+mixed sequence of 100, 100, 200, 100 afterwards paid 14.4 / 13.2 / 31.1 / 13.3
+because every one of those buckets was already held. Four identical requests
+exercise ONE bucket and ONE compile, which is why they are the cheap half here.
+§13's blind-spot finding, which came from genie3, lands here as a measurement
+rather than a hazard — and note what the mixed sequence actually proves that
+repeats cannot: the engine switched 100 → 200 → 100 and the third request was
+not slower than the first, so the worker holds both and chooses, rather than
+rebuilding whichever it last used.
+
+**And the headline multiple is measured at the smallest input, which is where it
+is largest. State both ends.** The 24-26x is 35 residues. At the row the budget
+is declared on — 800 residues, the 832-token bucket — the same worker gives
+**3.5x**: 755.0 s for the cold bucket against 217.8 / 216.3 / 217.9 / 223.5 s for
+four held ones. Nothing regressed; the fixed cost is the same and the work it is
+divided by grew, so residency returns a smaller multiple exactly where a request
+is expensive. A provider quoting only its best rung tells a host the opposite of
+what it needs to plan with, because the expensive requests are the ones being
+scheduled around. Quote the gain at the budget row, and the best case as the best
+case.
+
+**A fifth activation shape: a `.pth` whose only job is to refuse.** The
+taxonomy was autoload-that-patches (30 of 36 kits), `worker_launch`, a
+replacement entry script, and autoload-plus-a-patched-tree. af3_jax installs
+the same shaped `.pth` and uses it to kill importers: it arms a meta-path
+finder on `alphafold3` when `AF3_JAX_OPT` names a mode other than `off`, **or
+when any `AF3_JAX_*` name outside its declared tuple is set** — and the second
+trigger fires with the mode unset. A resident worker must import `alphafold3`,
+so the consequence for `[runtime] launch` is sharper than "do not set the mode":
+it must **strip** undeclared `AF3_JAX_*` names from the child's environment,
+because a variable inherited from the operator's shell is enough to make the
+worker exit 3 on import. Not setting a variable and removing it are different
+operations, and only one of them is safe against an environment you did not
+build.
+
+## 13. What providers fifteen through seventeen changed
 
 ProGen2, Protenix and Genie 3, plus the two still in flight. Seventeen verified.
 Five of this batch's findings change what the acceptance test is for.
@@ -514,7 +759,7 @@ verification script says so and exits non-zero rather than printing 4/4.
 
 **A resident worker may have to reset UPSTREAM's module state, not just the
 kit's.** This is the sixth resident-worker hazard and the first that is neither a
-fork, a lever, nor a graph. Section 13 names the kit's own recovery for a failed
+fork, a lever, nor a graph. Section 14 names the kit's own recovery for a failed
 capture; this is the same shape one layer down, with nobody naming it, in a
 library that is entitled to assume one model per process because the kits' own
 determinism contracts say one process per request. The cheap generalisable check
@@ -560,7 +805,7 @@ preloads. The result imports fine and is simply not the stack that was measured.
 A lock may now declare ordered passes with `# --- pass break ---`.
 
 **Residency's payoff tracks the ratio of fixed cost to work, not the kind of
-fixed cost.** Section 14 explains the 2.0x–12x range by what a kit does at import
+fixed cost.** Section 15 explains the 2.0x–12x range by what a kit does at import
 and at first call. Genie 3 reaches 12x with no compile trace and no held-weights
 advantage over Boltz-2, purely because a 20-step 50-residue pass is *shorter than
 the per-process set-up it is compared against*. Both terms matter, and the
@@ -593,7 +838,7 @@ true of the providers already shipped will refuse the next one shaped
 differently, and that costs more than a missing check, because a refusal is
 believed.** Each was fixed by measuring instead of asserting.
 
-## 13. What providers eleven through fourteen changed
+## 14. What providers eleven through fourteen changed
 
 AF3-torch, Evo 2, ESMFold2-binder-design, AtlasFold and BoltzGen — brought up by
 one agent each, with the GPU serialized. Fourteen providers are verified now.
@@ -689,7 +934,7 @@ showed 86-91% — which belonged to an unrelated session. The usable signal is
 utilisation *plus* `/proc/<pid>/stat` CPU, on a quiet card. Peaks reproduce under
 contention; wall times do not.
 
-## 14. What providers seven through ten changed
+## 15. What providers seven through ten changed
 
 RoseTTAFold3, BoltzGen, ESM Cambrian and AF3-torch, brought up by one agent
 each in parallel, with the GPU serialized by the caller. The four together
@@ -794,7 +1039,7 @@ that takes 15-19 s quiet. Peak reserved reproduced to the hundredth of a GiB
 across both; wall time did not. Report peaks from any run, and wall times only
 from an idle card.
 
-## 15. What providers four, five and six changed
+## 16. What providers four, five and six changed
 
 Three at once — RFdiffusion3, ESMFold2 and OpenFold3 — brought up in parallel
 by one agent each, with the GPU serialized by the caller. Two passed; the third
@@ -878,7 +1123,7 @@ a shared scratchpad is shared: one agent's `weights.log` was overwritten
 mid-download by a sibling writing the same filename. Neither is deep; both cost
 an hour.
 
-## 16. What the third provider changed
+## 17. What the third provider changed
 
 Chai-1 is the first whose upstream loads its model inside the call that uses
 it. `chai_lab.load_exported` is not memoised and `run_folding_on_context` calls
@@ -912,7 +1157,7 @@ policy in force (`alloc_effective=true` on the kit's own EXIT line) and costs
 only the bookkeeping, which the kit then records as a PARTIAL activation. That
 is the accurate word and the manifest says why.
 
-## 17. What the second provider changed
+## 18. What the second provider changed
 
 Enformer was brought onto the standard next, deliberately unlike the first, and
 four things that looked settled after one provider were not.

@@ -8,12 +8,35 @@ from tooluniverse.cli import _remote_tool_install_hint
 
 
 class RemoteSetupPreflightTests(unittest.TestCase):
-    def test_catalog_covers_30_implementations_and_41_operations(self):
-        self.assertEqual(len(preflight.DEPLOYMENTS), 30)
+    def test_catalog_matches_the_runtime_deployment_table(self):
+        """The preflight catalog and the runtime table are the same inventory.
+
+        This used to assert the literals 30 and 41. It went red the moment the
+        thirty-first provider landed and stayed red through fifteen more, which
+        is what a written-down count always does: it stops testing the thing and
+        starts testing the number. `test_remote_runtime` asserts the table's own
+        size; this asserts that the two agree, slug for slug and port for port,
+        which is the property that actually matters -- a provider present in one
+        and absent from the other is a provider an operator cannot preflight.
+        """
+        from tooluniverse.remote_runtime import REMOTE_DEPLOYMENTS
+
+        catalog = {item.slug: item for item in preflight.DEPLOYMENTS}
+        runtime = {item.slug: item for item in REMOTE_DEPLOYMENTS}
+        self.assertEqual(sorted(catalog), sorted(runtime))
         self.assertEqual(
-            sum(len(item.operations) for item in preflight.DEPLOYMENTS), 41
+            {slug: item.port for slug, item in catalog.items()},
+            {slug: item.port for slug, item in runtime.items()},
         )
-        self.assertEqual(len({item.port for item in preflight.DEPLOYMENTS}), 30)
+        self.assertEqual(
+            {slug: tuple(item.operations) for slug, item in catalog.items()},
+            {slug: tuple(item.operations) for slug, item in runtime.items()},
+        )
+        # Ports are the scheduling identity of a provider; two sharing one would
+        # make the second unreachable.
+        self.assertEqual(
+            len({item.port for item in preflight.DEPLOYMENTS}), len(catalog)
+        )
 
     def test_every_setup_skill_matches_the_shared_contract(self):
         failures = {
@@ -53,7 +76,9 @@ class RemoteSetupPreflightTests(unittest.TestCase):
         self.assertIn("not published on PyPI", hint)
         self.assertIn("public wheel", hint)
         self.assertIn("connect.aiscientist.tools/downloads", hint)
-        self.assertIn("3fad5eee5ecf7887a693d93ccd1aa112dc0955617a885d1fc3daded0030f9ae0", hint)
+        self.assertIn(
+            "3fad5eee5ecf7887a693d93ccd1aa112dc0955617a885d1fc3daded0030f9ae0", hint
+        )
         self.assertNotIn("github.com", hint)
 
 

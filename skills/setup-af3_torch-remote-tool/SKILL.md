@@ -157,7 +157,10 @@ Prefer browser device authorization. For CI or migration, supply
 `tu remote login --manual-key`; never put a key in shell arguments.
 
 This implementation was added after the authenticated 2026-08-16 Platform
-matrix and was not part of it. It has not been exercised through the Platform
+matrix and was not part of it. That matrix imported each implementation it
+covered as unpublished owner drafts and invoked them through
+`/expert-sessions/{id}/test`; this provider was imported as no such draft and
+invoked through no such route. It has not been exercised through the Platform
 at all: the evidence above is local, on one card, through the loopback
 endpoint. Public publication, independent-caller authorization/isolation,
 saturation, and persistent supervision are untested.
@@ -167,7 +170,7 @@ saturation, and persistent supervision are untested.
 Operation: af3_torch_predict
 
 ~~~json
-{"chains":[{"molecule_type":"protein","sequence":"LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF"}]}
+{"fold_input": "{\"name\": \"smoke\", \"dialect\": \"alphafold3\", \"version\": 2, \"sequences\": [{\"protein\": {\"id\": \"A\", \"sequence\": \"LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF\", \"modifications\": [], \"templates\": [], \"unpairedMsa\": \">query\\nLSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF\\n\", \"pairedMsa\": \"\"}}], \"modelSeeds\": [1]}", "name": "smoke"}
 ~~~
 
 Invoke the example through the live local MCP endpoint:
@@ -179,7 +182,7 @@ import json
 from fastmcp import Client
 
 async def main():
-    arguments = json.loads(r'''{"chains":[{"molecule_type":"protein","sequence":"LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF"}]}''')
+    arguments = json.loads(r'''{"fold_input": "{\"name\": \"smoke\", \"dialect\": \"alphafold3\", \"version\": 2, \"sequences\": [{\"protein\": {\"id\": \"A\", \"sequence\": \"LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF\", \"modifications\": [], \"templates\": [], \"unpairedMsa\": \">query\\nLSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF\\n\", \"pairedMsa\": \"\"}}], \"modelSeeds\": [1]}", "name": "smoke"}''')
     async with Client("http://127.0.0.1:8036/mcp") as client:
         result = await client.call_tool("af3_torch_predict", arguments)
         print(result)
