@@ -19,6 +19,7 @@ Subcommands:
 import argparse
 import contextlib
 import difflib
+import inspect
 import json
 import os
 import sys
@@ -2712,13 +2713,24 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
         from tuplatform_connect.relay import RelayAgent, RelayError
 
         print("Sharing privately; press Ctrl-C to stop the relay.")
+        relay_kwargs = {"workers": args.workers or 2}
+        if "control_handler" in inspect.signature(RelayAgent.__init__).parameters:
+            # The platform can then ask this host what it has loaded, and warm a model
+            # before the call that needs it. An older tuplatform-connect simply never
+            # advertises control support, and the pool still works on demand.
+            relay_kwargs["control_handler"] = pool.control
+        else:
+            print(
+                "  Note: this tuplatform-connect predates provider control; "
+                "on-demand start still works, but the platform cannot prewarm."
+            )
         try:
             RelayAgent(
                 args.service,
                 key,
                 endpoint,
                 args.name or "tu-remote-pool",
-                workers=args.workers or 2,
+                **relay_kwargs,
             ).run_forever()
         except RelayError as exc:
             raise RuntimeError(str(exc)) from exc

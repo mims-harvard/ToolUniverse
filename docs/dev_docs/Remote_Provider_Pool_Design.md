@@ -126,17 +126,11 @@ pool, not on eviction and not on shutdown.
 These are the remaining parts of "just run one command and let `tu` launch whatever is
 needed", and each needs something the pool cannot reach from behind the relay.
 
-**Prewarm before a call arrives.** The pool only learns a model is wanted when a call
-for it lands, so the first caller pays the model load. Fixing this needs a control
-plane in the tunnel. The binary framing already has the extension point — `kind` is a
-byte, currently `1 = request`, `2 = response` — so `3 = control` is additive and
-backward compatible. The platform would then be able to send `start`/`stop`/`status`
-and act on the reply, which also lets it replace today's blunt 503 with a bounded wait,
-reusing the pattern the hosted MCP gateway already has for its own 30–90s cold starts.
-
-**Queue a call across the relay while a model loads.** Requires the same control plane
-plus a platform-side admitted-wait state; today the 503 + `Retry-After` pushes the
-retry decision to the caller.
+**Queue a call across the relay while a model loads.** The control plane (below) can now
+warm a provider ahead of time, but a call that still arrives mid-load gets 503 +
+`Retry-After` rather than being held. Holding it needs a platform-side admitted-wait
+state, reusing the pattern the hosted MCP gateway already has for its own 30–90s cold
+starts.
 
 **VRAM-aware admission.** `--max-active` counts providers, not memory. Two small models
 may fit where one large one does not, and the pool has no model-size metadata to reason
@@ -150,6 +144,42 @@ scheduling concern, not an agent-side one.
 **Starting a provider the operator did not allow.** `--allow` is the security boundary
 and is deliberately explicit: the pool starts local processes, so the set of startable
 providers must come from the host's owner, never from a caller's request.
+
+## The control plane
+
+Implemented as `kind = 3` on the existing binary framing (`1 = request`, `2 = response`),
+so it reuses the correlation map, timeouts and cancellation that already exist and adds
+no second transport.
+
+| op | who | effect |
+|---|---|---|
+| `status` | owner or member | what the host shares, what is loaded, `max_active`, `idle_ttl` |
+| `prewarm` | owner or member | start a provider before the call that needs it |
+| `stop` | **owner only** | unload a provider; refuses while a call is in flight |
+
+`prewarm` returns as soon as it has started loading, because a model takes minutes and a
+control call is bounded in seconds; readiness is read back through `status`. A prewarmed
+provider deliberately holds no in-flight slot, or it could never be evicted or reaped.
+
+Three rules carry the safety of this path:
+
+- **Capability is negotiated, never assumed.** An agent advertises `control_protocol` in
+  its handshake. Agents predating this raise on an unrecognised frame kind and drop the
+  tunnel, taking every in-flight call with them, so the platform refuses to send a control
+  frame to a connection that did not advertise support.
+- **The transmittable op set is closed.** The tunnel validates against `controlOps` rather
+  than relaying an arbitrary string, because each op runs as a local process action on
+  someone else's machine.
+- **The agent's `--allow` list is the real boundary.** The provider name is relayed from a
+  caller, so the pool refuses any slug the host's operator did not share.
+
+A control failure is answered, never raised: an exception on the agent side would close
+the WebSocket and kill every in-flight tool call because one control message was
+malformed.
+
+Control dispatch is local-connection only. The Redis coordinator forwards request frames
+between replicas and has no control representation, so a control call for an agent on
+another replica reports no agent rather than silently doing nothing.
 
 ## Verified
 

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import threading
+import time
 import urllib.error
 import urllib.request
 from pathlib import Path
@@ -552,3 +553,129 @@ def test_malformed_json_is_a_parse_error(served):
         urllib.request.urlopen(request, timeout=10)
     assert caught.value.status == 400
     assert json.loads(caught.value.read())["error"]["code"] == -32700
+
+
+# ── control plane ───────────────────────────────────────────────────────────────
+
+
+def wait_until(predicate, timeout=5.0):
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        if predicate():
+            return True
+        time.sleep(0.02)
+    return False
+
+
+def test_status_reports_what_the_host_shares_and_what_is_loaded(tmp_path):
+    pool = make_pool(tmp_path, ["boltz", "esm"], max_active=2, idle_ttl=600)
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    result = pool.control("status", {})
+
+    assert result["allowed"] == ["boltz", "esm"]
+    assert result["max_active"] == 2
+    assert result["idle_ttl"] == 600
+    assert [row["provider"] for row in result["providers"]] == ["boltz"]
+
+
+def test_prewarm_is_refused_for_a_provider_this_host_does_not_share(tmp_path):
+    """The allowlist is the control plane's security boundary.
+
+    The platform relays a provider name a caller chose. Without this check, a member of a
+    shared host could start any reviewed provider on someone else's machine.
+    """
+    pool = make_pool(tmp_path, ["boltz"])
+
+    result = pool.control("prewarm", {"provider": "esm"})
+
+    assert "not shared by this host" in result["error"]
+    assert pool.lifecycle.started == []
+
+
+def test_prewarm_loads_the_model_before_any_call_arrives(tmp_path):
+    pool = make_pool(tmp_path, ["boltz"])
+
+    acknowledged = pool.control("prewarm", {"provider": "boltz"})
+
+    assert acknowledged == {"provider": "boltz", "state": "starting"}
+    assert wait_until(lambda: pool.lifecycle.started == ["boltz"])
+    assert wait_until(lambda: [r["provider"] for r in pool.status()] == ["boltz"])
+
+
+def test_a_prewarmed_provider_holds_no_slot_so_it_can_still_be_reaped(tmp_path):
+    """A prewarm that looked like an in-flight call would pin the GPU forever."""
+    clock = FakeClock()
+    pool = make_pool(tmp_path, ["boltz"], idle_ttl=100, clock=clock)
+    pool.control("prewarm", {"provider": "boltz"})
+    assert wait_until(lambda: len(pool.status()) == 1)
+
+    assert pool.status()[0]["in_flight"] == 0
+    clock.advance(100)
+    assert pool.reap_idle() == ("boltz",)
+
+
+def test_prewarming_something_already_loaded_does_not_restart_it(tmp_path):
+    pool = make_pool(tmp_path, ["boltz"])
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    result = pool.control("prewarm", {"provider": "boltz"})
+
+    assert result == {"provider": "boltz", "state": "ready"}
+    assert pool.lifecycle.started == ["boltz"]
+
+
+def test_stop_unloads_an_idle_provider(tmp_path):
+    pool = make_pool(tmp_path, ["boltz"])
+    deployment = pool.provider_for_tool("boltz2_docking")
+    pool.acquire(deployment)
+    pool.release(deployment)
+
+    result = pool.control("stop", {"provider": "boltz"})
+
+    assert result == {"provider": "boltz", "state": "stopped"}
+    assert pool.status() == []
+
+
+def test_stop_refuses_to_interrupt_a_running_call(tmp_path):
+    pool = make_pool(tmp_path, ["boltz"])
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))  # held
+
+    result = pool.control("stop", {"provider": "boltz"})
+
+    assert result["state"] == "busy"
+    assert result["in_flight"] == 1
+    assert [row["provider"] for row in pool.status()] == ["boltz"]
+
+
+def test_stopping_something_not_loaded_is_reported_not_an_error(tmp_path):
+    pool = make_pool(tmp_path, ["boltz"])
+
+    assert pool.control("stop", {"provider": "boltz"}) == {
+        "provider": "boltz",
+        "state": "absent",
+    }
+
+
+@pytest.mark.parametrize(
+    "op, args",
+    [
+        ("prewarm", {}),
+        ("stop", {"provider": ""}),
+        ("prewarm", {"provider": 7}),
+        ("exec", {"provider": "boltz"}),
+        ("status/../etc", {}),
+    ],
+)
+def test_a_malformed_control_operation_is_answered_not_raised(tmp_path, op, args):
+    """Raising would propagate out of the agent and close the tunnel.
+
+    Every in-flight tool call for this host would die because one control message was
+    malformed, so the pool reports the problem in its result instead.
+    """
+    pool = make_pool(tmp_path, ["boltz"])
+
+    result = pool.control(op, args)
+
+    assert "error" in result
+    assert pool.lifecycle.started == []

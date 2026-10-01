@@ -423,6 +423,92 @@ class ProviderPool:
             starting = sorted(self._starting)
         return rows + [{"provider": slug, "starting": True} for slug in starting]
 
+    # ── control plane ────────────────────────────────────────────────────────────
+
+    def deployment_for_slug(self, slug: str) -> RemoteDeployment:
+        """Resolve an allowed provider by name.
+
+        The allowlist is the security boundary for the control plane: the platform relays
+        a provider name chosen by a caller, and acting on it would otherwise let a member
+        of a shared host start any reviewed provider on someone else's machine.
+        """
+
+        if slug not in self.allow:
+            raise PoolError(f"provider '{slug}' is not shared by this host")
+        return REMOTE_BY_SLUG[slug]
+
+    def prewarm(self, slug: str) -> dict[str, Any]:
+        """Start a provider ahead of the call that needs it, without waiting for it.
+
+        Loading a model takes minutes and a control call is bounded in seconds, so this
+        reports what it set in motion and leaves readiness to ``status``. A prewarm that
+        is already resident is a no-op rather than a restart.
+        """
+
+        deployment = self.deployment_for_slug(slug)
+        with self._lock:
+            if deployment.slug in self._active:
+                return {"provider": slug, "state": "ready"}
+            if deployment.slug in self._starting:
+                return {"provider": slug, "state": "starting"}
+
+        def load() -> None:
+            try:
+                self.acquire(deployment)
+            except (PoolError, OSError, RuntimeError, ValueError):
+                # acquire already unwound its own state; the next status call reports the
+                # provider as absent, which is the honest answer.
+                return
+            # Hold no slot: prewarming must not look like an in-flight call, or the
+            # provider could never be evicted or reaped.
+            self.release(deployment)
+
+        threading.Thread(target=load, name=f"tu-prewarm-{slug}", daemon=True).start()
+        return {"provider": slug, "state": "starting"}
+
+    def unload(self, slug: str) -> dict[str, Any]:
+        """Stop one provider if nothing is using it."""
+
+        deployment = self.deployment_for_slug(slug)
+        with self._lock:
+            active = self._active.get(deployment.slug)
+            if active is None:
+                return {"provider": slug, "state": "absent"}
+            if active.in_flight > 0:
+                return {
+                    "provider": slug,
+                    "state": "busy",
+                    "in_flight": active.in_flight,
+                }
+            self._stop_locked(deployment.slug)
+        return {"provider": slug, "state": "stopped"}
+
+    def control(self, op: str, args: Mapping[str, Any]) -> dict[str, Any]:
+        """Answer one control operation from the platform.
+
+        Pass this to ``RelayAgent(control_handler=...)``. Raising here would close the
+        tunnel, so an operation the host declines is reported in the result instead.
+        """
+
+        if op == "status":
+            return {
+                "providers": self.status(),
+                "allowed": list(self.allow),
+                "max_active": self.max_active,
+                "idle_ttl": self.idle_ttl,
+            }
+        slug = args.get("provider")
+        if not isinstance(slug, str) or not slug:
+            return {"error": "provider is required"}
+        try:
+            if op == "prewarm":
+                return self.prewarm(slug)
+            if op == "stop":
+                return self.unload(slug)
+        except PoolError as exc:
+            return {"provider": slug, "error": str(exc)}
+        return {"error": f"unsupported control operation '{op}'"}
+
 
 def discover_tool_schemas(
     endpoint: str, timeout: float = 120.0
