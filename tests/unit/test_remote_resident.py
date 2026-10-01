@@ -14,6 +14,8 @@ import textwrap
 import threading
 import time
 
+from pathlib import Path
+
 import pytest
 
 from tooluniverse.remote_resident import protocol as P
@@ -1252,3 +1254,121 @@ class TestTritonCompileProbe:
 
     def test_a_stack_without_triton_is_skipped_rather_than_failed(self):
         assert "'skipped': 'no triton'" in S._TRITON_COMPILE_PROBE
+
+
+class TestOrderedInstallPasses:
+    """A lock may declare ordered pip passes, because pip ignores file order.
+
+    protenix_v1's lock carries both the CUDA 12.9 and 13.0 runtimes and 27
+    paths under nvidia/{cudnn,nccl,cusparselt} collide between them. One pip
+    pass installs whichever of a colliding pair it reaches last, so the result
+    imports fine and is simply not the stack that was measured -- the kind of
+    wrong a smoke cannot see. The kit's own Dockerfile needs two passes.
+    """
+
+    @staticmethod
+    def _batches(text, slug="x"):
+        """What step_environment would install, in order, without running pip."""
+        groups = [[]]
+        for ln in text.splitlines():
+            if ln.strip().startswith("#"):
+                if "pass break" in ln:
+                    groups.append([])
+                continue
+            if ln.strip():
+                groups[-1].append(ln)
+        pins = [ln for g in groups for ln in g]
+        boot = [ln for ln in pins if ln.split("==")[0] in ("pip", "wheel")]
+        passes = [g for g in ([x for x in g if x not in boot] for g in groups) if g]
+        return boot, passes
+
+    def test_a_lock_without_markers_is_one_pass(self):
+        boot, passes = self._batches("pip==1.0\na==1\nb==2\n")
+        assert boot == ["pip==1.0"]
+        assert passes == [["a==1", "b==2"]]
+
+    def test_a_marker_splits_the_install_in_file_order(self):
+        boot, passes = self._batches(
+            "pip==1.0\nnvidia-cudnn-cu12==9.10\n"
+            "# --- pass break ---\n"
+            "nvidia-cudnn-cu13==9.20\ntorch==2.13.0\n"
+        )
+        assert boot == ["pip==1.0"]
+        # Order is the lock's: the CUDA 13 pass must come second so its files win.
+        assert passes == [
+            ["nvidia-cudnn-cu12==9.10"],
+            ["nvidia-cudnn-cu13==9.20", "torch==2.13.0"],
+        ]
+
+    def test_ordinary_comments_are_not_markers(self):
+        _, passes = self._batches("a==1\n# just a comment\nb==2\n")
+        assert passes == [["a==1", "b==2"]]
+
+    def test_every_shipped_lock_still_parses_to_at_least_one_pass(self):
+        import glob
+
+        for f in sorted(glob.glob("src/tooluniverse/remote/*/environment/*.lock")):
+            _, passes = self._batches(Path(f).read_text())
+            assert passes, f"{f} parsed to no installable pass"
+
+
+class TestArchCheckAcrossFrameworks:
+    """A provider's accelerator is not always torch's.
+
+    af3_jax pins a CPU-only torch because its weights converter is a torch
+    script, and `_arch_problem` refused it with `torch reports no usable GPU`
+    while jax reported a CudaDevice and drove the card. That was the third false
+    refusal this layer has produced from one framework's assumptions.
+    """
+
+    def test_a_working_torch_is_still_judged_by_torch(self):
+        assert (
+            S._arch_problem(
+                {
+                    "torch": "2.13.0+cu130",
+                    "arch_list": ["sm_90", "sm_120"],
+                    "device_sm": "sm_121",
+                },
+                True,
+            )
+            is None
+        )
+
+    def test_a_torch_that_cannot_reach_the_card_is_still_refused(self):
+        problem = S._arch_problem(
+            {"torch": "2.6.0", "arch_list": ["sm_80", "sm_90"], "device_sm": "sm_121"},
+            True,
+        )
+        assert problem and "sm_121" in problem
+
+    def test_a_cpu_only_torch_beside_a_gpu_jax_is_not_refused(self):
+        """The af3_jax case: torch is incidental, jax holds the card."""
+        assert (
+            S._arch_problem(
+                {
+                    "torch": "2.7.1+cpu",
+                    "arch_list": [],
+                    "jax": "0.10.2",
+                    "jax_backend": "gpu",
+                    "jax_device": "cuda:0",
+                },
+                True,
+            )
+            is None
+        )
+
+    def test_a_cpu_only_torch_with_no_other_framework_is_still_refused(self):
+        problem = S._arch_problem({"torch": "2.7.1+cpu", "arch_list": []}, True)
+        assert problem and "no usable GPU" in problem
+
+    def test_a_cpu_jax_does_not_rescue_a_cpu_torch(self):
+        """A jax that fell back to the CPU backend is not an accelerator."""
+        problem = S._arch_problem(
+            {"torch": "2.7.1+cpu", "arch_list": [], "jax_backend": "cpu"}, True
+        )
+        assert problem and "no usable GPU" in problem
+
+    def test_the_probe_asks_jax_too(self):
+        prog = S._ARCH_PROBE
+        assert "jax_backend" in prog and "local_devices" in prog
+        compile(prog, "<probe>", "exec")

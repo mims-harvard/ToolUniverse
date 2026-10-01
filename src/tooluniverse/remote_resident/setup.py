@@ -438,6 +438,21 @@ try:
     out["triton_ptxas"] = _ptx
 except Exception:
     pass
+try:
+    # A provider's accelerator is not always torch's. af3_jax pins a CPU-only
+    # torch because its weights converter is a torch script, and judging that
+    # provider's card by `torch.cuda.is_available()` refused it while JAX drove
+    # the GPU. So the probe reports what every framework present can see and
+    # the caller decides, rather than assuming one of them is authoritative.
+    import jax as _jax
+    out["jax"] = _jax.__version__
+    out["jax_backend"] = _jax.default_backend()
+    _devs = _jax.local_devices(backend="gpu") if out["jax_backend"] == "gpu" else []
+    if _devs:
+        out["jax_device"] = str(_devs[0])
+        out["jax_device_cc"] = str(getattr(_devs[0], "compute_capability", "") or "")
+except Exception:
+    pass
 sys.stdout.write("ARCH " + json.dumps(out))
 """
 
@@ -663,6 +678,14 @@ def _check_torch_targets_this_gpu(exec_env, gpu_required: bool) -> Optional[str]
 def _arch_problem(info: Dict[str, Any], gpu_required: bool) -> Optional[str]:
     """Why torch's own cubins cannot drive this card, or None."""
     if info.get("error") or not info.get("device_sm"):
+        if info.get("jax_backend") == "gpu" and info.get("jax_device"):
+            # Another framework has the card. This was a false refusal on
+            # af3_jax, whose kit must pin a CPU-only torch because its weights
+            # converter is a torch script: `torch_arch_unsupported` fired while
+            # jax reported a CudaDevice and drove the GPU. The lesson is the one
+            # the Triton note already carries -- a check written from one
+            # framework's assumptions refuses providers that work.
+            return None
         return (
             None
             if not gpu_required
@@ -780,12 +803,40 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
     # --no-deps because the lock is complete; letting a resolver re-derive the
     # set is how a stack stops being the one that was measured.
     text = lock.read_text().splitlines()
-    pins = [ln for ln in text if ln.strip() and not ln.lstrip().startswith("#")]
+
+    # A lock may declare ORDERED passes with `# --- pass break ---`, and one
+    # kit needs it. pip does not honour requirement order within a single
+    # install, so a lock carrying two CUDA generations installs whichever of a
+    # colliding pair pip reaches last: protenix_v1's keeps both the CUDA 12.9
+    # and 13.0 runtimes, and 27 paths under nvidia/{cudnn,nccl,cusparselt}
+    # collide. Measured, one pass leaves nvidia/cudnn/lib/libcudnn.so.9 at
+    # 124,920 bytes -- the cu12 wheel's file -- where two passes with CUDA 13
+    # last leave the cu13 wheel's 6,328,728-byte one, which is the single path
+    # torch 2.13.0+cu130 preloads. The result imports fine and is simply not
+    # the stack that was measured, which is the kind of wrong that survives a
+    # smoke. The kit's own Dockerfile uses two passes and says why.
+    groups: List[List[str]] = [[]]
+    for ln in text:
+        if ln.strip().startswith("#"):
+            if "pass break" in ln:
+                groups.append([])
+            continue
+        if ln.strip():
+            groups[-1].append(ln)
+    pins = [ln for g in groups for ln in g]
     boot = [ln for ln in pins if ln.split("==")[0] in ("pip", "wheel")]
-    rest = [ln for ln in pins if ln not in boot]
+    passes = [[ln for ln in g if ln not in boot] for g in groups]
+    passes = [g for g in passes if g]
 
     lines: List[str] = []
-    for label, batch, extra in (("pip/wheel", boot, []), ("stack", rest, [])):
+    batches = [("pip/wheel", boot, [])]
+    if len(passes) <= 1:
+        batches.append(("stack", passes[0] if passes else [], []))
+    else:
+        batches += [
+            (f"stack pass {i + 1}/{len(passes)}", g, []) for i, g in enumerate(passes)
+        ]
+    for label, batch, extra in batches:
         if not batch:
             continue
         listing = lock.parent / f".{manifest.slug}-{label.replace('/', '-')}.txt"
