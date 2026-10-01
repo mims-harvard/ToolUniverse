@@ -1,0 +1,521 @@
+# Protenix v1 — all-atom biomolecular structure prediction, held resident.
+#
+# The fifteenth provider on the standard. Protenix 1.1.0 is ByteDance's open
+# reproduction of AlphaFold3 (Apache 2.0, code and parameters); its optimization
+# kit ships four modes — `off`, `exact` (bit-identical to stock under --det 1),
+# `fast` (the default) and `big` (lowest peak memory, up to ~4,000 tokens on one
+# GPU, with `--n_gpu P` row-sharding the pair representation across P cards).
+#
+# THIS PROVIDER RUNS THE KIT OFF, and the reason is one 1.1 MB file. Everything
+# else about the bring-up went the other way: the stack installed, the card is
+# admitted, the kit's own dry run returns ok. The whole story is under [kit].
+#
+# WHAT THE OBVIOUS READING OF THE KIT GETS WRONG, stated first because it
+# almost cost this provider its environment. `stock/PINS.json` carries a
+# "pinned_stack" block reading torch 2.7.1+cu126 / triton 3.3.1 /
+# cuequivariance 0.8.0, and download.pytorch.org publishes no aarch64 file at
+# torch 2.7.1+cu126 — which reads like the gate that forces a local-version
+# substitution and a recorded deviation, as evo2 makes. It is not that. That
+# block is PINS.json's record of what UPSTREAM protenix 1.1.0 declares in its
+# own wheel metadata, and the file says so itself: its "tested_on" field ends
+# "a documentation line: nothing reads or compares it", and STOCK.md's Stack
+# section gives the kit's actual stack as "torch 2.13.0+cu130, triton 3.7.1,
+# cuequivariance 0.11.1 ... the full list is environment/requirements.lock".
+#
+# And the kit's only pin check agrees. `stock/check_pins.py` compares the
+# installed `protenix` distribution's files against the shipped wheel's RECORD
+# and NOTHING about the stack — its own docstring reads "Software pins only ...
+# Standard library only (zipfile for the wheel's RECORD, no torch import)".
+# Measured on this aarch64 / torch 2.13.0+cu130 environment:
+#
+#   protenix 1.1.0 == pin 1.1.0; 138/138 package files are the pinned wheel's
+#   bytes; route file:///…/stock/protenix-1.1.0-py3-none-any.whl (archive)
+#
+# So there is NO torch deviation here and none is recorded. PyPI publishes
+# torch 2.13.0 and triton 3.7.1 as cp311 manylinux aarch64 wheels, and
+# `torch.__version__` on the installed one is `2.13.0+cu130`. This is also the
+# first provider in the queue whose pinned Triton is above the band that cannot
+# lower a cross-lane reduction for this card: triton 3.7.1 compiled a `tl.sum`
+# kernel here and returned the right answer, with no `TRITON_PTXAS-BLACKWELL_PATH`
+# and no 12.9 ptxas (STANDARD.md section 12's table predicted exactly that, and
+# it held).
+#
+# WHAT RESIDENCY BUYS. Stock's `protenix pred` builds `Protenix(configs)` and
+# then reads a 1,475,950,125-byte checkpoint into it, once per process. The
+# construction is not cheap for a reason the kit's own `lazy_init` lever states
+# in its registry entry: the model's random parameter initialisation is "about
+# a minute of CPU per process for the 368 M parameters", every value of which
+# `load_state_dict(strict=True)` then overwrites. With the kit off that lever
+# is not available, so the full minute is paid — once, by this worker, instead
+# of on every request. On top of it sit the checkpoint read, the CUDA context
+# and the first-use cuEquivariance and Triton compiles. NOT YET MEASURED here;
+# see [provider] status.
+
+[provider]
+slug = "protenix_v1"
+description = "Protenix 1.1.0 all-atom structure prediction for a protein, nucleic-acid, ligand and ion complex"
+operations = ["protenix_v1_fold"]
+# UNTESTED, deliberately and precisely: this provider has been installed and
+# every step of `tu remote setup` except the smoke has been exercised on an
+# NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02), but NO
+# MODEL HAS BEEN PUT ON THE CARD. One GPU is shared by several bring-ups and
+# the smoke is serialized by the caller, so it was not run here.
+#
+# What IS established on this host, each by running it rather than reading it:
+#
+#   * the lock installs (129 pins, 7 of them built from sdist on aarch64), and
+#     torch 2.13.0+cu130 sees the card with arch list
+#     ['sm_80','sm_90','sm_100','sm_110','sm_120'] — sm_120 cubins run on this
+#     sm_121 card, which is the binary-compatibility rule every verified
+#     provider here relies on;
+#   * triton 3.7.1 compiles and runs a `tl.sum` cross-lane reduction;
+#   * cuEquivariance 0.11.1's `triangle_multiplicative_update` and
+#     `triangle_attention` — which are protenix's own DEFAULT kernels, not an
+#     optimization — both run on this card, which is the AtlasFold question
+#     (a pinned runtime dependency shipping kernels the pinned compiler cannot
+#     build) and it comes out the other way here;
+#   * the kit's pin check passes, its install step completes, and its own dry
+#     run `run.sh check --config h100 --mode fast` returns `"ok": true` with
+#     `gpu {"name": "NVIDIA GB10", "sm": "12.1"}`;
+#   * all seven weight files are at their `stock/PINS.json` digests;
+#   * stock's fast-LayerNorm extension CANNOT run here, latently — see
+#     [kit.env] LAYERNORM_TYPE, which is the one finding of this bring-up that
+#     would have cost a debugging round.
+#
+# What is NOT established: that a fold completes, what it costs, and whether
+# four consecutive identical requests survive in one held worker. Until those
+# are run this is `untested` and [gpu] vram_budget_gb below is a DERIVED
+# reserve, labelled as such.
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver
+580.173.02), venv route, Python 3.11.5, torch 2.13.0+cu130, triton 3.7.1, kit
+mode OFF -- the kit's one prebuilt object is x86-64 and `kit_foreign_objects`
+refuses per directory, so the mode is unreachable here (see [kit]).
+
+VERIFIED ON 4 CONSECUTIVE IDENTICAL REQUESTS plus a mixed-shape sequence and an
+ascending ladder, one held worker, every request asserted to have written
+structures:
+
+    ladder   100 / 200 / 400 / 800 residues   ~1.9 / 2.37 / 3.71 / 9.65 GiB
+    mixed    100, 100, 400, 100               4/4
+    repeats  4 x the 35-residue smoke         4/4, 4.9 / 5.0 / 5.1 / 4.4 s
+
+The smoke alone took 47 s, most of it upstream's full random initialisation of
+368 M parameters -- the kit's `lazy_init` lever is what would have avoided it and
+is unavailable with the mode off."""
+
+[runtime]
+mode = "resident"
+worker = "resident/protenix_v1_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
+# The build constructs a 368 M-parameter model with upstream's own random
+# initialisation (the kit's `lazy_init` lever would skip it; the kit is off
+# here, so it is paid), reads a 1.37 GiB checkpoint and opens the CUDA context.
+# The kit's registry prices the initialisation alone at "about a minute of CPU
+# per process". Generous on purpose: a deadline that fires during a first build
+# reports a stall that is not one.
+start_timeout_s = 1800.0
+request_timeout_s = 7200.0
+idle_timeout_s = 900.0
+# What a run that actually worked leaves behind, as `runner/dumper.py` writes
+# it into `<dump_dir>/<sample_name>/seed_<seed>/predictions/`:
+#
+#   <sample>_sample_<rank>.cif                      one per diffusion sample
+#   <sample>_summary_confidence_sample_<rank>.json
+#   <sample>_full_data_sample_<rank>.json           (need_atom_confidence only)
+#
+# `*_sample_[0-9]*.cif` rather than `*.cif`, and the distinction is the one
+# BoltzGen's `design_spec.cif` made necessary: a glob must not match a file the
+# provider writes regardless of success. Checked against both directions here —
+# a failed item leaves `<dump_dir>/ERR/<sample>.txt` and nothing else, and the
+# only other file this provider writes unconditionally is its copy of the input
+# JSON (upstream writes an updated copy beside `--input`, so the request's own
+# output directory is where it goes). Neither is a `.cif`, and neither carries
+# `_sample_<digit>`.
+outputs = ["*_sample_[0-9]*.cif"]
+# And the reply-side half. The worker raises when its own structure list is
+# empty, so this is belt and braces; it catches the other direction, a worker
+# that wrote files and reported none.
+output_keys = ["structures"]
+smoke = "smoke/input.json"
+# 35 residues (villin headpiece HP36), single sequence, at upstream's full
+# defaults: 5 diffusion samples x 200 steps x 10 recycling cycles. The deadline
+# allows for the first run's cuEquivariance and Triton compiles on a card none
+# of them has been compiled for.
+#
+# ON WHETHER THIS SMOKE REACHES ANYTHING, which is AtlasFold's warning and is
+# answered rather than ignored: it does not need to. Every gate in this kit —
+# the sampler-graph token cap (`exact` 1536 / `fast` 1999), `big`'s
+# `TRIMUL_GATE_TOKENS`, the triangle-attention ceiling — belongs to a KIT MODE,
+# and the kit is off here, so there is no lever for a small input to miss. What
+# the smoke exercises is the whole of what this provider runs: upstream's
+# featuriser, its cuEquivariance triangle kernels, the 48-block trunk, the
+# diffusion sampler and the confidence head. The ladder under [gpu] is still
+# required before `verified`, for the budget rather than for coverage.
+smoke_timeout_s = 5400.0
+
+[gpu]
+policy = "required"
+# MEASURED, and the closest any derived reserve on this standard has come: the
+# arithmetic in this file's history said 12.0 and the measurement is 9.65, 1.24x
+# high, against openfold3's 3.8x, esmfold2's 1.6x low, af3_torch's 9x and evo2's
+# 20% low. The term-by-term derivation is what made it checkable.
+#
+# Ladder, one held worker, ascending, nothing larger run before it:
+#
+#     residues   peak reserved
+#          100      ~1.90 GiB
+#          200       2.37 GiB
+#          400       3.71 GiB
+#          800       9.65 GiB   <- the reference this budget declares
+#
+# ~5.1x from 100 to 800, which puts this in af3_torch's family (5.3x) rather
+# than openfold3's (3.6x) -- the same AlphaFold3 architecture measured twice
+# through two independent reimplementations, agreeing on the shape of the cost.
+# A host capping chains at 400 residues holds this in 4 GiB.
+vram_budget_gb = 9.65
+driver_min = 580
+driver_min_reason = "its stack is CUDA 13.0 (torch 2.13.0+cu130, nvidia-*-cu13 runtimes); the kit's own README and STOCK.md both state 'an NVIDIA driver that runs CUDA 13.0 (version 580 or newer)'. This is NOT the 570 floor the cu128 providers carry. Measured host: 580.173.02."
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_PROTENIX_V1_PYTHON"
+lock = "environment/requirements.lock"
+# `protenix` has no module-level __version__, so the installed distribution is
+# what is asked. protenix_v1_opt is the kit and opt_core its shared core; both
+# are installed editable from the checkout by [kit] install and are
+# deliberately absent from the lock. Measured at 0.97 s and it does NOT trigger
+# the fast-LayerNorm nvcc build — `import protenix` does not reach
+# `protenix.model.triangular.layers`, which is the module that imports the
+# extension.
+verify = "import torch, protenix, protenix_v1_opt, opt_core; from importlib.metadata import version; assert version('protenix') == '1.1.0'"
+
+# ---------------------------------------------------------------- environment
+#
+# THE INTERPRETER IS A STDLIB venv, NOT `uv venv`, and the choice was checked
+# rather than inherited. This kit activates through a `.pth`
+# (`opt/protenix_v1_opt_autoload.pth`), and `protenix_v1_opt.kit` has an
+# `autoload_hook_main()` that checks the hook — so OpenFold3's `_virtualenv.pth`
+# problem is the thing to rule out. Read rather than assumed: that check tests
+# the .pth's EFFECT (whether `protenix_v1_opt._autoload` is in `sys.modules` of
+# a fresh interpreter), not the presence of any file, and `run.sh` only calls it
+# on the environment route with a kit mode set — which this provider never
+# takes. So `uv venv` would in fact have been safe here.
+#
+# The stdlib `venv` was used anyway, for a different reason: the lock pins
+# Python 3.11 (`protenix` requires-python >= 3.11 and the kit's lock is a cp311
+# freeze), the only 3.11 on this host is uv's managed CPython 3.11.5 — which is
+# the exact interpreter version the kit's own STOCK.md recipe names — and
+# running `python -m venv` with THAT interpreter gives a 3.11.5 environment with
+# no `_virtualenv.pth` in it at all. One fewer thing for a future kit to trip
+# over, at no cost:
+#
+#   ~/.local/share/uv/python/cpython-3.11.5-linux-aarch64-gnu/bin/python3.11 \
+#       -m venv ~/protenix_v1-venv
+#   export TOOLUNIVERSE_PROTENIX_V1_PYTHON=~/protenix_v1-venv/bin/python
+
+[weights]
+# Upstream's own variable, read by `configs/configs_inference.py` and
+# `configs/configs_data.py` AT IMPORT, which is why the worker refuses to start
+# without it rather than defaulting. The kit requires it on every route; its
+# `configs/<card>.env` files say so ("has no default: unset, it refuses by
+# name, rc 3"). The kit's documented value is `/weights/protenix_v1`, which is
+# not a path a user owns, so this follows the house convention instead.
+root_env = "PROTENIX_ROOT_DIR"
+root_default = "~/.protenix"
+# The kit's own fetcher, which calls UPSTREAM's downloader
+# (`runner.inference.download_inference_cache`) against upstream's URL table in
+# `protenix/web_service/dependency_url.py` — no URL is restated here, so a
+# mirror change upstream cannot break this. It is also a verifier: it transfers
+# the checkpoint to `<name>.part` first, compares the sha256 with the pin
+# BEFORE the file takes the checkpoint's name (upstream torch-loads a checkpoint
+# it has just downloaded, before any digest could be compared), and then hashes
+# all six data files against `stock/PINS.json`. Needs no cwd and no PATH.
+#
+# [kit] install already runs this with `--weights`, so the weights step
+# ordinarily finds everything present; this declaration is what recovers a file
+# removed later.
+fetch = "{python} -m protenix_v1_opt.weights \"{weights_root}\""
+
+# GENERATED from the kit's own stock/PINS.json by a script, never transcribed.
+# PINS.json's shape here is an eleventh distinct one: the checkpoint is three
+# sibling scalars ("checkpoint", "checkpoint_sha256", "checkpoint_bytes") while
+# the data files are a nested "data_files" map whose values are either a string
+# or a LIST of strings, with digests in a PARALLEL "data_files_sha256" map and
+# no byte count anywhere — so the six `size` lines below were measured off the
+# verified cache and the seven `sha256` lines come from the pin file.
+# All seven are declared, not just the checkpoint: upstream's own
+# `download_inference_cache` fetches a missing data file SILENTLY at runner
+# construction (runner/inference.py:291-347), which is exactly the implicit
+# fetch section 4 of the standard exists to stop.
+# 7 files, 2.00 GiB.
+
+[[weights.files]]
+name = "checkpoint/protenix_base_default_v1.0.0.pt"
+size = 1475950125
+sha256 = "2b7d5a8b30494514fc47fd2271a16260528cdba170ba09cc112fdecd8f85ec04"
+
+[[weights.files]]
+name = "common/components.cif"
+size = 490777362
+sha256 = "bb31ae5cf6c8bc669924313077cb4231ee5ffefd3a20118cd14f3ec89f8bb6a5"
+
+[[weights.files]]
+name = "common/components.cif.rdkit_mol.pkl"
+size = 142498117
+sha256 = "d1cfb71f5993a3ebea7c47877022d7f597bbfbaf86e28a4770e957da6c50cd35"
+
+[[weights.files]]
+name = "common/clusters-by-entity-40.txt"
+size = 21699572
+sha256 = "1ab4af905e75b382eda8dec59917dc3608bee0729e36b9e71baf860bbe86850c"
+
+[[weights.files]]
+name = "common/obsolete_release_date.csv"
+size = 134716
+sha256 = "a4f3f63ac5d7eebd78b07995cc669b9eccd6f5d8813c9492c9df02868893cf33"
+
+[[weights.files]]
+name = "common/obsolete_to_successor.json"
+size = 86882
+sha256 = "2bc08348d0efba438c109bb27be6fa25b611d371c60b8a8da3de387a4a0698ad"
+
+[[weights.files]]
+name = "common/release_date_cache.json"
+size = 12754898
+sha256 = "8b1ef12ddc01a0d5eb2d388c77ded91aa906eebce7440726c57b6f8d1a3ec142"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "protenix_v1"
+# The kit's kernels come from common/opt_core, which this checkout shares with
+# the boltz, enformer, chai1, openfold3, rosettafold3, esmfold2, esmc, boltzgen,
+# af3_torch and atlasfold providers; the sparse set is the union of what its
+# providers declare.
+sparse = ["protenix_v1", "common"]
+package = "protenix_v1_opt"
+#
+# ACTIVATION is the common form, shape 1 of the four:
+# `opt/protenix_v1_opt_autoload.pth` imports `protenix_v1_opt._autoload` at
+# interpreter start, and with the mode variable set a meta-path finder waits for
+# the first import of `runner` or `protenix.model` and calls
+# `protenix_v1_opt.enable(mode)` right after that package's own body has run.
+#
+# THE MODE VARIABLE'S NAME IS READ, NOT DERIVED, and this kit is the second
+# after atlasfold where the first place the probe looks is empty:
+# `protenix_v1_opt.modes` has no module-level `ENV`, so `kit_launch`'s probe
+# falls through to `_autoload.ENV`. Measured, by running that probe here:
+#
+#   "mode_env": "PROTENIX_V1_OPT", "activation": "autoload",
+#   "modes": ["exact","fast","big","off"]
+#
+# A WARNING FOR ANYONE SETTING ANOTHER VARIABLE ON THIS PROVIDER. The kit
+# polices its own namespace at INTERPRETER START, harder than rosettafold3's:
+# `_autoload.install()` refuses the whole process, by name and with exit 3,
+# for any environment name beginning `PROTENIX_V1_OPT` that is not one of the
+# six it declares, and for any name beginning `PROTENIX_V1_BIG_` that is not
+# one of its two size statements ("a mistyped switch never runs stock"). A
+# typo in [kit.env] is therefore a refusal at start-up, not a setting that is
+# quietly ignored — which is the better failure, and is why nothing below is
+# spelled from memory.
+#
+# ------------------------------------------------------------------ mode = off
+#
+# `tu remote setup` REFUSES ANY OTHER VALUE ON THIS MACHINE, and the file that
+# does it is one prebuilt object:
+#
+#   protenix_v1/opt/forward/v05_addon/lib/fastln_prebuilt/
+#       fast_layer_norm_cuda_v2_stream.so
+#       ELF 64-bit LSB shared object, x86-64
+#
+# `step_kit`'s `kit_foreign_objects` check reads the ELF machine type of every
+# `.so` under `dest/subdir` before installing, and `protenix_v1/` is `subdir`,
+# so this one is in scope and the step returns REFUSED with
+# `set [kit] mode = "off" to run the provider without the kit's levers`.
+# Verified by running it rather than predicted — see the report accompanying
+# this provider.
+#
+# WHAT THAT OBJECT ACTUALLY OWNS, because the honest answer is "less than the
+# refusal implies, and it would not have mattered". It is the kit's
+# stream-correct rebuild of STOCK's own fast-LayerNorm extension, and it exists
+# for one lever: `sg`, the diffusion denoiser's CUDA graph. Upstream's extension
+# launches its kernels on the legacy default stream, so a replayed graph reads
+# LayerNorm outputs nobody wrote (NaN); the kit rebuilds the identical sources
+# with `at::cuda::getCurrentCUDAStream()` at every launch site. And its loader,
+# `lib/fastln_prebuilt.py`, DEGRADES BY DESIGN: it holds the .so to a SHA256SUMS
+# line, checks the manifest's torch and CUDA versions against the live ones,
+# re-runs a 21-case equality check and a side-stream/graph-replay check IN THIS
+# PROCESS, and "if any check fails it returns installed=False with the reason
+# and the caller falls back to the source rebuild (fastln_stream)" — an nvcc
+# build into `$TORCH_EXTENSIONS_DIR`, costing minutes once. The manifest beside
+# it lists `device_code: [sm_70, sm_80, sm_86, sm_89, sm_90, sm_100]`, so the
+# rebuild would have been needed here on CUDA-architecture grounds anyway.
+#
+# So this object is a CACHE with a documented miss path, and `_foreign_objects`
+# cannot tell that from an object a lever dlopens or dies. That is a real limit
+# of the check and it is flagged in the report rather than worked around here:
+# the check is doing what it was written to do, and a provider is not the place
+# to argue with it.
+#
+# WOULD THE KIT HAVE BEEN WORTH IT HERE? Probably not much, and the evidence is
+# in the checkout rather than in an opinion. The kit's own dry run passes on
+# this card — `run.sh check --config h100 --mode fast` returns `"ok": true`,
+# `gpu {"name":"NVIDIA GB10","sm":"12.1"}`, 24 levers armed, `gates: []` — but a
+# dry run imports no kit code and resolves no kernel cell. What the cells say is
+# that almost nothing would serve: every prebuilt GPU object the `fast` line
+# reaches is sm_80 or sm_90a (113 cubins and 48 host `.so` under
+# `common/opt_core`, all of the latter x86-64 cpython-311/312 builds), and the
+# kit's own per-card cell tables are keyed by compute capability with rows for
+# 8.0 and 9.0 only — `ditattn`'s is literally `apb_ptx1.CELLS['dit'][cc]`, and
+# `cond_dedupe`, `dit_fused`, `dit_lowp`, `atom_fused` and `dit_attn_exact` all
+# document "a card without a cell (cc 8.0 today) steps aside by name". A cell
+# miss is `card_off`, which `report.partial_of` treats as by-design rather than
+# partial, but a lever that FALLS BACK at run time is partial — and a PARTIAL
+# activation takes the whole mode to NOT ACTIVE with exit 3 unless
+# `PROTENIX_V1_OPT_ALLOW_PARTIAL=1`. Which of the two each lever would land on
+# cannot be read off the tables; it needs a run. On a host where this kit is
+# worth having — x86-64, cc 9.0 — delete this line, delete [kit.env]
+# LAYERNORM_TYPE, and re-measure the ladder, which will be a different one.
+#
+# ONE MORE THING `mode = "off"` BUYS, and it is not nothing: `off` is the only
+# mode whose numerics are upstream's as released, so this provider's answers are
+# stock Protenix's answers. Note that this is NOT the kit's own `--mode off`
+# route, which runs `protenix pred` in a clean subprocess (`stock_pred.py`) and
+# is by construction a fresh process per prediction. Here `off` only means no
+# finder is installed — `_autoload.install()` returns None for an unset or
+# "off" value before importing anything — and the worker holds upstream
+# directly, which is what makes residency possible at all.
+mode = "off"
+# Every lever of the `fast` line plus the `exact`-only ones, on this host: the
+# kit installs no finder, so none of them is attempted. Listed by name rather
+# than summarised, from `protenix_v1_opt.modes.LEVERS`, so that a reviewer on
+# another machine can see exactly what is being given up.
+levers_declined = [
+    "exact", "fast", "gblock", "gflash", "tricuda", "triexact", "xtr", "ttr",
+    "sg", "sampler_prep", "hoist", "lazy_init", "keep_pool", "template_dedupe",
+    "tmpl_triatt", "tmpl_trimul", "tmpl_trimul_exact", "tmpl_pairfused",
+    "tmpl_xtr", "summary_hostidx", "ditattn", "ditattnfp16", "atomattn",
+    "dit_attn_exact", "pfattn", "opm_fused", "pwa_fused", "cond_dedupe",
+    "dit_fused", "dit_lowp", "atom_fused", "atom_attn_exact",
+]
+# `MODEL_OPT_LEVERS_OFF` is deliberately NOT set. This kit DOES read it —
+# `modes.resolve` calls `ablation.requested(environ)` and the ACTIVE line
+# reports `ablated=<names>` — unlike boltzgen's, which ignores it. But with the
+# mode off there is no arm to ablate and the variable would be a setting that
+# does nothing, which STANDARD.md section 13 names as worse than saying so.
+#
+# ---------------------------------------------------------------- env_row
+#
+# THIS KIT KEEPS NO ENVIRONMENT ROW, and the declaration is required because an
+# absence and a failed read look identical from the launcher. Measured by
+# running `kit_launch`'s own probe against this kit:
+#
+#   "env": {}, "row_error": "resolve(mode, home): FileNotFoundError: …
+#    /protenix_v1/ptxfpf/levers_ptx1.py"
+#
+# A THIRD FAILURE SHAPE FOR THAT PROBE, worth recording. `protenix_v1_opt.modes`
+# HAS a `resolve()`, and it answers — `resolve(mode)` returns a frozen
+# `Resolution` dataclass carrying mode, arm, trimul, levers, tier, line,
+# memory_preset, triattn_floor, ablated, mode_arm, capped and graph_cap, and
+# NEITHER an `env` nor an `exports` field, so `_row_of` correctly returns None.
+# The probe then tries its second shape, `resolve(mode, home)` — and this kit's
+# second positional parameter is `kit_dir`, the directory of the kit's LEVER
+# CODE (`ptxfpf/levers_ptx1.py`), not a kit home. Handing it MODEL_OPT is
+# therefore not a signature mismatch at all: it is a valid call with a wrong
+# path, and it raises FileNotFoundError naming a kit file, which reads like a
+# broken checkout rather than a probe that ran out of shapes. The row is empty
+# because this kit has no row, and that is what `env_row = "none"` says.
+env_row = "none"
+env_row_reason = """protenix_v1_opt.modes.resolve() returns a Resolution
+carrying the mode's arm and levers and no environment row of any kind, and
+there is no alloc.env_row() and no modes.jit_cache_key() either (the probe
+records `stack_key_error: AttributeError`; this kit computes its cache key with
+`python -m protenix_v1_opt._stackkey` instead). Its deployment variables live
+in per-card `configs/<card>.env` shell files that `run.sh` sources — h100, h200
+and a100 — exactly as esmfold2's, esmc's, rosettafold3's and atlasfold's do,
+and it ships none for sm121. Those files set eight things and every one is
+already supplied: PROTENIX_ROOT_DIR by [weights] root_env, MODEL_OPT and
+MODEL_OPT_JIT_ROOT by kit_launch, MODEL_OPT_STACK_KEY / TORCH_EXTENSIONS_DIR /
+TRITON_CACHE_DIR by torch's and Triton's own defaults under that root (nothing
+of the kit is compiled here), and LAYERNORM_TYPE, PYTHONDONTWRITEBYTECODE and
+PYTHONUNBUFFERED by [kit.env] below. The mode word is never in a config file —
+every one of them says so in its first comment line, "The mode is NOT here"."""
+#
+# ---------------------------------------------------------------- install
+#
+# `run.sh install` is two editable installs (`pip install -e
+# ../common/opt_core -e opt`), then the pin check, then — with `--weights DIR` —
+# upstream's own weight download and a digest comparison of all seven files.
+# It is run even though the kit's modes are off, for three things it gives that
+# nothing else does: it proves the installed `protenix` is the pinned wheel's
+# bytes, it fetches and verifies the weights through upstream's own downloader,
+# and it makes `protenix_v1_opt` importable so [env] verify and `kit_launch`'s
+# probe have something to read.
+#
+# `python` on PATH is what run.sh drives — it reads no PYTHON variable — and
+# `tu remote setup` puts the manifest's interpreter first on PATH for exactly
+# this step, so the plain form is the correct one. Verified here: the step
+# completes, and `git status --porcelain` on the shared checkout afterwards
+# shows only `__pycache__/` and `.egg-info/`, both of which `_is_tampering`
+# treats as byproducts.
+install = "bash run.sh install --weights {weights_root}"
+
+# The kit's own documented knobs and upstream's, applied before the process
+# starts. All three come from `configs/<card>.env`, which a resident worker
+# never sources because it does not go through `run.sh`.
+[kit.env]
+# THE FINDING OF THIS BRING-UP, and the one that would otherwise have been
+# discovered as an inscrutable error in the middle of a fold.
+#
+# `LAYERNORM_TYPE` is upstream's own switch (PINS.json lists it under
+# `stock_environment.reads`; all three `configs/<card>.env` files set it to
+# `fast_layernorm`, upstream's default). It selects stock Protenix's own
+# fast-LayerNorm CUDA extension, which
+# `protenix/model/layer_norm/torch_ext_compile.py` builds with nvcc at the first
+# import of `protenix.model.triangular.layers`. That file hard-codes the
+# architectures it emits — ("70","80","86","89","90","100"), intersected with
+# what the local nvcc lists — as `-gencode arch=compute_X,code=sm_X`, with no
+# `code=compute_X` row. SASS only, no PTX, nothing above sm_100. Measured here
+# with nvcc 13.0 (which DOES list compute_120 and compute_121; the kernel
+# simply never asks for them): the built object holds `sm_80, sm_86, sm_89,
+# sm_90, sm_100` and `cuobjdump --list-ptx` reports "No PTX file found".
+#
+# On this sm_121 card its kernels therefore cannot launch — and the way they
+# fail is why this is a [kit.env] line and a worker refusal rather than a note.
+# The extension call RETURNS NORMALLY, `torch.cuda.synchronize()` after it
+# PASSES, and the next unrelated torch operation on the card raises:
+#
+#   torch.AcceleratorError: CUDA error: no kernel image is available for
+#   execution on the device
+#
+# — with a LayerNorm output in hand that was never written. Reproduced in a
+# clean process with a torch LayerNorm of the same shape succeeding immediately
+# before it, and at every shape tried (1, 2, 4, 8, 16, 64, 256, 4096 rows x 64,
+# 128, 384 columns: 24 of 24 fail).
+#
+# `torch` is upstream's own alternative and costs nothing structurally here:
+# `protenix/model/triangular/layers.py` reads the variable and does not even
+# IMPORT the extension module unless it is `fast_layernorm`, so this also skips
+# the nvcc build entirely. The only thing in the tree that needs the fast path
+# is the kit's `sg` lever, and the kit is off. The worker refuses to start if
+# this is overridden back on a card outside the extension's built set.
+LAYERNORM_TYPE = "torch"
+# BoltzGen's finding, applied unconditionally. `num_workers = 0` covers only
+# the first of fork's three shapes; a library's own OpenMP pool is the third,
+# and the only cheap way to guarantee a resident worker that has done host
+# tensor work does not let one fork is to make the pool not exist. Protenix's
+# featuriser does substantial host work -- biotite structure parsing, the
+# 490 MB CCD component table, and `sklearn.neighbors.KDTree` queries in
+# `protenix/data/core/featurizer.py`, whose BLAS sits under the same
+# threadpool machinery -- so the ingredients are present even though no fork
+# is expected on this path (upstream's own `num_workers` default is 0).
+OMP_NUM_THREADS = "1"
+# What all three shipped config files set, verbatim and for the same reason:
+# the kit package is installed EDITABLE from the shared checkout, so without
+# this every interpreter start writes `__pycache__` into a third-party tree
+# that `step_kit` re-reads with `git status --porcelain` on the next run.
+PYTHONDONTWRITEBYTECODE = "1"

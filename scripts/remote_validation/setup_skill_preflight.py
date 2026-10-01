@@ -239,6 +239,12 @@ DEPLOYMENTS = (
         path_env=("PROGEN2_WEIGHTS",),
     ),
     Deployment(
+        "protenix_v1",
+        8046,
+        ("protenix_v1_fold",),
+        ("TOOLUNIVERSE_PROTENIX_V1_PYTHON",),
+    ),
+    Deployment(
         "rfdiffusion3",
         8040,
         ("rfdiffusion3_design",),

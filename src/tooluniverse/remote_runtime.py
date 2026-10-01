@@ -314,6 +314,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "protenix_v1",
+        "tooluniverse.remote.protenix_v1.protenix_v1_tool",
+        8046,
+        ("protenix_v1_fold",),
+        ("TOOLUNIVERSE_PROTENIX_V1_PYTHON",),
+        (),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "rfdiffusion3",
         "tooluniverse.remote.rfdiffusion3.rfdiffusion3_tool",
         8040,
