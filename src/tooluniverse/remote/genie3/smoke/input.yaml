@@ -1,0 +1,45 @@
+# The smallest request that exercises Genie 3's generation path end to end --
+# upstream's own experiment YAML, which is the only input format this provider
+# takes (examples/unconditional/experiment.yaml at the pin, narrowed).
+#
+# Why these numbers:
+#
+#   * source `unconditional` needs no dataset directory and no target PDB, so
+#     the smoke tests the model rather than the data tree.
+#   * length 50 is upstream's own example length and the smallest thing the
+#     unconditional dataset builds.
+#   * n_sample 2 at the mode table's batch size of 1 is TWO batches of the same
+#     feature shape, which is what exercises lever L9 (in-request CUDA-graph
+#     reuse: one capture, one `rebind_graph` replay). A single design would
+#     leave the kit's graph cache with a miss and no hit, and L9 is one of the
+#     nine levers mode `exact` plans -- a mode is all of its levers. The reply's
+#     graph_cache.hits must read 1.
+#   * n_sample_step 20 instead of upstream's default 100: the DDIM step count
+#     is a request key, not a kit switch, and 20 steps is a fifth of the wall
+#     clock for the same code path. The levers of mode `exact` have no token or
+#     step gate (unlike atlasfold's, which are all at min_tokens = 512), so a
+#     short request still engages every one of them.
+#   * direction_scale 0.8 is upstream's own value for unconditional requests
+#     (examples/unconditional/experiment.yaml) and the sampler has no default
+#     for it.
+#
+# paths.rootdir is required by upstream's config loader but is NOT where this
+# provider writes: the worker hands the kit's own writer the per-request
+# directory the caller named.
+experiment:
+  name: genie3_smoke
+
+paths:
+  rootdir: out/genie3-smoke
+
+generation:
+  dataset:
+    source: unconditional
+    min_length: 50
+    max_length: 50
+    length_step: 50
+    n_sample: 2
+  sampler:
+    sampler:
+      direction_scale: 0.8
+      n_sample_step: 20

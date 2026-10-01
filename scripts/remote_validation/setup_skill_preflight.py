@@ -161,6 +161,13 @@ DEPLOYMENTS = (
         ),
     ),
     Deployment(
+        "genie3",
+        8048,
+        ("genie3_design",),
+        ("GENIE3_WEIGHTS", "TOOLUNIVERSE_GENIE3_PYTHON"),
+        path_env=("GENIE3_WEIGHTS",),
+    ),
+    Deployment(
         "harmony",
         8026,
         ("run_harmony_integrate",),

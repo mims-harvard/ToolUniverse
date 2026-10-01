@@ -216,6 +216,15 @@ REMOTE_DEPLOYMENTS = (
         relay_workers=2,
     ),
     RemoteDeployment(
+        "genie3",
+        "tooluniverse.remote.genie3.genie3_tool",
+        8048,
+        ("genie3_design",),
+        ("GENIE3_WEIGHTS", "TOOLUNIVERSE_GENIE3_PYTHON"),
+        ("GENIE3_WEIGHTS",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "harmony",
         "tooluniverse.remote.harmony.harmony_tool",
         8026,
