@@ -254,6 +254,19 @@ manifest carries the ladder and names the row it declares:
 | ESMFold2 | 14.14 | 15.07 | 17.70 | 25.28 | 800 aa |
 | RFdiffusion3 | 2.62 | 2.92 (1 design) | 12.49 (4 designs) | — | 400 aa, 4 designs |
 
+**A ladder must run ascending, in a worker nothing larger has touched yet.**
+`peak_reserved_gib` is a running high-water mark in six of the eight workers
+written so far; only Boltz-2 and Enformer reset it per request through
+`on_reset`, so the same field means two different things across providers and
+their records are not directly comparable. The consequence for measurement is
+concrete: taking esmc's ladder after a mixed-shape phase made its 100-residue
+rung read 24.44 GiB where a clean ascending session reads 24.08. Neither number
+is wrong — the first answers "what does this worker hold now", which is what a
+scheduler wants, and the second answers "what does this input cost", which is
+what an envelope needs. A new provider should NOT reset: a host adding budgets
+up needs the worker's worst case, and a per-request peak under-reports whatever
+the allocator pool has grown to.
+
 Reading the ladder is as useful as reading the number. ESMFold2 costs 1.8x
 going from 100 to 800 residues where OpenFold3 costs 2.9x, because almost all
 of ESMFold2's footprint is the constant ESMC-6B term; a host that will not fold
@@ -460,6 +473,7 @@ in-process at all, which makes it `mode = "subprocess"`.
 | Derived estimates err both ways | measured: openfold3 3.8x high, esmfold2 1.6x low |
 | Turning a kit off can cost VRAM, not just speed | measured: esmc `off` costs 9.6 GiB -- `pipe` was the device-side loader |
 | No CUDA aarch64 torch below 2.7 | measured: 4 wheels inspected, `libtorch_cpu.so` only, nvidia deps marked x86_64 |
+| `peak_reserved_gib` is a high-water mark, so ladders ascend first | measured: 24.44 vs 24.08 GiB for the same 100-residue rung |
 
 ## 12. What providers seven through ten changed
 
