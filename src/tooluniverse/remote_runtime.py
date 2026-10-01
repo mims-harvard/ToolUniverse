@@ -67,6 +67,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "atlasfold",
+        "tooluniverse.remote.atlasfold.atlasfold_tool",
+        8043,
+        ("atlasfold_predict",),
+        ("TOOLUNIVERSE_ATLASFOLD_PYTHON",),
+        (),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "af3_torch",
         "tooluniverse.remote.af3_torch.af3_torch_tool",
         8036,

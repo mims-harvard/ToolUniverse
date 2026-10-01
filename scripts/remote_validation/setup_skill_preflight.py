@@ -55,6 +55,12 @@ DEPLOYMENTS = (
         path_env=("EVO2_OPT_WEIGHTS",),
     ),
     Deployment(
+        "atlasfold",
+        8043,
+        ("atlasfold_predict",),
+        ("TOOLUNIVERSE_ATLASFOLD_PYTHON",),
+    ),
+    Deployment(
         "af3_torch",
         8036,
         ("af3_torch_predict",),
