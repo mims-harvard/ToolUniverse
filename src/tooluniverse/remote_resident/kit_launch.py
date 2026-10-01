@@ -52,7 +52,7 @@ import json
 import os
 import subprocess
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Sequence, Tuple
 
 from .exec_env import from_manifest
 
@@ -166,13 +166,23 @@ def kit_package(manifest) -> str:
     return f"{subdir}_opt"
 
 
-def ask_kit(python_or_env, package: str, mode: str) -> Dict:
+def ask_kit(
+    python_or_env, package: str, mode: str, levers_off: Sequence[str] = ()
+) -> Dict:
     """The kit's own launch options and environment row, read in its interpreter.
 
     ``python_or_env`` is an interpreter path or an :class:`ExecEnvironment`. The
     probe has to run where the kit is installed, which for a container provider
     is inside the container: asking this process's interpreter would report a
     kit that is not the one the worker will load.
+
+    ``levers_off`` is set in the PROBE's environment, not only in the worker's.
+    The kits read ``MODEL_OPT_LEVERS_OFF`` when they resolve a mode, so a probe
+    run without it reports the unablated row -- and a kit that then sees the
+    ablated one refuses the whole activation over the mismatch. openfold3's
+    worker carries a ``_reconcile_kit_row`` to work around exactly that, which
+    is a workaround every later provider with both a row and an ablation would
+    have had to re-derive.
     """
     if isinstance(python_or_env, (str, os.PathLike)):
         argv, env, python = (
@@ -183,6 +193,9 @@ def ask_kit(python_or_env, package: str, mode: str) -> Dict:
     else:
         argv, env = python_or_env.argv(["-c", _PROBE, package, mode])
         python = python_or_env.describe()
+    if levers_off:
+        env = dict(env if env is not None else os.environ)
+        env["MODEL_OPT_LEVERS_OFF"] = ",".join(str(x) for x in levers_off)
     proc = subprocess.run(
         argv,
         env=env,
@@ -225,7 +238,8 @@ def build_command(worker) -> Tuple[List[str], Dict[str, str]]:
         )
 
     package = kit_package(manifest)
-    row = ask_kit(exec_env, package, manifest.kit.get("mode", "fast"))
+    off = manifest.kit.get("levers_off") or ()
+    row = ask_kit(exec_env, package, manifest.kit.get("mode", "fast"), off)
 
     worker_py = manifest.resolve(manifest.worker)
     shared = Path(__file__).resolve().parent
@@ -286,7 +300,6 @@ def build_command(worker) -> Tuple[List[str], Dict[str, str]]:
     for key, value in (manifest.kit.get("env") or {}).items():
         env[str(key)] = str(value)
 
-    off = manifest.kit.get("levers_off") or ()
     if off:
         # A lever the provider asks the kit not to attempt. The kits read this
         # themselves (MODEL_OPT_LEVERS_OFF) and say so on their ACTIVE line as
