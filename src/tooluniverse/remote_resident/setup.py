@@ -473,7 +473,100 @@ def _toolchain_problems(exec_env, gpu_required: bool) -> tuple:
     problem = _arch_problem(info, gpu_required)
     if problem:
         return problem, "torch_arch_unsupported", []
-    return None, "", _check_triton_targets_this_gpu(info)
+    notes = _check_triton_targets_this_gpu(info)
+    if info.get("triton") and info.get("device_sm"):
+        probed = _probe_triton_compile(exec_env)
+        if probed and not probed.get("skipped") and not probed.get("ok"):
+            notes.insert(
+                0,
+                f"MEASURED: this interpreter cannot compile and run a "
+                f"warp-shuffle kernel on {info['device_sm']} "
+                f"(rc={probed.get('rc')}: {probed.get('why', 'no reason')}). "
+                f"Any kernel reaching tl.sum, tl.max or tl.dot aborts the "
+                f"process, which no worker can catch. This is the question the "
+                f"string reads below only approximate: atlasfold passed them "
+                f"and still died, because cuEquivariance ships Triton kernels "
+                f"of its own. Three real routes out -- ablate the Triton levers "
+                f"through the kit's door where it has one, switch upstream's "
+                f"own kernel flag where it has one (atlasfold needed BOTH), or "
+                f"a host whose Triton knows this card",
+            )
+    return None, "", notes
+
+
+# The kernel the probe compiles. `tl.sum` is the construct that emits the warp
+# shuffle, which is the instruction a Triton too old for this card cannot lower.
+_REDUCE_SRC = "\n".join(
+    [
+        "import torch, triton, triton.language as tl",
+        "",
+        "@triton.jit",
+        "def _k(x_ptr, o_ptr, N: tl.constexpr):",
+        "    tl.store(o_ptr, tl.sum(tl.load(x_ptr + tl.arange(0, N)), axis=0))",
+        "",
+        "x = torch.ones(256, device='cuda', dtype=torch.float32)",
+        "o = torch.zeros(1, device='cuda', dtype=torch.float32)",
+        "_k[(1,)](x, o, N=256)",
+        "torch.cuda.synchronize()",
+        "assert abs(float(o[0]) - 256.0) < 1e-3, float(o[0])",
+        "print('REDUCE_OK')",
+    ]
+)
+
+# Written to a FILE and run as a CHILD, for two reasons that each cost an agent
+# an hour. ``@triton.jit`` reads its own body with ``inspect.getsource``, so a
+# kernel defined inside ``python -c`` fails with "could not get source code" --
+# the right verdict for the wrong reason. And the failure being tested for is an
+# abort(), which no try/except in the calling process could survive.
+_TRITON_COMPILE_PROBE = "\n".join(
+    [
+        "import json, os, subprocess, sys, tempfile",
+        "SRC = " + repr(_REDUCE_SRC),
+        "out = {}",
+        "try:",
+        "    import triton",
+        "except Exception:",
+        "    sys.stdout.write('TRITONC ' + json.dumps({'skipped': 'no triton'}))",
+        "    raise SystemExit",
+        "d = tempfile.mkdtemp(prefix='tu-triton-probe-')",
+        "f = os.path.join(d, 'probe_reduce.py')",
+        "open(f, 'w').write(SRC)",
+        "try:",
+        "    r = subprocess.run([sys.executable, f], capture_output=True,",
+        "                       text=True, timeout=600)",
+        "    out['rc'] = r.returncode",
+        "    out['ok'] = 'REDUCE_OK' in (r.stdout or '')",
+        "    if not out['ok']:",
+        "        tail = ((r.stderr or '') + (r.stdout or '')).strip().splitlines()",
+        "        out['why'] = tail[-1][:200] if tail else 'no output'",
+        "except Exception as exc:",
+        "    out['rc'], out['ok'] = None, False",
+        "    out['why'] = '%s: %s' % (type(exc).__name__, exc)",
+        "sys.stdout.write('TRITONC ' + json.dumps(out))",
+    ]
+)
+
+
+def _probe_triton_compile(exec_env) -> Optional[Dict[str, Any]]:
+    """Can this interpreter compile AND RUN a warp-shuffle kernel on this card?
+
+    Strictly stronger than reading ``libtriton.so``'s target strings, and the
+    atlasfold bring-up is why it exists: that provider's static reads were
+    correct and still did not predict its failure, because **cuEquivariance
+    ships Triton kernels of its own** and nothing in Triton's target list says
+    whether a second consumer's kernels will build. The question a host
+    actually has is "can this interpreter emit a shuffle kernel for this GPU",
+    and one kernel answers it in about two seconds.
+    """
+    argv, env = exec_env.argv(["-c", _TRITON_COMPILE_PROBE])
+    try:
+        out = _run(argv, env=env, timeout=900)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    for line in (out.stdout or "").splitlines():
+        if line.startswith("TRITONC "):
+            return json.loads(line[8:])
+    return None
 
 
 def _check_triton_targets_this_gpu(info: Dict[str, Any]) -> List[str]:
@@ -516,8 +609,8 @@ def _check_triton_targets_this_gpu(info: Dict[str, Any]) -> List[str]:
         notes.append(
             f"triton {info['triton']}'s LLVM target machine does not list {sm} "
             f"and ignores it. A kernel that reduces ACROSS LANES -- tl.sum, "
-            f"tl.max, tl.dot -- then aborts the process with \"LLVM ERROR: "
-            f"Cannot select: intrinsic %llvm.nvvm.shfl.sync.bfly.i32\", which "
+            f'tl.max, tl.dot -- then aborts the process with "LLVM ERROR: '
+            f'Cannot select: intrinsic %llvm.nvvm.shfl.sync.bfly.i32", which '
             f"no worker can catch. A kernel that does not reduce compiles and "
             f"runs correctly: on this card atlasfold dies and evo2 does not, on "
             f"the same triton 3.3.1, because evo2's kit spells its reductions "

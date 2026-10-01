@@ -1200,3 +1200,35 @@ class TestDriverFloor:
         assert undeclared == [], (
             f"these GPU-required providers declare no driver floor: {undeclared}"
         )
+
+
+class TestTritonCompileProbe:
+    """The measured answer, which the string reads only approximate.
+
+    atlasfold passed every static read this layer can make and still aborted,
+    because cuEquivariance ships Triton kernels of its own and nothing in
+    Triton's own target list predicts a second consumer's.
+    """
+
+    def test_the_probe_program_defines_its_kernel_as_a_quoted_literal(self):
+        """The first version inlined it unquoted and the child died on syntax.
+
+        That produced the right verdict for the wrong reason, which is the
+        failure mode a probe must not have.
+        """
+        prog = S._TRITON_COMPILE_PROBE
+        assert "SRC = " + repr(S._REDUCE_SRC) in prog
+        compile(prog, "<probe>", "exec")  # the program itself must parse
+
+    def test_the_kernel_reduces_across_lanes(self):
+        """tl.sum is the construct that emits the warp shuffle under test."""
+        assert "tl.sum" in S._REDUCE_SRC
+        compile(S._REDUCE_SRC, "<kernel>", "exec")
+
+    def test_the_kernel_runs_as_a_file_not_as_dash_c(self):
+        """@triton.jit reads its own body with inspect.getsource."""
+        assert "tempfile.mkdtemp" in S._TRITON_COMPILE_PROBE
+        assert "subprocess.run([sys.executable, f]" in S._TRITON_COMPILE_PROBE
+
+    def test_a_stack_without_triton_is_skipped_rather_than_failed(self):
+        assert "'skipped': 'no triton'" in S._TRITON_COMPILE_PROBE
