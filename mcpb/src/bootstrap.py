@@ -60,8 +60,31 @@ def main():
         BUNDLE,
         os.path.join("src", "run_stdio.py"),
     ]
-    # Replace this process, so the server owns stdio directly and no wrapper
-    # sits between Desktop and the protocol.
+    if os.name == "nt":
+        # os.exec* on Windows does neither of the things its name promises. It
+        # does not replace the process -- the CRT spawns a new one and exits
+        # this one -- and it builds the child's command line by joining argv
+        # with spaces and no quoting. Desktop installs the bundle under
+        # "%APPDATA%\\Claude\\Claude Extensions\\...", so --directory was split
+        # at that space and uv died with "The system cannot find the file
+        # specified. (os error 2)" on every launch (issue #684).
+        #
+        # subprocess quotes argv through list2cmdline and inherits stdio, so
+        # the server still owns the protocol streams. A wrapper process stays
+        # in the tree, which exec did not avoid here anyway: it left the child
+        # orphaned instead. Imported inside the branch to keep the POSIX path,
+        # measured at 30 ms, from paying for an import it never uses.
+        import subprocess
+
+        try:
+            code = subprocess.call(argv)
+        except OSError as exc:
+            print(f"ToolUniverse could not start: {exc}", file=sys.stderr)
+            raise SystemExit(1)
+        raise SystemExit(code)
+
+    # On POSIX exec really does replace this process, so the server owns stdio
+    # directly and no wrapper sits between Desktop and the protocol.
     try:
         os.execvp(uv, argv)
     except OSError as exc:

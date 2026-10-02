@@ -704,3 +704,88 @@ def test_bootstrap_is_a_no_op_without_a_snapshot(tmp_path):
     module._repair_lock()
 
     assert (bundle / "uv.lock").read_text() == "tooluniverse==1.5.3\n"
+
+
+def _load_bootstrap(tmp_path, name):
+    """The bundle's bootstrap, loaded from a copy so BUNDLE points at tmp_path."""
+    import importlib.util
+
+    (tmp_path / "src").mkdir(exist_ok=True)
+    (tmp_path / "src" / "bootstrap.py").write_text(
+        (MCPB_DIR / "src" / "bootstrap.py").read_text()
+    )
+    spec = importlib.util.spec_from_file_location(
+        name, tmp_path / "src" / "bootstrap.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_bootstrap_does_not_exec_on_windows(tmp_path, monkeypatch):
+    """os.exec* on Windows splits the bundle path at its space (issue #684).
+
+    Desktop installs under "%APPDATA%\\Claude\\Claude Extensions\\...". The CRT's
+    _wexecv builds the child command line by joining argv with spaces and no
+    quoting, so uv received `--directory ...\\Claude\\Claude` plus a stray
+    `Extensions\\...` and died with "The system cannot find the file specified.
+    (os error 2)" on every Windows launch. It does not even replace the
+    process there, which was the reason exec was chosen.
+
+    Every workflow in this repository runs on ubuntu-latest, and the earlier
+    "path with spaces" check for this launch was made on POSIX -- where execvp
+    passes a real argv array and the bug cannot appear. So the platform is
+    faked here rather than tested on, and what is asserted is the thing that
+    differs: the arguments must reach uv as a list, for subprocess to quote.
+    """
+    module = _load_bootstrap(tmp_path, "mcpb_bootstrap_windows")
+    monkeypatch.setattr(module.os, "name", "nt")
+
+    def _refuse_exec(*args, **kwargs):  # pragma: no cover - must not be reached
+        raise AssertionError(
+            "bootstrap used os.execvp on Windows; the bundle path would be "
+            "split at its space"
+        )
+
+    monkeypatch.setattr(module.os, "execvp", _refuse_exec)
+
+    seen = {}
+    monkeypatch.setattr(
+        subprocess, "call", lambda argv, *a, **k: seen.setdefault("argv", argv) and 0
+    )
+
+    with pytest.raises(SystemExit) as exit_info:
+        module.main()
+
+    assert exit_info.value.code == 0, "uv's exit status must pass through"
+    argv = seen["argv"]
+    assert isinstance(argv, list), (
+        "pass argv as a list so subprocess quotes it; a string would be split "
+        "by the shell exactly as exec was splitting it"
+    )
+    directory = argv[argv.index("--directory") + 1]
+    assert directory == str(tmp_path), (
+        "the bundle directory must arrive as one argument, spaces and all"
+    )
+    assert argv[-1] == os.path.join("src", "run_stdio.py")
+
+
+def test_bootstrap_still_execs_on_posix(tmp_path, monkeypatch):
+    """exec is kept where it works, so no wrapper sits in the stdio path."""
+    module = _load_bootstrap(tmp_path, "mcpb_bootstrap_posix")
+    monkeypatch.setattr(module.os, "name", "posix")
+
+    seen = {}
+    monkeypatch.setattr(
+        module.os, "execvp", lambda uv, argv: seen.update(uv=uv, argv=argv)
+    )
+
+    def _refuse_subprocess(*args, **kwargs):  # pragma: no cover
+        raise AssertionError("POSIX must keep replacing the process with exec")
+
+    monkeypatch.setattr(subprocess, "call", _refuse_subprocess)
+
+    module.main()
+
+    assert seen["argv"][seen["argv"].index("--directory") + 1] == str(tmp_path)
+    assert seen["argv"][-1] == os.path.join("src", "run_stdio.py")

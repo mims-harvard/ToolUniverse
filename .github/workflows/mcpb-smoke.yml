@@ -17,6 +17,14 @@ name: MCPB bundle smoke test
 # It is slow -- the first launch resolves and installs the bundle's whole
 # dependency set -- so it runs on changes that can affect the bundle rather
 # than on every push.
+#
+# It runs on Windows as well, because the same failure happened again there and
+# this job could not see it. Every workflow in this repository ran only on
+# ubuntu-latest, so a launcher that worked on POSIX and could never start on
+# Windows reached the release page: os.exec* there joins argv without quoting,
+# and Desktop installs the bundle under "Claude Extensions" (issue #684). The
+# smoke test now also unpacks under a path containing a space, which is what
+# made that bug invisible rather than merely untested.
 
 on:
   push:
@@ -43,9 +51,13 @@ concurrency:
 
 jobs:
   smoke:
-    name: Build the bundle and start it
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+    name: Build the bundle and start it (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -60,16 +72,18 @@ jobs:
           node-version: "20"
 
       - name: Build the bundle
+        shell: bash
         run: bash mcpb/build.sh
 
       - name: Start it and complete an MCP handshake
-        run: python3 mcpb/smoke_test.py dist/tooluniverse.mcpb --timeout 1500
+        shell: bash
+        run: python mcpb/smoke_test.py dist/tooluniverse.mcpb --timeout 1500
 
       - name: Upload the bundle for inspection
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: tooluniverse-mcpb
+          name: tooluniverse-mcpb-${{ matrix.os }}
           path: dist/tooluniverse.mcpb
           retention-days: 14
           if-no-files-found: warn

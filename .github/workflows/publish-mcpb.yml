@@ -83,8 +83,43 @@ jobs:
               print('')
           ")
           fi
+          # Neither version tells you whether the launcher changed. The bundle
+          # carries its own code, and a fix to it at an unchanged version was
+          # invisible to this gate: issue #684 (the Windows launcher could never
+          # start) would have been fixed in the repo and still broken on the
+          # release page until the next version bump. Compare the files the
+          # build copies in verbatim; uv.lock is generated, so it is excluded
+          # and covered by the LOCKED check above.
+          LAUNCHER_DRIFT=no
+          if [ -s /tmp/published.mcpb ]; then
+            LAUNCHER_DRIFT=$(python3 -c "
+          import hashlib, pathlib, zipfile
+          tracked = [
+              'manifest.json', 'pyproject.toml', '.python-version',
+              'src/bootstrap.py', 'src/run_stdio.py',
+          ]
+          def digest(blob):
+              return hashlib.sha256(blob).hexdigest()
+          try:
+              published = zipfile.ZipFile('/tmp/published.mcpb')
+              names = set(published.namelist())
+          except Exception:
+              print('unknown'); raise SystemExit(0)
+          for name in tracked:
+              local = pathlib.Path('mcpb') / name
+              if not local.is_file():
+                  print('unknown'); break
+              if name not in names:
+                  print(name); break
+              if digest(published.read(name)) != digest(local.read_bytes()):
+                  print(name); break
+          else:
+              print('no')
+          ")
+          fi
           echo "published bundle version: ${PUBLISHED:-<unavailable>}"
           echo "published bundle installs: ${LOCKED:-<unavailable>}"
+          echo "launcher drift: $LAUNCHER_DRIFT"
 
           # Republish on any disagreement, not just "newer". A published bundle
           # ahead of the repo is also wrong, and that is precisely the stale
@@ -99,6 +134,9 @@ jobs:
             echo "should_publish=true" >> "$GITHUB_OUTPUT"
           elif [ -n "$LOCKED" ] && [ "$LOCKED" != "$REPO_VERSION" ]; then
             echo "Bundle installs $LOCKED but this is $REPO_VERSION — will rebuild"
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          elif [ "$LAUNCHER_DRIFT" != "no" ]; then
+            echo "Published bundle's $LAUNCHER_DRIFT differs from this repo — will rebuild"
             echo "should_publish=true" >> "$GITHUB_OUTPUT"
           else
             echo "Published bundle already matches — nothing to do"

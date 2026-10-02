@@ -58,7 +58,14 @@ def _rpc(method: str, params: dict, request_id: int) -> str:
 
 
 def smoke(bundle: Path, timeout: int) -> int:
-    workdir = Path(tempfile.mkdtemp(prefix="mcpb-smoke-"))
+    # Unpack under a directory whose name contains a space. Desktop installs
+    # into "%APPDATA%\\Claude\\Claude Extensions\\..." and "~/Library/Application
+    # Support/Claude/Claude Extensions/...", and launching from a path without
+    # one hid issue #684 completely: the Windows launcher split --directory at
+    # that space and no CI job ever ran from a path that had one.
+    root = Path(tempfile.mkdtemp(prefix="mcpb smoke "))
+    workdir = root / "Claude Extensions"
+    workdir.mkdir(parents=True)
     try:
         with zipfile.ZipFile(bundle) as zf:
             zf.extractall(workdir)
@@ -118,7 +125,7 @@ def smoke(bundle: Path, timeout: int) -> int:
         print("PASS: bundle started and completed an MCP initialize handshake")
         return 0
     finally:
-        shutil.rmtree(workdir, ignore_errors=True)
+        shutil.rmtree(root, ignore_errors=True)
 
 
 def _first_jsonrpc_result(stdout: str):
