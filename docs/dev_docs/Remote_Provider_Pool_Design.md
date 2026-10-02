@@ -126,12 +126,6 @@ pool, not on eviction and not on shutdown.
 These are the remaining parts of "just run one command and let `tu` launch whatever is
 needed", and each needs something the pool cannot reach from behind the relay.
 
-**Queue a call across the relay while a model loads.** The control plane (below) can now
-warm a provider ahead of time, but a call that still arrives mid-load gets 503 +
-`Retry-After` rather than being held. Holding it needs a platform-side admitted-wait
-state, reusing the pattern the hosted MCP gateway already has for its own 30–90s cold
-starts.
-
 **VRAM-aware admission.** `--max-active` counts providers, not memory. Two small models
 may fit where one large one does not, and the pool has no model-size metadata to reason
 with. `RemoteDeployment` would need a declared footprint, and admission would have to
@@ -176,6 +170,24 @@ Three rules carry the safety of this path:
 A control failure is answered, never raised: an exception on the agent side would close
 the WebSocket and kill every in-flight tool call because one control message was
 malformed.
+
+### Waiting out a cold model
+
+A call can still arrive for a model that is not loaded, and the pool answers it with 503
+because it cannot hold the request: the relay agent abandons a local request after 25
+seconds and that timeout tears the tunnel down for everyone on the host. A model load
+takes minutes, so waiting here would trade one failed call for an outage.
+
+The platform absorbs it instead, where the per-tool budget of up to 900 seconds already
+lives: a 503 is re-dispatched after 2s, 4s, 8s, then 15s, capped at six attempts and only
+while the pause plus a usable remainder still fits the caller's timeout. Only 503
+qualifies — it is the one status that says the tool did not run, so a retry cannot
+duplicate a side effect, whereas 502 and 504 can both mean the call executed and its
+answer was lost.
+
+That is why the pool deliberately has no pre-wait of its own. A few seconds there would
+spare one round trip on a fast load, at the cost of moving every request closer to the
+25-second cliff.
 
 Control dispatch is local-connection only. The Redis coordinator forwards request frames
 between replicas and has no control representation, so a control call for an agent on
