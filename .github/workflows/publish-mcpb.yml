@@ -15,8 +15,18 @@ name: Publish MCPB bundle
 # someone unpacks the release asset by hand.
 #
 # Nothing is uploaded until the freshly built bundle has actually started and
-# completed an MCP handshake (mcpb/smoke_test.py). A bundle that cannot boot
-# fails the job instead of reaching the release page.
+# completed an MCP handshake (mcpb/smoke_test.py) -- on Linux *and* on Windows.
+# A bundle that cannot boot fails the job instead of reaching the release page.
+#
+# Windows is checked here and not only in mcpb-smoke.yml because the two gates
+# answer different questions. mcpb-smoke.yml stops a bad launcher from being
+# merged; this stops one from being published. A bundle that could never start
+# on Windows reached the release page once already (issue #684), and at that
+# point the pull request gate is behind you.
+#
+# The build runs once and the artifact is carried between jobs, so the bytes
+# that were started on both platforms are the exact bytes uploaded. Building
+# again in the publish job would have published something nothing had booted.
 
 on:
   workflow_dispatch:
@@ -144,14 +154,12 @@ jobs:
           fi
           echo "version=$REPO_VERSION" >> "$GITHUB_OUTPUT"
 
-  publish:
-    name: Build, start it, then upload
+  build:
+    name: Build the bundle
     needs: check
     if: needs.check.outputs.should_publish == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 40
-    permissions:
-      contents: write # replacing the release asset
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -165,13 +173,71 @@ jobs:
         with:
           node-version: "20"
 
+      # build.sh is POSIX-only: it drives python3 with shell paths, which under
+      # the Git Bash on windows-latest arrive at a native Windows python as
+      # "/d/a/...". Nothing about producing the zip is platform-specific, and
+      # releases are built here, so this stays on Linux and only the launch is
+      # exercised per platform.
       - name: Build the bundle
         run: bash mcpb/build.sh
 
-      # The gate that the manual process lacked. An unbootable bundle must fail
-      # the job here rather than land on the release page.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tooluniverse-mcpb-candidate
+          path: dist/tooluniverse.mcpb
+          retention-days: 7
+          if-no-files-found: error
+
+  smoke:
+    name: Start it (${{ matrix.os }})
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Report both platforms rather than cancelling the other on the first
+      # failure; which one broke is the first thing anyone asks.
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: tooluniverse-mcpb-candidate
+          path: dist
+
+      # The gate the manual process lacked. smoke_test.py unpacks under a
+      # directory with a space in its name and launches with the command out of
+      # the manifest, the way Desktop does. `python`, not `python3`: the Windows
+      # runner has no python3 on PATH.
       - name: Start it and complete an MCP handshake
-        run: python3 mcpb/smoke_test.py dist/tooluniverse.mcpb --timeout 1500
+        run: python mcpb/smoke_test.py dist/tooluniverse.mcpb --timeout 1500
+
+  publish:
+    name: Upload the bundle that booted
+    needs: smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write # replacing the release asset
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: tooluniverse-mcpb-candidate
+          path: dist
 
       - name: Upload to the mcpb release
         env:
@@ -222,5 +288,5 @@ jobs:
             echo
             echo "- version: \`$VERSION\`"
             echo "- sha256: \`$LOCAL\`"
-            echo "- started and completed an MCP handshake before upload"
+            echo "- started and completed an MCP handshake on Linux and Windows before upload"
           } >> "$GITHUB_STEP_SUMMARY"

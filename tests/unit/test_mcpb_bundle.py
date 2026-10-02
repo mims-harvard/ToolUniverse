@@ -789,3 +789,110 @@ def test_bootstrap_still_execs_on_posix(tmp_path, monkeypatch):
 
     assert seen["argv"][seen["argv"].index("--directory") + 1] == str(tmp_path)
     assert seen["argv"][-1] == os.path.join("src", "run_stdio.py")
+
+
+WORKFLOWS = Path(__file__).resolve().parents[2] / ".github" / "workflows"
+
+
+def _workflow(name):
+    import yaml
+
+    return yaml.safe_load((WORKFLOWS / name).read_text(encoding="utf-8"))
+
+
+def _smoking_jobs(workflow):
+    """Job ids whose steps launch the bundle through mcpb/smoke_test.py."""
+    jobs = workflow.get("jobs") or {}
+    return {
+        job_id: job
+        for job_id, job in jobs.items()
+        if any(
+            "mcpb/smoke_test.py" in (step.get("run") or "")
+            for step in job.get("steps") or []
+        )
+    }
+
+
+def _platforms(job):
+    matrix = ((job.get("strategy") or {}).get("matrix") or {}).get("os")
+    if matrix:
+        return set(matrix)
+    runs_on = job.get("runs-on")
+    return {runs_on} if isinstance(runs_on, str) else set(runs_on or ())
+
+
+@pytest.mark.parametrize("workflow", ["mcpb-smoke.yml", "publish-mcpb.yml"])
+def test_the_bundle_is_started_on_windows_as_well_as_linux(workflow):
+    """A launcher that cannot start on Windows must not pass either gate.
+
+    One did: issue #684. os.exec* on Windows joins argv without quoting, Desktop
+    installs under "Claude Extensions", and every workflow in this repository
+    ran only on ubuntu-latest -- so the bundle was merged and published while
+    being unable to start for any Windows user.
+
+    Both gates are checked because they answer different questions:
+    mcpb-smoke.yml stops a bad launcher from being merged, publish-mcpb.yml
+    stops one from being published, and by the time publishing happens the pull
+    request gate is behind you.
+    """
+    smoking = _smoking_jobs(_workflow(workflow))
+
+    assert smoking, f"{workflow} no longer starts the bundle at all"
+    covered = set()
+    for job in smoking.values():
+        covered |= _platforms(job)
+
+    assert "windows-latest" in covered, (
+        f"{workflow} only starts the bundle on {sorted(covered)}; a launcher "
+        "that cannot start on Windows would pass this gate again"
+    )
+    assert "ubuntu-latest" in covered, f"{workflow} stopped covering Linux"
+
+
+def test_publishing_cannot_skip_the_windows_start():
+    """Upload must sit downstream of the smoke jobs, not beside them.
+
+    Smoking on Windows is worth nothing if the upload job can reach the release
+    page without waiting for it. This walks the `needs` graph rather than
+    trusting job order, and also pins that the uploaded bytes are the ones that
+    were started: the publish job must take the bundle from an artifact, since
+    building again would publish something nothing had booted.
+    """
+    workflow = _workflow("publish-mcpb.yml")
+    jobs = workflow["jobs"]
+    smoking = set(_smoking_jobs(workflow))
+
+    uploaders = [
+        job_id
+        for job_id, job in jobs.items()
+        if any(
+            "gh release upload" in (step.get("run") or "")
+            for step in job.get("steps") or []
+        )
+    ]
+    assert uploaders, "publish-mcpb.yml no longer uploads anything"
+
+    def upstream(job_id, seen=None):
+        seen = seen if seen is not None else set()
+        needs = jobs[job_id].get("needs") or []
+        needs = [needs] if isinstance(needs, str) else needs
+        for dep in needs:
+            if dep not in seen:
+                seen.add(dep)
+                upstream(dep, seen)
+        return seen
+
+    for job_id in uploaders:
+        ancestors = upstream(job_id)
+        assert ancestors & smoking, (
+            f"job {job_id!r} uploads to the release without any smoke job "
+            f"upstream of it (its ancestors are {sorted(ancestors)})"
+        )
+        steps = jobs[job_id].get("steps") or []
+        assert not any("mcpb/build.sh" in (s.get("run") or "") for s in steps), (
+            f"job {job_id!r} rebuilds the bundle before uploading, so the "
+            "published bytes are not the ones that were started"
+        )
+        assert any(
+            "download-artifact" in (s.get("uses") or "") for s in steps
+        ), f"job {job_id!r} must take the bundle from the artifact that was started"
