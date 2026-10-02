@@ -50,15 +50,34 @@ def _module_constants(tree):
     """
     constants = {}
     for node in tree.body:
-        if not isinstance(node, ast.Assign) or len(node.targets) != 1:
+        if isinstance(node, ast.AnnAssign):
+            # `MAX_CHAINS: int = 8`
+            targets, value = [node.target], node.value
+            if value is None:
+                continue
+        elif isinstance(node, ast.Assign) and len(node.targets) == 1:
+            targets, value = [node.targets[0]], node.value
+        else:
             continue
-        target = node.targets[0]
-        if not isinstance(target, ast.Name):
-            continue
-        try:
-            constants[target.id] = _resolve(node.value, constants)
-        except (ValueError, TypeError, SyntaxError, KeyError):
-            continue
+        # `MIN_BINDER, MAX_BINDER = 8, 250` -- ordinary Python, and skipping it
+        # made a whole provider's schema unreadable until the loud-failure
+        # branch named the file.
+        if len(targets) == 1 and isinstance(targets[0], (ast.Tuple, ast.List)):
+            names = targets[0].elts
+            if not isinstance(value, (ast.Tuple, ast.List)) or len(value.elts) != len(
+                names
+            ):
+                continue
+            targets, values = names, value.elts
+        else:
+            values = [value]
+        for target, item in zip(targets, values):
+            if not isinstance(target, ast.Name):
+                continue
+            try:
+                constants[target.id] = _resolve(item, constants)
+            except (ValueError, TypeError, SyntaxError, KeyError):
+                continue
     return constants
 
 
@@ -109,6 +128,16 @@ def _resolve(node, constants):
             else:
                 out.append("{...}")
         return "".join(out)
+    if isinstance(node, ast.Subscript):
+        # `RECYCLE_BOUNDS[0]` -- indexing a constant the module already defines.
+        # Deliberately narrow: a resolved container and a resolved key, nothing
+        # computed. This is a reader for schema literals, not an interpreter.
+        container = _resolve(node.value, constants)
+        key = _resolve(node.slice, constants)
+        try:
+            return container[key]
+        except (TypeError, KeyError, IndexError) as exc:
+            raise ValueError(f"unresolvable subscript: {exc}") from exc
     if isinstance(node, ast.BinOp) and type(node.op) in _SAFE_BINOPS:
         return _SAFE_BINOPS[type(node.op)](
             _resolve(node.left, constants), _resolve(node.right, constants)

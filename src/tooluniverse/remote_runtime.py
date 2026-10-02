@@ -54,6 +54,11 @@ REMOTE_DEPLOYMENTS = (
         module="tooluniverse.remote.boltz.boltz_mcp_server",
         port=8080,
         operations=("boltz2_docking",),
+        # The manifest's `[env] python` names this, and leaving it out of
+        # required_env meant `tu remote check boltz` probed the SERVER's
+        # interpreter and reported a GPU verdict about the wrong process.
+        required_env=("TOOLUNIVERSE_BOLTZ_PYTHON",),
+        path_env=("BOLTZ_CACHE",),
         required_commands=("boltz",),
         gpu_policy="required",
     ),
@@ -192,6 +197,8 @@ REMOTE_DEPLOYMENTS = (
         "tooluniverse.remote.enformer.enformer_tool",
         8011,
         ("run_enformer_predict", "run_enformer_variant_effect"),
+        ("TOOLUNIVERSE_ENFORMER_PYTHON",),
+        ("HF_HOME",),
         gpu_policy="recommended",
     ),
     RemoteDeployment(

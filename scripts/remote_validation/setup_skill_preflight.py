@@ -45,6 +45,8 @@ DEPLOYMENTS = (
         "boltz",
         8080,
         ("boltz2_docking",),
+        ("TOOLUNIVERSE_BOLTZ_PYTHON",),
+        path_env=("BOLTZ_CACHE",),
         required_commands=("boltz",),
     ),
     Deployment(
@@ -146,7 +148,11 @@ DEPLOYMENTS = (
         path_env=("HF_HOME",),
     ),
     Deployment(
-        "enformer", 8011, ("run_enformer_predict", "run_enformer_variant_effect")
+        "enformer",
+        8011,
+        ("run_enformer_predict", "run_enformer_variant_effect"),
+        ("TOOLUNIVERSE_ENFORMER_PYTHON",),
+        path_env=("HF_HOME",),
     ),
     Deployment("esm", 8008, ("esm_embed_sequence",)),
     Deployment(

@@ -1498,3 +1498,66 @@ class TestLauncherCanRemoveAVariable:
         assert "popen_env = dict(os.environ)" not in src, (
             "a pruned copy of os.environ cannot remove anything"
         )
+
+
+class TestManifestAndDeploymentAgree:
+    """A manifest's `[env] python` variable must be in its `required_env`.
+
+    Two sources of truth describe the same provider: the manifest, which the
+    setup steps read, and the deployment table, which `tu remote check` and the
+    preflight read. Nothing held them together, and boltz and enformer -- the
+    two oldest resident providers -- declared
+    `[env] python = "$TOOLUNIVERSE_<SLUG>_PYTHON"` while their `required_env`
+    was empty. The consequence was quiet rather than loud: `tu remote check`
+    could not know there was a model environment to look at, so it probed the
+    SERVER's interpreter and printed a GPU verdict about the wrong process, and
+    `--check-provider-env` never told an operator the variable was unset.
+    """
+
+    @staticmethod
+    def _verified():
+        from tooluniverse.remote_resident import manifest as M
+
+        root = Path(__file__).resolve().parents[2] / "src" / "tooluniverse" / "remote"
+        for path in sorted(root.glob("*/provider.toml")):
+            try:
+                m = M.load(path)
+            except Exception:
+                continue
+            if m.status == "verified":
+                yield path.parent.name, path, m
+
+    def test_every_interpreter_variable_is_declared(self):
+        import re
+
+        from tooluniverse.remote_runtime import REMOTE_DEPLOYMENTS
+
+        by_slug = {d.slug: d for d in REMOTE_DEPLOYMENTS}
+        problems = []
+        for slug, path, _manifest in self._verified():
+            wanted = set(
+                re.findall(r'^python = "\$([A-Z0-9_]+)"', path.read_text(), re.M)
+            )
+            deployment = by_slug.get(slug)
+            if deployment is None:
+                problems.append(f"{slug}: verified but absent from REMOTE_DEPLOYMENTS")
+                continue
+            missing = wanted - set(deployment.required_env)
+            if missing:
+                problems.append(
+                    f"{slug}: manifest's [env] python needs {sorted(missing)}, "
+                    f"required_env is {deployment.required_env}"
+                )
+        assert not problems, "\n".join(problems)
+
+    def test_the_preflight_catalog_declares_them_too(self):
+        from scripts.remote_validation.setup_skill_preflight import DEPLOYMENTS
+        from tooluniverse.remote_runtime import REMOTE_DEPLOYMENTS
+
+        runtime = {d.slug: set(d.required_env) for d in REMOTE_DEPLOYMENTS}
+        catalog = {d.slug: set(d.required_env) for d in DEPLOYMENTS}
+        assert catalog == runtime, (
+            "the preflight catalog and the runtime table must require the same "
+            "variables; an operator preflights against one and runs against the "
+            "other"
+        )
