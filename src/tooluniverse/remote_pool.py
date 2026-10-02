@@ -948,34 +948,51 @@ class PoolMCPHandler(BaseHTTPRequestHandler):
 
         try:
             endpoint = self.pool.acquire(deployment)
-        except ProviderStarting as exc:
+        except ProviderStarting:
             # 503 rather than a JSON-RPC error: the caller should retry the same call, and
             # a protocol-level error would read as "this tool is broken".
-            self._respond(503, {"detail": str(exc)}, {"Retry-After": "15"})
+            self._respond(
+                503,
+                {"detail": "the provider is loading this model; retry shortly"},
+                {"Retry-After": "15"},
+            )
             return
         except PoolError as exc:
-            self._respond(503, {"detail": str(exc)}, {"Retry-After": "10"})
+            # The exception text carries this host's capacity and GPU numbers, which are
+            # useful in the operator's log and must not be handed to whoever made the
+            # call. A member who could read them could poll free VRAM and infer what
+            # other people on this machine just loaded, so the caller is told only that
+            # it should come back.
+            print(f"  Admission refused: {exc}", flush=True)
+            self._respond(
+                503,
+                {"detail": "the provider is at capacity; retry shortly"},
+                {"Retry-After": "10"},
+            )
             return
         except (OSError, RuntimeError, ValueError) as exc:
+            # The slug is already public -- it is how the caller reached this tool -- but
+            # the exception text can carry interpreter paths, log locations and ports.
+            print(f"  Start failed for {deployment.slug}: {exc}", flush=True)
             self._respond(
                 200,
                 _jsonrpc_error(
                     request_id,
                     _JSONRPC_INTERNAL_ERROR,
-                    f"could not start provider '{deployment.slug}': {exc}",
+                    f"provider '{deployment.slug}' could not be started on this host",
                 ),
             )
             return
 
         try:
             status, body = proxy_call(endpoint, message)
-        except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        except (urllib.error.URLError, TimeoutError, OSError):
             self._respond(
                 200,
                 _jsonrpc_error(
                     request_id,
                     _JSONRPC_INTERNAL_ERROR,
-                    f"provider '{deployment.slug}' did not answer: {exc}",
+                    f"provider '{deployment.slug}' did not answer",
                 ),
             )
             return

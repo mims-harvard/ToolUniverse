@@ -991,3 +991,78 @@ def test_a_failing_nvidia_smi_reports_no_gpu(monkeypatch):
     )
 
     assert remote_pool.gpu_free_mib() is None
+
+
+# ── what a caller is allowed to learn about the host ────────────────────────────
+
+
+def test_a_refused_call_is_not_told_the_hosts_gpu_numbers(tmp_path, capsys):
+    """The exception carries capacity and GPU state; the HTTP reply must not.
+
+    A member who could read free VRAM from an error could poll it and infer what other
+    people on the same machine just loaded. The numbers belong in the operator's log.
+    """
+    pool = vram_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=1_000), max_active=2)
+    pool.footprints.record("boltz", 40_000)
+    server = serve_pool(pool, port=0)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    port = server.server_address[1]
+    try:
+        request = urllib.request.Request(
+            f"http://127.0.0.1:{port}/mcp",
+            data=json.dumps(
+                {
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "method": "tools/call",
+                    "params": {"name": "boltz2_docking", "arguments": {}},
+                }
+            ).encode(),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with pytest.raises(urllib.error.HTTPError) as caught:
+            urllib.request.urlopen(request, timeout=10)
+        assert caught.value.status == 503
+        detail = json.loads(caught.value.read())["detail"]
+    finally:
+        server.shutdown()
+        server.server_close()
+
+    assert "40000" not in detail and "1000" not in detail, detail
+    assert "MiB" not in detail, detail
+    assert "capacity" in detail
+    # The operator still gets the full reason on the host's own console.
+    assert "40000 MiB" in capsys.readouterr().out
+
+
+def test_a_start_failure_does_not_hand_the_caller_local_detail(tmp_path, monkeypatch):
+    """Interpreter paths, log locations and ports are the host's business."""
+    lifecycle = Lifecycle()
+
+    def explode(deployment, **kwargs):
+        raise RuntimeError("/home/owner/envs/boltz/bin/python failed on port 8080")
+
+    lifecycle.ensure = explode  # type: ignore[assignment]
+    pool = make_pool(tmp_path, ["boltz"], lifecycle=lifecycle)
+    server = serve_pool(pool, port=0)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    port = server.server_address[1]
+    try:
+        status, body = _rpc(
+            port,
+            {
+                "jsonrpc": "2.0",
+                "id": 2,
+                "method": "tools/call",
+                "params": {"name": "boltz2_docking", "arguments": {}},
+            },
+        )
+    finally:
+        server.shutdown()
+        server.server_close()
+
+    message = body["error"]["message"]
+    assert status == 200
+    assert "/home/owner" not in message and "8080" not in message, message
+    assert "boltz" in message, "the slug is already public; it is how the call arrived"
