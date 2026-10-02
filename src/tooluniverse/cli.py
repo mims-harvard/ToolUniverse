@@ -1595,9 +1595,10 @@ def cmd_test(args: argparse.Namespace) -> None:
             failures.append(f"result is an empty {type(result).__name__}")
 
         # return_schema validation (auto, from tool definition).
-        # For the {"status", "data"} envelope the schema describes the inner
-        # `data` payload, not the envelope (issue #246); a `status` result with
-        # no `data` key is not that envelope and is validated whole. Tools returning a bare
+        # For the {"status", "data"} envelope the schema usually describes the
+        # inner `data` payload, not the envelope (issue #246); a `status` result
+        # with no `data` key is not that envelope and is validated whole, and a
+        # schema that declares `data` itself is taken at its word (see below). Tools returning a bare
         # list from run() have no envelope and their configs declare the list
         # itself (top-level {"type": "array"}, e.g. CORE_search_papers), so the
         # whole result is the payload there. Reaching here with a list also
@@ -1607,7 +1608,22 @@ def cmd_test(args: argparse.Namespace) -> None:
                 tool_def.get("return_schema") if isinstance(tool_def, dict) else None
             )
             if return_schema:
-                payload = result["data"] if wraps_inner_payload else result
+                # Validate what the schema says it describes. A schema whose own
+                # top level declares `data` is describing the {"status","data"}
+                # envelope, so unwrapping first leaves the declared property
+                # absent from the object being checked -- and since nothing is
+                # `required`, it then passes no matter what the tool returned.
+                # 262 tools ship such a schema; the measured effect is that
+                # OpenTargets_get_target_genomic_location_by_ensemblID declared
+                # `strand` as an integer, returned 'NEGATIVE', and passed.
+                describes_envelope = isinstance(
+                    return_schema.get("properties"), dict
+                ) and "data" in return_schema["properties"]
+                payload = (
+                    result["data"]
+                    if wraps_inner_payload and not describes_envelope
+                    else result
+                )
                 try:
                     import jsonschema
 

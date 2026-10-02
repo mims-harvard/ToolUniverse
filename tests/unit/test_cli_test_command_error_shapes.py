@@ -248,3 +248,73 @@ def test_status_with_data_key_still_validates_the_inner_payload(
     assert tu.exit_code == 0, out
     assert "All 1 test(s) passed" in out
     assert "return_schema mismatch" not in out
+
+
+# A schema that describes the {"status","data"} envelope rather than the inner
+# payload. 262 shipped tools are written this way.
+_ENVELOPE_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "status": {"type": "string"},
+        "data": {
+            "type": "object",
+            "properties": {"strand": {"type": "integer"}},
+        },
+    },
+}
+
+
+@pytest.mark.parametrize(
+    "case,result,exit_code,expected",
+    [
+        # The bug: unwrapping to `data` first left the schema's only declared
+        # property absent from the object being checked, and since nothing is
+        # `required` it passed whatever the tool returned.
+        # OpenTargets_get_target_genomic_location_by_ensemblID declared strand
+        # as an integer, returned 'NEGATIVE', and passed for exactly this
+        # reason.
+        (
+            "envelope schema catches a bad inner value",
+            {"status": "success", "data": {"strand": "NEGATIVE"}},
+            1,
+            "return_schema mismatch",
+        ),
+        (
+            "envelope schema accepts a good one",
+            {"status": "success", "data": {"strand": 1}},
+            0,
+            "All 1 test(s) passed",
+        ),
+    ],
+)
+def test_a_schema_that_declares_data_is_matched_against_the_envelope(
+    monkeypatch, capsys, disable_network, case, result, exit_code, expected
+):
+    tu = _run_cmd_test(monkeypatch, result, return_schema=_ENVELOPE_SCHEMA)
+
+    assert tu.exit_code == exit_code, case
+    assert expected in capsys.readouterr().out, case
+
+
+def test_a_payload_whose_own_top_level_key_is_data_still_validates():
+    """Not every schema that declares `data` is describing the envelope.
+
+    iCite returns `{"data": [...]}` with no status at all, and its schema
+    describes exactly that. Rewriting such schemas to their own `data`
+    sub-schema -- the other way to make the 262 bite -- corrupts the ones that
+    were already right: the validator then compares `{"data": [...]}` against
+    an array schema and reports a mismatch on a healthy call. Choosing the
+    target instead of rewriting the schema leaves these untouched, which is
+    why the fix lives in the validator.
+    """
+    schema = {
+        "type": "object",
+        "properties": {"data": {"type": "array", "items": {"type": "object"}}},
+    }
+    result = {"data": [{"pmid": 38421676}]}
+
+    import jsonschema
+
+    jsonschema.validate(result, schema)
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(result["data"], schema)

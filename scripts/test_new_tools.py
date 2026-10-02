@@ -279,7 +279,20 @@ def run_tests(
                             # properties. Unwrapping those gave None, and every
                             # healthy call was reported as
                             # "Schema Mismatch: None is not of type 'object'".
-                            data = result["data"] if "data" in result else result
+                            #
+                            # And do not unwrap when the schema itself declares
+                            # `data`: it is describing the envelope, so checking
+                            # the inner payload leaves the declared property
+                            # absent and -- nothing being `required` -- passes
+                            # whatever the tool returned. Matches cli.py.
+                            declares_data = isinstance(
+                                schema, dict
+                            ) and "data" in (schema.get("properties") or {})
+                            data = (
+                                result["data"]
+                                if "data" in result and not declares_data
+                                else result
+                            )
                             error = result.get("error")
                         # Check for success field (old style)
                         elif "success" in result:
