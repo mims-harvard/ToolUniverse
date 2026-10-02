@@ -201,6 +201,13 @@ DEPLOYMENTS = (
         path_env=("GENIE3_WEIGHTS",),
     ),
     Deployment(
+        "gpnstar",
+        8057,
+        ("run_gpnstar_vep",),
+        ("HF_HOME", "TOOLUNIVERSE_GPNSTAR_PYTHON"),
+        path_env=("HF_HOME",),
+    ),
+    Deployment(
         "harmony",
         8026,
         ("run_harmony_integrate",),

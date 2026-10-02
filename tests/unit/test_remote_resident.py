@@ -1488,15 +1488,32 @@ class TestLauncherCanRemoveAVariable:
         src = inspect.getsource(supervisor.ResidentWorker._start)
         assert "child_env(extra_env, os.environ)" in src
 
-    def test_af3_jax_asks_for_removals_rather_than_pruning(self):
-        """The provider that needs it must use the form the supervisor honours."""
-        src = (
-            Path(__file__).resolve().parents[2]
-            / "src/tooluniverse/remote/af3_jax/launch.py"
-        ).read_text()
-        assert "removals" in src
-        assert "popen_env = dict(os.environ)" not in src, (
-            "a pruned copy of os.environ cannot remove anything"
+    def test_no_provider_launch_prunes_a_copy_of_the_environment(self):
+        """The invariant, across every provider-local launcher.
+
+        af3_jax was fixed when the defect was found; esm_if1, af3_torch and
+        ef2inv had the same code and were not, because nothing looked. All four
+        wrote `popen_env = dict(os.environ)` and then popped names out of it,
+        which removes nothing: the supervisor rebuilds the child's environment
+        from `os.environ` and applies the mapping over it. Proved on esm_if1 by
+        exporting `ESM_IF1_OPT=off` against a manifest whose mode is `fast` and
+        watching the worker exit 3 -- the exact refusal the strip existed to
+        prevent -- and then watching it start once the launcher returned
+        removals instead.
+        """
+        root = Path(__file__).resolve().parents[2] / "src" / "tooluniverse" / "remote"
+        offenders = []
+        for path in sorted(root.glob("*/launch.py")):
+            src = path.read_text()
+            if "dict(os.environ)" not in src:
+                continue
+            # A copy is fine as long as nothing is removed from it; the defect is
+            # the removal, which the supervisor cannot see.
+            if ".pop(" in src or "del popen_env[" in src:
+                offenders.append(path.parent.name)
+        assert not offenders, (
+            "these launchers remove names from a copy of os.environ, which "
+            "removes nothing -- map the name to None instead: " + ", ".join(offenders)
         )
 
 

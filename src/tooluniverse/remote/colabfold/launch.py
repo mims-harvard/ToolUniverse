@@ -55,7 +55,6 @@ name except the two it sets on purpose, and no ``MODEL_OPT_LEVERS_OFF`` at all.
 from __future__ import annotations
 
 import os
-import shutil
 from pathlib import Path
 from typing import Dict, List, Tuple
 
@@ -207,50 +206,35 @@ def build_command(worker) -> Tuple[List[str], Dict[str, str]]:
     # THE STRIP HAS TO HAPPEN IN THE ARGV, NOT IN THE RETURNED ENVIRONMENT, and
     # that is a measured property of the layer rather than a style choice.
     # `supervisor._start` does
+    # A REMOVAL IS A None VALUE. `supervisor.child_env` builds the child's
+    # environment from `os.environ` and then applies this mapping over it, and
+    # it pops every name mapped to None -- so removal IS expressible through the
+    # return value, as of the fix recorded in STANDARD section 12.
     #
-    #     argv, extra_env = self.build_command(self)
-    #     env = dict(os.environ)
-    #     env.update(extra_env)
+    # It was not when this provider was built. `_start` then did
+    # `env = dict(os.environ)` followed by `env.update(extra_env)`, so a name
+    # pruned from a returned copy came straight back, and this launcher worked
+    # around it by putting `env -u NAME` in the ARGV. That workaround is gone
+    # now that the mechanism exists: one mechanism beats two, and the argv form
+    # hid the intent from anything reading `build_command`'s return value --
+    # which is how the same defect survived in three sibling providers.
     #
-    # so whatever this function returns is treated as an ADDITION to the
-    # operator's own environment. A name this function removes from its copy is
-    # simply re-added by that first line -- removal is not expressible through
-    # the return value at all. Verified the hard way: with
-    # `COLABFOLD_OPT_MODE=typo` exported, a launcher that pruned its returned
-    # mapping still produced a worker that exited 3 at `import colabfold.batch`
-    # with the kit's own `NOT ACTIVE: undeclared variable(s) COLABFOLD_OPT_MODE`.
-    # `env -u NAME` in the argv removes it from the child whatever the
-    # supervisor merged, which is why the pruning below is also spelled here.
-    # (af3_jax's launcher prunes its returned mapping and its docstring says it
-    # was exercised by inspecting that mapping; the same defect applies to it,
-    # and the report to the maintainers names it.)
-    strip = sorted(
-        {
-            k
-            for k in os.environ
-            if any(k.startswith(p) for p in STOCK_ABSENT_PREFIXES)
-            or k == LEVERS_OFF_ENV
-        }
-        - set(env)
-    )
-    if strip:
-        env_bin = shutil.which("env") or "/usr/bin/env"
-        argv = [env_bin] + [a for name in strip for a in ("-u", name)] + argv
-
-    popen_env = dict(os.environ)
-    # STRIP, do not merely omit. Every COLABFOLD_OPT* and AF_PALLAS_ATTN* name
-    # the operator exported is removed before ours are written back: an
-    # undeclared one would make the start-up hook exit the worker 3 at
-    # `import colabfold.batch`, and a declared one (COLABFOLD_OPT=fast, say)
-    # would either arm the same refusal or contradict this manifest. The kit's
-    # own stock route does exactly this and then asserts the result is empty
-    # (`stock_pred.proof()`), which is the behaviour this reproduces for a
-    # worker that is the stock model process in all but its lifetime.
-    for prefix in STOCK_ABSENT_PREFIXES:
-        for name in [k for k in popen_env if k.startswith(prefix)]:
-            popen_env.pop(name)
-    # And the ablation switch, which under `off` installs the refusing finder
-    # all by itself. Not setting it is not enough; it has to go.
-    popen_env.pop(LEVERS_OFF_ENV, None)
-    popen_env.update(env)
-    return argv, popen_env
+    # Every COLABFOLD_OPT* and AF_PALLAS_ATTN* name the operator exported must be
+    # REMOVED, not merely overwritten: an undeclared one makes the start-up hook
+    # exit the worker 3 at `import colabfold.batch`, and a declared one
+    # (COLABFOLD_OPT=fast, say) would either arm the same refusal or contradict
+    # this manifest. The kit's own stock route does exactly this and then asserts
+    # the result is empty (`stock_pred.proof()`), which is the behaviour this
+    # reproduces for a worker that is the stock model process in all but its
+    # lifetime. LEVERS_OFF_ENV goes too: under `off` it installs the refusing
+    # finder all by itself, so not setting it is not enough.
+    removals = {
+        name: None
+        for name in os.environ
+        if (
+            any(name.startswith(prefix) for prefix in STOCK_ABSENT_PREFIXES)
+            or name == LEVERS_OFF_ENV
+        )
+        and name not in env
+    }
+    return argv, {**removals, **env}

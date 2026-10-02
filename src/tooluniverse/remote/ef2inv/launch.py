@@ -194,17 +194,24 @@ def build_command(worker) -> Tuple[List[str], Dict[str, str]]:
     os.makedirs(jit_root, exist_ok=True)
     env["MODEL_OPT_JIT_ROOT"] = jit_root
 
-    popen_env = dict(os.environ)
-    # STRIP, do not merely omit, and do it with the kit's own list: an
-    # EF2INV_OPT or a stale EF2_FAST_KIT inherited from an operator's shell
-    # would fail the kit's environment proof in the worker and cost a confusing
-    # exit 3. EF2_FAST_KIT is set by the WORKER, from the kit's own mode table.
-    for prefix in _must_be_absent(kit_home):
-        for name in [
-            k
-            for k in popen_env
-            if (k.startswith(prefix) if prefix.endswith("_") else k == prefix)
-        ]:
-            popen_env.pop(name)
+    # A REMOVAL IS A None VALUE, not a pruned copy. `supervisor.child_env`
+    # builds the child's environment from `os.environ` and then applies this
+    # mapping over it, so a name merely left out of a copy comes straight back.
+    # This launcher used to prune `dict(os.environ)` and its strip did nothing:
+    # measured on a sibling provider, with the stray variable exported and the
+    # worker exiting 3 at the very refusal the strip existed to prevent.
+    # STANDARD section 12 has the general form -- a launcher's intent has to be
+    # expressed in something the executor acts on.
+    #
+    # The list is the kit's own: an EF2INV_OPT or a stale EF2_FAST_KIT inherited
+    # from an operator's shell would fail the kit's environment proof in the
+    # worker and cost a confusing exit 3. EF2_FAST_KIT is set by the WORKER,
+    # from the kit's own mode table.
+    popen_env = {
+        name: None
+        for prefix in _must_be_absent(kit_home)
+        for name in os.environ
+        if (name.startswith(prefix) if prefix.endswith("_") else name == prefix)
+    }
     popen_env.update(env)
     return argv, popen_env

@@ -1,0 +1,14 @@
+{
+  "variants": [
+    {"chrom": "1", "pos": 1425822, "ref": "C", "alt": "G"},
+    {"chrom": "1", "pos": 1615869, "ref": "C", "alt": "T"},
+    {"chrom": "2", "pos": 5718743, "ref": "A", "alt": "G"},
+    {"chrom": "2", "pos": 5718745, "ref": "C", "alt": "T"},
+    {"chrom": "3", "pos": 213423, "ref": "A", "alt": "G"},
+    {"chrom": "3", "pos": 384380, "ref": "A", "alt": "C"},
+    {"chrom": "5", "pos": 420942, "ref": "A", "alt": "C"},
+    {"chrom": "5", "pos": 850655, "ref": "C", "alt": "T"}
+  ],
+  "window_size": 128,
+  "batch_size": 8
+}

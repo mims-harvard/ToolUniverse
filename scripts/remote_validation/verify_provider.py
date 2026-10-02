@@ -436,6 +436,46 @@ def _complexa_design(text, n):
     return json.dumps(doc)
 
 
+def _gpnstar_vep(text, n):
+    """A GPN-Star request of n variants whose BATCH SHAPE is n (capped at 64).
+
+    The input is a JSON document of single-nucleotide variants scored against an
+    alignment store, and a variant's `ref` has to equal the store's own base at that
+    position or upstream refuses the request. So the variants cannot be tiled or
+    invented the way a sequence provider's residues are: they are drawn from
+    `gpnstar_realpos_128.json`, every position of the kit's sparse example store whose
+    128-bp window lies inside a present chunk, with the ref read from the store by
+    `gpnstar_realpos.py` (3,207 of them).
+
+    WHAT THE RUNG VARIES, and why it is not simply the count: this provider's engine
+    key is the kit's per-shape state -- the K/V route decision, the constants cached per
+    shape -- and that is a function of the BATCH shape (batch_size x window), not of how
+    many variants are in the request: 4,000 variants at batch 8 run one shape. So the
+    rung sets batch_size = min(n, 64) as well, which makes the size axis the engine-key
+    axis up to 64. Past 64 the batch shape stops changing and only the batch COUNT grows.
+    The WINDOW axis, which also changes the shape, is exercised separately by
+    gpnstar_window_axis.py.
+    """
+    import json as _json
+
+    doc = _json.loads(text)
+    # Shipped beside this script: see fixtures/README.md for why these cannot be
+    # invented. A path from one machine's scratchpad lived here first, which is
+    # the second time that has happened in this file.
+    pool = _json.loads(
+        (
+            Path(__file__).resolve().parent
+            / "fixtures"
+            / "gpnstar_valid_positions_w128.json"
+        ).read_text()
+    )
+    step = 7919  # coprime with 3207, so the n picks are distinct and spread over the chunks
+    doc["variants"] = [pool[(i * step) % len(pool)] for i in range(n)]
+    doc["window_size"] = 128
+    doc["batch_size"] = max(1, min(n, 64))
+    return _json.dumps(doc)
+
+
 SHAPERS = {
     "protenix_v1": lambda x, n: _json_seq(
         x, n, [0, "sequences", 0, "proteinChain", "sequence"]
@@ -460,6 +500,7 @@ SHAPERS = {
     "e1": _e1_fasta,
     "rosettafold3": lambda t, n: _json_seq(t, n, [0, "components", 0, "seq"]),
     "evo2": lambda t, n: _tile(DNA, n),
+    "gpnstar": _gpnstar_vep,
     "esm_if1": _esm_if1_backbone,
     "colabfold": _colabfold_a3m,
     "af2ig": _af2ig_complex,

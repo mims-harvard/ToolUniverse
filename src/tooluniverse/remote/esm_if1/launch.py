@@ -234,11 +234,20 @@ def build_command(worker) -> Tuple[List[str], Dict[str, str]]:
     env["TOOLUNIVERSE_REMOTE_PROTOCOL"] = os.fspath(shared / "protocol.py")
     env["TOOLUNIVERSE_REMOTE_WORKER_BASE"] = os.fspath(shared / "worker_base.py")
 
-    popen_env = dict(os.environ)
-    # STRIP, do not merely omit. An ESM_IF1_OPT inherited from an operator's
-    # shell is a ModeConflict against --mode on the worker's first statement.
-    for prefix in _strip_prefixes(python):
-        for name in [k for k in popen_env if k.startswith(prefix)]:
-            popen_env.pop(name)
-    popen_env.update(env)
-    return argv, popen_env
+    # A REMOVAL IS A None VALUE, not a pruned copy. `supervisor.child_env`
+    # builds the child's environment from `os.environ` and then applies this
+    # mapping over it, so a name merely left out of a copy comes straight back.
+    # This launcher used to prune `dict(os.environ)` and its strip did nothing:
+    # measured, with the stray variable exported and the worker exiting 3 at the
+    # very refusal the strip existed to prevent. STANDARD section 12 has the
+    # general form -- a launcher's intent has to be expressed in something the
+    # executor acts on.
+    # An ESM_IF1_OPT inherited from an operator's shell is a ModeConflict
+    # against --mode on the worker's first statement.
+    removals = {
+        name: None
+        for prefix in _strip_prefixes(python)
+        for name in os.environ
+        if name.startswith(prefix) and name not in env
+    }
+    return argv, {**removals, **env}

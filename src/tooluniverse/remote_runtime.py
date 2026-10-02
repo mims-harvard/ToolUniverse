@@ -268,6 +268,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "gpnstar",
+        "tooluniverse.remote.gpnstar.gpnstar_tool",
+        8057,
+        ("run_gpnstar_vep",),
+        ("HF_HOME", "TOOLUNIVERSE_GPNSTAR_PYTHON"),
+        ("HF_HOME",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "harmony",
         "tooluniverse.remote.harmony.harmony_tool",
         8026,
