@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2718 scientific tools.
+Type-safe Python interface to 2717 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -1902,9 +1902,6 @@ from .OpenTargets_get_target_constraint_info_by_ensemblID import (
 )
 from .OpenTargets_get_target_depmap_essentiality import (
     OpenTargets_get_target_depmap_essentiality,
-)
-from .OpenTargets_get_target_enabling_packages_by_ensemblID import (
-    OpenTargets_get_target_enabling_packages_by_ensemblID,
 )
 from .OpenTargets_get_target_expression_by_ensemblID import (
     OpenTargets_get_target_expression_by_ensemblID,
@@ -4799,7 +4796,6 @@ __all__ = [
     "OpenTargets_get_target_classes_by_ensemblID",
     "OpenTargets_get_target_constraint_info_by_ensemblID",
     "OpenTargets_get_target_depmap_essentiality",
-    "OpenTargets_get_target_enabling_packages_by_ensemblID",
     "OpenTargets_get_target_expression_by_ensemblID",
     "OpenTargets_get_target_gene_ontology_by_ensemblID",
     "OpenTargets_get_target_genomic_location_by_ensemblID",

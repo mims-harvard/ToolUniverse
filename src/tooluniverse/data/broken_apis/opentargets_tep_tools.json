@@ -1,0 +1,52 @@
+[
+  {
+    "name": "OpenTargets_get_target_enabling_packages_by_ensemblID",
+    "description": "Retrieve the Target Enabling Packages (TEP) associated with a specific target ensemblID.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ensemblId": {
+          "type": "string",
+          "description": "The Ensembl ID of the target."
+        }
+      },
+      "required": [
+        "ensemblId"
+      ]
+    },
+    "query_schema": "\n      query fetchTargetEnablingPackages($ensemblId: String!) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          tep {\n            name\n            uri\n            therapeuticArea\n            description\n          }\n        }\n      }\n    ",
+    "label": [
+      "OpenTarget",
+      "Target Information",
+      "GraphQL",
+      "Target"
+    ],
+    "type": "OpenTarget",
+    "test_examples": [
+      {
+        "ensemblId": "ENSG00000141510"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "target": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "approvedSymbol": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+]

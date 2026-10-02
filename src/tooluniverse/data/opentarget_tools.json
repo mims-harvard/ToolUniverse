@@ -1962,7 +1962,8 @@
                                             "type": "integer"
                                         },
                                         "strand": {
-                                            "type": "integer"
+                                            "type": ["string", "null"],
+                                            "description": "Strand the gene is on, as OpenTargets reports it: 'POSITIVE' or 'NEGATIVE'. It was an integer in an earlier version of the API."
                                         }
                                     }
                                 }
@@ -2273,57 +2274,7 @@
             }
         }
     },
-    {
-        "name": "OpenTargets_get_target_enabling_packages_by_ensemblID",
-        "description": "Retrieve the Target Enabling Packages (TEP) associated with a specific target ensemblID.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "ensemblId": {
-                    "type": "string",
-                    "description": "The Ensembl ID of the target."
-                }
-            },
-            "required": [
-                "ensemblId"
-            ]
-        },
-        "query_schema": "\n      query fetchTargetEnablingPackages($ensemblId: String!) {\n        target(ensemblId: $ensemblId) {\n          id\n          approvedSymbol\n          tep {\n            name\n            uri\n            therapeuticArea\n            description\n          }\n        }\n      }\n    ",
-        "label": [
-            "OpenTarget",
-            "Target Information",
-            "GraphQL",
-            "Target"
-        ],
-        "type": "OpenTarget",
-        "test_examples": [
-            {
-                "ensemblId": "ENSG00000141510"
-            }
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "target": {
-                            "type": "object",
-                            "properties": {
-                                "id": {
-                                    "type": "string"
-                                },
-                                "approvedSymbol": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    },
-    {
+  {
         "name": "OpenTargets_get_target_interactions_by_ensemblID",
         "description": "Retrieve interaction data for a specific target ensemblID, including interaction partners and evidence. Results are PAGINATED and Open Targets returns only 25 rows when no `page` is given: `interactions.count` is the total number of interactions (a well-studied target has thousands), `interactions.returned` is how many are in `rows`, and `interactions.truncated` is true when interactions remain unfetched, in which case `metadata.truncation_note` names the exact `page` argument to pass. Pass page: {\"index\": 0, \"size\": N} (Open Targets rejects a size above 3000) and step `index` to page through.",
         "label": [
@@ -3861,7 +3812,7 @@
                 "ensemblId"
             ]
         },
-        "query_schema": "\n      query getTargetChemicalProbes($ensemblId: String!) {\n        target(ensemblId: $ensemblId) {\n          chemicalProbes {\n            id\n            control\n            drugId\n            mechanismOfAction\n            isHighQuality\n            origin\n            probeMinerScore\n            probesDrugsScore\n            scoreInCells\n            scoreInOrganisms\n            targetFromSourceId\n            urls {\n              niceName\n              url\n            }\n          }\n        }\n      }\n    ",
+        "query_schema": "\n      query getTargetChemicalProbes($ensemblId: String!) {\n        target(ensemblId: $ensemblId) {\n          chemicalProbes {\n            id\n            control\n            drugId\n            mechanismOfAction\n            isHighQuality\n            origin\n            probesDrugsScore\n            scoreInCells\n            scoreInOrganisms\n            targetFromSourceId\n            urls {\n              niceName\n              url\n            }\n          }\n        }\n      }\n    ",
         "label": [
             "OpenTarget",
             "Drug Information",
@@ -5677,10 +5628,8 @@
                                             ]
                                         },
                                         "strand": {
-                                            "type": [
-                                                "integer",
-                                                "null"
-                                            ]
+                                            "type": ["string", "null"],
+                                            "description": "Strand the gene is on, as OpenTargets reports it: 'POSITIVE' or 'NEGATIVE'. It was an integer in an earlier version of the API."
                                         }
                                     }
                                 }
