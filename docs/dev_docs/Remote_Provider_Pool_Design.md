@@ -126,11 +126,6 @@ pool, not on eviction and not on shutdown.
 These are the remaining parts of "just run one command and let `tu` launch whatever is
 needed", and each needs something the pool cannot reach from behind the relay.
 
-**VRAM-aware admission.** `--max-active` counts providers, not memory. Two small models
-may fit where one large one does not, and the pool has no model-size metadata to reason
-with. `RemoteDeployment` would need a declared footprint, and admission would have to
-consult actual free VRAM.
-
 **Scheduling across hosts.** Each agent is one tunnel bound to one `server_id`. Routing
 a tool to whichever of several GPU hosts can serve it soonest is a platform-side
 scheduling concern, not an agent-side one.
@@ -170,6 +165,44 @@ Three rules carry the safety of this path:
 A control failure is answered, never raised: an exception on the agent side would close
 the WebSocket and kill every in-flight tool call because one control message was
 malformed.
+
+### Admitting on memory, not just on count
+
+`--max-active` is a count, and a count cannot express that two small models fit where one
+large one does not. Memory can, but nothing declares what a reviewed provider costs: there
+is no `provider.toml`, no figure in any of the thirty READMEs, and no field on
+`RemoteDeployment`. Writing a table of numbers would be guessing about other people's
+hardware.
+
+So the pool measures instead. Free VRAM before a start, free VRAM once the provider
+answers, and the difference is what that model costs *on this machine*. `FootprintStore`
+caches it beside the schema snapshots. A provider's first load is therefore admitted on
+count alone — there is nothing to reason with yet — and every later one can be admitted on
+memory.
+
+Three decisions worth keeping:
+
+- **The largest measurement wins.** A model that allocates lazily looks smaller on a run
+  that only initialised it, and admitting on that smaller number overcommits the GPU the
+  next time it is really used.
+- **Freed memory is estimated from the victims' own measurements, not re-read from the
+  driver.** A stopped process does not return its VRAM immediately, so a fresh reading
+  straight after a kill reports the memory as still in use. A victim nobody has measured
+  yet counts as freeing nothing, which can refuse an admission that would have fit —
+  preferred over the opposite error.
+- **The most free device is reported, never the sum.** One provider lands on one GPU, so a
+  sum would claim room no single model can use. The pool does not choose placement, so
+  this is an upper bound on what the next model can expect rather than a guarantee.
+
+Memory pressure never evicts a provider with a call in flight, exactly like the count
+ceiling: the caller is told to retry instead of having a running GPU job killed under it.
+
+Reading the GPU degrades to "do not reason about VRAM" rather than to "no memory": no
+`nvidia-smi`, a non-zero exit, or a reading that is not a number. That last case is not
+hypothetical — a machine used to develop this has `nvidia-smi` present and answering
+`[N/A]` for `memory.free`, and admitting against that would be worse than ignoring it.
+Twenty of the thirty reviewed providers need no GPU at all, so count-only admission stays
+a normal mode of operation rather than a fallback.
 
 ### Waiting out a cold model
 

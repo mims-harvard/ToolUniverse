@@ -2582,6 +2582,7 @@ def cmd_remote_run(args: argparse.Namespace) -> None:
 def cmd_remote_pool(args: argparse.Namespace) -> None:
     """Serve several reviewed providers from one process, starting each on demand."""
     from tooluniverse.remote_pool import (
+        FootprintStore,
         PoolError,
         ProviderPool,
         SchemaStore,
@@ -2662,6 +2663,8 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
             python=resolve_python(args.python, REMOTE_BY_SLUG[usable[0]]),
             log_dir=args.log_dir,
             schemas=SchemaStore(args.schema_dir),
+            footprints=FootprintStore(args.schema_dir),
+            vram_headroom_mib=args.vram_headroom,
             max_active=args.max_active,
             idle_ttl=args.idle_ttl,
             startup_timeout=args.startup_timeout,
@@ -3437,6 +3440,18 @@ def main() -> None:
         type=float,
         default=900.0,
         help="stop a provider after this many idle seconds (default: 900)",
+    )
+    p.add_argument(
+        "--vram-headroom",
+        type=_bounded_int(0, 65536),
+        default=1024,
+        metavar="MIB",
+        help=(
+            "GPU memory left spare when admitting a measured provider, for fragmentation "
+            "and the CUDA context (default: 1024 MiB). Memory-based admission only "
+            "applies once a provider has been loaded here at least once; nothing "
+            "declares a provider's footprint, so the pool measures it"
+        ),
     )
     p.add_argument(
         "--port",

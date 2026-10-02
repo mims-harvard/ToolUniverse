@@ -679,3 +679,315 @@ def test_a_malformed_control_operation_is_answered_not_raised(tmp_path, op, args
 
     assert "error" in result
     assert pool.lifecycle.started == []
+
+
+# ── VRAM-aware admission ────────────────────────────────────────────────────────
+
+
+class FakeGPU:
+    """A GPU whose free memory the test controls."""
+
+    def __init__(self, free: int | None) -> None:
+        self.free = free
+        self.reads = 0
+
+    def __call__(self) -> int | None:
+        self.reads += 1
+        return self.free
+
+
+def vram_pool(tmp_path, slugs, gpu, lifecycle=None, **kwargs):
+    from tooluniverse.remote_pool import FootprintStore
+
+    pool = make_pool(
+        tmp_path,
+        slugs,
+        lifecycle=lifecycle,
+        footprints=FootprintStore(tmp_path / "fp"),
+        read_free_vram=gpu,
+        **kwargs,
+    )
+    return pool
+
+
+def test_nothing_declares_a_provider_footprint_so_the_first_load_is_count_only(
+    tmp_path,
+):
+    """No provider.toml, no README figure, no RemoteDeployment field declares this.
+
+    Inventing a table would be guessing about other people's hardware, so the pool
+    admits the first load on count and learns the cost from that load.
+    """
+    gpu = FakeGPU(free=100)  # Far too little for anything, yet the load must proceed.
+    pool = vram_pool(tmp_path, ["boltz"], gpu)
+
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert pool.lifecycle.started == ["boltz"]
+    assert pool.footprints.get("boltz") is None, "nothing was measurable yet"
+
+
+def test_a_start_is_measured_by_difference_and_reused_next_time(tmp_path):
+    readings = [40_000, 24_000]  # before the start, then after it
+    gpu = FakeGPU(free=None)
+    gpu.__call__ = lambda: readings.pop(0) if readings else 24_000  # type: ignore
+    pool = vram_pool(
+        tmp_path, ["boltz"], lambda: readings.pop(0) if readings else 24_000
+    )
+    deployment = pool.provider_for_tool("boltz2_docking")
+    pool.footprints.record("boltz", 1)  # make the pool take a before-reading
+
+    pool.acquire(deployment)
+
+    # 40000 - 24000, recorded because it is larger than the seeded 1 MiB.
+    assert pool.footprints.get("boltz") == 16_000
+
+
+def test_a_measured_provider_is_refused_when_the_gpu_cannot_hold_it(tmp_path):
+    gpu = FakeGPU(free=8_000)
+    pool = vram_pool(tmp_path, ["boltz"], gpu, max_active=2)
+    pool.footprints.record("boltz", 20_000)
+
+    with pytest.raises(PoolError, match="needs 20000 MiB"):
+        pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert pool.lifecycle.started == [], "a model that cannot fit must not be launched"
+
+
+def test_headroom_is_required_on_top_of_the_measurement(tmp_path):
+    """Admitting a model into exactly its measured size fails on the real allocation."""
+    pool = vram_pool(tmp_path, ["boltz"], FakeGPU(free=20_000), vram_headroom_mib=1024)
+    pool.footprints.record("boltz", 20_000)
+
+    with pytest.raises(PoolError, match="headroom"):
+        pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+
+def test_two_small_models_coexist_where_a_count_of_one_would_not(tmp_path):
+    """The whole point of measuring: a count cannot express that these both fit."""
+    pool = vram_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=40_000), max_active=4)
+    esm_tool = REMOTE_BY_SLUG["esm"].operations[0]
+    pool.footprints.record("boltz", 4_000)
+    pool.footprints.record("esm", 4_000)
+
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+    pool.acquire(pool.provider_for_tool(esm_tool))
+
+    assert sorted(row["provider"] for row in pool.status()) == ["boltz", "esm"]
+
+
+def test_a_large_model_evicts_an_idle_one_to_make_memory_room(tmp_path):
+    pool = vram_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=10_000), max_active=4)
+    esm = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+    boltz = pool.provider_for_tool("boltz2_docking")
+    pool.footprints.record("esm", 6_000)
+    pool.footprints.record("boltz", 14_000)
+
+    pool.acquire(esm)
+    pool.release(esm)
+    pool.acquire(boltz)  # 10000 free + 6000 reclaimed from esm = 16000 >= 14000 + 1024
+
+    assert [row["provider"] for row in pool.status()] == ["boltz"]
+
+
+def test_memory_pressure_never_evicts_a_provider_mid_call(tmp_path):
+    """Same rule as the count ceiling: a running GPU job is not collateral."""
+    pool = vram_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=2_000), max_active=4)
+    esm = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+    pool.acquire(esm)  # admitted on count, since nothing had measured it yet; held
+    pool.footprints.record("esm", 4_000)
+    pool.footprints.record("boltz", 20_000)
+
+    with pytest.raises(PoolError, match="busy"):
+        pool.acquire(pool.provider_for_tool("boltz2_docking"))
+    assert [row["provider"] for row in pool.status()] == ["esm"]
+
+
+def test_an_unmeasured_victim_is_assumed_to_free_nothing(tmp_path):
+    """Conservative on purpose: guessing a victim's size could overcommit the GPU.
+
+    The numbers matter. Free memory is short of what boltz needs, and one unmeasured
+    resident is available to evict. Crediting that eviction with any plausible amount
+    (8 GiB, say) would clear the requirement and admit boltz onto a GPU that cannot hold
+    it; crediting it with nothing refuses. A test where both choices end in a refusal
+    would prove nothing, so this one is sized so they differ.
+    """
+    pool = vram_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=4_000), max_active=4)
+    esm = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+    pool.acquire(esm)
+    pool.release(esm)  # resident, idle, and never measured
+    pool.footprints.record("boltz", 10_000)  # needs 11024 with headroom
+
+    with pytest.raises(PoolError, match="needs 10000 MiB"):
+        pool.acquire(pool.provider_for_tool("boltz2_docking"))
+    assert pool.lifecycle.started == ["esm"], "boltz must not have been launched"
+
+
+def test_a_machine_with_no_gpu_admits_on_count_alone(tmp_path):
+    """Twenty of the thirty reviewed providers need no GPU at all."""
+    pool = vram_pool(tmp_path, ["boltz"], FakeGPU(free=None))
+    pool.footprints.record("boltz", 20_000)
+
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert pool.lifecycle.started == ["boltz"]
+
+
+def test_a_driver_error_is_treated_as_no_reading_rather_than_no_memory(tmp_path):
+    def broken() -> int | None:
+        raise OSError("nvidia-smi exploded")
+
+    pool = vram_pool(tmp_path, ["boltz"], broken)
+    pool.footprints.record("boltz", 20_000)
+
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert pool.lifecycle.started == ["boltz"]
+
+
+def test_the_gpu_is_not_consulted_before_anything_has_been_measured(tmp_path):
+    """A first load must not pay for a reading it cannot act on."""
+    gpu = FakeGPU(free=50_000)
+    pool = vram_pool(tmp_path, ["boltz"], gpu)
+
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert gpu.reads == 1, f"expected one post-start reading, got {gpu.reads}"
+
+
+def test_status_reports_only_measurements_that_exist(tmp_path):
+    pool = vram_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=31_000))
+    pool.footprints.record("boltz", 12_000)
+
+    answer = pool.control("status", {})
+
+    assert answer["measured_vram_mib"] == {"boltz": 12_000}
+    assert answer["free_vram_mib"] == 31_000
+    assert answer["vram_headroom_mib"] == 1024
+
+
+def test_a_pool_without_a_footprint_store_reports_no_vram_fields(tmp_path):
+    pool = make_pool(tmp_path, ["boltz"])
+
+    answer = pool.control("status", {})
+
+    assert "measured_vram_mib" not in answer
+    assert "free_vram_mib" not in answer
+
+
+# ── footprint store ─────────────────────────────────────────────────────────────
+
+
+def test_a_footprint_survives_a_restart(tmp_path):
+    from tooluniverse.remote_pool import FootprintStore
+
+    FootprintStore(tmp_path / "fp").record("boltz", 9_000)
+
+    assert FootprintStore(tmp_path / "fp").get("boltz") == 9_000
+
+
+def test_the_largest_measurement_wins(tmp_path):
+    """A lazily-allocating model looks smaller on a run that only initialised it.
+
+    Admitting on the smaller number would overcommit the GPU the next time it is used.
+    """
+    from tooluniverse.remote_pool import FootprintStore
+
+    store = FootprintStore(tmp_path / "fp")
+    store.record("boltz", 12_000)
+    store.record("boltz", 4_000)
+
+    assert store.get("boltz") == 12_000
+
+
+@pytest.mark.parametrize("value", [0, -500])
+def test_a_non_positive_measurement_is_discarded(tmp_path, value):
+    from tooluniverse.remote_pool import FootprintStore
+
+    store = FootprintStore(tmp_path / "fp")
+    store.record("boltz", value)
+
+    assert store.get("boltz") is None
+
+
+def test_an_implausible_measurement_is_discarded(tmp_path):
+    """A misread must not wedge admission behind a number no GPU can satisfy."""
+    from tooluniverse.remote_pool import MAX_PLAUSIBLE_FOOTPRINT_MIB, FootprintStore
+
+    store = FootprintStore(tmp_path / "fp")
+    store.record("boltz", MAX_PLAUSIBLE_FOOTPRINT_MIB + 1)
+
+    assert store.get("boltz") is None
+
+
+def test_a_corrupt_footprint_file_is_ignored(tmp_path):
+    from tooluniverse.remote_pool import FootprintStore
+
+    (tmp_path / "fp").mkdir()
+    (tmp_path / "fp" / "footprints.json").write_text("{not json")
+
+    assert FootprintStore(tmp_path / "fp").get("boltz") is None
+
+
+# ── reading the GPU ─────────────────────────────────────────────────────────────
+
+
+def test_the_most_free_device_is_reported_not_the_sum(monkeypatch):
+    """One provider lands on one GPU, so a sum would claim room nothing can use."""
+    import subprocess as sp
+
+    from tooluniverse import remote_pool
+
+    monkeypatch.setattr(
+        remote_pool.subprocess,
+        "run",
+        lambda *a, **k: sp.CompletedProcess(
+            a, 0, stdout="8000\n23000\n1000\n", stderr=""
+        ),
+    )
+
+    assert remote_pool.gpu_free_mib() == 23_000
+
+
+def test_a_partial_or_non_numeric_reading_is_discarded(monkeypatch):
+    """Admitting on half a view of the hardware is worse than not reasoning at all."""
+    import subprocess as sp
+
+    from tooluniverse import remote_pool
+
+    monkeypatch.setattr(
+        remote_pool.subprocess,
+        "run",
+        lambda *a, **k: sp.CompletedProcess(a, 0, stdout="8000\n[N/A]\n", stderr=""),
+    )
+
+    assert remote_pool.gpu_free_mib() is None
+
+
+@pytest.mark.parametrize(
+    "outcome",
+    [FileNotFoundError("nvidia-smi"), OSError("boom")],
+)
+def test_a_machine_without_nvidia_smi_reports_no_gpu(monkeypatch, outcome):
+    from tooluniverse import remote_pool
+
+    def explode(*a, **k):
+        raise outcome
+
+    monkeypatch.setattr(remote_pool.subprocess, "run", explode)
+
+    assert remote_pool.gpu_free_mib() is None
+
+
+def test_a_failing_nvidia_smi_reports_no_gpu(monkeypatch):
+    import subprocess as sp
+
+    from tooluniverse import remote_pool
+
+    monkeypatch.setattr(
+        remote_pool.subprocess,
+        "run",
+        lambda *a, **k: sp.CompletedProcess(a, 9, stdout="", stderr="driver error"),
+    )
+
+    assert remote_pool.gpu_free_mib() is None

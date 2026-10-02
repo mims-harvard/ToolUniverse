@@ -37,6 +37,7 @@ protocol change rather than here.
 from __future__ import annotations
 
 import json
+import subprocess
 import threading
 import time
 import urllib.error
@@ -66,6 +67,14 @@ MAX_TOOLS_PER_PROVIDER = 512
 # only the ceiling this module allows an operator to configure.
 MIN_STARTUP_TIMEOUT = 10.0
 MAX_STARTUP_TIMEOUT = 1800.0
+
+# A measurement above this is a misread rather than a model: no single reviewed provider
+# approaches it, and admitting against a bogus number would wedge the pool.
+MAX_PLAUSIBLE_FOOTPRINT_MIB = 512 << 10  # 512 GiB
+
+# Fragmentation, the CUDA context, and whatever else shares the device. Admitting a model
+# into exactly its measured size reliably fails on the real allocation.
+DEFAULT_VRAM_HEADROOM_MIB = 1024
 
 DEFAULT_POOL_PORT = 7999
 DEFAULT_IDLE_TTL = 900.0
@@ -115,6 +124,106 @@ def build_tool_index(slugs: Iterable[str]) -> dict[str, RemoteDeployment]:
                 )
             index[operation] = deployment
     return index
+
+
+def gpu_free_mib(timeout: float = 5.0) -> int | None:
+    """Free VRAM on the most free visible GPU, or None when there is no GPU to ask.
+
+    Reports the maximum across devices rather than the sum: one provider lands on one
+    GPU, so the sum would claim room that no single model can use. The pool does not
+    choose placement -- CUDA_VISIBLE_DEVICES and the provider do -- so this is an upper
+    bound on what the next model can expect, not a guarantee.
+
+    None means "do not reason about VRAM": no nvidia-smi, no driver, or a machine with no
+    GPU at all, which is the case for twenty of the thirty reviewed providers.
+    """
+
+    try:
+        completed = subprocess.run(
+            [
+                "nvidia-smi",
+                "--query-gpu=memory.free",
+                "--format=csv,noheader,nounits",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if completed.returncode != 0:
+        return None
+    values: list[int] = []
+    for line in completed.stdout.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            values.append(int(line))
+        except ValueError:
+            # A driver error string in place of a number: treat the whole reading as
+            # unavailable rather than admitting on a partial view of the hardware.
+            return None
+    return max(values) if values else None
+
+
+@dataclass
+class FootprintStore:
+    """Measured VRAM cost per provider, cached on disk.
+
+    Nothing declares how much memory a reviewed provider needs -- no provider.toml, no
+    README figure, nothing in RemoteDeployment -- so inventing a table would be guessing
+    about other people's hardware. Instead the pool measures: free VRAM before a start,
+    free VRAM once the provider answers, and the difference is what that model costs on
+    this machine. The first load of a provider is therefore admitted on count alone, and
+    every later one can be admitted on memory.
+
+    Measurements keep the largest value seen. A model that allocates lazily looks smaller
+    on a run that only initialised it, and admitting on that smaller number would
+    overcommit the GPU the next time it is actually used.
+    """
+
+    directory: Path
+
+    def __post_init__(self) -> None:
+        self.directory = Path(self.directory).expanduser()
+
+    def _path(self) -> Path:
+        return self.directory / "footprints.json"
+
+    def _read(self) -> dict[str, int]:
+        try:
+            payload = json.loads(self._path().read_text(encoding="utf-8"))
+        except (OSError, UnicodeDecodeError, ValueError):
+            return {}
+        if not isinstance(payload, dict):
+            return {}
+        return {
+            slug: value
+            for slug, value in payload.items()
+            if isinstance(slug, str) and isinstance(value, int) and value > 0
+        }
+
+    def get(self, slug: str) -> int | None:
+        return self._read().get(slug)
+
+    def record(self, slug: str, mib: int) -> None:
+        """Keep the largest plausible measurement for this provider."""
+
+        if mib <= 0 or mib > MAX_PLAUSIBLE_FOOTPRINT_MIB:
+            return
+        known = self._read()
+        if known.get(slug, 0) >= mib:
+            return
+        known[slug] = mib
+        self.directory.mkdir(parents=True, exist_ok=True)
+        target = self._path()
+        temporary = target.with_suffix(".json.tmp")
+        temporary.write_text(
+            json.dumps(known, separators=(",", ":"), sort_keys=True), encoding="utf-8"
+        )
+        temporary.replace(target)
 
 
 @dataclass
@@ -223,6 +332,9 @@ class ProviderPool:
     max_active: int = DEFAULT_MAX_ACTIVE
     idle_ttl: float = DEFAULT_IDLE_TTL
     startup_timeout: float = DEFAULT_STARTUP_TIMEOUT
+    footprints: FootprintStore | None = None
+    vram_headroom_mib: int = DEFAULT_VRAM_HEADROOM_MIB
+    read_free_vram: Callable[[], int | None] = gpu_free_mib
     ensure: Callable[..., tuple[ManagedRemoteProcess | None, dict[str, Any]]] = (
         ensure_provider
     )
@@ -335,7 +447,24 @@ class ProviderPool:
                 raise ProviderStarting(
                     f"provider '{deployment.slug}' is still starting; retry shortly"
                 )
-            self._evict_for_locked(deployment)
+
+        # Read the GPU before taking the admission lock: nvidia-smi is a subprocess, and
+        # holding the lock across it would serialize every other caller behind a driver
+        # that can hang. The reading can go stale between here and the decision below;
+        # the headroom is what absorbs that.
+        free_before = self._free_vram_for(deployment)
+
+        with self._lock:
+            active = self._active.get(deployment.slug)
+            if active is not None:
+                active.in_flight += 1
+                active.last_used = self.clock()
+                return deployment.endpoint
+            if deployment.slug in self._starting:
+                raise ProviderStarting(
+                    f"provider '{deployment.slug}' is still starting; retry shortly"
+                )
+            self._evict_for_locked(deployment, free_before)
             self._starting.add(deployment.slug)
 
         try:
@@ -349,6 +478,7 @@ class ProviderPool:
             with self._lock:
                 self._starting.discard(deployment.slug)
             raise
+        self._record_footprint(deployment, free_before)
         with self._lock:
             self._starting.discard(deployment.slug)
             self._active[deployment.slug] = _ActiveProvider(
@@ -367,21 +497,90 @@ class ProviderPool:
             active.in_flight = max(0, active.in_flight - 1)
             active.last_used = self.clock()
 
-    def _evict_for_locked(self, incoming: RemoteDeployment) -> None:
-        """Free a slot for ``incoming``, oldest idle provider first.
+    def _free_vram_for(self, deployment: RemoteDeployment) -> int | None:
+        """Current free VRAM, but only when it could change this admission.
 
-        Called with the lock held and ``incoming`` not yet active. A provider with
-        requests in flight is never evicted; if every slot is busy the caller is told to
-        retry rather than having a running job killed under it.
+        Skipped entirely when nothing has measured this provider yet, so a first load
+        never pays for an nvidia-smi call it cannot act on.
         """
 
-        while len(self._active) + len(self._starting) >= self.max_active:
+        if self.footprints is None or self.footprints.get(deployment.slug) is None:
+            return None
+        try:
+            return self.read_free_vram()
+        except (OSError, ValueError):
+            return None
+
+    def _record_footprint(
+        self, deployment: RemoteDeployment, free_before: int | None
+    ) -> None:
+        """Learn what this provider costs, by difference across its own start."""
+
+        if self.footprints is None:
+            return
+        if free_before is None:
+            # No reading was taken before the start (the usual case on a first load), so
+            # take one now and measure against it on the next start instead of inventing
+            # a delta from a baseline we never had.
+            try:
+                self.read_free_vram()
+            except (OSError, ValueError):
+                pass
+            return
+        try:
+            free_after = self.read_free_vram()
+        except (OSError, ValueError):
+            return
+        if free_after is None:
+            return
+        self.footprints.record(deployment.slug, free_before - free_after)
+
+    def _evict_for_locked(
+        self, incoming: RemoteDeployment, free_mib: int | None = None
+    ) -> None:
+        """Free room for ``incoming``, oldest idle provider first.
+
+        Called with the lock held and ``incoming`` not yet active. A provider with
+        requests in flight is never evicted; if nothing can be freed the caller is told to
+        retry rather than having a running job killed under it.
+
+        Two independent ceilings. ``max_active`` is a count, and applies always. Memory
+        applies only once this provider has been measured and a GPU answered: two small
+        models may fit where one large one does not, which a count can never express.
+
+        Freed memory is estimated from the victims' own measurements rather than re-read
+        from the driver, because a stopped process does not return its VRAM immediately --
+        a fresh reading straight after a kill reports the memory as still in use. A victim
+        nobody has measured yet counts as freeing nothing, so admission stays conservative
+        instead of optimistic.
+        """
+
+        def lru_idle_victim() -> _ActiveProvider:
             idle = [active for active in self._active.values() if active.in_flight == 0]
             if not idle:
                 raise PoolError(
                     f"all {self.max_active} provider slot(s) are busy; retry shortly"
                 )
-            victim = min(idle, key=lambda active: active.last_used)
+            return min(idle, key=lambda active: active.last_used)
+
+        while len(self._active) + len(self._starting) >= self.max_active:
+            self._stop_locked(lru_idle_victim().deployment.slug)
+
+        if free_mib is None or self.footprints is None:
+            return
+        needed = self.footprints.get(incoming.slug)
+        if needed is None:
+            return
+        required = needed + self.vram_headroom_mib
+        while free_mib < required:
+            if not any(active.in_flight == 0 for active in self._active.values()):
+                raise PoolError(
+                    f"provider '{incoming.slug}' needs {needed} MiB plus "
+                    f"{self.vram_headroom_mib} MiB headroom and only {free_mib} MiB is "
+                    "free; every resident provider is busy, so retry shortly"
+                )
+            victim = lru_idle_victim()
+            free_mib += self.footprints.get(victim.deployment.slug) or 0
             self._stop_locked(victim.deployment.slug)
 
     def _stop_locked(self, slug: str) -> None:
@@ -491,12 +690,27 @@ class ProviderPool:
         """
 
         if op == "status":
-            return {
+            answer: dict[str, Any] = {
                 "providers": self.status(),
                 "allowed": list(self.allow),
                 "max_active": self.max_active,
                 "idle_ttl": self.idle_ttl,
             }
+            if self.footprints is not None:
+                # Only what has actually been measured. A provider missing from this map
+                # has never been loaded here, and is admitted on count alone until it has.
+                answer["measured_vram_mib"] = {
+                    slug: self.footprints.get(slug)
+                    for slug in self.allow
+                    if self.footprints.get(slug) is not None
+                }
+                answer["vram_headroom_mib"] = self.vram_headroom_mib
+                try:
+                    free = self.read_free_vram()
+                except (OSError, ValueError):
+                    free = None
+                answer["free_vram_mib"] = free
+            return answer
         slug = args.get("provider")
         if not isinstance(slug, str) or not slug:
             return {"error": "provider is required"}
