@@ -18,13 +18,21 @@ name: MCPB bundle smoke test
 # dependency set -- so it runs on changes that can affect the bundle rather
 # than on every push.
 #
-# It runs on Windows as well, because the same failure happened again there and
-# this job could not see it. Every workflow in this repository ran only on
-# ubuntu-latest, so a launcher that worked on POSIX and could never start on
-# Windows reached the release page: os.exec* there joins argv without quoting,
-# and Desktop installs the bundle under "Claude Extensions" (issue #684). The
-# smoke test now also unpacks under a path containing a space, which is what
-# made that bug invisible rather than merely untested.
+# The bundle is built once and then started on both Linux and Windows, because
+# the same failure happened again on a platform this job could not see. Every
+# workflow in this repository ran only on ubuntu-latest, so a launcher that
+# worked on POSIX and could never start on Windows reached the release page:
+# os.exec* there joins argv without quoting, and Desktop installs the bundle
+# under "Claude Extensions" (issue #684). The smoke test now also unpacks under
+# a path containing a space, which is what made that bug invisible rather than
+# merely untested.
+#
+# Only the launch is platform-specific; the artifact is a zip. build.sh stays
+# POSIX-only -- it drives uv, npx and python3 with shell paths, and under the
+# Git Bash on windows-latest those reach a native Windows python as
+# "/d/a/.../manifest.json", which it cannot open. So the build runs once on
+# Linux and both legs start the identical artifact, which is also closer to
+# what users install than a separately built one would be.
 
 on:
   push:
@@ -50,14 +58,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  smoke:
-    name: Build the bundle and start it (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-    timeout-minutes: 45
+  build:
+    name: Build the bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -72,18 +76,41 @@ jobs:
           node-version: "20"
 
       - name: Build the bundle
-        shell: bash
         run: bash mcpb/build.sh
 
-      - name: Start it and complete an MCP handshake
-        shell: bash
-        run: python mcpb/smoke_test.py dist/tooluniverse.mcpb --timeout 1500
-
-      - name: Upload the bundle for inspection
-        if: always()
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
-          name: tooluniverse-mcpb-${{ matrix.os }}
+          name: tooluniverse-mcpb
           path: dist/tooluniverse.mcpb
           retention-days: 14
-          if-no-files-found: warn
+          if-no-files-found: error
+
+  smoke:
+    name: Start it (${{ matrix.os }})
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: tooluniverse-mcpb
+          path: dist
+
+      # smoke_test.py unpacks the bundle under a directory with a space in its
+      # name and launches it with the command out of the manifest, exactly as
+      # Desktop would. Plain `python` rather than `python3`: the Windows runner
+      # has no python3 on PATH.
+      - name: Start it and complete an MCP handshake
+        run: python mcpb/smoke_test.py dist/tooluniverse.mcpb --timeout 1500
