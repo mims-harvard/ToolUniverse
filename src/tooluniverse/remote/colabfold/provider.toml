@@ -414,6 +414,17 @@ policy = "required"
 # 2.8x per doubling, which is why the server's ceiling is 400 residues and why
 # that ceiling is about latency rather than about the budget.
 #
+# AND THE MARGIN AGAINST `request_timeout_s` MUST BE READ AT THE CONTENDED
+# FIGURE, not the idle one. The 1736 s above is from a quiet card. The same
+# rung re-measured with four other providers' builds on the machine took
+# **2380.1 s**, which is 66% of the declared 3600 s rather than 48%. Nothing
+# is wrong -- the structure came back and the peak was identical at 4.0 GiB --
+# but a timeout is a promise about the worst case, and the worst case is the
+# busy card, which is the one a co-tenanted host actually has. This is
+# progen2's finding in the time dimension: two individually sane numbers
+# (a 400-residue ceiling and a 3600 s timeout) have to be checked against each
+# other at the upper bound, not at the figure that flatters them.
+#
 # ENVELOPE: 400 polymer residues over up to 16 chains, the AlphaFold2-Multimer
 # v3 parameters, 5 models, 1 seed, upstream's default 20 recycles with early
 # stop at tolerance 0.5, the MSA axes at the model config's own 508 / 2048, f32

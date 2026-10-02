@@ -639,6 +639,8 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | Read the kit's timers before declining a lever | measured: t_output 45-57 s against t_model 14-17 s, a 5x misjudgement |
 | Vary the ENGINE KEY, not the input | measured: af2ig rebuilds on (num_recycle, initial_guess), not on length |
 | A reply must not name a path the server deletes | measured: `structure_path` pointed into a removed temp dir |
+| A timeout's margin is read at the CONTENDED figure | measured: colabfold's declared row is 48% of its timeout idle, 66% busy |
+| `smoke_timeout_s` above `request_timeout_s` is legitimate | checked: `step_smoke` overrides the worker's request timeout with it |
 | A framework default can claim the whole card | measured: 91.22 GiB vs 2.0 on `XLA_PYTHON_CLIENT_PREALLOCATE` |
 | A digest authenticates bytes, not entitlement | measured: protenix_v2's checkpoint 403s; exact-digest mirrors exist |
 | HEAD the checkpoint URL before anything else | measured: 40 ms would have replaced a whole investigation |
