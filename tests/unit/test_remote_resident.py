@@ -1561,3 +1561,76 @@ class TestManifestAndDeploymentAgree:
             "variables; an operator preflights against one and runs against the "
             "other"
         )
+
+
+class TestAcceptanceHarness:
+    """`scripts/remote_validation/verify_provider.py` and its input shapers.
+
+    The harness implements the acceptance test the standard describes, and
+    until now it lived only in a session scratchpad -- so the standard's
+    central method had no implementation anyone else could run. The shapers
+    are the part that rots: one of them truncated PDB ATOM records at column
+    54 and biotite raised `could not convert string to float: ''` on a record
+    with no occupancy field, which is a bug in the test fixture that looks
+    exactly like a bug in the provider.
+    """
+
+    @staticmethod
+    def _harness():
+        import importlib.util
+
+        path = (
+            Path(__file__).resolve().parents[2]
+            / "scripts/remote_validation/verify_provider.py"
+        )
+        spec = importlib.util.spec_from_file_location("_verify_provider", path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_it_imports_without_a_hardcoded_path(self):
+        source = (
+            Path(__file__).resolve().parents[2]
+            / "scripts/remote_validation/verify_provider.py"
+        ).read_text()
+        assert "/home/" not in source, "a path from one machine's scratchpad"
+        assert self._harness().SHAPERS
+
+    def test_every_shaper_resizes_its_provider_s_own_smoke_input(self):
+        from tooluniverse.remote_resident import manifest as M
+
+        harness = self._harness()
+        root = Path(__file__).resolve().parents[2] / "src" / "tooluniverse" / "remote"
+        problems = []
+        for slug, shaper in sorted(harness.SHAPERS.items()):
+            tom = root / slug / "provider.toml"
+            if not tom.is_file():
+                continue
+            try:
+                manifest = M.load(tom)
+            except Exception:
+                continue  # a provider still being built
+            smoke = root / slug / manifest.smoke if manifest.smoke else None
+            if smoke is None or not smoke.is_file():
+                problems.append(f"{slug}: no smoke input to resize")
+                continue
+            text = smoke.read_text()
+            try:
+                small, large = shaper(text, 60), shaper(text, 240)
+            except Exception as exc:
+                problems.append(f"{slug}: shaper raised {type(exc).__name__}: {exc}")
+                continue
+            if not small or not large:
+                problems.append(f"{slug}: shaper returned nothing")
+            elif small == large:
+                problems.append(f"{slug}: 60 and 240 produced the same input")
+        assert not problems, "\n".join(problems)
+
+    def test_a_provider_with_no_shaper_is_not_silently_passed(self):
+        """Exit 2, not 0, so nobody reads 4/4 as an acceptance."""
+        source = (
+            Path(__file__).resolve().parents[2]
+            / "scripts/remote_validation/verify_provider.py"
+        ).read_text()
+        assert "NO SHAPER FOR" in source
+        assert "return 2" in source
