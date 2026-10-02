@@ -641,6 +641,7 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | A reply must not name a path the server deletes | measured: `structure_path` pointed into a removed temp dir |
 | A timeout's margin is read at the CONTENDED figure | measured: colabfold's declared row is 48% of its timeout idle, 66% busy |
 | A lever can cost what no budget can bound | measured: gpnstar's `graph` lever, 0.8 GiB per distinct shape, 29 shapes -> 24.34 GiB |
+| A JIT bundled in torch can not know the card | measured: NVRTC 12.8 fails `torch.prod`; 12.9.86 first on the loader path fixes it |
 | Reduced-data verification is honest if it is written down | measured: gpnstar on a 0.14 MiB example store, said in four places |
 | A per-request floor can be a hash, not the model | measured: 4.8 s of a 5.4 s call was dill-pickling a bound method |
 | `smoke_timeout_s` above `request_timeout_s` is legitimate | checked: `step_smoke` overrides the worker's request timeout with it |
@@ -935,6 +936,51 @@ about 0.4 s with byte-identical output. Residency keeps what a process holds; it
 does nothing about work upstream repeats inside one process, and that work can
 be larger than the work being measured. Look at a per-request profile before
 concluding a provider's floor is the model.
+
+
+**A SIXTH KIND OF STACK-VERSUS-CARD FAILURE, and the one with the most
+misleading symptom: a JIT compiler BUNDLED INSIDE TORCH that does not know the
+card, surfacing as one ordinary torch op.** complexa's kit pins torch 2.7.0,
+which is above the 2.7 floor, so every pre-check passes and the GPU is open.
+Then a real request dies, and what dies is `torch.prod(x, dim=-1)` — on all six
+CUDA dtypes, with `nvrtc: error: invalid value for --gpu-architecture (-arch)`,
+while a GEMM, a LayerNorm and an SDPA all run fine. torch 2.7.0+cu128 bundles
+NVRTC 12.8, `torch.prod` is one of the reductions torch compiles at run time
+through NVRTC, and 12.8 has no sm_121 target.
+
+Confirmed here by the narrowest possible experiment, because the claim deserved
+it: the same op in the same interpreter, with and without a newer NVRTC first on
+the loader path.
+
+```
+$ env -u LD_LIBRARY_PATH python -c "torch.prod(torch.randn(4,8,device='cuda'),-1)"
+RuntimeError  (nvrtc: invalid value for --gpu-architecture)
+$ LD_LIBRARY_PATH=<site-packages>/nvidia/cuda_nvrtc/lib python -c "...same..."
+-0.006928586401045322
+```
+
+The fix is to add a dependency torch already bundles, at a HIGHER version:
+`nvidia-cuda-nvrtc-cu12==12.9.86` in the lock, and its directory first on
+`LD_LIBRARY_PATH` from the launcher. Three things make this worth its own entry
+rather than a footnote on §10's table:
+
+  * **The failing component is inside torch, not in the kit**, so no amount of
+    reading the kit's pins or levers finds it, and `[kit] mode = "off"` does not
+    help.
+  * **The symptom is an ordinary op.** `atlasfold`'s version of this was a kit's
+    Triton kernels against a bundled `ptxas` — suspicious code in a suspicious
+    place. Nobody suspects `torch.prod`, and upstream calls it once per target in
+    a data transform, so it looks like a data problem.
+  * **The remedy is additive, not a deviation downward.** The lock gains a newer
+    wheel of something the stack already contains, which is a different move from
+    dropping a pin or turning a mode off, and `[env] verify` can assert it: run
+    the op.
+
+Generalised, this is §10's "read the PTX of the library whose kernel runs first"
+with a second clause: **a stack can also compile at RUN time, and then the
+question is which compiler does that and whether it knows the card.** Both
+`ptxas` (ahead of time, in triton) and NVRTC (at run time, in torch) have now
+failed here while everything around them was correctly pinned.
 
 
 ## 13. What the eighteenth provider changed: the first one that is not PyTorch

@@ -30,12 +30,31 @@ import sys
 import time
 
 
-def available_gib() -> float:
+def meminfo_gib() -> dict:
+    """`MemFree` and `MemAvailable`, in GiB.
+
+    **The number that predicts a CUDA failure here is MemFree, not
+    MemAvailable**, and the first version of this guard used the wrong one. It
+    let a worker start at 60.4 GiB *available* and the worker died with
+    `CUDA error: out of memory` -- because only 5 GiB was *free* and the other 56
+    was reclaimable page cache, which a device allocation on this host does not
+    get to reclaim in time. `MemAvailable` answers "how much could a well-behaved
+    process eventually get"; a CUDA allocation asks a narrower question, and the
+    guard has to ask the narrow one.
+
+    Both are returned so the refusal can say which gate stopped it, because the
+    gap between them is the interesting part of the message.
+    """
+    want = {"MemFree": None, "MemAvailable": None}
     with open("/proc/meminfo") as fh:
         for line in fh:
-            if line.startswith("MemAvailable:"):
-                return int(line.split()[1]) / (1024 * 1024)
-    raise RuntimeError("/proc/meminfo has no MemAvailable")
+            key, _, rest = line.partition(":")
+            if key in want:
+                want[key] = int(rest.split()[0]) / (1024 * 1024)
+    missing = [k for k, v in want.items() if v is None]
+    if missing:
+        raise RuntimeError(f"/proc/meminfo has no {', '.join(missing)}")
+    return want
 
 
 def holders() -> str:
@@ -92,21 +111,29 @@ def main() -> int:
     deadline = time.time() + a.timeout
     clear = 0
     while True:
-        free = available_gib()
+        mem = meminfo_gib()
+        free, avail = mem["MemFree"], mem["MemAvailable"]
         if free >= a.need:
             clear += 1
             if clear >= 2:
-                print(f"ok: {free:.1f} GiB available, {a.need:.1f} needed")
+                print(
+                    f"ok: {free:.1f} GiB free ({avail:.1f} available), "
+                    f"{a.need:.1f} needed"
+                )
                 return 0
         else:
             clear = 0
         if time.time() >= deadline:
             print(
-                f"refused: {free:.1f} GiB available, {a.need:.1f} needed, after "
-                f"{a.timeout:.0f}s. Holding it now: {holders()}. Wait for a "
-                f"co-tenant to finish, or run this provider when the machine is "
-                f"quieter -- do not start it anyway: one 28 GiB smoke on top of "
-                f"four held workers wedged this host.",
+                f"refused: {free:.1f} GiB FREE, {a.need:.1f} needed, after "
+                f"{a.timeout:.0f}s. ({avail:.1f} GiB is 'available', but that "
+                f"counts reclaimable page cache a device allocation here does "
+                f"not get in time -- a worker started at 60.4 available with 5 "
+                f"free and died of CUDA out of memory.) Holding it now: "
+                f"{holders()}. Wait for a co-tenant to finish, or run this "
+                f"provider when the machine is quieter -- do not start it "
+                f"anyway: one 28 GiB smoke on top of four held workers wedged "
+                f"this host.",
                 file=sys.stderr,
             )
             return 3

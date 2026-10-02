@@ -1632,15 +1632,31 @@ class TestAcceptanceHarness:
                 problems.append(f"{slug}: no smoke input to resize")
                 continue
             text = smoke.read_text()
-            try:
-                small, large = shaper(text, 60), shaper(text, 240)
-            except Exception as exc:
-                problems.append(f"{slug}: shaper raised {type(exc).__name__}: {exc}")
-                continue
-            if not small or not large:
-                problems.append(f"{slug}: shaper returned nothing")
-            elif small == large:
-                problems.append(f"{slug}: 60 and 240 produced the same input")
+            # A LADDER OF CANDIDATES, not a fixed pair. The first version of this
+            # test asked for 60 and 240 and failed mosaic, whose input is a
+            # target plus a binder of fixed length: at 60 there is no target
+            # left, and refusing is the shaper doing its job rather than
+            # failing. A provider's size axis has a floor and the floor differs,
+            # so probe a range and require two distinct results from it.
+            made, raised = {}, {}
+            for n in (60, 100, 200, 240, 400, 800):
+                try:
+                    out = shaper(text, n)
+                except Exception as exc:  # noqa: BLE001 - reported, not swallowed
+                    raised[n] = f"{type(exc).__name__}: {exc}"
+                    continue
+                if out:
+                    made[n] = out
+            if len(made) < 2:
+                problems.append(
+                    f"{slug}: fewer than two of six sizes produced an input; "
+                    f"refusals were {raised}"
+                )
+            elif len(set(made.values())) < 2:
+                problems.append(
+                    f"{slug}: every size that worked produced the SAME input "
+                    f"({sorted(made)}), so the ladder would measure one shape"
+                )
         assert not problems, "\n".join(problems)
 
     def test_a_provider_with_no_shaper_is_not_silently_passed(self):
