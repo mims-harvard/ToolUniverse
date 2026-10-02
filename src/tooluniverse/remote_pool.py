@@ -332,6 +332,10 @@ class ProviderPool:
     max_active: int = DEFAULT_MAX_ACTIVE
     idle_ttl: float = DEFAULT_IDLE_TTL
     startup_timeout: float = DEFAULT_STARTUP_TIMEOUT
+    # Names an operator chose to let providers see beyond what each one declares. Empty by
+    # default: a provider's own declaration is the contract, and widening it is a decision
+    # the machine's owner makes explicitly.
+    extra_env: tuple[str, ...] = ()
     footprints: FootprintStore | None = None
     vram_headroom_mib: int = DEFAULT_VRAM_HEADROOM_MIB
     read_free_vram: Callable[[], int | None] = gpu_free_mib
@@ -410,6 +414,7 @@ class ProviderPool:
             python=self.python,
             log_dir=self.log_dir,
             startup_timeout=self.startup_timeout,
+            extra_env=self.extra_env,
         )
         try:
             tools = self._discover_tools(deployment)
@@ -473,6 +478,7 @@ class ProviderPool:
                 python=self.python,
                 log_dir=self.log_dir,
                 startup_timeout=self.startup_timeout,
+                extra_env=self.extra_env,
             )
         except BaseException:
             with self._lock:

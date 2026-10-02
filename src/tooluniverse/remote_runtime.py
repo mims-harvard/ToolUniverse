@@ -20,6 +20,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -353,15 +354,105 @@ def resolve_python(
     return os.path.abspath(os.path.expanduser(resolved))
 
 
-def child_environment(python: str, deployment: RemoteDeployment) -> dict[str, str]:
-    """Build a provider environment without copying secrets into arguments."""
+# Variables a provider process needs to function at all, whatever it computes: where to
+# find libraries and caches, how to reach the network, how to talk to a GPU. None of them
+# is a credential by convention, which is what makes listing them safe.
+#
+# LD_PRELOAD is deliberately absent. No reviewed provider needs it and it is the standard
+# way to get arbitrary code into someone else's process.
+PROVIDER_ENV_BASE = frozenset(
+    {
+        "HOME",
+        "USER",
+        "LOGNAME",
+        "SHELL",
+        "LANG",
+        "LANGUAGE",
+        "TZ",
+        "TMPDIR",
+        "TEMP",
+        "TMP",
+        "LD_LIBRARY_PATH",
+        "PYTHONPATH",
+        "VIRTUAL_ENV",
+        "CONDA_PREFIX",
+        "CONDA_DEFAULT_ENV",
+        "SSL_CERT_FILE",
+        "SSL_CERT_DIR",
+        "REQUESTS_CA_BUNDLE",
+        "CURL_CA_BUNDLE",
+        "HTTP_PROXY",
+        "HTTPS_PROXY",
+        "NO_PROXY",
+        "http_proxy",
+        "https_proxy",
+        "no_proxy",
+        "XDG_CACHE_HOME",
+        "XDG_CONFIG_HOME",
+        "XDG_DATA_HOME",
+        "HF_HOME",
+        "TORCH_HOME",
+        "MPLCONFIGDIR",
+        "NUMBA_CACHE_DIR",
+    }
+)
 
-    environment = os.environ.copy()
-    # Platform credentials belong to the relay process, never to scientific
-    # provider code. Provider-specific credentials (for example USPTO_API_KEY)
-    # remain available because their reviewed deployment explicitly needs them.
-    environment.pop("TOOLUNIVERSE_SERVICE_KEY", None)
-    environment.pop("TU_SERVICE_KEY", None)
+# Whole families whose names cannot hold a credential by convention: device selection,
+# thread counts, BLAS tuning, R library paths.
+#
+# Not HF_: that family contains HF_TOKEN. HF_HOME is listed above by name instead, which is
+# the difference between allowing a cache location and allowing an access token.
+PROVIDER_ENV_PREFIXES = (
+    "CUDA_",
+    "NVIDIA_",
+    "NCCL_",
+    "OMP_",
+    "MKL_",
+    "OPENBLAS_",
+    "NUMEXPR_",
+    "LC_",
+    "R_",
+)
+
+
+def provider_environment_names(
+    deployment: RemoteDeployment, extra: Iterable[str] = ()
+) -> set[str]:
+    """Every variable this provider is allowed to see, by name."""
+
+    allowed = set(PROVIDER_ENV_BASE)
+    allowed |= set(deployment.required_env)
+    allowed |= set(deployment.path_env)
+    allowed |= {name for name in extra if name}
+    allowed |= {name for name in os.environ if name.startswith(PROVIDER_ENV_PREFIXES)}
+    return allowed
+
+
+def child_environment(
+    python: str, deployment: RemoteDeployment, *, extra_env: Iterable[str] = ()
+) -> dict[str, str]:
+    """Build a provider environment from an allowlist rather than by inheritance.
+
+    A provider used to receive a copy of the whole process environment with two platform
+    keys removed. That is defensible when the machine only serves its owner, and wrong as
+    soon as it serves anyone else: a reviewed provider would run under the owner's identity
+    holding every unrelated credential in their shell -- cloud keys, model-provider keys,
+    database URLs -- any of which a crash dump, a debug log, or an outbound request could
+    carry somewhere the owner did not intend. It also meant a caller's work could silently
+    spend the owner's paid API quota.
+
+    So a provider now sees only what it declared it needs, plus the infrastructure
+    variables every process needs. Anything a site requires beyond that is passed
+    explicitly with ``--pass-env``, which keeps the decision with the operator instead of
+    making it for them by copying everything.
+    """
+
+    allowed = provider_environment_names(deployment, extra_env)
+    environment = {name: value for name, value in os.environ.items() if name in allowed}
+    # Kept out regardless: these authenticate this machine to the platform, and nothing a
+    # provider computes has any business holding them.
+    for platform_key in ("TOOLUNIVERSE_SERVICE_KEY", "TU_SERVICE_KEY"):
+        environment.pop(platform_key, None)
     python_bin = str(Path(python).parent)
     current_path = environment.get("PATH", "")
     environment["PATH"] = (
@@ -670,6 +761,7 @@ def start_provider(
     *,
     python: str,
     log_dir: str | Path,
+    extra_env: Iterable[str] = (),
 ) -> ManagedRemoteProcess:
     """Start one reviewed provider module with output redirected to a log."""
 
@@ -681,7 +773,7 @@ def start_provider(
     try:
         process = subprocess.Popen(
             command,
-            env=child_environment(python, deployment),
+            env=child_environment(python, deployment, extra_env=extra_env),
             stdin=subprocess.DEVNULL,
             stdout=log_handle,
             stderr=subprocess.STDOUT,
@@ -760,6 +852,7 @@ def ensure_provider(
     python: str,
     log_dir: str | Path,
     startup_timeout: float,
+    extra_env: Iterable[str] = (),
 ) -> tuple[ManagedRemoteProcess | None, dict[str, Any]]:
     """Reuse an exact endpoint or start a provider and validate it."""
 
@@ -771,7 +864,9 @@ def ensure_provider(
             )
         return None, current
 
-    managed = start_provider(deployment, python=python, log_dir=log_dir)
+    managed = start_provider(
+        deployment, python=python, log_dir=log_dir, extra_env=extra_env
+    )
     try:
         ready = wait_until_ready(deployment, managed, timeout=startup_timeout)
     except Exception:

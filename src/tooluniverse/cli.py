@@ -2663,6 +2663,7 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
             python=resolve_python(args.python, REMOTE_BY_SLUG[usable[0]]),
             log_dir=args.log_dir,
             schemas=SchemaStore(args.schema_dir),
+            extra_env=tuple(args.pass_env),
             footprints=FootprintStore(args.schema_dir),
             vram_headroom_mib=args.vram_headroom,
             max_active=args.max_active,
@@ -2689,6 +2690,21 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
                     pass
         for slug, outcome in pool.warm(report=lambda line: print(f"  {line}")).items():
             print(f"  {slug}: {outcome}")
+
+    # Say it out loud. A provider that quietly lost an undeclared variable it had been
+    # relying on would otherwise look like an unrelated failure, and --pass-env is the fix.
+    from tooluniverse.remote_runtime import provider_environment_names
+
+    visible = set()
+    for deployment in pool.deployments:
+        visible |= provider_environment_names(deployment, pool.extra_env)
+    withheld = sorted(name for name in os.environ if name not in visible)
+    if withheld:
+        print(
+            f"Providers will not see {len(withheld)} of this shell's environment "
+            f"variables, including any API keys of yours. Add --pass-env NAME for one a "
+            f"provider genuinely needs."
+        )
 
     tools = pool.known_tools()
     print(
@@ -3440,6 +3456,17 @@ def main() -> None:
         type=float,
         default=900.0,
         help="stop a provider after this many idle seconds (default: 900)",
+    )
+    p.add_argument(
+        "--pass-env",
+        action="append",
+        default=[],
+        metavar="NAME",
+        help=(
+            "also let providers read this environment variable (repeatable). A provider "
+            "otherwise sees only what it declares plus infrastructure variables, so none "
+            "of your unrelated API keys reach model code or get spent by a caller's work"
+        ),
     )
     p.add_argument(
         "--vram-headroom",

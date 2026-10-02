@@ -48,7 +48,7 @@ class Lifecycle:
         self.stopped: list[str] = []
         self.fail: set[str] = set()
 
-    def ensure(self, deployment, *, python, log_dir, startup_timeout):
+    def ensure(self, deployment, *, python, log_dir, startup_timeout, extra_env=()):
         if deployment.slug in self.fail:
             raise RuntimeError(f"boom: {deployment.slug}")
         self.started.append(deployment.slug)
