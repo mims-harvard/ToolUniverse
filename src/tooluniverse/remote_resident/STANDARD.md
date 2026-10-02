@@ -640,6 +640,9 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | Vary the ENGINE KEY, not the input | measured: af2ig rebuilds on (num_recycle, initial_guess), not on length |
 | A reply must not name a path the server deletes | measured: `structure_path` pointed into a removed temp dir |
 | A timeout's margin is read at the CONTENDED figure | measured: colabfold's declared row is 48% of its timeout idle, 66% busy |
+| A lever can cost what no budget can bound | measured: gpnstar's `graph` lever, 0.8 GiB per distinct shape, 29 shapes -> 24.34 GiB |
+| Reduced-data verification is honest if it is written down | measured: gpnstar on a 0.14 MiB example store, said in four places |
+| A per-request floor can be a hash, not the model | measured: 4.8 s of a 5.4 s call was dill-pickling a bound method |
 | `smoke_timeout_s` above `request_timeout_s` is legitimate | checked: `step_smoke` overrides the worker's request timeout with it |
 | A framework default can claim the whole card | measured: 91.22 GiB vs 2.0 on `XLA_PYTHON_CLIENT_PREALLOCATE` |
 | A digest authenticates bytes, not entitlement | measured: protenix_v2's checkpoint 403s; exact-digest mirrors exist |
@@ -654,13 +657,14 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | A residency multiple is largest at the smallest input | measured: af3_jax 26x at 35 aa, 3.5x at its budget row |
 | A launch must STRIP undeclared names, not merely not set them | measured: af3_jax's `.pth` exits 3 on an inherited variable |
 
-## 12. What providers nineteen through twenty-two changed: four checks that passed where the defect was invisible
+## 12. What providers nineteen through twenty-three changed: five checks that passed where the defect was invisible
 
-ESM-IF1, ColabFold, OpenFold3-OpenBind-0 and AF2-initial-guess. Twenty-two
-verified. The findings that matter most here are not about any of the four
-models: each turned up a check that had already been run and passed while the
-thing it was supposed to catch was broken — and the fourth's catch is a rule
-written in this document two sections below.
+ESM-IF1, ColabFold, OpenFold3-OpenBind-0, AF2-initial-guess and GPN-Star.
+Twenty-three verified. The findings that matter most here are not about any of
+the five models: each turned up a check that had already been run and passed
+while the thing it was supposed to catch was broken — the fourth's catch is a
+rule written in this document two sections below, and the fifth's is a defect
+this section had already named and fixed in one place out of four.
 
 **A launcher could not remove an environment variable, and the test that said
 it could read the one place the defect was invisible.** af3_jax's kit refuses
@@ -889,6 +893,48 @@ nothing else is offered. From the same provider: a worker whose orphan watchdog
 exits through `os._exit(0)` skips `atexit` by design, so it must sweep its own
 stale temp trees at START-UP as well as removing them at exit, checking whether
 the pid in each name is alive.
+
+
+**A LEVER CAN HAVE A COST NO BUDGET CAN COVER, because what it scales with is
+not an input the manifest bounds.** Every VRAM finding on this standard so far
+has been about a number: a peak that grows with length, with sample count, with
+their product. GPN-Star's kit has a `graph` lever whose cost grows with **the
+number of distinct shapes a worker has ever seen** — 29 small ones took the
+reserve from 1.0 to **24.34 GiB**, about 0.8 GiB per shape, and nothing retires
+them. The provider's ceilings bound tokens per forward and the token-count
+product, which is exactly what they should bound; neither bounds how many
+distinct shapes a sequence of requests picks, and a caller picks them freely. So
+there is no envelope to declare: the budget would have to be a function of the
+request HISTORY rather than of any request.
+
+The lever was declined through the kit's own public `unpatch_graphs` with a
+variable to re-enable it, which is the §7 shape. The rule to carry: when a lever
+caches per shape, ask what bounds the shape count before measuring its peak at
+all. A ladder cannot find this, because a ladder's rungs are a handful of shapes
+run once each — it took a deliberate sweep of 29.
+
+**A provider can be honestly verified against reduced data, and saying so is
+what makes it honest.** GPN-Star reads a multi-species alignment store; the real
+hg38 one is 42 GB and unpacks to about 64. It was verified against the kit's own
+0.14 MiB sparse example instead — four chromosomes, eight windows, ~3,200 valid
+positions — and that limit is stated in `verified_on`, in the tool's description,
+in the setup skill and in the worker's own error text, which is four places
+because an operator will meet it in whichever one they read first. The budget
+measurements were taken on both that store and a synthetic worst-case one built
+for the purpose. This is the opposite failure mode to openfold3's: not a green
+step that proved nothing, but a real measurement whose domain is narrower than
+the provider's advertised one, which is fine exactly as long as the narrowing is
+written where it will be found.
+
+**Upstream can pay a per-request cost that residency does not remove, and the
+cause can be a hash.** GPN-Star's per-call floor was 5.4 s, of which **4.8 s was
+`Dataset.set_transform` fingerprinting its argument by dill-pickling a bound
+method** — which drags the entire model into the hash, every call. Registering
+the tokenizer through a wrapper that hashes to a constant brought the floor to
+about 0.4 s with byte-identical output. Residency keeps what a process holds; it
+does nothing about work upstream repeats inside one process, and that work can
+be larger than the work being measured. Look at a per-request profile before
+concluding a provider's floor is the model.
 
 
 ## 13. What the eighteenth provider changed: the first one that is not PyTorch
