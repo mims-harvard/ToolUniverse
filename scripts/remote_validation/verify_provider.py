@@ -390,8 +390,10 @@ def _complexa_design(text, n):
     The three hotspots (A37, A39, A49) sit inside every crop of 64 or more.
     The number of designs stays 1 and the steps stay at the smoke's: this is the
     length axis only. The ENGINE-KEY axes (num_steps, batch size, design count,
-    seed, a different target) are exercised by complexa_engine_key.py, because
-    this function is handed one number.
+    seed, a different target) are NOT varied here, because this function is
+    handed one number; they were exercised separately by a driver that changes
+    each in turn and returns to request one (byte-identical) -- see the
+    provider's verified_on.
     """
     doc = json.loads(text)
     res_order, res = [], {}
@@ -476,7 +478,30 @@ def _gpnstar_vep(text, n):
     return _json.dumps(doc)
 
 
+def _mosaic_design(text, n):
+    """A binder-design request whose complex is n Boltz-2 TOKENS in total.
+
+    mosaic's cost axis is the token count (target residues x copies + binder
+    length) and each distinct count is its own XLA program, so the first request
+    into a new count pays a compilation of minutes. n is TOTAL tokens: the rung
+    keeps the smoke's binder length and tiles the smoke's barstar target out to
+    n - binder residues (PROT here IS barstar). Rungs above 89 target residues
+    are a measurement of cost, not a biological target. Steps, seed, copies and
+    epitope stay the smoke's: this is the length axis only; the epitope and copy
+    axes are exercised separately.
+    """
+    doc = json.loads(text)
+    binder = int(doc.get("binder_length", 80))
+    copies = int(doc.get("target_copies", 1))
+    target = (n - binder) // copies
+    if target < 1:
+        raise ValueError("mosaic shaper: no target left after the binder")
+    doc["target_sequence"] = _tile(PROT, target)
+    return json.dumps(doc)
+
+
 SHAPERS = {
+    "mosaic": _mosaic_design,
     "protenix_v1": lambda x, n: _json_seq(
         x, n, [0, "sequences", 0, "proteinChain", "sequence"]
     ),

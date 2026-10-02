@@ -176,6 +176,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "complexa",
+        "tooluniverse.remote.complexa.complexa_tool",
+        8056,
+        ("complexa_design_binder",),
+        ("TOOLUNIVERSE_COMPLEXA_PYTHON",),
+        (),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "depmap-24q2",
         "tooluniverse.remote.depmap_24q2.depmap_24q2_mcp_tool",
         7002,
@@ -339,6 +348,15 @@ REMOTE_DEPLOYMENTS = (
         ("TOOLUNIVERSE_REMOTE_DATA_ROOT",),
         ("TOOLUNIVERSE_REMOTE_DATA_ROOT",),
         ("Rscript",),
+    ),
+    RemoteDeployment(
+        "mosaic",
+        "tooluniverse.remote.mosaic.mosaic_tool",
+        8055,
+        ("mosaic_design_binder",),
+        ("TOOLUNIVERSE_MOSAIC_PYTHON",),
+        ("MOSAIC_CACHE_DIR",),
+        gpu_policy="required",
     ),
     RemoteDeployment(
         "openfold3",

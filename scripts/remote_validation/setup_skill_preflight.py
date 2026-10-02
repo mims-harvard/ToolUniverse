@@ -134,6 +134,12 @@ DEPLOYMENTS = (
         path_env=("COLABFOLD_OPT_DATA_DIR",),
     ),
     Deployment(
+        "complexa",
+        8056,
+        ("complexa_design_binder",),
+        ("TOOLUNIVERSE_COMPLEXA_PYTHON",),
+    ),
+    Deployment(
         "depmap-24q2",
         7002,
         ("compute_depmap24q2_gene_correlations",),
@@ -257,6 +263,13 @@ DEPLOYMENTS = (
         ("TOOLUNIVERSE_REMOTE_DATA_ROOT",),
         ("Rscript",),
         ("TOOLUNIVERSE_REMOTE_DATA_ROOT",),
+    ),
+    Deployment(
+        "mosaic",
+        8055,
+        ("mosaic_design_binder",),
+        ("TOOLUNIVERSE_MOSAIC_PYTHON",),
+        path_env=("MOSAIC_CACHE_DIR",),
     ),
     Deployment(
         "openfold3",
