@@ -2331,19 +2331,46 @@ def cmd_doctor(args: argparse.Namespace) -> None:
         raise SystemExit(1)
 
 
+# The one question that decides how this command behaves is what you are sharing. Each
+# answer is a flag rather than a separate command, so `tu serve --help` is the whole map.
+SERVE_INPUTS = (
+    ("files", "TOOL.py files"),
+    ("forward", "--forward URL"),
+    ("allow", "--allow SLUG,SLUG"),
+)
+
+# 8080 suits a file-mode server but is also the reviewed boltz provider's own port, so the
+# model pool cannot share that default or the two would collide on a GPU host.
+DEFAULT_FILE_MODE_PORT = 8080
+DEFAULT_POOL_MODE_PORT = 7999
+
+
 def cmd_serve(args: argparse.Namespace) -> None:
-    """Start the normal MCP server or expose provider-owned remote tools."""
+    """Share your own functions, an MCP server you already run, or reviewed GPU models."""
     try:
-        forward = getattr(args, "forward", None)
-        files = getattr(args, "files", [])
+        chosen = [
+            label for name, label in SERVE_INPUTS if getattr(args, name, None)
+        ]
+        if len(chosen) > 1:
+            raise ValueError(
+                f"choose one thing to share, not {len(chosen)}: {', '.join(chosen)}"
+            )
         share = getattr(args, "share", False)
-        if forward and files:
-            raise ValueError("use either TOOL.py files or --forward, not both")
-        if share and not files and not forward:
-            raise ValueError("--share requires TOOL.py files or --forward URL")
-        if forward:
+        if share and not chosen:
+            raise ValueError(
+                "--share needs something to share: TOOL.py files, --forward URL, "
+                "or --allow SLUG,SLUG"
+            )
+        if getattr(args, "allow", None):
+            if args.port is None:
+                args.port = DEFAULT_POOL_MODE_PORT
+            cmd_remote_pool(args)
+            return
+        if args.port is None:
+            args.port = DEFAULT_FILE_MODE_PORT
+        if getattr(args, "forward", None):
             _forward_remote_tool_server(args)
-        elif files:
+        elif getattr(args, "files", None):
             _start_remote_tool_server(args)
         else:
             from tooluniverse.smcp_server import run_default_stdio_server
@@ -2580,7 +2607,16 @@ def cmd_remote_run(args: argparse.Namespace) -> None:
 
 
 def cmd_remote_pool(args: argparse.Namespace) -> None:
-    """Serve several reviewed providers from one process, starting each on demand."""
+    """Serve several reviewed providers from one process, starting each on demand.
+
+    Reached either as `tu serve --allow`, which is the documented spelling, or as the
+    older `tu remote pool`. Both run exactly this, so an existing script keeps working.
+    """
+    if getattr(args, "command", None) == "remote":
+        print(
+            "Note: `tu remote pool` is now `tu serve --allow` -- one command for sharing "
+            "your own functions, an MCP server, or reviewed models. This still works."
+        )
     from tooluniverse.remote_pool import (
         FootprintStore,
         PoolError,
@@ -2955,7 +2991,14 @@ def cmd_disconnect(args: argparse.Namespace) -> None:
 # ── argument parser ────────────────────────────────────────────────────────────
 
 
-def main() -> None:
+def build_parser() -> argparse.ArgumentParser:
+    """Build the whole CLI surface, with no side effects.
+
+    Split out of main so the argument surface can be tested. The absence of this was why
+    a command could quietly end up reachable only one of the three ways a user might try:
+    nothing could assert what `tu serve` accepts without running the process.
+    """
+
     # Shared output flags
     _out = argparse.ArgumentParser(add_help=False)
     _out.add_argument(
@@ -3434,7 +3477,7 @@ def main() -> None:
 
     p = remote_sub.add_parser(
         "pool",
-        help="serve several providers from one process, starting each on demand",
+        help="deprecated alias for `tu serve --allow`",
     )
     p.add_argument(
         "--allow",
@@ -3578,8 +3621,11 @@ def main() -> None:
     p.add_argument(
         "--port",
         type=_bounded_int(1, 65535),
-        default=8080,
-        help="local MCP port for file mode (default: 8080)",
+        default=None,
+        help=(
+            "local MCP port (default: 8080 for TOOL.py files, 7999 when sharing models "
+            "with --allow, because 8080 is a reviewed model's own port)"
+        ),
     )
     p.add_argument(
         "--workers",
@@ -3599,6 +3645,89 @@ def main() -> None:
         "--no-browser",
         action="store_true",
         help="print login links without trying to open a browser",
+    )
+    # Sharing reviewed GPU models is the third thing this command can expose, alongside
+    # your own decorated functions and an MCP server you already run. It lived behind
+    # `tu remote pool`, which meant the one question that decides everything -- what am I
+    # sharing -- was answered by picking a different command instead of a different flag.
+    pool_group = p.add_argument_group(
+        "sharing reviewed GPU models (instead of TOOL.py or --forward)"
+    )
+    pool_group.add_argument(
+        "--allow",
+        metavar="SLUG,SLUG",
+        help=(
+            "comma-separated reviewed providers this machine may start on demand; "
+            "run `tu remote list` to see them"
+        ),
+    )
+    pool_group.add_argument(
+        "--max-active",
+        type=_bounded_int(1, 16),
+        default=1,
+        help="models kept loaded at once (default: 1, because one large model fills a GPU)",
+    )
+    pool_group.add_argument(
+        "--idle-ttl",
+        type=float,
+        default=900.0,
+        help="unload a model after this many idle seconds (default: 900)",
+    )
+    pool_group.add_argument(
+        "--vram-headroom",
+        type=_bounded_int(0, 65536),
+        default=1024,
+        metavar="MIB",
+        help="GPU memory left spare when admitting a measured model (default: 1024)",
+    )
+    pool_group.add_argument(
+        "--pass-env",
+        action="append",
+        default=[],
+        metavar="NAME",
+        help=(
+            "also let models read this environment variable (repeatable); they otherwise "
+            "see only what they declare, so none of your API keys reach model code"
+        ),
+    )
+    pool_group.add_argument(
+        "--warm",
+        action="store_true",
+        help="snapshot every model's tool list before serving",
+    )
+    pool_group.add_argument(
+        "--schema-dir",
+        default=os.getenv(
+            "TOOLUNIVERSE_REMOTE_SCHEMA_DIR", ".tooluniverse/remote-pool-schemas"
+        ),
+        help="tool-list snapshot cache (default: .tooluniverse/remote-pool-schemas)",
+    )
+    pool_group.add_argument(
+        "--allow-cpu",
+        action="store_true",
+        help="allow CPU execution when a model normally requires CUDA",
+    )
+    pool_group.add_argument(
+        "--python",
+        metavar="PATH",
+        help="Python executable from the model's provider environment",
+    )
+    pool_group.add_argument(
+        "--log-dir",
+        default=os.getenv("TOOLUNIVERSE_REMOTE_LOG_DIR", ".tooluniverse/remote-logs"),
+        help="model log directory (default: .tooluniverse/remote-logs)",
+    )
+    pool_group.add_argument(
+        "--startup-timeout",
+        type=float,
+        default=120,
+        help="model startup timeout in seconds (default: 120)",
+    )
+    pool_group.add_argument(
+        "--timeout",
+        type=float,
+        default=30,
+        help="model environment check timeout in seconds (default: 30)",
     )
     p.set_defaults(func=cmd_serve)
 
@@ -3643,6 +3772,12 @@ def main() -> None:
         "target", help="exact MCP URL, UUID, display name, or tool namespace"
     )
     p.set_defaults(func=cmd_disconnect)
+
+    return parser
+
+
+def main() -> None:
+    parser = build_parser()
 
     # Quiet is now the default. --verbose/-v opts back in to warnings.
     # We check argv directly because argparse hasn't run yet.
