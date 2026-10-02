@@ -319,10 +319,25 @@ smoke_timeout_s = 600.0
 #        * `[gpu] policy` is a declaration of what this deployment PROVIDES.
 #          `none` is true today. `required` would promise a path nobody has run.
 #
-#      If someone wants the GPU route later, the measurement is cheap and the
-#      shape of it is known: install the cu124 aarch64 torch, run one GEMM, and
-#      see whether the driver JITs sm_90 PTX for this card or raises `no kernel
-#      image is available`. Until someone does that, this stays `none`.
+#      THAT MEASUREMENT HAS SINCE BEEN MADE, and it closes the question: a
+#      throwaway venv with `torch==2.5.1` from the cu124 index reports
+#      `is_available True`, warns that sm_121 is not in its arch list, and then
+#      raises on the FIRST device allocation --
+#
+#        >>> torch.randn(2048, 2048, device="cuda")
+#        RuntimeError: CUDA error: no kernel image is available for execution
+#
+#      -- before any GEMM, so cuBLAS was the wrong library to interrogate.
+#      `cuobjdump` on torch's own 935 MB `libtorch_cuda.so` finds cubins for
+#      sm_50 through sm_90a and NO PTX at all. There is nothing in torch's own
+#      kernels to compile forward from, whatever its dependencies carry.
+#
+#      So `policy = "none"` is no longer "declined on three stated reasons with
+#      the route unmeasured"; the route is measured and it is closed. The three
+#      reasons still hold and are left above because they were the honest basis
+#      for the decision at the time, and because the first of them -- the PyG
+#      companions having no aarch64 build at any version -- would have forced
+#      the same deviation even if the GPU route had opened.
 #
 #   §10's other two escapes were not taken: building torch from source for
 #   aarch64 + CUDA 13 + sm_121 at the pinned version is days of work on a

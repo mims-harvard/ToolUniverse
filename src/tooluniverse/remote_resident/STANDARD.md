@@ -480,21 +480,46 @@ transformer's GEMMs go through:
 The modern stack needs no JIT at all — an sm_120 cubin runs on sm_121, which is
 why every verified provider here drives a card none of its builds lists. The old
 one has no sm_12x cubin but does carry sm_90 PTX, and PTX is forward-compatible,
-so the driver can in principle compile it for this part. The honest status of a
-CUDA 12.4 stack on this card is therefore **unmeasured**, not impossible, and a
-provider declining it should say which it is. esm_if1 declines it and says so:
-the PyG companions its kit pins have no aarch64 build at any version so a GPU
-route must drop them anyway, cross-generation JIT of cuBLAS in the hot path of
-every GEMM would be a new untested unknown, and `[gpu] policy` is a declaration
-of what a deployment provides — `none` is true today where `required` would
-promise a path nobody has run.
+so the driver could in principle compile it for this part.
 
-The general rule this replaces a wrong one with: **do not infer the absence of a
-capability from the absence of an artifact in one index, and do not infer it from
-a cubin list alone — read the PTX too.** The two questions are "does any build
-of this exist for my architecture" and "does the code inside it cover, or JIT
-to, my compute capability", and they have different answers and different
-commands.
+**And it still does not work, which was then measured rather than argued.** A
+throwaway venv with `torch==2.5.1` from the cu124 index, on this card:
+
+```
+torch 2.5.1  cuda 12.4  is_available True
+arch_list ['sm_50','sm_80','sm_86','sm_89','sm_90','sm_90a']
+UserWarning: NVIDIA GB10 with CUDA capability sm_121 is not compatible ...
+>>> torch.randn(2048, 2048, device="cuda")
+RuntimeError: CUDA error: no kernel image is available for execution on the device
+```
+
+It fails on the FIRST device allocation, before any GEMM, so cuBLAS was the
+wrong library to interrogate. `cuobjdump` on torch's own 935 MB
+`libtorch_cuda.so`: cubins for sm_50 through sm_90a and **no PTX at all**. There
+is nothing in torch's own kernels to JIT forward from, whatever its dependencies
+carry.
+
+So the conclusion that these kits cannot use this card at their pinned torch is
+RIGHT, and the three statements made about why are worth keeping side by side,
+because two of them were wrong and both were plausible:
+
+| statement | verdict |
+| --- | --- |
+| "PyPI has no CUDA aarch64 torch below 2.7, so there is no CUDA code to JIT" | premise true, inference **wrong** — download.pytorch.org has it at 2.4.0 / 2.4.1 / 2.5.1 |
+| "cuBLAS 12.4 aarch64 carries no PTX, so nothing can JIT" | **wrong** — both its libraries carry sm_90 PTX |
+| "`libtorch_cuda.so` carries no PTX, so the first torch kernel fails" | **measured**, with the error text above |
+
+The general rule: **do not infer the absence of a capability from the absence of
+an artifact in one index; do not infer it from a cubin list alone — read the PTX
+too; and read the PTX of the library whose kernel actually runs first.** The
+three questions are "does any build exist for my architecture", "does the code
+inside cover or JIT to my compute capability", and "which library's kernel is
+the first to run" — different answers, different commands, and the cheapest of
+the three is the one that settles it.
+
+What this leaves open for those six kits is not the GPU but the CPU: esm_if1 is
+the precedent, `[gpu] policy = "none"` with a measured thread count, and for a
+small model it is the right answer rather than a consolation.
 
 Three ways out, in descending honesty:
 
@@ -581,6 +606,7 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | Turning a kit off can cost VRAM, not just speed | measured: esmc `off` costs 9.6 GiB -- `pipe` was the device-side loader |
 | No CUDA aarch64 torch below 2.7 **on PyPI** | measured: 4 wheels, `libtorch_cpu.so` only — but download.pytorch.org has cu124 aarch64 2.4.0 |
 | Read the PTX, not only the cubin list | measured: cuBLAS 12.4 aarch64 has no sm_12x cubin and does carry sm_90 PTX |
+| …and read it for the library that runs FIRST | measured: `libtorch_cuda.so` carries no PTX; `torch.randn(device='cuda')` raises |
 | `peak_reserved_gib` is a high-water mark, so ladders ascend first | measured: 24.44 vs 24.08 GiB for the same 100-residue rung |
 | Fork has three shapes; a library's pool is one | measured: boltzgen 0 designs in 420 s, 31.6 s with OMP_NUM_THREADS=1 |
 | An `outputs` glob must not match a file written anyway | measured: boltzgen's `design_spec.cif` would have passed a design-less run |
