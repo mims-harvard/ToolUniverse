@@ -192,6 +192,41 @@ def test_the_runtime_still_sets_what_the_provider_is_told_to_bind(monkeypatch):
     assert result["PATH"].startswith("/usr/bin")
 
 
+def test_the_system_path_survives_rather_than_being_replaced(monkeypatch):
+    """The provider's bin is prepended to PATH, never substituted for it.
+
+    An earlier version of this allowlist omitted PATH, so the surviving value was only the
+    provider's own bin directory and every required_commands binary stopped resolving --
+    Rscript for the four R providers, boltz for its own. The weaker assertion above passes
+    in that state, which is why this one checks the tail as well as the head.
+    """
+    monkeypatch.setenv("PATH", "/usr/bin:/bin")
+
+    result = child_environment("/opt/env/bin/python", PLAIN)
+
+    assert result["PATH"] == "/opt/env/bin:/usr/bin:/bin"
+
+
+def test_every_required_command_can_still_be_found(monkeypatch):
+    """The catalog needs Rscript and boltz on PATH; a dropped PATH hides both."""
+    import os
+    import shutil
+
+    monkeypatch.setenv("PATH", os.defpath)
+    commands = {
+        name
+        for deployment in REMOTE_BY_SLUG.values()
+        for name in deployment.required_commands
+    }
+    assert commands == {"Rscript", "boltz"}, commands
+
+    passed = child_environment("/opt/env/bin/python", PLAIN)["PATH"]
+
+    # The provider sees the same search path this process has, plus its own bin first.
+    assert passed.endswith(os.defpath)
+    assert shutil.which("sh", path=passed) is not None
+
+
 # ── the operator's escape hatch ─────────────────────────────────────────────────
 
 

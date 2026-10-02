@@ -362,6 +362,10 @@ def resolve_python(
 # way to get arbitrary code into someone else's process.
 PROVIDER_ENV_BASE = frozenset(
     {
+        # Without PATH the provider's own bin directory becomes its entire search path, so
+        # every required_commands binary -- Rscript for the four R providers, boltz for its
+        # own -- stops resolving. The existing runtime test caught exactly that.
+        "PATH",
         "HOME",
         "USER",
         "LOGNAME",
