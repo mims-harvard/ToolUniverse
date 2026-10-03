@@ -50,7 +50,13 @@
     },
     "fields": {
       "endpoint": "https://veupathdb.org/veupathdb/service/record-types/gene/searches",
-      "return_format": "JSON"
+      "return_format": "JSON",
+      "auth_header": {
+        "env_var": "VEUPATHDB_API_KEY",
+        "header": "Authorization",
+        "required": true,
+        "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess"
+      }
     },
     "return_schema": {
       "oneOf": [
@@ -115,7 +121,19 @@
     },
     "test_examples": [
       {}
-    ]
+    ],
+    "required_api_keys": [
+      "VEUPATHDB_API_KEY"
+    ],
+    "api_key_info": {
+      "VEUPATHDB_API_KEY": {
+        "domain": "Pathogens & Microbiology",
+        "type": "secret",
+        "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess",
+        "purpose": "Query the VEuPathDB WDK service for pathogen gene searches and records.",
+        "without": "VEuPathDB returns 401 'Valid API Key required for this endpoint.' Only the record-type listing stays open."
+      }
+    }
   },
   {
     "name": "VEuPathDB_list_organism_searches",
@@ -128,7 +146,13 @@
     },
     "fields": {
       "endpoint": "https://veupathdb.org/veupathdb/service/record-types/organism/searches",
-      "return_format": "JSON"
+      "return_format": "JSON",
+      "auth_header": {
+        "env_var": "VEUPATHDB_API_KEY",
+        "header": "Authorization",
+        "required": true,
+        "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess"
+      }
     },
     "return_schema": {
       "oneOf": [
@@ -178,6 +202,9 @@
     },
     "test_examples": [
       {}
+    ],
+    "required_api_keys": [
+      "VEUPATHDB_API_KEY"
     ]
   },
   {
@@ -297,7 +324,10 @@
           ]
         }
       ]
-    }
+    },
+    "required_api_keys": [
+      "VEUPATHDB_API_KEY"
+    ]
   },
   {
     "name": "VEuPathDB_get_gene_record",
@@ -425,6 +455,9 @@
           ]
         }
       ]
-    }
+    },
+    "required_api_keys": [
+      "VEUPATHDB_API_KEY"
+    ]
   }
 ]

@@ -97,6 +97,9 @@
         "wild_type": "E",
         "mutant": "V"
       }
+    ],
+    "required_api_keys": [
+      "HF_TOKEN"
     ]
   }
 ]
