@@ -149,6 +149,7 @@ STATIC_LAZY_REGISTRY = {
     "DNATool": "dna_tools",
     "DOAJTool": "doaj_tool",
     "DTUProteinTool": "dtu_protein_tool",
+    "DailyMedDrugClassesTool": "dailymed_drug_classes_tool",
     "DailyMedSPLParserTool": "dailymed_tool",
     "DataCiteRESTTool": "datacite_tool",
     "DataCiteTool": "datacite_tool",

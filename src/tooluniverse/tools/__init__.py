@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2717 scientific tools.
+Type-safe Python interface to 2716 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -1609,7 +1609,6 @@ from .NCIThesaurus_get_parents import NCIThesaurus_get_parents
 from .NCIThesaurus_search import NCIThesaurus_search
 from .NCI_expand_drugs_by_letter import NCI_expand_drugs_by_letter
 from .NCI_get_drug_by_name import NCI_get_drug_by_name
-from .NCI_search_cancer_resources import NCI_search_cancer_resources
 from .NDEx_get_network import NDEx_get_network
 from .NDEx_get_network_summary import NDEx_get_network_summary
 from .NDEx_search_networks import NDEx_search_networks
@@ -4600,7 +4599,6 @@ __all__ = [
     "NCIThesaurus_search",
     "NCI_expand_drugs_by_letter",
     "NCI_get_drug_by_name",
-    "NCI_search_cancer_resources",
     "NDEx_get_network",
     "NDEx_get_network_summary",
     "NDEx_search_networks",
