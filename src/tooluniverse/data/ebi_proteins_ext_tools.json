@@ -889,12 +889,20 @@
       "oneOf": [
         {
           "type": "object",
+          "description": "RNA editing sites curated by UniProt. An entry with none returns an empty list, which is an answer rather than a failure.",
           "properties": {
             "accession": {
-              "type": "string"
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "entry_name": {
-              "type": "string"
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "UniProt entry name, e.g. GRIA2_HUMAN"
             },
             "rna_editing_sites": {
               "type": "array",
@@ -902,82 +910,130 @@
                 "type": "object",
                 "properties": {
                   "type": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "Always 'RNA editing'"
                   },
                   "position": {
                     "type": [
                       "integer",
-                      "number",
                       "null"
-                    ]
+                    ],
+                    "description": "Residue position in the protein sequence; null if UniProt gives a position it cannot parse as a number"
                   },
-                  "genomic_location": {
+                  "evidences": {
                     "type": [
                       "array",
                       "null"
-                    ]
-                  },
-                  "variant_locations": {
-                    "type": [
-                      "array",
-                      "null"
-                    ]
-                  },
-                  "codon": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "consequence_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "wild_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "mutated_type": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "somatic_status": {
-                    "type": [
-                      "boolean",
-                      "null"
-                    ]
-                  },
-                  "rna_editing_info": {
-                    "type": [
-                      "object",
-                      "null"
-                    ]
+                    ],
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "ECO evidence code, e.g. ECO:0000269"
+                        },
+                        "source": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "'PubMed' or 'UniProtKB'"
+                        },
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The PubMed ID or UniProt accession the evidence points at"
+                        }
+                      }
+                    }
                   }
                 }
               }
             },
             "total_sites": {
+              "type": "integer"
+            },
+            "location_type": {
               "type": [
-                "integer",
-                "number"
-              ]
+                "string",
+                "null"
+              ],
+              "description": "UniProt's 'Known', 'Not_applicable' or 'Undetermined' -- how precisely the positions are known, which is not the same as there being none. Null when the entry has no RNA editing comment."
+            },
+            "notes": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The curator's note, e.g. 'Partially edited. Fully edited in the brain'"
+                  },
+                  "evidences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "ECO evidence code, e.g. ECO:0000269"
+                        },
+                        "source": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "'PubMed' or 'UniProtKB'"
+                        },
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The PubMed ID or UniProt accession the evidence points at"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
           "required": [
-            "accession"
+            "accession",
+            "rna_editing_sites",
+            "total_sites"
           ]
         },
         {
           "type": "object",
+          "description": "The lookup failed.",
           "properties": {
             "error": {
               "type": "string"
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           "required": [

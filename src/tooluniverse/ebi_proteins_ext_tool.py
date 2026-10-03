@@ -15,6 +15,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 PROTEINS_API_BASE_URL = "https://www.ebi.ac.uk/proteins/api"
+UNIPROT_REST_BASE_URL = "https://rest.uniprot.org"
 
 
 @register_tool("EBIProteinsExtTool")
@@ -510,7 +511,24 @@ class EBIProteinsExtTool(BaseTool):
         }
 
     def _get_rna_editing(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get RNA editing annotations (A-to-I recoding sites) for a protein."""
+        """RNA editing (A-to-I recoding) sites for a protein, read from UniProt.
+
+        Not from the Proteins API, although it documents the endpoint this used
+        to call. /rna-editing serves nothing: ?offset=0&size=1&taxid=<tx>
+        returns 0 records for human, mouse, rat and fly alike, and
+        /rna-editing/P42262 answers 404 "Can not find Features for accession"
+        for GRIA2, the textbook Q/R site. Both URL shapes are in the API's own
+        openapi.json, so the tool was calling it correctly -- the dataset is
+        empty.
+
+        UniProtKB has the annotation: P42262 position 607 with PubMed:7523595,
+        and P28335 (5HT2C) positions 156, 158 and 160 with PubMed:9928237. So
+        this reads cc_rna_editing from the UniProt REST entry instead. The
+        fields UniProt curates are the position, its evidence and the curator's
+        note; codon, genomic location and consequence type were in the Proteins
+        API's feature shape and have no UniProt equivalent, so they are gone
+        from the output rather than reported as permanently null.
+        """
         accession = arguments.get("accession", "")
         if not accession:
             return {
@@ -519,55 +537,104 @@ class EBIProteinsExtTool(BaseTool):
             }
         accession = accession.strip()
 
-        url = f"{PROTEINS_API_BASE_URL}/rna-editing/{accession}"
-        headers = {"Accept": "application/json"}
-        response = requests.get(url, headers=headers, timeout=self.timeout)
-        response.raise_for_status()
-        data = response.json()
+        url = f"{UNIPROT_REST_BASE_URL}/uniprotkb/{accession}.json"
+        try:
+            response = requests.get(
+                url,
+                params={"fields": "cc_rna_editing,accession,id"},
+                headers={"Accept": "application/json"},
+                timeout=self.timeout,
+            )
+        except requests.exceptions.RequestException as exc:
+            return {
+                "status": "error",
+                "error": f"UniProt request failed: {exc}",
+                "url": url,
+            }
+        if response.status_code in (400, 404):
+            # 404 for a well-formed accession UniProt does not hold, 400 for
+            # one it cannot parse at all. Both mean the same thing to a caller.
+            return {
+                "status": "error",
+                "error": (
+                    f"UniProt has no entry for accession '{accession}' "
+                    "(expected a UniProt accession such as P42262)"
+                ),
+                "url": url,
+            }
+        if response.status_code != 200:
+            return {
+                "status": "error",
+                "error": f"UniProt returned HTTP {response.status_code}",
+                "url": url,
+            }
+        try:
+            data = response.json()
+        except ValueError:
+            return {
+                "status": "error",
+                "error": "UniProt returned a response that is not JSON",
+                "url": url,
+            }
 
-        sites = []
-        for f in data.get("features", []):
-            vt = f.get("variantType") or {}
-            loc = f.get("locationType") or {}
-            position = (loc.get("position") or {}).get("position")
-            variant_locations = []
-            for vl in vt.get("variantLocation", []) or []:
-                variant_locations.append(
+        def _evidences(node):
+            out = []
+            for ev in node.get("evidences") or []:
+                out.append(
                     {
-                        "loc": vl.get("loc"),
-                        "seq_id": vl.get("seqId"),
-                        "source": vl.get("source"),
+                        "code": ev.get("evidenceCode"),
+                        "source": ev.get("source"),
+                        "id": ev.get("id"),
                     }
                 )
-            editing_info = f.get("rnaEditingInfo") or {}
-            sites.append(
-                {
-                    "type": f.get("type"),
-                    "position": position,
-                    "genomic_location": vt.get("genomicLocation"),
-                    "variant_locations": variant_locations
-                    if variant_locations
-                    else None,
-                    "codon": vt.get("codon"),
-                    "consequence_type": vt.get("consequenceType"),
-                    "wild_type": vt.get("wildType"),
-                    "mutated_type": vt.get("mutatedType"),
-                    "somatic_status": vt.get("somaticStatus"),
-                    "rna_editing_info": editing_info if editing_info else None,
-                }
-            )
+            return out or None
+
+        sites = []
+        notes = []
+        location_types = []
+        for comment in data.get("comments") or []:
+            if not (comment.get("commentType") or "").upper().startswith("RNA EDIT"):
+                continue
+            if comment.get("locationType"):
+                location_types.append(comment["locationType"])
+            for position in comment.get("positions") or []:
+                raw = position.get("position")
+                try:
+                    parsed = int(raw)
+                except (TypeError, ValueError):
+                    parsed = None
+                sites.append(
+                    {
+                        "type": "RNA editing",
+                        "position": parsed,
+                        "evidences": _evidences(position),
+                    }
+                )
+            for text in (comment.get("note") or {}).get("texts") or []:
+                notes.append(
+                    {"text": text.get("value"), "evidences": _evidences(text)}
+                )
 
         return {
             "status": "success",
             "data": {
-                "accession": data.get("accession"),
-                "entry_name": data.get("entryName"),
+                "accession": data.get("primaryAccession") or accession,
+                "entry_name": data.get("uniProtkbId"),
                 "rna_editing_sites": sites,
-                "total_sites": len(data.get("features", [])),
+                "total_sites": len(sites),
+                # "Known", "Not_applicable" or "Undetermined" -- UniProt says
+                # how precisely the edited positions are known, which is not
+                # the same as there being none.
+                "location_type": location_types[0] if location_types else None,
+                "notes": notes or None,
             },
             "metadata": {
-                "source": "EBI Proteins API - RNA Editing",
+                "source": "UniProtKB REST (cc_rna_editing)",
                 "accession": accession,
+                "source_note": (
+                    "The EBI Proteins API /rna-editing endpoint still exists but "
+                    "serves no records for any taxon, so this reads UniProtKB"
+                ),
             },
         }
 

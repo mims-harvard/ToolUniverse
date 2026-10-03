@@ -419,7 +419,7 @@
   "EBIProteins_get_proteins_by_genomic_loc": "db80dd07947451537109e45666734b44",
   "EBIProteins_get_proteomics_peptides": "c48648801b96c01f003a71aec62a7edc",
   "EBIProteins_get_proteomics_ptm": "cc4862466d7dd3849bdb87fab33d372a",
-  "EBIProteins_get_rna_editing": "49ea0517f1825eacd72a67f48e4125b1",
+  "EBIProteins_get_rna_editing": "b88942ee2d52ab750ee1bfed3ac3777f",
   "EBIProteins_get_structural_features": "568c985aba46eee0494d5ecc6cf6d52f",
   "EBIProteins_get_variation": "67cd11428ef10c261e9bc613a4d91669",
   "EBIProteins_get_variation_by_dbsnp": "63399915adf109a6afa3304ff3a0b73c",
