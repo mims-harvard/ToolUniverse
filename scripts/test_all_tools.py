@@ -339,9 +339,22 @@ def _format_result_status(result: Dict[str, Any]) -> str:
     if state == "no_tests":
         return "NO TESTS: category has no executable examples"
     if state == "skipped":
+        skipped = result.get("skipped", 0)
+        local_input = result.get("skipped_local_input", 0)
+        if local_input and local_input >= skipped:
+            return (
+                f"SKIPPED: {skipped} tool(s) need an input file the caller "
+                "supplies"
+            )
+        if local_input:
+            return (
+                f"SKIPPED: {skipped} tool(s) -- {local_input} need an input "
+                f"file the caller supplies, {skipped - local_input} need a "
+                "credential this run does not have"
+            )
         return (
-            f"SKIPPED: {result.get('skipped', 0)} tool(s) need a credential "
-            "this run does not have"
+            f"SKIPPED: {skipped} tool(s) need a credential this run does not "
+            "have"
         )
     return f"PASSED: {result.get('tests_run', 0)} test(s)"
 
@@ -450,6 +463,7 @@ _OUTPUT_LABELS: List[Tuple[str, str]] = [
     # Parsed so a category whose every tool was skipped for a missing
     # credential can be told apart from one that ships no examples.
     ("Skipped:", "skipped"),
+    ("Skipped local input:", "skipped_local_input"),
 ]
 
 

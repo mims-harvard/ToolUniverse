@@ -175,6 +175,9 @@ def run_tests(
                         f"  ⏭️  {name}: Skipped (requires user-supplied local input file)"
                     )
                 stats["skipped"] += 1
+                stats["skipped_local_input"] = (
+                    stats.get("skipped_local_input", 0) + 1
+                )
                 continue
 
             # Check if tool requires API keys that are not available
@@ -428,6 +431,11 @@ def main():
     if stats["errors_other"] > 0:
         print(f"  └─ Other Errors: {stats['errors_other']}")
     print(f"Skipped:          {stats['skipped']}")
+    # Two different reasons share the skipped count, and the sweep labelled
+    # every one of them "need a credential". A tool whose examples want a file
+    # the caller supplies is a different fact.
+    if stats.get("skipped_local_input"):
+        print(f"Skipped local input: {stats['skipped_local_input']}")
     print("-" * 30)
     print(f"Schema Valid:     {stats['schema_valid']}")
     print(f"Schema Invalid:   {stats['schema_invalid']}")
