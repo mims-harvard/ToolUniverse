@@ -153,7 +153,7 @@ def test_conoserver_goes_through_the_shared_helper():
     )
 
 
-@pytest.mark.parametrize("slug", ["wormbase_rest", "foodb"])
+@pytest.mark.parametrize("slug", ["wormbase_rest", "foodb", "powo"])
 def test_the_challenged_apis_are_recorded_with_their_evidence(slug):
     entry = json.loads((DATA / "broken_apis" / f"{slug}.json").read_text("utf-8"))
 
@@ -161,9 +161,10 @@ def test_the_challenged_apis_are_recorded_with_their_evidence(slug):
     assert entry["retry_count"] >= 3
     assert entry["retry_after"]
     assert entry["affected_tools"], "the retirement should name the tools"
-    assert "ConoServer" in entry["root_cause"], (
-        "the contrast is the point: that one was a User-Agent block and fixable"
-    )
+    # The substance each entry has to carry: this is not something a header
+    # fixes, which is what separates it from the ConoServer User-Agent block.
+    assert "JavaScript" in entry["root_cause"]
+    assert "None from an API client" in entry["workaround"]
 
 
 @pytest.mark.parametrize(
@@ -177,3 +178,22 @@ def test_both_tools_name_the_challenge_instead_of_a_bare_403(module, name):
 
     assert "cloudflare_challenge(" in source
     assert f"{name} is unreachable" in source
+
+
+def test_the_shared_rest_path_names_a_challenge():
+    """POWO is config-driven, so one place covers every BaseRESTTool tool.
+
+    It reported "POWO_search_plants API error" for the same managed challenge
+    as WormBase and FooDB -- a message that sends a user looking for a
+    credential problem. Third instance of the signature, which is why the
+    detection lives in the shared path rather than in a third tool module.
+    """
+    source = (
+        Path(__file__).resolve().parents[2]
+        / "src"
+        / "tooluniverse"
+        / "base_rest_tool.py"
+    ).read_text("utf-8")
+
+    assert "cloudflare_challenge(response)" in source
+    assert "is unreachable: {challenge}" in source
