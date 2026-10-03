@@ -432,6 +432,112 @@ def provider_environment_names(
     return allowed
 
 
+
+def explain_environment_failure(
+    report: dict[str, Any], deployment: RemoteDeployment
+) -> list[str]:
+    """Turn a failed environment check into sentences with a fix in each one.
+
+    The CLI used to print the exclusion reason from report["checks"], a key this function's
+    report has never contained, so every provider was excluded with the words "environment
+    check failed" and nothing else. The reason was computed and then thrown away.
+
+    That matters most for the people this is aimed at. A biologist whose virtual environment
+    is Python 3.11 cannot act on "environment check failed"; they can act on "needs Python
+    3.12, this one is 3.11".
+
+    Mirrors the conditions that make up report["ok"], in the order someone would fix them:
+    nothing later is worth reporting while the interpreter itself is wrong.
+    """
+    slug = deployment.slug
+    setup = f"The setup guide for it is skills/setup-{slug}-remote-tool."
+    provider = report.get("provider") or {}
+    reasons: list[str] = []
+
+    if report.get("error"):
+        return [str(report["error"])]
+
+    if provider.get("error"):
+        # The probe could not even report. Its exit code is the only honest detail; stderr is
+        # deliberately not surfaced because a provider's output can carry credentials.
+        reasons.append(
+            f"{slug} could not be checked: {provider['error']}"
+            f" (exit code {provider.get('exit_code', '?')}). {setup}"
+        )
+        return reasons
+
+    if report.get("python_supported_3_12") is False:
+        version = provider.get("python_version") or []
+        running = ".".join(str(part) for part in version[:2]) if version else "something else"
+        reasons.append(
+            f"{slug} needs Python 3.12; this environment is {running}. Make one with "
+            f"`python3.12 -m venv .venv` and install into it."
+        )
+        # An interpreter mismatch makes every later check meaningless: the packages are
+        # missing because they were installed somewhere else.
+        return reasons
+
+    if provider.get("module_available") is False:
+        reasons.append(
+            f"{slug} is not installed in this environment. {setup}"
+        )
+
+    for name, present in (provider.get("commands") or {}).items():
+        if not present:
+            reasons.append(
+                f"{slug} runs `{name}`, which is not on this machine's PATH. {setup}"
+            )
+
+    for item in report.get("provider_environment") or []:
+        name = item.get("name", "a variable")
+        if not item.get("set"):
+            reasons.append(
+                f"{slug} needs the environment variable {name}, which is not set."
+            )
+        elif not item.get("path_exists", True):
+            reasons.append(
+                f"{name} points at a path that does not exist on this machine."
+            )
+
+    credentials = report.get("provider_credentials")
+    if isinstance(credentials, dict) and credentials.get("ready") is not True:
+        detail = str(credentials.get("detail") or "it is not available")
+        reasons.append(f"{slug} needs a credential and {detail}.")
+
+    if report.get("gpu_policy") == "required" and not report.get("cpu_override"):
+        gpu = provider.get("gpu") or {}
+        if gpu.get("cuda_available") is not True:
+            reasons.append(
+                f"{slug} needs a CUDA GPU and this machine has none available. Add "
+                f"--allow-cpu to run it on the processor instead, which is much slower."
+            )
+        elif gpu.get("tensor_sum") != 28.0:
+            reasons.append(
+                f"{slug} found a GPU but a test calculation on it gave the wrong answer, so "
+                f"the CUDA installation is not working."
+            )
+
+    share = report.get("share_prerequisites") or {}
+    if share.get("requested"):
+        if not share.get("sdk_available"):
+            reasons.append(
+                "Sharing needs tuplatform-connect, which is not installed in this environment."
+            )
+        if not share.get("service_key_set"):
+            reasons.append(
+                "Sharing needs this computer to be signed in. Run `tu remote login`, or let "
+                "the command open a browser for you."
+            )
+
+    if not reasons:
+        # Everything checkable passed and the result still says no. Say that, rather than
+        # inventing a cause, and name the command that prints the whole report.
+        reasons.append(
+            f"{slug} did not pass its environment check and the report gives no reason. "
+            f"`tu remote check {slug}` prints all of it."
+        )
+    return reasons
+
 def child_environment(
     python: str, deployment: RemoteDeployment, *, extra_env: Iterable[str] = ()
 ) -> dict[str, str]:

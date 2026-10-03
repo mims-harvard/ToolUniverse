@@ -2696,12 +2696,14 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
             usable.append(slug)
             print(f"  {slug}: environment ok")
             continue
-        reasons = "; ".join(
-            str(item.get("detail") or item.get("name") or "failed")
-            for item in check.get("checks", [])
-            if not item.get("ok")
-        )
-        print(f"  {slug}: EXCLUDED -- {reasons or 'environment check failed'}")
+        # check_environment has never returned a "checks" key, so the previous version of
+        # this printed "environment check failed" for every provider and discarded the reason
+        # it had just computed.
+        from tooluniverse.remote_runtime import explain_environment_failure
+
+        print(f"  {slug}: cannot be shared from this machine")
+        for reason in explain_environment_failure(check, REMOTE_BY_SLUG[slug]):
+            print(f"      {reason}")
     if not usable:
         print(
             "Error: none of the named providers passed their environment check.",
@@ -2769,7 +2771,35 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
             "discover what this host shares."
         )
 
-    server = serve_pool(pool, port=args.port)
+    try:
+        server = serve_pool(pool, port=args.port)
+    except OSError as exc:
+        # "[Errno 98] Address already in use" is where someone who has just been told to run
+        # one command gets stuck, and the usual cause is their own previous run still going.
+        if exc.errno in (48, 98, 10048):  # EADDRINUSE on Linux, macOS and Windows
+            from tooluniverse.remote_pool import suggest_free_port
+
+            # Checked before it is offered. The obvious suggestion, one above 7999, is 8000 --
+            # free of providers and also where a locally running platform listens, so someone
+            # following that advice meets the same error with a different number.
+            spare = suggest_free_port(args.port, REMOTE_BY_SLUG.values())
+            headline = (
+                f"Error: something else on this computer is already using port "
+                f"{args.port}, so this cannot start."
+            )
+            lines = [
+                headline,
+                "  The usual cause is an earlier run of this command that is still going.",
+            ]
+            if spare is not None:
+                lines.append(
+                    f"  Either stop that one, or give this one a free port:  --port {spare}"
+                )
+            else:
+                lines.append("  Stop that one, or pass --port with a port nothing is using.")
+            print("\n".join(lines), file=sys.stderr)
+            raise SystemExit(2) from exc
+        raise
     bound_port = server.server_address[1]
     endpoint = f"http://127.0.0.1:{bound_port}/mcp"
     threading.Thread(

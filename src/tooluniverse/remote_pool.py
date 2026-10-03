@@ -37,6 +37,7 @@ protocol change rather than here.
 from __future__ import annotations
 
 import json
+import socket
 import subprocess
 import threading
 import time
@@ -800,6 +801,30 @@ def _jsonrpc_error(request_id: Any, code: int, message: str) -> dict[str, Any]:
 def _jsonrpc_result(request_id: Any, result: Any) -> dict[str, Any]:
     return {"jsonrpc": "2.0", "id": request_id, "result": result}
 
+
+
+def suggest_free_port(avoid: int, deployments: Iterable[RemoteDeployment] = ()) -> int | None:
+    """Find a port that is free right now and belongs to no reviewed provider.
+
+    Offering a number without checking it is how one collision becomes two: 7999 + 1 is 8000,
+    which is free of providers and is also the port a locally running platform listens on.
+    Someone told to try it lands in the same error with a different number.
+    """
+    taken = {deployment.port for deployment in deployments}
+    taken.add(avoid)
+    for candidate in range(avoid + 1, avoid + 40):
+        if candidate in taken or candidate > 65535:
+            continue
+        probe = socket.socket()
+        try:
+            probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            probe.bind(("127.0.0.1", candidate))
+        except OSError:
+            continue
+        finally:
+            probe.close()
+        return candidate
+    return None
 
 class PoolMCPHandler(BaseHTTPRequestHandler):
     """A sessionless Streamable-HTTP MCP endpoint in front of :class:`ProviderPool`.
