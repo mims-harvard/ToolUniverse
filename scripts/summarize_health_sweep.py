@@ -52,12 +52,22 @@ PASSING_STATUS = frozenset({"PASSED"})
 TIMEOUT_STATUS = frozenset({"TIMEOUT"})
 
 
-def parse_logs(patterns: list) -> tuple[dict, dict, set, int]:
-    """Return (results, failure_counts, timed_out, expected_total)."""
+def parse_logs(patterns: list) -> tuple[dict, dict, set, int, int]:
+    """Return (results, failure_counts, timed_out, expected_total, shards_seen).
+
+    `expected_total` is summed from the shards whose log is present, so it
+    cannot account for a shard that was killed before uploading anything --
+    its slice is missing from the numerator *and* the denominator. Run
+    36387615324 reported "555 of 600 -- 45 never reached" when shard 1 was
+    lost entirely and the true unknown was nearer 130. `shards_seen` is what
+    lets the caller notice, by comparing it with the shard count the workflow
+    launched.
+    """
     results: dict = {}
     counts: dict = {}
     timed_out: set = set()
     expected = 0
+    shards_seen = 0
     for pattern in patterns:
         for path in sorted(glob.glob(pattern)):
             try:
@@ -97,7 +107,8 @@ def parse_logs(patterns: list) -> tuple[dict, dict, set, int]:
                     if is_timeout:
                         timed_out.add(category)
             expected += shard_total
-    return results, counts, timed_out, expected
+            shards_seen += 1
+    return results, counts, timed_out, expected, shards_seen
 
 
 def load_baseline(path: str | Path) -> set:
@@ -113,7 +124,8 @@ def load_baseline(path: str | Path) -> set:
 
 
 def build_summary(
-    results, counts, timed_out, baseline, expected_total
+    results, counts, timed_out, baseline, expected_total,
+    shards_seen=0, shards_expected=0,
 ) -> tuple[str, dict]:
     failing = {c for c, ok in results.items() if not ok}
     passing = set(results) - failing
@@ -130,7 +142,24 @@ def build_summary(
         + (f" of {expected_total} — **{missing} never reached**" if missing else "")
     )
     lines.append(f"- Failing: **{len(failing)}**  |  baseline: **{len(baseline)}**")
+    lost_shards = max(0, shards_expected - shards_seen) if shards_expected else 0
+    if shards_expected:
+        lines.append(
+            f"- Shards reported: **{shards_seen}** of {shards_expected}"
+            + (f" — **{lost_shards} uploaded nothing**" if lost_shards else "")
+        )
     lines.append("")
+    if lost_shards:
+        # Said separately from `missing` on purpose: a shard that uploaded
+        # nothing is absent from the denominator too, so the category
+        # arithmetic understates the loss rather than overstating it.
+        lines += [
+            f"> {lost_shards} of {shards_expected} shards uploaded no log at all, "
+            "so their categories are missing from the counts above as well as "
+            "from the results. The real number of unchecked categories is "
+            "higher than the figure on the first line.",
+            "",
+        ]
     if missing:
         lines += [
             f"> {missing} category/categories were never reached — a shard was lost. "
@@ -185,6 +214,8 @@ def build_summary(
         "recovered": recovered,
         "timed_out": sorted(timed_out),
         "baseline_size": len(baseline),
+        "shards_reported": shards_seen,
+        "shards_expected": shards_expected,
     }
     return "\n".join(lines), row
 
@@ -208,15 +239,33 @@ def main(argv=None) -> int:
     parser.add_argument(
         "--timestamp", default="", help="ISO timestamp; defaults to now (UTC)"
     )
+    parser.add_argument(
+        "--shard-count",
+        type=int,
+        default=0,
+        help=(
+            "How many shards the run launched. Without it a shard that "
+            "uploaded nothing is invisible: its categories are absent from "
+            "the expected total as well as from the results."
+        ),
+    )
     args = parser.parse_args(argv)
 
-    results, counts, timed_out, parsed_total = parse_logs(args.logs)
+    results, counts, timed_out, parsed_total, shards_seen = parse_logs(args.logs)
     # The shards state their own slice size, so the run's expected total is
     # known without being told. Passing --expected-total still wins.
     expected_total = args.expected_total or parsed_total
 
     baseline = load_baseline(args.baseline)
-    text, row = build_summary(results, counts, timed_out, baseline, expected_total)
+    text, row = build_summary(
+        results,
+        counts,
+        timed_out,
+        baseline,
+        expected_total,
+        shards_seen=shards_seen,
+        shards_expected=args.shard_count,
+    )
 
     if not results:
         # This is how the check failed silently for weeks: the progress format

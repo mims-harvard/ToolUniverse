@@ -42,6 +42,14 @@ jobs:
     name: Tool sweep shard ${{ matrix.shard }} (live APIs)
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    # A lost shard must not paint the run red. The sweep step is already
+    # continue-on-error, but an evicted runner kills the job rather than the
+    # step (exit 143), and one failed matrix leg fails the workflow -- which is
+    # why every run since August has been red regardless of tool health, and
+    # why nobody could tell a lost shard from a real regression. `summarize`
+    # runs with `if: always()` and exits non-zero when it can parse nothing, so
+    # the run still goes red when the sweep genuinely produced no results.
+    continue-on-error: true
 
     strategy:
       fail-fast: false # a lost shard must not cancel the other seven
@@ -141,7 +149,8 @@ jobs:
             --history .github/tool-health-history.jsonl \
             --summary "$GITHUB_STEP_SUMMARY" \
             --run-id "${{ github.run_id }}" \
-            --sha "${{ github.sha }}"
+            --sha "${{ github.sha }}" \
+            --shard-count "${SHARD_COUNT}"
 
       # Artifacts and run logs expire, so nothing outlived a quarter and decay
       # over any longer window could not be measured at all. One line per run,
@@ -149,13 +158,20 @@ jobs:
       - name: Commit history row
         if: github.event_name == 'schedule'
         run: |
-          if git diff --quiet -- .github/tool-health-history.jsonl; then
-            echo "no history change"
-            exit 0
-          fi
+          set -euo pipefail
+          # Stage first, then compare the index. `git diff` ignores untracked
+          # files, and this file starts untracked -- so on every run since the
+          # check was sharded it reported "no history change" for a file the
+          # summarizer had just written, exited 0, and never added it. The file
+          # therefore never became tracked, and the next run repeated it. The
+          # history has been empty since August for that reason alone.
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .github/tool-health-history.jsonl
+          if git diff --cached --quiet -- .github/tool-health-history.jsonl; then
+            echo "no history change"
+            exit 0
+          fi
           git commit -m "chore: record weekly tool health check (run ${{ github.run_id }})"
           # Another workflow may have pushed since checkout. Rebase rather than
           # fail; if the branch has genuinely diverged, leave it for next week

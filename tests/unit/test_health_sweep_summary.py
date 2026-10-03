@@ -41,7 +41,7 @@ def _write(tmp_path, text, name="sweep_output_0.log"):
 
 
 def test_the_real_progress_format_is_parsed(tmp_path, mod):
-    results, counts, timed_out, expected = mod.parse_logs([_write(tmp_path, SHARD)])
+    results, counts, timed_out, expected, _ = mod.parse_logs([_write(tmp_path, SHARD)])
 
     assert results["cellrank"] is False
     assert results["brenda"] is True
@@ -54,18 +54,18 @@ def test_the_real_progress_format_is_parsed(tmp_path, mod):
 def test_no_tests_is_neither_pass_nor_fail(tmp_path, mod):
     """Counting it as passing would make a category losing its examples look
     like a recovery."""
-    results, _, _, _ = mod.parse_logs([_write(tmp_path, SHARD)])
+    results, _, _, _, _ = mod.parse_logs([_write(tmp_path, SHARD)])
     assert "mcp_contracts.lock" not in results
 
 
 def test_expected_total_comes_from_the_shards(tmp_path, mod):
     """Without it, a lost shard is indistinguishable from a clean run."""
-    _, _, _, expected = mod.parse_logs([_write(tmp_path, SHARD)])
+    _, _, _, expected, _ = mod.parse_logs([_write(tmp_path, SHARD)])
     assert expected == 86
 
 
 def test_a_lost_shard_is_reported_as_unknown(tmp_path, mod):
-    results, counts, timed_out, expected = mod.parse_logs([_write(tmp_path, SHARD)])
+    results, counts, timed_out, expected, _ = mod.parse_logs([_write(tmp_path, SHARD)])
     text, row = mod.build_summary(results, counts, timed_out, set(), expected)
     assert "never reached" in text
     assert "No new failures" not in text
@@ -73,7 +73,7 @@ def test_a_lost_shard_is_reported_as_unknown(tmp_path, mod):
 
 def test_the_old_emoji_format_still_parses(tmp_path, mod):
     older = "[1/638] zinc: ❌ 1 failures\n[2/638] gbif: ✅ 7 tests passed\n"
-    results, counts, _, _ = mod.parse_logs([_write(tmp_path, older, "old.log")])
+    results, counts, _, _, _ = mod.parse_logs([_write(tmp_path, older, "old.log")])
     assert results == {"zinc": False, "gbif": True}
     assert counts["zinc"] == 1
 
