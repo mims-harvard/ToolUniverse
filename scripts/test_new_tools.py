@@ -50,8 +50,20 @@ def load_all_tool_configs(
 ) -> List[Tuple[Path, List[Dict]]]:
     """Load tool configurations matching the pattern."""
     configs = []
-    search_pattern = f"*{pattern}*" if pattern else "*"
-    files = list(data_dir.glob(f"**/{search_pattern}.json"))
+    # An exact category first. The substring glob below matches filenames, and
+    # "ols" is inside "tools", so `test_new_tools.py ols` matched 647 of the
+    # 688 config files and tested most of the repository. The sweep asks for
+    # one category at a time, so that guaranteed a TIMEOUT for ols on every
+    # weekly run -- measured: still going after 1500 s, at 22 of the
+    # repository's tests. The next-worst name, ensembl, matches 13 files and
+    # all 13 are genuinely ensembl's.
+    exact = data_dir / f"{pattern}_tools.json" if pattern else None
+    if exact is not None and exact.is_file():
+        files = [exact]
+        search_pattern = exact.name
+    else:
+        search_pattern = f"*{pattern}*" if pattern else "*"
+        files = list(data_dir.glob(f"**/{search_pattern}.json"))
 
     # Fallback: If no files found matching pattern, maybe it's a tool name?
     # Try loading ALL files and letting the tool name filter handle it.
