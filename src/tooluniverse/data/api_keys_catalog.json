@@ -364,7 +364,7 @@
   },
   {
     "name": "ICD_CLIENT_ID",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Clinical & Safety",
     "register_url": "https://icd.who.int/icdapi",
@@ -376,7 +376,7 @@
   },
   {
     "name": "ICD_CLIENT_SECRET",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Clinical & Safety",
     "register_url": "https://icd.who.int/icdapi",
@@ -622,7 +622,7 @@
   },
   {
     "name": "UMLS_API_KEY",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Clinical & Safety",
     "register_url": "https://uts.nlm.nih.gov/uts/signup-login",
