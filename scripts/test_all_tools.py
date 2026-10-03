@@ -199,6 +199,36 @@ def load_checkpoint(
     return validated
 
 
+# src/tooluniverse/remote/<slug>/ is a provider that needs its own server, so
+# --skip-remote has to drop it. This used to be a hardcoded list of ten names
+# and it drifted: 30 provider directories existed and 24 of them -- borzoi,
+# celltypist, monocle3, scvi and the rest -- were still being tested. The tools
+# are not loaded without their server, so each one failed with "Tool 'X' not
+# found even after loading tools" and the weekly report counted 22 categories
+# of phantom failures. Derived from the filesystem so it cannot drift again.
+_EXTERNAL_SERVICE_PATTERNS = (
+    "blast",  # NCBI BLAST API: submits a job to a queue, not a request/response
+    "simbad",  # SIMBAD astronomical database API
+    "uspto",  # USPTO Patent API, and uspto_downloader with it
+    "depmap",  # the pattern name; the provider directory is depmap_24q2
+)
+
+
+def remote_tool_patterns() -> set:
+    """Pattern names --skip-remote must drop: provider dirs plus the services."""
+    patterns = set(_EXTERNAL_SERVICE_PATTERNS)
+    remote_root = (
+        Path(__file__).resolve().parents[1] / "src" / "tooluniverse" / "remote"
+    )
+    if remote_root.is_dir():
+        patterns.update(
+            entry.name
+            for entry in remote_root.iterdir()
+            if entry.is_dir() and not entry.name.startswith(("_", "."))
+        )
+    return patterns
+
+
 def find_all_tool_configs(data_dir: Path) -> List[Path]:
     """Find all JSON configuration files."""
     json_files = list(data_dir.glob("*.json"))
@@ -833,16 +863,11 @@ def main():
     
     # Skip remote tools if requested
     if args.skip_remote:
-        remote_tools = [
-            'boltz', 'depmap', 'expert_feedback', 'immune_compass', 
-            'pinnacle', 'transcriptformer', 'uspto_downloader',
-            # Add external API services that require remote servers
-            'blast',  # NCBI BLAST API
-            'simbad',  # SIMBAD astronomical database API
-            'uspto',  # USPTO Patent API (in addition to uspto_downloader)
-        ]
-        skip_tools.update(remote_tools)
-        print(f"🌐 Skipping remote tools (require external servers): {', '.join(sorted(remote_tools))}")
+        skip_tools.update(remote_tool_patterns())
+        print(
+            "🌐 Skipping remote tools (require external servers): "
+            f"{len(remote_tool_patterns())} pattern(s)"
+        )
     
     # Skip MCP tools if requested
     if args.skip_mcp:
@@ -883,7 +908,17 @@ def main():
         skipped_count = before_count - len(config_patterns)
         if skipped_count > 0:
             print(f"⏭️  Skipped {skipped_count} tool(s)")
-    
+        if before_count and not config_patterns:
+            # Everything asked for was on the skip list. Nothing failed, so
+            # exiting non-zero would report a deliberate exclusion as a
+            # problem -- `--pattern borzoi --skip-remote` is a reasonable thing
+            # to type and the answer is "that one needs its own server".
+            print(
+                f"⏭️  Every pattern matched was on the skip list "
+                f"({skipped_count} skipped); nothing to test"
+            )
+            sys.exit(0)
+
     if not config_patterns:
         print("❌ No tools remaining after filtering")
         sys.exit(1)
