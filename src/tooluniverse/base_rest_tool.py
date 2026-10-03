@@ -481,9 +481,21 @@ class BaseRESTTool(BaseTool):
 
             # Check for errors (accept any 2xx success status)
             if not (200 <= response.status_code < 300):
+                # A tool whose upstream is gone can still point somewhere. The
+                # config carries fields.unreachable_alternatives when a usable
+                # alternative exists but is not equivalent enough to repoint
+                # to -- POWO's names are in IPNI and its taxonomy in GBIF, and
+                # neither carries POWO's distribution text, so the caller gets
+                # told rather than quietly served a narrower answer.
+                error = f"{self.api_name} API error"
+                alternatives = (self.tool_config.get("fields") or {}).get(
+                    "unreachable_alternatives"
+                )
+                if response.status_code >= 400 and alternatives:
+                    error = f"{error}. {alternatives}"
                 return {
                     "status": "error",
-                    "error": f"{self.api_name} API error",
+                    "error": error,
                     "url": url,
                     "status_code": response.status_code,
                     "detail": redact_url_secrets((response.text or "")[:500]),

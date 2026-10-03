@@ -37,7 +37,10 @@
     },
     "fields": {
       "endpoint": "https://powo.science.kew.org/api/2/search",
-      "headers": {"User-Agent": "ToolUniverse/1.0 (scientific research; https://github.com/tooluniverse/ToolUniverse)"}
+      "headers": {
+        "User-Agent": "ToolUniverse/1.0 (scientific research; https://github.com/tooluniverse/ToolUniverse)"
+      },
+      "unreachable_alternatives": "POWO is behind a Cloudflare JavaScript challenge. For plant names and authorship, IPNI is a Kew service and still open: https://ipni.org/api/1/search?q=<name> answered 200 with 4764 results for Quercus on 2026-10-03. For taxonomy and occurrence, GBIF is open: https://api.gbif.org/v1/species/match?name=<name> resolved Quercus robur L. POWO adds distribution and descriptive text that neither carries, so neither is a drop-in replacement and these tools are not repointed at them."
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -192,7 +195,10 @@
     },
     "fields": {
       "endpoint": "https://powo.science.kew.org/api/2/taxon/{fqId}",
-      "headers": {"User-Agent": "ToolUniverse/1.0 (scientific research; https://github.com/tooluniverse/ToolUniverse)"}
+      "headers": {
+        "User-Agent": "ToolUniverse/1.0 (scientific research; https://github.com/tooluniverse/ToolUniverse)"
+      },
+      "unreachable_alternatives": "POWO is behind a Cloudflare JavaScript challenge. For plant names and authorship, IPNI is a Kew service and still open: https://ipni.org/api/1/search?q=<name> answered 200 with 4764 results for Quercus on 2026-10-03. For taxonomy and occurrence, GBIF is open: https://api.gbif.org/v1/species/match?name=<name> resolved Quercus robur L. POWO adds distribution and descriptive text that neither carries, so neither is a drop-in replacement and these tools are not repointed at them."
     },
     "type": "BaseRESTTool",
     "test_examples": [

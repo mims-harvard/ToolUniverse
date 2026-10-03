@@ -1,9 +1,39 @@
 import json
 from typing import Any, Dict
 from urllib.parse import urlencode
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 from tooluniverse.tool_registry import register_tool
+
+
+class GDCMaintenance(RuntimeError):
+    """GDC answered with its maintenance page rather than data.
+
+    The API returns HTTP 503 and a 39 KB HTML page saying "The GDC is
+    currently undergoing maintenance", including for /status. That is an
+    announced, temporary window, and reporting it as "HTTP Error 503: Service
+    Unavailable" reads like a transport fault the caller might retry around --
+    they cannot, and they do not need to investigate anything.
+    """
+
+
+def _maintenance_error(error: HTTPError) -> "GDCMaintenance | None":
+    """Recognise the maintenance page behind a 503."""
+    if getattr(error, "code", None) != 503:
+        return None
+    try:
+        body = error.read().decode("utf-8", errors="ignore")
+    except Exception:  # noqa: BLE001 - never raise from an error path
+        body = ""
+    if "undergoing maintenance" not in body.lower():
+        return None
+    return GDCMaintenance(
+        "The GDC is undergoing scheduled maintenance and its API is returning "
+        "503 for every request, including /status. Nothing to configure or "
+        "retry around; it comes back when they finish. Their status notice "
+        "points at the GDC Help Desk."
+    )
 
 
 def _http_get(
@@ -12,12 +42,18 @@ def _http_get(
     timeout: int = 30,
 ) -> Dict[str, Any]:
     req = Request(url, headers=headers or {})
-    with urlopen(req, timeout=timeout) as resp:
-        data = resp.read()
-        try:
-            return json.loads(data.decode("utf-8", errors="ignore"))
-        except Exception:
-            return {"raw": data.decode("utf-8", errors="ignore")}
+    try:
+        with urlopen(req, timeout=timeout) as resp:
+            data = resp.read()
+    except HTTPError as error:
+        maintenance = _maintenance_error(error)
+        if maintenance is not None:
+            raise maintenance from error
+        raise
+    try:
+        return json.loads(data.decode("utf-8", errors="ignore"))
+    except Exception:
+        return {"raw": data.decode("utf-8", errors="ignore")}
 
 
 def _http_post(
@@ -31,12 +67,18 @@ def _http_post(
     headers["Content-Type"] = "application/json"
     data = json.dumps(payload).encode("utf-8")
     req = Request(url, data=data, headers=headers, method="POST")
-    with urlopen(req, timeout=timeout) as resp:
-        response_data = resp.read()
-        try:
-            return json.loads(response_data.decode("utf-8", errors="ignore"))
-        except Exception:
-            return {"raw": response_data.decode("utf-8", errors="ignore")}
+    try:
+        with urlopen(req, timeout=timeout) as resp:
+            response_data = resp.read()
+    except HTTPError as error:
+        maintenance = _maintenance_error(error)
+        if maintenance is not None:
+            raise maintenance from error
+        raise
+    try:
+        return json.loads(response_data.decode("utf-8", errors="ignore"))
+    except Exception:
+        return {"raw": response_data.decode("utf-8", errors="ignore")}
 
 
 @register_tool(

@@ -175,6 +175,27 @@ def run_tests(
                         f"  ⏭️  {name}: Skipped (requires user-supplied local input file)"
                     )
                 stats["skipped"] += 1
+                stats["skipped_local_input"] = (
+                    stats.get("skipped_local_input", 0) + 1
+                )
+                continue
+
+            # Skip a tool whose own design allows a wait longer than the
+            # sweep's per-category budget. ProteinsPlus submits a job and
+            # polls: poll_interval 15 s and max_wait_time 1800 s, so one call
+            # may legitimately block for half an hour and its six tools can
+            # never fit in 600 s. Reporting that as TIMEOUT reads as a broken
+            # tool, which it is not -- it is a tool the sweep cannot time-box.
+            if tool.get("long_running"):
+                if args.verbose:
+                    print(
+                        f"  ⏭️  {name}: Skipped (long-running: upstream job "
+                        "polling exceeds the sweep budget)"
+                    )
+                stats["skipped"] += 1
+                stats["skipped_long_running"] = (
+                    stats.get("skipped_long_running", 0) + 1
+                )
                 continue
 
             # Check if tool requires API keys that are not available
@@ -428,6 +449,12 @@ def main():
     if stats["errors_other"] > 0:
         print(f"  └─ Other Errors: {stats['errors_other']}")
     print(f"Skipped:          {stats['skipped']}")
+    # Three different reasons share the skipped count, and the sweep used to
+    # label every one of them "need a credential".
+    if stats.get("skipped_local_input"):
+        print(f"Skipped local input: {stats['skipped_local_input']}")
+    if stats.get("skipped_long_running"):
+        print(f"Skipped long running: {stats['skipped_long_running']}")
     print("-" * 30)
     print(f"Schema Valid:     {stats['schema_valid']}")
     print(f"Schema Invalid:   {stats['schema_invalid']}")

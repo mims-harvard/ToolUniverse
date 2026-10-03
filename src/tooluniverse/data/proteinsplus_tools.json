@@ -76,7 +76,8 @@
       {
         "pdb_id": "2OZR"
       }
-    ]
+    ],
+    "long_running": true
   },
   {
     "name": "ProteinsPlus_predict_binding_sites_v3",
@@ -210,7 +211,8 @@
         "ligand": "JE2_A_701",
         "ligand_bias": true
       }
-    ]
+    ],
+    "long_running": true
   },
   {
     "name": "ProteinsPlus_generate_interaction_diagram",
@@ -287,7 +289,8 @@
         "pdb_id": "1KZK",
         "ligand": "JE2_A_701"
       }
-    ]
+    ],
+    "long_running": true
   },
   {
     "name": "ProteinsPlus_analyze_binding_site_similarity",
@@ -437,7 +440,8 @@
         "mode": "screening",
         "ligand": "JE2_A_701"
       }
-    ]
+    ],
+    "long_running": true
   },
   {
     "name": "ProteinsPlus_profile_structure_quality",
@@ -532,7 +536,8 @@
         "pdb_id": "4HHB",
         "setting": "platinum"
       }
-    ]
+    ],
+    "long_running": true
   },
   {
     "name": "ProteinsPlus_protonate_structure",
@@ -609,6 +614,7 @@
       {
         "pdb_id": "1cbs"
       }
-    ]
+    ],
+    "long_running": true
   }
 ]
