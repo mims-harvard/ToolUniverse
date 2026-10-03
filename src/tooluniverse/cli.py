@@ -2644,6 +2644,37 @@ def default_server_name(suffix: str = "") -> str:
     return f"{host}{suffix}"
 
 
+def background_command_for_pool(args: argparse.Namespace, server_name: str) -> str:
+    """The command that reruns this exact pool as a service that survives the terminal.
+
+    Built from what was actually passed rather than as a template, because a person who tuned
+    --max-active and then pasted a generic line would get a service that behaves differently
+    from the run they just watched work.
+
+    Only non-default options are included: a line carrying every flag at its default value is
+    harder to read and no more faithful.
+    """
+    quoted = server_name if server_name.replace("-", "").replace("_", "").isalnum() else f'"{server_name}"'
+    parts = [
+        "tuplatform-service install",
+        f"--allow {args.allow}",
+        f"--name {quoted}",
+    ]
+    if getattr(args, "max_active", 1) != 1:
+        parts.append(f"--max-active {args.max_active}")
+    if abs(float(getattr(args, "idle_ttl", 900.0)) - 900.0) > 1e-9:
+        parts.append(f"--idle-ttl {args.idle_ttl:g}")
+    if getattr(args, "vram_headroom", 1024) != 1024:
+        parts.append(f"--vram-headroom {args.vram_headroom}")
+    if getattr(args, "allow_cpu", False):
+        parts.append("--allow-cpu")
+    for name in getattr(args, "pass_env", None) or []:
+        parts.append(f"--pass-env {name}")
+    if getattr(args, "python", ""):
+        parts.append(f"--python {args.python}")
+    return " ".join(parts)
+
+
 def cmd_remote_pool(args: argparse.Namespace) -> None:
     """Serve several reviewed providers from one process, starting each on demand.
 
@@ -2848,11 +2879,17 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
                 "on-demand start still works, but the platform cannot prewarm."
             )
         try:
+            server_name = args.name or default_server_name("-models")
+            if "background_command" in inspect.signature(RelayAgent.__init__).parameters:
+                # Older tuplatform-connect simply does not print the hint.
+                relay_kwargs["background_command"] = background_command_for_pool(
+                    args, server_name
+                )
             RelayAgent(
                 args.service,
                 key,
                 endpoint,
-                args.name or default_server_name("-models"),
+                server_name,
                 **relay_kwargs,
             ).run_forever()
         except RelayError as exc:
