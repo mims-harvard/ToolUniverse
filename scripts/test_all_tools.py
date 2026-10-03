@@ -436,6 +436,123 @@ def run_all_patterns(
     return results
 
 
+# Signals that a category's failures came from load rather than from the tool.
+#
+# The 2026-10-03 sweep ran 10 workers against live APIs and reported 90
+# non-passing categories. Roughly 120 of the individual test failures were
+# self-inflicted: ensembl_sequence failed twice in the parallel sweep and
+# passed 4/4 run alone, and enrichr failed with "'str' object has no attribute"
+# in parallel and passed alone. That error reads exactly like a code defect,
+# which is the problem -- the report could not tell "this tool is broken" from
+# "we overloaded its upstream", so a third of its contents had to be re-checked
+# by hand before any of it could be trusted.
+_CONTENTION_MARKERS = (
+    "429",
+    "too many requests",
+    "rate limit",
+    "500",
+    "502",
+    "503",
+    "504",
+    "internal server error",
+    "service unavailable",
+    "bad gateway",
+    "timed out",
+    "timeout",
+    "connection reset",
+    "connection aborted",
+    "remote end closed",
+    "response ended prematurely",
+    # Ensembl answers a throttled request with no usable status, and the tool
+    # surfaces that as "HTTP error: unknown".
+    "http error: unknown",
+)
+
+
+def looks_contended(result: Dict[str, Any]) -> bool:
+    """True when a non-passing result's messages all point at load.
+
+    Only the failure lines are read. A category that also reports a schema
+    mismatch or a 404 is left alone: re-running it serially would cost minutes
+    and change nothing.
+    """
+    if not result_is_failure(result):
+        return False
+    if normalize_result(result)["state"] == "timeout":
+        return True
+
+    output = result.get("raw_output") or ""
+    messages = [
+        line.lower()
+        for line in output.splitlines()
+        if "\u274c" in line or "Failed -" in line
+    ]
+    if not messages:
+        # No per-test message at all: the subprocess died before printing one,
+        # which a serial re-run can distinguish from a tool defect.
+        return bool(result.get("error"))
+    # One contended-looking failure is enough. Requiring all of them meant a
+    # category with 28 load failures and one real defect never got re-run, so
+    # its 28 lines of noise stayed in the report next to the one line worth
+    # reading. A re-run costs one serial subprocess and says which it was.
+    return any(
+        marker in message
+        for message in messages
+        for marker in _CONTENTION_MARKERS
+    )
+
+
+def retry_contended_patterns(
+    results: Dict[str, Dict[str, Any]],
+    repo_root: Path,
+    verbose: bool = False,
+    on_result: Optional[Callable[[str, Dict[str, Dict[str, Any]]], None]] = None,
+) -> Dict[str, str]:
+    """Re-run load-shaped failures one at a time; keep the better result.
+
+    Returns pattern -> "state before -> state after" for the ones that changed.
+    """
+    candidates = [
+        pattern
+        for pattern, result in sorted(results.items())
+        if looks_contended(result)
+    ]
+    if not candidates:
+        return {}
+
+    print()
+    print(
+        f"🔁 Re-running {len(candidates)} category/categories serially: their "
+        "failures all look like upstream load, which the parallel pass causes"
+    )
+    changed: Dict[str, str] = {}
+    for index, pattern in enumerate(candidates, start=1):
+        before = normalize_result(results[pattern])["state"]
+        retried = normalize_result(
+            run_test_for_pattern(pattern, repo_root, verbose=verbose)
+        )
+        after = retried["state"]
+        # Only a pass replaces the original. "not a failure any more" was too
+        # loose: a serial re-run that reports no_tests or skipped would then
+        # overwrite a real failure with an absence, which is worse signal than
+        # the failure was. A category that fails serially too keeps the
+        # evidence it first produced.
+        if after == "passed" or (
+            after == "skipped" and before in {"failed", "schema_error"}
+        ):
+            retried["retried_serially"] = True
+            results[pattern] = retried
+            changed[pattern] = f"{before} -> {after}"
+            verdict = f"{after} (was {before} under load)"
+        else:
+            results[pattern].setdefault("retried_serially", True)
+            verdict = f"still {after}"
+        if on_result:
+            on_result(pattern, results)
+        print(f"   [{index}/{len(candidates)}] {pattern}: {verdict}", flush=True)
+    return changed
+
+
 # Maps a label found in test output to the stats key it populates.
 # All values are parsed as int except "Duration" which is float.
 _OUTPUT_LABELS: List[Tuple[str, str]] = [
@@ -756,6 +873,15 @@ def main():
         help=f"Run tests in parallel across patterns (up to {DEFAULT_PARALLEL_WORKERS} workers)"
     )
     parser.add_argument(
+        "--no-retry",
+        action="store_true",
+        help=(
+            "Do not re-run load-shaped failures serially after a --parallel "
+            "pass. The retry exists because 10 workers against live APIs "
+            "produce 429s and timeouts that read exactly like tool defects"
+        ),
+    )
+    parser.add_argument(
         "--output",
         default="TOOL_TEST_REPORT.md",
         help="Output report filename"
@@ -965,6 +1091,22 @@ def main():
         initial_results=resumed_results,
         on_result=save_progress,
     )
+
+    # A category that only fails under load is not a broken tool, and the
+    # report cannot tell the difference from the parallel pass alone.
+    retried = {}
+    if args.parallel and not args.no_retry:
+        retried = retry_contended_patterns(
+            results, repo_root, verbose=args.verbose, on_result=save_progress
+        )
+        if retried:
+            print()
+            print(
+                f"🔁 {len(retried)} category/categories passed on their own, so "
+                "the parallel pass was the cause:"
+            )
+            for pattern, transition in sorted(retried.items()):
+                print(f"   {pattern}: {transition}")
 
     total_duration = time.time() - start_time
     # Completeness is judged against `selected` (this invocation's assigned
