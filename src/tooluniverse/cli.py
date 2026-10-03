@@ -2307,7 +2307,7 @@ def _forward_remote_tool_server(args: argparse.Namespace) -> None:
             args.service,
             key,
             args.forward,
-            args.name or "Remote MCP Server",
+            args.name or default_server_name(),
             workers=args.workers,
         ).run_forever()
     except RelayError as exc:
@@ -2622,6 +2622,28 @@ def cmd_remote_run(args: argparse.Namespace) -> None:
         stop_provider(managed)
 
 
+def default_server_name(suffix: str = "") -> str:
+    """Name this machine after itself, so two machines are two machines.
+
+    remote_server carries UNIQUE(user_id, name) and registration upserts on it, so a fixed
+    default made the second machine a rename of the first: someone who shared a laptop and
+    then a lab box, both with the plain command, silently ended up with one. A hostname is
+    distinct per machine and is also what its owner calls it.
+    """
+    import socket
+
+    host = ""
+    try:
+        host = socket.gethostname().split(".", 1)[0].strip()
+    except OSError:
+        host = ""
+    # Container hostnames are a hex id, and an empty one is possible; neither is worth
+    # showing someone, but both are still unique, which is the part that matters.
+    if not host:
+        host = "this-computer"
+    return f"{host}{suffix}"
+
+
 def cmd_remote_pool(args: argparse.Namespace) -> None:
     """Serve several reviewed providers from one process, starting each on demand.
 
@@ -2800,7 +2822,7 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
                 args.service,
                 key,
                 endpoint,
-                args.name or "tu-remote-pool",
+                args.name or default_server_name("-models"),
                 **relay_kwargs,
             ).run_forever()
         except RelayError as exc:
