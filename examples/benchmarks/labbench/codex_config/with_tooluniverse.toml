@@ -1,0 +1,28 @@
+# Codex configuration for the WITH-ToolUniverse condition.
+#
+#   codex exec --config /abs/path/to/with_tooluniverse.toml - < prompt.txt
+#
+# The only difference from baseline.toml is the ToolUniverse MCP server below.
+# Keep the model and every other setting identical between the two files, or the
+# ablation measures more than one change at a time.
+
+model = "gpt-5.5"
+
+[mcp_servers.tooluniverse]
+# Path to the tooluniverse entry point in the environment you are testing.
+command = "tooluniverse"
+args = []
+
+[mcp_servers.tooluniverse.env]
+# Pin the checkout under test. If an editable install resolves `import tooluniverse`
+# to a different working copy, the run silently measures that other copy instead:
+# the server still starts and still answers, so nothing looks wrong.
+PYTHONPATH = "/absolute/path/to/ToolUniverse/src"
+PYTHONIOENCODING = "utf-8"
+
+# API keys for the tools that need them. Omit any you do not have; the affected
+# tools will report an error rather than return a wrong answer.
+# DISGENET_API_KEY = "..."
+# OMIM_API_KEY = "..."
+# NCBI_API_KEY = "..."
+# UMLS_API_KEY = "..."
