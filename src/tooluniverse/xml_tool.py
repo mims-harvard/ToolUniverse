@@ -1,6 +1,9 @@
 # import xml.etree.ElementTree as ET
+import threading
+from itertools import islice
+
 from lxml import etree as ET
-from typing import List, Dict, Any, Optional, Set
+from typing import Any, Dict, Iterator, List, Optional, Set
 from .base_tool import BaseTool
 from .utils import download_from_hf
 from .tool_registry import register_tool
@@ -12,6 +15,31 @@ from .logging_config import get_logger
 # prepended ahead of the JSON payload and failed to parse it. Routing
 # through the logging module keeps it on stderr instead.
 logger = get_logger(__name__)
+
+# One parsed tree per file, shared by every tool that reads it.
+#
+# _load_dataset() runs from __init__, so each instance used to parse its own
+# copy. 19 tools read two files -- MeSH_desc2025.xml at 299 MB and
+# drugbank_full_database.xml at 1.5 GB -- and lxml holds a tree at several
+# times the file size, so the 15 DrugBank tools alone built 15 independent
+# trees of the same 1.5 GB document. Measured on the 2026-10-03 sweep: the xml
+# category peaked at 120 GB RSS and was killed by the OOM killer (exit 137,
+# signal 9) after 138 s, which the sweep could only report as "incomplete or
+# invalid test output" because the process died before printing a summary.
+#
+# The trees are only ever read, so sharing them is safe. Keyed by path and by
+# the record XPath and namespaces, because tools disagree on those and the
+# record list is derived from them.
+_TREE_CACHE: Dict[str, Any] = {}
+_RECORDS_CACHE: Dict[tuple, Any] = {}
+_PARSE_LOCK = threading.Lock()
+
+
+def clear_dataset_cache() -> None:
+    """Drop every shared tree. For tests; a process otherwise keeps them."""
+    with _PARSE_LOCK:
+        _TREE_CACHE.clear()
+        _RECORDS_CACHE.clear()
 
 
 @register_tool("XMLTool")
@@ -52,11 +80,33 @@ class XMLDatasetTool(BaseTool):
             if not xml_path:
                 return
 
-            tree = ET.parse(xml_path)
-            self.xml_root = tree.getroot()
-            self.records = self.xml_root.findall(
-                self.record_xpath, namespaces=self.namespaces
+            cache_key = (
+                xml_path,
+                self.record_xpath,
+                tuple(sorted((self.namespaces or {}).items())),
             )
+            with _PARSE_LOCK:
+                cached = _RECORDS_CACHE.get(cache_key)
+                if cached is not None:
+                    self.xml_root, self.records = cached
+                    logger.debug(
+                        "Reusing XML dataset: %d records from root '%s'",
+                        len(self.records),
+                        self.xml_root.tag,
+                    )
+                    return
+
+                root = _TREE_CACHE.get(xml_path)
+                if root is None:
+                    root = ET.parse(xml_path).getroot()
+                    _TREE_CACHE[xml_path] = root
+                    logger.info("Parsed XML dataset %s", xml_path)
+
+                self.xml_root = root
+                self.records = root.findall(
+                    self.record_xpath, namespaces=self.namespaces
+                )
+                _RECORDS_CACHE[cache_key] = (self.xml_root, self.records)
 
             logger.info(
                 "Loaded XML dataset: %d records from root '%s'",
@@ -298,12 +348,27 @@ class XMLDatasetTool(BaseTool):
         except Exception:
             return ""
 
+    def _iter_records_data(self) -> Iterator[Dict[str, Any]]:
+        """Yield each record's extracted data, holding one at a time.
+
+        _get_all_records_data built and kept a dict for every record. A
+        DrugBank tool extracts 73687 of them, nested lists included, and 15
+        tools read that file, so the extracted copies cost about as much as the
+        shared tree itself -- half of the 27 GB the category still used after
+        the trees were shared. _search keeps only the records that match and
+        discards the rest as it goes, which is what the ranking pass needs.
+        """
+        for record in self.records:
+            yield self._extract_record_data(record)
+
     def _get_all_records_data(self) -> List[Dict[str, Any]]:
-        """Get all records data with caching."""
+        """Every record's data as a list, cached.
+
+        Still used where a field list or a sample is needed up front. _search
+        iterates instead; see _iter_records_data.
+        """
         if not self._record_cache:
-            self._record_cache = [
-                self._extract_record_data(record) for record in self.records
-            ]
+            self._record_cache = list(self._iter_records_data())
         return self._record_cache
 
     def _declared_limit_default(self, fallback):
@@ -390,7 +455,7 @@ class XMLDatasetTool(BaseTool):
 
         search_query = query if case_sensitive else query.lower()
 
-        all_records = self._get_all_records_data()
+        all_records = self._iter_records_data()
         # Feature-27B-01: this loop used to truncate to `limit` *while*
         # scanning, so the page handed back was simply "the first N records in
         # the file that matched anything" and match quality never entered into
@@ -666,7 +731,7 @@ class XMLDatasetTool(BaseTool):
             }
 
         # Get field information from sample records
-        sample_data = self._get_all_records_data()[:5]
+        sample_data = list(islice(self._iter_records_data(), 5))
         all_fields = set()
         for record_data in sample_data:
             all_fields.update(record_data.keys())
