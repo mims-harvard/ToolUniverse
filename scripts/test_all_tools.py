@@ -48,6 +48,7 @@ RESULT_STATES = (
     "failed",
     "schema_error",
     "no_tests",
+    "skipped",
     "timeout",
     "error",
 )
@@ -67,7 +68,11 @@ def classify_result(result: Dict[str, Any]) -> str:
     if result.get("exit_code", 0) != 0:
         return "error"
     if result.get("tests_run", 0) == 0:
-        return "no_tests"
+        # "no examples to run" and "every example needs a credential this
+        # runner does not have" are different facts, and reporting the second
+        # as the first is how 24 key-gated tools looked like a catalogue with
+        # no tests. Neither is a failure.
+        return "skipped" if result.get("skipped", 0) > 0 else "no_tests"
     if result.get("passed", 0) < result.get("tests_run", 0):
         return "error"
     return "passed"
@@ -333,6 +338,11 @@ def _format_result_status(result: Dict[str, Any]) -> str:
         return f"SCHEMA ERROR: {result['schema_invalid']} invalid result(s)"
     if state == "no_tests":
         return "NO TESTS: category has no executable examples"
+    if state == "skipped":
+        return (
+            f"SKIPPED: {result.get('skipped', 0)} tool(s) need a credential "
+            "this run does not have"
+        )
     return f"PASSED: {result.get('tests_run', 0)} test(s)"
 
 
@@ -437,6 +447,9 @@ _OUTPUT_LABELS: List[Tuple[str, str]] = [
     ("Other Errors:", "errors_other"),
     ("Schema Valid:", "schema_valid"),
     ("Schema Invalid:", "schema_invalid"),
+    # Parsed so a category whose every tool was skipped for a missing
+    # credential can be told apart from one that ships no examples.
+    ("Skipped:", "skipped"),
 ]
 
 

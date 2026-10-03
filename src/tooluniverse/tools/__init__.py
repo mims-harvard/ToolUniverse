@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2716 scientific tools.
+Type-safe Python interface to 2698 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -1185,16 +1185,6 @@ from .GxA_get_experiment_info import GxA_get_experiment_info
 from .GxA_list_experiments import GxA_list_experiments
 from .HAL_search_archive import HAL_search_archive
 from .HCPCS_search import HCPCS_search
-from .HFInference_classify_image import HFInference_classify_image
-from .HFInference_classify_text import HFInference_classify_text
-from .HFInference_detect_objects import HFInference_detect_objects
-from .HFInference_embed_text import HFInference_embed_text
-from .HFInference_fill_mask import HFInference_fill_mask
-from .HFInference_ner import HFInference_ner
-from .HFInference_question_answering import HFInference_question_answering
-from .HFInference_summarize import HFInference_summarize
-from .HFInference_translate import HFInference_translate
-from .HFInference_zero_shot_classify import HFInference_zero_shot_classify
 from .HGNC_fetch_gene_by_id import HGNC_fetch_gene_by_id
 from .HGNC_fetch_gene_by_symbol import HGNC_fetch_gene_by_symbol
 from .HGNC_fetch_gene_family_members import HGNC_fetch_gene_family_members
@@ -1260,9 +1250,6 @@ from .HumanMine_search_genes import HumanMine_search_genes
 from .HumanMine_search_pathways import HumanMine_search_pathways
 from .ICD10_get_code_info import ICD10_get_code_info
 from .ICD10_search_codes import ICD10_search_codes
-from .ICD11_browse_hierarchy import ICD11_browse_hierarchy
-from .ICD11_get_entity import ICD11_get_entity
-from .ICD11_search_diseases import ICD11_search_diseases
 from .IDR_get_image_map_annotations import IDR_get_image_map_annotations
 from .IDR_get_study import IDR_get_study
 from .IDR_get_study_datasets import IDR_get_study_datasets
@@ -3143,7 +3130,6 @@ from .iPTMnet_get_proteoforms import iPTMnet_get_proteoforms
 from .iPTMnet_get_ptm_ppi import iPTMnet_get_ptm_ppi
 from .iPTMnet_get_ptm_sites import iPTMnet_get_ptm_sites
 from .iPTMnet_search import iPTMnet_search
-from .icd_search_codes import icd_search_codes
 from .iedb_get_epitope_antigens import iedb_get_epitope_antigens
 from .iedb_get_epitope_mhc import iedb_get_epitope_mhc
 from .iedb_get_epitope_references import iedb_get_epitope_references
@@ -3177,7 +3163,6 @@ from .kegg_get_pathway_info import kegg_get_pathway_info
 from .kegg_list_organisms import kegg_list_organisms
 from .kegg_search_pathway import kegg_search_pathway
 from .list_tools import list_tools
-from .loinc_search_codes import loinc_search_codes
 from .mesh_get_subjects_by_pharmacological_action import (
     mesh_get_subjects_by_pharmacological_action,
 )
@@ -3266,10 +3251,7 @@ from .resolve_identifier_for_gene_or_protein import (
 from .run_deseq2_analysis import run_deseq2_analysis
 from .scite_get_tallies import scite_get_tallies
 from .search_clinical_trials import search_clinical_trials
-from .snomed_search_concepts import snomed_search_concepts
 from .ssGSEA_score import ssGSEA_score
-from .umls_get_concept_details import umls_get_concept_details
-from .umls_search_concepts import umls_search_concepts
 from .visualize_molecule_2d import visualize_molecule_2d
 from .visualize_molecule_3d import visualize_molecule_3d
 from .visualize_protein_structure_3d import visualize_protein_structure_3d
@@ -4203,16 +4185,6 @@ __all__ = [
     "GxA_list_experiments",
     "HAL_search_archive",
     "HCPCS_search",
-    "HFInference_classify_image",
-    "HFInference_classify_text",
-    "HFInference_detect_objects",
-    "HFInference_embed_text",
-    "HFInference_fill_mask",
-    "HFInference_ner",
-    "HFInference_question_answering",
-    "HFInference_summarize",
-    "HFInference_translate",
-    "HFInference_zero_shot_classify",
     "HGNC_fetch_gene_by_id",
     "HGNC_fetch_gene_by_symbol",
     "HGNC_fetch_gene_family_members",
@@ -4268,9 +4240,6 @@ __all__ = [
     "HumanMine_search_pathways",
     "ICD10_get_code_info",
     "ICD10_search_codes",
-    "ICD11_browse_hierarchy",
-    "ICD11_get_entity",
-    "ICD11_search_diseases",
     "IDR_get_image_map_annotations",
     "IDR_get_study",
     "IDR_get_study_datasets",
@@ -5871,7 +5840,6 @@ __all__ = [
     "iPTMnet_get_ptm_ppi",
     "iPTMnet_get_ptm_sites",
     "iPTMnet_search",
-    "icd_search_codes",
     "iedb_get_epitope_antigens",
     "iedb_get_epitope_mhc",
     "iedb_get_epitope_references",
@@ -5905,7 +5873,6 @@ __all__ = [
     "kegg_list_organisms",
     "kegg_search_pathway",
     "list_tools",
-    "loinc_search_codes",
     "mesh_get_subjects_by_pharmacological_action",
     "mesh_get_subjects_by_subject_id",
     "mesh_get_subjects_by_subject_name",
@@ -5986,10 +5953,7 @@ __all__ = [
     "run_deseq2_analysis",
     "scite_get_tallies",
     "search_clinical_trials",
-    "snomed_search_concepts",
     "ssGSEA_score",
-    "umls_get_concept_details",
-    "umls_search_concepts",
     "visualize_molecule_2d",
     "visualize_molecule_3d",
     "visualize_protein_structure_3d",
