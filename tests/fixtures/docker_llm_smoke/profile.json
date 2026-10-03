@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "profile_name": "docker-llm-smoke",
+  "service_id": "tooluniverse-docker-llm-smoke",
+  "image": "tooluniverse/docker-llm-smoke:test",
+  "container_port": 8000,
+  "health_path": "/health",
+  "inference_path": "/v1/chat/completions",
+  "model": "fixture-evidence-synthesizer",
+  "tool": {
+    "name": "DockerEvidenceSynthesizer",
+    "description": "Send a bounded evidence-synthesis prompt to the reviewed loopback Docker service.",
+    "max_prompt_chars": 20000,
+    "max_tokens_cap": 1024,
+    "default_temperature": 0.0
+  },
+  "resources": {
+    "cpus": 1.0,
+    "memory_mb": 256,
+    "pids_limit": 64,
+    "tmpfs_mb": 64
+  },
+  "timeouts": {
+    "health_seconds": 30,
+    "inference_seconds": 15
+  }
+}
