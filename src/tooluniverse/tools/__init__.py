@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2698 scientific tools.
+Type-safe Python interface to 2696 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -1174,10 +1174,8 @@ from .GlyGen_get_site import GlyGen_get_site
 from .GlyGen_search_glycans import GlyGen_search_glycans
 from .GlyGen_search_glycoproteins import GlyGen_search_glycoproteins
 from .GoaT_get_species import GoaT_get_species
-from .GtoPdb_get_disease_associations import GtoPdb_get_disease_associations
 from .GtoPdb_get_interactions import GtoPdb_get_interactions
 from .GtoPdb_get_ligand_properties import GtoPdb_get_ligand_properties
-from .GtoPdb_search_diseases import GtoPdb_search_diseases
 from .GtoPdb_search_ligands import GtoPdb_search_ligands
 from .GtoPdb_search_targets import GtoPdb_search_targets
 from .GxA_get_experiment_expression import GxA_get_experiment_expression
@@ -4174,10 +4172,8 @@ __all__ = [
     "GlyGen_search_glycans",
     "GlyGen_search_glycoproteins",
     "GoaT_get_species",
-    "GtoPdb_get_disease_associations",
     "GtoPdb_get_interactions",
     "GtoPdb_get_ligand_properties",
-    "GtoPdb_search_diseases",
     "GtoPdb_search_ligands",
     "GtoPdb_search_targets",
     "GxA_get_experiment_expression",
