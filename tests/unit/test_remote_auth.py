@@ -284,7 +284,7 @@ def test_remote_share_rejects_malformed_key_before_provider_checks(
     assert raised.value.code == 2
     environment_check.assert_not_called()
     output = capsys.readouterr()
-    assert "invalid format" in output.err
+    assert "does not look like a ToolUniverse key" in output.err
     assert "not-a-key" not in output.err
 
 
@@ -319,8 +319,9 @@ def test_remote_share_rejects_revoked_key_before_provider_start(
     assert raised.value.code == 2
     provider_start.assert_not_called()
     output = capsys.readouterr()
-    assert "failed before provider startup" in output.err
-    assert "tu remote login" in output.err
+    assert "no longer accepted" in output.err
+    # The variable overrides a stored sign-in, so it, not `tu remote login`, is the fix.
+    assert "TOOLUNIVERSE_SERVICE_KEY" in output.err
     assert KEY_A not in output.out
     assert KEY_A not in output.err
 

@@ -1904,6 +1904,15 @@ def _read_private_bytes(path: Path, *, maximum: int = 1 << 16) -> bytes:
         os.close(descriptor)
 
 
+# The website calls the account key a "private connection". This computer's own key, from
+# `tu remote login`, is a different kind that can only share this machine, so messages about it
+# say "sign-in" rather than reuse that name and send people to make the wrong one.
+NOT_SIGNED_IN = (
+    "Error: this computer is not signed in to ToolUniverse yet. Run `tu remote login` once "
+    "(it shows a link to approve in any browser), then run this command again."
+)
+
+
 def _valid_remote_key(key: str) -> bool:
     import re
 
@@ -2024,12 +2033,19 @@ def _connection_key_for_share(service: str, *, no_browser: bool = False) -> str:
         # Explicit environment configuration wins: silently replacing it would leave the next
         # process broken again. Non-interactive jobs also fail fast instead of waiting on a browser.
         if not sys.stdin.isatty() or os.getenv("TOOLUNIVERSE_SERVICE_KEY", "").strip():
+            if os.getenv("TOOLUNIVERSE_SERVICE_KEY", "").strip():
+                # The variable wins over a stored sign-in, so logging in again would not help.
+                raise RuntimeError(
+                    f"the key in TOOLUNIVERSE_SERVICE_KEY is no longer accepted ({exc}). "
+                    "Remove it from this shell and from ~/.tooluniverse/.env, or replace it "
+                    "with a current key, then run this command again."
+                ) from exc
             raise RuntimeError(
-                "TU Platform connection-key validation failed before provider "
-                f"startup: {exc}. Run `tu remote login` to replace an expired or "
-                "revoked key."
+                f"this computer's sign-in is no longer accepted ({exc}) -- it was revoked on "
+                "the website or has expired. Run `tu remote login` to sign this computer in "
+                "again, then run this command again."
             ) from exc
-        print("Stored connection expired or was revoked; re-authorizing...")
+        print("This computer's sign-in expired or was revoked; signing in again...")
         key = _device_authorization_login(service, no_browser=no_browser)
         _write_stored_remote_key(key)
         return key
@@ -2599,15 +2615,14 @@ def cmd_remote_run(args: argparse.Namespace) -> None:
         raise SystemExit(2) from exc
     if args.share and not key:
         print(
-            "Error: no private connection key is configured. "
-            "Run `tu remote login` once, then retry this command.",
+            NOT_SIGNED_IN,
             file=sys.stderr,
         )
         raise SystemExit(2)
     if args.share and not _valid_remote_key(key):
         print(
-            "Error: the private connection key has an invalid format. "
-            "Unset TOOLUNIVERSE_SERVICE_KEY if it is overriding a stored login, "
+            "Error: TOOLUNIVERSE_SERVICE_KEY does not look like a ToolUniverse key "
+            "(they start with tu-sk-). Unset it if it is overriding a stored sign-in, "
             "then run `tu remote login`.",
             file=sys.stderr,
         )
@@ -2817,8 +2832,7 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
         raise SystemExit(2) from exc
     if args.share and (not key or not _valid_remote_key(key)):
         print(
-            "Error: no usable private connection key. "
-            "Run `tu remote login` once, then retry this command.",
+            NOT_SIGNED_IN,
             file=sys.stderr,
         )
         raise SystemExit(2)
@@ -3697,7 +3711,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_remote_login)
 
     p = remote_sub.add_parser(
-        "logout", help="remove the locally stored private connection key"
+        "logout", help="sign this computer out (removes its stored sharing key)"
     )
     p.add_argument(
         "--revoke",
@@ -3760,7 +3774,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     def _add_remote_run_options(remote_parser: argparse.ArgumentParser) -> None:
         remote_parser.add_argument(
-            "--name", help="private connection name shown on TU Platform"
+            "--name", help="name for this machine shown on TU Platform"
         )
         remote_parser.add_argument(
             "--workers",
