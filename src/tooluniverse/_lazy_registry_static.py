@@ -470,6 +470,7 @@ STATIC_LAZY_REGISTRY = {
     "MonarchDiseasesForMultiplePhenoTool": "restful_tool",
     "MonarchTool": "restful_tool",
     "MonarchV3Tool": "monarch_v3_tool",
+    "MouseMineTool": "mousemine_tool",
     "MouserTool": "mouser_tool",
     "MutalyzerTool": "mutalyzer_tool",
     "MyChemTool": "mygene_tool",
