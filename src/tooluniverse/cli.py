@@ -2252,6 +2252,13 @@ def _start_remote_tool_server(args: argparse.Namespace) -> None:
             raise ValueError(f"could not import remote tool file: {raw_path}")
         module = importlib.util.module_from_spec(spec)
         sys.modules[module_name] = module
+        # As `python my_tool.py` would: the file's own folder comes first, so `import helpers`
+        # next to it works. Without this it worked only when run from that folder -- measured,
+        # from anywhere else "No module named 'helpers'", which is where a background service
+        # starts.
+        folder = str(path.parent)
+        if folder not in sys.path:
+            sys.path.insert(0, folder)
         try:
             spec.loader.exec_module(module)
         except Exception:
