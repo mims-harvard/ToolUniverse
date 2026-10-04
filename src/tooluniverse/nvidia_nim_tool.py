@@ -303,74 +303,81 @@ class NvidiaNIMTool(BaseTool):
                 "_raw_content": response.content,
             }
 
-        if self.response_type == "pdb" or "text/plain" in content_type:
-            # PDB structure text. Some NIMs (e.g. ESMFold) wrap it in JSON
-            # {"pdbs": ["...ATOM records..."]} even on the pdb path, so unwrap to
-            # the actual PDB string rather than handing back a JSON blob.
-            structure = response.text
-            stripped = structure.lstrip()
-            if stripped.startswith(("{", "[")):
-                try:
-                    payload = response.json()
-                except ValueError:
-                    payload = None
-                if isinstance(payload, dict):
-                    pdbs = payload.get("pdbs") or payload.get("pdb")
-                    if isinstance(pdbs, list) and pdbs:
-                        structure = pdbs[0]
-                    elif isinstance(pdbs, str):
-                        structure = pdbs
-            return {
-                "status": "success",
-                "structure": structure,
-                "format": "pdb",
-            }
-
-        if self.response_type == "mfasta":
-            # Multi-FASTA format
-            try:
-                data = response.json()
-                return {
-                    "status": "success",
-                    "data": data,
-                    "format": "mfasta",
-                }
-            except ValueError:
-                return {
-                    "status": "success",
-                    "sequences": response.text,
-                    "format": "mfasta",
-                }
-
-        # Default: JSON response
+        # Decode JSON envelopes before dispatching by the model's output
+        # format, so a failed prediction cannot become PDB or FASTA text.
         try:
             data = response.json()
-            # Some NIMs (e.g. DiffDock) answer HTTP 200 but report an inner
-            # failure (e.g. {"status": "failed", "detail": ...}). Surface that as
-            # an error rather than a misleading top-level success.
-            if isinstance(data, dict) and str(data.get("status", "")).lower() in (
-                "failed",
-                "error",
-                "errored",
-            ):
-                detail = str(data.get("detail") or data.get("message") or data)[:300]
+        except ValueError as exc:
+            text = response.text or ""
+            json_expected = "json" in content_type or text.lstrip().startswith(
+                ("{", "[")
+            )
+            if not json_expected and self.response_type == "mfasta":
                 return {
-                    "status": "error",
-                    "error": "NIM reported an inner failure",
-                    "detail": detail,
-                    "data": data,
+                    "status": "success",
+                    "data": {"mfasta": text},
+                    "sequences": text,
+                    "format": "mfasta",
                 }
-            return {
-                "status": "success",
-                "data": data,
-            }
-        except ValueError as e:
+            if not json_expected and self.response_type == "pdb":
+                return {
+                    "status": "success",
+                    "data": text,
+                    "structure": text,
+                    "format": "pdb",
+                }
             return {
                 "status": "error",
                 "error": "Failed to parse JSON response",
-                "detail": str(e),
-                "raw_response": response.text[:500] if response.text else None,
+                "detail": str(exc),
+                "raw_response": text[:500] or None,
             }
+
+        if isinstance(data, dict) and str(data.get("status", "")).lower() in (
+            "failed",
+            "error",
+            "errored",
+        ):
+            detail = str(data.get("detail") or data.get("message") or data)[:300]
+            return {
+                "status": "error",
+                "error": "NIM reported an inner failure",
+                "detail": detail,
+                "data": data,
+            }
+
+        if self.response_type == "mfasta":
+            return {"status": "success", "data": data, "format": "mfasta"}
+
+        if self.response_type == "pdb":
+            # ESMFold wraps coordinates in {"pdbs": ["..."]}. An empty or
+            # malformed envelope is not a predicted structure.
+            pdbs = data.get("pdbs", data.get("pdb")) if isinstance(data, dict) else None
+            if isinstance(pdbs, str):
+                pdbs = [pdbs]
+            if (
+                not isinstance(pdbs, list)
+                or not pdbs
+                or not all(isinstance(pdb, str) and pdb.strip() for pdb in pdbs)
+            ):
+                return {
+                    "status": "error",
+                    "error": "NIM response contains no valid PDB structure",
+                    "data": data,
+                }
+            out = {
+                "status": "success",
+                "data": pdbs[0],
+                "structure": pdbs[0],
+                "format": "pdb",
+            }
+            if len(pdbs) > 1:
+                # Keep the original single-structure field for existing
+                # callers, while retaining every result for ensemble checks.
+                out["structures"] = pdbs
+            return out
+
+        return {"status": "success", "data": data}
 
     def _validate_api_key(self) -> Optional[Dict[str, Any]]:
         """Validate API key is present."""
