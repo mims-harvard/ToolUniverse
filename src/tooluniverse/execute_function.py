@@ -369,14 +369,39 @@ def explain_remote_load_failure(
             f"remove it with `tu disconnect {label}`."
         )
         return message, False
-    if auth_env and any(
-        marker in lowered for marker in ("401", "403", "unauthorized", "forbidden")
+    # The status as parsed above, never a bare "401" in the text: the detail carries the relay
+    # URL, whose random server id can contain those digits, and then any failure at all read
+    # as a refused key.
+    code = status.group(1) if status else ""
+    if auth_env and (
+        code in ("401", "403") or "unauthorized" in lowered or "forbidden" in lowered
     ):
         message = (
             f"Remote tools from '{label}' could not load: the platform rejected the key in "
             f"{auth_env}. It may have expired or been revoked -- create a new API key in "
             f"your account and save it in ~/.tooluniverse/.env."
         )
+        return message, False
+    if "/relay/" in url and status and status.group(1) == "402":
+        # Not an outage: the relay refuses with 402 when the owner's call limit is used up or
+        # the sharing period they set has ended. "Will load again once its owner brings it back
+        # online" sent people waiting for a machine that was online all along.
+        if "expired" in lowered:
+            message = (
+                f"Remote tools from '{label}' could not load: the period its owner set for "
+                f"sharing this machine has ended. Ask the owner to extend it."
+            )
+        elif "limit" in lowered:
+            message = (
+                f"Remote tools from '{label}' could not load: the request limit its owner set "
+                f"for this machine is used up. Ask the owner to raise it."
+            )
+        else:
+            message = (
+                f"Remote tools from '{label}' could not load: the platform refused them (402). "
+                f"Either the request limit the machine's owner set is used up, or the period "
+                f"they set for sharing it has ended. Ask the owner to raise or extend it."
+            )
         return message, False
     if "/relay/" in url:
         # A shared machine: the person loading it is a borrower, so "start the server" is

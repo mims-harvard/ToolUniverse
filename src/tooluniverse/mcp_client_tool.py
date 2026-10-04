@@ -90,6 +90,9 @@ class BaseMCPClient:
         self.timeout = timeout
         self.http_headers_from_env = http_headers_from_env or {}
         self.session = None
+        # (status, JSON body) of the last HTTP error response in the current request; see
+        # _recording_client_factory.
+        self._last_http_error = None
         self.header_templates = dict(headers or {})
         self.auth_env = auth_env
         self.headers = {}
@@ -184,10 +187,51 @@ class BaseMCPClient:
             return urljoin(base_url.rstrip("/") + "/", path)
         return self.server_url
 
+    def _recording_client_factory(self):
+        """An HTTP client factory that remembers the last error response.
+
+        A refusal can arrive on a request the MCP library sends from a background task -- the
+        relay answers a used-up request limit with 402 on the notification after initialize.
+        The library logs that error and raises an empty BrokenResourceError inside an exception
+        group, so the status never reaches the caller: measured, a borrower saw "unhandled
+        errors in a TaskGroup (1 sub-exception)" and was told the machine was offline.
+        """
+        try:
+            from mcp.shared._httpx_utils import create_mcp_http_client
+        except ImportError:  # pragma: no cover - moved in a later mcp release
+            import httpx
+
+            def create_mcp_http_client(headers=None, timeout=None, auth=None):
+                return httpx.AsyncClient(
+                    headers=headers, timeout=timeout, auth=auth, follow_redirects=True
+                )
+
+        def factory(headers=None, timeout=None, auth=None):
+            client = create_mcp_http_client(headers=headers, timeout=timeout, auth=auth)
+
+            async def remember(response):
+                if response.status_code < 400:
+                    return
+                body = {}
+                try:
+                    await response.aread()
+                    parsed = response.json()
+                    if isinstance(parsed, dict):
+                        body = parsed
+                except Exception:  # noqa: BLE001 - a non-JSON error body still has a status
+                    body = {}
+                self._last_http_error = (response.status_code, body)
+
+            client.event_hooks.setdefault("response", []).append(remember)
+            return client
+
+        return factory
+
     async def _make_mcp_request(
         self, method: str, params: Optional[Dict] = None
     ) -> Dict[str, Any]:
         """Make an MCP JSON-RPC request"""
+        self._last_http_error = None
         if self.transport == "http":
             endpoint = self._get_mcp_endpoint("")
             headers = dict(self.headers)
@@ -206,6 +250,7 @@ class BaseMCPClient:
                 endpoint,
                 headers=headers or None,
                 timeout=self.timeout,
+                httpx_client_factory=self._recording_client_factory(),
                 **long_read,
             ) as (
                 read_stream,
@@ -461,7 +506,11 @@ REMOTE_CALL_READ_TIMEOUT = 16 * 60
 
 
 def describe_remote_call_failure(
-    exc: BaseException, server_url: str, tool_name: str, auth_env: str = ""
+    exc: BaseException,
+    server_url: str,
+    tool_name: str,
+    auth_env: str = "",
+    recorded: "tuple[int, dict] | None" = None,
 ) -> str:
     """Say why a call to a connected remote tool failed, in words an assistant can relay.
 
@@ -486,16 +535,19 @@ def describe_remote_call_failure(
         )
     response = getattr(leaf, "response", None)
     status = getattr(response, "status_code", None)
+    body = {}
+    if isinstance(status, int):
+        try:
+            parsed = response.json()
+            if isinstance(parsed, dict):
+                body = parsed
+        except Exception:  # noqa: BLE001 - a streamed or non-JSON body; fall back to the status
+            body = {}
+    elif recorded:
+        # The status was lost on the way here; see BaseMCPClient._recording_client_factory.
+        status, body = recorded
     if "/relay/" not in (server_url or "") or not isinstance(status, int):
         return detail
-
-    body = {}
-    try:
-        parsed = response.json()
-        if isinstance(parsed, dict):
-            body = parsed
-    except Exception:  # noqa: BLE001 - a streamed or non-JSON body; fall back to the status
-        body = {}
 
     if status == 403:
         # The key was accepted; this account is no longer let in (the relay's "access
@@ -513,9 +565,15 @@ def describe_remote_call_failure(
             f"key in your account and save it in ~/.tooluniverse/.env."
         )
     if status == 402:
+        # The relay answers 402 for two different things the owner controls.
+        if "expired" in str(body.get("detail", "")).lower():
+            return (
+                f"'{tool_name}' was refused: the period its owner set for sharing this machine "
+                f"has ended. Ask the owner to extend it."
+            )
         return (
-            f"'{tool_name}' was refused: the machine's owner has set a limit on how many calls "
-            f"it serves, and it has been reached. Ask the owner to raise it."
+            f"'{tool_name}' was refused: the request limit the machine's owner set for it is "
+            f"used up. Ask the owner to raise it."
         )
     if status >= 500:
         if body.get("may_have_executed"):
@@ -643,6 +701,7 @@ class MCPProxyTool(MCPClientTool):
                         # The name the caller used (prefixed), not the remote server's own.
                         (self.tool_config or {}).get("name") or self.target_tool_name,
                         getattr(self, "auth_env", ""),
+                        recorded=getattr(self, "_last_http_error", None),
                     ),
                 }
             finally:
@@ -984,7 +1043,17 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
 
             return self._discovered_tools
         except Exception as e:
-            raise Exception(f"Failed to discover tools: {str(e)}")
+            recorded = getattr(self, "_last_http_error", None)
+            if recorded:
+                status, body = recorded
+                said = str(body.get("detail") or "").strip()
+                # from None: this sentence is the explanation, and the exception group under
+                # it would otherwise be what gets reported.
+                raise RuntimeError(
+                    f"Failed to discover tools: the server answered HTTP {status}"
+                    + (f": {said}" if said else "")
+                ) from None
+            raise Exception(f"Failed to discover tools: {str(e)}") from e
 
     async def call_tool(
         self, tool_name: str, arguments: Dict[str, Any]

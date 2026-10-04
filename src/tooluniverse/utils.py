@@ -691,7 +691,11 @@ def leaf_exception(exc: BaseException) -> BaseException:
         if children:
             current = children[0]
             continue
-        nested = current.__cause__ or current.__context__
+        # A context raised `from None` was deliberately replaced by this exception's message;
+        # Python's own traceback hides it too.
+        nested = current.__cause__ or (
+            None if current.__suppress_context__ else current.__context__
+        )
         if nested is not None:
             current = nested
             continue
