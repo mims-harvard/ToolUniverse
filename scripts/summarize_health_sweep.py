@@ -40,7 +40,7 @@ from pathlib import Path
 PROGRESS = re.compile(
     r"\[(?P<index>\d+)/(?P<total>\d+)\]\s+(?P<category>[A-Za-z0-9_.-]+):\s*"
     r"(?:(?P<mark>✅|❌|🔥)\s*(?P<emoji_count>\d+)?"
-    r"|(?P<status>PASSED|FAILED|SCHEMA ERROR|TIMEOUT|ERROR|NO TESTS)"
+    r"|(?P<status>PASSED|FAILED|SCHEMA ERROR|TIMEOUT|ERROR|NO TESTS|SKIPPED)"
     r"(?:[^0-9\n]*(?P<count>\d+))?)"
 )
 FAILING = frozenset({"❌", "🔥"})
@@ -50,6 +50,14 @@ FAILING = frozenset({"❌", "🔥"})
 FAILING_STATUS = frozenset({"FAILED", "SCHEMA ERROR", "TIMEOUT", "ERROR"})
 PASSING_STATUS = frozenset({"PASSED"})
 TIMEOUT_STATUS = frozenset({"TIMEOUT"})
+#: Reached, but with no pass/fail verdict. They are excluded from passing and
+#: failing alike -- that part was always right -- but they were also excluded
+#: from "reached", so run 37193646910 reported "598 of 664 -- 66 never
+#: reached ... a shard was lost" while every one of its 8 shards had logged
+#: 83 of 83 categories. The 66 were 61 SKIPPED (a missing credential, input
+#: file, package or a long-running job) and 5 NO TESTS. SKIPPED was added to
+#: the sweep in #699 without being added here.
+NO_VERDICT_STATUS = frozenset({"SKIPPED", "NO TESTS"})
 
 
 def parse_logs(patterns: list) -> tuple[dict, dict, set, int, int]:
@@ -111,6 +119,26 @@ def parse_logs(patterns: list) -> tuple[dict, dict, set, int, int]:
     return results, counts, timed_out, expected, shards_seen
 
 
+def parse_no_verdict(patterns: list) -> dict:
+    """Categories that were reached but carry no verdict: {category: status}.
+
+    Kept out of parse_logs so its five-value return, which callers and tests
+    unpack positionally, does not change.
+    """
+    reached: dict = {}
+    for pattern in patterns:
+        for path in sorted(glob.glob(pattern)):
+            try:
+                text = Path(path).read_text(errors="replace")
+            except OSError:
+                continue
+            for match in PROGRESS.finditer(text):
+                status = match.group("status")
+                if status in NO_VERDICT_STATUS:
+                    reached[match.group("category")] = status
+    return reached
+
+
 def load_baseline(path: str | Path) -> set:
     file = Path(path)
     if not file.exists():
@@ -125,7 +153,7 @@ def load_baseline(path: str | Path) -> set:
 
 def build_summary(
     results, counts, timed_out, baseline, expected_total,
-    shards_seen=0, shards_expected=0,
+    shards_seen=0, shards_expected=0, no_verdict=None,
 ) -> tuple[str, dict]:
     failing = {c for c, ok in results.items() if not ok}
     passing = set(results) - failing
@@ -134,13 +162,25 @@ def build_summary(
     )
     recovered = sorted(baseline & passing)
     known = sorted(failing & baseline)
-    missing = max(0, expected_total - len(results)) if expected_total else 0
+    no_verdict = {
+        c: s for c, s in (no_verdict or {}).items() if c not in results
+    }
+    skipped = sorted(c for c, s in no_verdict.items() if s == "SKIPPED")
+    no_tests = sorted(c for c, s in no_verdict.items() if s == "NO TESTS")
+    reached = len(results) + len(no_verdict)
+    missing = max(0, expected_total - reached) if expected_total else 0
 
     lines = ["# Weekly Tool Health Check", ""]
     lines.append(
-        f"- Categories reported: **{len(results)}**"
+        f"- Categories reported: **{reached}**"
         + (f" of {expected_total} — **{missing} never reached**" if missing else "")
     )
+    if no_verdict:
+        lines.append(
+            f"- No verdict: **{len(skipped)}** skipped (credential, input file, "
+            f"package or long-running job)"
+            + (f", **{len(no_tests)}** with no examples" if no_tests else "")
+        )
     lines.append(f"- Failing: **{len(failing)}**  |  baseline: **{len(baseline)}**")
     lost_shards = max(0, shards_expected - shards_seen) if shards_expected else 0
     if shards_expected:
@@ -205,9 +245,11 @@ def build_summary(
         ]
 
     row = {
-        "reported": len(results),
+        "reported": reached,
         "expected": expected_total,
         "never_reached": missing,
+        "skipped": len(skipped),
+        "no_tests": len(no_tests),
         "passing": len(passing),
         "failing": len(failing),
         "new_failing": new,
@@ -252,6 +294,7 @@ def main(argv=None) -> int:
     args = parser.parse_args(argv)
 
     results, counts, timed_out, parsed_total, shards_seen = parse_logs(args.logs)
+    no_verdict = parse_no_verdict(args.logs)
     # The shards state their own slice size, so the run's expected total is
     # known without being told. Passing --expected-total still wins.
     expected_total = args.expected_total or parsed_total
@@ -264,6 +307,7 @@ def main(argv=None) -> int:
         baseline,
         expected_total,
         shards_seen=shards_seen,
+        no_verdict=no_verdict,
         shards_expected=args.shard_count,
     )
 
