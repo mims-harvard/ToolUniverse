@@ -301,3 +301,69 @@ def test_the_cli_reserves_spelling_tips_for_names_that_are_unknown(error, spelli
     })
 
     assert ("Check tool name spelling" in rendered) is spelling_expected, rendered
+
+
+# ── when the owner withdraws access ──────────────────────────────────────────────
+
+HTTPX_403 = (
+    "Client error '403 Forbidden' for url 'http://localhost:8000/relay/x/mcp'\n"
+    "For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403"
+)
+
+
+def test_withdrawn_access_points_to_the_owner_not_a_new_key():
+    """Measured: after the owner removed the borrower, and after the owner stopped sharing.
+
+    Both used to say the key "may have expired or been revoked -- create a new API key". A new
+    key gets the same 403; only the owner can change it.
+    """
+    message, missing = explain_remote_load_failure(RELAY, HTTPX_403, {BORROWER_KEY_ENV: KEY})
+
+    assert missing is False
+    assert "create a new API key" not in message
+    assert "owner" in message and "new share code" in message
+    assert "tu disconnect alice-gpu" in message
+
+
+def test_a_401_from_the_relay_is_still_about_the_key():
+    message, _ = explain_remote_load_failure(
+        RELAY, "Client error '401 Unauthorized' for url ...", {BORROWER_KEY_ENV: KEY})
+
+    assert "rejected the key" in message
+
+
+def test_a_dead_share_code_message(home, monkeypatch, capsys):
+    monkeypatch.setenv(BORROWER_KEY_ENV, KEY)
+    monkeypatch.setattr(cli, "_platform_request",
+                        lambda *a, **k: (_ for _ in ()).throw(RuntimeError("invalid share code")))
+    args = SimpleNamespace(target="TU-SHARE-ABCD1234", service="http://127.0.0.1:8000",
+                           name=None, platform=False)
+
+    with pytest.raises(SystemExit):
+        cli.cmd_connect(args)
+
+    err = capsys.readouterr().err
+    assert "copied whole" in err and "ask them for a fresh one" in err
+
+
+def test_disconnect_explains_what_changes_without_python_jargon(home, monkeypatch, capsys):
+    import tooluniverse.remote_connections as rc
+
+    monkeypatch.setattr(rc, "remove_connection", lambda target: {"name": "alice-gpu"})
+
+    cli.cmd_disconnect(SimpleNamespace(target="alice-gpu"))
+
+    out = capsys.readouterr().out
+    assert "load_tools" not in out
+    assert "restart" in out
+
+
+def test_no_connections_lists_what_people_actually_hold(home, monkeypatch, capsys):
+    import tooluniverse.remote_connections as rc
+
+    monkeypatch.setattr(rc, "read_connections", list)
+
+    cli.cmd_connections(SimpleNamespace(json=False))
+
+    out = capsys.readouterr().out
+    assert "TU-SHARE-" in out and "tool page link" in out

@@ -355,6 +355,20 @@ def explain_remote_load_failure(
             f"terminal has it, or export it in this one."
         )
         return message, True
+    refused = bool(status and status.group(1) == "403") or "forbidden" in lowered
+    if auth_env and refused and "/relay/" in url:
+        # 403 from a shared machine's relay: the key was accepted and this account is no
+        # longer allowed in. Measured: after the owner removed the borrower, and again after
+        # the owner stopped sharing, this used to say the key "may have expired or been
+        # revoked -- create a new API key". A new key gets the same 403; only the owner can
+        # change it.
+        message = (
+            f"Remote tools from '{label}' could not load: the platform accepted your key but "
+            f"refused access to this machine. Usually its owner stopped sharing it or removed "
+            f"your account. Ask them for a new share code and run `tu connect <code>`, or "
+            f"remove it with `tu disconnect {label}`."
+        )
+        return message, False
     if auth_env and any(
         marker in lowered for marker in ("401", "403", "unauthorized", "forbidden")
     ):

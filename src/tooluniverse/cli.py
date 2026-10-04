@@ -3217,6 +3217,15 @@ def cmd_connect(args: argparse.Namespace) -> None:
                         f"{_api_keys_page(base_url)} and save it as {BORROWER_KEY_ENV} in "
                         f"{_global_env_path()}."
                     ) from exc
+                if "invalid share code" in str(exc):
+                    # The platform says only "invalid share code" -- for a typo, and equally
+                    # for a code that worked last week but was replaced, stopped, or revoked.
+                    raise RuntimeError(
+                        "this share code does not work. Check it was copied whole "
+                        "(TU-SHARE- and everything after it). A code that worked before stops "
+                        "working when its owner stops sharing, makes a new code, or removes "
+                        "you -- ask them for a fresh one."
+                    ) from exc
                 raise
             server_id = joined.get("server_id")
             if not server_id:
@@ -3288,7 +3297,11 @@ def cmd_connections(args: argparse.Namespace) -> None:
         return
     if not connections:
         print("No remote tool connections saved.")
-        print("Add one with: tu connect <MCP-URL> --name <unique-name>")
+        # Most people arrive holding a share code or a marketplace link, not an MCP URL.
+        print("Add one with any of:")
+        print("  tu connect TU-SHARE-...      a code someone sent you to use their machine")
+        print("  tu connect <tool page link>  a tool from the marketplace")
+        print("  tu connect <MCP-URL>         your own or another MCP server")
         return
     for connection in connections:
         kind = connection.get("kind", "remote")
@@ -3315,10 +3328,12 @@ def cmd_disconnect(args: argparse.Namespace) -> None:
         raise SystemExit(2) from exc
     if removed is None:
         print(f"No saved connection matched: {args.target}", file=sys.stderr)
+        print("Run `tu connections` to see the names you can use.", file=sys.stderr)
         raise SystemExit(1)
     print(f"Disconnected: {removed.get('name', 'Remote tool')}")
     print(
-        "It will be absent after the next ToolUniverse.load_tools() or `tu serve` start."
+        "Its tools are gone from the next `tu` command. An AI assistant that is already "
+        "running keeps them until you restart it."
     )
 
 

@@ -100,12 +100,25 @@ def test_without_the_platforms_word_it_does_not_claim_safety(body):
 # ── other refusals ──────────────────────────────────────────────────────────────
 
 
-@pytest.mark.parametrize("status", [401, 403])
-def test_a_rejected_key_names_the_variable(status):
+def test_a_rejected_key_names_the_variable():
     message = describe_remote_call_failure(
-        grouped(http_error(status, {})), RELAY, TOOL, auth_env="TU_API_KEY")
+        grouped(http_error(401, {})), RELAY, TOOL, auth_env="TU_API_KEY")
 
     assert "TU_API_KEY" in message and ".tooluniverse/.env" in message
+
+
+def test_withdrawn_access_is_not_blamed_on_the_key():
+    """The relay's 403 means the key was accepted and this account is no longer let in.
+
+    Measured after the owner removed the borrower: telling them to make a new key sends them
+    round a loop -- the new key gets the same 403.
+    """
+    message = describe_remote_call_failure(
+        grouped(http_error(403, {"detail": "access denied"})), RELAY, TOOL,
+        auth_env="TU_API_KEY")
+
+    assert "create a new API key" not in message
+    assert "owner" in message and "new share code" in message
 
 
 def test_the_owners_call_limit_is_named_as_the_owners():

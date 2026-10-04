@@ -477,11 +477,19 @@ def describe_remote_call_failure(
     except Exception:  # noqa: BLE001 - a streamed or non-JSON body; fall back to the status
         body = {}
 
-    if status in (401, 403):
+    if status == 403:
+        # The key was accepted; this account is no longer let in (the relay's "access
+        # denied"). A new key would get the same answer.
+        return (
+            f"'{tool_name}' was refused (HTTP 403): the platform accepted your key but this "
+            f"account no longer has access to the machine. Usually its owner stopped sharing "
+            f"it or removed you -- ask them for a new share code and run `tu connect <code>`."
+        )
+    if status == 401:
         key = f"the key in {auth_env}" if auth_env else "your API key"
         return (
             f"'{tool_name}' was refused (HTTP {status}): the platform rejected {key}. It may "
-            f"have expired, been revoked, or lost access to this machine -- create a new API "
+            f"have expired or been revoked -- create a new API "
             f"key in your account and save it in ~/.tooluniverse/.env."
         )
     if status == 402:
