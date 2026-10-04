@@ -1877,7 +1877,35 @@ class ToolUniverse:
             ["Check tool name spelling", "Verify tool is available in loaded categories"],
         )
 
-    def _process_mcp_auto_loaders(self):
+    # How often one failed connection may be tried again on demand.
+    _REMOTE_RELOAD_INTERVAL = 30.0
+
+    def _reload_failed_remote_connection(self, function_name: str) -> None:
+        """Load once more the connection a missing tool belongs to.
+
+        Connections load when the process starts. An assistant started while a borrowed
+        machine was offline kept answering that its tools were unavailable after the machine
+        came back, until the assistant itself was restarted -- although the message it gave
+        said the connection "will load again once its owner brings it back online". Retried
+        at most every 30 seconds per connection, and only when one of its tools is wanted.
+        """
+        if not function_name or function_name in self.all_tool_dict:
+            return
+        import time
+
+        failures = getattr(self, "_failed_remote_connections", {})
+        attempts = self.__dict__.setdefault("_remote_reload_attempts", {})
+        for prefix in list(failures):
+            if not function_name.startswith(prefix):
+                continue
+            now = time.monotonic()
+            if now - attempts.get(prefix, float("-inf")) < self._REMOTE_RELOAD_INTERVAL:
+                return
+            attempts[prefix] = now
+            self._process_mcp_auto_loaders(only_prefix=prefix)
+            return
+
+    def _process_mcp_auto_loaders(self, only_prefix: str | None = None):
         """
         Process any MCPAutoLoaderTool instances to automatically discover and register MCP tools.
 
@@ -1891,14 +1919,20 @@ class ToolUniverse:
             - Updates tool counts after MCP registration
         """
         self.logger.debug("Starting _process_mcp_auto_loaders")
-        self._failed_remote_connections = {}
+        if only_prefix is None:
+            self._failed_remote_connections = {}
+        else:
+            # One connection again; the others' recorded failures stand.
+            getattr(self, "_failed_remote_connections", {}).pop(only_prefix, None)
         import asyncio
         import warnings
 
         auto_loaders = []
         self.logger.debug(f"Checking {len(self.all_tools)} tools for MCPAutoLoaderTool")
         for tool_config in self.all_tools:
-            if tool_config.get("type") == "MCPAutoLoaderTool":
+            if tool_config.get("type") == "MCPAutoLoaderTool" and (
+                only_prefix is None or tool_config.get("tool_prefix") == only_prefix
+            ):
                 auto_loaders.append(tool_config)
                 self.logger.debug(f"Found MCPAutoLoaderTool: {tool_config['name']}")
 
@@ -3424,6 +3458,8 @@ class ToolUniverse:
 
         # A tool gated during process startup can be activated by this request's credentials.
         self._activate_credential_tool(function_name)
+        # A connected machine that was offline when this process started may be back.
+        self._reload_failed_remote_connection(function_name)
 
         # Resolve original names to shortened names (all_tool_dict uses shortened as keys)
         function_name = self._resolve_tool_name(function_name)
