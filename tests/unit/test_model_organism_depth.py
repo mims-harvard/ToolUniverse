@@ -166,45 +166,75 @@ class TestSGDDisease:
 # --------------------------------------------------------------------------
 # WormBase
 # --------------------------------------------------------------------------
+# WormBase's own REST API is behind a Cloudflare JavaScript challenge, so these
+# three tools read the Alliance of Genome Resources instead (see
+# test_wormbase_reads_alliance.py for the routes and the fixtures). The widget
+# payloads these classes used to mock no longer have a caller.
+#
+# What survived the transport change is kept here and pointed at the new one:
+# the response parses into the declared field names, a missing gene_id is an
+# error, and a transport failure comes back as an envelope rather than raising.
+
+
+def _alliance_patch(monkeypatch, routes):
+    """Answer Alliance calls from a dict of {(method, path): payload}."""
+    import tooluniverse.wormbase_tool as wb_module
+
+    class _R:
+        status_code = 200
+
+        def __init__(self, payload):
+            self._payload = payload
+
+        def json(self):
+            return self._payload
+
+        def raise_for_status(self):
+            return None
+
+    def fake(session, method, url, **kwargs):
+        path = url.split("/api", 1)[1].split("?")[0]
+        return _R(routes[(method, path)])
+
+    monkeypatch.setattr(wb_module, "request_with_retry", fake)
+
+
 class TestWormBaseOrthologs:
     def _make(self):
         return _tool(WormBaseTool, "gene_orthologs")
 
-    def test_parse_success(self):
-        """Covers parse success."""
-        payload = {
-            "fields": {
-                "other_orthologs": {
-                    "data": [
+    def test_parse_success(self, monkeypatch):
+        """Covers parse success, now against Alliance's orthology payload."""
+        _alliance_patch(
+            monkeypatch,
+            {
+                ("GET", "/gene/WB:WBGene00006818/orthologs"): {
+                    "total": 1,
+                    "results": [
                         {
-                            "species": {"genus": "D", "species": "rerio"},
-                            "ortholog": {
-                                "id": "ZFIN:ZDB-GENE-061215-70",
-                                "label": "pou4f4",
-                            },
-                            "method": [
-                                {"label": "Inparanoid"},
-                                {"label": "EnsEMBL-Compara"},
-                            ],
+                            "geneToGeneOrthologyGenerated": {
+                                "objectGene": {
+                                    "primaryExternalId": "ZFIN:ZDB-GENE-061215-70",
+                                    "geneSymbol": {"displayText": "pou4f4"},
+                                    "taxon": {"name": "Danio rerio"},
+                                },
+                                "predictionMethodsMatched": [
+                                    {"name": "Ensembl Compara"},
+                                    {"name": "PANTHER"},
+                                ],
+                            }
                         }
-                    ]
+                    ],
                 },
-                "nematode_orthologs": {
-                    "data": [
-                        {
-                            "species": {"genus": "C", "species": "tribulationis"},
-                            "ortholog": {"id": "CSP40.g8217", "label": "CSP40.g8217"},
-                            "method": [{"label": "WormBase-Compara"}],
-                        }
-                    ]
+                ("GET", "/gene/WB:WBGene00006818/paralogs"): {
+                    "total": 0,
+                    "results": [],
                 },
-                "paralogs": {"data": []},
-            }
-        }
-        with patch(
-            "tooluniverse.wormbase_tool.requests.get", return_value=_resp(payload)
-        ):
-            out = self._make().run({"gene_id": "WBGene00006818"})
+            },
+        )
+
+        out = self._make().run({"gene_id": "WBGene00006818"})
+
         assert out["status"] == "success"
         data = out["data"]
         assert data["cross_species_ortholog_count"] == 1
@@ -212,18 +242,30 @@ class TestWormBaseOrthologs:
             data["cross_species_orthologs"][0]["ortholog_id"]
             == "ZFIN:ZDB-GENE-061215-70"
         )
-        assert data["nematode_orthologs"][0]["ortholog_id"] == "CSP40.g8217"
+        assert data["cross_species_orthologs"][0]["methods"] == [
+            "Ensembl Compara",
+            "PANTHER",
+        ]
+        # WormBase's nematode orthologs have no Alliance equivalent.
+        assert data["nematode_orthologs"] == []
+        assert "six model organisms" in out["metadata"]["coverage_note"]
 
     def test_missing_id(self):
         """Covers missing id."""
         assert self._make().run({})["status"] == "error"
 
-    def test_error_path(self):
+    def test_error_path(self, monkeypatch):
         """Covers error path."""
-        with patch(
-            "tooluniverse.wormbase_tool.requests.get", side_effect=Exception("x")
-        ):
-            out = self._make().run({"gene_id": "WBGene00006818"})
+        import tooluniverse.wormbase_tool as wb_module
+
+        monkeypatch.setattr(
+            wb_module,
+            "request_with_retry",
+            lambda *a, **k: (_ for _ in ()).throw(Exception("x")),
+        )
+
+        out = self._make().run({"gene_id": "WBGene00006818"})
+
         assert out["status"] == "error"
 
 
@@ -231,46 +273,78 @@ class TestWormBaseInteractions:
     def _make(self):
         return _tool(WormBaseTool, "gene_interactions")
 
-    def test_parse_and_classify(self):
-        """Covers parse and classify."""
-        payload = {
-            "fields": {
-                "interactions": {
-                    "data": {
-                        "edges": [
-                            {
-                                "effector": {"label": "die-1", "id": "WBGene00000995"},
-                                "affected": {"label": "unc-86", "id": "WBGene00006818"},
-                                "type": "physical:protein-DNA",
-                                "citations": [{"label": "Some 2004"}],
-                            },
-                            {
-                                "effector": {"label": "unc-86", "id": "WBGene00006818"},
-                                "affected": {"label": "ttx-3", "id": "WBGene00006654"},
-                                "type": "gi-module-three:diverging",
-                                "citations": [{"label": "Baum 1999"}],
-                            },
-                        ]
-                    }
-                }
+    def test_parse_and_classify(self, monkeypatch):
+        """Covers parse and classify: Alliance splits the two kinds by route."""
+        def pair(subject_id, subject, object_id, obj, kind):
+            return {
+                "geneAssociationSubject": {
+                    "primaryExternalId": subject_id,
+                    "geneSymbol": {"displayText": subject},
+                },
+                "geneGeneAssociationObject": {
+                    "primaryExternalId": object_id,
+                    "geneSymbol": {"displayText": obj},
+                },
+                "interactionType": {"name": kind},
+                "interactionSource": {"name": "wormbase"},
             }
-        }
-        with patch(
-            "tooluniverse.wormbase_tool.requests.get", return_value=_resp(payload)
-        ):
-            out = self._make().run({"gene_id": "WBGene00006818"})
+
+        _alliance_patch(
+            monkeypatch,
+            {
+                ("GET", "/gene/WB:WBGene00006818/molecular-interactions"): {
+                    "total": 1,
+                    "results": [
+                        {
+                            "geneMolecularInteraction": pair(
+                                "WB:WBGene00000995",
+                                "die-1",
+                                "WB:WBGene00006818",
+                                "unc-86",
+                                "protein-DNA",
+                            )
+                        }
+                    ],
+                },
+                ("GET", "/gene/WB:WBGene00006818/genetic-interactions"): {
+                    "total": 1,
+                    "results": [
+                        {
+                            "geneGeneticInteraction": pair(
+                                "WB:WBGene00006818",
+                                "unc-86",
+                                "WB:WBGene00006654",
+                                "ttx-3",
+                                "diverging",
+                            )
+                        }
+                    ],
+                },
+            },
+        )
+
+        out = self._make().run({"gene_id": "WBGene00006818"})
+
         assert out["status"] == "success"
         assert out["data"]["physical_count"] == 1
         assert out["data"]["genetic_count"] == 1
-        gen = out["data"]["genetic_interactions"][0]
-        assert gen["interactor_2_id"] == "WBGene00006654"
+        genetic = out["data"]["genetic_interactions"][0]
+        assert genetic["interactor_2_id"] == "WBGene00006654"
+        # The point of using Alliance: the records are still WormBase's.
+        assert genetic["citation"] == "wormbase"
 
-    def test_error_path(self):
+    def test_error_path(self, monkeypatch):
         """Covers error path."""
-        with patch(
-            "tooluniverse.wormbase_tool.requests.get", side_effect=Exception("x")
-        ):
-            out = self._make().run({"gene_id": "WBGene00006818"})
+        import tooluniverse.wormbase_tool as wb_module
+
+        monkeypatch.setattr(
+            wb_module,
+            "request_with_retry",
+            lambda *a, **k: (_ for _ in ()).throw(Exception("x")),
+        )
+
+        out = self._make().run({"gene_id": "WBGene00006818"})
+
         assert out["status"] == "error"
 
 
@@ -278,42 +352,46 @@ class TestWormBaseHumanDiseases:
     def _make(self):
         return _tool(WormBaseTool, "gene_human_diseases")
 
-    def test_parse_success(self):
-        """Covers parse success."""
-        payload = {
-            "human_diseases": {
-                "data": {
-                    "gene": ["602460"],
-                    "potential_model": [
+    def test_parse_success(self, monkeypatch):
+        """Covers parse success, now from Alliance's disease ribbon."""
+        _alliance_patch(
+            monkeypatch,
+            {
+                ("POST", "/gene/WB:WBGene00006818/disease-ribbon-summary"): {
+                    "categories": [
                         {
                             "id": "DOID:0110546",
                             "label": "autosomal dominant nonsyndromic deafness 15",
-                            "ev": {
-                                "Inferred_automatically": [
-                                    "Inferred by orthology (HGNC:9220)"
-                                ]
-                            },
                         }
                     ],
+                    "subjects": [],
                 }
-            }
-        }
-        with patch(
-            "tooluniverse.wormbase_tool.requests.get", return_value=_resp(payload)
-        ):
-            out = self._make().run({"gene_id": "WBGene00006818"})
+            },
+        )
+
+        out = self._make().run({"gene_id": "WBGene00006818"})
+
         assert out["status"] == "success"
         assert out["data"]["disease_count"] == 1
-        d = out["data"]["diseases"][0]
-        assert d["disease_id"] == "DOID:0110546"
-        assert d["evidence"]
+        disease = out["data"]["diseases"][0]
+        assert disease["disease_id"] == "DOID:0110546"
+        # The ribbon carries no evidence codes, and the note says so instead
+        # of the field quietly going missing.
+        assert disease["evidence"] == []
+        assert "evidence and model_type" in out["metadata"]["coverage_note"]
 
-    def test_error_path(self):
+    def test_error_path(self, monkeypatch):
         """Covers error path."""
-        with patch(
-            "tooluniverse.wormbase_tool.requests.get", side_effect=Exception("x")
-        ):
-            out = self._make().run({"gene_id": "WBGene00006818"})
+        import tooluniverse.wormbase_tool as wb_module
+
+        monkeypatch.setattr(
+            wb_module,
+            "request_with_retry",
+            lambda *a, **k: (_ for _ in ()).throw(Exception("x")),
+        )
+
+        out = self._make().run({"gene_id": "WBGene00006818"})
+
         assert out["status"] == "error"
 
 

@@ -1,433 +1,272 @@
-"""Regression guard for Fix-R30-GtoPdb-type in gtopdb_tool.py: the `type`
-filter on GtoPdb_search_ligands (and its sibling GtoPdb_search_targets) was
-accepted, forwarded, and then completely ignored, so the query executed was
-never the query submitted.
+"""The `type` filter has to remove records, and an unknown value has to be refused.
 
-Reproduction that motivated the fix::
+Written when GtoPdb's REST service ignored ?type= whenever ?name= was also
+supplied, so an unrecognised value returned every record while reading as a
+filtered search. That service is now key-gated everywhere and these tools read
+the open bulk CSVs instead, so the half of this file about what gets pushed
+upstream has no subject any more -- there is no upstream query.
 
-    tu run GtoPdb_search_ligands '{"name":"semaglutide","type":"NotARealType"}'
-    -> status success, 1 record: ligandId 9724, name "semaglutide", type "Peptide"
+What survived is the part that was never about the transport: a type filter
+removes non-matching records, the vocabulary is matched case- and
+spacing-insensitively, GtoPdb's own documented-but-dead values are refused with
+a pointer, and `approved: false` means all ligands rather than unapproved ones.
+Those are checked here against the bulk implementation, with recorded CSV rows.
 
-A garbage type value changed nothing; neither did a real-but-wrong one. The
-result sets were byte-identical with `type` omitted, wrong, or nonsense.
-
-Established upstream by curl (2026-08-10), i.e. this is GtoPdb's behaviour,
-not a transport bug in the wrapper::
-
-    /services/ligands?name=semaglutide                        -> 1 rec, type "Peptide"
-    /services/ligands?name=semaglutide&type=Synthetic organic -> the SAME record
-    /services/ligands?name=semaglutide&type=NotARealType      -> the SAME record
-    /services/targets?name=serotonin                          -> 19 recs (gpcr/lgic/transporter)
-    /services/targets?name=serotonin&type=GPCR                -> the SAME 19 records
-
-GtoPdb drops ?type= whenever ?name= is present. Used alone it does filter, but
-only over a vocabulary that is neither the record `type` vocabulary nor the enum
-ToolUniverse used to document::
-
-    /services/ligands?type=Peptide            -> HTTP 404 "No ligands found"
-    /services/ligands?type=Endogenous peptide -> HTTP 404 (GtoPdb's own docs list it)
-    /services/targets?type=Ion channel        -> HTTP 404 (ToolUniverse documented it)
-
-The old test_examples entry ``{"name": "dopamine", "type": "Endogenous
-peptide"}`` passed only because the filter was ignored -- dopamine is a
-Metabolite, and the call returned Peptide/Metabolite/Synthetic organic records
-that did not match the requested filter. It asserted nothing.
-
-The fix filters client-side against each record's own `type` field (or boolean
-flag, for 'Approved'/'Withdrawn'/'Labelled') and validates the requested value
-at input against the vocabulary GtoPdb really uses. These tests mock the HTTP
-layer -- no network -- with a fixed upstream payload of mixed `type` values,
-exactly as GtoPdb returns when it ignores the filter.
+Carrying them over caught two contracts the rewrite would otherwise have
+broken: the Ion channel umbrella, which has no single GtoPdb value, and
+`approved: false`, which the first version of the rewrite turned into a filter
+for unapproved ligands.
 """
 
-from unittest.mock import MagicMock, patch
+import json
+from pathlib import Path
 
 import pytest
 
-from tooluniverse.gtopdb_tool import GtoPdbRESTTool
+import tooluniverse.gtopdb_tool as gtopdb
 
 pytestmark = pytest.mark.unit
 
-LIGANDS_ENDPOINT = "https://www.guidetopharmacology.org/services/ligands"
-TARGETS_ENDPOINT = "https://www.guidetopharmacology.org/services/targets"
+DATA = Path(__file__).resolve().parents[2] / "src" / "tooluniverse" / "data"
 
-# Real shape of GET /services/ligands?name=dopamine (captured live 2026-08-10).
-# GtoPdb returns all four records regardless of any `type=` supplied alongside
-# `name=`, which is precisely the defect under guard.
-_DOPAMINE_PAYLOAD = [
-    {
-        "ligandId": 13048,
-        "name": "cerebral dopamine neurotrophic factor",
-        "type": "Peptide",
-        "approved": False,
-        "withdrawn": False,
-        "labelled": False,
-    },
-    {
-        "ligandId": 940,
-        "name": "dopamine",
-        "type": "Metabolite",
-        "approved": True,
-        "withdrawn": False,
-        "labelled": False,
-    },
-    {
-        "ligandId": 5552,
-        "name": "N-oleoyldopamine",
-        "type": "Metabolite",
-        "approved": False,
-        "withdrawn": False,
-        "labelled": False,
-    },
-    {
-        "ligandId": 4261,
-        "name": "NADA",
-        "type": "Synthetic organic",
-        "approved": False,
-        "withdrawn": False,
-        "labelled": True,
-    },
-]
+TARGETS_CSV = (
+    '"# GtoPdb Version: 2026.3 - published: 2026-09-16"\n'
+    '"Type","Family id","Family name","Target id","Target name","Subunit id",'
+    '"Subunit name","Target systematic name","Target abbreviated name",'
+    '"synonyms","HGNC id","HGNC symbol"\n'
+    '"gpcr","1","5-HT","377","serotonin receptor 1","","","","","","","HTR1B"\n'
+    '"lgic","2","5-HT3","378","serotonin receptor 3","","","","","","","HTR3A"\n'
+    '"vgic","3","Nav","379","serotonin-sensitive channel","","","","","","",'
+    '"SCN1A"\n'
+    '"other_ic","4","Other","380","serotonin other channel","","","","","","",'
+    '"TPCN1"\n'
+    '"enzyme","5","Enz","381","serotonin N-acetyltransferase","","","","","",'
+    '"","AANAT"\n'
+)
 
-# Real shape of GET /services/targets?name=serotonin (trimmed to 5 of 19).
-_SEROTONIN_TARGETS = [
-    {"targetId": 928, "name": "SERT", "type": "transporter"},
-    {"targetId": 12, "name": "5-HT7 receptor", "type": "gpcr"},
-    {"targetId": 11, "name": "5-HT6 receptor", "type": "gpcr"},
-    {"targetId": 377, "name": "5-HT3E", "type": "lgic"},
-    {"targetId": 2486, "name": "dopamine beta-hydroxylase", "type": "enzyme"},
-]
+LIGANDS_CSV = (
+    '"# GtoPdb Version: 2026.3 - published: 2026-09-16"\n'
+    '"Ligand ID","Name","Species","Type","Approved","Withdrawn","Labelled",'
+    '"Radioactive","PubChem SID","PubChem CID","UniProt ID","Ensembl ID",'
+    '"ChEMBL ID","Ligand Subunit IDs","Ligand Subunit Name",'
+    '"Ligand Subunit UniProt IDs","Ligand Subunit Ensembl IDs","IUPAC name",'
+    '"INN","Synonyms","SMILES","InChIKey","InChI"\n'
+    '"1","dopamine","","Metabolite","","","","","","681","","","","","","","",'
+    '"","","","","",""\n'
+    '"2","dopamine analogue A","","Synthetic organic","yes","","","","","","",'
+    '"","","","","","","","","","","",""\n'
+    '"3","dopamine analogue B","","Synthetic organic","","yes","","","","","",'
+    '"","","","","","","","","","","",""\n'
+    '"4","dopamine label","","Synthetic organic","","","yes","","","","","","",'
+    '"","","","","","","","","",""\n'
+    '"5","semaglutide","","Peptide","yes","","","","","","","","","","","","",'
+    '"","","","","",""\n'
+)
+
+FIXTURES = {
+    gtopdb.TARGETS_FILE: TARGETS_CSV,
+    gtopdb.LIGANDS_FILE: LIGANDS_CSV,
+}
 
 
-def _tool(endpoint):
-    return GtoPdbRESTTool(
-        {"name": "GtoPdb_test", "fields": {"endpoint": endpoint, "params": {}}}
+class _Response:
+    status_code = 200
+
+    def __init__(self, text):
+        self.text = text
+
+
+@pytest.fixture(autouse=True)
+def _recorded_bulk(monkeypatch):
+    gtopdb.clear_bulk_cache()
+
+    def fake_request(session, method, url, **kwargs):
+        return _Response(FIXTURES[url.rsplit("/", 1)[-1]])
+
+    monkeypatch.setattr(gtopdb, "request_with_retry", fake_request)
+    yield
+    gtopdb.clear_bulk_cache()
+
+
+def _tool(name):
+    config = {
+        t["name"]: t
+        for t in json.loads((DATA / "gtopdb_tools.json").read_text("utf-8"))
+    }[name]
+    return gtopdb.GtoPdbRESTTool(config)
+
+
+def _names(result, key):
+    return [item["name"] for item in result["data"][key]]
+
+
+class TestTypeFilterRemovesRecords:
+    def test_a_ligand_type_filters_out_the_other_types(self):
+        result = _tool("GtoPdb_search_ligands").run(
+            {"name": "dopamine", "type": "Metabolite"}
+        )
+
+        assert _names(result, "ligands") == ["dopamine"]
+
+    def test_semaglutide_keeps_its_record_under_peptide(self):
+        result = _tool("GtoPdb_search_ligands").run(
+            {"name": "semaglutide", "type": "Peptide"}
+        )
+
+        assert _names(result, "ligands") == ["semaglutide"]
+
+    def test_the_wrong_type_returns_nothing_rather_than_everything(self):
+        result = _tool("GtoPdb_search_ligands").run(
+            {"name": "semaglutide", "type": "Metabolite"}
+        )
+
+        assert result["data"]["total_matches"] == 0
+        assert "note" in result["data"]
+
+    @pytest.mark.parametrize(
+        "spelling", ["Metabolite", "metabolite", "METABOLITE", " metabolite "]
     )
-
-
-def _resp(payload, status=200):
-    r = MagicMock()
-    r.status_code = status
-    r.json.return_value = payload
-    r.text = ""
-    return r
-
-
-def _run(endpoint, arguments, payload):
-    """Run the tool with the HTTP layer stubbed, returning (result, urls_called)."""
-    calls = []
-
-    def fake(session, method, url, **kwargs):
-        calls.append(url)
-        return _resp(payload)
-
-    with patch("tooluniverse.gtopdb_tool.request_with_retry", side_effect=fake):
-        result = _tool(endpoint).run(arguments)
-    return result, calls
-
-
-# ---------------------------------------------------------------------------
-# (a) a `type` filter actually removes non-matching records
-# ---------------------------------------------------------------------------
-
-
-class TestTypeFilterRemovesNonMatchingRecords:
-    def test_ligand_type_filters_out_other_types(self):
-        result, _ = _run(
-            LIGANDS_ENDPOINT,
-            {"name": "dopamine", "type": "Metabolite"},
-            _DOPAMINE_PAYLOAD,
+    def test_the_vocabulary_is_matched_insensitively(self, spelling):
+        result = _tool("GtoPdb_search_ligands").run(
+            {"name": "dopamine", "type": spelling}
         )
+
+        assert _names(result, "ligands") == ["dopamine"]
+
+    @pytest.mark.parametrize(
+        ("pseudo_type", "expected"),
+        [
+            ("Approved", ["dopamine analogue A"]),
+            ("Withdrawn", ["dopamine analogue B"]),
+            ("Labelled", ["dopamine label"]),
+            ("Labeled", ["dopamine label"]),
+        ],
+    )
+    def test_the_boolean_pseudo_types_match_record_flags(self, pseudo_type, expected):
+        """Approved, Withdrawn and Labelled are flags, not `type` values."""
+        result = _tool("GtoPdb_search_ligands").run(
+            {"name": "dopamine", "type": pseudo_type}
+        )
+
+        assert _names(result, "ligands") == expected
+
+
+class TestTargetTypes:
+    def test_a_target_type_filters_out_the_other_types(self):
+        result = _tool("GtoPdb_search_targets").run(
+            {"name": "serotonin", "type": "GPCR"}
+        )
+
+        assert [t["targetId"] for t in result["data"]["targets"]] == [377]
+
+    def test_the_ion_channel_umbrella_covers_all_three_record_types(self):
+        """GtoPdb has no single value for this; it spans lgic, vgic, other_ic."""
+        result = _tool("GtoPdb_search_targets").run(
+            {"name": "serotonin", "type": "Ion channel"}
+        )
+
+        assert sorted(t["targetId"] for t in result["data"]["targets"]) == [
+            378,
+            379,
+            380,
+        ]
+
+    @pytest.mark.parametrize(
+        ("spelling", "expected"),
+        [
+            ("CatalyticReceptor", "CatalyticReceptor"),
+            ("Catalytic receptor", "CatalyticReceptor"),
+            ("Nuclear receptor", "NHR"),
+            ("Other protein", "OtherProtein"),
+        ],
+    )
+    def test_the_alias_spellings_resolve(self, spelling, expected):
+        spec = gtopdb._TARGET_TYPE_SPECS[gtopdb._norm_type(spelling)]
+
+        assert spec.canonical == expected
+
+    def test_accessory_protein_is_accepted_and_says_what_is_missing(self):
+        """REST returned 10 records with an empty type; the CSV has none."""
+        result = _tool("GtoPdb_search_targets").run({"type": "Accessory protein"})
+
         assert result["status"] == "success"
-        assert [r["ligandId"] for r in result["data"]] == [940, 5552]
-        assert {r["type"] for r in result["data"]} == {"Metabolite"}
-        assert result["count"] == 2
+        assert result["data"]["total_matches"] == 0
+        assert "no accessory proteins" in result["data"]["note"]
 
-    def test_semaglutide_reproduction_peptide_filter_keeps_the_record(self):
-        """The exact record from the reproduction: type='Peptide' must keep it."""
-        payload = [
-            {
-                "ligandId": 9724,
-                "name": "semaglutide",
-                "type": "Peptide",
-                "approved": True,
-            }
-        ]
-        result, _ = _run(
-            LIGANDS_ENDPOINT, {"name": "semaglutide", "type": "Peptide"}, payload
+
+class TestInvalidTypeIsRefused:
+    def test_a_garbage_type_is_an_error_not_an_unfiltered_result(self):
+        result = _tool("GtoPdb_search_ligands").run(
+            {"name": "dopamine", "type": "not-a-type"}
         )
-        assert [r["ligandId"] for r in result["data"]] == [9724]
 
-    def test_semaglutide_reproduction_wrong_type_now_returns_nothing(self):
-        """'Synthetic organic' is a real GtoPdb type but not semaglutide's.
-
-        Before the fix this returned the semaglutide record unchanged.
-        """
-        payload = [
-            {
-                "ligandId": 9724,
-                "name": "semaglutide",
-                "type": "Peptide",
-                "approved": True,
-            }
-        ]
-        result, _ = _run(
-            LIGANDS_ENDPOINT,
-            {"name": "semaglutide", "type": "Synthetic organic"},
-            payload,
-        )
-        assert result["status"] == "success"
-        assert result["data"] == []
-        assert result["count"] == 0
-
-    def test_type_is_matched_case_insensitively(self):
-        result, _ = _run(
-            LIGANDS_ENDPOINT,
-            {"name": "dopamine", "type": "metabolite"},
-            _DOPAMINE_PAYLOAD,
-        )
-        assert [r["ligandId"] for r in result["data"]] == [940, 5552]
-
-    def test_flag_pseudo_types_match_boolean_record_fields(self):
-        approved, _ = _run(
-            LIGANDS_ENDPOINT,
-            {"name": "dopamine", "type": "Approved"},
-            _DOPAMINE_PAYLOAD,
-        )
-        assert [r["ligandId"] for r in approved["data"]] == [940]
-
-        labelled, _ = _run(
-            LIGANDS_ENDPOINT,
-            {"name": "dopamine", "type": "Labelled"},
-            _DOPAMINE_PAYLOAD,
-        )
-        assert [r["ligandId"] for r in labelled["data"]] == [4261]
-
-    def test_type_is_not_forwarded_upstream_when_a_name_search_is_present(self):
-        """GtoPdb ignores ?type= alongside ?name=; sending it only misleads."""
-        _, calls = _run(
-            LIGANDS_ENDPOINT,
-            {"name": "dopamine", "type": "Metabolite"},
-            _DOPAMINE_PAYLOAD,
-        )
-        assert calls, "expected at least one upstream request"
-        assert all("type=" not in u for u in calls), calls
-        assert any("name=dopamine" in u for u in calls), calls
-
-    def test_result_discloses_that_the_filter_was_enforced_client_side(self):
-        result, _ = _run(
-            LIGANDS_ENDPOINT,
-            {"name": "dopamine", "type": "Metabolite"},
-            _DOPAMINE_PAYLOAD,
-        )
-        assert result["type_filter"]["requested"] == "Metabolite"
-        assert result["type_filter"]["enforced"] == "client-side"
-        assert result["type_filter"]["records_scanned"] == 4
-        assert result["type_filter"]["records_matched"] == 2
-
-
-class TestSiblingTargetSearchFiltersToo:
-    """GtoPdb_search_targets had the identical defect: ?type=GPCR alongside
-    ?name=serotonin returned transporters and ion channels unchanged."""
-
-    def test_target_type_filters_out_other_types(self):
-        result, _ = _run(
-            TARGETS_ENDPOINT,
-            {"name": "serotonin", "type": "GPCR"},
-            _SEROTONIN_TARGETS,
-        )
-        assert [r["targetId"] for r in result["data"]] == [12, 11]
-        assert {r["type"] for r in result["data"]} == {"gpcr"}
-
-    def test_ion_channel_umbrella_covers_all_three_record_types(self):
-        result, _ = _run(
-            TARGETS_ENDPOINT,
-            {"name": "serotonin", "type": "Ion channel"},
-            _SEROTONIN_TARGETS,
-        )
-        assert [r["targetId"] for r in result["data"]] == [377]
-
-    def test_target_type_not_forwarded_upstream_with_a_name_search(self):
-        _, calls = _run(
-            TARGETS_ENDPOINT,
-            {"name": "serotonin", "type": "GPCR"},
-            _SEROTONIN_TARGETS,
-        )
-        assert all("type=" not in u for u in calls), calls
-
-
-# ---------------------------------------------------------------------------
-# (b) an invalid `type` is rejected at input rather than silently ignored
-# ---------------------------------------------------------------------------
-
-
-class TestInvalidTypeRejectedAtInput:
-    def test_garbage_ligand_type_is_an_error_not_an_unfiltered_result(self):
-        """The headline reproduction: NotARealType used to return everything."""
-        result, calls = _run(
-            LIGANDS_ENDPOINT,
-            {"name": "semaglutide", "type": "NotARealType"},
-            _DOPAMINE_PAYLOAD,
-        )
         assert result["status"] == "error"
-        assert "NotARealType" in result["error"]
-        assert "data" not in result
-        # Rejected before any request went out.
-        assert calls == []
+        assert "not-a-type" in result["error"]
 
-    def test_error_lists_the_real_vocabulary(self):
-        result, _ = _run(
-            LIGANDS_ENDPOINT, {"name": "x", "type": "Synthetic"}, _DOPAMINE_PAYLOAD
+    def test_the_error_lists_the_real_vocabulary(self):
+        result = _tool("GtoPdb_search_ligands").run({"type": "nonsense"})
+
+        for expected in ("Peptide", "Metabolite", "Synthetic organic"):
+            assert expected in result["error"]
+        assert "Peptide" in result["valid_types"]
+
+    @pytest.mark.parametrize(
+        ("dead_value", "pointer"),
+        [("endogenous peptide", "Peptide"), ("inn", "Approved")],
+    )
+    def test_a_documented_but_dead_value_is_refused_with_a_pointer(
+        self, dead_value, pointer
+    ):
+        """GtoPdb's own docs list these and no record carries them."""
+        result = _tool("GtoPdb_search_ligands").run(
+            {"name": "dopamine", "type": dead_value}
         )
+
         assert result["status"] == "error"
-        for expected in (
-            "Synthetic organic",
-            "Peptide",
-            "Natural product",
-            "Metabolite",
-            "Antibody",
-            "Nucleic acid",
-            "Inorganic",
-            "Approved",
-            "Withdrawn",
-            "Labelled",
-        ):
-            assert expected in result["valid_types"]
+        assert pointer in result["error"]
 
-    def test_documented_but_dead_gtopdb_value_is_rejected_with_a_pointer(self):
-        """'Endogenous peptide' is in GtoPdb's own docs but matches no record
-        (HTTP 404 upstream). It was the old, misleading test_examples value."""
-        result, calls = _run(
-            LIGANDS_ENDPOINT,
-            {"name": "dopamine", "type": "Endogenous peptide"},
-            _DOPAMINE_PAYLOAD,
-        )
+    def test_an_invalid_target_type_is_refused(self):
+        result = _tool("GtoPdb_search_targets").run({"type": "Metabolite"})
+
         assert result["status"] == "error"
-        assert "Peptide" in result["error"]
-        assert calls == []
-
-    def test_target_enum_values_that_404_upstream_are_accepted_as_aliases(self):
-        """'Nuclear receptor' and 'Catalytic receptor' were ToolUniverse's own
-        documented values; they 404 upstream, so they map to NHR /
-        catalytic_receptor rather than being rejected."""
-        payload = [
-            {"targetId": 1, "name": "ER-alpha", "type": "nhr"},
-            {"targetId": 2, "name": "EGFR", "type": "catalytic_receptor"},
-        ]
-        nhr, _ = _run(
-            TARGETS_ENDPOINT, {"name": "x", "type": "Nuclear receptor"}, payload
-        )
-        assert [r["targetId"] for r in nhr["data"]] == [1]
-
-        cat, _ = _run(
-            TARGETS_ENDPOINT, {"name": "x", "type": "catalytic_receptor"}, payload
-        )
-        assert [r["targetId"] for r in cat["data"]] == [2]
-
-    def test_invalid_target_type_is_rejected(self):
-        result, calls = _run(
-            TARGETS_ENDPOINT,
-            {"name": "serotonin", "type": "Kinase"},
-            _SEROTONIN_TARGETS,
-        )
-        assert result["status"] == "error"
-        assert "GPCR" in result["valid_types"]
-        assert calls == []
-
-
-# ---------------------------------------------------------------------------
-# (c) omitting `type` returns everything unchanged
-# ---------------------------------------------------------------------------
+        assert "GPCR" in result["error"]
 
 
 class TestNoTypeMeansNoFiltering:
-    def test_ligand_search_without_type_returns_all_records(self):
-        result, calls = _run(LIGANDS_ENDPOINT, {"name": "dopamine"}, _DOPAMINE_PAYLOAD)
+    def test_a_search_without_a_type_returns_every_match(self):
+        result = _tool("GtoPdb_search_ligands").run({"name": "dopamine"})
+
+        assert result["data"]["total_matches"] == 4
+
+    def test_an_empty_string_type_is_treated_as_omitted(self):
+        result = _tool("GtoPdb_search_ligands").run({"name": "dopamine", "type": ""})
+
         assert result["status"] == "success"
-        assert [r["ligandId"] for r in result["data"]] == [13048, 940, 5552, 4261]
-        assert "type_filter" not in result
-        assert any("name=dopamine" in u for u in calls)
-
-    def test_target_search_without_type_returns_all_records(self):
-        result, _ = _run(TARGETS_ENDPOINT, {"name": "serotonin"}, _SEROTONIN_TARGETS)
-        assert len(result["data"]) == len(_SEROTONIN_TARGETS)
-        assert "type_filter" not in result
-
-    def test_empty_string_type_is_treated_as_omitted(self):
-        result, _ = _run(
-            LIGANDS_ENDPOINT, {"name": "dopamine", "type": ""}, _DOPAMINE_PAYLOAD
-        )
-        assert result["status"] == "success"
-        assert len(result["data"]) == 4
-
-
-# ---------------------------------------------------------------------------
-# (d) `approved` -- a total no-op upstream, verified by curl:
-#     /services/ligands?approved=true  -> all 13856 ligands
-#     /services/ligands?approved=false -> the same 13856 ligands
-#     so it too must be enforced client-side.
-# ---------------------------------------------------------------------------
+        assert result["data"]["total_matches"] == 4
 
 
 class TestApprovedFilter:
     def test_approved_true_keeps_only_approved_records(self):
-        result, _ = _run(
-            LIGANDS_ENDPOINT, {"name": "dopamine", "approved": True}, _DOPAMINE_PAYLOAD
+        result = _tool("GtoPdb_search_ligands").run(
+            {"name": "dopamine", "approved": True}
         )
-        assert [r["ligandId"] for r in result["data"]] == [940]
-        assert result["approved_filter"]["records_scanned"] == 4
-        assert result["approved_filter"]["records_matched"] == 1
 
-    def test_approved_true_is_not_forwarded_upstream(self):
-        _, calls = _run(
-            LIGANDS_ENDPOINT, {"name": "dopamine", "approved": True}, _DOPAMINE_PAYLOAD
-        )
-        assert all("approved=" not in u for u in calls), calls
+        assert _names(result, "ligands") == ["dopamine analogue A"]
 
     def test_approved_false_means_all_ligands_as_documented(self):
-        """The parameter has always been documented as 'approved drugs only
-        (true) or all ligands (false/omit)', so false is not a filter."""
-        result, _ = _run(
-            LIGANDS_ENDPOINT, {"name": "dopamine", "approved": False}, _DOPAMINE_PAYLOAD
+        """The parameter is 'approved drugs only (true) or all ligands
+        (false/omit)', so false is not a filter for unapproved ligands."""
+        explicit = _tool("GtoPdb_search_ligands").run(
+            {"name": "dopamine", "approved": False}
         )
-        assert len(result["data"]) == 4
-        assert "approved_filter" not in result
+        omitted = _tool("GtoPdb_search_ligands").run({"name": "dopamine"})
 
-    def test_approved_combines_with_type(self):
-        result, _ = _run(
-            LIGANDS_ENDPOINT,
-            {"name": "dopamine", "type": "Metabolite", "approved": True},
-            _DOPAMINE_PAYLOAD,
+        assert explicit["data"]["total_matches"] == 4
+        assert _names(explicit, "ligands") == _names(omitted, "ligands")
+
+    def test_approved_combines_with_a_type(self):
+        result = _tool("GtoPdb_search_ligands").run(
+            {"name": "dopamine", "type": "Synthetic organic", "approved": True}
         )
-        assert [r["ligandId"] for r in result["data"]] == [940]
 
-    def test_approved_alone_uses_the_one_server_side_filter_gtopdb_honours(self):
-        """With no name search there is nothing to narrow the fetch, so push
-        ?type=Approved (the only approval filter GtoPdb honours) upstream
-        instead of pulling all 13856 ligands."""
-        _, calls = _run(LIGANDS_ENDPOINT, {"approved": True}, _DOPAMINE_PAYLOAD)
-        assert any("type=Approved" in u for u in calls), calls
-
-
-# ---------------------------------------------------------------------------
-# Server-side push-down is an optimisation only: the client-side filter must
-# still run, so a stale/ignored server response can never leak through.
-# ---------------------------------------------------------------------------
-
-
-class TestServerSidePushDownStillFiltersClientSide:
-    def test_type_only_query_pushes_supported_value_upstream(self):
-        _, calls = _run(LIGANDS_ENDPOINT, {"type": "Metabolite"}, _DOPAMINE_PAYLOAD)
-        assert any("type=Metabolite" in u for u in calls), calls
-
-    def test_type_only_query_still_filters_a_non_compliant_response(self):
-        result, _ = _run(LIGANDS_ENDPOINT, {"type": "Metabolite"}, _DOPAMINE_PAYLOAD)
-        assert [r["ligandId"] for r in result["data"]] == [940, 5552]
-
-    def test_peptide_is_never_pushed_upstream_because_it_404s_there(self):
-        _, calls = _run(LIGANDS_ENDPOINT, {"type": "Peptide"}, _DOPAMINE_PAYLOAD)
-        assert all("type=" not in u for u in calls), calls
-
-    def test_peptide_only_query_still_filters_client_side(self):
-        result, _ = _run(LIGANDS_ENDPOINT, {"type": "Peptide"}, _DOPAMINE_PAYLOAD)
-        assert [r["ligandId"] for r in result["data"]] == [13048]
+        assert _names(result, "ligands") == ["dopamine analogue A"]

@@ -164,7 +164,14 @@ def test_the_challenged_apis_are_recorded_with_their_evidence(slug):
     # The substance each entry has to carry: this is not something a header
     # fixes, which is what separates it from the ConoServer User-Agent block.
     assert "JavaScript" in entry["root_cause"]
-    assert "None from an API client" in entry["workaround"]
+    assert entry["workaround"].strip()
+    if slug == "wormbase_rest":
+        # This one has a route after all: Alliance redistributes the same
+        # records with WormBase attribution, so the tools work again.
+        assert "Alliance" in entry["workaround"]
+        assert "12/12" in entry["workaround"]
+    else:
+        assert "None from an API client" in entry["workaround"]
 
 
 @pytest.mark.parametrize(

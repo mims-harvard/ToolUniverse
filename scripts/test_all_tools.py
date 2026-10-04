@@ -29,6 +29,7 @@ import concurrent.futures
 import fnmatch
 import hashlib
 import json
+import signal
 import subprocess
 import sys
 import time
@@ -41,6 +42,13 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 # mostly waiting on live HTTP calls), so a moderate thread pool speeds up
 # --parallel substantially without hammering any single upstream API too hard.
 DEFAULT_PARALLEL_WORKERS = 10
+
+# 10 minutes per pattern. 5 was enough only while failures were cheap:
+# fda_drug_labeling measured 255.89 s once its impossible examples were
+# repaired, 85% of the old budget, so ordinary network variance tipped it
+# into TIMEOUT -- which reads as a tool failure. Named once because three
+# places reported the number and two of them still said five minutes.
+PATTERN_TIMEOUT_SECONDS = 600
 
 CHECKPOINT_SCHEMA_VERSION = 2
 RESULT_STATES = (
@@ -331,7 +339,7 @@ def run_test_for_pattern(
             # sections, and the category measured 255.89 s -- 85% of the old
             # budget -- so normal network variance tipped it into TIMEOUT,
             # which reads as a tool failure and is worse signal than before.
-            timeout=600
+            timeout=PATTERN_TIMEOUT_SECONDS,
         )
         
         # Parse output to extract statistics
@@ -340,13 +348,31 @@ def run_test_for_pattern(
         stats["exit_code"] = result.returncode
         stats["raw_output"] = output
         stats["stderr"] = result.stderr
-        
+
+        # A negative return code is a signal, and a runner reports that as
+        # "incomplete or invalid test output" because the process died before
+        # printing its summary. The xml category was killed by the OOM killer
+        # on every sweep -- 120 GB of RSS, exit 137 -- and the report said only
+        # that its output was unparseable, which reads like a formatting bug.
+        if result.returncode is not None and result.returncode < 0:
+            signal_number = -result.returncode
+            name = signal.Signals(signal_number).name if signal_number in {
+                member.value for member in signal.Signals
+            } else f"signal {signal_number}"
+            hint = (
+                " The usual cause is the OOM killer; check the category's "
+                "memory use before reading this as a test failure."
+                if signal_number == signal.SIGKILL
+                else ""
+            )
+            stats["error"] = f"Killed by {name}.{hint}"
+
         return normalize_result(stats)
-        
+
     except subprocess.TimeoutExpired:
         return normalize_result(
             {
-                "error": "Timeout after 5 minutes",
+                "error": f"Timeout after {PATTERN_TIMEOUT_SECONDS // 60} minutes",
                 "timed_out": True,
                 "exit_code": -1,
             }
@@ -359,7 +385,7 @@ def _format_result_status(result: Dict[str, Any]) -> str:
     """One-line human-readable status for a single pattern's test result."""
     state = normalize_result(result)["state"]
     if state == "timeout":
-        return "TIMEOUT: exceeded 5 minutes"
+        return f"TIMEOUT: exceeded {PATTERN_TIMEOUT_SECONDS // 60} minutes"
     if state == "error":
         return f"ERROR: {result.get('error', 'incomplete or invalid test output')}"
     if state == "failed":
