@@ -325,3 +325,21 @@ def connection_configs(path: Path | None = None) -> List[Dict[str, Any]]:
                 }
             )
     return configs
+
+
+# The platform's public site, for the default service. A local or self-hosted service has no
+# known site, and naming the wrong one would send someone to an account they do not have.
+SITE_FOR_SERVICE = {
+    "https://tooluniverse-backend.onrender.com": "https://connect.aiscientist.tools",
+}
+
+# The account key a consumer of shared machines and published tools uses. Kept apart from
+# TOOLUNIVERSE_SERVICE_KEY, which is the computer-only key `tu remote login` and
+# `tu serve --share` use to share *this* machine -- the platform refuses that kind for anything
+# but registering its one machine, so it can neither join a machine nor call a tool.
+BORROWER_KEY_ENV = "TU_API_KEY"
+
+
+def api_keys_page(service: str) -> str:
+    site = SITE_FOR_SERVICE.get((service or "").rstrip("/"))
+    return f"{site}/api-keys" if site else "the API keys page of your ToolUniverse account"

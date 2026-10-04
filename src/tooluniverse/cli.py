@@ -29,6 +29,17 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
+# Shared with the platform tool, so the two cannot name different sites or key variables.
+from tooluniverse.remote_connections import (
+    BORROWER_KEY_ENV,
+)
+from tooluniverse.remote_connections import (
+    SITE_FOR_SERVICE as _SITE_FOR_SERVICE,
+)
+from tooluniverse.remote_connections import (
+    api_keys_page as _api_keys_page,
+)
+
 try:
     from importlib.metadata import version as _pkg_version
 
@@ -3067,25 +3078,6 @@ def _platform_request(
         ) from exc
 
 
-# The platform's public site, for the default service. A local or self-hosted service has no
-# known site, and naming the wrong one would send someone to an account they do not have.
-_SITE_FOR_SERVICE = {
-    "https://tooluniverse-backend.onrender.com": "https://connect.aiscientist.tools",
-}
-
-# Joining someone else's machine needs an account API key, and that key lives under its own
-# name. TOOLUNIVERSE_SERVICE_KEY already means something else here: the computer-only key that
-# `tu remote login` and `tu serve --share` use to share *this* machine, which the platform
-# deliberately refuses for anything but registering that one machine. Saving a borrower's key
-# under the same name would make sharing and borrowing on one computer overwrite each other.
-BORROWER_KEY_ENV = "TU_API_KEY"
-
-
-def _api_keys_page(service: str) -> str:
-    site = _SITE_FOR_SERVICE.get(service.rstrip("/"))
-    return f"{site}/api-keys" if site else "the API keys page of your ToolUniverse account"
-
-
 def _global_env_path() -> Path:
     return Path.home() / ".tooluniverse" / ".env"
 
@@ -3116,7 +3108,11 @@ def _save_global_env(name: str, value: str) -> Path:
     return path
 
 
-def _borrower_api_key(service: str) -> tuple[str, str, str]:
+def _borrower_api_key(
+    service: str,
+    purpose: str = "Joining someone's machine",
+    then: str = "run this again",
+) -> tuple[str, str, str]:
     """Find the key that joins someone's machine, or help the person get one.
 
     Returns (key, env_name, where) with where in {"shell", "saved", "entered"}.
@@ -3150,7 +3146,7 @@ def _borrower_api_key(service: str) -> tuple[str, str, str]:
             return value, name, "shell" if in_shell[name] else "saved"
 
     page = _api_keys_page(service)
-    lines = ["Joining someone's machine needs an API key from your ToolUniverse account."]
+    lines = [f"{purpose} needs an API key from your ToolUniverse account."]
     try:
         has_computer_login = bool(_read_stored_remote_key())
     except (OSError, ValueError):
@@ -3160,11 +3156,12 @@ def _borrower_api_key(service: str) -> tuple[str, str, str]:
             "  The sign-in from `tu remote login` is for sharing this computer; it cannot "
             "join another one."
         )
-    lines.append(f"  Create an API key at {page}.")
+    # The page's own button reads "New private connection"; naming it is how someone finds it.
+    lines.append(f"  Create one at {page} (the page calls it a private connection).")
     if not sys.stdin.isatty():
         lines.append(
             f"  Then save it once so every terminal has it: add the line "
-            f"{BORROWER_KEY_ENV}=<your key> to {_global_env_path()}, and run this again."
+            f"{BORROWER_KEY_ENV}=<your key> to {_global_env_path()}, and {then}."
         )
         raise RuntimeError("\n".join(lines))
 
@@ -3269,6 +3266,31 @@ def cmd_connect(args: argparse.Namespace) -> None:
     print(f"{action}: {connection['name']}")
     print(f"Tool name: {tool_hint}")
     print("It will load on the next ToolUniverse.load_tools() or `tu serve` start.")
+    if connection.get("kind") == "platform":
+        # Connecting to a published tool needs no key -- its description is public -- but
+        # calling it does. Without this the connect succeeded silently and the key was first
+        # mentioned at call time, possibly by an assistant, long after the person had left the
+        # terminal where they could have fixed it.
+        try:
+            _, env_name, key_source = _borrower_api_key(
+                base_url,
+                purpose="Running this tool",
+                then="the tool will find it the next time it runs",
+            )
+        except RuntimeError as exc:
+            print(f"Note: {exc}")
+        else:
+            if env_name != BORROWER_KEY_ENV:
+                print(
+                    f"Note: only {env_name} is set, and it may hold this computer's sharing "
+                    f"connection, which cannot call tools. Save a private connection from "
+                    f"your account as {BORROWER_KEY_ENV} in {_global_env_path()}."
+                )
+            elif key_source == "shell":
+                print(
+                    f"Note: {env_name} is set in this terminal only. Add it to "
+                    f"{_global_env_path()} so the tool still works in a new one."
+                )
     if target.upper().startswith("TU-SHARE-") and key_source == "shell":
         # The connection reads this variable every time it loads. Set only in this shell,
         # the tools disappear from the next terminal with a 401 -- measured.
