@@ -50,7 +50,7 @@
         "population": "CEU"
       }
     ],
-    "optional_api_keys": [
+    "required_api_keys": [
       "LDLINK_TOKEN"
     ],
     "api_key_info": {

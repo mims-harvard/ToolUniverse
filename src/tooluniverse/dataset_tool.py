@@ -25,7 +25,15 @@ class DatasetTool(BaseTool):
         self._load_dataset()
 
     def _load_dataset(self):
-        """Load the drugbank vocabulary CSV dataset."""
+        """Load the dataset, recording why if it could not be loaded.
+
+        Every failure used to collapse into an empty DataFrame, and both run()
+        paths then said "Dataset not loaded or is empty" -- the same sentence
+        for a missing parquet engine, an unsupported extension and a failed
+        download. _load_error carries the reason through so the caller gets the
+        one that applies.
+        """
+        self._load_error = None
         try:
             if "hf_dataset_path" in self.tool_config:
                 # Download dataset from Hugging Face Hub
@@ -67,7 +75,28 @@ class DatasetTool(BaseTool):
             elif dataset_path.endswith(".pkl"):
                 self.dataset = pd.read_pickle(dataset_path)
             elif dataset_path.endswith(".parquet"):
-                self.dataset = pd.read_parquet(dataset_path)
+                try:
+                    self.dataset = pd.read_parquet(dataset_path)
+                except ImportError as exc:
+                    # pandas needs pyarrow or fastparquet for parquet and
+                    # neither is a ToolUniverse dependency, so the real error
+                    # was "no engine" while the tool reported "Dataset not
+                    # loaded or is empty" -- which reads as an upstream problem.
+                    self._load_error = (
+                        f"{dataset_path.rsplit('/', 1)[-1]} is a parquet file "
+                        "and pandas has no parquet engine installed. Run "
+                        "`pip install pyarrow` (or fastparquet) to use this "
+                        f"tool. Underlying error: {exc}"
+                    )
+                    self.dataset = pd.DataFrame()
+                    return
+            else:
+                self._load_error = (
+                    f"Unsupported dataset format: {dataset_path.rsplit('/', 1)[-1]}. "
+                    "Supported: .csv, .tsv, .txt, .xlsx, .pkl, .parquet."
+                )
+                self.dataset = pd.DataFrame()
+                return
 
             # Clean column names
             self.dataset.columns = self.dataset.columns.str.strip()
@@ -79,12 +108,17 @@ class DatasetTool(BaseTool):
 
         except Exception as e:
             print(f"Error loading dataset: {e}")
+            self._load_error = f"Could not load the dataset: {e}"
             self.dataset = pd.DataFrame()
 
     def run(self, arguments):
         """Main entry point for the tool."""
         if self.dataset is None or self.dataset.empty:
-            return {"status": "error", "error": "Dataset not loaded or is empty"}
+            return {
+                "status": "error",
+                "error": getattr(self, "_load_error", None)
+                or "Dataset not loaded or is empty",
+            }
 
         query_params = deepcopy(self.query_schema)
         expected_param_names = self.parameters.keys()
@@ -394,7 +428,11 @@ class DatasetTool(BaseTool):
     def get_dataset_info(self):
         """Get information about the loaded dataset."""
         if self.dataset is None or self.dataset.empty:
-            return {"status": "error", "error": "Dataset not loaded or is empty"}
+            return {
+                "status": "error",
+                "error": getattr(self, "_load_error", None)
+                or "Dataset not loaded or is empty",
+            }
 
         return {
             "total_records": len(self.dataset),
