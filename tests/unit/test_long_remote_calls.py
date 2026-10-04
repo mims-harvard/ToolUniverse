@@ -37,7 +37,7 @@ def captured_read_timeout(monkeypatch, method):
     client = BaseMCPClient(server_url="https://api.example/relay/x/mcp", transport="http")
     with pytest.raises(Stop):
         asyncio.run(client._make_mcp_request(method, {"name": "predict", "arguments": {}}))
-    return seen["sse_read_timeout"]
+    return seen.get("sse_read_timeout", "library default")
 
 
 def test_a_tool_call_waits_past_the_platforms_cap(monkeypatch):
@@ -47,7 +47,7 @@ def test_a_tool_call_waits_past_the_platforms_cap(monkeypatch):
 
 def test_listing_tools_keeps_the_short_limit(monkeypatch):
     # A wedged server must not hold a load for a quarter of an hour.
-    assert captured_read_timeout(monkeypatch, "tools/list") == 300
+    assert captured_read_timeout(monkeypatch, "tools/list") == "library default"
 
 
 def test_a_deadline_is_said_plainly_and_warns_against_running_twice():

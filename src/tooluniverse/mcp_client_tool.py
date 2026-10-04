@@ -192,18 +192,21 @@ class BaseMCPClient:
             endpoint = self._get_mcp_endpoint("")
             headers = dict(self.headers)
             headers.update(self._resolve_http_headers())
+            # A tool call is often real work on someone else's machine. The library's default
+            # stops reading after 5 minutes: measured, a borrowed model that took 330 seconds
+            # failed at 300 with "Cancelled via cancel scope ...; reason: deadline exceeded"
+            # although the platform allowed it. Everything else keeps the default, so a wedged
+            # server cannot hold a load for this long.
+            long_read = (
+                {"sse_read_timeout": REMOTE_CALL_READ_TIMEOUT}
+                if method == "tools/call"
+                else {}
+            )
             async with streamablehttp_client(
                 endpoint,
                 headers=headers or None,
                 timeout=self.timeout,
-                # A tool call is often real work on someone else's machine. The library's
-                # default stops reading after 5 minutes: measured, a borrowed model that took
-                # 330 seconds failed at 300 with "Cancelled via cancel scope ...; reason:
-                # deadline exceeded" although the platform allowed it. Listing tools keeps the
-                # default, so a wedged server cannot hold a load for this long.
-                sse_read_timeout=(
-                    REMOTE_CALL_READ_TIMEOUT if method == "tools/call" else 300
-                ),
+                **long_read,
             ) as (
                 read_stream,
                 write_stream,
