@@ -2053,6 +2053,29 @@ def _device_authorization_login(service: str, *, no_browser: bool = False) -> st
     raise AssertionError("unreachable")
 
 
+def _graphical_session_available() -> bool:
+    """Is there a desktop here that could show a browser window?
+
+    Python's webbrowser falls back to terminal browsers -- www-browser, links, lynx, w3m --
+    which lab servers often have, and GenericBrowser.open waits for them to exit. Measured
+    against a live platform with a stand-in text browser and no DISPLAY: the person approved
+    the code in their laptop's browser, and `tu remote login` still never finished, because it
+    only starts polling for the approval after the browser call returns. The login was never
+    stored. `tu serve --share` reaches this same function when no key is stored yet, so a
+    first share over SSH hung the same way.
+
+    tuplatform-connect has the same guard (its #96); this copy exists because ToolUniverse
+    cannot assume that package is installed. macOS and Windows always have a window server,
+    and `open` and `start` do not block.
+    """
+    if sys.platform in {"darwin", "win32"}:
+        return True
+    return bool(
+        os.environ.get("DISPLAY", "").strip()
+        or os.environ.get("WAYLAND_DISPLAY", "").strip()
+    )
+
+
 def _device_authorization_attempt(service: str, *, no_browser: bool = False) -> str:
     """Run one short-lived browser authorization request."""
 
@@ -2101,7 +2124,16 @@ def _device_authorization_attempt(service: str, *, no_browser: bool = False) -> 
     print(f"  {verification_url}")
     print(f"Code: {user_code}")
     print("Waiting for approval (Ctrl-C to cancel)...", flush=True)
-    if not no_browser:
+    if no_browser:
+        pass
+    elif not _graphical_session_available():
+        # Not attempted: see _graphical_session_available. Said out loud, so someone over SSH
+        # knows nothing is wrong and nothing is missing.
+        print(
+            "No desktop here to open a browser in, which is normal over SSH. Open the link "
+            "above on any computer -- the code ties it to this one."
+        )
+    else:
         try:
             if not webbrowser.open(verification_url, new=2):
                 print("The browser did not open automatically; use the link above.")
