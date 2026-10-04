@@ -304,6 +304,9 @@ def connection_configs(path: Path | None = None) -> List[Dict[str, Any]]:
                 "tool_prefix": connection.get("prefix", "remote_"),
                 "category": "connected_remote_tools",
                 "timeout": 30,
+                # The name the person chose or was shown when connecting. The loader's own
+                # name is connected_mcp_<n>, which means nothing to them in an error.
+                "connection_name": connection.get("name", ""),
             }
             if connection.get("auth_env"):
                 config["auth_env"] = connection["auth_env"]

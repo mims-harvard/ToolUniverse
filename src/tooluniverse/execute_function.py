@@ -333,6 +333,69 @@ def _load_global_dotenv(workspace_dotenv, logger=None):
             logger.debug(f"Could not load global .env: {exc}")
 
 
+
+def explain_remote_load_failure(
+    config: dict[str, Any], detail: str, environ: dict[str, str] | None = None
+) -> tuple[str, bool]:
+    """Say why a connected remote server's tools did not load, and what fixes it.
+
+    Returns (message, missing_key). missing_key is True only when the configured key is not
+    set at all, which is the case a person fixes by saving one -- the caller words that
+    message so the CLI offers the .tooluniverse/.env tip.
+
+    Every failure used to read "is unavailable: <detail>. The connection was kept; start the
+    server and call load_tools() again." Measured with a borrower who had joined someone's
+    machine and then opened a new terminal: the detail was a 401 from the platform, buried in
+    an httpx traceback string, and the advice to start the server was wrong twice over -- the
+    server was running, and it was not theirs to start. The tool then reported "not found",
+    and the CLI added "check tool name spelling". The actual cause, a key that was not set in
+    that terminal, was never named.
+    """
+    env = os.environ if environ is None else environ
+    label = config.get("connection_name") or config.get("name") or "remote server"
+    # httpx's text is a URL, a status line and a link to MDN, repeated by the caller. The
+    # person reading this needs only whether the platform answered, and with what.
+    import re as _re
+
+    status = _re.search(r"\b([45]\d\d)\b", detail)
+    short = f"the platform answered {status.group(1)}" if status else (
+        detail.splitlines()[0][:160] if detail else "no answer")
+    auth_env = str(config.get("auth_env") or "")
+    url = str(config.get("server_url") or "")
+    lowered = detail.lower()
+
+    if auth_env and not (env.get(auth_env) or "").strip():
+        message = (
+            f"Remote tools from '{label}' require API key {auth_env}, which is not set. "
+            f"Save it once in ~/.tooluniverse/.env as {auth_env}=<your key> so every "
+            f"terminal has it, or export it in this one."
+        )
+        return message, True
+    if auth_env and any(
+        marker in lowered for marker in ("401", "403", "unauthorized", "forbidden")
+    ):
+        message = (
+            f"Remote tools from '{label}' could not load: the platform rejected the key in "
+            f"{auth_env}. It may have expired or been revoked -- create a new API key in "
+            f"your account and save it in ~/.tooluniverse/.env."
+        )
+        return message, False
+    if "/relay/" in url:
+        # A shared machine: the person loading it is a borrower, so "start the server" is
+        # not something they can do.
+        message = (
+            f"Remote tools from '{label}' could not load: the machine that serves them is "
+            f"not reachable right now ({short}). The connection is kept and will load "
+            f"again once its owner brings it back online."
+        )
+        return message, False
+    message = (
+        f"Remote MCP server '{label}' is unavailable: {detail}. The connection was kept; "
+        f"start the server and call load_tools() again."
+    )
+    return message, False
+
+
 class ToolUniverse:
     """
     A comprehensive tool management system for loading, organizing, and executing various scientific and data tools.
@@ -1792,6 +1855,44 @@ class ToolUniverse:
                     existing_names.add(config["name"])
                     self.logger.debug(f"Added sub-package config: {config['name']}")
 
+    def _missing_tool_error(self, function_name: str) -> tuple[str, list[str]]:
+        """Why a tool is absent, and what to do -- for every place that reports it missing.
+
+        A tool from a connected remote server is only registered if that server loaded. When
+        it did not, "not found -- check the spelling" sends someone hunting for a typo that is
+        not there. Measured with a borrower in a new terminal: the load warning named the
+        missing key correctly and the final error still said to check the spelling, because
+        three separate places produce this error and only two had been taught the reason.
+
+        A missing key is worded exactly like the existing "requires API key(s) not set"
+        error, which the CLI recognises and answers with the .tooluniverse/.env tip.
+        """
+        for prefix, failure in getattr(self, "_failed_remote_connections", {}).items():
+            if not prefix or not function_name.startswith(prefix):
+                continue
+            missing = failure.get("missing_env") or ""
+            label = failure.get("label") or "remote server"
+            if missing:
+                return (
+                    (
+                        f"Tool '{function_name}' requires API key(s) not set: {missing}. "
+                        f"It comes from your connection '{label}'; save {missing}=<your key> "
+                        f"in ~/.tooluniverse/.env so every terminal has it."
+                    ),
+                    [
+                        f"Save {missing}=<your key> in ~/.tooluniverse/.env",
+                        "Run `tu connections` to see what this terminal is connected to",
+                    ],
+                )
+            return (
+                f"Tool '{function_name}' is not available. {failure.get('message', '')}",
+                ["Run `tu connections` to see what this terminal is connected to"],
+            )
+        return (
+            f"Tool '{function_name}' not found even after loading tools",
+            ["Check tool name spelling", "Verify tool is available in loaded categories"],
+        )
+
     def _process_mcp_auto_loaders(self):
         """
         Process any MCPAutoLoaderTool instances to automatically discover and register MCP tools.
@@ -1806,6 +1907,7 @@ class ToolUniverse:
             - Updates tool counts after MCP registration
         """
         self.logger.debug("Starting _process_mcp_auto_loaders")
+        self._failed_remote_connections = {}
         import asyncio
         import warnings
 
@@ -1948,11 +2050,21 @@ class ToolUniverse:
             except Exception as e:
                 self.logger.debug("MCP auto-loader processing failed", exc_info=True)
                 detail = _concise_exception_message(e)
-                warning(
-                    f"Remote MCP server '{loader_config['name']}' is unavailable: "
-                    f"{detail}. The connection was kept; start the server and call "
-                    "load_tools() again."
-                )
+                message, missing_key = explain_remote_load_failure(loader_config, detail)
+                # Remembered per tool prefix, so a call to one of this connection's tools
+                # can say why it is missing instead of "not found -- check the spelling".
+                prefix = loader_config.get("tool_prefix")
+                if prefix:
+                    self._failed_remote_connections[prefix] = {
+                        "message": message,
+                        "missing_env": str(loader_config.get("auth_env") or "")
+                        if missing_key
+                        else "",
+                        "label": loader_config.get("connection_name")
+                        or loader_config.get("name")
+                        or "remote server",
+                    }
+                warning(message)
 
         # Update tool count after MCP registration
         self.logger.debug(
@@ -3493,6 +3605,10 @@ class ToolUniverse:
                         )
                     else:
                         _missing_keys = self._excluded_api_key_tools.get(function_name)
+                        missing_steps = [
+                            "Check tool name spelling",
+                            "Verify tool is available in loaded categories",
+                        ]
                         if _missing_keys:
                             error_msg = (
                                 f"Tool '{function_name}' requires API key(s) not set: "
@@ -3500,15 +3616,12 @@ class ToolUniverse:
                                 "Set them as environment variables and retry."
                             )
                         else:
-                            error_msg = f"Tool '{function_name}' not found even after loading tools"
+                            error_msg, missing_steps = self._missing_tool_error(function_name)
                         return self._create_dual_format_error(
                             ToolUnavailableError(
                                 error_msg,
                                 retriable=False,
-                                next_steps=[
-                                    "Check tool name spelling",
-                                    "Verify tool is available in loaded categories",
-                                ],
+                                next_steps=missing_steps,
                             )
                         )
             except Exception as e:
@@ -3730,6 +3843,10 @@ class ToolUniverse:
                     )
                 else:
                     _missing_keys = self._excluded_api_key_tools.get(function_name)
+                    missing_steps = [
+                        "Check tool name spelling",
+                        "Verify tool is available in loaded categories",
+                    ]
                     if _missing_keys:
                         error_msg = (
                             f"Tool '{function_name}' requires API key(s) not set: "
@@ -3737,17 +3854,12 @@ class ToolUniverse:
                             "Set them as environment variables and retry."
                         )
                     else:
-                        error_msg = (
-                            f"Tool '{function_name}' not found even after loading tools"
-                        )
+                        error_msg, missing_steps = self._missing_tool_error(function_name)
                     return self._create_dual_format_error(
                         ToolUnavailableError(
                             error_msg,
                             retriable=False,
-                            next_steps=[
-                                "Check tool name spelling",
-                                "Verify tool is available in loaded categories",
-                            ],
+                            next_steps=missing_steps,
                         )
                     )
         except Exception as e:
@@ -4385,13 +4497,11 @@ class ToolUniverse:
                             "Run `tu status` to check which API keys are configured",
                         ],
                     )
+                missing_msg, missing_steps = self._missing_tool_error(function_name)
                 return ToolUnavailableError(
-                    f"Tool '{function_name}' not found even after loading tools",
+                    missing_msg,
                     retriable=False,
-                    next_steps=[
-                        "Check tool name spelling",
-                        "Verify tool is available in loaded categories",
-                    ],
+                    next_steps=missing_steps,
                 )
 
         tool_instance = self._get_tool_instance(function_name, cache=True)

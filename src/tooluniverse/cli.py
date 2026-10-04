@@ -616,7 +616,14 @@ def _render_run(d: dict) -> str:
     # bad parameter VALUE, not a bad tool name. A genuine unknown-tool-name
     # error is reliably tagged error_details.type == "ToolUnavailableError"
     # (confirmed live); use that structured signal instead of the message text.
-    is_not_found = details.get("type") == "ToolUnavailableError"
+    # The type alone also covers a tool that exists but whose remote connection could not
+    # load -- a machine whose owner is offline, a rejected key. Spelling tips are wrong there;
+    # requiring "not found" as well keeps them for genuinely unknown names. This is stricter
+    # than either test alone, so it cannot reintroduce the R18A-2 false positive above.
+    is_not_found = (
+        details.get("type") == "ToolUnavailableError"
+        and "not found" in short_err.lower()
+    )
     is_api_key_error = "requires api key" in short_err.lower()
     suggestions = d.get("suggestions") or details.get("suggestions") or []
     if is_api_key_error:
@@ -3045,6 +3052,124 @@ def _platform_request(
         ) from exc
 
 
+# The platform's public site, for the default service. A local or self-hosted service has no
+# known site, and naming the wrong one would send someone to an account they do not have.
+_SITE_FOR_SERVICE = {
+    "https://tooluniverse-backend.onrender.com": "https://connect.aiscientist.tools",
+}
+
+# Joining someone else's machine needs an account API key, and that key lives under its own
+# name. TOOLUNIVERSE_SERVICE_KEY already means something else here: the computer-only key that
+# `tu remote login` and `tu serve --share` use to share *this* machine, which the platform
+# deliberately refuses for anything but registering that one machine. Saving a borrower's key
+# under the same name would make sharing and borrowing on one computer overwrite each other.
+BORROWER_KEY_ENV = "TU_API_KEY"
+
+
+def _api_keys_page(service: str) -> str:
+    site = _SITE_FOR_SERVICE.get(service.rstrip("/"))
+    return f"{site}/api-keys" if site else "the API keys page of your ToolUniverse account"
+
+
+def _global_env_path() -> Path:
+    return Path.home() / ".tooluniverse" / ".env"
+
+
+def _save_global_env(name: str, value: str) -> Path:
+    """Write NAME=value into ~/.tooluniverse/.env, replacing any earlier line, at 0600.
+
+    That file is the existing secrets store: ToolUniverse loads it on start without
+    overriding the shell, so a key saved here is there in every new terminal. Exporting it
+    in one shell is what left a borrower's tools failing the next time they opened one.
+    """
+    path = _global_env_path()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        path.parent.chmod(0o700)
+    except OSError:
+        pass
+    kept = []
+    if path.exists():
+        for line in path.read_text().splitlines():
+            if line.split("=", 1)[0].strip() != name:
+                kept.append(line)
+    kept.append(f"{name}={value}")
+    temporary = path.with_name(".env.tmp")
+    temporary.write_text("\n".join(kept) + "\n")
+    temporary.chmod(0o600)
+    temporary.replace(path)
+    return path
+
+
+def _borrower_api_key(service: str) -> tuple[str, str, str]:
+    """Find the key that joins someone's machine, or help the person get one.
+
+    Returns (key, env_name, where) with where in {"shell", "saved", "entered"}.
+
+    Measured before this: a person with nothing set got "joining a share code requires
+    TU_API_KEY or TOOLUNIVERSE_SERVICE_KEY" and nothing about how to get either; a person who
+    had run `tu remote login`, which is what every other sign-in message tells them to do, got
+    the identical error, because that key is stored in a file this never read -- and could not
+    have used, since it is the computer-only kind.
+    """
+    in_shell = {name: bool(os.getenv(name, "").strip())
+                for name in (BORROWER_KEY_ENV, "TOOLUNIVERSE_SERVICE_KEY")}
+    # Workspace file, then the global one, neither overriding the shell -- the precedence
+    # ToolUniverse itself uses. Loaded directly rather than through _load_global_dotenv,
+    # which skips the global file when it is the same path as the workspace one on the
+    # assumption that the workspace file was already loaded. Nothing loads it here, so from a
+    # terminal opened in the home directory -- the usual place a terminal opens -- a saved
+    # key was skipped. A test that ran with the home directory as cwd caught it; the live
+    # probe had not, because it happened to run elsewhere.
+    try:
+        from dotenv import load_dotenv
+    except ImportError:
+        load_dotenv = None
+    if load_dotenv is not None:
+        for candidate in (Path.cwd() / ".tooluniverse" / ".env", _global_env_path()):
+            if candidate.is_file():
+                load_dotenv(candidate, override=False)
+    for name in (BORROWER_KEY_ENV, "TOOLUNIVERSE_SERVICE_KEY"):
+        value = os.getenv(name, "").strip()
+        if value:
+            return value, name, "shell" if in_shell[name] else "saved"
+
+    page = _api_keys_page(service)
+    lines = ["Joining someone's machine needs an API key from your ToolUniverse account."]
+    try:
+        has_computer_login = bool(_read_stored_remote_key())
+    except (OSError, ValueError):
+        has_computer_login = False
+    if has_computer_login:
+        lines.append(
+            "  The sign-in from `tu remote login` is for sharing this computer; it cannot "
+            "join another one."
+        )
+    lines.append(f"  Create an API key at {page}.")
+    if not sys.stdin.isatty():
+        lines.append(
+            f"  Then save it once so every terminal has it: add the line "
+            f"{BORROWER_KEY_ENV}=<your key> to {_global_env_path()}, and run this again."
+        )
+        raise RuntimeError("\n".join(lines))
+
+    import getpass
+
+    print("\n".join(lines))
+    key = getpass.getpass("  Paste it here (it will not be shown): ").strip()
+    if not key:
+        raise RuntimeError("no key was entered, so nothing was changed")
+    if not _valid_remote_key(key):
+        raise RuntimeError(
+            "that does not look like a ToolUniverse API key (they start with tu-sk-); "
+            "nothing was saved"
+        )
+    path = _save_global_env(BORROWER_KEY_ENV, key)
+    os.environ[BORROWER_KEY_ENV] = key
+    print(f"  Saved to {path}; new terminals will have it too.")
+    return key, BORROWER_KEY_ENV, "entered"
+
+
 def cmd_connect(args: argparse.Namespace) -> None:
     """Persist one explicit MCP server, shared server, or marketplace tool."""
     from tooluniverse.remote_connections import (
@@ -3058,20 +3183,26 @@ def cmd_connect(args: argparse.Namespace) -> None:
     base_url = args.service.rstrip("/")
     try:
         if target.upper().startswith("TU-SHARE-"):
-            env_name = (
-                "TU_API_KEY" if os.getenv("TU_API_KEY") else "TOOLUNIVERSE_SERVICE_KEY"
-            )
-            api_key = os.getenv(env_name, "").strip()
-            if not api_key:
-                raise RuntimeError(
-                    "joining a share code requires TU_API_KEY or TOOLUNIVERSE_SERVICE_KEY"
+            api_key, env_name, key_source = _borrower_api_key(base_url)
+            try:
+                joined = _platform_request(
+                    base_url,
+                    "/remote-servers/join",
+                    api_key=api_key,
+                    payload={"share_code": target},
                 )
-            joined = _platform_request(
-                base_url,
-                "/remote-servers/join",
-                api_key=api_key,
-                payload={"share_code": target},
-            )
+            except RuntimeError as exc:
+                if "computer-only connection" in str(exc):
+                    # The platform's own wording is accurate but assumes the reader knows
+                    # there are two kinds of key.
+                    raise RuntimeError(
+                        f"{env_name} holds this computer's sharing connection, which can "
+                        f"register this machine but cannot join another one. Joining needs "
+                        f"an API key from your account: create one at "
+                        f"{_api_keys_page(base_url)} and save it as {BORROWER_KEY_ENV} in "
+                        f"{_global_env_path()}."
+                    ) from exc
+                raise
             server_id = joined.get("server_id")
             if not server_id:
                 raise RuntimeError("platform did not return the joined server")
@@ -3123,6 +3254,13 @@ def cmd_connect(args: argparse.Namespace) -> None:
     print(f"{action}: {connection['name']}")
     print(f"Tool name: {tool_hint}")
     print("It will load on the next ToolUniverse.load_tools() or `tu serve` start.")
+    if target.upper().startswith("TU-SHARE-") and key_source == "shell":
+        # The connection reads this variable every time it loads. Set only in this shell,
+        # the tools disappear from the next terminal with a 401 -- measured.
+        print(
+            f"Note: {env_name} is set in this terminal only. Add it to "
+            f"{_global_env_path()} so the tools still load in a new one."
+        )
 
 
 def cmd_connections(args: argparse.Namespace) -> None:
