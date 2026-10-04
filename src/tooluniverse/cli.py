@@ -2272,6 +2272,7 @@ def _start_remote_tool_server(args: argparse.Namespace) -> None:
         )
 
     local_host, local_url = _local_mcp_endpoint(args.host, args.port)
+    _require_free_port(args.host, args.port)
     print(f"Remote tool server: {server_name}", flush=True)
     print(f"Tools: {', '.join(item['name'] for item in selected)}", flush=True)
     print(f"Local MCP: {local_url}", flush=True)
@@ -2337,6 +2338,39 @@ def _start_remote_tool_server(args: argparse.Namespace) -> None:
         ).run_forever()
     except RelayError as exc:
         raise RuntimeError(str(exc)) from exc
+
+
+def _require_free_port(host: str, port: int) -> None:
+    """Refuse to start where another program already listens.
+
+    The startup check below only connects to the port, and a connection succeeds against
+    whatever is there. Measured with an unrelated MCP service on 8080: this file's own server
+    failed to bind in its thread, the check passed against the other service, and the relay
+    shared that service's tools -- under this server's name -- to the platform.
+    """
+    import socket
+
+    # Bound exactly as the server will bind, so the answer is the server's own.
+    probe = socket.socket(socket.AF_INET6 if ":" in host else socket.AF_INET)
+    try:
+        probe.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        probe.bind((host, port))
+    except OSError as exc:
+        from tooluniverse.remote_pool import suggest_free_port
+
+        spare = suggest_free_port(port)
+        hint = (
+            f"Either stop that program, or give this one a free port:  --port {spare}"
+            if spare is not None
+            else "Stop that program, or pass --port with a port nothing is using."
+        )
+        raise RuntimeError(
+            f"something else on this computer is already using port {port}, so this cannot "
+            f"start. The usual cause is an earlier run of this command that is still going. "
+            f"{hint}"
+        ) from exc
+    finally:
+        probe.close()
 
 
 def _forward_remote_tool_server(args: argparse.Namespace) -> None:
