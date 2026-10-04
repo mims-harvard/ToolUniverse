@@ -103,6 +103,34 @@ from fastmcp import FastMCP
 
 FASTMCP_AVAILABLE = True
 
+# FastMCP's banner checks PyPI and says "Update available: 4.x -- Run: pip install --upgrade
+# fastmcp". ToolUniverse requires fastmcp<4, so following that advice breaks the install it was
+# printed by -- shown to everyone who ran `tu serve my_tool.py --share`. Someone who wants the
+# check can still ask for it with FASTMCP_CHECK_FOR_UPDATES.
+if not os.environ.get("FASTMCP_CHECK_FOR_UPDATES"):
+    import fastmcp as _fastmcp
+
+    _fastmcp.settings.check_for_updates = "off"
+
+
+def _json_default(value: Any) -> Any:
+    """Turn the values scientific code returns into JSON, not their str().
+
+    json.dumps(default=_json_default) turned a numpy array into the text "[0. 3. 6. 9.]" -- measured with
+    a @remote_tool returning an embedding -- so the caller received a string where it expected
+    numbers. numpy arrays and scalars, and pandas frames and series, all have exact JSON forms.
+    Anything else keeps the old fallback.
+    """
+    to_dict = getattr(value, "to_dict", None)
+    if callable(to_dict) and hasattr(value, "columns"):
+        return to_dict(orient="records")
+    tolist = getattr(value, "tolist", None)
+    if callable(tolist):
+        return tolist()
+    if isinstance(value, (set, frozenset)):
+        return sorted(value, key=str)
+    return str(value)
+
 from .execute_function import ToolUniverse
 from .credentials import ContextThreadPoolExecutor
 from .logging_config import (
@@ -160,7 +188,7 @@ def _truncate_response(
         lo, hi = 1, total
         while lo < hi:
             mid = (lo + hi + 1) // 2
-            trial = json.dumps(result[:mid], ensure_ascii=False, default=str)
+            trial = json.dumps(result[:mid], ensure_ascii=False, default=_json_default)
             if len(trial) <= max_chars - 500:  # leave room for metadata
                 lo = mid
             else:
@@ -175,7 +203,7 @@ def _truncate_response(
                 **truncation_meta,
             },
             ensure_ascii=False,
-            default=str,
+            default=_json_default,
         )
 
     # If result is a dict, try to truncate the largest list value
@@ -197,7 +225,7 @@ def _truncate_response(
                     f"_{largest_key}_total": total,
                     **truncation_meta,
                 }
-                trial = json.dumps(trimmed, ensure_ascii=False, default=str)
+                trial = json.dumps(trimmed, ensure_ascii=False, default=_json_default)
                 if len(trial) <= max_chars:
                     return trial
                 keep = keep // 2
@@ -967,7 +995,7 @@ class SMCP(FastMCP):
                         {"tools": [], "result": result}, ensure_ascii=False
                     )
             elif isinstance(result, dict) or isinstance(result, list):
-                serialized = json.dumps(result, ensure_ascii=False, default=str)
+                serialized = json.dumps(result, ensure_ascii=False, default=_json_default)
             else:
                 serialized = json.dumps(
                     {"tools": [], "result": str(result)}, ensure_ascii=False
@@ -2156,11 +2184,13 @@ class SMCP(FastMCP):
                                 {"result": result}, ensure_ascii=False
                             )
                     elif isinstance(result, (dict, list)):
-                        serialized = json.dumps(result, ensure_ascii=False, default=str)
+                        serialized = json.dumps(result, ensure_ascii=False, default=_json_default)
                     else:
                         # For other types, convert to JSON
                         serialized = json.dumps(
-                            {"result": str(result)}, ensure_ascii=False
+                            {"result": result},
+                            ensure_ascii=False,
+                            default=_json_default,
                         )
 
                     # Guard against oversized responses that overflow LLM context

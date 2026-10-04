@@ -4540,7 +4540,13 @@ class ToolUniverse:
         if callable(handler):
             return handler(exception)
 
-        # Fallback for tool instance creation failure or non-BaseTool tools.
+        # Fallback for tool instance creation failure or non-BaseTool tools -- which includes
+        # every @remote_tool function. A ValueError from one is the function refusing its
+        # input, as BaseTool.handle_error already treats it. It used to come back as a
+        # retriable server error with "Retry the request" and "Check service status", which a
+        # caller cannot act on and an assistant would loop on.
+        if isinstance(exception, ValueError):
+            return ToolValidationError(f"{function_name} rejected the input: {exception}")
         return ToolServerError(f"Unexpected error calling {function_name}: {exception}")
 
     def _create_dual_format_error(self, error: ToolError) -> dict:
