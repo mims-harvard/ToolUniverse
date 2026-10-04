@@ -444,8 +444,6 @@ class MCPClientTool(BaseTool, BaseMCPClient):
         return result
 
 
-@register_tool("MCPProxyTool")
-
 def describe_remote_call_failure(
     exc: BaseException, server_url: str, tool_name: str, auth_env: str = ""
 ) -> str:
@@ -513,6 +511,7 @@ def describe_remote_call_failure(
     return detail
 
 
+@register_tool("MCPProxyTool")
 class MCPProxyTool(MCPClientTool):
     """
     A proxy tool that automatically forwards tool calls to an MCP server.
