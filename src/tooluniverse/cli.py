@@ -25,6 +25,7 @@ import os
 import sys
 import threading
 import time
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -2644,6 +2645,34 @@ def default_server_name(suffix: str = "") -> str:
     return f"{host}{suffix}"
 
 
+def unset_pass_env_warning(
+    names: Sequence[str], environment: Mapping[str, str]
+) -> str:
+    """Warn about --pass-env names that are not set, or return "" when all of them are.
+
+    --pass-env names a variable to hand through to a model, and a name that is not set hands
+    through nothing. Silently: the pool starts, the model runs, and it fails later for a reason
+    that no longer looks like a typo in a flag. The mistake is cheap to make -- the whole point
+    of the flag is that the variable is something unusual -- and expensive to find.
+
+    Separate from the command so the wording can be tested. A check buried inside
+    cmd_remote_pool is only reachable by starting a pool.
+
+    An empty value counts as unset: exporting a variable to the empty string hands the model
+    nothing it can use, and the person almost certainly did not mean to.
+    """
+    unset = [name for name in names if not (environment.get(name) or "").strip()]
+    if not unset:
+        return ""
+    one = len(unset) == 1
+    return (
+        f"  Note: --pass-env named {', '.join(unset)}, which "
+        f"{'is' if one else 'are'} not set in this shell, so "
+        f"{'it' if one else 'they'} will not reach the model. "
+        f"Export {'it' if one else 'them'} first, or drop the flag."
+    )
+
+
 def background_command_for_pool(args: argparse.Namespace, server_name: str) -> str:
     """The command that reruns this exact pool as a service that survives the terminal.
 
@@ -2764,13 +2793,18 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
         )
         raise SystemExit(1)
 
+    passed_env = list(args.pass_env or [])
+    warning = unset_pass_env_warning(passed_env, os.environ)
+    if warning:
+        print(warning)
+
     try:
         pool = ProviderPool(
             allow=tuple(usable),
             python=resolve_python(args.python, REMOTE_BY_SLUG[usable[0]]),
             log_dir=args.log_dir,
             schemas=SchemaStore(args.schema_dir),
-            extra_env=tuple(args.pass_env),
+            extra_env=tuple(passed_env),
             footprints=FootprintStore(args.schema_dir),
             vram_headroom_mib=args.vram_headroom,
             max_active=args.max_active,
