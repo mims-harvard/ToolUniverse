@@ -689,6 +689,7 @@ STATIC_LAZY_REGISTRY = {
     "TCDBTool": "tcdb_tool",
     "TCIATool": "tcia_tool",
     "TDCDatasetTool": "tdc_dataset_tool",
+    "TDCDownloadAborted": "tdc_dataset_tool",
     "TDCOracleTool": "tdc_oracle_tool",
     "TIMERTool": "timer_tool",
     "TRIPDatabaseTool": "unified_guideline_tools",

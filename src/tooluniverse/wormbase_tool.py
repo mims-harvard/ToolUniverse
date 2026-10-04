@@ -13,6 +13,7 @@ No authentication required. Free for academic/research use.
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
+from .http_utils import cloudflare_challenge
 from .tool_registry import register_tool
 
 WORMBASE_BASE_URL = "https://rest.wormbase.org/rest"
@@ -101,6 +102,12 @@ class WormBaseTool(BaseTool):
                 "error": "Failed to connect to WormBase API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
+            challenge = cloudflare_challenge(getattr(e, "response", None))
+            if challenge:
+                return {
+                    "status": "error",
+                    "error": f"WormBase is unreachable: {challenge}.",
+                }
             return {
                 "status": "error",
                 "error": f"WormBase API HTTP error: {e.response.status_code}",

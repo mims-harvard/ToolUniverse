@@ -84,7 +84,15 @@ class VEuPathDBTool(BaseTool):
     their shared WDK REST API (POST with JSON body).
 
     Dispatch is by the operation named in the tool config (``fields.operation``
-    or, as a fallback, inferred from the tool name). No authentication required.
+    or, as a fallback, inferred from the tool name).
+
+    The WDK service used to be open and is not any more: every endpoint except
+    the record-type listing answers 401 "Valid API Key required for this
+    endpoint." The key goes in a bare ``Authorization`` header -- not
+    ``Bearer`` -- which is how VEuPathDB's own 401 body distinguishes a missing
+    key from a rejected one: without the header the body is that sentence, with
+    a bogus key it is "HTTP 401 Unauthorized". Their published web-service page
+    does not document the mechanism, so that difference is the evidence.
     """
 
     def __init__(self, tool_config: Dict[str, Any]):
@@ -176,10 +184,14 @@ class VEuPathDBTool(BaseTool):
 
         Raises on transport / HTTP errors; run() converts those to an envelope.
         """
+        headers = {"Content-Type": "application/json", "Accept": "application/json"}
+        api_key = self.credential("VEUPATHDB_API_KEY")
+        if api_key:
+            headers["Authorization"] = api_key
         response = requests.post(
             url,
             json=body,
-            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            headers=headers,
             timeout=self.timeout,
         )
         response.raise_for_status()

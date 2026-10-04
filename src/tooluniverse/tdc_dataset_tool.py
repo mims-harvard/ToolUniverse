@@ -34,6 +34,59 @@ fails on modern RDKit. We install a tiny ``rdkit.six`` shim before importing
 tdc so the package imports cleanly on current RDKit.
 """
 
+from contextlib import contextmanager
+
+# Harvard Dataverse, which hosts every TDC dataset, returns 403 to the literal
+# User-Agent "python-requests/x.y" and 200 to anything else. PyTDC downloads
+# with a bare requests.get, so every load_dataset call fetched a 199-byte
+# "403 Forbidden" HTML page instead of the file. Measured against
+# /api/access/datafile/4259569, the Caco2_Wang file PyTDC asks for:
+#
+#     default (python-requests/2.32.5)   403      199 bytes  text/html
+#     ToolUniverse/1.5.4                 200    82501 bytes  text/tab-separated-values
+#     empty User-Agent                   200    82501 bytes
+#     curl/8.5.0                         200    82501 bytes
+#
+# So this is not a TDC outage and not a Dataverse one: the endpoint, the file
+# ids PyTDC carries and the data are all fine. One blocked header string.
+#
+# PyTDC then read the HTML page as a TSV, printed its first line, and called
+# sys.exit("Please report this error to contact@tdcommons.ai, thanks!").
+# SystemExit is not an Exception, so it passed through every handler here and
+# killed the process -- which is why the sweep reported "incomplete or invalid
+# test output" for the dataset and tdc_dataset categories rather than a failure.
+_DATAVERSE_USER_AGENT = "ToolUniverse (https://github.com/mims-harvard/ToolUniverse)"
+
+
+@contextmanager
+def _requests_user_agent(user_agent: str):
+    """Give requests a User-Agent for the duration, if a caller set none.
+
+    Scoped to the PyTDC call rather than set globally, and it never overrides a
+    header the caller chose.
+    """
+    import requests
+
+    original = requests.sessions.Session.request
+
+    def request_with_user_agent(self, method, url, **kwargs):
+        headers = dict(kwargs.get("headers") or {})
+        if not any(key.lower() == "user-agent" for key in headers):
+            headers["User-Agent"] = user_agent
+            kwargs["headers"] = headers
+        return original(self, method, url, **kwargs)
+
+    requests.sessions.Session.request = request_with_user_agent
+    try:
+        yield
+    finally:
+        requests.sessions.Session.request = original
+
+
+class TDCDownloadAborted(RuntimeError):
+    """PyTDC called sys.exit() instead of raising."""
+
+
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -282,7 +335,14 @@ class TDCDatasetTool(BaseTool):
 
         module = __import__(module_path, fromlist=[class_name])
         problem_cls = getattr(module, class_name)
-        dataset = problem_cls(name=name)
+        try:
+            with _requests_user_agent(_DATAVERSE_USER_AGENT):
+                dataset = problem_cls(name=name)
+        except SystemExit as exc:
+            # PyTDC exits the process on a bad download rather than raising.
+            raise TDCDownloadAborted(
+                f"PyTDC aborted while downloading '{name}': {exc}"
+            ) from exc
         cls._dataset_cache[cache_key] = dataset
         return dataset
 
@@ -335,7 +395,16 @@ class TDCDatasetTool(BaseTool):
             }
 
         try:
-            df = dataset.get_data()
+            with _requests_user_agent(_DATAVERSE_USER_AGENT):
+                df = dataset.get_data()
+        except SystemExit as exc:
+            return {
+                "status": "error",
+                "error": (
+                    f"PyTDC aborted while reading '{name}' ({class_name}): {exc}. "
+                    "It calls sys.exit() on a download it cannot parse."
+                ),
+            }
         except Exception as exc:
             return {
                 "status": "error",

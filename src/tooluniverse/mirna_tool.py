@@ -19,6 +19,7 @@ No authentication required. Free public access.
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
+from .provider_rate_limit import enforce_provider_rate_limit
 
 
 RNACENTRAL_BASE = "https://rnacentral.org/api/v1"
@@ -48,6 +49,33 @@ SPECIES_TAXID = {
     "sus scrofa": "9823",
     "xenopus tropicalis": "8364",
 }
+
+
+# Rate limits by host, applied at the one place every request goes through.
+#
+# The 2026-10-03 sweep ran 10 workers against live APIs and these tools
+# answered 429. Measured afterwards, run on their own, RNAcentral served eight
+# rapid requests without complaint -- so their 429s came from the concurrency,
+# not from a per-second ceiling either tool was crossing alone. EBI was
+# different: by the end of the triage it answered 429 to the *first* request,
+# which is a sustained-use penalty earned over several sweeps.
+#
+# Both are the same fix. A shared bucket per host means the worker pool
+# spends one budget instead of one each, which is what the limiter already
+# does for NCBI across pubmed, icite and medgen.
+_HOST_RATE_LIMITS = (
+    ("rnacentral.org", "rnacentral", 3.0),
+    ("ebi.ac.uk", "ebi", 3.0),
+)
+
+
+def _rate_limited_get(url, **kwargs):
+    """requests.get, after waiting for this host's slot."""
+    for host, provider, rps in _HOST_RATE_LIMITS:
+        if host in url:
+            enforce_provider_rate_limit(provider, "", rps)
+            break
+    return requests.get(url, **kwargs)
 
 
 class miRNASearchTool(BaseTool):
@@ -92,7 +120,7 @@ class miRNASearchTool(BaseTool):
                 "fields": EBI_FIELDS,
             }
 
-            resp = requests.get(EBI_SEARCH_BASE, params=params, timeout=self.timeout)
+            resp = _rate_limited_get(EBI_SEARCH_BASE, params=params, timeout=self.timeout)
             resp.raise_for_status()
             result = resp.json()
 
@@ -211,13 +239,13 @@ class miRNAGetTool(BaseTool):
         # the species-specific fields (rna_type, species, description) from the
         # xrefs endpoint, filtered by taxid when provided.
         url = f"{RNACENTRAL_BASE}/rna/{rnacentral_id}/?format=json"
-        resp = requests.get(url, timeout=self.timeout)
+        resp = _rate_limited_get(url, timeout=self.timeout)
         resp.raise_for_status()
         result = resp.json()
 
         rna_type = species = description = ""
         try:
-            xr = requests.get(
+            xr = _rate_limited_get(
                 f"{RNACENTRAL_BASE}/rna/{rnacentral_id}/xrefs/?format=json&page_size=100",
                 timeout=self.timeout,
             )
@@ -275,7 +303,7 @@ class miRNAGetTool(BaseTool):
             f"?format=json&page_size={min(page_size, 50)}"
         )
 
-        resp = requests.get(url, timeout=self.timeout)
+        resp = _rate_limited_get(url, timeout=self.timeout)
         resp.raise_for_status()
         result = resp.json()
 
@@ -315,7 +343,7 @@ class miRNAGetTool(BaseTool):
             f"?format=json&page_size={min(page_size, 50)}"
         )
 
-        resp = requests.get(url, timeout=self.timeout)
+        resp = _rate_limited_get(url, timeout=self.timeout)
         resp.raise_for_status()
         result = resp.json()
 

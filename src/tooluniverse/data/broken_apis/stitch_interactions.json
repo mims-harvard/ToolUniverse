@@ -1,0 +1,18 @@
+{
+  "api_name": "STITCH interaction endpoints",
+  "base_url": "http://stitch.embl.de/api",
+  "failure_mode": "HTTP 404 on every interaction sub-endpoint: /json/interactions, /tsv/interactions, /json/network and /json/interaction_partners. /json/resolve still answers 200.",
+  "root_cause": "STITCH retired its interaction API while keeping identifier resolution. Probed 2026-10-03: resolve returns 200 with real data for 'aspirin', and the four interaction paths all return a 196-byte Apache 404 page. An /api/v5/ prefix 404s too, and https on stitch.embl.de fails TLS, so there is no moved path to follow.",
+  "confirmed_broken_date": "2026-10-03",
+  "last_retry_date": "2026-10-03",
+  "retry_count": 3,
+  "retry_after": "2027-01-15",
+  "retry_notes": "GET http://stitch.embl.de/api/json/interaction_partners?identifiers=aspirin . A 200 means the interaction API is back. STITCH_resolve_identifier is unaffected and still passes, so a failure there would be a separate problem.",
+  "workaround": "None that answers the same question. STRING serves https://string-db.org/api/json/interaction_partners and returns 200 for identifiers=aspirin, which looks like a drop-in replacement and is not one: STRING holds no chemicals, so it fuzzy-matched 'aspirin' to the gene SLC17A4 and returned that gene's protein-protein interactions (SLC17A4-SLC17A1 at score 0.952, and nine more). Repointing there would answer a different question with confident-looking data, which is worse than the 404. Checked before writing this down.",
+  "investigation_notes": "Found in the 2026-10-03 sweep as 4 failures under the stitch category. The tools already report the 404 clearly (Fix-R19E-3), so they stay registered rather than being removed: a caller asking for chemical-protein interactions learns the upstream is gone, which is the honest answer. STITCH_resolve_identifier continues to work.",
+  "tool_file": "src/tooluniverse/stitch_tool.py",
+  "affected_tools": [
+    "STITCH_get_chemical_protein_interactions",
+    "STITCH_get_interaction_partners"
+  ]
+}
