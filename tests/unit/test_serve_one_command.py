@@ -212,3 +212,22 @@ def test_pass_env_is_wired_through_both_entry_points(monkeypatch):
         assert seen.get("extra_env") == ("SITE_LICENCE",), (
             f"{argv} -> {seen.get('extra_env')}"
         )
+
+
+def test_a_bare_namespace_still_reaches_the_stdio_server(monkeypatch):
+    """Programmatic callers pass a Namespace with none of the CLI's fields.
+
+    Reading args.port directly turned that into "'Namespace' object has no attribute
+    'port'", which cmd_serve then reported as an error and exited 2. tests/tools/ caught it,
+    but pull-request CI does not run that directory, so it shipped. This copy lives under
+    tests/unit/ so the same mistake fails a pull request.
+    """
+    fired: dict = {}
+    monkeypatch.setattr(
+        "tooluniverse.smcp_server.run_default_stdio_server",
+        lambda: fired.update(target="stdio"),
+    )
+
+    cmd_serve(argparse.Namespace())
+
+    assert fired == {"target": "stdio"}

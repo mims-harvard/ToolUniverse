@@ -2420,12 +2420,16 @@ def cmd_serve(args: argparse.Namespace) -> None:
                 "--share needs something to share: TOOL.py files, --forward URL, "
                 "or --allow SLUG,SLUG"
             )
+        # getattr, like every other field here: cmd_serve is also called with a bare
+        # Namespace by code that only wants the stdio server, and reading args.port directly
+        # turned that into "'Namespace' object has no attribute 'port'" -- caught by
+        # tests/tools, which pull-request CI does not run.
         if getattr(args, "allow", None):
-            if args.port is None:
+            if getattr(args, "port", None) is None:
                 args.port = DEFAULT_POOL_MODE_PORT
             cmd_remote_pool(args)
             return
-        if args.port is None:
+        if getattr(args, "port", None) is None:
             args.port = DEFAULT_FILE_MODE_PORT
         if getattr(args, "forward", None):
             _forward_remote_tool_server(args)
