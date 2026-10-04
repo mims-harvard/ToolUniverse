@@ -82,9 +82,9 @@ DEFAULT_IDLE_TTL = 900.0
 DEFAULT_MAX_ACTIVE = 1
 DEFAULT_STARTUP_TIMEOUT = 600.0
 
-# Proxied tool calls can be long GPU jobs. The relay agent gives up at 25s and the
-# platform enforces its own per-tool timeout, so this only prevents a wedged provider
-# from pinning a pool thread forever.
+# Proxied tool calls can be long GPU jobs. The platform enforces each call's own deadline and
+# caps every one at 15 minutes, so this only prevents a wedged provider from pinning a pool
+# thread forever.
 PROXY_TIMEOUT = 900.0
 
 _JSONRPC_PARSE_ERROR = -32700
