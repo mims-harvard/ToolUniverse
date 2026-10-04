@@ -1907,10 +1907,11 @@ def _read_private_bytes(path: Path, *, maximum: int = 1 << 16) -> bytes:
 # The website calls the account key a "private connection". This computer's own key, from
 # `tu remote login`, is a different kind that can only share this machine, so messages about it
 # say "sign-in" rather than reuse that name and send people to make the wrong one.
-NOT_SIGNED_IN = (
-    "Error: this computer is not signed in to ToolUniverse yet. Run `tu remote login` once "
+NOT_SIGNED_IN_REASON = (
+    "this computer is not signed in to ToolUniverse yet. Run `tu remote login` once "
     "(it shows a link to approve in any browser), then run this command again."
 )
+NOT_SIGNED_IN = "Error: " + NOT_SIGNED_IN_REASON
 
 
 def _valid_remote_key(key: str) -> bool:
@@ -2309,10 +2310,7 @@ def _start_remote_tool_server(args: argparse.Namespace) -> None:
         no_browser=getattr(args, "no_browser", False),
     )
     if not api_key:
-        raise RuntimeError(
-            "--share requires a computer-only connection key. Set "
-            "TOOLUNIVERSE_SERVICE_KEY or run interactively to enter it securely."
-        )
+        raise RuntimeError(NOT_SIGNED_IN_REASON)
 
     server_errors = []
 
@@ -2367,7 +2365,7 @@ def _forward_remote_tool_server(args: argparse.Namespace) -> None:
         no_browser=getattr(args, "no_browser", False),
     )
     if not key:
-        raise RuntimeError("a computer-only connection key is required")
+        raise RuntimeError(NOT_SIGNED_IN_REASON)
     try:
         RelayAgent(
             args.service,
@@ -3079,6 +3077,36 @@ def _platform_request(
             error_code=error_code,
             retry_after=retry_after,
         ) from exc
+    except (urllib.error.URLError, TimeoutError) as exc:
+        raise RuntimeError(
+            _unreachable_message(base_url, getattr(exc, "reason", exc))
+        ) from exc
+
+
+def _unreachable_message(base_url: str, reason: object) -> str:
+    """Say why the platform could not be reached, in terms of what the person can do.
+
+    This used to surface as "remote login failed: <urlopen error [Errno 111] Connection
+    refused>" -- accurate, and nothing a scientist can act on. The three cases worth telling
+    apart are the ones with different fixes.
+    """
+    text = str(reason)
+    lowered = text.lower()
+    if "timed out" in lowered:
+        return (
+            f"{base_url} did not answer within 15 seconds. After a quiet period it can take "
+            f"a minute to start up; wait a minute and run this again."
+        )
+    if "certificate" in lowered:
+        return (
+            f"could not open a secure connection to {base_url} ({text}). This is common on "
+            f"university or company networks that inspect secure traffic: ask your IT team "
+            f"for their certificate file and point SSL_CERT_FILE at it, or try another network."
+        )
+    return (
+        f"could not reach {base_url} ({text}). Check this computer's internet connection. "
+        f"On a network that needs a proxy, set HTTPS_PROXY to the address your IT team gives you."
+    )
 
 
 # The platform's public site, for the default service. A local or self-hosted service has no
