@@ -3193,6 +3193,7 @@ def cmd_connect(args: argparse.Namespace) -> None:
 
     target = args.target.strip()
     base_url = args.service.rstrip("/")
+    listed: list[str] = []
     try:
         if target.upper().startswith("TU-SHARE-"):
             api_key, env_name, key_source = _borrower_api_key(base_url)
@@ -3259,13 +3260,16 @@ def cmd_connect(args: argparse.Namespace) -> None:
         print(f"Error: {exc}", file=sys.stderr)
         raise SystemExit(2) from exc
 
-    tool_hint = (
-        connection.get("tool_name") or connection.get("prefix", "remote_") + "<tool>"
-    )
+    if connection.get("tool_name"):
+        listed = [connection["tool_name"]]
     action = "Connected" if changed else "Already connected"
     print(f"{action}: {connection['name']}")
-    print(f"Tool name: {tool_hint}")
-    print("It will load on the next ToolUniverse.load_tools() or `tu serve` start.")
+    if listed:
+        print("Tools:")
+        for name in listed[:10]:
+            print(f"  {name}")
+        if len(listed) > 10:
+            print(f"  ... and {len(listed) - 10} more: tu grep {connection.get('prefix', '')}")
     if connection.get("kind") == "platform":
         # Connecting to a published tool needs no key -- its description is public -- but
         # calling it does. Without this the connect succeeded silently and the key was first
@@ -3298,6 +3302,32 @@ def cmd_connect(args: argparse.Namespace) -> None:
             f"Note: {env_name} is set in this terminal only. Add it to "
             f"{_global_env_path()} so the tools still load in a new one."
         )
+    for line in _after_connect_lines(connection, listed):
+        print(line)
+
+
+def _after_connect_lines(connection: dict, listed: list[str]) -> list[str]:
+    """What to do next, after connecting.
+
+    This used to end with "It will load on the next ToolUniverse.load_tools() or `tu serve`
+    start" and name the tools as "alice_gpu_<tool>" -- a Python call the person had never
+    made, and a placeholder where the name they needed should be. Driven live, nothing said
+    how to try the tool or how to reach it from an AI assistant, which is where most people
+    meant to use it.
+    """
+    lines = [""]
+    if listed:
+        lines += ["Try it here:", f"  tu info {listed[0]}"]
+    else:
+        prefix = connection.get("prefix", "")
+        lines += [f"Its tools are named {prefix}...; list them with:", f"  tu grep {prefix}"]
+    lines += [
+        "",
+        "Use it from an AI assistant: restart any assistant that already runs ToolUniverse",
+        "and these tools are included. To add ToolUniverse to Claude Code:",
+        "  claude mcp add --transport stdio tooluniverse -- tu serve",
+    ]
+    return lines
 
 
 def cmd_connections(args: argparse.Namespace) -> None:
