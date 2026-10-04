@@ -54,33 +54,45 @@
             },
             "pharmacophore_features": {
               "type": "object",
-              "description": "Feature name \u2192 {count, atom_indices} mapping"
+              "description": "Feature name → {count, atom_indices} mapping"
             },
             "feature_counts": {
               "type": "object",
-              "description": "Feature name \u2192 integer count"
+              "description": "Feature name → integer count"
             },
             "feature_centers_3d": {
               "type": [
                 "object",
                 "null"
               ],
-              "description": "Feature name \u2192 [x, y, z] center coordinates (from MMFF conformer)"
+              "description": "Feature name → [x, y, z] center coordinates (from MMFF conformer)"
             },
             "interpretation": {
               "type": "object",
               "properties": {
                 "HBD_count": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "HBA_count": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "aromatic_atom_count": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "hydrophobic_atom_count": {
-                  "type": ["integer", "null"]
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "hbd_hba_ratio": {
                   "type": [
@@ -110,11 +122,14 @@
           ]
         }
       ]
-    }
+    },
+    "required_packages": [
+      "rdkit"
+    ]
   },
   {
     "name": "RDKit_matched_molecular_pair",
-    "description": "Find the Matched Molecular Pair (MMP) transformation between two SMILES compounds using the Hussain-Rea single-cut fragmentation algorithm (rdMMPA). Identifies the maximal common core scaffold and the side-chain substituents that differ between compound A and compound B. Returns: common core SMILES, side-chain A, side-chain B, transformation string (sidechain_A \u2192 sidechain_B), Tanimoto similarity (Morgan r=2), and property deltas (\u0394MW, \u0394cLogP, \u0394HBD, \u0394HBA, \u0394TPSA). Essential for SAR analysis: understand what structural change caused a property improvement or potency shift.",
+    "description": "Find the Matched Molecular Pair (MMP) transformation between two SMILES compounds using the Hussain-Rea single-cut fragmentation algorithm (rdMMPA). Identifies the maximal common core scaffold and the side-chain substituents that differ between compound A and compound B. Returns: common core SMILES, side-chain A, side-chain B, transformation string (sidechain_A → sidechain_B), Tanimoto similarity (Morgan r=2), and property deltas (ΔMW, ΔcLogP, ΔHBD, ΔHBA, ΔTPSA). Essential for SAR analysis: understand what structural change caused a property improvement or potency shift.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -261,6 +276,9 @@
           ]
         }
       ]
-    }
+    },
+    "required_packages": [
+      "rdkit"
+    ]
   }
 ]

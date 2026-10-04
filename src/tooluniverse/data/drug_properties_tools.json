@@ -1,7 +1,7 @@
 [
   {
     "name": "DrugProps_lipinski_filter",
-    "description": "Check drug-likeness of a compound using Lipinski Rule of Five (Ro5), Veber, Pfizer 3/75, Egan, and Ghose filters. Returns MW, cLogP, HBD, HBA, TPSA, RotBonds, Csp3 fraction, and pass/fail status for each filter. Essential first step in hit-to-lead optimization. Lipinski Ro5 (pass = drug-like): MW\u2264500, cLogP\u22645, HBD\u22645, HBA\u226410 (max 1 violation). Veber (oral bioavailability): RotBonds\u226410, TPSA\u2264140. Pfizer 3/75 (reduces promiscuity): cLogP\u22643, TPSA\u226575. Examples: aspirin ('CC(=O)Oc1ccccc1C(=O)O') passes all filters; venetoclax fails Ro5 due to MW>900 (beyond-Ro5 territory).",
+    "description": "Check drug-likeness of a compound using Lipinski Rule of Five (Ro5), Veber, Pfizer 3/75, Egan, and Ghose filters. Returns MW, cLogP, HBD, HBA, TPSA, RotBonds, Csp3 fraction, and pass/fail status for each filter. Essential first step in hit-to-lead optimization. Lipinski Ro5 (pass = drug-like): MW≤500, cLogP≤5, HBD≤5, HBA≤10 (max 1 violation). Veber (oral bioavailability): RotBonds≤10, TPSA≤140. Pfizer 3/75 (reduces promiscuity): cLogP≤3, TPSA≥75. Examples: aspirin ('CC(=O)Oc1ccccc1C(=O)O') passes all filters; venetoclax fails Ro5 due to MW>900 (beyond-Ro5 territory).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -123,11 +123,14 @@
           ]
         }
       ]
-    }
+    },
+    "required_packages": [
+      "rdkit"
+    ]
   },
   {
     "name": "DrugProps_calculate_qed",
-    "description": "Calculate Quantitative Estimate of Drug-likeness (QED) score for a compound using the Bickerton et al. (2012) method. QED integrates 8 molecular descriptors (MW, AlogP, HBA, HBD, PSA, rotatable bonds, aromatic rings, structural alerts) into a single score from 0 (non-drug-like) to 1 (most drug-like). Median QED of approved oral drugs is ~0.49. High QED (\u22650.67) = drug-like; Medium (0.34\u20130.67) = borderline; Low (<0.34) = non-drug-like. Use after DrugProps_lipinski_filter for a more nuanced drug-likeness assessment.",
+    "description": "Calculate Quantitative Estimate of Drug-likeness (QED) score for a compound using the Bickerton et al. (2012) method. QED integrates 8 molecular descriptors (MW, AlogP, HBA, HBD, PSA, rotatable bonds, aromatic rings, structural alerts) into a single score from 0 (non-drug-like) to 1 (most drug-like). Median QED of approved oral drugs is ~0.49. High QED (≥0.67) = drug-like; Medium (0.34–0.67) = borderline; Low (<0.34) = non-drug-like. Use after DrugProps_lipinski_filter for a more nuanced drug-likeness assessment.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -219,7 +222,10 @@
           ]
         }
       ]
-    }
+    },
+    "required_packages": [
+      "rdkit"
+    ]
   },
   {
     "name": "DrugProps_pains_filter",
@@ -331,6 +337,9 @@
           ]
         }
       ]
-    }
+    },
+    "required_packages": [
+      "rdkit"
+    ]
   }
 ]

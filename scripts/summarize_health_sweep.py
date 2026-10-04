@@ -139,6 +139,38 @@ def parse_no_verdict(patterns: list) -> dict:
     return reached
 
 
+def first_errors(patterns: list) -> dict:
+    """{category: its first failure message}, from the sweep's JSON results.
+
+    The markdown report and the progress log hold counts only, so a category
+    that failed in CI and passed everywhere else -- the weekly run is the only
+    place it was seen -- could not be diagnosed from the artifacts. The JSON
+    keeps each test's own line.
+    """
+    import json as _json
+
+    found: dict = {}
+    for pattern in patterns or []:
+        for path in sorted(glob.glob(pattern)):
+            try:
+                results = _json.loads(Path(path).read_text(errors="replace"))
+            except (OSError, ValueError):
+                continue
+            for category, result in (results.get("results") or {}).items():
+                if category in found or not isinstance(result, dict):
+                    continue
+                for line in (result.get("raw_output") or "").splitlines():
+                    line = line.strip()
+                    if line.startswith(("\u274c", "\u26a0")):
+                        for marker in ("Failed - ", "ERROR - ", "Schema Mismatch: "):
+                            if marker in line:
+                                line = line.split(marker, 1)[1]
+                                break
+                        found[category] = line[:220]
+                        break
+    return found
+
+
 def load_baseline(path: str | Path) -> set:
     file = Path(path)
     if not file.exists():
@@ -153,7 +185,7 @@ def load_baseline(path: str | Path) -> set:
 
 def build_summary(
     results, counts, timed_out, baseline, expected_total,
-    shards_seen=0, shards_expected=0, no_verdict=None,
+    shards_seen=0, shards_expected=0, no_verdict=None, errors=None,
 ) -> tuple[str, dict]:
     failing = {c for c, ok in results.items() if not ok}
     passing = set(results) - failing
@@ -215,6 +247,11 @@ def build_summary(
                 for c in new
             )
         )
+        explained = [c for c in new if (errors or {}).get(c)]
+        if explained:
+            lines += ["", "<details><summary>First error per new failure</summary>", ""]
+            lines += [f"- `{c}`: {(errors or {})[c]}" for c in explained]
+            lines += ["", "</details>"]
         lines += [
             "",
             "> Not in `.github/known_failing_categories.txt`. Reproduce before "
@@ -267,6 +304,12 @@ def main(argv=None) -> int:
     parser.add_argument(
         "--logs", nargs="+", required=True, help="glob(s) of shard logs"
     )
+    parser.add_argument(
+        "--results",
+        nargs="*",
+        default=[],
+        help="glob(s) of the sweep's JSON results, for each failure's own message",
+    )
     parser.add_argument("--baseline", required=True)
     parser.add_argument("--history", help="JSONL file to append one row to")
     parser.add_argument("--summary", help="file to write the Markdown summary to")
@@ -295,6 +338,7 @@ def main(argv=None) -> int:
 
     results, counts, timed_out, parsed_total, shards_seen = parse_logs(args.logs)
     no_verdict = parse_no_verdict(args.logs)
+    errors = first_errors(args.results)
     # The shards state their own slice size, so the run's expected total is
     # known without being told. Passing --expected-total still wins.
     expected_total = args.expected_total or parsed_total
@@ -308,6 +352,7 @@ def main(argv=None) -> int:
         expected_total,
         shards_seen=shards_seen,
         no_verdict=no_verdict,
+        errors=errors,
         shards_expected=args.shard_count,
     )
 

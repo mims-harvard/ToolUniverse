@@ -105,6 +105,7 @@ jobs:
             --skip-remote --skip-mcp --parallel \
             --shard ${{ matrix.shard }}/${{ env.SHARD_COUNT }} \
             --output TOOL_TEST_REPORT_${{ matrix.shard }}.md $PATTERN_ARG \
+            --json-output TOOL_TEST_RESULTS_${{ matrix.shard }}.json \
             2>&1 | tee sweep_output_${{ matrix.shard }}.log
 
       - name: Upload shard results
@@ -112,8 +113,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sweep-shard-${{ matrix.shard }}
+          # The JSON carries each test's own error message; the .md and the log
+          # carry only counts. Without it a failure that happens only in CI --
+          # a missing package, a datacenter IP an upstream refuses -- cannot be
+          # diagnosed from the run at all.
           path: |
             TOOL_TEST_REPORT_${{ matrix.shard }}.md
+            TOOL_TEST_RESULTS_${{ matrix.shard }}.json
             sweep_output_${{ matrix.shard }}.log
           if-no-files-found: warn
           retention-days: 90
@@ -145,6 +151,7 @@ jobs:
         run: |
           python scripts/summarize_health_sweep.py \
             --logs 'shards/*/sweep_output_*.log' \
+            --results 'shards/*/TOOL_TEST_RESULTS_*.json' \
             --baseline .github/known_failing_categories.txt \
             --history .github/tool-health-history.jsonl \
             --summary "$GITHUB_STEP_SUMMARY" \
