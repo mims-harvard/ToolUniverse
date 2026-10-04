@@ -45,6 +45,19 @@ except ImportError:
     )
 
 
+def _missing_distributions(names):
+    """The declared distributions that are not installed, by pip name."""
+    from importlib import metadata
+
+    missing = []
+    for name in names:
+        try:
+            metadata.version(name)
+        except metadata.PackageNotFoundError:
+            missing.append(name)
+    return missing
+
+
 def schema_describes_envelope(schema, _depth=0):
     """True when *schema* describes the {"status", "data"} envelope itself.
 
@@ -251,6 +264,28 @@ def run_tests(
                 continue
 
             # Check if tool requires API keys that are not available
+            # Skip a tool whose declared packages are not installed.
+            # required_packages has been declared by 119 tools and read by
+            # nothing but `tu info`, so a tool needing pybiolib or py3Dmol was
+            # run anyway and counted as a failure no fix to the tool could
+            # clear. Checked by distribution name, which is what the field
+            # holds -- biopython imports as Bio and pybiolib as biolib, so an
+            # import-name check would need a mapping that drifts.
+            missing_packages = _missing_distributions(
+                tool.get("required_packages") or []
+            )
+            if missing_packages:
+                if args.verbose:
+                    print(
+                        f"  ⏭️  {name}: Skipped (needs "
+                        f"{', '.join(missing_packages)} installed)"
+                    )
+                stats["skipped"] += 1
+                stats["skipped_missing_package"] = (
+                    stats.get("skipped_missing_package", 0) + 1
+                )
+                continue
+
             required_keys = tool.get("required_api_keys", [])
             if required_keys:
                 missing_keys = [key for key in required_keys if not os.getenv(key)]
@@ -505,6 +540,8 @@ def main():
         print(f"Skipped local input: {stats['skipped_local_input']}")
     if stats.get("skipped_long_running"):
         print(f"Skipped long running: {stats['skipped_long_running']}")
+    if stats.get("skipped_missing_package"):
+        print(f"Skipped missing package: {stats['skipped_missing_package']}")
     print("-" * 30)
     print(f"Schema Valid:     {stats['schema_valid']}")
     print(f"Schema Invalid:   {stats['schema_invalid']}")

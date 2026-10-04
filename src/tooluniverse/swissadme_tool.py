@@ -244,6 +244,9 @@ class SwissADMETool(BaseTool):
         Returns the CSV text content on success, or None on failure.
         """
         # Format input: "SMILES name" or just "SMILES"
+        # Reset here, not at each caller, so a reason from an earlier call
+        # can never be reported for this one.
+        self._last_failure = None
         if name:
             smiles_input = "{} {}".format(smiles.strip(), name.strip())
         else:
@@ -262,6 +265,19 @@ class SwissADMETool(BaseTool):
         )
 
         if resp.status_code != 200:
+            # Recorded so the caller can say what happened. Returning a bare
+            # None made every failure read as a bad SMILES -- including a 403
+            # from Apache that refuses this host outright, for which "Verify
+            # the SMILES is valid" sent the user to check aspirin's structure.
+            self._last_failure = (
+                f"SwissADME answered HTTP {resp.status_code} to the submission"
+                + (
+                    ", which is the server refusing this client, not a judgement "
+                    "on the molecule"
+                    if resp.status_code in (401, 403, 429)
+                    else ""
+                )
+            )
             return None
 
         # Extract the CSV URL from the HTML response
@@ -278,6 +294,10 @@ class SwissADMETool(BaseTool):
         # Fetch the CSV
         csv_resp = self.session.get(csv_url, timeout=30)
         if csv_resp.status_code != 200:
+            self._last_failure = (
+                f"SwissADME accepted the job but its results file answered "
+                f"HTTP {csv_resp.status_code}"
+            )
             return None
 
         return csv_resp.text
@@ -332,7 +352,8 @@ class SwissADMETool(BaseTool):
         if not csv_text:
             return {
                 "status": "error",
-                "error": "Failed to compute ADME properties for the given SMILES. "
+                "error": getattr(self, "_last_failure", None)
+                or "Failed to compute ADME properties for the given SMILES. "
                 "Verify the SMILES is valid and represents a druglike small molecule.",
             }
 
@@ -449,7 +470,8 @@ class SwissADMETool(BaseTool):
         if not csv_text:
             return {
                 "status": "error",
-                "error": "Failed to compute properties for the given SMILES. "
+                "error": getattr(self, "_last_failure", None)
+                or "Failed to compute properties for the given SMILES. "
                 "Verify the SMILES is valid and represents a druglike small molecule.",
             }
 

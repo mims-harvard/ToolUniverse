@@ -399,12 +399,17 @@ def _format_result_status(result: Dict[str, Any]) -> str:
         reasons = []
         local_input = result.get("skipped_local_input", 0)
         long_running = result.get("skipped_long_running", 0)
+        missing_package = result.get("skipped_missing_package", 0)
+        if missing_package:
+            reasons.append(
+                f"{missing_package} need a package that is not installed"
+            )
         if local_input:
             reasons.append(f"{local_input} need an input file the caller supplies")
         if long_running:
             reasons.append(f"{long_running} poll an upstream job for longer than "
                            "this budget")
-        credential = skipped - local_input - long_running
+        credential = skipped - local_input - long_running - missing_package
         if credential > 0:
             reasons.append(
                 f"{credential} need a credential this run does not have"
@@ -638,6 +643,7 @@ _OUTPUT_LABELS: List[Tuple[str, str]] = [
     ("Skipped:", "skipped"),
     ("Skipped local input:", "skipped_local_input"),
     ("Skipped long running:", "skipped_long_running"),
+    ("Skipped missing package:", "skipped_missing_package"),
 ]
 
 
