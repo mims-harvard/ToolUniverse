@@ -2445,7 +2445,18 @@ def cmd_serve(args: argparse.Namespace) -> None:
         else:
             from tooluniverse.smcp_server import run_default_stdio_server
 
-            run_default_stdio_server()
+            # run_default_stdio_server parses sys.argv itself, and under `tu serve` that still
+            # holds "serve", which it does not know -- so `tu serve` exited with
+            # "unrecognized arguments: serve" and never started the MCP server. The
+            # `tooluniverse` entry point worked, because its argv is just the program name.
+            # The only test of this path mocked the server, so the parse never ran in a test.
+            program = sys.argv[0] if sys.argv else "tu"
+            saved_argv = sys.argv
+            sys.argv = [program]
+            try:
+                run_default_stdio_server()
+            finally:
+                sys.argv = saved_argv
     except Exception as exc:
         print(f"Error: {exc}", file=sys.stderr)
         raise SystemExit(2) from exc

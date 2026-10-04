@@ -231,3 +231,25 @@ def test_a_bare_namespace_still_reaches_the_stdio_server(monkeypatch):
     cmd_serve(argparse.Namespace())
 
     assert fired == {"target": "stdio"}
+
+
+def test_the_stdio_server_is_handed_an_argv_it_can_parse(monkeypatch):
+    """The stdio server parses sys.argv itself; "serve" in it made `tu serve` exit 2.
+
+    Mocking run_default_stdio_server outright is how that survived, so this mock records the
+    argv it would have parsed instead of ignoring it.
+    """
+    import sys
+
+    seen: dict = {}
+    monkeypatch.setattr(
+        "tooluniverse.smcp_server.run_default_stdio_server",
+        lambda: seen.update(argv=list(sys.argv)),
+    )
+    monkeypatch.setattr(sys, "argv", ["tu", "serve"])
+
+    cmd_serve(argparse.Namespace())
+
+    assert seen["argv"] == ["tu"]
+    # And the caller's argv is left as it was.
+    assert sys.argv == ["tu", "serve"]

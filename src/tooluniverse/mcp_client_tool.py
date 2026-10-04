@@ -445,6 +445,74 @@ class MCPClientTool(BaseTool, BaseMCPClient):
 
 
 @register_tool("MCPProxyTool")
+
+def describe_remote_call_failure(
+    exc: BaseException, server_url: str, tool_name: str, auth_env: str = ""
+) -> str:
+    """Say why a call to a connected remote tool failed, in words an assistant can relay.
+
+    The error used to be str(exc). A call that fails on the network is wrapped by anyio in an
+    exception group, so an assistant whose borrowed machine had gone offline received
+    "unhandled errors in a TaskGroup (1 sub-exception)" and passed it on to the scientist.
+
+    For a machine reached through the platform's relay, the relay's own JSON body says whether
+    the call may already have run. That decides the advice: retrying a call that may have
+    executed would run a GPU job twice, so "try again later" is only said when the platform
+    reports that it did not.
+    """
+    from .utils import concise_exception_message, leaf_exception
+
+    leaf = leaf_exception(exc)
+    detail = concise_exception_message(exc)
+    response = getattr(leaf, "response", None)
+    status = getattr(response, "status_code", None)
+    if "/relay/" not in (server_url or "") or not isinstance(status, int):
+        return detail
+
+    body = {}
+    try:
+        parsed = response.json()
+        if isinstance(parsed, dict):
+            body = parsed
+    except Exception:  # noqa: BLE001 - a streamed or non-JSON body; fall back to the status
+        body = {}
+
+    if status in (401, 403):
+        key = f"the key in {auth_env}" if auth_env else "your API key"
+        return (
+            f"'{tool_name}' was refused (HTTP {status}): the platform rejected {key}. It may "
+            f"have expired, been revoked, or lost access to this machine -- create a new API "
+            f"key in your account and save it in ~/.tooluniverse/.env."
+        )
+    if status == 402:
+        return (
+            f"'{tool_name}' was refused: the machine's owner has set a limit on how many calls "
+            f"it serves, and it has been reached. Ask the owner to raise it."
+        )
+    if status >= 500:
+        if body.get("may_have_executed"):
+            return (
+                f"The machine that serves '{tool_name}' stopped answering (HTTP {status}), and "
+                f"the call may already have started there. Do not run it again automatically: "
+                f"check with the machine's owner whether it finished."
+            )
+        if body.get("may_have_executed") is False:
+            return (
+                f"The machine that serves '{tool_name}' is not reachable right now (HTTP "
+                f"{status}), and the call did not run. It is safe to try again later; the "
+                f"machine belongs to someone else, so it comes back when its owner "
+                f"reconnects it."
+            )
+        # The body could not be read, so whether the call started is unknown. Claiming it is
+        # safe to retry without the platform saying so is how a job runs twice.
+        return (
+            f"The machine that serves '{tool_name}' is not reachable right now (HTTP "
+            f"{status}). Whether the call started is unknown, so check with the machine's "
+            f"owner before running it again."
+        )
+    return detail
+
+
 class MCPProxyTool(MCPClientTool):
     """
     A proxy tool that automatically forwards tool calls to an MCP server.
@@ -538,7 +606,16 @@ class MCPProxyTool(MCPClientTool):
                     return self._normalize_result(result)
                 return _unwrap_mcp_tool_result(result)
             except Exception as e:
-                return {"status": "error", "error": str(e)}
+                return {
+                    "status": "error",
+                    "error": describe_remote_call_failure(
+                        e,
+                        self.server_url,
+                        # The name the caller used (prefixed), not the remote server's own.
+                        (self.tool_config or {}).get("name") or self.target_tool_name,
+                        getattr(self, "auth_env", ""),
+                    ),
+                }
             finally:
                 # Always clean up session
                 await self._close_session()

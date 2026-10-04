@@ -40,6 +40,8 @@ from concurrent.futures import as_completed
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 from .utils import read_json_list, evaluate_function_call, extract_function_call_json
+# Shared with mcp_client_tool, which needs the same unwrapping at call time.
+from .utils import concise_exception_message as _concise_exception_message
 from .exceptions import (
     ToolError,
     ToolUnavailableError,
@@ -87,24 +89,6 @@ LAZY_LOADING_ENABLED = (
 )
 
 
-def _concise_exception_message(exc: BaseException) -> str:
-    """Return the most useful leaf message without dumping an exception group."""
-    seen = set()
-    current = exc
-    while current is not None and id(current) not in seen:
-        seen.add(id(current))
-        children = getattr(current, "exceptions", None)
-        if children:
-            current = children[0]
-            continue
-        nested = current.__cause__ or current.__context__
-        if nested is not None:
-            current = nested
-            continue
-        message = str(current).strip()
-        return message or type(current).__name__
-    message = str(exc).strip()
-    return message or type(exc).__name__
 
 
 if LAZY_LOADING_ENABLED:
