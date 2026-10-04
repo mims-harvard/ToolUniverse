@@ -499,6 +499,19 @@ class BaseRESTTool(BaseTool):
                 challenge = cloudflare_challenge(response)
                 if challenge:
                     error = f"{self.api_name} is unreachable: {challenge}."
+                elif 500 <= response.status_code < 600:
+                    # Name the server error. "MouseMine_search API error" for
+                    # a 504 reads like a problem with the request; it is the
+                    # upstream being down, and the caller's next move is to
+                    # wait rather than to check their query. 7 categories in
+                    # the 2026-10-04 sweep were 5xx -- 502 from SKEMPI, 503
+                    # from iPTMnet and EWAS Catalog, 504 from CATH and
+                    # MouseMine -- all reported with that same flat sentence.
+                    error = (
+                        f"{self.api_name} returned HTTP "
+                        f"{response.status_code}: the service is failing on "
+                        "its side, not rejecting this request"
+                    )
                 else:
                     error = f"{self.api_name} API error"
                 alternatives = (self.tool_config.get("fields") or {}).get(
