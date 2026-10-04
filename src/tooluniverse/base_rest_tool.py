@@ -14,7 +14,11 @@ import requests
 import urllib.parse
 from typing import Any, Dict, Optional, Callable
 from .base_tool import BaseTool
-from .http_utils import redact_url_secrets, request_with_retry
+from .http_utils import (
+    cloudflare_challenge,
+    redact_url_secrets,
+    request_with_retry,
+)
 from .provider_rate_limit import enforce_provider_rate_limit
 from .shared_http_session import create_shared_pool_session
 
@@ -481,9 +485,19 @@ class BaseRESTTool(BaseTool):
 
             # Check for errors (accept any 2xx success status)
             if not (200 <= response.status_code < 300):
+                # Every config-driven tool shares this path, so a Cloudflare
+                # challenge is named here rather than in each of them. POWO
+                # reported only "POWO_search_plants API error" for a 403 that
+                # is the same managed challenge as WormBase and FooDB, and
+                # that message sends a user looking for a credential problem.
+                challenge = cloudflare_challenge(response)
                 return {
                     "status": "error",
-                    "error": f"{self.api_name} API error",
+                    "error": (
+                        f"{self.api_name} is unreachable: {challenge}."
+                        if challenge
+                        else f"{self.api_name} API error"
+                    ),
                     "url": url,
                     "status_code": response.status_code,
                     "detail": redact_url_secrets((response.text or "")[:500]),

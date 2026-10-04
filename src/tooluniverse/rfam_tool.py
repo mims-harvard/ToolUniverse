@@ -343,12 +343,20 @@ class RfamTool(BaseTool):
         url = f"{RFAM_BASE_URL}/family/{family_id}/structures"
 
         headers = {}
+        params = {}
         if format_type == "json":
             headers["Accept"] = "application/json"
+            # This one endpoint ignores the Accept header and answers HTTP 500
+            # without the query parameter. Measured against RF00002: every
+            # other family route -- /family/{id}, /acc, /id, /regions, /tree/ --
+            # returns 200 with the header alone, and only /structures needs
+            # ?content-type=application/json, with which it returns the mapping.
+            params["content-type"] = "application/json"
         elif format_type == "xml":
             headers["Accept"] = "text/xml"
+            params["content-type"] = "text/xml"
 
-        response = requests.get(url, headers=headers, timeout=30)
+        response = requests.get(url, headers=headers, params=params, timeout=30)
 
         if response.status_code == 200:
             if format_type == "json":

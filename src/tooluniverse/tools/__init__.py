@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2696 scientific tools.
+Type-safe Python interface to 2689 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -535,7 +535,6 @@ from .EPMC_get_references import EPMC_get_references
 from .EPMC_get_text_mined_annotations import EPMC_get_text_mined_annotations
 from .ERDDAP_get_dataset_info import ERDDAP_get_dataset_info
 from .ERDDAP_search_datasets import ERDDAP_search_datasets
-from .ESM2_score_missense_variant import ESM2_score_missense_variant
 from .ESMFold_predict_structure import ESMFold_predict_structure
 from .EVA_get_clustered_variant_by_rs import EVA_get_clustered_variant_by_rs
 from .EVA_get_variants_by_gene import EVA_get_variants_by_gene
@@ -1287,7 +1286,6 @@ from .ITIS_get_full_record import ITIS_get_full_record
 from .ITIS_get_hierarchy import ITIS_get_hierarchy
 from .ITIS_search_by_common_name import ITIS_search_by_common_name
 from .ITIS_search_by_scientific_name import ITIS_search_by_scientific_name
-from .IUCN_get_conservation_status import IUCN_get_conservation_status
 from .IUPred3_predict_disorder import IUPred3_predict_disorder
 from .IdentifiersOrg_get_namespace import IdentifiersOrg_get_namespace
 from .IdentifiersOrg_list_namespaces import IdentifiersOrg_list_namespaces
@@ -1350,7 +1348,6 @@ from .KLIFS_get_structures import KLIFS_get_structures
 from .KLIFS_get_structures_by_pdb import KLIFS_get_structures_by_pdb
 from .KLIFS_list_kinases import KLIFS_list_kinases
 from .L1000FWD_sig_search import L1000FWD_sig_search
-from .LDlink_get_proxies import LDlink_get_proxies
 from .LINCS_list_libraries import LINCS_list_libraries
 from .LINCS_search_signatures import LINCS_search_signatures
 from .LNCipedia_get_lncrna import LNCipedia_get_lncrna
@@ -2552,11 +2549,7 @@ from .VDJDB_get_antigen_specificity import VDJDB_get_antigen_specificity
 from .VDJDB_get_database_summary import VDJDB_get_database_summary
 from .VDJDB_search_cdr3 import VDJDB_search_cdr3
 from .VEP_predict_pathogenicity import VEP_predict_pathogenicity
-from .VEuPathDB_get_gene_record import VEuPathDB_get_gene_record
-from .VEuPathDB_list_gene_searches import VEuPathDB_list_gene_searches
-from .VEuPathDB_list_organism_searches import VEuPathDB_list_organism_searches
 from .VEuPathDB_list_record_types import VEuPathDB_list_record_types
-from .VEuPathDB_search_genes_by_organism import VEuPathDB_search_genes_by_organism
 from .VariantValidator_format_genomic_to_transcripts import (
     VariantValidator_format_genomic_to_transcripts,
 )
@@ -3753,7 +3746,6 @@ __all__ = [
     "EPMC_get_text_mined_annotations",
     "ERDDAP_get_dataset_info",
     "ERDDAP_search_datasets",
-    "ESM2_score_missense_variant",
     "ESMFold_predict_structure",
     "EVA_get_clustered_variant_by_rs",
     "EVA_get_variants_by_gene",
@@ -4275,7 +4267,6 @@ __all__ = [
     "ITIS_get_hierarchy",
     "ITIS_search_by_common_name",
     "ITIS_search_by_scientific_name",
-    "IUCN_get_conservation_status",
     "IUPred3_predict_disorder",
     "IdentifiersOrg_get_namespace",
     "IdentifiersOrg_list_namespaces",
@@ -4336,7 +4327,6 @@ __all__ = [
     "KLIFS_get_structures_by_pdb",
     "KLIFS_list_kinases",
     "L1000FWD_sig_search",
-    "LDlink_get_proxies",
     "LINCS_list_libraries",
     "LINCS_search_signatures",
     "LNCipedia_get_lncrna",
@@ -5338,11 +5328,7 @@ __all__ = [
     "VDJDB_get_database_summary",
     "VDJDB_search_cdr3",
     "VEP_predict_pathogenicity",
-    "VEuPathDB_get_gene_record",
-    "VEuPathDB_list_gene_searches",
-    "VEuPathDB_list_organism_searches",
     "VEuPathDB_list_record_types",
-    "VEuPathDB_search_genes_by_organism",
     "VariantValidator_format_genomic_to_transcripts",
     "VariantValidator_gene2transcripts",
     "VariantValidator_validate_variant",

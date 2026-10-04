@@ -17,7 +17,7 @@ def SAbDab_get_structure_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get per-structure curated antibody annotations from SAbDab for a PDB ID. Returns the SAbDab summa...
 
@@ -40,7 +40,7 @@ def SAbDab_get_structure_summary(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
