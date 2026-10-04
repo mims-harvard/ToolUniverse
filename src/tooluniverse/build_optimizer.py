@@ -3,7 +3,7 @@
 import json
 import hashlib
 from pathlib import Path
-from typing import Dict, Any, Set, Tuple
+from typing import Any, Dict, Optional, Set, Tuple
 
 # Fields excluded from hash calculation and comparison (metadata/timestamp fields)
 # `source_file` is the absolute path the config was loaded from, so including
@@ -133,6 +133,7 @@ def get_changed_tools(
     metadata_file: Path,
     force_regenerate: bool = False,
     verbose: bool = False,
+    known_tool_names: Optional[Set[str]] = None,
 ) -> Tuple[list, list, list, Dict[str, list]]:
     """Get lists of new, changed, and unchanged tools.
 
@@ -141,6 +142,16 @@ def get_changed_tools(
         metadata_file: Path to metadata file storing previous hashes
         force_regenerate: If True, mark all tools as changed
         verbose: If True, provide detailed change information
+        known_tool_names: Every tool declared in a built-in config. An entry
+            for a tool missing from *current_tools* is carried forward when
+            its name is still declared, and dropped when it is not.
+
+            Without this the file was rebuilt from current_tools alone, which
+            is the key-filtered set, so a machine holding no credentials wrote
+            19 fewer entries than one holding them and regenerating anywhere
+            else produced a diff. A carried-forward hash stays correct: if the
+            tool's config changed while it was ungated, the mismatch is caught
+            the moment it loads again.
 
     Returns:
         Tuple of (new_tools, changed_tools, unchanged_tools, change_details)
@@ -186,7 +197,14 @@ def get_changed_tools(
             else:
                 unchanged_tools.append(tool_name)
 
+    # Carry forward an entry whose tool this environment could not load, so
+    # the file records every built-in tool rather than today's loadable subset.
+    if known_tool_names is not None:
+        for tool_name, old_hash in old_metadata.items():
+            if tool_name not in new_metadata and tool_name in known_tool_names:
+                new_metadata[tool_name] = old_hash
+
     # Save updated metadata
-    save_metadata(new_metadata, metadata_file)
+    save_metadata(dict(sorted(new_metadata.items())), metadata_file)
 
     return new_tools, changed_tools, unchanged_tools, change_details
