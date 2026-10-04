@@ -27,7 +27,8 @@ def revoked(monkeypatch):
     monkeypatch.setattr(cli, "_resolve_private_connection_key", lambda *a, **k: KEY)
 
     def refuse(*a, **k):
-        raise RuntimeError("Invalid or expired API key")
+        # What _platform_request raises when the platform refuses the key.
+        raise cli._PlatformHTTPError("Invalid or expired API key", status=401)
 
     monkeypatch.setattr(cli, "_validate_remote_connection_key", refuse)
     monkeypatch.setattr(sys.stdin, "isatty", lambda: False, raising=False)
@@ -130,3 +131,39 @@ def test_an_inspected_network_is_told_about_certificates(monkeypatch):
     message = unreachable(monkeypatch, urllib.error.URLError(error))
 
     assert "SSL_CERT_FILE" in message
+
+
+@pytest.mark.parametrize("error", [
+    RuntimeError("could not reach https://api.example ([Errno 111] Connection refused). ..."),
+    cli._PlatformHTTPError("internal error", status=503),
+])
+def test_a_platform_problem_is_not_blamed_on_the_key(monkeypatch, error):
+    """Neither an unreachable platform nor a 5xx says anything about the key."""
+    monkeypatch.setattr(cli, "_resolve_private_connection_key", lambda *a, **k: KEY)
+
+    def fail(*a, **k):
+        raise error
+
+    monkeypatch.setattr(cli, "_validate_remote_connection_key", fail)
+    monkeypatch.setattr(sys.stdin, "isatty", lambda: True, raising=False)
+    monkeypatch.setenv("TOOLUNIVERSE_SERVICE_KEY", KEY)
+    started = []
+    monkeypatch.setattr(cli, "_device_authorization_login", lambda *a, **k: started.append(1))
+
+    with pytest.raises(RuntimeError) as caught:
+        cli._connection_key_for_share("https://api.example")
+
+    assert caught.value is error
+    assert "no longer accepted" not in str(caught.value)
+    assert started == []
+
+
+def test_a_refused_key_is_still_called_refused(revoked, monkeypatch):
+    def refuse(*a, **k):
+        raise cli._PlatformHTTPError("Invalid or expired API key", status=401)
+
+    monkeypatch.setattr(cli, "_validate_remote_connection_key", refuse)
+    monkeypatch.delenv("TOOLUNIVERSE_SERVICE_KEY", raising=False)
+
+    with pytest.raises(RuntimeError, match="no longer accepted"):
+        cli._connection_key_for_share("https://api.example")

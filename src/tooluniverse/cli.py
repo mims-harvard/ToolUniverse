@@ -2031,6 +2031,11 @@ def _connection_key_for_share(service: str, *, no_browser: bool = False) -> str:
         _validate_remote_connection_key(service, key)
         return key
     except RuntimeError as exc:
+        if not (isinstance(exc, _PlatformHTTPError) and exc.status in (401, 403)):
+            # Only the platform refusing the key means the key is the problem. An unreachable
+            # platform, or one having a bad moment, said "the key is no longer accepted --
+            # remove it" about a key that was fine, and on a terminal started a new sign-in.
+            raise
         # Explicit environment configuration wins: silently replacing it would leave the next
         # process broken again. Non-interactive jobs also fail fast instead of waiting on a browser.
         if not sys.stdin.isatty() or os.getenv("TOOLUNIVERSE_SERVICE_KEY", "").strip():

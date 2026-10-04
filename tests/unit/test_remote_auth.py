@@ -302,7 +302,10 @@ def test_remote_share_rejects_revoked_key_before_provider_start(
     monkeypatch.setattr(
         cli,
         "_platform_request",
-        lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("HTTP 401")),
+        # What _platform_request raises when the platform refuses a key.
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            cli._PlatformHTTPError("Invalid or expired API key", status=401)
+        ),
     )
     args = SimpleNamespace(
         implementation="boltz",
