@@ -359,6 +359,7 @@
     "without": "Public models work without it; needed for gated or private repos.",
     "used_by": [
       "embedding_tools.json",
+      "esm2_variant_effect_tools.json",
       "huggingface_inference_tools.json"
     ]
   },
@@ -388,7 +389,7 @@
   },
   {
     "name": "IUCN_API_KEY",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Ecology & Biodiversity",
     "register_url": "https://api.iucnredlist.org/",
@@ -400,7 +401,7 @@
   },
   {
     "name": "LDLINK_TOKEN",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Genomics & Variants",
     "register_url": "https://ldlink.nih.gov/?tab=apiaccess",
@@ -654,6 +655,18 @@
     "without": "Leave blank unless you run your own USPTO server.",
     "used_by": [
       "uspto_downloader_tools.json"
+    ]
+  },
+  {
+    "name": "VEUPATHDB_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Pathogens & Microbiology",
+    "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess",
+    "purpose": "Query the VEuPathDB WDK service for pathogen gene searches and records.",
+    "without": "VEuPathDB returns 401 'Valid API Key required for this endpoint.' Only the record-type listing stays open.",
+    "used_by": [
+      "veupathdb_tools.json"
     ]
   },
   {

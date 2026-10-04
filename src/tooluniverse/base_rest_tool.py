@@ -14,7 +14,11 @@ import requests
 import urllib.parse
 from typing import Any, Dict, Optional, Callable
 from .base_tool import BaseTool
-from .http_utils import redact_url_secrets, request_with_retry
+from .http_utils import (
+    cloudflare_challenge,
+    redact_url_secrets,
+    request_with_retry,
+)
 from .provider_rate_limit import enforce_provider_rate_limit
 from .shared_http_session import create_shared_pool_session
 
@@ -481,18 +485,27 @@ class BaseRESTTool(BaseTool):
 
             # Check for errors (accept any 2xx success status)
             if not (200 <= response.status_code < 300):
-                # A tool whose upstream is gone can still point somewhere. The
-                # config carries fields.unreachable_alternatives when a usable
-                # alternative exists but is not equivalent enough to repoint
-                # to -- POWO's names are in IPNI and its taxonomy in GBIF, and
-                # neither carries POWO's distribution text, so the caller gets
-                # told rather than quietly served a narrower answer.
-                error = f"{self.api_name} API error"
+                # Every config-driven tool shares this path, so both of
+                # these are said here rather than in each tool.
+                #
+                # A Cloudflare managed challenge is named, because "API error"
+                # for a 403 sends a user looking for a credential problem.
+                # And a tool whose upstream is gone can still point somewhere:
+                # fields.unreachable_alternatives carries a pointer when a
+                # usable alternative exists but is not equivalent enough to
+                # repoint to. POWO is both at once -- challenged, with its
+                # names in IPNI and its taxonomy in GBIF, neither of which
+                # carries its distribution text.
+                challenge = cloudflare_challenge(response)
+                if challenge:
+                    error = f"{self.api_name} is unreachable: {challenge}."
+                else:
+                    error = f"{self.api_name} API error"
                 alternatives = (self.tool_config.get("fields") or {}).get(
                     "unreachable_alternatives"
                 )
                 if response.status_code >= 400 and alternatives:
-                    error = f"{error}. {alternatives}"
+                    error = f"{error} {alternatives}"
                 return {
                     "status": "error",
                     "error": error,

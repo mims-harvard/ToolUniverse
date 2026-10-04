@@ -49,6 +49,46 @@ os.environ.setdefault("TOOLUNIVERSE_LIGHT_IMPORT", "1")
 _TRUNC = 60  # max description chars in table output
 
 
+def _schema_describes_envelope(schema, _depth=0):
+    """True when *schema* describes the {"status", "data"} envelope itself.
+
+    A schema that declares its own `data` property is describing the envelope,
+    so unwrapping before validation would leave that property absent from the
+    object being checked -- and with nothing `required`, it then passes
+    whatever the tool returned.
+
+    The check looked only at top-level `properties`, which missed every schema
+    declaring `data` inside a oneOf/anyOf/allOf branch -- 138 of them. All six
+    unified_guideline tools reported "Schema Mismatch: At root: [...]" while
+    both the tool and its schema were correct, because the envelope was
+    unwrapped and the bare payload then checked against a schema that only
+    ever described envelopes.
+
+    Recursing alone is not enough, and this is the part that took three
+    attempts. A branch can declare `data` because the *payload* has a field of
+    that name: IDR's API answers {"data": [...], "meta": {...}} and the Art
+    Institute's answers {"config", "data", "info", "pagination"}. Treating
+    those as envelopes stops the unwrap that should happen, and measuring it
+    showed exactly that -- one category fixed, idr and artic broken, the same
+    pair a previous attempt at this broke.
+
+    `status` is what separates them. The envelope is the thing that carries a
+    status, so a branch describes it only when it declares `status` and `data`
+    together. Measured across the 13 affected categories: unified_guideline
+    fixed, idr and artic unchanged.
+    """
+    if not isinstance(schema, dict) or _depth > 4:
+        return False
+    properties = schema.get("properties") or {}
+    if "data" in properties and "status" in properties:
+        return True
+    for keyword in ("oneOf", "anyOf", "allOf"):
+        for branch in schema.get(keyword) or []:
+            if _schema_describes_envelope(branch, _depth + 1):
+                return True
+    return False
+
+
 def _non_neg_int(value: str) -> int:
     """Argparse type that rejects negative integers (used for --offset and --limit)."""
     try:
@@ -1616,9 +1656,11 @@ def cmd_test(args: argparse.Namespace) -> None:
                 # 262 tools ship such a schema; the measured effect is that
                 # OpenTargets_get_target_genomic_location_by_ensemblID declared
                 # `strand` as an integer, returned 'NEGATIVE', and passed.
-                describes_envelope = isinstance(
-                    return_schema.get("properties"), dict
-                ) and "data" in return_schema["properties"]
+                # Also true when `data` is declared inside a oneOf/anyOf/
+                # allOf branch, which 139 schemas do -- missing those unwrapped
+                # the envelope and checked a bare payload against a schema that
+                # only described envelopes.
+                describes_envelope = _schema_describes_envelope(return_schema)
                 payload = (
                     result["data"]
                     if wraps_inner_payload and not describes_envelope

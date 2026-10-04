@@ -21,6 +21,7 @@ class with no extra registration.
 API: https://rnasysu.com/encori/api/  (public, no authentication)
 """
 
+import re
 from typing import Any, Dict, List
 
 import requests
@@ -96,8 +97,25 @@ class ENCORITool(BaseTool):
         header = lines[0].split("\t")
         # A single non-tabular line is ENCORI's way of reporting a bad request.
         if len(header) < 2:
+            first = lines[0].strip()
+            # Except when it is not a message at all. ENCORI sometimes answers
+            # with an HTML page, and echoing its first line gave the useless
+            # "ENCORI rejected the query: <br />".
+            if "<" in first and ">" in first:
+                stripped = re.sub(r"<[^>]+>", " ", "\n".join(lines[:40]))
+                stripped = re.sub(r"\s+", " ", stripped).strip()
+                detail = f" It said: {stripped[:200]}" if stripped else ""
+                return {
+                    "error": (
+                        "ENCORI returned an HTML page instead of the "
+                        "tab-separated data this endpoint documents, so the "
+                        "query could not be read as a result set. This is "
+                        "usually the endpoint being unavailable rather than a "
+                        f"problem with the query.{detail}"
+                    ),
+                }
             return {
-                "error": "ENCORI rejected the query: " + lines[0].strip(),
+                "error": "ENCORI rejected the query: " + first,
             }
 
         return {"header": header, "lines": lines}
