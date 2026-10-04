@@ -625,9 +625,12 @@ def test_platform_remote_tool_requires_key(monkeypatch):
     assert "TU_API_KEY" in result["error"]
 
 
-@pytest.mark.parametrize("timeout", [0, 901, float("inf"), float("nan")])
+# The ceiling is 930 s: the platform enforces each published tool's deadline up
+# to 15 minutes and answers when it passes, so the client waits slightly longer
+# to receive that answer. 931 is the first value past it.
+@pytest.mark.parametrize("timeout", [0, 931, float("inf"), float("nan")])
 def test_platform_remote_tool_rejects_unsafe_timeout(timeout):
-    with pytest.raises(ValueError, match="between 1 and 900"):
+    with pytest.raises(ValueError, match="between 1 and 930"):
         PlatformRemoteTool(
             {
                 "name": "remote_model",
