@@ -3459,6 +3459,8 @@ def _after_connect_lines(connection: dict, listed: list[str]) -> list[str]:
         "Use it from an AI assistant: restart any assistant that already runs ToolUniverse",
         "and these tools are included. To add ToolUniverse to Claude Code, for every folder:",
         "  claude mcp add --scope user --transport stdio tooluniverse -- tu serve",
+        "Or to Codex:",
+        "  codex mcp add tooluniverse -- tu serve",
     ]
     return lines
 

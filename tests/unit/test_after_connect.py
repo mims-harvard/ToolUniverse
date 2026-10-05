@@ -30,6 +30,8 @@ def test_the_ai_assistant_route_is_given():
     assert "claude mcp add" in out and "tu serve" in out
     # Otherwise the server exists only for the folder the command was run in.
     assert "--scope user" in out
+    # Checked with Codex CLI 0.153: registers a global server, no scope flag needed.
+    assert "codex mcp add tooluniverse -- tu serve" in out
     assert "load_tools" not in out
 
 
