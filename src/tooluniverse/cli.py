@@ -3340,9 +3340,9 @@ def cmd_connect(args: argparse.Namespace) -> None:
                     # for a code that worked last week but was replaced, stopped, or revoked.
                     raise RuntimeError(
                         "this share code does not work. Check it was copied whole "
-                        "(TU-SHARE- and everything after it). A code that worked before stops "
-                        "working when its owner stops sharing, makes a new code, or removes "
-                        "you -- ask them for a fresh one."
+                        "(TU-SHARE- and everything after it). A code also stops working when "
+                        "it reaches the number of uses or the end date its owner set, or when "
+                        "they stop sharing or make a new one -- ask them for a fresh code."
                     ) from exc
                 raise
             server_id = joined.get("server_id")

@@ -343,7 +343,10 @@ def test_a_dead_share_code_message(home, monkeypatch, capsys):
         cli.cmd_connect(args)
 
     err = capsys.readouterr().err
-    assert "copied whole" in err and "ask them for a fresh one" in err
+    assert "copied whole" in err and "ask them for a fresh code" in err
+    # The owner can limit a code's uses and set an end date; the platform refuses those
+    # exactly like an unknown code, so the message has to name them.
+    assert "number of uses" in err and "end date" in err
 
 
 def test_disconnect_explains_what_changes_without_python_jargon(home, monkeypatch, capsys):
