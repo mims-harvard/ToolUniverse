@@ -3443,6 +3443,10 @@ def _after_connect_lines(connection: dict, listed: list[str]) -> list[str]:
     made, and a placeholder where the name they needed should be. Driven live, nothing said
     how to try the tool or how to reach it from an AI assistant, which is where most people
     meant to use it.
+
+    The Claude Code line carries --scope user. Without it `claude mcp add` registers the
+    server for the current folder only -- measured, Claude Code opened in a project folder then
+    had no ToolUniverse at all.
     """
     lines = [""]
     if listed:
@@ -3453,8 +3457,8 @@ def _after_connect_lines(connection: dict, listed: list[str]) -> list[str]:
     lines += [
         "",
         "Use it from an AI assistant: restart any assistant that already runs ToolUniverse",
-        "and these tools are included. To add ToolUniverse to Claude Code:",
-        "  claude mcp add --transport stdio tooluniverse -- tu serve",
+        "and these tools are included. To add ToolUniverse to Claude Code, for every folder:",
+        "  claude mcp add --scope user --transport stdio tooluniverse -- tu serve",
     ]
     return lines
 

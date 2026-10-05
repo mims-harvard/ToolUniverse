@@ -57,7 +57,7 @@ instead of installing the MCPB bundle:
 
 .. code-block:: bash
 
-   claude mcp add --transport stdio tooluniverse -- tooluniverse
+   claude mcp add --scope user --transport stdio tooluniverse -- tooluniverse
 
 This keeps Claude Code on the regular ToolUniverse command path while MCPB
 clients can continue using the bundled release.

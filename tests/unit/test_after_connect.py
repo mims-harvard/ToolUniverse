@@ -28,6 +28,8 @@ def test_the_ai_assistant_route_is_given():
     out = "\n".join(_after_connect_lines({"prefix": "x_"}, ["x_predict"]))
 
     assert "claude mcp add" in out and "tu serve" in out
+    # Otherwise the server exists only for the folder the command was run in.
+    assert "--scope user" in out
     assert "load_tools" not in out
 
 
