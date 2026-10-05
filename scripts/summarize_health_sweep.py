@@ -58,6 +58,22 @@ TIMEOUT_STATUS = frozenset({"TIMEOUT"})
 #: file, package or a long-running job) and 5 NO TESTS. SKIPPED was added to
 #: the sweep in #699 without being added here.
 NO_VERDICT_STATUS = frozenset({"SKIPPED", "NO TESTS"})
+#: The sweep re-runs load-shaped failures one at a time once the parallel pass
+#: is done, and a serial pass replaces the first verdict -- its own JSON says
+#: "passed". The log keeps both lines, though, and only the first was read, so
+#: run 37273817054 listed 12 categories as new failures that the sweep itself
+#: had recorded as passing: `[34/83] gxa: FAILED: 4 ...` then
+#: `   [4/4] gxa: passed (was failed under load)`. "still failed" keeps the
+#: first verdict, as the sweep does.
+SERIAL_RETRY = re.compile(
+    r"\[\d+/\d+\]\s+(?P<category>[A-Za-z0-9_.-]+):\s*"
+    r"(?P<after>passed|skipped) \(was \w+ under load\)"
+)
+
+
+def serial_retries(text: str) -> dict:
+    """{category: "passed" | "skipped"} for failures a serial re-run replaced."""
+    return {m.group("category"): m.group("after") for m in SERIAL_RETRY.finditer(text)}
 
 
 def parse_logs(patterns: list) -> tuple[dict, dict, set, int, int]:
@@ -114,6 +130,15 @@ def parse_logs(patterns: list) -> tuple[dict, dict, set, int, int]:
                     counts[category] = failure_count
                     if is_timeout:
                         timed_out.add(category)
+            for category, after in serial_retries(text).items():
+                counts.pop(category, None)
+                timed_out.discard(category)
+                if after == "passed":
+                    results[category] = True
+                else:
+                    # Skipped serially: reached, but no verdict -- see
+                    # parse_no_verdict, which records it.
+                    results.pop(category, None)
             expected += shard_total
             shards_seen += 1
     return results, counts, timed_out, expected, shards_seen
@@ -136,6 +161,9 @@ def parse_no_verdict(patterns: list) -> dict:
                 status = match.group("status")
                 if status in NO_VERDICT_STATUS:
                     reached[match.group("category")] = status
+            for category, after in serial_retries(text).items():
+                if after == "skipped":
+                    reached[category] = "SKIPPED"
     return reached
 
 
