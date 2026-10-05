@@ -3713,6 +3713,7 @@ class ToolUniverse:
                 cache_enabled
                 and tool_instance
                 and getattr(tool_instance, "supports_caching", lambda: True)()
+                and not self._is_error_result(result)
             ):
                 if cache_key is None:
                     cache_key = self._make_cache_key(
@@ -3949,6 +3950,7 @@ class ToolUniverse:
             cache_enabled
             and tool_instance
             and getattr(tool_instance, "supports_caching", lambda: True)()
+            and not self._is_error_result(result)
         ):
             if cache_key is None:
                 cache_key = self._make_cache_key(
@@ -4294,6 +4296,32 @@ class ToolUniverse:
                 self.logger.error(f"Failed to auto-load tools: {load_error}")
                 return False
         return True
+
+    @staticmethod
+    def _is_error_result(result: Any) -> bool:
+        """Whether a tool result reports a failure instead of data.
+
+        Tools report a timeout, an HTTP 429 or an upstream outage by returning
+        ``{"status": "error", ...}`` (or a bare ``{"error": ...}``) rather than
+        raising, and a few, such as the openFDA count tools, return
+        ``[{"error": ...}]``. Such a result must not be cached: the default
+        cache persists to disk with no TTL, so one transient failure would be
+        replayed for the same arguments on every later call, across restarts.
+        """
+        if isinstance(result, dict):
+            status = result.get("status")
+            if status == "error":
+                return True
+            return status is None and bool(result.get("error"))
+        # Same rule as _tool_error_message in cli.py: an openFDA count row has
+        # "term" next to "error", a failure sentinel does not.
+        return (
+            isinstance(result, list)
+            and len(result) > 0
+            and isinstance(result[0], dict)
+            and "error" in result[0]
+            and "term" not in result[0]
+        )
 
     def _make_cache_key(
         self, function_name: str, arguments: dict, tool_instance=None
