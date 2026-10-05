@@ -84,3 +84,15 @@ def test_the_summary_no_longer_lists_a_retried_pass_as_new(tmp_path):
 
     assert "gxa" not in row["new_failing"]
     assert set(row["new_failing"]) == {"dblp", "neurovault"}
+
+
+def test_the_indigo_tool_declares_it():
+    """epam.indigo is optional; CI lacks it and ran the tool anyway (same run)."""
+    import json
+
+    tools = json.loads(
+        (ROOT / "src" / "tooluniverse" / "data" / "chembl_tools.json").read_text("utf-8")
+    )
+    tool = next(t for t in tools if t["name"] == "ChEMBL_search_similar_molecules")
+
+    assert tool.get("required_packages") == ["epam.indigo"]
