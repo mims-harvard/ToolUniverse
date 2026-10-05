@@ -23,6 +23,29 @@ from .provider_rate_limit import enforce_provider_rate_limit
 from .shared_http_session import create_shared_pool_session
 
 
+def _upstream_reason(response) -> str:
+    """A short reason from an error body, when the service gave one.
+
+    Only a JSON `message`/`error`/`detail` string, or a one-line plain-text
+    body: an HTML error page would only add noise to a one-line error.
+    """
+    try:
+        body = response.json()
+    except Exception:
+        body = None
+    if isinstance(body, dict):
+        for key in ("message", "error", "detail", "errorMessage"):
+            value = body.get(key)
+            if isinstance(value, str) and value.strip():
+                return value.strip()[:200]
+        return ""
+    text = getattr(response, "text", "")
+    text = text.strip() if isinstance(text, str) else ""
+    if text and "\n" not in text and "<" not in text and len(text) <= 200:
+        return text
+    return ""
+
+
 class BaseRESTTool(BaseTool):
     """
     Base class for REST API tools with common HTTP request handling.
@@ -513,7 +536,16 @@ class BaseRESTTool(BaseTool):
                         "its side, not rejecting this request"
                     )
                 else:
-                    error = f"{self.api_name} API error"
+                    # The status and the service's own reason. The bare
+                    # sentence was all the weekly report could quote, so
+                    # biomodels, github and modeldb failed in CI (run
+                    # 37273817054), passed everywhere else, and said nothing
+                    # about why: a 403 refusal, a 429 limit and a 404 read
+                    # the same.
+                    error = f"{self.api_name} API error (HTTP {response.status_code})"
+                    reason = _upstream_reason(response)
+                    if reason:
+                        error = f"{error}: {redact_url_secrets(reason)}"
                 alternatives = (self.tool_config.get("fields") or {}).get(
                     "unreachable_alternatives"
                 )
