@@ -27,6 +27,9 @@ from pathlib import Path
 # (dev, docs, build) and the aggregate ``all`` extra are intentionally absent —
 # missing them says nothing about whether a tool can run.
 EXTRA_PACKAGES: dict[str, dict[str, str]] = {
+    "protein-pka": {
+        "propka": "propka",
+    },
     "pdf": {
         "pymupdf": "pymupdf",
     },

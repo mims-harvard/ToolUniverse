@@ -297,7 +297,7 @@ stats = [
 ]
 
 all = [
-    "tooluniverse[dev,docs,graph,visualization,space,embedding,ml,bioinformatics,openai,gemini,browser,documents,chem,websearch,stats]",
+    "tooluniverse[dev,docs,graph,visualization,space,embedding,ml,bioinformatics,openai,gemini,browser,documents,chem,websearch,stats,protein-pka]",
 ]
 build = [
     "pyinstaller>=6.0.0",
