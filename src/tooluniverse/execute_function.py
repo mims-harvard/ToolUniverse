@@ -394,13 +394,13 @@ def explain_remote_load_failure(
             )
         elif "limit" in lowered:
             message = (
-                f"Remote tools from '{label}' could not load: the request limit its owner set "
+                f"Remote tools from '{label}' could not load: the tool run limit its owner set "
                 f"for this machine is used up. Ask the owner to raise it."
             )
         else:
             message = (
                 f"Remote tools from '{label}' could not load: the platform refused them (402). "
-                f"Either the request limit the machine's owner set is used up, or the period "
+                f"Either the tool run limit the machine's owner set is used up, or the period "
                 f"they set for sharing it has ended. Ask the owner to raise or extend it."
             )
         return message, False

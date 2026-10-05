@@ -192,7 +192,7 @@ class BaseMCPClient:
         """An HTTP client factory that remembers the last error response.
 
         A refusal can arrive on a request the MCP library sends from a background task -- the
-        relay answers a used-up request limit with 402 on the notification after initialize.
+        relay answers an ended sharing period with 402 on the notification after initialize.
         The library logs that error and raises an empty BrokenResourceError inside an exception
         group, so the status never reaches the caller: measured, a borrower saw "unhandled
         errors in a TaskGroup (1 sub-exception)" and was told the machine was offline.
@@ -573,7 +573,7 @@ def describe_remote_call_failure(
                 f"has ended. Ask the owner to extend it."
             )
         return (
-            f"'{tool_name}' was refused: the request limit the machine's owner set for it is "
+            f"'{tool_name}' was refused: the tool run limit the machine's owner set for it is "
             f"used up. Ask the owner to raise it."
         )
     if status >= 500:
