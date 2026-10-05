@@ -102,6 +102,10 @@ requires-python = ">=3.10"
 readme = "README.md"
 
 [project.optional-dependencies]
+protein-pka = [
+    # Local empirical protein pKa diagnostics; never imported at startup.
+    "propka>=3.5,<4",
+]
 pdf = [
     # PyMuPDF is AGPL-3.0 or commercially licensed. Keep it opt-in and out of
     # the aggregate `all` extra so default Apache-2.0 installations do not pull

@@ -1593,6 +1593,8 @@
   "PRIDE_get_project_files": "258e9d9d3a7e4cc07593620ea2e29fd7",
   "PRIDE_get_projects_for_protein": "21be4c3ec9c5d3755c43b3a49e96b1cf",
   "PRIDE_search_proteomics": "bc089774876586565e35179ceeda420e",
+  "PROPKA_compare_partner_pka": "7da6b1c50cd41445698a9f4bae1840fb",
+  "PROPKA_predict_pka": "3be10b811c2b81b9dafd24b49a336b64",
   "PROSITE_get_entry": "cbbc66367a7e243a8fcb8f131e760711",
   "PROSITE_scan_sequence": "c94f717c3c69c5aaa9e5b129af6424c7",
   "PROSITE_search": "732d0fc3690fc8cf3855c734687be2b6",

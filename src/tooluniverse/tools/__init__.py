@@ -2127,6 +2127,8 @@ from .PMC_search_papers import PMC_search_papers
 from .POWO_get_taxon import POWO_get_taxon
 from .POWO_search_plants import POWO_search_plants
 from .PRIDE_get_project import PRIDE_get_project
+from .PROPKA_compare_partner_pka import PROPKA_compare_partner_pka
+from .PROPKA_predict_pka import PROPKA_predict_pka
 from .PRIDE_get_project_files import PRIDE_get_project_files
 from .PRIDE_get_projects_for_protein import PRIDE_get_projects_for_protein
 from .PRIDE_search_proteomics import PRIDE_search_proteomics
@@ -5111,6 +5113,8 @@ __all__ = [
     "POWO_get_taxon",
     "POWO_search_plants",
     "PRIDE_get_project",
+    "PROPKA_compare_partner_pka",
+    "PROPKA_predict_pka",
     "PRIDE_get_project_files",
     "PRIDE_get_projects_for_protein",
     "PRIDE_search_proteomics",
