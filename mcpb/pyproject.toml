@@ -1,6 +1,6 @@
 [project]
 name = "tooluniverse-mcpb-native"
-version = "1.5.4"
+version = "1.5.5"
 description = "ToolUniverse MCP Server (Native MCPB bundle)"
 # This bound and manifest.json's compatibility.runtimes.python look like the
 # same fact stated twice. They are not:
