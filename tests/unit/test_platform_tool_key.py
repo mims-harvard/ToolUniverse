@@ -48,7 +48,7 @@ def test_without_a_key_it_says_where_to_keep_one(clean_env):
     assert BORROWER_KEY_ENV in message
     assert ".tooluniverse/.env" in message and "every terminal" in message
     # The page's own name for the thing to create.
-    assert "private connection" in message
+    assert "connection key" in message
     assert "https://connect.aiscientist.tools/api-keys" in message
 
 

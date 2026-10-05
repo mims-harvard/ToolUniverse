@@ -1,9 +1,9 @@
-"""Messages about this computer's own key must not call it a "private connection".
+"""Messages about this computer's own key must not call it a "connection key".
 
-The website's API keys page calls the account key a "private connection" ("New private
-connection", "Private connections"). The CLI used the same name for the key `tu remote login`
-stores -- a different, computer-only kind that can share this machine and nothing else. Someone
-told "no private connection key is configured" can reasonably go and create one on that page.
+The website's Connection keys page calls the account key a "connection key" ("Create a
+connection key"). The CLI once used that page's name for the key `tu remote login` stores -- a
+different, computer-only kind that can share this machine and nothing else. Someone told "no
+connection key is configured" can reasonably go and create one on that page.
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ KEY = "tu-sk-" + "c" * 60
 
 
 def test_not_signed_in_says_what_to_run_without_the_websites_name():
-    assert "private connection" not in cli.NOT_SIGNED_IN
+    assert "connection key" not in cli.NOT_SIGNED_IN
     assert "tu remote login" in cli.NOT_SIGNED_IN
 
 
@@ -63,7 +63,7 @@ def test_help_texts_do_not_reuse_the_websites_name(capsys):
     for argv in (["remote", "--help"], ["remote", "run", "--help"]):
         with pytest.raises(SystemExit):
             parser.parse_args(argv)
-    assert "private connection" not in capsys.readouterr().out
+    assert "connection key" not in capsys.readouterr().out
 
 
 def test_forwarding_without_a_sign_in_gives_the_same_instruction(monkeypatch):
