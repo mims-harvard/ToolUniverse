@@ -181,6 +181,23 @@ def format_result(val: Any, max_len: int = 100) -> str:
     return s
 
 
+def error_message(result: dict) -> Any:
+    """The failure message of an envelope, wherever the tool put it.
+
+    Many tools put it inside the envelope -- {"status": "error", "data":
+    {"error": ...}}, about 87 return sites. Reading only the top level printed
+    "Failed - None" for every one of them (pypi_package_inspector, run
+    37273817054), which is the one line the weekly report quotes.
+    """
+    error = result.get("error")
+    if error:
+        return error
+    inner = result.get("data")
+    if isinstance(inner, dict):
+        error = inner.get("error") or inner.get("message")
+    return error or result.get("message")
+
+
 def check_for_404_error(result: Any) -> bool:
     """Check if result contains a 404 error."""
     if isinstance(result, dict):
@@ -399,7 +416,7 @@ def run_tests(
                                 if "data" in result and not declares_data
                                 else result
                             )
-                            error = result.get("error")
+                            error = error_message(result)
                         # Check for success field (old style)
                         elif "success" in result:
                             success = result["success"]
