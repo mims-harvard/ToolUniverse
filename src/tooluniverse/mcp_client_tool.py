@@ -19,6 +19,7 @@ from mcp.client.streamable_http import streamablehttp_client
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 from .logging_config import get_logger
+from .remote_connections import global_env_file
 from .mcp_contract_compat import (
     classify as classify_contract_drift,
     load_reviewed_contracts,
@@ -562,7 +563,7 @@ def describe_remote_call_failure(
         return (
             f"'{tool_name}' was refused (HTTP {status}): the platform rejected {key}. It may "
             f"have expired or been revoked -- create a new API "
-            f"key in your account and save it in ~/.tooluniverse/.env."
+            f"key in your account and save it in {global_env_file()}."
         )
     if status == 402:
         # The relay answers 402 for two different things the owner controls.

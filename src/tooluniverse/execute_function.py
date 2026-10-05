@@ -40,6 +40,7 @@ from concurrent.futures import as_completed
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 from .utils import read_json_list, evaluate_function_call, extract_function_call_json
+from .remote_connections import global_env_file
 # Shared with mcp_client_tool, which needs the same unwrapping at call time.
 from .utils import concise_exception_message as _concise_exception_message
 from .exceptions import (
@@ -351,7 +352,7 @@ def explain_remote_load_failure(
     if auth_env and not (env.get(auth_env) or "").strip():
         message = (
             f"Remote tools from '{label}' require API key {auth_env}, which is not set. "
-            f"Save it once in ~/.tooluniverse/.env as {auth_env}=<your key> so every "
+            f"Save it once in {global_env_file()} as {auth_env}=<your key> so every "
             f"terminal has it, or export it in this one."
         )
         return message, True
@@ -379,7 +380,7 @@ def explain_remote_load_failure(
         message = (
             f"Remote tools from '{label}' could not load: the platform rejected the key in "
             f"{auth_env}. It may have expired or been revoked -- create a new API key in "
-            f"your account and save it in ~/.tooluniverse/.env."
+            f"your account and save it in {global_env_file()}."
         )
         return message, False
     if "/relay/" in url and status and status.group(1) == "402":
@@ -1900,10 +1901,10 @@ class ToolUniverse:
                     (
                         f"Tool '{function_name}' requires API key(s) not set: {missing}. "
                         f"It comes from your connection '{label}'; save {missing}=<your key> "
-                        f"in ~/.tooluniverse/.env so every terminal has it."
+                        f"in {global_env_file()} so every terminal has it."
                     ),
                     [
-                        f"Save {missing}=<your key> in ~/.tooluniverse/.env",
+                        f"Save {missing}=<your key> in {global_env_file()}",
                         "Run `tu connections` to see what this terminal is connected to",
                     ],
                 )

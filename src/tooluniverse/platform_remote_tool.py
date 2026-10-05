@@ -12,7 +12,7 @@ import urllib.request
 from typing import Any, Dict
 
 from .base_tool import BaseTool
-from .remote_connections import BORROWER_KEY_ENV, api_keys_page
+from .remote_connections import BORROWER_KEY_ENV, api_keys_page, global_env_file
 from .tool_registry import register_tool
 
 
@@ -173,7 +173,7 @@ class PlatformRemoteTool(BaseTool):
         return (
             f"This connected platform tool requires {BORROWER_KEY_ENV}. Create a private "
             f"connection at {api_keys_page(self.base_url)} and save it once as "
-            f"{BORROWER_KEY_ENV}=<your key> in ~/.tooluniverse/.env so every terminal has it."
+            f"{BORROWER_KEY_ENV}=<your key> in {global_env_file()} so every terminal has it."
         )
 
     def run(self, arguments: Dict[str, Any]):

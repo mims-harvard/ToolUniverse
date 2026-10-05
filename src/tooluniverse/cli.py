@@ -2054,7 +2054,7 @@ def _connection_key_for_share(service: str, *, no_browser: bool = False) -> str:
                 # The variable wins over a stored sign-in, so logging in again would not help.
                 raise RuntimeError(
                     f"the key in TOOLUNIVERSE_SERVICE_KEY is no longer accepted ({exc}). "
-                    "Remove it from this shell and from ~/.tooluniverse/.env, or replace it "
+                    "Remove it from this shell and from " + str(_global_env_path()) + ", or replace it "
                     "with a current key, then run this command again."
                 ) from exc
             raise RuntimeError(

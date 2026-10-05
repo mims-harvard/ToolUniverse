@@ -340,6 +340,15 @@ SITE_FOR_SERVICE = {
 BORROWER_KEY_ENV = "TU_API_KEY"
 
 
+def global_env_file() -> str:
+    """Where a key saved for every terminal lives, as this computer writes the path.
+
+    Messages used to say "~/.tooluniverse/.env". On Windows "~" means nothing to Notepad or cmd,
+    and on any system the real path is the one a person can paste.
+    """
+    return str(Path.home() / ".tooluniverse" / ".env")
+
+
 def api_keys_page(service: str) -> str:
     site = SITE_FOR_SERVICE.get((service or "").rstrip("/"))
     return f"{site}/api-keys" if site else "the API keys page of your ToolUniverse account"
