@@ -404,7 +404,9 @@ class ChEMBLRESTTool(BaseTool):
         except Exception:
             return None
 
-    def _lookup_chembl_id_by_name(self, drug_name: str) -> Optional[str]:
+    def _lookup_chembl_id_by_name(
+        self, drug_name: str, failures: Optional[list] = None
+    ) -> Optional[str]:
         """Look up a ChEMBL molecule ID by preferred name (case-insensitive).
 
         Feature-79B-001: Uses icontains first (most reliable), then iexact as
@@ -435,8 +437,11 @@ class ChEMBLRESTTool(BaseTool):
                         if (mol.get("pref_name") or "").lower() == drug_name.lower():
                             return self._extract_parent_chembl_id(mol)
                     return self._extract_parent_chembl_id(molecules[0])
-            except Exception:
-                pass
+            except Exception as e:
+                # A failed lookup is not a miss: the caller reports these
+                # instead of "not found in ChEMBL".
+                if failures is not None:
+                    failures.append(str(e) or type(e).__name__)
         return None
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -485,7 +490,16 @@ class ChEMBLRESTTool(BaseTool):
                     # Feature-42A-01: auto-lookup ChEMBL ID by drug_name if provided
                     drug_name = arguments.get("drug_name")
                     if drug_name:
-                        mol_id = self._lookup_chembl_id_by_name(drug_name)
+                        failures: list = []
+                        mol_id = self._lookup_chembl_id_by_name(drug_name, failures)
+                        if not mol_id and len(failures) == 2:
+                            # both lookups failed: ChEMBL did not answer
+                            return {
+                                "status": "error",
+                                "error": f"Could not look up drug '{drug_name}': "
+                                f"ChEMBL did not answer ({failures[-1]}). This is "
+                                "not a 'not found'; retry later.",
+                            }
                         if mol_id:
                             arguments = dict(arguments)
                             arguments["drug_chembl_id"] = mol_id

@@ -228,7 +228,13 @@ def test_the_suggestion_skips_ports_that_are_in_use_right_now():
         for candidate in (7999, 8000, 8001):
             sock = socket.socket()
             sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            sock.bind(("127.0.0.1", candidate))
+            try:
+                sock.bind(("127.0.0.1", candidate))
+            except OSError:
+                # Something else on this machine already listens there, which
+                # is the condition under test; on a shared host 8000 often is.
+                sock.close()
+                continue
             sock.listen(1)
             held.append(sock)
 
