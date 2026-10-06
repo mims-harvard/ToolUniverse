@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2848 scientific tools.
+Type-safe Python interface to 2849 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
