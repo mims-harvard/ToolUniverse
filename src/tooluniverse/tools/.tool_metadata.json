@@ -1549,6 +1549,7 @@
   "PDBTM_get_topology": "f92601dd59a7c83ceda4a8af52945996",
   "PDB_REDO_get_structure_quality": "48c18a81394b567e8dea1dad7bb4b48e",
   "PDB_REDO_get_version_info": "3619dfb2681aef6a96d347ba7c6facb0",
+  "PDB_inspect_structure": "a9970ac342f9210de8b366e6f0b3ce8c",
   "PDB_search_similar_structures": "f68d15addc800d718fc9f2a1f27ee199",
   "PDBePISA_get_assemblies": "5d9581ecc3a1bb5ea8b65d4ded771565",
   "PDBePISA_get_interfaces": "ed27039335d92129abc67ed6eb1732e5",

@@ -554,6 +554,7 @@ STATIC_LAZY_REGISTRY = {
     "OxOTool": "oxo_tool",
     "PANTHERTool": "panther_tool",
     "PDBECompoundTool": "pdbe_compound_tool",
+    "PDBInventoryTool": "pdb_inventory_tool",
     "PDBTMTool": "pdbtm_tool",
     "PDBeAPIRESTTool": "pdbe_api_tool",
     "PDBeLigandsTool": "pdbe_ligands_tool",

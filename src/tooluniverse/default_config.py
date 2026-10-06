@@ -581,6 +581,7 @@ default_tool_files = {
     ),
     # ProteinsPlus - Protein-ligand docking and binding site analysis
     "proteinsplus": os.path.join(current_dir, "data", "proteinsplus_tools.json"),
+    "pdb_inventory": os.path.join(current_dir, "data", "pdb_inventory_tools.json"),
     # SwissDock - Molecular docking with AutoDock Vina and Attracting Cavities
     "swissdock": os.path.join(current_dir, "data", "swissdock_tools.json"),
     # LIPID MAPS - Lipid Structure Database (lipidomics)
@@ -1103,9 +1104,7 @@ default_tool_files = {
     "nih_reporter": os.path.join(current_dir, "data", "nih_reporter_tools.json"),
     # SciCrunch RRID resolver - any RRID prefix beyond the existing
     # antibody-specific AntibodyRegistry tool
-    "scicrunch_rrid": os.path.join(
-        current_dir, "data", "scicrunch_rrid_tools.json"
-    ),
+    "scicrunch_rrid": os.path.join(current_dir, "data", "scicrunch_rrid_tools.json"),
     # CMS Open Payments - drug/device manufacturer payments to physicians,
     # a health-economics/conflict-of-interest layer with no prior coverage
     "cms_open_payments": os.path.join(
@@ -1124,9 +1123,7 @@ default_tool_files = {
     "nci_evs": os.path.join(current_dir, "data", "nci_evs_tools.json"),
     # openFDA device - recalls and MAUDE adverse events, the device side of
     # openFDA (existing tools cover only drug/label, drug/event, drugsfda)
-    "openfda_device": os.path.join(
-        current_dir, "data", "openfda_device_tools.json"
-    ),
+    "openfda_device": os.path.join(current_dir, "data", "openfda_device_tools.json"),
     # FHIR Terminology Service - SNOMED CT code lookup and hierarchy
     # expansion (LOINC/RxNorm/ICD-10-CM already have dedicated tools)
     "fhir_terminology": os.path.join(
