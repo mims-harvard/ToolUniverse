@@ -81,10 +81,17 @@ def load_metadata(metadata_file: Path) -> Dict[str, str]:
 
 
 def save_metadata(metadata: Dict[str, str], metadata_file: Path) -> None:
-    """Save tool metadata to file."""
+    """Save tool metadata to file.
+
+    Ends with a newline, as the end-of-file-fixer pre-commit hook requires.
+    Without it the hook added one on every commit that touched the file, the
+    next build removed it again, and each PR adding a tool (#749, #750, #757)
+    arrived with a one-byte drift against what the generator writes.
+    """
     metadata_file.parent.mkdir(parents=True, exist_ok=True)
     with open(metadata_file, "w", encoding="utf-8") as f:
         json.dump(metadata, f, indent=2, sort_keys=True)
+        f.write("\n")
 
 
 def cleanup_orphaned_files(tools_dir: Path, current_tool_names: Set[str]) -> int:
