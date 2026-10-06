@@ -118,19 +118,36 @@ experiment available: the same `torch.prod(x, dim=-1)` in the same interpreter
 raises without this lock's nvrtc 12.9.86 directory first on LD_LIBRARY_PATH and
 returns -0.006928586401045322 with it.
 
-**THE DECLARED ROW IS STILL THE BRINGUP'S MEASUREMENT, NOT A RE-MEASUREMENT.**
-Every rung above reads 7.93 GiB, which is the BUILD's high-water mark, because
-for this provider length is not the expensive axis -- designs-per-pass is -- and
-the acceptance suite varies length only. So that run says nothing about 20.25,
-and a reader should not take it as confirmation. The corner (crop 300 + binder
-200 = 500 residues, 16 designs) was measured once during the bringup at 17.75
-GiB observed, and 20.25 is that plus one retained kit pair-bias buffer of 2.51
-GiB which the kit replaces on a shape change. A re-measurement was attempted and
-REFUSED by `scripts/remote_validation/wait_for_memory.py`: 6.1 GiB free against
-26 needed, with three workers from another checkout of this repository holding
-the machine. Starting it anyway is what wedged this host once already. The
-re-measurement is owed, and the command is
-`--target_input A1-300 --binder_length 200 --num_designs 16` on a quiet card."""
+THE ACCEPTANCE LADDER SAYS NOTHING ABOUT THE DECLARED ROW, which is worth
+stating because it looks as though it should. Every rung above reads 7.93 GiB --
+the BUILD's high-water mark -- because for this provider length is not the
+expensive axis, DESIGNS-PER-PASS is, and the suite varies length only.
+
+SO THE CORNER WAS MEASURED SEPARATELY, on a quiet machine, three ways, and the
+declared figure sits ABOVE all three. The corner is crop 300 + binder 200 = 500
+residues at 16 designs, built by the acceptance harness's own shaper rather than
+by hand (a first attempt wrote `target_input = "A1-300"` against the smoke's
+115-residue PD-L1 crop and upstream correctly answered
+`ValueError: No atoms found for selection: A/*/116`):
+
+    fresh worker, straight to the corner          17.75 GiB
+    after a SMALLER shape (n=200, 4 designs)      17.85 GiB
+    after climbing the DESIGN axis 2 -> 4 -> 8    19.00 GiB
+    the corner repeated, same shape               19.00 GiB
+
+17.75 and 19.00 both reproduce the bringup's own figures. **Its third figure,
+20.25 "after a shape change", did NOT reproduce in either sequence tried**, and
+20.25 was the one it derived rather than observed -- 17.75 plus a 2.51 GiB kit
+pair-bias buffer it reported as retained across a shape change. On this machine
+the retention is worth 1.25 GiB (17.75 -> 19.00) and only when the previous
+shape was LARGER on the design axis; arriving from a smaller target costs 0.10.
+
+`vram_budget_gb` STAYS 20.25 rather than dropping to the 19.00 measured here.
+A budget is an upper bound a host adds up, so being above every observed figure
+is the safe direction and lowering it to the highest number one happens to have
+reproduced is not. What a reader should take from this block is the shape of the
+curve -- the design axis drives the peak, a retained buffer adds about 1.25 GiB
+on top, and 20.25 has roughly a gigabyte of headroom over anything measured."""
 
 [runtime]
 mode = "resident"

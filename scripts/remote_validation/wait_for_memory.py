@@ -57,6 +57,12 @@ def meminfo_gib() -> dict:
     return want
 
 
+def holder_count() -> int:
+    """How many resident workers are allocating right now, ours or anyone's."""
+    text = holders()
+    return 0 if text == "no resident workers are running" else text.count(",") + 1
+
+
 def holders() -> str:
     """Who is holding a resident worker right now, largest first."""
     try:
@@ -113,23 +119,48 @@ def main() -> int:
     while True:
         mem = meminfo_gib()
         free, avail = mem["MemFree"], mem["MemAvailable"]
-        if free >= a.need:
+        # WHICH GATE, and this part was measured rather than guessed. A CUDA
+        # allocation here DOES reclaim page cache: a probe starting at 18.7 GiB
+        # free reached 24 GiB held, and the numbers show the mechanism -- free
+        # drains to about 4 GiB and then `Cached` starts falling (72 -> 63) while
+        # free holds. So reclaim works, and the OOM that caused this script was
+        # not "reclaim does not work" but "reclaim could not keep up with three
+        # other workers racing for the same reclaimable pool".
+        #
+        # So the gate depends on whether anyone else is allocating. With no
+        # co-tenant worker, `MemAvailable` is the honest ceiling. With one, be
+        # strict: `MemFree`, because what the other process will take next is
+        # not knowable and the race is what fails.
+        others = holder_count()
+        gate, gate_name = (free, "MemFree") if others else (avail, "MemAvailable")
+        if gate >= a.need:
             clear += 1
             if clear >= 2:
                 print(
-                    f"ok: {free:.1f} GiB free ({avail:.1f} available), "
-                    f"{a.need:.1f} needed"
+                    f"ok: {gate:.1f} GiB {gate_name}, {a.need:.1f} needed "
+                    f"({free:.1f} free, {avail:.1f} available, "
+                    f"{others} co-tenant worker(s))"
                 )
                 return 0
         else:
             clear = 0
         if time.time() >= deadline:
+            if others:
+                why = (
+                    f"{free:.1f} GiB MemFree against {a.need:.1f} needed, and "
+                    f"{others} other worker(s) are allocating. {avail:.1f} GiB "
+                    f"is 'available', but page-cache reclaim cannot be shared "
+                    f"with a racing allocator -- a worker started at 60.4 "
+                    f"available with 5 free and died of CUDA out of memory."
+                )
+            else:
+                why = (
+                    f"{avail:.1f} GiB MemAvailable against {a.need:.1f} needed, "
+                    f"with no co-tenant worker, so reclaim is not the problem: "
+                    f"the machine genuinely does not have this much."
+                )
             print(
-                f"refused: {free:.1f} GiB FREE, {a.need:.1f} needed, after "
-                f"{a.timeout:.0f}s. ({avail:.1f} GiB is 'available', but that "
-                f"counts reclaimable page cache a device allocation here does "
-                f"not get in time -- a worker started at 60.4 available with 5 "
-                f"free and died of CUDA out of memory.) Holding it now: "
+                f"refused after {a.timeout:.0f}s: {why} Holding it now: "
                 f"{holders()}. Wait for a co-tenant to finish, or run this "
                 f"provider when the machine is quieter -- do not start it "
                 f"anyway: one 28 GiB smoke on top of four held workers wedged "
