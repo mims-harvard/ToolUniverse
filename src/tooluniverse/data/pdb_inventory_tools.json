@@ -2,7 +2,7 @@
   {
     "name": "PDB_inspect_structure",
     "type": "PDBInventoryTool",
-    "description": "Inspect legacy PDB from local text/path or public ID (1UBQ). Reports chains, coordinate sequences, glycan-name counts, expected lengths and coincident atoms for one selected model. Inventory only; no chemistry or binding validation.",
+    "description": "Inspect local legacy PDB or public ID (1UBQ). Reports selected-model coordinates, chains, SEQRES declarations, missing sequence metadata, glycan-name counts and coincident atoms. Inventory only; no reconstruction, chemistry or binding validation.",
     "cacheable": false,
     "parameter": {
       "type": "object",
@@ -52,7 +52,7 @@
             "minimum": 1,
             "maximum": 100000
           },
-          "description": "Expected exact protein-chain lengths, e.g. {\"A\":76}; mismatch is reported."
+          "description": "Expected exact protein-chain length mapping, e.g. {\"A\":76}. Coordinate counts and protein SEQRES declarations are compared separately; neither check verifies biological sequence identity."
         },
         "glycan_residue_names": {
           "type": [
@@ -238,7 +238,10 @@
                 "recognized_glycan_heavy_coordinate_records",
                 "binding_verified",
                 "pH_selectivity_verified",
-                "structure_chemistry_verified"
+                "structure_chemistry_verified",
+                "seqres_metadata_consistent",
+                "seqres_chains",
+                "coordinate_only_protein_chains"
               ],
               "properties": {
                 "input_sha256": {
@@ -274,6 +277,24 @@
                 },
                 "structure_chemistry_verified": {
                   "const": false
+                },
+                "seqres_metadata_consistent": {
+                  "type": "boolean"
+                },
+                "seqres_chains": {
+                  "type": "object"
+                },
+                "expected_chain_lengths_match_seqres": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "coordinate_only_protein_chains": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }

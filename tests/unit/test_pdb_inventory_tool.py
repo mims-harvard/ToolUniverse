@@ -249,3 +249,86 @@ def test_path_size_bound(tmp_path):
     path = tmp_path / "large.pdb"
     path.write_bytes(b"x" * (MAX_BYTES + 1))
     assert "4 MiB" in tool().run({"pdb_path": str(path)})["error"]
+
+
+def seqres(names, declared=None, serial=1, chain="A"):
+    length = len(names) if declared is None else declared
+    return f"SEQRES {serial:3d} {chain} {length:4d}  " + " ".join(names) + "\n"
+
+
+def test_seqres_and_coordinates_are_compared_separately():
+    text = seqres(["ALA", "GLY", "SER", "CYS", "ASP"])
+    text += atom("ALA", "A", 1) + atom("CYS", "A", 4) + atom("ASP", "A", 5)
+    d = result(text, expected_chain_lengths={"A": 5})
+    assert not d["expected_chain_lengths_match"]
+    assert d["expected_chain_lengths_match_seqres"] is True
+    assert d["declared_protein_seqres_chain_lengths"] == {"A": 5}
+    assert d["seqres_chains"]["A"]["unobserved_declared_protein_residue_count"] == 2
+    assert d["coordinate_only_protein_chains"] == []
+    assert d["seqres_metadata_consistent"]
+
+
+def test_missing_seqres_does_not_establish_complete_sequence():
+    d = result(atom("ALA", "A"), expected_chain_lengths={"A": 1})
+    assert d["expected_chain_lengths_match"] is True
+    assert d["expected_chain_lengths_match_seqres"] is False
+    assert not d["seqres_records_present"]
+    assert d["coordinate_only_protein_chains"] == ["A"]
+    assert any("Coordinate-only" in w for w in d["warnings"])
+
+
+def test_seqres_malformed_inconsistent_and_duplicate_serials_are_visible():
+    for header in [
+        "SEQRES broken\n",
+        seqres(["ALA"], declared=2),
+        seqres(["ALA"], declared=2) + seqres(["GLY"], declared=2),
+        seqres(["ALA"], declared=2) + seqres(["GLY"], declared=3, serial=2),
+    ]:
+        d = result(header + atom("ALA", "A"), expected_chain_lengths={"A": 1})
+        assert d["seqres_metadata_consistent"] is False
+        assert d["seqres_metadata_errors"]
+        assert d["expected_chain_lengths_match_seqres"] is None
+        assert d["coordinate_records"] == 1
+
+
+def test_seqres_identity_mismatch_is_not_described_as_missing_coordinates():
+    d = result(seqres(["GLY", "SER"]) + atom("ALA", "A"))
+    assert (
+        d["seqres_chains"]["A"]["coordinate_sequence_is_ordered_subsequence"] is False
+    )
+    assert d["seqres_chains"]["A"]["unobserved_declared_protein_residue_count"] is None
+    assert d["seqres_metadata_consistent"] is False
+
+
+def test_global_seqres_is_compared_to_selected_model_only():
+    text = seqres(["ALA", "GLY"])
+    text += "MODEL        1\n" + atom("ALA", "A", 1) + "ENDMDL\n"
+    text += "MODEL        2\n" + atom("ALA", "A", 1) + atom("GLY", "A", 2) + "ENDMDL\n"
+    one, two = result(text), result(text, model_index=2)
+    assert one["seqres_chains"]["A"]["unobserved_declared_protein_residue_count"] == 1
+    assert two["seqres_chains"]["A"]["unobserved_declared_protein_residue_count"] == 0
+    assert two["coordinate_records"] == 2
+
+
+def test_seqres_unknown_names_need_caller_aliases_not_automatic_protein_labels():
+    text = (
+        seqres(["NLN", "GLY"])
+        + atom("NLN", "A", name="N")
+        + atom("NLN", "A", name="CA")
+        + atom("NLN", "A", name="C")
+    )
+    unknown = result(text)
+    assert (
+        unknown["seqres_chains"]["A"]["coordinate_sequence_is_ordered_subsequence"]
+        is None
+    )
+    known = result(text, protein_residue_aliases={"NLN": "ASN"})
+    assert known["seqres_chains"]["A"]["unobserved_declared_protein_residue_count"] == 1
+    assert known["declared_protein_seqres_chain_lengths"] == {"A": 2}
+
+
+def test_seqres_completely_unobserved_declared_protein_chain_is_reported():
+    d = result(seqres(["GLY"], chain="B") + atom("ALA", "A"))
+    assert d["seqres_chains"]["B"]["observed_protein_residue_count"] == 0
+    assert d["seqres_chains"]["B"]["unobserved_declared_protein_residue_count"] == 1
+    assert d["coordinate_only_protein_chains"] == ["A"]

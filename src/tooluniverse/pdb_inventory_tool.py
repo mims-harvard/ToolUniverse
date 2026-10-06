@@ -311,6 +311,101 @@ def inspect(lines, aliases, glycan_names, expected, detail_limit):
     }
 
 
+def inspect_seqres(content, data, aliases, expected):
+    """Compare declared polymer metadata with one selected coordinate model."""
+    records, errors = {}, []
+    for line_number, line in enumerate(content.splitlines(), 1):
+        if line[:6] != "SEQRES":
+            continue
+        try:
+            serial, chain, length = int(line[7:10]), line[11], int(line[13:17])
+            names = line[19:70].split()
+            if not 1 <= serial <= 999 or not 1 <= length <= 99999 or not names:
+                raise ValueError
+            if any(not re.fullmatch(r"[A-Za-z0-9]{1,3}", name) for name in names):
+                raise ValueError
+            records.setdefault(chain, []).append((serial, length, names))
+        except (ValueError, IndexError):
+            errors.append(f"Malformed SEQRES record at line {line_number}.")
+    summaries, declared_protein_lengths = {}, {}
+    for chain, rows in records.items():
+        lengths = {row[1] for row in rows}
+        serials = [row[0] for row in rows]
+        names = [name.upper() for row in rows for name in row[2]]
+        length = next(iter(lengths)) if len(lengths) == 1 else None
+        consistent = length == len(names) and serials == list(range(1, len(rows) + 1))
+        canonical = [aliases.get(name, name) for name in names]
+        protein_names = all(name in AA for name in canonical)
+        declared = "".join(AA[name] for name in canonical) if protein_names else None
+        coordinate = data["chains"].get(chain, {}).get("coordinate_sequence", "")
+        observed = len(coordinate)
+        subsequence = None
+        if (
+            consistent
+            and declared is not None
+            and "X" not in coordinate
+            and not data["noncontiguous_residue_identifier_count"]
+        ):
+            # Subsequence membership does not infer unique missing positions.
+            iterator = iter(declared)
+            subsequence = all(
+                any(x == residue for x in iterator) for residue in coordinate
+            )
+        if not consistent:
+            errors.append(
+                f"Inconsistent SEQRES declarations, counts or serials for chain {chain!r}."
+            )
+        if subsequence is False:
+            errors.append(
+                f"Coordinate protein sequence is not an ordered subsequence of SEQRES for chain {chain!r}."
+            )
+        if consistent and protein_names:
+            declared_protein_lengths[chain] = length
+        summaries[chain] = {
+            "record_count": len(rows),
+            "declared_length": length,
+            "record_residue_count": len(names),
+            "declaration_consistent": consistent,
+            "all_names_standard_or_caller_alias_amino_acids": protein_names,
+            "observed_protein_residue_count": observed,
+            "coordinate_sequence_is_ordered_subsequence": subsequence,
+            "unobserved_declared_protein_residue_count": (
+                length - observed if subsequence is True else None
+            ),
+        }
+    missing = sorted(set(data["observed_protein_chain_lengths"]) - set(records))
+    warnings = list(errors)
+    if missing:
+        warnings.append(
+            "Protein coordinate chains lack SEQRES: "
+            + repr(missing)
+            + ". Coordinate-only loaders may omit unresolved sequence residues."
+        )
+    for chain, summary in summaries.items():
+        if summary["unobserved_declared_protein_residue_count"]:
+            warnings.append(
+                f"SEQRES for chain {chain!r} includes residues without protein coordinates; "
+                "verify the downstream parser preserves the intended full sequence."
+            )
+    expected_match = (
+        None if expected is None or errors else declared_protein_lengths == expected
+    )
+    if expected_match is False:
+        warnings.append(
+            "Declared protein SEQRES chain lengths do not match the expected mapping."
+        )
+    data["warnings"].extend(warnings)
+    return {
+        "seqres_records_present": bool(records),
+        "seqres_metadata_consistent": not errors,
+        "seqres_chains": summaries,
+        "declared_protein_seqres_chain_lengths": declared_protein_lengths,
+        "expected_chain_lengths_match_seqres": expected_match,
+        "coordinate_only_protein_chains": missing,
+        "seqres_metadata_errors": errors,
+    }
+
+
 @register_tool("PDBInventoryTool")
 class PDBInventoryTool(BaseTool):
     def run(self, arguments):
@@ -388,6 +483,7 @@ class PDBInventoryTool(BaseTool):
                 raise ValueError("model_index exceeds the number of input models")
             serial, lines = models[index - 1]
             data = inspect(lines, aliases, glycans, expected, detail_limit)
+            data.update(inspect_seqres(content, data, aliases, expected))
             data.update(
                 input_kind=kind,
                 input_sha256=digest,
