@@ -230,6 +230,7 @@ default_tool_files = {
     "replicate": os.path.join(current_dir, "data", "replicate_tools.json"),
     # DTU protein predictors (DeepTMHMM / SignalP via biolib)
     "dtu_protein": os.path.join(current_dir, "data", "dtu_protein_tools.json"),
+    "protein_pka": os.path.join(current_dir, "data", "protein_pka_tools.json"),
     # Cellpose deep-learning cell/nucleus segmentation (local, cellpose pkg)
     "cellpose": os.path.join(current_dir, "data", "cellpose_tools.json"),
     # DeepSpot-M spatial gene expression from an H&E tile (local, deepspotm pkg)

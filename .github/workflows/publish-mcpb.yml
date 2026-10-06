@@ -178,8 +178,50 @@ jobs:
       # "/d/a/...". Nothing about producing the zip is platform-specific, and
       # releases are built here, so this stays on Linux and only the launch is
       # exercised per platform.
+      # This workflow and publish-pypi.yml start on the same push, so the build
+      # used to resolve uv.lock before the new release was on PyPI and pin the
+      # previous one. 1.5.4 shipped with lock 1.5.3, 1.5.5 with 1.5.4, and the
+      # 1.5.6 build started 45 s before its wheel was uploaded and locked 1.5.5.
+      # Every fresh install then started one release behind and immediately
+      # self-updated -- the update a slow Windows machine cannot finish in the
+      # launcher's 8 s. Wait until pip can actually fetch this version.
+      - name: Wait until this version can be installed from PyPI
+        env:
+          VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 40); do
+            if python -m pip download --quiet --no-deps --no-cache-dir \
+                --dest /tmp/pypi-probe "tooluniverse==$VERSION" 2>/dev/null; then
+              echo "tooluniverse $VERSION is installable (attempt $attempt)"
+              exit 0
+            fi
+            echo "tooluniverse $VERSION not on PyPI yet (attempt $attempt); waiting 30 s"
+            sleep 30
+          done
+          echo "::error::tooluniverse $VERSION never became installable from PyPI"
+          exit 1
+
       - name: Build the bundle
         run: bash mcpb/build.sh
+
+      # Belt and braces for the wait above: never upload a bundle whose lock
+      # installs a different release than its manifest names.
+      - name: The lock installs this release
+        env:
+          VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          set -euo pipefail
+          LOCKED=$(python3 -c "
+          import re, zipfile
+          lock = zipfile.ZipFile('dist/tooluniverse.mcpb').read('uv.lock').decode()
+          print(re.search(r'name = \"tooluniverse\"\nversion = \"([^\"]+)\"', lock).group(1))
+          ")
+          echo "bundle $VERSION locks tooluniverse $LOCKED"
+          if [ "$LOCKED" != "$VERSION" ]; then
+            echo "::error::bundle $VERSION would install tooluniverse $LOCKED"
+            exit 1
+          fi
 
       - uses: actions/upload-artifact@v4
         with:

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tooluniverse"
-version = "1.5.4"
+version = "1.5.6"
 description = "A comprehensive collection of scientific tools for Agentic AI, offering integration with the ToolUniverse SDK and MCP Server to support advanced scientific workflows."
 authors = [
     { name = "Shanghua Gao", email = "shanghuagao@gmail.com" }
@@ -102,6 +102,10 @@ requires-python = ">=3.10"
 readme = "README.md"
 
 [project.optional-dependencies]
+protein-pka = [
+    # Local empirical protein pKa diagnostics; never imported at startup.
+    "propka>=3.5,<4",
+]
 pdf = [
     # PyMuPDF is AGPL-3.0 or commercially licensed. Keep it opt-in and out of
     # the aggregate `all` extra so default Apache-2.0 installations do not pull
@@ -293,7 +297,7 @@ stats = [
 ]
 
 all = [
-    "tooluniverse[dev,docs,graph,visualization,space,embedding,ml,bioinformatics,openai,gemini,browser,documents,chem,websearch,stats]",
+    "tooluniverse[dev,docs,graph,visualization,space,embedding,ml,bioinformatics,openai,gemini,browser,documents,chem,websearch,stats,protein-pka]",
 ]
 build = [
     "pyinstaller>=6.0.0",

@@ -1845,7 +1845,7 @@ def _resolve_private_connection_key(
         _write_stored_remote_key(key)
         return key
     try:
-        return getpass.getpass("Private connection key: ").strip()
+        return getpass.getpass("Connection key: ").strip()
     except (EOFError, KeyboardInterrupt):
         return ""
 
@@ -1915,7 +1915,7 @@ def _read_private_bytes(path: Path, *, maximum: int = 1 << 16) -> bytes:
         os.close(descriptor)
 
 
-# The website calls the account key a "private connection". This computer's own key, from
+# The website calls the account key a "connection key". This computer's own key, from
 # `tu remote login`, is a different kind that can only share this machine, so messages about it
 # say "sign-in" rather than reuse that name and send people to make the wrong one.
 NOT_SIGNED_IN_REASON = (
@@ -3276,8 +3276,8 @@ def _borrower_api_key(
             "  The sign-in from `tu remote login` is for sharing this computer; it cannot "
             "join another one."
         )
-    # The page's own button reads "New private connection"; naming it is how someone finds it.
-    lines.append(f"  Create one at {page} (the page calls it a private connection).")
+    # The page's own button reads "Create a connection key"; naming it is how someone finds it.
+    lines.append(f"  Create one at {page} (click \"Create a connection key\").")
     if not sys.stdin.isatty():
         lines.append(
             f"  Then save it once so every terminal has it: add the line "
@@ -3416,7 +3416,7 @@ def cmd_connect(args: argparse.Namespace) -> None:
             if env_name != BORROWER_KEY_ENV:
                 print(
                     f"Note: only {env_name} is set, and it may hold this computer's sharing "
-                    f"connection, which cannot call tools. Save a private connection from "
+                    f"connection, which cannot call tools. Save a connection key from "
                     f"your account as {BORROWER_KEY_ENV} in {_global_env_path()}."
                 )
             elif key_source == "shell":

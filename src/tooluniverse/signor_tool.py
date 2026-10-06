@@ -11,8 +11,9 @@ Pathways: https://signor.uniroma2.it/getPathwayData.php
 Reference: Licata et al. (2020) Nucleic Acids Research
 """
 
+import threading
+
 import requests
-from functools import lru_cache
 from typing import Dict, Any, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -22,9 +23,23 @@ SIGNOR_PATHWAY_URL = "https://signor.uniroma2.it/getPathwayData.php"
 UNIPROT_SEARCH_URL = "https://rest.uniprot.org/uniprotkb/search"
 
 
-@lru_cache(maxsize=256)
+_RESOLVED: Dict[tuple, str] = {}
+_RESOLVED_LOCK = threading.Lock()
+_RESOLVED_MAX = 256
+
+
 def _resolve_gene_to_uniprot(gene_symbol: str, taxon_id: int = 9606) -> str:
-    """Resolve a gene symbol to a reviewed UniProt accession (cached per process)."""
+    """Resolve a gene symbol to a reviewed UniProt accession (cached per process).
+
+    Only a definite answer is cached -- an accession, or a 200 with no hit.
+    This was an lru_cache, which also kept the "" returned for a timeout or a
+    5xx, so one transient UniProt failure left that gene unresolvable for the
+    rest of the process.
+    """
+    key = (gene_symbol, taxon_id)
+    with _RESOLVED_LOCK:
+        if key in _RESOLVED:
+            return _RESOLVED[key]
     try:
         resp = requests.get(
             UNIPROT_SEARCH_URL,
@@ -36,13 +51,17 @@ def _resolve_gene_to_uniprot(gene_symbol: str, taxon_id: int = 9606) -> str:
             },
             timeout=10,
         )
-        if resp.status_code == 200:
-            hits = resp.json().get("results", [])
-            if hits:
-                return hits[0].get("primaryAccession", "")
+        if resp.status_code != 200:
+            return ""
+        hits = resp.json().get("results", [])
     except Exception:
-        pass
-    return ""
+        return ""
+    accession = hits[0].get("primaryAccession", "") if hits else ""
+    with _RESOLVED_LOCK:
+        if len(_RESOLVED) >= _RESOLVED_MAX:
+            _RESOLVED.pop(next(iter(_RESOLVED)))
+        _RESOLVED[key] = accession
+    return accession
 
 
 # Column names for getData.php TSV response (no header row)

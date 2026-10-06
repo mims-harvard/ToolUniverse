@@ -265,6 +265,7 @@ def _refresh_locked(bundle_dir, timeout_seconds, http_timeout_seconds):
         )
         if completed.returncode != 0:
             _restore_lock()
+            _repair_environment(uv_binary, bundle_dir)
             detail = (completed.stderr or completed.stdout or "").strip()
             detail = detail[-500:].replace("\n", " ")
             print(
@@ -283,9 +284,60 @@ def _refresh_locked(bundle_dir, timeout_seconds, http_timeout_seconds):
             "ToolUniverse update check timed out; keeping the installed version",
             file=sys.stderr,
         )
+        _repair_environment(uv_binary, bundle_dir)
     except Exception as exc:  # noqa: BLE001 - never fatal, this is opportunistic
         _restore_lock()
+        _repair_environment(uv_binary, bundle_dir)
         print(f"ToolUniverse update check skipped: {exc}", file=sys.stderr)
+
+
+def _repair_environment(uv_binary, bundle_dir, timeout_seconds=600):
+    """Bring the environment back to the restored lock after an update stopped.
+
+    Restoring uv.lock is not enough when the sync was killed while installing.
+    uv removes the old package before it writes the new one, so a kill in
+    between leaves tooluniverse half there or gone, and this very launch then
+    fails on `import tooluniverse` -- Desktop shows "Server disconnected".
+    Reproduced on the 1.5.6 release: the Windows smoke test's update took
+    longer than 8 s, and `tooluniverse.utils` was missing. Locally, killing the
+    same upgrade 0.2-0.3 s in left 0 or 238 of the package's 611 files.
+
+    A frozen sync against the restored lock reinstalls the previous release
+    from uv's cache -- it was installed from there, so this works offline. It
+    runs only after an update that did not complete, and it is not given the
+    8 s bound: killing an install is how the breakage happened.
+    """
+    try:
+        completed = subprocess.run(
+            [
+                uv_binary,
+                "sync",
+                "--frozen",
+                # Reinstall, do not just compare: a kill can land after the
+                # files go but before the old dist-info does, and then uv sees
+                # the release "installed" and changes nothing (measured: a plain
+                # frozen sync left `tooluniverse.base_tool` missing).
+                "--reinstall-package",
+                "tooluniverse",
+                "--python",
+                "3.12",
+                "--directory",
+                bundle_dir,
+            ],
+            timeout=timeout_seconds,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if completed.returncode != 0:
+            detail = (completed.stderr or completed.stdout or "").strip()
+            print(
+                "ToolUniverse could not restore its environment after an "
+                f"interrupted update ({detail[-300:]})",
+                file=sys.stderr,
+            )
+    except Exception as exc:  # noqa: BLE001 - best effort; uv run retries next launch
+        print(f"ToolUniverse could not restore its environment: {exc}", file=sys.stderr)
 
 
 def _report_running_version():

@@ -171,8 +171,8 @@ class PlatformRemoteTool(BaseTool):
         # shell -- and the tool is then missing again from the next terminal. The global .env
         # is loaded on every start without overriding the shell, so saving it there once works.
         return (
-            f"This connected platform tool requires {BORROWER_KEY_ENV}. Create a private "
-            f"connection at {api_keys_page(self.base_url)} and save it once as "
+            f"This connected platform tool requires {BORROWER_KEY_ENV}. Create a connection "
+            f"key at {api_keys_page(self.base_url)} and save it once as "
             f"{BORROWER_KEY_ENV}=<your key> in {global_env_file()} so every terminal has it."
         )
 

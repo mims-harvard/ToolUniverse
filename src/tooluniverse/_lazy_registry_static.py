@@ -597,6 +597,7 @@ STATIC_LAZY_REGISTRY = {
     "ProtVarPopulationTool": "protvar_tool",
     "ProtVarTool": "protvar_tool",
     "ProtacDBTool": "protacdb_tool",
+    "ProteinPKATool": "protein_pka_tool",
     "ProteinStructure3DTool": "protein_structure_3d_tool",
     "ProteinsAPIRESTTool": "proteins_api_tool",
     "ProteinsPlusRESTTool": "proteinsplus_tool",

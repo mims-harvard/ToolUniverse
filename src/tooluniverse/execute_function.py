@@ -394,13 +394,13 @@ def explain_remote_load_failure(
             )
         elif "limit" in lowered:
             message = (
-                f"Remote tools from '{label}' could not load: the request limit its owner set "
+                f"Remote tools from '{label}' could not load: the tool run limit its owner set "
                 f"for this machine is used up. Ask the owner to raise it."
             )
         else:
             message = (
                 f"Remote tools from '{label}' could not load: the platform refused them (402). "
-                f"Either the request limit the machine's owner set is used up, or the period "
+                f"Either the tool run limit the machine's owner set is used up, or the period "
                 f"they set for sharing it has ended. Ask the owner to raise or extend it."
             )
         return message, False
@@ -3578,7 +3578,9 @@ class ToolUniverse:
                     version=cache_version,
                     cache_key=cache_key,
                 )
-                if cached_value is not None:
+                if cached_value is not None and not self._is_error_result(
+                    cached_value
+                ):
                     self.logger.debug(f"Cache hit for {function_name}")
                     return cached_value
                 cache_guard = self.cache_manager.singleflight_guard(composed_cache_key)
@@ -3592,7 +3594,9 @@ class ToolUniverse:
                     version=cache_version,
                     cache_key=cache_key,
                 )
-                if cached_value is not None:
+                if cached_value is not None and not self._is_error_result(
+                    cached_value
+                ):
                     self.logger.debug(
                         f"Cache hit for {function_name} (after singleflight wait)"
                     )
@@ -3713,6 +3717,7 @@ class ToolUniverse:
                 cache_enabled
                 and tool_instance
                 and getattr(tool_instance, "supports_caching", lambda: True)()
+                and not self._is_error_result(result)
             ):
                 if cache_key is None:
                     cache_key = self._make_cache_key(
@@ -3830,7 +3835,9 @@ class ToolUniverse:
                     version=cache_version,
                     cache_key=cache_key,
                 )
-                if cached_value is not None:
+                if cached_value is not None and not self._is_error_result(
+                    cached_value
+                ):
                     self.logger.debug(f"Cache hit for {function_name}")
                     return cached_value
             else:
@@ -3949,6 +3956,7 @@ class ToolUniverse:
             cache_enabled
             and tool_instance
             and getattr(tool_instance, "supports_caching", lambda: True)()
+            and not self._is_error_result(result)
         ):
             if cache_key is None:
                 cache_key = self._make_cache_key(
@@ -4294,6 +4302,37 @@ class ToolUniverse:
                 self.logger.error(f"Failed to auto-load tools: {load_error}")
                 return False
         return True
+
+    @staticmethod
+    def _is_error_result(result: Any) -> bool:
+        """Whether a tool result reports a failure instead of data.
+
+        Tools report a timeout, an HTTP 429 or an upstream outage by returning
+        ``{"status": "error", ...}`` (or a bare ``{"error": ...}``) rather than
+        raising, and a few, such as the openFDA count tools, return
+        ``[{"error": ...}]``. Such a result must not be cached: the default
+        cache persists to disk with no TTL, so one transient failure would be
+        replayed for the same arguments on every later call, across restarts.
+
+        Reads apply it too: entries written before this check existed are on
+        disk with no expiry, and a version upgrade does not clear them -- the
+        cache version comes from the tool class. A cached error is treated as
+        a miss, and the next good result overwrites it.
+        """
+        if isinstance(result, dict):
+            status = result.get("status")
+            if status == "error":
+                return True
+            return status is None and bool(result.get("error"))
+        # Same rule as _tool_error_message in cli.py: an openFDA count row has
+        # "term" next to "error", a failure sentinel does not.
+        return (
+            isinstance(result, list)
+            and len(result) > 0
+            and isinstance(result[0], dict)
+            and "error" in result[0]
+            and "term" not in result[0]
+        )
 
     def _make_cache_key(
         self, function_name: str, arguments: dict, tool_instance=None

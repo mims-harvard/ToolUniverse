@@ -800,22 +800,30 @@ class ESMTool(BaseTool):
                 import json as _json
 
                 cached = _json.loads(cache_path.read_text())
-                cached.setdefault("metadata", {})["from_cache"] = True
-                return cached
+                if not self._label_was_cached_from_failures(cached):
+                    cached.setdefault("metadata", {})["from_cache"] = True
+                    return cached
             except Exception:
                 pass  # fall through and recompute
 
         # Run SAE labeling pipeline across the panel
         panel = self._SAE_LABELING_PANEL[:n_proteins]
         evidence: List[Dict[str, Any]] = []
+        # Proteins whose UniProt entry or Forge features could not be read.
+        # Every panel protein is under the length limit, so these are network
+        # or service failures, not properties of the protein -- and a label
+        # computed without them is not the label.
+        failed: List[str] = []
 
         for accession in panel:
             entry = self._fetch_uniprot_entry(accession)
             if entry is None:
+                failed.append(accession)
                 continue
             seq = entry.get("sequence", {}).get("value")
             uniprot_features = entry.get("features", []) or []
             if not seq:
+                failed.append(accession)
                 continue
 
             sae_response = self._get_sae_features(
@@ -828,7 +836,7 @@ class ESMTool(BaseTool):
                 }
             )
             if sae_response.get("status") != "success":
-                # Likely a panel protein too long, Forge errored, etc.; skip
+                failed.append(accession)
                 continue
 
             # Find residues where target feature_id activates
@@ -869,6 +877,17 @@ class ESMTool(BaseTool):
                     }
                 )
 
+        if len(failed) == len(panel):
+            return {
+                "status": "error",
+                "error": (
+                    f"Could not label SAE feature {feature_id}: none of the "
+                    f"{len(panel)} panel proteins could be read from UniProt "
+                    "or ESM Forge. This is a network or service failure; "
+                    "retry later."
+                ),
+            }
+
         # Aggregate categories across all evidence rows
         category_counts: Dict[str, int] = {}
         for e in evidence:
@@ -892,7 +911,8 @@ class ESMTool(BaseTool):
                 "category": category,
                 "confidence": round(confidence, 3),
                 "n_proteins_with_activation": len(set(e["protein"] for e in evidence)),
-                "n_proteins_analyzed": len(panel),
+                "n_proteins_analyzed": len(panel) - len(failed),
+                "n_proteins_failed": len(failed),
                 "category_vote_counts": category_counts,
                 "supporting_evidence": evidence,
             },
@@ -910,6 +930,14 @@ class ESMTool(BaseTool):
             },
         }
 
+        if failed:
+            # Partial: return it, flagged, but never write it. The cache has no
+            # expiry, so a label voted on by the proteins that happened to
+            # load would be served as this feature's label from then on.
+            result["metadata"]["partial"] = True
+            result["metadata"]["failed_proteins"] = failed
+            return result
+
         # Write cache (best-effort)
         try:
             import json as _json
@@ -920,6 +948,23 @@ class ESMTool(BaseTool):
             pass
 
         return result
+
+    @staticmethod
+    def _label_was_cached_from_failures(cached: Dict[str, Any]) -> bool:
+        """Whether a cached label may have been written after failed fetches.
+
+        Labels are now written only when every panel protein was read, and
+        record n_proteins_failed. Older files do not, and those written while
+        UniProt or Forge was unreachable look like this: no protein activated,
+        so "uncategorized". Recompute that case rather than trust it.
+        """
+        data = cached.get("data") or {}
+        if "n_proteins_failed" in data:
+            return data["n_proteins_failed"] > 0
+        return (
+            data.get("category") == "uncategorized"
+            and not data.get("n_proteins_with_activation")
+        )
 
     @staticmethod
     def _build_per_pos_map(

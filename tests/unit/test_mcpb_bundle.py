@@ -248,6 +248,8 @@ def test_mcpb_refresh_restores_the_lock_when_the_sync_fails(tmp_path, monkeypatc
     original = lock.read_text()
 
     def fake_run(cmd, **kwargs):
+        if "--upgrade-package" not in cmd:  # the repair: a frozen sync
+            return real_subprocess.CompletedProcess(cmd, 0, "", "")
         # what uv does: resolve and write the lock, then fail to install
         lock.write_text("tooluniverse==1.5.3\n")
         return real_subprocess.CompletedProcess(cmd, 1, "", "error: permission denied")
@@ -271,6 +273,8 @@ def test_mcpb_refresh_restores_the_lock_when_the_sync_times_out(tmp_path, monkey
     original = lock.read_text()
 
     def fake_run(cmd, **kwargs):
+        if "--upgrade-package" not in cmd:  # the repair: a frozen sync
+            return real_subprocess.CompletedProcess(cmd, 0, "", "")
         lock.write_text("tooluniverse==1.5.3\n")
         raise real_subprocess.TimeoutExpired(cmd, 8)
 
@@ -279,6 +283,97 @@ def test_mcpb_refresh_restores_the_lock_when_the_sync_times_out(tmp_path, monkey
 
     assert lock.read_text() == original
     assert not (bundle / "uv.lock.pre-update").exists()
+
+
+def _record_runs(monkeypatch, lock, upgrade):
+    """Fake uv: `upgrade` decides what the update does; record every call."""
+    import subprocess as real_subprocess
+
+    calls = []
+
+    def fake_run(cmd, **kwargs):
+        calls.append((list(cmd), kwargs.get("timeout")))
+        if "--upgrade-package" in cmd:
+            lock.write_text("tooluniverse==1.5.6\n")
+            return upgrade(cmd)
+        return real_subprocess.CompletedProcess(cmd, 0, "", "")
+
+    monkeypatch.setattr("subprocess.run", fake_run)
+    return calls
+
+
+@pytest.mark.parametrize("outcome", ["timeout", "failure", "exception"])
+def test_mcpb_an_interrupted_update_is_repaired_before_import(
+    tmp_path, monkeypatch, outcome
+):
+    """Restoring the lock does not restore the files.
+
+    uv removes the old package before writing the new one, so an update killed
+    at the 8 s bound in between left tooluniverse half installed, and the same
+    launch failed on import. That is what the Windows smoke test hit on the
+    1.5.6 release (`No module named 'tooluniverse.utils'`); killing the same
+    upgrade locally 0.2-0.3 s in left 0 or 238 of 611 files. After any update
+    that did not complete, the launcher reinstalls the locked release.
+    """
+    import subprocess as real_subprocess
+
+    bundle = _fake_bundle(tmp_path)
+    lock = bundle / "uv.lock"
+    original = lock.read_text()
+
+    def upgrade(cmd):
+        if outcome == "timeout":
+            raise real_subprocess.TimeoutExpired(cmd, 8)
+        if outcome == "exception":
+            raise OSError("disk full")
+        return real_subprocess.CompletedProcess(cmd, 1, "", "error")
+
+    calls = _record_runs(monkeypatch, lock, upgrade)
+    _load_launcher_refresh(bundle)()
+
+    assert len(calls) == 2
+    repair, timeout = calls[1]
+    assert "--frozen" in repair
+    # a plain frozen sync trusts a dist-info whose files are gone
+    assert repair[repair.index("--reinstall-package") + 1] == "tooluniverse"
+    assert "--upgrade-package" not in repair
+    # never killed early: killing an install is how the breakage happened
+    assert timeout is None or timeout >= 300
+    assert lock.read_text() == original  # repaired against the restored lock
+
+
+def test_mcpb_a_completed_update_is_not_reinstalled(tmp_path, monkeypatch):
+    import subprocess as real_subprocess
+
+    bundle = _fake_bundle(tmp_path)
+    lock = bundle / "uv.lock"
+    calls = _record_runs(
+        monkeypatch, lock, lambda cmd: real_subprocess.CompletedProcess(cmd, 0, "", "")
+    )
+
+    _load_launcher_refresh(bundle)()
+
+    assert len(calls) == 1
+
+
+def test_mcpb_the_release_workflow_waits_for_pypi_and_checks_the_lock():
+    """The bundle used to be built before its release reached PyPI.
+
+    publish-mcpb and publish-pypi start on the same push, so the build locked
+    the previous release: 1.5.4 shipped locking 1.5.3, 1.5.5 locking 1.5.4,
+    and the 1.5.6 build started 45 s before its wheel was uploaded.
+    """
+    import yaml
+
+    workflow = yaml.safe_load(
+        (MCPB_DIR.parent / ".github" / "workflows" / "publish-mcpb.yml").read_text()
+    )
+    names = [step.get("name") for step in workflow["jobs"]["build"]["steps"]]
+
+    wait = names.index("Wait until this version can be installed from PyPI")
+    build = names.index("Build the bundle")
+    check = names.index("The lock installs this release")
+    assert wait < build < check
 
 
 def test_mcpb_refresh_keeps_the_new_lock_when_the_sync_succeeds(tmp_path, monkeypatch):

@@ -83,7 +83,7 @@ def test_the_platforms_own_words_choose_the_message():
 
     assert "period" in expired and "extend" in expired
     assert "limit" not in expired
-    assert "request limit" in limited and "raise" in limited
+    assert "tool run limit" in limited and "raise" in limited
 
 
 def test_a_status_lost_on_the_way_is_taken_from_the_recorded_response():
@@ -95,7 +95,7 @@ def test_a_status_lost_on_the_way_is_taken_from_the_recorded_response():
     message = describe_remote_call_failure(lost, RELAY, "lab_predict",
                                            recorded=(402, {"detail": "call limit reached"}))
 
-    assert "request limit" in message
+    assert "tool run limit" in message
 
 
 def test_leaf_exception_stops_where_the_context_was_replaced():
