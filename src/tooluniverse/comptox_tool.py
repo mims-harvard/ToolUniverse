@@ -17,7 +17,6 @@ Authentication: API key via the "x-api-key" HTTP header. Free; obtained by
 emailing ccte_api@epa.gov.
 """
 
-import os
 import requests
 from typing import Any, Dict, Optional
 from .base_tool import BaseTool
@@ -49,9 +48,22 @@ class CompToxTool(BaseTool):
         self.timeout = timeout
         self.parameter = tool_config.get("parameter", {})
         self.required = self.parameter.get("required", [])
-        if api_key is _API_KEY_FROM_ENV:
-            api_key = os.environ.get("EPA_COMPTOX_API_KEY")
-        self.api_key = api_key
+        self._api_key_overridden = api_key is not _API_KEY_FROM_ENV
+        self._explicit_api_key = None if api_key is _API_KEY_FROM_ENV else api_key
+
+    @property
+    def api_key(self) -> Optional[str]:
+        """Resolve the key for the active request, not once at construction.
+
+        A long-lived/hosted process serves more than one tenant's key over
+        its lifetime, so the key is looked up fresh on each access via
+        BaseTool.credential() (which honours a request-scoped credential
+        context) rather than cached in __init__. An explicit constructor
+        override (including an explicit None, used by tests) always wins.
+        """
+        if self._api_key_overridden:
+            return self._explicit_api_key
+        return self.credential("EPA_COMPTOX_API_KEY")
 
     def _headers(self) -> Dict[str, str]:
         return {"Accept": "application/json", "x-api-key": self.api_key}

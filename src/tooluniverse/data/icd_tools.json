@@ -142,7 +142,11 @@
         "purpose": "WHO ICD-11 API client secret (OAuth), used with the client ID.",
         "without": "Required together with ICD_CLIENT_ID."
       }
-    }
+    },
+    "required_api_keys": [
+      "ICD_CLIENT_ID",
+      "ICD_CLIENT_SECRET"
+    ]
   },
   {
     "name": "ICD11_get_entity",
@@ -242,7 +246,7 @@
         "language": "en"
       }
     ],
-    "optional_api_keys": [
+    "required_api_keys": [
       "ICD_CLIENT_ID",
       "ICD_CLIENT_SECRET"
     ]
@@ -317,7 +321,7 @@
         "language": "en"
       }
     ],
-    "optional_api_keys": [
+    "required_api_keys": [
       "ICD_CLIENT_ID",
       "ICD_CLIENT_SECRET"
     ]

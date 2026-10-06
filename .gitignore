@@ -241,3 +241,14 @@ TOOL_SWEEP_TRIAGE.md
 
 # Local-only runtime artifact from test_new_tools.py
 tool_relationship_graph.json
+
+# TDC downloads its datasets into ./data at call time, so running the sweep
+# leaves files in the working tree. Nothing under the repo root's data/ is
+# tracked; src/tooluniverse/data/ is a different, tracked directory.
+/data/
+
+# Four DrugBank tools used to set save_to_local_dir to this path, which drops a
+# 1.5 GB copy of drugbank_full_database.xml inside the package. They now share
+# the Hugging Face cache like the other fifteen; ignored so an older checkout or
+# a reintroduced setting cannot stage it.
+/src/tooluniverse/test/

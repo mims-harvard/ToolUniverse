@@ -2,6 +2,7 @@ import re
 import requests
 from typing import Dict, Any, List, Optional
 from .base_tool import BaseTool
+from .provider_rate_limit import enforce_provider_rate_limit
 from .tool_registry import register_tool
 
 _EFO_ID_RE = re.compile(r"^[A-Z]+[_:]\d+")
@@ -78,6 +79,33 @@ def _order_ci_bounds(record: Dict[str, Any]) -> Dict[str, Any]:
     return record
 
 
+# Rate limits by host, applied at the one place every request goes through.
+#
+# The 2026-10-03 sweep ran 10 workers against live APIs and these tools
+# answered 429. Measured afterwards, run on their own, RNAcentral served eight
+# rapid requests without complaint -- so their 429s came from the concurrency,
+# not from a per-second ceiling either tool was crossing alone. EBI was
+# different: by the end of the triage it answered 429 to the *first* request,
+# which is a sustained-use penalty earned over several sweeps.
+#
+# Both are the same fix. A shared bucket per host means the worker pool
+# spends one budget instead of one each, which is what the limiter already
+# does for NCBI across pubmed, icite and medgen.
+_HOST_RATE_LIMITS = (
+    ("rnacentral.org", "rnacentral", 3.0),
+    ("ebi.ac.uk", "ebi", 3.0),
+)
+
+
+def _rate_limited_get(url, **kwargs):
+    """requests.get, after waiting for this host's slot."""
+    for host, provider, rps in _HOST_RATE_LIMITS:
+        if host in url:
+            enforce_provider_rate_limit(provider, "", rps)
+            break
+    return requests.get(url, **kwargs)
+
+
 class GWASRESTTool(BaseTool):
     """Base class for GWAS Catalog REST API tools."""
 
@@ -92,7 +120,7 @@ class GWASRESTTool(BaseTool):
         """Make a request to the GWAS Catalog API."""
         url = f"{self.base_url}{endpoint}"
         try:
-            response = requests.get(url, params=params, timeout=60)
+            response = _rate_limited_get(url, params=params, timeout=60)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.RequestException as e:
@@ -169,7 +197,7 @@ class GWASRESTTool(BaseTool):
         """
         # Primary: GWAS Catalog efoTraits endpoint (v1)
         try:
-            resp = requests.get(
+            resp = _rate_limited_get(
                 f"{self.base_url}/efoTraits/search/findByEfoTrait",
                 params={"trait": disease_trait},
                 timeout=15,
@@ -189,7 +217,7 @@ class GWASRESTTool(BaseTool):
 
         # Fallback: search studies by disease_trait, extract efo_id from first result
         try:
-            resp = requests.get(
+            resp = _rate_limited_get(
                 f"{self.base_url}/v2/studies",
                 params={"disease_trait": disease_trait, "size": 1},
                 timeout=15,
@@ -244,7 +272,7 @@ class GWASRESTTool(BaseTool):
         candidates: List[Dict[str, str]] = []
         seen = set()
         try:
-            resp = requests.get(
+            resp = _rate_limited_get(
                 "https://www.ebi.ac.uk/gwas/api/search",
                 params={"q": disease_trait, "max": 10},
                 timeout=15,
@@ -287,7 +315,7 @@ class GWASRESTTool(BaseTool):
     def _fetch_study(self, accession_id: str) -> Optional[Dict[str, Any]]:
         """Fetch one study record, or None if it cannot be retrieved."""
         try:
-            resp = requests.get(
+            resp = _rate_limited_get(
                 f"{self.base_url}/v2/studies/{accession_id}", timeout=15
             )
             if resp.status_code == 200:

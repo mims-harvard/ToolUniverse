@@ -1,0 +1,314 @@
+[
+  {
+    "name": "PDB_inspect_structure",
+    "type": "PDBInventoryTool",
+    "description": "Inspect legacy PDB from local text/path or public ID (1UBQ). Reports chains, coordinate sequences, glycan-name counts, expected lengths and coincident atoms for one selected model. Inventory only; no chemistry or binding validation.",
+    "cacheable": false,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Local legacy PDB path; stays local. Exactly one input source."
+        },
+        "pdb_content": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Inline legacy PDB coordinates; stays local. Exactly one input source."
+        },
+        "pdb_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Four-character public RCSB identifier, e.g. 1UBQ; downloads only this public PDB."
+        },
+        "model_index": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 10000,
+          "description": "Model by file order, default 1. Models are never pooled."
+        },
+        "expected_chain_lengths": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "minProperties": 1,
+          "propertyNames": {
+            "minLength": 1,
+            "maxLength": 1
+          },
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100000
+          },
+          "description": "Expected exact protein-chain lengths, e.g. {\"A\":76}; mismatch is reported."
+        },
+        "glycan_residue_names": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9]{1,3}$"
+          },
+          "maxItems": 200,
+          "description": "Additional caller-declared glycan residue names, including GLYCAM labels. Counts ATOM and HETATM; names do not validate chemistry."
+        },
+        "protein_residue_aliases": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "propertyNames": {
+            "pattern": "^[A-Za-z0-9]{1,3}$"
+          },
+          "additionalProperties": {
+            "type": "string",
+            "enum": [
+              "ALA",
+              "ARG",
+              "ASN",
+              "ASP",
+              "CYS",
+              "GLN",
+              "GLU",
+              "GLY",
+              "HIS",
+              "ILE",
+              "LEU",
+              "LYS",
+              "MET",
+              "PHE",
+              "PRO",
+              "SER",
+              "THR",
+              "TRP",
+              "TYR",
+              "VAL"
+            ]
+          },
+          "description": "Caller declarations mapping nonstandard protein names to canonical 3-letter amino acids; e.g. NLN to ASN for a known GLYCAM input."
+        },
+        "max_residue_details": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Bound residue detail lists, default 100. Counts and coordinate sequences stay complete; truncation is reported."
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "pdb_path"
+          ],
+          "properties": {
+            "pdb_path": {
+              "type": "string"
+            }
+          },
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "pdb_content"
+                ],
+                "properties": {
+                  "pdb_content": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "required": [
+                  "pdb_id"
+                ],
+                "properties": {
+                  "pdb_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "required": [
+            "pdb_content"
+          ],
+          "properties": {
+            "pdb_content": {
+              "type": "string"
+            }
+          },
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "pdb_path"
+                ],
+                "properties": {
+                  "pdb_path": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "required": [
+                  "pdb_id"
+                ],
+                "properties": {
+                  "pdb_id": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "required": [
+            "pdb_id"
+          ],
+          "properties": {
+            "pdb_id": {
+              "type": "string"
+            }
+          },
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "pdb_path"
+                ],
+                "properties": {
+                  "pdb_path": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "required": [
+                  "pdb_content"
+                ],
+                "properties": {
+                  "pdb_content": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "data"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "required": [
+                "input_sha256",
+                "chains",
+                "input_model_count",
+                "selected_model_index",
+                "recognized_glycan_heavy_coordinate_records",
+                "binding_verified",
+                "pH_selectivity_verified",
+                "structure_chemistry_verified"
+              ],
+              "properties": {
+                "input_sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "chains": {
+                  "type": "object"
+                },
+                "input_model_count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "selected_model_index": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "recognized_glycan_heavy_coordinate_records": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "expected_chain_lengths_match": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "binding_verified": {
+                  "const": false
+                },
+                "pH_selectivity_verified": {
+                  "const": false
+                },
+                "structure_chemistry_verified": {
+                  "const": false
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1UBQ",
+        "expected_chain_lengths": {
+          "A": 76
+        }
+      },
+      {
+        "pdb_path": "tests/fixtures/pdb_inventory/1ubq_protein.pdb",
+        "expected_chain_lengths": {
+          "A": 76
+        }
+      }
+    ]
+  }
+]

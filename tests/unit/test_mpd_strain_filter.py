@@ -132,16 +132,22 @@ def test_zero_hit_search_404_is_an_empty_success_not_an_error():
     resp.raise_for_status.assert_not_called()
 
 
-def test_other_404_still_raises_as_an_error():
+def test_a_404_with_a_differently_shaped_body_is_still_handed_back_as_is():
+    """Every 404 from this search is treated as an empty result (no hits),
+    whatever its body looks like -- deliberate per #711: a first attempt at
+    synthesising a minimal {"@graph": [], "total": 0} traded the "nothing
+    matched" failure for a schema error instead (the schema requires
+    @context), so the real body is handed back unconditionally rather than
+    validated against ENCODE's documented shape."""
     tool = MPDRESTTool(_tool_config())
 
     resp = MagicMock()
     resp.status_code = 404
     resp.json.return_value = {"detail": "not the ENCODE empty-search shape"}
-    resp.raise_for_status.side_effect = Exception("404 Client Error: Not Found")
 
     with patch.object(tool.session, "get", return_value=resp):
         result = tool.run({"strain": "DBA/2J"})
 
-    assert result["status"] == "error"
-    assert "MPD API error" in result["error"]
+    assert result["status"] == "success"
+    assert result["data"] == {"detail": "not the ENCODE empty-search shape"}
+    resp.raise_for_status.assert_not_called()

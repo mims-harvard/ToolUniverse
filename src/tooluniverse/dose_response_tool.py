@@ -10,6 +10,7 @@ No external API calls. Uses scipy.optimize for curve fitting.
 import math
 from typing import Dict, Any, List
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 
 try:
@@ -49,7 +50,7 @@ class DoseResponseTool(BaseTool):
         if not HAS_SCIPY:
             return {
                 "status": "error",
-                "error": "scipy and numpy are required. Install with: pip install scipy numpy",
+                "error": f"scipy is required. {install_hint('stats', 'scipy')}",
             }
 
         operation = arguments.get("operation")

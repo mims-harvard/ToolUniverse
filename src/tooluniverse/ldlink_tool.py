@@ -9,12 +9,12 @@ read from the LDLINK_TOKEN environment variable).
 Register: https://ldlink.nih.gov/?tab=apiaccess
 """
 
-import os
 from typing import Any, Dict
 
 import requests
 
 from .base_tool import BaseTool
+from .credentials import has_credential_context
 from .tool_registry import register_tool
 
 LDLINK_URL = "https://ldlink.nih.gov/LDlinkRest"
@@ -27,7 +27,20 @@ class LDlinkTool(BaseTool):
     def __init__(self, tool_config: Dict[str, Any]):
         super().__init__(tool_config)
         self.timeout = tool_config.get("timeout", 30)
-        self.token = os.environ.get("LDLINK_TOKEN", "")
+        self._token_override = None
+
+    @property
+    def token(self) -> str:
+        scoped_token = self.credential("LDLINK_TOKEN") or ""
+        if has_credential_context():
+            return scoped_token
+        return (
+            self._token_override if self._token_override is not None else scoped_token
+        )
+
+    @token.setter
+    def token(self, value):
+        self._token_override = value
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         if not self.token:

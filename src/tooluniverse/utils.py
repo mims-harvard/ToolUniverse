@@ -675,3 +675,36 @@ def validate_hook_conditions(conditions: Dict[str, Any]) -> bool:
 
     except Exception:
         return False
+
+
+def leaf_exception(exc: BaseException) -> BaseException:
+    """The innermost exception: through exception groups, causes and contexts.
+
+    anyio and asyncio wrap a single network failure in an exception group whose str() is
+    "unhandled errors in a TaskGroup (1 sub-exception)", which says nothing about what failed.
+    """
+    seen = set()
+    current = exc
+    while current is not None and id(current) not in seen:
+        seen.add(id(current))
+        children = getattr(current, "exceptions", None)
+        if children:
+            current = children[0]
+            continue
+        # A context raised `from None` was deliberately replaced by this exception's message;
+        # Python's own traceback hides it too.
+        nested = current.__cause__ or (
+            None if current.__suppress_context__ else current.__context__
+        )
+        if nested is not None:
+            current = nested
+            continue
+        return current
+    return exc
+
+
+def concise_exception_message(exc: BaseException) -> str:
+    """Return the most useful leaf message without dumping an exception group."""
+    leaf = leaf_exception(exc)
+    message = str(leaf).strip() or str(exc).strip()
+    return message or type(leaf).__name__

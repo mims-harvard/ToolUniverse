@@ -83,7 +83,8 @@
           }
         }
       }
-    }
+    },
+    "required_packages": ["epam.indigo"]
   },
   {
     "type": "ChEMBLRESTTool",

@@ -17,7 +17,7 @@ def GtoPdb_search_targets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the Guide to Pharmacology database (GtoPdb) for drug targets including GPCRs, ion channels...
 
@@ -40,7 +40,7 @@ def GtoPdb_search_targets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

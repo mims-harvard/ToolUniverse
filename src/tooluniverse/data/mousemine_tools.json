@@ -1,7 +1,7 @@
 [
   {
     "name": "MouseMine_search",
-    "type": "BaseRESTTool",
+    "type": "MouseMineTool",
     "description": "Search MouseMine, the InterMine data warehouse for mouse (Mus musculus) genomics data from MGI (Mouse Genome Informatics). Searches across genes, alleles, proteins, publications, gene ontology terms, protein domains, and more. Returns matching records with category facets and relevance scores. MouseMine integrates data from MGI including gene annotations, phenotypes, alleles, expression data, pathways, and disease models. Use facet_Category parameter to filter by specific entity type (e.g., 'ProteinCodingGene', 'Allele', 'Publication', 'Protein').",
     "parameter": {
       "type": "object",
@@ -130,7 +130,7 @@
   },
   {
     "name": "MouseMine_search_genes",
-    "type": "BaseRESTTool",
+    "type": "MouseMineTool",
     "description": "Search MouseMine specifically for mouse protein-coding genes. This is a convenience wrapper that filters results to ProteinCodingGene category only. Returns gene symbols, MGI identifiers, and organism information from Mouse Genome Informatics (MGI). For broader searches across all entity types, use MouseMine_search instead.",
     "parameter": {
       "type": "object",
@@ -238,7 +238,7 @@
   },
   {
     "name": "MouseMine_search_alleles",
-    "type": "BaseRESTTool",
+    "type": "MouseMineTool",
     "description": "Search MouseMine specifically for mouse alleles and mutants. Returns allele symbols, names, MGI identifiers, allele types (Targeted, Endonuclease-mediated, Spontaneous, etc.), and attribute strings (Null/knockout, etc.) from Mouse Genome Informatics (MGI). Useful for finding knockout/knockin alleles, spontaneous mutations, and transgenic alleles for specific genes. For broader searches, use MouseMine_search instead.",
     "parameter": {
       "type": "object",

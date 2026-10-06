@@ -26,6 +26,7 @@ Tool Discovery & Usage
 ----------------------
 
 * **Tool Discovery** → :doc:`finding_tools` - Tutorial to ToolUniverse's three tool finder methods: keyword, LLM, and embedding search
+* **Protein Model Outputs** → :doc:`protein_model_outputs` - Read NVIDIA sequence and structure predictions, preserve all samples, and distinguish model failures
 * **Tools Overview** → :doc:`tools` - Comprehensive overview of all available tools
 
 AI Agent Platform Setup

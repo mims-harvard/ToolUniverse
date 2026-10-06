@@ -1,7 +1,7 @@
 """
 GWASSumStats_list_studies
 
-DEPRECATED / non-functional: the EBI GWAS Catalog Summary Statistics REST API was retired (every ...
+List studies in the EBI GWAS Catalog, newest API (v2). Returns the study accession with its repor...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def GWASSumStats_list_studies(
     validate: bool = True,
 ) -> list[Any]:
     """
-    DEPRECATED / non-functional: the EBI GWAS Catalog Summary Statistics REST API was retired (every ...
+    List studies in the EBI GWAS Catalog, newest API (v2). Returns the study accession with its repor...
 
     Parameters
     ----------

@@ -1684,7 +1684,11 @@
             "type": "object",
             "properties": {
               "alarms": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -1917,8 +1921,7 @@
     ],
     "test_examples": [
       {
-        "pharmacology_info": "toxicity",
-        "indication": "hypertension",
+        "pharmacology_info": "Mechanism of Action",
         "limit": 1,
         "skip": 0
       }
@@ -2757,7 +2760,11 @@
             "type": "object",
             "properties": {
               "assembly_or_installation_instructions": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -3302,8 +3309,8 @@
     ],
     "test_examples": [
       {
-        "carcinogenic_info": "carcinogenic",
-        "limit": 2,
+        "carcinogenic_info": "carcinogenic potential",
+        "limit": 5,
         "skip": 0
       }
     ],
@@ -5156,7 +5163,11 @@
             "type": "object",
             "properties": {
               "disposal_and_waste_handling": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -6044,7 +6055,7 @@
     "test_examples": [
       {
         "lab_test_interference": "false positive",
-        "limit": 2,
+        "limit": 5,
         "skip": 0
       }
     ],
@@ -6074,7 +6085,11 @@
             "type": "object",
             "properties": {
               "drug_and_or_laboratory_test_interactions": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -6629,8 +6644,8 @@
     ],
     "test_examples": [
       {
-        "effective_time": "2023",
-        "limit": 2,
+        "effective_time": "20210902",
+        "limit": 5,
         "skip": 0
       }
     ],
@@ -7311,8 +7326,8 @@
     ],
     "test_examples": [
       {
-        "precaution_info": "pregnancy",
-        "limit": 2,
+        "precaution_info": "superinfection",
+        "limit": 5,
         "skip": 0
       }
     ],
@@ -8068,7 +8083,11 @@
             "type": "object",
             "properties": {
               "health_care_provider_letter": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -8174,8 +8193,8 @@
     ],
     "test_examples": [
       {
-        "health_claim": "reduce",
-        "limit": 2,
+        "health_claim": "homeopathic",
+        "limit": 5,
         "skip": 0
       }
     ],
@@ -8205,7 +8224,11 @@
             "type": "object",
             "properties": {
               "health_claim": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -9224,7 +9247,11 @@
             "type": "object",
             "properties": {
               "information_for_owners_or_caregivers": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -9589,8 +9616,8 @@
     ],
     "test_examples": [
       {
-        "instructions_for_use": "inject",
-        "limit": 2,
+        "instructions_for_use": "Instructions for Use",
+        "limit": 5,
         "skip": 0
       }
     ],
@@ -9620,7 +9647,11 @@
             "type": "object",
             "properties": {
               "instructions_for_use": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -10101,8 +10132,8 @@
     ],
     "test_examples": [
       {
-        "child_safety_info": "children",
-        "limit": 2,
+        "child_safety_info": "out of reach of children",
+        "limit": 5,
         "skip": 0
       }
     ],
@@ -10197,7 +10228,7 @@
   },
   {
     "name": "FDA_get_child_safety_info_by_drug_name",
-    "description": "Retrieve child safety information for a specific drug based on its name.",
+    "description": "Retrieve the FDA label's keep_out_of_reach_of_children section by drug name. This section contains child-access and accidental-ingestion warnings; it does not provide a general assessment of pediatric use. For pediatric-use labeling, use FDA_get_pediatric_use_info_by_drug_name. A missing section does not establish safety or lack of risk.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11432,8 +11463,8 @@
     ],
     "test_examples": [
       {
-        "toxicology_info": "carcinogenesis",
-        "limit": 2,
+        "toxicology_info": "Carcinogenesis",
+        "limit": 5,
         "skip": 0
       }
     ],
@@ -11703,8 +11734,8 @@
     ],
     "test_examples": [
       {
-        "nonteratogenic_effects": "neonatal",
-        "limit": 2,
+        "nonteratogenic_effects": "fetal development",
+        "limit": 5,
         "skip": 0
       }
     ],
@@ -11734,7 +11765,11 @@
             "type": "object",
             "properties": {
               "nonteratogenic_effects": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -13390,7 +13425,7 @@
   },
   {
     "name": "FDA_get_pediatric_use_info_by_drug_name",
-    "description": "Retrieve pediatric use information based on drug names.",
+    "description": "Retrieve the FDA label's pediatric_use section by drug name. Use this section for statements about use in pediatric populations, including age-specific evidence or limitations when present. It is distinct from keep_out_of_reach_of_children access warnings. A missing section does not establish safety or lack of risk; relevant information may appear in other label sections.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -15694,8 +15729,8 @@
     ],
     "test_examples": [
       {
-        "residue_warning": "milk",
-        "limit": 2,
+        "residue_warning": "excessive heat",
+        "limit": 1,
         "skip": 0
       }
     ],
@@ -15869,7 +15904,11 @@
             "type": "object",
             "properties": {
               "risks": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -16133,7 +16172,11 @@
             "type": "object",
             "properties": {
               "route": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "openfda.route": {
                 "type": [
@@ -16293,7 +16336,11 @@
                 }
               },
               "route": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "openfda.route": {
                 "type": [
@@ -16803,7 +16850,11 @@
             "type": "object",
             "properties": {
               "spl_indexing_data_elements": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -18450,8 +18501,8 @@
     ],
     "test_examples": [
       {
-        "summary_text": "warning",
-        "limit": 2,
+        "summary_text": "Sun Protection",
+        "limit": 1,
         "skip": 0
       }
     ],
@@ -18481,7 +18532,11 @@
             "type": "object",
             "properties": {
               "summary_of_safety_and_effectiveness": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -18710,8 +18765,8 @@
     ],
     "test_examples": [
       {
-        "teratogenic_effects": "pregnancy",
-        "limit": 2,
+        "teratogenic_effects": "Pregnancy Category C",
+        "limit": 5,
         "skip": 0
       }
     ],
@@ -18741,7 +18796,11 @@
             "type": "object",
             "properties": {
               "teratogenic_effects": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [
@@ -19445,7 +19504,11 @@
             "type": "object",
             "properties": {
               "user_safety_warnings": {
-                "type": "null"
+                "type": ["array", "null"],
+                "items": {
+                  "type": "string"
+                },
+                "description": "openFDA returns this label section as an array of strings; it is null when the matched label has no such section."
               },
               "indications_and_usage": {
                 "type": [

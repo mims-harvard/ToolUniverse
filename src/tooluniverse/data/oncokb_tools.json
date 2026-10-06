@@ -66,7 +66,8 @@
                   "type": "null"
                 },
                 "tumorType": {
-                  "type": "null"
+                  "type": ["string", "null"],
+                  "description": "The tumour type the annotation was scoped to, echoed back. Null when the call did not supply one."
                 },
                 "consequence": {
                   "type": "null"
@@ -84,10 +85,8 @@
                   "type": "null"
                 },
                 "canonicalTranscript": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": ["string", "null"],
+                  "description": "Ensembl transcript id OncoKB annotated against, e.g. 'ENST00000288602'. Null when OncoKB has no canonical transcript for the queried gene."
                 },
                 "germline": {
                   "type": "boolean"
@@ -557,10 +556,8 @@
                   "type": "null"
                 },
                 "canonicalTranscript": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
+                  "type": ["string", "null"],
+                  "description": "Ensembl transcript id OncoKB annotated against, e.g. 'ENST00000288602'. Null when OncoKB has no canonical transcript for the queried gene."
                 },
                 "germline": {
                   "type": "boolean"
@@ -1332,7 +1329,8 @@
                   "type": "null"
                 },
                 "tumorType": {
-                  "type": "null"
+                  "type": ["string", "null"],
+                  "description": "The tumour type the annotation was scoped to, echoed back. Null when the call did not supply one."
                 },
                 "consequence": {
                   "type": "null"

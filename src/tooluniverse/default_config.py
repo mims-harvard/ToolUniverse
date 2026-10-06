@@ -230,6 +230,7 @@ default_tool_files = {
     "replicate": os.path.join(current_dir, "data", "replicate_tools.json"),
     # DTU protein predictors (DeepTMHMM / SignalP via biolib)
     "dtu_protein": os.path.join(current_dir, "data", "dtu_protein_tools.json"),
+    "protein_pka": os.path.join(current_dir, "data", "protein_pka_tools.json"),
     # Cellpose deep-learning cell/nucleus segmentation (local, cellpose pkg)
     "cellpose": os.path.join(current_dir, "data", "cellpose_tools.json"),
     # DeepSpot-M spatial gene expression from an H&E tile (local, deepspotm pkg)
@@ -345,6 +346,9 @@ default_tool_files = {
     ),
     "compound_drug_profile": os.path.join(
         current_dir, "data", "compound_drug_profile_tools.json"
+    ),
+    "compound_target_profile": os.path.join(
+        current_dir, "data", "compound_target_profile_tools.json"
     ),
     "python_executor": os.path.join(current_dir, "data", "python_executor_tools.json"),
     "idmap": os.path.join(current_dir, "data", "idmap_tools.json"),
@@ -580,6 +584,7 @@ default_tool_files = {
     ),
     # ProteinsPlus - Protein-ligand docking and binding site analysis
     "proteinsplus": os.path.join(current_dir, "data", "proteinsplus_tools.json"),
+    "pdb_inventory": os.path.join(current_dir, "data", "pdb_inventory_tools.json"),
     # SwissDock - Molecular docking with AutoDock Vina and Attracting Cavities
     "swissdock": os.path.join(current_dir, "data", "swissdock_tools.json"),
     # LIPID MAPS - Lipid Structure Database (lipidomics)
@@ -1087,7 +1092,11 @@ default_tool_files = {
     # EVA - European Variation Archive (EBI) for population variant data
     "eva": os.path.join(current_dir, "data", "eva_tools.json"),
     # eQTL Catalogue - Expression quantitative trait loci associations
-    "eqtl": os.path.join(current_dir, "data", "eqtl_tools.json"),
+    # Archived at: src/tooluniverse/data/broken_apis/eqtl_tools.json
+    # EBI retired the REST API: every path and version answers 410 Gone. The data
+    # moved to FTP/HDF5/Tabix (ftp.ebi.ac.uk/pub/databases/spot/eQTL/), so there is
+    # no endpoint to repoint at; use OpenTargets for eQTL evidence per gene/variant.
+    # "eqtl": os.path.join(current_dir, "data", "eqtl_tools.json"),
     # OSDR - NASA Open Science Data Repository (space biology studies).
     # Re-added: the domain from the prior attempt (genelab-data.ndc.nasa.gov)
     # is dead, but OSDR has since migrated to osdr.nasa.gov, verified live.
@@ -1238,7 +1247,7 @@ default_tool_files = {
     "usgs_water": os.path.join(current_dir, "data", "usgs_water_tools.json"),
     # Spaceflight News API - 30K+ space news articles from major sites
     # Launch Library 2 - upcoming rocket launches worldwide (all providers)
-    # US Census Bureau - population and demographic data (no key required)
+    # US Census Bureau - population and demographic data (free key required)
     "uscensus": os.path.join(current_dir, "data", "uscensus_tools.json"),
     # Open-Meteo Marine - ocean wave/swell forecasts for any coastal location
     "open_meteo_marine": os.path.join(

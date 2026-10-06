@@ -9,12 +9,12 @@ IUCN_API_KEY environment variable, sent as an Authorization header).
 Register: https://api.iucnredlist.org/
 """
 
-import os
 from typing import Any, Dict
 
 import requests
 
 from .base_tool import BaseTool
+from .credentials import has_credential_context
 from .tool_registry import register_tool
 
 IUCN_URL = "https://api.iucnredlist.org/api/v4"
@@ -38,7 +38,19 @@ class IUCNTool(BaseTool):
     def __init__(self, tool_config: Dict[str, Any]):
         super().__init__(tool_config)
         self.timeout = tool_config.get("timeout", 30)
-        self.token = os.environ.get("IUCN_API_KEY", "")
+        self._token_override = None
+
+    @property
+    def token(self) -> str:
+        """Resolve the IUCN key for the active request."""
+        scoped_key = self.credential("IUCN_API_KEY") or ""
+        if has_credential_context():
+            return scoped_key
+        return self._token_override if self._token_override is not None else scoped_key
+
+    @token.setter
+    def token(self, value):
+        self._token_override = value
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         if not self.token:

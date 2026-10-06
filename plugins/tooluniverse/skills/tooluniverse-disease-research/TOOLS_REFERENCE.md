@@ -579,21 +579,7 @@ tu.tools.civic_search_molecular_profiles(limit=50)
 
 ## 9. Pharmacology (GtoPdb)
 
-> All `GtoPdb_*` tools need `GTOPDB_API_KEY` (the API returns HTTP 401 without a key); the calls below were checked against the tool schemas but not run live.
-
-### GtoPdb_search_diseases
-**Purpose**: Search diseases
-```python
-tu.tools.GtoPdb_search_diseases(name="diabetes")
-# Returns: diseases with IDs, OMIM, DOID
-```
-
-### GtoPdb_get_disease_associations
-**Purpose**: Get disease-linked targets and ligands (disease_id from GtoPdb_search_diseases)
-```python
-tu.tools.GtoPdb_get_disease_associations(disease_id=652)
-# Returns: diseaseTargets and diseaseLigands
-```
+> GtoPdb's REST web services closed (every call now answers 401 "API key is missing", and GtoPdb publishes no mechanism to obtain one). The `GtoPdb_*` tools below now read GtoPdb's open bulk CSV downloads instead and need no key; `GtoPdb_search_diseases` and `GtoPdb_get_disease_associations` are retired, since GtoPdb publishes no open disease file to read them from. Use OpenTargets_get_associated_drugs_by_disease_efoId (above) for disease-target associations instead.
 
 ### GtoPdb_search_targets
 **Purpose**: Get pharmacological targets
@@ -638,7 +624,7 @@ tu.tools.GtoPdb_search_ligands(name="aspirin", approved=True)
 tu.tools.GtoPdb_get_ligand_properties(ligand_id=1016)
 # Returns: chemical structure and molecular properties
 ```
-> Note: as of this writing the GtoPdb web services reject requests without an API key (HTTP 401), so these GtoPdb tools could not be run end-to-end when this reference was corrected; check the error before relying on them.
+> Note: GtoPdb's REST web services closed; these tools now read GtoPdb's open bulk CSV downloads and need no API key (see the module docstring in `gtopdb_tool.py` for the measured file sizes/load times).
 
 ---
 

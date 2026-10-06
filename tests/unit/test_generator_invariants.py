@@ -187,3 +187,34 @@ def test_static_registry_main_writes_the_discovered_mapping():
     assert namespace["STATIC_LAZY_REGISTRY"] == registry
     assert content.index('"AlphaTool"') < content.index('"ZetaTool"')
     assert write_text.call_args.kwargs == {"encoding": "utf-8"}
+
+
+def test_the_committed_lazy_registry_matches_its_generator(tmp_path):
+    """`_lazy_registry_static.py` is generated output, and nothing checked it.
+
+    The file is only consulted where AST discovery cannot run -- a frozen or
+    source-stripped build -- so a class missing from it fails silently in a
+    normal checkout and surfaces only in the bundle. It had drifted that way:
+    eight classes discoverable from source were absent, and the key order,
+    which the generator emits with `sort_keys=True`, had been broken by hand
+    edits appending to the end.
+
+    Regeneration is monotonic, because `build_lazy_registry()` seeds itself
+    from the committed file before adding what it finds. So this compares the
+    generated text to the committed text: it catches an addition that was never
+    written back, and it catches the hand edit that put a key out of order. It
+    cannot catch an entry that should be deleted; nothing can, through this
+    generator.
+    """
+    generated = tmp_path / "_lazy_registry_static.py"
+    lazy.main(generated)
+
+    committed = PACKAGE_DIR / "_lazy_registry_static.py"
+    assert generated.read_text(encoding="utf-8") == committed.read_text(
+        encoding="utf-8"
+    ), (
+        "src/tooluniverse/_lazy_registry_static.py is out of date. Run "
+        "`python src/tooluniverse/generate_lazy_registry.py` and commit the "
+        "result. Do not hand-edit the file: the generator sorts its keys, and "
+        "an appended entry will fail this test."
+    )

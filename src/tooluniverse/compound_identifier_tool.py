@@ -792,8 +792,9 @@ class CompoundIdentifierResolutionTool(BaseTool):
             notes.append(
                 f"In {', '.join(tied)} the leading value is tied with the next on "
                 "concordance, so the order between them carries no evidence — it "
-                "is the order the sources happened to report. A pseudoautosomal "
-                "gene really does have two equally valid Ensembl IDs. Treat the "
+                "is the order the sources happened to report. Ties are often real "
+                "rather than a defect: a gene has many RefSeq transcripts and a "
+                "pseudoautosomal one has two equally valid Ensembl IDs. Treat the "
                 "tied values as alternatives, not as first and second choice."
             )
         if renamed_to:

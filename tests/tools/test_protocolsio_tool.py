@@ -52,12 +52,17 @@ class TestMissingApiKey:
         assert result["status"] == "error"
         assert "PROTOCOLS_IO_API_KEY" in result["error"]
 
-    def test_key_resolved_from_environment_at_construction(self, tool_config):
+    def test_key_resolved_from_environment_per_request(self, tool_config):
         from tooluniverse.protocolsio_tool import ProtocolsIOTool
 
+        tool = ProtocolsIOTool(tool_config)
         with patch.dict("os.environ", {"PROTOCOLS_IO_API_KEY": "env-token"}, clear=False):
-            tool = ProtocolsIOTool(tool_config)
-        assert tool.api_key == "env-token"
+            assert tool.api_key == "env-token"
+        # No construction-time caching: a later call without the env var sees
+        # no key, which is what lets a hosted process serve more than one
+        # tenant's key over the same instance's lifetime.
+        with patch.dict("os.environ", {}, clear=True):
+            assert tool.api_key is None
 
 
 class TestMissingOperation:

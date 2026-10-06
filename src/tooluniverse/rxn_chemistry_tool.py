@@ -80,8 +80,9 @@ class RXNChemistryTool(BaseTool):
       * predict_reaction       -- forward prediction: reactants -> product
       * predict_retrosynthesis -- retrosynthesis: product -> precursor routes
 
-    The API key is read ONLY from os.environ[RXN4CHEMISTRY_API_KEY]; it is
-    never accepted as a parameter. If the key is missing the tool returns a
+    The API key is resolved from the active request credential scope, with
+    RXN4CHEMISTRY_API_KEY as the local environment fallback; it is never
+    accepted as a tool argument. If the key is missing the tool returns a
     structured error rather than raising.
     """
 
@@ -96,7 +97,7 @@ class RXNChemistryTool(BaseTool):
     # Key / header helpers
     # ------------------------------------------------------------------ #
     def _api_key(self) -> str:
-        return os.environ.get(ENV_KEY, "")
+        return self.credential(ENV_KEY) or ""
 
     def _headers(self, api_key: str) -> Dict[str, str]:
         return {"Authorization": api_key, "Content-Type": "application/json"}

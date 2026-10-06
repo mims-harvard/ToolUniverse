@@ -302,6 +302,18 @@
     ]
   },
   {
+    "name": "FIRECRAWL_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Other",
+    "register_url": "https://www.firecrawl.dev/app/api-keys",
+    "purpose": "Authenticate the backend='firecrawl' option (Firecrawl Search, https://api.firecrawl.dev/v2/search). Searches are billed against the account's credits (a free key includes 1,000) and use the account's rate limits instead of the keyless cap.",
+    "without": "backend='firecrawl' still works keyless within Firecrawl's per-IP daily request and credit cap (HTTP 429 past it, then the normal DDGS fallback). The cap is per IP, so users behind one shared server or NAT share it. The default web_search chain is unaffected.",
+    "used_by": [
+      "web_search_tools.json"
+    ]
+  },
+  {
     "name": "FOLKLORE_MCP_URL",
     "requirement": "required",
     "type": "endpoint",
@@ -350,18 +362,6 @@
     ]
   },
   {
-    "name": "GTOPDB_API_KEY",
-    "requirement": "optional",
-    "type": "secret",
-    "domain": "Drugs & Chemistry",
-    "register_url": "https://www.guidetopharmacology.org/webServices.jsp",
-    "purpose": "Query the IUPHAR/BPS Guide to Pharmacology (targets, ligands, interactions, diseases).",
-    "without": "The GtoPdb web services reject every request without a key (HTTP 401), so all GtoPdb_* tools fail; register on the site, then request a key via the contact link on the web-services page.",
-    "used_by": [
-      "gtopdb_tools.json"
-    ]
-  },
-  {
     "name": "HF_TOKEN",
     "requirement": "required",
     "type": "secret",
@@ -371,12 +371,13 @@
     "without": "Public models work without it; needed for gated or private repos.",
     "used_by": [
       "embedding_tools.json",
+      "esm2_variant_effect_tools.json",
       "huggingface_inference_tools.json"
     ]
   },
   {
     "name": "ICD_CLIENT_ID",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Clinical & Safety",
     "register_url": "https://icd.who.int/icdapi",
@@ -388,7 +389,7 @@
   },
   {
     "name": "ICD_CLIENT_SECRET",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Clinical & Safety",
     "register_url": "https://icd.who.int/icdapi",
@@ -400,7 +401,7 @@
   },
   {
     "name": "IUCN_API_KEY",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Ecology & Biodiversity",
     "register_url": "https://api.iucnredlist.org/",
@@ -412,7 +413,7 @@
   },
   {
     "name": "LDLINK_TOKEN",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Genomics & Variants",
     "register_url": "https://ldlink.nih.gov/?tab=apiaccess",
@@ -633,8 +634,20 @@
     ]
   },
   {
+    "name": "TYPESAFE_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Tool Discovery",
+    "register_url": "https://typesafe.ai/",
+    "purpose": "Grade retrieved tool candidates for relevance so Tool_Finder_Jev can rank them.",
+    "without": "Tool_Finder_Jev is not loaded; the other tool finders are unaffected.",
+    "used_by": [
+      "finder_tools.json"
+    ]
+  },
+  {
     "name": "UMLS_API_KEY",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Clinical & Safety",
     "register_url": "https://uts.nlm.nih.gov/uts/signup-login",
@@ -670,12 +683,12 @@
   },
   {
     "name": "VEUPATHDB_API_KEY",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
-    "domain": "Genetics & Variants",
+    "domain": "Pathogens & Microbiology",
     "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess",
-    "purpose": "List VEuPathDB gene and organism search definitions (pathogen, vector and host genomics).",
-    "without": "VEuPathDB_list_gene_searches and VEuPathDB_list_organism_searches return HTTP 401 without a key. As of 2026-09-21 VEuPathDB_search_genes_by_organism and VEuPathDB_get_gene_record also return HTTP 401, and ToolUniverse does not send a key for those two yet; VEuPathDB_list_record_types works keyless.",
+    "purpose": "Query the VEuPathDB WDK service for pathogen gene searches and records.",
+    "without": "VEuPathDB returns 401 'Valid API Key required for this endpoint.' Only the record-type listing stays open.",
     "used_by": [
       "veupathdb_tools.json"
     ]

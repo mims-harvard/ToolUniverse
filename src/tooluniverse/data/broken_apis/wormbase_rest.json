@@ -1,0 +1,22 @@
+{
+  "api_name": "WormBase REST API",
+  "base_url": "https",
+  "failure_mode": "HTTP 403 with cf-mitigated: challenge and a \"Just a moment... Enable JavaScript and cookies to continue\" page, for every request. downloads.wormbase.org answers the same way, so there is no bulk route either.",
+  "root_cause": "The site enabled Cloudflare's managed JavaScript challenge. Passing it requires executing JavaScript and holding a cookie, which no HTTP client does, so this is not a credential, header or rate-limit problem. Verified against four User-Agents on 2026-10-03 -- the requests default, ToolUniverse/1.5.4, curl/8.5.0 and a current Chrome string -- all four answered 403 with cf-mitigated: challenge. Contrast ConoServer, whose nginx blocked only the literal 'python-requests' User-Agent and answers 200 to any other, which is why that one was fixable here.",
+  "confirmed_broken_date": "2026-10-03",
+  "last_retry_date": "2026-10-03",
+  "retry_count": 4,
+  "retry_after": "2026-12-01",
+  "retry_notes": "GET https://rest.wormbase.org/rest/widget/gene/WBGene00000912/overview with no special headers. A 200 means the challenge is off and the richer WormBase widget fields -- gene status, not-observed phenotypes, nematode orthologs -- become available again. While cf-mitigated reads 'challenge' there is nothing to implement on this side, and the Alliance route covers the substance in the meantime.",
+  "workaround": "The Alliance of Genome Resources redistributes the same curated records, and WormBase is one of its member databases: a gene fetched there carries dataProvider {\"abbreviation\": \"WB\", \"fullName\": \"WormBase\"} and its interactions carry interactionSource \"wormbase\". All six tools read Alliance now and the category passes 12/12. Verified routes against WB:WBGene00000912 on 2026-10-03: GET /gene/{curie}, /phenotypes, /orthologs, /paralogs, /molecular-interactions, /genetic-interactions, and POST /gene/{curie}/disease-ribbon-summary and POST /expression, the last two with a bare JSON list as the body. Three fields have no Alliance equivalent and come back empty with a coverage_note saying so: the Live/Dead gene status, WormBase's 'not observed' phenotype annotations, and orthologs in nematodes other than the six Alliance model organisms.",
+  "investigation_notes": "Found while triaging the 2026-10-03 sweep, where this showed up only as 'HTTP error: 403'. http_utils.cloudflare_challenge() now recognises the signature so any tool can report it the same way.",
+  "tool_file": "wormbase_tools.json:src/tooluniverse/wormbase_tool.py",
+  "affected_tools": [
+    "WormBase_get_gene",
+    "WormBase_get_phenotypes",
+    "WormBase_get_expression",
+    "WormBase_get_orthologs",
+    "WormBase_get_interactions",
+    "WormBase_get_human_diseases"
+  ]
+}

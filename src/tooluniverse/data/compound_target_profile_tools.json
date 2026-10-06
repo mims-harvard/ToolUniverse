@@ -1,0 +1,440 @@
+[
+  {
+    "type": "CompoundTargetProfileTool",
+    "name": "gather_target_profile",
+    "description": "Gather a drug target's identity, function, expression, tractability and safety from OpenTargets, UniProt and gnomAD in a single call. Accepts a gene symbol, Ensembl gene id or UniProt accession ('TP53', 'ENSG00000141510', 'P04637') and resolves it once, so the caller does not need the Ensembl id that all twenty OpenTargets target endpoints are keyed by. Ranks expression separately per datasource because their units differ, and reads loss-of-function constraint from both OpenTargets and gnomAD so the two can be compared. Use when assessing a target; use OpenTargets_get_target_tractability_by_ensemblID, UniProt_get_function_by_accession or gnomad_get_gene_constraints directly when you already have the identifier and want one authority.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "description": "Gene symbol, Ensembl gene id or UniProt accession, e.g. 'TP53', 'ENSG00000141510', 'P04637'."
+        },
+        "species": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Species for symbol resolution. Default 'human'. Expression, tractability and safety are curated for human targets only."
+        },
+        "sections": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "identity",
+              "function",
+              "expression",
+              "tractability",
+              "safety"
+            ]
+          },
+          "description": "Limit which sections are assembled. Omit for all five; an empty list is an error. Only the calls a requested section needs are made; resolution always runs because query.ensembl_gene and query.uniprot are always returned."
+        }
+      },
+      "required": [
+        "target"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Unwrapped payload (result['data']) of a successful call.",
+          "properties": {
+            "query": {
+              "type": "object",
+              "properties": {
+                "target": {
+                  "type": "string"
+                },
+                "ensembl_gene": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "uniprot": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "symbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "species": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "target"
+              ]
+            },
+            "sources_queried": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "sources_failed": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "'<source>: <reason>' per call that errored. A section it feeds is missing, not empty."
+            },
+            "sources_skipped": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "'<source>: <reason>' per source deliberately not called, e.g. a section keyed by an identifier that could not be resolved."
+            },
+            "identity": {
+              "type": "object",
+              "properties": {
+                "symbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "biotype": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "ensembl_gene": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "uniprot": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "genomic_location": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "chromosome": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "start": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "end": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "strand": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Strand as OpenTargets reports it, 'POSITIVE' or 'NEGATIVE'. Passed through rather than mapped to +1/-1, which would invent a representation the source does not use."
+                    }
+                  }
+                }
+              }
+            },
+            "function": {
+              "type": "object",
+              "properties": {
+                "descriptions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "truncated": {
+                  "type": "boolean"
+                },
+                "pubmed_citations_removed": {
+                  "type": "boolean",
+                  "description": "Whether inline '(PubMed:\u2026)' accessions were stripped from the prose. They are roughly half the text for a well-studied protein and are available from UniProt itself."
+                }
+              }
+            },
+            "expression": {
+              "type": "object",
+              "description": "Ranked per datasource; units are not comparable across them.",
+              "properties": {
+                "rows_total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "rows_read": {
+                  "type": "integer"
+                },
+                "complete": {
+                  "type": "boolean",
+                  "description": "Whether every row was read. False means the ranking is over a subset."
+                },
+                "by_datasource": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "unit": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "highest_expression": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "tissue": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "median": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "cell_type": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Cell type achieving this value, for cell-type-resolved sources; null for bulk. A high value describes that cell type, not the tissue as a whole."
+                            }
+                          }
+                        }
+                      },
+                      "rows_measured": {
+                        "type": "integer",
+                        "description": "Rows this datasource returned. A single-cell source reports one row per cell type within a tissue, so this exceeds the tissue count."
+                      },
+                      "distinct_tissues": {
+                        "type": "integer",
+                        "description": "Distinct tissues among those rows."
+                      }
+                    }
+                  }
+                },
+                "rows_without_tissue": {
+                  "type": "integer",
+                  "description": "Rows naming no tissue, excluded from the rankings. Explains why the per-datasource counts do not sum to rows_read."
+                }
+              }
+            },
+            "tractability": {
+              "type": "object",
+              "properties": {
+                "assessments": {
+                  "type": "integer"
+                },
+                "supported_by_modality": {
+                  "type": "object",
+                  "description": "Modality code (SM small molecule, AB antibody, PR degrader, OC other clinical) to the assessments it passes.",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "modalities_with_evidence": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "safety": {
+              "type": "object",
+              "properties": {
+                "liabilities_checked": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the lookup answered, false when it was called and failed, null when the curators do not cover this target at all. An empty list means something different in each case."
+                },
+                "safety_liabilities": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "event": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "liabilities_truncated": {
+                  "type": "boolean"
+                },
+                "lof_constraint_opentargets": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "observed": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "expected": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "oe": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "oe_upper": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "lof_constraint_gnomad": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "observed": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "expected": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "oe": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "pLI": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "sources_agree_on_observed_lof": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether OpenTargets and gnomAD report the same observed loss-of-function count. Null when only one supplied constraint."
+                }
+              }
+            },
+            "disclosure_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "query",
+            "sources_queried",
+            "sources_failed",
+            "sources_skipped",
+            "disclosure_notes"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "target": "TP53"
+      },
+      {
+        "target": "ENSG00000146648"
+      },
+      {
+        "target": "PCSK9",
+        "sections": [
+          "tractability",
+          "safety"
+        ]
+      },
+      {
+        "target": "P04637",
+        "sections": [
+          "identity",
+          "function"
+        ]
+      }
+    ]
+  }
+]

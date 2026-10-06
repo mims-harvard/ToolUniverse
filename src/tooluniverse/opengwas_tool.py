@@ -16,7 +16,6 @@ Auth: free JWT token in the OPENGWAS_JWT environment variable
       (register at https://api.opengwas.io).
 """
 
-import os
 import requests
 
 from .base_tool import BaseTool
@@ -36,7 +35,7 @@ class OpenGWASTool(BaseTool):
 
     def _headers(self):
         """Bearer headers, or None when no token is configured."""
-        token = os.environ.get("OPENGWAS_JWT", "").strip()
+        token = (self.credential("OPENGWAS_JWT") or "").strip()
         if not token:
             return None
         return {

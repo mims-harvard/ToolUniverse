@@ -47,10 +47,8 @@
               "description": "Molecular weight in Daltons"
             },
             "formal_charge": {
-              "type": [
-                "integer",
-                "null"
-              ]
+              "type": ["integer", "null"],
+              "description": "Net formal charge of the compound. Null when PDBe records none: ATP and NAG return 0, HEM returns null."
             },
             "compound_type": {
               "type": "string",

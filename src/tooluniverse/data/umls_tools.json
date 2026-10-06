@@ -83,7 +83,10 @@
         "purpose": "Authenticate to UMLS for concept, SNOMED CT, and LOINC lookups.",
         "without": "UMLS/SNOMED/LOINC tools are blocked without it (free UMLS license)."
       }
-    }
+    },
+    "required_api_keys": [
+      "UMLS_API_KEY"
+    ]
   },
   {
     "name": "umls_get_concept_details",
@@ -145,7 +148,7 @@
         "pageSize": 25
       }
     ],
-    "optional_api_keys": [
+    "required_api_keys": [
       "UMLS_API_KEY"
     ]
   },
@@ -229,7 +232,7 @@
         "pageSize": 25
       }
     ],
-    "optional_api_keys": [
+    "required_api_keys": [
       "UMLS_API_KEY"
     ]
   },
@@ -302,7 +305,7 @@
         "pageSize": 25
       }
     ],
-    "optional_api_keys": [
+    "required_api_keys": [
       "UMLS_API_KEY"
     ]
   },
@@ -375,7 +378,7 @@
         "pageSize": 25
       }
     ],
-    "optional_api_keys": [
+    "required_api_keys": [
       "UMLS_API_KEY"
     ]
   }

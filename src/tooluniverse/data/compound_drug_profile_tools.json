@@ -255,7 +255,7 @@
                     "integer",
                     "null"
                   ],
-                  "description": "Upstream's own total of approved indications."
+                  "description": "Upstream's own count of those diseases."
                 },
                 "approved": {
                   "type": "array",
@@ -275,7 +275,8 @@
                         ]
                       }
                     }
-                  }
+                  },
+                  "description": "Diseases whose highest recorded clinical stage for this drug is approval. Not the same as the drug being approved to treat them \u2014 the records cover combination products and historical labels, so aspirin's list contains gastric ulcer and dyspepsia, which it is contraindicated in."
                 },
                 "truncated": {
                   "type": "boolean",

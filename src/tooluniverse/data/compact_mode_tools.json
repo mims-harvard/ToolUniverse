@@ -2,6 +2,11 @@
   {
     "type": "ListTools",
     "name": "list_tools",
+    "mcp_annotations": {
+      "title": "List tools",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "List tools with multiple output modes. Default mode='names' for quick scanning. Recommended workflow: start with default or mode='categories' for overview, then use 'get_tool_info' tool to get descriptions/details for specific tools (supports batch queries). Warning: modes like 'basic'/'summary' return very large payloads; use 'get_tool_info' instead for descriptions. If you must use these modes, use 'limit'/'offset' or filter by 'categories'. Modes: 'names' (default), 'basic', 'categories', 'by_category', 'summary', 'custom'.",
     "related_tools": [
       "grep_tools",
@@ -129,6 +134,11 @@
   {
     "type": "GrepTools",
     "name": "grep_tools",
+    "mcp_annotations": {
+      "title": "Search tools by text or regex",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Search tools using simple text matching or regex patterns. Supports both simple text search (default, agent-friendly) and regex patterns (advanced). Independent from Tool_Finder_Keyword, uses basic text/regex matching without TF-IDF or NLP processing. Fast and simple for pattern searches.",
     "use_case": "Quick text-based search when you know keywords or patterns to search for",
     "workflow_hint": "Use with search_mode='text' (default) for simple searches, or 'regex' for advanced pattern matching. For natural language queries, use find_tools instead.",
@@ -260,6 +270,11 @@
   {
     "type": "GetToolInfo",
     "name": "get_tool_info",
+    "mcp_annotations": {
+      "title": "Get tool details",
+      "readOnlyHint": true,
+      "destructiveHint": false
+    },
     "description": "Get tool information with configurable detail level. Supports single tool (string) or multiple tools (list). Use detail_level='description' to get only the description field, or detail_level='full' to get complete tool definition including parameter schema.",
     "use_case": "Get tool information when you need either just the description or the full definition. Supports both single and batch queries.",
     "workflow_hint": "Use detail_level='description' for quick overviews, detail_level='full' when you need complete parameter details. Can query single tool (string) or multiple tools (list).",
@@ -327,6 +342,11 @@
   {
     "type": "ExecuteTool",
     "name": "execute_tool",
+    "mcp_annotations": {
+      "title": "Run a ToolUniverse tool",
+      "readOnlyHint": false,
+      "destructiveHint": true
+    },
     "description": "Execute a ToolUniverse tool directly with custom arguments. This is the primary way to run any tool in the ToolUniverse system. You must get the tool definition first to figure out the arguments to pass.",
     "use_case": "Execute any ToolUniverse tool by name with custom arguments. Use after discovering tools via find_tools or list_tools.",
     "workflow_hint": "First use find_tools or list_tools to discover available tools, then use execute_tool to run them with your specific parameters.",

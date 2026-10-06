@@ -4,6 +4,67 @@ This directory is the source of truth for `tooluniverse.mcpb` — the
 Model Context Protocol Bundle published at
 `https://github.com/mims-harvard/ToolUniverse/releases/download/mcpb/tooluniverse.mcpb`.
 
+## Requirements
+
+| | |
+|---|---|
+| Host | Claude Desktop, or another loader with MCPB 0.4 `uv` runtime support |
+| Python | 3.10-3.14, selected by the host; the bundle itself runs on 3.12 |
+| macOS on Apple Silicon | **14 or newer** |
+| macOS on Intel, Windows, Linux | no minimum OS version |
+
+The macOS floor comes from one dependency. `faiss-cpu` backs the vector-search
+tools and publishes no arm64 wheel older than `macosx_14_0` for any release we
+can ship -- it moved from `macosx_11_0` to `macosx_14_0` at 1.11.0 and has
+stayed there. Below macOS 14 the install falls back to the sdist and tries to
+compile faiss, which needs a C++ toolchain and SWIG and will normally fail
+inside Claude Desktop's install step. `build.sh` enforces this by dry-running
+the locked environment with `MACOSX_DEPLOYMENT_TARGET=14.0`, so a dependency
+bump that lost arm64 wheels would fail the build rather than ship.
+
+Everything else in the lock resolves from wheels on `aarch64-apple-darwin`,
+`x86_64-pc-windows-msvc`, `x86_64-unknown-linux-gnu` and
+`aarch64-unknown-linux-gnu`, with no compiler on the user's machine.
+
+## How this bundle updates itself
+
+The bundle does not carry ToolUniverse's source. `pyproject.toml` declares
+`tooluniverse` as a dependency, the build resolves it into `uv.lock`, and the
+launcher refreshes that dependency in the background of startup. A user picks
+up each PyPI release without a new directory submission.
+
+That matters because a desktop extension has no self-serve update path: every
+change to the published artifact is a manual submission, reviewed by hand. With
+the source bundled, every fix meant another submission. Now a resubmission is
+needed only when the bundle itself changes -- the manifest metadata, the
+launcher, or the Python floor.
+
+**Startup never depends on the network.** The manifest launches
+`uv run --frozen`, which installs from the shipped lock and contacts no index.
+The refresh is a separate, bounded `uv sync --upgrade-package tooluniverse`
+inside `run_stdio.py`, before the first ToolUniverse import, with uv's HTTP
+timeout at 3 s, a process timeout at 8 s, and at most one check a day
+(`TOOLUNIVERSE_UPDATE_INTERVAL_HOURS`, or `TOOLUNIVERSE_SKIP_SELF_UPDATE=1` to
+turn it off). Anything that fails there leaves the installed version in place.
+
+Measured on the built bundle:
+
+| scenario | result |
+|---|---|
+| locked to 1.5.2, next launch | starts on **1.5.3**, lock and venv both updated |
+| cold install, empty uv cache | 8.5 s |
+| warm launch | 1.2-1.5 s |
+| package index unreachable | starts in **1.2 s** (9 s on the one launch a day that checks) |
+| no network at all | starts from the cached environment |
+| install killed mid-way, relaunched | starts |
+| two launches at once | both start |
+| bundle directory read-only | starts |
+
+An earlier revision put `--upgrade-package` on the launch command itself. That
+made startup require the index: against a blackholed index the launch failed
+after 44 s, which Desktop reports as "Server disconnected". The lock plus the
+bounded refresh is what avoids that.
+
 ## Contents
 
 | File | Purpose |
@@ -60,3 +121,12 @@ download URL stays stable for marketplaces (e.g. `anthropics/life-sciences`).
 
 Bump `version` in BOTH `mcpb/manifest.json` and `mcpb/pyproject.toml` to match
 the repo root `pyproject.toml` when shipping a new bundle.
+
+## Privacy Policy
+
+ToolUniverse runs locally and collects nothing: no telemetry, no analytics, no
+conversation data. When you run a tool, that tool's arguments are sent to that
+tool's data provider (UniProt, openFDA, Open Targets and so on) so it can
+answer, and nothing else leaves your machine. API keys stay local and are sent
+only to the service they belong to. Full policy:
+https://github.com/mims-harvard/ToolUniverse/blob/main/PRIVACY.md

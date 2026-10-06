@@ -69,12 +69,17 @@ class TestMissingApiKey:
         assert result["status"] == "error"
         assert "EPA_COMPTOX_API_KEY" in result["error"]
 
-    def test_key_resolved_from_environment_at_construction(self, search_config):
+    def test_key_resolved_from_environment_per_request(self, search_config):
         from tooluniverse.comptox_tool import CompToxTool
 
+        tool = CompToxTool(search_config)
         with patch.dict("os.environ", {"EPA_COMPTOX_API_KEY": "env-key"}, clear=False):
-            tool = CompToxTool(search_config)
-        assert tool.api_key == "env-key"
+            assert tool.api_key == "env-key"
+        # No construction-time caching: a later call without the env var sees
+        # no key, which is what lets a hosted process serve more than one
+        # tenant's key over the same instance's lifetime.
+        with patch.dict("os.environ", {}, clear=True):
+            assert tool.api_key is None
 
 
 class TestMissingOperation:

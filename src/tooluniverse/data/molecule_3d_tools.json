@@ -79,9 +79,21 @@
         }
       },
       "anyOf": [
-        {"required": ["smiles"]},
-        {"required": ["mol_content"]},
-        {"required": ["sdf_content"]}
+        {
+          "required": [
+            "smiles"
+          ]
+        },
+        {
+          "required": [
+            "mol_content"
+          ]
+        },
+        {
+          "required": [
+            "sdf_content"
+          ]
+        }
       ]
     },
     "default_width": 800,
@@ -172,6 +184,9 @@
         "generate_conformers": true,
         "conformer_count": 1
       }
+    ],
+    "required_packages": [
+      "py3Dmol"
     ]
   }
 ]

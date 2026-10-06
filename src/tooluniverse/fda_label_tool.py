@@ -7,11 +7,11 @@ prescribing information including indications, dosing, contraindications,
 warnings, drug interactions, and pharmacology.
 
 API: https://open.fda.gov/apis/drug/label/
-No authentication required. Set the FDA_API_KEY env var to raise the
-default ~40 req/min anonymous rate limit (https://open.fda.gov/apis/authentication/).
+No authentication required. Supply FDA_API_KEY as a request credential or environment
+fallback to raise the default ~40 req/min anonymous rate limit
+(https://open.fda.gov/apis/authentication/).
 """
 
-import os
 import re
 import requests
 from typing import Any
@@ -306,7 +306,12 @@ class FDALabelTool(BaseTool):
     def __init__(self, tool_config: dict[str, Any]):
         super().__init__(tool_config)
         self.query_type = tool_config.get("fields", {}).get("query_type", "search")
-        self.api_key = os.getenv("FDA_API_KEY")
+
+    @property
+    def api_key(self):
+        """Resolve the optional openFDA key from the active request."""
+
+        return self.credential("FDA_API_KEY")
 
     def _params(self, **kwargs: Any) -> dict:
         """Build request params, adding api_key when a valid FDA_API_KEY is set.

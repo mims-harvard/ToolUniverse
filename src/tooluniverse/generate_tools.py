@@ -690,6 +690,7 @@ def main(
         metadata_file,
         force_regenerate=force_regenerate,
         verbose=verbose,
+        known_tool_names=all_config_tool_names,
     )
 
     # Check for missing files - tools that exist in config but not as files
@@ -759,7 +760,28 @@ def main(
     # __init__.py in that directory is never executed by Python — the installed
     # package's __init__.py already extends __path__ to find wrapper files there.
     if output_dir is None:
-        init_path = generate_init(list(builtin_tool_dict.keys()), output)
+        # Export every built-in tool that has a wrapper file, not just the ones
+        # this machine could load.
+        #
+        # cleanup_orphaned_files above already keeps a wrapper whose API key is
+        # absent -- the comment there names BRENDA, NvidiaNIM, OMIM and
+        # DisGeNET -- but the index was generated from the key-filtered set, so
+        # the file stayed and the import line went. 157 wrappers were in that
+        # state, and the effect is worse than a missing name: Python falls
+        # through to the submodule, so `from tooluniverse.tools import
+        # Addgene_get_plasmid` hands back a module that looks importable and
+        # is not callable.
+        #
+        # It also made the committed index depend on which credentials the
+        # generating machine held, so regenerating anywhere else produced a
+        # diff. Restricted to names that have a file, because an import line
+        # for a missing module would break the package at import time.
+        exportable = sorted(
+            name
+            for name in all_config_tool_names
+            if (output / f"{name}.py").exists()
+        )
+        init_path = generate_init(exportable, output)
         generated_paths.append(str(init_path))
 
     # Always ensure _shared_client.py exists (wrappers import it at call time)

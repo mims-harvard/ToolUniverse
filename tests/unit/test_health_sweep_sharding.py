@@ -89,7 +89,7 @@ def _log(*rows) -> str:
 def test_summary_merges_shard_logs(tmp_path):
     (tmp_path / "a.log").write_text(_log("alpha: ✅ 7 tests passed", "beta: ❌ 9 failures"))
     (tmp_path / "b.log").write_text(_log("gamma: 🔥 ERROR: Timeout after 5 minutes"))
-    results, counts, timed_out, _ = summarize.parse_logs([str(tmp_path / "*.log")])
+    results, counts, timed_out, _, _ = summarize.parse_logs([str(tmp_path / "*.log")])
     assert results == {"alpha": True, "beta": False, "gamma": False}
     assert counts["beta"] == 9
     assert timed_out == {"gamma"}
@@ -97,7 +97,7 @@ def test_summary_merges_shard_logs(tmp_path):
 
 def test_categories_never_reached_are_missing_not_passing(tmp_path):
     (tmp_path / "a.log").write_text(_log("alpha: ✅ 1 tests passed"))
-    results, counts, timed_out, _ = summarize.parse_logs([str(tmp_path / "*.log")])
+    results, counts, timed_out, _, _ = summarize.parse_logs([str(tmp_path / "*.log")])
     text, row = summarize.build_summary(results, counts, timed_out, set(), 638)
     assert row["never_reached"] == 637
     assert "never reached" in text
@@ -108,7 +108,7 @@ def test_new_failures_are_ranked_with_timeouts_first(tmp_path):
     (tmp_path / "a.log").write_text(_log(
         "alpha: ❌ 20 failures", "beta: 🔥 ERROR: Timeout after 5 minutes"
     ))
-    results, counts, timed_out, _ = summarize.parse_logs([str(tmp_path / "*.log")])
+    results, counts, timed_out, _, _ = summarize.parse_logs([str(tmp_path / "*.log")])
     _, row = summarize.build_summary(results, counts, timed_out, set(), 0)
     assert row["new_failing"] == ["beta", "alpha"]
 
@@ -117,7 +117,7 @@ def test_baseline_splits_new_from_known_and_recovered(tmp_path):
     (tmp_path / "a.log").write_text(_log(
         "alpha: ✅ 1 tests passed", "beta: ❌ 1 failures", "gamma: ❌ 1 failures"
     ))
-    results, counts, timed_out, _ = summarize.parse_logs([str(tmp_path / "*.log")])
+    results, counts, timed_out, _, _ = summarize.parse_logs([str(tmp_path / "*.log")])
     _, row = summarize.build_summary(results, counts, timed_out, {"alpha", "gamma"}, 0)
     assert row["new_failing"] == ["beta"]
     assert row["recovered"] == ["alpha"]

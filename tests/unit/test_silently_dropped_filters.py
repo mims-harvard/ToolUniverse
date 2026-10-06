@@ -13,6 +13,8 @@ wrong result as a success:
 * HPA_get_rna_expression_by_source queried a column name HPA does not have.
 """
 
+import json
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -130,19 +132,66 @@ def _gtopdb_tool(endpoint):
     )
 
 
-def test_gtopdb_target_search_maps_gene_symbol_to_gene_symbol_query():
-    url = _gtopdb_tool(
-        "https://www.guidetopharmacology.org/services/targets"
-    )._build_url({"gene_symbol": "CHRNA7"})
-    assert url.endswith("targets?geneSymbol=CHRNA7")
+# GtoPdb's REST service is key-gated, so there is no query string to inspect
+# any more -- these tools filter the open bulk CSVs (see
+# test_gtopdb_reads_the_open_bulk_files.py). The invariant this file is about
+# survives the change: a filter the caller passed has to narrow the result, not
+# be quietly dropped. Asserted against returned records rather than a URL.
+_GTOPDB_TARGETS_CSV = (
+    '"# GtoPdb Version: 2026.3 - published: 2026-09-16"\n'
+    '"Type","Family id","Family name","Target id","Target name","Subunit id",'
+    '"Subunit name","Target systematic name","Target abbreviated name",'
+    '"synonyms","HGNC id","HGNC symbol"\n'
+    '"lgic","1","nAChR","460","nicotinic acetylcholine receptor alpha7",'
+    '"","","","","dopamine-sensitive","","CHRNA7"\n'
+    '"gpcr","2","DA","214","D1 receptor","","","","","dopamine","","DRD1"\n'
+)
 
 
-def test_gtopdb_target_search_still_supports_name():
-    url = _gtopdb_tool(
-        "https://www.guidetopharmacology.org/services/targets"
-    )._build_url({"name": "dopamine"})
-    assert "name=dopamine" in url
-    assert "geneSymbol" not in url
+def _gtopdb_bulk_targets(monkeypatch):
+    import tooluniverse.gtopdb_tool as gtopdb_module
+
+    class _Response:
+        status_code = 200
+        text = _GTOPDB_TARGETS_CSV
+
+    gtopdb_module.clear_bulk_cache()
+    monkeypatch.setattr(
+        gtopdb_module,
+        "request_with_retry",
+        lambda session, method, url, **kwargs: _Response(),
+    )
+    config = {
+        cfg["name"]: cfg
+        for cfg in json.loads(
+            (
+                Path(__file__).resolve().parents[2]
+                / "src"
+                / "tooluniverse"
+                / "data"
+                / "gtopdb_tools.json"
+            ).read_text("utf-8")
+        )
+    }["GtoPdb_search_targets"]
+    return gtopdb_module.GtoPdbRESTTool(config)
+
+
+def test_gtopdb_target_search_filters_on_gene_symbol(monkeypatch):
+    tool = _gtopdb_bulk_targets(monkeypatch)
+
+    result = tool.run({"gene_symbol": "CHRNA7"})
+
+    assert [t["targetId"] for t in result["data"]["targets"]] == [460]
+
+
+def test_gtopdb_target_search_still_supports_name(monkeypatch):
+    tool = _gtopdb_bulk_targets(monkeypatch)
+
+    result = tool.run({"name": "dopamine"})
+
+    # Both records mention dopamine -- one by name, one by synonym -- so a name
+    # search must not collapse to the gene-symbol lookup.
+    assert result["data"]["total_matches"] == 2
 
 
 def test_gtopdb_target_search_does_not_resolve_gene_symbol_to_targetid():

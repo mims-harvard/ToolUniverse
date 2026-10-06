@@ -164,8 +164,10 @@ class TestZincCartBlanche(unittest.TestCase):
     def test_search_by_smiles_parse(self):
         tool = _tool()
         tool.session = MagicMock()
-        # The submit is a POST (returns a task id); the result polls are .get calls:
-        # one PROGRESS, then SUCCESS.
+        # The submit is a POST (returns a task id); the result polls are GETs:
+        # one PROGRESS, then SUCCESS. This test used to mock the submit as a
+        # .get, which is how a GET-with-a-body passed here for as long as the
+        # live API answered it with 400 "No Valid SMILES, please try again".
         submit_resp = _json_response({"task": "abc-123"})
         progress_resp = _json_response(_SEARCH_PROGRESS)
         success_resp = _json_response(_SEARCH_SUCCESS)
@@ -192,13 +194,11 @@ class TestZincCartBlanche(unittest.TestCase):
         self.assertEqual(hit["mwt"], 78.114)
         self.assertEqual(hit["database"], "zinc22")
         self.assertEqual(hit["n_catalogs"], 2)
-        # The submit is a POST with a multipart form (files=) on /smiles.json;
-        # a GET with that body is rejected by CartBlanche (HTTP 400).
-        tool.session.get.assert_called()
-        for polled in tool.session.get.call_args_list:
-            self.assertNotIn("smiles.json", polled[0][0])
+        # The submit call is a POST with a multipart form on /smiles.json.
         submit_call = tool.session.post.call_args_list[0]
         self.assertIn("smiles.json", submit_call[0][0])
+        for poll in tool.session.get.call_args_list:
+            self.assertNotIn("files", poll.kwargs, "a GET must not carry the form")
         self.assertIn("files", submit_call.kwargs)
         self.assertIn("smiles", submit_call.kwargs["files"])
 

@@ -18,7 +18,6 @@ https://www.protocols.io/api-clients and completing the OAuth flow (or
 using a static developer token issued for your account).
 """
 
-import os
 import requests
 from typing import Any, Dict, Optional
 from .base_tool import BaseTool
@@ -51,16 +50,27 @@ class ProtocolsIOTool(BaseTool):
         self.timeout = timeout
         self.parameter = tool_config.get("parameter", {})
         self.required = self.parameter.get("required", [])
-        if api_key is _API_KEY_FROM_ENV:
-            # Resolve at construction time so a long-lived process or test
-            # can rotate credentials without re-importing this module.
-            api_key = os.environ.get("PROTOCOLS_IO_API_KEY")
-        self.api_key = api_key
+        self._api_key_overridden = api_key is not _API_KEY_FROM_ENV
+        self._explicit_api_key = None if api_key is _API_KEY_FROM_ENV else api_key
+
+    @property
+    def api_key(self) -> Optional[str]:
+        """Resolve the token for the active request, not once at construction.
+
+        A long-lived/hosted process serves more than one tenant's token over
+        its lifetime, so it is looked up fresh on each access via
+        BaseTool.credential() (which honours a request-scoped credential
+        context) rather than cached in __init__. An explicit constructor
+        override (including an explicit None, used by tests) always wins.
+        """
+        if self._api_key_overridden:
+            return self._explicit_api_key
+        return self.credential("PROTOCOLS_IO_API_KEY")
 
     def _headers(self) -> Dict[str, str]:
         return {
             "Accept": "application/json",
-            "Authorization": "Bearer " + self.api_key,
+            "Authorization": "Bearer " + (self.api_key or ""),
         }
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

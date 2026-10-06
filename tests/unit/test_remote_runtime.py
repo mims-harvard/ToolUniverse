@@ -119,7 +119,23 @@ def test_child_environment_prepends_provider_bin_without_losing_existing_path(
     assert environment["TOOLUNIVERSE_MCP_HOST"] == "127.0.0.1"
     assert environment["TOOLUNIVERSE_MCP_PORT"] == "8080"
     assert "TOOLUNIVERSE_SERVICE_KEY" not in environment
-    assert environment["USPTO_API_KEY"] == "provider-secret"
+    # USPTO_API_KEY belongs to uspto-downloader, not to boltz. This assertion used to read
+    # the other way round, because a provider inherited the whole environment and so could
+    # see any credential that happened to be in the owner's shell. A provider now sees a
+    # credential only when its own deployment declares it.
+    assert "USPTO_API_KEY" not in environment
+
+
+def test_a_provider_sees_a_credential_only_when_it_declares_it(monkeypatch):
+    monkeypatch.setenv("USPTO_API_KEY", "provider-secret")
+
+    declaring = child_environment(
+        "/provider/bin/python", REMOTE_BY_SLUG["uspto-downloader"]
+    )
+    unrelated = child_environment("/provider/bin/python", REMOTE_BY_SLUG["boltz"])
+
+    assert declaring["USPTO_API_KEY"] == "provider-secret"
+    assert "USPTO_API_KEY" not in unrelated
 
 
 def test_environment_check_parses_final_json_line_and_never_discloses_secret(

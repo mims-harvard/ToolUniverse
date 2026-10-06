@@ -15,6 +15,7 @@ import io
 from urllib.parse import urljoin
 from typing import Dict, List, Any, Optional
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 from .http_utils import request_with_retry
 
@@ -293,7 +294,7 @@ class CorePDFSnippetsTool(BaseTool):
         ):
             return {
                 "status": "error",
-                "error": "No PDF text extractor available (need pymupdf, pypdf, or markitdown).",
+                "error": f"No PDF text extractor available. {install_hint('documents', 'pymupdf')}",
                 "retryable": False,
             }
 
@@ -501,7 +502,7 @@ class CorePDFSnippetsTool(BaseTool):
                 if not MARKITDOWN_AVAILABLE:
                     return {
                         "status": "error",
-                        "error": "No PDF text extractor available (need pymupdf, pypdf, or markitdown).",
+                        "error": f"No PDF text extractor available. {install_hint('documents', 'pymupdf')}",
                         "retryable": False,
                         "retrieval_trace": retrieval_trace,
                     }
