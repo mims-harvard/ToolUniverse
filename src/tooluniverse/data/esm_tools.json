@@ -814,6 +814,10 @@
             "n_proteins_analyzed": {
               "type": "integer"
             },
+            "n_proteins_failed": {
+              "type": "integer",
+              "description": "Panel proteins whose UniProt entry or Forge features could not be read. Non-zero means the label is partial: it is returned with metadata.partial and is not cached."
+            },
             "category_vote_counts": {
               "type": "object",
               "description": "Raw vote counts per category, useful for spotting ties / weak signals"

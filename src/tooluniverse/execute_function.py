@@ -3578,7 +3578,9 @@ class ToolUniverse:
                     version=cache_version,
                     cache_key=cache_key,
                 )
-                if cached_value is not None:
+                if cached_value is not None and not self._is_error_result(
+                    cached_value
+                ):
                     self.logger.debug(f"Cache hit for {function_name}")
                     return cached_value
                 cache_guard = self.cache_manager.singleflight_guard(composed_cache_key)
@@ -3592,7 +3594,9 @@ class ToolUniverse:
                     version=cache_version,
                     cache_key=cache_key,
                 )
-                if cached_value is not None:
+                if cached_value is not None and not self._is_error_result(
+                    cached_value
+                ):
                     self.logger.debug(
                         f"Cache hit for {function_name} (after singleflight wait)"
                     )
@@ -3831,7 +3835,9 @@ class ToolUniverse:
                     version=cache_version,
                     cache_key=cache_key,
                 )
-                if cached_value is not None:
+                if cached_value is not None and not self._is_error_result(
+                    cached_value
+                ):
                     self.logger.debug(f"Cache hit for {function_name}")
                     return cached_value
             else:
@@ -4307,6 +4313,11 @@ class ToolUniverse:
         ``[{"error": ...}]``. Such a result must not be cached: the default
         cache persists to disk with no TTL, so one transient failure would be
         replayed for the same arguments on every later call, across restarts.
+
+        Reads apply it too: entries written before this check existed are on
+        disk with no expiry, and a version upgrade does not clear them -- the
+        cache version comes from the tool class. A cached error is treated as
+        a miss, and the next good result overwrites it.
         """
         if isinstance(result, dict):
             status = result.get("status")
