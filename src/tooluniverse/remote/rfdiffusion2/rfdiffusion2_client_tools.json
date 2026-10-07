@@ -1,0 +1,178 @@
+[
+    {
+        "type": "RFDiffusion2Tool",
+        "name": "rfdiffusion2_design",
+        "description": "Design protein backbones with RFdiffusion2, including atom-level enzyme active-site scaffolding around a small molecule. Give a contig string and a provider-side PDB that holds the motif residues, the ligands, and RFdiffusion2's ORI positioning atom. Returns each designed backbone as PDB text with residue, ligand, and motif summaries. One 180-residue design takes about 3.5 minutes on a 32 GB GPU.",
+        "parameter": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "contig_map": {
+                    "type": "string",
+                    "description": "RFdiffusion2 contig string. Numbers are lengths of new backbone; chain-prefixed ranges are motif residues taken from input_pdb. Example: '46,A106-106,59,A166-166,2,A169-169,23,A193-193,46'.",
+                    "minLength": 1,
+                    "maxLength": 512,
+                    "pattern": "^[A-Za-z0-9,/ \\-]+$"
+                },
+                "input_pdb": {
+                    "type": "string",
+                    "description": "PDB file name relative to the provider's RFdiffusion2 input directory, for example 'mcsa_41/M0584_1ldm.pdb'. The file must hold the motif residues, the ligands, and an ORI HETATM atom marking where the design is centered. Absolute paths, '..' segments, and URLs are rejected.",
+                    "minLength": 1,
+                    "maxLength": 512,
+                    "pattern": "^\\.*[A-Za-z0-9_-][A-Za-z0-9._-]*(/\\.*[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+                },
+                "ligand": {
+                    "type": "string",
+                    "description": "Comma-separated residue names of the ligands in input_pdb to design around, for example 'NAD,OXM'.",
+                    "pattern": "^[A-Za-z0-9]{1,5}(,[A-Za-z0-9]{1,5})*$"
+                },
+                "contig_atoms": {
+                    "type": "object",
+                    "description": "Atom-level motif: maps a motif residue such as 'A106' to the comma-separated atom names to keep, for example 'NE,CD,CZ'.",
+                    "minProperties": 1,
+                    "maxProperties": 32,
+                    "patternProperties": {
+                        "^[A-Za-z][0-9]{1,4}$": {
+                            "type": "string",
+                            "pattern": "^[A-Z0-9]{1,4}(,[A-Z0-9]{1,4})*$"
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "contig_as_guidepost": {
+                    "type": "boolean",
+                    "description": "If true, RFdiffusion2 chooses where in the sequence the motif residues go instead of fixing them to the contig order.",
+                    "default": false
+                },
+                "num_designs": {
+                    "type": "integer",
+                    "description": "Number of backbones to generate.",
+                    "default": 1,
+                    "minimum": 1,
+                    "maximum": 4
+                },
+                "inference_steps": {
+                    "type": "integer",
+                    "description": "Number of flow-matching steps. Omit to use the model default of 100.",
+                    "minimum": 10,
+                    "maximum": 200
+                },
+                "seed": {
+                    "type": "integer",
+                    "description": "Seed for a reproducible run. Omit for a random design.",
+                    "minimum": 0,
+                    "maximum": 2147483647
+                },
+                "return_structure": {
+                    "type": "boolean",
+                    "description": "If false, return only the per-design summaries without the PDB text.",
+                    "default": true
+                },
+                "timeout_seconds": {
+                    "type": "integer",
+                    "description": "Maximum time for the call in seconds, including any wait for another design to finish on the provider.",
+                    "default": 900,
+                    "minimum": 1,
+                    "maximum": 900
+                },
+                "dry_run": {
+                    "type": "boolean",
+                    "description": "If true, validate the arguments, including that input_pdb exists on the provider, and return the Hydra overrides without running RFdiffusion2.",
+                    "default": false
+                }
+            },
+            "required": [
+                "contig_map",
+                "input_pdb"
+            ]
+        },
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "enum": [
+                        "success",
+                        "error"
+                    ]
+                },
+                "error": {
+                    "type": "string",
+                    "description": "Sanitized validation or provider error."
+                },
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "dry_run": {
+                            "type": "boolean"
+                        },
+                        "overrides": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "description": "Hydra overrides a dry run would pass to RFdiffusion2."
+                        },
+                        "num_designs": {
+                            "type": "integer"
+                        },
+                        "runtime_seconds": {
+                            "type": "number"
+                        },
+                        "designs": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Design file stem."
+                                    },
+                                    "pdb_bytes": {
+                                        "type": "integer",
+                                        "description": "Size of the designed PDB."
+                                    },
+                                    "num_residues": {
+                                        "type": "integer",
+                                        "description": "Protein residues in the design."
+                                    },
+                                    "num_atoms": {
+                                        "type": "integer",
+                                        "description": "Protein and ligand atoms in the design."
+                                    },
+                                    "chains": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "ligands": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "description": "Ligand residue names present in the design."
+                                    },
+                                    "residues_with_side_chain_atoms": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "description": "Residues that carry side-chain atoms, as chain, number, and name (for example 'A66:ARG'). These are the scaffolded motif residues; newly designed residues are backbone-only."
+                                    },
+                                    "pdb": {
+                                        "type": "string",
+                                        "description": "Designed backbone in PDB format, when return_structure is true."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "required": [
+                "status"
+            ]
+        }
+    }
+]

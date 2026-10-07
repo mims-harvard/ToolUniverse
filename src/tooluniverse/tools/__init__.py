@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2858 scientific tools.
+Type-safe Python interface to 2859 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -3322,6 +3322,7 @@ from .loinc_search_codes import loinc_search_codes
 from .mcp_auto_loader_boltz import mcp_auto_loader_boltz
 from .mcp_auto_loader_esm import mcp_auto_loader_esm
 from .mcp_auto_loader_expert_feedback import mcp_auto_loader_expert_feedback
+from .mcp_auto_loader_rfdiffusion2 import mcp_auto_loader_rfdiffusion2
 from .mcp_auto_loader_txagent import mcp_auto_loader_txagent
 from .mcp_auto_loader_uspto_downloader import mcp_auto_loader_uspto_downloader
 from .mesh_get_subjects_by_pharmacological_action import (
@@ -6192,6 +6193,7 @@ __all__ = [
     "mcp_auto_loader_boltz",
     "mcp_auto_loader_esm",
     "mcp_auto_loader_expert_feedback",
+    "mcp_auto_loader_rfdiffusion2",
     "mcp_auto_loader_txagent",
     "mcp_auto_loader_uspto_downloader",
     "mesh_get_subjects_by_pharmacological_action",

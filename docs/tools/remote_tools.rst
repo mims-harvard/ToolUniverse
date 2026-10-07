@@ -11,6 +11,7 @@ This section aggregates setup guides for all integrations under ``src/tooluniver
    remote/expert_feedback.md
    remote/immune_compass.md
    remote/pinnacle.md
+   remote/rfdiffusion2.md
    remote/transcriptformer.md
    remote/uspto_downloader.md
 

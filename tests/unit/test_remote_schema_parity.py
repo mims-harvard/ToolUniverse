@@ -202,6 +202,7 @@ class RemoteSchemaParityTests(unittest.TestCase):
             "expert_feedback/human_expert_client_tools.json": (
                 "expert_feedback_tools.json"
             ),
+            "rfdiffusion2/rfdiffusion2_client_tools.json": "rfdiffusion2_tools.json",
         }
         problems = []
         for internal_relative, published_name in pairs.items():
@@ -720,7 +721,7 @@ class RemoteSchemaParityTests(unittest.TestCase):
             if "from fastmcp import FastMCP" in source:
                 fastmcp_sources.append((source_path, source))
 
-        self.assertEqual(len(fastmcp_sources), 6)
+        self.assertEqual(len(fastmcp_sources), 7)
         problems = []
         for source_path, source in fastmcp_sources:
             relative = source_path.relative_to(REMOTE_SOURCE_ROOT)
@@ -742,6 +743,9 @@ class RemoteSchemaParityTests(unittest.TestCase):
 
         cases = {
             "boltz2_docking": REMOTE_SOURCE_ROOT / "boltz" / "boltz_mcp_server.py",
+            "rfdiffusion2_design": REMOTE_SOURCE_ROOT
+            / "rfdiffusion2"
+            / "rfdiffusion2_mcp_server.py",
             "get_abstract_from_patent_app_number": REMOTE_SOURCE_ROOT
             / "uspto_downloader"
             / "uspto_downloader_mcp_server.py",

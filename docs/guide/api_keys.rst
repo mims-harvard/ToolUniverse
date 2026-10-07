@@ -242,6 +242,13 @@ These settings configure connections to external Model Context Protocol (MCP) se
 :How to Setup: Deploy the Boltz MCP server
 :Tool Categories: ``mcp_auto_loader_boltz``
 
+**RFdiffusion2 Protein Design**
+
+:Host: ``RFDIFFUSION2_MCP_SERVER_HOST``
+:Required For: RFdiffusion2 protein backbone design via MCP
+:How to Setup: Deploy the RFdiffusion2 MCP server (see :doc:`../tools/remote/rfdiffusion2`)
+:Tool Categories: ``mcp_auto_loader_rfdiffusion2``
+
 **USPTO Patent Downloader**
 
 :Host: ``USPTO_MCP_SERVER_HOST``

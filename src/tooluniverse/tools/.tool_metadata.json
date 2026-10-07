@@ -2614,6 +2614,7 @@
   "kegg_list_organisms": "8a654a2e6ea074419a0b7c511da2621d",
   "kegg_search_pathway": "b834932611b6c1a0a979cc5649d0c08a",
   "list_tools": "b69097415365f11780f9d5d72b6c44fe",
+  "mcp_auto_loader_rfdiffusion2": "0f243b4ac45f9a4db8e78701813a4994",
   "mesh_get_subjects_by_pharmacological_action": "f7c89a997efecc47f375a43d6e29c91b",
   "mesh_get_subjects_by_subject_id": "0445d29354e4352b05e47baba221ff76",
   "mesh_get_subjects_by_subject_name": "e1ae5e9e42654a4327ee710848790768",
