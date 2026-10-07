@@ -1,6 +1,6 @@
 # Codex configuration for the WITHOUT-ToolUniverse baseline condition.
 #
-#   codex exec --config /abs/path/to/baseline.toml - < prompt.txt
+#   Passed to run_ablation.py as --codex-without, not to codex --config.
 #
 # No MCP servers are attached, so the agent runs on the base model alone. Every
 # other setting must match with_tooluniverse.toml exactly.

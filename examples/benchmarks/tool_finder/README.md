@@ -111,10 +111,13 @@ With both conditions met, `build_corpus.py` reproduces the published snapshot ex
 pool 2,634, 2,615 seed tools, 2,233 held-out tools, and byte-identical document text for
 all 2,634 tools.
 
-## Quick path: re-score the released data
+## Optional quick path: re-score the published data asset
 
-Generating queries and judging them costs API calls. To skip both and go straight to
-the metrics:
+Generating queries and judging them costs API calls. The optional quick path below
+requires the `benchmark-data-v1` release asset. At the time of this revision that
+asset has not been published; use the full regeneration path below until it is
+available. Regenerated model judgments are new observations and are not byte-exact
+reproductions of the original query and judgment files.
 
 ```bash
 python download_data.py     # queries + graded judgments into ./data

@@ -27,7 +27,7 @@ the with/without ablation is the number that isolates the platform.
 
 ## Requirements
 
-- An agent CLI: [Claude Code](https://claude.com/claude-code) or Codex.
+- Python 3.11+ and an agent CLI: [Claude Code](https://claude.com/claude-code) or Codex.
 - `pip install pandas numpy pyarrow` to build the question set.
 - API keys for the tools you want available. Missing keys do not corrupt the run; the
   affected tools report an error instead of returning something wrong. They do lower the
@@ -46,6 +46,12 @@ export TOOLUNIVERSE_PLUGIN_DIR="$PWD/dist/tooluniverse-plugin"
 **Codex** takes an MCP server entry; copy `codex_config/with_tooluniverse.toml`, set the
 `PYTHONPATH` and command to the checkout you intend to measure, and keep
 `baseline.toml` identical except for the absent server.
+
+The runner reads the Codex TOML files and passes each value as `--config key=value`.
+It disables inherited user MCP configuration and starts every question in an empty
+workspace. Claude runs in print mode with only the explicitly supplied MCP configuration.
+CLI launch failures and timeouts abort the run instead of becoming incorrect answers.
+Policy refusals returned by a successful run still count as incorrect.
 
 The base models used in the published run are Opus 4.8 for Claude Code and GPT-5.5 for
 Codex. Any other model measures a different system, which is legitimate but is not a
@@ -82,7 +88,8 @@ If the MCP server has not finished loading the tool catalogue when the CLI gives
 waiting, the agent runs anyway with no ToolUniverse tools attached, answers every
 question, and produces a complete with-ToolUniverse result that measures the bare model.
 Nothing in the output looks wrong. `preflight.py` makes a live tool call with a known
-answer, which is the only reliable way to tell the difference. Asking the agent whether
+answer, and checks the completed MCP tool event and returned value, rather than trusting
+the final answer alone. Asking the agent whether
 it can call the tool is not: it answers from priors in a couple of seconds and is
 confident either way.
 
@@ -139,3 +146,9 @@ Check, in this order:
 4. **Are the tools failing on missing credentials?** Inspect `response_tail` in the
    results file; repeated tool errors depress the with-condition without any obvious
    sign in the accuracy alone.
+
+## Offline regression checks
+
+From the repository root, run `python -m unittest discover -s examples/benchmarks/labbench/tests`.
+The CLI invocation, configuration isolation, observed-tool preflight and scoring
+checks use synthetic fixtures and do not make model or database calls.

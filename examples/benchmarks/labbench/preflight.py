@@ -17,6 +17,7 @@ Usage:
 
 import argparse
 import sys
+import json
 
 from run_ablation import AGENTS
 
@@ -50,23 +51,35 @@ def main():
     text = (response or "").upper()
 
     ok_symbol = EXPECTED_SYMBOL in text
-    named_tool = "TOOL:" in text and len(text.split("TOOL:")[-1].strip()) > 2
+    observed = [
+        call
+        for call in getattr(args, "tool_calls", [])
+        if call.get("completed")
+        and call.get("name", "").startswith("mcp__tooluniverse__")
+        and "ENSG00000141510" in json.dumps(call.get("arguments", {}))
+        and EXPECTED_SYMBOL in json.dumps(call.get("result")).upper()
+    ]
+    named_tool = bool(observed)
 
     print("-" * 60)
     print((response or "")[-600:])
     print("-" * 60)
     print(f"expected symbol {EXPECTED_SYMBOL} present : {'yes' if ok_symbol else 'NO'}")
-    print(f"named the tool it called            : {'yes' if named_tool else 'NO'}")
+    print(f"observed successful tool call            : {'yes' if named_tool else 'NO'}")
 
     if not ok_symbol:
-        print("\nFAIL: the with-condition did not return the expected value. Do not start a "
-              "run until this passes. Check that the plugin directory or MCP config points "
-              "at the build you intend to measure, and that the MCP start-up timeout is "
-              "long enough for the tool catalogue to load.")
+        print(
+            "\nFAIL: the with-condition did not return the expected value. Do not start a "
+            "run until this passes. Check that the plugin directory or MCP config points "
+            "at the build you intend to measure, and that the MCP start-up timeout is "
+            "long enough for the tool catalogue to load."
+        )
         return 1
     if not named_tool:
-        print("\nWARNING: the value is right but no tool was named, so it may have been "
-              "answered from memory. Re-run before trusting the with-condition.")
+        print(
+            "\nWARNING: the value is right but no successful MCP call was observed, so it may have been "
+            "answered from memory. Re-run before trusting the with-condition."
+        )
         return 1
     print("\nPASS: ToolUniverse is attached and answering.")
     return 0

@@ -1,6 +1,7 @@
 # Codex configuration for the WITH-ToolUniverse condition.
 #
-#   codex exec --config /abs/path/to/with_tooluniverse.toml - < prompt.txt
+#   python run_ablation.py --agent codex --codex-with codex_config/with_tooluniverse.toml \
+#     --codex-without codex_config/baseline.toml --items data/dbqa.jsonl --out results/dbqa.json
 #
 # The only difference from baseline.toml is the ToolUniverse MCP server below.
 # Keep the model and every other setting identical between the two files, or the
@@ -12,6 +13,8 @@ model = "gpt-5.5"
 # Path to the tooluniverse entry point in the environment you are testing.
 command = "tooluniverse"
 args = []
+startup_timeout_sec = 600
+tool_timeout_sec = 600
 
 [mcp_servers.tooluniverse.env]
 # Pin the checkout under test. If an editable install resolves `import tooluniverse`
