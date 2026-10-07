@@ -20,6 +20,7 @@ appears somewhere in a long explanation.
 
 import argparse
 import json
+import math
 import re
 import sys
 
@@ -27,7 +28,8 @@ import sys
 def options(q):
     def num(v):
         try:
-            return float(str(v).strip().rstrip("%"))
+            value = float(str(v).strip().rstrip("%"))
+            return value if math.isfinite(value) else None
         except Exception:
             return None
 
@@ -41,14 +43,15 @@ def committed_value(text):
     """The number the reply actually asserts, not any number it mentions."""
     if not text:
         return None
-    tail = text[-500:]
-    m = re.findall(r"\*\*\s*(-?\d+(?:\.\d+)?)\s*(?:%|\*\*)", tail)
+    tail = str(text)[-500:]
+    number = r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?"
+    m = re.findall(r"\*\*\s*(" + number + r")\s*(?:%|\*\*)", tail)
     if m:
         return float(m[-1])
-    m = re.findall(r"(?:answer|value|result)\D{0,20}(-?\d+(?:\.\d+)?)", tail, re.I)
+    m = re.findall(r"(?:answer|value|result)\D{0,20}(" + number + r")", tail, re.I)
     if m:
         return float(m[-1])
-    m = re.findall(r"-?\d+(?:\.\d+)?", tail)
+    m = re.findall(number, tail)
     return float(m[-1]) if m else None
 
 
@@ -58,11 +61,57 @@ def selects_gold(value, gold, distractors, margin=0.15):
     `margin` requires the runner-up to be at least 15% further away, so an
     answer sitting midway between two options is not credited to either.
     """
-    if value is None:
+    if value is None or not math.isfinite(value):
         return False
     dg = abs(value - gold)
     dd = min(abs(value - d) for d in distractors)
     return dg < dd and dd >= dg * (1 + margin)
+
+
+def regrade(records, questions, margin=0.15):
+    """Recompute every eligible numeric item, preserving other recorded grades."""
+    if not records:
+        raise ValueError("No evaluated records to score")
+    qs = {q["id"]: q for q in questions}
+    if len(qs) != len(questions):
+        raise ValueError("Question ids must be unique")
+    seen = set()
+    graded = []
+    changed = 0
+    numeric = 0
+    for record in records:
+        q_id = record.get("id")
+        if q_id in seen or q_id not in qs:
+            raise ValueError(f"Duplicate or unknown evaluated question id: {q_id}")
+        seen.add(q_id)
+        q = qs[q_id]
+        row = dict(record)
+        gold, distractors = options(q)
+        if gold is not None:
+            numeric += 1
+            row["correct"] = selects_gold(
+                committed_value(row.get("predicted")), gold, distractors, margin
+            )
+            row["grading_method"] = "numeric_nearest_option"
+            changed += row["correct"] != bool(record.get("correct"))
+        elif not isinstance(row.get("correct"), bool):
+            raise ValueError(
+                f"Recorded grade is missing for nonnumeric question: {q_id}"
+            )
+        graded.append(row)
+    correct = sum(row["correct"] for row in graded)
+    return {
+        "results": graded,
+        "summary": {
+            "correct": correct,
+            "total": len(graded),
+            "accuracy": round(100 * correct / len(graded), 1),
+            "numeric_items": numeric,
+            "changed_grades": changed,
+            "question_set_total": len(questions),
+            "grading_method": "recorded grader plus numeric nearest-option override",
+        },
+    }
 
 
 def main():
@@ -70,34 +119,31 @@ def main():
     ap.add_argument("--results", required=True)
     ap.add_argument("--questions", required=True)
     ap.add_argument("--margin", type=float, default=0.15)
+    ap.add_argument(
+        "--out", help="Write grades and the final score without changing raw results"
+    )
     a = ap.parse_args()
-
-    qs = {q["id"]: q for q in json.load(open(a.questions))}
+    if not math.isfinite(a.margin) or a.margin < 0:
+        ap.error("--margin must be finite and nonnegative")
+    qs = json.load(open(a.questions))
     d = json.load(open(a.results))
     recs = (
         d if isinstance(d, list) else (d.get("with_plugin") or d.get("results") or [])
     )
 
-    flipped, checked = [], 0
-    for r in recs:
-        if r.get("correct"):
-            continue
-        q = qs.get(r.get("id"))
-        if not q:
-            continue
-        gold, ds = options(q)
-        if gold is None:
-            continue
-        checked += 1
-        v = committed_value(r.get("predicted"))
-        if selects_gold(v, gold, ds, a.margin):
-            flipped.append((q.get("short_id"), v, gold, ds, r.get("question", "")[:60]))
-
-    print(f"numeric-MCQ items among the failures: {checked}")
-    print(f"answers that unambiguously select gold: {len(flipped)}\n")
-    for sid, v, gold, ds, qq in flipped:
-        print(f"  {sid:8s} answered {v:<10g} gold {gold:<8g} distractors {ds}")
-        print(f"           {qq}")
+    scored = regrade(recs, qs, a.margin)
+    summary = scored["summary"]
+    print(
+        f"Results: {summary['correct']}/{summary['total']} ({summary['accuracy']:.1f}%)"
+    )
+    print(
+        f"Numeric items regraded: {summary['numeric_items']}; changed grades: {summary['changed_grades']}"
+    )
+    if summary["total"] != summary["question_set_total"]:
+        print("Partial evaluation; this is not the full 205-question score.")
+    if a.out:
+        with open(a.out, "w") as handle:
+            json.dump(scored, handle, indent=2)
     return 0
 
 

@@ -1,7 +1,9 @@
 # BixBench with ToolUniverse
 
 Run the [BixBench](https://huggingface.co/datasets/futurehouse/BixBench)
-bioinformatics benchmark against ToolUniverse and reproduce **181/205 (88.3%)**.
+bioinformatics benchmark against ToolUniverse and compare your result with the reported **181/205 (88.3%)** reference.
+Agent runs are stochastic; the final score is recomputed from your records rather
+than assumed to match this reference.
 
 BixBench gives an agent a real analysis capsule — data files plus the notebook
 that produced the published result — and asks questions whose answers require
@@ -12,6 +14,7 @@ running the analysis.
 - Python 3.10+, the `claude` CLI, and a built ToolUniverse plugin (`dist/tooluniverse-plugin`)
 - **R** with DESeq2 and clusterProfiler (several questions need it)
 - `phykit`, `biopython`, `scipy`, `pandas`, `scanpy`
+- `datasets`, `huggingface_hub`, `numpy` and `pyarrow` for the public data downloads
 - ~25 GB free disk: 19 GB of capsules plus working space
 
 ## Quick start
@@ -21,7 +24,10 @@ cd benchmarks/bixbench
 bash scripts/run_benchmark.sh --data-dir /path/with/25GB --out results.json
 ```
 
-That runs every step below and prints the final score. Steps can also be run
+That runs every step below and prints the final score. `--data-dir` is passed to
+the evaluation harness, and `--plugin` and `--src` select the checkout being tested.
+Use `--resume results.json` to continue an interrupted run. The scorer writes a
+separate `results.graded.json` and preserves the raw records. Steps can also be run
 individually.
 
 ## Steps
@@ -33,7 +39,7 @@ bash scripts/preflight.sh
 ```
 
 Verifies that the plugin's MCP server loads the ToolUniverse you intend to test,
-that the skills the agent reads match your checkout, that an MCP tool call
+that the skills the agent reads match your checkout, that an observed MCP tool call
 actually returns data, and that the grader rejects wrong answers. **Exits
 non-zero if any check fails** — a misconfigured plugin still produces a complete
 run and a plausible score, so this is worth the two minutes.
@@ -46,7 +52,9 @@ python3 scripts/download_capsules.py --data-dir <path>
 ```
 
 Neither is committed: the questions carry BixBench's canary GUID, and the
-capsules are ~19 GB.
+capsules are ~19 GB. Completed downloads are marked only after CRC-checked
+extraction. A missing dependency or failed download exits nonzero so the run
+cannot quietly continue with partial data.
 
 ### 3. Confirm the reference values
 
@@ -63,7 +71,8 @@ phylogenetics questions will not reproduce.
 ```bash
 python3 ../../skills/devtu-benchmark-harness/scripts/run_eval.py \
     --benchmark bixbench --mode plugin-only --n 205 \
-    --data-file questions.json --timeout 900 --max-turns 80 \
+    --data-file questions.json --data-dir /path/to/capsules \
+    --plugin-dir /path/to/tooluniverse-plugin --timeout 900 --max-turns 80 \
     --full-skill-injection --save-incremental results.json
 ```
 
@@ -75,7 +84,8 @@ Write results to local disk, not a quota-limited network share.
 ### 5. Score
 
 ```bash
-python3 scripts/regrade_nearest_option.py --results results.json --questions questions.json
+python3 scripts/regrade_nearest_option.py --results results.json --questions questions.json \
+    --out results.graded.json
 ```
 
 ## Grading
@@ -99,7 +109,9 @@ Two settings to make deliberately:
   `ideal` of 0.57 while the nearest distractor, 0.65, is four times further away.
   `regrade_nearest_option.py` scores by nearest option, requires a 15% margin so
   an ambiguous value is credited to neither, and reads only the value the answer
-  commits to.
+  commits to. The numeric override is applied to every eligible item, including
+  previously correct records; the final score is labelled with this custom grading
+  protocol and is not presented as the unmodified BixBench grader score.
 
 ## Working with the capsules
 
@@ -156,3 +168,8 @@ version of that grader credited the ground truth appearing anywhere in a reply,
 which scored one additional item and is why some stored result files show 56 —
 the answer there mentions the correct value while committing to a different
 one.
+
+## Offline regression checks
+
+From the repository root, run `python -m unittest discover -s benchmarks/bixbench/tests`.
+These tests exercise scoring, downloads and configuration without model calls.

@@ -28,7 +28,10 @@ import os
 import statistics as st
 import subprocess
 import sys
-import zipfile
+import tempfile
+from pathlib import Path
+
+from download_capsules import extract_capsule
 
 
 def phykit(*args, timeout=180):
@@ -41,7 +44,7 @@ def phykit(*args, timeout=180):
 def column_gap_fraction(path):
     """Fraction of alignment columns holding at least one gap."""
     seqs, cur = [], []
-    for line in open(path):
+    for line in Path(path).read_text().splitlines():
         if line.startswith(">"):
             if cur:
                 seqs.append("".join(cur))
@@ -52,26 +55,19 @@ def column_gap_fraction(path):
         seqs.append("".join(cur))
     if not seqs:
         return 0.0
-    n = min(len(s) for s in seqs)
+    if len({len(s) for s in seqs}) != 1:
+        raise ValueError("Aligned sequences must have equal lengths")
+    n = len(seqs[0])
     return sum(1 for i in range(n) if any(s[i] == "-" for s in seqs)) / n if n else 0.0
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument(
-        "--capsule", required=True, help="extracted CapsuleFolder-... directory"
-    )
-    ap.add_argument("--workdir", default="/tmp/bixbench_ref")
-    a = ap.parse_args()
-
-    zf = os.path.join(a.capsule, "scogs_fungi.zip")
+def evaluate(capsule, workdir):
+    zf = os.path.join(capsule, "scogs_fungi.zip")
     if not os.path.exists(zf):
         print(f"ERROR: {zf} not found", file=sys.stderr)
         return 2
-    os.makedirs(a.workdir, exist_ok=True)
-    with zipfile.ZipFile(zf) as z:
-        z.extractall(a.workdir)
-    os.chdir(a.workdir)
+    extract_capsule(zf, workdir)
+    os.chdir(workdir)
 
     stems = sorted(
         f[: -len(".faa.mafft.clipkit.treefile")]
@@ -135,6 +131,26 @@ def main():
         else f"\n{bad} value(s) differ -- do not trust downstream results"
     )
     return 1 if bad else 0
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--capsule", required=True)
+    ap.add_argument("--workdir", help="New directory for extracted reference files")
+    a = ap.parse_args()
+    capsule = str(Path(a.capsule).resolve())
+    original_cwd = Path.cwd()
+    try:
+        if a.workdir:
+            workdir = Path(a.workdir).resolve()
+            if workdir.exists():
+                ap.error("--workdir must be new, to avoid mixing old reference files")
+            workdir.parent.mkdir(parents=True, exist_ok=True)
+            return evaluate(capsule, str(workdir))
+        with tempfile.TemporaryDirectory(prefix="bixbench-reference-") as tmp:
+            return evaluate(capsule, str(Path(tmp) / "extracted"))
+    finally:
+        os.chdir(original_cwd)
 
 
 if __name__ == "__main__":

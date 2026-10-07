@@ -10,6 +10,10 @@ Usage:
 """
 
 import argparse
+import shutil
+import stat
+import sys
+import tempfile
 import zipfile
 from pathlib import Path
 
@@ -20,6 +24,29 @@ DATA_DIR_DEFAULT = (
     / "bixbench"
     / "data"
 )
+
+
+def extract_capsule(archive, destination):
+    """Only mark a complete, CRC-checked extraction as reusable."""
+    destination = Path(destination)
+    with tempfile.TemporaryDirectory(dir=destination.parent, prefix=".capsule-") as tmp:
+        with zipfile.ZipFile(archive) as zf:
+            for info in zf.infolist():
+                path = Path(info.filename)
+                if (
+                    path.is_absolute()
+                    or ".." in path.parts
+                    or stat.S_ISLNK(info.external_attr >> 16)
+                ):
+                    raise ValueError(f"Unsafe capsule member: {info.filename}")
+            bad = zf.testzip()
+            if bad:
+                raise ValueError(f"Corrupt capsule member: {bad}")
+            zf.extractall(tmp)
+        Path(tmp, ".complete").touch()
+        if destination.exists():
+            shutil.rmtree(destination)
+        shutil.move(tmp, destination)
 
 
 def main():
@@ -36,7 +63,7 @@ def main():
         from huggingface_hub import hf_hub_download, list_repo_tree
     except ImportError:
         print("Install huggingface_hub: pip install huggingface_hub")
-        return
+        return 1
 
     data_dir = args.data_dir
     data_dir.mkdir(parents=True, exist_ok=True)
@@ -46,7 +73,9 @@ def main():
     existing = {
         d.name
         for d in data_dir.iterdir()
-        if d.is_dir() and d.name.startswith("CapsuleFolder-")
+        if d.is_dir()
+        and d.name.startswith("CapsuleFolder-")
+        and (d / ".complete").exists()
     }
 
     # List capsule zips in the HF repo
@@ -67,7 +96,7 @@ def main():
 
     if not to_download:
         print("All capsules already downloaded.")
-        return
+        return 0
 
     failed = []
     for i, f in enumerate(to_download, 1):
@@ -82,9 +111,7 @@ def main():
             )
             folder_name = f.path.replace(".zip", "")
             extract_to = data_dir / folder_name
-            extract_to.mkdir(exist_ok=True)
-            with zipfile.ZipFile(local_path) as zf:
-                zf.extractall(extract_to)
+            extract_capsule(local_path, extract_to)
             print(f"  OK", flush=True)
         except Exception as e:
             print(f"  FAILED: {e}", flush=True)
@@ -98,7 +125,8 @@ def main():
     print(f"\nTotal capsules: {final_count}")
     if failed:
         print(f"Failed ({len(failed)}): {failed}")
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

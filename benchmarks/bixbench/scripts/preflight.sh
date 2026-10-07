@@ -36,13 +36,15 @@ MCP_JSON="$PLUGIN/.mcp.json"
 if [ ! -f "$MCP_JSON" ]; then
   bad "no .mcp.json at $MCP_JSON"
 else
-  configured=$(python3 -c "
-import json,sys
+  configured=$(python3 - "$MCP_JSON" <<'PYCONFIG'
+import json, sys
 try:
-    env=json.load(open('$MCP_JSON'))['mcpServers']['tooluniverse'].get('env',{})
-    print(env.get('PYTHONPATH',''))
-except Exception:
-    print('')" 2>/dev/null)
+    env = json.load(open(sys.argv[1]))['mcpServers']['tooluniverse'].get('env', {})
+    print(env.get('PYTHONPATH', ''))
+except (OSError, ValueError, KeyError):
+    print('')
+PYCONFIG
+)
   if [ -z "$configured" ]; then
     bad "no PYTHONPATH in .mcp.json - the server may load a different install"
   elif [ "$(cd "$configured" 2>/dev/null && pwd)" != "$(cd "$SRC" 2>/dev/null && pwd)" ]; then
@@ -68,14 +70,22 @@ else bad "plugin skills are stale - rebuild the plugin or copy them into dist/";
 
 # 3. Prove the tools work by CALLING one. Asking the model whether it can call a
 #    tool returns an answer from priors that is wrong in both directions.
-probe=$(MCP_TIMEOUT=600000 MCP_TOOL_TIMEOUT=600000 timeout 560 claude --output-format json \
-      --plugin-dir "$PLUGIN" --max-turns 14 \
-      -p "Call mcp__tooluniverse__execute_tool with name='UCSC_get_sequence' and arguments={'genome':'hg38','region':'chr14:89000000-89000010'}. Reply with only the returned dna string, or FAILED." 2>/dev/null \
-      | python3 -c "import sys,json;print(str(json.load(sys.stdin).get('result',''))[:60])" 2>/dev/null)
+probe=$(python3 "$HERE/probe_tool_call.py" --plugin "$PLUGIN" 2>/dev/null)
 case "$probe" in
   *ATCTTGTCACT*) ok "MCP tool call returns the expected sequence" ;;
   *)             bad "MCP tool call did not return the expected sequence (got '${probe:-nothing}')" ;;
 esac
+
+# 4. This is deterministic and must not contact a model judge.
+if python3 - "$REPO" <<'PYGRADER'
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(sys.argv[1]) / 'skills/devtu-benchmark-harness/scripts'))
+from grade_answers import grade_answer
+assert not grade_answer('definitely incorrect', 'required benchmark answer', 'str_verifier', use_llm=False)['correct']
+PYGRADER
+then ok "grader rejects a deliberately wrong answer"
+else bad "grader accepted a wrong answer or could not run"; fi
 
 echo
 if [ "$fail" -eq 0 ]; then echo "PREFLIGHT PASS"; else echo "PREFLIGHT FAIL - fix the above before running"; fi
