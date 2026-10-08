@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def IntOGen_list_cohorts(
-    cancer_type: Optional[str | Any] = None,
+    cancer_type: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -20,7 +20,7 @@ def IntOGen_list_cohorts(
 
     Parameters
     ----------
-    cancer_type : str | Any
+    cancer_type : str
         Optional cancer type code to filter cohorts. If omitted, returns all 271 coho...
     stream_callback : Callable, optional
         Callback for streaming output

@@ -1,7 +1,7 @@
 """
 ChIPAtlas_enrichment_analysis
 
-Perform enrichment analysis to identify transcription factors and histone modifications enriched ...
+NON-FUNCTIONAL / stub (checked 2026-09-22): ChIP-Atlas's enrichment analysis (identifying transcr...
 """
 
 from typing import Any, Optional, Callable
@@ -24,7 +24,7 @@ def ChIPAtlas_enrichment_analysis(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Perform enrichment analysis to identify transcription factors and histone modifications enriched ...
+    NON-FUNCTIONAL / stub (checked 2026-09-22): ChIP-Atlas's enrichment analysis (identifying transcr...
 
     Parameters
     ----------

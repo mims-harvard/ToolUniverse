@@ -78,11 +78,13 @@ def test_get_interactors_404_gives_honest_endpoint_unavailable_message():
 
 def test_get_interactions_success_still_works():
     tool = _tool("get_interactions")
+    response = _resp()
+    response.text = (
+        "string:CID1\tstring:P1\taspirin\tPTGS1\t-\t-\t-\t-\t-\t"
+        "taxid:-2\ttaxid:-2\t-\t-\t-\tscore:0.999\n"
+    )
 
-    with patch(
-        "tooluniverse.stitch_tool.requests.get",
-        return_value=_resp([{"stringId_A": "CID1", "stringId_B": "P1"}]),
-    ):
+    with patch("tooluniverse.stitch_tool.requests.get", return_value=response):
         result = tool.run({"identifiers": ["CIDm00002244"]})
 
     assert result["status"] == "success"

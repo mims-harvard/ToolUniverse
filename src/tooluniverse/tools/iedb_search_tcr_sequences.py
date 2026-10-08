@@ -30,7 +30,7 @@ def iedb_search_tcr_sequences(
     select : str | list[str]
         Columns to return.
     filters : dict[str, Any]
-        PostgREST filters. Key columns: receptor_group_id, receptor_type, receptor_na...
+        PostgREST filters, e.g. {"chain2_cdr3_seq": "eq.ASSQDRDTQY"}. Key columns: re...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

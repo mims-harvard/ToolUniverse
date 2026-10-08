@@ -119,7 +119,7 @@ For detailed code snippets and API call patterns for each phase, see `ANALYSIS_D
 Not every mutation in a tumor is driving the cancer. Before querying databases, form a hypothesis:
 
 - **Is this gene a known oncogene or tumor suppressor?** Genes like EGFR, BRAF, KRAS, TP53, PIK3CA are well-established cancer drivers. A mutation in one of these warrants deep investigation. A mutation in a gene with no known cancer role is likely a passenger.
-- **Is this specific mutation recurrent across tumors (hotspot)?** Use cBioPortal to check. A mutation seen in hundreds of independent tumors (e.g., BRAF V600E) is almost certainly a driver. A unique, never-before-seen missense in the same gene is less certain.
+- **Is this specific mutation recurrent across tumors (hotspot)?** Use cBioPortal to check prevalence across specific studies, or `GenomeNexus_get_cancer_hotspots` for a direct `is_hotspot` boolean plus tumor counts from the Chang et al. hotspot database (e.g., BRAF V600E: `is_hotspot: true`, 897 tumors as a single-residue hotspot, 545 as a 3D-cluster hotspot). A mutation seen in hundreds of independent tumors is almost certainly a driver. A unique, never-before-seen missense in the same gene is less certain.
 - **What is the predicted functional impact?** Truncating mutations (nonsense, frameshift) in tumor suppressors are likely loss-of-function drivers. Missense mutations in oncogenes at known hotspot residues are likely gain-of-function drivers.
 - **For unique (non-hotspot) missense in driver genes, look at mechanism, not just pathogenicity.** AlphaMissense gives a score; the ESMC-6B SAE composite `ESM_explain_variant_mechanism(sequence=wt_protein_seq, position=..., ref_aa=..., alt_aa=..., top_k_features=5)` answers *how* the substitution disrupts function — catalytic / ligand-binding / PTM / structural-stability loss. A unique missense that disrupts the same SAE feature category as a known driver hotspot in the same gene is more likely a driver than a missense that disrupts unrelated features. Requires `ESM_API_KEY`; missense only.
 - **Conclusion pattern**: A recurrent mutation in a known driver gene is likely actionable. A unique mutation in a gene not associated with cancer is likely a passenger. State your assessment and the reasoning behind it.
@@ -198,6 +198,41 @@ Form your clinical hypothesis FIRST based on gene function and mutation type, TH
 | `PubMed_search_articles` | `query`, `limit`, `include_abstract` | Returns **list** of dicts (NOT wrapped) |
 | `Reactome_map_uniprot_to_pathways` | `id` (UniProt accession) | Pathway mappings |
 | `GTEx_get_median_gene_expression` | `gencode_id`, `operation="median"` | Expression by tissue |
+
+### Variant Annotation & Cancer Hotspots (Genome Nexus)
+
+Complements CIViC/cBioPortal with structured, computed consequence prediction (VEP/SIFT/PolyPhen/AlphaMissense) plus a dedicated cancer-hotspot lookup — use it to establish *in silico* pathogenicity and hotspot status before or alongside the curated clinical-evidence search, not instead of it. Requires **GRCh37/hg19** coordinates (convert first if you only have GRCh38, e.g. via NCBI Variation Services in `tooluniverse-variant-analysis`).
+
+| Tool | Key Parameters | Response Key Fields |
+|------|---------------|-------------------|
+| `GenomeNexus_annotate_variant` | `hgvsg` (GRCh37, e.g. `"7:g.140453136A>T"`) | `most_severe_consequence`, `transcript_consequences[].{hgvsp, sift_prediction, polyphen_prediction, alphaMissense}`, `hotspots.annotation`, `colocated_variants[].dbSnpId` |
+| `GenomeNexus_annotate_mutation` | `chromosome`, `start`, `end`, `reference_allele`, `variant_allele` (GRCh37) | Same shape as `annotate_variant` — use when you have separate coordinate fields instead of an HGVS string |
+| `GenomeNexus_annotate_dbsnp` | `rsid` (e.g. `"rs121913529"`) | Same shape; resolves the rsID to coordinates first |
+| `GenomeNexus_get_cancer_hotspots` | `hgvsg` (GRCh37) | `is_hotspot` (bool), `hotspots[].{residue, tumorCount, type}` — `type` is `"single residue"` or `"3d"` (structural cluster) |
+| `GenomeNexus_get_canonical_transcript` | `gene_symbol` | `transcriptId`, `proteinId`, `proteinLength`, `refseqMrnaId`, `pfamDomains[]` |
+
+### Cancer Driver Gene Classification (IntOGen)
+
+Genome Nexus's `is_hotspot` (above) answers "is this exact *variant* recurrent?" IntOGen answers a different, gene-level question: "is this whole *gene* a statistically established cancer driver in this cancer type?", derived from applying 7 independent driver-detection methods (dNdScv, OncodriveFML, OncodriveCLUSTL, HotMAPS, smRegions, CBaSE, MutPanning) to thousands of tumors across 271 cohorts (TCGA, ICGC, Hartwig, and others). Use it to establish gene-level driver status BEFORE or ALONGSIDE the hotspot check — a variant in a gene that isn't a driver in this cancer type is far less likely to be actionable regardless of its hotspot status, and a gene that IS a driver but where your specific variant ISN'T a known hotspot may still warrant the mechanism-based reasoning in "Driver vs Passenger Reasoning" above.
+
+| Tool | Key Parameters | Response Key Fields |
+|------|---------------|-------------------|
+| `IntOGen_list_cancer_types` | none | `data.cancer_types[].{cancer_type_id, cancer_name}` (87 codes, e.g. `BRCA`, `LUAD`, `SKCM`) |
+| `IntOGen_get_drivers` | `cancer_type` (IntOGen code, REQUIRED) | `data.driver_genes[].{gene, mutations, samples, cohorts}` |
+| `IntOGen_get_gene_info` | `gene` (HUGO symbol, REQUIRED) | `data.cancer_types[].{cancer_type, cancer_name, methods[], mutated_samples, total_samples}` |
+| `IntOGen_list_cohorts` | `cancer_type` (optional filter) | `data.cohorts[].{cohort_id, name, samples, source, tumor_type, age_group}` |
+
+**Combined workflow**: given gene + cancer type, call `IntOGen_get_drivers(cancer_type=...)` and check whether the gene appears in `driver_genes[]` — if yes, it's a statistically established driver in this exact cancer type (report `mutations`/`samples`/`cohorts` as supporting evidence). For the inverse question ("which cancer types is this gene a driver in overall?"), use `IntOGen_get_gene_info(gene=...)` instead, which also reports which of the 7 detection `methods` flagged it per cancer type — a gene flagged by multiple independent methods is stronger evidence than one flagged by a single method. **Operational note**: the IntOGen backend is occasionally slow and can time out (~45s) on a cold request — retry once before reporting "no data found."
+
+### Somatic Classification Tiers (CancerVar)
+
+Everything above (Genome Nexus, IntOGen, CIViC, cBioPortal) is evidence you assemble and weigh yourself. `CancerVar_classify_variant` instead runs the full AMP/ASCO/CAP 2017 rubric server-side and returns a ready-made Tier I-IV verdict — use it as a fast, automatable cross-check on your own manual assessment, not as a replacement for citing the underlying evidence above in a report.
+
+| Tool | Key Parameters | Response Key Fields |
+|------|---------------|-------------------|
+| `CancerVar_classify_variant` | `chrom`, `pos`, `ref`, `alt` (GRCh37/hg19 by default; pass `build="hg38"` for GRCh38), all REQUIRED | `data.tier` (`Tier_I_strong`\|`Tier_II_potential`\|`Tier_III_unknown`\|`Tier_IV_benign`), `data.opai` (Oncogenicity Pathogenicity Index, 0-1), `data.cbp_criteria` (12 named evidence scores, e.g. hotspot-database membership, FDA-approved-therapy association, population rarity) |
+
+Verified live on BRAF V600E (`chrom="7", pos=140453136, ref="A", alt="T", build="hg19"`): `tier="Tier_I_strong"`, `opai=0.99` — matches the FDA-approved-therapy-association tier this variant is known for, and matches the tool's own documented worked example exactly (unlike InterVar below, this example was accurate). Tier I requires CBP_1 or CBP_2 (FDA-approved association) to be active; Tier II is investigational/preclinical evidence without regulatory approval; Tier III is a true VUS-equivalent; Tier IV is benign. Report the tier alongside which specific `cbp_criteria` were active, the same way you'd cite ACMG criteria for a germline call — a bare tier number without its supporting criteria is not an audit-ready answer.
 
 ---
 

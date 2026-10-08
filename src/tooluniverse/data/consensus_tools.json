@@ -1,0 +1,166 @@
+[
+  {
+    "type": "ConsensusTool",
+    "name": "Consensus_search_papers",
+    "description": "Search 220M+ peer-reviewed papers via the Consensus API (https://consensus.app), returning ranked papers with an AI-generated one-line takeaway per paper plus study-design metadata (study type, sample size, journal quality) for evidence triage rather than raw retrieval. Complements PubMed/Europe PMC/OpenAlex: broader than biomedical-only sources, and surfaces a synthesized 'what does this paper conclude' takeaway instead of just an abstract. Requires CONSENSUS_API_KEY (paid Consensus account: https://consensus.app/home/api).",
+    "required_api_keys": ["CONSENSUS_API_KEY"],
+    "api_key_info": {
+      "CONSENSUS_API_KEY": {
+        "domain": "Literature & Patents",
+        "type": "secret",
+        "register_url": "https://consensus.app/home/api",
+        "purpose": "Search 220M+ peer-reviewed papers via the Consensus API.",
+        "without": "Consensus tools are blocked without it. Requires a paid Consensus account (Pro, Deep, or Teams plan)."
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Natural-language research question, e.g. 'Does creatine improve cognition?'"
+        },
+        "year_min": {
+          "type": "integer",
+          "description": "Minimum publication year."
+        },
+        "year_max": {
+          "type": "integer",
+          "description": "Maximum publication year."
+        },
+        "month_min": {
+          "type": "integer",
+          "description": "Minimum publication month (1-12), used with year_min."
+        },
+        "month_max": {
+          "type": "integer",
+          "description": "Maximum publication month (1-12), used with year_max."
+        },
+        "study_types": {
+          "type": "string",
+          "description": "Comma-separated study designs to filter by, e.g. 'rct,meta-analysis,systematic review,cohort study'."
+        },
+        "human": {
+          "type": "boolean",
+          "description": "Restrict to human studies only."
+        },
+        "controlled": {
+          "type": "boolean",
+          "description": "Restrict to controlled studies only."
+        },
+        "sample_size_min": {
+          "type": "integer",
+          "description": "Minimum study sample size."
+        },
+        "exclude_preprints": {
+          "type": "boolean",
+          "description": "Exclude preprints from results."
+        },
+        "sjr_min": {
+          "type": "integer",
+          "description": "Minimum SJR journal-quality quartile (1 = top quartile)."
+        },
+        "sjr_max": {
+          "type": "integer",
+          "description": "Maximum SJR journal-quality quartile (1 = top quartile)."
+        },
+        "citation_min": {
+          "type": "integer",
+          "description": "Minimum citation count."
+        },
+        "medical_mode": {
+          "type": "boolean",
+          "description": "Restrict to top medical journals and clinical guidelines (~8M docs)."
+        },
+        "domain": {
+          "type": "string",
+          "description": "Subject area filter, e.g. 'med', 'bio', 'cs', 'psych', 'econ'."
+        },
+        "country": {
+          "type": "string",
+          "description": "Filter by study country."
+        },
+        "journal_name": {
+          "type": "string",
+          "description": "Filter by exact journal name."
+        },
+        "publisher_name": {
+          "type": "string",
+          "description": "Filter by publisher name."
+        },
+        "open_access": {
+          "type": "boolean",
+          "description": "Restrict to open-access papers only."
+        },
+        "include_semantic_score": {
+          "type": "boolean",
+          "description": "Include a relevance (semantic similarity) score per result."
+        },
+        "include_full_text_chunks": {
+          "type": "boolean",
+          "description": "Include query-relevant full-text excerpts per result, where available."
+        },
+        "page": {
+          "type": "integer",
+          "description": "Zero-indexed page number for pagination; see the returned next_page/is_end fields."
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Search results with pagination metadata.",
+          "properties": {
+            "status": {"type": "string", "enum": ["success"]},
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {"type": "string"},
+                  "authors": {"type": "array", "items": {"type": "string"}},
+                  "publish_year": {"type": "integer"},
+                  "doi": {"type": ["string", "null"]},
+                  "journal_name": {"type": ["string", "null"]},
+                  "citation_count": {"type": ["integer", "null"]},
+                  "study_type": {"type": ["string", "null"]},
+                  "sample_size": {"type": ["integer", "null"]},
+                  "sjr_best_quartile": {"type": ["integer", "null"]},
+                  "takeaway": {"type": ["string", "null"]},
+                  "abstract": {"type": ["string", "null"]},
+                  "url": {"type": "string"}
+                }
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "query": {"type": "string"},
+                "returned": {"type": "integer"},
+                "page": {"type": ["integer", "null"]},
+                "page_size": {"type": ["integer", "null"]},
+                "is_end": {"type": ["boolean", "null"]},
+                "next_page": {"type": ["integer", "null"]}
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Error response.",
+          "properties": {
+            "status": {"type": "string", "enum": ["error"]},
+            "error": {"type": "string"}
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query": "Does creatine improve cognition?"
+      }
+    ]
+  }
+]

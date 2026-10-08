@@ -87,7 +87,7 @@
   {
     "name": "WikiPathways_get_pathway",
     "type": "WikiPathwaysGetTool",
-    "description": "Fetch pathway content by WPID (JSON/GPML). Use to programmatically access pathway nodes/edges/metadata for enrichment reporting or network visualization.",
+    "description": "Fetch pathway content by WPID. format='json' (default) returns structured metadata (uri, title, organism) plus the gene list (id, label, datasource) via WikiPathways' SPARQL endpoint, for enrichment reporting or network visualization. format='gpml' returns the pathway's raw GPML XML (nodes, edges, coordinates, exact upstream layout) instead -- use this when you need the full pathway diagram/model, not just its gene list. Errors clearly if the WPID has no GPML file or isn't in the SPARQL endpoint.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -114,48 +114,84 @@
       "format": "json"
     },
     "return_schema": {
-      "type": "object",
-      "description": "WikiPathways API response with pathway content",
-      "properties": {
-        "pathway": {
+      "oneOf": [
+        {
           "type": "object",
-          "description": "Pathway content and metadata",
+          "description": "format='json' response",
           "properties": {
-            "id": {
-              "type": "string",
-              "description": "WikiPathways ID"
+            "wpid": {
+              "type": "string"
             },
-            "name": {
-              "type": "string",
-              "description": "Pathway name"
+            "uri": {
+              "type": "string"
             },
-            "species": {
-              "type": "string",
-              "description": "Organism name"
+            "title": {
+              "type": "string"
             },
-            "revision": {
-              "type": "string",
-              "description": "Revision number"
+            "organism": {
+              "type": "string"
             },
-            "url": {
+            "genes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "datasource": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "gene_count": {
+              "type": "integer"
+            }
+          },
+          "required": [
+            "wpid",
+            "title",
+            "genes"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "format='gpml' response",
+          "properties": {
+            "wpid": {
+              "type": "string"
+            },
+            "format": {
               "type": "string",
-              "description": "Pathway URL"
+              "enum": [
+                "gpml"
+              ]
             },
             "gpml": {
-              "type": [
-                "string",
-                "null"
-              ],
-              "description": "GPML XML content if format=gpml"
+              "type": "string",
+              "description": "Raw GPML XML"
             }
-          }
+          },
+          "required": [
+            "wpid",
+            "format",
+            "gpml"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
         "wpid": "WP254",
         "format": "json"
+      },
+      {
+        "wpid": "WP254",
+        "format": "gpml"
       }
     ],
     "label": [

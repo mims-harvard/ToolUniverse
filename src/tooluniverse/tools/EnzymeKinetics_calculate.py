@@ -9,13 +9,13 @@ from ._shared_client import get_shared_client
 
 
 def EnzymeKinetics_calculate(
-    operation: str,
     substrate_concs: list[Any],
-    velocities: Optional[list[Any] | Any] = None,
-    velocities_no_inhibitor: Optional[list[Any] | Any] = None,
-    velocities_with_inhibitor: Optional[list[Any] | Any] = None,
-    inhibitor_conc: Optional[float | Any] = None,
-    inhibition_type: Optional[str | Any] = "competitive",
+    operation: Optional[str] = "michaelis_menten",
+    velocities: Optional[list[Any]] = None,
+    velocities_no_inhibitor: Optional[list[Any]] = None,
+    velocities_with_inhibitor: Optional[list[Any]] = None,
+    inhibitor_conc: Optional[float] = None,
+    inhibition_type: Optional[str] = "competitive",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,15 +30,15 @@ def EnzymeKinetics_calculate(
         Calculation type: 'michaelis_menten' for Km/Vmax, 'hill' for Hill coefficient...
     substrate_concs : list[Any]
         Substrate concentrations (at least 3 values). Must be positive.
-    velocities : list[Any] | Any
+    velocities : list[Any]
         Measured velocities corresponding to substrate_concs. Required for michaelis_...
-    velocities_no_inhibitor : list[Any] | Any
+    velocities_no_inhibitor : list[Any]
         Velocities without inhibitor (required for inhibition mode).
-    velocities_with_inhibitor : list[Any] | Any
+    velocities_with_inhibitor : list[Any]
         Velocities with inhibitor (required for inhibition mode).
-    inhibitor_conc : float | Any
+    inhibitor_conc : float
         Inhibitor concentration (required for inhibition mode).
-    inhibition_type : str | Any
+    inhibition_type : str
         Type of inhibition (default: competitive).
     stream_callback : Callable, optional
         Callback for streaming output

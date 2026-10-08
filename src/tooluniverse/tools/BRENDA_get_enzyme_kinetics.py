@@ -9,12 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def BRENDA_get_enzyme_kinetics(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_enzyme_kinetics",
     ec_number: Optional[str] = None,
     enzyme_name: Optional[str] = None,
     organism: Optional[str] = None,
     enzyme_id: Optional[str] = None,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -35,7 +35,7 @@ def BRENDA_get_enzyme_kinetics(
         Optional organism filter (e.g., Homo sapiens, Escherichia coli, Saccharomyces...
     enzyme_id : str
         Alias for ec_number. Enzyme identifier in EC notation.
-    limit : int | Any
+    limit : int
         Maximum number of SABIO-RK kinetic law entries to retrieve (default 20)
     stream_callback : Callable, optional
         Callback for streaming output

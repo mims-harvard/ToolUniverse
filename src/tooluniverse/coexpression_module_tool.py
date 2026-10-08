@@ -23,10 +23,16 @@ analysis." BMC Bioinformatics 9, 559 (2008).
 
 from typing import Any, Dict, List, Optional
 
-import networkx as nx
+try:
+    import networkx as nx
+
+    HAS_NETWORKX = True
+except ImportError:  # pragma: no cover - optional dependency
+    HAS_NETWORKX = False
 import numpy as np
 
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 
 
@@ -40,6 +46,11 @@ class CoexpressionModuleTool(BaseTool):
 
     # ------------------------------------------------------------------ run
     def run(self, arguments: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        if not HAS_NETWORKX:
+            return {
+                "status": "error",
+                "error": f"networkx is required for this tool. {install_hint('stats', 'networkx')}",
+            }
         args = arguments or {}
         parsed = self._parse_expression(args)
         if isinstance(parsed, dict):

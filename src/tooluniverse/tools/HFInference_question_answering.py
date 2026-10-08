@@ -9,16 +9,16 @@ from ._shared_client import get_shared_client
 
 
 def HFInference_question_answering(
-    operation: str,
     model_id: str,
     question: str,
     context: str,
+    operation: Optional[str] = "question_answering",
     wait_for_model: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Answer a question by extracting the relevant span from a supplied context passage, using any Hugg...
 
@@ -43,7 +43,7 @@ def HFInference_question_answering(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

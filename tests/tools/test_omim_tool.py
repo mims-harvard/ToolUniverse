@@ -19,11 +19,12 @@ class TestOMIMToolDirect:
             return next(t for t in tools if t["name"] == "OMIM_search")
 
     @pytest.fixture
-    def tool(self, tool_config):
+    def tool(self, tool_config, monkeypatch):
         """Create tool instance with mock API key."""
-        with patch.dict(os.environ, {"OMIM_API_KEY": "test_key"}):
-            from tooluniverse.omim_tool import OMIMTool
-            return OMIMTool(tool_config)
+        monkeypatch.setenv("OMIM_API_KEY", "test_key")
+        from tooluniverse.omim_tool import OMIMTool
+
+        return OMIMTool(tool_config)
 
     def test_missing_api_key(self, tool_config):
         """Test error when API key is missing."""

@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def PomBase_search_genes(
     query: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def PomBase_search_genes(
     ----------
     query : str
         Search query - gene name, systematic ID prefix, or product keyword. Examples:...
-    limit : int | Any
+    limit : int
         Maximum results to return (1-50, default 10).
     stream_callback : Callable, optional
         Callback for streaming output

@@ -39,7 +39,7 @@ Resist the urge to skip to ClinVar immediately. A "Pathogenic" ClinVar entry is 
 3. **Consequence hierarchy** -- Prioritize by predicted impact:
    - Loss-of-function (frameshift, nonsense, splice-site): strongest candidates
    - Missense in conserved domain: strong if in known functional domain
-   - Synonymous / intronic: usually benign unless at splice junction
+   - Synonymous / intronic: usually benign unless at splice junction -- but "usually" is doing real work: a *deep* intronic variant can still be pathogenic by creating a cryptic splice site far from the canonical boundary, which consequence filtering alone won't flag. If a deep intronic or otherwise unannotated variant survives Steps 1-2 (rare, correct inheritance, phenotype match) despite a bland consequence label, don't dismiss it yet -- see `tooluniverse-regulatory-variant-analysis` for a direct sequence-based check on whether it actually disrupts splicing, expression, or another regulatory readout.
 
 4. **ClinVar vs OMIM vs gnomAD -- when to check each**:
    - **ClinVar**: "Is this specific variant known to be pathogenic?" Check review stars (>=2 stars = reliable)
@@ -102,6 +102,8 @@ Key identifier formats: disease codes are ORPHAcode integers (e.g., 558 for Marf
 **Orphanet_get_natural_history**: `orpha_code` (string REQUIRED). Returns `average_age_of_onset` and `type_of_inheritance`. Inheritance mode (autosomal dominant, X-linked recessive, etc.) is critical context for interpreting variant pathogenicity and family risk.
 
 **Orphanet_get_icd_mapping**: `orpha_code` (string REQUIRED). Maps to ICD-10/ICD-11 for clinical coding contexts.
+
+**Note on `Orphadata_*` tools**: a separate, smaller tool family (`Orphadata_get_disorder`/`_search_by_name`/`_get_epidemiology`/`_get_phenotypes`) wraps the same underlying Orphanet data with substantial overlap with the `Orphanet_*` family above. `Orphanet_*` is more complete (10 tools vs. 4, including gene associations, classification, and natural history that Orphadata doesn't have) -- use it as the default. Reach for `Orphadata_get_disorder` specifically only when you need its cross-references to MeSH/UMLS/MedDRA, which `Orphanet_get_icd_mapping` doesn't cover (it maps to ICD-10/ICD-11/OMIM/SNOMED-CT instead).
 
 ---
 

@@ -19,6 +19,12 @@ from mcp.client.streamable_http import streamablehttp_client
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 from .logging_config import get_logger
+from .remote_connections import global_env_file
+from .mcp_contract_compat import (
+    classify as classify_contract_drift,
+    load_reviewed_contracts,
+    pinned_tool_from_reviewed,
+)
 import os
 
 logger = get_logger(__name__)
@@ -85,6 +91,9 @@ class BaseMCPClient:
         self.timeout = timeout
         self.http_headers_from_env = http_headers_from_env or {}
         self.session = None
+        # (status, JSON body) of the last HTTP error response in the current request; see
+        # _recording_client_factory.
+        self._last_http_error = None
         self.header_templates = dict(headers or {})
         self.auth_env = auth_env
         self.headers = {}
@@ -179,18 +188,71 @@ class BaseMCPClient:
             return urljoin(base_url.rstrip("/") + "/", path)
         return self.server_url
 
+    def _recording_client_factory(self):
+        """An HTTP client factory that remembers the last error response.
+
+        A refusal can arrive on a request the MCP library sends from a background task -- the
+        relay answers an ended sharing period with 402 on the notification after initialize.
+        The library logs that error and raises an empty BrokenResourceError inside an exception
+        group, so the status never reaches the caller: measured, a borrower saw "unhandled
+        errors in a TaskGroup (1 sub-exception)" and was told the machine was offline.
+        """
+        try:
+            from mcp.shared._httpx_utils import create_mcp_http_client
+        except ImportError:  # pragma: no cover - moved in a later mcp release
+            import httpx
+
+            def create_mcp_http_client(headers=None, timeout=None, auth=None):
+                return httpx.AsyncClient(
+                    headers=headers, timeout=timeout, auth=auth, follow_redirects=True
+                )
+
+        def factory(headers=None, timeout=None, auth=None):
+            client = create_mcp_http_client(headers=headers, timeout=timeout, auth=auth)
+
+            async def remember(response):
+                if response.status_code < 400:
+                    return
+                body = {}
+                try:
+                    await response.aread()
+                    parsed = response.json()
+                    if isinstance(parsed, dict):
+                        body = parsed
+                except Exception:  # noqa: BLE001 - a non-JSON error body still has a status
+                    body = {}
+                self._last_http_error = (response.status_code, body)
+
+            client.event_hooks.setdefault("response", []).append(remember)
+            return client
+
+        return factory
+
     async def _make_mcp_request(
         self, method: str, params: Optional[Dict] = None
     ) -> Dict[str, Any]:
         """Make an MCP JSON-RPC request"""
+        self._last_http_error = None
         if self.transport == "http":
             endpoint = self._get_mcp_endpoint("")
             headers = dict(self.headers)
             headers.update(self._resolve_http_headers())
+            # A tool call is often real work on someone else's machine. The library's default
+            # stops reading after 5 minutes: measured, a borrowed model that took 330 seconds
+            # failed at 300 with "Cancelled via cancel scope ...; reason: deadline exceeded"
+            # although the platform allowed it. Everything else keeps the default, so a wedged
+            # server cannot hold a load for this long.
+            long_read = (
+                {"sse_read_timeout": REMOTE_CALL_READ_TIMEOUT}
+                if method == "tools/call"
+                else {}
+            )
             async with streamablehttp_client(
                 endpoint,
                 headers=headers or None,
                 timeout=self.timeout,
+                httpx_client_factory=self._recording_client_factory(),
+                **long_read,
             ) as (
                 read_stream,
                 write_stream,
@@ -439,6 +501,105 @@ class MCPClientTool(BaseTool, BaseMCPClient):
         return result
 
 
+# The platform caps one call at 15 minutes; wait a little longer so its own answer, which says
+# whether the call ran, arrives instead of a local timeout.
+REMOTE_CALL_READ_TIMEOUT = 16 * 60
+
+
+def describe_remote_call_failure(
+    exc: BaseException,
+    server_url: str,
+    tool_name: str,
+    auth_env: str = "",
+    recorded: "tuple[int, dict] | None" = None,
+) -> str:
+    """Say why a call to a connected remote tool failed, in words an assistant can relay.
+
+    The error used to be str(exc). A call that fails on the network is wrapped by anyio in an
+    exception group, so an assistant whose borrowed machine had gone offline received
+    "unhandled errors in a TaskGroup (1 sub-exception)" and passed it on to the scientist.
+
+    For a machine reached through the platform's relay, the relay's own JSON body says whether
+    the call may already have run. That decides the advice: retrying a call that may have
+    executed would run a GPU job twice, so "try again later" is only said when the platform
+    reports that it did not.
+    """
+    from .utils import concise_exception_message, leaf_exception
+
+    leaf = leaf_exception(exc)
+    detail = concise_exception_message(exc)
+    if isinstance(leaf, TimeoutError) or "deadline exceeded" in detail.lower():
+        # anyio says "Cancelled via cancel scope 7f3a...; reason: deadline exceeded".
+        return (
+            f"'{tool_name}' did not answer in time. It may still be running on the machine "
+            f"that serves it, so wait before calling it again rather than starting it twice."
+        )
+    response = getattr(leaf, "response", None)
+    status = getattr(response, "status_code", None)
+    body = {}
+    if isinstance(status, int):
+        try:
+            parsed = response.json()
+            if isinstance(parsed, dict):
+                body = parsed
+        except Exception:  # noqa: BLE001 - a streamed or non-JSON body; fall back to the status
+            body = {}
+    elif recorded:
+        # The status was lost on the way here; see BaseMCPClient._recording_client_factory.
+        status, body = recorded
+    if "/relay/" not in (server_url or "") or not isinstance(status, int):
+        return detail
+
+    if status == 403:
+        # The key was accepted; this account is no longer let in (the relay's "access
+        # denied"). A new key would get the same answer.
+        return (
+            f"'{tool_name}' was refused (HTTP 403): the platform accepted your key but this "
+            f"account no longer has access to the machine. Usually its owner stopped sharing "
+            f"it or removed you -- ask them for a new share code and run `tu connect <code>`."
+        )
+    if status == 401:
+        key = f"the key in {auth_env}" if auth_env else "your API key"
+        return (
+            f"'{tool_name}' was refused (HTTP {status}): the platform rejected {key}. It may "
+            f"have expired or been revoked -- create a new API "
+            f"key in your account and save it in {global_env_file()}."
+        )
+    if status == 402:
+        # The relay answers 402 for two different things the owner controls.
+        if "expired" in str(body.get("detail", "")).lower():
+            return (
+                f"'{tool_name}' was refused: the period its owner set for sharing this machine "
+                f"has ended. Ask the owner to extend it."
+            )
+        return (
+            f"'{tool_name}' was refused: the tool run limit the machine's owner set for it is "
+            f"used up. Ask the owner to raise it."
+        )
+    if status >= 500:
+        if body.get("may_have_executed"):
+            return (
+                f"The machine that serves '{tool_name}' stopped answering (HTTP {status}), and "
+                f"the call may already have started there. Do not run it again automatically: "
+                f"check with the machine's owner whether it finished."
+            )
+        if body.get("may_have_executed") is False:
+            return (
+                f"The machine that serves '{tool_name}' is not reachable right now (HTTP "
+                f"{status}), and the call did not run. It is safe to try again later; the "
+                f"machine belongs to someone else, so it comes back when its owner "
+                f"reconnects it."
+            )
+        # The body could not be read, so whether the call started is unknown. Claiming it is
+        # safe to retry without the platform saying so is how a job runs twice.
+        return (
+            f"The machine that serves '{tool_name}' is not reachable right now (HTTP "
+            f"{status}). Whether the call started is unknown, so check with the machine's "
+            f"owner before running it again."
+        )
+    return detail
+
+
 @register_tool("MCPProxyTool")
 class MCPProxyTool(MCPClientTool):
     """
@@ -533,7 +694,17 @@ class MCPProxyTool(MCPClientTool):
                     return self._normalize_result(result)
                 return _unwrap_mcp_tool_result(result)
             except Exception as e:
-                return {"status": "error", "error": str(e)}
+                return {
+                    "status": "error",
+                    "error": describe_remote_call_failure(
+                        e,
+                        self.server_url,
+                        # The name the caller used (prefixed), not the remote server's own.
+                        (self.tool_config or {}).get("name") or self.target_tool_name,
+                        getattr(self, "auth_env", ""),
+                        recorded=getattr(self, "_last_http_error", None),
+                    ),
+                }
             finally:
                 # Always clean up session
                 await self._close_session()
@@ -699,6 +870,9 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
             http_headers_from_env=tool_config.get("http_headers_from_env"),
         )
 
+        # The loader's own config name keys its reviewed contracts in the
+        # lockfile, so drift can be compared against what was reviewed.
+        self.loader_name = tool_config.get("name", "")
         self.auto_register = tool_config.get("auto_register", True)
         self.tool_prefix = tool_config.get("tool_prefix", "mcp_")
         self.selected_tools = tool_config.get(
@@ -754,6 +928,14 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
         self, remote_tools: Dict[str, Dict[str, Any]]
     ) -> Dict[str, Dict[str, Any]]:
         expected_names = self.selected_tools or list(self.tool_contracts)
+
+        # A reviewed tool that is absent entirely still fails the whole
+        # category. Every reviewed tool being present is a check on the
+        # server's identity rather than on any one tool's schema: an endpoint
+        # serving only a subset may be stale, rolled back, or the wrong host,
+        # and these schemas are public enough that a subset can match
+        # byte-for-byte. Drift in one tool is a far weaker signal, so only
+        # drift is survivable below.
         missing_remote = [name for name in expected_names if name not in remote_tools]
         if missing_remote:
             raise ValueError(
@@ -761,22 +943,86 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
                 + ", ".join(sorted(missing_remote))
             )
 
+        # Verify each reviewed tool's contract independently. A single tool
+        # whose upstream schema has drifted is excluded on its own rather than
+        # aborting the whole category, so unaffected siblings stay usable --
+        # third-party MCP servers change one tool at a time, and taking every
+        # other reviewed tool offline with it is a much larger outage than the
+        # drift warrants. A drifted tool is never pinned, so it produces no
+        # proxy config and is not registered by this load.
+        recorded_contracts = load_reviewed_contracts(self.loader_name)
         pinned_tools = {}
+        rejected = {}
+        tolerated = {}
         for name in expected_names:
             reviewed = self.tool_contracts.get(name)
             if reviewed is None:
+                # A selected name with no reviewed contract is a local config
+                # error (typically a typo), not upstream drift -- fail loudly
+                # instead of quietly shrinking the category.
                 raise ValueError(f"No reviewed MCP contract for tool: {name}")
             reviewed_hash = reviewed.get("contract_sha256")
             if not reviewed_hash:
                 reviewed_hash = self._contract_sha256(reviewed)
             remote_hash = self._contract_sha256(remote_tools[name])
             if reviewed_hash != remote_hash:
-                raise ValueError(f"MCP contract changed for reviewed tool: {name}")
-            pinned_tool = copy.deepcopy(remote_tools[name])
+                # The hash only says the contract moved. Ask the narrower,
+                # decidable question: would the contract we reviewed still work
+                # against this server? If so the tool keeps running on the
+                # REVIEWED contract, so nothing the server changed reaches the
+                # agent. Without a recorded schema there is nothing to compare
+                # and the tool is refused, as before.
+                recorded = recorded_contracts.get(name)
+                # The lockfile is a record of what was reviewed, never an
+                # authority of its own: trust it only while it still hashes to
+                # the contract_sha256 pinned in the config. Refreshing the
+                # lockfile alone -- which sync_mcp_contracts.py --update does,
+                # re-recording straight from the server -- would otherwise
+                # re-point the trust anchor at whatever is being served now,
+                # and the comparison would be live against live.
+                if recorded is not None and (
+                    self._contract_sha256(recorded) != reviewed_hash
+                ):
+                    rejected[name] = (
+                        "contract changed, and the recorded schema does not "
+                        "match the pinned contract_sha256"
+                    )
+                    continue
+                compatible, drift_reasons = classify_contract_drift(
+                    recorded, remote_tools[name]
+                )
+                if not compatible:
+                    rejected[name] = "; ".join(drift_reasons) or "contract changed"
+                    continue
+                tolerated[name] = True
+                pinned_tool = pinned_tool_from_reviewed(recorded, remote_tools[name])
+            else:
+                pinned_tool = copy.deepcopy(remote_tools[name])
             for local_field in ("description", "title", "annotations"):
                 if local_field in reviewed:
                     pinned_tool[local_field] = copy.deepcopy(reviewed[local_field])
             pinned_tools[name] = pinned_tool
+
+        if tolerated:
+            logger.info(
+                "Upstream changed these MCP tools compatibly, so they keep "
+                f"running on the reviewed schema: {', '.join(sorted(tolerated))}. "
+                "The daily contract-drift check will raise the diff for review."
+            )
+
+        if rejected:
+            summary = ", ".join(
+                f"{name} ({reason})" for name, reason in sorted(rejected.items())
+            )
+            if not pinned_tools:
+                raise ValueError(
+                    f"No reviewed MCP tools passed contract verification: {summary}"
+                )
+            logger.warning(
+                "Skipping reviewed MCP tools that failed contract verification: "
+                f"{summary}. Re-review the upstream schema and update "
+                "contract_sha256 to restore them."
+            )
         return pinned_tools
 
     async def discover_tools(self) -> Dict[str, Any]:
@@ -798,7 +1044,17 @@ class MCPAutoLoaderTool(BaseTool, BaseMCPClient):
 
             return self._discovered_tools
         except Exception as e:
-            raise Exception(f"Failed to discover tools: {str(e)}")
+            recorded = getattr(self, "_last_http_error", None)
+            if recorded:
+                status, body = recorded
+                said = str(body.get("detail") or "").strip()
+                # from None: this sentence is the explanation, and the exception group under
+                # it would otherwise be what gets reported.
+                raise RuntimeError(
+                    f"Failed to discover tools: the server answered HTTP {status}"
+                    + (f": {said}" if said else "")
+                ) from None
+            raise Exception(f"Failed to discover tools: {str(e)}") from e
 
     async def call_tool(
         self, tool_name: str, arguments: Dict[str, Any]

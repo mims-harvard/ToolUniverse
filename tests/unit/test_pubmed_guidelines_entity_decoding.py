@@ -31,7 +31,7 @@ _ABSTRACT_XML = (
     "<PubmedArticleSet><PubmedArticle><MedlineCitation><PMID>123</PMID>"
     "<Article><Abstract><AbstractText>"
     "Criteria include NEWS/NEWS2 &#x2265; 5 and Shock Index &#x2265; 0.7."
-    "</AbstractText></Article></MedlineCitation></PubmedArticle></PubmedArticleSet>"
+    "</AbstractText></Abstract></Article></MedlineCitation></PubmedArticle></PubmedArticleSet>"
 )
 
 

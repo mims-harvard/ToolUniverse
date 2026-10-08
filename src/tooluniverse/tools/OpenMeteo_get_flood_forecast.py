@@ -11,9 +11,9 @@ from ._shared_client import get_shared_client
 def OpenMeteo_get_flood_forecast(
     latitude: float,
     longitude: float,
-    daily: Optional[str | Any] = None,
-    forecast_days: Optional[int | Any] = None,
-    past_days: Optional[int | Any] = None,
+    daily: Optional[str] = None,
+    forecast_days: Optional[int] = None,
+    past_days: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,11 +28,11 @@ def OpenMeteo_get_flood_forecast(
         Latitude in decimal degrees (e.g., 52.52 for Berlin, 48.85 for Paris, 29.76 f...
     longitude : float
         Longitude in decimal degrees (e.g., 13.41 for Berlin, 2.35 for Paris, -95.37 ...
-    daily : str | Any
+    daily : str
         Comma-separated daily variables. Options: river_discharge, river_discharge_me...
-    forecast_days : int | Any
+    forecast_days : int
         Number of forecast days (1-210, default 92). GloFAS provides seasonal forecas...
-    past_days : int | Any
+    past_days : int
         Number of past days to include (0-92, default 0). Includes recent historical ...
     stream_callback : Callable, optional
         Callback for streaming output

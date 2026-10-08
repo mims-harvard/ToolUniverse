@@ -27,6 +27,15 @@ GSA_BASE_URL = "https://ngdc.cncb.ac.cn/gsa"
 _HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; ToolUniverse/1.0)"}
 
 
+# Markers of GSA's JavaScript browser check: its title and its heading.
+_BROWSER_CHECK_MARKERS = ("正在进行安全检查", "正在验证您的浏览器")
+
+
+def _is_browser_check(html: str) -> bool:
+    head = (html or "")[:4000]
+    return any(marker in head for marker in _BROWSER_CHECK_MARKERS)
+
+
 def _panel_by_heading(soup: BeautifulSoup, heading_text: str):
     for panel in soup.find_all("div", class_="panel-heading"):
         if heading_text in panel.get_text():
@@ -111,6 +120,30 @@ class GSATool(BaseTool):
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"GSA request failed: {e}"}
         resp.raise_for_status()
+
+        # GSA put a JavaScript browser check in front of its record pages. It
+        # answers 200 with a 1.6 KB page titled 正在进行安全检查 ("security
+        # check in progress") whose script sets a cookie a browser earns by
+        # running it, and its own comments say the point is to stop curl and
+        # Python scripts. So a script never reaches the record.
+        #
+        # That page has no 标题: label, so it used to fall through to "No GSA
+        # accession found for 'CRA002926'" -- which is false, and tells a
+        # caller the accession does not exist when it does. Reported as what
+        # it is instead. The check is not worked around: its intent is stated
+        # in the page, and routing to some other GSA page it has not yet
+        # covered would be working against that.
+        if _is_browser_check(resp.text):
+            return {
+                "status": "error",
+                "error": (
+                    f"GSA is serving a browser check instead of the record for "
+                    f"'{accession}', so this could not be read. It does not "
+                    "mean the accession is missing. GSA's record pages now "
+                    "require a JavaScript-capable browser; open "
+                    f"{GSA_BASE_URL}/browse/{accession} to view it."
+                ),
+            }
 
         soup = BeautifulSoup(resp.text, "html.parser")
         title = _label_value(soup, "标题:")

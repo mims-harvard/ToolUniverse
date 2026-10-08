@@ -20,6 +20,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -353,15 +354,215 @@ def resolve_python(
     return os.path.abspath(os.path.expanduser(resolved))
 
 
-def child_environment(python: str, deployment: RemoteDeployment) -> dict[str, str]:
-    """Build a provider environment without copying secrets into arguments."""
+# Variables a provider process needs to function at all, whatever it computes: where to
+# find libraries and caches, how to reach the network, how to talk to a GPU. None of them
+# is a credential by convention, which is what makes listing them safe.
+#
+# LD_PRELOAD is deliberately absent. No reviewed provider needs it and it is the standard
+# way to get arbitrary code into someone else's process.
+PROVIDER_ENV_BASE = frozenset(
+    {
+        # Without PATH the provider's own bin directory becomes its entire search path, so
+        # every required_commands binary -- Rscript for the four R providers, boltz for its
+        # own -- stops resolving. The existing runtime test caught exactly that.
+        "PATH",
+        "HOME",
+        "USER",
+        "LOGNAME",
+        "SHELL",
+        "LANG",
+        "LANGUAGE",
+        "TZ",
+        "TMPDIR",
+        "TEMP",
+        "TMP",
+        "LD_LIBRARY_PATH",
+        "PYTHONPATH",
+        "VIRTUAL_ENV",
+        "CONDA_PREFIX",
+        "CONDA_DEFAULT_ENV",
+        "SSL_CERT_FILE",
+        "SSL_CERT_DIR",
+        "REQUESTS_CA_BUNDLE",
+        "CURL_CA_BUNDLE",
+        "HTTP_PROXY",
+        "HTTPS_PROXY",
+        "NO_PROXY",
+        "http_proxy",
+        "https_proxy",
+        "no_proxy",
+        "XDG_CACHE_HOME",
+        "XDG_CONFIG_HOME",
+        "XDG_DATA_HOME",
+        "HF_HOME",
+        "TORCH_HOME",
+        "MPLCONFIGDIR",
+        "NUMBA_CACHE_DIR",
+    }
+)
 
-    environment = os.environ.copy()
-    # Platform credentials belong to the relay process, never to scientific
-    # provider code. Provider-specific credentials (for example USPTO_API_KEY)
-    # remain available because their reviewed deployment explicitly needs them.
-    environment.pop("TOOLUNIVERSE_SERVICE_KEY", None)
-    environment.pop("TU_SERVICE_KEY", None)
+# Whole families whose names cannot hold a credential by convention: device selection,
+# thread counts, BLAS tuning, R library paths.
+#
+# Not HF_: that family contains HF_TOKEN. HF_HOME is listed above by name instead, which is
+# the difference between allowing a cache location and allowing an access token.
+PROVIDER_ENV_PREFIXES = (
+    "CUDA_",
+    "NVIDIA_",
+    "NCCL_",
+    "OMP_",
+    "MKL_",
+    "OPENBLAS_",
+    "NUMEXPR_",
+    "LC_",
+    "R_",
+)
+
+
+def provider_environment_names(
+    deployment: RemoteDeployment, extra: Iterable[str] = ()
+) -> set[str]:
+    """Every variable this provider is allowed to see, by name."""
+
+    allowed = set(PROVIDER_ENV_BASE)
+    allowed |= set(deployment.required_env)
+    allowed |= set(deployment.path_env)
+    allowed |= {name for name in extra if name}
+    allowed |= {name for name in os.environ if name.startswith(PROVIDER_ENV_PREFIXES)}
+    return allowed
+
+
+
+def explain_environment_failure(
+    report: dict[str, Any], deployment: RemoteDeployment
+) -> list[str]:
+    """Turn a failed environment check into sentences with a fix in each one.
+
+    The CLI used to print the exclusion reason from report["checks"], a key this function's
+    report has never contained, so every provider was excluded with the words "environment
+    check failed" and nothing else. The reason was computed and then thrown away.
+
+    That matters most for the people this is aimed at. A biologist whose virtual environment
+    is Python 3.11 cannot act on "environment check failed"; they can act on "needs Python
+    3.12, this one is 3.11".
+
+    Mirrors the conditions that make up report["ok"], in the order someone would fix them:
+    nothing later is worth reporting while the interpreter itself is wrong.
+    """
+    slug = deployment.slug
+    setup = f"The setup guide for it is skills/setup-{slug}-remote-tool."
+    provider = report.get("provider") or {}
+    reasons: list[str] = []
+
+    if report.get("error"):
+        return [str(report["error"])]
+
+    if provider.get("error"):
+        # The probe could not even report. Its exit code is the only honest detail; stderr is
+        # deliberately not surfaced because a provider's output can carry credentials.
+        reasons.append(
+            f"{slug} could not be checked: {provider['error']}"
+            f" (exit code {provider.get('exit_code', '?')}). {setup}"
+        )
+        return reasons
+
+    if report.get("python_supported_3_12") is False:
+        version = provider.get("python_version") or []
+        running = ".".join(str(part) for part in version[:2]) if version else "something else"
+        reasons.append(
+            f"{slug} needs Python 3.12; this environment is {running}. Make one with "
+            f"`python3.12 -m venv .venv` and install into it."
+        )
+        # An interpreter mismatch makes every later check meaningless: the packages are
+        # missing because they were installed somewhere else.
+        return reasons
+
+    if provider.get("module_available") is False:
+        reasons.append(
+            f"{slug} is not installed in this environment. {setup}"
+        )
+
+    for name, present in (provider.get("commands") or {}).items():
+        if not present:
+            reasons.append(
+                f"{slug} runs `{name}`, which is not on this machine's PATH. {setup}"
+            )
+
+    for item in report.get("provider_environment") or []:
+        name = item.get("name", "a variable")
+        if not item.get("set"):
+            reasons.append(
+                f"{slug} needs the environment variable {name}, which is not set."
+            )
+        elif not item.get("path_exists", True):
+            reasons.append(
+                f"{name} points at a path that does not exist on this machine."
+            )
+
+    credentials = report.get("provider_credentials")
+    if isinstance(credentials, dict) and credentials.get("ready") is not True:
+        detail = str(credentials.get("detail") or "it is not available")
+        reasons.append(f"{slug} needs a credential and {detail}.")
+
+    if report.get("gpu_policy") == "required" and not report.get("cpu_override"):
+        gpu = provider.get("gpu") or {}
+        if gpu.get("cuda_available") is not True:
+            reasons.append(
+                f"{slug} needs a CUDA GPU and this machine has none available. Add "
+                f"--allow-cpu to run it on the processor instead, which is much slower."
+            )
+        elif gpu.get("tensor_sum") != 28.0:
+            reasons.append(
+                f"{slug} found a GPU but a test calculation on it gave the wrong answer, so "
+                f"the CUDA installation is not working."
+            )
+
+    share = report.get("share_prerequisites") or {}
+    if share.get("requested"):
+        if not share.get("sdk_available"):
+            reasons.append(
+                "Sharing needs tuplatform-connect, which is not installed in this environment."
+            )
+        if not share.get("service_key_set"):
+            reasons.append(
+                "Sharing needs this computer to be signed in. Run `tu remote login`, or let "
+                "the command open a browser for you."
+            )
+
+    if not reasons:
+        # Everything checkable passed and the result still says no. Say that, rather than
+        # inventing a cause, and name the command that prints the whole report.
+        reasons.append(
+            f"{slug} did not pass its environment check and the report gives no reason. "
+            f"`tu remote check {slug}` prints all of it."
+        )
+    return reasons
+
+def child_environment(
+    python: str, deployment: RemoteDeployment, *, extra_env: Iterable[str] = ()
+) -> dict[str, str]:
+    """Build a provider environment from an allowlist rather than by inheritance.
+
+    A provider used to receive a copy of the whole process environment with two platform
+    keys removed. That is defensible when the machine only serves its owner, and wrong as
+    soon as it serves anyone else: a reviewed provider would run under the owner's identity
+    holding every unrelated credential in their shell -- cloud keys, model-provider keys,
+    database URLs -- any of which a crash dump, a debug log, or an outbound request could
+    carry somewhere the owner did not intend. It also meant a caller's work could silently
+    spend the owner's paid API quota.
+
+    So a provider now sees only what it declared it needs, plus the infrastructure
+    variables every process needs. Anything a site requires beyond that is passed
+    explicitly with ``--pass-env``, which keeps the decision with the operator instead of
+    making it for them by copying everything.
+    """
+
+    allowed = provider_environment_names(deployment, extra_env)
+    environment = {name: value for name, value in os.environ.items() if name in allowed}
+    # Kept out regardless: these authenticate this machine to the platform, and nothing a
+    # provider computes has any business holding them.
+    for platform_key in ("TOOLUNIVERSE_SERVICE_KEY", "TU_SERVICE_KEY"):
+        environment.pop(platform_key, None)
     python_bin = str(Path(python).parent)
     current_path = environment.get("PATH", "")
     environment["PATH"] = (
@@ -670,6 +871,7 @@ def start_provider(
     *,
     python: str,
     log_dir: str | Path,
+    extra_env: Iterable[str] = (),
 ) -> ManagedRemoteProcess:
     """Start one reviewed provider module with output redirected to a log."""
 
@@ -681,7 +883,7 @@ def start_provider(
     try:
         process = subprocess.Popen(
             command,
-            env=child_environment(python, deployment),
+            env=child_environment(python, deployment, extra_env=extra_env),
             stdin=subprocess.DEVNULL,
             stdout=log_handle,
             stderr=subprocess.STDOUT,
@@ -760,6 +962,7 @@ def ensure_provider(
     python: str,
     log_dir: str | Path,
     startup_timeout: float,
+    extra_env: Iterable[str] = (),
 ) -> tuple[ManagedRemoteProcess | None, dict[str, Any]]:
     """Reuse an exact endpoint or start a provider and validate it."""
 
@@ -771,7 +974,9 @@ def ensure_provider(
             )
         return None, current
 
-    managed = start_provider(deployment, python=python, log_dir=log_dir)
+    managed = start_provider(
+        deployment, python=python, log_dir=log_dir, extra_env=extra_env
+    )
     try:
         ready = wait_until_ready(deployment, managed, timeout=startup_timeout)
     except Exception:

@@ -11,13 +11,13 @@ Get your key at: https://build.nvidia.com
 Rate limit: 40 requests per minute (enforced internally).
 """
 
-import os
 import re
 import time
 import requests
 from typing import Dict, Any, Optional, List
 from urllib.parse import urlparse
 from .base_tool import BaseTool
+from .credentials import has_credential_context
 from .tool_registry import register_tool
 
 
@@ -98,9 +98,19 @@ class NvidiaNIMTool(BaseTool):
         self.poll_seconds = fields.get("poll_seconds", self.DEFAULT_POLL_SECONDS)
         self.response_type = fields.get("response_type", "json")
         self.timeout = fields.get("timeout", self.DEFAULT_TIMEOUT)
+        self._api_key_override = None
 
-        # Get API key from environment
-        self.api_key = os.environ.get("NVIDIA_API_KEY")
+    @property
+    def api_key(self) -> str:
+        """Resolve the NVIDIA key for the active request."""
+        scoped_key = self.credential("NVIDIA_API_KEY") or ""
+        if has_credential_context():
+            return scoped_key
+        return self._api_key_override or scoped_key
+
+    @api_key.setter
+    def api_key(self, value):
+        self._api_key_override = value
 
     def _get_headers(self) -> Dict[str, str]:
         """Build request headers with authentication."""
@@ -293,74 +303,81 @@ class NvidiaNIMTool(BaseTool):
                 "_raw_content": response.content,
             }
 
-        if self.response_type == "pdb" or "text/plain" in content_type:
-            # PDB structure text. Some NIMs (e.g. ESMFold) wrap it in JSON
-            # {"pdbs": ["...ATOM records..."]} even on the pdb path, so unwrap to
-            # the actual PDB string rather than handing back a JSON blob.
-            structure = response.text
-            stripped = structure.lstrip()
-            if stripped.startswith(("{", "[")):
-                try:
-                    payload = response.json()
-                except ValueError:
-                    payload = None
-                if isinstance(payload, dict):
-                    pdbs = payload.get("pdbs") or payload.get("pdb")
-                    if isinstance(pdbs, list) and pdbs:
-                        structure = pdbs[0]
-                    elif isinstance(pdbs, str):
-                        structure = pdbs
-            return {
-                "status": "success",
-                "structure": structure,
-                "format": "pdb",
-            }
-
-        if self.response_type == "mfasta":
-            # Multi-FASTA format
-            try:
-                data = response.json()
-                return {
-                    "status": "success",
-                    "data": data,
-                    "format": "mfasta",
-                }
-            except ValueError:
-                return {
-                    "status": "success",
-                    "sequences": response.text,
-                    "format": "mfasta",
-                }
-
-        # Default: JSON response
+        # Decode JSON envelopes before dispatching by the model's output
+        # format, so a failed prediction cannot become PDB or FASTA text.
         try:
             data = response.json()
-            # Some NIMs (e.g. DiffDock) answer HTTP 200 but report an inner
-            # failure (e.g. {"status": "failed", "detail": ...}). Surface that as
-            # an error rather than a misleading top-level success.
-            if isinstance(data, dict) and str(data.get("status", "")).lower() in (
-                "failed",
-                "error",
-                "errored",
-            ):
-                detail = str(data.get("detail") or data.get("message") or data)[:300]
+        except ValueError as exc:
+            text = response.text or ""
+            json_expected = "json" in content_type or text.lstrip().startswith(
+                ("{", "[")
+            )
+            if not json_expected and self.response_type == "mfasta":
                 return {
-                    "status": "error",
-                    "error": "NIM reported an inner failure",
-                    "detail": detail,
-                    "data": data,
+                    "status": "success",
+                    "data": {"mfasta": text},
+                    "sequences": text,
+                    "format": "mfasta",
                 }
-            return {
-                "status": "success",
-                "data": data,
-            }
-        except ValueError as e:
+            if not json_expected and self.response_type == "pdb":
+                return {
+                    "status": "success",
+                    "data": text,
+                    "structure": text,
+                    "format": "pdb",
+                }
             return {
                 "status": "error",
                 "error": "Failed to parse JSON response",
-                "detail": str(e),
-                "raw_response": response.text[:500] if response.text else None,
+                "detail": str(exc),
+                "raw_response": text[:500] or None,
             }
+
+        if isinstance(data, dict) and str(data.get("status", "")).lower() in (
+            "failed",
+            "error",
+            "errored",
+        ):
+            detail = str(data.get("detail") or data.get("message") or data)[:300]
+            return {
+                "status": "error",
+                "error": "NIM reported an inner failure",
+                "detail": detail,
+                "data": data,
+            }
+
+        if self.response_type == "mfasta":
+            return {"status": "success", "data": data, "format": "mfasta"}
+
+        if self.response_type == "pdb":
+            # ESMFold wraps coordinates in {"pdbs": ["..."]}. An empty or
+            # malformed envelope is not a predicted structure.
+            pdbs = data.get("pdbs", data.get("pdb")) if isinstance(data, dict) else None
+            if isinstance(pdbs, str):
+                pdbs = [pdbs]
+            if (
+                not isinstance(pdbs, list)
+                or not pdbs
+                or not all(isinstance(pdb, str) and pdb.strip() for pdb in pdbs)
+            ):
+                return {
+                    "status": "error",
+                    "error": "NIM response contains no valid PDB structure",
+                    "data": data,
+                }
+            out = {
+                "status": "success",
+                "data": pdbs[0],
+                "structure": pdbs[0],
+                "format": "pdb",
+            }
+            if len(pdbs) > 1:
+                # Keep the original single-structure field for existing
+                # callers, while retaining every result for ensemble checks.
+                out["structures"] = pdbs
+            return out
+
+        return {"status": "success", "data": data}
 
     def _validate_api_key(self) -> Optional[Dict[str, Any]]:
         """Validate API key is present."""

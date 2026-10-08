@@ -71,6 +71,9 @@
     ],
     "fields": {
       "operation": "sa_score"
-    }
+    },
+    "required_packages": [
+      "rdkit"
+    ]
   }
 ]

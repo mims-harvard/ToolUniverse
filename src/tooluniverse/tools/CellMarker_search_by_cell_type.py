@@ -9,10 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def CellMarker_search_by_cell_type(
-    operation: str,
     cell_name: str,
     species: Optional[str] = None,
     tissue_type: Optional[str] = None,
+    limit: Optional[int] = 200,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,14 +24,16 @@ def CellMarker_search_by_cell_type(
 
     Parameters
     ----------
-    operation : str
-        Operation type
     cell_name : str
         Cell type name to search for (e.g., 'T cell', 'Macrophage', 'B cell', 'Fibrob...
     species : str
         Species filter. If omitted, searches both species.
     tissue_type : str
         Filter results by tissue type (e.g., 'Blood', 'Lung', 'Brain'). Case-insensit...
+    limit : int
+        Maximum records to return. Default 200; total_records reports how many matche...
+    offset : int
+        Records to skip before returning, for paging through total_records.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,10 +51,11 @@ def CellMarker_search_by_cell_type(
     _args = {
         k: v
         for k, v in {
-            "operation": operation,
             "cell_name": cell_name,
             "species": species,
             "tissue_type": tissue_type,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

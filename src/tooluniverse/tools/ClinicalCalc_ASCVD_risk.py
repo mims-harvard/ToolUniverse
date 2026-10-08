@@ -17,6 +17,7 @@ def ClinicalCalc_ASCVD_risk(
     smoker: Optional[bool] = None,
     diabetes: Optional[bool] = None,
     female: Optional[bool] = None,
+    sex: Optional[str] = None,
     race: Optional[str] = "white",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -43,9 +44,11 @@ def ClinicalCalc_ASCVD_risk(
     diabetes : bool
         Diabetes mellitus
     female : bool
-        Female sex
+        Female sex (legacy boolean; equivalent to sex='female'). If both 'female' and...
+    sex : str
+        Biological sex: 'female'/'f' or 'male'/'m' (case-insensitive). Preferred over...
     race : str
-        'white' (or other) vs 'black'/'African American'; affects the coefficient set
+        'white' (or other) vs 'black'/'African American'; affects the coefficient set...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -71,6 +74,7 @@ def ClinicalCalc_ASCVD_risk(
             "smoker": smoker,
             "diabetes": diabetes,
             "female": female,
+            "sex": sex,
             "race": race,
         }.items()
         if v is not None

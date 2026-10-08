@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def FourDN_get_download_url(
-    operation: str,
     file_accession: str,
+    operation: Optional[str] = "download_file_url",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

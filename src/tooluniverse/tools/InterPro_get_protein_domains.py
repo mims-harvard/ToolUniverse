@@ -14,7 +14,7 @@ def InterPro_get_protein_domains(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get protein domain annotations from InterPro database using UniProt protein ID. Returns domain fa...
 
@@ -31,7 +31,7 @@ def InterPro_get_protein_domains(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

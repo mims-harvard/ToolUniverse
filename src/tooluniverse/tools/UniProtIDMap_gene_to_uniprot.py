@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def UniProtIDMap_gene_to_uniprot(
     gene_names: str,
     tax_id: Optional[int] = 9606,
-    reviewed_only: Optional[bool | Any] = None,
+    reviewed_only: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def UniProtIDMap_gene_to_uniprot(
         Comma-separated gene symbols. Examples: 'TP53', 'BRCA1,TP53,EGFR,KRAS', 'INS,...
     tax_id : int
         NCBI Taxonomy ID restricting the species searched. Optional; when omitted it ...
-    reviewed_only : bool | Any
+    reviewed_only : bool
         If true, return only Swiss-Prot (reviewed) entries. Default: false (all UniPr...
     stream_callback : Callable, optional
         Callback for streaming output

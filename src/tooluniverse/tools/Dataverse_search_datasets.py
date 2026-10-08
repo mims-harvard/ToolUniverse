@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def Dataverse_search_datasets(
     q: str,
-    type_: Optional[str | Any] = None,
-    per_page: Optional[int | Any] = None,
-    start: Optional[int | Any] = None,
+    type_: Optional[str] = None,
+    per_page: Optional[int] = None,
+    start: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def Dataverse_search_datasets(
     ----------
     q : str
         Search query string for dataset title, description, or keyword (e.g., 'climat...
-    type_ : str | Any
+    type_ : str
         Filter by type: 'dataset', 'file', or 'dataverse' (default: returns all types)
-    per_page : int | Any
+    per_page : int
         Number of results per page (default 10)
-    start : int | Any
+    start : int
         Result offset for pagination (0-based, e.g., 0, 10, 20)
     stream_callback : Callable, optional
         Callback for streaming output

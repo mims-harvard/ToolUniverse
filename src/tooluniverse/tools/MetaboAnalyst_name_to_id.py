@@ -1,7 +1,7 @@
 """
 MetaboAnalyst_name_to_id
 
-Map metabolite common names to database identifiers (KEGG, HMDB, PubChem, ChEBI). Resolves metabo...
+Map metabolite common names to database identifiers (KEGG, PubChem, ChEBI). Resolves metabolite n...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def MetaboAnalyst_name_to_id(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Map metabolite common names to database identifiers (KEGG, HMDB, PubChem, ChEBI). Resolves metabo...
+    Map metabolite common names to database identifiers (KEGG, PubChem, ChEBI). Resolves metabolite n...
 
     Parameters
     ----------

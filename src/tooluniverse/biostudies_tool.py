@@ -14,6 +14,21 @@ from typing import Any, Dict, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
+
+def _iter_file_dicts(entries):
+    """Yield file dicts from a BioStudies "files" value of any nesting depth.
+
+    BioStudies nests a subsection's file entries one level deeper as a list of
+    lists ("files": [[{...}, {...}]]), so a plain isinstance(entry, dict) check
+    skipped every file.
+    """
+    for entry in entries:
+        if isinstance(entry, dict):
+            yield entry
+        elif isinstance(entry, list):
+            yield from _iter_file_dicts(entry)
+
+
 try:
     from markitdown import MarkItDown
 
@@ -245,16 +260,15 @@ class BioStudiesRESTTool(BaseTool):
                 files = self._extract_files_from_section(data["section"])
             # If data has direct files array
             elif "files" in data and isinstance(data["files"], list):
-                for file_obj in data["files"]:
-                    if isinstance(file_obj, dict):
-                        files.append(
-                            {
-                                "path": file_obj.get("path", file_obj.get("name", "")),
-                                "size": file_obj.get("size", 0),
-                                "type": file_obj.get("type", ""),
-                                "attributes": file_obj.get("attributes", []),
-                            }
-                        )
+                for file_obj in _iter_file_dicts(data["files"]):
+                    files.append(
+                        {
+                            "path": file_obj.get("path", file_obj.get("name", "")),
+                            "size": file_obj.get("size", 0),
+                            "type": file_obj.get("type", ""),
+                            "attributes": file_obj.get("attributes", []),
+                        }
+                    )
         elif isinstance(data, list):
             # If data is directly a list of files
             for file_obj in data:
@@ -275,16 +289,15 @@ class BioStudiesRESTTool(BaseTool):
 
         # Add files from current section
         if "files" in section and isinstance(section["files"], list):
-            for file_obj in section["files"]:
-                if isinstance(file_obj, dict):
-                    files.append(
-                        {
-                            "path": file_obj.get("path", file_obj.get("name", "")),
-                            "size": file_obj.get("size", 0),
-                            "type": file_obj.get("type", ""),
-                            "attributes": file_obj.get("attributes", []),
-                        }
-                    )
+            for file_obj in _iter_file_dicts(section["files"]):
+                files.append(
+                    {
+                        "path": file_obj.get("path", file_obj.get("name", "")),
+                        "size": file_obj.get("size", 0),
+                        "type": file_obj.get("type", ""),
+                        "attributes": file_obj.get("attributes", []),
+                    }
+                )
 
         # Recursively extract from subsections
         if "subsections" in section and isinstance(section["subsections"], list):

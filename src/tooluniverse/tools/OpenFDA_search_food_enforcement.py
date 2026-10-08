@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def OpenFDA_search_food_enforcement(
-    search: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
-    count: Optional[str | Any] = None,
+    search: Optional[str] = None,
+    limit: Optional[int] = None,
+    count: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,12 +22,12 @@ def OpenFDA_search_food_enforcement(
 
     Parameters
     ----------
-    search : str | Any
+    search : str
         Lucene query for food recalls (e.g., 'classification:"Class I"', 'reason_for_...
-    limit : int | Any
+    limit : int
         Maximum number of results (default 5, max 100)
-    count : str | Any
-        Field to count by (e.g., 'classification', 'state', 'recalling_firm.exact')
+    count : str
+        Field to count by. Must use the '.exact' keyword sub-field for text columns o...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

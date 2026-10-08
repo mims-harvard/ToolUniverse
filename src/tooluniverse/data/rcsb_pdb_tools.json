@@ -1253,7 +1253,7 @@
     },
     "test_examples": [
       {
-        "pdb_id": "1CRN"
+        "pdb_id": "1HSG"
       }
     ],
     "return_schema": {
@@ -1338,7 +1338,7 @@
     },
     "test_examples": [
       {
-        "entity_id": "5FMB_2"
+        "entity_id": "3PTB_1"
       }
     ],
     "return_schema": {
@@ -1392,7 +1392,7 @@
     },
     "test_examples": [
       {
-        "entity_id": "1"
+        "entity_id": "4HHB_1"
       }
     ],
     "return_schema": {
@@ -1444,7 +1444,7 @@
     },
     "test_examples": [
       {
-        "entity_id": "1"
+        "entity_id": "4HHB_1"
       }
     ],
     "return_schema": {
@@ -1618,7 +1618,7 @@
     },
     "test_examples": [
       {
-        "pdb_id": "1CRN"
+        "pdb_id": "6LU7"
       }
     ],
     "return_schema": {
@@ -1778,7 +1778,7 @@
     },
     "test_examples": [
       {
-        "entity_id": "1"
+        "entity_id": "5FMB_2"
       }
     ],
     "return_schema": {
@@ -2244,7 +2244,7 @@
     },
     "test_examples": [
       {
-        "pdb_id": "1CRN"
+        "pdb_id": "5A1A"
       }
     ],
     "return_schema": {
@@ -2311,7 +2311,7 @@
     },
     "test_examples": [
       {
-        "entity_id": "1"
+        "entity_id": "4HHB_1"
       }
     ],
     "return_schema": {
@@ -2362,7 +2362,7 @@
     },
     "test_examples": [
       {
-        "pdb_id": "1CRN"
+        "pdb_id": "6LU7"
       }
     ],
     "return_schema": {
@@ -2709,7 +2709,7 @@
     },
     "test_examples": [
       {
-        "pdb_id": "1CRN"
+        "pdb_id": "1STP"
       }
     ],
     "return_schema": {
@@ -2847,7 +2847,7 @@
     },
     "test_examples": [
       {
-        "pdb_id": "1CRN"
+        "pdb_id": "6LU7"
       }
     ],
     "return_schema": {
@@ -2944,7 +2944,7 @@
     },
     "test_examples": [
       {
-        "pdb_id": "1CRN"
+        "pdb_id": "1HSG"
       }
     ],
     "return_schema": {
@@ -3021,7 +3021,7 @@
     },
     "test_examples": [
       {
-        "pdb_id": "1CRN"
+        "pdb_id": "1HSG"
       }
     ],
     "return_schema": {
@@ -3085,7 +3085,7 @@
     },
     "test_examples": [
       {
-        "pdb_id": "1CRN"
+        "pdb_id": "4HHB"
       }
     ],
     "return_schema": {

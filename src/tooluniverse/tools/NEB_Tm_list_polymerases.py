@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def NEB_Tm_list_polymerases(
-    filter: Optional[str | Any] = None,
+    filter: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -20,7 +20,7 @@ def NEB_Tm_list_polymerases(
 
     Parameters
     ----------
-    filter : str | Any
+    filter : str
         Optional keyword to filter products by name, product code, or catalog number....
     stream_callback : Callable, optional
         Callback for streaming output

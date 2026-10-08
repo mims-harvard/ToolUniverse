@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def Rfam_get_alignment(
-    operation: str,
     family_id: str,
+    operation: Optional[str] = "get_alignment",
     format: Optional[str] = "stockholm",
     gzip: Optional[bool] = False,
     *,

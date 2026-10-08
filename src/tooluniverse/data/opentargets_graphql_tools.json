@@ -1,0 +1,143 @@
+[
+  {
+    "type": "OpenTargetsGraphQLSchemaTool",
+    "name": "OpenTargets_get_graphql_schema",
+    "description": "Describe the Open Targets Platform GraphQL schema so a query can be written for OpenTargets_query_graphql. Without type_name it lists the root queries (target, disease, drug, variant, study, credibleSet, search, mapIds, ...) with their arguments and return types plus the names of every type. With type_name (case-sensitive, e.g. 'Target', 'Disease', 'Drug', 'Evidence') it lists that type's fields with GraphQL types, arguments and descriptions, or the values of an enum.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "type_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "GraphQL type to describe, e.g. 'Target'. Omit to list the root queries and all type names."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Root queries and type names, or one type's fields",
+      "properties": {
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "type_names": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "fields": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "input_fields": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "enum_values": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {},
+      {
+        "type_name": "Target"
+      }
+    ],
+    "label": [
+      "OpenTargets",
+      "GraphQL",
+      "Schema"
+    ],
+    "metadata": {
+      "tags": [
+        "target",
+        "disease",
+        "graphql",
+        "schema"
+      ],
+      "estimated_execution_time": "1-2 seconds"
+    }
+  },
+  {
+    "type": "OpenTargetsGraphQLQueryTool",
+    "name": "OpenTargets_query_graphql",
+    "description": "Run any read-only GraphQL query against the Open Targets Platform API (targets, diseases, drugs, variants, GWAS studies, credible sets, evidence, associations, tractability, safety, expression ...). Use this when none of the dedicated OpenTargets_* tools returns the field you need: read the schema with OpenTargets_get_graphql_schema, then send a query such as '{ target(ensemblId: \"ENSG00000141510\") { approvedSymbol biotype } }' or a parameterised one with variables. Returns the GraphQL data object; partial-result errors are reported in metadata.graphql_errors and a failed query returns status=error with the server's message. Mutations are refused.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "GraphQL query document, e.g. '{ target(ensemblId: \"ENSG00000141510\") { approvedSymbol biotype } }'"
+        },
+        "variables": {
+          "type": [
+            "object",
+            "string",
+            "null"
+          ],
+          "description": "Variables for a parameterised query, as a JSON object (or a JSON string)"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "The GraphQL data object: one key per root field requested"
+    },
+    "test_examples": [
+      {
+        "query": "{ target(ensemblId: \"ENSG00000141510\") { id approvedSymbol biotype } }"
+      },
+      {
+        "query": "query($id: String!) { disease(efoId: $id) { id name therapeuticAreas { name } } }",
+        "variables": {
+          "id": "MONDO_0004975"
+        }
+      }
+    ],
+    "label": [
+      "OpenTargets",
+      "GraphQL",
+      "Drug target discovery"
+    ],
+    "metadata": {
+      "tags": [
+        "target",
+        "disease",
+        "drug",
+        "graphql",
+        "evidence"
+      ],
+      "estimated_execution_time": "1-5 seconds"
+    }
+  }
+]

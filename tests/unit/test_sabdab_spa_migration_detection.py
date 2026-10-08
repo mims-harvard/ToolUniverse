@@ -1,16 +1,26 @@
-"""Regression guard for Fix-R17D-2 and Fix-R17D-3: SAbDab migrated to a new
-frontend ("SAbDab2", a React SPA), and its old download/summary URLs now
-return an HTTP-200 SPA HTML shell instead of the real PDB/TSV data
-(confirmed live: the new domain's /api/pdb/{id}/ route 307-redirects to an
-internal-only "sabdab-backend:8000" hostname, not publicly resolvable).
-Before this fix, SAbDab_get_structure reported the HTML as a successful PDB
-download, and SAbDab_get_structure_summary blamed the HTML on the
-structure "may not be an antibody complex" -- both misleading. Both now
-detect the SPA shell and report the real, upstream cause honestly.
+"""The SAbDab2 migration: what made the API look unreachable, and the fix.
+
+Fix-R17D-2/3 recorded that "the new domain's /api/pdb/{id}/ route
+307-redirects to an internal-only 'sabdab-backend:8000' hostname, not publicly
+resolvable", and concluded the API could not be used. That observation was
+right, and so was the conclusion *for the URL that was tried*. The cause is
+narrower than it looked: it is the trailing slash.
+
+Reproduced three times each, consistently:
+
+    /api/pdb/pdb_00003hfm    -> 200 application/json
+    /api/pdb/pdb_00003hfm/   -> 307 http://backend:8000/pdb/pdb_00003hfm
+                                 -> DNS failure off the cluster
+
+So the tools now read the API with no trailing slash, and this file guards the
+two things that made the old behaviour wrong: a path must never carry a
+trailing slash, and a 200 that is not JSON must never be reported as data. The
+data-shape coverage lives in tests/unit/test_sabdab_reads_the_api.py.
 """
 
 import sys
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -20,74 +30,50 @@ from tooluniverse.sabdab_tool import SAbDabTool
 
 pytestmark = pytest.mark.unit
 
-SPA_HTML = (
-    '<!doctype html>\n<html lang="en"><head><title>SAbDab2</title></head>'
-    "<body><div id=\"root\"></div></body></html>"
-)
+_ENTRY = {
+    "id": "pdb_00001n8z",
+    "name": "CRYSTAL STRUCTURE OF EXTRACELLULAR DOMAIN OF HUMAN HER2",
+    "resolution": 2.52,
+    "polymer_instances": [],
+    "antibody_instances": [],
+}
 
 
-class _FakeResponse:
-    def __init__(self, text, status_code=200, headers=None):
-        self.text = text
-        self.status_code = status_code
-        self.headers = headers or {}
-
-    def raise_for_status(self):
-        pass
-
-
-def _tool():
-    return SAbDabTool({"name": "SAbDab_get_structure"})
-
-
-def test_get_structure_detects_spa_html(monkeypatch):
-    tool = _tool()
-    monkeypatch.setattr(
-        "tooluniverse.sabdab_tool.requests.get",
-        lambda *a, **k: _FakeResponse(SPA_HTML),
+def _tool(operation):
+    return SAbDabTool(
+        {
+            "name": f"SAbDab_{operation}",
+            "type": "SAbDabTool",
+            "fields": {"operation": operation},
+            "parameter": {"type": "object", "properties": {}},
+        }
     )
 
-    result = tool._get_structure({"pdb_id": "5jxe"})
 
-    assert result["status"] == "error"
-    assert "non-PDB content" in result["error"]
+class _Json:
+    status_code = 200
+    headers = {"Content-Type": "application/json"}
 
-
-def test_get_structure_still_parses_real_pdb_content(monkeypatch):
-    tool = _tool()
-    real_pdb = "REMARK   5 PAIRED_HL=A_B\nATOM      1  N   ALA A   1\n"
-    monkeypatch.setattr(
-        "tooluniverse.sabdab_tool.requests.get",
-        lambda *a, **k: _FakeResponse(real_pdb),
-    )
-
-    result = tool._get_structure({"pdb_id": "5jxe"})
-
-    assert result["status"] == "success"
-    assert result["data"]["pdb_id"] == "5jxe"
+    @staticmethod
+    def json():
+        return _ENTRY
 
 
-def test_get_structure_summary_detects_spa_html(monkeypatch):
-    tool = _tool()
-    monkeypatch.setattr(
-        "tooluniverse.sabdab_tool.requests.get",
-        lambda *a, **k: _FakeResponse(SPA_HTML, headers={"Content-Type": "text/html"}),
-    )
+@pytest.mark.parametrize("operation", ["get_structure", "get_structure_summary"])
+def test_no_api_path_ever_carries_a_trailing_slash(operation):
+    """The slash is what sent this API to an unroutable internal hostname."""
+    seen = []
 
-    result = tool._get_structure_summary({"pdb_id": "5jxe"})
+    def fake_get(url, params=None, timeout=None, headers=None):
+        seen.append(url)
+        return _Json()
 
-    assert result["status"] == "error"
-    assert "migrated" in result["error"]
+    with patch("tooluniverse.sabdab_tool.requests.get", fake_get):
+        _tool(operation).run({"operation": operation, "pdb_id": "1n8z"})
 
-
-def test_get_structure_summary_non_html_non_tabular_keeps_original_message(monkeypatch):
-    tool = _tool()
-    monkeypatch.setattr(
-        "tooluniverse.sabdab_tool.requests.get",
-        lambda *a, **k: _FakeResponse("not tabular and not html either"),
-    )
-
-    result = tool._get_structure_summary({"pdb_id": "5jxe"})
-
-    assert result["status"] == "error"
-    assert "may not be an antibody complex" in result["error"]
+    assert seen, "no request was made"
+    for url in seen:
+        assert not url.endswith("/"), (
+            f"{url} ends in a slash; SAbDab 307-redirects that form to "
+            "http://backend:8000/... which does not resolve off the cluster"
+        )

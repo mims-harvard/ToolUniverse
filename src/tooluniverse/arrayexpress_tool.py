@@ -201,21 +201,32 @@ class ArrayExpressRESTTool(BaseTool):
                 "url": url if "url" in locals() else None,
             }
 
+    @classmethod
+    def _iter_file_dicts(cls, entries):
+        """Yield file dicts from a BioStudies "files" value of any nesting depth."""
+        for entry in entries:
+            if isinstance(entry, dict):
+                yield entry
+            elif isinstance(entry, list):
+                yield from cls._iter_file_dicts(entry)
+
     def _extract_files_from_section(self, section: Dict[str, Any]) -> list:
         """Extract files from a BioStudies section"""
         files = []
 
-        # Add files from current section
+        # Add files from current section. BioStudies nests the file entries one
+        # level deeper as a list of lists ("files": [[{...}, {...}]]), so a plain
+        # isinstance(entry, dict) check silently skipped every file and the tool
+        # reported 0 files for experiments that have them.
         if "files" in section and isinstance(section["files"], list):
-            for file_obj in section["files"]:
-                if isinstance(file_obj, dict):
-                    files.append(
-                        {
-                            "name": file_obj.get("path", file_obj.get("name", "")),
-                            "size": file_obj.get("size", 0),
-                            "type": file_obj.get("type", ""),
-                        }
-                    )
+            for file_obj in self._iter_file_dicts(section["files"]):
+                files.append(
+                    {
+                        "name": file_obj.get("path", file_obj.get("name", "")),
+                        "size": file_obj.get("size", 0),
+                        "type": file_obj.get("type", ""),
+                    }
+                )
 
         # Recursively extract from subsections
         # Note: BioStudies subsections can be a list of lists

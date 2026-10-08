@@ -25,9 +25,9 @@ def OpenNIH_topic_trend(
     query : str
         Topic words to match in grant titles.
     fiscal_year_start : int
-
+        First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed f...
     fiscal_year_end : int
-
+        Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

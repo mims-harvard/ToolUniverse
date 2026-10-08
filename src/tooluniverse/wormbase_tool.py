@@ -1,22 +1,58 @@
 # wormbase_tool.py
 """
-WormBase REST API tool for ToolUniverse.
+WormBase gene tools for ToolUniverse, served through the Alliance API.
 
-WormBase is the central repository for research using the model organism
-Caenorhabditis elegans and related nematodes. It provides curated gene
-information, phenotypes, expression data, and orthologs.
+WormBase curates Caenorhabditis elegans: gene information, phenotypes,
+expression, orthologs, interactions and human disease models.
 
-API: https://rest.wormbase.org
-No authentication required. Free for academic/research use.
+rest.wormbase.org is unreachable from any HTTP client. It answers 403 with
+cf-mitigated: challenge and a "Just a moment... Enable JavaScript and cookies"
+page, and so does downloads.wormbase.org, so there is no bulk route either.
+See data/broken_apis/wormbase_rest.json.
+
+The Alliance of Genome Resources redistributes the same curated records, and
+WormBase is one of its member databases -- a gene fetched there carries
+dataProvider {"abbreviation": "WB", "fullName": "WormBase"} and its
+interactions carry interactionSource "wormbase". So this is the same data with
+attribution, not a substitute that answers a nearby question.
+
+This module already depended on Alliance to turn a gene symbol into a WBGene
+ID, since WormBase's own search was unreachable too; now the data follows.
+
+Three fields have no Alliance equivalent and come back empty rather than
+guessed. Each says so in its own metadata:
+
+  status                    WormBase's Live/Dead gene status
+  phenotypes_not_observed   WormBase's "not observed" annotations
+  nematode_orthologs        Alliance covers the six model organisms, not
+                            other nematodes
+
+API: https://www.alliancegenome.org/api
+No authentication required.
 """
 
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
+from .http_utils import cloudflare_challenge, request_with_retry
 from .tool_registry import register_tool
 
-WORMBASE_BASE_URL = "https://rest.wormbase.org/rest"
-ALLIANCE_AUTOCOMPLETE_URL = "https://www.alliancegenome.org/api/search_autocomplete"
+ALLIANCE_API_BASE = "https://www.alliancegenome.org/api"
+ALLIANCE_AUTOCOMPLETE_URL = f"{ALLIANCE_API_BASE}/search_autocomplete"
+
+# Verified 2026-10-03 against WB:WBGene00000912 (daf-16):
+#   GET  /gene/{curie}                        200   31696 B
+#   GET  /gene/{curie}/phenotypes             200   28 records
+#   GET  /gene/{curie}/orthologs              200   23 records
+#   GET  /gene/{curie}/paralogs               200   26463 B
+#   GET  /gene/{curie}/molecular-interactions 200   267 records
+#   GET  /gene/{curie}/genetic-interactions   200   379 records
+#   POST /gene/{curie}/disease-ribbon-summary 200   8661 B   body: [curie]
+#   POST /expression                          200   111 records, body: [curie]
+# The two POST endpoints answer 405 to GET, which is how they were found; they
+# want a bare JSON list, and reject {"geneIDs": [...]} with
+# "Not able to deserialize data provided."
+_ROW_LIMIT = 50
 
 # Module-level cache: gene name (lower) -> WBGene ID, avoids repeated lookups
 _WBGENE_CACHE: dict = {}
@@ -67,6 +103,31 @@ def _resolve_wbgene_id(gene_input: str) -> str:
         return gene_input
 
 
+def _alliance_curie(gene_id: str) -> str:
+    """Alliance wants the CURIE form; WormBase's REST needed it stripped."""
+    bare = gene_id.split(":", 1)[-1]
+    return f"WB:{bare}" if bare.upper().startswith("WBGENE") else gene_id
+
+
+def _wb_id(curie: str) -> str:
+    """The WBGene form the previous responses used."""
+    return (curie or "").split(":", 1)[-1]
+
+
+def _text(value: Any) -> str:
+    """Alliance wraps display strings as {formatText, displayText}."""
+    if isinstance(value, dict):
+        return value.get("displayText") or value.get("formatText") or ""
+    return value or ""
+
+
+def _named(value: Any) -> str:
+    """An ontology term's label."""
+    if isinstance(value, dict):
+        return value.get("name") or value.get("label") or ""
+    return value or ""
+
+
 @register_tool("WormBaseTool")
 class WormBaseTool(BaseTool):
     """
@@ -85,6 +146,7 @@ class WormBaseTool(BaseTool):
         self.endpoint_type = tool_config.get("fields", {}).get(
             "endpoint_type", "gene_overview"
         )
+        self.session = requests.Session()
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the WormBase API call."""
@@ -101,6 +163,12 @@ class WormBaseTool(BaseTool):
                 "error": "Failed to connect to WormBase API. Check network connectivity.",
             }
         except requests.exceptions.HTTPError as e:
+            challenge = cloudflare_challenge(getattr(e, "response", None))
+            if challenge:
+                return {
+                    "status": "error",
+                    "error": f"WormBase is unreachable: {challenge}.",
+                }
             return {
                 "status": "error",
                 "error": f"WormBase API HTTP error: {e.response.status_code}",
@@ -131,510 +199,349 @@ class WormBaseTool(BaseTool):
                 "error": f"Unknown endpoint_type: {self.endpoint_type}",
             }
 
-    def _gene_overview(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get detailed gene overview from WormBase by WBGene ID or gene name."""
+    # ------------------------------------------------------------------ #
+    # Alliance transport
+    # ------------------------------------------------------------------ #
+    def _alliance(self, path: str, params=None, body=None) -> Any:
+        """GET or POST an Alliance endpoint and return the parsed JSON.
+
+        Goes through request_with_retry so the shared User-Agent and backoff
+        apply. Raises for a non-2xx; run() turns that into an envelope.
+        """
+        url = f"{ALLIANCE_API_BASE}{path}"
+        method = "POST" if body is not None else "GET"
+        response = request_with_retry(
+            self.session,
+            method,
+            url,
+            params=params,
+            headers={"Accept": "application/json"},
+            json=body,
+            timeout=self.timeout,
+            max_attempts=3,
+        )
+        response.raise_for_status()
+        return response.json()
+
+    def _gene_required(self, arguments: Dict[str, Any]):
         gene_input = arguments.get("gene_id", "")
         if not gene_input:
-            return {
+            return None, {
                 "status": "error",
                 "error": "gene_id parameter is required (e.g., 'WBGene00006763' or 'unc-86')",
             }
-        gene_id = _resolve_wbgene_id(gene_input)
-
-        url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/overview"
-        response = requests.get(
-            url,
-            headers={"Accept": "application/json"},
-            timeout=self.timeout,
-        )
-        response.raise_for_status()
-        raw = response.json()
-
-        fields = raw.get("fields", {})
-
-        # Extract name info
-        name_data = fields.get("name", {}).get("data", {})
-        gene_name = name_data.get("label", "") if isinstance(name_data, dict) else ""
-        wb_id = name_data.get("id", gene_id) if isinstance(name_data, dict) else gene_id
-
-        # Extract taxonomy
-        taxonomy_data = fields.get("taxonomy", {}).get("data", {})
-        species = ""
-        if isinstance(taxonomy_data, dict):
-            genus = taxonomy_data.get("genus", "")
-            sp = taxonomy_data.get("species", "")
-            species = f"{genus} {sp}".strip()
-
-        # Extract description
-        desc_data = fields.get("concise_description", {}).get("data", {})
-        description = ""
-        if isinstance(desc_data, dict):
-            description = desc_data.get("text", "")
-        elif isinstance(desc_data, str):
-            description = desc_data
-
-        # Legacy description
-        legacy_data = fields.get("legacy_manual_description", {}).get("data", {})
-        legacy_desc = ""
-        if isinstance(legacy_data, dict):
-            legacy_desc = legacy_data.get("text", "")
-
-        # Sequence name
-        seq_name = fields.get("sequence_name", {}).get("data", "")
-
-        # Classification
-        classification = fields.get("classification", {}).get("data", {})
-        gene_type = None
-        if isinstance(classification, dict):
-            gene_type = classification.get("type", None)
-            if isinstance(gene_type, dict):
-                gene_type = gene_type.get("label", None)
-
-        # Status
-        status = fields.get("status", {}).get("data", "")
-
-        result = {
-            "wormbase_id": wb_id,
-            "gene_name": gene_name,
-            "sequence_name": seq_name,
-            "species": species,
-            "description": description or legacy_desc,
-            "gene_type": gene_type,
-            "status": status,
-        }
-
-        return {
-            "status": "success",
-            "data": result,
-            "metadata": {
-                "source": "WormBase",
-                "query": gene_id,
-                "endpoint": "gene_overview",
-            },
-        }
-
-    def _gene_phenotypes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get phenotype annotations for a C. elegans gene from WormBase."""
-        gene_input = arguments.get("gene_id", "")
-        if not gene_input:
-            return {
-                "status": "error",
-                "error": "gene_id parameter is required (e.g., 'WBGene00006763' or 'unc-86')",
-            }
-        gene_id = _resolve_wbgene_id(gene_input)
-
-        url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/phenotype"
-        response = requests.get(
-            url,
-            headers={"Accept": "application/json"},
-            timeout=self.timeout,
-        )
-        response.raise_for_status()
-        raw = response.json()
-
-        fields = raw.get("fields", {})
-
-        # Gene name
-        name_data = fields.get("name", {}).get("data", {})
-        gene_name = name_data.get("label", "") if isinstance(name_data, dict) else ""
-
-        # Observed phenotypes
-        phenotypes = []
-        pheno_data = fields.get("phenotype", {}).get("data", [])
-        if isinstance(pheno_data, list):
-            for p in pheno_data[:50]:
-                if isinstance(p, dict):
-                    pheno_info = p.get("phenotype", {})
-                    pheno_entry = {
-                        "phenotype_id": pheno_info.get("id", "")
-                        if isinstance(pheno_info, dict)
-                        else "",
-                        "phenotype_name": pheno_info.get("label", "")
-                        if isinstance(pheno_info, dict)
-                        else str(pheno_info),
-                    }
-                    # Evidence
-                    evidence = p.get("evidence", [])
-                    if isinstance(evidence, list) and evidence:
-                        first_ev = evidence[0] if isinstance(evidence[0], dict) else {}
-                        pheno_entry["evidence_type"] = first_ev.get("label", "")
-                    phenotypes.append(pheno_entry)
-
-        # Not-observed phenotypes
-        not_observed = []
-        not_pheno_data = fields.get("phenotype_not_observed", {}).get("data", [])
-        if isinstance(not_pheno_data, list):
-            for p in not_pheno_data[:20]:
-                if isinstance(p, dict):
-                    pheno_info = p.get("phenotype", {})
-                    not_observed.append(
-                        {
-                            "phenotype_id": pheno_info.get("id", "")
-                            if isinstance(pheno_info, dict)
-                            else "",
-                            "phenotype_name": pheno_info.get("label", "")
-                            if isinstance(pheno_info, dict)
-                            else str(pheno_info),
-                        }
-                    )
-
-        result = {
-            "wormbase_id": gene_id,
-            "gene_name": gene_name,
-            "phenotype_count": len(pheno_data) if isinstance(pheno_data, list) else 0,
-            "phenotypes": phenotypes,
-            "not_observed_count": len(not_pheno_data)
-            if isinstance(not_pheno_data, list)
-            else 0,
-            "phenotypes_not_observed": not_observed,
-        }
-
-        return {
-            "status": "success",
-            "data": result,
-            "metadata": {
-                "source": "WormBase",
-                "query": gene_id,
-                "endpoint": "gene_phenotypes",
-            },
-        }
-
-    def _gene_expression(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get expression data for a C. elegans gene from WormBase."""
-        gene_input = arguments.get("gene_id", "")
-        if not gene_input:
-            return {
-                "status": "error",
-                "error": "gene_id parameter is required (e.g., 'WBGene00006763' or 'unc-86')",
-            }
-        gene_id = _resolve_wbgene_id(gene_input)
-
-        url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/expression"
-        response = requests.get(
-            url,
-            headers={"Accept": "application/json"},
-            timeout=self.timeout,
-        )
-        response.raise_for_status()
-        raw = response.json()
-
-        fields = raw.get("fields", {})
-
-        # Gene name
-        name_data = fields.get("name", {}).get("data", {})
-        gene_name = name_data.get("label", "") if isinstance(name_data, dict) else ""
-
-        # Tissues expressed in
-        expressed_in = []
-        tissue_data = fields.get("expressed_in", {}).get("data", [])
-        if isinstance(tissue_data, list):
-            for t in tissue_data[:30]:
-                if isinstance(t, dict):
-                    ontology_term = t.get("ontology_term", {})
-                    expressed_in.append(
-                        {
-                            "term_id": ontology_term.get("id", "")
-                            if isinstance(ontology_term, dict)
-                            else "",
-                            "term_name": ontology_term.get("label", "")
-                            if isinstance(ontology_term, dict)
-                            else str(t),
-                        }
-                    )
-
-        # Developmental stages
-        expressed_during = []
-        stage_data = fields.get("expressed_during", {}).get("data", [])
-        if isinstance(stage_data, list):
-            for s in stage_data[:20]:
-                if isinstance(s, dict):
-                    ontology_term = s.get("ontology_term", {})
-                    expressed_during.append(
-                        {
-                            "term_id": ontology_term.get("id", "")
-                            if isinstance(ontology_term, dict)
-                            else "",
-                            "term_name": ontology_term.get("label", "")
-                            if isinstance(ontology_term, dict)
-                            else str(s),
-                        }
-                    )
-
-        # Subcellular localization
-        subcellular = []
-        sub_data = fields.get("subcellular_localization", {}).get("data", [])
-        if isinstance(sub_data, list):
-            for loc in sub_data[:10]:
-                if isinstance(loc, dict):
-                    ontology_term = loc.get("ontology_term", {})
-                    subcellular.append(
-                        {
-                            "term_id": ontology_term.get("id", "")
-                            if isinstance(ontology_term, dict)
-                            else "",
-                            "term_name": ontology_term.get("label", "")
-                            if isinstance(ontology_term, dict)
-                            else str(loc),
-                        }
-                    )
-
-        # Expression clusters
-        clusters = []
-        cluster_data = fields.get("expression_cluster", {}).get("data", [])
-        if isinstance(cluster_data, list):
-            for c in cluster_data[:15]:
-                if isinstance(c, dict):
-                    cluster_info = c.get("expression_cluster", {})
-                    clusters.append(
-                        {
-                            "cluster_id": cluster_info.get("id", "")
-                            if isinstance(cluster_info, dict)
-                            else "",
-                            "cluster_label": cluster_info.get("label", "")
-                            if isinstance(cluster_info, dict)
-                            else str(c),
-                        }
-                    )
-
-        result = {
-            "wormbase_id": gene_id,
-            "gene_name": gene_name,
-            "expressed_in_count": len(tissue_data)
-            if isinstance(tissue_data, list)
-            else 0,
-            "expressed_in": expressed_in,
-            "expressed_during": expressed_during,
-            "subcellular_localization": subcellular,
-            "expression_clusters_count": len(cluster_data)
-            if isinstance(cluster_data, list)
-            else 0,
-            "expression_clusters": clusters,
-        }
-
-        return {
-            "status": "success",
-            "data": result,
-            "metadata": {
-                "source": "WormBase",
-                "query": gene_id,
-                "endpoint": "gene_expression",
-            },
-        }
+        return _alliance_curie(_resolve_wbgene_id(gene_input)), None
 
     @staticmethod
-    def _parse_ortholog_entries(entries, limit):
-        """Parse a list of homology-widget ortholog/paralog entries."""
-        parsed = []
-        if not isinstance(entries, list):
-            return parsed
-        for e in entries[:limit]:
-            if not isinstance(e, dict):
-                continue
-            ortholog = e.get("ortholog") or {}
-            species = e.get("species") or {}
-            methods = e.get("method") or []
-            method_labels = [
-                m.get("label")
-                for m in methods
-                if isinstance(m, dict) and m.get("label")
+    def _envelope(endpoint: str, curie: str, data: Dict[str, Any], note=None):
+        metadata = {
+            "source": "WormBase via the Alliance of Genome Resources",
+            "query": _wb_id(curie),
+            "endpoint": endpoint,
+        }
+        if note:
+            metadata["coverage_note"] = note
+        return {"status": "success", "data": data, "metadata": metadata}
+
+    # ------------------------------------------------------------------ #
+    # The six aspects
+    # ------------------------------------------------------------------ #
+    def _gene_overview(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Gene identity, type and description."""
+        curie, error = self._gene_required(arguments)
+        if error:
+            return error
+
+        gene = (self._alliance(f"/gene/{curie}") or {}).get("gene") or {}
+        notes = [
+            n.get("freeText", "")
+            for n in (gene.get("relatedNotes") or [])
+            if isinstance(n, dict) and n.get("freeText")
+        ]
+        data = {
+            "wormbase_id": _wb_id(gene.get("primaryExternalId") or curie),
+            "gene_name": _text(gene.get("geneSymbol")),
+            "sequence_name": _text(gene.get("geneSystematicName")),
+            "species": ((gene.get("taxon") or {}).get("species") or {}).get(
+                "fullName", ""
+            ),
+            "description": notes[0] if notes else _text(gene.get("geneFullName")),
+            "gene_type": _named(gene.get("geneType")),
+            # WormBase's Live/Dead status is not in the Alliance record.
+            "status": "",
+        }
+        return self._envelope(
+            "gene_overview",
+            curie,
+            data,
+            "status is empty: WormBase's Live/Dead gene status has no Alliance "
+            "equivalent. Every other field is the Alliance record, which "
+            "attributes itself to WormBase.",
+        )
+
+    def _gene_phenotypes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Phenotype annotations."""
+        curie, error = self._gene_required(arguments)
+        if error:
+            return error
+
+        payload = self._alliance(
+            f"/gene/{curie}/phenotypes", params={"limit": _ROW_LIMIT}
+        )
+        results = payload.get("results") or []
+        phenotypes = []
+        for row in results:
+            statement = row.get("phenotypeStatement") or ""
+            references = [
+                ref.get("curie", "")
+                for ref in (row.get("references") or [])
+                if isinstance(ref, dict)
             ]
-            genus = species.get("genus") or ""
-            sp = species.get("species") or ""
-            parsed.append(
+            phenotypes.append(
                 {
-                    "ortholog_id": ortholog.get("id")
-                    if isinstance(ortholog, dict)
-                    else None,
-                    "ortholog_label": ortholog.get("label")
-                    if isinstance(ortholog, dict)
-                    else str(ortholog),
-                    "species": f"{genus}. {sp}".strip(". ").strip(),
-                    "methods": method_labels,
+                    "phenotype_id": "",
+                    "phenotype_name": statement,
+                    # The declared field. Alliance's relation name is the
+                    # closest thing it publishes: "is_implicated_in".
+                    "evidence_type": _named(row.get("relation")),
+                    "references": [r for r in references if r],
                 }
             )
-        return parsed
+        subject = (results[0].get("subject") if results else {}) or {}
+        data = {
+            "wormbase_id": _wb_id(curie),
+            "gene_name": _text(subject.get("geneSymbol")),
+            "phenotype_count": payload.get("total", len(phenotypes)),
+            "phenotypes": phenotypes,
+            # Alliance carries the implicated-in annotations only.
+            "not_observed_count": 0,
+            "phenotypes_not_observed": [],
+        }
+        return self._envelope(
+            "gene_phenotypes",
+            curie,
+            data,
+            "phenotypes_not_observed is empty: Alliance publishes the "
+            "implicated-in annotations and not WormBase's 'not observed' set. "
+            "phenotype_id is empty for the same reason -- the annotation is "
+            "identified by its statement here.",
+        )
+
+    def _gene_expression(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Expression annotations."""
+        curie, error = self._gene_required(arguments)
+        if error:
+            return error
+
+        payload = self._alliance(
+            "/expression", params={"limit": _ROW_LIMIT}, body=[curie]
+        )
+        # The annotation names these whereExpressedStatement and
+        # whenExpressedStageName -- plain strings, e.g. "AIYL" and
+        # "Nematoda Life Stage" -- not the ontology objects I first looked for.
+        # The declared shape is {term_id, term_name}, which is what the
+        # WormBase widget gave. Alliance names the place and the stage as plain
+        # strings (whereExpressedStatement "AIYL", whenExpressedStageName
+        # "Nematoda Life Stage") and carries the anatomy term ids separately in
+        # the row's termIds, so term_id is filled from there for a location and
+        # left null for a stage rather than invented.
+        expressed_in, during, assays = [], [], []
+        seen_in, seen_during, gene_name = set(), set(), ""
+        for row in payload.get("results") or []:
+            annotation = row.get("geneExpressionAnnotation") or {}
+            subject = annotation.get("expressionAnnotationSubject") or {}
+            gene_name = gene_name or _text(subject.get("geneSymbol"))
+            where = annotation.get("whereExpressedStatement") or ""
+            when = annotation.get("whenExpressedStageName") or ""
+            assay = _named(annotation.get("expressionAssayUsed"))
+            term_ids = [
+                term for term in (row.get("termIds") or []) if isinstance(term, str)
+            ]
+            if where and where not in seen_in:
+                seen_in.add(where)
+                expressed_in.append(
+                    {"term_id": term_ids[0] if term_ids else None,
+                     "term_name": where}
+                )
+            if when and when not in seen_during:
+                seen_during.add(when)
+                during.append({"term_id": None, "term_name": when})
+            if assay and assay not in assays:
+                assays.append(assay)
+        data = {
+            "wormbase_id": _wb_id(curie),
+            "gene_name": gene_name,
+            "expressed_in_count": len(expressed_in),
+            "expressed_in": expressed_in,
+            "expressed_during": during,
+            # Alliance reports the assay, not a subcellular compartment.
+            "subcellular_localization": [],
+            "expression_assays": assays,
+            "expression_clusters_count": 0,
+            "expression_clusters": [],
+        }
+        return self._envelope(
+            "gene_expression",
+            curie,
+            data,
+            f"{payload.get('total', 0)} annotations upstream, "
+            f"{len(payload.get('results') or [])} read. expression_clusters and "
+            "subcellular_localization are empty: both are WormBase widget "
+            "concepts with no Alliance equivalent. expression_assays is added "
+            "in their place, since Alliance does report the assay used.",
+        )
 
     def _gene_orthologs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get orthologs/homologs of a C. elegans gene across species."""
-        gene_input = arguments.get("gene_id", "")
-        if not gene_input:
-            return {
-                "status": "error",
-                "error": "gene_id parameter is required (e.g., 'WBGene00006818' or 'unc-86')",
-            }
-        gene_id = _resolve_wbgene_id(gene_input)
+        """Orthologs across the Alliance model organisms, plus paralogs."""
+        curie, error = self._gene_required(arguments)
+        if error:
+            return error
 
-        url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/homology"
-        response = requests.get(
-            url,
-            headers={"Accept": "application/json"},
-            timeout=self.timeout,
+        # Field names follow the declared schema -- ortholog_id,
+        # ortholog_label, methods, species -- not Alliance's own spelling, so
+        # a caller written against the WormBase responses keeps working.
+        orthologs = []
+        payload = self._alliance(f"/gene/{curie}/orthologs")
+        for row in payload.get("results") or []:
+            pair = row.get("geneToGeneOrthologyGenerated") or {}
+            other = pair.get("objectGene") or {}
+            methods = [
+                _named(m)
+                for m in (pair.get("predictionMethodsMatched") or [])
+                if _named(m)
+            ]
+            orthologs.append(
+                {
+                    "ortholog_id": other.get("primaryExternalId", ""),
+                    "ortholog_label": _text(other.get("geneSymbol")),
+                    "species": (other.get("taxon") or {}).get("name", ""),
+                    "methods": methods,
+                }
+            )
+
+        paralogs = []
+        paralog_payload = self._alliance(f"/gene/{curie}/paralogs")
+        for row in paralog_payload.get("results") or []:
+            pair = row.get("geneToGeneParalogy") or {}
+            other = pair.get("objectGene") or {}
+            paralogs.append(
+                {
+                    "ortholog_id": other.get("primaryExternalId", ""),
+                    "ortholog_label": _text(other.get("geneSymbol")),
+                }
+            )
+
+        data = {
+            "wormbase_id": _wb_id(curie),
+            "cross_species_ortholog_count": payload.get("total", len(orthologs)),
+            "cross_species_orthologs": orthologs,
+            # Alliance's set is the six model organisms.
+            "nematode_ortholog_count": 0,
+            "nematode_orthologs": [],
+            "paralog_count": paralog_payload.get("total", len(paralogs)),
+            "paralogs": paralogs,
+        }
+        return self._envelope(
+            "gene_orthologs",
+            curie,
+            data,
+            "nematode_orthologs is empty: Alliance publishes orthology across "
+            "its six model organisms, so orthologs in other nematodes are not "
+            "available here.",
         )
-        response.raise_for_status()
-        fields = response.json().get("fields", {})
-
-        other = fields.get("other_orthologs", {}).get("data")
-        nematode = fields.get("nematode_orthologs", {}).get("data")
-        paralogs = fields.get("paralogs", {}).get("data")
-
-        result = {
-            "wormbase_id": gene_id,
-            "cross_species_ortholog_count": len(other)
-            if isinstance(other, list)
-            else 0,
-            "cross_species_orthologs": self._parse_ortholog_entries(other, 50),
-            "nematode_ortholog_count": len(nematode)
-            if isinstance(nematode, list)
-            else 0,
-            "nematode_orthologs": self._parse_ortholog_entries(nematode, 50),
-            "paralog_count": len(paralogs) if isinstance(paralogs, list) else 0,
-            "paralogs": self._parse_ortholog_entries(paralogs, 30),
-        }
-
-        return {
-            "status": "success",
-            "data": result,
-            "metadata": {
-                "source": "WormBase",
-                "query": gene_id,
-                "endpoint": "gene_homology",
-            },
-        }
 
     def _gene_interactions(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get physical and genetic interactions for a C. elegans gene."""
-        gene_input = arguments.get("gene_id", "")
-        if not gene_input:
-            return {
-                "status": "error",
-                "error": "gene_id parameter is required (e.g., 'WBGene00006818' or 'unc-86')",
-            }
-        gene_id = _resolve_wbgene_id(gene_input)
+        """Molecular and genetic interactions."""
+        curie, error = self._gene_required(arguments)
+        if error:
+            return error
 
-        url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/interactions"
-        response = requests.get(
-            url,
-            headers={"Accept": "application/json"},
-            timeout=self.timeout,
+        def rows(path, inner_key):
+            payload = self._alliance(
+                f"/gene/{curie}/{path}", params={"limit": _ROW_LIMIT}
+            )
+            out = []
+            for row in payload.get("results") or []:
+                inner = row.get(inner_key) or {}
+                subject = inner.get("geneAssociationSubject") or {}
+                obj = inner.get("geneGeneAssociationObject") or {}
+                out.append(
+                    {
+                        "interactor_1": _text(subject.get("geneSymbol")),
+                        "interactor_1_id": _wb_id(
+                            subject.get("primaryExternalId", "")
+                        ),
+                        "interactor_2": _text(obj.get("geneSymbol")),
+                        "interactor_2_id": _wb_id(obj.get("primaryExternalId", "")),
+                        "interaction_type": _named(inner.get("interactionType")),
+                        "citation": _named(inner.get("interactionSource")),
+                    }
+                )
+            return payload.get("total", len(out)), out
+
+        physical_total, physical = rows(
+            "molecular-interactions", "geneMolecularInteraction"
         )
-        response.raise_for_status()
-        fields = response.json().get("fields", {})
-
-        edges_container = fields.get("interactions", {}).get("data") or {}
-        edges = (
-            edges_container.get("edges") if isinstance(edges_container, dict) else None
-        ) or []
-
-        physical = []
-        genetic = []
-        for edge in edges:
-            if not isinstance(edge, dict):
-                continue
-            effector = edge.get("effector") or {}
-            affected = edge.get("affected") or {}
-            citations = edge.get("citations") or []
-            int_type = edge.get("type") or ""
-            entry = {
-                "interactor_1": effector.get("label")
-                if isinstance(effector, dict)
-                else None,
-                "interactor_1_id": effector.get("id")
-                if isinstance(effector, dict)
-                else None,
-                "interactor_2": affected.get("label")
-                if isinstance(affected, dict)
-                else None,
-                "interactor_2_id": affected.get("id")
-                if isinstance(affected, dict)
-                else None,
-                "interaction_type": int_type,
-                "citation": citations[0].get("label")
-                if citations and isinstance(citations[0], dict)
-                else None,
-            }
-            # WormBase interaction types are prefixed, e.g. "physical:protein-DNA",
-            # "genetic:other", or "gi-module-three:diverging" (a genetic module).
-            lt = int_type.lower()
-            if lt.startswith("genetic") or lt.startswith("gi-"):
-                genetic.append(entry)
-            else:
-                physical.append(entry)
-
-        result = {
-            "wormbase_id": gene_id,
-            "total_interactions": len(edges),
+        genetic_total, genetic = rows(
+            "genetic-interactions", "geneGeneticInteraction"
+        )
+        data = {
+            "wormbase_id": _wb_id(curie),
+            "total_interactions": physical_total + genetic_total,
             "physical_count": len(physical),
-            "physical_interactions": physical[:150],
+            "total_physical_interactions": physical_total,
+            "physical_interactions": physical,
             "genetic_count": len(genetic),
-            "genetic_interactions": genetic[:150],
+            "total_genetic_interactions": genetic_total,
+            "genetic_interactions": genetic,
         }
-
-        return {
-            "status": "success",
-            "data": result,
-            "metadata": {
-                "source": "WormBase",
-                "query": gene_id,
-                "endpoint": "gene_interactions",
-            },
-        }
+        return self._envelope(
+            "gene_interactions",
+            curie,
+            data,
+            f"citation carries the aggregating source (interactionSource, e.g. "
+            f"'wormbase') rather than a publication. At most {_ROW_LIMIT} rows "
+            "of each kind are read; the totals are the upstream counts.",
+        )
 
     def _gene_human_diseases(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get human disease models (DOID) for a C. elegans gene by orthology."""
-        gene_input = arguments.get("gene_id", "")
-        if not gene_input:
-            return {
-                "status": "error",
-                "error": "gene_id parameter is required (e.g., 'WBGene00006818' or 'unc-86')",
-            }
-        gene_id = _resolve_wbgene_id(gene_input)
+        """Human disease associations, as Alliance's DO ribbon categories."""
+        curie, error = self._gene_required(arguments)
+        if error:
+            return error
 
-        url = f"{WORMBASE_BASE_URL}/field/gene/{gene_id}/human_diseases"
-        response = requests.get(
-            url,
-            headers={"Accept": "application/json"},
-            timeout=self.timeout,
+        payload = self._alliance(
+            f"/gene/{curie}/disease-ribbon-summary", body=[curie]
         )
-        response.raise_for_status()
-        data = response.json().get("human_diseases", {}).get("data") or {}
-
         diseases = []
-        if isinstance(data, dict):
-            for key in ("potential_model", "experimental_model", "disease_model"):
-                entries = data.get(key)
-                if not isinstance(entries, list):
-                    continue
-                for d in entries:
-                    if not isinstance(d, dict):
-                        continue
-                    ev = d.get("ev") or {}
-                    evidence_notes = []
-                    if isinstance(ev, dict):
-                        for vals in ev.values():
-                            if isinstance(vals, list):
-                                evidence_notes.extend(str(v) for v in vals)
-                    diseases.append(
-                        {
-                            "disease_id": d.get("id"),
-                            "disease_name": d.get("label"),
-                            "model_type": key,
-                            "evidence": evidence_notes,
-                        }
-                    )
-
-        result = {
-            "wormbase_id": gene_id,
-            "human_gene_ids": data.get("gene") if isinstance(data, dict) else None,
+        for category in payload.get("categories") or []:
+            if not isinstance(category, dict):
+                continue
+            diseases.append(
+                {
+                    "disease_id": category.get("id", ""),
+                    "disease_name": category.get("label", ""),
+                    # The ribbon is a summary by disease term and carries
+                    # neither the evidence codes nor the model type that
+                    # WormBase's human_diseases field did.
+                    "evidence": [],
+                    "model_type": "",
+                }
+            )
+        data = {
+            "wormbase_id": _wb_id(curie),
+            # The ribbon summarises by disease term, not by human gene.
+            "human_gene_ids": [],
             "disease_count": len(diseases),
             "diseases": diseases,
         }
-
-        return {
-            "status": "success",
-            "data": result,
-            "metadata": {
-                "source": "WormBase",
-                "query": gene_id,
-                "endpoint": "gene_human_diseases",
-            },
-        }
+        return self._envelope(
+            "gene_human_diseases",
+            curie,
+            data,
+            "diseases are Disease Ontology categories from Alliance's disease "
+            "ribbon (e.g. DOID:0050117 Infection), so evidence and model_type "
+            "are empty -- the ribbon summarises by term and carries neither. "
+            "human_gene_ids is empty too: it groups by disease rather than by "
+            "the human ortholog, which WormBase_get_orthologs answers.",
+        )

@@ -4,14 +4,20 @@ Unified Guideline Tools
 Consolidated clinical guidelines search tools from multiple sources.
 """
 
-import html
 import requests
 import time
 import re
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
-from markitdown import MarkItDown
+
+try:
+    from markitdown import MarkItDown
+
+    MARKITDOWN_AVAILABLE = True
+except ImportError:  # pragma: no cover - optional dependency
+    MARKITDOWN_AVAILABLE = False
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 
 
@@ -56,13 +62,36 @@ def _guideline_envelope(results, *, total, retrieved=None, source=None):
     return {"status": "success", "data": results, "metadata": metadata}
 
 
+def _is_specific_token(token):
+    """Reject short plain-English words that match almost any abstract.
+
+    Relevance filtering is a substring ``any()`` test, so a two-letter English
+    word such as "of" or "in" matches essentially every record and silently
+    disables the filter. Such words are only discarded when they are plain
+    ASCII letters: short non-Latin terms (医疗) and connected biomedical
+    identifiers (IL-6, COVID-19, H1N1) stay, since those are specific.
+    """
+    if len(token) >= 3:
+        return True
+    return not token.isascii() or not token.isalpha()
+
+
 def _extract_meaningful_terms(query):
     """Return significant query terms for relevance filtering."""
     if not isinstance(query, str):
         return []
 
-    # Keep alphabetic tokens with length >= 3
-    tokens = re.findall(r"[a-zA-Z]{3,}", query.lower())
+    # Keep connected biomedical identifiers as one token (COVID-19,
+    # HLA-B*57:01, IL-6) as well as Unicode terms.  Splitting at punctuation
+    # turns the numeric suffix into a broad substring filter (e.g. "2019"),
+    # which admits unrelated literature.  Numeric-only fragments are never
+    # useful evidence concepts, so discard them.
+    tokens = re.findall(r"[^\W_]+(?:[-*:/][^\W_]+)*", query.lower())
+    tokens = [
+        token
+        for token in tokens
+        if any(character.isalpha() for character in token) and _is_specific_token(token)
+    ]
     stop_terms = {
         "management",
         "care",
@@ -87,6 +116,34 @@ def _extract_meaningful_terms(query):
     }
     meaningful = [token for token in tokens if token not in stop_terms]
     return meaningful if meaningful else tokens
+
+
+def _markitdown():
+    """Build a converter, or say which extra supplies it.
+
+    The three call sites sit inside ``except Exception`` handlers that return
+    ``str(e)``, so raising here reaches the caller with the instruction intact.
+    """
+    if not MARKITDOWN_AVAILABLE:
+        raise RuntimeError(
+            f"markitdown is required to extract this guideline. "
+            f"{install_hint('documents', 'markitdown')}"
+        )
+    return MarkItDown()
+
+
+class _ContentUnavailable(Exception):
+    """A per-record content fetch failed; the record stays, without that text."""
+
+
+def _abstract_text_from_sections(element: ET.Element) -> str:
+    """Flatten every structured abstract section, preserving inline text."""
+    sections = element.findall(".//AbstractText")
+    return " ".join(
+        "".join(section.itertext()).strip()
+        for section in sections
+        if "".join(section.itertext()).strip()
+    )
 
 
 @register_tool()
@@ -390,28 +447,28 @@ class PubMedGuidelinesTool(BaseTool):
             )
             abstract_response.raise_for_status()
 
-            # Parse abstracts from XML
-            import re
-
+            # Parse abstracts from XML.  PubMed commonly splits a structured
+            # abstract into several AbstractText nodes (Background, Methods,
+            # Results, Conclusions); treating the first match as the complete
+            # abstract drops the evidence callers need to assess a guideline.
             abstracts = {}
-            xml_text = abstract_response.text
-            # Extract abstracts for each PMID
+            if abstract_response.text.strip():
+                try:
+                    abstract_root = ET.fromstring(abstract_response.text)
+                    records = abstract_root.findall(".//PubmedArticle")
+                    records.extend(abstract_root.findall(".//PubmedBookArticle"))
+                    for record in records:
+                        pmid = record.findtext(".//PMID")
+                        if pmid:
+                            abstracts[pmid] = _abstract_text_from_sections(record)
+                except ET.ParseError as e:
+                    return {
+                        "status": "error",
+                        "error": f"Failed to parse PubMed abstract XML: {e}",
+                        "source": "PubMed",
+                    }
             for pmid in pmids:
-                # Find abstract text for this PMID
-                pmid_pattern = rf"<PMID[^>]*>{pmid}</PMID>.*?<AbstractText[^>]*>(.*?)</AbstractText>"
-                abstract_match = re.search(pmid_pattern, xml_text, re.DOTALL)
-                if abstract_match:
-                    # Clean HTML tags from abstract
-                    abstract = re.sub(r"<[^>]+>", "", abstract_match.group(1))
-                    # Fix-R7B-2/R7E-1: this regex-based extraction never
-                    # actually parses the XML, so entity references like
-                    # "&#x2265;" (confirmed present verbatim in PubMed's raw
-                    # efetch XML for "&#x2265;" / "&#xe7;" etc.) were left
-                    # undecoded, unlike PubMed_search_articles which uses a
-                    # real XML parser that resolves them automatically.
-                    abstracts[pmid] = html.unescape(abstract).strip()
-                else:
-                    abstracts[pmid] = ""
+                abstracts.setdefault(pmid, "")
 
             # Process results
             results = []
@@ -540,15 +597,29 @@ class EuropePMCGuidelinesTool(BaseTool):
                 title = result.get("title", "")
                 pub_type = result.get("pubType", "")
 
-                # Get abstract from detailed API call
-                abstract = self._get_europepmc_abstract(result.get("pmid", ""))
+                # Get abstract from detailed API call. A failed fetch leaves the
+                # record without text and says so; it must neither sink the whole
+                # search nor put an error message where the abstract belongs.
+                content_unavailable = []
+                try:
+                    abstract = self._get_europepmc_abstract(result.get("pmid", ""))
+                except _ContentUnavailable as e:
+                    abstract = ""
+                    content_unavailable.append(str(e))
 
                 # If abstract is too short or just a question, try to get more content
                 if len(abstract) < 200 or abstract.endswith("?"):
-                    # Try to get full text or more detailed content
-                    abstract = self._get_europepmc_full_content(
-                        result.get("pmid", ""), result.get("pmcid", "")
-                    )
+                    # Try to get full text or more detailed content, keeping the
+                    # short abstract when there is nothing fuller to replace it.
+                    try:
+                        fuller = self._get_europepmc_full_content(
+                            result.get("pmid", ""), result.get("pmcid", "")
+                        )
+                    except _ContentUnavailable as e:
+                        fuller = ""
+                        content_unavailable.append(str(e))
+                    if fuller:
+                        abstract = fuller
 
                 # More strict guideline detection
                 title_lower = title.lower()
@@ -583,7 +654,7 @@ class EuropePMCGuidelinesTool(BaseTool):
                 if pmid:
                     url = f"https://europepmc.org/article/MED/{pmid}"
                 elif pmcid:
-                    url = f"https://europepmc.org/article/{pmcid}"
+                    url = f"https://europepmc.org/article/PMC/{pmcid}"
                 elif doi:
                     url = f"https://doi.org/{doi}"
 
@@ -608,6 +679,8 @@ class EuropePMCGuidelinesTool(BaseTool):
                         "url": url,
                         "source": "Europe PMC",
                     }
+                    if content_unavailable:
+                        guideline_result["content_unavailable"] = content_unavailable
 
                     results.append(guideline_result)
 
@@ -653,15 +726,14 @@ class EuropePMCGuidelinesTool(BaseTool):
             response = self.session.get(base_url, params=params, timeout=15)
             response.raise_for_status()
 
-            # Parse XML response
-            import xml.etree.ElementTree as ET
-
             root = ET.fromstring(response.content)
 
-            # Find abstract text
-            abstract_elem = root.find(".//AbstractText")
-            if abstract_elem is not None:
-                return abstract_elem.text or ""
+            # PubMed structured abstracts may have multiple sections and
+            # inline markup; retain each section instead of the first node's
+            # direct text only.
+            abstract = _abstract_text_from_sections(root)
+            if abstract:
+                return abstract
 
             # Try alternative path
             abstract_elem = root.find(".//abstract")
@@ -670,8 +742,12 @@ class EuropePMCGuidelinesTool(BaseTool):
 
             return ""
 
+        except ET.ParseError as e:
+            raise ValueError(f"Failed to parse Europe PMC abstract XML: {e}") from e
         except Exception as e:
-            return f"Error fetching abstract: {str(e)}"
+            raise _ContentUnavailable(
+                f"abstract for PMID {pmid}: {type(e).__name__}: {e}"
+            ) from e
 
     def _get_europepmc_full_content(self, pmid, pmcid):
         """Get more detailed content from Europe PMC."""
@@ -688,8 +764,6 @@ class EuropePMCGuidelinesTool(BaseTool):
             response = self.session.get(full_text_url, timeout=15)
             if response.status_code == 200:
                 # Parse XML to extract meaningful content
-                import xml.etree.ElementTree as ET
-
                 root = ET.fromstring(response.content)
 
                 # Extract sections that might contain clinical recommendations
@@ -728,7 +802,9 @@ class EuropePMCGuidelinesTool(BaseTool):
             return ""
 
         except Exception as e:
-            return f"Error fetching full content: {str(e)}"
+            raise _ContentUnavailable(
+                f"full text for {pmcid or 'PMID ' + str(pmid)}: {type(e).__name__}: {e}"
+            ) from e
 
 
 @register_tool()
@@ -892,7 +968,7 @@ class TRIPDatabaseTool(BaseTool):
                 return self._extract_dmj_guideline_content(url)
 
             # Fallback: generic MarkItDown extraction
-            md = MarkItDown()
+            md = _markitdown()
             result = md.convert(url)
 
             if not result or not getattr(result, "text_content", None):
@@ -977,7 +1053,7 @@ class TRIPDatabaseTool(BaseTool):
     def _extract_bmj_guideline_content(self, url):
         """Fetch BMJ Rapid Recommendation content with key recommendations."""
         try:
-            md = MarkItDown()
+            md = _markitdown()
             result = md.convert(url)
             if not result or not getattr(result, "text_content", None):
                 return {
@@ -1060,7 +1136,7 @@ class TRIPDatabaseTool(BaseTool):
     def _extract_dmj_guideline_content(self, url):
         """Fetch Diabetes & Metabolism Journal guideline content and GRADE statements."""
         try:
-            md = MarkItDown()
+            md = _markitdown()
             result = md.convert(url)
             if not result or not getattr(result, "text_content", None):
                 return {
@@ -1310,7 +1386,13 @@ class WHOGuidelinesTool(BaseTool):
         response = self.session.get(
             self.iris_search_url,
             params={"query": query, "size": size, "dsoType": "item"},
-            headers={"Accept": "application/json"},
+            # IRIS answers 403 to the browser-style User-Agent this session sends to
+            # www.who.int (and to python-requests' default one) but serves an
+            # identified API client, so say who is asking.
+            headers={
+                "Accept": "application/json",
+                "User-Agent": "ToolUniverse/1.0 (+https://github.com/mims-harvard/ToolUniverse)",
+            },
             timeout=30,
         )
         response.raise_for_status()
@@ -1408,6 +1490,9 @@ class OpenAlexGuidelinesTool(BaseTool):
 
     def _search_openalex_guidelines(self, query, limit, year_from=None, year_to=None):
         """Search for clinical guidelines using OpenAlex API."""
+        if limit == 0:
+            return _guideline_envelope([], total=0, retrieved=0, source="OpenAlex")
+
         try:
             # Build search query to focus on guidelines
             search_query = (
@@ -1761,7 +1846,10 @@ class NICEGuidelineFullTextTool(BaseTool):
                 "full_text_length": len(full_text),
                 "sections_count": len(content_sections),
                 "recommendations": recommendations[:20] if recommendations else None,
-                "recommendations_count": len(recommendations) if recommendations else 0,
+                "recommendations_count": len(recommendations[:20])
+                if recommendations
+                else 0,
+                "total_recommendations": len(recommendations) if recommendations else 0,
                 "source": "NICE",
                 "content_type": "full_guideline",
             }

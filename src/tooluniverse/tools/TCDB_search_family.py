@@ -9,6 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def TCDB_search_family(
+    family_id: Optional[str] = None,
+    family_name: Optional[str] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -19,7 +23,14 @@ def TCDB_search_family(
 
     Parameters
     ----------
-    No parameters
+    family_id : str
+        TC family ID or prefix to search (e.g., '2.A.1' for Major Facilitator Superfa...
+    family_name : str
+        Text to search in family descriptions (e.g., 'Major Facilitator', 'ABC', 'glu...
+    limit : int
+        Maximum number of families to return per page (default 20, max 100). This cap...
+    offset : int
+        Number of matching families to skip before returning a page (default 0). Comb...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,7 +45,16 @@ def TCDB_search_family(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "family_id": family_id,
+            "family_name": family_name,
+            "limit": limit,
+            "offset": offset,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "TCDB_search_family",

@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def eBird_get_taxon_groups(
     speciesGrouping: str,
-    groupNameLocale: Optional[str | Any] = None,
+    groupNameLocale: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def eBird_get_taxon_groups(
     ----------
     speciesGrouping : str
         Grouping system to use. 'merlin' returns ~30 simplified groups used in the Me...
-    groupNameLocale : str | Any
+    groupNameLocale : str
         Language code for group names (e.g., 'en' for English, 'es' for Spanish, 'fr'...
     stream_callback : Callable, optional
         Callback for streaming output

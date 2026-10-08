@@ -7,10 +7,10 @@ data from NCBI. The API covers gene metadata, gene orthologs, genome
 assembly reports, and taxonomic classification across all organisms.
 
 API: https://api.ncbi.nlm.nih.gov/datasets/v2
-No authentication required (optional API key for higher rate limits).
+No authentication required (optional request-scoped or environment API key for higher
+rate limits).
 """
 
-import os
 import time
 from typing import Any, Dict
 from urllib.parse import quote
@@ -44,10 +44,15 @@ class NCBIDatasetsTool(BaseTool):
     def __init__(self, tool_config: Dict[str, Any]):
         super().__init__(tool_config)
         self.timeout = tool_config.get("timeout", 30)
-        self.api_key = os.environ.get("NCBI_API_KEY", "").strip()
         self.endpoint_type = tool_config.get("fields", {}).get(
             "endpoint_type", "gene_by_id"
         )
+
+    @property
+    def api_key(self) -> str:
+        """Resolve the optional NCBI key from the active request."""
+
+        return (self.credential("NCBI_API_KEY") or "").strip()
 
     def _headers(self) -> Dict[str, str]:
         """Build request headers without exposing the optional API key as input."""

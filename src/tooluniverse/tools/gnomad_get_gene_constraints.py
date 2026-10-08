@@ -15,7 +15,7 @@ def gnomad_get_gene_constraints(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get gene constraint metrics from gnomAD for a gene symbol (GRCh38). Returns constraint fields und...
 
@@ -34,7 +34,7 @@ def gnomad_get_gene_constraints(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -543,7 +543,8 @@ class DepMapTool(BaseTool):
                 "data": {
                     "query": query,
                     "genes": genes[:20],
-                    "count": len(genes),
+                    "count": len(genes[:20]),
+                    "total_genes": len(genes),
                 },
             }
         except requests.exceptions.Timeout:

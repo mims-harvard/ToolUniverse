@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def Bioconductor_search_packages(
     q: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def Bioconductor_search_packages(
     ----------
     q : str
         Search query for Bioconductor packages. Can be a keyword, analysis type, or t...
-    limit : int | Any
+    limit : int
         Maximum number of results to return (default: 10, max: 100)
     stream_callback : Callable, optional
         Callback for streaming output

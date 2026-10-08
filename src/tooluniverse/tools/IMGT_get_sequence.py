@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def IMGT_get_sequence(
     accession: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_sequence",
     format: Optional[str] = "fasta",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

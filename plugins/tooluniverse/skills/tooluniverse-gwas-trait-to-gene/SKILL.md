@@ -76,7 +76,7 @@ This skill enables systematic discovery of genes linked to diseases/traits by an
 - `gwas_search_associations` - Search associations with filters (RECOMMENDED for trait lookups)
 - `gwas_search_studies` - Search studies by trait/cohort
 - `gwas_get_associations_for_snp` - Get all associations for a SNP
-- `gwas_get_variants_for_trait` - Get variants for a trait. **Supports `p_value_threshold` parameter** for server-side filtering (see notes below)
+- `gwas_get_variants_for_trait` - Get variants for a trait. **No p-value threshold parameter** (one passed in is silently ignored) -- filter client-side on `pvalue_mantissa`/`pvalue_exponent` (see notes below)
 - `gwas_get_studies_for_trait` - Get studies for a trait
 - `gwas_get_snps_for_gene` - Get SNPs mapped to a gene. **Parameter is `gene_symbol`** (NOT `mapped_gene`)
 - `gwas_get_associations_for_study` - Get associations from a study
@@ -181,23 +181,24 @@ discover_gwas_genes(
 
 ### `gwas_get_variants_for_trait` -- p-value Filtering
 
-This tool now accepts an optional `p_value_threshold` parameter for server-side
-p-value filtering. When provided, the GWAS Catalog API filters variants to only
-return those below the specified threshold.
+This tool has **no p-value threshold parameter**. A `p_value_threshold=...` argument is
+silently ignored (verified live: output identical with and without it), so filter the
+returned associations yourself. Use `sort="p_value", direction="asc"` to get the strongest
+associations first, and `page`/`size` to page (`metadata.pagination.totalElements` is the total).
 
 ```python
-# Server-side filtering (preferred -- reduces data transfer)
 result = tu.tools.gwas_get_variants_for_trait(
-    trait="type 2 diabetes",
-    p_value_threshold=5e-8
+    trait="type 2 diabetes", size=200, sort="p_value", direction="asc"
 )
+
+def genome_wide_significant(a, exp=-8, mant=5):        # p < 5e-8
+    return (a['pvalue_exponent'], a['pvalue_mantissa']) < (exp, mant)
+
+hits = [a for a in result['data'] if genome_wide_significant(a)]
 ```
 
-**Client-side fallback**: When the API returns unfiltered results (some trait
-queries ignore the threshold parameter), the tool also applies client-side
-p-value filtering. This means you may see fewer results than expected if the
-API returned pre-filtered data and the client filter applies again. Always
-check the actual p-values in the returned data.
+Filter on `pvalue_mantissa` and `pvalue_exponent`, not `p_value`: the `p_value` float underflows
+to `0.0` for very small p-values (e.g. 3 x 10^-1315), so it cannot be compared to a threshold.
 
 ### `gwas_get_associations_for_trait` -- BROKEN
 

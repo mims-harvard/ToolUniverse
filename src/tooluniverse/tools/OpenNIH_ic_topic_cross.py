@@ -29,11 +29,11 @@ def OpenNIH_ic_topic_cross(
     query : str
         Research topic or RCDC category.
     fiscal_year_start : int
-
+        First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed f...
     fiscal_year_end : int
-
+        Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below ...
     match_strategy : str
-
+        How to match the topic: auto uses official RCDC categories when coverage perm...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

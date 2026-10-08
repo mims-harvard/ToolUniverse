@@ -11,8 +11,10 @@ from ._shared_client import get_shared_client
 def PharmGKB_get_drug_label_annotations(
     label_id: Optional[str] = None,
     source: Optional[str] = None,
+    drug_name: Optional[str] = None,
     limit: Optional[int] = None,
     id: Optional[str] = None,
+    drug: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,10 +29,14 @@ def PharmGKB_get_drug_label_annotations(
         PharmGKB Label Annotation ID (e.g., 'PA166114907' for the FDA bosutinib label...
     source : str
         Regulatory agency for the listing mode. One of FDA, EMA, HCSC, PMDA. Defaults...
+    drug_name : str
+        Filter the listing to annotations whose name mentions this drug (case-insensi...
     limit : int
         Maximum number of label annotations to return in listing mode (default 50, ma...
     id : str
         Alias for label_id.
+    drug : str
+        Alias for drug_name.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -50,8 +56,10 @@ def PharmGKB_get_drug_label_annotations(
         for k, v in {
             "label_id": label_id,
             "source": source,
+            "drug_name": drug_name,
             "limit": limit,
             "id": id,
+            "drug": drug,
         }.items()
         if v is not None
     }

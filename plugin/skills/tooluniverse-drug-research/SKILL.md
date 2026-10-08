@@ -89,7 +89,14 @@ Step 12: Document all sources -> Update Section 11 (Data Sources)
 
 4. PharmGKB_search_drugs(query=drug_name)
    -> Extract: PharmGKB ID (PA...)
+
+5. DrugCentral_search(query=drug_name, size=...)
+   -> Extract: InChIKey, CAS number, canonical SMILES, cross-referenced FDA/EMA/PMDA approval status in one call
 ```
+
+**DrugCentral** (live-verified: `DrugCentral_search`, `DrugCentral_get_drug`, `DrugCentral_get_targets`) is a useful fifth disambiguation source and a fast Path 2 (Mechanism & Targets) shortcut — `DrugCentral_get_targets(chem_id=<InChIKey or ChEMBL ID>)` returns target names/classes directly, which can cross-check (not replace) the ChEMBL-activities-derived target table this skill's Path 2 already builds. Real example: `DrugCentral_search(query="metformin")` returns InChIKey `XZWYZXLIPXDOLR-UHFFFAOYSA-N`; `DrugCentral_get_targets` on that InChIKey returns `5'-AMP-activated protein kinase` among its targets.
+
+**Dietary supplements are not in PubChem/ChEMBL/DailyMed/DrugCentral as prescription drugs — check the NIH DSLD instead.** If the query resolves to zero hits in the chain above (or the user is clearly asking about an OTC vitamin/herbal/supplement product, e.g. "vitamin D gummies" or a specific brand), use `NIHDSLD_search_products(query=<name or brand>)` -> `NIHDSLD_get_label(product_id=...)` for the full per-serving ingredient list with amounts and %daily value. Live-verified: `NIHDSLD_search_products(query="vitamin d")` returns real product `20581` ("Vitamin D Gummy Vitamins", Nutrition Now); `NIHDSLD_get_label(20581)` returns its full label (2000 IU Vitamin D at 500% daily value per 2-gummy serving, plus calories/carbs/sugar) and an `off_market` flag. This complements rather than replaces the prescription-drug paths above — supplements have no FDA approval/mechanism-of-action data, so most other report sections legitimately stay "not applicable" for a supplement query.
 
 ### Handle Naming Ambiguity
 

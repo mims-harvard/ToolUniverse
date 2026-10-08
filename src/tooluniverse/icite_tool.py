@@ -5,12 +5,10 @@ not keyword search. This tool bridges the gap by first searching PubMed via
 eSearch to get PMIDs, then fetching iCite citation metrics for those PMIDs.
 """
 
-import os
-import time
-import threading
 from typing import Any, Dict
 from .base_rest_tool import BaseRESTTool
 from .http_utils import request_with_retry
+from .provider_rate_limit import enforce_provider_rate_limit
 from .tool_registry import register_tool
 
 
@@ -22,21 +20,12 @@ class ICiteSearchPublicationsTool(BaseRESTTool):
     This tool first queries PubMed eSearch, then batch-fetches iCite metrics.
     """
 
-    _last_request_time = 0.0
-    _rate_limit_lock = threading.Lock()
-
     PUBMED_ESEARCH = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
     ICITE_API = "https://icite.od.nih.gov/api/pubs"
 
     def _enforce_rate_limit(self) -> None:
-        has_key = bool(os.environ.get("NCBI_API_KEY"))
-        min_interval = 0.15 if has_key else 0.4
-        with self._rate_limit_lock:
-            now = time.time()
-            elapsed = now - ICiteSearchPublicationsTool._last_request_time
-            if elapsed < min_interval:
-                time.sleep(min_interval - elapsed)
-            ICiteSearchPublicationsTool._last_request_time = time.time()
+        api_key = self.credential("NCBI_API_KEY") or ""
+        enforce_provider_rate_limit("ncbi", api_key, 10.0 if api_key else 3.0)
 
     def _search_pubmed(self, query: str, limit: int) -> list:
         """Search PubMed eSearch and return list of PMID strings."""
@@ -48,7 +37,7 @@ class ICiteSearchPublicationsTool(BaseRESTTool):
             "retmax": limit,
             "sort": "relevance",
         }
-        api_key = os.environ.get("NCBI_API_KEY")
+        api_key = self.credential("NCBI_API_KEY")
         if api_key:
             params["api_key"] = api_key
 

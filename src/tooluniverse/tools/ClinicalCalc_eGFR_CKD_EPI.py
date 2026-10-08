@@ -12,6 +12,7 @@ def ClinicalCalc_eGFR_CKD_EPI(
     creatinine: float,
     age: float,
     female: Optional[bool] = None,
+    sex: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,11 +24,13 @@ def ClinicalCalc_eGFR_CKD_EPI(
     Parameters
     ----------
     creatinine : float
-        Serum creatinine in mg/dL
+        Serum creatinine in mg/dL. Must be greater than 0; a value below 0.2 is under...
     age : float
-        Age in years
+        Age in years. Must be greater than 0. CKD-EPI 2021 was derived in adults; an ...
     female : bool
-        Female sex
+        Female sex (legacy boolean; equivalent to sex='female'). If both 'female' and...
+    sex : str
+        Biological sex: 'female'/'f' or 'male'/'m' (case-insensitive). Preferred over...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def ClinicalCalc_eGFR_CKD_EPI(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"creatinine": creatinine, "age": age, "female": female}.items()
+        for k, v in {
+            "creatinine": creatinine,
+            "age": age,
+            "female": female,
+            "sex": sex,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

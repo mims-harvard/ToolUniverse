@@ -23,7 +23,7 @@ def resolve_disease(tu, disease_name):
         }
 
     # Fallback: OLS EFO search
-    ols_result = tu.tools.ols_search_efo_terms(query=disease_name, limit=5)
+    ols_result = tu.tools.ols_search_efo_terms(query=disease_name, rows=5)
     ols_terms = ols_result.get('data', {}).get('terms', [])
     if ols_terms:
         term = ols_terms[0]

@@ -1,0 +1,334 @@
+name: Publish MCPB bundle
+
+# Builds the Claude Desktop bundle and replaces the asset on the `mcpb` release.
+#
+# This used to be a manual step, and that is how a broken bundle reached users:
+# it was built by hand in the window between two fixes landing, so the published
+# file was a stale build that could not start at all. Nothing noticed, because
+# nothing compares the published artifact to the code.
+#
+# The gate is deliberately self-healing, for the same reason publish-pypi.yml
+# compares against PyPI rather than HEAD~1: it reads the version out of the
+# *currently published* .mcpb and rebuilds whenever that disagrees with
+# pyproject.toml. Any drift — a missed run, a hand-uploaded stale file, a failed
+# upload — is corrected by the next push to main rather than persisting until
+# someone unpacks the release asset by hand.
+#
+# Nothing is uploaded until the freshly built bundle has actually started and
+# completed an MCP handshake (mcpb/smoke_test.py) -- on Linux *and* on Windows.
+# A bundle that cannot boot fails the job instead of reaching the release page.
+#
+# Windows is checked here and not only in mcpb-smoke.yml because the two gates
+# answer different questions. mcpb-smoke.yml stops a bad launcher from being
+# merged; this stops one from being published. A bundle that could never start
+# on Windows reached the release page once already (issue #684), and at that
+# point the pull request gate is behind you.
+#
+# The build runs once and the artifact is carried between jobs, so the bytes
+# that were started on both platforms are the exact bytes uploaded. Building
+# again in the publish job would have published something nothing had booted.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    # No paths filter, matching publish-pypi.yml: large squash-merges have been
+    # observed not to fire path-filtered workflows even when the path was in the
+    # diff. The version check below is cheap and short-circuits.
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-mcpb
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: Is the published bundle behind?
+    runs-on: ubuntu-latest
+    outputs:
+      should_publish: ${{ steps.check.outputs.should_publish }}
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compare pyproject version against the published bundle
+        id: check
+        run: |
+          set -euo pipefail
+
+          REPO_VERSION=$(python3 -c "
+          import re
+          print(re.search(r'version\s*=\s*\"([^\"]+)\"', open('pyproject.toml').read()).group(1))
+          ")
+          echo "pyproject.toml version: $REPO_VERSION"
+
+          # Read the version out of the asset that users actually download.
+          PUBLISHED=""
+          if curl -fsSL -o /tmp/published.mcpb \
+              "https://github.com/${{ github.repository }}/releases/download/mcpb/tooluniverse.mcpb" 2>/dev/null; then
+            PUBLISHED=$(python3 -c "
+          import json, zipfile
+          try:
+              print(json.loads(zipfile.ZipFile('/tmp/published.mcpb').read('manifest.json'))['version'])
+          except Exception:
+              print('')
+          ")
+            # The manifest version is not the whole story. The bundle installs
+            # whatever its uv.lock pins, and that is resolved at build time --
+            # so a build that lands in the minute before the release reaches
+            # PyPI pins the *previous* release, and keeps pinning it until the
+            # next version bump, because the two manifest versions agree.
+            # 1.5.4 shipped exactly that way: manifest 1.5.4, lock 1.5.3, and a
+            # fresh install therefore got the older dependency set until the
+            # launcher's daily refresh moved it.
+            LOCKED=$(python3 -c "
+          import re, zipfile
+          try:
+              lock = zipfile.ZipFile('/tmp/published.mcpb').read('uv.lock').decode()
+              print(re.search(r'name = \"tooluniverse\"\nversion = \"([^\"]+)\"', lock).group(1))
+          except Exception:
+              print('')
+          ")
+          fi
+          # Neither version tells you whether the launcher changed. The bundle
+          # carries its own code, and a fix to it at an unchanged version was
+          # invisible to this gate: issue #684 (the Windows launcher could never
+          # start) would have been fixed in the repo and still broken on the
+          # release page until the next version bump. Compare the files the
+          # build copies in verbatim; uv.lock is generated, so it is excluded
+          # and covered by the LOCKED check above.
+          LAUNCHER_DRIFT=no
+          if [ -s /tmp/published.mcpb ]; then
+            LAUNCHER_DRIFT=$(python3 -c "
+          import hashlib, pathlib, zipfile
+          tracked = [
+              'manifest.json', 'pyproject.toml', '.python-version',
+              'src/bootstrap.py', 'src/run_stdio.py',
+          ]
+          def digest(blob):
+              return hashlib.sha256(blob).hexdigest()
+          try:
+              published = zipfile.ZipFile('/tmp/published.mcpb')
+              names = set(published.namelist())
+          except Exception:
+              print('unknown'); raise SystemExit(0)
+          for name in tracked:
+              local = pathlib.Path('mcpb') / name
+              if not local.is_file():
+                  print('unknown'); break
+              if name not in names:
+                  print(name); break
+              if digest(published.read(name)) != digest(local.read_bytes()):
+                  print(name); break
+          else:
+              print('no')
+          ")
+          fi
+          echo "published bundle version: ${PUBLISHED:-<unavailable>}"
+          echo "published bundle installs: ${LOCKED:-<unavailable>}"
+          echo "launcher drift: $LAUNCHER_DRIFT"
+
+          # Republish on any disagreement, not just "newer". A published bundle
+          # ahead of the repo is also wrong, and that is precisely the stale
+          # hand-built state this is meant to correct.
+          # A manual run means someone wants the artifact rebuilt; asking it to
+          # decide for itself defeats the point of the button.
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual run — rebuilding regardless"
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          elif [ "$REPO_VERSION" != "$PUBLISHED" ]; then
+            echo "Bundle is out of date — will rebuild and publish"
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          elif [ -n "$LOCKED" ] && [ "$LOCKED" != "$REPO_VERSION" ]; then
+            echo "Bundle installs $LOCKED but this is $REPO_VERSION — will rebuild"
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          elif [ "$LAUNCHER_DRIFT" != "no" ]; then
+            echo "Published bundle's $LAUNCHER_DRIFT differs from this repo — will rebuild"
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Published bundle already matches — nothing to do"
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+          fi
+          echo "version=$REPO_VERSION" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build the bundle
+    needs: check
+    if: needs.check.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # build.sh is POSIX-only: it drives python3 with shell paths, which under
+      # the Git Bash on windows-latest arrive at a native Windows python as
+      # "/d/a/...". Nothing about producing the zip is platform-specific, and
+      # releases are built here, so this stays on Linux and only the launch is
+      # exercised per platform.
+      # This workflow and publish-pypi.yml start on the same push, so the build
+      # used to resolve uv.lock before the new release was on PyPI and pin the
+      # previous one. 1.5.4 shipped with lock 1.5.3, 1.5.5 with 1.5.4, and the
+      # 1.5.6 build started 45 s before its wheel was uploaded and locked 1.5.5.
+      # Every fresh install then started one release behind and immediately
+      # self-updated -- the update a slow Windows machine cannot finish in the
+      # launcher's 8 s. Wait until pip can actually fetch this version.
+      - name: Wait until this version can be installed from PyPI
+        env:
+          VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          set -euo pipefail
+          for attempt in $(seq 1 40); do
+            if python -m pip download --quiet --no-deps --no-cache-dir \
+                --dest /tmp/pypi-probe "tooluniverse==$VERSION" 2>/dev/null; then
+              echo "tooluniverse $VERSION is installable (attempt $attempt)"
+              exit 0
+            fi
+            echo "tooluniverse $VERSION not on PyPI yet (attempt $attempt); waiting 30 s"
+            sleep 30
+          done
+          echo "::error::tooluniverse $VERSION never became installable from PyPI"
+          exit 1
+
+      - name: Build the bundle
+        run: bash mcpb/build.sh
+
+      # Belt and braces for the wait above: never upload a bundle whose lock
+      # installs a different release than its manifest names.
+      - name: The lock installs this release
+        env:
+          VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          set -euo pipefail
+          LOCKED=$(python3 -c "
+          import re, zipfile
+          lock = zipfile.ZipFile('dist/tooluniverse.mcpb').read('uv.lock').decode()
+          print(re.search(r'name = \"tooluniverse\"\nversion = \"([^\"]+)\"', lock).group(1))
+          ")
+          echo "bundle $VERSION locks tooluniverse $LOCKED"
+          if [ "$LOCKED" != "$VERSION" ]; then
+            echo "::error::bundle $VERSION would install tooluniverse $LOCKED"
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tooluniverse-mcpb-candidate
+          path: dist/tooluniverse.mcpb
+          retention-days: 7
+          if-no-files-found: error
+
+  smoke:
+    name: Start it (${{ matrix.os }})
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Report both platforms rather than cancelling the other on the first
+      # failure; which one broke is the first thing anyone asks.
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: tooluniverse-mcpb-candidate
+          path: dist
+
+      # The gate the manual process lacked. smoke_test.py unpacks under a
+      # directory with a space in its name and launches with the command out of
+      # the manifest, the way Desktop does. `python`, not `python3`: the Windows
+      # runner has no python3 on PATH.
+      - name: Start it and complete an MCP handshake
+        run: python mcpb/smoke_test.py dist/tooluniverse.mcpb --timeout 1500
+
+  publish:
+    name: Upload the bundle that booted
+    needs: smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write # replacing the release asset
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: tooluniverse-mcpb-candidate
+          path: dist
+
+      - name: Upload to the mcpb release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          gh release upload mcpb dist/tooluniverse.mcpb \
+            --repo "${{ github.repository }}" --clobber
+
+      - name: Verify what is now published
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Upload succeeding is not the same as the right bytes being served.
+          #
+          # Release assets are served through a CDN, so for a short window
+          # after --clobber the download URL can still return the previous
+          # bytes. A single check would then fail a publish that actually
+          # worked -- and a red publish job invites exactly the manual
+          # re-upload this workflow exists to remove. Retry before believing
+          # a mismatch.
+          LOCAL=$(sha256sum dist/tooluniverse.mcpb | cut -d' ' -f1)
+          echo "local : $LOCAL"
+          URL="https://github.com/${{ github.repository }}/releases/download/mcpb/tooluniverse.mcpb"
+          REMOTE=""
+          for attempt in 1 2 3 4 5 6; do
+            if curl -fsSL --retry 2 -o /tmp/roundtrip.mcpb "$URL"; then
+              REMOTE=$(sha256sum /tmp/roundtrip.mcpb | cut -d' ' -f1)
+              echo "remote (attempt $attempt): $REMOTE"
+              [ "$LOCAL" = "$REMOTE" ] && break
+            else
+              echo "remote (attempt $attempt): download failed"
+            fi
+            sleep $((attempt * 10))
+          done
+          if [ "$LOCAL" != "$REMOTE" ]; then
+            echo "::error::published asset still does not match the bundle built here after retries (local=$LOCAL remote=${REMOTE:-<none>})"
+            exit 1
+          fi
+          VERSION=$(python3 -c "
+          import json, zipfile
+          print(json.loads(zipfile.ZipFile('/tmp/roundtrip.mcpb').read('manifest.json'))['version'])
+          ")
+          echo "published version: $VERSION"
+          {
+            echo "## MCPB bundle published"
+            echo
+            echo "- version: \`$VERSION\`"
+            echo "- sha256: \`$LOCAL\`"
+            echo "- started and completed an MCP handshake on Linux and Windows before upload"
+          } >> "$GITHUB_STEP_SUMMARY"

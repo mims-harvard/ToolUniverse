@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def OpenFoodFacts_search_products(
     search_terms: str,
-    page_size: Optional[int | Any] = None,
-    page: Optional[int | Any] = None,
+    page_size: Optional[int] = 50,
+    page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def OpenFoodFacts_search_products(
     ----------
     search_terms : str
         Food product name or brand to search for. Examples: 'nutella', 'coca cola', '...
-    page_size : int | Any
-        Number of results per page (1-100). Default: 10
-    page : int | Any
+    page_size : int
+        Number of results per page (1-100). Defaults to 50, which is what an unparame...
+    page : int
         Page number for pagination. Default: 1
     stream_callback : Callable, optional
         Callback for streaming output

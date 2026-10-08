@@ -49,6 +49,27 @@ def _summarize_study(study: Dict[str, Any], description_chars: int) -> Dict[str,
     }
 
 
+def _phrase_query(query):
+    """Quote a query whose precision a one- or two-letter token would destroy.
+
+    The portal drops very short tokens, so an unquoted "B cell" matches on
+    "cell" alone: it returns 734 studies, the same as "T cell" (732) and as
+    "cell" itself (732), none of them about B cells. Quoting searches the
+    phrase and returns 73 on-target studies.
+
+    Longer multi-word queries are left alone, because there the unquoted form
+    is the better one -- "lung adenocarcinoma" finds 90 studies against 3 for
+    the quoted phrase.
+    """
+    stripped = query.strip()
+    if len(stripped) > 1 and stripped[0] == stripped[-1] == '"':
+        return stripped, False
+    tokens = stripped.split()
+    if len(tokens) > 1 and any(len(token) <= 2 for token in tokens):
+        return f'"{stripped}"', True
+    return stripped, False
+
+
 @register_tool("SingleCellPortalTool")
 class SingleCellPortalTool(BaseTool):
     """
@@ -123,6 +144,8 @@ class SingleCellPortalTool(BaseTool):
     def _search_studies(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Keyword search across study titles, descriptions, and metadata."""
         query = arguments.get("query")
+        if query is not None:
+            query = str(query).strip()
         if not query:
             return {
                 "status": "error",
@@ -130,8 +153,9 @@ class SingleCellPortalTool(BaseTool):
                 "(e.g., 'lung', 'glioblastoma', 'COVID-19').",
             }
 
+        effective_query, quoted = _phrase_query(str(query))
         url = f"{SCP_BASE_URL}/search"
-        params = {"type": "study", "terms": query}
+        params = {"type": "study", "terms": effective_query}
         page = arguments.get("page")
         if isinstance(page, int) and page > 0:
             params["page"] = page
@@ -157,6 +181,8 @@ class SingleCellPortalTool(BaseTool):
             "data": results,
             "metadata": {
                 "query": query,
+                "effective_query": effective_query,
+                "phrase_quoted": quoted,
                 "total_matching": raw.get("total_studies"),
                 "total_pages": raw.get("total_pages"),
                 "current_page": raw.get("current_page"),

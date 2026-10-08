@@ -1,7 +1,7 @@
 """
 ExpressionAtlas_get_baseline
 
-Get baseline gene expression experiments from EBI Expression Atlas. Shows which tissues/cell type...
+List baseline gene expression experiments in EBI Expression Atlas for a given species. The `gene`...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,15 @@ from ._shared_client import get_shared_client
 def ExpressionAtlas_get_baseline(
     gene: str,
     species: Optional[str] = "homo sapiens",
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Get baseline gene expression experiments from EBI Expression Atlas. Shows which tissues/cell type...
+    List baseline gene expression experiments in EBI Expression Atlas for a given species. The `gene`...
 
     Parameters
     ----------
@@ -25,6 +27,10 @@ def ExpressionAtlas_get_baseline(
         Gene symbol (e.g., 'TP53', 'WDR7') or Ensembl ID (e.g., 'ENSG00000141510')
     species : str
         Species name (default: 'homo sapiens'). Also supports 'mus musculus', 'rattus...
+    limit : int
+        Maximum number of experiments to return (default 50, max 500). Compare with t...
+    offset : int
+        Zero-based index of the first experiment to return, for paging through result...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,13 +40,20 @@ def ExpressionAtlas_get_baseline(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"gene": gene, "species": species}.items() if v is not None
+        k: v
+        for k, v in {
+            "gene": gene,
+            "species": species,
+            "limit": limit,
+            "offset": offset,
+        }.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

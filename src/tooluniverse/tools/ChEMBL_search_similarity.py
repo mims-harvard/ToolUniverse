@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ChEMBL_search_similarity(
     smiles: str,
-    threshold: int,
+    threshold: Optional[int] = 80,
     limit: Optional[int] = 20,
     offset: Optional[int] = 0,
     *,

@@ -1,7 +1,7 @@
 """
 Alliance_search_genes
 
-Search for genes across all model organisms in the Alliance of Genome Resources. Searches by gene...
+Search for genes across all model organisms in the Alliance of Genome Resources. Matches by gene ...
 """
 
 from typing import Any, Optional, Callable
@@ -17,12 +17,12 @@ def Alliance_search_genes(
     validate: bool = True,
 ) -> Any:
     """
-    Search for genes across all model organisms in the Alliance of Genome Resources. Searches by gene...
+    Search for genes across all model organisms in the Alliance of Genome Resources. Matches by gene ...
 
     Parameters
     ----------
     query : str
-        Gene name, symbol, or keyword to search for. Examples: 'insulin', 'tumor prot...
+        Gene symbol or synonym to search for (not a descriptive name). Examples: 'INS...
     limit : int
         Maximum number of results to return (1-50). Default: 10.
     stream_callback : Callable, optional

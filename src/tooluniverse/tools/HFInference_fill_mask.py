@@ -9,16 +9,16 @@ from ._shared_client import get_shared_client
 
 
 def HFInference_fill_mask(
-    operation: str,
     model_id: str,
     text: str,
+    operation: Optional[str] = "fill_mask",
     top_k: Optional[int] = None,
     wait_for_model: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Predict the most likely token(s) for a masked position using any HuggingFace fill-mask (masked-LM...
 
@@ -43,7 +43,7 @@ def HFInference_fill_mask(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

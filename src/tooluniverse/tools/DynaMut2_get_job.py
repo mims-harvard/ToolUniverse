@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def DynaMut2_get_job(
-    operation: str,
     job_id: str,
-    endpoint: Optional[str | Any] = "prediction_single",
+    operation: Optional[str] = "get_job",
+    endpoint: Optional[str] = "prediction_single",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def DynaMut2_get_job(
         Operation type
     job_id : str
         DynaMut2 job identifier returned from a previous predict_stability call.
-    endpoint : str | Any
+    endpoint : str
         API endpoint for the job type. Default: 'prediction_single'. Other options: '...
     stream_callback : Callable, optional
         Callback for streaming output

@@ -19,7 +19,6 @@ code (or an uploaded structure — not exposed here).
 
 import hashlib
 import hmac
-import os
 from typing import Any, Dict
 
 import requests
@@ -122,8 +121,8 @@ class ClusProSubmitPeptideDockingTool(BaseTool):
     """Submit a ClusPro peptide-docking job; returns the job id."""
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        username = os.environ.get("CLUSPRO_USERNAME")
-        secret = os.environ.get("CLUSPRO_API_SECRET")
+        username = self.credential("CLUSPRO_USERNAME")
+        secret = self.credential("CLUSPRO_API_SECRET")
         if not username or not secret:
             return _err(
                 "Requires a free academic ClusPro account: set CLUSPRO_USERNAME "

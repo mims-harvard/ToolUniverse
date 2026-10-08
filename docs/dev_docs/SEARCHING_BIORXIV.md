@@ -29,14 +29,13 @@ tu = ToolUniverse()
 
 # Search for bioRxiv preprints using Europe PMC
 result = tu.run({"name": "EuropePMC_search_articles", "arguments": {
-   "query": "CRISPR gene editing",
-   "source": "PPR",  # Preprints only
-   "pageSize": 20
+   "query": "CRISPR gene editing AND SRC:PPR",  # SRC:PPR = preprints only
+   "limit": 20
 }})
 
 # Get full metadata from bioRxiv once you have the DOI
 if result and result.get('status') == 'success':
-   for article in result['data']['resultList']['result']:
+   for article in result['data']:
        doi = article.get('doi')
        if doi and doi.startswith('10.1101/'):
            preprint = tu.run({"name": "BioRxiv_get_preprint", "arguments": {"doi": doi}})
@@ -72,9 +71,12 @@ Semantic Scholar also indexes bioRxiv:
 
 ```python
 result = tu.run({"name": "SemanticScholar_search_papers", "arguments": {
-   "query": "CRISPR gene editing",
-   "venue": "bioRxiv"
+   "query": "CRISPR gene editing bioRxiv",
+   "limit": 20
 }})
+
+# The tool has no venue filter; keep the bioRxiv records client-side
+biorxiv = [p for p in result if "biorxiv" in (p.get("journal") or "").lower()]
 ```
 
 ### Option 4: Local Data Dumps (Advanced)
@@ -137,14 +139,13 @@ result = tu.run({"name": "BioRxiv_search_preprints", "arguments": {
 ```python
 # Step 1: Search using Europe PMC
 search_result = tu.run({"name": "EuropePMC_search_articles", "arguments": {
-   "query": "CRISPR",
-   "source": "PPR",
-   "pageSize": 10
+   "query": "CRISPR AND SRC:PPR",
+   "limit": 10
 }})
 
 # Step 2: Get full bioRxiv metadata for each result
 if search_result and search_result.get('status') == 'success':
-   for article in search_result['data']['resultList']['result']:
+   for article in search_result['data']:
        doi = article.get('doi')
        if doi and doi.startswith('10.1101/'):
            preprint = tu.run({"name": "BioRxiv_get_preprint", "arguments": {"doi": doi}})
@@ -180,17 +181,14 @@ tu = ToolUniverse()
 
 # 1. Discover relevant preprints
 search = tu.run({"name": "EuropePMC_search_articles", "arguments": {
-   "query": "Acinetobacter antibiotic resistance",
-   "source": "PPR",
-   "fromDate": "2023-01-01",
-   "toDate": "2024-12-31",
-   "pageSize": 20
+   "query": "Acinetobacter antibiotic resistance AND SRC:PPR AND FIRST_PDATE:[2023-01-01 TO 2024-12-31]",
+   "limit": 20
 }})
 
 # 2. Get complete metadata for the most relevant ones
 preprints = []
 if search and search.get('status') == 'success':
-   for article in search['data']['resultList']['result'][:5]:
+   for article in search['data'][:5]:
        doi = article.get('doi')
        if doi and doi.startswith('10.1101/'):
            detailed = tu.run({"name": "BioRxiv_get_preprint", "arguments": {"doi": doi}})

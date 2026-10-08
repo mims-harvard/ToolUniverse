@@ -7,16 +7,17 @@ prescribing information including indications, dosing, contraindications,
 warnings, drug interactions, and pharmacology.
 
 API: https://open.fda.gov/apis/drug/label/
-No authentication required. Set the FDA_API_KEY env var to raise the
-default ~40 req/min anonymous rate limit (https://open.fda.gov/apis/authentication/).
+No authentication required. Supply FDA_API_KEY as a request credential or environment
+fallback to raise the default ~40 req/min anonymous rate limit
+(https://open.fda.gov/apis/authentication/).
 """
 
-import os
 import re
 import requests
 from typing import Any
 
 from .base_tool import BaseTool
+from .http_utils import request_with_retry
 from .tool_registry import register_tool
 
 FDA_LABEL_URL = "https://api.fda.gov/drug/label.json"
@@ -150,6 +151,57 @@ def _name_queries(field: str, drug_name: str) -> list[str]:
     return queries
 
 
+# Labels openFDA never linked to its drug records carry no `openfda` block, so
+# they have no `openfda.brand_name` / `openfda.generic_name` for the name search
+# to match. Measured on the live API: `_missing_:openfda` matches 177,901 labels,
+# and they include current, approved prescription drugs -- TAGRISSO
+# (osimertinib) is one, so both `openfda.generic_name:"osimertinib"` and
+# `openfda.brand_name:"tagrisso"` return NOT_FOUND although its label is there.
+#
+# The only name field such a label has is `spl_product_data_elements`, the raw
+# product text: "TAGRISSO osimertinib OSIMERTINIB OSIMERTINIB MANNITOL ...".
+# That text also lists every ingredient, and searching it alone answers
+# "magnesium stearate" with a gabapentin label (5,172 unlinked labels mention
+# mannitol). Case does not separate the two -- some labels are written all in
+# lower case ("Ambien zolpidem tartrate zolpidem tartrate zolpidem hypromelloses
+# lactose magnesium stearate ...") -- but repetition does: each product block
+# names the drug as brand, generic name, active ingredient and active moiety,
+# while each inactive ingredient appears once. See `_names_product_itself`.
+_PRODUCT_TEXT_FIELD = "spl_product_data_elements"
+_PRODUCT_TEXT_FETCH = 50
+
+
+def _names_product_itself(product_text: str, drug_name: str) -> bool:
+    """True when `drug_name` is this label's product or generic name, not an ingredient.
+
+    Looks at the first product block only -- a label with several strengths
+    repeats the block, starting again at the brand name, which would otherwise
+    repeat its inactive ingredients too. Within it, `drug_name` must open the
+    block (the brand) or appear at least twice (generic name plus active
+    ingredient): "TAGRISSO osimertinib OSIMERTINIB OSIMERTINIB MANNITOL ..."
+    names osimertinib three times and mannitol once.
+    """
+    tokens = [t for t in re.split(r"[^0-9A-Za-z]+", drug_name) if t]
+    words = product_text.split()
+    if not tokens or not words:
+        return False
+    block = product_text.strip()
+    brand = re.escape(words[0])
+    repeat = re.search(
+        rf"(?<!\S){brand}(?!\S)", block[len(words[0]) :], flags=re.IGNORECASE
+    )
+    if repeat:
+        block = block[: len(words[0]) + repeat.start()]
+    pattern = re.compile(
+        r"(?<![0-9A-Za-z])"
+        + r"[^0-9A-Za-z]+".join(map(re.escape, tokens))
+        + r"(?![0-9A-Za-z])",
+        re.IGNORECASE,
+    )
+    matches = list(pattern.finditer(block))
+    return bool(matches) and (matches[0].start() == 0 or len(matches) >= 2)
+
+
 def _valid_api_key(value: Any) -> bool:
     if not isinstance(value, str):
         return False
@@ -268,7 +320,32 @@ def _extract_label(
         "mechanism_of_action": section("mechanism_of_action"),
         "spl_id": result.get("id"),
     }
+    if not record["brand_name"] and not record["generic_name"]:
+        # An unlinked label: say what the product is, from the label's own text.
+        product = section(_PRODUCT_TEXT_FIELD)
+        record["product"] = product[:200] if product else None
     return _apply_section_limit(record, max_chars)
+
+
+class _RetryableGet:
+    """Adapts ``request_with_retry``'s session protocol onto ``requests.get``.
+
+    openFDA throttles per minute as well as per day, so a burst of label
+    lookups can hit 429 even with a valid key; these calls used to go straight
+    to ``raise_for_status()`` and fail. Routing them through the shared helper
+    reuses its backoff and ``Retry-After`` handling.
+
+    The indirection keeps this module's HTTP surface as ``requests.get`` rather
+    than ``requests.request``, so the call shape stays what it has always been.
+    ``requests`` is resolved at call time, not captured at import.
+    """
+
+    @staticmethod
+    def request(method, url, **kwargs):
+        # Forward only what the caller actually set. request_with_retry always
+        # passes headers/json/data, and sending those as explicit ``None`` would
+        # change the call signature this module has always used.
+        return requests.get(url, **{k: v for k, v in kwargs.items() if v is not None})
 
 
 @register_tool("FDALabelTool")
@@ -284,7 +361,12 @@ class FDALabelTool(BaseTool):
     def __init__(self, tool_config: dict[str, Any]):
         super().__init__(tool_config)
         self.query_type = tool_config.get("fields", {}).get("query_type", "search")
-        self.api_key = os.getenv("FDA_API_KEY")
+
+    @property
+    def api_key(self):
+        """Resolve the optional openFDA key from the active request."""
+
+        return self.credential("FDA_API_KEY")
 
     def _params(self, **kwargs: Any) -> dict:
         """Build request params, adding api_key when a valid FDA_API_KEY is set.
@@ -331,7 +413,8 @@ class FDALabelTool(BaseTool):
     def _query_drug_fields(
         self, drug_name: str, limit: int, max_chars: int | None = None
     ) -> tuple[list[dict] | None, list[str]]:
-        """Search generic_name then brand_name, exact phrase then all-tokens.
+        """Search generic_name then brand_name, exact phrase then all-tokens,
+        then the product text of labels openFDA never linked.
 
         Returns (extracted label results, truncated section names) on the first
         match, or (None, []) if no results found. See `_name_queries` for the
@@ -339,7 +422,9 @@ class FDALabelTool(BaseTool):
         """
         for field in ("openfda.generic_name", "openfda.brand_name"):
             for q in _name_queries(field, drug_name):
-                resp = requests.get(
+                resp = request_with_retry(
+                    _RetryableGet,
+                    "GET",
                     FDA_LABEL_URL,
                     params=self._params(search=q, limit=limit),
                     timeout=20,
@@ -349,14 +434,54 @@ class FDALabelTool(BaseTool):
                 resp.raise_for_status()
                 results = resp.json().get("results", [])
                 if results:
-                    labels: list[dict] = []
-                    truncated: list[str] = []
-                    for r in results:
-                        record, cut = _extract_label(r, max_chars)
-                        labels.append(record)
-                        truncated.extend(cut)
-                    return labels, truncated
-        return None, []
+                    return self._extract_all(results, max_chars)
+        return self._query_unlinked_labels(drug_name, limit, max_chars)
+
+    def _query_unlinked_labels(
+        self, drug_name: str, limit: int, max_chars: int | None
+    ) -> tuple[list[dict] | None, list[str]]:
+        """Last resort: labels openFDA never linked, found by their product text.
+
+        Runs only after every `openfda` name query missed, so it cannot change
+        an answer the linked labels already give. See `_names_product_itself`
+        for why matches in the ingredient lists are dropped.
+        """
+        resp = request_with_retry(
+            _RetryableGet,
+            "GET",
+            FDA_LABEL_URL,
+            params=self._params(
+                search=_phrase(_PRODUCT_TEXT_FIELD, drug_name),
+                limit=max(limit, _PRODUCT_TEXT_FETCH),
+            ),
+            timeout=20,
+        )
+        if resp.status_code == 404:
+            return None, []
+        resp.raise_for_status()
+        own = [
+            r
+            for r in resp.json().get("results", [])
+            if not r.get("openfda")
+            and _names_product_itself(
+                " ".join(r.get(_PRODUCT_TEXT_FIELD) or []), drug_name
+            )
+        ][:limit]
+        if not own:
+            return None, []
+        return self._extract_all(own, max_chars)
+
+    @staticmethod
+    def _extract_all(
+        results: list[dict], max_chars: int | None
+    ) -> tuple[list[dict], list[str]]:
+        labels: list[dict] = []
+        truncated: list[str] = []
+        for r in results:
+            record, cut = _extract_label(r, max_chars)
+            labels.append(record)
+            truncated.extend(cut)
+        return labels, truncated
 
     def _search(self, arguments: dict) -> Any:
         drug_name = arguments.get("drug_name")
@@ -384,7 +509,9 @@ class FDALabelTool(BaseTool):
             return response
 
         q = _phrase("indications_and_usage", indication)
-        resp = requests.get(
+        resp = request_with_retry(
+            _RetryableGet,
+            "GET",
             FDA_LABEL_URL,
             params=self._params(search=q, limit=limit),
             timeout=20,
@@ -445,7 +572,9 @@ class FDALabelTool(BaseTool):
 
     def _list_classes(self, arguments: dict) -> Any:
         limit = min(int(arguments.get("limit", 20)), 100)
-        resp = requests.get(
+        resp = request_with_retry(
+            _RetryableGet,
+            "GET",
             FDA_LABEL_URL,
             params=self._params(
                 count="openfda.pharm_class_epc.exact",

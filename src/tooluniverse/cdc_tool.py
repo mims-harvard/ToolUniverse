@@ -5,6 +5,8 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 CDC_DATA_BASE_URL = "https://data.cdc.gov"
+CDC_CATALOG_URL = "https://api.us.socrata.com/api/catalog/v1"
+CDC_DOMAIN = "data.cdc.gov"
 
 
 @register_tool("CDCRESTTool")
@@ -107,8 +109,68 @@ class CDCRESTTool(BaseTool):
         """
         return {"status": "error", "error": message, "data": {"error": message}}
 
+    def _search_catalog(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search the dataset catalog through Socrata's Discovery API.
+
+        ``/api/views.json`` cannot search: it ignores ``$q``, ``q``, ``$limit`` and
+        ``$offset`` and lists all ~1,500 datasets in a fixed order whatever the
+        text, so the search text goes to the Discovery API instead.
+        """
+        props = self.tool_config.get("parameter", {}).get("properties", {})
+        limit = arguments.get("limit") or props.get("limit", {}).get("default", 50)
+        params = {
+            "domains": CDC_DOMAIN,
+            "search_context": CDC_DOMAIN,
+            "only": "datasets",
+            "limit": max(1, min(int(limit), 1000)),
+            "offset": int(arguments.get("offset") or 0),
+        }
+        if arguments.get("search_query"):
+            params["q"] = arguments["search_query"]
+        if arguments.get("category"):
+            params["categories"] = arguments["category"]
+        try:
+            resp = requests.get(CDC_CATALOG_URL, params=params, timeout=30)
+            resp.raise_for_status()
+            body = resp.json()
+        except requests.exceptions.RequestException as e:
+            return self._error(f"Request failed: {str(e)}")
+        except ValueError as e:
+            return self._error(f"Failed to parse JSON: {str(e)}")
+
+        datasets = []
+        for hit in body.get("results", []):
+            resource = hit.get("resource", {})
+            classification = hit.get("classification", {})
+            datasets.append(
+                {
+                    "id": resource.get("id"),
+                    "name": resource.get("name"),
+                    "description": resource.get("description"),
+                    "category": classification.get("domain_category"),
+                    "tags": classification.get("domain_tags"),
+                    "updated_at": resource.get("updatedAt"),
+                    "data_updated_at": resource.get("data_updated_at"),
+                    "download_count": resource.get("download_count"),
+                    "columns": resource.get("columns_name"),
+                    "link": hit.get("permalink") or hit.get("link"),
+                }
+            )
+        return {
+            "status": "success",
+            "data": datasets,
+            "metadata": {
+                "source": "CDC Data.CDC.gov (Socrata Discovery API)",
+                "endpoint": CDC_CATALOG_URL,
+                "query": arguments,
+                "total_matches": body.get("resultSetSize", len(datasets)),
+            },
+        }
+
     def _make_request(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Make HTTP request to CDC Data API."""
+        if "views.json" in self.endpoint_template:
+            return self._search_catalog(arguments)
         try:
             url = self._build_url(arguments)
         except ValueError as e:

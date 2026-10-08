@@ -12,6 +12,7 @@ def MSigDB_check_gene_in_set(
     gene_set_name: str,
     gene: str,
     operation: Optional[str] = None,
+    species: Optional[str] = "auto",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +29,8 @@ def MSigDB_check_gene_in_set(
         Exact gene set name (e.g., 'ZNF549_TARGET_GENES', 'ESC_V6.5_UP_EARLY.V1_DN', ...
     gene : str
         Gene symbol to check (e.g., 'SELENOP', 'TP53', 'CD37')
+    species : str
+        MSigDB collection to query. 'auto' (default) tries human then mouse. Use 'mou...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def MSigDB_check_gene_in_set(
             "operation": operation,
             "gene_set_name": gene_set_name,
             "gene": gene,
+            "species": species,
         }.items()
         if v is not None
     }

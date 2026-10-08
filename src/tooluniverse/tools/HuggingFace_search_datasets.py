@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def HuggingFace_search_datasets(
     search: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def HuggingFace_search_datasets(
     ----------
     search : str
         Search query for dataset name or topic (e.g., 'protein sequence', 'medical im...
-    limit : int | Any
+    limit : int
         Maximum number of results to return (default 20, max 1000)
     stream_callback : Callable, optional
         Callback for streaming output

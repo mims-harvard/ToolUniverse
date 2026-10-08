@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-regulatory-genomics
-description: Transcription factor binding, cis-regulatory elements (cCREs), chromatin accessibility, and regulatory annotation using JASPAR (motifs), ENCODE (cCREs, ChIP-seq), RegulomeDB (regulatory variant scoring), UCSC — plus sequence-based deep-learning prediction of regulatory activity and non-coding variant effects (AlphaGenome, Enformer, Borzoi, ChromBPNet, Evo 2). Use for regulatory element annotation, TF-binding-site prediction, regulatory-region functional impact assessment, and predicting how a non-coding variant or a raw DNA sequence affects expression/chromatin/accessibility. Use this whenever a user asks what regulates a gene, whether a SNP hits a regulatory element, or to predict a non-coding variant's functional effect from sequence.
+description: Transcription factor binding, cis-regulatory elements (cCREs), chromatin accessibility, and regulatory annotation using JASPAR (motifs), UniBind, ENCODE (cCREs, ChIP-seq), RegulomeDB (regulatory variant scoring), UCSC, and the Ensembl Regulatory Build (motif instances, evolutionarily constrained elements, TF binding matrices) — plus sequence-based deep-learning prediction of regulatory activity and non-coding variant effects (AlphaGenome, Enformer, Borzoi, ChromBPNet, Evo 2). Use for regulatory element annotation, TF-binding-site prediction, regulatory-region functional impact assessment, and predicting how a non-coding variant or a raw DNA sequence affects expression/chromatin/accessibility. Use this whenever a user asks what regulates a gene, whether a SNP hits a regulatory element, or to predict a non-coding variant's functional effect from sequence.
 disable-model-invocation: true
 ---
 
@@ -67,6 +67,12 @@ When analysis requires computation (statistics, data processing, scoring, enrich
 | `UCSC_get_encode_cCREs` | Get cCREs overlapping a genomic region | `chrom`, `start`, `end` |
 | `RegulomeDB_query_variant` | Score regulatory impact of a variant | `rsid` (e.g., "rs4994") |
 | `ENCODE_search_biosamples` | Find available cell lines/tissues in ENCODE | `term_name`, `biosample_type`, `limit` |
+| `EnsemblReg_get_motif_features` | TF binding motif instances in a region (Ensembl Regulatory Build) | `region`, `species` | motif instances with `binding_matrix_stable_id`, `transcription_factor_complex`, `score` |
+| `EnsemblReg_get_constrained_elements` | Evolutionarily constrained (purifying-selection) elements in a region — the conservation evidence type called out below | `region`, `species` | `constrained_elements[]` with `score`, `start`/`end` |
+| `EnsemblReg_get_binding_matrix` | Full PWM/PFM for an Ensembl binding-matrix stable ID | `binding_matrix_id` (e.g. `ENSPFM0320`) | nucleotide-frequency matrix, `associated_tfs[]`, `threshold` |
+| `MEME_fimo_scan` / `MEME_discover_motifs` / `MEME_tomtom_compare` / `MEME_list_databases` | Scan sequences for known motifs / discover novel motifs de novo / compare a motif against JASPAR-HOCOMOCO-CIS-BP / list available comparison databases | `sequences`, `motif_text` (MEME format) | Submits a job to meme-suite.org; 10-120s depending on op |
+| `HOCOMOCO_search_motifs` / `HOCOMOCO_get_motif` | Curated ChIP-seq-derived TF motif by gene name / full motif detail + optional PWM | `query` (gene name) / `motif_id` | Human + mouse only; complements JASPAR, not a replacement |
+| `Dfam_search_families` / `Dfam_get_family` / `Dfam_get_annotations` | Find transposable-element/repeat families / get one family's detail / get repeat annotations for a genomic region | `name_prefix`/`clade`/`repeat_type` / `accession` / `chrom`,`start`,`end` | Repeats can carry their own regulatory elements (e.g. SVA/Alu insertions) |
 
 ### Sequence-based deep-learning models (predict, don't just annotate)
 
@@ -74,13 +80,15 @@ The tools above tell you what is *known* to be at a locus (databases). These mod
 
 | Tool | Op | Predicts | Context | Access |
 |------|----|----------|---------|--------|
-| `AlphaGenome_predict_interval` / `AlphaGenome_score_variant` | profile region / score variant | RNA-seq, ATAC, CAGE, splice tracks (frontier accuracy, single-base) | up to 1 Mb | hosted API — `ALPHA_GENOME_API_KEY` |
+| `AlphaGenome_atlas_lookup_variant` / `AlphaGenome_atlas_scan_interval` | precomputed lookup: one SNV / every SNV in a region | unified AVI_SCORE (AlphaGenome + AlphaMissense) + per-track scores, no live model run | up to 10 kb per scan | hosted API — `ALPHA_GENOME_API_KEY` (much higher query rate than the live ops below) |
+| `AlphaGenome_predict_interval` / `AlphaGenome_score_variant` / `AlphaGenome_score_ism_variants` | profile region / score variant / saturation-mutagenesis scan | RNA-seq, ATAC, CAGE, splice tracks (frontier accuracy, single-base); ISM ranks every substitution in a ≤500 bp window by effect — good for "which base in this element matters" | up to 1 Mb (ISM window ≤500 bp) | hosted API — `ALPHA_GENOME_API_KEY` |
 | `run_enformer_predict` / `run_enformer_variant_effect` | profile / score | 5,313 human (+1,643 mouse) tracks: expression, chromatin, TF binding | 196 kb | remote MCP server |
 | `run_borzoi_predict` / `run_borzoi_variant_effect` | profile / score | RNA-seq coverage (expression / polyA / splicing emphasis), 7,611 tracks | 524 kb | remote MCP server |
 | `run_chrombpnet_predict` / `run_chrombpnet_variant_effect` | profile / score | chromatin accessibility (ATAC / DNase), base-resolution profile + counts | ~2 kb | remote MCP server |
 | `Evo2_score_variant` | score | genome-foundation-model delta log-likelihood; coding **and** non-coding | up to 1 Mb | hosted NIM — `NVIDIA_API_KEY` |
+| `gi_*` (opt-in, `GENOMIC_INTELLIGENCE_MCP_URL`) | profile (6 tasks) + composite find-genes-then-predict | promoter, splice sites, enhancer activity, chromatin state, expression, gene annotation | — | public demo server, shared rate-limited quota, no key |
 
-**Picking one:** `AlphaGenome_*` is the broadest readout + longest context when its key is set; `run_enformer_*` / `run_borzoi_*` are the published, self-hostable equivalents (Enformer for general regulation, Borzoi when expression/splicing is the question); `run_chrombpnet_*` when the question is specifically chromatin accessibility; `Evo2_score_variant` as a sequence-only check that also covers coding variants. Outputs are Δ (alt − ref) effect sizes, not calibrated probabilities — rank/calibrate against known variants. If no key/server is provisioned, fall back to the annotation tools above and say so.
+**Picking one:** for a known single-nucleotide variant, check `AlphaGenome_atlas_lookup_variant` (or `atlas_scan_interval` for a whole region) first — it's a precomputed database read covering all ~9B possible human SNVs, far cheaper than a live call, and its AVI_SCORE already fuses AlphaGenome's regulatory signal with AlphaMissense's coding-impact model into one number. Fall back to the live `AlphaGenome_*` operations for indels, custom/synthetic sequences, or full per-track detail (`predict_variant`/`predict_sequence`/`score_interval` are also available for raw-track and no-variant use cases); `run_enformer_*` / `run_borzoi_*` are the published, self-hostable equivalents (Enformer for general regulation, Borzoi when expression/splicing is the question); `run_chrombpnet_*` when the question is specifically chromatin accessibility; `Evo2_score_variant` as a sequence-only check that also covers coding variants. Outputs are Δ (alt − ref) effect sizes, not calibrated probabilities (except AVI_SCORE, which is a unified impact score) — rank/calibrate against known variants. If no key/server is provisioned, fall back to the annotation tools above and say so.
 
 ---
 
@@ -141,6 +149,129 @@ tu.run_tool("UniBind_list_tfs", {"search": "SMAD"})   # -> [SMAD2, SMAD3, SMAD4]
 
 Notes: `species` is the scientific name ('Homo sapiens', not a taxid);
 `collection` is 'Robust' (high-confidence) or 'Permissive'; public, no API key.
+
+### Phase 1c: Ensembl Regulatory Build (motifs + the missing conservation evidence type)
+
+The Domain Reasoning above lists four converging evidence types for a
+high-confidence regulatory element — conservation, accessibility, TF
+binding, eQTL — but conservation had no tool until now.
+`EnsemblReg_get_constrained_elements` fills that gap directly: it returns
+evolutionarily constrained (purifying-selection) elements in a region,
+independent of JASPAR/UniBind/ENCODE's binding-evidence tools. Combine it
+with `EnsemblReg_get_motif_features` (a second, database-scale source of TF
+motif instances, complementary to JASPAR/UniBind) to build the
+two-or-more-evidence-types case this skill's reasoning already calls for.
+
+```
+# TF binding motif instances in a region (species defaults to homo_sapiens)
+tu.run_tool("EnsemblReg_get_motif_features", {"region": "7:140424943-140524564"})
+#   -> motif_count, motif_features[] each with stable_id,
+#      transcription_factor_complex, binding_matrix_stable_id, score,
+#      start/end/strand
+
+# Evolutionary conservation evidence for the same region
+tu.run_tool("EnsemblReg_get_constrained_elements", {"region": "17:7661779-7687538"})
+#   -> element_count, constrained_elements[] each with score (higher =
+#      stronger conservation), start/end
+
+# Full PWM for a binding matrix found above (e.g. from motif_features)
+tu.run_tool("EnsemblReg_get_binding_matrix", {"binding_matrix_id": "ENSPFM0320"})
+#   -> associated_tfs[], nucleotide-frequency matrix, threshold, consensus
+```
+
+**Operational notes (live-verified, not assumed)**: these three endpoints
+are slow — `get_motif_features` typically takes 10-25s, `get_binding_matrix`
+50-60s, `get_constrained_elements` up to 25s for a small region. Use a
+generous timeout (60-90s) rather than treating a slow response as a hang.
+`get_constrained_elements` is also unreliable on larger regions (e.g. the
+~100kb BRAF locus reproducibly failed or timed out on repeated attempts
+while the smaller TP53 region succeeded) — prefer regions well under 50kb
+for this specific endpoint, and retry once before concluding the call
+failed.
+
+### Phase 1d: TF Motif Discovery and Comparison (MEME Suite) + Curated Reference Motifs (HOCOMOCO)
+
+JASPAR gives a curated motif *library*; the MEME Suite tools instead let you
+*discover* a motif de novo from a set of related sequences and *compare* any
+motif (discovered or known) against reference databases. HOCOMOCO is a
+second curated reference library (ChIP-seq-derived, human/mouse only) —
+complementary to JASPAR, not a replacement, since the two are built from
+different underlying peak sets and sometimes disagree on model quality for
+the same TF.
+
+```
+# 1. Scan sequences for known motif occurrences (submits a job to
+#    meme-suite.org, polls ~10-30s)
+tu.run_tool("MEME_fimo_scan", {
+    "sequences": ">promoter\nGGATCCGCGCGCTATAAAAGGATCC...",
+    "motif_text": "MEME version 5\n\nALPHABET= ACGT\n...",  # full MEME-format motif
+    "pvalue_threshold": 0.0001
+})
+#   -> hits[] with start/stop/strand/score/pvalue/qvalue/matched_sequence
+
+# 2. De novo motif discovery across >=2 related sequences (~30-120s)
+tu.run_tool("MEME_discover_motifs", {
+    "sequences": ">seq1\n...\n>seq2\n...",  # co-regulated gene promoters, etc.
+    "nmotifs": 3
+})
+#   -> motifs[] with consensus, width, sites, evalue, probability_matrix
+
+# 3. Identify which known TF a discovered (or any) motif resembles
+#    (~5-20s)
+tu.run_tool("MEME_tomtom_compare", {
+    "query_motif": "MEME version 5\n...",
+    "target_db": "JASPAR2026_vertebrates"  # or "HOCOMOCO_v12"; see list_databases
+})
+#   -> matches[] ranked by evalue, with target_id (e.g. JASPAR MA0106.3)
+
+# 4. See available target databases for tomtom_compare (no remote call,
+#    cached metadata)
+tu.run_tool("MEME_list_databases", {"category_filter": "JASPAR"})
+```
+
+**HOCOMOCO as a curated cross-check** — given a TF name, get its curated
+consensus/PWM/quality grade directly, no discovery step needed:
+
+```
+tu.run_tool("HOCOMOCO_search_motifs", {"query": "CTCF"})
+#   -> [{motif_id: "CTCF.H14CORE.0.P.B", gene_name_human, quality, consensus, ...}]
+tu.run_tool("HOCOMOCO_get_motif", {"motif_id": "CTCF.H14CORE.0.P.B", "include_pwm": true})
+#   -> real verified response: consensus "hbRCCRShAGRKGGCGShvn", quality "B",
+#      tfclass (superclass/class/family/subfamily), uniprot_ac_human "P49711",
+#      pwm (if include_pwm=true)
+```
+
+Quality grades run A (best) to D (lowest); data_sources "P" = ChIP-Seq
+peaks, "S" = HT-SELEX. Use HOCOMOCO's quality grade to sanity-check a
+JASPAR/MEME-discovered motif for the same TF — a low grade or missing entry
+is itself informative (that TF's binding may be less well characterized).
+
+### Repeat Elements (Dfam)
+
+Transposable elements and other repeats can create, destroy, or shift
+regulatory elements (SVA/Alu insertions carrying their own TF binding
+sites is a well-known mechanism) — a fifth context worth checking alongside
+the four evidence types in Domain Reasoning above when a regulatory element
+sits inside or near a repeat-masked region.
+
+```
+tu.run_tool("Dfam_search_families", {"name_prefix": "AluS"})
+#   -> [{accession: "DF000000003", name: "AluSc", repeat_type: "SINE", ...}]
+tu.run_tool("Dfam_get_family", {"accession": "DF000000003"})
+#   -> consensus_sequence, classification, clades[], citations[]
+
+# Real example: TP53 locus (chr17:7,661,779-7,687,538, GRCh38) — the same
+# region used in the Ensembl Regulatory Build section above — carries two
+# real SVA retroposon insertions (SVA_E, SVA_A) and an AluSc SINE:
+tu.run_tool("Dfam_get_annotations", {
+    "assembly": "hg38", "chrom": "chr17", "start": 7661779, "end": 7687538
+})
+#   -> [{accession: "DF000001071", query: "SVA_E", type: "Retroposon",
+#        bit_score: 180, e_value: "1.3e-50", seq_start: 7661463, ...}, ...]
+```
+
+`nrph=true` (default) returns non-redundant profile hits only; set `false`
+for every raw hit including overlapping/lower-scoring alignments.
 
 ### Phase 2: ENCODE Experiment Search
 

@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GenCC_get_classifications(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_classifications",
     gene_symbol: Optional[str] = None,
     disease: Optional[str] = None,
     submitter: Optional[str] = "",

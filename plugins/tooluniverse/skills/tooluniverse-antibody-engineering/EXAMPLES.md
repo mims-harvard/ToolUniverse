@@ -304,7 +304,7 @@ RFSGSGSGTDFTLTISSLQPEDFATYYCQQSYSTPLTFGQGTKVEIK
 | IMGT_search_genes | IGHV, IGKV (Homo sapiens) | Germline candidates |
 | IMGT_get_sequence | IGHV1-69*01, IGKV1-39*01 | Framework sequences |
 | TheraSAbDab_search_by_target | PD-L1 | 3 approved antibodies |
-| alphafold_get_prediction | VH:VL complexes | Structure models |
+| ESMFold_predict_structure | VH-linker-VL scFv | Structure models |
 | iedb_search_epitopes | Sequence scanning | T-cell epitopes |
 ```
 
@@ -1048,7 +1048,7 @@ Light Chain 2: VL2(anti-TIM-3) - CL-lambda*
 
 | Tool | Query | Results |
 |------|-------|---------|
-| STRING_get_interactions | PD-L1, TIM-3 | Co-expression analysis |
+| STRING_get_network | PD-L1, TIM-3 | Co-expression analysis |
 | TheraSAbDab_search_by_target | PD-L1, TIM-3 | Clinical precedents |
 | UniProt | Q9NZQ7, Q8TDQ0 | Target biology |
 | AlphaFold | VH-VL complexes | Structure models |
@@ -1057,267 +1057,25 @@ Light Chain 2: VL2(anti-TIM-3) - CL-lambda*
 
 ---
 
-## Example 5: pH-Dependent Binding Optimization
+## Example 5: Conditional pH Binding With Unverified Assays
 
 ### User Query
-"Engineer pH-dependent binding into this anti-HER2 antibody for improved PK via FcRn recycling"
+"Engineer pH-dependent binding into this antibody; compare an acidic-binding objective with an endosomal-release objective."
 
-### Expected Output (Key Sections)
+### Decision and Report Outline
 
-```markdown
-# pH-Dependent Binding Engineering: Anti-HER2 Antibody
+This is an illustrative workflow, not a performed experiment. Do not fill it with invented KD, half-life, fold-change, structure confidence or assay results.
 
-**Goal**: Bind at pH 7.4 (blood), release at pH 6.0 (endosome) | **Application**: Enhanced PK and tumor selectivity
+1. Specify which direction is desired. For acidic-tissue binding, ask whether the candidate binds more strongly at the specified acidic pH than at neutral pH. For antigen release during recycling, the desired direction is the opposite. Do not describe acidic release as proof of acidic tumor-selective binding.
+2. Map actual antibody numbering to sequence positions and evaluate the target construct. A histidine substitution is a mechanism hypothesis, not a guaranteed switch.
+3. Check the complete bound/free ionizable-group inventory, termini, receptor glycans/cofactors and component retention. Match both partners; do not score only the engineered histidine.
+4. Evaluate suitable empirical and coupled protonation models, stating formulas, sign conventions, units and assumptions. Keep disagreement visible. Local imposed HID/HIE/HIP preparations are not equilibrium pH populations.
+5. Run established positive controls through the same preparation and scoring. If total cycle direction agrees but an edge-fraction gate fails, report those two outcomes separately.
+6. Rank candidate hypotheses with exact sequences and uncertain objectives labeled unverified. A terminal-extension benefit depends on the actual assay construct and requires new validation.
+7. Define matched binding assays at both pHs with construct, receptor, buffer and detection-limit controls. Only measured outcomes support an assay selectivity claim.
 
----
+### Example of an Honest Result
 
-## Executive Summary
+A candidate can pass monomer folding and sampled receptor/glycan geometry checks while remaining unverified for affinity and pH selectivity. One model can support a protonation-linked hypothesis while a different model disagrees. Report that evidence as unresolved and prioritize the computation or experiment that distinguishes the assumptions; do not synthesize an expected KD ratio from unrelated scores.
 
-Successfully engineered pH-dependent binding via histidine substitutions:
-- **Strategy**: Introduce His residues at binding interface (pKa ~6.0)
-- **Result**: 20-fold weaker binding at pH 6.0 vs. pH 7.4
-- **PK benefit**: Predicted 2-3x longer half-life via enhanced FcRn recycling
-- **Affinity maintained**: KD 2.1 nM at pH 7.4 (acceptable therapeutic range)
-
-**Recommended Candidate**: pH-HER2-v3 with 3 His substitutions
-
----
-
-## 1. pH-Dependent Binding Rationale
-
-### 1.1 Mechanism
-
-**FcRn Recycling**:
-- Antibodies internalized into endosomes (pH 6.0)
-- FcRn binding: Antibody rescued from lysosomal degradation
-- FcRn dissociates at pH 7.4: Antibody released back to blood
-- **Problem**: Antigen-bound antibody stays in endosome longer → faster clearance
-
-**Solution**: pH-dependent antigen binding
-- Bind antigen at pH 7.4 (blood, tumor)
-- Release antigen at pH 6.0 (endosome)
-- Free antibody recycled by FcRn → longer half-life
-- **Benefit**: 2-3x half-life extension + tumor selectivity (acidic microenvironment)
-
-### 1.2 Clinical Precedent
-
-**Antibodies with pH-Dependent Binding**:
-| Antibody | Target | pH Ratio (KD 7.4/6.0) | Half-life Extension | Status |
-|----------|--------|----------------------|---------------------|--------|
-| MEDI4276 | HER2 | 15x | ~2x | Phase I/II |
-| M111 | EGFR | 25x | ~3x | Preclinical |
-
-**Our Goal**: 10-20x pH ratio, 2-3x half-life improvement
-
-*Source: Literature, TheraSAbDab*
-
----
-
-## 2. Histidine Engineering Strategy
-
-### 2.1 Histidine Properties
-
-**pKa ~6.0**: Protonated (charged) at pH <6, deprotonated (neutral) at pH >7
-- At pH 7.4: Neutral → favorable for binding (hydrophobic/pi-stacking)
-- At pH 6.0: Protonated (+charge) → unfavorable if destabilizes interface
-
-**Design Principle**: Place His at positions where protonation disrupts binding
-
-### 2.2 Interface Analysis
-
-**Current Binding Interface** (anti-HER2):
-
-| Residue | CDR | Type | Target Contact | Energy | His Candidate? |
-|---------|-----|------|----------------|--------|----------------|
-| Y100 | H3 | Hydrophobic | HER2 Phe | 2.8 kcal/mol | **YES** - Tyr→His maintains pi-stacking at pH 7.4 |
-| D100b | H3 | Charged | HER2 Arg | 1.9 kcal/mol | **YES** - Asp→His flips charge at pH 6.0 |
-| T28 | H1 | Polar | HER2 Asp | 1.6 kcal/mol | **YES** - Thr→His adds charge at pH 6.0 |
-| I52 | H2 | Hydrophobic | HER2 Leu | 1.5 kcal/mol | No - His too polar |
-
-### 2.3 Designed Variants
-
-**Variant 1 (Conservative)**: Single His substitution
-- Mutation: D100bH (CDR-H3)
-- Rationale: Charge flip (Asp- → His+) at pH 6.0 disrupts salt bridge
-- Predicted pH ratio: 5-8x
-
-**Variant 2 (Moderate)**: Two His substitutions
-- Mutations: Y100H, D100bH (both CDR-H3)
-- Rationale: Dual mechanism (pi-stacking loss + charge flip)
-- Predicted pH ratio: 12-18x
-
-**Variant 3 (Aggressive)**: Three His substitutions
-- Mutations: T28H (CDR-H1), Y100H (CDR-H3), D100bH (CDR-H3)
-- Rationale: Maximize pH sensitivity
-- Predicted pH ratio: 20-30x
-
----
-
-## 3. Computational Predictions
-
-### 3.1 Affinity Predictions
-
-**Variant 2 (Recommended)**:
-
-| pH | Predicted KD | Fold Change | Assessment |
-|----|--------------|-------------|------------|
-| **7.4** | **2.1 nM** | 1.0x (baseline) | Therapeutic range (acceptable) |
-| 7.0 | 4.2 nM | 2.0x | Moderate weakening |
-| 6.5 | 12.5 nM | 6.0x | Significant weakening |
-| **6.0** | **38 nM** | **18x** | **Strong pH dependence** ✓ |
-| 5.5 | 95 nM | 45x | Very weak binding |
-
-**pH Ratio**: 18x (target: 10-20x) → Meets design goal
-
-### 3.2 Structure Predictions (AlphaFold)
-
-**Variant 2 Structure Quality**:
-| pH | Mean pLDDT | CDR pLDDT | Interface pLDDT | Status |
-|----|------------|-----------|-----------------|--------|
-| 7.4 | 87.9 | 84.2 | 86.1 | High confidence |
-| 6.0 | 86.5 | 83.8 | 79.3 | Lower interface confidence (expected) |
-
-**Interpretation**: Structure maintained, but interface destabilized at pH 6.0 (desired)
-
----
-
-## 4. Developability Assessment
-
-### 4.1 Impact on Developability
-
-| Property | Original | Variant 1 | Variant 2 | Variant 3 |
-|----------|----------|-----------|-----------|-----------|
-| Affinity (pH 7.4) | 0.8 nM | 1.5 nM | **2.1 nM** | 3.8 nM |
-| pH ratio | 1x | 6x | **18x** | 28x |
-| Aggregation | 75 | 73 | **72** | 68 |
-| Stability (Tm) | 73°C | 72°C | **71°C** | 69°C |
-| **Developability** | **78/100** | **76/100** | **75/100** | **71/100** |
-
-**Recommendation**: Variant 2 balances pH dependence (18x) with acceptable affinity (2.1 nM) and developability (75/100, Tier 1)
-
-### 4.2 Histidine Stability
-
-**His Oxidation Risk**:
-- His residues susceptible to oxidation (especially if surface-exposed)
-- CDR-H3 His: Buried in interface at pH 7.4 → Low oxidation risk
-- CDR-H1 His (T28H): Partially exposed → Medium risk
-
-**Mitigation** (if oxidation observed):
-- Formulate with Met (sacrificial oxidation target)
-- Use inert atmosphere during manufacturing
-- Add EDTA to chelate metal ions
-
----
-
-## 5. Predicted PK Improvement
-
-### 5.1 PK Modeling
-
-**Assumptions**:
-- Standard FcRn-mediated recycling
-- pH-dependent antigen release enhances recycling
-- Tumor microenvironment pH: 6.5-7.0 (partial selectivity)
-
-**Predicted Parameters**:
-
-| Antibody | t1/2 (days) | Clearance (mL/day/kg) | AUC Fold | Tumor/Blood Ratio |
-|----------|-------------|----------------------|----------|-------------------|
-| Original | 14 | 4.5 | 1.0x | 1.5 |
-| pH-Variant 2 | **32** | **2.0** | **2.3x** | **2.8** |
-
-**Benefits**:
-1. **Longer half-life**: 14 → 32 days (2.3x)
-2. **Lower clearance**: Enhanced FcRn recycling
-3. **Tumor selectivity**: 2.8x accumulation (acidic microenvironment)
-4. **Dosing**: Potentially Q4W instead of Q3W
-
-### 5.2 Tumor Selectivity
-
-**pH Gradient**:
-- Blood pH: 7.4
-- Tumor microenvironment: 6.5-7.0 (acidic due to glycolysis)
-- Normal tissue: 7.4
-
-**Binding at Different pH**:
-| Location | pH | KD | Binding Efficiency |
-|----------|-----|--------|-------------------|
-| Blood | 7.4 | 2.1 nM | 100% (baseline) |
-| Tumor | 6.8 | 6.5 nM | 65% (moderate) |
-| Tumor | 6.5 | 12.5 nM | 35% (lower) |
-| Endosome | 6.0 | 38 nM | 10% (release) |
-
-**Advantage**: Preferential accumulation in tumors (acidic) vs. normal tissue
-
----
-
-## 6. Experimental Validation Plan
-
-### 6.1 In Vitro Characterization
-
-**Phase 1: pH-Dependent Binding** (Weeks 1-3)
-- SPR at multiple pH (5.5, 6.0, 6.5, 7.0, 7.4)
-- Calculate pH ratio: KD(pH 7.4) / KD(pH 6.0)
-- Target: 10-20x ratio
-- Cell-based binding: Flow cytometry at pH 7.4 vs 6.5
-
-**Phase 2: Developability** (Weeks 3-6)
-- Aggregation: SEC at pH 6.0 and 7.4
-- Stability: DSF, long-term storage (4°C, 3 months)
-- His oxidation: Forced degradation, LC-MS
-
-**Phase 3: Functional Activity** (Weeks 6-8)
-- Cell proliferation inhibition (pH 7.4)
-- Antibody-dependent cellular cytotoxicity (ADCC)
-- Internalization assay (pH switching)
-
-### 6.2 In Vivo PK Studies
-
-**Study Design**:
-- Species: Cynomolgus monkey (human FcRn ortholog)
-- Dose: 10 mg/kg IV
-- Comparison: pH-variant vs. original antibody
-- PK sampling: 0-56 days
-- Endpoints: t1/2, CL, AUC, Vss
-
-**Success Criteria**:
-- t1/2 improvement: >1.5x (target 2-3x)
-- Tumor accumulation: >1.5x (if xenograft model)
-
----
-
-## 7. Final Recommendation
-
-**Lead Candidate: pH-HER2-v2**
-
-**Mutations**:
-```
-CDR-H3: Y100H, D100bH
-```
-
-**Performance Summary**:
-| Metric | Value | Assessment |
-|--------|-------|------------|
-| Affinity (pH 7.4) | 2.1 nM | Therapeutic range |
-| pH ratio | 18x | Excellent pH dependence |
-| Predicted t1/2 | 32 days | 2.3x improvement |
-| Developability | 75/100 | Tier 1 (acceptable) |
-| Tumor selectivity | 2.8x | Enhanced |
-
-**Next Steps**:
-1. **Gene synthesis & expression** (Month 1)
-2. **In vitro validation** (Month 2-3): Confirm pH-dependent binding
-3. **PK study** (Month 4-6): Cynomolgus monkey, compare to original
-4. **Efficacy study** (Month 7-9): Tumor xenograft, assess selectivity
-5. **IND filing** (Month 12-18): If PK/efficacy confirmed
-
----
-
-## Data Sources
-
-| Tool | Query | Results |
-|------|-------|---------|
-| AlphaFold | Antibody-HER2 complex | Interface analysis |
-| Literature | pH-dependent antibodies | Clinical precedent |
-| In silico modeling | His mutations | pH-dependent KD predictions |
-| PK modeling | FcRn recycling | Half-life predictions |
-```
+Use [Protein Design Campaign](../tooluniverse-protein-design-campaign/SKILL.md) and [conditional pH validation](../tooluniverse-protein-design-campaign/references/ph-selectivity.md) for the detailed workflow.

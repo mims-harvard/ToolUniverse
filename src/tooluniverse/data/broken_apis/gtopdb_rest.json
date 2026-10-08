@@ -1,0 +1,18 @@
+{
+  "api_name": "Guide to Pharmacology (GtoPdb) REST web services",
+  "base_url": "https://www.guidetopharmacology.org/services",
+  "failure_mode": "Every /services path answers HTTP 401 with {\"message\":\"API key is missing. In order to use the GtoPdb Web Services you must register and request an API Key. https://www.guidetopharmacology.org/login.jsp\"}",
+  "root_cause": "GtoPdb closed its open REST web services behind registration. This is a policy change, not an outage: /services/targets, /services/ligands and the bare /services/targets root all return the same 401. The service is not reachable even for a registered user from here, because no documented way to send the key exists. Their own webServices.jsp page is 26157 characters long and mentions an API key zero times, and seven transports were tried against /services/targets?name=CB1 -- ?apiKey=, ?api_key=, ?key=, an X-API-Key header, an apiKey header, Authorization: Bearer, and a bare Authorization -- all seven returning the identical 'API key is missing' body, i.e. none of them is recognised as carrying a key at all.",
+  "confirmed_broken_date": "2026-10-03",
+  "last_retry_date": "2026-10-03",
+  "retry_count": 3,
+  "retry_after": "2027-01-15",
+  "retry_notes": "Try GET https://www.guidetopharmacology.org/services/targets?name=CB1 with no credentials. A 200 means the open service is back. If it still 401s, re-read https://www.guidetopharmacology.org/webServices.jsp -- the mechanism becomes implementable the moment that page documents a header or parameter name, and the four bulk-backed tools can then regain the live service as a faster path.",
+  "workaround": "The bulk CSV downloads under https://www.guidetopharmacology.org/DATA/ are still open and carry the same records. GtoPdb_search_targets, GtoPdb_search_ligands, GtoPdb_get_interactions and GtoPdb_get_ligand_properties now read targets_and_families.csv (1.81 MB, 3392 targets), ligands.csv (6.54 MB, 13991 ligands), interactions.csv (7.20 MB, 24936 interactions) and ligand_physchem_properties.csv (0.80 MB, 11266 ligands), parsed once per process. No key, and all four tools work for everyone.",
+  "investigation_notes": "GtoPdb_search_diseases and GtoPdb_get_disease_associations are retired rather than repointed, because GtoPdb publishes no open disease file. diseases.csv, disease_associations.csv, GtP_to_DO_mapping.csv, GtP_to_OMIM_mapping.csv, ligand_disease_associations.csv, target_disease_associations.csv, disease.csv and diseases_and_associations.csv all 404, /DATA/ itself 404s so there is no index to read, and none of targets_and_families.csv, ligands.csv or interactions.csv carries a disease, indication, OMIM, EFO, MONDO or DO column. Disease data exists only behind the key-gated /services/diseases and /services/diseases/diseaseAssociations endpoints. Those two tools accounted for 8 of the 17 gtopdb failures in the 2026-10-03 sweep; the other 9 are now passing.",
+  "affected_tools": [
+    "GtoPdb_search_diseases",
+    "GtoPdb_get_disease_associations"
+  ],
+  "tool_file": "src/tooluniverse/gtopdb_tool.py"
+}

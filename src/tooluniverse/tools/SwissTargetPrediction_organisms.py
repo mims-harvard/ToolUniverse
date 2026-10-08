@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def SwissTargetPrediction_organisms(
-    operation: str,
+    operation: Optional[str] = "get_organisms",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

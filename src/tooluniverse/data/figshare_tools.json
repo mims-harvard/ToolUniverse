@@ -36,9 +36,10 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.figshare.com/v2/articles"
+      "endpoint": "https://api.figshare.com/v2/articles/search",
+      "http_method": "POST"
     },
-    "type": "BaseRESTTool",
+    "type": "FigshareRESTTool",
     "test_examples": [
       {
         "search_for": "CRISPR gene editing single cell",

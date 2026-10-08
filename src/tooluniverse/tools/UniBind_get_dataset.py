@@ -15,7 +15,7 @@ def UniBind_get_dataset(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Retrieve full direct transcription factor (TF)-DNA binding-site detail for one UniBind dataset by...
 
@@ -34,7 +34,7 @@ def UniBind_get_dataset(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

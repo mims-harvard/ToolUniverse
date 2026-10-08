@@ -10,10 +10,10 @@ from ._shared_client import get_shared_client
 
 def ToolDescriptionOptimizer(
     tool_config: dict[str, Any],
-    save_to_file: bool,
-    output_file: str,
-    max_iterations: int,
-    satisfaction_threshold: float,
+    save_to_file: Optional[bool] = False,
+    output_file: Optional[str] = None,
+    max_iterations: Optional[int] = 3,
+    satisfaction_threshold: Optional[float] = 8,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

@@ -18,7 +18,18 @@
         "size": {
           "type": "integer",
           "description": "Maximum number of results to return",
-          "default": 20
+          "default": 20,
+          "minimum": 1
+        },
+        "fields": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Field abbreviations to return, e.g. ['id','ac','ox','ca']. A full record is very large (one HeLa hit is roughly 670 KB), so restrict this whenever the whole record is not needed. See https://api.cellosaurus.org/api-fields."
         }
       },
       "required": [

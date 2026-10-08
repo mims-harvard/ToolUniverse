@@ -1,7 +1,7 @@
 [
   {
     "name": "PDBeSearch_search_structures",
-    "description": "Search PDB structures through PDBe's Solr search interface by keyword, protein name, or gene name. Returns PDB IDs, titles, resolution, experimental methods, deposition dates, and organisms, sorted by resolution (best first). Complements RCSB PDB tools with powerful full-text search. Example: searching 'insulin' returns 400+ structures; 'BRCA1' returns 148 structures including BRCT domains.",
+    "description": "Search PDB structures through PDBe's Solr search interface by keyword, protein name, or gene name. Returns PDB IDs, titles, resolution, experimental methods, deposition dates, and organisms, sorted by relevance by default (best text match first, resolution as tie-breaker; sort_by='resolution' gives best-resolved first). Complements RCSB PDB tools with powerful full-text search. Example: searching 'insulin' returns 400+ structures; 'BRCA1' returns 148 structures including BRCT domains.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -15,6 +15,15 @@
             "null"
           ],
           "description": "Maximum results to return (1-50, default 10)."
+        },
+        "sort_by": {
+          "type": "string",
+          "enum": [
+            "relevance",
+            "resolution"
+          ],
+          "default": "relevance",
+          "description": "Result ordering: 'relevance' (default) puts the best text match first with resolution as the tie-breaker; 'resolution' lists the best-resolved structures first, even if they only mention the query."
         }
       },
       "required": [

@@ -1,7 +1,7 @@
 """
 cBioPortal_get_gene_info
 
-Get detailed information about a specific gene by Entrez Gene ID. Returns gene symbol, aliases, t...
+Get basic information about a specific gene by Entrez Gene ID. Returns the HUGO gene symbol and g...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def cBioPortal_get_gene_info(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get detailed information about a specific gene by Entrez Gene ID. Returns gene symbol, aliases, t...
+    Get basic information about a specific gene by Entrez Gene ID. Returns the HUGO gene symbol and g...
 
     Parameters
     ----------

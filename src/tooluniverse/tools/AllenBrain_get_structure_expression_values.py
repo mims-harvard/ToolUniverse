@@ -16,7 +16,7 @@ def AllenBrain_get_structure_expression_values(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
     Get quantified per-structure gene-expression values (StructureUnionize) for one Allen Mouse Brain...
 
@@ -37,7 +37,7 @@ def AllenBrain_get_structure_expression_values(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

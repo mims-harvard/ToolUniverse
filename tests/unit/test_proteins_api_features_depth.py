@@ -63,54 +63,16 @@ def _coord_tool(endpoint):
 # RNA editing
 # ---------------------------------------------------------------------------
 
-RNA_EDITING_PAYLOAD = {
-    "accession": "P42262",
-    "entryName": "GRIA2_HUMAN",
-    "features": [
-        {
-            "type": "rna_editing",
-            "variantType": {
-                "genomicLocation": ["NC_000004.12:g.157336723A>G"],
-                "variantLocation": [
-                    {
-                        "loc": "p.Gln607Arg",
-                        "seqId": "ENST00000264426.14",
-                        "source": "Ensembl",
-                    }
-                ],
-                "codon": "cGg",
-                "consequenceType": "missense",
-                "wildType": "Q",
-                "mutatedType": "R",
-                "somaticStatus": False,
-            },
-            "rnaEditingInfo": {"nsamples": 2280},
-            "locationType": {"position": {"position": 607, "status": "certain"}},
-        }
-    ],
-}
-
 
 class TestRnaEditing(unittest.TestCase):
-    def test_parse_qr_recoding_site(self):
-        """Parse the canonical GRIA2 Q/R RNA-editing site at residue 607."""
-        tool = _ext_tool("rna_editing")
-        with patch(
-            "tooluniverse.ebi_proteins_ext_tool.requests.get",
-            return_value=_resp(RNA_EDITING_PAYLOAD),
-        ):
-            result = tool.run({"accession": "P42262"})
-
-        self.assertEqual(result["status"], "success")
-        data = result["data"]
-        self.assertEqual(data["accession"], "P42262")
-        self.assertEqual(data["total_sites"], 1)
-        site = data["rna_editing_sites"][0]
-        self.assertEqual(site["position"], 607)
-        self.assertEqual(site["wild_type"], "Q")
-        self.assertEqual(site["mutated_type"], "R")
-        self.assertEqual(site["consequence_type"], "missense")
-        self.assertEqual(site["genomic_location"], ["NC_000004.12:g.157336723A>G"])
+    # The EBI feature payload this used to parse -- wild_type Q, mutated_type R,
+    # consequence_type missense, the genomic coordinate -- is richer than what
+    # replaced it, and it is unreachable. The Proteins API /rna-editing dataset
+    # returns 0 records for every taxon tried (human, mouse, rat, fly) and 404
+    # for GRIA2 itself, so that shape never arrives. RNA editing now reads
+    # UniProt's cc_rna_editing, which curates the position, its PubMed evidence
+    # and the curator's note but not the amino-acid substitution. Covered by
+    # tests/unit/test_rna_editing_reads_uniprot.py.
 
     def test_missing_accession_is_error(self):
         tool = _ext_tool("rna_editing")

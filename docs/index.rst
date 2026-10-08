@@ -59,7 +59,7 @@ Get Started
 
       **Choose CLI**
 
-      Discover, inspect, run, and test 1000+ tools directly from your shell with the ``tu`` command.
+      Discover, inspect, run, and test 2,700+ tools directly from your shell with the ``tu`` command.
 
    .. grid-item-card:: Writing code?
       :link: guide/python_guide
@@ -74,7 +74,7 @@ Get Started
 What Can You Do?
 ----------------
 
-**AI Agent Skills** - Specialized workflows combining 1000+ scientific tools:
+**AI Agent Skills** - Specialized workflows combining 2,700+ scientific tools:
 
 .. grid:: 1 1 2 2
    :gutter: 3

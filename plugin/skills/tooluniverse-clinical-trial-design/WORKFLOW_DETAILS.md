@@ -7,7 +7,7 @@ Full Python example using ToolUniverse to assess trial feasibility across all 6 
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # ============================================================================
@@ -18,13 +18,13 @@ tu.load_tools()
 disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(
     diseaseName="non-small cell lung cancer"
 )
-efo_id = disease_info['data']['id']
+efo_id = disease_info['data']['search']['hits'][0]['id']
 
-# Get phenotype data (includes prevalence if available)
-phenotypes = tu.tools.OpenTargets_get_diseases_phenotypes(
+# Get HPO phenotype annotations (no prevalence figures)
+phenotypes = tu.tools.OpenTargets_get_associated_phenotypes_by_disease_efoId(
     efoId=efo_id
 )
-# Note: May need to supplement with literature (PubMed) for specific prevalence
+# Note: Prevalence must come from literature (PubMed)
 
 # Step 1.2: Estimate EGFR mutation prevalence
 egfr_variants = tu.tools.ClinVar_search_variants(
@@ -37,10 +37,13 @@ l858r_variants = [v for v in egfr_variants['data']
                   if 'L858R' in v.get('name', '')]
 
 # Also check population databases for allele frequency
-gnomad_egfr = tu.tools.gnomad_search_variants(
-    gene="EGFR"
+# gnomad_search_variants takes a variant ID / rsID / ClinVar ID (not a gene symbol).
+# L858R is rs121434568; a somatic hotspot, so "No data returned" means absent from gnomAD.
+gnomad_l858r = tu.tools.gnomad_search_variants(
+    query="rs121434568",
+    dataset="gnomad_r4"
 )
-# Filter to L858R and sum allele frequencies
+# If found, pass the returned variant_id to gnomad_get_variant for allele frequencies
 
 # Step 1.3: Search literature for epidemiology
 epi_papers = tu.tools.PubMed_search_articles(
@@ -73,20 +76,20 @@ testing_papers = tu.tools.PubMed_search_articles(
 soc_drug = "osimertinib"
 
 soc_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(
-    drug_name_or_drugbank_id=soc_drug
+    query=soc_drug
 )
 
 soc_indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id=soc_drug
+    query=soc_drug
 )
 
 soc_pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id=soc_drug
+    query=soc_drug
 )
 
 # Step 3.2: Check FDA Orange Book for approved generics
 orange_book = tu.tools.FDA_OrangeBook_search_drug(
-    ingredient=soc_drug
+    generic_name=soc_drug
 )
 
 # Step 3.3: Find FDA approval details
@@ -99,15 +102,22 @@ fda_approval = tu.tools.OpenFDA_get_approval_history(
 # ============================================================================
 
 # Step 4.1: Search for precedent Phase 2 trials in EGFR+ NSCLC
-precedent_trials = tu.tools.search_clinical_trials(
+precedent_trials = tu.tools.ClinicalTrials_search_studies(
     condition="EGFR positive non-small cell lung cancer",
-    phase="2",
-    status="completed"
+    filter_phase="PHASE2",
+    filter_status="COMPLETED",
+    page_size=20
 )
+precedent_studies = precedent_trials['data']['studies']
 
-# Analyze which primary endpoints were used (ORR, PFS, etc.)
-orr_trials = [t for t in precedent_trials['data']
-              if 'response rate' in t.get('primary_outcome', '').lower()]
+# Analyze which primary endpoints were used (ORR, PFS, etc.).
+# Search results carry no outcome fields; primary outcomes come from ClinicalTrials_get_study.
+orr_trials = []
+for t in precedent_studies:
+    details = tu.tools.ClinicalTrials_get_study(nct_id=t['nct_id'])
+    measures = ' '.join(o.get('measure', '') for o in details['data'].get('primary_outcomes', []))
+    if 'response rate' in measures.lower():
+        orr_trials.append(t)
 
 # Step 4.2: Find FDA approvals using ORR as primary endpoint
 orr_approvals = tu.tools.PubMed_search_articles(
@@ -116,9 +126,9 @@ orr_approvals = tu.tools.PubMed_search_articles(
 )
 
 # Step 4.3: Get detailed trial results for sample size justification
-for trial in precedent_trials['data'][:5]:
-    nct_id = trial.get('nct_number')
-    trial_details = tu.tools.search_clinical_trials(
+for trial in precedent_studies[:5]:
+    nct_id = trial.get('nct_id')
+    trial_details = tu.tools.ClinicalTrials_get_study(
         nct_id=nct_id
     )
     # Extract: ORR, n, confidence intervals
@@ -131,7 +141,7 @@ for trial in precedent_trials['data'][:5]:
 class_drug = "erlotinib"  # Example EGFR TKI for class effect reference
 
 class_safety = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(
-    drug_name_or_drugbank_id=class_drug
+    query=class_drug
 )
 
 class_warnings = tu.tools.FDA_get_warnings_and_cautions_by_drug_name(
@@ -139,9 +149,9 @@ class_warnings = tu.tools.FDA_get_warnings_and_cautions_by_drug_name(
 )
 
 # Step 5.2: FAERS data for real-world adverse events
-faers_egfr_tki = tu.tools.FAERS_search_reports_by_drug_and_reaction(
-    drug_name="erlotinib",
-    limit=500
+faers_egfr_tki = tu.tools.FAERS_search_adverse_event_reports(
+    medicinalproduct="ERLOTINIB",
+    limit=100  # capped at 100 per request; read total_available for the full count
 )
 
 # Summarize top adverse events

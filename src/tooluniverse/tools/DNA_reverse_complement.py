@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def DNA_reverse_complement(
-    operation: str,
     sequence: str,
+    operation: Optional[str] = "reverse_complement",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,7 +22,7 @@ def DNA_reverse_complement(
     Parameters
     ----------
     operation : str
-        Operation type
+        Operation (optional; defaults to 'reverse_complement' for this tool).
     sequence : str
         DNA sequence (A, T, G, C, N only). Case insensitive.
     stream_callback : Callable, optional

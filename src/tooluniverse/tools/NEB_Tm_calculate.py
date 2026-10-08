@@ -10,10 +10,10 @@ from ._shared_client import get_shared_client
 
 def NEB_Tm_calculate(
     primer_sequence: str,
-    primer_sequence_2: Optional[str | Any] = None,
-    polymerase: Optional[str | Any] = None,
-    primer_concentration: Optional[int | Any] = None,
-    monovalent_salt_mm: Optional[int | Any] = None,
+    primer_sequence_2: Optional[str] = None,
+    polymerase: Optional[str] = None,
+    primer_concentration: Optional[int] = None,
+    monovalent_salt_mm: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,13 +26,13 @@ def NEB_Tm_calculate(
     ----------
     primer_sequence : str
         Forward primer DNA sequence (5' to 3'). Must contain only A, T, C, G bases an...
-    primer_sequence_2 : str | Any
+    primer_sequence_2 : str
         Optional reverse primer DNA sequence (5' to 3'). When provided, the API also ...
-    polymerase : str | Any
+    polymerase : str
         NEB polymerase product code. Determines buffer composition for Tm calculation...
-    primer_concentration : int | Any
+    primer_concentration : int
         Primer concentration in nanomolar (nM). Affects Tm calculation. Common values...
-    monovalent_salt_mm : int | Any
+    monovalent_salt_mm : int
         Monovalent salt concentration in mM. Only used when polymerase is 'custom'. T...
     stream_callback : Callable, optional
         Callback for streaming output

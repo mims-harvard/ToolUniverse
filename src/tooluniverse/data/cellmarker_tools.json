@@ -7,14 +7,6 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "operation": {
-          "type": "string",
-          "enum": [
-            "search_by_gene"
-          ],
-          "description": "Operation type",
-          "default": "search_by_gene"
-        },
         "gene_symbol": {
           "type": "string",
           "description": "Gene symbol to search for (e.g., 'CD3D', 'CD68', 'EPCAM', 'MS4A1')"
@@ -30,6 +22,24 @@
         "tissue_type": {
           "type": "string",
           "description": "Filter results by tissue type (e.g., 'Blood', 'Lung', 'Brain'). Case-insensitive partial match."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "default": 200,
+          "description": "Maximum records to return. Default 200; total_records reports how many matched, so raise this or page with offset when it is larger."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "default": 0,
+          "description": "Records to skip before returning, for paging through total_records."
         }
       },
       "required": [
@@ -107,14 +117,6 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "operation": {
-          "type": "string",
-          "enum": [
-            "search_by_cell_type"
-          ],
-          "description": "Operation type",
-          "default": "search_by_cell_type"
-        },
         "cell_name": {
           "type": "string",
           "description": "Cell type name to search for (e.g., 'T cell', 'Macrophage', 'B cell', 'Fibroblast')"
@@ -130,6 +132,24 @@
         "tissue_type": {
           "type": "string",
           "description": "Filter results by tissue type (e.g., 'Blood', 'Lung', 'Brain'). Case-insensitive partial match."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "default": 200,
+          "description": "Maximum records to return. Default 200; total_records reports how many matched, so raise this or page with offset when it is larger."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "default": 0,
+          "description": "Records to skip before returning, for paging through total_records."
         }
       },
       "required": [
@@ -216,14 +236,6 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "operation": {
-          "type": "string",
-          "enum": [
-            "list_cell_types"
-          ],
-          "description": "Operation type",
-          "default": "list_cell_types"
-        },
         "tissue_type": {
           "type": "string",
           "description": "Tissue type to list cell types for (e.g., 'Blood', 'Lung', 'Brain', 'Liver'). If omitted, returns a global list."
@@ -300,14 +312,6 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "operation": {
-          "type": "string",
-          "enum": [
-            "search_cancer_markers"
-          ],
-          "description": "Operation type",
-          "default": "search_cancer_markers"
-        },
         "cancer_type": {
           "type": "string",
           "description": "Cancer tissue type (e.g., 'Breast', 'Lung', 'Brain', 'Liver'). Filters by tissue where cancer occurs."
@@ -319,6 +323,24 @@
         "cell_type": {
           "type": "string",
           "description": "Cancer cell type to search for (e.g., 'Cancer stem cell', 'T cell', 'Macrophage')"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "default": 200,
+          "description": "Maximum records to return. Default 200; total_records reports how many matched, so raise this or page with offset when it is larger."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "default": 0,
+          "description": "Records to skip before returning, for paging through total_records."
         }
       },
       "required": []

@@ -44,7 +44,7 @@ Verified tool signatures, response structures, and troubleshooting.
 | Tool | Key Parameters | Response Structure |
 |------|---------------|-------------------|
 | `OpenTargets_get_drug_mechanisms_of_action_by_chemblId` | `chemblId: str` | `{data: {drug: {mechanismsOfAction: {rows: [{mechanismOfAction, actionType, targets}]}}}}` |
-| `OpenTargets_get_associated_targets_by_drug_chemblId` | `chemblId: str`, `size: int` | `{data: {drug: {linkedTargets: {count, rows}}}}` |
+| `OpenTargets_get_associated_targets_by_drug_chemblId` | `chemblId: str` (no paging parameter) | `{data: {drug: {mechanismsOfAction: {rows: [{actionType, targets: [{id, approvedSymbol}]}]}}}}` (targets are nested per mechanism row) |
 | `drugbank_get_targets_by_drug_name_or_drugbank_id` | `query, case_sensitive, exact_match, limit` (ALL required) | `{status, data: {targets: [{id, name, organism, actions}]}}` |
 | `DGIdb_get_drug_gene_interactions` | `genes: list[str]` | `{data: {genes: {nodes: [{name, interactions}]}}}` |
 | `CTD_get_chemical_gene_interactions` | `input_terms: str` | `{data: [{ChemicalName, GeneSymbol, InteractionActions}]}` |
@@ -53,7 +53,7 @@ Verified tool signatures, response structures, and troubleshooting.
 ## Target-Disease Edge Tools
 | Tool | Key Parameters | Response Structure |
 |------|---------------|-------------------|
-| `OpenTargets_get_associated_targets_by_disease_efoId` | `efoId: str`, `limit: int` | `{data: {disease: {associatedTargets: {count, rows: [{target: {id, approvedSymbol}, score}]}}}}` |
+| `OpenTargets_get_associated_targets_by_disease_efoId` | `efoId: str`, `size: int` | `{data: {disease: {associatedTargets: {count, rows: [{target: {id, approvedSymbol}, score}]}}}}` |
 | `OpenTargets_target_disease_evidence` | `efoId: str`, `ensemblId: str` (BOTH required) | Evidence data across datasources |
 | `CTD_get_gene_diseases` | `input_terms: str` | `{data: [{GeneName, DiseaseName, DirectEvidence}]}` |
 | `GWAS_search_associations_by_gene` | `gene_name: str` | GWAS association data |

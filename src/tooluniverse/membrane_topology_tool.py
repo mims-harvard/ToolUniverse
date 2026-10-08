@@ -291,7 +291,8 @@ class TopDBTool(BaseTool):
                 "reliability": _float(topology.get("Reliability")),
                 "regions": regions,
                 "experimental_evidence": evidence[:50],
-                "evidence_count": len(evidence),
+                "evidence_count": len(evidence[:50]),
+                "total_experimental_evidence": len(evidence),
             },
             "metadata": {
                 "identifier": identifier,

@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def FAERS_filter_serious_events(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "filter_serious_events",
     drug_name: Optional[str] = None,
     seriousness_type: Optional[str] = "all",
     drug: Optional[str] = None,

@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def IDR_get_study_datasets(
     project_id: int,
-    limit: Optional[int | Any] = None,
-    offset: Optional[int | Any] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def IDR_get_study_datasets(
     ----------
     project_id : int
         IDR project/study ID (e.g., 101). Obtain from IDR_list_studies.
-    limit : int | Any
+    limit : int
         Maximum number of datasets to return (default 25, max 1000)
-    offset : int | Any
+    offset : int
         Offset for pagination
     stream_callback : Callable, optional
         Callback for streaming output

@@ -10,6 +10,7 @@ from ._shared_client import get_shared_client
 
 def MGnify_list_biomes(
     depth: Optional[int] = None,
+    lineage: Optional[str] = None,
     page: Optional[int] = None,
     page_size: Optional[int] = None,
     *,
@@ -23,7 +24,9 @@ def MGnify_list_biomes(
     Parameters
     ----------
     depth : int
-        Hierarchy depth to filter by (1=root, 2=second level, etc.).
+        Depth of the biome lineage to keep, counting 'root' as 1 (so 'root:Engineered...
+    lineage : str
+        List this biome and all biomes below it, e.g. 'root:Host-associated:Human' (u...
     page : int
         Page number (default 1).
     page_size : int
@@ -44,7 +47,12 @@ def MGnify_list_biomes(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"depth": depth, "page": page, "page_size": page_size}.items()
+        for k, v in {
+            "depth": depth,
+            "lineage": lineage,
+            "page": page,
+            "page_size": page_size,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

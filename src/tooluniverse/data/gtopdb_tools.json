@@ -34,7 +34,8 @@
           "description": "Name/keyword to search for. Alias for the \"name\" parameter."
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://www.guidetopharmacology.org/services/targets",
@@ -54,65 +55,82 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
+      "type": "object",
+      "description": "Matches from the GtoPdb bulk download, newest published release.",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "The bulk CSV the records came from."
+        },
+        "total_matches": {
+          "type": "integer",
+          "description": "Records matching the filters, before the limit."
+        },
+        "returned": {
+          "type": "integer",
+          "description": "Records in this response."
+        },
+        "targets": {
           "type": "array",
-          "description": "List of pharmacological targets",
+          "description": "Targets whose name, abbreviation, systematic name or synonyms match. An exact gene-symbol or name hit is returned first.",
           "items": {
             "type": "object",
             "properties": {
               "targetId": {
-                "type": "integer",
-                "description": "GtoPdb target ID"
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
               "name": {
-                "type": "string",
-                "description": "Full target name"
+                "type": "string"
+              },
+              "rawName": {
+                "type": "string"
               },
               "abbreviation": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Common abbreviation"
+                "type": "string"
+              },
+              "systematicName": {
+                "type": "string"
               },
               "type": {
-                "type": "string",
-                "description": "Target type as GtoPdb records it, lower_snake_case: 'gpcr', 'nhr', 'lgic', 'vgic', 'other_ic', 'enzyme', 'catalytic_receptor', 'transporter', 'other_protein', or '' (accessory proteins)"
+                "type": "string"
               },
-              "familyIds": {
-                "type": "array",
-                "items": {
-                  "type": "integer"
-                },
-                "description": "Family IDs"
+              "familyId": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
               },
-              "subunitIds": {
-                "type": "array",
-                "items": {
-                  "type": "integer"
-                }
+              "familyName": {
+                "type": "string"
               },
-              "complexIds": {
-                "type": "array",
-                "items": {
-                  "type": "integer"
-                }
+              "geneSymbol": {
+                "type": "string"
+              },
+              "hgncId": {
+                "type": "string"
+              },
+              "synonyms": {
+                "type": "string"
               }
             }
           }
         },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Present only when the result is empty and the reason is worth stating."
         }
+      },
+      "required": [
+        "source",
+        "total_matches",
+        "returned",
+        "targets"
       ]
     }
   },
@@ -151,7 +169,8 @@
           "description": "Name/keyword to search for. Alias for the \"name\" parameter."
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://www.guidetopharmacology.org/services/ligands",
@@ -176,31 +195,100 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
+      "type": "object",
+      "description": "Matches from the GtoPdb bulk download, newest published release.",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "The bulk CSV the records came from."
+        },
+        "total_matches": {
+          "type": "integer",
+          "description": "Records matching the filters, before the limit."
+        },
+        "returned": {
+          "type": "integer",
+          "description": "Records in this response."
+        },
+        "ligands": {
           "type": "array",
-          "description": "List of ligands. Every record satisfies the requested 'type'/'approved' filters -- ToolUniverse enforces them client-side because GtoPdb does not.",
+          "description": "Ligands whose name matches, exact hit first.",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "ligandId": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": "string"
+              },
+              "rawName": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "approved": {
+                "type": "boolean"
+              },
+              "withdrawn": {
+                "type": "boolean"
+              },
+              "species": {
+                "type": "string"
+              },
+              "pubchemCid": {
+                "type": "string"
+              },
+              "chemblId": {
+                "type": "string"
+              },
+              "uniprotId": {
+                "type": "string"
+              },
+              "iupacName": {
+                "type": "string"
+              },
+              "inn": {
+                "type": "string"
+              },
+              "smiles": {
+                "type": "string"
+              },
+              "inchi": {
+                "type": "string"
+              },
+              "inchiKey": {
+                "type": "string"
+              },
+              "synonyms": {
+                "type": "string"
+              }
+            }
           }
         },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Present only when the result is empty and the reason is worth stating."
         }
+      },
+      "required": [
+        "source",
+        "total_matches",
+        "returned",
+        "ligands"
       ]
     }
   },
   {
     "name": "GtoPdb_get_interactions",
-    "description": "Get pharmacological interactions between targets and ligands from the Guide to Pharmacology database. Provide gene_symbol (convenience, auto-resolves to targetId), targetId (from GtoPdb_search_targets), or ligandId (from GtoPdb_search_ligands) to filter interactions. Returns binding affinity (Ki, Kd, IC50, EC50), action type (agonist, antagonist, inhibitor, etc.), species, and assay information. NOTE: GtoPdb coverage focuses on GPCRs, ion channels, nuclear receptors, and enzymes; kinase inhibitors (EGFR, BRAF, ALK, VEGFR inhibitors) have limited interaction data \u2014 use ChEMBL_get_drug_mechanisms for those instead. No authentication required.",
+    "description": "Get pharmacological interactions between targets and ligands from the Guide to Pharmacology database. Provide gene_symbol (convenience, auto-resolves to targetId), targetId (from GtoPdb_search_targets), or ligandId (from GtoPdb_search_ligands) to filter interactions. Returns binding affinity (Ki, Kd, IC50, EC50), action type (agonist, antagonist, inhibitor, etc.), species, and assay information. NOTE: GtoPdb coverage focuses on GPCRs, ion channels, nuclear receptors, and enzymes; kinase inhibitors (EGFR, BRAF, ALK, VEGFR inhibitors) have limited interaction data — use ChEMBL_get_drug_mechanisms for those instead. No authentication required.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -209,7 +297,7 @@
             "string",
             "null"
           ],
-          "description": "Gene symbol convenience parameter \u2014 automatically resolves to GtoPdb targetId. Works for gene-symbol-named targets (e.g., 'KRAS', 'EGFR', 'BRAF', 'ALK'). Traditional receptor names like 'DRD2' may not resolve; use GtoPdb_search_targets first to confirm. Prefer exact gene symbols over partial names."
+          "description": "Gene symbol convenience parameter — automatically resolves to GtoPdb targetId. Works for gene-symbol-named targets (e.g., 'KRAS', 'EGFR', 'BRAF', 'ALK'). Traditional receptor names like 'DRD2' may not resolve; use GtoPdb_search_targets first to confirm. Prefer exact gene symbols over partial names."
         },
         "targetId": {
           "type": [
@@ -240,7 +328,8 @@
           "description": "Filter by species. Examples: 'Human', 'Mouse', 'Rat'"
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://www.guidetopharmacology.org/services/interactions",
@@ -264,118 +353,100 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "array",
-          "items": {
-            "type": "object"
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "name": "GtoPdb_search_diseases",
-    "description": "Search the Guide to Pharmacology (GtoPdb / IUPHAR-BPS) for diseases by name, and retrieve their curated disease IDs, names, synonyms, and cross-references to external databases (OMIM, Orphanet, Disease Ontology). GtoPdb links diseases to the drug targets and approved/experimental ligands relevant to them. Example: 'epilepsy' returns disease entries such as 'Epilepsy and Intellectual Disability'. No authentication required.",
-    "parameter": {
       "type": "object",
+      "description": "Matches from the GtoPdb bulk download, newest published release.",
       "properties": {
-        "name": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Disease name to search. Examples: 'epilepsy', 'asthma', 'hypertension', 'breast cancer'."
+        "source": {
+          "type": "string",
+          "description": "The bulk CSV the records came from."
         },
-        "query": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Name/keyword to search for. Alias for the \"name\" parameter."
-        }
-      },
-      "required": [],
-      "additionalProperties": false
-    },
-    "fields": {
-      "endpoint": "https://www.guidetopharmacology.org/services/diseases",
-      "params": {}
-    },
-    "type": "GtoPdbRESTTool",
-    "test_examples": [
-      {
-        "name": "epilepsy"
-      },
-      {
-        "query": "asthma"
-      }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
+        "total_matches": {
+          "type": "integer",
+          "description": "Records matching the filters, before the limit."
+        },
+        "returned": {
+          "type": "integer",
+          "description": "Records in this response."
+        },
+        "interactions": {
           "type": "array",
+          "description": "Ligand-target interactions with GtoPdb's curated affinity range.",
           "items": {
             "type": "object",
             "properties": {
-              "diseaseId": {
+              "targetId": {
                 "type": [
                   "integer",
                   "null"
-                ],
-                "description": "GtoPdb disease ID"
+                ]
               },
-              "name": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Disease name"
+              "targetName": {
+                "type": "string"
               },
-              "description": {
+              "targetGeneSymbol": {
+                "type": "string"
+              },
+              "targetUniprotId": {
+                "type": "string"
+              },
+              "targetSpecies": {
+                "type": "string"
+              },
+              "ligandId": {
                 "type": [
-                  "string",
+                  "integer",
                   "null"
                 ]
               },
-              "synonyms": {
-                "type": "array",
-                "items": {
-                  "type": [
-                    "object",
-                    "string"
-                  ],
-                  "description": "GtoPdb returns synonyms as objects like {\"name\": \"...\"}; a plain string is also accepted."
-                }
+              "ligandName": {
+                "type": "string"
               },
-              "databaseLinks": {
-                "type": "array"
+              "ligandType": {
+                "type": "string"
+              },
+              "approvedLigand": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string"
+              },
+              "action": {
+                "type": "string"
+              },
+              "affinityUnits": {
+                "type": "string"
+              },
+              "affinityHigh": {
+                "type": "string"
+              },
+              "affinityMedian": {
+                "type": "string"
+              },
+              "affinityLow": {
+                "type": "string"
+              },
+              "selectivity": {
+                "type": "string"
+              },
+              "primaryTarget": {
+                "type": "boolean"
               }
             }
           }
         },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Present only when the result is empty and the reason is worth stating."
         }
+      },
+      "required": [
+        "source",
+        "total_matches",
+        "returned",
+        "interactions"
       ]
     }
   },
@@ -400,7 +471,8 @@
           "description": "Alias for ligand_id. GtoPdb ligand ID."
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://www.guidetopharmacology.org/services/ligands/ligandProperties",
@@ -416,9 +488,21 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
+      "type": "object",
+      "description": "Physicochemical properties for one ligand, with its identity record.",
+      "properties": {
+        "source": {
+          "type": "string"
+        },
+        "ligandId": {
+          "type": "integer"
+        },
+        "ligand": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The ligand's row from ligands.csv.",
           "properties": {
             "ligandId": {
               "type": [
@@ -426,181 +510,115 @@
                 "null"
               ]
             },
-            "ligandName": {
-              "type": [
-                "string",
-                "null"
-              ]
+            "name": {
+              "type": "string"
+            },
+            "rawName": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "approved": {
+              "type": "boolean"
+            },
+            "withdrawn": {
+              "type": "boolean"
+            },
+            "species": {
+              "type": "string"
+            },
+            "pubchemCid": {
+              "type": "string"
+            },
+            "chemblId": {
+              "type": "string"
+            },
+            "uniprotId": {
+              "type": "string"
             },
             "iupacName": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
+            },
+            "inn": {
+              "type": "string"
             },
             "smiles": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "inchi": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": "string"
             },
             "inchiKey": {
+              "type": "string"
+            },
+            "synonyms": {
+              "type": "string"
+            }
+          }
+        },
+        "properties": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Names and numeric types follow the retired /molecularProperties response. Null when GtoPdb publishes no properties for the ligand; 11266 of 13991 ligands have a row.",
+          "properties": {
+            "hydrogenBondAcceptors": {
               "type": [
-                "string",
+                "number",
                 "null"
               ]
             },
-            "molecularProperties": {
+            "hydrogenBondDonors": {
               "type": [
-                "object",
-                "null"
-              ],
-              "properties": {
-                "molecularWeight": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "logP": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "hydrogenBondDonors": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "hydrogenBondAcceptors": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "rotatableBonds": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "topologicalPolarSurfaceArea": {
-                  "type": [
-                    "number",
-                    "null"
-                  ]
-                },
-                "lipinskisRuleOfFive": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                }
-              }
-            }
-          },
-          "required": [
-            "ligandId"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
-    }
-  },
-  {
-    "name": "GtoPdb_get_disease_associations",
-    "description": "Get curated disease-to-target and disease-to-ligand associations from the Guide to Pharmacology (GtoPdb / IUPHAR-BPS) for a given disease ID. Merges two keyless endpoints into one record: diseaseTargets (drug targets linked to the disease, with roles, references, and ligand-target interactions) and diseaseLigands (approved/experimental ligands linked to the disease, with approval status and clinical-use notes). An empty list is a valid result (some diseases have targets but no curated ligands). Use GtoPdb_search_diseases first to find a disease_id (e.g., non-allergic asthma = 1161). No authentication required.",
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "disease_id": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "GtoPdb disease ID. Get from GtoPdb_search_diseases. Examples: 1161 (non-allergic asthma), 34 (acute myeloid leukemia). Alias: diseaseId also accepted."
-        },
-        "diseaseId": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Alias for disease_id. GtoPdb disease ID."
-        }
-      },
-      "required": []
-    },
-    "fields": {
-      "endpoint": "https://www.guidetopharmacology.org/services/diseases/diseaseAssociations",
-      "params": {}
-    },
-    "type": "GtoPdbRESTTool",
-    "test_examples": [
-      {
-        "disease_id": 1161
-      },
-      {
-        "disease_id": 34
-      }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "diseaseId": {
-              "type": [
-                "integer",
+                "number",
                 "null"
               ]
             },
-            "diseaseTargets": {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
+            "rotatableBonds": {
+              "type": [
+                "number",
+                "null"
+              ]
             },
-            "diseaseLigands": {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
+            "topologicalPolarSurfaceArea": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "molecularWeight": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "logP": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "lipinskisRuleOfFive": {
+              "type": [
+                "number",
+                "null"
+              ]
             }
-          },
-          "required": [
-            "diseaseTargets",
-            "diseaseLigands"
-          ]
+          }
         },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
+        "note": {
+          "type": [
+            "string",
+            "null"
           ]
         }
+      },
+      "required": [
+        "source",
+        "ligandId",
+        "properties"
       ]
     }
   }

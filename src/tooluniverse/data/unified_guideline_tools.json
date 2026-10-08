@@ -1013,7 +1013,7 @@
     },
     "test_examples": [
       {
-        "query": "machine learning optimization",
+        "query": "hypertension",
         "limit": 1
       }
     ]

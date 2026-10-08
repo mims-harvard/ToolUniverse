@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def BioPortal_annotate_text(
     text: str,
-    ontologies: Optional[str | Any] = None,
-    longest_only: Optional[bool | Any] = None,
+    ontologies: Optional[str] = None,
+    longest_only: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def BioPortal_annotate_text(
     ----------
     text : str
         Biomedical text to annotate. Can be a sentence, abstract, or clinical note. M...
-    ontologies : str | Any
+    ontologies : str
         Comma-separated ontology acronyms to restrict annotation. If null, uses all o...
-    longest_only : bool | Any
+    longest_only : bool
         If true (default), only return longest matching spans. Set false for all poss...
     stream_callback : Callable, optional
         Callback for streaming output

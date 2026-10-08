@@ -172,7 +172,7 @@ Create `[INDICATION]_trial_feasibility_report.md` with all 14 sections. See `REP
 ```python
 from tooluniverse import ToolUniverse
 
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # Example: EGFR+ NSCLC trial feasibility
@@ -180,21 +180,22 @@ tu.load_tools()
 disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(
     diseaseName="non-small cell lung cancer"
 )
-prevalence = tu.tools.OpenTargets_get_diseases_phenotypes(
-    efoId=disease_info['data']['id']
+# Returns HPO phenotypes only, not prevalence figures; get prevalence from literature
+prevalence = tu.tools.OpenTargets_get_associated_phenotypes_by_disease_efoId(
+    efoId=disease_info['data']['search']['hits'][0]['id']
 )
 
 # Step 2: Biomarker prevalence
 variants = tu.tools.ClinVar_search_variants(gene="EGFR", significance="pathogenic")
 
 # Step 3: Precedent trials
-trials = tu.tools.search_clinical_trials(
+trials = tu.tools.ClinicalTrials_search_studies(
     condition="EGFR positive non-small cell lung cancer",
-    status="completed", phase="2"
+    filter_status="COMPLETED", filter_phase="PHASE2"
 )
 
 # Step 4: Standard of care comparator
-soc = tu.tools.FDA_OrangeBook_search_drug(ingredient="osimertinib")
+soc = tu.tools.FDA_OrangeBook_search_drug(generic_name="osimertinib")
 
 # Compile into feasibility report...
 ```
@@ -202,6 +203,10 @@ soc = tu.tools.FDA_OrangeBook_search_drug(ingredient="osimertinib")
 See `WORKFLOW_DETAILS.md` for the complete 6-path Python workflow and use case examples.
 
 ---
+
+## Next Steps
+
+Once this feasibility assessment is complete, use **`tooluniverse-clinical-trial-protocol`** to turn the 6-dimension findings (endpoint, population, comparator, effect size, duration, regulatory pathway) into an actual protocol document — full ICH E6(R2)/FDA-style sections plus a real sample-size calculation. That skill consumes this report's output rather than re-deriving feasibility.
 
 ## Integration with Other Skills
 

@@ -24,7 +24,7 @@ def ChEMBL_get_drug(
     drug_chembl_id : str
         ChEMBL drug ID, e.g., 'CHEMBL1201581'
     format : str
-
+        Response format (json, xml or yaml; default json)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

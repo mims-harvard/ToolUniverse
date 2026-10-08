@@ -9,15 +9,21 @@ Complete code implementations for all repurposing strategies.
 ```python
 # 1.1 Get disease information
 disease_info = tu.tools.OpenTargets_get_disease_id_description_by_name(diseaseName="[disease_name]")
+disease_id = disease_info['data']['search']['hits'][0]['id']  # e.g. MONDO_0004975
 
-# 1.2 Find associated targets
+# 1.2 Find associated targets (`size` = how many top-scored targets to return)
 targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(
-    efoId=disease_info['data']['id'], limit=20
+    efoId=disease_id, size=20
 )
+rows = targets['data']['disease']['associatedTargets']['rows']
+# each row: {'target': {'id': 'ENSG...', 'approvedSymbol': 'NOD2'}, 'score': 0.75}
 
-# 1.3 Get target details
-for target in targets['data'][:10]:
-    details = tu.tools.UniProt_get_entry_by_accession(accession=target['uniprot_id'])
+# 1.3 Get target details (Open Targets rows carry Ensembl IDs, not UniProt accessions)
+for row in rows[:10]:
+    info = tu.tools.OpenTargets_get_target_info_by_ensemblID(ensemblId=row['target']['id'])
+    swissprot = [p['id'] for p in info['data']['target']['proteinIds']
+                 if p['source'] == 'uniprot_swissprot']
+    details = tu.tools.UniProt_get_entry_by_accession(accession=swissprot[0])
 ```
 
 ---
@@ -25,17 +31,22 @@ for target in targets['data'][:10]:
 ## Phase 2: Drug Discovery
 
 ```python
-for target in targets['data'][:10]:
+for row in rows[:10]:
+    symbol = row['target']['approvedSymbol']
+    # DrugBank matches protein NAMES ("Epidermal growth factor receptor"), not gene
+    # symbols ("EGFR" returns 0 matches) -- take approvedName from the target record.
+    info = tu.tools.OpenTargets_get_target_info_by_ensemblID(ensemblId=row['target']['id'])
+    protein_name = info['data']['target']['approvedName']
     drugbank_results = tu.tools.drugbank_get_drug_name_and_description_by_target_name(
-        target_name=target['gene_symbol'])
-    dgidb_results = tu.tools.DGIdb_get_drug_gene_interactions(gene_name=target['gene_symbol'])
-    chembl_results = tu.tools.ChEMBL_search_drugs(query=target['gene_symbol'], limit=10)
+        query=protein_name)
+    dgidb_results = tu.tools.DGIdb_get_drug_gene_interactions(gene_name=symbol)
+    chembl_results = tu.tools.ChEMBL_search_drugs(query=symbol, limit=10)
 
 # Get drug details
 for drug_name in unique_drugs:
-    drug_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(drug_name_or_drugbank_id=drug_name)
-    indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(drug_name_or_drugbank_id=drug_name)
-    pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(drug_name_or_drugbank_id=drug_name)
+    drug_info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(query=drug_name)
+    indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(query=drug_name)
+    pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(query=drug_name)
 ```
 
 ---
@@ -45,8 +56,8 @@ for drug_name in unique_drugs:
 ```python
 for drug in top_candidates:
     warnings = tu.tools.FDA_get_warnings_and_cautions_by_drug_name(drug_name=drug['name'])
-    adverse_events = tu.tools.FAERS_search_reports_by_drug_and_reaction(drug_name=drug['name'], limit=100)
-    interactions = tu.tools.drugbank_get_drug_interactions_by_drug_name_or_id(drug_name_or_id=drug['name'])
+    adverse_events = tu.tools.FAERS_count_reactions_by_drug_event(medicinalproduct=drug['name'], limit=100)
+    interactions = tu.tools.drugbank_get_drug_interactions_by_drug_name_or_id(query=drug['name'])
     if 'smiles' in drug:
         admet = tu.tools.ADMETAI_predict_physicochemical_properties(smiles=drug['smiles'], use_cache=True)
 ```
@@ -90,7 +101,7 @@ def score_repurposing_candidate(drug, target_score, safety_data, literature_coun
 
 ```python
 known_drug = "metformin"
-moa = tu.tools.drugbank_get_drug_desc_pharmacology_by_moa(mechanism_of_action="[moa_term]")
+moa = tu.tools.drugbank_get_drug_desc_pharmacology_by_moa(query="[moa_term]")
 similar = tu.tools.ChEMBL_search_similar_molecules(query=known_drug, similarity_threshold=70)
 ```
 
@@ -99,9 +110,9 @@ similar = tu.tools.ChEMBL_search_similar_molecules(query=known_drug, similarity_
 ## Alternative Strategy B: Network-Based Repurposing
 
 ```python
-pathways = tu.tools.drugbank_get_pathways_reactions_by_drug_or_id(drug_name_or_drugbank_id="[drug_name]")
+pathways = tu.tools.drugbank_get_pathways_reactions_by_drug_or_id(query="[drug_name]")
 pathway_drugs = tu.tools.drugbank_get_drug_name_and_description_by_pathway_name(
-    pathway_name=pathways['data'][0]['pathway_name'])
+    query=pathways['data']['results'][0]['pathways'][0]['name'])
 ```
 
 ---
@@ -109,9 +120,9 @@ pathway_drugs = tu.tools.drugbank_get_drug_name_and_description_by_pathway_name(
 ## Alternative Strategy C: Phenotype-Based Repurposing
 
 ```python
-indication_drugs = tu.tools.drugbank_get_drug_name_and_description_by_indication(indication="[related_indication]")
+indication_drugs = tu.tools.drugbank_get_drug_name_and_description_by_indication(query="[related_indication]")
 # Analyze adverse events as therapeutic effects (e.g., minoxidil hair growth)
-adverse_as_therapeutic = tu.tools.FAERS_search_reports_by_drug_and_reaction(drug_name="[drug_name]", limit=1000)
+adverse_as_therapeutic = tu.tools.FAERS_count_reactions_by_drug_event(medicinalproduct="[drug_name]", limit=1000)
 ```
 
 ---
@@ -131,11 +142,11 @@ approved_drugs = [d for d in all_drugs if d.get('approved')]
 ### Pattern 2: Deep Dive Single Drug
 ```python
 drug_name = "metformin"
-info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(drug_name_or_drugbank_id=drug_name)
-targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(drug_name_or_drugbank_id=drug_name)
-indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(drug_name_or_drugbank_id=drug_name)
-pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(drug_name_or_drugbank_id=drug_name)
-interactions = tu.tools.drugbank_get_drug_interactions_by_drug_name_or_id(drug_name_or_id=drug_name)
+info = tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(query=drug_name)
+targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(query=drug_name)
+indications = tu.tools.drugbank_get_indications_by_drug_name_or_drugbank_id(query=drug_name)
+pharmacology = tu.tools.drugbank_get_pharmacology_by_drug_name_or_drugbank_id(query=drug_name)
+interactions = tu.tools.drugbank_get_drug_interactions_by_drug_name_or_id(query=drug_name)
 warnings = tu.tools.FDA_get_warnings_and_cautions_by_drug_name(drug_name=drug_name)
 papers = tu.tools.PubMed_search_articles(query=f"{drug_name} AND [new_disease]", max_results=100)
 ```
@@ -147,7 +158,7 @@ comparison = []
 for drug in candidates:
     data = {
         'name': drug,
-        'info': tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(drug_name_or_drugbank_id=drug),
+        'info': tu.tools.drugbank_get_drug_basic_info_by_drug_name_or_id(query=drug),
         'safety': tu.tools.FDA_get_warnings_and_cautions_by_drug_name(drug_name=drug),
         'evidence': tu.tools.PubMed_search_articles(query=drug, max_results=10)
     }
@@ -161,10 +172,17 @@ for drug in candidates:
 ### Polypharmacology-Based Repurposing
 Find drugs with multi-target activity matching disease network:
 ```python
-targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_id, limit=50)
+targets = tu.tools.OpenTargets_get_associated_targets_by_disease_efoId(efoId=disease_id, size=50)
+disease_symbols = {r['target']['approvedSymbol']
+                   for r in targets['data']['disease']['associatedTargets']['rows']}
 for drug in candidate_drugs:
-    drug_targets = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(drug_name_or_drugbank_id=drug)
-    overlap = len(set(drug_targets) & set(disease_targets))
+    res = tu.tools.drugbank_get_targets_by_drug_name_or_drugbank_id(query=drug)
+    # DrugBank targets are {'id', 'name' (protein name), 'organism', 'actions'} with no gene
+    # symbol, so map each protein name to a symbol first (your own step, e.g. via
+    # OpenTargets_get_target_id_description_by_name) before comparing with disease_symbols.
+    drug_target_names = [t['name'] for t in res['data']['results'][0]['targets']]
+    drug_symbols = map_protein_names_to_symbols(drug_target_names)
+    overlap = len(drug_symbols & disease_symbols)
     if overlap >= 3:
         print(f"{drug}: hits {overlap} disease targets")
 ```
@@ -172,12 +190,15 @@ for drug in candidate_drugs:
 ### Structure-Based Repurposing
 Find structurally similar approved drugs:
 ```python
-cid = tu.tools.PubChem_get_CID_by_compound_name(compound_name=known_active)
-similar = tu.tools.PubChem_search_compounds_by_similarity(cid=cid['data']['cid'], threshold=85)
-for compound in similar['data']:
+cid = tu.tools.PubChem_get_CID_by_compound_name(compound_name=known_active)['data']['IdentifierList']['CID'][0]
+props = tu.tools.PubChem_get_compound_properties_by_CID(cid=cid)
+smiles = props['data']['PropertyTable']['Properties'][0]['ConnectivitySMILES']
+similar = tu.tools.PubChem_search_compounds_by_similarity(smiles=smiles, threshold=0.85)  # Tanimoto 0-1; CIDs only
+for similar_cid in similar['data']['IdentifierList']['CID']:
     # FDA labels are keyed by drug name, not CID -- resolve the name first
-    _syn = tu.tools.PubChem_get_compound_synonyms_by_CID(cid=compound['cid'])
-    _name = _syn['data'][0] if isinstance(_syn, dict) and _syn.get('data') else None
+    _syn = tu.tools.PubChem_get_compound_synonyms_by_CID(cid=similar_cid)
+    _info = _syn.get('data', {}).get('InformationList', {}).get('Information', [])
+    _name = _info[0]['Synonym'][0] if _info and _info[0].get('Synonym') else None
     drug_info = tu.tools.FDA_get_drug_label(drug_name=_name)
 ```
 

@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def Sequence_gc_content(
-    operation: str,
     sequence: str,
+    operation: Optional[str] = "gc_content",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

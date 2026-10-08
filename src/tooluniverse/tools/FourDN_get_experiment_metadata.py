@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def FourDN_get_experiment_metadata(
-    operation: str,
     experiment_accession: str,
+    operation: Optional[str] = "get_experiment_metadata",
     include_full_metadata: Optional[bool] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

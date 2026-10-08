@@ -1,3 +1,4 @@
+import time
 import requests
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -464,6 +465,13 @@ class EuropePMCTool(BaseTool):
             timeout=timeout,
         )
 
+    @staticmethod
+    def _is_search_payload(payload):
+        """True for a real Europe PMC search body (it always has hitCount or resultList)."""
+        return isinstance(payload, dict) and (
+            "hitCount" in payload or "resultList" in payload
+        )
+
     def _search(
         self,
         query,
@@ -554,6 +562,44 @@ class EuropePMCTool(BaseTool):
                     "retryable": True,
                 }
             ], None
+
+        if not self._is_search_payload(core_payload):
+            # HTTP 200 with a body that is not a search response: seen live, a query
+            # with 66,695 hits came back as 0 results and no hitCount, reported as
+            # a successful empty search. A genuine empty result carries hitCount 0,
+            # so retry once and otherwise report a retryable error.
+            time.sleep(0.5)
+            retry = request_with_retry(
+                self.session,
+                "GET",
+                self.base_url,
+                params=core_params,
+                timeout=20,
+                max_attempts=3,
+            )
+            try:
+                core_payload = retry.json() if retry.status_code == 200 else None
+            except ValueError:
+                core_payload = None
+            if not self._is_search_payload(core_payload):
+                return [
+                    {
+                        "title": "Error",
+                        "abstract": None,
+                        "authors": [],
+                        "journal": None,
+                        "year": None,
+                        "doi": None,
+                        "url": None,
+                        "citations": 0,
+                        "open_access": False,
+                        "keywords": [],
+                        "source": "Europe PMC",
+                        "error": "Europe PMC returned an unexpected response "
+                        "(no hitCount or resultList), so the result count is unknown",
+                        "retryable": True,
+                    }
+                ], None
 
         hit_count = core_payload.get("hitCount")
         try:

@@ -29,6 +29,7 @@ import concurrent.futures
 import fnmatch
 import hashlib
 import json
+import signal
 import subprocess
 import sys
 import time
@@ -42,12 +43,20 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 # --parallel substantially without hammering any single upstream API too hard.
 DEFAULT_PARALLEL_WORKERS = 10
 
+# 10 minutes per pattern. 5 was enough only while failures were cheap:
+# fda_drug_labeling measured 255.89 s once its impossible examples were
+# repaired, 85% of the old budget, so ordinary network variance tipped it
+# into TIMEOUT -- which reads as a tool failure. Named once because three
+# places reported the number and two of them still said five minutes.
+PATTERN_TIMEOUT_SECONDS = 600
+
 CHECKPOINT_SCHEMA_VERSION = 2
 RESULT_STATES = (
     "passed",
     "failed",
     "schema_error",
     "no_tests",
+    "skipped",
     "timeout",
     "error",
 )
@@ -67,7 +76,11 @@ def classify_result(result: Dict[str, Any]) -> str:
     if result.get("exit_code", 0) != 0:
         return "error"
     if result.get("tests_run", 0) == 0:
-        return "no_tests"
+        # "no examples to run" and "every example needs a credential this
+        # runner does not have" are different facts, and reporting the second
+        # as the first is how 24 key-gated tools looked like a catalogue with
+        # no tests. Neither is a failure.
+        return "skipped" if result.get("skipped", 0) > 0 else "no_tests"
     if result.get("passed", 0) < result.get("tests_run", 0):
         return "error"
     return "passed"
@@ -194,6 +207,36 @@ def load_checkpoint(
     return validated
 
 
+# src/tooluniverse/remote/<slug>/ is a provider that needs its own server, so
+# --skip-remote has to drop it. This used to be a hardcoded list of ten names
+# and it drifted: 30 provider directories existed and 24 of them -- borzoi,
+# celltypist, monocle3, scvi and the rest -- were still being tested. The tools
+# are not loaded without their server, so each one failed with "Tool 'X' not
+# found even after loading tools" and the weekly report counted 22 categories
+# of phantom failures. Derived from the filesystem so it cannot drift again.
+_EXTERNAL_SERVICE_PATTERNS = (
+    "blast",  # NCBI BLAST API: submits a job to a queue, not a request/response
+    "simbad",  # SIMBAD astronomical database API
+    "uspto",  # USPTO Patent API, and uspto_downloader with it
+    "depmap",  # the pattern name; the provider directory is depmap_24q2
+)
+
+
+def remote_tool_patterns() -> set:
+    """Pattern names --skip-remote must drop: provider dirs plus the services."""
+    patterns = set(_EXTERNAL_SERVICE_PATTERNS)
+    remote_root = (
+        Path(__file__).resolve().parents[1] / "src" / "tooluniverse" / "remote"
+    )
+    if remote_root.is_dir():
+        patterns.update(
+            entry.name
+            for entry in remote_root.iterdir()
+            if entry.is_dir() and not entry.name.startswith(("_", "."))
+        )
+    return patterns
+
+
 def find_all_tool_configs(data_dir: Path) -> List[Path]:
     """Find all JSON configuration files."""
     json_files = list(data_dir.glob("*.json"))
@@ -289,7 +332,14 @@ def run_test_for_pattern(
             capture_output=True,
             text=True,
             cwd=repo_root,
-            timeout=300  # 5 minute timeout per pattern
+            # 10 minutes per pattern. 5 was enough only while failures were
+            # cheap: fda_drug_labeling's 156 tests fit inside 300 s because 27
+            # of them died instantly on a NOT_FOUND from an impossible example
+            # query. With those examples repaired the tests fetch real label
+            # sections, and the category measured 255.89 s -- 85% of the old
+            # budget -- so normal network variance tipped it into TIMEOUT,
+            # which reads as a tool failure and is worse signal than before.
+            timeout=PATTERN_TIMEOUT_SECONDS,
         )
         
         # Parse output to extract statistics
@@ -298,13 +348,31 @@ def run_test_for_pattern(
         stats["exit_code"] = result.returncode
         stats["raw_output"] = output
         stats["stderr"] = result.stderr
-        
+
+        # A negative return code is a signal, and a runner reports that as
+        # "incomplete or invalid test output" because the process died before
+        # printing its summary. The xml category was killed by the OOM killer
+        # on every sweep -- 120 GB of RSS, exit 137 -- and the report said only
+        # that its output was unparseable, which reads like a formatting bug.
+        if result.returncode is not None and result.returncode < 0:
+            signal_number = -result.returncode
+            name = signal.Signals(signal_number).name if signal_number in {
+                member.value for member in signal.Signals
+            } else f"signal {signal_number}"
+            hint = (
+                " The usual cause is the OOM killer; check the category's "
+                "memory use before reading this as a test failure."
+                if signal_number == signal.SIGKILL
+                else ""
+            )
+            stats["error"] = f"Killed by {name}.{hint}"
+
         return normalize_result(stats)
-        
+
     except subprocess.TimeoutExpired:
         return normalize_result(
             {
-                "error": "Timeout after 5 minutes",
+                "error": f"Timeout after {PATTERN_TIMEOUT_SECONDS // 60} minutes",
                 "timed_out": True,
                 "exit_code": -1,
             }
@@ -317,7 +385,7 @@ def _format_result_status(result: Dict[str, Any]) -> str:
     """One-line human-readable status for a single pattern's test result."""
     state = normalize_result(result)["state"]
     if state == "timeout":
-        return "TIMEOUT: exceeded 5 minutes"
+        return f"TIMEOUT: exceeded {PATTERN_TIMEOUT_SECONDS // 60} minutes"
     if state == "error":
         return f"ERROR: {result.get('error', 'incomplete or invalid test output')}"
     if state == "failed":
@@ -326,6 +394,29 @@ def _format_result_status(result: Dict[str, Any]) -> str:
         return f"SCHEMA ERROR: {result['schema_invalid']} invalid result(s)"
     if state == "no_tests":
         return "NO TESTS: category has no executable examples"
+    if state == "skipped":
+        skipped = result.get("skipped", 0)
+        reasons = []
+        local_input = result.get("skipped_local_input", 0)
+        long_running = result.get("skipped_long_running", 0)
+        missing_package = result.get("skipped_missing_package", 0)
+        if missing_package:
+            reasons.append(
+                f"{missing_package} need a package that is not installed"
+            )
+        if local_input:
+            reasons.append(f"{local_input} need an input file the caller supplies")
+        if long_running:
+            reasons.append(f"{long_running} poll an upstream job for longer than "
+                           "this budget")
+        credential = skipped - local_input - long_running - missing_package
+        if credential > 0:
+            reasons.append(
+                f"{credential} need a credential this run does not have"
+            )
+        if len(reasons) == 1:
+            return f"SKIPPED: {skipped} tool(s) {reasons[0].split(' ', 1)[1]}"
+        return f"SKIPPED: {skipped} tool(s) -- " + ", ".join(reasons)
     return f"PASSED: {result.get('tests_run', 0)} test(s)"
 
 
@@ -419,6 +510,123 @@ def run_all_patterns(
     return results
 
 
+# Signals that a category's failures came from load rather than from the tool.
+#
+# The 2026-10-03 sweep ran 10 workers against live APIs and reported 90
+# non-passing categories. Roughly 120 of the individual test failures were
+# self-inflicted: ensembl_sequence failed twice in the parallel sweep and
+# passed 4/4 run alone, and enrichr failed with "'str' object has no attribute"
+# in parallel and passed alone. That error reads exactly like a code defect,
+# which is the problem -- the report could not tell "this tool is broken" from
+# "we overloaded its upstream", so a third of its contents had to be re-checked
+# by hand before any of it could be trusted.
+_CONTENTION_MARKERS = (
+    "429",
+    "too many requests",
+    "rate limit",
+    "500",
+    "502",
+    "503",
+    "504",
+    "internal server error",
+    "service unavailable",
+    "bad gateway",
+    "timed out",
+    "timeout",
+    "connection reset",
+    "connection aborted",
+    "remote end closed",
+    "response ended prematurely",
+    # Ensembl answers a throttled request with no usable status, and the tool
+    # surfaces that as "HTTP error: unknown".
+    "http error: unknown",
+)
+
+
+def looks_contended(result: Dict[str, Any]) -> bool:
+    """True when a non-passing result's messages all point at load.
+
+    Only the failure lines are read. A category that also reports a schema
+    mismatch or a 404 is left alone: re-running it serially would cost minutes
+    and change nothing.
+    """
+    if not result_is_failure(result):
+        return False
+    if normalize_result(result)["state"] == "timeout":
+        return True
+
+    output = result.get("raw_output") or ""
+    messages = [
+        line.lower()
+        for line in output.splitlines()
+        if "\u274c" in line or "Failed -" in line
+    ]
+    if not messages:
+        # No per-test message at all: the subprocess died before printing one,
+        # which a serial re-run can distinguish from a tool defect.
+        return bool(result.get("error"))
+    # One contended-looking failure is enough. Requiring all of them meant a
+    # category with 28 load failures and one real defect never got re-run, so
+    # its 28 lines of noise stayed in the report next to the one line worth
+    # reading. A re-run costs one serial subprocess and says which it was.
+    return any(
+        marker in message
+        for message in messages
+        for marker in _CONTENTION_MARKERS
+    )
+
+
+def retry_contended_patterns(
+    results: Dict[str, Dict[str, Any]],
+    repo_root: Path,
+    verbose: bool = False,
+    on_result: Optional[Callable[[str, Dict[str, Dict[str, Any]]], None]] = None,
+) -> Dict[str, str]:
+    """Re-run load-shaped failures one at a time; keep the better result.
+
+    Returns pattern -> "state before -> state after" for the ones that changed.
+    """
+    candidates = [
+        pattern
+        for pattern, result in sorted(results.items())
+        if looks_contended(result)
+    ]
+    if not candidates:
+        return {}
+
+    print()
+    print(
+        f"🔁 Re-running {len(candidates)} category/categories serially: their "
+        "failures all look like upstream load, which the parallel pass causes"
+    )
+    changed: Dict[str, str] = {}
+    for index, pattern in enumerate(candidates, start=1):
+        before = normalize_result(results[pattern])["state"]
+        retried = normalize_result(
+            run_test_for_pattern(pattern, repo_root, verbose=verbose)
+        )
+        after = retried["state"]
+        # Only a pass replaces the original. "not a failure any more" was too
+        # loose: a serial re-run that reports no_tests or skipped would then
+        # overwrite a real failure with an absence, which is worse signal than
+        # the failure was. A category that fails serially too keeps the
+        # evidence it first produced.
+        if after == "passed" or (
+            after == "skipped" and before in {"failed", "schema_error"}
+        ):
+            retried["retried_serially"] = True
+            results[pattern] = retried
+            changed[pattern] = f"{before} -> {after}"
+            verdict = f"{after} (was {before} under load)"
+        else:
+            results[pattern].setdefault("retried_serially", True)
+            verdict = f"still {after}"
+        if on_result:
+            on_result(pattern, results)
+        print(f"   [{index}/{len(candidates)}] {pattern}: {verdict}", flush=True)
+    return changed
+
+
 # Maps a label found in test output to the stats key it populates.
 # All values are parsed as int except "Duration" which is float.
 _OUTPUT_LABELS: List[Tuple[str, str]] = [
@@ -430,6 +638,12 @@ _OUTPUT_LABELS: List[Tuple[str, str]] = [
     ("Other Errors:", "errors_other"),
     ("Schema Valid:", "schema_valid"),
     ("Schema Invalid:", "schema_invalid"),
+    # Parsed so a category whose every tool was skipped for a missing
+    # credential can be told apart from one that ships no examples.
+    ("Skipped:", "skipped"),
+    ("Skipped local input:", "skipped_local_input"),
+    ("Skipped long running:", "skipped_long_running"),
+    ("Skipped missing package:", "skipped_missing_package"),
 ]
 
 
@@ -736,6 +950,15 @@ def main():
         help=f"Run tests in parallel across patterns (up to {DEFAULT_PARALLEL_WORKERS} workers)"
     )
     parser.add_argument(
+        "--no-retry",
+        action="store_true",
+        help=(
+            "Do not re-run load-shaped failures serially after a --parallel "
+            "pass. The retry exists because 10 workers against live APIs "
+            "produce 429s and timeouts that read exactly like tool defects"
+        ),
+    )
+    parser.add_argument(
         "--output",
         default="TOOL_TEST_REPORT.md",
         help="Output report filename"
@@ -813,16 +1036,11 @@ def main():
     
     # Skip remote tools if requested
     if args.skip_remote:
-        remote_tools = [
-            'boltz', 'depmap', 'expert_feedback', 'immune_compass', 
-            'pinnacle', 'transcriptformer', 'uspto_downloader',
-            # Add external API services that require remote servers
-            'blast',  # NCBI BLAST API
-            'simbad',  # SIMBAD astronomical database API
-            'uspto',  # USPTO Patent API (in addition to uspto_downloader)
-        ]
-        skip_tools.update(remote_tools)
-        print(f"🌐 Skipping remote tools (require external servers): {', '.join(sorted(remote_tools))}")
+        skip_tools.update(remote_tool_patterns())
+        print(
+            "🌐 Skipping remote tools (require external servers): "
+            f"{len(remote_tool_patterns())} pattern(s)"
+        )
     
     # Skip MCP tools if requested
     if args.skip_mcp:
@@ -863,7 +1081,17 @@ def main():
         skipped_count = before_count - len(config_patterns)
         if skipped_count > 0:
             print(f"⏭️  Skipped {skipped_count} tool(s)")
-    
+        if before_count and not config_patterns:
+            # Everything asked for was on the skip list. Nothing failed, so
+            # exiting non-zero would report a deliberate exclusion as a
+            # problem -- `--pattern borzoi --skip-remote` is a reasonable thing
+            # to type and the answer is "that one needs its own server".
+            print(
+                f"⏭️  Every pattern matched was on the skip list "
+                f"({skipped_count} skipped); nothing to test"
+            )
+            sys.exit(0)
+
     if not config_patterns:
         print("❌ No tools remaining after filtering")
         sys.exit(1)
@@ -945,6 +1173,22 @@ def main():
         initial_results=resumed_results,
         on_result=save_progress,
     )
+
+    # A category that only fails under load is not a broken tool, and the
+    # report cannot tell the difference from the parallel pass alone.
+    retried = {}
+    if args.parallel and not args.no_retry:
+        retried = retry_contended_patterns(
+            results, repo_root, verbose=args.verbose, on_result=save_progress
+        )
+        if retried:
+            print()
+            print(
+                f"🔁 {len(retried)} category/categories passed on their own, so "
+                "the parallel pass was the cause:"
+            )
+            for pattern, transition in sorted(retried.items()):
+                print(f"   {pattern}: {transition}")
 
     total_duration = time.time() - start_time
     # Completeness is judged against `selected` (this invocation's assigned

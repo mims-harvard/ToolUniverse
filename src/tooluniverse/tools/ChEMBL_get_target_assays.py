@@ -12,6 +12,7 @@ def ChEMBL_get_target_assays(
     target_chembl_id__exact: str,
     limit: Optional[int] = 20,
     offset: Optional[int] = 0,
+    fields: Optional[list[str]] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,9 +26,11 @@ def ChEMBL_get_target_assays(
     target_chembl_id__exact : str
         ChEMBL target ID (e.g., 'CHEMBL2074'). To find a target ID, use ChEMBL_search...
     limit : int
-
+        Maximum number of results (default: 20, max: 1000)
     offset : int
-
+        Offset for pagination (default: 0)
+    fields : list[str]
+        Optional list of assay fields to include in each returned assay object (proje...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def ChEMBL_get_target_assays(
             "target_chembl_id__exact": target_chembl_id__exact,
             "limit": limit,
             "offset": offset,
+            "fields": fields,
         }.items()
         if v is not None
     }

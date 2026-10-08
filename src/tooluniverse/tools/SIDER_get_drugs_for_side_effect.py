@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def SIDER_get_drugs_for_side_effect(
-    operation: str,
-    meddra_code: Optional[str | Any] = None,
-    side_effect_name: Optional[str | Any] = None,
+    operation: Optional[str] = "get_drugs_for_side_effect",
+    meddra_code: Optional[str] = None,
+    side_effect_name: Optional[str] = None,
     limit: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -25,9 +25,9 @@ def SIDER_get_drugs_for_side_effect(
     ----------
     operation : str
         Operation type
-    meddra_code : str | Any
+    meddra_code : str
         MedDRA concept code / UMLS CUI (e.g., 'C0018681' for headache, 'C0027497' for...
-    side_effect_name : str | Any
+    side_effect_name : str
         Side effect name to search (e.g., 'headache', 'nausea', 'diarrhea'). Will sea...
     limit : int
         Maximum number of drugs to return (default: 50)

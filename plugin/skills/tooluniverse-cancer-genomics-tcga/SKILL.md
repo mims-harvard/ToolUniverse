@@ -161,16 +161,17 @@ result = tu.tools.Progenetix_cnv_search(
 ## Phase 5: Survival Analysis
 
 **GDC_get_survival**: `project_id` (string REQUIRED, e.g., "TCGA-BRCA"), `gene_symbol` (string, optional -- filters to mutated cases).
-Returns `{status, data: {donors: [{id, time, censored, survivalEstimate}], overallStats: {pValue}}}`.
-- Each donor has `time` (days), `censored` (bool: False=death event, True=censored), and `survivalEstimate`.
-- `overallStats.pValue`: log-rank p-value (present when `gene_symbol` splits cohort).
-- Without `gene_symbol`: returns full-cohort survival curve.
-- With `gene_symbol`: returns survival split by mutation status (mutated vs. wild-type).
+Returns `{status, data: {project_id, gene_symbol, total_donors, alive_censored, deceased, max_follow_up_days, median_follow_up_days, donors: [{id, submitter_id, project_id, time, censored, survivalEstimate}], note}}`.
+- `donors` holds only the first 50 donors (`note` says so); `total_donors`, `alive_censored`, `deceased` and the follow-up days summarise the whole cohort.
+- Each donor has `time` (days), `censored` (bool: True=alive/censored, False=death event) and `survivalEstimate` (Kaplan-Meier estimate).
+- The tool returns **no log-rank p-value** and no mutated-vs-wild-type split. With `gene_symbol` it restricts the cohort to cases GDC associates with that gene (TCGA-BRCA + TP53: 708 of 1,076 donors), so compare two calls or run a log-rank test yourself (e.g. `lifelines`).
 
 ```python
-# Survival for TCGA-BRCA split by TP53 mutation
+# Survival summary for TCGA-BRCA restricted to TP53 (verified 2026-09-21)
 surv = tu.tools.GDC_get_survival(project_id="TCGA-BRCA", gene_symbol="TP53")
-pval = surv["data"]["overallStats"]["pValue"]
+info = surv["data"]
+print(info["total_donors"], info["deceased"], info["median_follow_up_days"])
+first_50 = info["donors"]  # [{'time': 1, 'censored': True, 'survivalEstimate': 0.998, ...}, ...]
 ```
 
 ---

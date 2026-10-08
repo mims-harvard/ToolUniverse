@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def ProtacDB_search_protacs(
-    operation: str,
-    target: Optional[str | Any] = None,
-    e3_ligase: Optional[str | Any] = None,
+    operation: Optional[str] = "search_protacs",
+    target: Optional[str] = None,
+    e3_ligase: Optional[str] = None,
     max_results: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -25,9 +25,9 @@ def ProtacDB_search_protacs(
     ----------
     operation : str
         Operation type
-    target : str | Any
+    target : str
         Target protein name or gene symbol (e.g., 'BRD4', 'KRAS', 'AR', 'BCL2'). At l...
-    e3_ligase : str | Any
+    e3_ligase : str
         E3 ubiquitin ligase (e.g., 'CRBN', 'VHL', 'MDM2', 'XIAP'). At least one of ta...
     max_results : int
         Maximum number of compounds to return (default 50, max 100)

@@ -15,6 +15,12 @@
 
 ## Install
 
+> [!IMPORTANT]
+> **Claude Desktop extension showing "Failed — Server disconnected"?** The copy of ToolUniverse in
+> Claude Desktop's built-in Extensions directory is an old build that cannot start. Remove it, then
+> use either option below — both install a working version.
+> Details and status: [#585](https://github.com/mims-harvard/ToolUniverse/issues/585)
+
 **AI agent (recommended)** — open your AI agent and run:
 ```
 Read https://aiscientist.tools/setup.md and set up ToolUniverse for me.
@@ -59,6 +65,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh   # if you don't have uv
 uv venv --python 3.12 && source .venv/bin/activate
 uv pip install tooluniverse
 ```
+
+Needs Python 3.10 or newer. On an Apple Silicon Mac it also needs **macOS 14 or newer**: `faiss-cpu`, which backs the vector-search tools, publishes no arm64 wheel older than `macosx_14_0`, so macOS 13 and earlier would have to compile it. Intel Macs, Windows and Linux have no such floor.
 
 The base install covers the API and database tools. Local ML, cheminformatics, and plotting tools need extras — `uv pip install 'tooluniverse[all]'`, or a single group such as `[ml]`, `[visualization]`, `[bioinformatics]`. Note `[all]` excludes `pdf`, `singlecell`, `smolagents`, `client`, and `build`, which install by name. Run `tooluniverse-doctor` to see which groups are missing.
 
@@ -130,6 +138,15 @@ Full documentation: [zitniklab.hms.harvard.edu/ToolUniverse](https://zitniklab.h
 **Leaders:** [Shanghua Gao](https://shgao.site) · [Marinka Zitnik](https://zitniklab.hms.harvard.edu/)
 
 **Contributors:** [Shanghua Gao](https://shgao.site) · [Richard Zhu](https://www.linkedin.com/in/richard-zhu-4236901a7/) · [Pengwei Sui](https://psui3905.github.io/) · [Zhenglun Kong](https://zlkong.github.io/homepage/) · [Sufian Aldogom](mailto:saldogom@mit.edu) · [Yepeng Huang](https://yepeng.notion.site/Yepeng-Huang-16ad8dd1740080c28d4bd3e3d7c1080c) · [Ayush Noori](https://www.ayushnoori.com/) · [Reza Shamji](mailto:reza_shamji@hms.harvard.edu) · [Krishna Parvataneni](mailto:krishna_parvataneni@hms.harvard.edu) · [Theodoros Tsiligkaridis](https://sites.google.com/view/theo-t) · [Marinka Zitnik](https://zitniklab.hms.harvard.edu/)
+
+## Privacy Policy
+
+ToolUniverse runs locally and collects nothing: no telemetry, no analytics, no
+conversation data. When you run a tool, that tool's arguments are sent to that
+tool's data provider (UniProt, openFDA, Open Targets and so on) so it can
+answer, and nothing else leaves your machine. API keys stay local and are sent
+only to the service they belong to. Full policy:
+https://github.com/mims-harvard/ToolUniverse/blob/main/PRIVACY.md
 
 ## Citation
 

@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def OmniPath_get_dorothea_regulon(
-    tf_gene: str,
-    confidence_levels: Optional[str | Any] = None,
+    tf_gene: str | list[Any],
+    confidence_levels: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -21,9 +21,9 @@ def OmniPath_get_dorothea_regulon(
 
     Parameters
     ----------
-    tf_gene : str
+    tf_gene : str | list[Any]
         Transcription factor gene symbol (e.g., 'TP53', 'MYC', 'STAT3', 'NF2')
-    confidence_levels : str | Any
+    confidence_levels : str
         Comma-separated DoRothEA confidence levels to include (e.g., 'A,B' for high c...
     stream_callback : Callable, optional
         Callback for streaming output

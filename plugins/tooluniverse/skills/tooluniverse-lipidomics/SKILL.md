@@ -42,11 +42,16 @@ Lipid identification starts with mass spectrometry: the lipid class is determine
 |------|---------|
 | `LipidMaps_search_by_name` | Lipid identification by name, abbreviation, or mass |
 | `LipidMaps_get_compound_by_id` | Detailed lipid info (structure, classification, pathways) |
+| `SwissLipids_search` | Lipid identification by name/shorthand — SIB's complementary lipid database, use when LIPID MAPS misses a species (see below) |
+| `SwissLipids_get_lipid` | Full SwissLipids entry: name, formula, monoisotopic mass, cross-refs |
+| `SwissLipids_get_children` | Descend the SwissLipids classification tree (category → class → species) one level |
 | `HMDB_search` / `HMDB_get_metabolite` | Lipid metabolite details, disease associations |
 | `kegg_search_pathway` | Lipid metabolism pathways (keyword=`sphingolipid`, `glycerolipid`, etc.) |
 | `KEGG_get_pathway_genes` | Enzymes in lipid pathways |
 | `PubChem_get_compound_properties_by_CID` | Chemical properties (mass, formula, SMILES) |
 | `CTD_get_gene_diseases` | Gene-disease links for lipid metabolism enzymes |
+| `LipidMaps_get_gene` | Resolve a lipid-metabolism gene (symbol/NCBI ID/LMP ID) to its LIPID MAPS Proteome Database record — name, synonyms, chromosome location, species |
+| `LipidMaps_get_protein` | Same lookup at the protein level — adds UniProt/RefSeq cross-references and amino-acid sequence |
 | `DisGeNET_search_gene` | Disease associations for lipid genes |
 | `PubMed_search_articles` | Published lipidomics studies |
 | `OpenTargets_get_associated_drugs_by_target_ensemblID` | Drugs targeting lipid metabolism enzymes |
@@ -86,6 +91,26 @@ PubChem_get_CID_by_compound_name(name="ceramide") → CID, SMILES
 - For exact mass search: use `LipidMaps_search_by_formula` with molecular formula (e.g., "C34H67NO3")
 - If name search fails, try PubChem: `PubChem_get_CID_by_compound_name(name="C16 Ceramide")` then cross-reference
 
+**SwissLipids as a second lipid database** — when LIPID MAPS doesn't have a species
+or you want its independent classification, SwissLipids (swisslipids.org, SIB)
+covers the same ground with its own ID space and hierarchy:
+
+```
+SwissLipids_search(query="PC(16:0/18:1)")   → real hit: entity_id "SLM:000088148"
+SwissLipids_get_lipid(entity_id="SLM:000000510") → real entry: "hexadecanoate"
+  (palmitate), formula C16H31O2, mass 255.4167, charge -1, plus a full
+  adduct_mz table ([M+H]+, [M+Na]+, [M-H]-, etc.) useful for matching
+  observed MS peaks directly — LIPID MAPS entries don't include this table.
+SwissLipids_get_children(entity_id="SLM:000000338") → descend one level in the
+  classification tree (e.g. from a lipid category down to its member species)
+```
+
+Shorthand abbreviations like `PC(16:0/18:1)` work directly in `SwissLipids_search`
+(unlike LIPID MAPS, which often needs the generic class name first). Note
+`classification` can come back as an empty array `[]` for some entries — a real
+data gap in SwissLipids, not a failed lookup; fall back to LIPID MAPS for that
+lipid's category if classification is required.
+
 ### Phase 1: Structural Classification
 
 Use `LipidMaps_get_compound_by_id` to retrieve the LIPID MAPS 8-category classification (FA, GL, GP, SP, ST, PR, SL, PK) for any lipid. The category immediately signals biological context: SP (sphingolipids) → apoptosis/neurodegeneration; GP (glycerophospholipids) → membrane remodeling; FA-derived eicosanoids → inflammation.
@@ -113,9 +138,12 @@ KEGG_get_pathway_genes(pathway_id="hsa00600")  # → SMPD1, CERS1, ...
 
 ### Phase 3: Disease Associations
 
-For each lipid or lipid enzyme, check disease links:
+For each lipid or lipid enzyme, resolve the gene/protein record first if needed, then check disease links:
 
 ```python
+LipidMaps_get_gene(input_value="SMPD1", input_item="gene_symbol")  # LMPD record: name, synonyms, chromosome
+  # verified live example: input_value="FASN" → {"gene_symbol": "Fasn", "lmp_id": "LMP001577", "gene_name": "fatty acid synthase", ...}
+LipidMaps_get_protein(input_value="P49327", input_item="uniprot_id")  # adds UniProt/RefSeq xrefs + sequence
 CTD_get_gene_diseases(input_terms="SMPD1")  # sphingomyelinase → Niemann-Pick
 DisGeNET_search_gene(gene="SMPD1")  # broader disease associations
 HMDB_get_metabolite(compound_name="ceramide")  # metabolite-disease links

@@ -10,6 +10,7 @@ from ._shared_client import get_shared_client
 
 def PDBe_KB_get_ligand_sites(
     uniprot_accession: str,
+    max_ligands: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +23,8 @@ def PDBe_KB_get_ligand_sites(
     ----------
     uniprot_accession : str
         UniProt accession ID for the protein. Examples: 'P04637' (TP53), 'P00533' (EG...
+    max_ligands : int
+        Maximum number of ligands to return (default 100). The underlying API does no...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -38,7 +41,10 @@ def PDBe_KB_get_ligand_sites(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"uniprot_accession": uniprot_accession}.items()
+        for k, v in {
+            "uniprot_accession": uniprot_accession,
+            "max_ligands": max_ligands,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

@@ -21,6 +21,22 @@ description: "Inorganic chemistry, physical chemistry, and materials science —
 2. **Verify density**: d = (Z * M) / (V * Na * 1e-24) where V in Å³, M in g/mol, Na = 6.022e23
 3. **Preferred**: Use `CrystalStructure_validate` tool (via MCP/SDK). **Fallback**: `python3 skills/tooluniverse-organic-chemistry/scripts/crystal_validator.py --a X --b Y --c Z --alpha A --beta B --gamma G --Z N --MW M --density D`
 4. **For batch comparison** (find the wrong dataset): Save datasets as JSON array and use `--datasets path/to/datasets.json`
+5. **When you need REAL experimental crystal data** (not user-supplied numbers to validate), use the Crystallography Open Database (COD) tools — see below. `CrystalStructure_validate` checks internal consistency of numbers you already have; COD looks up actual deposited structures.
+
+#### Looking up real crystal structures (COD)
+
+`COD_search_structures` and `COD_get_structure` query the Crystallography Open Database (500,000+ experimentally determined structures — inorganic, organic, mineral, and metal-organic). Use when a compound/mineral name, chemical formula, elements, or space group is named and you need real unit-cell parameters, space group, and publication details rather than computing from given numbers.
+
+```
+COD_search_structures({"el1":"Cu","el2":"O","nel":"2","sgNumber":"225","results":5})   # binary Cu-O compounds, FCC space group
+COD_search_structures({"mineral":"calcite","results":5})
+COD_search_structures({"text":"aspirin","results":5})   # free-text also matches organic/pharmaceutical crystals, not just inorganic
+COD_get_structure({"id":"1011240"})   # full detail (a,b,c,alpha,beta,gamma,vol,Z,sg,sgNumber,doi,...) for one COD entry
+```
+
+Verified live: `COD_search_structures({"el1":"Si","el2":"O","nel":"2","results":10})` returns real SiO2 polymorph entries (e.g. COD ID `1000007`, a=9.7397, b=8.9174, c=5.2503 Å); `COD_get_structure({"id":"1515581"})` returns real aspirin crystal data (P 1 21/c 1, sgNumber 14, cell volume 825.44 Å³, temperature 123 K). Workflow: search first (by formula/elements/mineral/text) to find candidate COD IDs, then `COD_get_structure` on a specific ID for the full record including DOI/journal/authors. `query`/`text` and `spacegroup`/`sg` and `max_results`/`results` are alias pairs — use either name.
+
+**Gotcha**: some search combinations legitimately return zero results (verified live) — an empty `data: []` with `count: 0` means no matching structures in COD, not a broken query; try relaxing filters (drop `sgNumber`, widen `nel`) before concluding the compound isn't in COD.
 
 ### 2. Bonding & Covalency Questions
 **Key reasoning patterns**:
@@ -90,6 +106,7 @@ python3 skills/tooluniverse-inorganic-physical-chemistry/scripts/equilibrium_sol
 | `PubMed_search_articles` | Literature on synthesis conditions, properties |
 | `CrystalStructure_validate` tool (or `crystal_validator.py` fallback) | Verify crystal structure data consistency |
 | `EquilibriumSolver_calculate` tool (or `equilibrium_solver.py` fallback) | Ksp, complex formation, common-ion solubility |
+| `COD_search_structures` / `COD_get_structure` | Look up real deposited crystal structures (unit cell, space group, DOI) from the Crystallography Open Database |
 
 ## LOOK UP DON'T GUESS
 

@@ -6,7 +6,10 @@
       "type": "object",
       "properties": {
         "identifiers": {
-          "type": "array",
+          "type": [
+            "array",
+            "string"
+          ],
           "items": {
             "type": "string"
           },
@@ -106,7 +109,10 @@
       "type": "object",
       "properties": {
         "identifiers": {
-          "type": "array",
+          "type": [
+            "array",
+            "string"
+          ],
           "items": {
             "type": "string"
           },

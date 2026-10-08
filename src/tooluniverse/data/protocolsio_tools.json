@@ -1,0 +1,211 @@
+[
+  {
+    "name": "ProtocolsIO_search_protocols",
+    "type": "ProtocolsIOTool",
+    "description": "Search protocols.io's public repository of peer-reviewed and community-submitted lab protocols by keyword. Returns matching protocol titles, IDs, authors, and publication dates. protocols.io covers most wet-lab and computational method categories (molecular biology, cell culture, imaging, sequencing, etc.). Requires PROTOCOLS_IO_API_KEY (OAuth Bearer token) environment variable. Use for: finding a published step-by-step method before writing your own, checking how others perform a specific technique.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["search_protocols"],
+          "description": "Operation type",
+          "default": "search_protocols"
+        },
+        "query": {
+          "type": "string",
+          "description": "Keyword(s) to search across protocol titles, descriptions, and authors (e.g., 'CRISPR knockout', 'single cell RNA-seq library prep')."
+        },
+        "order_field": {
+          "type": ["string", "null"],
+          "enum": ["relevance", "activity", "date", "name", "id", null],
+          "description": "Sort field. Default 'relevance'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum number of results to return (default 10, max 50)."
+        }
+      },
+      "required": ["query"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "protocols": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "integer" },
+                      "title": { "type": "string" },
+                      "doi": { "type": ["string", "null"] },
+                      "authors": { "type": "array" },
+                      "published_on": { "type": ["integer", "string", "null"] }
+                    }
+                  }
+                },
+                "total_count": { "type": "integer" }
+              }
+            },
+            "metadata": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": { "error": { "type": "string" } },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "search_protocols",
+        "query": "CRISPR knockout",
+        "limit": 5
+      }
+    ],
+    "required_api_keys": ["PROTOCOLS_IO_API_KEY"],
+    "api_key_info": {
+      "PROTOCOLS_IO_API_KEY": {
+        "domain": "Molecular Cloning & Lab Methods",
+        "type": "secret",
+        "register_url": "https://www.protocols.io/api-clients",
+        "purpose": "Search and retrieve published lab protocols from protocols.io.",
+        "without": "protocols.io tools are blocked without it."
+      }
+    },
+    "fields": { "operation": "search_protocols" }
+  },
+  {
+    "name": "ProtocolsIO_get_protocol",
+    "type": "ProtocolsIOTool",
+    "description": "Get full detail for a specific protocols.io protocol by its numeric ID, URI slug, or DOI. Returns title, description, materials/reagents list, ordered authors, DOI, and publication metadata. Requires PROTOCOLS_IO_API_KEY (OAuth Bearer token) environment variable. Use after ProtocolsIO_search_protocols to inspect a specific hit in full, or when the user already has a protocols.io ID/DOI.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_protocol"],
+          "description": "Operation type",
+          "default": "get_protocol"
+        },
+        "protocol_id": {
+          "type": ["integer", "string"],
+          "description": "protocols.io protocol ID (integer), URI slug, or DOI (e.g., 65123, or 'dx.doi.org/10.17504/protocols.io.xxxxx')."
+        },
+        "content_format": {
+          "type": ["string", "null"],
+          "enum": ["json", "html", "markdown", null],
+          "description": "Format for free-text fields (description, steps). Default 'json'."
+        }
+      },
+      "required": ["protocol_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "integer" },
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "doi": { "type": ["string", "null"] },
+                "authors": { "type": "array" },
+                "materials": { "type": "array" },
+                "published_on": { "type": ["integer", "string", "null"] }
+              }
+            },
+            "metadata": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": { "error": { "type": "string" } },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_protocol",
+        "protocol_id": 65123
+      }
+    ],
+    "required_api_keys": ["PROTOCOLS_IO_API_KEY"],
+    "fields": { "operation": "get_protocol" }
+  },
+  {
+    "name": "ProtocolsIO_get_protocol_steps",
+    "type": "ProtocolsIOTool",
+    "description": "Get the ordered step-by-step instructions for a specific protocols.io protocol by its numeric ID, URI slug, or DOI. Returns each step's components (text, images, timers, reagents referenced) in sequence. Requires PROTOCOLS_IO_API_KEY (OAuth Bearer token) environment variable. Use once a specific protocol has been identified (via ProtocolsIO_search_protocols or ProtocolsIO_get_protocol) and the actual bench-level steps are needed.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": ["get_protocol_steps"],
+          "description": "Operation type",
+          "default": "get_protocol_steps"
+        },
+        "protocol_id": {
+          "type": ["integer", "string"],
+          "description": "protocols.io protocol ID (integer), URI slug, or DOI."
+        },
+        "content_format": {
+          "type": ["string", "null"],
+          "enum": ["json", "html", "markdown", null],
+          "description": "Format for step text. Default 'json'."
+        }
+      },
+      "required": ["protocol_id"]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "object",
+              "properties": {
+                "steps": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": ["integer", "string"] },
+                      "guid": { "type": ["string", "null"] },
+                      "components": { "type": "array" }
+                    }
+                  }
+                },
+                "step_count": { "type": "integer" }
+              }
+            },
+            "metadata": { "type": "object" }
+          }
+        },
+        {
+          "type": "object",
+          "properties": { "error": { "type": "string" } },
+          "required": ["error"]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "operation": "get_protocol_steps",
+        "protocol_id": 65123
+      }
+    ],
+    "required_api_keys": ["PROTOCOLS_IO_API_KEY"],
+    "fields": { "operation": "get_protocol_steps" }
+  }
+]

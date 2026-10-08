@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def STITCH_get_interaction_partners(
-    identifiers: list[str],
+    identifiers: list[str] | str,
     species: Optional[int] = 9606,
     limit: Optional[int] = 10,
     *,
@@ -22,7 +22,7 @@ def STITCH_get_interaction_partners(
 
     Parameters
     ----------
-    identifiers : list[str]
+    identifiers : list[str] | str
         Chemical or protein identifiers to query.
     species : int
         NCBI taxonomy ID.

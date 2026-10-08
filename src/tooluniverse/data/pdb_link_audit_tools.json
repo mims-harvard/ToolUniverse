@@ -1,0 +1,194 @@
+[
+  {
+    "name": "PDB_compare_declared_links",
+    "type": "PDBLinkAuditTool",
+    "description": "Compare explicit reference PDB LINK distances against a local PDB model. Resolves exact atoms with optional chain/residue remapping and reports missing/ambiguous endpoints. Local diagnostic only; no inferred bonds, chemistry or binding validation.",
+    "cacheable": false,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "reference_pdb_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Local reference legacy PDB path; exactly one path or content for this input. Never uploaded."
+        },
+        "reference_pdb_content": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Local reference legacy PDB content; exactly one path or content for this input. Never uploaded."
+        },
+        "reference_model_index": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 10000,
+          "description": "Select model by file order, default1; models never pooled."
+        },
+        "observed_pdb_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Local observed legacy PDB path; exactly one path or content for this input. Never uploaded."
+        },
+        "observed_pdb_content": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Local observed legacy PDB content; exactly one path or content for this input. Never uploaded."
+        },
+        "observed_model_index": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 10000,
+          "description": "Select model by file order, default1; models never pooled."
+        },
+        "max_length_error_angstrom": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Maximum absolute deviation from reference coordinate distance, default0.3 Angstrom; not an ideal bond-length rule."
+        },
+        "chain_map": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "propertyNames": {
+            "minLength": 1,
+            "maxLength": 1
+          },
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1
+          },
+          "description": "Explicit reference-to-observed chain map, default identity. A blank PDB chain ID is one space."
+        },
+        "residue_map": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "maxItems": 10000,
+          "items": {
+            "type": "object",
+            "required": [
+              "reference_chain",
+              "reference_residue",
+              "observed_residue"
+            ],
+            "properties": {
+              "reference_chain": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1
+              },
+              "reference_residue": {
+                "type": "integer"
+              },
+              "observed_residue": {
+                "type": "integer"
+              },
+              "reference_insertion_code": {
+                "type": "string",
+                "maxLength": 1
+              },
+              "observed_insertion_code": {
+                "type": "string",
+                "maxLength": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "Explicit residue-number/insertion remapping within the chain map. Unmapped residues retain IDs; no sequence alignment or residue reconstruction."
+        }
+      },
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "data"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "required": [
+                "reference_link_count",
+                "resolved_link_count",
+                "unresolved_link_count",
+                "all_declared_distances_agree",
+                "chemical_validation",
+                "links"
+              ],
+              "properties": {
+                "reference_link_count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "resolved_link_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "unresolved_link_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "all_declared_distances_agree": {
+                  "type": "boolean"
+                },
+                "chemical_validation": {
+                  "const": false
+                },
+                "links": {
+                  "type": "array"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "reference_pdb_content": "LINK         ND2 ASN A   1                  C1 NAG G   1                        \nATOM      1  ND2 ASN A   1       0.000   0.000   0.000  1.00  0.00           C\nATOM      1   C1 NAG G   1       1.430   0.000   0.000  1.00  0.00           C\n",
+        "observed_pdb_content": "ATOM      1  ND2 ASN A   1       0.000   0.000   0.000  1.00  0.00           C\nATOM      1   C1 NAG G   1       4.000   0.000   0.000  1.00  0.00           C\n"
+      }
+    ]
+  }
+]

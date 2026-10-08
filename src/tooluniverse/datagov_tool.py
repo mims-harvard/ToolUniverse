@@ -6,8 +6,10 @@ from EPA, CDC, Census, NIH, USDA, NOAA, and 100+ other federal agencies.
 
 The legacy CKAN /api/3/action/package_search endpoint was retired in 2025;
 the catalog now serves a Solr-backed JSON search at /search?_format=json
-with different param names (`_q` instead of `q`, `organization` slug
-instead of CKAN `fq` filter). This tool talks to the new endpoint and
+with different param names: the search text is `q` (a `_q` parameter is
+silently ignored and lists the same datasets for every query), the page size
+is `per_page` (`rows` is ignored) and the agency filter is `org_slug` (an
+`organization` parameter is ignored). This tool talks to the new endpoint and
 normalises the response into the same {datasets:[{title, description,
 organization, ...}], total_count, returned} shape the previous CKAN
 version emitted, so callers don't see a behavioural change.
@@ -47,11 +49,16 @@ class DataGovTool(BaseTool):
                 },
             }
 
-        params = {"_q": query, "_format": "json", "rows": rows}
+        params = {"q": query, "_format": "json", "per_page": rows}
+        slug = None
         if organization:
-            # The new endpoint takes the organization *slug* (e.g. 'epa-gov')
-            # as a separate query param, not as a CKAN fq filter.
-            params["organization"] = organization
+            # The endpoint filters on the organization *slug* ('epa', 'noaa',
+            # 'hhs'). Older docs used '<agency>-gov' names, which match nothing,
+            # so a trailing '-gov' is dropped.
+            slug = str(organization).strip().lower()
+            if slug.endswith("-gov"):
+                slug = slug[: -len("-gov")]
+            params["org_slug"] = slug
 
         try:
             resp = requests.get(
@@ -114,6 +121,13 @@ class DataGovTool(BaseTool):
                 }
             )
 
+        metadata = {"source": "Data.gov (Solr search)", "api": DATAGOV_SEARCH}
+        if slug and not results:
+            metadata["note"] = (
+                f"No datasets for organization slug '{slug}'. Slugs are short agency "
+                "names such as 'epa', 'noaa', 'nasa', 'hhs', 'usda', 'census', 'doi', "
+                "'energy'; NIH, CDC and FDA datasets are filed under 'hhs'."
+            )
         return {
             "status": "success",
             "data": {
@@ -123,8 +137,5 @@ class DataGovTool(BaseTool):
                 "returned": len(datasets),
                 "datasets": datasets,
             },
-            "metadata": {
-                "source": "Data.gov (Solr search)",
-                "api": DATAGOV_SEARCH,
-            },
+            "metadata": metadata,
         }

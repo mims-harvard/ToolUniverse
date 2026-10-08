@@ -1,0 +1,27 @@
+{
+  "_comment": "Published results for this ablation, as reported at https://aiscientist.tools/posts/labbench-benchmark . Accuracies are percentages, averaged over 3 repetitions, on Biomni's released test split (DbQA 60 items, SeqQA 70 items). Compare a reproduction against these; agreement within a couple of points is expected, since agent runs are not deterministic.",
+  "protocol": {
+    "items": "Biomni released test split, same items and same option construction",
+    "repetitions": 3,
+    "grading": "exact letter match on [ANSWER]X[/ANSWER]; unparseable or refused answers count as incorrect",
+    "conditions": "identical agent, model, prompts and code execution; ToolUniverse presence is the only difference"
+  },
+  "subtasks": {
+    "DbQA": {
+      "n_items": 60,
+      "claude_code": {"base_model": "Opus 4.8", "with_tooluniverse": 78.3, "without_tooluniverse": 56.7, "difference": 21.6},
+      "codex": {"base_model": "GPT-5.5", "with_tooluniverse": 92.8, "without_tooluniverse": 81.1, "difference": 11.7},
+      "biomni_published": 74.4
+    },
+    "SeqQA": {
+      "n_items": 70,
+      "claude_code": {"base_model": "Opus 4.8", "with_tooluniverse": 99.5, "without_tooluniverse": 94.3, "difference": 5.2},
+      "codex": {"base_model": "GPT-5.5", "with_tooluniverse": 96.2, "without_tooluniverse": 91.4, "difference": 4.8},
+      "biomni_published": 81.9
+    }
+  },
+  "notes": [
+    "Biomni's published accuracies are on these identical items, which makes it a same-item reference point rather than a re-implementation. It runs on its own base model, so the gap against it also contains a base-model difference; the with/without ablation is the measurement that holds the model constant.",
+    "Opus 4.8 declines a small number of questions on safety grounds in both conditions, and a declined answer is scored incorrect. The Claude Code accuracies are therefore lower bounds."
+  ]
+}

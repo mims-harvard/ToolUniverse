@@ -46,7 +46,7 @@ tu run DNA_golden_gate_design '{"operation":"golden_gate_design",
 Returns `parts_with_overhangs`: each part's unique 4-bp `left_overhang`/`right_overhang` and the `full_sequence` flanked by the Type IIS recognition sites (e.g. BsaI `GGTCTC(N1)` … cutting outside its site to leave the 4-bp fusion overhang).
 
 **Golden Gate design rules**
-- **Domestication is mandatory.** The chosen enzyme's site (BsaI `GGTCTC`, BbsI `GAAGAC`) must NOT occur **inside** any part, or it will be cut internally. Remove internal sites by silent mutation before assembly — check every part.
+- **Domestication is mandatory.** The chosen enzyme's site (BsaI `GGTCTC`, BbsI `GAAGAC`) must NOT occur **inside** any part, or it will be cut internally. Remove internal sites by silent mutation before assembly — check every part. Don't rely on memorized recognition sites for a less common enzyme, or when a part's internal site can't be silently removed and you need an isoschizomer instead: `REBASE_get_enzyme` (site + methylation sensitivity) and `REBASE_list_isoschizomers` (alternative enzymes cutting the same site) are the authoritative lookup.
 - **Overhangs must be unique and non-palindromic.** Each 4-bp fusion site must differ from the others and not equal its own reverse complement, or junctions misligate. The tool assigns unique non-palindromic overhangs; keep them.
 - **Avoid high-GC or all-AT overhangs**; published high-fidelity overhang sets (e.g. Potapov 2018) ligate most cleanly.
 - **Order is encoded by the overhangs**, not by listing order — the 4-bp junctions define assembly.

@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def PDC_get_clinical_data(
-    operation: str,
     pdc_study_id: str,
+    operation: Optional[str] = "get_clinical_data",
     offset: Optional[int] = None,
     limit: Optional[int] = None,
     *,

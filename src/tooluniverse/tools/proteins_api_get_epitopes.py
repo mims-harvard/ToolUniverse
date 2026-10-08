@@ -1,7 +1,7 @@
 """
 proteins_api_get_epitopes
 
-Get epitope sequences for a protein. Returns B-cell and T-cell epitope information with antigenic...
+Get the epitope features for a protein from the EBI Proteins API epitope endpoint (IEDB-derived)....
 """
 
 from typing import Any, Optional, Callable
@@ -15,9 +15,9 @@ def proteins_api_get_epitopes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Get epitope sequences for a protein. Returns B-cell and T-cell epitope information with antigenic...
+    Get the epitope features for a protein from the EBI Proteins API epitope endpoint (IEDB-derived)....
 
     Parameters
     ----------
@@ -34,7 +34,7 @@ def proteins_api_get_epitopes(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

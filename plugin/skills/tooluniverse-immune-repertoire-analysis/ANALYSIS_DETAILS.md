@@ -360,21 +360,22 @@ def identify_public_clonotypes(sample_dataframes, min_samples=2):
 ### Query IEDB for Known Epitopes
 
 ```python
-def query_epitope_database(cdr3_sequences, organism='human', top_n=10):
-    """Query IEDB for known T-cell epitopes matching CDR3 sequences."""
+def query_epitope_database(cdr3_sequences, top_n=10):
+    """Query IEDB for known T-cell epitopes matching TRB (beta-chain) CDR3 sequences."""
     from tooluniverse import ToolUniverse
     tu = ToolUniverse()
 
     epitope_matches = {}
     for cdr3 in cdr3_sequences[:top_n]:
         result = tu.run_one_function({
-            "name": "IEDB_search_tcells",
-            "arguments": {"receptor": cdr3, "organism": organism}
+            "name": "iedb_search_tcr_sequences",
+            "arguments": {"filters": {"chain2_cdr3_seq": f"eq.{cdr3}"}, "limit": 10}
         })
-        if 'data' in result and 'epitopes' in result['data']:
-            epitopes = result['data']['epitopes']
-            if len(epitopes) > 0:
-                epitope_matches[cdr3] = epitopes
+        # Each row carries the cognate epitope(s) in `linear_sequences` and
+        # MHC restriction in `mhc_allele_names`.
+        rows = result.get('data') or []
+        if rows:
+            epitope_matches[cdr3] = rows
     return epitope_matches
 ```
 

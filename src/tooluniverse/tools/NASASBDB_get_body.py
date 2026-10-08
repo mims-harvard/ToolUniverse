@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def NASASBDB_get_body(
     sstr: str,
-    phys_par: Optional[str | Any] = None,
+    phys_par: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def NASASBDB_get_body(
     ----------
     sstr : str
         Small body identifier: name, number, or designation. Examples: 'Ceres' (1 Cer...
-    phys_par : str | Any
+    phys_par : str
         Whether to include physical parameters: 'true' (default) or 'false'
     stream_callback : Callable, optional
         Callback for streaming output

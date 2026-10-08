@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def OpenMeteo_geocode_location(
     name: str,
-    count: Optional[int | Any] = None,
-    language: Optional[str | Any] = None,
+    count: Optional[int] = None,
+    language: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def OpenMeteo_geocode_location(
     ----------
     name : str
         City or location name to search (e.g., 'London', 'New York', 'Tokyo', 'Paris'...
-    count : int | Any
+    count : int
         Number of results to return (default 10, max 100)
-    language : str | Any
+    language : str
         Language for result names (e.g., 'en', 'de', 'fr', 'ja', 'zh'). Default 'en'.
     stream_callback : Callable, optional
         Callback for streaming output

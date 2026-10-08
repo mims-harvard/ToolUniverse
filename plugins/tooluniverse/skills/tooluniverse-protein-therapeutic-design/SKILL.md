@@ -13,7 +13,7 @@ AI-guided de novo protein design using RFdiffusion backbone generation, ProteinM
 2. **Target-guided** - Design binders with target structure in mind
 3. **Iterative validation** - Predict structure to validate designs
 4. **Developability-aware** - Consider aggregation, immunogenicity, expression
-5. **Evidence-graded** - Grade designs by confidence metrics
+5. **Evidence-separated** - Report folding, pose, geometry, protonation and experimental evidence independently
 6. **Actionable output** - Provide sequences ready for experimental testing
 7. **English-first queries** - Always use English terms in tool calls
 
@@ -63,13 +63,19 @@ Phase 6: Report Synthesis
 
 ## Critical Requirements
 
+For iterative campaigns, conflicting predictions, glycosylated receptor checks,
+conditional pH binding, or competition preparation, use
+[Protein Design Campaign](../tooluniverse-protein-design-campaign/SKILL.md)
+alongside this workflow. Verify installed tool schemas before executing examples;
+model confidence and successful execution do not establish binding.
+
 ### Report-First Approach (MANDATORY)
 1. Create `[TARGET]_protein_design_report.md` first with section headers
 2. Progressively update as designs are generated
 3. Output `[TARGET]_designed_sequences.fasta` and `[TARGET]_top_candidates.csv`
 
 ### Design Documentation (MANDATORY)
-Every design MUST include: Sequence, Length, Target, Method, and Quality Metrics (pLDDT, pTM, MPNN score, binding prediction).
+Every design MUST include: Sequence, Length, Target, Method, and available Quality Metrics (pLDDT, pTM, MPNN score, binding prediction). Mark unavailable metrics unmeasured or uncomputed; do not fabricate binding predictions or experimental values.
 
 ---
 
@@ -77,8 +83,8 @@ Every design MUST include: Sequence, Length, Target, Method, and Quality Metrics
 
 | Tool | Purpose | Key Parameter |
 |------|---------|---------------|
-| `NvidiaNIM_rfdiffusion` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)* | Backbone generation | `diffusion_steps` (NOT `num_steps`) |
-| `NvidiaNIM_proteinmpnn` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)* | Sequence design | `pdb_string` (NOT `pdb`) |
+| `NvidiaNIM_rfdiffusion` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)* | Backbone generation | `contigs` + `input_pdb` (both required), `diffusion_steps` (NOT `num_steps`; default 15) |
+| `NvidiaNIM_proteinmpnn` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)* | Sequence design | `input_pdb` (required; NOT `pdb` or `pdb_string`), `num_seq_per_target`, `sampling_temp` (a list) |
 | `ESMFold_predict_structure` | Fast validation | `sequence` (NOT `seq`) |
 | `NvidiaNIM_alphafold2` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)* | High-accuracy structure inference from sequence | `sequence`, `algorithm` |
 | `NvidiaNIM_esm2_650m` *(requires NVIDIA_API_KEY env var; free key at build.nvidia.com)* | Sequence embeddings | `sequences`, `format` |
@@ -87,8 +93,8 @@ Every design MUST include: Sequence, Length, Target, Method, and Quality Metrics
 
 | Tool | Wrong | Correct |
 |------|-------|---------|
-| `NvidiaNIM_rfdiffusion` *(requires NVIDIA_API_KEY)* | `num_steps=50` | `diffusion_steps=50` |
-| `NvidiaNIM_proteinmpnn` *(requires NVIDIA_API_KEY)* | `pdb=content` | `pdb_string=content` |
+| `NvidiaNIM_rfdiffusion` *(requires NVIDIA_API_KEY)* | `num_steps=50` | `diffusion_steps=50` (plus required `contigs` and `input_pdb`) |
+| `NvidiaNIM_proteinmpnn` *(requires NVIDIA_API_KEY)* | `pdb=content` or `pdb_string=content` | `input_pdb=content` |
 | `ESMFold_predict_structure` | `seq="MVLS..."` | `sequence="MVLS..."` |
 | `NvidiaNIM_alphafold2` *(requires NVIDIA_API_KEY)* | `seq="MVLS..."` | `sequence="MVLS..."` |
 
@@ -113,11 +119,16 @@ Every design MUST include: Sequence, Length, Target, Method, and Quality Metrics
 
 ---
 
-## Evidence Grading
+## Folding and Developability Screening
+
+These are illustrative computational screening tiers, not binding-evidence grades
+or calibrated success probabilities. Benchmark screening with appropriate controls.
+Monomer pLDDT/pTM cannot establish a complex pose, affinity, cross-species binding
+or pH selectivity. Report those dimensions separately, including missing evidence.
 
 | Tier | Criteria |
 |------|----------|
-| T1 (best) | pLDDT >85, pTM >0.8, low aggregation, neutral pI |
+| T1 (strongest in this screen) | pLDDT >85, pTM >0.8, low aggregation, neutral pI |
 | T2 | pLDDT >75, pTM >0.7, acceptable developability |
 | T3 | pLDDT >70, pTM >0.65, developability concerns |
 | T4 | Failed validation or major developability issues |

@@ -1,7 +1,7 @@
 ---
 
 name: tooluniverse-regulatory-variant-analysis
-description: "Non-coding/regulatory variant interpretation — GWAS association lookup, eQTL evidence (GTEx), chromatin state (ENCODE), regulatory variant scoring (RegulomeDB, CADD), and TF-binding disruption. Use for non-coding GWAS hit interpretation, eQTL-based gene assignment, and regulatory mechanism reasoning. Distinct from coding-variant tools."
+description: "Non-coding/regulatory variant interpretation — GWAS association lookup, eQTL evidence (GTEx), chromatin state (ENCODE), regulatory variant scoring (RegulomeDB, CADD), TF-binding disruption, and sequence-based deep-learning prediction (AlphaGenome/AlphaGenome Atlas) for when annotation databases are silent. Use for non-coding GWAS hit interpretation, eQTL-based gene assignment, and regulatory mechanism reasoning. Distinct from coding-variant tools."
 ---
 
 ## COMPUTE, DON'T DESCRIBE
@@ -9,7 +9,7 @@ When analysis requires computation (statistics, data processing, scoring, enrich
 
 # Regulatory Variant Analysis Skill
 
-Systematic regulatory variant interpretation: discover trait associations from GWAS, map eQTL effects, annotate chromatin context, assess regulatory element overlap, and produce evidence-graded functional impact predictions for non-coding variants.
+Systematic regulatory variant interpretation: discover trait associations from GWAS, map eQTL effects, annotate chromatin context, assess regulatory element overlap, predict direct sequence-level effects with AlphaGenome/AlphaGenome Atlas, and produce evidence-graded functional impact predictions for non-coding variants.
 
 ## When to Use
 
@@ -21,6 +21,8 @@ Systematic regulatory variant interpretation: discover trait associations from G
 - "What is the RegulomeDB score for rs429358?"
 - "Find ENCODE histone marks at the BRCA1 promoter region"
 - "Map trait ontology terms for 'blood pressure' to EFO IDs"
+- "This variant has no GWAS/eQTL/ENCODE hits at all — does a sequence model predict any effect?"
+- "Scan this candidate regulatory region to find which single base change matters most"
 
 **NOT for** (use other skills instead):
 - Coding variant pathogenicity -> Use `tooluniverse-variant-interpretation`
@@ -33,7 +35,7 @@ Systematic regulatory variant interpretation: discover trait associations from G
 
 ## Non-Coding Variant Impact Reasoning
 
-When evaluating a non-coding variant, build evidence across four questions:
+When evaluating a non-coding variant, build evidence across five questions. The first four are annotation-based (what's already known to be at this position, in this population); the fifth is model-based (what the sequence itself predicts, whether or not anything is annotated there yet) — they answer different questions and should corroborate, not substitute for, each other.
 
 **1. Is the variant in a regulatory element?**
 Use RegulomeDB to assess whether the variant overlaps TF binding sites, chromatin accessibility peaks, or known regulatory annotations. A low RegulomeDB score (categories 1a-2a) indicates strong evidence that the position is functionally active. Confirm with ENCODE histone marks: H3K27ac signals active enhancers and active promoters; H3K4me1 alone marks poised enhancers; H3K4me3 marks active promoters; H3K27me3 marks silenced regions.
@@ -47,7 +49,10 @@ Query GTEx to determine whether the variant (or variants in tight LD) modulates 
 **4. Is there GWAS evidence for trait association?**
 Search the GWAS Catalog for the rsID or the surrounding locus. Genome-wide significant associations (p < 5×10⁻⁸) in relevant traits anchor the variant's biological importance. Cross-reference with OpenTargets for locus-to-gene mapping from multiple GWAS studies.
 
-**Synthesizing the evidence**: Build a multi-layer case. A variant with GWAS significance + eQTL evidence + RegulomeDB score 1a-2a + active chromatin (H3K27ac) in the relevant tissue represents high-confidence regulatory impact. Two or three converging lines of evidence (e.g., eQTL plus active enhancer) constitute moderate confidence. A single line, or a variant only in a poised but not active regulatory context, represents lower confidence.
+**5. What does a sequence-based model predict directly?**
+Run `AlphaGenome_atlas_lookup_variant` for a near-instant AVI_SCORE (a unified AlphaGenome + AlphaMissense impact estimate; precomputed, so it is cheap to check on every candidate SNV up front, even before the annotation phases below). A high AVI_SCORE with no other evidence is exactly the "variant with no obvious job" case — it means the annotation databases haven't caught up, not that the variant is inert. When the AVI_SCORE is high, or the position is an indel/synthetic sequence Atlas can't cover, escalate to the live model: `AlphaGenome_score_variant` for a per-track effect breakdown, or `AlphaGenome_score_ism_variants` to scan the surrounding window and identify which exact base change (and which biological readout — expression, splicing, chromatin) drives the effect. This is the only one of the five questions that gives a *mechanistic* answer (e.g., "this substitution creates a transcription-factor binding motif that wasn't there before") rather than a correlational one.
+
+**Synthesizing the evidence**: Build a multi-layer case. A variant with GWAS significance + eQTL evidence + RegulomeDB score 1a-2a + active chromatin (H3K27ac) in the relevant tissue represents high-confidence regulatory impact — and a concordant AVI_SCORE or ISM result strengthens that case further, since it comes from an independent, causal-mechanism source rather than more correlational annotation. Two or three converging lines of evidence (e.g., eQTL plus active enhancer) constitute moderate confidence. A single line, or a variant only in a poised but not active regulatory context, represents lower confidence — but see the AlphaGenome-only case below before calling it "no evidence."
 
 ---
 
@@ -59,6 +64,10 @@ Input (rsID, genomic coordinates, trait/disease, gene)
   v
 Phase 0: Variant/Trait Resolution
   Resolve rsIDs, map trait names to EFO/MONDO IDs via OLS
+  |
+  v
+Phase 0.5: Sequence-Based Triage (AlphaGenome Atlas)
+  Instant AVI_SCORE per candidate SNV -- cheap, run before the annotation phases
   |
   v
 Phase 1: GWAS Association Lookup
@@ -77,6 +86,10 @@ Phase 4: OpenTargets GWAS Integration
   OpenTargets GWAS study aggregation, locus-to-gene mapping
   |
   v
+Phase 4.5: Sequence-Based Deep-Dive (if Phases 1-4 are silent, or the Phase 0.5
+  AVI_SCORE was high and needs a mechanism) -- live AlphaGenome scan
+  |
+  v
 Phase 5: Functional Impact Synthesis
   Integrate all evidence, assign regulatory impact level
   |
@@ -90,6 +103,18 @@ Phase 6: Report
 ## Phase 0: Variant/Trait Resolution
 
 Use `ols_search_terms` to resolve trait names to ontology IDs before GWAS queries. Restrict to `ontology="efo"` for GWAS traits; OpenTargets prefers MONDO IDs (e.g., MONDO_0005148 for type 2 diabetes rather than EFO_0001360). Use `EnsemblVEP_annotate_rsid` (param is `variant_id`, not `rsid`) for initial consequence annotation and nearest gene identification.
+
+---
+
+## Phase 0.5: Sequence-Based Triage (AlphaGenome Atlas)
+
+**Requires `ALPHA_GENOME_API_KEY`.** If it isn't configured, the AlphaGenome tools won't appear in your toolset at all — skip this phase and Phase 4.5 entirely and proceed with Phases 1-4, which are a complete, self-sufficient pipeline on their own (this is how the skill worked before AlphaGenome support existed, and nothing below depends on it having run).
+
+When you have one specific variant (chromosome, position, reference/alternate bases), run `AlphaGenome_atlas_lookup_variant` before spending calls on the annotation phases below. It's a precomputed database read covering essentially all possible human SNVs, so it's cheap enough to run as a default first step rather than a last resort: it returns `AVI_SCORE`, a single number fusing AlphaGenome's regulatory prediction with AlphaMissense's coding-impact model, comparable across coding and non-coding variants alike.
+
+When you instead have a *list* of candidates rather than one known variant — e.g. Phase 1's `gwas_get_variants_for_trait` returned dozens of SNPs for a trait, or you're fine-mapping a locus — use `AlphaGenome_atlas_scan_interval` on the region instead of looping `atlas_lookup_variant` over every candidate one at a time. One call ranks every possible SNV in up to a 10 kb window by AVI_SCORE, which is exactly the "group candidates by predicted molecular effect before doing expensive follow-up" pattern that found materially more trait associations in large cohort analyses than treating each candidate as equally worth investigating.
+
+Treat either result as a prior, not a verdict: a high AVI_SCORE with weak annotation evidence means "look harder here, the databases haven't caught up" (see Phase 4.5); a low AVI_SCORE alongside strong GWAS/eQTL evidence is worth a second look at whether the causal variant is actually a different one in LD. Atlas only covers single-nucleotide substitutions — for an indel, skip straight to `AlphaGenome_score_variant` (live model) instead.
 
 ---
 
@@ -129,14 +154,29 @@ When you have the variant as a GRCh38 coordinate, `FAVOR_annotate_variant(varian
 
 ---
 
+## Phase 4.5: Sequence-Based Deep-Dive (conditional)
+
+Run this phase when either condition holds: (a) Phases 1-4 came back empty or weak — the classic "no obvious job" variant — or (b) Phase 0.5's AVI_SCORE was high and the report needs an actual mechanism, not just a number.
+
+- `AlphaGenome_score_variant`: the recommended per-track ref-vs-alt effect for the variant, when you already know which modality matters (expression, splicing, accessibility, a specific histone mark).
+- `AlphaGenome_score_ism_variants`: scans every possible substitution across a short window (≤500 bp) around the variant and ranks them by effect. Use this when you don't yet know *which* base matters, only that something in the region does — e.g. confirming a variant sits inside a motif by checking whether neighboring positions show the same disruption pattern.
+- `AlphaGenome_predict_interval`: full track profile across a wider window (up to 1 Mb) when you need the broader regulatory landscape, not just the single-variant delta.
+
+A concordant result across two or three tracks (e.g., a histone mark for enhancer activity plus expression, both shifting the same direction) is stronger evidence than a single-track hit — the same logic Phase 5 already applies to annotation evidence.
+
+AlphaGenome isn't the only sequence-prediction model in ToolUniverse, just the broadest and the one this phase defaults to. If it's unavailable (no key) or a specific case calls for something else — a published, self-hostable model instead of a hosted API, or a question specifically about chromatin accessibility rather than a broad multi-modality readout — see `tooluniverse-regulatory-genomics` for Enformer, Borzoi, ChromBPNet, and Evo 2, which cover the same kind of ground with different tradeoffs.
+
+---
+
 ## Phase 5: Functional Impact Synthesis
 
 After collecting evidence, reason through the layers:
 
-- **High impact**: GWAS genome-wide significant + eQTL with meaningful NES + RegulomeDB score ≤ 2 + active chromatin (H3K27ac) in relevant tissue. Multiple independent lines converge on the same locus and gene.
+- **High impact**: GWAS genome-wide significant + eQTL with meaningful NES + RegulomeDB score ≤ 2 + active chromatin (H3K27ac) in relevant tissue. Multiple independent lines converge on the same locus and gene — a concordant AlphaGenome/AVI_SCORE result adds a mechanistic line on top of this, but isn't required for high confidence when the annotation evidence already converges.
 - **Moderate impact**: Two to three lines of evidence (e.g., eQTL + active enhancer overlap, or GWAS significant + RegulomeDB ≤ 3) without full convergence.
 - **Low impact**: Single line of evidence, or only computational annotation (VEP consequence category) without functional data.
-- **No evidence**: No regulatory annotations in any source; the variant may be in a non-functional region or the relevant cell type is not represented in available datasets.
+- **Sequence-model-supported, annotation-silent**: No GWAS/eQTL/ENCODE/RegulomeDB evidence, but Phase 4.5 shows a high AVI_SCORE and/or a clear multi-track mechanism (e.g., a created transcription-factor motif, a disrupted splice junction). Treat this as its own tier, not as "no evidence" — it means the variant is plausibly functional but too novel or too rare for existing databases to have caught up, not that nothing is happening. State the confidence honestly: this is a strong hypothesis from an independent, well-validated model, not the multi-source convergence of the tiers above.
+- **No evidence**: No regulatory annotations in any source, and Phase 4.5 (if run) shows a low AVI_SCORE / no strong sequence effect either. The variant may be in a non-functional region.
 
 ---
 
@@ -147,6 +187,9 @@ After collecting evidence, reason through the layers:
 - **RegulomeDB returns no data**: Query ENCODE directly, or run `FAVOR_annotate_variant` (GRCh38 coordinate) for its regulatory + conservation annotation; the variant may lack regulatory annotations in available data.
 - **OpenTargets GWAS returns None**: Verify MONDO/EFO ID format; try `OpenTargets_multi_entity_search_by_query_string` first to confirm the correct ID.
 - **ENCODE tissue not found**: ENCODE uses specific biosample names; RegulomeDB aggregates data from many cell types and may cover the gap.
+- **All of Phases 1-4 return empty/weak**: Don't conclude "no evidence" yet — run Phase 4.5. AlphaGenome predicts directly from sequence and doesn't depend on the variant (or anything nearby) having been studied before, so it's the one evidence source that still works when the databases have nothing.
+- **Variant is an indel, not a single-nucleotide substitution**: `AlphaGenome_atlas_lookup_variant`/`AlphaGenome_atlas_scan_interval` are SNV-only; use the live `AlphaGenome_score_variant` instead.
+- **AlphaGenome tools aren't in your toolset**: `ALPHA_GENOME_API_KEY` isn't configured. Skip Phases 0.5 and 4.5 and run Phases 1-4 as a standalone pipeline — do not block the analysis waiting on a key that may never be provided. If a sequence-model prediction still matters for the case, `tooluniverse-regulatory-genomics` covers self-hostable alternatives (Enformer, Borzoi, ChromBPNet) that don't need this specific key.
 
 ---
 
@@ -191,6 +234,44 @@ Step 5: ENCODE_search_histone_experiments(histone_mark="H3K27ac", biosample_term
 Step 6: Classify impact based on convergence of evidence lines
 ```
 
+### Annotation-Silent Variant Resolved via Sequence Prediction
+
+The pattern behind real cases like the GREGoR Consortium's use of AlphaGenome Atlas to solve an unsolved epilepsy case through a deep intronic *DNM1* variant: no exonic hit, no GWAS association, nothing for the annotation phases to find — until a sequence model is asked directly.
+
+```
+Step 1: AlphaGenome_atlas_lookup_variant(chromosome=..., position=..., reference_bases=..., alternate_bases=...)
+  -> High AVI_SCORE despite the variant being deep intronic
+
+Step 2: gwas_search_associations, GTEx_query_eqtl, RegulomeDB_query_variant, ENCODE_search_histone_experiments
+  -> All empty or weak -- nothing here for standard annotation to catch
+
+Step 3: AlphaGenome_score_ism_variants(chromosome=..., start=..., end=..., output_type="SPLICE_SITES")
+  -> Scan the surrounding window; identify that this substitution creates a cryptic splice site
+
+Step 4: Synthesize: high AVI_SCORE + a concrete, mechanistic splice-site prediction, despite zero
+  annotation-database hits -> classify as "sequence-model-supported, annotation-silent", not
+  "no evidence". Recommend experimental validation (e.g., a minigene splicing assay) rather than
+  treating the model output as a final answer.
+```
+
+### Triaging Many Candidates at a GWAS Locus
+
+A GWAS hit rarely implicates exactly one variant — LD means a locus typically carries dozens of candidates. Running the full annotation pipeline (Phases 1-4) on every one of them is expensive; triage first.
+
+```
+Step 1: gwas_get_variants_for_trait(trait/efo_id=...)
+  -> Dozens of candidate SNPs at the associated locus
+
+Step 2: AlphaGenome_atlas_scan_interval(chromosome=..., start=..., end=...)
+  -> One call, AVI_SCORE for every SNV across the locus (<=10 kb per call; tile larger loci)
+
+Step 3: Rank candidates by AVI_SCORE; take the top handful (not just the GWAS lead SNP --
+  a variant in tight LD with a stronger predicted effect is often the better causal candidate)
+
+Step 4: Run Phases 1-4 (GWAS, eQTL, RegulomeDB/ENCODE, OpenTargets) only on those top candidates,
+  not the full list -- the expensive annotation calls are now spent where they're likely to pay off
+```
+
 ---
 
 ## Limitations
@@ -201,3 +282,4 @@ Step 6: Classify impact based on convergence of evidence lines
 - eQTL analysis identifies correlation, not causation; fine-mapping is needed to identify causal variants.
 - RegulomeDB scores are heuristic; a score of 1a does not guarantee functional impact.
 - GWAS associations are population-level; individual variant effects depend on genetic background.
+- AlphaGenome/AVI_SCORE predictions are model estimates, not experimental measurements — they corroborate annotation evidence or generate a hypothesis worth validating, but a high score alone is not equivalent to a confirmed functional impact. `AlphaGenome_score_ism_variants` is capped at a 500 bp window and `AlphaGenome_atlas_scan_interval` at 10,000 bp per call — scope the region before calling either.

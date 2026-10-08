@@ -16,7 +16,19 @@ The Michaelis-Menten model: `v = Vmax·[S] / (Km + [S])`.
 - You need Km (substrate affinity), Vmax, kcat (turnover number), or kcat/Km.
 - You have ±inhibitor velocity data and want to classify the inhibition mode + Ki.
 
-For *published* kinetic constants (someone else's Km/kcat), use the BRENDA tools instead — this skill is for analyzing **your own measured** data.
+For *published* kinetic constants (someone else's Km/kcat), use the BRENDA tools or `SABIO_RK_search_reactions` instead — this skill is for analyzing **your own measured** data.
+
+### Looking up published constants instead of fitting your own (SABIO-RK)
+
+`SABIO_RK_search_reactions` searches >200,000 literature-curated kinetic entries (Km, kcat, Vmax, Ki) by EC number, enzyme name, substrate, organism, or product — no authentication required. A second source alongside BRENDA; check both if a value seems off, since coverage and curation differ.
+
+```
+tu run SABIO_RK_search_reactions '{"ec_number":"1.1.1.1"}'
+tu run SABIO_RK_search_reactions '{"enzyme_name":"hexokinase","organism":"Homo sapiens","limit":5}'
+tu run SABIO_RK_search_reactions '{"substrate":"ethanol","limit":10}'
+```
+
+Verified live: EC 1.1.1.1 (alcohol dehydrogenase), hexokinase/Homo sapiens, and ethanol-substrate queries all return real `kinetic_laws` entries with `substrates`, `products`, `parameters`, `mechanism_type`, and `pubmed_id`. **Gotcha (verified live)**: a returned entry can list its `parameter_types` (e.g. `["concentration","Hill coefficient","S_half","Vmax"]`) while the actual `parameters` array is empty — the entry documents *which* kinetic parameters were characterized for that reaction, not necessarily their numeric values in every record; check `parameters` is non-empty before citing a specific number, and if empty, look at a different entry_id for the same reaction/organism.
 
 ## Step 1 — Prepare the data
 
@@ -87,4 +99,4 @@ Ki is the inhibition constant (lower = more potent inhibitor). Decide the mechan
 ## Related skills
 - `tooluniverse-dose-response` — IC50/EC50 (the Hill/4PL sibling for concentration-response).
 - `tooluniverse-statistical-modeling` — general nonlinear regression and model comparison.
-- BRENDA tools — look up *published* enzyme kinetic constants.
+- BRENDA tools / `SABIO_RK_search_reactions` — look up *published* enzyme kinetic constants.

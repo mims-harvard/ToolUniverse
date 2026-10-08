@@ -15,7 +15,7 @@ def gnomad_get_variant(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get basic variant metadata from gnomAD by `variant_id` (format like '19-44908822-C-T'). Use `gnom...
 
@@ -34,7 +34,7 @@ def gnomad_get_variant(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

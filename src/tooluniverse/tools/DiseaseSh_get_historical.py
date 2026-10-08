@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def DiseaseSh_get_historical(
-    country: Optional[str | Any] = None,
-    lastdays: Optional[str | Any] = None,
+    country: Optional[str] = "all",
+    lastdays: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -21,9 +21,9 @@ def DiseaseSh_get_historical(
 
     Parameters
     ----------
-    country : str | Any
+    country : str
         Country name or 'all' for global data. Examples: 'USA', 'India', 'all'. If om...
-    lastdays : str | Any
+    lastdays : str
         Number of days of historical data to return. Use a number (e.g., '30') or 'al...
     stream_callback : Callable, optional
         Callback for streaming output

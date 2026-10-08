@@ -39,8 +39,8 @@ KEGG maps diseases to pathways and drugs to targets, but the real value is in th
 | KEGG_get_network | `network_id` | Network details and relationships |
 | KEGG_search_variant | `keyword` | Variant entries matching keyword |
 | KEGG_get_variant | `variant_id` | Variant details and disease associations |
-| KEGG_convert_ids | `source_db`, `target_db`, `ids` | Convert identifiers between KEGG and external databases (e.g., NCBI Gene ↔ KEGG gene IDs, UniProt ↔ KEGG) |
-| KEGG_link_entries | `target_db`, `source_db_or_ids` | Find cross-database relationships (e.g., all genes linked to a pathway, all drugs linked to a disease) |
+| KEGG_convert_ids | `kegg_id` (IDs joined with `+`), `target_db` | Convert KEGG gene/compound IDs to external IDs (`uniprot`, `ncbi-geneid`, `ncbi-proteinid`, `chebi`, `pubchem`); KEGG → external only |
+| KEGG_link_entries | `source`, `target` | Find cross-database relationships (e.g., all genes linked to a pathway, all drugs linked to a disease) |
 
 ## Workflow
 
@@ -127,24 +127,27 @@ networks = tu.tools.KEGG_search_network(keyword="BRAF melanoma")
 
 ## ID Conversion & Cross-Linking
 
-Use `KEGG_convert_ids` to map between KEGG identifiers and external databases before or after lookups:
+Use `KEGG_convert_ids` to map KEGG identifiers to external databases (it converts KEGG → external only):
 
 ```python
-# Convert NCBI Gene IDs to KEGG gene IDs for human (hsa)
-result = tu.tools.KEGG_convert_ids(source_db="ncbi-geneid", target_db="hsa", ids=["672", "675"])
+# Convert KEGG human gene IDs to UniProt accessions (join several IDs with '+')
+result = tu.tools.KEGG_convert_ids(kegg_id="hsa:672+hsa:675", target_db="uniprot")
+# result['data'] -> [{"kegg_id": "hsa:672", "external_id": "up:P38398"}, ...]
 
-# Convert UniProt accessions to KEGG entries
-result = tu.tools.KEGG_convert_ids(source_db="up", target_db="hsa", ids=["P38398"])
+# Convert a KEGG gene ID to its NCBI Gene ID
+result = tu.tools.KEGG_convert_ids(kegg_id="hsa:672", target_db="ncbi-geneid")
 ```
+
+For the reverse direction, KEGG human gene IDs are simply `hsa:` plus the NCBI Gene ID (NCBI Gene 672 is `hsa:672`); there is no external → KEGG conversion tool.
 
 Use `KEGG_link_entries` to retrieve relationships between KEGG databases:
 
 ```python
 # Find all KEGG pathway IDs that contain a given gene
-result = tu.tools.KEGG_link_entries(target_db="pathway", source_db_or_ids="hsa:7157")
+result = tu.tools.KEGG_link_entries(source="hsa:7157", target="pathway")
 
 # Find all genes linked to a specific pathway
-result = tu.tools.KEGG_link_entries(target_db="hsa", source_db_or_ids="path:hsa05210")
+result = tu.tools.KEGG_link_entries(source="hsa05210", target="hsa")
 ```
 
 These tools are especially useful when you have external IDs (Entrez Gene, UniProt, ChEMBL) and need to bridge into KEGG's namespace, or when you want a complete gene-pathway or drug-disease adjacency list.
@@ -172,7 +175,7 @@ These tools are especially useful when you have external IDs (Entrez Gene, UniPr
 - **KEGG pathway significance**: KEGG pathways are manually curated maps of molecular interactions. A gene appearing in a KEGG disease pathway has been editorially reviewed as relevant to that disease mechanism. However, KEGG coverage is not exhaustive -- absence from KEGG does not mean absence of involvement. Cross-reference with Reactome or WikiPathways for broader coverage.
 - **Disease-drug network interpretation**: KEGG Network entries (N-codes) link diseases, genes, and drugs in mechanistic triangles. A drug targeting a gene in a disease network has a curated rationale for therapeutic relevance. The network structure distinguishes direct targets (drug binds gene product) from pathway-level connections (drug affects pathway containing the gene). Prioritize direct target relationships for drug repurposing hypotheses.
 - **Variant impact assessment**: KEGG Variant entries are curated for clinical significance (often cancer driver mutations). A variant listed in KEGG with a linked drug entry indicates an established pharmacogenomic or precision oncology relationship (e.g., BRAF V600E linked to vemurafenib). Variants not in KEGG may still be clinically relevant -- cross-reference with ClinVar and CIViC.
-- **ID conversion caveat**: KEGG uses its own gene ID namespace (e.g., hsa:7157 for TP53). Always use `KEGG_convert_ids` to map from external IDs (NCBI Gene, UniProt) before querying KEGG-specific tools. Failed conversions may indicate the gene is not in KEGG's curated set.
+- **ID conversion caveat**: KEGG uses its own gene ID namespace (e.g., hsa:7157 for TP53). Human KEGG gene IDs are `hsa:` plus the NCBI Gene ID; `KEGG_convert_ids` only maps KEGG IDs to external IDs (UniProt, NCBI Gene), so resolve UniProt accessions to NCBI Gene IDs first with another tool. Failed conversions may indicate the gene is not in KEGG's curated set.
 - **Drug entry completeness**: KEGG Drug entries vary in detail. Approved drugs typically have full target, pathway, and metabolism information. Investigational compounds may have partial entries. Check the drug's "Target" and "Pathway" fields for completeness before drawing conclusions.
 
 ### Synthesis Questions

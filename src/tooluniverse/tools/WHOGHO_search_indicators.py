@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def WHOGHO_search_indicators(
-    filter: Optional[str | Any] = None,
-    top: Optional[int | Any] = None,
+    filter: Optional[str] = None,
+    top: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -21,9 +21,9 @@ def WHOGHO_search_indicators(
 
     Parameters
     ----------
-    filter : str | Any
+    filter : str
         OData filter string for indicator names. Examples: "contains(IndicatorName,'m...
-    top : int | Any
+    top : int
         Maximum number of results to return. Default: 10, max: 100
     stream_callback : Callable, optional
         Callback for streaming output

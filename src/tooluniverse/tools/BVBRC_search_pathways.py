@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def BVBRC_search_pathways(
-    taxon_id: Optional[str | Any] = None,
-    pathway_name: Optional[str | Any] = None,
-    ec_number: Optional[str | Any] = None,
-    genome_id: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    taxon_id: Optional[str] = None,
+    pathway_name: Optional[str] = None,
+    ec_number: Optional[str] = None,
+    genome_id: Optional[str] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,15 +24,15 @@ def BVBRC_search_pathways(
 
     Parameters
     ----------
-    taxon_id : str | Any
+    taxon_id : str
         NCBI Taxonomy ID. Examples: '1773' (M. tuberculosis), '562' (E. coli), '1280'...
-    pathway_name : str | Any
+    pathway_name : str
         Pathway name keyword. Examples: 'Glycolysis', 'Fatty acid', 'Amino acid', 'Su...
-    ec_number : str | Any
+    ec_number : str
         Enzyme Commission number. Examples: '1.11.1.6' (catalase), '2.7.1.1' (hexokin...
-    genome_id : str | Any
+    genome_id : str
         Restrict to a specific genome. Example: '83332.12' (M. tuberculosis H37Rv).
-    limit : int | Any
+    limit : int
         Maximum number of results. Default: 25. Max: 100.
     stream_callback : Callable, optional
         Callback for streaming output

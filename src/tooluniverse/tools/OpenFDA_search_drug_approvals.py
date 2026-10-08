@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def OpenFDA_search_drug_approvals(
-    operation: str,
-    drug_name: Optional[str | Any] = None,
-    sponsor: Optional[str | Any] = None,
-    application_number: Optional[str | Any] = None,
+    operation: Optional[str] = "search_approvals",
+    drug_name: Optional[str] = None,
+    sponsor: Optional[str] = None,
+    application_number: Optional[str] = None,
     limit: Optional[int] = 5,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -26,11 +26,11 @@ def OpenFDA_search_drug_approvals(
     ----------
     operation : str
         Operation type
-    drug_name : str | Any
+    drug_name : str
         Drug name to search (brand or generic, e.g., 'aspirin', 'metformin', 'Lipitor...
-    sponsor : str | Any
+    sponsor : str
         Sponsor/manufacturer name (e.g., 'PFIZER', 'MERCK', 'NOVARTIS')
-    application_number : str | Any
+    application_number : str
         FDA application number (e.g., 'NDA021457', 'ANDA078372', 'BLA125554')
     limit : int
         Maximum number of results (default: 5, max: 20)

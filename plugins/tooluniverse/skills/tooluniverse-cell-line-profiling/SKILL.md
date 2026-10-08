@@ -54,7 +54,6 @@ Apply for: cell line selection by cancer type/gene, cell line profiling, gene de
 | `CellMarker_search_cancer_markers` | `operation="search_cancer_markers"`, `cancer_type`, `gene_symbol`, `cell_type` | Cancer cell markers |
 | `CellMarker_search_by_gene` | `operation="search_by_gene"`, `gene_symbol` (required), `species` | Cell types expressing a gene |
 | `HPA_get_comparative_expression_by_gene_and_cellline` | `gene_name` (required), `cell_line` (required) | Supported lines: ishikawa, hela, mcf7, a549, hepg2, jurkat, pc3, rh30, siha, u251 |
-| `CLUE_get_cell_lines` | `operation="get_cell_lines"`, `cell_id` | L1000 CMap cell line info (requires CLUE_API_KEY) |
 | `SYNERGxDB_search_combos` | `drug_name_1`, `drug_name_2`, `sample` (tissue or cell ID) | Drug combination synergy (ZIP, Bliss, Loewe) |
 | `SYNERGxDB_list_cell_lines` | - | All cell lines in SYNERGxDB |
 | `DGIdb_get_drug_gene_interactions` | `genes: list[str]` | Druggable gene interactions |
@@ -135,7 +134,7 @@ Phase 5: Target Druggability & Recommendations
 
 **OUTPUT**: Gene validation + mutation status per cell line.
 
-**Per-cell-line Chronos scores** (what the API can't give you): use the bundled script `scripts/depmap_gene_dependency.py`. It pulls the current DepMap Public release (CRISPRGeneEffect.csv + Model.csv) once via the public download index, caches it, and answers the dependency question directly:
+**Per-cell-line Chronos scores** (what the API can't give you): use the bundled script `scripts/depmap_gene_dependency.py`. It pulls the current DepMap Public release (CRISPRGeneEffect.csv + Model.csv) once via the public download index, caches it, and answers the dependency question directly: NOTE (2026-09-21): DepMap's download index now answers with a bot-check page instead of the file list; the script reports that (exit 2) rather than bypassing it. Download `CRISPRGeneEffect.csv` and `Model.csv` from https://depmap.org/portal/download/all/ in a browser and put them in the cache directory (`$DEPMAP_CACHE_DIR`, default `<tmp>/depmap_cache`); cached files are used without contacting DepMap.
 
 ```bash
 # Cell lines most dependent on a gene (optionally within a lineage)
@@ -156,8 +155,6 @@ Output: cell line, lineage, primary disease, Chronos score (most negative = most
 **4A PharmacoDB**: `PharmacoDB_get_experiments(operation="get_experiments", compound_name="Erlotinib", cell_line_name="A549", per_page=20)` for dose-response (IC50, AAC, EC50). Omit `compound_name` to get all drugs for a cell line. Use `PharmacoDB_get_biomarker_assoc(compound_name="...", tissue_name="...", mdata_type="mutation")` for sensitivity biomarkers.
 
 **4B SYNERGxDB**: `SYNERGxDB_search_combos(drug_name_1="gemcitabine", drug_name_2="erlotinib", sample="lung")`. Positive ZIP = synergy. Covers cytotoxic agents only (not targeted therapies/biologics).
-
-**4C CLUE**: `CLUE_get_cell_lines(operation="get_cell_lines", cell_id="MCF7")` — requires CLUE_API_KEY.
 
 **OUTPUT**: Drug sensitivity table (drug, IC50, AAC, dataset) + synergy data if available.
 
@@ -257,7 +254,6 @@ Use cell line NAME as common key across databases. IDs: DepMap=SIDM, Cellosaurus
 | cBioPortal CCLE study ID unknown | Use `ccle_broad_2019` as default CCLE study |
 | PharmacoDB cell line name mismatch | Use `PharmacoDB_search(operation="search", query="<name>")` to find the canonical name |
 | HPA cell line not supported | Only 10 lines supported (hela, mcf7, a549, hepg2, jurkat, pc3, rh30, siha, u251, ishikawa). Skip HPA for other lines |
-| CLUE requires API key | Skip CLUE tools if CLUE_API_KEY not set; note in report |
 | Gene symbol not found in DepMap | Use `DepMap_search_genes(query="<symbol>")` to check aliases |
 | Cellosaurus accession pattern | Must be CVCL_XXXX format; search first if you only have a name |
 | SYNERGxDB no results for drug combo | Drug may not be in database; SYNERGxDB covers cytotoxic agents, not most targeted therapies |

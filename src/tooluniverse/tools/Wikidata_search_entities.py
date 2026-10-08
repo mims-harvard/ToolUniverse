@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def Wikidata_search_entities(
     search: str,
-    language: Optional[str | Any] = None,
-    type_: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    language: Optional[str] = "en",
+    type_: Optional[str] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def Wikidata_search_entities(
     ----------
     search : str
         Search term to find Wikidata entities. Examples: 'CRISPR', 'Albert Einstein',...
-    language : str | Any
+    language : str
         Language code for search and results. Default: 'en'. Examples: 'fr', 'de', 'z...
-    type_ : str | Any
+    type_ : str
         Entity type to search. Values: 'item' (Q-numbers, default), 'property' (P-num...
-    limit : int | Any
+    limit : int
         Number of results to return (default 7, max 50)
     stream_callback : Callable, optional
         Callback for streaming output

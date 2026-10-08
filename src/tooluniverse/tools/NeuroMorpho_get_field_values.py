@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def NeuroMorpho_get_field_values(
-    field_name: str,
+    field_name: Optional[str] = "species",
     page: Optional[int] = 0,
     size: Optional[int] = 500,
     *,

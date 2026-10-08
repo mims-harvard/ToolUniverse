@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def CPIC_get_gene_drug_pairs(
-    genesymbol: Optional[str | Any] = None,
-    gene_symbol: Optional[str | Any] = None,
-    gene: Optional[str | Any] = None,
+    genesymbol: Optional[str] = None,
+    gene_symbol: Optional[str] = None,
+    gene: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,11 +22,11 @@ def CPIC_get_gene_drug_pairs(
 
     Parameters
     ----------
-    genesymbol : str | Any
+    genesymbol : str
         Gene symbol (e.g., 'CYP2D6', 'CYP2C19', 'SLCO1B1', 'TPMT', 'DPYD', 'VKORC1')
-    gene_symbol : str | Any
+    gene_symbol : str
         Alias for genesymbol (e.g., 'CYP2D6')
-    gene : str | Any
+    gene : str
         Alias for genesymbol (e.g., 'CYP2D6')
     stream_callback : Callable, optional
         Callback for streaming output

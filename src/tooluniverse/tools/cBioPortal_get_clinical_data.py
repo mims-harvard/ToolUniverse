@@ -1,7 +1,7 @@
 """
 cBioPortal_get_clinical_data
 
-Get clinical data for all samples in a study. Returns patient-level data like tumor stage, histol...
+Get clinical data for samples in a study. Returns patient-level data like tumor stage, histology,...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def cBioPortal_get_clinical_data(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get clinical data for all samples in a study. Returns patient-level data like tumor stage, histol...
+    Get clinical data for samples in a study. Returns patient-level data like tumor stage, histology,...
 
     Parameters
     ----------

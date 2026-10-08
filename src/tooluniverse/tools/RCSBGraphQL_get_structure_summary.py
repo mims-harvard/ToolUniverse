@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def RCSBGraphQL_get_structure_summary(
-    pdb_id: Optional[str | Any] = None,
-    pdb_ids: Optional[str | Any] = None,
+    pdb_id: Optional[str] = None,
+    pdb_ids: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -21,9 +21,9 @@ def RCSBGraphQL_get_structure_summary(
 
     Parameters
     ----------
-    pdb_id : str | Any
+    pdb_id : str
         Single PDB ID. Example: '4HHB' (hemoglobin), '1TUP' (p53-DNA complex), '6LU7'...
-    pdb_ids : str | Any
+    pdb_ids : str
         Comma-separated list of PDB IDs for batch query. Example: '4HHB,1TUP,6LU7'. M...
     stream_callback : Callable, optional
         Callback for streaming output

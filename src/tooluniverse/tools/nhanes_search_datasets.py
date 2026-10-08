@@ -25,7 +25,7 @@ def nhanes_search_datasets(
     search_term : str
         Search term to find datasets (e.g., 'glucose', 'blood pressure', 'diabetes')
     year : str
-        Optional NHANES cycle to filter (e.g., '2017-2018')
+        Optional NHANES cycle to filter (e.g., '2017-2018'). If omitted, searches the...
     limit : int
         Maximum number of results (default: 20)
     stream_callback : Callable, optional

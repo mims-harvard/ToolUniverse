@@ -165,6 +165,10 @@ User Query (drug name or SMILES)
 
 **Fallback**: If ADMETAI import fails (missing `tooluniverse[ml]`), rely on SwissADME alone. SwissADME provides all Lipinski descriptors independently.
 
+**Local TDC oracle scoring (no ML extra, no PubChem round-trip needed)**: `TDC_predict_oracle_score(smiles=..., oracle=...)` computes drug-likeness/property scores locally via the PyTDC package straight from a SMILES string — useful when `tooluniverse[ml]` isn't installed or as a fast independent cross-check. Six oracles: `QED` (drug-likeness 0-1), `SA` (synthetic accessibility 1=easy to 10=hard), `LogP`, and three target-binding-likelihood oracles (`GSK3B`, `JNK3`, `DRD2`) useful for early candidate triage against those specific targets. **Verified live and cross-checked**: `TDC_predict_oracle_score(smiles="CC(=O)Oc1ccccc1C(=O)O", oracle="SA")` and the independent `Chem_sa_score(smiles=...)` tool both returned **1.580** for aspirin — same underlying RDKit SA_Score algorithm, two separate wrapper tools; either is fine to cite, don't report both as independent corroborating evidence since they're the same computation.
+
+`TDC_load_dataset(problem=..., name=...)` / `TDC_list_datasets(problem=...)` give access to TDC's ADME/Tox/HTS benchmark datasets — relevant if validating a custom prediction model against a public benchmark, not part of a single-compound ADMET profile. **`TDC_list_datasets` works** (verified live: `problem="ADME"` → 27 real dataset names). **`TDC_load_dataset` is currently broken** — verified live and reproduced on two different datasets (`Caco2_Wang`, `hERG`): it downloads successfully but the loader then receives an HTML error page instead of data and raises `Please report this error to contact@tdcommons.ai`. Don't build a workflow around it; use `TDC_list_datasets` for discovery and note the load failure if a user specifically needs a dataset pulled.
+
 ---
 
 ### PHASE 3: ADME Predictions

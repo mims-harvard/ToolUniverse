@@ -95,7 +95,7 @@ Match drug targets to new disease genes, assess mechanistic fit, check contraind
 
 ```python
 from tooluniverse import ToolUniverse
-tu = ToolUniverse(use_cache=True)
+tu = ToolUniverse()
 tu.load_tools()
 
 # Step 1: Get GWAS associations (use disease_trait not trait; no p_value_threshold param)

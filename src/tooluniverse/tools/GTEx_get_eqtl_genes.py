@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GTEx_get_eqtl_genes(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_eqtl_genes",
     tissue_site_detail_id: Optional[list[str]] = None,
     dataset_id: Optional[str] = "gtex_v8",
     page: Optional[int] = 0,
@@ -18,7 +18,7 @@ def GTEx_get_eqtl_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get eQTL genes (eGenes) with significant cis-eQTLs. Returns genes with at least one significant e...
 
@@ -31,9 +31,9 @@ def GTEx_get_eqtl_genes(
     dataset_id : str
         GTEx dataset version
     page : int
-
+        Page number (0-based)
     items_per_page : int
-
+        Results per page
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -43,7 +43,7 @@ def GTEx_get_eqtl_genes(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def BindingDB_get_ligands_by_pdb(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get binding affinity data for proteins by PDB structure ID. Returns ligands with measured affinit...
 
@@ -37,7 +37,7 @@ def BindingDB_get_ligands_by_pdb(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

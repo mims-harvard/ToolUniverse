@@ -130,7 +130,7 @@
                         "number",
                         "null"
                       ],
-                      "description": "Maturation half-time (minutes) at 37\u00b0C"
+                      "description": "Maturation half-time (minutes) at 37°C"
                     },
                     "lifetime": {
                       "type": [
@@ -144,7 +144,7 @@
                         "number",
                         "null"
                       ],
-                      "description": "Relative brightness (ext_coeff \u00d7 qy / 1000)"
+                      "description": "Relative brightness (ext_coeff × qy / 1000)"
                     }
                   }
                 }
@@ -227,6 +227,12 @@
       "endpoint": "https://www.fpbase.org/api/proteins/",
       "params": {
         "format": "json"
+      },
+      "param_mapping": {
+        "agg_exc_max__gte": "ex_max__gte",
+        "agg_exc_max__lte": "ex_max__lte",
+        "agg_em_max__gte": "em_max__gte",
+        "agg_em_max__lte": "em_max__lte"
       }
     },
     "type": "BaseRESTTool",

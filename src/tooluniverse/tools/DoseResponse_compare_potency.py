@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def DoseResponse_compare_potency(
-    operation: str,
     conc_a: list[Any],
     resp_a: list[Any],
     conc_b: list[Any],
     resp_b: list[Any],
+    operation: Optional[str] = "compare_potency",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

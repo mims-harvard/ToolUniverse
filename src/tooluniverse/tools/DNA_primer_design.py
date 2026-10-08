@@ -9,13 +9,13 @@ from ._shared_client import get_shared_client
 
 
 def DNA_primer_design(
-    operation: str,
     sequence: str,
-    target_start: Optional[int | Any] = None,
-    target_end: Optional[int | Any] = None,
-    tm_target: Optional[float | Any] = 60.0,
-    product_size_min: Optional[int | Any] = 100,
-    product_size_max: Optional[int | Any] = 1000,
+    operation: Optional[str] = "primer_design",
+    target_start: Optional[int] = None,
+    target_end: Optional[int] = None,
+    tm_target: Optional[float] = 60.0,
+    product_size_min: Optional[int] = 100,
+    product_size_max: Optional[int] = 1000,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,18 +27,18 @@ def DNA_primer_design(
     Parameters
     ----------
     operation : str
-        Operation type
+        Operation (optional; defaults to 'primer_design' for this tool).
     sequence : str
         DNA template sequence (A, T, G, C, N only). Must be at least 200 bp for good ...
-    target_start : int | Any
+    target_start : int
         0-based start position of the target region to amplify. Defaults to 0.
-    target_end : int | Any
+    target_end : int
         0-based end position of the target region to amplify. Defaults to sequence le...
-    tm_target : float | Any
+    tm_target : float
         Target melting temperature in Celsius (default: 60.0°C).
-    product_size_min : int | Any
+    product_size_min : int
         Minimum acceptable PCR product size in bp (default: 100).
-    product_size_max : int | Any
+    product_size_max : int
         Maximum acceptable PCR product size in bp (default: 1000).
     stream_callback : Callable, optional
         Callback for streaming output

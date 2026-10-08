@@ -15,6 +15,7 @@ When uncertain about any scientific fact, SEARCH databases first rather than rea
 
 **Triggers**:
 - User has spatial transcriptomics data (Visium, MERFISH, seqFISH, etc.)
+- User has *only* an H&E histology image and no spatial assay at all -- `DeepSpotM_predict_gene_expression` (local model, no API/key) predicts spatial gene expression for a 224x224 H&E tile directly, a virtual readout when no real spatial data exists yet. Treat its output as a model prediction to guide follow-up (e.g. which region to actually assay), not a substitute for the platforms above when real spatial data is the goal.
 - Questions about tissue architecture or spatial organization
 - Spatial gene expression pattern analysis
 - Cell-cell proximity or neighborhood analysis requests
@@ -214,7 +215,11 @@ donors = tu.tools.HuBMAP_search_donors(group_name="Stanford", limit=10)
 result = tu.tools.OmicsDI_search_datasets(query="spatial transcriptomics kidney Visium")
 
 # Use CELLxGENE for cell-level expression context
-result = tu.tools.CELLxGENE_get_cell_metadata(tissue="kidney")
+# obs_value_filter is required (unfiltered Census queries time out)
+result = tu.tools.CELLxGENE_get_cell_metadata(
+    obs_value_filter='tissue_general == "kidney"',
+    column_names=["cell_type", "tissue", "disease"],
+)
 ```
 
 ```python

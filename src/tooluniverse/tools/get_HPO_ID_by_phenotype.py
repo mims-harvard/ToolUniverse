@@ -1,7 +1,7 @@
 """
 get_HPO_ID_by_phenotype
 
-Retrieve the HPO ID of a phenotype or symptom.
+Retrieve the HPO ID of a phenotype or symptom. Results are restricted to the HP: namespace (Monar...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def get_HPO_ID_by_phenotype(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve the HPO ID of a phenotype or symptom.
+    Retrieve the HPO ID of a phenotype or symptom. Results are restricted to the HP: namespace (Monar...
 
     Parameters
     ----------

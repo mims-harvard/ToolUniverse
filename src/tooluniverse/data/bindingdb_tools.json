@@ -391,7 +391,11 @@
         }
       ]
     },
-    "test_examples": []
+    "test_examples": [
+      {
+        "pdb_ids": "1Q0L,3ANM"
+      }
+    ]
   },
   {
     "type": "BindingDBTool",

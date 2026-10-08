@@ -12,7 +12,7 @@ def UniProtIDMap_convert_ids(
     ids: str,
     from_db: str,
     to_db: Optional[str] = "UniProtKB",
-    tax_id: Optional[int | Any] = None,
+    tax_id: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -29,7 +29,7 @@ def UniProtIDMap_convert_ids(
         Source database. Common values: 'Gene_Name', 'UniProtKB_AC-ID', 'Ensembl', 'E...
     to_db : str
         Target database. Common values: 'UniProtKB', 'UniProtKB-Swiss-Prot', 'Gene_Na...
-    tax_id : int | Any
+    tax_id : int
         NCBI Taxonomy ID to restrict results. Examples: 9606 (human), 10090 (mouse), ...
     stream_callback : Callable, optional
         Callback for streaming output

@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ENCODE_search_chromatin_accessibility(
     assay_type: Optional[str] = "ATAC-seq",
-    biosample_term_name: Optional[str | Any] = None,
+    biosample_term_name: Optional[str] = None,
     organism: Optional[str] = "Homo sapiens",
     limit: Optional[int] = 25,
     *,
@@ -25,7 +25,7 @@ def ENCODE_search_chromatin_accessibility(
     ----------
     assay_type : str
         Chromatin accessibility assay: 'ATAC-seq' (Assay for Transposase-Accessible C...
-    biosample_term_name : str | Any
+    biosample_term_name : str
         Biosample name filter (e.g., 'K562', 'GM12878', 'liver'). Leave empty for all.
     organism : str
         Organism scientific name.

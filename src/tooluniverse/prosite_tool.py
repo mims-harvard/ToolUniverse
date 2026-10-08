@@ -248,7 +248,9 @@ class PROSITETool(BaseTool):
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
-        data = response.json()
+        # InterPro answers a search with no hits as HTTP 204 and an empty body,
+        # which is not JSON: report it as zero results, not a parse error.
+        data = response.json() if response.content.strip() else {}
 
         results = []
         for result in data.get("results", []):

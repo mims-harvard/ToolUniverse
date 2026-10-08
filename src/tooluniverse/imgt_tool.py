@@ -162,7 +162,8 @@ class IMGTTool(BaseTool):
                     "species": species,
                     "query": query_value,
                     "fasta": fasta_text,
-                    "record_count": len(headers),
+                    "record_count": len(headers[:5]),
+                    "total_first_records": len(headers),
                     "first_records": headers[:5],
                 },
                 "metadata": {

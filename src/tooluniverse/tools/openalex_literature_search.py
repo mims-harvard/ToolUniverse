@@ -13,8 +13,11 @@ def openalex_literature_search(
     query: Optional[str] = None,
     max_results: Optional[int] = 10,
     limit: Optional[int] = None,
+    num_results: Optional[int] = None,
     year_from: Optional[int] = None,
+    start_year: Optional[int] = None,
     year_to: Optional[int] = None,
+    end_year: Optional[int] = None,
     open_access: Optional[bool] = None,
     require_has_fulltext: Optional[bool] = False,
     fulltext_terms: Optional[list[str]] = None,
@@ -36,10 +39,16 @@ def openalex_literature_search(
         Maximum number of papers to retrieve (default: 10, maximum: 200).
     limit : int
         Alias for `max_results` (OpenAlex max 200).
+    num_results : int
+        Alias for `max_results` (OpenAlex max 200).
     year_from : int
         Start year for publication date filter (e.g., 2020). Optional parameter to li...
+    start_year : int
+        Alias for `year_from`.
     year_to : int
         End year for publication date filter (e.g., 2023). Optional parameter to limi...
+    end_year : int
+        Alias for `year_to`.
     open_access : bool
         Filter for open access papers only. Set to true for open access papers, false...
     require_has_fulltext : bool
@@ -67,8 +76,11 @@ def openalex_literature_search(
             "query": query,
             "max_results": max_results,
             "limit": limit,
+            "num_results": num_results,
             "year_from": year_from,
+            "start_year": start_year,
             "year_to": year_to,
+            "end_year": end_year,
             "open_access": open_access,
             "require_has_fulltext": require_has_fulltext,
             "fulltext_terms": fulltext_terms,

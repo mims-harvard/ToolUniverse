@@ -45,10 +45,9 @@
         "sort": {
           "type": "string",
           "enum": [
-            "relevance",
-            "pub_date"
+            "relevance"
           ],
-          "description": "Sort order for results (default: relevance)",
+          "description": "Result order. SRA's esearch supports relevance ordering only (default).",
           "default": "relevance"
         }
       }

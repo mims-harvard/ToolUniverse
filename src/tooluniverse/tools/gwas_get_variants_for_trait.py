@@ -17,11 +17,13 @@ def gwas_get_variants_for_trait(
     size: Optional[int] = None,
     limit: Optional[int] = None,
     page: Optional[int] = None,
+    sort: Optional[str] = None,
+    direction: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search the GWAS Catalog for all genetic variants (SNPs) linked to a specific disease or trait. Ac...
 
@@ -43,6 +45,10 @@ def gwas_get_variants_for_trait(
         Alias for size. Number of results to return per page
     page : int
         Page number for pagination
+    sort : str
+        Sort field (e.g., 'p_value', 'or_value'). Defaults to 'p_value' so the most s...
+    direction : str
+        Sort direction ('asc' or 'desc'). Defaults to 'asc'.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,7 +58,7 @@ def gwas_get_variants_for_trait(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -68,6 +74,8 @@ def gwas_get_variants_for_trait(
             "size": size,
             "limit": limit,
             "page": page,
+            "sort": sort,
+            "direction": direction,
         }.items()
         if v is not None
     }

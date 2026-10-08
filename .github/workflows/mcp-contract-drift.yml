@@ -1,0 +1,96 @@
+name: MCP contract drift
+
+# Third-party MCP servers change their tool schemas whenever they like. The
+# pinned contract_sha256 in each mcp_auto_loader_*.json then stops matching and
+# the tools are refused -- correctly, but in the USER's process, where nobody is
+# in a position to review a third-party schema or re-pin it.
+#
+# This moves that detection to where the review can actually happen. Folklore
+# and Genomic Intelligence were each serving zero tools for an unknown length of
+# time before this existed, found only by accident: the weekly tool health check
+# cannot see them because MCP loader URLs are opt-in env vars that CI never sets.
+#
+# Two jobs, deliberately different in strictness:
+#
+#   check-config  offline, on every PR. The lockfile and the loader configs must
+#                 agree. Deterministic, so it is a hard gate.
+#   check-live    scheduled, against the real servers. Fails on genuine drift,
+#                 but a server that cannot be reached is skipped, not failed --
+#                 a vendor outage or a rate limit must not read as drift.
+
+on:
+  push:
+    paths:
+      - "src/tooluniverse/data/mcp_auto_loader_*.json"
+      - "src/tooluniverse/data/mcp_contracts.lock.json"
+      - "scripts/sync_mcp_contracts.py"
+  pull_request:
+    paths:
+      - "src/tooluniverse/data/mcp_auto_loader_*.json"
+      - "src/tooluniverse/data/mcp_contracts.lock.json"
+      - "scripts/sync_mcp_contracts.py"
+  schedule:
+    # 05:00 UTC daily. Daily rather than weekly because the window between a
+    # vendor changing a schema and a maintainer seeing the diff is exactly how
+    # long an unreviewed change can reach agents.
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mcp-contract-drift-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  check-config:
+    name: Lockfile agrees with the pinned configs
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -e .
+      - name: Check lockfile against loader configs
+        run: python3 scripts/sync_mcp_contracts.py --check-config
+
+  check-live:
+    name: Live servers match the reviewed contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # Skipped on pull_request: it reaches third-party servers, so it would let
+    # an unrelated vendor change fail an unrelated PR.
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -e .
+      - name: Diff live contracts against the lockfile
+        id: drift
+        run: |
+          set -o pipefail
+          python3 scripts/sync_mcp_contracts.py --check-live 2>&1 | tee drift.txt
+      - name: Summarise
+        if: always()
+        run: |
+          {
+            echo '## MCP contract drift'
+            echo
+            echo '```'
+            cat drift.txt || echo "(no output)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-contract-drift
+          path: drift.txt
+          retention-days: 30

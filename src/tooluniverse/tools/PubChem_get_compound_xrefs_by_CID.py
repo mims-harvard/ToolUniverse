@@ -24,7 +24,7 @@ def PubChem_get_compound_xrefs_by_CID(
     cid : int
         Compound ID to query external references for, e.g., 2244.
     xref_types : list[str]
-        List of external database types to query, e.g., ["RegistryID", "RN", "PubMedI...
+        List of PubChem XRef types to query. Allowed values ONLY: RegistryID, RN, Pub...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

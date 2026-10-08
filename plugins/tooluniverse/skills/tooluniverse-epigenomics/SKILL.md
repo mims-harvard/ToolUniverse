@@ -151,6 +151,8 @@ See `ANALYSIS_PROCEDURES.md` for decision tree.
 - `GTEx_get_median_gene_expression`: `gene_symbol` (NOT Ensembl ID)
 - `GTEx_query_eqtl`: `gene_symbol`, `tissue_id` (case-sensitive exact, e.g., `"Whole_Blood"`)
 
+**EWAS Catalog** (published epigenome-wide association study results, not raw methylation data): `EWASCatalog_search_by_cpg` (`cpg_id`, e.g. `"cg00000029"`) or `EWASCatalog_search_by_gene` (`gene_symbol`) — use when the question is "has this CpG/gene been associated with a trait in a published EWAS," not for processing methylation data you already have.
+
 **Other**: `ensembl_lookup_gene` (requires `species='homo_sapiens'`), `ensembl_get_regulatory_features` (NO "chr" prefix), `SCREEN_get_regulatory_elements`, `ChIPAtlas_*` (requires `operation` param), `SRA_search_experiments` (library_strategy: "ChIP-Seq"/"Bisulfite-Seq"/"ATAC-seq")
 
 ### Phase 7: Genome-Wide Statistics

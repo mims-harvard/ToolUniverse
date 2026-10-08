@@ -183,20 +183,21 @@ def calculate_humanization_score(sequence, human_germline):
 
 ## Phase 3: Structure Modeling & Analysis
 
-### 3.1 AlphaFold Structure Prediction
+### 3.1 Antibody Structure Prediction (ESMFold)
 
 ```python
 def predict_antibody_structure(tu, vh_sequence, vl_sequence):
-    """Predict antibody Fv structure using AlphaFold."""
+    """Predict antibody Fv structure as a single-chain Fv (VH-linker-VL) with ESMFold."""
 
-    fv_sequence = vh_sequence + ":" + vl_sequence
+    # alphafold_get_prediction only retrieves precomputed AlphaFold DB models by UniProt
+    # accession; it cannot fold a new antibody sequence. ESMFold_predict_structure folds a
+    # single sequence (best under 400 residues; no API key).
+    scfv_sequence = vh_sequence + "GGGGSGGGGSGGGGS" + vl_sequence
 
-    prediction = tu.tools.alphafold_get_prediction(
-        sequence=fv_sequence,
-        return_format='pdb'
-    )
+    prediction = tu.tools.ESMFold_predict_structure(sequence=scfv_sequence)['data']
 
-    plddt_scores = extract_plddt(prediction)
+    # pLDDT is on a 0-1 scale here (not 0-100); VH occupies the first positions of the scFv
+    plddt_scores = [r['plddt'] for r in prediction['per_residue_plddt']]
 
     regions = {
         'VH_FR': np.mean([plddt_scores[i] for i in range(0, 26)]),
@@ -206,7 +207,7 @@ def predict_antibody_structure(tu, vh_sequence, vl_sequence):
     }
 
     return {
-        'structure': prediction,
+        'structure': prediction['pdb_text'],
         'mean_plddt': np.mean(plddt_scores),
         'regional_plddt': regions,
         'cdr_confidence': np.mean([regions['CDR_H1'], regions['CDR_H2'], regions['CDR_H3']])
@@ -318,7 +319,7 @@ def cdr_optimization_strategies(cdr_sequence, cdr_name):
         strategies.append({
             'strategy': 'CDR-H3 extension',
             'rationale': 'Add 1-2 residues to increase contact surface',
-            'expected_impact': '+2-5x affinity improvement'
+            'expected_impact': 'unquantified interface hypothesis; requires validation'
         })
 
     # Strategy 2: Tyrosine enrichment
@@ -326,7 +327,7 @@ def cdr_optimization_strategies(cdr_sequence, cdr_name):
         strategies.append({
             'strategy': 'Tyrosine enrichment',
             'rationale': 'Tyr provides pi-stacking and H-bonds',
-            'expected_impact': '+2-3x affinity improvement'
+            'expected_impact': 'unquantified contact hypothesis; requires validation'
         })
 
     # Strategy 3: Salt bridge formation
@@ -334,7 +335,7 @@ def cdr_optimization_strategies(cdr_sequence, cdr_name):
         strategies.append({
             'strategy': 'Salt bridge formation',
             'rationale': 'Charged residues for electrostatic interactions',
-            'expected_impact': '+1-2x affinity and pH sensitivity'
+            'expected_impact': 'unverified electrostatic hypothesis; pH direction depends on bound/free context'
         })
 
     return strategies

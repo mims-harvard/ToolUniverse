@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def Orphanet_get_gene_diseases(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_gene_diseases",
     gene_name: Optional[str] = None,
-    gene_symbol: Optional[str | Any] = None,
+    gene_symbol: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def Orphanet_get_gene_diseases(
         Operation type (fixed: get_gene_diseases)
     gene_name : str
         Gene symbol or name keyword (e.g., 'FBN1', 'BRCA1', 'huntingtin'). Use gene_s...
-    gene_symbol : str | Any
+    gene_symbol : str
         Alternative to gene_name: standard HGNC gene symbol (e.g., 'GBA1', 'FBN1'). N...
     stream_callback : Callable, optional
         Callback for streaming output

@@ -72,7 +72,8 @@ Every optimization MUST include per-variant documentation with:
 | `IMGT_get_sequence` | Human framework sequences | Humanization |
 | `SAbDab_search_structures` | Antibody structure precedents | Structure |
 | `TheraSAbDab_search_by_target` | Clinical antibody benchmarks | Validation |
-| `alphafold_get_prediction` | Structure modeling | Structure |
+| `ESMFold_predict_structure` | Fv structure modeling (VH-linker-VL scFv) | Structure |
+| `alphafold_get_prediction` | Retrieve a precomputed AlphaFold DB model by UniProt accession (target antigen) | Structure |
 | `iedb_search_epitopes` | Epitope identification | Immunogenicity |
 | `iedb_search_bcell` | B-cell epitope prediction | Immunogenicity |
 | `UniProt_get_entry_by_accession` | Target antigen information | Target |
@@ -146,7 +147,7 @@ Phase 8: Final Report & Recommendations
 **Goal**: Annotate sequences, identify species/germline, find clinical precedents.
 
 **Key steps**:
-1. Annotate CDRs using IMGT numbering (CDR-H1: 27-38, CDR-H2: 56-65, CDR-H3: 105-117)
+1. Annotate CDRs using an antibody-numbering tool and map labels back to sequence indices (IMGT CDR-H1: 27-38, CDR-H2: 56-65, CDR-H3: 105-117). These labels are not literal array offsets, especially with insertions or terminal extensions.
 2. Identify closest human germline genes via `IMGT_search_genes`
 3. Search clinical precedents via `TheraSAbDab_search_by_target`
 4. Get target antigen info via `UniProt_get_entry_by_accession`
@@ -180,7 +181,7 @@ See `WORKFLOW_DETAILS.md` Phase 2 for code examples.
 **Goal**: Predict structure, analyze CDR conformations, map epitope.
 
 **Key steps**:
-1. Predict Fv structure via `alphafold_get_prediction` (VH:VL)
+1. Predict Fv structure via `ESMFold_predict_structure` (VH-linker-VL scFv; `alphafold_get_prediction` only retrieves precomputed models by UniProt accession)
 2. Assess pLDDT scores by region (framework, CDRs, interface)
 3. Classify CDR canonical structures and calculate RMSD
 4. Search known epitopes via `iedb_search_epitopes`
@@ -199,12 +200,12 @@ See `WORKFLOW_DETAILS.md` Phase 3 for code examples.
 **Key steps**:
 1. Identify interface residues (distance cutoff 4.5 A)
 2. Screen all amino acid substitutions at CDR interface positions
-3. Rank by predicted binding energy change (ddG < -0.5 kcal/mol = favorable)
+3. Rank by computed binding-energy change only when the method and calibration support it; state the sign convention and uncertainty. An illustrative cutoff is not a universal binding gate.
 4. Design combination strategy: single -> double -> triple mutants
 5. Consider CDR-H3 extension, tyrosine enrichment, salt bridge formation
-6. Optional: pH-dependent binding via histidine substitutions
+6. Optional: specify stronger acidic binding or neutral binding with acidic release before considering histidine substitutions. Neither direction follows automatically from His pKa. Validate complete bound/free protonation assumptions with controls and matched assays; use [Protein Design Campaign](../tooluniverse-protein-design-campaign/SKILL.md) and its [pH reference](../tooluniverse-protein-design-campaign/references/ph-selectivity.md).
 
-**Output**: Ranked mutation list, combination strategy, expected affinity improvements.
+**Output**: Ranked mutation hypotheses, combination strategy, computed metrics where supported, and explicit unverified affinity/conditional-binding claims. Do not invent KD ranges or fold improvements.
 
 See `WORKFLOW_DETAILS.md` Phase 4 for code examples.
 
@@ -252,7 +253,7 @@ See `WORKFLOW_DETAILS.md` Phase 6 for code examples.
 **Goal**: Assess expression, purification, formulation, and CMC feasibility.
 
 **Key steps**:
-1. Assess codon optimization for CHO, identify rare codons
+1. Assess codon optimization for CHO, identify rare codons -- `CodonUsage_get_optimal_codons(taxid=<Cricetulus griseus NCBI taxid>)` gives the CHO-preferred codon per amino acid to compare against; resolve the taxid first if not already known rather than assuming one. `CodonUsage_get_table` (same taxid) additionally gives per-codon usage frequency, needed to flag which codons in the actual sequence are rare in CHO specifically -- human codon-usage tables (e.g. from tooluniverse-sequence-analysis) are the wrong reference here, rare-in-human is not the same set as rare-in-CHO
 2. Design signal peptide
 3. Plan 3-step purification: Protein A capture -> cation exchange polishing -> viral nanofiltration
 4. Recommend formulation (buffer, pH, stabilizer, tonicity)
@@ -301,9 +302,15 @@ See `REPORT_TEMPLATE.md` for the full report template.
 - `iedb_get_epitope_references`: Citations
 
 ### Structure & Target
-- `alphafold_get_prediction`: Structure prediction
+- `ESMFold_predict_structure`: Fv structure prediction from a sequence
+- `alphafold_get_prediction`: Retrieve a precomputed AlphaFold DB model by UniProt accession
 - `UniProt_get_entry_by_accession`: Target info
 - `RCSBData_get_entry`: Experimental structures
+
+### Reagent Verification (Antibody Registry)
+- `AntibodyRegistry_search`: Find validated commercial antibodies for a target (by target gene/protein name, antibody name, or vendor keyword). Returns each hit's RRID, target (with UniProt/Entrez id), clonality, host organism, applications, vendor/catalog number, and defining citation. Useful during Phase 1 (target/precedent research) to see what antibody reagents already exist against a target antigen before designing a new one, or during Phase 8 (validation planning) to identify a benchmark reagent.
+- `AntibodyRegistry_get_by_rrid`: Resolve a specific RRID (e.g. `AB_2298772`, accepts the bare numeric id or `RRID:AB_...` form too) cited in a methods section to its full record — verify which exact antibody a paper used rather than assuming from the name alone. Live-verified: both tools return real records (e.g. `AntibodyRegistry_search(query="GFAP")` -> a real GFAP rabbit mAb with UniProt target P14136).
+- `SciCrunch_resolve_rrid`: General RRID resolver for everything that ISN'T an antibody — cell lines (`CVCL_` prefix), model organisms, software/tools (`SCR_` prefix), and plasmids. Use it when a clinical-precedent or validation paper's methods section also cites the cell line or software used alongside an antibody. It will still resolve an `AB_` RRID, but only returns generic fields (name, description, categories, proper_citation) — no target/clonality/host — so prefer `AntibodyRegistry_get_by_rrid` for antibody RRIDs specifically. Live-verified: `SciCrunch_resolve_rrid(rrid="CVCL_0045")` returns the real HEK293 cell-line record (12 synonyms, `proper_citation: "NCBI_Iran Cat# C497, RRID:CVCL_0045"`); on the same `AB_2298772` antibody RRID above it returns only `name`/`description`/`categories` with no target info, confirming the richer-antibody-fields distinction.
 
 ### Systems Biology (for Bispecifics)
 - `STRING_get_interaction_partners`: Protein interactions

@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def Survival_cox_regression(
-    operation: str,
     durations: list[Any],
     event_observed: list[Any],
     covariates: dict[str, Any],
+    operation: Optional[str] = "cox_regression",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def MaveDB_get_variant_scores(
     urn: str,
     hgvs_pro: Optional[str] = None,
-    limit: Optional[int] = 50,
+    limit: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,7 +27,7 @@ def MaveDB_get_variant_scores(
     hgvs_pro : str
         Optional filter: HGVS protein notation substring (e.g., 'Arg175', 'p.Arg175Hi...
     limit : int
-        Maximum variants to return (default 50, max 500).
+        Maximum variants to return after client-side filtering. Set to 0 or null to r...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def BridgeDb_xrefs(
     identifier: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "xrefs",
     source: Optional[str] = None,
     source_database: Optional[str] = None,
     organism: Optional[str] = None,

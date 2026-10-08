@@ -35,7 +35,7 @@
     },
     "test_examples": [
       {
-        "text": "The quick brown fox jumps over the lazy dog.",
+        "text": "BRCA1",
         "entity_type": "gene",
         "max_results": 5
       }

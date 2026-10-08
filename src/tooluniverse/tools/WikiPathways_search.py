@@ -15,7 +15,7 @@ def WikiPathways_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Text search across community-curated pathways (disease, metabolic, signaling). Use to discover re...
 
@@ -34,7 +34,7 @@ def WikiPathways_search(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def ARCHS4_get_gene_expression(
     gene: str,
-    species: Optional[str | Any] = "human",
-    type_: Optional[str | Any] = "tissue",
+    species: Optional[str] = "human",
+    type_: Optional[str] = "tissue",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def ARCHS4_get_gene_expression(
     ----------
     gene : str
         Gene symbol (e.g., TP53, BRCA1, EGFR, MYC)
-    species : str | Any
+    species : str
         Species: human or mouse (default: human)
-    type_ : str | Any
+    type_ : str
         Expression type: tissue (organs/tissues) or cellline (cell lines). Default: t...
     stream_callback : Callable, optional
         Callback for streaming output

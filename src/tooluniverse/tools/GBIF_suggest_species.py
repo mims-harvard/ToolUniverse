@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def GBIF_suggest_species(
     q: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def GBIF_suggest_species(
     ----------
     q : str
         Partial or full species/taxon name to autocomplete. Examples: 'Homo sap', 'Qu...
-    limit : int | Any
+    limit : int
         Maximum number of suggestions to return (1-20, default 10).
     stream_callback : Callable, optional
         Callback for streaming output

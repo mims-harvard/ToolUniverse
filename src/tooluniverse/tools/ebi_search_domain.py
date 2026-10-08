@@ -19,7 +19,7 @@ def ebi_search_domain(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Search across a specific EBI domain (e.g., ensembl, uniprot, interpro) using the unified EBI Sear...
 
@@ -36,7 +36,7 @@ def ebi_search_domain(
     fields : str
         Comma-separated list of fields to return (e.g., 'id,name,description'). If no...
     format : str
-        Response format: 'json' or 'xml'
+        Response format. Only 'json' is produced by this endpoint.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -46,7 +46,7 @@ def ebi_search_domain(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

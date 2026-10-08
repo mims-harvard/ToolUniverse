@@ -35,7 +35,7 @@ When asked about a variant's significance, query ClinVar/gnomAD/CIViC FIRST. Nev
 ## Workflow Overview
 
 ```
-Phase 1: VARIANT IDENTITY        → Normalize HGVS, map gene/transcript/consequence
+Phase 1: VARIANT IDENTITY        → Normalize HGVS, map gene/transcript/consequence, resolve ClinGen CA ID
 Phase 2: CLINICAL DATABASES       → ClinVar, gnomAD, OMIM, ClinGen, COSMIC, SpliceAI
 Phase 2.5: REGULATORY CONTEXT     → ChIPAtlas/ENCODE annotation + DL variant-effect (AlphaGenome/Enformer/Borzoi/ChromBPNet/Evo2) (non-coding only)
 Phase 3: COMPUTATIONAL PREDICTIONS → CADD, AlphaMissense, EVE, SIFT/PolyPhen
@@ -49,7 +49,7 @@ Phase 6: ACMG CLASSIFICATION      → Evidence codes, classification, recommenda
 
 ## Phase 1: Variant Identity
 
-Tools: `MyVariant_query_variants`, `EnsemblVar_get_variant_consequences`, `NCBIGene_search`, `VariantValidator_gene2transcripts`, `VariantValidator_validate_variant`, `Tark_get_mane_transcripts`, `Tark_get_transcript`
+Tools: `MyVariant_query_variants`, `EnsemblVar_get_variant_consequences`, `NCBIGene_search`, `VariantValidator_gene2transcripts`, `VariantValidator_validate_variant`, `Tark_get_mane_transcripts`, `Tark_get_transcript`, `ClinGenAllele_lookup_hgvs`, `ClinGenAllele_get_allele`
 
 **VariantValidator_gene2transcripts**: Look up MANE Select and MANE Plus Clinical transcripts for a gene. Use this to identify the correct canonical transcript before variant annotation.
 - Parameters: `gene_symbol` (e.g. "TP53"), `transcript_set` ("mane" | "refseq" | "ensembl" | "all"), `genome_build` ("GRCh38" default)
@@ -62,11 +62,13 @@ Tools: `MyVariant_query_variants`, `EnsemblVar_get_variant_consequences`, `NCBIG
 - Parameters: `genome_build` ("GRCh37" | "GRCh38"), `variant_description` (HGVS, e.g. "NM_007294.4:c.5266dup"), `select_transcripts` (transcript or "all")
 - Returns: Validated HGVS, protein consequence, genomic coordinates, gene IDs
 
+**ClinGenAllele_lookup_hgvs** / **ClinGenAllele_get_allele**: Resolve a genomic (`NC_*`), coding (`NM_*`), or protein (`NP_*`) HGVS expression to the ClinGen Allele Registry's canonical allele ID (CA ID) and get its cross-references to ClinVar, dbSNP, COSMIC, and gnomAD in one call — verified live, `NM_000546.6:c.743G>A` (TP53 p.Arg248Gln) resolves to `CA000387` with `ClinVarVariations`, `dbSNP`, and `COSMIC` IDs attached. Use `ClinGenAllele_get_allele(ca_id=...)` to re-fetch the same record by CA ID once you have it (e.g. from a ClinVar record that already cites one). Useful as a fast identity-canonicalization step when a variant needs to be matched across databases that key on different accessions — no API key required. **Coordinate gotcha**: `genomic_alleles[].start`/`end` are 0-based interbase (half-open), NOT the 1-based position used by HGVS `g.`/VCF/gnomAD — add 1 to `start` to get the HGVS genomic position; each row's `coordinate_system` field states this explicitly.
+
 Capture: HGVS notation (c. and p.), gene symbol, canonical transcript (MANE Select via VariantValidator), consequence type, amino acid change, exon/intron location.
 
 ## Phase 2: Clinical Databases
 
-Tools: `ClinVar_search_variants`, `gnomad_search_variants`, `gnomad_get_variant`, `OMIM_search`, `OMIM_get_entry`, `ClinGen_search_gene_validity`, `ClinGen_search_dosage_sensitivity`, `ClinGen_search_actionability`, `COSMIC_search_mutations`, `COSMIC_get_mutations_by_gene`, `DisGeNET_search_gene`, `DisGeNET_get_vda`, `SpliceAI_predict_splice`, `SpliceAI_get_max_delta`, `civic_get_variants_by_gene`, `civic_search_evidence_items`, `civic_search_assertions`
+Tools: `ClinVar_search_variants`, `gnomad_search_variants`, `gnomad_get_variant`, `OMIM_search`, `OMIM_get_entry`, `ClinGen_search_gene_validity`, `ClinGen_search_dosage_sensitivity`, `ClinGen_search_actionability`, `COSMIC_search_mutations`, `COSMIC_get_mutations_by_gene`, `DisGeNET_search_gene`, `DisGeNET_get_vda`, `SpliceAI_predict_splice`, `SpliceAI_get_max_delta`, `civic_get_variants_by_gene`, `civic_search_evidence_items`, `civic_search_assertions`. If the opt-in Folklore MCP is connected (`folklore_*`, needs `FOLKLORE_MCP_URL`), it adds public GRCh38 germline variant evidence with source-linked literature — accepts no patient/phenotype/family data, and like everything above, its output requires qualified professional review, not a diagnosis on its own.
 
 > **gnomAD two-step workflow**: `gnomad_search_variants` only accepts rsIDs or variant IDs (not gene names). Search by rsID first, then use the returned `variant_id` with `gnomad_get_variant` to get population allele frequencies.
 >
@@ -88,17 +90,18 @@ Apply for intronic (non-splice), promoter, UTR, or intergenic variants near dise
 
 | Tool | Predicts | Context | Access |
 |---|---|---|---|
+| `AlphaGenome_atlas_lookup_variant` | Precomputed AVI_SCORE (unified AlphaGenome + AlphaMissense impact score) + per-track scores for a known SNV — no live model run | genome-wide precomputed | hosted API — needs `ALPHA_GENOME_API_KEY` (same key, higher query rate) |
 | `AlphaGenome_score_variant` | Δ across RNA-seq / ATAC / CAGE / splice tracks (frontier accuracy, single-base) | up to 1 Mb | hosted API — needs `ALPHA_GENOME_API_KEY` |
 | `run_enformer_variant_effect` | Δ across 5,313 human tracks (expression, chromatin, TF binding) | 196 kb | remote MCP server |
 | `run_borzoi_variant_effect` | Δ in RNA-seq coverage (expression / polyA / splicing emphasis) | 524 kb | remote MCP server |
 | `run_chrombpnet_variant_effect` | Δ in chromatin accessibility (ATAC / DNase), base-resolution | ~2 kb | remote MCP server |
 | `Evo2_score_variant` | Genome-foundation-model delta log-likelihood; covers coding **and** non-coding | up to 1 Mb | hosted NIM — needs `NVIDIA_API_KEY` |
 
-**Reading the score:** these return Δ (alt − ref) effect sizes, *not* calibrated pathogenicity probabilities. A large predicted disruption in a tissue-relevant track is mechanistic support (PS3_supporting / PP3) for a non-coding variant; near-zero across tracks supports BP4. Rank or calibrate against known regulatory variants rather than applying an absolute cutoff.
+**Reading the score:** most of these return Δ (alt − ref) effect sizes, *not* calibrated pathogenicity probabilities — a large predicted disruption in a tissue-relevant track is mechanistic support (PS3_supporting / PP3) for a non-coding variant; near-zero across tracks supports BP4. Rank or calibrate against known regulatory variants rather than applying an absolute cutoff. `AlphaGenome_atlas_lookup_variant`'s AVI_SCORE is the exception — it's already a unified impact score (fusing AlphaGenome's regulatory signal with AlphaMissense's coding model), so it can be read more directly, but still corroborate rather than treat as a sole classifier.
 
-**Which to pick:** start with `AlphaGenome_score_variant` (broadest readout, longest context, frontier accuracy) when its key is set; `run_enformer_variant_effect` / `run_borzoi_variant_effect` are the named, self-hostable equivalents (Enformer for general regulation, Borzoi when expression/splicing is the question); `run_chrombpnet_variant_effect` when the hypothesis is specifically chromatin accessibility; `Evo2_score_variant` as a sequence-only check that also works on coding variants. If no key/server is provisioned, fall back to the ChIPAtlas/ENCODE annotation above and note the predictive gap rather than guessing.
+**Which to pick:** for a known single-nucleotide variant, check `AlphaGenome_atlas_lookup_variant` first — it's a precomputed database lookup (much cheaper than a live call) covering all ~9B possible human SNVs. For indels, or when you need the full per-track breakdown or a custom sequence, fall back to `AlphaGenome_score_variant` (broadest live readout, longest context, frontier accuracy); `run_enformer_variant_effect` / `run_borzoi_variant_effect` are the named, self-hostable equivalents (Enformer for general regulation, Borzoi when expression/splicing is the question); `run_chrombpnet_variant_effect` when the hypothesis is specifically chromatin accessibility; `Evo2_score_variant` as a sequence-only check that also works on coding variants. If no key/server is provisioned, fall back to the ChIPAtlas/ENCODE annotation above and note the predictive gap rather than guessing.
 
-**Inputs:** `AlphaGenome_score_variant` takes `chromosome` + `position` + `reference_bases`/`alternate_bases` (+ `output_type`, `sequence_length`); `Evo2_score_variant` takes a DNA window as `sequence` + `position` + `alternate` (point substitution) or `ref_sequence`/`alt_sequence`, plus optional `model` (`evo2-40b` default, `evo2-7b` faster); the Enformer/Borzoi/ChromBPNet remote tools take the variant locus and score the change over their output tracks.
+**Inputs:** `AlphaGenome_atlas_lookup_variant`/`AlphaGenome_score_variant` both take `chromosome` + `position` + `reference_bases`/`alternate_bases` (Atlas additionally takes `scorers`, default `["AVI_SCORE"]`; score_variant takes `output_type`/`sequence_length`); `Evo2_score_variant` takes a DNA window as `sequence` + `position` + `alternate` (point substitution) or `ref_sequence`/`alt_sequence`, plus optional `model` (`evo2-40b` default, `evo2-7b` faster); the Enformer/Borzoi/ChromBPNet remote tools take the variant locus and score the change over their output tracks.
 
 ## Phase 2.9: Short-Circuit Check
 

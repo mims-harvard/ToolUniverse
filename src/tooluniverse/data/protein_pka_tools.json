@@ -1,0 +1,385 @@
+[
+  {
+    "name": "PROPKA_predict_pka",
+    "type": "ProteinPKATool",
+    "description": "Predict protein pKa locally from one PDB model using optional PROPKA. Returns numbered groups, warnings and independent-site protonated fractions. Accept a PDB ID, path or text; e.g. 1UBQ. Predictions do not validate pH-dependent binding.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Four-character RCSB PDB ID to download publicly. Provide exactly one source."
+        },
+        "pdb_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Local PDB file path; no upload. Provide exactly one source."
+        },
+        "pdb_content": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Inline PDB text; no upload. Provide exactly one source."
+        },
+        "ph_values": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 14
+          },
+          "minItems": 1,
+          "maxItems": 20,
+          "description": "pH values for independent-site fractions; defaults to [6.5, 7.4]."
+        },
+        "timeout_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 600,
+          "description": "Bounded local worker runtime; defaults to 180 seconds."
+        }
+      },
+      "required": [],
+      "oneOf": [
+        {
+          "required": [
+            "pdb_id"
+          ],
+          "properties": {
+            "pdb_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "required": [
+            "pdb_path"
+          ],
+          "properties": {
+            "pdb_path": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "required": [
+            "pdb_content"
+          ],
+          "properties": {
+            "pdb_content": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "fields": {
+      "operation": "predict"
+    },
+    "cacheable": false,
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "prediction": {
+                  "type": "object"
+                },
+                "input_sha256": {
+                  "type": "string"
+                },
+                "propka_version": {
+                  "type": "string"
+                },
+                "binding_verified": {
+                  "const": false
+                },
+                "pH_selectivity_verified": {
+                  "const": false
+                }
+              },
+              "required": [
+                "prediction",
+                "input_sha256",
+                "propka_version",
+                "binding_verified",
+                "pH_selectivity_verified"
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1UBQ",
+        "ph_values": [
+          6.5,
+          7.4
+        ]
+      }
+    ],
+    "required_packages": [
+      "propka"
+    ]
+  },
+  {
+    "name": "PROPKA_compare_partner_pka",
+    "type": "ProteinPKATool",
+    "description": "Compare protein pKa in a complex with the same-coordinate free partner using local PROPKA. Explicitly retain associated chains (e.g. glycan/cofactor chains) with free_keep_chains; default extracts only partner_chain. No automatic molecular inference, affinity or pH validation.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "pdb_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Four-character RCSB PDB ID to download publicly. Provide exactly one source."
+        },
+        "pdb_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Local complex PDB file path; no upload. Provide exactly one source."
+        },
+        "pdb_content": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Inline complex PDB text; no upload. Provide exactly one source."
+        },
+        "partner_chain": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1,
+          "description": "PDB chain character to extract unchanged; use a space for a blank chain."
+        },
+        "ph_values": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 14
+          },
+          "minItems": 1,
+          "maxItems": 20,
+          "description": "pH values for independent-site fractions; defaults to [6.5, 7.4]."
+        },
+        "timeout_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 600,
+          "description": "Bounded runtime for both calculations; defaults to 180 seconds."
+        },
+        "free_keep_chains": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1
+          },
+          "maxItems": 62,
+          "uniqueItems": true,
+          "description": "Additional chains belonging to the free partner, e.g. covalent glycans/cofactors. Must exist in input; omit or null to extract only partner_chain. Do not repeat partner_chain. No automatic bond or molecule inference."
+        }
+      },
+      "required": [
+        "partner_chain"
+      ],
+      "oneOf": [
+        {
+          "required": [
+            "pdb_id"
+          ],
+          "properties": {
+            "pdb_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "required": [
+            "pdb_path"
+          ],
+          "properties": {
+            "pdb_path": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "required": [
+            "pdb_content"
+          ],
+          "properties": {
+            "pdb_content": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "fields": {
+      "operation": "compare_partner"
+    },
+    "cacheable": false,
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "prediction": {
+                  "type": "object"
+                },
+                "free_prediction": {
+                  "type": "object"
+                },
+                "comparison": {
+                  "type": "object"
+                },
+                "input_sha256": {
+                  "type": "string"
+                },
+                "propka_version": {
+                  "type": "string"
+                },
+                "binding_verified": {
+                  "const": false
+                },
+                "pH_selectivity_verified": {
+                  "const": false
+                },
+                "free_partner_chains": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1
+                  }
+                },
+                "free_partner_coordinate_records": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "required": [
+                "prediction",
+                "free_prediction",
+                "comparison",
+                "input_sha256",
+                "propka_version",
+                "binding_verified",
+                "pH_selectivity_verified"
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1UBQ",
+        "partner_chain": "A",
+        "ph_values": [
+          6.5,
+          7.4
+        ]
+      },
+      {
+        "pdb_path": "tests/fixtures/protein_pka/1ubq_with_associated_water.pdb",
+        "partner_chain": "A",
+        "free_keep_chains": [
+          "W"
+        ],
+        "ph_values": [
+          6.5,
+          7.4
+        ]
+      }
+    ],
+    "required_packages": [
+      "propka"
+    ]
+  }
+]

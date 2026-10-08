@@ -34,7 +34,7 @@ _SUMMARY_JSON = {
 _ABSTRACT_XML = (
     "<PubmedArticleSet><PubmedArticle><MedlineCitation><PMID>34787987</PMID>"
     "<Article><Abstract><AbstractText>Guidance on managing lead exposure."
-    "</AbstractText></Article></MedlineCitation></PubmedArticle></PubmedArticleSet>"
+    "</AbstractText></Abstract></Article></MedlineCitation></PubmedArticle></PubmedArticleSet>"
 )
 
 

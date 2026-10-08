@@ -1,7 +1,7 @@
 """
 DiseaseSH_get_vaccine_coverage
 
-Get COVID-19 vaccine coverage data for a country or globally using the Disease.sh API. Returns ti...
+Get COVID-19 vaccine coverage data for a specific country using the Disease.sh API. Returns timel...
 """
 
 from typing import Any, Optional, Callable
@@ -9,21 +9,21 @@ from ._shared_client import get_shared_client
 
 
 def DiseaseSH_get_vaccine_coverage(
-    country: Optional[str | Any] = None,
-    lastdays: Optional[int | Any] = None,
+    country: str,
+    lastdays: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get COVID-19 vaccine coverage data for a country or globally using the Disease.sh API. Returns ti...
+    Get COVID-19 vaccine coverage data for a specific country using the Disease.sh API. Returns timel...
 
     Parameters
     ----------
-    country : str | Any
-        Country name or 'all' for global. Examples: 'usa', 'uk', 'germany', 'india', ...
-    lastdays : int | Any
+    country : str
+        Country name or ISO code (a real one -- 'all' is not supported by this endpoi...
+    lastdays : int
         Number of past days to include. Default: 30. Examples: 7, 30, 90
     stream_callback : Callable, optional
         Callback for streaming output

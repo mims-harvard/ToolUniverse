@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def L1000FWD_sig_search(
-    operation: str,
     up_genes: list[str],
     down_genes: list[str],
+    operation: Optional[str] = "sig_search",
     n_results: Optional[int] = 10,
     mode: Optional[str] = "similar",
     *,

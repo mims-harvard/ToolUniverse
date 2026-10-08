@@ -8,6 +8,7 @@ query return 403 regardless of query format.
 """
 
 import json
+import os
 import pytest
 import requests
 from unittest.mock import patch, MagicMock
@@ -101,8 +102,11 @@ class TestRunHttpErrorHandling:
     def test_run_404_returns_no_records_hint(self, tool):
         resp = _http_error_response(
             404,
-            {"code": "404", "message": "Not Found",
-             "detailedMessage": "No matching records found"},
+            {
+                "code": "404",
+                "message": "Not Found",
+                "detailedMessage": "No matching records found",
+            },
         )
         with patch.object(tool.session, "get", return_value=resp):
             result = tool.run(
@@ -121,18 +125,22 @@ class TestRunHttpErrorHandling:
         assert "hint" not in result["data"]
 
 
-class TestInitRequiresKey:
-    """The tool refuses to initialise without a key rather than failing at call time."""
+class TestRuntimeRequiresKey:
+    """The tool can initialize before a request supplies its key."""
 
-    def test_missing_key_raises(self, tool_config):
+    def test_missing_key_returns_error(self, tool_config):
         from tooluniverse.uspto_tool import USPTOOpenDataPortalTool
 
-        with pytest.raises(ValueError, match="USPTO_API_KEY"):
-            USPTOOpenDataPortalTool(tool_config, api_key=None)
+        tool = USPTOOpenDataPortalTool(tool_config, api_key=None)
+        with patch.dict(os.environ, {}, clear=True):
+            result = tool.run({"query": "widget"})
 
-    def test_omitted_key_is_resolved_when_instance_is_constructed(self, tool_config):
+        assert result["status"] == "error"
+        assert "USPTO_API_KEY" in result["error"]
+
+    def test_omitted_key_is_resolved_when_request_runs(self, tool_config):
         from tooluniverse.uspto_tool import USPTOOpenDataPortalTool
 
-        with patch.dict("os.environ", {"USPTO_API_KEY": "runtime-key"}, clear=False):
-            runtime_tool = USPTOOpenDataPortalTool(tool_config)
-        assert runtime_tool.headers["X-API-KEY"] == "runtime-key"
+        runtime_tool = USPTOOpenDataPortalTool(tool_config)
+        with patch.dict(os.environ, {"USPTO_API_KEY": "runtime-key"}, clear=False):
+            assert runtime_tool._headers()["X-API-KEY"] == "runtime-key"

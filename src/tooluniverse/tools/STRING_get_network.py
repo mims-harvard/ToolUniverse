@@ -12,7 +12,7 @@ def STRING_get_network(
     identifiers: str,
     species: Optional[int] = 9606,
     limit: Optional[int] = 10,
-    required_score: Optional[int | Any] = None,
+    required_score: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,12 +24,12 @@ def STRING_get_network(
     Parameters
     ----------
     identifiers : str
-        Protein identifier(s). For multiple proteins, separate with '\\r' (carriage r...
+        Protein identifier(s). For multiple proteins, separate with '\\r' (carriage re...
     species : int
         NCBI taxonomy ID. Examples: 9606 (human), 10090 (mouse), 7227 (Drosophila), 6...
     limit : int
         Maximum number of interaction partners to include (per protein). 0 = only int...
-    required_score : int | Any
+    required_score : int
         Minimum combined STRING score (0-1000). 400=medium, 700=high, 900=highest con...
     stream_callback : Callable, optional
         Callback for streaming output

@@ -10,6 +10,7 @@ from ._shared_client import get_shared_client
 
 def PubChem_get_compound_properties_by_CID(
     cid: int,
+    properties: Optional[list[str] | str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +23,8 @@ def PubChem_get_compound_properties_by_CID(
     ----------
     cid : int
         PubChem compound ID to query, e.g., 2244 (Aspirin).
+    properties : list[str] | str
+        Optional list of PubChem property names to retrieve (e.g. ['MolecularFormula'...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +39,9 @@ def PubChem_get_compound_properties_by_CID(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"cid": cid}.items() if v is not None}
+    _args = {
+        k: v for k, v in {"cid": cid, "properties": properties}.items() if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "PubChem_get_compound_properties_by_CID",

@@ -955,10 +955,10 @@ tooluniverse.remap\_tool module
    :show-inheritance:
    :private-members:
 
-tooluniverse.remote\_tool module
---------------------------------
+tooluniverse.remote\_placeholder\_tool module
+---------------------------------------------
 
-.. automodule:: tooluniverse.remote_tool
+.. automodule:: tooluniverse.remote_placeholder_tool
    :members:
    :undoc-members:
    :show-inheritance:

@@ -1,7 +1,7 @@
 ---
 
 name: tooluniverse-pharmacovigilance
-description: "Drug safety and adverse event analysis — FAERS spontaneous-report mining, FDA black-box warnings, signal detection (PRR, ROR, IC), risk factors by demographic/comorbidity, and label change tracking. Use for post-market safety surveillance, AE signal investigation, drug-AE association strength scoring, and pharmacovigilance reports."
+description: "Drug safety and adverse event analysis — FAERS spontaneous-report mining, FDA black-box warnings, signal detection (PRR, ROR, IC), risk factors by demographic/comorbidity, label change tracking, and SIDER curated label-derived side-effect frequencies. Use for post-market safety surveillance, AE signal investigation, drug-AE association strength scoring, \"what side effects does drug X have\" questions, and pharmacovigilance reports."
 ---
 
 ## COMPUTE, DON'T DESCRIBE
@@ -240,6 +240,22 @@ See [SIGNAL_DETECTION.md](SIGNAL_DETECTION.md) for detailed disproportionality f
 2. Extract: boxed warnings, contraindications, warnings/precautions, drug interactions
 3. Categorize severity: Boxed Warning > Contraindication > Warning > Precaution
 
+### Phase 3.5: SIDER Structured Label Side Effects (Faster Alternative/Complement to Raw Label Parsing)
+
+SIDER (`SIDER_search_drug`, `SIDER_get_drug_side_effects`, `SIDER_get_drug_indications`, `SIDER_get_drugs_for_side_effect`, `SIDER_search_side_effect`) pre-extracts and structures side effects and indications directly from drug package inserts/labels — a curated, static snapshot, not a real-time feed like FAERS. Use it when you want the label's own reported side-effect frequencies (e.g. "diarrhoea, very common, 9.6%-57.5%") without hand-parsing DailyMed's raw label text.
+
+1. `SIDER_search_drug(drug_name=...)` -> resolve to a `sider_drug_id` (PubChem CID)
+2. `SIDER_get_drug_side_effects(drug_name=... or sider_drug_id=..., limit=...)` -> MedDRA-coded side effects with the drug's own reported frequency and, when the label includes a placebo arm, the placebo-arm frequency for direct comparison
+3. `SIDER_get_drugs_for_side_effect(side_effect_name=... or meddra_code=...)` / `SIDER_search_side_effect(side_effect_name=...)` -> reverse lookup: which other drugs report this side effect, for class-level comparison
+
+**Frequency field semantics (read carefully before reporting a number)**:
+- `frequency` is copied verbatim from the label's "Data for drug" column — it may be a percent, a percent range, a qualitative term (`postmarketing`, `rare`, `frequent`), or a combination (`uncommon, 5% - 7%`). It is null when the label reports no frequency at all — do not report null as "0%" or "not reported as a risk."
+- `placebo_frequency` is null for the *majority* of side effects because most SIDER labels have no placebo arm at all. **Null means "SIDER has no placebo rate for this entry," not "the placebo rate is zero" and not "the placebo rate equals the drug's rate."** Never state or imply a placebo comparison you don't actually have a `placebo_frequency` value for.
+
+**Known SIDER data-quality gotcha (verified live, not a bug to route around silently)**: `SIDER_get_drug_indications` is *not* a clean "what this drug treats" list — it is extracted by text-mining the label's indications section and label text more broadly, so it can include conditions that are actually risks, contraindications, or complications rather than approved uses. Live example: metformin's SIDER "indications" list includes `Diabetes mellitus` and `Type 2 diabetes mellitus` (correct) alongside `Coma`, `Lactic acidosis`, `Diabetic ketoacidosis`, and `Myocardial infarction` (these are risks/warnings associated with metformin, not things it treats). **Always sanity-check a SIDER "indication" against known pharmacology before stating it as an approved use** — cross-reference against DailyMed's actual "Indications and Usage" section (Phase 3 above) or `OpenTargets_get_drug_indications_by_chemblId` rather than reporting a SIDER indication list at face value.
+
+`SIDER_get_drugs_for_side_effect` results are not pre-sorted by frequency or clinical relevance — treat the returned order as arbitrary and re-sort yourself if ranking by reported frequency matters for the analysis.
+
 ## Phase 4: Pharmacogenomic Risk
 
 1. Search `PharmGKB_search_drugs(query=...)` for clinical annotations
@@ -313,6 +329,7 @@ Save as `[DRUG]_safety_report.md`. See [REPORT_TEMPLATES.md](REPORT_TEMPLATES.md
 | `DailyMed_search_spls` | `OpenFDA_search_drug_labels` | DailyMed website |
 | `PharmGKB_search_drugs` | `CPIC_list_guidelines` | Literature search |
 | `search_clinical_trials` | `ClinicalTrials.gov` API | PubMed for trial results |
+| `SIDER_get_drug_side_effects` | `DailyMed_get_spl_by_setid` (parse raw label text) | `FDA_get_adverse_reactions_by_drug_name` |
 
 ---
 

@@ -1,7 +1,7 @@
 """
 OpenTargets_get_associated_drugs_by_disease_efoId
 
-Retrieve known drugs associated with a specific disease by disease efoId.
+Retrieve the known drugs and clinical candidates for a disease by its ID (EFO, MONDO or HP). Each...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def OpenTargets_get_associated_drugs_by_disease_efoId(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve known drugs associated with a specific disease by disease efoId.
+    Retrieve the known drugs and clinical candidates for a disease by its ID (EFO, MONDO or HP). Each...
 
     Parameters
     ----------

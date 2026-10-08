@@ -79,10 +79,12 @@ Evidence grading, completeness checklists, and special consideration notes for t
 - Assess aggregation risk (higher for bispecifics)
 
 ### pH-Dependent Binding
-- Add His residues at interface (pKa ~6.0)
-- Target: Bind at pH 7.4, release at pH 6.0
-- Improves PK via FcRn recycling
-- Useful for tumor targeting (acidic microenvironment)
+- Specify the objective: stronger acidic binding or neutral binding with acidic release
+- Evaluate bound/free environments; adding His does not guarantee a pH switch
+- Check complete ionizable-group inventories, real termini and retained receptor components
+- Calibrate model directions with controls and preserve conflicting evidence
+- Validate binding at both pHs experimentally before claiming selectivity or a recycling benefit
+- See [pH validation](../tooluniverse-protein-design-campaign/references/ph-selectivity.md)
 
 ### Affinity Ceiling
 - Most therapeutic antibodies: KD 0.1-10 nM

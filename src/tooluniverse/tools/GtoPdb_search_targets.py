@@ -9,24 +9,27 @@ from ._shared_client import get_shared_client
 
 
 def GtoPdb_search_targets(
-    name: Optional[str | Any] = None,
-    type_: Optional[str | Any] = None,
-    query: Optional[str | Any] = None,
+    name: Optional[str] = None,
+    gene_symbol: Optional[str] = None,
+    type_: Optional[str] = None,
+    query: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the Guide to Pharmacology database (GtoPdb) for drug targets including GPCRs, ion channels...
 
     Parameters
     ----------
-    name : str | Any
-        Target name or gene symbol to search. Examples: 'dopamine', 'serotonin recept...
-    type_ : str | Any
-        Target type filter. Values: 'GPCR', 'Ion channel', 'Nuclear receptor', 'Enzym...
-    query : str | Any
+    name : str
+        Target NAME substring to search. Examples: 'dopamine', 'serotonin receptor', ...
+    gene_symbol : str
+        HGNC gene symbol for an exact target lookup. Examples: 'CHRNA7' (nicotinic ac...
+    type_ : str
+        Target type filter, enforced by ToolUniverse against each returned record (Gt...
+    query : str
         Name/keyword to search for. Alias for the "name" parameter.
     stream_callback : Callable, optional
         Callback for streaming output
@@ -37,14 +40,19 @@ def GtoPdb_search_targets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"name": name, "type": type_, "query": query}.items()
+        for k, v in {
+            "name": name,
+            "gene_symbol": gene_symbol,
+            "type": type_,
+            "query": query,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

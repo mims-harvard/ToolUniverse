@@ -190,8 +190,36 @@ Retrieve sequence from `UniProt_get_entry_by_accession`:
 ### Decision Logic
 
 - If no UniProt accession available: skip AlphaFold; use ESMFold only
-- If protein is a complex or has multiple chains: note that both tools predict single chains
+- If protein is a complex or has multiple chains: note that both tools predict single chains -- see "Complex / Ligand-Binding Prediction (Boltz)" below if the question specifically needs a multimer or protein-ligand complex, not just monomer confidence
 - If AlphaFold confidence is very high (mean pLDDT > 85): recommend using AlphaFold as primary reference
+
+---
+
+## Complex / Ligand-Binding Prediction (Boltz, paid -- optional)
+
+ESMFold and standard AlphaFold (above) predict single chains only. When the question is specifically about a **complex** -- multi-chain assembly, or protein-ligand binding -- the official Boltz API (`Boltz_*` tools) covers that gap, but it's operationally different from everything else in this skill: it requires `BOLTZ_API_KEY`, it's a **paid**, asynchronous job (submit, poll, retrieve), not a free synchronous call.
+
+**Always estimate cost before submitting**: call `Boltz_estimate_structure_binding_cost` with the same input first, and confirm with the user before calling `Boltz_start_structure_binding` -- don't submit a paid job on a user's behalf without that confirmation. `Boltz_start_structure_binding` also requires a caller-supplied `idempotency_key` to avoid double-billing on retry.
+
+Workflow: `Boltz_estimate_structure_binding_cost` (confirm cost) -> `Boltz_start_structure_binding` (submit) -> `Boltz_get_structure_binding` (poll by job ID until complete) -> interpret confidence the same way as ESMFold/AlphaFold above.
+
+For simple monomer confidence with no complex/binding question, ESMFold and AlphaFold remain the right default -- they're free and synchronous. Reach for Boltz only when the question can't be answered without it.
+
+---
+
+## Membrane Topology & Signal Peptide Prediction (DTU tools, optional)
+
+`dtu_protein_predict` runs DTU Health Tech's ML predictors on a raw sequence via the BioLib cloud runner (`pip install pybiolib`, anonymous, no account) — a different question than ESMFold/AlphaFold's 3D coordinates: per-residue topology and sequence features rather than a fold.
+
+| Model | What it predicts | Status (live-verified) |
+|-------|-------------------|------------------------|
+| `deeptmhmm` (default) | Per-residue topology (inside/outside/TM-helix/beta-strand/signal) + a TM-region table — use for "is this a membrane protein, and how many passes" | Reliable |
+| `signalp` | Signal-peptide detection + cleavage site | Reliable — verified live on a real signal-peptide-bearing sequence: correctly returned `has_signal_peptide: true`, cleavage at residue 22 |
+| `deeploc` | Subcellular localization | **Prokaryotic only** (maps to DeepLocPro — the eukaryotic DeepLoc 2.0 isn't published on BioLib) and its upstream BioLib app currently crashes during embedding (device-mismatch); prefer `deeptmhmm`/`signalp` |
+
+Jobs run anonymously on shared BioLib cloud infrastructure and commonly take 2-5 minutes — raise `max_wait_time` for large/multiple sequences, and don't treat a slow response as a hang. Input is FASTA text, a bare amino-acid string, or a `fasta_path`. Missing `pybiolib` fails cleanly with an install instruction rather than a stack trace — check for that first if the tool errors immediately.
+
+Use this alongside Phase 1 (ProtParam) when the protein might be membrane-associated or secreted (e.g. GRAVY score > 0, or a "receptor"/"secreted"-sounding name) — a membrane topology or signal-peptide call changes how you read ESMFold/AlphaFold confidence (transmembrane helices are often high-pLDDT despite being embedded in a lipid bilayer the model never sees).
 
 ---
 
@@ -327,13 +355,14 @@ Retrieve sequence from `UniProt_get_entry_by_accession`:
 | **RCSB PDB** | ~220,000 experimental structures | Ground-truth experimental coordinates for comparison |
 | **ProtVar** | All UniProt proteins | Variant impact, domain context, clinical annotations |
 | **ProtParam** | Any sequence | Physicochemical sequence properties |
+| **Boltz API** (paid, `BOLTZ_API_KEY`) | Multi-chain complexes, protein-ligand binding | Async job; estimate cost first (see dedicated section above) |
 
 ---
 
 ## Limitations
 
 - **ESMFold length limit**: sequences longer than ~800 residues may fail or have reduced quality
-- **Single-chain only**: both ESMFold and standard AlphaFold predict monomers; complex prediction requires AlphaFold-Multimer (not available via these tools)
+- **Single-chain only (ESMFold/AlphaFold)**: both predict monomers; for a multi-chain complex or protein-ligand binding, see the Boltz section above -- paid, not a free default
 - **Disordered regions**: pLDDT < 50 indicates intrinsically disordered regions (IDRs) — do not interpret these as structured
 - **No dynamics**: predicted structures are static; do not represent conformational flexibility or allosteric changes
 - **Novel folds**: ESMFold may struggle with proteins having no homologs in training data

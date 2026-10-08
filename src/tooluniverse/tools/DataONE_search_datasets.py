@@ -10,10 +10,10 @@ from ._shared_client import get_shared_client
 
 def DataONE_search_datasets(
     q: str,
-    fl: Optional[str | Any] = None,
-    rows: Optional[int | Any] = None,
-    start: Optional[int | Any] = None,
-    sort: Optional[str | Any] = None,
+    fl: Optional[str] = None,
+    rows: Optional[int] = None,
+    start: Optional[int] = None,
+    sort: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,13 +26,13 @@ def DataONE_search_datasets(
     ----------
     q : str
         Search query using Solr query syntax. Examples: 'climate change', 'author:Smi...
-    fl : str | Any
+    fl : str
         Comma-separated list of fields to return. Default: 'id,title,author,dateUploa...
-    rows : int | Any
+    rows : int
         Number of results to return (default 10, max 1000)
-    start : int | Any
+    start : int
         Offset for pagination (default 0)
-    sort : str | Any
+    sort : str
         Sort order. Examples: 'dateUploaded desc', 'score desc', 'title asc'
     stream_callback : Callable, optional
         Callback for streaming output

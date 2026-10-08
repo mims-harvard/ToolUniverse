@@ -271,7 +271,7 @@
   {
     "name": "ZINC_search_by_smiles",
     "type": "ZincTool",
-    "description": "Structure-search the ZINC22 (and legacy ZINC20) database by SMILES via the CartBlanche22 async structure-search API. Submits the query, polls for completion (within 30s), and returns matching compounds with zinc_id, SMILES, the matched substructure SMILES, formula, MW, LogP, InChIKey, source database, and vendor-catalog count. Use dist=0 (default) for exact matches and a small positive dist (e.g. 1-4) for graph-edit-distance similarity; adist is the anonymized (atom-type-agnostic) distance. Returns the ZINC IDs you then feed to ZINC_get_compound / ZINC_get_purchasable. Replaces the retired zinc15.docking.org service.",
+    "description": "Structure-search the ZINC22 (and legacy ZINC20) database by SMILES via the CartBlanche22 async structure-search API. Submits the query, polls for completion (within 30s), and returns matching compounds with zinc_id, SMILES, the matched substructure SMILES, formula, MW, LogP, InChIKey, source database, and vendor-catalog count. Use dist=0 (default) for exact matches and a small positive dist (e.g. 1-4) for graph-edit-distance similarity; adist is the anonymized (atom-type-agnostic) distance. Returns the ZINC IDs you then feed to ZINC_get_compound / ZINC_get_purchasable. Replaces the retired zinc15.docking.org service. NOTE (checked 2026-09-20): the CartBlanche structure-search job now submits and completes, but the upstream returned zero hits for every SMILES tried (benzene, aspirin, paracetamol, ibuprofen; zinc20 and zinc22), including when queried directly, so an empty result currently reflects the service rather than the query.",
     "parameter": {
       "type": "object",
       "properties": {

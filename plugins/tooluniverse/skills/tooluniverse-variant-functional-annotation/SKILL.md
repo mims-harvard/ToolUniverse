@@ -127,7 +127,7 @@ When the variant is available as a GRCh38 genomic coordinate, `FAVOR_annotate_va
 
 `ProtVar_get_function(accession, position)` returns conservation scores, domain membership, PTM sites, and functional impact annotations.
 
-`ProtVar_get_population(accession, position)` returns gnomAD allele frequencies per ancestry from ProtVar's aggregation.
+`ProtVar_get_population(accession, position)` returns `colocated_variants`: one row per known amino-acid change at that position, with consequence, `clinical_significance`, population `frequencies` (gnomAD / ClinVar MAF), SIFT/PolyPhen `predictions` and associated `diseases` (e.g. P04637 175 lists R175H, R175C, R175G ... all Pathogenic).
 
 **Key fields to reason over**: `active_site` / `binding_site` flags are high-priority signals; `conservation_score` quantifies evolutionary constraint at this position; `domain` membership places the variant in biological context; `secondary_structure` (loop variants are typically less constrained than helix/sheet).
 

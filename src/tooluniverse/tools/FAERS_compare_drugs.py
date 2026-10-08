@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def FAERS_compare_drugs(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "compare_drugs",
     drug1: Optional[str] = None,
     drug2: Optional[str] = None,
     adverse_event: Optional[str] = None,

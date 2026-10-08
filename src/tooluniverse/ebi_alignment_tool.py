@@ -46,11 +46,29 @@ def _submit(
     """POST a job to an EBI service. Returns (job_id, error)."""
     resp = requests.post(f"{_EBI_BASE}/{service}/run", data=params, timeout=timeout)
     if resp.status_code != 200:
-        return (
-            None,
-            f"{service} submission failed (HTTP {resp.status_code}): {resp.text[:200]}",
-        )
+        return None, _submission_error(service, resp.status_code, resp.text)
     return resp.text.strip(), None
+
+
+def _submission_error(service: str, status_code: int, body: str) -> str:
+    """The reason EBI gave, not the first 200 characters of its XML.
+
+    The body is `<error><description>...</description></error>`, and slicing it
+    left only the XML declaration -- every failure read the same. On
+    2026-10-05 07:44 UTC all Job Dispatcher services answered HTTP 400 for
+    half a minute with a description naming a missing file on EBI's own disk,
+    `/nfs/public/.../<job>.params (No such file or directory)`. A 400 says
+    "your request", so that is named as EBI failing on its side.
+    """
+    match = re.search(r"<description>(.*?)</description>", body or "", re.DOTALL)
+    reason = (match.group(1) if match else body or "").strip()
+    if "No such file or directory" in reason or reason.startswith("/nfs/"):
+        return (
+            f"{service} submission failed on EBI's side (HTTP {status_code}): "
+            "the Job Dispatcher could not read its own job file, which is a "
+            "server fault rather than a problem with this request. Retry later."
+        )
+    return f"{service} submission failed (HTTP {status_code}): {reason[:300]}"
 
 
 def _poll(

@@ -86,6 +86,7 @@ ipython_config.py
 
 # pyenv
 .python-version
+!mcpb/.python-version
 
 # celery beat schedule file
 celerybeat-schedule
@@ -219,6 +220,20 @@ credentials.json
 *_api_key*
 *_token*
 
+# ...but those two patterns match any path segment, and these words appear
+# legitimately in source, tests and docs. The generated wrapper for
+# ReactomeAnalysis_token_result is one: `git add` refuses it, so if that file
+# is ever cleaned and rebuilt it silently never returns, and the tool
+# disappears from tooluniverse.tools. Re-include the extensions that hold
+# code and prose; data files keep the broad guard, since a real leaked
+# credential is far likelier to be .json, .txt or .yaml than .py.
+!*_api_key*.py
+!*_token*.py
+!*_api_key*.md
+!*_token*.md
+!*_api_key*.rst
+!*_token*.rst
+
 # Local-only harness sweep artifacts (test-all command output)
 TOOL_TEST_REPORT.md
 TOOL_TEST_RESULTS.json
@@ -226,3 +241,14 @@ TOOL_SWEEP_TRIAGE.md
 
 # Local-only runtime artifact from test_new_tools.py
 tool_relationship_graph.json
+
+# TDC downloads its datasets into ./data at call time, so running the sweep
+# leaves files in the working tree. Nothing under the repo root's data/ is
+# tracked; src/tooluniverse/data/ is a different, tracked directory.
+/data/
+
+# Four DrugBank tools used to set save_to_local_dir to this path, which drops a
+# 1.5 GB copy of drugbank_full_database.xml inside the package. They now share
+# the Hugging Face cache like the other fifteen; ignored so an older checkout or
+# a reintroduced setting cannot stage it.
+/src/tooluniverse/test/

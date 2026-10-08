@@ -1,7 +1,7 @@
 """
 HPA_get_protein_interactions_by_gene
 
-Fetch known protein-protein interaction partners for a given gene from Human Protein Atlas database.
+DEPRECATED / non-functional: the Human Protein Atlas search API no longer exposes protein-protein...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def HPA_get_protein_interactions_by_gene(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Fetch known protein-protein interaction partners for a given gene from Human Protein Atlas database.
+    DEPRECATED / non-functional: the Human Protein Atlas search API no longer exposes protein-protein...
 
     Parameters
     ----------

@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def CEDA_search_datasets(
-    q: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
-    offset: Optional[int | Any] = None,
+    q: Optional[str] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,11 +22,11 @@ def CEDA_search_datasets(
 
     Parameters
     ----------
-    q : str | Any
+    q : str
         Search query for datasets. Examples: 'climate model', 'sea surface temperatur...
-    limit : int | Any
+    limit : int
         Number of results to return (default 10, max 100)
-    offset : int | Any
+    offset : int
         Offset for pagination
     stream_callback : Callable, optional
         Callback for streaming output

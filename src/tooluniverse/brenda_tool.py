@@ -14,7 +14,6 @@ WSDL: https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl
 """
 
 import hashlib
-import os
 from typing import Any, Dict, List, Optional
 
 import requests
@@ -23,6 +22,14 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 BRENDA_WSDL = "https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl"
+
+
+try:
+    from zeep.exceptions import Fault
+except ImportError:  # zeep is optional; _get_client() reports that clearly
+
+    class Fault(Exception):
+        """Placeholder so ``except Fault`` stays valid when zeep is not installed."""
 
 
 def _get_client():
@@ -71,8 +78,8 @@ class BRENDATool(BaseTool):
         super().__init__(tool_config)
 
     def _credentials(self) -> Optional[tuple]:
-        email = os.environ.get("BRENDA_EMAIL", "")
-        password = os.environ.get("BRENDA_PASSWORD", "")
+        email = self.credential("BRENDA_EMAIL") or ""
+        password = self.credential("BRENDA_PASSWORD") or ""
         if not email or not password:
             return None
         return email, _hash_password(password)
@@ -120,8 +127,6 @@ class BRENDATool(BaseTool):
         organism = arguments.get("organism", "")
 
         try:
-            from zeep.exceptions import Fault
-
             client = _get_client()
             raw = client.service.getKmValue(
                 email=email,
@@ -178,8 +183,6 @@ class BRENDATool(BaseTool):
         organism = arguments.get("organism", "")
 
         try:
-            from zeep.exceptions import Fault
-
             client = _get_client()
             raw = client.service.getTurnoverNumber(
                 email=email,
@@ -240,8 +243,6 @@ class BRENDATool(BaseTool):
         organism = arguments.get("organism", "")
 
         try:
-            from zeep.exceptions import Fault
-
             client = _get_client()
             raw = client.service.getInhibitors(
                 email=email,
@@ -294,8 +295,6 @@ class BRENDATool(BaseTool):
         email, pw_hash = creds
 
         try:
-            from zeep.exceptions import Fault
-
             client = _get_client()
             raw = client.service.getSystematicName(
                 email=email,
@@ -337,8 +336,14 @@ class BRENDATool(BaseTool):
     # Uses ExPASy ENZYME (enzyme info) + SABIO-RK (kinetic parameters)
     # Optionally enriched with BRENDA SOAP if credentials are available.
 
-    def _resolve_ec_from_name(self, enzyme_name: str) -> Optional[str]:
-        """Resolve enzyme name to EC number via UniProt search."""
+    def _resolve_ec_from_name(
+        self, enzyme_name: str, failures: Optional[list] = None
+    ) -> Optional[str]:
+        """Resolve enzyme name to EC number via UniProt search.
+
+        A failed request appends its reason to `failures` and returns None, so
+        the caller can tell "UniProt did not answer" from "no EC number".
+        """
         try:
             url = (
                 "https://rest.uniprot.org/uniprotkb/search"
@@ -347,6 +352,8 @@ class BRENDATool(BaseTool):
             )
             resp = requests.get(url, timeout=15)
             if resp.status_code != 200:
+                if failures is not None:
+                    failures.append(f"UniProt HTTP {resp.status_code}")
                 return None
             data = resp.json()
             for result in data.get("results", []):
@@ -357,7 +364,9 @@ class BRENDATool(BaseTool):
                     if val and not val.endswith("-"):
                         return val
             return None
-        except Exception:
+        except Exception as e:
+            if failures is not None:
+                failures.append(str(e) or type(e).__name__)
             return None
 
     def _fetch_expasy_enzyme(self, ec_number: str) -> Dict[str, Any]:
@@ -468,7 +477,17 @@ class BRENDATool(BaseTool):
 
         # Resolve enzyme name to EC number if needed
         if not ec_number and enzyme_name:
-            ec_number = self._resolve_ec_from_name(enzyme_name) or ""
+            failures: list = []
+            ec_number = self._resolve_ec_from_name(enzyme_name, failures) or ""
+            if not ec_number and failures:
+                return {
+                    "status": "error",
+                    "error": (
+                        f"Could not resolve enzyme name '{enzyme_name}': UniProt, "
+                        f"which maps names to EC numbers, did not answer "
+                        f"({failures[0]}). Retry later, or pass ec_number directly."
+                    ),
+                }
             if not ec_number:
                 return {
                     "status": "error",
@@ -557,8 +576,6 @@ class BRENDATool(BaseTool):
         creds = self._credentials()
         if creds:
             try:
-                from zeep.exceptions import Fault
-
                 email, pw_hash = creds
                 client = _get_client()
 

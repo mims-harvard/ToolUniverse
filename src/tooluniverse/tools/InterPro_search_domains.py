@@ -15,7 +15,7 @@ def InterPro_search_domains(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Search InterPro database for protein domains and families by name or accession. Returns matching ...
 
@@ -34,7 +34,7 @@ def InterPro_search_domains(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

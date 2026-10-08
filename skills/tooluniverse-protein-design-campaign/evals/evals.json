@@ -1,0 +1,54 @@
+{
+  "skill_name": "tooluniverse-protein-design-campaign",
+  "notes": "Reusable public/synthetic behavioral prompts. Give the evaluator the skill and prompt without these assertions; evaluate the resulting actions and report afterward. These are persona evaluations, not a binding benchmark or an automatic score. No private campaign artifacts are required. Deterministic helper tests live in tests/unit/test_protein_campaign_preflight.py.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "public-inventory-and-declared-links",
+      "prompt": "Review a public-protein structural screen using ToolUniverse. Use the local public 1UBQ fixture in tests/fixtures/pdb_inventory/1ubq_protein.pdb and the registered PDB_inspect_structure and PDB_compare_declared_links tools when available. Does the inventory establish complete native glycosylation or binding? Can missing LINK metadata be treated as all links passing? Make a decision about the next useful check using actual returned results, and distinguish unavailable tools from failed science. Keep all inputs local.",
+      "assertions": [
+        "Uses installed schemas and the registered TU route rather than inventing parameters.",
+        "Reports public chain A as 76 coordinate residues and preserves missing sequence metadata as a limitation.",
+        "Does not infer native glycan coverage or measured binding from an inventory.",
+        "Treats missing reference LINK metadata as unavailable evidence, not a geometry pass.",
+        "Proposes a specific identity/geometry check appropriate to the available metadata."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "public-pka-completeness-and-component-scope",
+      "prompt": "Audit PROPKA on public 1UBQ using its local fixture and registered TU tools. Independently count expected protein groups from coordinates, then compare the reported inventory. If free_keep_chains is supported, exercise a same-coordinate retained water or translated second public protein chain using a temporary fixture. Explain what these results can establish about stronger acidic binding; identify any omissions or unsupported retention option without inventing affinity.",
+      "assertions": [
+        "Inventories acidic and basic groups plus real termini independently of worker output.",
+        "Recognizes that COO-derived Asp/Glu/C-terminal groups can be silently omitted by older workers.",
+        "Checks matched and unmatched groups against the primary partner in both predictions.",
+        "Retained components and same-coordinate comparison are recorded without claiming physical dissociation.",
+        "Does not promote protonation fractions or zero self-shifts into measured KD or pH selectivity."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "conflicting-models-and-terminal-variants",
+      "prompt": "Three designs share one core and differ only in terminal extensions. Three model families produced 24 successful calls and 88 structures, including 22 known-control structures. Raw placement rejects all designs and a known binder; preparation lets four control structures pass. An empirical protonation model predicts improved acidic binding, while a coupled learned model predicts the opposite. No binding assays exist. Decide whether to promote a design, explain independent evidence counts, and choose a bounded next computation. Do not run new cloud jobs.",
+      "assertions": [
+        "Separates core families, exact sequences, model families, calls and sampled structures.",
+        "Diagnoses control failure before treating the raw cutoff as a validated candidate veto.",
+        "Preserves conflicting directions and inspects constructs, components and terminal contributions.",
+        "Selects a bounded matched-preparation/control pilot instead of silently relaxing gates or averaging unrelated scores.",
+        "Labels binding and pH objectives unverified and proposes matched experimental assays."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "reviewed-package-and-restart-boundaries",
+      "prompt": "Prepare a local CSV using public 1UBQ sequence as a formatting control, then run the bundled submission preflight. Also create a temporary methods file containing an example signed-URL token and private path, and test failure/redaction. The GPU job previously exited after device OOM despite high host MemAvailable, and the portal only shows an upload preview. There is no authorization to upload designs or accept terms. Explain the actual job and submission state and next steps without taking external actions.",
+      "assertions": [
+        "Runs the helper through its documented command and checks exit 0 for a valid format control and exit 2 for the disclosure case.",
+        "Does not echo the token, sequence or candidate name in helper output and verifies inputs are not modified.",
+        "Treats host memory separately from device memory and verifies process/checkpoint state before bounded recovery.",
+        "Does not describe a preview as a successful submission; requires a receipt and exact candidate count.",
+        "Preserves missing external-action authorization, human review and eligibility limitations."
+      ]
+    }
+  ]
+}

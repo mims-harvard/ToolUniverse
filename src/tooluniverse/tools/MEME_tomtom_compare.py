@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def MEME_tomtom_compare(
-    operation: str,
     query_motif: str,
-    target_db: Optional[str | Any] = "JASPAR2026_vertebrates",
-    evalue_threshold: Optional[float | Any] = 0.5,
-    comparison_function: Optional[str | Any] = "pearson",
+    operation: Optional[str] = "tomtom_compare",
+    target_db: Optional[str] = "JASPAR2026_vertebrates",
+    evalue_threshold: Optional[float] = 0.5,
+    comparison_function: Optional[str] = "pearson",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,11 +28,11 @@ def MEME_tomtom_compare(
         Operation type
     query_motif : str
         Query motif in MEME format. Must include the full MEME header followed by one...
-    target_db : str | Any
+    target_db : str
         Target motif database to search against. Options: 'JASPAR2026_vertebrates' (d...
-    evalue_threshold : float | Any
+    evalue_threshold : float
         E-value threshold for reporting matches. Default 0.5. Must be <= 1.0.
-    comparison_function : str | Any
+    comparison_function : str
         Distance function for motif comparison. 'pearson' = Pearson correlation (defa...
     stream_callback : Callable, optional
         Callback for streaming output

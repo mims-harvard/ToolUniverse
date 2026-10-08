@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def MSigDB_get_gene_set_members(
     gene_set_name: str,
     operation: Optional[str] = None,
+    species: Optional[str] = "auto",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +26,8 @@ def MSigDB_get_gene_set_members(
 
     gene_set_name : str
         Exact MSigDB gene set name (e.g., 'ZNF549_TARGET_GENES', 'MIR675_3P_TARGET_GE...
+    species : str
+        MSigDB collection to query. 'auto' (default) tries human then mouse. Use 'mou...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def MSigDB_get_gene_set_members(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "gene_set_name": gene_set_name}.items()
+        for k, v in {
+            "operation": operation,
+            "gene_set_name": gene_set_name,
+            "species": species,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

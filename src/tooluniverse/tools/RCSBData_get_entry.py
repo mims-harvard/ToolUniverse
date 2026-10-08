@@ -9,7 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def RCSBData_get_entry(
-    pdb_id: str,
+    pdb_id: Optional[str] = None,
+    entry_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +23,8 @@ def RCSBData_get_entry(
     ----------
     pdb_id : str
         PDB entry ID (4 characters). Examples: '4HHB' (hemoglobin), '1TUP' (p53-DNA c...
+    entry_id : str
+        Alias for pdb_id (the RCSB-native term; the REST endpoint is /core/entry/{id}...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +39,11 @@ def RCSBData_get_entry(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"pdb_id": pdb_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"pdb_id": pdb_id, "entry_id": entry_id}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "RCSBData_get_entry",

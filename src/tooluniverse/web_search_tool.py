@@ -1,5 +1,7 @@
-"""Web search tools for ToolUniverse using Parallel Search MCP and DDGS."""
+"""Web search tools for ToolUniverse using DDGS plus opt-in hosted backends
+(Parallel Search MCP, SerpBase, Firecrawl Search)."""
 
+import importlib.util
 import json
 import re
 import subprocess
@@ -7,12 +9,13 @@ import sys
 import time
 from html import unescape
 from typing import Any, Dict, List, Optional, Tuple
-from urllib.parse import parse_qs, unquote, urlparse
+from urllib.parse import parse_qs, urlparse
 
 import requests
 
 from .base_tool import BaseTool
 from .mcp_client_tool import BaseMCPClient
+from .extras import install_hint
 from .tool_registry import register_tool
 
 PARALLEL_SEARCH_MCP_URL = "https://search.parallel.ai/mcp"
@@ -22,6 +25,38 @@ PARALLEL_PROVIDER_NOTICE = (
     "are not applied by this backend; do not submit sensitive or "
     "patient-identifying information."
 )
+
+SERPBASE_SEARCH_URL = "https://api.serpbase.dev/google/search"
+SERPBASE_PROVIDER_NOTICE = (
+    "Query sent to SerpBase's hosted third-party Google-SERP API at "
+    f"{SERPBASE_SEARCH_URL} (billed per request). ToolUniverse safesearch "
+    "control is not applied by this backend; do not submit sensitive or "
+    "patient-identifying information."
+)
+
+FIRECRAWL_SEARCH_URL = "https://api.firecrawl.dev/v2/search"
+FIRECRAWL_PROVIDER_NOTICE = (
+    "Query sent to Firecrawl's hosted third-party Search API at "
+    f"{FIRECRAWL_SEARCH_URL}. ToolUniverse region is applied as a country "
+    "code only and safesearch as a two-state filter by this backend; do not "
+    "submit sensitive or patient-identifying information."
+)
+# Region prefixes in the web_search enum that are not ISO 3166-1 alpha-2
+# country codes ("uk-en" is the United Kingdom; "ja-jp" is Japan).
+_FIRECRAWL_COUNTRY_OVERRIDES = {"uk": "GB", "ja": "JP"}
+
+
+def _firecrawl_country_from_region(region: str) -> str:
+    """Map a DDGS-style region such as ``uk-en`` to Firecrawl's ``country``.
+
+    Firecrawl only takes an ISO 3166-1 alpha-2 country code; the language half
+    of the ToolUniverse region has no equivalent and is not sent.
+    """
+    country, _, _ = (region or "").partition("-")
+    country = country.strip().lower()
+    if not country:
+        return "US"
+    return _FIRECRAWL_COUNTRY_OVERRIDES.get(country, country.upper())
 
 
 @register_tool("WebSearchTool")
@@ -84,6 +119,15 @@ results = list(
 )
 print(json.dumps(results))
 """
+
+        # The script above imports ddgs, and it runs under this interpreter, so
+        # find_spec here predicts the child exactly. Checking first turns
+        # "DDGS subprocess failed with exit code 1: ModuleNotFoundError: No
+        # module named 'ddgs'" into something the caller can act on.
+        if importlib.util.find_spec("ddgs") is None:
+            raise RuntimeError(
+                f"ddgs is required for web search. {install_hint('websearch', 'ddgs')}"
+            )
 
         completed = subprocess.run(
             [sys.executable, "-c", ddgs_script, json.dumps(payload)],
@@ -187,6 +231,181 @@ print(json.dumps(results))
 
         return results
 
+    def _search_with_serpbase(
+        self, query: str, max_results: int, region: str = "us-en"
+    ) -> List[Dict[str, Any]]:
+        """Search with SerpBase's real Google-SERP API and normalize its results.
+
+        Requires SERPBASE_API_KEY. SerpBase returns HTTP 200 even for
+        authentication/quota errors, with the failure indicated in the JSON
+        body's ``error`` field rather than the status code, so that field is
+        checked explicitly rather than relying on ``raise_for_status()`` alone.
+        """
+        api_key = self.credential("SERPBASE_API_KEY") or ""
+        if not api_key:
+            raise RuntimeError(
+                "SERPBASE_API_KEY environment variable is not set. "
+                "Request a key at https://serpbase.dev."
+            )
+
+        country, _, language = region.partition("-")
+        payload = {"q": query, "gl": country or "us", "hl": language or "en"}
+
+        response = requests.post(
+            SERPBASE_SEARCH_URL,
+            json=payload,
+            headers={"X-API-Key": api_key},
+            timeout=30,
+        )
+        response.raise_for_status()
+        data = response.json()
+
+        if data.get("error"):
+            raise RuntimeError(f"SerpBase API error: {data['error']}")
+
+        organic = data.get("organic")
+        if not isinstance(organic, list):
+            raise RuntimeError("SerpBase response did not include organic results")
+
+        results = []
+        for item in organic:
+            if not isinstance(item, dict):
+                continue
+            link = item.get("link") or item.get("url")
+            if not isinstance(link, str) or not link:
+                continue
+            title = item.get("title")
+            snippet = item.get("snippet")
+            results.append(
+                {
+                    "title": title if isinstance(title, str) else "",
+                    "url": link,
+                    "snippet": snippet if isinstance(snippet, str) else "",
+                    "rank": item.get("rank", len(results) + 1),
+                }
+            )
+            if len(results) >= max_results:
+                break
+
+        return results
+
+    def _search_with_firecrawl(
+        self,
+        query: str,
+        max_results: int,
+        region: str = "us-en",
+        safesearch: str = "moderate",
+    ) -> List[Dict[str, Any]]:
+        """Search with Firecrawl's Search API and normalize its web results.
+
+        Works without a key: Firecrawl caps keyless requests per IP per day
+        (requests and credits) and answers HTTP 429 past the cap. When
+        FIRECRAWL_API_KEY resolves -- from the request's credential scope when
+        one is active, otherwise from the environment -- searches are billed
+        against that account's credits and get its higher rate limits.
+        Resolving per call rather than at construction is what lets one hosted
+        process serve several users' keys. Firecrawl reports
+        failures through the HTTP status code with ``{"success": false,
+        "error": ...}`` in the body, so the body is read first to keep that
+        message, then the status is enforced.
+        """
+        headers: Dict[str, str] = {}
+        api_key = (self.credential("FIRECRAWL_API_KEY") or "").strip()
+        if api_key:
+            headers["Authorization"] = f"Bearer {api_key}"
+
+        payload: Dict[str, Any] = {
+            "query": query,
+            "limit": max_results,
+            "sources": ["web"],
+            "country": _firecrawl_country_from_region(region),
+            # Firecrawl defaults to query-relevant "highlights", which can be
+            # several KB of markdown per result. Ask for plain provider
+            # snippets so `snippet` stays comparable to the other backends.
+            "highlights": False,
+        }
+        # Firecrawl's filter is two-state: ``safe: true`` filters, omitting it
+        # does not. ToolUniverse's "on" and its default "moderate" both enable
+        # the filter (the conservative reading); only an explicit "off" leaves
+        # it unset.
+        if safesearch in ("on", "moderate"):
+            payload["safe"] = True
+
+        response = requests.post(
+            FIRECRAWL_SEARCH_URL,
+            json=payload,
+            headers=headers,
+            timeout=30,
+        )
+
+        try:
+            data = response.json()
+        except ValueError:
+            data = None
+        body_error = data.get("error") if isinstance(data, dict) else None
+
+        if response.status_code == 402:
+            detail = f" {body_error}" if body_error else ""
+            raise RuntimeError(
+                f"Firecrawl Search account is out of credits (HTTP 402).{detail}"
+            )
+        if response.status_code == 429:
+            if api_key:
+                hint = "The account's per-minute search rate limit was exceeded."
+            else:
+                hint = (
+                    "Keyless requests are capped per IP per day; set "
+                    "FIRECRAWL_API_KEY to use the account's limits instead."
+                )
+            detail = f" {body_error}." if body_error else ""
+            raise RuntimeError(
+                f"Firecrawl Search rate limit reached (HTTP 429).{detail} {hint}"
+            )
+        if response.status_code >= 400:
+            message = body_error or response.reason or "request failed"
+            details = data.get("details") if isinstance(data, dict) else None
+            if details:
+                message = f"{message} {details}"
+            raise RuntimeError(
+                f"Firecrawl Search API error (HTTP {response.status_code}): {message}"
+            )
+
+        if not isinstance(data, dict):
+            raise RuntimeError("Firecrawl Search response was not a JSON object")
+        if not data.get("success", False):
+            raise RuntimeError(
+                f"Firecrawl Search API error: {body_error or 'unknown error'}"
+            )
+
+        payload_data = data.get("data")
+        web_results = (
+            payload_data.get("web") if isinstance(payload_data, dict) else None
+        )
+        if not isinstance(web_results, list):
+            raise RuntimeError("Firecrawl Search response did not include web results")
+
+        results = []
+        for item in web_results:
+            if not isinstance(item, dict):
+                continue
+            url = item.get("url")
+            if not isinstance(url, str) or not url:
+                continue
+            title = item.get("title")
+            description = item.get("description")
+            results.append(
+                {
+                    "title": title if isinstance(title, str) else "",
+                    "url": url,
+                    "snippet": description if isinstance(description, str) else "",
+                    "rank": len(results) + 1,
+                }
+            )
+            if len(results) >= max_results:
+                break
+
+        return results
+
     def _search_with_fallback(
         self,
         query: str,
@@ -235,6 +454,53 @@ print(json.dumps(results))
 
             # Explicit providers fall back to DDGS auto today. Preserve that
             # contract without adding Parallel to the default provider chain.
+            backends_to_try = ["auto"]
+        elif backend == "serpbase":
+            attempted_backends.append("serpbase")
+            try:
+                results = self._search_with_serpbase(
+                    query=query, max_results=max_results, region=region
+                )
+                if results:
+                    return (
+                        results,
+                        "serpbase",
+                        attempted_backends,
+                        None,
+                        provider_errors,
+                    )
+                had_empty_success = True
+            except Exception as error:
+                last_error = str(error)
+                provider_errors["serpbase"] = str(error)
+
+            # Explicit providers fall back to DDGS auto today. Preserve that
+            # contract without adding SerpBase to the default provider chain.
+            backends_to_try = ["auto"]
+        elif backend == "firecrawl":
+            attempted_backends.append("firecrawl")
+            try:
+                results = self._search_with_firecrawl(
+                    query=query,
+                    max_results=max_results,
+                    region=region,
+                    safesearch=safesearch,
+                )
+                if results:
+                    return (
+                        results,
+                        "firecrawl",
+                        attempted_backends,
+                        None,
+                        provider_errors,
+                    )
+                had_empty_success = True
+            except Exception as error:
+                last_error = str(error)
+                provider_errors["firecrawl"] = str(error)
+
+            # Explicit providers fall back to DDGS auto today. Preserve that
+            # contract without adding Firecrawl to the default provider chain.
             backends_to_try = ["auto"]
         elif backend == "auto":
             # Try the explicit DuckDuckGo backend first. It tends to fail with
@@ -359,7 +625,10 @@ print(json.dumps(results))
                 query_map = parse_qs(parsed.query)
                 uddg_values = query_map.get("uddg")
                 if uddg_values:
-                    parsed_href = unquote(uddg_values[0])
+                    # parse_qs already percent-decodes query values. Decoding a
+                    # second time corrupts destinations that intentionally
+                    # contain escaped reserved characters (for example %2B).
+                    parsed_href = uddg_values[0]
 
             clean_title = unescape(re.sub(r"<[^>]+>", "", raw_title)).strip()
             raw_snippet = snippets[index - 1] if index - 1 < len(snippets) else ""
@@ -484,6 +753,23 @@ print(json.dumps(results))
                         },
                     }
 
+            if backend == "serpbase" and safesearch != "moderate":
+                error_msg = (
+                    "The SerpBase backend does not support the safesearch "
+                    "control. Omit it or use a DDGS backend."
+                )
+                return {
+                    "status": "error",
+                    "error": error_msg,
+                    "data": {
+                        "status": "error",
+                        "error": error_msg,
+                        "query": query,
+                        "total_results": 0,
+                        "results": [],
+                    },
+                }
+
             # Validate max_results
             max_results = max(1, min(max_results, 50))  # Limit between 1-50
 
@@ -529,6 +815,10 @@ print(json.dumps(results))
                 }
                 if "parallel" in attempted_backends:
                     response["data"]["provider_notice"] = PARALLEL_PROVIDER_NOTICE
+                if "serpbase" in attempted_backends:
+                    response["data"]["provider_notice"] = SERPBASE_PROVIDER_NOTICE
+                if "firecrawl" in attempted_backends:
+                    response["data"]["provider_notice"] = FIRECRAWL_PROVIDER_NOTICE
                 return response
 
             # Add rate limiting to be respectful
@@ -547,6 +837,10 @@ print(json.dumps(results))
                 result_data["provider_errors"] = provider_errors
             if "parallel" in attempted_backends:
                 result_data["provider_notice"] = PARALLEL_PROVIDER_NOTICE
+            if "serpbase" in attempted_backends:
+                result_data["provider_notice"] = SERPBASE_PROVIDER_NOTICE
+            if "firecrawl" in attempted_backends:
+                result_data["provider_notice"] = FIRECRAWL_PROVIDER_NOTICE
 
             return {"status": "success", "data": result_data}
 

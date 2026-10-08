@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def HFInference_summarize(
-    operation: str,
     model_id: str,
     text: str,
+    operation: Optional[str] = "summarize",
     max_length: Optional[int] = None,
     min_length: Optional[int] = None,
     wait_for_model: Optional[bool] = None,
@@ -19,7 +19,7 @@ def HFInference_summarize(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Summarize a passage of text using any HuggingFace summarization model (serverless hf-inference pr...
 
@@ -46,7 +46,7 @@ def HFInference_summarize(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

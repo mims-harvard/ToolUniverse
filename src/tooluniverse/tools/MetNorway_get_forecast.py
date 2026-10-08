@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def MetNorway_get_forecast(
     lat: float,
     lon: float,
-    altitude: Optional[int | Any] = None,
+    altitude: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def MetNorway_get_forecast(
         Latitude in decimal degrees (-90 to 90). Examples: 59.9139 (Oslo), 51.5074 (L...
     lon : float
         Longitude in decimal degrees (-180 to 180). Examples: 10.7522 (Oslo), -0.1278...
-    altitude : int | Any
+    altitude : int
         Station altitude in meters above sea level. Optional. Improves forecast accur...
     stream_callback : Callable, optional
         Callback for streaming output

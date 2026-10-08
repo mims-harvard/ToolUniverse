@@ -110,6 +110,10 @@ class GetSPLBySetIDTool(BaseTool):
         self.resource = tool_config.get("fields", {}).get("resource")
 
     def run(self, arguments):
+        setid = arguments.get("setid")
+        if not setid or not str(setid).strip():
+            return {"status": "error", "error": "setid parameter is required"}
+
         if self.resource in ("media", "history"):
             return self._get_resource(arguments)
         return self._get_full_spl(arguments)

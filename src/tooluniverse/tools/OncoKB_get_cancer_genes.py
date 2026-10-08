@@ -9,12 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def OncoKB_get_cancer_genes(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_cancer_genes",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get list of all cancer genes curated in OncoKB. Returns genes classified as oncogenes and/or tumo...
 
@@ -31,7 +31,7 @@ def OncoKB_get_cancer_genes(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

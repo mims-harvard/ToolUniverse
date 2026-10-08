@@ -1,7 +1,7 @@
 """
 GWASSumStats_get_trait_studies
 
-Get GWAS studies with deposited summary statistics for a specific EFO trait. Returns study access...
+Find GWAS Catalog studies for a trait, matched on the EFO trait LABEL rather than an ontology id....
 """
 
 from typing import Any, Optional, Callable
@@ -9,19 +9,25 @@ from ._shared_client import get_shared_client
 
 
 def GWASSumStats_get_trait_studies(
-    trait_id: str,
+    trait: Optional[str] = None,
+    size: Optional[int] = None,
+    trait_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get GWAS studies with deposited summary statistics for a specific EFO trait. Returns study access...
+    Find GWAS Catalog studies for a trait, matched on the EFO trait LABEL rather than an ontology id....
 
     Parameters
     ----------
+    trait : str
+        Text matched case-insensitively against the EFO trait label, e.g. 'alzheimer'...
+    size : int
+        Number of studies to return (default 20, max 100).
     trait_id : str
-        EFO trait ontology ID (e.g., 'EFO_0000249' for Alzheimer disease, 'EFO_000164...
+        Deprecated. An ontology id such as 'EFO_0000249'; the API filters on the labe...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,11 @@ def GWASSumStats_get_trait_studies(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"trait_id": trait_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"trait": trait, "size": size, "trait_id": trait_id}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "GWASSumStats_get_trait_studies",

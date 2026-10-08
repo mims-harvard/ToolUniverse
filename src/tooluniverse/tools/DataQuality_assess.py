@@ -1,7 +1,7 @@
 """
 DataQuality_assess
 
-Assess the quality of a tabular dataset (CSV file or JSON array of records).
+Assess the quality of a tabular dataset (CSV file or JSON array of records). Returns per-column s...
 """
 
 from typing import Any, Optional, Callable
@@ -9,21 +9,21 @@ from ._shared_client import get_shared_client
 
 
 def DataQuality_assess(
-    data: list[dict] | str,
+    data: list[Any] | str,
+    columns: Optional[list[str]] = None,
     *,
-    columns: list[str] | None = None,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Assess the quality of a tabular dataset.
+    Assess the quality of a tabular dataset (CSV file or JSON array of records). Returns per-column s...
 
     Parameters
     ----------
-    data : list[dict] | str
-        JSON array of records (list of dicts) or absolute path to a CSV file.
-    columns : list[str] | None, optional
+    data : list[Any] | str
+        Input dataset: either a JSON array of records (list of dicts) or an absolute ...
+    columns : list[str]
         List of column names to assess. Default: all columns.
     stream_callback : Callable, optional
         Callback for streaming output
@@ -34,8 +34,11 @@ def DataQuality_assess(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
+    # Handle mutable defaults to avoid B006 linting error
+
+    # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v for k, v in {"data": data, "columns": columns}.items() if v is not None
     }

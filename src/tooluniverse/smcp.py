@@ -97,15 +97,43 @@ import functools
 import json
 import os
 import sys
-from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List, Optional, Union, Callable, Literal
 
 from fastmcp import FastMCP
 
 FASTMCP_AVAILABLE = True
 
+# FastMCP's banner checks PyPI and says "Update available: 4.x -- Run: pip install --upgrade
+# fastmcp". ToolUniverse requires fastmcp<4, so following that advice breaks the install it was
+# printed by -- shown to everyone who ran `tu serve my_tool.py --share`. Someone who wants the
+# check can still ask for it with FASTMCP_CHECK_FOR_UPDATES.
+if not os.environ.get("FASTMCP_CHECK_FOR_UPDATES"):
+    import fastmcp as _fastmcp
+
+    _fastmcp.settings.check_for_updates = "off"
+
+
+def _json_default(value: Any) -> Any:
+    """Turn the values scientific code returns into JSON, not their str().
+
+    json.dumps(default=_json_default) turned a numpy array into the text "[0. 3. 6. 9.]" -- measured with
+    a @remote_tool returning an embedding -- so the caller received a string where it expected
+    numbers. numpy arrays and scalars, and pandas frames and series, all have exact JSON forms.
+    Anything else keeps the old fallback.
+    """
+    to_dict = getattr(value, "to_dict", None)
+    if callable(to_dict) and hasattr(value, "columns"):
+        return to_dict(orient="records")
+    tolist = getattr(value, "tolist", None)
+    if callable(tolist):
+        return tolist()
+    if isinstance(value, (set, frozenset)):
+        return sorted(value, key=str)
+    return str(value)
+
 from .execute_function import ToolUniverse
 from .agentic_tool import render_agentic_instruction
+from .credentials import ContextThreadPoolExecutor
 from .logging_config import (
     get_logger,
 )
@@ -161,7 +189,7 @@ def _truncate_response(
         lo, hi = 1, total
         while lo < hi:
             mid = (lo + hi + 1) // 2
-            trial = json.dumps(result[:mid], ensure_ascii=False, default=str)
+            trial = json.dumps(result[:mid], ensure_ascii=False, default=_json_default)
             if len(trial) <= max_chars - 500:  # leave room for metadata
                 lo = mid
             else:
@@ -176,7 +204,7 @@ def _truncate_response(
                 **truncation_meta,
             },
             ensure_ascii=False,
-            default=str,
+            default=_json_default,
         )
 
     # If result is a dict, try to truncate the largest list value
@@ -198,7 +226,7 @@ def _truncate_response(
                     f"_{largest_key}_total": total,
                     **truncation_meta,
                 }
-                trial = json.dumps(trimmed, ensure_ascii=False, default=str)
+                trial = json.dumps(trimmed, ensure_ascii=False, default=_json_default)
                 if len(trial) <= max_chars:
                     return trial
                 keep = keep // 2
@@ -208,6 +236,17 @@ def _truncate_response(
     if full_path:
         suffix += f"\nFull response saved to: {full_path}"
     return serialized[:max_chars] + suffix
+
+
+def _readable_tool_title(name: str) -> str:
+    """Human-readable title for a tool that declares none.
+
+    The directory requires ``title`` on every tool. Registered names read
+    ``Vendor_verb_what``, so replacing the separators is enough to give a
+    reviewer and a user something legible without inventing wording that could
+    drift from the description.
+    """
+    return name.replace("_", " ").strip() or name
 
 
 class SMCP(FastMCP):
@@ -509,7 +548,10 @@ class SMCP(FastMCP):
         self.profile_metadata = None
 
         # Thread pool for concurrent tool execution
-        self.executor = ThreadPoolExecutor(max_workers=max_workers)
+        # Preserve request-scoped credentials and tracing context across the async-to-sync
+        # boundary. Standard ThreadPoolExecutor drops ContextVars and can therefore make a hosted
+        # request silently fall back to process-global credentials.
+        self.executor = ContextThreadPoolExecutor(max_workers=max_workers)
 
         # Track exposed tools to avoid duplicates
         self._exposed_tools = set()
@@ -963,7 +1005,7 @@ class SMCP(FastMCP):
                         {"tools": [], "result": result}, ensure_ascii=False
                     )
             elif isinstance(result, dict) or isinstance(result, list):
-                serialized = json.dumps(result, ensure_ascii=False, default=str)
+                serialized = json.dumps(result, ensure_ascii=False, default=_json_default)
             else:
                 serialized = json.dumps(
                     {"tools": [], "result": str(result)}, ensure_ascii=False
@@ -1003,7 +1045,7 @@ class SMCP(FastMCP):
             str: Tool name to use for search
         """
         # Get available tools
-        all_tools = self.tooluniverse.return_all_loaded_tools()
+        all_tools = self.tooluniverse.return_all_loaded_tools(copy_tools=False)
         available_tool_names = [tool.get("name", "") for tool in all_tools]
 
         # Handle specific method requests
@@ -1353,6 +1395,7 @@ class SMCP(FastMCP):
 
         @self.tool(
             annotations=ToolAnnotations(
+                title="Find tools by description",
                 readOnlyHint=True,  # Search tool is read-only
                 destructiveHint=False,
             )
@@ -1419,7 +1462,7 @@ class SMCP(FastMCP):
 
         # Check if ToolFinderLLM is available in loaded tools
         try:
-            all_tools = self.tooluniverse.return_all_loaded_tools()
+            all_tools = self.tooluniverse.return_all_loaded_tools(copy_tools=False)
             available_tool_names = [tool.get("name", "") for tool in all_tools]
 
             # Try ToolFinderLLM first (more advanced)
@@ -1465,7 +1508,7 @@ class SMCP(FastMCP):
                     self.logger.debug(f"Could not load tool_finder category: {e}")
 
             # Re-check availability after potential loading
-            all_tools = self.tooluniverse.return_all_loaded_tools()
+            all_tools = self.tooluniverse.return_all_loaded_tools(copy_tools=False)
             available_tool_names = [tool.get("name", "") for tool in all_tools]
 
             if "Tool_Finder_LLM" in available_tool_names:
@@ -1638,6 +1681,13 @@ class SMCP(FastMCP):
             from .server_security import enforce_bind_security
 
             enforce_bind_security(host)
+
+            # Binding to loopback is not, by itself, safe from remote browsers:
+            # DNS rebinding lets a malicious webpage resolve its own origin to
+            # 127.0.0.1 and reach this MCP endpoint as an in-browser client,
+            # with no Bearer token required. FastMCP validates Host/Origin
+            # itself once told to; ToolUniverse just needs to opt in.
+            kwargs.setdefault("host_origin_protection", "auto")
 
         # Build server URL based on transport
         if transport == "streamable-http" or transport == "http":
@@ -1842,7 +1892,9 @@ class SMCP(FastMCP):
                 for option in alternatives
                 if isinstance(option, dict)
             ]
-            return Union[tuple(types)] if len(types) > 1 else (types[0] if types else Any)
+            return (
+                Union[tuple(types)] if len(types) > 1 else (types[0] if types else Any)
+            )
 
         param_type = param_info.get("type", "string")
         if isinstance(param_type, list):
@@ -1874,6 +1926,19 @@ class SMCP(FastMCP):
         """Translate common JSON Schema limits into Pydantic Field limits."""
         constraints: Dict[str, Any] = {}
         param_type = param_info.get("type")
+        # "type" may be a list. ["integer", "null"] is how an optional parameter
+        # is spelled across the shipped configs, and it is also what
+        # mcp_tool_registry._py_type_to_json_schema infers for Optional[int].
+        # The set membership test below hashes its left operand, so a list
+        # raised TypeError: unhashable type: 'list'. Narrow to the first
+        # non-null member, the same way _resolve_param_type does in its
+        # non-strict branch, so the limits are still applied. The first
+        # non-null member is the right one to read: of the 1674 list typed
+        # parameters under data/, the 59 that carry a limit are either nullable
+        # or ["array", "string"], so that member is what the limit describes.
+        if isinstance(param_type, list):
+            non_null = [item for item in param_type if item != "null"]
+            param_type = non_null[0] if non_null else None
         if param_type == "string":
             mapping = {
                 "minLength": "min_length",
@@ -2290,11 +2355,13 @@ class SMCP(FastMCP):
                                 {"result": result}, ensure_ascii=False
                             )
                     elif isinstance(result, (dict, list)):
-                        serialized = json.dumps(result, ensure_ascii=False, default=str)
+                        serialized = json.dumps(result, ensure_ascii=False, default=_json_default)
                     else:
                         # For other types, convert to JSON
                         serialized = json.dumps(
-                            {"result": str(result)}, ensure_ascii=False
+                            {"result": result},
+                            ensure_ascii=False,
+                            default=_json_default,
                         )
 
                     # Guard against oversized responses that overflow LLM context
@@ -2350,45 +2417,62 @@ Returns:
             from mcp.types import ToolAnnotations
 
             tool_annotations = ToolAnnotations(
+                # The connectors directory requires a title on every tool, and
+                # rejects a submission without one. Tools that set their own in
+                # ``mcp_annotations`` keep it; the rest get their registered
+                # name made readable, which beats shipping no title at all.
+                title=annotations_dict.get("title")
+                or _readable_tool_title(
+                    tool_config.get("original_name") or tool_config.get("name", "")
+                ),
                 readOnlyHint=annotations_dict.get("readOnlyHint"),
                 destructiveHint=annotations_dict.get("destructiveHint"),
             )
 
-            # Register with FastMCP using exposed_name for MCP, but tool execution uses original tool_name
-            registered_tool = self.tool(
-                description=description, annotations=tool_annotations
-            )(
-                dynamic_tool_function
-            )
-            if self.strict_input_schemas:
-                # FastMCP derives discovery metadata from the Python signature.
-                # Preserve the reviewed provider contract verbatim so omitted
-                # optional fields are not incorrectly advertised as nullable
-                # and bounds/enums remain visible to TOU clients.
-                # FunctionTool is a Pydantic model whose normal assignment path
-                # re-normalizes the schema and reintroduces nullable/default
-                # metadata. Bypass that normalization after construction; the
-                # callable's strict signature remains the runtime validator.
-                strict_parameters = copy.deepcopy(parameters)
-                object.__setattr__(
-                    registered_tool, "parameters", strict_parameters
+            if tool_config.get("mcp_schema_mode") == "passthrough":
+                from .mcp_schema_adapter import register_schema_passthrough_tool
+
+                register_schema_passthrough_tool(
+                    self,
+                    name=exposed_name,
+                    description=description,
+                    parameters=parameters,
+                    annotations=tool_annotations,
+                    fn=dynamic_tool_function,
                 )
-                # FastMCP 3 stores a validated copy in its local provider.
-                # Update that copy as well; get_tool()/tools/list read it.
-                local_provider = getattr(self, "_local_provider", None)
-                components = getattr(local_provider, "_components", {})
-                stored_tools = [
-                    component
-                    for component in components.values()
-                    if getattr(component, "name", None) == exposed_name
-                    and hasattr(component, "parameters")
-                ]
-                for stored_tool in stored_tools:
-                    object.__setattr__(
-                        stored_tool,
-                        "parameters",
-                        copy.deepcopy(strict_parameters),
-                    )
+            else:
+                # Register with FastMCP using exposed_name for MCP, but tool
+                # execution uses original tool_name.
+                registered_tool = self.tool(
+                    description=description, annotations=tool_annotations
+                )(dynamic_tool_function)
+                if self.strict_input_schemas:
+                    # FastMCP derives discovery metadata from the Python signature.
+                    # Preserve the reviewed provider contract verbatim so omitted
+                    # optional fields are not incorrectly advertised as nullable
+                    # and bounds/enums remain visible to TOU clients.
+                    # FunctionTool is a Pydantic model whose normal assignment path
+                    # re-normalizes the schema and reintroduces nullable/default
+                    # metadata. Bypass that normalization after construction; the
+                    # callable's strict signature remains the runtime validator.
+                    strict_parameters = copy.deepcopy(parameters)
+                    object.__setattr__(registered_tool, "parameters", strict_parameters)
+                    # FastMCP 3 stores a validated copy in its local provider.
+                    # Update that copy as well; get_tool()/tools/list read it.
+                    local_provider = getattr(self, "_local_provider", None)
+                    components = getattr(local_provider, "_components", {})
+                    stored_tools = [
+                        component
+                        for component in components.values()
+                        if getattr(component, "name", None) == exposed_name
+                        and hasattr(component, "parameters")
+                    ]
+                    for stored_tool in stored_tools:
+                        object.__setattr__(
+                            stored_tool,
+                            "parameters",
+                            copy.deepcopy(strict_parameters),
+                        )
 
         except Exception as e:
             self.logger.error(f"Error creating MCP tool from config: {e}")

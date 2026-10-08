@@ -9,12 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def FPbase_search_by_spectrum(
-    name__icontains: Optional[str | Any] = None,
-    agg_exc_max__gte: Optional[int | Any] = None,
-    agg_exc_max__lte: Optional[int | Any] = None,
-    agg_em_max__gte: Optional[int | Any] = None,
-    agg_em_max__lte: Optional[int | Any] = None,
-    switch_type: Optional[str | Any] = None,
+    name__icontains: Optional[str] = None,
+    agg_exc_max__gte: Optional[int] = None,
+    agg_exc_max__lte: Optional[int] = None,
+    agg_em_max__gte: Optional[int] = None,
+    agg_em_max__lte: Optional[int] = None,
+    switch_type: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,17 +25,17 @@ def FPbase_search_by_spectrum(
 
     Parameters
     ----------
-    name__icontains : str | Any
+    name__icontains : str
         Search by name (case-insensitive partial match, e.g., 'GFP', 'cherry', 'scarl...
-    agg_exc_max__gte : int | Any
+    agg_exc_max__gte : int
         Minimum excitation wavelength in nm (e.g., 480 for green range)
-    agg_exc_max__lte : int | Any
+    agg_exc_max__lte : int
         Maximum excitation wavelength in nm (e.g., 520 for green range)
-    agg_em_max__gte : int | Any
+    agg_em_max__gte : int
         Minimum emission wavelength in nm
-    agg_em_max__lte : int | Any
+    agg_em_max__lte : int
         Maximum emission wavelength in nm
-    switch_type : str | Any
+    switch_type : str
         Filter by photoswitching: 'b' (basic/constitutive), 'ps' (photoswitchable), '...
     stream_callback : Callable, optional
         Callback for streaming output

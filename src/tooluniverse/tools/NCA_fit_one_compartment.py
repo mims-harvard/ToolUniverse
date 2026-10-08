@@ -11,10 +11,10 @@ from ._shared_client import get_shared_client
 def NCA_fit_one_compartment(
     times: list[Any],
     concentrations: list[Any],
-    dose: Optional[float | Any] = None,
-    dose_unit: Optional[str | Any] = None,
-    conc_unit: Optional[str | Any] = None,
-    time_unit: Optional[str | Any] = None,
+    dose: Optional[float] = None,
+    dose_unit: Optional[str] = None,
+    conc_unit: Optional[str] = None,
+    time_unit: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -29,13 +29,13 @@ def NCA_fit_one_compartment(
         Time points after IV administration. Example: [0, 0.5, 1, 2, 4, 8, 12, 24].
     concentrations : list[Any]
         Plasma concentrations at each time point. Example: [500, 380, 290, 170, 60, 8...
-    dose : float | Any
+    dose : float
         Administered IV dose. Required to calculate Vd and CL.
-    dose_unit : str | Any
+    dose_unit : str
         Unit of dose (default: 'mg').
-    conc_unit : str | Any
+    conc_unit : str
         Unit of concentration (default: 'ng/mL').
-    time_unit : str | Any
+    time_unit : str
         Unit of time (default: 'h').
     stream_callback : Callable, optional
         Callback for streaming output

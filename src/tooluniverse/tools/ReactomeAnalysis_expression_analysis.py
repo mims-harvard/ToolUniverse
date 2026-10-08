@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ReactomeAnalysis_expression_analysis(
-    identifiers: str,
+    identifiers: str | list[Any],
     page_size: Optional[int] = None,
     include_disease: Optional[bool] = None,
     projection: Optional[bool] = None,
@@ -23,7 +23,7 @@ def ReactomeAnalysis_expression_analysis(
 
     Parameters
     ----------
-    identifiers : str
+    identifiers : str | list[Any]
         Tab-delimited expression rows, one identifier per line as 'GENE<TAB>VALUE'. N...
     page_size : int
         Number of pathways to return (default 20, max 50).

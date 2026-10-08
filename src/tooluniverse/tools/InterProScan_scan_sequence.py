@@ -18,7 +18,7 @@ def InterProScan_scan_sequence(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Run InterProScan analysis on a protein sequence to predict domains, families, and functional site...
 
@@ -43,7 +43,7 @@ def InterProScan_scan_sequence(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

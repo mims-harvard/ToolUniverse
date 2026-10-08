@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def Epidemiology_diagnostic(
-    operation: str,
     tp: int,
     fp: int,
     tn: int,
     fn: int,
+    operation: Optional[str] = "diagnostic",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

@@ -16,7 +16,7 @@ def UniProt_search_uniref(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search UniRef clusters. Returns clusters matching the query. Use this to find UniRef clusters for...
 
@@ -37,7 +37,7 @@ def UniProt_search_uniref(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -84,6 +84,18 @@
     ]
   },
   {
+    "name": "BOLTZ_API_KEY",
+    "requirement": "required",
+    "type": "api_key",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://api.boltz.bio/",
+    "purpose": "Authenticate to the official hosted Boltz prediction and administration API.",
+    "without": "Official hosted Boltz API tools are unavailable; the existing self-hosted Boltz MCP integration is unaffected.",
+    "used_by": [
+      "boltz_api_tools.json"
+    ]
+  },
+  {
     "name": "BOLTZ_MCP_SERVER_HOST",
     "requirement": "required",
     "type": "endpoint",
@@ -144,18 +156,6 @@
     ]
   },
   {
-    "name": "CLUE_API_KEY",
-    "requirement": "required",
-    "type": "secret",
-    "domain": "Drugs & Chemistry",
-    "register_url": "https://clue.io",
-    "purpose": "Query Connectivity Map drug\u2013gene perturbation signatures for repurposing.",
-    "without": "CLUE tools are blocked without it. The key is free.",
-    "used_by": [
-      "clue_tools.json"
-    ]
-  },
-  {
     "name": "CLUSPRO_API_SECRET",
     "requirement": "required",
     "type": "secret",
@@ -180,6 +180,18 @@
     ]
   },
   {
+    "name": "CONSENSUS_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Literature & Patents",
+    "register_url": "https://consensus.app/home/api",
+    "purpose": "Search 220M+ peer-reviewed papers via the Consensus API.",
+    "without": "Consensus tools are blocked without it. Requires a paid Consensus account (Pro, Deep, or Teams plan).",
+    "used_by": [
+      "consensus_tools.json"
+    ]
+  },
+  {
     "name": "DISGENET_API_KEY",
     "requirement": "required",
     "type": "secret",
@@ -189,6 +201,18 @@
     "without": "Limited public data works without it; the key unlocks full access.",
     "used_by": [
       "disgenet_tools.json"
+    ]
+  },
+  {
+    "name": "EPA_COMPTOX_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Toxicology & Chemical Safety",
+    "register_url": "mailto:ccte_api@epa.gov",
+    "purpose": "Query EPA CompTox chemical identity, hazard, and ToxCast/Tox21 bioactivity data.",
+    "without": "CompTox tools are blocked without it.",
+    "used_by": [
+      "comptox_tools.json"
     ]
   },
   {
@@ -213,6 +237,30 @@
     "without": "Leave blank unless you run your own ESM server.",
     "used_by": [
       "mcp_auto_loader_esm.json"
+    ]
+  },
+  {
+    "name": "EXA_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Literature & Patents",
+    "register_url": "https://dashboard.exa.ai/",
+    "purpose": "Raises Exa's rate limits for production use of the web-search MCP connection.",
+    "without": "Works at Exa's free/casual rate limit without it.",
+    "used_by": [
+      "mcp_auto_loader_exa.json"
+    ]
+  },
+  {
+    "name": "EXA_MCP_URL",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Literature & Patents",
+    "register_url": "https://exa.ai",
+    "purpose": "Endpoint URL for the opt-in Exa web-search MCP connection.",
+    "without": "Leave blank to keep this third-party MCP connection disabled. To enable, set this to https://mcp.exa.ai/mcp \u2014 the public endpoint requires no account for casual use.",
+    "used_by": [
+      "mcp_auto_loader_exa.json"
     ]
   },
   {
@@ -251,6 +299,18 @@
     "without": "Falls back to a shared, rate-limited DEMO_KEY without it.",
     "used_by": [
       "fooddata_central_tools.json"
+    ]
+  },
+  {
+    "name": "FIRECRAWL_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Other",
+    "register_url": "https://www.firecrawl.dev/app/api-keys",
+    "purpose": "Authenticate the backend='firecrawl' option (Firecrawl Search, https://api.firecrawl.dev/v2/search). Searches are billed against the account's credits (a free key includes 1,000) and use the account's rate limits instead of the keyless cap.",
+    "without": "backend='firecrawl' still works keyless within Firecrawl's per-IP daily request and credit cap (HTTP 429 past it, then the normal DDGS fallback). The cap is per IP, so users behind one shared server or NAT share it. The default web_search chain is unaffected.",
+    "used_by": [
+      "web_search_tools.json"
     ]
   },
   {
@@ -311,12 +371,13 @@
     "without": "Public models work without it; needed for gated or private repos.",
     "used_by": [
       "embedding_tools.json",
+      "esm2_variant_effect_tools.json",
       "huggingface_inference_tools.json"
     ]
   },
   {
     "name": "ICD_CLIENT_ID",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Clinical & Safety",
     "register_url": "https://icd.who.int/icdapi",
@@ -328,7 +389,7 @@
   },
   {
     "name": "ICD_CLIENT_SECRET",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Clinical & Safety",
     "register_url": "https://icd.who.int/icdapi",
@@ -340,7 +401,7 @@
   },
   {
     "name": "IUCN_API_KEY",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Ecology & Biodiversity",
     "register_url": "https://api.iucnredlist.org/",
@@ -352,7 +413,7 @@
   },
   {
     "name": "LDLINK_TOKEN",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Genomics & Variants",
     "register_url": "https://ldlink.nih.gov/?tab=apiaccess",
@@ -500,6 +561,18 @@
     ]
   },
   {
+    "name": "PROTOCOLS_IO_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Molecular Cloning & Lab Methods",
+    "register_url": "https://www.protocols.io/api-clients",
+    "purpose": "Search and retrieve published lab protocols from protocols.io.",
+    "without": "protocols.io tools are blocked without it.",
+    "used_by": [
+      "protocolsio_tools.json"
+    ]
+  },
+  {
     "name": "REPLICATE_API_TOKEN",
     "requirement": "required",
     "type": "secret",
@@ -537,6 +610,18 @@
     ]
   },
   {
+    "name": "SERPBASE_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Other",
+    "register_url": "https://serpbase.dev",
+    "purpose": "Query the backend='serpbase' option for real Google SERP results (https://api.serpbase.dev), billed per request.",
+    "without": "web_search still works via DDGS/Parallel/DuckDuckGo-HTML/Wikipedia; backend='serpbase' is blocked without it.",
+    "used_by": [
+      "web_search_tools.json"
+    ]
+  },
+  {
     "name": "TXAGENT_MCP_SERVER_HOST",
     "requirement": "required",
     "type": "endpoint",
@@ -549,8 +634,20 @@
     ]
   },
   {
+    "name": "TYPESAFE_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Tool Discovery",
+    "register_url": "https://typesafe.ai/",
+    "purpose": "Grade retrieved tool candidates for relevance so Tool_Finder_Jev can rank them.",
+    "without": "Tool_Finder_Jev is not loaded; the other tool finders are unaffected.",
+    "used_by": [
+      "finder_tools.json"
+    ]
+  },
+  {
     "name": "UMLS_API_KEY",
-    "requirement": "optional",
+    "requirement": "required",
     "type": "secret",
     "domain": "Clinical & Safety",
     "register_url": "https://uts.nlm.nih.gov/uts/signup-login",
@@ -582,6 +679,18 @@
     "without": "Leave blank unless you run your own USPTO server.",
     "used_by": [
       "uspto_downloader_tools.json"
+    ]
+  },
+  {
+    "name": "VEUPATHDB_API_KEY",
+    "requirement": "required",
+    "type": "secret",
+    "domain": "Pathogens & Microbiology",
+    "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess",
+    "purpose": "Query the VEuPathDB WDK service for pathogen gene searches and records.",
+    "without": "VEuPathDB returns 401 'Valid API Key required for this endpoint.' Only the record-type listing stays open.",
+    "used_by": [
+      "veupathdb_tools.json"
     ]
   },
   {

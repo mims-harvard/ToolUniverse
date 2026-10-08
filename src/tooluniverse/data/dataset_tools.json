@@ -491,6 +491,9 @@
         "exact_match": false,
         "limit": 10
       }
+    ],
+    "required_packages": [
+      "pyarrow"
     ]
   },
   {
