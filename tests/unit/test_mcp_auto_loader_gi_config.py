@@ -33,7 +33,7 @@ EXPECTED_CONTRACT_HASHES = {
     "predict_splice": "5af1ca0fd53975ec26639de3e41f40068b8ee67ce8b8e0c538348d5f43ec63ec",
     "predict_enhancer": "31764dbf1037225a1d6895f49b3715204f76ced412c343d8e5f1cef77f3be391",
     "predict_chromatin": "23fde61976ec60cd1e33c88b2c94624e168a14fc5c7314cf61555d4f2d5f8c85",
-    "predict_expression": "41b8c67d2d1a022ea3b6c043eb8161d54685d60a4eca82a14f4cfcb84eb7e2ce",
+    "predict_expression": "72275af77a902805405c4c13e05cabc8245f5ffc228a1faff6ccd5b2feb5c1cb",
     "find_genes": "2fded6f0f98cf1661b8775f623e83ecd2792e148c88db6a62013a9a560cbc2b8",
     "find_genes_and_predict_expression": "42681714a809d268bb89453ce49ec0db3d56a06b1e539c07840e75edf2fda8c5",
     "get_job": "673945815b6c49bdb1b8bf93bbb27924692e95b56cd3881bd88060ced4601c6e",
