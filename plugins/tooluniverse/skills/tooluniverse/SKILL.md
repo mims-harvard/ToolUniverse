@@ -291,6 +291,15 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 | "**install skills**", "missing skills", "skill not found", "add skills" | `Skill(skill="tooluniverse-install-skills")` |
 | "**self-review**", "eval current work", "evaluate this work", "check my work", "is this complete", "definition of done", "evaluation rubric", "success criteria", "grading criteria", "LLM-as-judge" | `Skill(skill="tooluniverse-self-review")` |
 
+### 13. Sharing & Account Tasks (you do the work; the user only answers and clicks Allow)
+
+| Keywords | Action |
+|----------|--------|
+| "**share my model/script/function**", "let my lab/colleague use this", "make this a tool", "share my GPU", "**keep my tool running**" | `Skill(skill="tooluniverse-share-computer")` |
+| "**publish my tool**", "put it in Discover", "let anyone use my tool", "unpublish" | `Skill(skill="tooluniverse-publish-tool")` |
+| "**API key missing**", "login/token rejected", "add my OMIM/NCBI/DisGeNET key", "which logins do I need" | `Skill(skill="tooluniverse-database-logins")` |
+| "**TU-SHARE-**" code, "use my colleague's model/computer", "run it on the lab GPU", "shared or community tools" | `Skill(skill="tooluniverse-use-shared-computer")` |
+
 ---
 
 ## Tie-Breaking Rules
