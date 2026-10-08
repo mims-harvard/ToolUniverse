@@ -8,9 +8,11 @@
 """
 
 import re
+import ssl
 from typing import Any, Dict, List
 
 import requests
+from requests.adapters import HTTPAdapter
 
 from .base_tool import BaseTool
 from .http_utils import request_with_retry
@@ -43,6 +45,26 @@ def _detect_id_type(identifier: str) -> str:
     return ""
 
 
+class _ClassicKeyShareAdapter(HTTPAdapter):
+    """Offer only a classic elliptic-curve key share in the TLS handshake.
+
+    pmc.ncbi.nlm.nih.gov answers HTTP 403 to every request whose TLS ClientHello
+    carries the post-quantum hybrid key share (X25519MLKEM768) that OpenSSL 3.5
+    sends by default -- which includes the Python builds uv installs, i.e. a
+    standard ``uvx tooluniverse``. Measured 2026-10-08 with the identical request:
+    OpenSSL 3.5.7 -> 403, the same build restricted to classic groups -> 200,
+    OpenSSL 3.0.13 -> 200. Of the 651 hosts referenced in this package, this is
+    the only one that behaves this way, so the restriction is mounted for this
+    host alone rather than weakening every connection.
+    """
+
+    def init_poolmanager(self, *args, **kwargs):
+        context = ssl.create_default_context()
+        context.set_ecdh_curve("prime256v1")
+        kwargs["ssl_context"] = context
+        return super().init_poolmanager(*args, **kwargs)
+
+
 class _NCBIHelperTool(BaseTool):
     def __init__(self, tool_config: Dict[str, Any], timeout: int = 30):
         super().__init__(tool_config)
@@ -51,6 +73,7 @@ class _NCBIHelperTool(BaseTool):
         self.session.headers.update(
             {"User-Agent": USER_AGENT, "Accept": "application/json"}
         )
+        self.session.mount("https://pmc.ncbi.nlm.nih.gov/", _ClassicKeyShareAdapter())
 
     def _get(self, url: str, params: Dict[str, Any]) -> requests.Response:
         return request_with_retry(
@@ -101,11 +124,22 @@ class PubMedConvertIDsTool(_NCBIHelperTool):
             }
             try:
                 response = self._get(IDCONV_URL, params)
-                payload = response.json()
             except Exception as e:
                 return {
                     "status": "error",
                     "error": f"PMC ID Converter request failed: {e}",
+                }
+            try:
+                payload = response.json()
+            except ValueError:
+                # A non-JSON body (e.g. an HTML 403 page) used to surface as
+                # "Expecting value: line 1 column 1", hiding the HTTP status.
+                return {
+                    "status": "error",
+                    "error": (
+                        f"PMC ID Converter returned HTTP {response.status_code} "
+                        f"with a non-JSON body: {response.text[:120]!r}"
+                    ),
                 }
             if response.status_code != 200 or payload.get("status") == "error":
                 detail = (
