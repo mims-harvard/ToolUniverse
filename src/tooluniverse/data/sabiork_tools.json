@@ -79,6 +79,7 @@
               },
               "parameters": {
                 "type": "array",
+                "description": "Measured kinetic constants for this entry (constants without a reported value are omitted)",
                 "items": {
                   "type": "object",
                   "properties": {
@@ -89,14 +90,49 @@
                     "name": {
                       "type": "string"
                     },
+                    "species": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Compound the constant refers to (e.g. the substrate for a Km), if SABIO-RK names one"
+                    },
                     "value": {
-                      "type": "number"
+                      "type": "number",
+                      "description": "Value as reported, in 'unit'"
                     },
                     "unit": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "value_si": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "SABIO-RK's SI-normalised value, in 'unit_si' (Km in M, kcat in s^(-1))"
+                    },
+                    "unit_si": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "end_value": {
+                      "type": "number",
+                      "description": "Upper end when a range is reported"
+                    },
+                    "standard_deviation": {
+                      "type": "number"
                     }
                   }
                 }
+              },
+              "conditions": {
+                "type": "object",
+                "description": "Assay conditions: ph, temperature, temperature_unit (when reported)"
               }
             }
           }

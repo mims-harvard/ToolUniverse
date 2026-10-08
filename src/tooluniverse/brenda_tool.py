@@ -19,6 +19,7 @@ from typing import Any, Dict, List, Optional
 import requests
 
 from .base_tool import BaseTool
+from .sabiork_tool import parse_solr_kinetic_law
 from .tool_registry import register_tool
 
 BRENDA_WSDL = "https://www.brenda-enzymes.org/soap/brenda_zeep.wsdl"
@@ -407,13 +408,9 @@ class BRENDATool(BaseTool):
         silently reported 0 SABIO-RK entries when the real count is 768.
         Ports the same Solr-backed endpoint sabiork_tool.py's SABIORKTool
         already migrated to (see its _search_reactions docstring) instead
-        of reimplementing a second copy of the fix. That endpoint doesn't
-        expose raw numeric parameter values (confirmed live -- SABIORKTool's
-        own "parameters" field is always empty too), so kinetic_laws entries
-        carry parameter_types/entry metadata but no Km/kcat/Ki numeric
-        values; the caller's numeric parameter_summary aggregation below
-        simply has nothing to aggregate, same as before this fix (never a
-        regression, since the old code always returned 0 entries anyway).
+        of reimplementing a second copy of the fix. The numeric Km/kcat/Ki
+        values are in each doc's ``Json`` field, not in a field of their own;
+        parse_solr_kinetic_law extracts them.
         """
         query_parts = [f"ECNumber:{ec_number}"]
         if organism:
@@ -428,7 +425,7 @@ class BRENDATool(BaseTool):
                 "wt": "json",
                 "rows": limit,
                 "fl": "EntryID,ECNumber,EnzymeName,Organism,Tissue,Substrate,"
-                "Product,ParameterType,PubMedID",
+                "Product,ParameterType,PubMedID,Json",
             },
             timeout=20,
         )
@@ -440,27 +437,30 @@ class BRENDATool(BaseTool):
         def _first(v):
             return v[0] if isinstance(v, list) and v else v
 
-        kinetic_laws = [
-            {
-                "sabiork_entry_id": str(_first(d.get("EntryID")) or ""),
-                "ec_number": _first(d.get("ECNumber")),
-                "enzyme_name": _first(d.get("EnzymeName")),
-                "organism": _first(d.get("Organism")),
-                "tissue": _first(d.get("Tissue")),
-                "substrates": d.get("Substrate")
-                if isinstance(d.get("Substrate"), list)
-                else [],
-                "products": d.get("Product")
-                if isinstance(d.get("Product"), list)
-                else [],
-                "parameter_types": d.get("ParameterType")
-                if isinstance(d.get("ParameterType"), list)
-                else [],
-                "parameters": [],
-                "pubmed_id": _first(d.get("PubMedID")),
-            }
-            for d in docs
-        ]
+        kinetic_laws = []
+        for d in docs:
+            law = parse_solr_kinetic_law(d.get("Json"))
+            kinetic_laws.append(
+                {
+                    "sabiork_entry_id": str(_first(d.get("EntryID")) or ""),
+                    "ec_number": _first(d.get("ECNumber")),
+                    "enzyme_name": _first(d.get("EnzymeName")),
+                    "organism": _first(d.get("Organism")),
+                    "tissue": _first(d.get("Tissue")),
+                    "substrates": d.get("Substrate")
+                    if isinstance(d.get("Substrate"), list)
+                    else [],
+                    "products": d.get("Product")
+                    if isinstance(d.get("Product"), list)
+                    else [],
+                    "parameter_types": d.get("ParameterType")
+                    if isinstance(d.get("ParameterType"), list)
+                    else [],
+                    "parameters": law["parameters"],
+                    "conditions": law["conditions"],
+                    "pubmed_id": _first(d.get("PubMedID")),
+                }
+            )
         return {"kinetic_laws": kinetic_laws, "total_count": total_count}
 
     def _get_enzyme_kinetics(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -534,32 +534,45 @@ class BRENDATool(BaseTool):
             if sabio.get("kinetic_laws"):
                 sources_used.append("SABIO-RK")
 
-                # Aggregate summary statistics
-                param_units = {"Km": "M", "kcat": "s^{-1}", "Ki": "M"}
-                buckets: Dict[str, list] = {}
+                # Aggregate on SABIO-RK's SI-normalised values: reported units
+                # differ between entries (Km in mM or uM, kcat in s^-1 or
+                # min^-1). SABIO-RK normalises Vmax to katal*g^(-1) in some
+                # entries and mol*s^(-1)*g^(-1) in others; 1 katal = 1 mol/s, so
+                # those are merged. Values in any other unit than the type's
+                # most common one are counted but not mixed into the stats.
+                buckets: Dict[str, Dict[str, list]] = {}
                 for law in sabio.get("kinetic_laws", []):
                     for p in law.get("parameters", []):
                         ptype = p.get("type", "")
-                        pval = p.get("value")
+                        pval = p.get("value_si")
                         if isinstance(pval, (int, float)) and ptype in (
                             "Km",
                             "kcat",
                             "Ki",
                             "Vmax",
+                            "kcat/Km",
                         ):
-                            buckets.setdefault(ptype, []).append(pval)
+                            unit = (p.get("unit_si") or "").replace(
+                                "katal", "mol*s^(-1)"
+                            )
+                            buckets.setdefault(ptype, {}).setdefault(unit, []).append(
+                                pval
+                            )
 
                 summary: Dict[str, Any] = {}
-                for ptype, vals in buckets.items():
+                for ptype, by_unit in buckets.items():
+                    unit, vals = max(by_unit.items(), key=lambda kv: len(kv[1]))
                     s = sorted(vals)
                     entry: Dict[str, Any] = {
                         "count": len(s),
                         "min": s[0],
                         "max": s[-1],
                         "median": s[len(s) // 2],
+                        "unit": unit,
                     }
-                    if ptype in param_units:
-                        entry["unit"] = param_units[ptype]
+                    skipped = sum(len(v) for v in by_unit.values()) - len(s)
+                    if skipped:
+                        entry["values_in_other_units"] = skipped
                     summary[ptype] = entry
                 if summary:
                     result["parameter_summary"] = summary

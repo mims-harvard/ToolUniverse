@@ -329,11 +329,72 @@
         },
         "kinetic_parameters": {
           "type": "array",
-          "description": "Individual kinetic law entries from SABIO-RK"
+          "description": "Individual kinetic law entries from SABIO-RK; each has 'parameters' (Km/kcat/Ki/Vmax/kcat-Km values with the substrate they refer to) and 'conditions' (pH, temperature)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "parameters": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "description": "Parameter type (Km, kcat, Ki, Vmax, kcat/Km)"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "species": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Compound the constant refers to (e.g. the substrate for a Km), if SABIO-RK names one"
+                    },
+                    "value": {
+                      "type": "number",
+                      "description": "Value as reported, in 'unit'"
+                    },
+                    "unit": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "value_si": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "SABIO-RK's SI-normalised value, in 'unit_si' (Km in M, kcat in s^(-1))"
+                    },
+                    "unit_si": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "end_value": {
+                      "type": "number",
+                      "description": "Upper end when a range is reported"
+                    },
+                    "standard_deviation": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              "conditions": {
+                "type": "object",
+                "description": "Assay conditions: ph, temperature, temperature_unit (when reported)"
+              }
+            }
+          }
         },
         "parameter_summary": {
           "type": "object",
-          "description": "Aggregated statistics for Km, kcat, Ki, Vmax across all entries"
+          "description": "Per parameter type (Km, kcat, Ki, Vmax, kcat/Km): count, min, max, median of the SI-normalised values in the returned entries, with their unit; values_in_other_units counts values left out because their unit differs"
         },
         "sabiork_total_entries": {
           "type": "integer"

@@ -8,6 +8,7 @@ API: https://sabiork.h-its.org/sabioRestWebServices/
 No authentication required. Free public access.
 """
 
+import json
 import xml.etree.ElementTree as ET
 from typing import Any, Dict, List, Optional
 
@@ -37,6 +38,65 @@ _UNIT_MAP = {
     "swedgeone": "s^{-1}",
     "Mwedgeoneswedgeone": "M^{-1}*s^{-1}",
 }
+
+
+def parse_solr_kinetic_law(json_field: Any) -> Dict[str, Any]:
+    """Pull the measured constants out of a Solr doc's ``Json`` field.
+
+    The Solr index (``/api/ft/proxy-select``) has no ``Parameter`` or
+    ``ParameterUnit`` field; asking for them returns nothing. The values live
+    in ``Json`` (a JSON string, ~10 kB per entry) under
+    ``kineticlaw.parameter[]``. Only constants with a reported value are kept:
+    assay concentration ranges (role "Variable") and the value-less
+    placeholders SABIO-RK stores for some laws would only add noise.
+    ``value``/``unit`` are as reported; ``value_si``/``unit_si`` are SABIO-RK's
+    own normalisation (Km in M, kcat in s^(-1)), which is what aggregation
+    across entries needs.
+    """
+    if isinstance(json_field, list):
+        json_field = json_field[0] if json_field else None
+    try:
+        law = json.loads(json_field) if isinstance(json_field, str) else json_field
+    except ValueError:
+        law = None
+    if not isinstance(law, dict):
+        return {"parameters": [], "conditions": {}}
+
+    parameters = []
+    for raw in (law.get("kineticlaw") or {}).get("parameter") or []:
+        if not isinstance(raw, dict) or raw.get("start_value") is None:
+            continue
+        if raw.get("role") != "Constant":
+            continue
+        unit = raw.get("unit") or {}
+        species_key = (raw.get("species") or {}).get("species_key") or ""
+        # "1 | Ethanol | Substrate" -> "Ethanol"
+        key_parts = [part.strip() for part in species_key.split("|")]
+        entry = {
+            "type": (raw.get("parameter_type") or {}).get("name") or raw.get("name"),
+            "name": raw.get("name"),
+            "species": key_parts[1] if len(key_parts) > 1 else None,
+            "value": raw.get("start_value"),
+            "unit": unit.get("name"),
+            "value_si": raw.get("n_start_value"),
+            "unit_si": unit.get("n_name"),
+        }
+        if raw.get("end_value") is not None:
+            entry["end_value"] = raw["end_value"]
+        if raw.get("standard_deviation") is not None:
+            entry["standard_deviation"] = raw["standard_deviation"]
+        parameters.append(entry)
+
+    conditions_raw = law.get("experimental_conditions") or {}
+    conditions = {}
+    ph = (conditions_raw.get("envvar_ph") or {}).get("start_value")
+    if ph is not None:
+        conditions["ph"] = ph
+    temperature = conditions_raw.get("envvar_temperature") or {}
+    if temperature.get("start_value") is not None:
+        conditions["temperature"] = temperature["start_value"]
+        conditions["temperature_unit"] = temperature.get("unit")
+    return {"parameters": parameters, "conditions": conditions}
 
 
 def _is_no_data_response(text: str) -> bool:
@@ -252,9 +312,8 @@ class SABIORKTool(BaseTool):
                     "Substrate",
                     "Product",
                     "Catalyst",
-                    "Parameter",
                     "ParameterType",
-                    "ParameterUnit",
+                    "Json",
                     "KineticMechanismType",
                     "PubMedID",
                     "InsertDate",
@@ -292,44 +351,45 @@ class SABIORKTool(BaseTool):
         def _first(v):
             return v[0] if isinstance(v, list) and v else v
 
-        records = [
-            {
-                "entry_id": str(_first(d.get("EntryID")) or ""),
-                "sabio_reaction_id": str(_first(d.get("SabioReactionID")) or ""),
-                "reaction_equation": _first(d.get("ReactionEquation")),
-                "ec_number": _first(d.get("ECNumber")),
-                "enzyme_name": _first(d.get("EnzymeName")),
-                "organism": _first(d.get("Organism")),
-                "tissue": _first(d.get("Tissue")),
-                "substrates": d.get("Substrate")
-                if isinstance(d.get("Substrate"), list)
-                else [d.get("Substrate")]
-                if d.get("Substrate")
-                else [],
-                "products": d.get("Product")
-                if isinstance(d.get("Product"), list)
-                else [d.get("Product")]
-                if d.get("Product")
-                else [],
-                "catalysts": d.get("Catalyst")
-                if isinstance(d.get("Catalyst"), list)
-                else [d.get("Catalyst")]
-                if d.get("Catalyst")
-                else [],
-                "parameters": d.get("Parameter")
-                if isinstance(d.get("Parameter"), list)
-                else [],
-                "parameter_types": d.get("ParameterType")
-                if isinstance(d.get("ParameterType"), list)
-                else [],
-                "parameter_units": d.get("ParameterUnit")
-                if isinstance(d.get("ParameterUnit"), list)
-                else [],
-                "mechanism_type": _first(d.get("KineticMechanismType")),
-                "pubmed_id": _first(d.get("PubMedID")),
-            }
-            for d in docs
-        ]
+        records = []
+        for d in docs:
+            law = parse_solr_kinetic_law(d.get("Json"))
+            records.append(
+                {
+                    "entry_id": str(_first(d.get("EntryID")) or ""),
+                    "sabio_reaction_id": str(_first(d.get("SabioReactionID")) or ""),
+                    "reaction_equation": _first(d.get("ReactionEquation")),
+                    "ec_number": _first(d.get("ECNumber")),
+                    "enzyme_name": _first(d.get("EnzymeName")),
+                    "organism": _first(d.get("Organism")),
+                    "tissue": _first(d.get("Tissue")),
+                    "substrates": d.get("Substrate")
+                    if isinstance(d.get("Substrate"), list)
+                    else [d.get("Substrate")]
+                    if d.get("Substrate")
+                    else [],
+                    "products": d.get("Product")
+                    if isinstance(d.get("Product"), list)
+                    else [d.get("Product")]
+                    if d.get("Product")
+                    else [],
+                    "catalysts": d.get("Catalyst")
+                    if isinstance(d.get("Catalyst"), list)
+                    else [d.get("Catalyst")]
+                    if d.get("Catalyst")
+                    else [],
+                    "parameters": law["parameters"],
+                    "parameter_types": d.get("ParameterType")
+                    if isinstance(d.get("ParameterType"), list)
+                    else [],
+                    "parameter_units": sorted(
+                        {p["unit"] for p in law["parameters"] if p.get("unit")}
+                    ),
+                    "conditions": law["conditions"],
+                    "mechanism_type": _first(d.get("KineticMechanismType")),
+                    "pubmed_id": _first(d.get("PubMedID")),
+                }
+            )
 
         return {
             "status": "success",
