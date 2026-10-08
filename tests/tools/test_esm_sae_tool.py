@@ -23,7 +23,9 @@ def _fake_sae_tensor(seq_len: int, n_features: int = 16384, k: int = 64):
     Shape: (seq_len + 2, n_features) — +2 for BOS/EOS tokens.
     Sparsity: k features active per row, deterministic positions.
     """
-    import torch
+    # torch is an optional dependency; tests that need a fake tensor skip
+    # without it, the rest of the module still runs.
+    torch = pytest.importorskip("torch")
 
     rows = []
     cols = []

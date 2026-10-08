@@ -14,11 +14,13 @@ Tests that duplicate test_critical_error_handling.py have been removed.
 """
 
 import gc
+import os
 import sys
 import time
 import unittest
 import warnings
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -176,13 +178,18 @@ class TestDiscoveredBugs(unittest.TestCase):
     @pytest.mark.network
     def test_missing_api_key_returns_dict(self):
         """Tools that need API keys must return a dict (not raise) when keys absent."""
+        # ArXiv_search_papers used to be listed here, but it needs no key and
+        # its declared return_schema is an array, so a list is its correct
+        # answer. OMIM_search is key-gated; run it with the key removed.
         tool_args = {
             "UniProt_get_entry_by_accession": {"accession": "P05067"},
-            "ArXiv_search_papers": {"query": "test", "limit": 5},
+            "OMIM_search": {"query": "Marfan"},
             "OpenTargets_get_associated_targets_by_disease_efoId": {"efoId": "EFO_0000305"},
         }
+        env = {k: v for k, v in os.environ.items() if k != "OMIM_API_KEY"}
         for tool_name, args in tool_args.items():
-            result = self.tu.run({"name": tool_name, "arguments": args})
+            with patch.dict(os.environ, env, clear=True):
+                result = self.tu.run({"name": tool_name, "arguments": args})
             self.assertIsInstance(result, dict, f"Expected dict from {tool_name}")
             if "error" in result:
                 error_msg = result["error"]

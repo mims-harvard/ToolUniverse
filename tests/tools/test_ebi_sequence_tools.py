@@ -20,6 +20,11 @@ EXPECTED_TOOLS = [
 
 TRANSIENT = ("timed out", "Failed to connect", "did not finish", "HTTP 5")
 
+# EBI jobs are polled for up to 150 s (50 x 3 s in ebi_alignment_tool). The
+# global 60 s pytest timeout killed a queued job before the tool could report
+# "did not finish", which the skip above already handles.
+pytestmark = pytest.mark.timeout(240)
+
 # Bovine rhodopsin (P02699): the canonical seven-transmembrane receptor.
 RHODOPSIN = (
     ">sp_P02699\n"

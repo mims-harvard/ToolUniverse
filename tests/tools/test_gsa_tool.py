@@ -15,6 +15,9 @@ from tooluniverse import ToolUniverse
 
 
 TRANSIENT = ("timed out", "Failed to connect", "HTTP 5")
+# Since 2026-10 GSA answers record pages with a JavaScript challenge; the tool
+# reports it as a browser check (1c104426), which is not a parsing failure.
+UPSTREAM_WALL = ("browser check",)
 
 MELANOMA_ACCESSION = "CRA002926"
 
@@ -31,6 +34,8 @@ def data_of(result):
         error = str(result.get("error", ""))
         if any(t in error for t in TRANSIENT):
             pytest.skip(f"upstream temporarily unavailable: {error[:80]}")
+        if any(t in error for t in UPSTREAM_WALL):
+            pytest.skip(f"GSA is serving a browser check: {error[:80]}")
         pytest.fail(f"unexpected error response: {error[:200]}")
     return result["data"]
 

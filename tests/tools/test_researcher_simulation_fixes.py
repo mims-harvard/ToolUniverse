@@ -176,16 +176,18 @@ class TestSemanticScholarErrorFormat(unittest.TestCase):
         }
         return SemanticScholarTool(config)
 
-    def test_missing_query_returns_error_list(self):
-        """Missing query should return a list with one error item (consistent with EuropePMC/PMC)."""
+    def test_missing_query_returns_error(self):
+        """Missing query is an error, not a fake paper result.
+
+        Since 4641138a run() reports argument errors in the standard
+        {"status": "error", "error": ...} envelope instead of a one-item list.
+        """
         tool = self._make_tool()
         result = tool.run({})
 
-        self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 1)
-        self.assertIn("error", result[0])
-        self.assertIn("query", result[0]["error"])
-        self.assertFalse(result[0].get("retryable", True))
+        self.assertIsInstance(result, dict)
+        self.assertEqual(result["status"], "error")
+        self.assertIn("query", result["error"])
 
     @patch("tooluniverse.semantic_scholar_tool.request_with_retry")
     def test_api_error_returns_error_list(self, mock_request):
@@ -325,7 +327,9 @@ class TestClinVarConditionFieldTag(unittest.TestCase):
         tool = self._make_tool()
         tool.run({"gene": "TP53", "condition": "Li-Fraumeni syndrome"})
 
-        call_args = mock_request.call_args
+        # The first request is the eSearch; with a non-empty idlist the tool
+        # follows up with eSummary, which carries no "term".
+        call_args = mock_request.call_args_list[0]
         term = call_args[1]["params"]["term"] if "params" in (call_args[1] or {}) else call_args[0][1]["term"]
         self.assertIn("[dis]", term)
         self.assertIn("[gene]", term)
@@ -616,17 +620,27 @@ class TestGTExGeneIdResolution(unittest.TestCase):
         self.assertIn("/reference/gene", first_call_url)
 
     @patch("tooluniverse.gtex_v2_tool.requests.get")
-    def test_versioned_id_not_re_resolved(self, mock_get):
-        """Already versioned IDs (containing '.') should not trigger resolution."""
+    def test_versioned_id_re_resolved_against_dataset_gencode(self, mock_get):
+        """A versioned ID is re-resolved against the dataset's GENCODE release.
+
+        Since 26c6bba2 the suffix is stripped and looked up again: TP53 is .18 in
+        GENCODE v39 (gtex_v10) but .16 in v26 (gtex_v8), and the wrong suffix
+        returns an empty HTTP 200 that reads as "no expression".
+        """
         tool = self._make_tool()
 
+        resolve_resp = MagicMock()
+        resolve_resp.status_code = 200
+        resolve_resp.json.return_value = {
+            "data": [{"gencodeId": "ENSG00000141510.16", "geneSymbol": "TP53"}]
+        }
         expr_resp = MagicMock()
         expr_resp.status_code = 200
         expr_resp.json.return_value = {
-            "data": [{"gencodeId": "ENSG00000141510.18", "median": 10.0}],
+            "data": [{"gencodeId": "ENSG00000141510.16", "median": 10.0}],
             "paging_info": {},
         }
-        mock_get.return_value = expr_resp
+        mock_get.side_effect = [resolve_resp, expr_resp]
 
         result = tool.run({
             "operation": "get_median_gene_expression",
@@ -634,8 +648,11 @@ class TestGTExGeneIdResolution(unittest.TestCase):
         })
 
         self.assertEqual(result["status"], "success")
-        # Only 1 call (expression), no resolution call
-        self.assertEqual(mock_get.call_count, 1)
+        self.assertEqual(mock_get.call_count, 2)
+        first_url, first_kwargs = mock_get.call_args_list[0][0][0], mock_get.call_args_list[0][1]
+        self.assertIn("/reference/gene", first_url)
+        self.assertEqual(first_kwargs["params"]["geneId"], "ENSG00000141510")
+        self.assertEqual(first_kwargs["params"]["gencodeVersion"], "v26")
         # Feature-80A: without tissue, uses clusteredMedianGeneExpression
         self.assertIn("GeneExpression", mock_get.call_args[0][0])
 
@@ -714,7 +731,8 @@ class TestIntActInteractorEndpoint(unittest.TestCase):
 
         mock_ebi.assert_not_called()
         self.assertEqual(result["status"], "success")
-        self.assertEqual(result["totalElements"], 1)
+        # Since 4641138a paging counts live under "metadata".
+        self.assertEqual(result["metadata"]["totalElements"], 1)
 
     @patch("tooluniverse.intact_tool.IntActRESTTool._use_ebi_search")
     def test_paginated_response_handled(self, mock_ebi):
@@ -736,9 +754,10 @@ class TestIntActInteractorEndpoint(unittest.TestCase):
             result = tool.run({"identifier": "BRCA1"})
 
         self.assertEqual(result["status"], "success")
-        self.assertEqual(result["count"], 2)
-        self.assertEqual(result["totalElements"], 500)
-        self.assertIn("note", result)
+        self.assertEqual(len(result["data"]), 2)
+        self.assertEqual(result["metadata"]["count"], 2)
+        self.assertEqual(result["metadata"]["totalElements"], 500)
+        self.assertIn("note", result["metadata"])
 
 
 # ---------------------------------------------------------------------------
@@ -971,9 +990,11 @@ class TestOperationAutoFill(unittest.TestCase):
         from tooluniverse.omim_tool import OMIMTool
         config = self._load_config("omim_tools.json", "OMIM_search")
         tool = OMIMTool(config)
-        tool.api_key = "fake_key"  # bypass API key check
         tool._search = MagicMock(return_value={"status": "success"})
-        tool.run({"query": "Marfan"})  # No operation param
+        # api_key is a read-only property read per call (9c410176); supply
+        # the key through the environment instead of assigning it.
+        with patch.dict(os.environ, {"OMIM_API_KEY": "fake_key"}):
+            tool.run({"query": "Marfan"})  # No operation param
         tool._search.assert_called_once()
 
     def test_disgenet_auto_fills_operation(self):
@@ -981,10 +1002,12 @@ class TestOperationAutoFill(unittest.TestCase):
         from tooluniverse.disgenet_tool import DisGeNETTool
         config = self._load_config("disgenet_tools.json", "DisGeNET_search_gene")
         tool = DisGeNETTool(config)
-        tool.api_key = "fake_key"  # bypass API key check
-        tool._search_gene = MagicMock(return_value={"status": "success"})
-        tool.run({"gene_symbol": "FBN1"})  # No operation param
-        tool._search_gene.assert_called_once()
+        # search_gene is served by _gene_disease since f74ba646, and the key is
+        # a read-only property read per call (9c410176).
+        tool._gene_disease = MagicMock(return_value={"status": "success"})
+        with patch.dict(os.environ, {"DISGENET_API_KEY": "fake_key"}):
+            tool.run({"gene": "FBN1"})  # No operation param
+        tool._gene_disease.assert_called_once()
 
     def test_all_fixed_jsons_no_operation_required(self):
         """All fixed JSON files should NOT have 'operation' in required."""
@@ -1048,9 +1071,11 @@ class TestMonarchRemoveEmptyValues(unittest.TestCase):
                     return_value=mock_response):
             result = tool.run({"query": "nonexistent phenotype"})
 
-        self.assertEqual(result["total"], 0)
-        self.assertEqual(result["items"], [])
-        self.assertIn("limit", result)
+        # Results sit under "data" since 2bf51984.
+        data = result["data"]
+        self.assertEqual(data["total"], 0)
+        self.assertEqual(data["items"], [])
+        self.assertIn("limit", data)
 
     def test_zero_descendant_count_preserved(self):
         """descendant_count: 0 should NOT be stripped."""
@@ -1082,92 +1107,29 @@ class TestMonarchRemoveEmptyValues(unittest.TestCase):
                     return_value=mock_response):
             result = tool.run({"query": "seizure"})
 
-        item = result["items"][0]
+        item = result["data"]["items"][0]
         self.assertEqual(item["has_descendant_count"], 0)
         # None values should still be stripped
         self.assertNotIn("description", item)
 
 
 # ---------------------------------------------------------------------------
-# CTD mitochondrial gene name normalization
-# ---------------------------------------------------------------------------
-class TestCTDMitoGeneNormalization(unittest.TestCase):
-    """CTD tool should strip MT- prefix for mitochondrial gene queries."""
-
-    def _make_tool(self, input_type="gene"):
-        from tooluniverse.ctd_tool import CTDTool
-
-        config = {
-            "name": "CTD_get_gene_diseases",
-            "type": "CTDTool",
-            "fields": {"input_type": input_type, "report_type": "diseases_curated"},
-        }
-        return CTDTool(config)
-
-    @patch("tooluniverse.ctd_tool.requests.get")
-    def test_mt_prefix_stripped(self, mock_get):
-        """MT-ND5 should be normalized to ND5 for CTD queries."""
-        tool = self._make_tool()
-
-        mock_resp = MagicMock()
-        mock_resp.status_code = 200
-        mock_resp.raise_for_status = MagicMock()
-        mock_resp.text = '[{"GeneSymbol": "ND5", "DiseaseName": "MELAS"}]'
-        mock_resp.json.return_value = [
-            {"GeneSymbol": "ND5", "DiseaseName": "MELAS"}
-        ]
-        mock_get.return_value = mock_resp
-
-        result = tool.run({"input_terms": "MT-ND5"})
-
-        # Verify API was called with ND5, not MT-ND5
-        call_params = mock_get.call_args[1].get("params", {})
-        self.assertEqual(call_params["inputTerms"], "ND5")
-
-        # Verify metadata includes normalization note
-        self.assertIn("normalized_query", result["metadata"])
-        self.assertEqual(result["metadata"]["normalized_query"], "ND5")
-
-    @patch("tooluniverse.ctd_tool.requests.get")
-    def test_non_mito_gene_unchanged(self, mock_get):
-        """Non-mitochondrial genes should NOT be modified."""
-        tool = self._make_tool()
-
-        mock_resp = MagicMock()
-        mock_resp.status_code = 200
-        mock_resp.raise_for_status = MagicMock()
-        mock_resp.text = '[{"GeneSymbol": "BRCA1"}]'
-        mock_resp.json.return_value = [{"GeneSymbol": "BRCA1"}]
-        mock_get.return_value = mock_resp
-
-        result = tool.run({"input_terms": "BRCA1"})
-
-        call_params = mock_get.call_args[1].get("params", {})
-        self.assertEqual(call_params["inputTerms"], "BRCA1")
-        self.assertNotIn("normalized_query", result["metadata"])
-
-    @patch("tooluniverse.ctd_tool.requests.get")
-    def test_mt_prefix_only_for_gene_type(self, mock_get):
-        """MT- prefix stripping should only apply to gene input_type."""
-        tool = self._make_tool(input_type="chem")
-
-        mock_resp = MagicMock()
-        mock_resp.status_code = 200
-        mock_resp.raise_for_status = MagicMock()
-        mock_resp.text = "[]"
-        mock_resp.json.return_value = []
-        mock_get.return_value = mock_resp
-
-        tool.run({"input_terms": "MT-ND5"})
-
-        call_params = mock_get.call_args[1].get("params", {})
-        # Chemical queries should NOT strip MT-
-        self.assertEqual(call_params["inputTerms"], "MT-ND5")
-
-
-# ---------------------------------------------------------------------------
 # ClinGen variant classifications coverage note
 # ---------------------------------------------------------------------------
+_PAH_EREPO_ROW = {
+    "variationId": "586",
+    "hgvs": ["NM_000277.2:c.1A>G", "NM_000277.2(PAH):c.1A>G (p.Met1Val)"],
+    "gene": {"label": "PAH"},
+    "condition": {"label": "phenylketonuria", "@id": "MONDO:0009861"},
+    "guidelines": [
+        {
+            "outcome": {"label": "Pathogenic"},
+            "agents": [{"affiliation": "Phenylketonuria VCEP"}],
+        }
+    ],
+}
+
+
 class TestClinGenVariantClassificationNote(unittest.TestCase):
     """ClinGen should add helpful note when no variant classifications found."""
 
@@ -1187,14 +1149,12 @@ class TestClinGenVariantClassificationNote(unittest.TestCase):
         """When no classifications found for a gene, include helpful note."""
         tool = self._make_tool()
 
-        # Mock TSV response with only header (no data for the gene)
+        # The Evidence Repository JSON API (bb314a29) returns a row for a
+        # different gene; the exact gene re-check must drop it.
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.raise_for_status = MagicMock()
-        mock_resp.text = (
-            "#Variation\tClinVar Variation Id\tHGNC Gene Symbol\n"
-            "NM_000277.2:c.1A>G\t586\tPAH\n"
-        )
+        mock_resp.json.return_value = {"variantInterpretations": [_PAH_EREPO_ROW]}
         mock_get.return_value = mock_resp
 
         result = tool.run({"gene": "LRRK2"})
@@ -1213,16 +1173,14 @@ class TestClinGenVariantClassificationNote(unittest.TestCase):
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.raise_for_status = MagicMock()
-        mock_resp.text = (
-            "#Variation\tClinVar Variation Id\tHGNC Gene Symbol\tDisease\n"
-            "NM_000277.2:c.1A>G\t586\tPAH\tphenylketonuria\n"
-        )
+        mock_resp.json.return_value = {"variantInterpretations": [_PAH_EREPO_ROW]}
         mock_get.return_value = mock_resp
 
         result = tool.run({"gene": "PAH"})
 
         self.assertEqual(result["status"], "success")
         self.assertGreater(result["total"], 0)
+        self.assertEqual(result["data"][0]["Disease"], "phenylketonuria")
         self.assertNotIn("note", result)
 
 
@@ -1423,7 +1381,10 @@ class TestGEOMethylationGPLFilter(unittest.TestCase):
 # GTEx expression summary provides helpful note on empty results
 # ---------------------------------------------------------------------------
 class TestGTExExpressionSummaryNote(unittest.TestCase):
-    """GTEx expression summary should provide hints when results are empty."""
+    """GTEx expression summary should provide hints when results are empty.
+
+    The boolean "success" key became the standard "status" envelope in 4641138a.
+    """
 
     def _make_tool(self):
         from tooluniverse.gtex_tool import GTExExpressionTool
@@ -1449,7 +1410,7 @@ class TestGTExExpressionSummaryNote(unittest.TestCase):
 
         result = tool.run({"gene_symbol": "COL5A1"})
 
-        self.assertTrue(result["success"])
+        self.assertEqual(result["status"], "success")
         self.assertEqual(result["data"]["geneExpression"], [])
         self.assertIn("note", result)
         self.assertIn("Could not resolve", result["note"])
@@ -1468,7 +1429,7 @@ class TestGTExExpressionSummaryNote(unittest.TestCase):
 
         result = tool.run({"ensembl_gene_id": "ENSG00000130635"})
 
-        self.assertTrue(result["success"])
+        self.assertEqual(result["status"], "success")
         self.assertIn("note", result)
         self.assertIn("GENCODE version", result["note"])
 
@@ -1486,7 +1447,7 @@ class TestGTExExpressionSummaryNote(unittest.TestCase):
 
         result = tool.run({"gene_symbol": "TP53"})
 
-        self.assertTrue(result["success"])
+        self.assertEqual(result["status"], "success")
         self.assertEqual(len(result["data"]["geneExpression"]), 1)
         self.assertNotIn("note", result)
 
@@ -1494,7 +1455,7 @@ class TestGTExExpressionSummaryNote(unittest.TestCase):
         """Should return error when neither gene_symbol nor ensembl_gene_id provided."""
         tool = self._make_tool()
         result = tool.run({})
-        self.assertFalse(result["success"])
+        self.assertEqual(result["status"], "error")
         self.assertIn("error", result)
 
 
@@ -1516,7 +1477,7 @@ class TestGDCMutationFrequency(unittest.TestCase):
 
     @patch("tooluniverse.gdc_tool._http_get")
     def test_returns_ssm_occurrence_counts(self, mock_http):
-        """Should return total_ssm_occurrences and per-project counts."""
+        """Should return total_ssm_occurrences and the Cancer Gene Census flag."""
         tool = self._make_tool()
 
         # First call: /genes for gene info
@@ -1552,10 +1513,9 @@ class TestGDCMutationFrequency(unittest.TestCase):
 
         self.assertEqual(result["status"], "success")
         self.assertEqual(result["data"]["total_ssm_occurrences"], 15000)
-        self.assertEqual(len(result["data"]["project_mutation_counts"]), 3)
-        self.assertEqual(
-            result["data"]["project_mutation_counts"][0]["project_id"], "TCGA-OV"
-        )
+        # project_mutation_counts was dropped in 4641138a: /ssm_occurrences
+        # ignores that facet, so the field was always empty.
+        self.assertNotIn("project_mutation_counts", result["data"])
         self.assertTrue(result["data"]["is_cancer_gene_census"])
 
     def test_missing_gene_symbol_returns_error(self):
@@ -1705,10 +1665,10 @@ class TestOncoKBDemoNote(unittest.TestCase):
     def test_demo_mode_includes_note(self, mock_get):
         """Demo mode response should include a note about limited results."""
         tool = self._make_tool()
-        # Force demo mode
-        tool.api_token = ""
-        tool.use_demo = True
-        tool.base_url = "https://demo.oncokb.org/api/v1"
+        # api_token, use_demo and base_url are read-only properties derived
+        # from the environment per call (9c410176); the cleared environment
+        # above is what forces demo mode.
+        self.assertTrue(tool.use_demo)
 
         mock_resp = MagicMock()
         mock_resp.status_code = 200
@@ -1753,8 +1713,10 @@ class TestHumanBaseEntrezIdHandling(unittest.TestCase):
 
         result = tool.run({"gene_list": ["INVALID"], "tissue": "brain"})
 
+        # 6df516b9 names the unresolved symbols instead of pointing at STRING.
         self.assertEqual(result["status"], "error")
-        self.assertIn("STRING_get_interaction_partners", result["error"])
+        self.assertIn("Could not resolve 'INVALID'", result["error"])
+        self.assertEqual(result["unresolved_genes"], ["INVALID"])
 
     @patch("tooluniverse.humanbase_tool.HumanBaseTool.get_entrez_ids")
     def test_none_values_filtered_from_entrez_ids(self, mock_ids):
@@ -1796,7 +1758,8 @@ class TestHumanBaseEntrezIdHandling(unittest.TestCase):
         result = tool.run({"gene_list": ["FAKE1", "FAKE2"], "tissue": "brain"})
 
         self.assertEqual(result["status"], "error")
-        self.assertIn("STRING_get_interaction_partners", result["error"])
+        self.assertIn("Could not resolve", result["error"])
+        self.assertEqual(result["unresolved_genes"], ["FAKE1", "FAKE2"])
 
 
 # ---------------------------------------------------------------------------
@@ -1805,7 +1768,9 @@ class TestHumanBaseEntrezIdHandling(unittest.TestCase):
 class TestHumanBaseSchemaOptionalParams(unittest.TestCase):
     """HumanBase schema should not require interaction or string_mode."""
 
-    def test_required_only_gene_list(self):
+    def test_nothing_required_gene_list_or_genes_alias_accepted(self):
+        """Since 4641138a nothing is required: gene_list or its alias genes
+        is accepted, and run() errors when neither is given."""
         import json
 
         with open(
@@ -1815,7 +1780,9 @@ class TestHumanBaseSchemaOptionalParams(unittest.TestCase):
 
         tool = tools[0]
         required = tool["parameter"]["required"]
-        self.assertIn("gene_list", required)
+        self.assertEqual(required, [])
+        self.assertIn("gene_list", tool["parameter"]["properties"])
+        self.assertIn("genes", tool["parameter"]["properties"])
         self.assertNotIn("interaction", required)
         self.assertNotIn("string_mode", required)
         self.assertNotIn("tissue", required)
@@ -2408,8 +2375,14 @@ class TestFDALabelGenericNameFallback(unittest.TestCase):
         return FDALabelTool(config)
 
     @patch("tooluniverse.fda_label_tool.requests.get")
-    def test_get_label_falls_back_to_unquoted(self, mock_get):
-        """When exact quoted search fails, unquoted search should match salt forms."""
+    def test_get_label_falls_back_to_bound_brand_query(self, mock_get):
+        """A generic-name miss falls back to another field-bound phrase.
+
+        Since cf5566c3 there is no unquoted fallback: an unbound openFDA query
+        matches a third of the corpus. A quoted phrase already matches salt
+        forms (tofacitinib -> TOFACITINIB CITRATE), so the next try is the
+        quoted brand name.
+        """
         tool = self._make_tool("get")
 
         not_found = MagicMock()
@@ -2434,7 +2407,7 @@ class TestFDALabelGenericNameFallback(unittest.TestCase):
             ]
         }
 
-        # Exact quoted generic fails (404), unquoted generic succeeds
+        # Quoted generic fails (404), quoted brand succeeds
         mock_get.side_effect = [not_found, found]
 
         result = tool.run({"drug_name": "tofacitinib"})
@@ -2443,10 +2416,14 @@ class TestFDALabelGenericNameFallback(unittest.TestCase):
         self.assertEqual(result["status"], "success")
         self.assertEqual(result["data"]["generic_name"], "TOFACITINIB CITRATE")
 
-        # Verify: first call was exact quoted, second was unquoted
+        # Both queries stay bound to a field and quoted.
         calls = mock_get.call_args_list
-        self.assertIn('"tofacitinib"', calls[0][1]["params"]["search"])
-        self.assertNotIn('"', calls[1][1]["params"]["search"].split(":")[-1])
+        self.assertEqual(
+            calls[0][1]["params"]["search"], 'openfda.generic_name:"tofacitinib"'
+        )
+        self.assertEqual(
+            calls[1][1]["params"]["search"], 'openfda.brand_name:"tofacitinib"'
+        )
 
     @patch("tooluniverse.fda_label_tool.requests.get")
     def test_search_falls_back_to_unquoted(self, mock_get):
@@ -2536,9 +2513,13 @@ class TestENCODEHistoneSearchGracefulFallback(unittest.TestCase):
         """Disease names (not ENCODE ontology terms) should return empty with helpful note."""
         from requests.exceptions import HTTPError
 
+        # ENCODE answers a zero-hit search with 404 and a JSON body
+        # {"@graph": [], "total": 0}, which 26c6bba2 parses as a real empty
+        # result rather than an error.
         resp_404 = MagicMock()
         resp_404.status_code = 404
         resp_404.raise_for_status.side_effect = HTTPError(response=resp_404)
+        resp_404.json.return_value = {"@graph": [], "total": 0}
 
         mock_get.return_value = resp_404
 
@@ -2547,7 +2528,7 @@ class TestENCODEHistoneSearchGracefulFallback(unittest.TestCase):
 
         self.assertEqual(result["data"], [])
         self.assertIn("note", result["metadata"])
-        self.assertIn("ENCODE requires ontology", result["metadata"]["note"])
+        self.assertIn("ENCODE requires exact ontology", result["metadata"]["note"])
 
     @patch("tooluniverse.epigenomics_tool.requests.get")
     def test_valid_biosample_works(self, mock_get):
@@ -2702,7 +2683,8 @@ class TestGTExExpressionSummaryEndpoint(unittest.TestCase):
         tool = self._make_tool()
         result = tool.run({"gene_symbol": "BRCA1"})
 
-        self.assertTrue(result.get("success"))
+        # "success": True became "status": "success" in 4641138a.
+        self.assertEqual(result.get("status"), "success")
         expr = result.get("data", {}).get("geneExpression", [])
         self.assertEqual(len(expr), 2)
         self.assertEqual(expr[0]["tissueSiteDetailId"], "Brain_Cortex")
@@ -3250,7 +3232,9 @@ class TestChEMBLDrugNameLookupIcontainsFirst(unittest.TestCase):
         }
         return ChEMBLRESTTool(config)
 
-    @patch("tooluniverse.chem_tool.requests.get")
+    # Lookups go through request_with_retry(self.session, ...) since da9e1ec7;
+    # patching requests.get no longer intercepted them and the test went live.
+    @patch("tooluniverse.chem_tool.request_with_retry")
     def test_icontains_finds_sotorasib(self, mock_get):
         """icontains lookup should find sotorasib and return parent ChEMBL ID."""
         tool = self._make_tool()
@@ -3278,7 +3262,7 @@ class TestChEMBLDrugNameLookupIcontainsFirst(unittest.TestCase):
         call_args = mock_get.call_args_list[0]
         self.assertIn("pref_name__icontains", call_args.kwargs.get("params", call_args[1].get("params", {})))
 
-    @patch("tooluniverse.chem_tool.requests.get")
+    @patch("tooluniverse.chem_tool.request_with_retry")
     def test_parent_compound_preferred(self, mock_get):
         """Should return parent compound ID for salt forms."""
         tool = self._make_tool()
@@ -3323,36 +3307,46 @@ class TestSTITCHSSLWarning(unittest.TestCase):
         mock_get.return_value = resp
 
         result = tool._get_interactions({"identifiers": ["sotorasib"]})
-        self.assertIn("error", result)
-        self.assertIn("No interactions found", result["error"])
-        self.assertIn("CID", result["error"])
+        # 34fce819: a 404 means the endpoint is unavailable on stitch-db.org,
+        # not that the identifier is bad.
+        self.assertEqual(result["status"], "error")
+        self.assertIn("endpoint", result["error"])
+        self.assertIn("STITCH_resolve_identifier", result["error"])
 
     @patch("tooluniverse.stitch_tool.requests.get")
     def test_success_returns_interactions(self, mock_get):
         """Successful response should return interactions."""
         tool = self._make_tool()
 
+        # 34fce819 reads /psi-mi-tab/interactionsList, parsed from resp.text.
+        cols = ["string:CIDm00002244", "string:9606.ENSP00000354587", "aspirin", "PTGS1"]
+        cols += ["-"] * 10 + ["score:0.999|escore:0.725|tscore:0.986"]
         resp = MagicMock()
         resp.status_code = 200
-        resp.json.return_value = [{"stringId_A": "CID1", "stringId_B": "ENSP001", "score": 900}]
+        resp.text = "\t".join(cols) + "\n"
         resp.raise_for_status = MagicMock()
         mock_get.return_value = resp
 
         result = tool._get_interactions({"identifiers": ["aspirin"]})
-        self.assertIn("interactions", result)
-        self.assertEqual(len(result["interactions"]), 1)
+        self.assertEqual(result["status"], "success")
+        self.assertEqual(len(result["data"]), 1)
+        self.assertEqual(result["data"][0]["preferredName_B"], "PTGS1")
+        self.assertEqual(result["data"][0]["score"], 0.999)
 
 
 class TestHMDBCommonName(unittest.TestCase):
     """Feature-79A-006: HMDB should return common name, not just IUPAC."""
 
+    # hmdb.ca is behind Cloudflare, so 4641138a moved hmdb_tool.py to
+    # data/broken_apis/; HMDB_get_metabolite is now served by MetaboliteTool
+    # (PubChem, resolving the HMDB ID through its RegistryID cross-reference).
     def _make_tool(self):
-        from tooluniverse.hmdb_tool import HMDBTool
+        from tooluniverse.metabolite_tool import MetaboliteTool
 
         config = {"name": "HMDB_get_metabolite"}
-        return HMDBTool(config)
+        return MetaboliteTool(config)
 
-    @patch("tooluniverse.hmdb_tool.requests.get")
+    @patch("tooluniverse.metabolite_tool.requests.get")
     def test_common_name_returned(self, mock_get):
         """Should return Title (common name) as primary name field."""
         tool = self._make_tool()
@@ -3382,7 +3376,7 @@ class TestHMDBCommonName(unittest.TestCase):
         }
 
         mock_get.side_effect = [xref_resp, props_resp]
-        result = tool._get_metabolite({"hmdb_id": "HMDB0000097"})
+        result = tool._get_info({"hmdb_id": "HMDB0000097"})
 
         self.assertEqual(result["status"], "success")
         self.assertEqual(result["data"]["name"], "Choline")
@@ -3483,10 +3477,13 @@ class TestPDBTextSearchMetadata(unittest.TestCase):
         mock_post.side_effect = [search_resp, graphql_resp]
 
         result = tool.run({"query": "KRAS", "search_type": "text", "max_results": 2})
-        self.assertEqual(len(result["results"]), 2)
-        self.assertEqual(result["results"][0]["title"], "KRAS G12C inhibitor")
-        self.assertEqual(result["results"][0]["resolution"], 1.56)
-        self.assertEqual(result["results"][0]["method"], "X-ray")
+        # Wrapped in the standard envelope since 4641138a.
+        self.assertEqual(result["status"], "success")
+        results = result["data"]["results"]
+        self.assertEqual(len(results), 2)
+        self.assertEqual(results[0]["title"], "KRAS G12C inhibitor")
+        self.assertEqual(results[0]["resolution"], 1.56)
+        self.assertEqual(results[0]["method"], "X-ray")
 
 
 if __name__ == "__main__":

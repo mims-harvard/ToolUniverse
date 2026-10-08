@@ -164,8 +164,11 @@ class TestUMLSTools:
         assert concept.get("ui") == "C0011849"
         assert "name" in concept
 
-    def test_search_requires_query(self, tu):
+    def test_search_requires_query(self, tu, monkeypatch):
         """Test that search requires query parameter."""
+        # The required-key check runs before argument validation (9c410176),
+        # so a placeholder key is needed to reach the missing-query error.
+        monkeypatch.setenv("UMLS_API_KEY", "placeholder")
         result = tu.run({
             "name": "umls_search_concepts",
             "arguments": {}
@@ -175,8 +178,11 @@ class TestUMLSTools:
         assert "error" in result
         assert "query" in result["error"].lower()
 
-    def test_get_concept_requires_cui(self, tu):
+    def test_get_concept_requires_cui(self, tu, monkeypatch):
         """Test that get_concept_details requires cui parameter."""
+        # The required-key check runs before argument validation (9c410176),
+        # so a placeholder key is needed to reach the missing-cui error.
+        monkeypatch.setenv("UMLS_API_KEY", "placeholder")
         result = tu.run({
             "name": "umls_get_concept_details",
             "arguments": {}

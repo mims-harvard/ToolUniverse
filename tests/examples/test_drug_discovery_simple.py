@@ -35,8 +35,13 @@ class TestDrugDiscoverySimple(unittest.TestCase):
             max_results=3
         )
         
-        # Should return results or None
-        self.assertTrue(compounds is None or isinstance(compounds, list))
+        # Tools answer with the {status, data} envelope; similarity search
+        # also needs the optional epam.indigo package, so an error is allowed
+        # as long as it is a structured one.
+        self.assertIsInstance(compounds, dict)
+        self.assertIn(compounds.get("status"), ("success", "error"))
+        if compounds["status"] == "success":
+            self.assertIsInstance(compounds["data"], list)
     
     def test_predict_admet_properties(self):
         """Test ADMET property prediction using ADMETAI tool."""
@@ -55,8 +60,11 @@ class TestDrugDiscoverySimple(unittest.TestCase):
             limit=3
         )
         
-        # Should return results or None
-        self.assertTrue(papers is None or isinstance(papers, list))
+        # Standard {status, data, metadata} envelope since aa386a98.
+        self.assertIsInstance(papers, dict)
+        self.assertIn(papers.get("status"), ("success", "error"))
+        if papers["status"] == "success":
+            self.assertIsInstance(papers["data"], list)
     
     def test_drug_discovery_workflow(self):
         """Test that the drug discovery workflow tools work correctly."""

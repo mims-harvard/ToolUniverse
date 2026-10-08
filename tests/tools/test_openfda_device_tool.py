@@ -128,7 +128,11 @@ class TestSearch510k:
             tu.tools.OpenFDADevice_search_510k(device_name="pacemaker", limit=10)
         )
         assert rows
-        assert any(r["k_number"] == "K913805" for r in rows)
+        # openFDA's relevance order for this term is not stable (K913805 left
+        # the top 10 by 2026-10), so check the rows are real pacemaker
+        # clearances rather than pinning one K-number.
+        assert all(r["k_number"].startswith("K") for r in rows)
+        assert any("PACEMAKER" in (r.get("device_name") or "").upper() for r in rows)
 
     def test_missing_device_name(self, tu):
         result = tu.tools.OpenFDADevice_search_510k(device_name="")
