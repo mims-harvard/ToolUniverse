@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scientific Peer Review"
+  short_description: "Structured, evidence-aware scientific manuscript review"
+  default_prompt: "Use $tooluniverse-scientific-peer-review to review this manuscript and prioritize actionable revisions."
