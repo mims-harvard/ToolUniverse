@@ -180,14 +180,14 @@ class GWASRESTTool(BaseTool):
 
         Returns ``{"efo_id": ..., "efo_label": ..., "source": ...}`` or None.
 
-        Tries the GWAS Catalog efoTraits endpoint first, then falls back to
-        a study-based resolution. The /v2/associations endpoint ignores the
+        Tries an exact label match in the GWAS Catalog efo-traits index
+        first, then falls back to a study-based resolution. The /v2/associations endpoint ignores the
         disease_trait query parameter, so we must resolve to an EFO ID.
 
         Fix-R31-2: this used to return the bare ID, so callers could only
         surface ``resolved_efo_id`` with no label -- and a *substitution* was
         indistinguishable from an exact hit. Confirmed live:
-        disease_trait="cardiorespiratory fitness" finds nothing in efoTraits
+        disease_trait="cardiorespiratory fitness" finds nothing in efo-traits
         and falls through to /v2/studies, whose single matching study
         (GCST90310239, disease_trait "Cardiorespiratory fitness") is tagged
         EFO_0009184 = "heart rate response to exercise" -- a different
@@ -195,22 +195,28 @@ class GWASRESTTool(BaseTool):
         uptake measurement"). The label travels with the ID now so callers
         can see the substitution instead of trusting a bare accession.
         """
-        # Primary: GWAS Catalog efoTraits endpoint (v1)
+        # Primary: exact label match in the v2 efo-traits index. The v1
+        # /efoTraits/search/findByEfoTrait lookup this replaced now answers
+        # HTTP 410, which silently dropped every exact name (e.g. "type 2
+        # diabetes mellitus") through to the study fallback below. v2's
+        # ?trait= is a substring search ("asthma" -> 13 terms, the bare
+        # "asthma" last), so keep only a case-insensitive exact label.
+        wanted = disease_trait.strip().lower()
         try:
             resp = _rate_limited_get(
-                f"{self.base_url}/efoTraits/search/findByEfoTrait",
-                params={"trait": disease_trait},
+                f"{self.base_url}/v2/efo-traits",
+                params={"trait": disease_trait, "size": 200},
                 timeout=15,
             )
             if resp.status_code == 200:
-                traits = resp.json().get("_embedded", {}).get("efoTraits", [])
-                if traits:
-                    short_name = traits[0].get("shortForm")
-                    if short_name:
+                traits = resp.json().get("_embedded", {}).get("efo_traits", [])
+                for trait in traits:
+                    label = self._coerce_str(trait.get("efo_trait"))
+                    if label and label.lower() == wanted and trait.get("efo_id"):
                         return {
-                            "efo_id": short_name,
-                            "efo_label": self._coerce_str(traits[0].get("trait")),
-                            "source": "GWAS Catalog efoTraits trait-label lookup",
+                            "efo_id": trait["efo_id"],
+                            "efo_label": label,
+                            "source": "GWAS Catalog efo-traits trait-label lookup",
                         }
         except Exception:
             pass
@@ -1176,10 +1182,10 @@ class GWASSNPsForGene(GWASRESTTool):
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
-        # Feature-83B-001: v2 /single-nucleotide-polymorphisms?mapped_gene= returns
-        # HTTP 500 for all gene queries. The v1 endpoint
-        # /singleNucleotidePolymorphisms/search/findByGene?geneName= works correctly.
-        self.endpoint = "/singleNucleotidePolymorphisms/search/findByGene"
+        # The v1 /singleNucleotidePolymorphisms/search/findByGene endpoint
+        # this used answers HTTP 410 ("legacy GWAS Catalog REST API is no
+        # longer available"); v2 ?mapped_gene= works (BRCA1: 23 SNPs).
+        self.endpoint = "/v2/single-nucleotide-polymorphisms"
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get SNPs for a gene."""
@@ -1192,23 +1198,21 @@ class GWASSNPsForGene(GWASRESTTool):
             return {"status": "error", "error": "gene_symbol is required"}
 
         params = {
-            "geneName": gene,
+            "mapped_gene": gene,
             "size": arguments.get("size", 50),
             "page": arguments.get("page", 0),
         }
 
         data = self._make_request(self.endpoint, params)
-        # v1 endpoint returns key "singleNucleotidePolymorphisms", not "snps"
-        result = self._extract_embedded_data(data, "singleNucleotidePolymorphisms")
+        result = self._extract_embedded_data(data, "snps")
 
-        # Feature-4B-3: the v1 findByGene endpoint repeats identical SNP
-        # records (verified: byte-for-byte duplicate objects for the same
-        # rsId), inflating apparent SNP counts. Dedupe by rsId.
+        # Feature-4B-3: the catalogue has repeated identical SNP records for
+        # one rs ID, inflating apparent SNP counts. Dedupe by rs ID.
         if result.get("status") == "success" and isinstance(result.get("data"), list):
             seen: set = set()
             deduped = []
             for snp in result["data"]:
-                rs_id = snp.get("rsId") if isinstance(snp, dict) else None
+                rs_id = snp.get("rs_id") if isinstance(snp, dict) else None
                 if rs_id:
                     if rs_id in seen:
                         continue

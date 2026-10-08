@@ -270,8 +270,8 @@ class _FakeResponse:
 
 def _fake_gwas_get(url, params=None, timeout=None, **kwargs):
     """Reproduces the live resolver traffic for 'cardiorespiratory fitness'."""
-    if "efoTraits/search/findByEfoTrait" in url:
-        return _FakeResponse({"_embedded": {"efoTraits": []}})
+    if url.endswith("/v2/efo-traits"):
+        return _FakeResponse({"_embedded": {"efo_traits": []}})
     if url.endswith("/v2/studies"):
         return _FakeResponse(
             {
@@ -334,11 +334,14 @@ def test_inexact_trait_resolution_is_flagged():
 
 def test_exact_trait_resolution_is_not_flagged_as_a_substitution():
     def exact_get(url, params=None, timeout=None, **kwargs):
-        if "efoTraits/search/findByEfoTrait" in url:
+        if url.endswith("/v2/efo-traits"):
             return _FakeResponse(
                 {
                     "_embedded": {
-                        "efoTraits": [{"trait": "asthma", "shortForm": "MONDO_0004979"}]
+                        "efo_traits": [
+                            {"efo_trait": "allergic asthma", "efo_id": "MONDO_0004784"},
+                            {"efo_trait": "asthma", "efo_id": "MONDO_0004979"},
+                        ]
                     }
                 }
             )
