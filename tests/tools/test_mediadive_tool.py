@@ -118,8 +118,9 @@ class TestGetIngredient:
     def test_media_usage_is_summarized_not_dumped(self, tu):
         # Peptone appears in hundreds of media; the sample must stay capped.
         data = data_of(tu.tools.MediaDive_get_ingredient(ingredient_id=1))
-        assert data["used_in_media_count"] > 20
+        assert data["total_used_in_media_sample"] > 20
         assert len(data["used_in_media_sample"]) <= 20
+        assert data["used_in_media_count"] == len(data["used_in_media_sample"])
 
     def test_unknown_ingredient(self, tu):
         result = tu.tools.MediaDive_get_ingredient(ingredient_id=999999999)

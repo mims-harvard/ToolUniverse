@@ -309,7 +309,8 @@ class MediaDiveTool(BaseTool):
             "metadata": {
                 "ingredient_id": ingredient_id,
                 "note": "used_in_media_sample lists up to 20 medium_ids using "
-                "this ingredient; used_in_media_count is the true total.",
+                "this ingredient and used_in_media_count counts that sample; "
+                "total_used_in_media_sample is the number of media that use it.",
                 "source": "MediaDive (DSMZ)",
             },
         }
