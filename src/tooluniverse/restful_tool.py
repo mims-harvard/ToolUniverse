@@ -261,7 +261,16 @@ class MonarchTool(RESTfulTool):
         if "facet_fields" in response:
             del response["facet_fields"]
 
+        had_items = isinstance(response, dict) and isinstance(
+            response.get("items"), list
+        )
         response = remove_none_and_empty_values(response)
+        # The shared cleaner drops every empty list, which took "items" with
+        # it on a zero-hit search: the page came back as {limit, offset,
+        # total} and a caller reading data["items"] got a KeyError only when
+        # nothing matched. An empty result keeps the shape of a full one.
+        if had_items and isinstance(response, dict):
+            response.setdefault("items", [])
         # Fix-R16A-2: Monarch's search endpoint has no server-side namespace
         # filter (confirmed live: a "prefix" query param is silently
         # ignored) and its "category" filter (e.g. biolink:PhenotypicFeature)
@@ -302,6 +311,10 @@ class MonarchTool(RESTfulTool):
                     )
                 filtered = filtered[:requested_limit]
             response["items"] = filtered
+            # Monarch echoes the over-fetched page size it was sent; report
+            # the limit the caller asked for instead.
+            if isinstance(requested_limit, int) and "limit" in response:
+                response["limit"] = requested_limit
         validation_detail = _validation_error_detail(response)
         if validation_detail:
             error = ToolValidationError(
