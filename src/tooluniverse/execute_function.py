@@ -1403,7 +1403,9 @@ class ToolUniverse:
         if all_python_files:
             self._import_user_python_tools(all_python_files)
 
-        self._load_auto_discovered_configs()
+        self._load_auto_discovered_configs(
+            category_filtered=categories is not None or bool(exclude_categories_set)
+        )
 
         if json_files:
             self._load_user_json_configs(json_files)
@@ -1837,7 +1839,7 @@ class ToolUniverse:
                     f"Failed to load Profile source '{source_uri}': {e}"
                 )
 
-    def _load_auto_discovered_configs(self):
+    def _load_auto_discovered_configs(self, category_filtered=False):
         """
         Load auto-discovered configs from the decorator registry and sub-package
         list registry.
@@ -1847,8 +1849,23 @@ class ToolUniverse:
         sub-package ``__init__.py`` files via ``register_tool_configs()`` are
         loaded from the flat list registry — this supports multiple tool
         instances per class (e.g. JLCSearch has 8 distinct configs).
+
+        Every built-in decorator config also has an entry in its category's
+        JSON file. When ``categories`` or ``exclude_categories`` narrows the
+        load, that JSON decides, so the built-in decorator copies are skipped:
+        the registry holds whichever modules happen to have been imported, and
+        ``load_tools(categories=["opennih"])`` used to return GTEx tools
+        whenever gtex_tool had been imported earlier in the process. Decorator
+        configs from user or plugin modules have no category and still load.
         """
-        from .tool_registry import get_config_registry, get_list_config_registry
+        from ._lazy_registry_static import STATIC_LAZY_REGISTRY
+        from .tool_registry import (
+            get_config_registry,
+            get_list_config_registry,
+            get_tool_registry,
+        )
+
+        tool_classes = get_tool_registry() if category_filtered else {}
 
         # Build a set of names already present so we never double-add
         existing_names = {t.get("name") for t in self.all_tools if isinstance(t, dict)}
@@ -1860,6 +1877,13 @@ class ToolUniverse:
                 f"Loading {len(discovered_configs)} auto-discovered tool configs"
             )
             for _tool_type, config in discovered_configs.items():
+                built_in_module = STATIC_LAZY_REGISTRY.get(_tool_type)
+                if (
+                    built_in_module
+                    and getattr(tool_classes.get(_tool_type), "__module__", None)
+                    == f"tooluniverse.{built_in_module}"
+                ):
+                    continue
                 if "name" in config and config["name"] not in existing_names:
                     # Ensure the config has a "type" field so init_tool can find the class.
                     # Make a shallow copy to avoid mutating the shared registry dict.
