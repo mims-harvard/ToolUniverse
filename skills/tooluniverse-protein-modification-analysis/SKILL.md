@@ -8,6 +8,8 @@ disable-model-invocation: true
 
 Comprehensive PTM analysis using iPTMnet (primary), ProtVar (functional context), UniProt (baseline), STRING (interactions), ELM (linear motifs), and MassIVE/ProteomeXchange (experimental data).
 
+> **iPTMnet is down (checked 2026-10-08).** Its REST API has answered HTTP 503 to every request since at least 2026-09-20 while the website stays up, so every `iPTMnet_*` call below currently returns that error. Try one call; if it is a 503, use the fallbacks given in each phase -- `UniProt_get_ptm_processing_by_accession` for modified residues (with the modifying enzyme where curated), `OmniPath_get_enzyme_substrate` for enzyme-substrate pairs, `EBIProteins_get_proteomics_ptm` for mass-spectrometry evidence. Nothing replaces iPTMnet's proteoform and PTM-dependent-interaction data; say so in the report rather than filling the gap.
+
 ## LOOK UP DON'T GUESS
 
 - PTM sites/enzymes: `iPTMnet_get_ptm_sites`
@@ -52,11 +54,12 @@ Phase 5: Synthesis & Report
 
 - `iPTMnet_search(operation="search", search_term="TP53", role="Substrate")` -- find UniProt IDs
 - If user provides UniProt accession directly, use it
+- If iPTMnet is down: `UniProt_search(query="gene_exact:TP53 AND reviewed:true", organism="human", limit=3)` for the accession (a bare "TP53" ranks TP53TG5 and TP53BP1 above P04637)
 - Select human entry if multiple hits
 
 ## Phase 1: PTM Sites
 
-`iPTMnet_get_ptm_sites(operation="get_ptm_sites", uniprot_id="P04637")` -- returns position, residue, modification type, enzyme, evidence. Group by modification type. Fallback: `UniProt_get_entry_by_accession` PTM annotations.
+`iPTMnet_get_ptm_sites(operation="get_ptm_sites", uniprot_id="P04637")` -- returns position, residue, modification type, enzyme, evidence. Group by modification type. Fallback: `UniProt_get_ptm_processing_by_accession(accession="P04637")` (modified residues, with the modifying enzyme in the description where curated, e.g. "Phosphoserine; by HIPK4"), `OmniPath_get_enzyme_substrate(substrates="TP53")` for enzyme-substrate pairs with residue and modification type, and `EBIProteins_get_proteomics_ptm(accession="P04637")` for MS-observed sites.
 
 ## Phase 2: Proteoforms
 
@@ -64,7 +67,7 @@ Phase 5: Synthesis & Report
 
 ## Phase 3: PTM-Dependent Interactions
 
-`iPTMnet_get_ptm_ppi(operation="get_ptm_ppi", uniprot_id=...)` -- interacting protein, PTM site, effect (enables/disrupts). Supplement with `STRING_get_interaction_partners(identifiers=gene, species=9606, required_score=700)`.
+`iPTMnet_get_ptm_ppi(operation="get_ptm_ppi", uniprot_id=...)` -- interacting protein, PTM site, effect (enables/disrupts). Supplement with `STRING_get_interaction_partners(identifiers=gene, species=9606, required_score=700)`. If iPTMnet is down, `OmniPath_get_enzyme_substrate(enzymes=gene)` and `(substrates=gene)` give the enzyme-substrate pairs behind many PTM-dependent interactions, but not whether a modification enables or disrupts a binding.
 
 ## Phase 4: Functional Context
 

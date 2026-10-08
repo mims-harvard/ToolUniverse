@@ -1,7 +1,7 @@
 """
 iPTMnet_search
 
-Search the iPTMnet database for proteins with post-translational modification (PTM) data. Find pr...
+NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has ...
 """
 
 from typing import Any, Optional, Callable
@@ -22,7 +22,7 @@ def iPTMnet_search(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search the iPTMnet database for proteins with post-translational modification (PTM) data. Find pr...
+    NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has ...
 
     Parameters
     ----------

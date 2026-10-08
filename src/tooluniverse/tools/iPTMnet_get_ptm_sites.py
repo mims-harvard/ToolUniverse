@@ -1,7 +1,7 @@
 """
 iPTMnet_get_ptm_sites
 
-Get all post-translational modification (PTM) sites for a protein from iPTMnet. Returns residue, ...
+NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has ...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def iPTMnet_get_ptm_sites(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get all post-translational modification (PTM) sites for a protein from iPTMnet. Returns residue, ...
+    NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has ...
 
     Parameters
     ----------

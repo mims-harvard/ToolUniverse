@@ -1,7 +1,7 @@
 """
 iPTMnet_get_ptm_ppi
 
-Get PTM-dependent protein-protein interactions from iPTMnet. Returns interactions where a post-tr...
+NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has ...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def iPTMnet_get_ptm_ppi(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get PTM-dependent protein-protein interactions from iPTMnet. Returns interactions where a post-tr...
+    NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has ...
 
     Parameters
     ----------
