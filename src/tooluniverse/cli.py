@@ -2227,10 +2227,91 @@ def _valid_device_user_code(code: str) -> bool:
     )
 
 
+# `--detach` for the two commands that keep running: the sign-in waits for someone to click
+# Allow, and sharing lasts as long as its process. An AI assistant runs commands for a user and
+# its command runner ends what it started when its turn (or its `exec` run) ends -- found in a
+# real Codex session: `nohup tu remote login &` printed the link, and the sign-in was gone before
+# anyone could click it. A new session (process group on Windows) is outside that cleanup.
+DETACHED_LOG_DIR = Path.home() / ".tooluniverse" / "logs"
+_DETACHED_CHILD = (
+    "import sys; sys.argv[0] = 'tu'; from tooluniverse_cli_entry import main; main()"
+)
+
+
+def _detached_slug(text: str) -> str:
+    slug = "".join(c.lower() if c.isalnum() else "-" for c in text).strip("-")
+    return "-".join(part for part in slug.split("-") if part)[:60] or "server"
+
+
+def _run_detached(
+    kind: str,
+    ready: Sequence[str],
+    wait_seconds: float,
+    command: Sequence[str] | None = None,
+) -> None:
+    """Run this same command in its own session and return once it is ready.
+
+    Prints what the command printed so far (the sign-in link, or the sharing status), where
+    its log and process id are, and exits with the command's own status if it ended early.
+    """
+    import subprocess
+
+    if command is None:
+        argv = [arg for arg in sys.argv[1:] if arg != "--detach"]
+        command = [sys.executable, "-c", _DETACHED_CHILD, *argv]
+    DETACHED_LOG_DIR.mkdir(parents=True, exist_ok=True)
+    log_path = DETACHED_LOG_DIR / f"{kind}.log"
+    pid_path = DETACHED_LOG_DIR / f"{kind}.pid"
+    options: dict[str, Any] = {}
+    if os.name == "nt":
+        options["creationflags"] = getattr(subprocess, "DETACHED_PROCESS", 0) | getattr(
+            subprocess, "CREATE_NEW_PROCESS_GROUP", 0
+        )
+    else:
+        options["start_new_session"] = True
+    with open(log_path, "wb") as log:
+        process = subprocess.Popen(
+            list(command),
+            stdin=subprocess.DEVNULL,
+            stdout=log,
+            stderr=subprocess.STDOUT,
+            env={**os.environ, "PYTHONUNBUFFERED": "1"},
+            **options,
+        )
+    pid_path.write_text(f"{process.pid}\n")
+    deadline = time.monotonic() + wait_seconds
+    while True:
+        text = log_path.read_text(encoding="utf-8", errors="replace").rstrip()
+        code = process.poll()
+        if code is not None:
+            if text:
+                print(text)
+            raise SystemExit(code)
+        if any(marker in text for marker in ready):
+            print(text)
+            print(f"Running in the background (process {process.pid}). Log: {log_path}")
+            return
+        if time.monotonic() > deadline:
+            if text:
+                print(text)
+            print(
+                f"Still starting in the background (process {process.pid}). "
+                f"Follow it in {log_path}"
+            )
+            return
+        time.sleep(0.5)
+
+
 def cmd_remote_login(args: argparse.Namespace) -> None:
     """Authorize in a browser or import and securely remember one connection key."""
 
     import getpass
+
+    if getattr(args, "detach", False):
+        _run_detached(
+            "login", ("Code:", "Remote login verified"), wait_seconds=60
+        )
+        return
 
     try:
         if args.env_file:
@@ -2516,6 +2597,19 @@ DEFAULT_POOL_MODE_PORT = 7999
 
 def cmd_serve(args: argparse.Namespace) -> None:
     """Share your own functions, an MCP server you already run, or reviewed GPU models."""
+    if getattr(args, "detach", False):
+        if not getattr(args, "share", False):
+            print("Error: --detach is for sharing; add --share.", file=sys.stderr)
+            raise SystemExit(2)
+        _run_detached(
+            "share-" + _detached_slug(getattr(args, "name", None) or "server"),
+            # "Sharing ..." is printed before the relay registers with the platform, and
+            # registration can still be refused (one computer sign-in serves one server), so
+            # wait for the relay's own confirmation.
+            ("Connected (",),
+            wait_seconds=180,
+        )
+        return
     try:
         chosen = [
             label for name, label in SERVE_INPUTS if getattr(args, name, None)
@@ -3880,6 +3974,12 @@ def build_parser() -> argparse.ArgumentParser:
         help="print the authorization link without trying to open a browser",
     )
     p.add_argument(
+        "--detach",
+        action="store_true",
+        help="print the link, then keep waiting for approval in the background "
+        "(log in ~/.tooluniverse/logs/login.log)",
+    )
+    p.add_argument(
         "--service",
         default=os.getenv(
             "TOOLUNIVERSE_SERVICE_URL",
@@ -4172,6 +4272,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-browser",
         action="store_true",
         help="print login links without trying to open a browser",
+    )
+    p.add_argument(
+        "--detach",
+        action="store_true",
+        help="with --share: return once sharing is live and keep it running in the "
+        "background (log in ~/.tooluniverse/logs/share-NAME.log)",
     )
     # Sharing reviewed GPU models is the third thing this command can expose, alongside
     # your own decorated functions and an MCP server you already run. It lived behind

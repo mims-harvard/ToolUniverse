@@ -5,6 +5,21 @@ description: Set up, launch, validate, and troubleshoot the Boltz-2 ToolUniverse
 
 # Set up Boltz-2 as a remote tool
 
+> **Sharing this model for a user, not developing it?** Follow the `tooluniverse-share-computer` guide; no ToolUniverse source checkout is needed. The model runs in its own Python environment, with its dependencies:
+>
+> ```bash
+> ~/.local/bin/uv venv --python 3.12 ~/.tooluniverse/envs/boltz
+> curl -fsSL -o ~/.tooluniverse/envs/boltz-tooluniverse.txt https://connect.aiscientist.tools/install-requirements.txt
+> ~/.local/bin/uv pip install --python ~/.tooluniverse/envs/boltz/bin/python -r ~/.tooluniverse/envs/boltz-tooluniverse.txt
+> # then this model's own dependencies, as in "Create an isolated environment" below
+> ~/.local/bin/tu remote check boltz --python ~/.tooluniverse/envs/boltz/bin/python   # lists anything still missing
+> ~/.local/bin/tu serve --allow boltz --python ~/.tooluniverse/envs/boltz/bin/python --share --detach --name "<computer name>" --service https://tooluniverse-backend.onrender.com
+> ```
+>
+> If the check reports a missing environment variable (a data folder, a model cache, a provider key), set it in the same shell before `tu serve`; "Obtain credentials, data, and model weights" below says what each one is. The model reads only the variables it declares.
+>
+> The rest of this guide is for developers working from the ToolUniverse source, and for diagnosing problems with this model.
+
 > Validation status (2026-08-16): Boltz 2.2.1 and the official checkpoints ran on the NVIDIA GB10 in one repaired direct MCP call and three authenticated Platform calls, each returning six finite affinity values in 63.6-66.5 seconds. The upstream MSA service timed out during validation, so those successful calls explicitly used bounded single-sequence mode. Missing, oversized, malformed, or non-finite affinity artifacts now fail closed. Public publication, cross-user isolation, broad concurrency, recovery, biological accuracy, and the live MSA path remain unvalidated; keep this deployment private.
 
 ## Prerequisites

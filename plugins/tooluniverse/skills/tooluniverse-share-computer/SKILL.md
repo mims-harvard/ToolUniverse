@@ -16,6 +16,8 @@ You must be able to run commands **on the computer that has the code or model** 
 
 > Sharing has to be set up on the computer that has your model. Open Claude Code or Codex on that computer and ask it the same thing; it can use this guide too.
 
+**Sandboxes.** Several steps need the internet and write to the user's home folder (installing, signing in, sharing). If your environment runs commands in a sandbox (Codex does by default), a step can fail with errors such as `Could not resolve host` or `Permission denied`. That is your own safety setting, not a broken installer: ask the user to approve running the step with network access, in one plain sentence ("I need internet access to install ToolUniverse's sharing tool. Allow it?"). Combine steps into as few commands as you can, so the user approves as few times as possible.
+
 ## 1. Find out what to share (ask, don't assume)
 
 Work out, from the conversation or by looking around with their permission:
@@ -41,9 +43,13 @@ Windows (PowerShell):
 powershell -ExecutionPolicy ByPass -c "irm https://connect.aiscientist.tools/install.ps1 | iex"
 ~~~
 
-It brings its own Python and puts `tu` and `tuplatform-service` on the PATH for new terminals. In the same shell, add `~/.local/bin` to PATH (or open a new shell), then confirm `tu --help` works. If the install fails, report the exact error to the user in one sentence and stop; do not improvise another installer.
+It brings its own Python and puts `tu` and `tuplatform-service` in `~/.local/bin` for new terminals. Your shell may not see them yet: call them as `~/.local/bin/tu` and `~/.local/bin/tuplatform-service`, and confirm `~/.local/bin/tu --help` works. If the install itself fails (not a sandbox block, see step 0), tell the user what happened in one plain sentence and stop; do not improvise another installer.
 
-Their own code may need its own packages (for example torch). Run the tool in the environment where their code already works: if they use conda or a virtualenv, install there instead with `python -m pip install "tooluniverse==1.5.5" "tuplatform-connect @ https://connect.aiscientist.tools/downloads/tuplatform_connect-0.4.2-py3-none-any.whl#sha256=e4e09af02093da3e739c9234e1f8182f8a9c311cd9fc0145a1dc119a296ef8ba"`.
+Their own code may need its own packages (for example torch). Run the tool in the environment where their code already works: if they use conda or a virtualenv, activate it and install there instead, then use that environment's `tu`:
+
+~~~bash
+python -m pip install -r https://connect.aiscientist.tools/install-requirements.txt
+~~~
 
 ## 3. Prepare what to share
 
@@ -88,31 +94,44 @@ Run `tu remote list`, show the user the models in plain words, and agree which t
 
 ## 4. Share it (the user clicks Allow once)
 
-Run one of these. It keeps running, so start it in the background and watch its output:
+Both commands below keep running after they start: the sign-in waits for the user, and sharing lasts as long as its process. Always pass `--detach`: the command prints what you need and returns, and the work continues in the background, outside your own command runner, which may stop what you started when your turn ends. Use the full path `~/.local/bin/tu` (or the `tu` of the user's own environment from step 2). If `--detach` is not recognized, the installed version is too old: run the installer from step 2 again.
+
+**a. Sign this computer in (once per computer).** Sharing needs it first; without it, sharing stops with "this computer is not signed in to ToolUniverse yet".
 
 ~~~bash
-# A. own code
-tu serve share_tool.py --share --name "Smith Lab GPU" --service https://tooluniverse-backend.onrender.com
-# B. existing MCP program
-tu serve --forward "http://localhost:8080" --share --name "Smith Lab Server" --service https://tooluniverse-backend.onrender.com
-# C. reviewed models
-tu serve --allow esm,boltz --share --name "Smith Lab GPU" --service https://tooluniverse-backend.onrender.com
+~/.local/bin/tu remote login --no-browser --detach
 ~~~
 
-The first time on a computer it prints:
+It prints a link and a code, then returns:
 
 ~~~
 Authorize this computer in your browser:
   https://connect.aiscientist.tools/activate?user_code=ABCD-EFGH
 Code: ABCD-EFGH
 Waiting for approval (Ctrl-C to cancel)...
+Running in the background (process 12345). Log: ~/.tooluniverse/logs/login.log
 ~~~
 
-Tell the user exactly this, with the real link and code:
+Tell the user, with the real link and code:
 
-> Open this link, sign in to ToolUniverse if asked, check that the code matches **ABCD-EFGH**, and click **Allow**: <link>
+> Open this link, sign in to ToolUniverse if asked, check that the code matches **ABCD-EFGH**, and click **Allow**: <link>. Tell me when you've done it.
 
-On a server without a browser, add `--no-browser`; the user can open the link on their laptop or phone. The computer keeps its own key in a private file after that; nobody copies a key. When it prints `Sharing through ToolUniverse Platform` (or `Sharing privately`), it is live.
+When they say so (or after a short wait), read `~/.tooluniverse/logs/login.log`. `Remote login verified and stored securely` means done: the computer keeps its own key in a private file, and nobody ever copies a key. The code is valid for 10 minutes; if the log shows it expired or failed, run the command again and pass on the new link. A computer signed in before can skip this step.
+
+**b. Start sharing.** From the folder that holds `share_tool.py`, pick the line that matches step 3:
+
+~~~bash
+# A. own code
+~/.local/bin/tu serve share_tool.py --share --detach --name "Smith Lab GPU" --service https://tooluniverse-backend.onrender.com
+# B. existing MCP program
+~/.local/bin/tu serve --forward "http://localhost:8080" --share --detach --name "Smith Lab Server" --service https://tooluniverse-backend.onrender.com
+# C. reviewed models
+~/.local/bin/tu serve --allow esm,boltz --share --detach --name "Smith Lab GPU" --service https://tooluniverse-backend.onrender.com
+~~~
+
+It returns once the output says `Connected (… tools discovered …)`: it is live. It prints the background process id and its log (`~/.tooluniverse/logs/share-<name>.log`; the id is also in the matching `.pid` file). If it ends with an error instead, tell the user what it says in plain words and fix the cause.
+
+One computer's sign-in shares one set of tools at a time. A second `tu serve --share` from the same computer fails with "already bound to another server". To share several functions, put them all in `share_tool.py` (each with `@remote_tool`), stop the running share and start it again. Sharing your own code and reviewed models from the same computer at the same time is not possible yet; say so plainly. It lasts until the computer restarts or the process is stopped; step 6 makes it permanent.
 
 ## 5. Check that it really works
 
@@ -123,10 +142,10 @@ Do not report success from the command output alone.
 
 ## 6. Keep it running (ask first)
 
-`tu serve` stops when the terminal closes. If the user wants it always available, ask before installing a background service, then run the same arguments with `tuplatform-service install` instead of `tu serve ... --share`, for example:
+The sharing process from step 4 stops when the computer restarts. If the user wants the tool always available, ask before installing a background service. Then stop the step-4 process and run the same arguments with `tuplatform-service install`, using absolute paths:
 
 ~~~bash
-tuplatform-service install --tool-file share_tool.py --name "Smith Lab GPU" --service https://tooluniverse-backend.onrender.com
+~/.local/bin/tuplatform-service install --tool-file "$PWD/share_tool.py" --name "Smith Lab GPU" --service https://tooluniverse-backend.onrender.com
 ~~~
 
 It survives logouts and reboots. Check it with `tuplatform-service status --name "Smith Lab GPU"`. Tell the user how to stop it later: ask you, or run `tuplatform-service uninstall --name "Smith Lab GPU"` (the same name).
@@ -140,7 +159,7 @@ Explain the two choices in plain words and let the user pick:
 
 ## Stopping and undoing
 
-- Stop sharing now: stop the `tu serve` process (Ctrl-C), or `tuplatform-service uninstall --name "<name>"` for the background service.
+- Stop sharing now: `kill "$(cat ~/.tooluniverse/logs/share-<name>.pid)"` (the id `--detach` printed), or `tuplatform-service uninstall --name "<name>"` for the background service. Avoid `pkill -f` with the command text: it can match and stop your own shell.
 - Sign this computer out of ToolUniverse and revoke its key: `tu remote logout --revoke`.
 - The computer's record stays on the Computers page as offline; the user can delete it there.
 
@@ -148,8 +167,8 @@ Explain the two choices in plain words and let the user pick:
 
 Say what happened in one plain sentence and what you will try next. Common cases:
 
-- `tu: command not found`: PATH was not refreshed; use `~/.local/bin/tu` or a new shell.
-- The approval link expired: `tu serve` prints a new one by itself; pass it on.
-- The computer stays offline: the process stopped or the network blocks outbound HTTPS; restart it and read its last lines.
+- `tu: command not found`: PATH was not refreshed; use `~/.local/bin/tu`.
+- The approval link expired: run step 4a again and pass on the new link.
+- The computer stays offline: the process stopped or the network blocks outbound HTTPS; read the end of its log in `~/.tooluniverse/logs/`, then run step 4b again.
 - The tool fails only through ToolUniverse: run the same input locally; a difference usually means a path, environment variable or working directory that exists only in the user's terminal.
 - A model needs a GPU that is not there: say so; do not silently fall back to something else.

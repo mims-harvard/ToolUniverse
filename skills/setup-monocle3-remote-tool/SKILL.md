@@ -5,6 +5,21 @@ description: Set up, launch, validate, and troubleshoot the Monocle 3 ToolUniver
 
 # Set up Monocle 3 as a remote tool
 
+> **Sharing this model for a user, not developing it?** Follow the `tooluniverse-share-computer` guide; no ToolUniverse source checkout is needed. The model runs in its own Python environment, with its dependencies:
+>
+> ```bash
+> ~/.local/bin/uv venv --python 3.12 ~/.tooluniverse/envs/monocle3
+> curl -fsSL -o ~/.tooluniverse/envs/monocle3-tooluniverse.txt https://connect.aiscientist.tools/install-requirements.txt
+> curl -fsSL -o ~/.tooluniverse/envs/monocle3-requirements.txt https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/src/tooluniverse/remote/monocle3/requirements.txt
+> ~/.local/bin/uv pip install --python ~/.tooluniverse/envs/monocle3/bin/python -r ~/.tooluniverse/envs/monocle3-tooluniverse.txt -r ~/.tooluniverse/envs/monocle3-requirements.txt
+> ~/.local/bin/tu remote check monocle3 --python ~/.tooluniverse/envs/monocle3/bin/python   # lists anything still missing
+> ~/.local/bin/tu serve --allow monocle3 --python ~/.tooluniverse/envs/monocle3/bin/python --share --detach --name "<computer name>" --service https://tooluniverse-backend.onrender.com
+> ```
+>
+> If the check reports a missing environment variable (a data folder, a model cache, a provider key), set it in the same shell before `tu serve`; "Obtain credentials, data, and model weights" below says what each one is. The model reads only the variables it declares.
+>
+> The rest of this guide is for developers working from the ToolUniverse source, and for diagnosing problems with this model.
+
 > Validation status (2026-08-16): R 4.4.3/Monocle3 1.4.27, loopback discovery, and two deterministic 240-cell calls passed with finite pseudotime for all cells; both disclosed the acyclic fallback after the upstream loop-closing bug. Public publication, cross-user isolation, representative biology, broad concurrency, and recovery remain incomplete. Authenticated private Platform import and owner testing passed on 2026-08-16; public publication and independent-caller authorization/isolation remain untested.
 
 ## Prerequisites

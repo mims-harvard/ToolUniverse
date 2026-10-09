@@ -17,7 +17,7 @@ Do not treat an arbitrary REST endpoint as MCP. Wrap it in a typed Python functi
 
 ## 1. Install the reviewed clients
 
-Open ToolUniverse Connect, go to **My Computers → Connect a computer**, choose the Python or existing-MCP path, and copy the immutable install command shown there. Run it in a new Python 3.12 virtual environment. The command pins both the ToolUniverse and relay sources; do not replace the pins with a moving branch.
+Open ToolUniverse Connect, go to **Computers → Connect a computer** (https://connect.aiscientist.tools/remote-servers), choose the Python or existing-MCP path, and copy the immutable install command shown there. Run it in a new Python 3.12 virtual environment. The command pins both the ToolUniverse and relay sources; do not replace the pins with a moving branch.
 
 Confirm the expected commands exist:
 
@@ -110,7 +110,7 @@ An explicit invalid `TOOLUNIVERSE_SERVICE_KEY` and all non-interactive jobs fail
 
 ## 5. Verify through TU Platform
 
-Wait until **My Computers** shows the server online. As its owner, import or open the remote tool and make one small semantic call through TU Platform. Confirm the platform result matches the local result. Record local discovery, local call, online status, platform discovery, platform call, model/device evidence, and timestamps separately.
+Wait until **Computers** shows the server online. As its owner, import or open the remote tool and make one small semantic call through TU Platform. Confirm the platform result matches the local result. Record local discovery, local call, online status, platform discovery, platform call, model/device evidence, and timestamps separately.
 
 Keep the connection private by default. Public marketplace publication, another user's authorization/isolation, load behavior, and long-running supervision are separate validations; do not claim them from an owner-only smoke test.
 
@@ -128,7 +128,7 @@ Remove only the local login with `tu remote logout`. Revoke the computer-only pl
 tu remote logout --revoke
 ~~~
 
-For an SDK-only existing-MCP setup, use `tuplatform-auth logout --revoke`. Revocation intentionally leaves the server record offline for owner inspection; delete that record separately in **My Computers** if desired.
+For an SDK-only existing-MCP setup, use `tuplatform-auth logout --revoke`. Revocation intentionally leaves the server record offline for owner inspection; delete that record separately in **Computers** if desired.
 
 ## Failure reporting
 

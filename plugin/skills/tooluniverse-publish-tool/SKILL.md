@@ -1,13 +1,13 @@
 ---
 name: tooluniverse-publish-tool
-description: Help the user publish one tool from their shared computer to ToolUniverse so other scientists' AI assistants can find and run it, choosing whether only they, specific colleagues, or everyone can use it. Guides the website steps in plain words and checks the result. Use when the user says "publish my tool", "put my model in Discover", "let anyone use this tool", "let only my collaborators use this tool", or "unpublish my tool".
+description: Help the user publish one tool from their shared computer to ToolUniverse so other scientists' AI assistants can find and run it, choosing whether only they, specific colleagues, or everyone can use it. Prepares and tests the tool for them; the user makes the final Publish click. Use when the user says "publish my tool", "put my model in Discover", "let anyone use this tool", "let only my collaborators use this tool", or "unpublish my tool".
 ---
 
 # Publish one tool to ToolUniverse
 
 Publishing puts **one** tool from a computer the user already shares into ToolUniverse, with a page in Discover if they make it public. People can run that one tool; they cannot see the computer's other tools or anything else on it.
 
-The person you are helping is usually a scientist, not a programmer. The publishing steps happen on the website, where only the user can click, so walk them through it one step at a time and check each result yourself where you can. Never ask for passwords, keys or tokens in the chat.
+The person you are helping is usually a scientist, not a programmer. You do the preparation; the final choice of who can use it, and the Publish click, are the user's on the website. Never ask for passwords, keys or tokens in the chat.
 
 ## 1. Make sure the tool is shared first
 
@@ -28,18 +28,26 @@ Ask in plain words and explain the choice:
 
 To give a few colleagues **every** tool on that computer instead of one tool, publishing is not needed: use a share code (see `tooluniverse-share-computer`, step 7).
 
-## 3. Walk them through the website
+## 3. Prepare it, then let the user publish
 
-Give these steps one or two at a time, and wait for the user:
+**If you have the `prepare_tool_publication` tool** (the hosted ToolUniverse connection), do the preparation yourself:
+
+1. Write a clear title, one or two sentences on what it does (what goes in, what comes out), and a few search keywords, from what you know about the tool. Show them to the user and adjust.
+2. Pick a small, realistic test input that matches the tool's inputs (see `list_remote_tools` for its input schema).
+3. Call `prepare_tool_publication` with `computer` (its name as `list_remote_tools` shows it), `tool`, `name`, `description`, `keywords` and `test_arguments`. It creates (or reuses) the private draft and runs a real test call.
+4. If `test_passed` is false, read `test_error`, fix the cause on the computer (the tool itself, or the computer went offline) and call it again.
+5. When it passes, give the user the `review_link` and say exactly this: open it, choose who can use it (**Choose who can use it**: Only me, Specific people with their account emails, or Public), then click **Publish**. You cannot publish for them: that choice is theirs, on purpose.
+
+**Without that tool**, walk them through the website one or two steps at a time:
 
 1. Open https://connect.aiscientist.tools/my-tools?create=1 (sign in if asked). The **Publish a tool** window opens.
 2. Under the computer's name, click the tool to publish.
-3. Improve what people will read: a clear name, one or two sentences on **What does it do?**, a realistic **Sample question**, and search keywords. Offer to write these for them from what you know about the tool; they paste your text.
-4. Click **Save & test**. In **Test input (JSON)**, use a small realistic example; you can write it for them, matching the tool's inputs. Click **Run test**.
+3. Fill in a clear name, **What does it do?**, a **Sample question** and search keywords; offer to write them, and they paste your text.
+4. Click **Save & test**. In **Test input (JSON)**, use a small realistic example (you can write it). Click **Run test**.
 5. When the test passes, click **Publish**.
 6. Set who may use it: on the tool's card in **My tools**, click **Access** and pick **Only me**, **Specific people** (then add each colleague's account email) or **Public**.
 
-If the test fails, read the error the page shows and fix the cause on the computer (usually the tool itself, or the computer went offline), then **Test again**. Do not ask the user to publish a tool that has not passed.
+If a test fails, fix the cause on the computer, then test again. Do not ask the user to publish a tool that has not passed.
 
 ## 4. Check it worked
 

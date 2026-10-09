@@ -5,6 +5,21 @@ description: Set up, launch, validate, and troubleshoot the USPTO downloader Too
 
 # Set up USPTO downloader as a remote tool
 
+> **Sharing this model for a user, not developing it?** Follow the `tooluniverse-share-computer` guide; no ToolUniverse source checkout is needed. The model runs in its own Python environment, with its dependencies:
+>
+> ```bash
+> ~/.local/bin/uv venv --python 3.12 ~/.tooluniverse/envs/uspto-downloader
+> curl -fsSL -o ~/.tooluniverse/envs/uspto-downloader-tooluniverse.txt https://connect.aiscientist.tools/install-requirements.txt
+> ~/.local/bin/uv pip install --python ~/.tooluniverse/envs/uspto-downloader/bin/python -r ~/.tooluniverse/envs/uspto-downloader-tooluniverse.txt
+> # then this model's own dependencies, as in "Create an isolated environment" below
+> ~/.local/bin/tu remote check uspto-downloader --python ~/.tooluniverse/envs/uspto-downloader/bin/python   # lists anything still missing
+> ~/.local/bin/tu serve --allow uspto-downloader --python ~/.tooluniverse/envs/uspto-downloader/bin/python --share --detach --name "<computer name>" --service https://tooluniverse-backend.onrender.com
+> ```
+>
+> If the check reports a missing environment variable (a data folder, a model cache, a provider key), set it in the same shell before `tu serve`; "Obtain credentials, data, and model weights" below says what each one is. The model reads only the variables it declares.
+>
+> The rest of this guide is for developers working from the ToolUniverse source, and for diagnosing problems with this model.
+
 > Validation status (2026-08-16): boundary/parser tests and live loopback discovery passed; all three current calls reached USPTO and received HTTP 403 for an invalid validation key. No patent content was retrieved, so functional content retrieval, public publication, cross-user isolation, and extraction/load behavior remain blocked by credentials or unmeasured. Authenticated private Platform import and owner testing passed on 2026-08-16; public publication and independent-caller authorization/isolation remain untested.
 
 ## Prerequisites

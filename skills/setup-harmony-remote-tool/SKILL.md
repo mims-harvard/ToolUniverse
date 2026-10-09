@@ -5,6 +5,21 @@ description: Set up, launch, validate, and troubleshoot the Harmony ToolUniverse
 
 # Set up Harmony as a remote tool
 
+> **Sharing this model for a user, not developing it?** Follow the `tooluniverse-share-computer` guide; no ToolUniverse source checkout is needed. The model runs in its own Python environment, with its dependencies:
+>
+> ```bash
+> ~/.local/bin/uv venv --python 3.12 ~/.tooluniverse/envs/harmony
+> curl -fsSL -o ~/.tooluniverse/envs/harmony-tooluniverse.txt https://connect.aiscientist.tools/install-requirements.txt
+> curl -fsSL -o ~/.tooluniverse/envs/harmony-requirements.txt https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/src/tooluniverse/remote/harmony/requirements.txt
+> ~/.local/bin/uv pip install --python ~/.tooluniverse/envs/harmony/bin/python -r ~/.tooluniverse/envs/harmony-tooluniverse.txt -r ~/.tooluniverse/envs/harmony-requirements.txt
+> ~/.local/bin/tu remote check harmony --python ~/.tooluniverse/envs/harmony/bin/python   # lists anything still missing
+> ~/.local/bin/tu serve --allow harmony --python ~/.tooluniverse/envs/harmony/bin/python --share --detach --name "<computer name>" --service https://tooluniverse-backend.onrender.com
+> ```
+>
+> If the check reports a missing environment variable (a data folder, a model cache, a provider key), set it in the same shell before `tu serve`; "Obtain credentials, data, and model weights" below says what each one is. The model reads only the variables it declares.
+>
+> The rest of this guide is for developers working from the ToolUniverse source, and for diagnosing problems with this model.
+
 > Validation status (2026-08-16): Harmony 2.0, loopback discovery/call, and invalid-input checks passed; the current deterministic two-batch call returned an aligned finite 240 x 10 embedding. Public publication, cross-user isolation, representative correction accuracy, broad concurrency, and recovery remain incomplete. Authenticated private Platform import and owner testing passed on 2026-08-16; public publication and independent-caller authorization/isolation remain untested.
 
 ## Prerequisites
