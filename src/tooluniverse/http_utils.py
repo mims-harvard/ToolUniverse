@@ -66,6 +66,7 @@ def upstream_reason_suffix(response: Any) -> str:
     reason = upstream_reason(response)
     return f": {reason}" if reason else ""
 
+
 def redact_url_secrets(value: Any) -> Any:
     """Redact credential-bearing query values in a URL or error message.
 
