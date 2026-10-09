@@ -1,0 +1,372 @@
+[
+  {
+    "name": "ProteinSimilarity_search_sequence_local",
+    "type": "LocalProteinSimilarityTool",
+    "description": "Search proteins locally with MMseqs2 against caller-managed FASTA/database files. Returns identities and coverage as fractions. CPU binary required; builtin:1UBQ is a public self-control. No upload or novelty certification.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query_path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Local protein FASTA with up to50 unique identifiers, uppercase standard residues/X and no gaps/stops; builtin:1UBQ is bundled public ubiquitin."
+        },
+        "reference_path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Local reference file or prebuilt database prefix (.dbtype must exist); builtin:1UBQ uses bundled public ubiquitin."
+        },
+        "threads": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 8,
+          "description": "CPU threads; defaults to2."
+        },
+        "timeout_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 3600,
+          "description": "Bounded process runtime; defaults to300 seconds."
+        },
+        "max_hits_per_query": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Returned hits per query, defaults to20; truncation is explicit."
+        },
+        "minimum_query_coverage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Minimum fraction of query residues covered; defaults to0."
+        },
+        "sensitivity": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 7.5,
+          "description": "MMseqs2 search sensitivity; defaults to7.5."
+        },
+        "evalue_threshold": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "MMseqs2 reported E-value cutoff; defaults to0.001. No hit does not certify novelty."
+        }
+      },
+      "required": [
+        "query_path",
+        "reference_path"
+      ]
+    },
+    "fields": {
+      "operation": "sequence"
+    },
+    "cacheable": false,
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "enum": [
+                    "sequence",
+                    "structure"
+                  ]
+                },
+                "query_count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "hits": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "backend_hit_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "returned_hit_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "hits_truncated": {
+                  "type": "boolean"
+                },
+                "binary_version": {
+                  "type": "string"
+                },
+                "binary_sha256": {
+                  "type": "string"
+                },
+                "GPU_enabled": {
+                  "const": false
+                },
+                "scientific_service_uploads": {
+                  "const": 0
+                },
+                "novelty_certified": {
+                  "const": false
+                },
+                "binding_verified": {
+                  "const": false
+                },
+                "limitations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "operation",
+                "query_count",
+                "hits",
+                "backend_hit_count",
+                "returned_hit_count",
+                "hits_truncated",
+                "binary_version",
+                "GPU_enabled",
+                "scientific_service_uploads",
+                "novelty_certified",
+                "binding_verified",
+                "limitations"
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            },
+            "stage": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error",
+            "stage"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query_path": "builtin:1UBQ",
+        "reference_path": "builtin:1UBQ",
+        "threads": 1
+      }
+    ]
+  },
+  {
+    "name": "ProteinSimilarity_search_structure_local",
+    "type": "LocalProteinSimilarityTool",
+    "description": "Compare single-chain PDB queries locally with Foldseek/TM-align and caller-managed references. Returns query/target-normalized TM-scores and coverage. CPU binary required; builtin:1UBQ is a public control. No upload.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query_path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Local single-chain one-model .pdb file, or directory of1\u201350 such files with standard CA records and no alternate locations; builtin:1UBQ is bundled public ubiquitin."
+        },
+        "reference_path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Local reference file or prebuilt database prefix (.dbtype must exist); builtin:1UBQ uses bundled public ubiquitin."
+        },
+        "threads": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 8,
+          "description": "CPU threads; defaults to2."
+        },
+        "timeout_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 3600,
+          "description": "Bounded process runtime; defaults to300 seconds."
+        },
+        "max_hits_per_query": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Returned hits per query, defaults to20; truncation is explicit."
+        },
+        "minimum_query_coverage": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Minimum fraction of query residues covered; defaults to0."
+        }
+      },
+      "required": [
+        "query_path",
+        "reference_path"
+      ]
+    },
+    "fields": {
+      "operation": "structure"
+    },
+    "cacheable": false,
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "enum": [
+                    "sequence",
+                    "structure"
+                  ]
+                },
+                "query_count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "hits": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "backend_hit_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "returned_hit_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "hits_truncated": {
+                  "type": "boolean"
+                },
+                "binary_version": {
+                  "type": "string"
+                },
+                "binary_sha256": {
+                  "type": "string"
+                },
+                "GPU_enabled": {
+                  "const": false
+                },
+                "scientific_service_uploads": {
+                  "const": 0
+                },
+                "novelty_certified": {
+                  "const": false
+                },
+                "binding_verified": {
+                  "const": false
+                },
+                "limitations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "operation",
+                "query_count",
+                "hits",
+                "backend_hit_count",
+                "returned_hit_count",
+                "hits_truncated",
+                "binary_version",
+                "GPU_enabled",
+                "scientific_service_uploads",
+                "novelty_certified",
+                "binding_verified",
+                "limitations"
+              ]
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            },
+            "stage": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error",
+            "stage"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query_path": "builtin:1UBQ",
+        "reference_path": "builtin:1UBQ",
+        "threads": 1
+      }
+    ]
+  }
+]

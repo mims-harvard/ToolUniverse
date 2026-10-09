@@ -432,6 +432,7 @@ STATIC_LAZY_REGISTRY = {
     "LipidMapsTool": "lipidmaps_tool",
     "ListTools": "tool_discovery_tools",
     "ListToolsTool": "tool_discovery_tools",
+    "LocalProteinSimilarityTool": "protein_similarity_local_tool",
     "MARRVELGeneTool": "marrvel_tool",
     "MARRVELOmimTool": "marrvel_tool",
     "MCPAutoLoaderTool": "mcp_client_tool",
