@@ -2235,9 +2235,11 @@ class TestGWASTraitResolution(unittest.TestCase):
         # Mock: first call resolves trait, second call fetches associations
         efo_response = MagicMock()
         efo_response.status_code = 200
+        # v2 /efo-traits (v1 findByEfoTrait now answers 410); ?trait= is a
+        # substring search, so the resolver keeps only an exact label.
         efo_response.json.return_value = {
             "_embedded": {
-                "efoTraits": [{"shortForm": "EFO_0001360", "trait": "Type 2 diabetes"}]
+                "efo_traits": [{"efo_id": "EFO_0001360", "efo_trait": "Type 2 diabetes"}]
             }
         }
         efo_response.raise_for_status.return_value = None
@@ -2290,9 +2292,11 @@ class TestGWASTraitResolution(unittest.TestCase):
 
         efo_response = MagicMock()
         efo_response.status_code = 200
+        # v2 /efo-traits (v1 findByEfoTrait now answers 410); ?trait= is a
+        # substring search, so the resolver keeps only an exact label.
         efo_response.json.return_value = {
             "_embedded": {
-                "efoTraits": [{"shortForm": "EFO_0001360", "trait": "Type 2 diabetes"}]
+                "efo_traits": [{"efo_id": "EFO_0001360", "efo_trait": "Type 2 diabetes"}]
             }
         }
         efo_response.raise_for_status.return_value = None
