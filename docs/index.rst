@@ -236,6 +236,7 @@ Community & Support
    guide/logging
    guide/streaming_tools
    guide/openrouter_support
+   guide/orcarouter_support
    guide/vllm_support
    guide/openai_compatible_support
    guide/euhealth_tools_tutorial
