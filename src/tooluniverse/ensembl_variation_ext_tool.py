@@ -13,6 +13,7 @@ import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 ENSEMBL_BASE_URL = "https://rest.ensembl.org"
 ENSEMBL_HEADERS = {"User-Agent": "ToolUniverse/1.0", "Accept": "application/json"}
@@ -49,13 +50,10 @@ class EnsemblVariationExtTool(BaseTool):
             return {"status": "error", "error": "Failed to connect to Ensembl REST API"}
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else "unknown"
-            text = ""
-            if e.response is not None:
-                try:
-                    text = e.response.json().get("error", "")
-                except Exception:
-                    text = e.response.text[:200]
-            return {"status": "error", "error": f"Ensembl API HTTP {status}: {text}"}
+            return {
+                "status": "error",
+                "error": f"Ensembl API HTTP {status}{upstream_reason_suffix(e.response)}",
+            }
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 

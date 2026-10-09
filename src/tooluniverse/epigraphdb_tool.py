@@ -16,6 +16,7 @@ from typing import Any
 
 from .base_rest_tool import BaseRESTTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 EPIGRAPHDB_BASE = "https://api.epigraphdb.org"
 
@@ -60,7 +61,7 @@ class EpiGraphDBTool(BaseRESTTool):
         except requests.exceptions.HTTPError as e:
             return {
                 "status": "error",
-                "error": f"EpiGraphDB HTTP error: {e.response.status_code} - {e.response.text[:200]}",
+                "error": f"EpiGraphDB HTTP error: {e.response.status_code}{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {

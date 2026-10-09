@@ -13,6 +13,7 @@ import requests
 from typing import Dict, Any, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 CLINGEN_API_URL = "https://search.clinicalgenome.org/api/dosage"
 
@@ -93,7 +94,7 @@ class ClinGenDosageTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             return {
                 "status": "error",
-                "error": f"HTTP {e.response.status_code}: {e.response.text[:200]}",
+                "error": f"HTTP {e.response.status_code}{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {"status": "error", "error": str(e)}
@@ -163,7 +164,7 @@ class ClinGenDosageTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             return {
                 "status": "error",
-                "error": f"HTTP {e.response.status_code}: {e.response.text[:200]}",
+                "error": f"HTTP {e.response.status_code}{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {"status": "error", "error": str(e)}

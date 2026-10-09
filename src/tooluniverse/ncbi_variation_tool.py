@@ -12,6 +12,7 @@ import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 NCBI_VAR_BASE = "https://api.ncbi.nlm.nih.gov/variation/v0"
 
@@ -148,7 +149,7 @@ class NCBIVariationTool(BaseTool):
         if resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"API returned {resp.status_code}: {resp.text[:200]}",
+                "error": f"API returned {resp.status_code}{upstream_reason_suffix(resp)}",
             }
         data = resp.json()
         return {
@@ -167,7 +168,7 @@ class NCBIVariationTool(BaseTool):
         if resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"API returned {resp.status_code}: {resp.text[:200]}",
+                "error": f"API returned {resp.status_code}{upstream_reason_suffix(resp)}",
             }
         data = resp.json()
         result = data.get("data", data)
@@ -187,7 +188,7 @@ class NCBIVariationTool(BaseTool):
         if resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"API returned {resp.status_code}: {resp.text[:200]}",
+                "error": f"API returned {resp.status_code}{upstream_reason_suffix(resp)}",
             }
         data = resp.json()
         spdis = data.get("data", {}).get("spdis", [])
@@ -210,7 +211,7 @@ class NCBIVariationTool(BaseTool):
         if resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"API returned {resp.status_code}: {resp.text[:200]}",
+                "error": f"API returned {resp.status_code}{upstream_reason_suffix(resp)}",
             }
         data = resp.json()
         return {
@@ -237,7 +238,7 @@ class NCBIVariationTool(BaseTool):
         if resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"API returned {resp.status_code}: {resp.text[:200]}",
+                "error": f"API returned {resp.status_code}{upstream_reason_suffix(resp)}",
             }
         data = resp.json()
 
@@ -367,7 +368,7 @@ class NCBIVariationTool(BaseTool):
         if resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"API returned {resp.status_code}: {resp.text[:200]}",
+                "error": f"API returned {resp.status_code}{upstream_reason_suffix(resp)}",
             }
         data = resp.json()
         results = data.get("results", {})
@@ -433,7 +434,7 @@ class NCBIVariationTool(BaseTool):
         if resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"API returned {resp.status_code}: {resp.text[:200]}",
+                "error": f"API returned {resp.status_code}{upstream_reason_suffix(resp)}",
             }
         data = resp.json()
         rsids = data.get("data", {}).get("rsids", [])
@@ -473,7 +474,7 @@ class NCBIVariationTool(BaseTool):
         if resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"API returned {resp.status_code}: {resp.text[:200]}",
+                "error": f"API returned {resp.status_code}{upstream_reason_suffix(resp)}",
             }
         data = resp.json()
         spdis = data.get("data", {}).get("spdis", [])

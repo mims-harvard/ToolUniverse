@@ -18,32 +18,14 @@ from .http_utils import (
     cloudflare_challenge,
     redact_url_secrets,
     request_with_retry,
+    upstream_reason,
 )
 from .provider_rate_limit import enforce_provider_rate_limit
 from .shared_http_session import create_shared_pool_session
 
 
-def _upstream_reason(response) -> str:
-    """A short reason from an error body, when the service gave one.
-
-    Only a JSON `message`/`error`/`detail` string, or a one-line plain-text
-    body: an HTML error page would only add noise to a one-line error.
-    """
-    try:
-        body = response.json()
-    except Exception:
-        body = None
-    if isinstance(body, dict):
-        for key in ("message", "error", "detail", "errorMessage"):
-            value = body.get(key)
-            if isinstance(value, str) and value.strip():
-                return value.strip()[:200]
-        return ""
-    text = getattr(response, "text", "")
-    text = text.strip() if isinstance(text, str) else ""
-    if text and "\n" not in text and "<" not in text and len(text) <= 200:
-        return text
-    return ""
+# Kept for callers and tests that import it from here.
+_upstream_reason = upstream_reason
 
 
 class BaseRESTTool(BaseTool):

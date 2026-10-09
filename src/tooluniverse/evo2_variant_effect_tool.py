@@ -42,6 +42,7 @@ import requests
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 _ARC_BASE = "https://health.api.nvidia.com/v1/biology/arc"
 _DEFAULT_MODEL = "evo2-40b"
@@ -236,7 +237,9 @@ class Evo2VariantEffectTool(BaseTool):
         except requests.exceptions.RequestException as exc:
             return self._err(f"Evo 2 request failed: {exc}")
         if resp.status_code != 200:
-            return self._err(f"Evo 2 HTTP {resp.status_code}: {resp.text[:200]}")
+            return self._err(
+                f"Evo 2 HTTP {resp.status_code}{upstream_reason_suffix(resp)}"
+            )
 
         try:
             decoded = self._decode_response(resp)

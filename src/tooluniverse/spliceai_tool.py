@@ -21,6 +21,7 @@ import re
 from typing import Dict, Any, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 # Base URLs for SpliceAI and Pangolin APIs
 SPLICEAI_URLS = {
@@ -174,14 +175,10 @@ class SpliceAITool(BaseTool):
         except requests.exceptions.Timeout:
             return {"status": "error", "error": f"Timeout after {self.timeout}s"}
         except requests.exceptions.HTTPError as e:
-            error_text = ""
-            try:
-                error_text = e.response.text[:200]
-            except Exception:
-                pass
             return {
                 "status": "error",
-                "error": f"HTTP {e.response.status_code}: {error_text}",
+                "error": f"HTTP {e.response.status_code}"
+                f"{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {"status": "error", "error": str(e)}
@@ -235,14 +232,10 @@ class SpliceAITool(BaseTool):
         except requests.exceptions.Timeout:
             return {"status": "error", "error": f"Timeout after {self.timeout}s"}
         except requests.exceptions.HTTPError as e:
-            error_text = ""
-            try:
-                error_text = e.response.text[:200]
-            except Exception:
-                pass
             return {
                 "status": "error",
-                "error": f"HTTP {e.response.status_code}: {error_text}",
+                "error": f"HTTP {e.response.status_code}"
+                f"{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {"status": "error", "error": str(e)}

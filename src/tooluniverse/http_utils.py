@@ -32,6 +32,40 @@ _SENSITIVE_QUERY_VALUE_RE = re.compile(
 )
 
 
+def upstream_reason(response: Any) -> str:
+    """A short reason from an error body, when the service gave one.
+
+    Only a JSON `message`/`error`/`detail` string, or a one-line plain-text
+    body: an HTML error page would only add noise to a one-line error.
+    Returns "" when there is nothing worth quoting (including ``None``).
+    """
+    if response is None:
+        return ""
+    try:
+        body = response.json()
+    except Exception:
+        body = None
+    if isinstance(body, dict):
+        for key in ("message", "error", "detail", "errorMessage"):
+            value = body.get(key)
+            # NCBI Variation nests it: {"error": {"code": 400, "message": ...}}
+            if isinstance(value, dict):
+                value = value.get("message")
+            if isinstance(value, str) and value.strip():
+                return value.strip()[:200]
+        return ""
+    text = getattr(response, "text", "")
+    text = text.strip() if isinstance(text, str) else ""
+    if text and "\n" not in text and "<" not in text and len(text) <= 200:
+        return text
+    return ""
+
+
+def upstream_reason_suffix(response: Any) -> str:
+    """``": <reason>"`` for an error message, or ``""`` when there is none."""
+    reason = upstream_reason(response)
+    return f": {reason}" if reason else ""
+
 def redact_url_secrets(value: Any) -> Any:
     """Redact credential-bearing query values in a URL or error message.
 
