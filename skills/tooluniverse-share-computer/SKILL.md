@@ -93,7 +93,17 @@ Run `tu remote list`, show the user the models in plain words, and agree which t
 
 ## 4. Share it (the user clicks Allow once)
 
-Both commands below keep running after they start: the sign-in waits for the user, and sharing lasts as long as its process. Always pass `--detach`: the command prints what you need and returns, and the work continues in the background, outside your own command runner, which may stop what you started when your turn ends. Use the full path `~/.local/bin/tu` (or the `tu` of the user's own environment from step 2). If `--detach` is not recognized, the installed version is too old: run the installer from step 2 again.
+Both commands below keep running after they start: the sign-in waits for the user, and sharing lasts as long as its process. Always pass `--detach`: the command prints what you need and returns, and the work continues in the background, outside your own command runner, which may stop what you started when your turn ends. Use the full path `~/.local/bin/tu` (or the `tu` of the user's own environment from step 2). If `--detach` is not recognized (ToolUniverse 1.5.6 or older), start the same command without `--detach` in its own session with the Python that runs `tu`, then read its log (macOS and Linux):
+
+~~~bash
+mkdir -p ~/.tooluniverse/logs
+TU=~/.local/bin/tu; PY=$(head -1 "$(readlink -f "$TU" 2>/dev/null || echo "$TU")" | sed 's/^#!//')
+"$PY" -c 'import subprocess, sys; log = open(sys.argv[1], "w"); p = subprocess.Popen(sys.argv[2:], stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT, start_new_session=True); print(p.pid)' \
+  ~/.tooluniverse/logs/login.log "$TU" remote login --no-browser
+sleep 3; cat ~/.tooluniverse/logs/login.log
+~~~
+
+Use the same pattern for step 4b, with a log such as `~/.tooluniverse/logs/share.log`, and wait until it shows `Connected (`. Save the printed process id to stop it later.
 
 **a. Sign this computer in (once per computer).** Sharing needs it first; without it, sharing stops with "this computer is not signed in to ToolUniverse yet".
 
