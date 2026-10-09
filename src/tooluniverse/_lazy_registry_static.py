@@ -213,6 +213,7 @@ STATIC_LAZY_REGISTRY = {
     "ESMFoldTool": "esmfold_tool",
     "ESMTool": "esm_tool",
     "EVETool": "eve_tool",
+    "EWASAtlasTool": "ewas_atlas_tool",
     "EWASCatalogTool": "ewas_catalog_tool",
     "EdgeRLimmaTool": "edger_limma_tool",
     "EmbeddingCollectionSearchTool": "database_setup.generic_embedding_search_tool",

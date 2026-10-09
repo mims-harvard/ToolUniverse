@@ -1,0 +1,727 @@
+[
+  {
+    "name": "EWASAtlas_get_probe",
+    "type": "EWASAtlasTool",
+    "description": "Get every curated epigenome-wide association study (EWAS) result reported for one Illumina CpG probe from EWAS Atlas: the traits it was associated with, direction of the methylation change, the study and PubMed ID, plus the probe's hg19 position, CpG-island context and nearby genes. Example: probe_id='cg05575921' (AHRR, the strongest known smoking-methylation signal, 100+ associations). Source: EWAS Atlas (NGDC/CNCB), curated independently of the EWAS Catalog, so it is the fallback when EWASCatalog_* tools fail (ewascatalog.org has answered HTTP 503 since at least 2026-10-05).",
+    "fields": {
+      "operation": "get_probe"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "probe_id"
+      ],
+      "properties": {
+        "probe_id": {
+          "type": "string",
+          "description": "Illumina 450K/EPIC CpG probe ID, e.g. 'cg05575921'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Max associations to return, 1-500. Default 50."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "probe_id": {
+          "type": "string"
+        },
+        "chromosome": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "position_hg19": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "cpg_island": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "genes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "association_count": {
+          "type": "integer"
+        },
+        "trait_count": {
+          "type": "integer"
+        },
+        "associations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "study_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "trait": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "correlation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rank": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "pmid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "probe_id": "cg05575921"
+      },
+      {
+        "probe_id": "cg03636183",
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "EWASAtlas_search_by_gene",
+    "type": "EWASAtlasTool",
+    "description": "Find the CpG probes annotated to a gene in EWAS Atlas and the curated epigenome-wide association study (EWAS) results reported for each, with a count of the most frequently reported traits across the gene. Probes are ordered by how many associations they have. Example: gene_symbol='AHRR'. Heavily studied genes take 10-20 s. Source: EWAS Atlas (NGDC/CNCB), curated independently of the EWAS Catalog, so it is the fallback when EWASCatalog_* tools fail (ewascatalog.org has answered HTTP 503 since at least 2026-10-05).",
+    "fields": {
+      "operation": "search_by_gene"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "gene_symbol"
+      ],
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "HGNC gene symbol, e.g. 'AHRR' or 'F2RL3'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Max probes to return, 1-500. Default 50."
+        },
+        "max_associations_per_probe": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Max associations listed under each probe, 1-200. Default 10 (association_count always gives the full number)."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "probe_id": {
+            "type": "string"
+          },
+          "chromosome": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "position_hg19": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "cpg_island": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "genes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "association_count": {
+            "type": "integer"
+          },
+          "trait_count": {
+            "type": "integer"
+          },
+          "associations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "study_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "trait": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "correlation": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "rank": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "pmid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "gene_symbol": "F2RL3",
+        "limit": 5
+      },
+      {
+        "gene_symbol": "AHRR",
+        "limit": 3,
+        "max_associations_per_probe": 3
+      }
+    ]
+  },
+  {
+    "name": "EWASAtlas_search_by_region",
+    "type": "EWASAtlasTool",
+    "description": "List the CpG probes with curated epigenome-wide association study (EWAS) results inside a genomic window (GRCh37/hg19, at most 1 Mb) from EWAS Atlas, with the traits reported for each probe and the most frequent traits in the window. Example: chromosome='5', start=373000, end=374000 (the AHRR smoking locus). A 1 Mb window takes about 20 s. Source: EWAS Atlas (NGDC/CNCB), curated independently of the EWAS Catalog, so it is the fallback when EWASCatalog_* tools fail (ewascatalog.org has answered HTTP 503 since at least 2026-10-05).",
+    "fields": {
+      "operation": "search_by_region"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "chromosome",
+        "start",
+        "end"
+      ],
+      "properties": {
+        "chromosome": {
+          "type": "string",
+          "description": "Chromosome: 1-22, X or Y ('chr' prefix accepted)."
+        },
+        "start": {
+          "type": "integer",
+          "description": "Window start, GRCh37/hg19, 1-based."
+        },
+        "end": {
+          "type": "integer",
+          "description": "Window end, GRCh37/hg19. end - start must be at most 1,000,000."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Max probes to return, 1-500. Default 50."
+        },
+        "max_associations_per_probe": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Max associations listed under each probe, 1-200. Default 10 (association_count always gives the full number)."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "probe_id": {
+            "type": "string"
+          },
+          "chromosome": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "position_hg19": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "cpg_island": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "genes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "association_count": {
+            "type": "integer"
+          },
+          "trait_count": {
+            "type": "integer"
+          },
+          "associations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "study_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "trait": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "correlation": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "rank": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "pmid": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "chromosome": "5",
+        "start": 373000,
+        "end": 374000
+      },
+      {
+        "chromosome": "X",
+        "start": 73040000,
+        "end": 73075000,
+        "limit": 5
+      }
+    ]
+  },
+  {
+    "name": "EWASAtlas_get_study",
+    "type": "EWASAtlasTool",
+    "description": "Get one curated epigenome-wide association study (EWAS) from EWAS Atlas by its study ID: reported trait, case/control groups, the probes it reported with direction and p-value, and each cohort's size, tissue, platform and demographics. Study IDs (ES#####) come from EWASAtlas_get_probe, EWASAtlas_search_by_gene or EWASAtlas_get_publication. Example: study_id='ES00033' (body mass index).",
+    "fields": {
+      "operation": "get_study"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "study_id"
+      ],
+      "properties": {
+        "study_id": {
+          "type": "string",
+          "description": "EWAS Atlas study ID, e.g. 'ES00033'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Max associations to return, 1-1000. Default 100."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "study_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reported_trait": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "case_group": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "control_group": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "association_count": {
+          "type": "integer"
+        },
+        "associations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "probe_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "correlation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rank": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "p_value": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "cohorts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stage": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "cohort": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sample_size": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "tissue": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "platform": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "mean_age": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "male_fraction": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "study_id": "ES00033"
+      },
+      {
+        "study_id": "ES00580",
+        "limit": 10
+      }
+    ]
+  },
+  {
+    "name": "EWASAtlas_get_publication",
+    "type": "EWASAtlasTool",
+    "description": "Get the epigenome-wide association studies (EWAS) that EWAS Atlas curated from one publication, by PubMed ID: title, DOI, date, and for each study the reported trait, probes with direction and p-value, and cohorts. Example: pmid='29535343'.",
+    "fields": {
+      "operation": "get_publication"
+    },
+    "parameter": {
+      "type": "object",
+      "required": [
+        "pmid"
+      ],
+      "properties": {
+        "pmid": {
+          "type": "string",
+          "description": "PubMed ID, e.g. '29535343'."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Max associations per study to return, 1-1000. Default 50."
+        }
+      }
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "pmid": {
+          "type": "string"
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "doi": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "publication_date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "studies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "study_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reported_trait": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "case_group": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "control_group": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "association_count": {
+                "type": "integer"
+              },
+              "associations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "probe_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "correlation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "rank": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "p_value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "cohorts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "stage": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "cohort": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "sample_size": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "tissue": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "platform": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "mean_age": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "male_fraction": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "pmid": "29535343"
+      },
+      {
+        "pmid": "29618728",
+        "limit": 5
+      }
+    ]
+  }
+]

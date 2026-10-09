@@ -1,7 +1,7 @@
 """
 EWASCatalog_search_by_gene
 
-Look up all published epigenome-wide association study (EWAS) results annotated to one gene from ...
+NOTE (checked 2026-10-09): ewascatalog.org has answered HTTP 503 site-wide since at least 2026-10...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def EWASCatalog_search_by_gene(
     validate: bool = True,
 ) -> Any:
     """
-    Look up all published epigenome-wide association study (EWAS) results annotated to one gene from ...
+    NOTE (checked 2026-10-09): ewascatalog.org has answered HTTP 503 site-wide since at least 2026-10...
 
     Parameters
     ----------

@@ -1,30 +1,30 @@
 """
-EWASCatalog_search_by_cpg
+EWASAtlas_get_publication
 
-NOTE (checked 2026-10-09): ewascatalog.org has answered HTTP 503 site-wide since at least 2026-10...
+Get the epigenome-wide association studies (EWAS) that EWAS Atlas curated from one publication, b...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def EWASCatalog_search_by_cpg(
-    cpg_id: str,
+def EWASAtlas_get_publication(
+    pmid: str,
     limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
-    NOTE (checked 2026-10-09): ewascatalog.org has answered HTTP 503 site-wide since at least 2026-10...
+    Get the epigenome-wide association studies (EWAS) that EWAS Atlas curated from one publication, b...
 
     Parameters
     ----------
-    cpg_id : str
-        Illumina CpG probe identifier, e.g. 'cg05575921'.
+    pmid : str
+        PubMed ID, e.g. '29535343'.
     limit : int
-        Max associations to return, 1-200. Default 50.
+        Max associations per study to return, 1-1000. Default 50.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,17 +34,15 @@ def EWASCatalog_search_by_cpg(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {
-        k: v for k, v in {"cpg_id": cpg_id, "limit": limit}.items() if v is not None
-    }
+    _args = {k: v for k, v in {"pmid": pmid, "limit": limit}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
-            "name": "EWASCatalog_search_by_cpg",
+            "name": "EWASAtlas_get_publication",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -53,4 +51,4 @@ def EWASCatalog_search_by_cpg(
     )
 
 
-__all__ = ["EWASCatalog_search_by_cpg"]
+__all__ = ["EWASAtlas_get_publication"]

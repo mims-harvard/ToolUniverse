@@ -1,30 +1,33 @@
 """
-EWASCatalog_search_by_cpg
+EWASAtlas_search_by_gene
 
-NOTE (checked 2026-10-09): ewascatalog.org has answered HTTP 503 site-wide since at least 2026-10...
+Find the CpG probes annotated to a gene in EWAS Atlas and the curated epigenome-wide association ...
 """
 
 from typing import Any, Optional, Callable
 from ._shared_client import get_shared_client
 
 
-def EWASCatalog_search_by_cpg(
-    cpg_id: str,
+def EWASAtlas_search_by_gene(
+    gene_symbol: str,
     limit: Optional[int] = None,
+    max_associations_per_probe: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
-    NOTE (checked 2026-10-09): ewascatalog.org has answered HTTP 503 site-wide since at least 2026-10...
+    Find the CpG probes annotated to a gene in EWAS Atlas and the curated epigenome-wide association ...
 
     Parameters
     ----------
-    cpg_id : str
-        Illumina CpG probe identifier, e.g. 'cg05575921'.
+    gene_symbol : str
+        HGNC gene symbol, e.g. 'AHRR' or 'F2RL3'.
     limit : int
-        Max associations to return, 1-200. Default 50.
+        Max probes to return, 1-500. Default 50.
+    max_associations_per_probe : int
+        Max associations listed under each probe, 1-200. Default 10 (association_coun...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,17 +37,23 @@ def EWASCatalog_search_by_cpg(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"cpg_id": cpg_id, "limit": limit}.items() if v is not None
+        k: v
+        for k, v in {
+            "gene_symbol": gene_symbol,
+            "limit": limit,
+            "max_associations_per_probe": max_associations_per_probe,
+        }.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {
-            "name": "EWASCatalog_search_by_cpg",
+            "name": "EWASAtlas_search_by_gene",
             "arguments": _args,
         },
         stream_callback=stream_callback,
@@ -53,4 +62,4 @@ def EWASCatalog_search_by_cpg(
     )
 
 
-__all__ = ["EWASCatalog_search_by_cpg"]
+__all__ = ["EWASAtlas_search_by_gene"]
