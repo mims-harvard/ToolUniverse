@@ -1681,6 +1681,8 @@
   "ProtacDB_get_protac": "9bc7f9cc5144147364b76399810ff3ac",
   "ProtacDB_search_protacs": "3044c51b47f9618531957b557e195fee",
   "ProtacDB_search_targets": "74352cc92e844bd6baee05f000c56d5d",
+  "ProteinSimilarity_search_sequence_local": "dba95e40e3bfdb3927467ae06f6d025c",
+  "ProteinSimilarity_search_structure_local": "744108f673f42ec23a537cf17f234d90",
   "Protein_MSA_inspect": "f65f0ac339456d9479523eff2b04c00a",
   "ProteinsPlus_analyze_binding_site_similarity": "2ee6422147f78490ae386b615bd7b0a7",
   "ProteinsPlus_generate_interaction_diagram": "3b070c83555c409835b5f95514906f18",
