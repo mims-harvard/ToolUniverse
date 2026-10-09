@@ -25,6 +25,15 @@ is limited to 2 MiB; explicitly select one model and remove alternate atom
 locations before calculation. The calculation timeout defaults to 180 seconds
 and can be set between 1 and 600 seconds.
 
+Before prediction, observed standard-protein intraresidue N–CA, CA–C, C–O
+and C–OXT distances must lie within conservative 1.0–2.2 Å sanity bounds.
+Grossly broken bonds or duplicate backbone atoms return an input error before
+the worker starts. Valid inputs report the checked bond count and missing
+N/CA/C/O atom count in `input_backbone_geometry`. Missing atoms are not
+reconstructed or presumed valid. This check does not cover peptide continuity,
+sidechains, steric clashes, glycans, or stereochemistry; passing is not a
+complete structure validation.
+
 Results retain chain, PDB residue number, insertion code, group type, input
 hash, PROPKA version and warnings. Comparison extracts the requested chain
 from the same bound coordinates and matches these identifiers, including
@@ -35,7 +44,7 @@ not cached because the contents of the file may change.
 `protonated_fractions` are independent-site Henderson-Hasselbalch estimates,
 not coupled-site populations or net charges. Protein ionization groups are
 reported; ligand pKa predictions are excluded. The tools perform no atom
-reconstruction, geometric validation, glycan collision checking or physical
+reconstruction, complete geometric validation, glycan collision checking or physical
 binding free-energy calculation. A pKa shift does not establish affinity or
 pH selectivity; both validation flags remain false.
 

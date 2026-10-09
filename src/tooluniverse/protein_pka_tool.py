@@ -16,12 +16,67 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 MAX_BYTES = 2 * 1024 * 1024
+PROTEIN_RESIDUES = set(
+    "ALA ARG ASN ASP CYS GLN GLU GLY HIS ILE LEU LYS MET PHE PRO SER THR TRP TYR VAL "
+    "ASH GLH CYM CYX HID HIE HIP LYN".split()
+)
 LIMITATIONS = [
     "Empirical PROPKA predictions, not measured pKa, affinity or pH selectivity.",
     "Fractions use independent-site Henderson-Hasselbalch; coupled-site populations are not simulated.",
-    "No optimization, structural/glycan collision checks, or missing-atom reconstruction.",
+    "Only a gross observed intraresidue backbone-bond sanity check; no optimization, "
+    "sidechain/peptide/stereochemical or structural/glycan collision validation, or atom reconstruction.",
     "Protein ionization groups only; ligand pKa values are not reported.",
 ]
+
+
+def _backbone_geometry(content):
+    """Reject impossible observed backbone bonds without inferring absent atoms."""
+    residues = {}
+    segment = 0
+    for line in content.splitlines():
+        if line.startswith("TER"):
+            segment += 1
+        if line[:6] not in ("ATOM  ", "HETATM"):
+            continue
+        residue_name = line[17:20].strip()
+        if residue_name not in PROTEIN_RESIDUES:
+            continue
+        key = (segment, line[21], line[22:27], residue_name)
+        atoms = residues.setdefault(key, {})
+        name = line[12:16].strip()
+        if name not in {"N", "CA", "C", "O", "OXT"}:
+            continue
+        if name in atoms:
+            raise ValueError(
+                f"Duplicate protein backbone atom {name}: chain {key[1]!r}, "
+                f"residue {key[2].strip()}"
+            )
+        atoms[name] = tuple(float(line[i : i + 8]) for i in (30, 38, 46))
+    checked = 0
+    missing = 0
+    for key, atoms in residues.items():
+        missing += len({"N", "CA", "C", "O"} - atoms.keys())
+        for first, second in (("N", "CA"), ("CA", "C"), ("C", "O"), ("C", "OXT")):
+            if first not in atoms or second not in atoms:
+                continue
+            distance = math.dist(atoms[first], atoms[second])
+            if not 1.0 <= distance <= 2.2:
+                raise ValueError(
+                    f"Invalid protein backbone bond {first}-{second}: chain {key[1]!r}, "
+                    f"residue {key[2].strip()}, distance {distance:.3f} A "
+                    "outside the conservative 1.0-2.2 A input bounds. "
+                    "Provide corrected coordinates; this tool does not repair geometry."
+                )
+            checked += 1
+    return {
+        "checked_observed_bonds": checked,
+        "standard_protein_residues": len(residues),
+        "missing_N_CA_C_O_atoms": missing,
+        "bond_length_bounds_A": [1.0, 2.2],
+        "scope": "Observed standard-protein intraresidue N-CA, CA-C, C-O and C-OXT "
+        "only. Does not validate absent atoms, peptide continuity, sidechains, clashes, "
+        "glycans or stereochemistry; passing is not complete structural validation.",
+    }
 
 
 def _read_pdb(arguments):
@@ -104,6 +159,7 @@ class ProteinPKATool(BaseTool):
             ):
                 raise ValueError("timeout_seconds must be an integer from 1 to 600")
             content, kind, digest = _read_pdb(arguments)
+            backbone_geometry = _backbone_geometry(content)
             chain = arguments.get("partner_chain")
             comparing = (
                 self.tool_config.get("fields", {}).get("operation") == "compare_partner"
@@ -180,6 +236,7 @@ class ProteinPKATool(BaseTool):
             result["data"].update(
                 input_sha256=digest,
                 input_kind=kind,
+                input_backbone_geometry=backbone_geometry,
                 ph_values=ph_values,
                 limitations=LIMITATIONS,
                 binding_verified=False,
