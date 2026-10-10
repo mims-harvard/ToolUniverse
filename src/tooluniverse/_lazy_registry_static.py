@@ -734,6 +734,7 @@ STATIC_LAZY_REGISTRY = {
     "URLToPDFTextTool": "url_tool",
     "USDAPlantsCharacteristicsTool": "usda_plants_tool",
     "USDAPlantsProfileTool": "usda_plants_tool",
+    "USGSWaterTool": "usgs_water_tool",
     "USPTOOpenDataPortalTool": "uspto_tool",
     "UniBindRESTTool": "unibind_tool",
     "UniChemTool": "unichem_tool",

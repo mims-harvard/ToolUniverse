@@ -1,34 +1,178 @@
 [
   {
     "name": "USGSWater_get_streamflow",
-    "description": "Get real-time streamflow (discharge) data from USGS water monitoring stations. Returns instantaneous values for water flow rate in cubic feet per second (ft3/s) including site name, location coordinates, and recent measurements. The USGS monitors over 10,000 stream gauges across the United States.",
+    "type": "USGSWaterTool",
+    "description": "Get recent streamflow (discharge) readings from USGS stream gages, in cubic feet per second (ft^3/s), with site name, state and coordinates. Values are usually every 15 minutes (some sites every 5) and provisional until reviewed. The USGS monitors over 10,000 stream gages across the United States. Source: USGS Water Data API (api.waterdata.usgs.gov, continuous values), which replaces the WaterServices API USGS is retiring on 2027-02-22.",
+    "fields": {
+      "parameter_code": "00060",
+      "parameter_name": "streamflow (discharge)"
+    },
     "parameter": {
       "type": "object",
+      "required": [
+        "sites"
+      ],
       "properties": {
         "sites": {
           "type": "string",
-          "description": "USGS site number(s), comma-separated (e.g., '01646500' for Potomac River near Washington DC, '09380000' for Colorado River at Lees Ferry)"
+          "description": "USGS site number(s), comma-separated, up to 25 (e.g. '01646500' for the Potomac River near Washington DC, '09380000' for the Colorado River at Lees Ferry). A 'USGS-' prefix is accepted."
         },
         "period": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Time period for data in ISO 8601 duration format (e.g., 'PT2H' for 2 hours, 'P1D' for 1 day, 'P7D' for 7 days). Default: 'P1D'"
+          "description": "How far back from now, as an ISO 8601 duration (e.g. 'PT2H' for 2 hours, 'P1D' for 1 day, 'P7D' for 7 days). Default: 'P1D'."
+        },
+        "max_values": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Max values per site, newest kept, 1-10000 (shared across a site's sensors when it has several). Default 500, about 1.7 days of 5-minute data."
         }
-      },
-      "required": [
-        "sites"
-      ]
-    },
-    "fields": {
-      "endpoint": "https://waterservices.usgs.gov/nwis/iv/",
-      "params": {
-        "format": "json",
-        "parameterCd": "00060"
       }
     },
-    "type": "BaseRESTTool",
+    "optional_api_keys": [
+      "USGS_WATER_API_KEY"
+    ],
+    "api_key_info": {
+      "USGS_WATER_API_KEY": {
+        "domain": "Other",
+        "type": "secret",
+        "register_url": "https://api.waterdata.usgs.gov/signup/",
+        "purpose": "Raise the rate limit for USGS Water Data API requests (streamflow, gage height, water temperature).",
+        "without": "Works anonymously at a lower rate limit."
+      }
+    },
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "site_id": {
+            "type": "string"
+          },
+          "time_series_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sensor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Sensor/sublocation label when a site has several series for this parameter (e.g. 'UPPER', 'From multiparameter sonde'); null otherwise."
+          },
+          "site_number": {
+            "type": "string"
+          },
+          "site_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "state": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "site_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "latitude": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "longitude": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "value_count": {
+            "type": "integer"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "latest": {
+            "type": "object",
+            "properties": {
+              "time": {
+                "type": "string"
+              },
+              "value": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "approval_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "qualifier": {
+                "type": [
+                  "string",
+                  "array",
+                  "null"
+                ]
+              }
+            }
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": [
+                    "number",
+                    "string",
+                    "null"
+                  ]
+                },
+                "approval_status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "qualifier": {
+                  "type": [
+                    "string",
+                    "array",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "test_examples": [
       {
         "sites": "01646500",
@@ -42,128 +186,173 @@
         "sites": "12340000",
         "period": "PT6H"
       }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "description": "USGS water data response",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "declaredType": {
-              "type": "string"
-            },
-            "value": {
-              "type": "object",
-              "properties": {
-                "queryInfo": {
-                  "type": "object"
-                },
-                "timeSeries": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "sourceInfo": {
-                        "type": "object",
-                        "properties": {
-                          "siteName": {
-                            "type": "string"
-                          },
-                          "siteCode": {
-                            "type": "array"
-                          },
-                          "geoLocation": {
-                            "type": "object"
-                          }
-                        }
-                      },
-                      "variable": {
-                        "type": "object",
-                        "properties": {
-                          "variableName": {
-                            "type": "string"
-                          },
-                          "unit": {
-                            "type": "object"
-                          }
-                        }
-                      },
-                      "values": {
-                        "type": "array",
-                        "items": {
-                          "type": "object",
-                          "properties": {
-                            "value": {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "value": {
-                                    "type": "string"
-                                  },
-                                  "dateTime": {
-                                    "type": "string"
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
-    }
+    ]
   },
   {
     "name": "USGSWater_get_water_level",
-    "description": "Get real-time water level (gage height) data from USGS monitoring stations. Returns water surface elevation in feet above a reference datum. Useful for monitoring river/lake levels, flood conditions, and drought assessment.",
+    "type": "USGSWaterTool",
+    "description": "Get recent water level (gage height) readings from USGS monitoring stations, in feet above the gage datum, with site name, state and coordinates. Useful for monitoring river and lake levels and flood conditions. Values are provisional until reviewed. Source: USGS Water Data API (api.waterdata.usgs.gov, continuous values), which replaces the WaterServices API USGS is retiring on 2027-02-22.",
+    "fields": {
+      "parameter_code": "00065",
+      "parameter_name": "gage height"
+    },
     "parameter": {
       "type": "object",
+      "required": [
+        "sites"
+      ],
       "properties": {
         "sites": {
           "type": "string",
-          "description": "USGS site number(s), comma-separated (e.g., '01646500' for Potomac River)"
+          "description": "USGS site number(s), comma-separated, up to 25 (e.g. '01646500' for the Potomac River near Washington DC, '09380000' for the Colorado River at Lees Ferry). A 'USGS-' prefix is accepted."
         },
         "period": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Time period in ISO 8601 format (e.g., 'PT2H', 'P1D', 'P7D'). Default: 'P1D'"
+          "description": "How far back from now, as an ISO 8601 duration (e.g. 'PT2H' for 2 hours, 'P1D' for 1 day, 'P7D' for 7 days). Default: 'P1D'."
+        },
+        "max_values": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Max values per site, newest kept, 1-10000 (shared across a site's sensors when it has several). Default 500, about 1.7 days of 5-minute data."
         }
-      },
-      "required": [
-        "sites"
-      ]
-    },
-    "fields": {
-      "endpoint": "https://waterservices.usgs.gov/nwis/iv/",
-      "params": {
-        "format": "json",
-        "parameterCd": "00065"
       }
     },
-    "type": "BaseRESTTool",
+    "optional_api_keys": [
+      "USGS_WATER_API_KEY"
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "site_id": {
+            "type": "string"
+          },
+          "time_series_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sensor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Sensor/sublocation label when a site has several series for this parameter (e.g. 'UPPER', 'From multiparameter sonde'); null otherwise."
+          },
+          "site_number": {
+            "type": "string"
+          },
+          "site_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "state": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "site_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "latitude": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "longitude": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "value_count": {
+            "type": "integer"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "latest": {
+            "type": "object",
+            "properties": {
+              "time": {
+                "type": "string"
+              },
+              "value": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "approval_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "qualifier": {
+                "type": [
+                  "string",
+                  "array",
+                  "null"
+                ]
+              }
+            }
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": [
+                    "number",
+                    "string",
+                    "null"
+                  ]
+                },
+                "approval_status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "qualifier": {
+                  "type": [
+                    "string",
+                    "array",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "test_examples": [
       {
         "sites": "01646500",
@@ -177,81 +366,173 @@
         "sites": "02037500",
         "period": "PT6H"
       }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "description": "USGS water level data",
-          "properties": {
-            "value": {
-              "type": "object",
-              "properties": {
-                "timeSeries": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "sourceInfo": {
-                        "type": "object"
-                      },
-                      "variable": {
-                        "type": "object"
-                      },
-                      "values": {
-                        "type": "array"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
-    }
+    ]
   },
   {
     "name": "USGSWater_get_water_temperature",
-    "description": "Get real-time water temperature data from USGS monitoring stations. Returns water temperature in degrees Celsius. Useful for ecological monitoring, aquatic habitat assessment, and water quality analysis.",
+    "type": "USGSWaterTool",
+    "description": "Get recent water temperature readings from USGS monitoring stations, in degrees Celsius, with site name, state and coordinates. Useful for ecological monitoring, aquatic habitat assessment and water quality analysis. Not every gage measures temperature; sites without it are listed in metadata.sites_without_data. Source: USGS Water Data API (api.waterdata.usgs.gov, continuous values), which replaces the WaterServices API USGS is retiring on 2027-02-22.",
+    "fields": {
+      "parameter_code": "00010",
+      "parameter_name": "water temperature"
+    },
     "parameter": {
       "type": "object",
+      "required": [
+        "sites"
+      ],
       "properties": {
         "sites": {
           "type": "string",
-          "description": "USGS site number(s), comma-separated"
+          "description": "USGS site number(s), comma-separated, up to 25 (e.g. '01646500' for the Potomac River near Washington DC, '09380000' for the Colorado River at Lees Ferry). A 'USGS-' prefix is accepted."
         },
         "period": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Time period in ISO 8601 format (e.g., 'PT2H', 'P1D', 'P7D'). Default: 'P1D'"
+          "description": "How far back from now, as an ISO 8601 duration (e.g. 'PT2H' for 2 hours, 'P1D' for 1 day, 'P7D' for 7 days). Default: 'P1D'."
+        },
+        "max_values": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Max values per site, newest kept, 1-10000 (shared across a site's sensors when it has several). Default 500, about 1.7 days of 5-minute data."
         }
-      },
-      "required": [
-        "sites"
-      ]
-    },
-    "fields": {
-      "endpoint": "https://waterservices.usgs.gov/nwis/iv/",
-      "params": {
-        "format": "json",
-        "parameterCd": "00010"
       }
     },
-    "type": "BaseRESTTool",
+    "optional_api_keys": [
+      "USGS_WATER_API_KEY"
+    ],
+    "return_schema": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "site_id": {
+            "type": "string"
+          },
+          "time_series_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "sensor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Sensor/sublocation label when a site has several series for this parameter (e.g. 'UPPER', 'From multiparameter sonde'); null otherwise."
+          },
+          "site_number": {
+            "type": "string"
+          },
+          "site_name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "state": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "site_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "latitude": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "longitude": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "unit": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "value_count": {
+            "type": "integer"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "latest": {
+            "type": "object",
+            "properties": {
+              "time": {
+                "type": "string"
+              },
+              "value": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              },
+              "approval_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "qualifier": {
+                "type": [
+                  "string",
+                  "array",
+                  "null"
+                ]
+              }
+            }
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "time": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": [
+                    "number",
+                    "string",
+                    "null"
+                  ]
+                },
+                "approval_status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "qualifier": {
+                  "type": [
+                    "string",
+                    "array",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "test_examples": [
       {
         "sites": "01646500",
@@ -262,52 +543,9 @@
         "period": "P1D"
       },
       {
-        "sites": "01578310",
-        "period": "PT6H"
+        "sites": "01646500,12450650",
+        "period": "PT3H"
       }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "description": "USGS water temperature data",
-          "properties": {
-            "value": {
-              "type": "object",
-              "properties": {
-                "timeSeries": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "sourceInfo": {
-                        "type": "object"
-                      },
-                      "variable": {
-                        "type": "object"
-                      },
-                      "values": {
-                        "type": "array"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
-    }
+    ]
   }
 ]

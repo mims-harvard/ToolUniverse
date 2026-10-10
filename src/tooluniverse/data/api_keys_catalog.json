@@ -658,6 +658,18 @@
     ]
   },
   {
+    "name": "USGS_WATER_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Other",
+    "register_url": "https://api.waterdata.usgs.gov/signup/",
+    "purpose": "Raise the rate limit for USGS Water Data API requests (streamflow, gage height, water temperature).",
+    "without": "Works anonymously at a lower rate limit.",
+    "used_by": [
+      "usgs_water_tools.json"
+    ]
+  },
+  {
     "name": "USPTO_API_KEY",
     "requirement": "required",
     "type": "secret",
