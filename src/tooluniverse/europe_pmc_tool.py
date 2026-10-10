@@ -318,6 +318,19 @@ def _fetch_fulltext_with_trace(
     }
 
 
+def _disclose_truncation(result, returned, hit_count, max_limit):
+    """Top-level ``truncated`` (and ``truncation_note`` when matches were left
+    behind), so a short page is not read as a short result set."""
+    result["truncated"] = returned < hit_count
+    if result["truncated"]:
+        result["truncation_note"] = (
+            f"Returned the top {returned} of {hit_count} articles matching "
+            f"this query in Europe PMC. This is a ranked slice, not the full "
+            f"result set — an article absent here may still match. Raise `limit` "
+            f"(up to {max_limit} per request) or narrow the query to see the rest."
+        )
+
+
 @register_tool("EuropePMCTool")
 class EuropePMCTool(BaseTool):
     """
@@ -393,17 +406,7 @@ class EuropePMCTool(BaseTool):
         metadata["total_results"] = hit_count
         if hit_count is None:
             return result
-        if len(articles) < hit_count:
-            result["truncated"] = True
-            result["truncation_note"] = (
-                f"Returned the top {len(articles)} of {hit_count} articles matching "
-                f"this query in Europe PMC. This is a ranked slice, not the full "
-                f"result set — an article absent here may still match. Raise `limit` "
-                f"(up to Europe PMC's 1000-per-request maximum) or narrow the query "
-                f"to see the rest."
-            )
-        else:
-            result["truncated"] = False
+        _disclose_truncation(result, len(articles), hit_count, max_limit=1000)
         return result
 
     def _local_name(self, tag: str) -> str:
@@ -717,6 +720,9 @@ class EuropePMCTool(BaseTool):
                     "authors": authors,
                     "journal": journal or None,
                     "year": year,
+                    # Earliest of the electronic and print dates; the
+                    # FIRST_PDATE search field filters on it.
+                    "first_publication_date": rec.get("firstPublicationDate") or None,
                     "doi": doi,
                     "url": url,
                     "source_db": source_db,
@@ -873,6 +879,133 @@ class EuropePMCTool(BaseTool):
                         continue
 
         return articles, hit_count
+
+
+_PHRASE_OR_WORD = re.compile(r'"[^"]*"|\w+(?:[-\']\w+)*')
+_WORD = re.compile(r"\w+(?:[-\']\w+)*")
+# Europe PMC reads these as operators in either case: TITLE_ABS:(intussusception
+# adult or child) returned 4,845 hits against 12 without the "or" (2026-10-10).
+_OPERATOR_WORDS = frozenset({"and", "or", "not"})
+
+
+def _search_terms(text: str) -> list:
+    """Quoted phrases (when the quotes pair up) and words, nothing else.
+
+    Inside a field clause any other syntax silently changes the search
+    (measured: ``TITLE_ABS:(scaphoid "fracture)`` returns 0 hits and
+    ``TITLE_ABS:(intussusception (adult)`` 2,147 instead of 973); a colon
+    makes a word a field name, a leading ``-`` excludes it, and bare
+    AND/OR/NOT are operators. Parentheses add nothing to an implicit AND.
+    """
+    if text.count('"') % 2:
+        text = text.replace('"', " ")
+    terms = []
+    for token in _PHRASE_OR_WORD.findall(text):
+        if token.startswith('"'):
+            words = _WORD.findall(token)
+            if words:
+                terms.append('"%s"' % " ".join(words))
+        elif token.lower() not in _OPERATOR_WORDS:
+            terms.append(token)
+    return terms
+
+
+def _date_bound(value, key, year_suffix):
+    """``(date, error)`` for a published_after / published_before value."""
+    if value in (None, ""):
+        return None, None
+    value = str(value).strip()
+    if not re.fullmatch(r"\d{4}(-\d{2}-\d{2})?", value):
+        return None, f"`{key}` must be a year (2019) or a date (2019-06-30)."
+    return (value if len(value) > 4 else value + year_suffix), None
+
+
+@register_tool("EuropePMCCaseReportsTool")
+class EuropePMCCaseReportsTool(EuropePMCTool):
+    """Published case reports on a condition, with their abstracts."""
+
+    MAX_LIMIT = 25
+
+    def run(self, arguments):
+        query = arguments.get("query")
+        terms = _search_terms(query) if isinstance(query, str) else []
+        if not terms:
+            return {
+                "status": "error",
+                "error": "`query` is required: the condition, presentation or "
+                "treatment to find case reports about, e.g. 'axial torsion of "
+                "Meckel diverticulum'.",
+            }
+        try:
+            limit = int(arguments.get("limit") or 5)
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": f"`limit` must be an integer from 1 to {self.MAX_LIMIT}.",
+            }
+        limit = min(max(limit, 1), self.MAX_LIMIT)
+        after, after_error = _date_bound(
+            arguments.get("published_after"), "published_after", "-01-01"
+        )
+        before, before_error = _date_bound(
+            arguments.get("published_before"), "published_before", "-12-31"
+        )
+        if after_error or before_error:
+            return {"status": "error", "error": after_error or before_error}
+        filters = ['PUB_TYPE:"Case Reports"']
+        if after or before:
+            filters.append(
+                "FIRST_PDATE:[%s TO %s]"
+                % (after or "1800-01-01", before or "3000-12-31")
+            )
+
+        def search(joiner):
+            clause = "TITLE_ABS:(%s)" % joiner.join(terms)
+            search_query = " AND ".join([clause] + filters)
+            return (search_query, *self._search(search_query, limit))
+
+        search_query, articles, hit_count = search(" ")
+        matching = (
+            "every query word in the title or abstract of an article Europe PMC "
+            "types as a case report, ranked by relevance"
+        )
+        if hit_count == 0 and len(terms) > 1:
+            # Europe PMC ANDs the words and does not stem them, so a long
+            # description of a patient usually matches nothing. Fall back to
+            # any of the words, ranked by relevance (the rarest words decide).
+            search_query, articles, hit_count = search(" OR ")
+            matching = (
+                "ANY query word: no case report has all of them in its title or "
+                "abstract, so these are the most relevant reports matching some "
+                "of them; check each against the case. A shorter query naming only "
+                "the condition (2-5 words) matches more precisely."
+            )
+        if hit_count is None:
+            failure = articles[0] if articles else {}
+            return {
+                "status": "error",
+                "error": failure.get("error") or "Europe PMC search failed",
+                "retryable": bool(failure.get("retryable")),
+                "query": search_query,
+            }
+        result = {
+            "status": "success",
+            "data": articles,
+            "metadata": {
+                "count": len(articles),
+                "total_results": hit_count,
+                "query": search_query,
+                "matching": matching,
+                "source": "Europe PMC",
+            },
+        }
+        if hit_count == 0:
+            result["metadata"]["hint"] = (
+                "No case report has this in its title or abstract. Europe PMC does "
+                "not stem words: try the singular, or another name for the condition."
+            )
+        _disclose_truncation(result, len(articles), hit_count, self.MAX_LIMIT)
+        return result
 
 
 @register_tool("EuropePMCFullTextSnippetsTool")

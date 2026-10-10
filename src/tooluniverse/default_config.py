@@ -425,6 +425,12 @@ default_tool_files = {
     "clinical_guidelines": os.path.join(
         current_dir, "data", "clinical_guidelines_tools.json"
     ),
+    # NCBI Bookshelf references from a local index built once by
+    # `python -m tooluniverse.ncbi_bookshelf_index build`: StatPearls search,
+    # sections and condition management; LactMed and LiverTox drug records
+    "ncbi_bookshelf_reference": os.path.join(
+        current_dir, "data", "ncbi_bookshelf_reference_tools.json"
+    ),
     # FDA drug labels - official prescribing information with clinical recommendations
     "openfda_labels": os.path.join(current_dir, "data", "openfda_label_tools.json"),
     # Database tools

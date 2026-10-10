@@ -1,0 +1,832 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper content-type="chapter" id="Barbiturates" from-where="body" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">livertox</book-id>
+    <book-title-group>
+      <book-title>LiverTox</book-title>
+      <subtitle>Clinical and Research Information on Drug-Induced Liver Injury</subtitle>
+    </book-title-group>
+    <pub-date date-type="pubr" publication-format="electronic">
+      <year>2012</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>National Institute of Diabetes and Digestive and Kidney Diseases</publisher-name>
+      <publisher-loc>Bethesda (MD)</publisher-loc>
+    </publisher>
+    <abstract>
+      <p>LiverTox<sup>&#x000ae;</sup> provides up-to-date, unbiased and easily accessed information on the diagnosis, cause, frequency, clinical patterns and management of liver injury attributable to prescription and nonprescription medications and selected herbal and dietary supplements. The LiverTox site is meant as a resource for both physicians and patients as well as for clinical academicians and researchers who specialize in idiosyncratic drug induced hepatotoxicity.</p>
+      <p>Information on a specific medication or supplement can be found by entering its name in the &#x0201c;Search this book&#x0201d; box shown above or by browsing the list of agents by its first letter using the alphabetic list shown below.</p>
+      <p>LiverTox is produced by the National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK) and is copyright free. It is requested that use of LiverTox data in publications be given appropriate acknowledgment.</p>
+      <p>The LiverTox team welcomes user comments and enquiries. <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/books/n/livertox/Contactus/">Contact Us</ext-link></p>
+    </abstract>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes notes-type="disclaimer">
+      <title>Disclaimer:</title>
+      <p>Information presented in the LiverTox database is derived from the scientific literature and public databases and reflects professional expertise of the authors. Such information does not represent official policy of the U.S. Government or any agency thereof. The information in LiverTox is not meant as a substitute for FDA approved product labeling and professional judgment in the diagnosis and treatment of drug induced liver injury. The U.S. Government and its individual agencies, including the NIDDK, NLM and NIH, does not warrant or assume any legal responsibility for the accuracy, completeness, or usefulness of the information contained on this Site.</p>
+      <p>NIH does not provide patient-specific medical advice concerning the potential of a drug or herbal supplement to cause hepatotoxicity; please consult with a physician for guidance.</p>
+      <p>As of September&#x0202f;2026, initial drafts of new and updated LiverTox chapters will be generated using Artificial Intelligence. Each draft will then undergo careful review, verification, and editing by the LiverTox editorial team. New chapters will also undergo independent peer review from an external expert in drug&#x02011;induced liver injury</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <book-part-id book-part-id-type="pmcid">Barbiturates</book-part-id>
+      <title-group>
+        <title>Barbiturates</title>
+      </title-group>
+      <pub-history>
+        <date date-type="updated">
+          <day>3</day>
+          <month>10</month>
+          <year>2021</year>
+        </date>
+      </pub-history>
+    </book-part-meta>
+    <body>
+      <sec id="Barbiturates.OVERVIEW">
+        <title>OVERVIEW</title>
+        <sec id="Barbiturates.Introduction" sec-type="pubmed-excerpt">
+          <title>Introduction</title>
+          <p>Barbiturates are structurally related compounds with sedative and hypnotic activities, some of which (phenobarbital and mephobarital) are also used as anticonvulsants. Phenobarbital has been clearly linked to cases of idiosyncratic acute liver injury, resembling the immunoallergic hepatotoxicity of other aromatic anticonvulsants such as phenytoin and carbamazepine. In contrast, the other conventional sedative barbiturates have not been linked to serum enzyme elevations during therapy and clinically apparent acute liver injury due to the sedative barbiturates is extremely rare, if it occurs at all.</p>
+        </sec>
+        <sec id="Barbiturates.Background">
+          <title>Background</title>
+          <p>Barbiturates are a family of compounds that have sedative and hypnotic activities and act as nonselective central nervous system (CNS) depressants. The barbiturates were introduced into medical practice in the early 20<sup>th</sup> century, used as a sleeping aid and in treatment of schizophrenia. However, with chronic use they often cause psychological and physical dependence and have serious adverse effects, including agitation, respiratory depression and daytime somnolence. Phenobarbital (fee" noe bar' bi tal) given in lower doses was found to have anticonvulsant activity and has been used extensively as an anticonvulsant, particularly in children. Phenobarbital appears to act by suppression of spread of seizure activity by enhancing the effect of gamma aminobutyric acid (GABA). Phenobarbital has been linked to instances of acute liver injury and is discussed separately as an anticonvulsant. The barbiturates that are used as sedatives and hypnotics, in contrast, have not been linked to cases of acute or chronic liver injury and are discussed together below.</p>
+          <p>Amobarbital, pentobarbital and secobarbital are used as sedatives and hypnotics and not as anticonvulsants. These and many other synthetic barbiturates were introduced into medical use in the United States in the early part of the 20<sup>th</sup> century as sedatives, hypnotics (short term treatment of insomnia) and preanesthetic agents. They are now rarely used, having been replaced by more effective and better tolerated sedatives and hypnotics such as the benzodiazepines and benzodiazepine receptor agonists. Amobarbital (am" oh bar' bi tal) and pentobarbital (pen&#x0201d; toe bar&#x02019; bi tal) are currently available, but only as solutions for parenteral administration, being used largely as preanesthetic agents. Secobarbital is available as a 100 mg capsule generically and under the brand name Seconal. Current indications for the barbiturates include short term treatment of insomnia and as a preanesthetic agent or sedative for a minor procedure or imaging study. The recommended dose of secobarbital in adults is 100 mg at bedtime or 200 to 300 mg 1 to 2 hours before surgery. Barbiturates that are no longer available in the United States include butalbital, butabarbital, mephobarbital, methohexital, and thiopental. Secobarbital, amobarbital and pentobarbital are classified as a Schedule II substances, indicating that they have definite potential for physical and psychological dependence and abuse. Frequent side effects include drowsiness, sedation, impairment of mental and physical abilities, hypotension, bradycardia, syncope, nausea, vomiting, headache, and skin rash. When given chronically, the barbiturates can cause psychological and physical dependence and their withdrawal can be associated with agitation, irritability, confusion, insomnia, and vivid dreams.</p>
+        </sec>
+        <sec id="Barbiturates.Hepatotoxicity">
+          <title>Hepatotoxicity</title>
+          <p>Despite wide scale previous use, there is little evidence that the conventional barbiturates used as sedatives or preanesthetic agents can cause liver injury, either serum enzyme elevations during therapy or clinically apparent acute liver disease. There have been no reports of liver injury associated with secobarbital, butabarbital or amobarbital. The barbiturates can cause allergic reactions and skin rashes, which may be accompanied by mild liver injury. Paradoxically, phenobarbital has been linked to many instances of hypersensitivity reactions with accompanying liver disease that can be severe, including drug reaction with eosinophilia and systemic symptoms (DRESS) syndrome, Stevens Johnson syndrome [SJS] and toxic epidermal necrolysis [TEN], while the other barbiturates have not. The barbiturates are also potent inducers of many hepatic enzymes. In animal models, phenobarbital causes enlargement of hepatocytes with marked increases in protein and lipid content of the endoplasmic reticulum, causing an increased granularity to the hepatocyte cytoplasm. Hepatic enzymes that are induced with chronic barbiturate use include multiple microsomal enzymes such as CYP 1A2, 2C9, 2C19 and 3A4 as well as glucuronyl transferase, delta-aminolevulinic acid, and aldehyde dehydrogenase. Thus, chronic use of barbiturates may increase the metabolism of many drugs and endogenous substances including steroid hormones, cholesterol, bile salts and vitamins.</p>
+          <p>Likelihood score for amobarbital, pentobarbital and secobarbital: E (unlikely causes of clinically apparent liver injury).</p>
+        </sec>
+        <sec id="Barbiturates.Mechanism_of_Injury">
+          <title>Mechanism of Injury</title>
+          <p>The reason why phenobarbital, but not amobarbital, butabarbital or secobarbital has been linked to hepatotoxicity is not known, but may merely be that the conventional barbiturates are infrequently used and used in relatively low doses for short periods only. The mechanism of phenobarbital hepatotoxicity is thought to be hypersensitivity and it commonly presents with DRESS syndrome. Hypersensitivity reactions can occur with other barbiturates, but hepatic involvement has not been described in the literature.</p>
+          <p>Drug Class: <related-object link-type="booklink" source-id="livertox" document-id="Sedatives_Hypnotics" document-type="chapter">Sedatives and Hypnotics</related-object></p>
+          <p>Drugs in the Subclass, Barbiturates: Amobarbital, Butabarbital, <related-object link-type="booklink" source-id="livertox" document-id="Phenobarbital" document-type="chapter">Phenobarbital</related-object>, Secobarbital</p>
+        </sec>
+      </sec>
+      <sec id="Barbiturates.PRODUCT_INFORMATION">
+        <title>PRODUCT INFORMATION</title>
+        <p>
+<bold>REPRESENTATIVE TRADE NAMES</bold>
+</p>
+        <p>Amobarbital &#x02013; Generic, Amytal&#x000ae;</p>
+        <p>Phenobarbital &#x02013; Generic</p>
+        <p>Secobarbital &#x02013; Generic, Seconal&#x000ae;</p>
+        <p>
+<bold>DRUG CLASS</bold>
+</p>
+        <p>Sedatives and Hypnotics</p>
+        <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&#x00026;query=Barbiturates">COMPLETE LABELING</ext-link>
+</p>
+        <p>Product labeling at DailyMed, National Library of Medicine, NIH</p>
+      </sec>
+      <sec id="Barbiturates.CHEMICAL_FORMULAS_AND_STRUC">
+        <title>CHEMICAL FORMULAS AND STRUCTURES</title>
+        <table-wrap id="Barbiturates.Tc" orientation="portrait" position="anchor">
+          <table frame="hsides" rules="groups">
+            <thead>
+              <tr>
+                <th id="hd_h_Barbiturates.Tc_1_1_1_1" valign="top" align="left" scope="col" rowspan="1" colspan="1">DRUG</th>
+                <th id="hd_h_Barbiturates.Tc_1_1_1_2" valign="top" align="left" scope="col" rowspan="1" colspan="1">CAS REGISTRY NUMBER</th>
+                <th id="hd_h_Barbiturates.Tc_1_1_1_3" valign="top" align="left" scope="col" rowspan="1" colspan="1">MOLECULAR FORMULA</th>
+                <th id="hd_h_Barbiturates.Tc_1_1_1_4" valign="top" align="left" scope="col" rowspan="1" colspan="1">STRUCTURE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td headers="hd_h_Barbiturates.Tc_1_1_1_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">Amobarbital</td>
+                <td headers="hd_h_Barbiturates.Tc_1_1_1_2" valign="top" align="left" rowspan="1" colspan="1">
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pubchem" xlink:href="sid://134970867">57-43-2</ext-link>
+</td>
+                <td headers="hd_h_Barbiturates.Tc_1_1_1_3" valign="top" align="left" rowspan="1" colspan="1">C11-H18-N2-O3</td>
+                <td headers="hd_h_Barbiturates.Tc_1_1_1_4" valign="top" align="left" rowspan="1" colspan="1">
+<related-object link-type="ext-image-back-link" source-id="pubchem" document-id="134970867" document-id-type="sid" document-type="summary" object-id="134970867" object-id-type="sid" object-type="image"/>
+</td>
+              </tr>
+              <tr>
+                <td headers="hd_h_Barbiturates.Tc_1_1_1_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">Phenobarbital</td>
+                <td headers="hd_h_Barbiturates.Tc_1_1_1_2" valign="top" align="left" rowspan="1" colspan="1">
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pubchem" xlink:href="sid://134970852">50-06-6</ext-link>
+</td>
+                <td headers="hd_h_Barbiturates.Tc_1_1_1_3" valign="top" align="left" rowspan="1" colspan="1">C12-H12-N2-O3</td>
+                <td headers="hd_h_Barbiturates.Tc_1_1_1_4" valign="top" align="left" rowspan="1" colspan="1">
+<related-object link-type="ext-image-back-link" source-id="pubchem" document-id="134970852" document-id-type="sid" document-type="summary" object-id="134970852" object-id-type="sid" object-type="image"/>
+</td>
+              </tr>
+              <tr>
+                <td headers="hd_h_Barbiturates.Tc_1_1_1_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">Secobarbital</td>
+                <td headers="hd_h_Barbiturates.Tc_1_1_1_2" valign="top" align="left" rowspan="1" colspan="1">
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pubchem" xlink:href="sid://134971831">76-73-3</ext-link>
+</td>
+                <td headers="hd_h_Barbiturates.Tc_1_1_1_3" valign="top" align="left" rowspan="1" colspan="1">C12-H18-N2-O3</td>
+                <td headers="hd_h_Barbiturates.Tc_1_1_1_4" valign="top" align="left" rowspan="1" colspan="1">
+<related-object link-type="ext-image-back-link" source-id="pubchem" document-id="134971831" document-id-type="sid" document-type="summary" object-id="134971831" object-id-type="sid" object-type="image"/>
+</td>
+              </tr>
+            </tbody>
+          </table>
+        </table-wrap>
+      </sec>
+      <sec id="Barbiturates.ANNOTATED_BIBLIOGRAPHY">
+        <title>ANNOTATED BIBLIOGRAPHY</title>
+        <p>References updated: 03 October 2021</p>
+        <ref-list id="Barbiturates.ANNOTATED_BIBLIOGRAPHY.reflist0">
+          <ref id="Barbiturates.REF.zimmerman.1999">
+            <mixed-citation publication-type="book">Zimmerman HJ. Anticonvulsants. In, Zimmerman HJ. Hepatotoxicity: the adverse effects of drugs and other chemicals on the liver. 2nd ed. Philadelphia: Lippincott, 1999, pp.498-516.<annotation><p><italic toggle="yes">(Expert review of anticonvulsants and liver injury published in 1999; mentions that liver injury from phenobarbital is rare, but it has been implicated in at least 15 cases of clinically apparent injury, both hepatocellular and cholestatic; potential hepatotoxicity of other barbiturates is not discussed).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="Barbiturates.REF.pirmohamed.2013">
+            <mixed-citation publication-type="book">Pirmohamed M, Leeder SJ. Anticonvulsant agents. In, Kaplowitz N, DeLeve LD, eds. Drug-induced liver disease. 3rd ed. Amsterdam: Elsevier, 2013: pp 423-442.<annotation><p><italic toggle="yes">(Review of anticonvulsant induced liver injury mentions that phenobarbital is the oldest aromatic anticonvulsant and can cause elevations in serum GGT and Alk P but is a rare cause of liver injury, reported cases usually associated with hypersensitivity reactions).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="Barbiturates.REF.smith.2018">
+            <mixed-citation publication-type="book">Smith MD, Metcalf CS, Wilcox KS. Pharmacology of the epilepsies. In, Brunton LL, Hilal-Dandan R, Knollman BC, eds. Goodman &#x00026; Gilman&#x02019;s the pharmacological basis of therapeutics. 13th ed. New York: McGraw-Hill, 2018, pp. 303-26.<annotation><p><italic toggle="yes">(Textbook of pharmacology and therapeutics).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="Barbiturates.REF.mihic.2018">
+            <mixed-citation publication-type="book">Mihic J, Mayfield J, Harris RA. Barbiturates. Hypnotics and sedatives. In, Brunton LL, Hilal-Dandan R, Knollman BC, eds. Goodman &#x00026; Gilman&#x02019;s the pharmacological basis of therapeutics. 13th ed. New York: McGraw-Hill, 2018, pp. 339-54.<annotation><p><italic toggle="yes">(Textbook of pharmacology and therapeutics mentions that the barbiturates were once used extensively, but have been replaced by the much safer benzodiazepines).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="Barbiturates.REF.welton.1950.232">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Welton</surname><given-names>DG</given-names></name>
+</person-group>
+              <article-title>Exfoliative dermatitis and hepatitis due to phenobarbital.</article-title>
+              <source>J Am Med Assoc.</source>
+              <year>1950</year>
+              <volume>143</volume>
+              <issue>3</issue>
+              <fpage>232</fpage>
+              <lpage>4</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(25 year old pregnant woman developed rash, followed by facial and peripheral edema, itching, erythema and exfoliation, fever to 104oC after 6 weeks of phenobarbital [white blood count 73,000, 32% eosinophils], jaundiced for a few weeks but ultimately recovered).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">15415251</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.mcgeachy.1953.600">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>McGeachy</surname><given-names>TE</given-names></name>
+<name name-style="western"><surname>Bloomer</surname><given-names>WE</given-names></name>
+</person-group>
+              <article-title>The phenobarbital sensitivity syndrome.</article-title>
+              <source>Am J Med</source>
+              <year>1953</year>
+              <volume>14</volume>
+              <fpage>600</fpage>
+              <lpage>4</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(3 cases of severe phenobarbital reactions seen between 1933 and 1947; two men and one woman, ages 27 to 41 years, developing rash, desquamation, fever, delirium and jaundice within 1-2 weeks of starting drug; one instance was fatal).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">13040367</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.pagliaro.1969.938">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Pagliaro</surname><given-names>L</given-names></name>
+<name name-style="western"><surname>Campesi</surname><given-names>G</given-names></name>
+<name name-style="western"><surname>Aguglia</surname><given-names>F.</given-names></name>
+</person-group>
+              <article-title>Barbiturate jaundice. Report of a case due to a barbital-containing drug, with positive rechallenge to phenobarbital.</article-title>
+              <source>Gastroenterology</source>
+              <year>1969</year>
+              <volume>56</volume>
+              <fpage>938</fpage>
+              <lpage>43</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(31 year old woman developed rash, fever, facial edema after 2 doses of "barbital" by 7 days developed jaundice [bilirubin 24.1 mg/dL, ALT 200 U/L, ALk P 15 BU], with prolonged jaundice; rechallenge with phenobarbital caused recurrence of fever, rash and jaundice [19 mg/dL]; three biopsies were done, but vanishing bile duct syndrome was evidently not present).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">4238546</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.weisburst.1976.126">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Weisburst</surname><given-names>M</given-names></name>
+<name name-style="western"><surname>Self</surname><given-names>T</given-names></name>
+<name name-style="western"><surname>Peace</surname><given-names>R</given-names></name>
+<name name-style="western"><surname>Cooper</surname><given-names>J</given-names></name>
+</person-group>
+              <article-title>Jaundice and rash associated with the use of phenobarbital and hydrochlorothiazide.</article-title>
+              <source>South Med J</source>
+              <year>1976</year>
+              <volume>69</volume>
+              <fpage>126</fpage>
+              <lpage>7</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(18 year old woman developed rash followed by fever, anorexia, lymphadenopathy and jaundice 6 weeks after starting phenobarbital for hypertension [bilirubin 7.2 mg/dL, AST 250 U/L, Alk P 350 U/L], resolving rapidly although no mention of drug being stopped).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">128822</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.shapiro.1980.270">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Shapiro</surname><given-names>PA</given-names></name>
+<name name-style="western"><surname>Antonioli</surname><given-names>DA</given-names></name>
+<name name-style="western"><surname>Peppercorn</surname><given-names>MA</given-names></name>
+</person-group>
+              <article-title>Barbiturate-induced submassive hepatic necrosis.</article-title>
+              <source>Am J Gastroenterol</source>
+              <year>1980</year>
+              <volume>74</volume>
+              <fpage>270</fpage>
+              <lpage>3</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(71 year old woman developed rash on phenytoin and was switched to mephobarbital and 3 months later developed anorexia, fatigue persisting for 6 weeks to onset of jaundice [bilirubin 5.3 mg/dL, ALT 837 U/L, Alk P 320 U/L], improved slowly but relapsed with restarting phenobarbital; biopsy showed submassive necrosis, ultimately recovering completely; no features of hypersensitivity).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">7468565</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.lane.1984.94">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Lane</surname><given-names>T</given-names></name>
+<name name-style="western"><surname>Peterson</surname><given-names>EA</given-names></name>
+</person-group>
+              <article-title>Hepatitis as a manifestation of phenobarbital hypersensitivity.</article-title>
+              <source>South Med J</source>
+              <year>1984</year>
+              <volume>77</volume>
+              <fpage>94</fpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(4 year old boy developed fever and rash about 1 week after starting phenobarbital and 1 week later found to have ALT 273 U/L [no bilirubin reported], rapid improvement with stopping).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">6695234</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.knutsen.1984.558">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Knutsen</surname><given-names>AP</given-names></name>
+<name name-style="western"><surname>Anderson</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Satayaviboon</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Slavin</surname><given-names>RG</given-names></name>
+</person-group>
+              <article-title>Immunologic aspects of phenobarbital hypersensitivity.</article-title>
+              <source>J Pediatr</source>
+              <year>1984</year>
+              <volume>105</volume>
+              <fpage>558</fpage>
+              <lpage>63</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Seven patients with onset of hypersensitivity 2 to 23 days after starting phenobarbital with fever, pruritic skin rash becoming confluent and desquamating; 2 patients had abnormal liver tests, but without jaundice; 3 had eosinophilia, 3 IgE elevations; 2 decreased C4 levels; several had positive lymphocyte stimulation tests to phenytoin or phenobarbital).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">6332892</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.roberts.1990.235">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Roberts</surname><given-names>EA</given-names></name>
+<name name-style="western"><surname>Spielberg</surname><given-names>SP</given-names></name>
+<name name-style="western"><surname>Goldbach</surname><given-names>M</given-names></name>
+<name name-style="western"><surname>Phillips</surname><given-names>MJ</given-names></name>
+</person-group>
+              <article-title>Phenobarbital hepatotoxicity in an 8-month-old infant.</article-title>
+              <source>J Hepatol</source>
+              <year>1990</year>
+              <volume>10</volume>
+              <fpage>235</fpage>
+              <lpage>9</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(8 month old boy with seizures given phenobarbital for 2 weeks developed rash followed by fever with eosinophilia, atypical lymphocytes [bilirubin 2.9 mg/dL, ALT 430 U/L, Alk P 135 U/L], slow recovery, positive lymphocyte cytotoxicity test).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">2332596</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.dayrellhart.1991.1060">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Dayrell-Hart</surname><given-names>B</given-names></name>
+<name name-style="western"><surname>Steinberg</surname><given-names>SA</given-names></name>
+<name name-style="western"><surname>VanWinkle</surname><given-names>TJ</given-names></name>
+<name name-style="western"><surname>Farnbach</surname><given-names>GC</given-names></name>
+</person-group>
+              <article-title>Hepatotoxicity of phenobarbital in dogs: 18 cases (1985-1989).</article-title>
+              <source>J Am Vet Med Assoc</source>
+              <year>1991</year>
+              <volume>199</volume>
+              <fpage>1060</fpage>
+              <lpage>6</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Description of 18 dogs with phenobarbital induced liver injury, all had sedation and ataxia, 3 were icteric [bilirubin 0.2-4.9 mg/dL, ALT 38-1,830 U/L, Alk P 301-5,240 U/L], liver biopsies showing variable degrees of necrosis, inflammation and fibrosis; 9 dogs died or were euthanized, whereas the others appeared to recover completely).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">1748613</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.di_martino.1994.904">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Di Martino</surname><given-names>V</given-names></name>
+<name name-style="western"><surname>Mallat</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Duvoux</surname><given-names>C</given-names></name>
+<name name-style="western"><surname>Zafrani</surname><given-names>ES</given-names></name>
+<name name-style="western"><surname>Dhumeaux</surname><given-names>D</given-names></name>
+</person-group>
+              <comment>[Severe hepatitis caused by phenobarbital]</comment>
+              <source>Gastroenterol Clin Biol</source>
+              <year>1994</year>
+              <volume>18</volume>
+              <fpage>904</fpage>
+              <lpage>5</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Patient on phenobarbital for 1 month developed fever and rash followed by adenopathy and jaundice [bilirubin 8.7 mg/dL, ALT 22 times ULN, elevated prothrombin time], treated with prednisone and recovered within 1 month).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">7875406</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.wallace.1996.378">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Wallace</surname><given-names>SJ</given-names></name>
+</person-group>
+              <article-title>A comparative review of the adverse effects of anticonvulsants in children with epilepsy.</article-title>
+              <source>Drug Saf</source>
+              <year>1996</year>
+              <volume>15</volume>
+              <fpage>378</fpage>
+              <lpage>93</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Systematic review; ALT elevations occur in 4% of children on phenytoin, 6% on valproate, 1% on carbamazepine, but not with phenobarbital; skin rash and Stevens-Johnson syndrome discussed related to phenobarbital).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">8968693</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.foster.2000.23">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Foster</surname><given-names>SF</given-names></name>
+<name name-style="western"><surname>Church</surname><given-names>DB</given-names></name>
+<name name-style="western"><surname>Watson</surname><given-names>AD</given-names></name>
+</person-group>
+              <article-title>Effects of phenobarbitone on serum biochemical tests in dogs.</article-title>
+              <source>Aust Vet J</source>
+              <year>2000</year>
+              <volume>78</volume>
+              <fpage>23</fpage>
+              <lpage>6</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Comparison of 10 dogs receiving phenobarbital for seizures with 10 control dogs found slightly higher levels of alkaline phosphatase in treated dogs, with no differences in GGT or bilirubin and mild increases in ALT).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">10736679</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.m_ller.2000.165">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>M&#x000fc;ller</surname><given-names>PB</given-names></name>
+<name name-style="western"><surname>Taboada</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Hosgood</surname><given-names>G</given-names></name>
+<name name-style="western"><surname>Partington</surname><given-names>BP</given-names></name>
+<name name-style="western"><surname>VanSteenhouse</surname><given-names>JL</given-names></name>
+<name name-style="western"><surname>Taylor</surname><given-names>HW</given-names></name>
+<name name-style="western"><surname>Wolfsheimer</surname><given-names>KJ</given-names></name>
+</person-group>
+              <article-title>Effects of long-term phenobarbital treatment on the liver in dogs.</article-title>
+              <source>J Vet Intern Med</source>
+              <year>2000</year>
+              <volume>14</volume>
+              <fpage>165</fpage>
+              <lpage>71</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(12 normal dogs who were given phenobarbital for 29 weeks developed slight rise in Alk P [~50 to 270 U/L] and ALT [27 to 65 U/L], with no change in serum bilirubin, and biopsy showing increase in hepatocyte size and cytoplasmic granularity compatible with enzyme induction, rather than injury or necrosis).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">10772488</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.gaskill.2005.147">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Gaskill</surname><given-names>CL</given-names></name>
+<name name-style="western"><surname>Miller</surname><given-names>LM</given-names></name>
+<name name-style="western"><surname>Mattoon</surname><given-names>JS</given-names></name>
+<name name-style="western"><surname>Hoffmann</surname><given-names>WE</given-names></name>
+<name name-style="western"><surname>Burton</surname><given-names>SA</given-names></name>
+<name name-style="western"><surname>Gelens</surname><given-names>HC</given-names></name>
+<name name-style="western"><surname>Ihle</surname><given-names>SL</given-names></name>
+<etal/>
+</person-group>
+              <article-title>Liver histopathology and liver and serum alanine aminotransferase and alkaline phosphatase activities in epileptic dogs receiving phenobarbital.</article-title>
+              <source>Vet Pathol</source>
+              <year>2005</year>
+              <month>Mar</month>
+              <volume>42</volume>
+              <fpage>147</fpage>
+              <lpage>60</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Liver biopsies from dogs receiving phenobarbital showed increase in hepatocyte size, granularity and mild injury, but similar although milder changes were found in control dogs; serum enzymes were mildly increased in phenobarbital treated dogs as was CYP 2B activity in liver).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">15753468</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.lachgar.2001.173">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Lachgar</surname><given-names>T</given-names></name>
+<name name-style="western"><surname>Touil</surname><given-names>Y.</given-names></name>
+</person-group>
+              <comment>[The drug hypersensitivity syndrome or DRESS syndrome to phenobarbital]</comment>
+              <source>Allerg Immunol (Paris)</source>
+              <year>2001</year>
+              <volume>33</volume>
+              <fpage>173</fpage>
+              <lpage>5</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(78 year old woman developed rash and fever 3 weeks after starting phenobarbital [ALT 3 times ULN, eosinophilia], resolving within a month of stopping).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">11434197</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.autretleca.2007.1439">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Autret-Leca</surname><given-names>E</given-names></name>
+<name name-style="western"><surname>Norbert</surname><given-names>K</given-names></name>
+<name name-style="western"><surname>Bensouda-Grimaldi</surname><given-names>L</given-names></name>
+<name name-style="western"><surname>Jonville-B&#x000e9;ra</surname><given-names>AP</given-names></name>
+<name name-style="western"><surname>Saliba</surname><given-names>E</given-names></name>
+<name name-style="western"><surname>Bentata</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Barthez-Carpentier</surname><given-names>MA</given-names></name>
+</person-group>
+              <comment>[DRESS syndrome, a drug reaction which remains bad known from paediatricians]</comment>
+              <source>Arch Pediatr</source>
+              <year>2007</year>
+              <volume>14</volume>
+              <fpage>1439</fpage>
+              <lpage>41</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(6 year old girl with epilepsy developed rash and fever 3 weeks after starting phenobarbital, with eosinophilia [ALT 5 times ULN, Alk P 1.5 times ULN], improving clinically with corticosteroid therapy; switched to topiramate and valproate without recurrence).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">17997290</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.bj_rnsson.2008.281">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Bj&#x000f6;rnsson</surname><given-names>E.</given-names></name>
+</person-group>
+              <article-title>Hepatotoxicity associated with antiepileptic drugs.</article-title>
+              <source>Acta Neurol Scand</source>
+              <year>2008</year>
+              <volume>118</volume>
+              <fpage>281</fpage>
+              <lpage>90</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Review of all anticonvulsants; phenytoin hepatotoxicity usually occurs as a part of a hypersensitivity syndrome, in 1:10,000 to 1:50,000 persons, 100 published cases, mean onset at 4 weeks, 13% mortality; in contrast, phenobarbital has only rarely been reported to cause liver injury).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">18341684</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.chalasani.2008.1924">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Chalasani</surname><given-names>N</given-names></name>
+<name name-style="western"><surname>Fontana</surname><given-names>RJ</given-names></name>
+<name name-style="western"><surname>Bonkovsky</surname><given-names>HL</given-names></name>
+<name name-style="western"><surname>Watkins</surname><given-names>PB</given-names></name>
+<name name-style="western"><surname>Davern</surname><given-names>T</given-names></name>
+<name name-style="western"><surname>Serrano</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Yang</surname><given-names>H</given-names></name>
+<name name-style="western"><surname>Rochon</surname><given-names>J</given-names></name>
+<collab>Drug Induced Liver Injury Network (DILIN)</collab>
+</person-group>
+              <article-title>Causes, clinical features, and outcomes from a prospective study of drug-induced liver injury in the United States.</article-title>
+              <source>Gastroenterology</source>
+              <year>2008</year>
+              <volume>135</volume>
+              <fpage>1924</fpage>
+              <lpage>34</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 300 cases of drug induced liver disease in the US collected between 2004 and 2008, 18 cases were attributed to anticonvulsants, no case was attributed to phenobarbital or other barbiturates).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">18955056</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.ferrajolo.2010.721">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Ferrajolo</surname><given-names>C</given-names></name>
+<name name-style="western"><surname>Capuano</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Verhamme</surname><given-names>KM</given-names></name>
+<name name-style="western"><surname>Schuemie</surname><given-names>M</given-names></name>
+<name name-style="western"><surname>Rossi</surname><given-names>F</given-names></name>
+<name name-style="western"><surname>Stricker</surname><given-names>BH</given-names></name>
+<name name-style="western"><surname>Sturkenboom</surname><given-names>MC</given-names></name>
+</person-group>
+              <article-title>Drug-induced hepatic injury in children: a case/non-case study of suspected adverse drug reactions in VigiBase.</article-title>
+              <source>Br J Clin Pharmacol</source>
+              <year>2010</year>
+              <volume>70</volume>
+              <fpage>721</fpage>
+              <lpage>8</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Worldwide pharmacovigilance database contained 9036 hepatic adverse drug reactions in children, phenobarbital accounting for 41 cases [0.4%] for an adjusted odds ratio of 6.6; no other barbiturate listed among the 41 most frequently implicated agents).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">21039766</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.molleston.2011.182">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Molleston</surname><given-names>JP</given-names></name>
+<name name-style="western"><surname>Fontana</surname><given-names>RJ</given-names></name>
+<name name-style="western"><surname>Lopez</surname><given-names>MJ</given-names></name>
+<name name-style="western"><surname>Kleiner</surname><given-names>DE</given-names></name>
+<name name-style="western"><surname>Gu</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Chalasani</surname><given-names>N</given-names></name>
+<collab>Drug-Induced Liver Injury Network</collab>
+</person-group>
+              <article-title>Characteristics of idiosyncratic drug-induced liver injury in children: results from the DILIN Prospective Study.</article-title>
+              <source>J Pediatr Gastroenterol Nutr</source>
+              <year>2011</year>
+              <volume>53</volume>
+              <fpage>182</fpage>
+              <lpage>9</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 30 children with drug induced liver injury enrolled in a prospective US database between 2004 and 2008, 8 were due to anticonvulsants [lamotrigine in 3, valproate in 3, phenytoin in 1 and carbamazepine in 1], none were attributed to phenobarbital or other barbiturates).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">21788760</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.sedky.2012.53">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Sedky</surname><given-names>K</given-names></name>
+<name name-style="western"><surname>Nazir</surname><given-names>R</given-names></name>
+<name name-style="western"><surname>Joshi</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Kaur</surname><given-names>G</given-names></name>
+<name name-style="western"><surname>Lippmann</surname><given-names>S</given-names></name>
+</person-group>
+              <article-title>Which psychotropic medications induce hepatotoxicity?</article-title>
+              <source>Gen Hosp Psychiatry</source>
+              <year>2012</year>
+              <volume>34</volume>
+              <fpage>53</fpage>
+              <lpage>61</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Review of the hepatotoxicity of psychotropic medications; barbiturates are not discussed).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">22133982</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.gaur.2012.531">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Gaur</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Agnihotri</surname><given-names>R.</given-names></name>
+</person-group>
+              <article-title>Phenobarbital induced Stevens-Johnson syndrome in a child.</article-title>
+              <source>Indian J Pharmacol</source>
+              <year>2012</year>
+              <volume>44</volume>
+              <fpage>531</fpage>
+              <lpage>2</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(12 year old boy developed fever and rash 7 days after switching from phenytoin to phenobarbital [bilirubin 3.1 mg/dL, ALT 187 U/L, Alk P 400 U/L], resolving rapidly upon stopping).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">23087523</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.ruggiero.2007.213">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Ruggiero</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Buonuomo</surname><given-names>PS</given-names></name>
+<name name-style="western"><surname>Maurizi</surname><given-names>P</given-names></name>
+<name name-style="western"><surname>Cefalo</surname><given-names>MG</given-names></name>
+<name name-style="western"><surname>Corsello</surname><given-names>M</given-names></name>
+<name name-style="western"><surname>Riccardi</surname><given-names>R</given-names></name>
+</person-group>
+              <article-title>Stevens-Johnson syndrome in children receiving phenobarbital therapy and cranial radiotherapy.</article-title>
+              <source>J Neurooncol</source>
+              <year>2007</year>
+              <volume>85</volume>
+              <fpage>213</fpage>
+              <lpage>5</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Two children, one boy and one girl, ages 6 and 7 developed rash [SJS/TEN] 26 and 28 days after starting phenobarbital after cranial radiotherapy for brain tumors; liver test results not provided).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">17589805</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.manuyakorn.2013.299">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Manuyakorn</surname><given-names>W</given-names></name>
+<name name-style="western"><surname>Siripool</surname><given-names>K</given-names></name>
+<name name-style="western"><surname>Kamchaisatian</surname><given-names>W</given-names></name>
+<name name-style="western"><surname>Pakakasama</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Visudtibhan</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Vilaiyuk</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Rujirawat</surname><given-names>T</given-names></name>
+<etal/>
+</person-group>
+              <article-title>Phenobarbital-induced severe cutaneous adverse drug reactions are associated with CYP2C19*2 in Thai children.</article-title>
+              <source>Pediatr Allergy Immunol</source>
+              <year>2013</year>
+              <volume>24</volume>
+              <fpage>299</fpage>
+              <lpage>303</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 40 cases of drug induced severe cutaneous reactions [DRESS or SJS/TEN] seen over 20 years at a single referral hospital in Thailand, 20 were due to phenobarbital, 17 to phenytoin and 3 to carbamazepine; among cases due to phenobarbital, ALT levels average 71 U/L [range 26-4243], weak association found with a CYP2C19*2 variant).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">23551241</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.chalasani.2015.1340">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Chalasani</surname><given-names>N</given-names></name>
+<name name-style="western"><surname>Bonkovsky</surname><given-names>HL</given-names></name>
+<name name-style="western"><surname>Fontana</surname><given-names>R</given-names></name>
+<name name-style="western"><surname>Lee</surname><given-names>W</given-names></name>
+<name name-style="western"><surname>Stolz</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Talwalkar</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Reddy</surname><given-names>KR</given-names></name>
+<etal/>
+<collab>United States Drug Induced Liver Injury Network</collab>
+</person-group>
+              <article-title>Features and outcomes of 899 patients with drug-induced liver injury: The DILIN Prospective Study.</article-title>
+              <source>Gastroenterology</source>
+              <year>2015</year>
+              <volume>148</volume>
+              <fpage>1340</fpage>
+              <lpage>52</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 899 cases of drug induced liver injury enrolled in a US prospective study between 2004 and 2013, none were attributed to a barbiturate).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">25754159</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.mason.2004.723">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Mason</surname><given-names>KP</given-names></name>
+<name name-style="western"><surname>Zurakowski</surname><given-names>D</given-names></name>
+<name name-style="western"><surname>Connor</surname><given-names>L</given-names></name>
+<name name-style="western"><surname>Karian</surname><given-names>VE</given-names></name>
+<name name-style="western"><surname>Fontaine</surname><given-names>PJ</given-names></name>
+<name name-style="western"><surname>Sanborn</surname><given-names>PA</given-names></name>
+<name name-style="western"><surname>Burrows</surname><given-names>PE</given-names></name>
+</person-group>
+              <article-title>Infant sedation for MR imaging and CT: oral versus intravenous pentobarbital.</article-title>
+              <source>Radiology.</source>
+              <year>2004</year>
+              <volume>233</volume>
+              <fpage>723</fpage>
+              <lpage>8</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Retrospective review of 2164 infants undergoing 2419 magnetic resonance imaging sessions requiring sedation and given either oral or iv pentobarbital, found that time to onset was faster with iv drug [7 vs 18 min], but quality of sedation and time to recovery were similar as were adverse events [1.3% vs 0.8%; none were liver related], the general findings favoring oral administration).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">15516603</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.l_pezmu_oz.2005.329">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>L&#x000f3;pez-Mu&#x000f1;oz</surname><given-names>F</given-names></name>
+<name name-style="western"><surname>Ucha-Udabe</surname><given-names>R</given-names></name>
+<name name-style="western"><surname>Alamo</surname><given-names>C</given-names></name>
+</person-group>
+              <article-title>The history of barbiturates a century after their clinical introduction.</article-title>
+              <source>Neuropsychiatr Dis Treat.</source>
+              <year>2005</year>
+              <volume>1</volume>
+              <fpage>329</fpage>
+              <lpage>43</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(History of the discovery of the barbiturates and development of synthetic formulations, about 50 of which came to market starting with phenobarbital [Luminol] in 1912, pentobarbital [Neonal] in 1922, most being used as sleeping aids and as therapy of schizophrenia, and later found to have anticonvulsant activity and to be useful in sedation and preanesthesia, but more recently replaced with safer and less addictive therapies).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">18568113</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.mccleary.2018.25">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>McCleary</surname><given-names>K</given-names></name>
+<name name-style="western"><surname>Barrash</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Granner</surname><given-names>M</given-names></name>
+<name name-style="western"><surname>Manzel</surname><given-names>K</given-names></name>
+<name name-style="western"><surname>Greider</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Jones</surname><given-names>R</given-names></name>
+</person-group>
+              <article-title>The safety and efficacy of propofol as a replacement for amobarbital in intracarotid Wada testing of presurgical patients with epilepsy.</article-title>
+              <source>Epilepsy Behav.</source>
+              <year>2018</year>
+              <volume>78</volume>
+              <fpage>25</fpage>
+              <lpage>29</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(The difficulty in obtaining amobarbital led to its replacement with propofol in mild sedation, and comparison of efficacy and safety using historical controls suggested similar rates of successful anesthesia and similar rates of adverse events; no mention of liver-related symptoms).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">29169082</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Barbiturates.REF.schlatter.2018.286">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Schlatter</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Kabiche</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Sellier</surname><given-names>N</given-names></name>
+<name name-style="western"><surname>Fontan</surname><given-names>JE</given-names></name>
+</person-group>
+              <article-title>Oral pentobarbital suspension for children sedation during MR imaging.</article-title>
+              <source>Ann Pharm Fr.</source>
+              <year>2018</year>
+              <volume>76</volume>
+              <fpage>286</fpage>
+              <lpage>290</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 81 children undergoing magnetic resonance imaging given oral pentobarbital for sedation, the success of obtaining imaging varied by age, being 100% below age 1 but only 42% in 4 to 8 year olds; adverse events were rare but [from a literature review] could include oxygen desaturation, prolonged sedation, paradoxical excitement, and vomiting; no mention of liver injury).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">29655484</pub-id>
+            </element-citation>
+          </ref>
+        </ref-list>
+      </sec>
+      <sec sec-type="link-group" id="Barbiturates.OTHER_REFERENCE_LINKS">
+        <title>OTHER REFERENCE LINKS</title>
+        <list list-type="order">
+          <list-item>
+            <label>1</label>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/sites/entrez?cmd=search&#x00026;db=pubmed&#x00026;pubmedfilters=true&#x00026;term=(Barbiturates/AE)+AND+Human%5BMH%5D+AND+(drug+induced+liver+injury+OR+jaundice/CI+OR+bile+duct+diseases/CI+OR+liver/DE+OR+liver+diseases/CI)+AND+(%221900/1/1%22%5BEDat%5D:%222999/12/31%22%5BEDat%5D)">Recent References on Barbiturates: from PubMed.gov</ext-link>
+</p>
+          </list-item>
+          <list-item>
+            <label>2</label>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://clinicaltrials.gov/ct2/results?term=Barbiturates">Trials on Barbiturates: from ClinicalTrials.gov</ext-link>
+</p>
+          </list-item>
+        </list>
+      </sec>
+    </body>
+  </book-part>
+</book-part-wrapper>

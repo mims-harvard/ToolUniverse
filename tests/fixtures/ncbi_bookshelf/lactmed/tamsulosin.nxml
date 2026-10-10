@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper id="tamsulosin" content-type="chapter" from-where="body" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">lactmed</book-id>
+    <book-title-group>
+      <book-title>Drugs and Lactation Database (LactMed&#x000ae;)</book-title>
+    </book-title-group>
+    <pub-date date-type="pubr" publication-format="electronic">
+      <year>2006</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>National Institute of Child Health and Human Development</publisher-name>
+      <publisher-loc>Bethesda (MD)</publisher-loc>
+    </publisher>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Chemicals and Drugs</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Health Care</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Public Health</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes specific-use="display-globally" notes-type="disclaimer">
+      <p><bold>Disclaimer: </bold>Information presented in this database is not meant as a substitute for professional judgment. You should consult your healthcare provider for breastfeeding advice related to your particular situation. The U.S. government does not warrant or assume any liability or responsibility for the accuracy or completeness of the information on this Site.</p>
+    </notes>
+    <notes specific-use="display-globally" notes-type="rights">
+      <p><bold>Attribution Statement:</bold> LactMed is a registered trademark of the U.S. Department of Health and Human Services.</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <book-part-id book-part-id-type="pmcid">tamsulosin</book-part-id>
+      <title-group>
+        <title>Tamsulosin</title>
+      </title-group>
+      <pub-history>
+        <date date-type="revised">
+          <day>18</day>
+          <month>1</month>
+          <year>2022</year>
+        </date>
+      </pub-history>
+      <related-object link-type="parent-book-link" source-id="lactmed">Drugs and Lactation Database (LactMed&#x000ae;)</related-object>
+      <related-object link-type="previous-part-link" source-id="lactmed" document-id="LM250" document-type="chapter">Tamoxifen</related-object>
+      <related-object link-type="next-part-link" source-id="lactmed" document-id="LM1463" document-type="chapter">Tapentadol</related-object>
+      <kwd-group>
+        <kwd>Tamsulosin</kwd>
+        <kwd>Amsulosin</kwd>
+        <kwd>Contiflo OD</kwd>
+        <kwd>Flowmax</kwd>
+        <kwd>Harnal-D</kwd>
+        <kwd>HSDB 7744</kwd>
+        <kwd>Tamsulosina</kwd>
+        <kwd>Tamsulosine</kwd>
+        <kwd>Tamsulosinum</kwd>
+        <kwd>UNII-G3P28OML5I YM 12617</kwd>
+        <kwd>5-(2-((2-Ethoxyphenoxy)ethyl)amino)propyl-2-methoxybenzenesulfonamide</kwd>
+      </kwd-group>
+    </book-part-meta>
+    <body>
+      <p>CASRN: 106133-20-4</p>
+      <related-object link-type="ext-image-back-link" source-id="pubchem" document-id="388650312" document-id-type="sid" document-type="summary" object-id="388650312" object-id-type="sid" object-type="image"/>
+      <sec id="tamsulosin.Drug_Levels_and_Effects">
+        <title>Drug Levels and Effects</title>
+        <sec id="tamsulosin.Summary_of_Use_during_Lactati">
+          <title>Summary of Use during Lactation</title>
+          <p content-type="pubmed-excerpt">Although tamsulosin is not FDA approved for use in women, it is used off-label in women with kidney stones. No information is available on the use of tamsulosin during breastfeeding. Because it is 94 to 99% bound to plasma proteins, amounts in milk are likely to be small. If tamsulosin is required by the mother, it is not a reason to discontinue breastfeeding. However, the breastfed infant should be carefully monitored.</p>
+        </sec>
+        <sec id="tamsulosin.Drug_Levels">
+          <title>Drug Levels</title>
+          <p><italic toggle="yes">Maternal Levels.</italic> Relevant published information was not found as of the revision date.</p>
+          <p><italic toggle="yes">Infant Levels.</italic> Relevant published information was not found as of the revision date.</p>
+        </sec>
+        <sec id="tamsulosin.Effects_in_Breastfed_Infants">
+          <title>Effects in Breastfed Infants</title>
+          <p>Relevant published information was not found as of the revision date.</p>
+        </sec>
+        <sec id="tamsulosin.Effects_on_Lactation_and_Brea">
+          <title>Effects on Lactation and Breastmilk</title>
+          <p>Relevant published information was not found as of the revision date.</p>
+        </sec>
+      </sec>
+      <sec id="tamsulosin.Substance_Identification">
+        <title>Substance Identification</title>
+        <sec id="tamsulosin.Substance_Name">
+          <title>Substance Name</title>
+          <p>Tamsulosin</p>
+        </sec>
+        <sec id="tamsulosin.CAS_Registry_Number">
+          <title>CAS Registry Number</title>
+          <p>106133-20-4</p>
+        </sec>
+        <sec id="tamsulosin.Drug_Class">
+          <title>Drug Class</title>
+          <p>Breast Feeding</p>
+          <p>Lactation</p>
+          <p>Adrenergic alpha-1 Receptor Antagonists</p>
+          <p>Urological Agents</p>
+        </sec>
+      </sec>
+    </body>
+  </book-part>
+</book-part-wrapper>
