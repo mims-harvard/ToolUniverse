@@ -13,7 +13,6 @@ from tooluniverse.tools import (
     OpenAlex_Guidelines_Search,
     TRIP_Database_Guidelines_Search,
     WHO_Guidelines_Search,
-    GIN_Guidelines_Search,
     CMA_Guidelines_Search,
 )
 
@@ -231,7 +230,6 @@ def clinical_guidelines_search_workflow(query: str, max_results_per_source: int 
         ("TRIP", TRIP_Database_Guidelines_Search,
          "Evidence-Based Medicine Database"),
         ("WHO", WHO_Guidelines_Search, "World Health Organization"),
-        ("GIN", GIN_Guidelines_Search, "International Guidelines Network"),
         ("CMA", CMA_Guidelines_Search, "Canadian Medical Association"),
     ]
 
