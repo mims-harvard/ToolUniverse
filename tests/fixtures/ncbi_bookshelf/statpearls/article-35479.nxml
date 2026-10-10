@@ -1,0 +1,1825 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper id="article-35479" content-type="chapter" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">statpearls</book-id>
+    <book-id book-id-type="publisher-id">statpearls</book-id>
+    <book-title-group>
+      <book-title>StatPearls</book-title>
+    </book-title-group>
+    <pub-date publication-format="electronic" date-type="pubr">
+      <month>01</month>
+      <year>2026</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>StatPearls Publishing</publisher-name>
+      <publisher-loc>Treasure Island (FL)</publisher-loc>
+    </publisher>
+    <permissions>
+      <copyright-statement>Copyright &#x000a9; 2026, StatPearls Publishing LLC</copyright-statement>
+      <license xmlns:xlink="http://www.w3.org/1999/xlink" license-type="open-access" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">
+        <license-p>This book is distributed under the terms of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) (<ext-link ext-link-type="uri" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">http://creativecommons.org/licenses/by-nc-nd/4.0/</ext-link>), which permits others to distribute the work, provided that the article is not altered or used commercially. You are not required to obtain permission to distribute this article, provided that you credit the author and journal.</license-p>
+      </license>
+    </permissions>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes notes-type="disclaimer">
+      <p>The intent of StatPearls review books and articles is to identify knowledge deficits and assist you in the learning process. Review books and articles are not intended to be a source of the knowledge base of medicine. The authors and editors do not warrant the information is complete or accurate. The reader is encouraged to verify content and questions in several references. All drug indications and dosages should be verified before administration.</p>
+      <p>The authors and editors would like to extend special thanks to Erin Hughes and Gerson Rubio for their editorial support.</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <title-group>
+        <title>Asteroid Hyalosis</title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Mishra</surname>
+            <given-names>Chitaranjan</given-names>
+          </name>
+          <aff>Trilochan Netralaya, Sambalpur</aff>
+        </contrib>
+      </contrib-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Tripathy</surname>
+            <given-names>Koushik</given-names>
+          </name>
+          <aff>ASG Eye Hospital, BT Road, Kolkata, India</aff>
+        </contrib>
+      </contrib-group>
+      <author-notes>
+        <fn id="article-35479.fn1" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Chitaranjan Mishra declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+        <fn id="article-35479.fn2" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Koushik Tripathy declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+      </author-notes>
+      <pub-history>
+        <date date-type="updated">
+          <day>15</day>
+          <month>2</month>
+          <year>2026</year>
+        </date>
+      </pub-history>
+    </book-part-meta>
+    <body>
+      <sec id="article-35479.s1" sec-type="Continuing Education Activity">
+        <title>Continuing Education Activity</title>
+        <p>Asteroid hyalosis (AH) is characterized by yellow-white brilliant reflecting particles surrounded by tightly adherent fibrils inside the vitreous cavity. It is a common ophthalmological finding. Proper ophthalmic evaluation and correct diagnosis of this condition are needed. This activity describes the evaluation and treatment of asteroid hyalosis and highlights the role of the interprofessional healthcare team in evaluating and managing care for patients with asteroid hyalosis.</p>
+        <p>
+<bold>Objectives:</bold>
+</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Identify the epidemiology of asteroid hyalosis.</p>
+          </list-item>
+          <list-item>
+            <p>Describe the ophthalmic evaluation of asteroid hyalosis.</p>
+          </list-item>
+          <list-item>
+            <p>Outline the management options available for asteroid hyalosis.</p>
+          </list-item>
+          <list-item>
+            <p>Describe interprofessional team strategies for improving care coordination and communication to advance studies on asteroid hyalosis and improve outcomes.</p>
+          </list-item>
+        </list>
+        <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/account/trialuserreg/?articleid=35479&#x00026;utm_source=pubmed&#x00026;utm_campaign=reviews&#x00026;utm_content=35479">Access free multiple choice questions on this topic.</ext-link>
+</p>
+      </sec>
+      <sec id="article-35479.s2" sec-type="pubmed-excerpt">
+        <title>Introduction</title>
+        <p>Asteroid hyalosis (AH) is characterized by yellow-white brilliant reflecting particles surrounded by tightly adherent fibrils inside the vitreous cavity.<xref ref-type="bibr" rid="article-35479.r1">[1]</xref> These particles are known as asteroid bodies (ABs) due to their resemblance to stars (asteroids) in the night sky. AH was initially called "asteroid hyalitis" by Benson in 1894. However, in the absence of inflammation, the term asteroid hyalosis was introduced later. "Scintillatio albescens or 'nivea" is a term used to describe this entity and was introduced by Wiegmann in 1918. AH is a benign vitreous opacification that does not generally need active intervention. However, accurate clinical diagnosis, the study of the associated ophthalmic and systemic features, pathogenesis, and biochemical composition of AH merit discussion.</p>
+      </sec>
+      <sec id="article-35479.s3" sec-type="Etiology">
+        <title>Etiology</title>
+        <p>The exact etiology of asteroid hyalosis is unknown.</p>
+      </sec>
+      <sec id="article-35479.s4" sec-type="Epidemiology">
+        <title>Epidemiology</title>
+        <p>The prevalence of asteroid hyalosis in the adult population is found to be 0.8% to 2.0% in different studies. This has been reported to be 0.8% from a retrospective chart review, 1.2% from fundus photography in the Beaver Dam Eye Study, and 2% from the pathological examination of autopsy specimens.<xref ref-type="bibr" rid="article-35479.r2">[2]</xref><xref ref-type="bibr" rid="article-35479.r3">[3]</xref><xref ref-type="bibr" rid="article-35479.r4">[4]</xref> The prevalence increases with age. Studies based on autopsy specimens documented it to be 3.2% and 6.6% in the age group from 61 to 70 years and more than 91 years, respectively.<xref ref-type="bibr" rid="article-35479.r4">[4]</xref> AH is unilateral in 75 to 90% of cases.<xref ref-type="bibr" rid="article-35479.r4">[4]</xref> There is no racial predisposition. Few studies have mentioned the male-to-female ratio to be 2 to 1.<xref ref-type="bibr" rid="article-35479.r4">[4]</xref> However, one large study did not find any gender predisposition.<xref ref-type="bibr" rid="article-35479.r2">[2]</xref> AH is not heritable, and familial cases are reported rarely.</p>
+      </sec>
+      <sec id="article-35479.s5" sec-type="Pathophysiology">
+        <title>Pathophysiology</title>
+        <p>The etiology of asteroid hyalosis remains to be elucidated. Voerhoeff postulated that angiosclerosis of intraocular vessels, along with local deposition of lipids and fats, leads to AH formation. Rodman described type 1 AH in normal vitreous and type 2 AH in vitreous with associated inflammation.<xref ref-type="bibr" rid="article-35479.r5">[5]</xref> Streeten suggested that ABs are produced from exogenous sources since the contents are not present in sufficient quantity in the normal vitreous.<xref ref-type="bibr" rid="article-35479.r6">[6]</xref> Bergren et al. suggested that the release of phospholipid and calcium from degenerated retinal cells could produce AH.<xref ref-type="bibr" rid="article-35479.r2">[2]</xref> Gass observed that AH initially develops near retinal blood vessels. Zauberman and Livni demonstrated the formation of asteroid bodies in the vitreous of albino rats in conjunction with hypercholesterolemia and closure of vertex veins.<xref ref-type="bibr" rid="article-35479.r7">[7]</xref> However, these findings were not replicable by others.</p>
+        <p>The unilateral occurrence of asteroid hyalosis can be postulated by the contribution from various factors, eg., local inflammation, retinal pigment epithelial degeneration, local changes in pH, vitreous collagen degeneration, and most notably, increased retinal vascular permeability altering the calcium and lipid levels of the vitreous. However, the exact etiology remains to be proved.</p>
+      </sec>
+      <sec id="article-35479.s6" sec-type="Histopathology">
+        <title>Histopathology</title>
+        <p>The structure and composition of ABs have been studied in various studies using biochemical methods, light, or electron microscopy. Calcium-associated phospholipids are proposed to be the major components of ABs based upon the findings like elemental detection of calcium and phosphorus using energy-dispersive x-ray spectroscopy (EDX) analysis and the intense reaction of ABs with lipid statins.<xref ref-type="bibr" rid="article-35479.r8">[8]</xref></p>
+        <p>Feldman et al. in 1967 used thin layer and gas chromatography to reveal the composition of ABs to be sphingomyelin, ceramide dihexoside, cholesterol, cerebroside, cholesteryl esters, with trace quantities of triglyceride and lecithin.<xref ref-type="bibr" rid="article-35479.r9">[9]</xref></p>
+        <p>March and Shoch, in 1975, utilized the X-ray microanalyzer to show that phosphate, probably as apatite, was a major constituent of ABs.<xref ref-type="bibr" rid="article-35479.r10">[10]</xref></p>
+        <p>Streeten, in 1982, did an ultrastructural analysis of vitreous and found that large ABs were composed of intertwined ribbons of multilaminar membranes with a 6-nm periodicity characteristic of complex lipids, especially phospholipids, lying in a homogeneous background matrix.<xref ref-type="bibr" rid="article-35479.r6">[6]</xref> This finding was supported by Topilow et al. using transmission electron microscopy.<xref ref-type="bibr" rid="article-35479.r11">[11]</xref> Streeten also found that small ABs featured lipid ribbons resulting from the deposition of successive lipid layers on the thin membranes, resulting in variable degrees of civilization.<xref ref-type="bibr" rid="article-35479.r6">[6]</xref></p>
+        <p>Winkler and Lunsdorf, in 2001, used electron energy loss spectroscopy (EELS) and energy-filtered transmission electron microscopy (EFTEM) to reveal that asteroid hyalosis is composed of calcium, phosphorus, and oxygen with an elemental similarity to hydroxyapatite. Using fast Fourier transform analysis, these investigators revealed that a fine, parallel-oriented line divides each 7-nm periodicity of asteroid lamellar stacks, separating each 7-nm layer into two halves of 3.5-nm thickness.<xref ref-type="bibr" rid="article-35479.r8">[8]</xref></p>
+        <p>Komatsu et al. 2003, did a chemical analysis of vitreous fluid with an energy-dispersive X-ray microanalyzer and reconstructive studies of hydroxylapatite in simulated body fluid. ABs appeared as "snowballs" under the scanning electron microscope covered with the clotted matrix of vitreous substances superficial to a pumice stone-like structure. They inferred that AH was produced not only by changes in ionic tension but also by changes in the vitreous extracellular matrix during aging and disease.<xref ref-type="bibr" rid="article-35479.r12">[12]</xref></p>
+        <p>Lin and colleagues in 2007 identified carotene by confocal micro-Raman spectroscopy, which was verified by high-performance liquid chromatography (HPLC).<xref ref-type="bibr" rid="article-35479.r13">[13]</xref></p>
+      </sec>
+      <sec id="article-35479.s7" sec-type="History and Physical">
+        <title>History and Physical</title>
+        <p>Systemic diseases like diabetes mellitus (DM), systemic hypertension, and hyperlipidemia have been associated with asteroid hyalosis, but controversies do exist. A study by Smith et al. found 70% of patients with AH had DM according to a glucose tolerance test, but the absence of a control group was the limitation of the study. Luxenberg and Sime, in a clinic-based study, reported no difference in the prevalence rate of AH in DM and control groups.<xref ref-type="bibr" rid="article-35479.r14">[14]</xref> In 1991, Bergren et al. did a large study involving 12205 patients, out of which 29% of the 101 AH patients had a history of DM in comparison to 10% of 101 controls.<xref ref-type="bibr" rid="article-35479.r2">[2]</xref> The difference was statistically significant (P=0.00007). However, Fawzi AA et al., in their study involving 10801 autopsy eyes, did not find any significant association with DM.<xref ref-type="bibr" rid="article-35479.r4">[4]</xref> The unilateral occurrence of AH in the setting of systemic disease like DM questions its significant association. Similarly, an association of AH with other diseases like hypertension, atherosclerosis, and hyperlipidemia failed to be reproducible in large population-based studies. Hypercholesterolemia, elevated serum calcium levels, and gout are described to be associated with AH in small studies.<xref ref-type="bibr" rid="article-35479.r14">[14]</xref><xref ref-type="bibr" rid="article-35479.r15">[15]</xref></p>
+      </sec>
+      <sec id="article-35479.s8" sec-type="Evaluation">
+        <title>Evaluation</title>
+        <p>Patients with asteroid hyalosis are usually asymptomatic, and this condition is mostly diagnosed during the routine ophthalmic examination.<xref ref-type="bibr" rid="article-35479.r16">[16]</xref><xref ref-type="bibr" rid="article-35479.r17">[17]</xref><xref ref-type="bibr" rid="article-35479.r16">[16]</xref> In eyes with AH, only a small proportion of light gets scattered, and the smooth surface of the ABs results in the minimal scattering of light. ABs may be visually symptomatic when they are sufficiently closer to the macula or when a complete posterior vitreous detachment causes the particles to be concentrated behind the lens. These unusual cases may need vitrectomy.</p>
+        <p>
+<bold>Ophthalmic Evaluation</bold>
+</p>
+        <p>By ophthalmoscopy, ABs are small round refractile opacities associated with vitreous strands and suspended in the vitreous cavity. They move along with the movement of the vitreous body and get back to their previous position after the movement stops. (Supplementary video) However, they do not settle with gravity. The size of these particles is found to be 3 to 100 microns.<xref ref-type="bibr" rid="article-35479.r11">[11]</xref> During ophthalmoscopy, the reflected light from these particles returns to the examiner and confounds the view. There occurs less reflection of light indirect ophthalmoscopy than in slit-lamp biomicroscopy with a 90 diopter lens or indirect ophthalmoscopy with a 20 diopter lens. So, direct ophthalmoscopy gives a relatively better view of the fundus in AH. The presence of AH in diabetic retinopathy eyes warrants fundus fluorescein angiography (FFA), especially in eyes with suspected neovascularisations.<xref ref-type="bibr" rid="article-35479.r18">[18]</xref> With the advent of wide-angle FFA, not only neovascularisations but also peripheral lesions e.g., malignancies, can be detected.<xref ref-type="bibr" rid="article-35479.r19">[19]</xref> Optical coherence tomography angiography (OCTA) is being increasingly used as an alternative to FFA, and there are reports of its utility in detecting lesions in diabetic retinopathy.<xref ref-type="bibr" rid="article-35479.r20">[20]</xref> Widefield fundus autofluorescence images are found to be helpful for the accurate localization of laser scars in the presence of AH.<xref ref-type="bibr" rid="article-35479.r21">[21]</xref> Optical coherence tomography (OCT) helps in the study of the vitreoretinal interface in these eyes.<xref ref-type="bibr" rid="article-35479.r22">[22]</xref> AH may induce media opacity during OCT scanning of the retina, and Swept source-OCT has superior diagnostic capabilities compared to SD-OCT in these settings.<xref ref-type="bibr" rid="article-35479.r23">[23]</xref> B scan helps in the diagnosis of AH by the presence of moderate to high amplitude point spikes in the vitreous cavity separated by a clear zone from the retinal surface.<xref ref-type="bibr" rid="article-35479.r24">[24]</xref> Recently, reports of multicolor imaging of the fundus, and confocal scanning ophthalmoscope have been reported to be preferred modalities to detect retinal lesions that are difficult to be detected in color fundus photography.<xref ref-type="bibr" rid="article-35479.r25">[25]</xref><xref ref-type="bibr" rid="article-35479.r26">[26]</xref><xref ref-type="bibr" rid="article-35479.r25">[25]</xref></p>
+        <p>An intact vitreoretinal interface without posterior vitreous detachment is found more often in AH.<xref ref-type="bibr" rid="article-35479.r4">[4]</xref><xref ref-type="bibr" rid="article-35479.r11">[11]</xref> Studies have postulated that the attached posterior vitreous may be responsible for the formation of ABs.<xref ref-type="bibr" rid="article-35479.r2">[2]</xref> AH is seen less often in myopic eyes than in hyperopic eyes.<xref ref-type="bibr" rid="article-35479.r2">[2]</xref> There is a report of less frequent retinal detachment in eyes with AH. Other ophthalmic associations like retinitis pigmentosa, uveal melanoma, macular telangiectasia type II, and pre-Descemet dystrophy have been less frequently reported in the literature.<xref ref-type="bibr" rid="article-35479.r27">[27]</xref><xref ref-type="bibr" rid="article-35479.r28">[28]</xref><xref ref-type="bibr" rid="article-35479.r29">[29]</xref><xref ref-type="bibr" rid="article-35479.r30">[30]</xref><xref ref-type="bibr" rid="article-35479.r31">[31]</xref><xref ref-type="bibr" rid="article-35479.r30">[30]</xref></p>
+      </sec>
+      <sec id="article-35479.s9" sec-type="Treatment / Management">
+        <title>Treatment / Management</title>
+        <p>Since asteroid hyalosis is most often asymptomatic, it needs observation only.<xref ref-type="bibr" rid="article-35479.r16">[16]</xref><xref ref-type="bibr" rid="article-35479.r32">[32]</xref> However, care should be taken not to miss any other significant fundus pathology in the context of a difficult fundoscopy. The presence of neovascularization in eyes with AH and DR can be detected with FFA.<xref ref-type="bibr" rid="article-35479.r18">[18]</xref><xref ref-type="bibr" rid="article-35479.r21">[21]</xref> OCT is useful to detect any vitreoretinal surface anomaly, and B scan can be helpful to detect any mass lesion obscured by the ABs.<xref ref-type="bibr" rid="article-35479.r22">[22]</xref><xref ref-type="bibr" rid="article-35479.r24">[24]</xref></p>
+        <p>
+<bold>Cataract surgery in the presence of AH</bold>
+</p>
+        <p>Cataract surgery in the presence of AH may pose certain issues of which the surgeon must be aware.<xref ref-type="bibr" rid="article-35479.r33">[33]</xref><xref ref-type="bibr" rid="article-35479.r34">[34]</xref><xref ref-type="bibr" rid="article-35479.r35">[35]</xref><xref ref-type="bibr" rid="article-35479.r34">[34]</xref></p>
+        <list list-type="order">
+          <list-item>
+            <p>A scan may show falsely short axial length due to confusing echoes from ABs. A comparison with the axial length of the fellow eye may be helpful.</p>
+          </list-item>
+          <list-item>
+            <p>Reflections from the ABs can cause an impaired view of the posterior capsule.</p>
+          </list-item>
+          <list-item>
+            <p>Silicone intraocular lenses should be avoided due to possible deposition of calcium and phosphorus content of ABs over the posterior lens surface.</p>
+          </list-item>
+        </list>
+        <p>Though there are reports of successful removal of calcium deposits from the surface of silicon IOLs in the presence of AH by laser capsulotomy and pars plana vitrectomy, IOL exchange remains the preferred treatment of choice in these settings.<xref ref-type="bibr" rid="article-35479.r36">[36]</xref><xref ref-type="bibr" rid="article-35479.r37">[37]</xref><xref ref-type="bibr" rid="article-35479.r38">[38]</xref><xref ref-type="bibr" rid="article-35479.r39">[39]</xref><xref ref-type="bibr" rid="article-35479.r38">[38]</xref></p>
+        <p>There are certain scenarios where vitrectomy is needed in AH.<xref ref-type="bibr" rid="article-35479.r40">[40]</xref><xref ref-type="bibr" rid="article-35479.r41">[41]</xref><xref ref-type="bibr" rid="article-35479.r42">[42]</xref><xref ref-type="bibr" rid="article-35479.r43">[43]</xref><xref ref-type="bibr" rid="article-35479.r44">[44]</xref><xref ref-type="bibr" rid="article-35479.r45">[45]</xref><xref ref-type="bibr" rid="article-35479.r46">[46]</xref><xref ref-type="bibr" rid="article-35479.r47">[47]</xref><xref ref-type="bibr" rid="article-35479.r48">[48]</xref><xref ref-type="bibr" rid="article-35479.r43">[43]</xref></p>
+        <list list-type="order">
+          <list-item>
+            <p>Poor visualization of fundus and failure of imaging modalities like FFA, OCT and B scan to detect the cause of visual symptoms</p>
+          </list-item>
+          <list-item>
+            <p>Inability to perform laser photocoagulation especially in a case of DR</p>
+          </list-item>
+          <list-item>
+            <p>Inability to find retinal breaks in the presence of a rhegmatogenous retinal detachment</p>
+          </list-item>
+          <list-item>
+            <p>Visual symptoms e.g., floaters or visual decline (rarely)</p>
+          </list-item>
+        </list>
+      </sec>
+      <sec id="article-35479.s10" sec-type="Differential Diagnosis">
+        <title>Differential Diagnosis</title>
+        <p>Asteroid hyalosis needs to be differentiated from similar appearing fundus pathology, e.g., synchysis scintillans, amyloidosis, vitritis, old vitreous hemorrhage, and malignancy, particularly lymphoma and masquerade syndromes. Synchysis scintillans or cholesterolosis bulbi occurs in end-stage eyes or with eyes with a degenerative disease and characterized by cholesterol crystal deposits freely floating and then settling in liquefied vitreous. Vitreous amyloidosis is mostly bilateral, visually symptomatic, and histopathology of vitreous samples is confirmatory in these cases. Vitritis patients have defective vision and other associated features like clinical history, pain, redness, etc. pointing towards inflammation. Vitreous hemorrhages should prompt to look for retinal vascular pathologies, retinal breaks, or associated features of trauma. Malignancies like lymphoma can be diagnosed by histopathology of the vitreous sample. However, AH mimicking vitreous seeds in a patient with retinoblastoma (RB) needs to be properly diagnosed, and protocol for the management of RB should be followed.<xref ref-type="bibr" rid="article-35479.r49">[49]</xref></p>
+      </sec>
+      <sec id="article-35479.s11" sec-type="Prognosis">
+        <title>Prognosis</title>
+        <p>Asteroid hyalosis is most often asymptomatic, and hence prognosis is good. However, in the presence of other ophthalmic comorbidities like diabetic retinopathy, the prognosis depends upon the associated diseases. Similarly, the presence of AH in situations like retinal detachment without an identifiable break, symptomatic floaters, etc., warrants vitrectomy, and the prognosis depend upon these associated diseases. Special care during biometry to avoid wrong intraocular lens power calculation helps in better prognosis in eyes with AH undergoing cataract surgery.</p>
+      </sec>
+      <sec id="article-35479.s12" sec-type="Complications">
+        <title>Complications</title>
+        <p>Asteroid hyalosis is benign and does not cause any complications. However, some cases may develop dense AH and cause troublesome floaters, which may need vitrectomy. The presence of AH in the anterior vitreous face may cause intraoperative reflections during cataract surgery, and hence awareness about this effect will help the surgeon avoid intraoperative complications.</p>
+      </sec>
+      <sec id="article-35479.s13" sec-type="Deterrence and Patient Education">
+        <title>Deterrence and Patient Education</title>
+        <p>Patients with diabetes mellitus and asteroid hyalosis should be informed of the need for fundus fluorescein angiography in case of doubtful neovascularisation in the retina for early identification and management of proliferative diabetic retinopathy.</p>
+      </sec>
+      <sec id="article-35479.s14" sec-type="Enhancing Healthcare Team Outcomes">
+        <title>Enhancing Healthcare Team Outcomes</title>
+        <p>The diagnosis and management of asteroid hyalosis are essential. The possible associations like diabetes, hypertension, and hyperlipidemia, when present, should be managed by interprofessional team communication with endocrinologists and general physicians. The team can also include optometrists, ophthalmologists, ophthalmology nurses, and operating room nurses. The nurses participate in patient education and follow-up, informing the ophthalmologist of any issues. [Level 5]</p>
+      </sec>
+      <sec id="article-35479.s15">
+        <title>Review Questions</title>
+        <list list-type="bullet">
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/account/trialuserreg/?articleid=35479&#x00026;utm_source=pubmed&#x00026;utm_campaign=reviews&#x00026;utm_content=35479">Access free multiple choice questions on this topic.</ext-link>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://mdsearchlight.com/eye-health/asteroid-hyalosis/?utm_source=pubmedlink&#x00026;utm_campaign=MDS&#x00026;utm_content=35479">Click here for a simplified version.</ext-link>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/articlelibrary/commentarticle/35479/?utm_source=pubmed&#x00026;utm_campaign=comments&#x00026;utm_content=35479">Comment on this article.</ext-link>
+</p>
+          </list-item>
+        </list>
+      </sec>
+    </body>
+    <back>
+      <floats-group id="article-35479.s16">
+        <fig id="article-35479.image.f1" position="float" orientation="portrait">
+          <label>Video 1</label>
+          <caption>
+            <p>Slit Lamp Video of Asteroid Body Movement. Asteroid bodies move with the vitreous in response to eye motion in an eye affected by asteroid hyalosis. Video contributed by Dr Chitaranjan Mishra, DNB, FICO, MRCS, Aravind Eye Hospital, Madurai</p>
+          </caption>
+          <media xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="AH.mp4" mime-subtype="mp4" mimetype="video" position="float" orientation="portrait"/>
+        </fig>
+      </floats-group>
+      <floats-group id="article-35479.s17">
+        <fig id="article-35479.image.f2" position="float" orientation="portrait">
+          <label>Figure 1</label>
+          <caption>
+            <p>B-Scan Ultrasound of an Eye with Asteroid Hyalosis. Dot-like echoes are visible within the vitreous cavity, separated from the retinal surface by a clear zone. Contributed by Dr Chitaranjan Mishra, DNB, FICO, MRCS, Aravind Eye Hospital, Madurai.</p>
+          </caption>
+          <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="B-SCAN-Manuscript" mimetype="image" position="float" orientation="portrait"/>
+        </fig>
+      </floats-group>
+      <ref-list id="article-35479.s18">
+        <title>References</title>
+        <ref id="article-35479.r1">
+          <label>1</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Tripathy</surname>
+                <given-names>K</given-names>
+              </name>
+            </person-group>
+            <article-title>Asteroid Hyalosis.</article-title>
+            <source>N Engl J Med</source>
+            <year>2018</year>
+            <month>Aug</month>
+            <day>23</day>
+            <volume>379</volume>
+            <issue>8</issue>
+            <fpage>e12</fpage>
+            <pub-id pub-id-type="pmid">30134134</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r2">
+          <label>2</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Bergren</surname>
+                <given-names>RL</given-names>
+              </name>
+              <name>
+                <surname>Brown</surname>
+                <given-names>GC</given-names>
+              </name>
+              <name>
+                <surname>Duker</surname>
+                <given-names>JS</given-names>
+              </name>
+            </person-group>
+            <article-title>Prevalence and association of asteroid hyalosis with systemic diseases.</article-title>
+            <source>Am J Ophthalmol</source>
+            <year>1991</year>
+            <month>Mar</month>
+            <day>15</day>
+            <volume>111</volume>
+            <issue>3</issue>
+            <fpage>289</fpage>
+            <page-range>289-93</page-range>
+            <pub-id pub-id-type="pmid">2000898</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r3">
+          <label>3</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Moss</surname>
+                <given-names>SE</given-names>
+              </name>
+              <name>
+                <surname>Klein</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Klein</surname>
+                <given-names>BE</given-names>
+              </name>
+            </person-group>
+            <article-title>Asteroid hyalosis in a population: the Beaver Dam eye study.</article-title>
+            <source>Am J Ophthalmol</source>
+            <year>2001</year>
+            <month>Jul</month>
+            <volume>132</volume>
+            <issue>1</issue>
+            <fpage>70</fpage>
+            <page-range>70-5</page-range>
+            <pub-id pub-id-type="pmid">11438056</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r4">
+          <label>4</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Fawzi</surname>
+                <given-names>AA</given-names>
+              </name>
+              <name>
+                <surname>Vo</surname>
+                <given-names>B</given-names>
+              </name>
+              <name>
+                <surname>Kriwanek</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Ramkumar</surname>
+                <given-names>HL</given-names>
+              </name>
+              <name>
+                <surname>Cha</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Carts</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Heckenlively</surname>
+                <given-names>JR</given-names>
+              </name>
+              <name>
+                <surname>Foos</surname>
+                <given-names>RY</given-names>
+              </name>
+              <name>
+                <surname>Glasgow</surname>
+                <given-names>BJ</given-names>
+              </name>
+            </person-group>
+            <article-title>Asteroid hyalosis in an autopsy population: The University of California at Los Angeles (UCLA) experience.</article-title>
+            <source>Arch Ophthalmol</source>
+            <year>2005</year>
+            <month>Apr</month>
+            <volume>123</volume>
+            <issue>4</issue>
+            <fpage>486</fpage>
+            <page-range>486-90</page-range>
+            <pub-id pub-id-type="pmid">15824221</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r5">
+          <label>5</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>RODMAN</surname>
+                <given-names>HI</given-names>
+              </name>
+              <name>
+                <surname>JOHNSON</surname>
+                <given-names>FB</given-names>
+              </name>
+              <name>
+                <surname>ZIMMERMAN</surname>
+                <given-names>LE</given-names>
+              </name>
+            </person-group>
+            <article-title>New histo-pathological and histochemical observations concerning asteroid hyalitis.</article-title>
+            <source>Arch Ophthalmol</source>
+            <year>1961</year>
+            <month>Oct</month>
+            <volume>66</volume>
+            <fpage>552</fpage>
+            <page-range>552-63</page-range>
+            <pub-id pub-id-type="pmid">14493131</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r6">
+          <label>6</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Streeten</surname>
+                <given-names>BW</given-names>
+              </name>
+            </person-group>
+            <article-title>Vitreous asteroid bodies. Ultrastructural characteristics and composition.</article-title>
+            <source>Arch Ophthalmol</source>
+            <year>1982</year>
+            <month>Jun</month>
+            <volume>100</volume>
+            <issue>6</issue>
+            <fpage>969</fpage>
+            <page-range>969-75</page-range>
+            <pub-id pub-id-type="pmid">7092637</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r7">
+          <label>7</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Zauberman</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Livni</surname>
+                <given-names>N</given-names>
+              </name>
+            </person-group>
+            <article-title>Experimental vascular occlusion in hypercholesterolemic rabbits.</article-title>
+            <source>Invest Ophthalmol Vis Sci</source>
+            <year>1981</year>
+            <month>Aug</month>
+            <volume>21</volume>
+            <issue>2</issue>
+            <fpage>248</fpage>
+            <page-range>248-55</page-range>
+            <pub-id pub-id-type="pmid">7251308</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r8">
+          <label>8</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Winkler</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>L&#x000fc;nsdorf</surname>
+                <given-names>H</given-names>
+              </name>
+            </person-group>
+            <article-title>Ultrastructure and composition of asteroid bodies.</article-title>
+            <source>Invest Ophthalmol Vis Sci</source>
+            <year>2001</year>
+            <month>Apr</month>
+            <volume>42</volume>
+            <issue>5</issue>
+            <fpage>902</fpage>
+            <page-range>902-7</page-range>
+            <pub-id pub-id-type="pmid">11274065</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r9">
+          <label>9</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Feldman</surname>
+                <given-names>GL</given-names>
+              </name>
+            </person-group>
+            <article-title>Human ocular lipids: their analysis and distribution.</article-title>
+            <source>Surv Ophthalmol</source>
+            <year>1967</year>
+            <month>Jun</month>
+            <volume>12</volume>
+            <issue>3</issue>
+            <fpage>207</fpage>
+            <page-range>207-43</page-range>
+            <pub-id pub-id-type="pmid">4867603</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r10">
+          <label>10</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>March</surname>
+                <given-names>WF</given-names>
+              </name>
+              <name>
+                <surname>Shoch</surname>
+                <given-names>D</given-names>
+              </name>
+            </person-group>
+            <article-title>Electron diffraction study of asteroid bodies.</article-title>
+            <source>Invest Ophthalmol</source>
+            <year>1975</year>
+            <month>May</month>
+            <volume>14</volume>
+            <issue>5</issue>
+            <fpage>399</fpage>
+            <page-range>399-400</page-range>
+            <pub-id pub-id-type="pmid">165161</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r11">
+          <label>11</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Topilow</surname>
+                <given-names>HW</given-names>
+              </name>
+              <name>
+                <surname>Kenyon</surname>
+                <given-names>KR</given-names>
+              </name>
+              <name>
+                <surname>Takahashi</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Freeman</surname>
+                <given-names>HM</given-names>
+              </name>
+              <name>
+                <surname>Tolentino</surname>
+                <given-names>FI</given-names>
+              </name>
+              <name>
+                <surname>Hanninen</surname>
+                <given-names>LA</given-names>
+              </name>
+            </person-group>
+            <article-title>Asteroid hyalosis. Biomicroscopy, ultrastructure, and composition.</article-title>
+            <source>Arch Ophthalmol</source>
+            <year>1982</year>
+            <month>Jun</month>
+            <volume>100</volume>
+            <issue>6</issue>
+            <fpage>964</fpage>
+            <page-range>964-8</page-range>
+            <pub-id pub-id-type="pmid">7092636</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r12">
+          <label>12</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Komatsu</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Kamura</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Ishi</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Kashima</surname>
+                <given-names>Y</given-names>
+              </name>
+            </person-group>
+            <article-title>Fine structure and morphogenesis of asteroid hyalosis.</article-title>
+            <source>Med Electron Microsc</source>
+            <year>2003</year>
+            <month>Jun</month>
+            <volume>36</volume>
+            <issue>2</issue>
+            <fpage>112</fpage>
+            <page-range>112-9</page-range>
+            <pub-id pub-id-type="pmid">12825125</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r13">
+          <label>13</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Lin</surname>
+                <given-names>SY</given-names>
+              </name>
+              <name>
+                <surname>Chen</surname>
+                <given-names>KH</given-names>
+              </name>
+              <name>
+                <surname>Cheng</surname>
+                <given-names>WT</given-names>
+              </name>
+              <name>
+                <surname>Ho</surname>
+                <given-names>CT</given-names>
+              </name>
+              <name>
+                <surname>Wang</surname>
+                <given-names>SL</given-names>
+              </name>
+            </person-group>
+            <article-title>Preliminary identification of Beta-carotene in the vitreous asteroid bodies by micro-Raman spectroscopy and HPLC analysis.</article-title>
+            <source>Microsc Microanal</source>
+            <year>2007</year>
+            <month>Apr</month>
+            <volume>13</volume>
+            <issue>2</issue>
+            <fpage>128</fpage>
+            <page-range>128-32</page-range>
+            <pub-id pub-id-type="pmid">17367552</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r14">
+          <label>14</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Luxenberg</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Sime</surname>
+                <given-names>D</given-names>
+              </name>
+            </person-group>
+            <article-title>Relationship of asteroid hyalosis to diabetes mellitus and plasma lipid levels.</article-title>
+            <source>Am J Ophthalmol</source>
+            <year>1969</year>
+            <month>Mar</month>
+            <volume>67</volume>
+            <issue>3</issue>
+            <fpage>406</fpage>
+            <page-range>406-13</page-range>
+            <pub-id pub-id-type="pmid">5774257</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r15">
+          <label>15</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Safir</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Dunn</surname>
+                <given-names>SN</given-names>
+              </name>
+              <name>
+                <surname>Martin</surname>
+                <given-names>RG</given-names>
+              </name>
+              <name>
+                <surname>Tate</surname>
+                <given-names>GW</given-names>
+              </name>
+              <name>
+                <surname>Mincey</surname>
+                <given-names>GJ</given-names>
+              </name>
+            </person-group>
+            <article-title>Is asteroid hyalosis ocular gout?</article-title>
+            <source>Ann Ophthalmol</source>
+            <year>1990</year>
+            <month>Feb</month>
+            <volume>22</volume>
+            <issue>2</issue>
+            <fpage>70</fpage>
+            <page-range>70-7</page-range>
+            <pub-id pub-id-type="pmid">2316956</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r16">
+          <label>16</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Khoshnevis</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Rosen</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Sebag</surname>
+                <given-names>J</given-names>
+              </name>
+            </person-group>
+            <article-title>Asteroid hyalosis-a comprehensive review.</article-title>
+            <source>Surv Ophthalmol</source>
+            <year>2019</year>
+            <season>Jul-Aug</season>
+            <volume>64</volume>
+            <issue>4</issue>
+            <fpage>452</fpage>
+            <page-range>452-462</page-range>
+            <pub-id pub-id-type="pmid">30707924</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r17">
+          <label>17</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Zaher</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>Blumenthal</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Blumenthal</surname>
+                <given-names>EZ</given-names>
+              </name>
+            </person-group>
+            <article-title>The lack of floater perception in eyes with asteroid hyalosis and its direct implications on laser vitreolysis.</article-title>
+            <source>Int J Retina Vitreous</source>
+            <year>2024</year>
+            <month>Oct</month>
+            <day>24</day>
+            <volume>10</volume>
+            <issue>1</issue>
+            <fpage>80</fpage>
+            <pub-id pub-id-type="pmid">39449063</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r18">
+          <label>18</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Hampton</surname>
+                <given-names>GR</given-names>
+              </name>
+              <name>
+                <surname>Nelsen</surname>
+                <given-names>PT</given-names>
+              </name>
+              <name>
+                <surname>Hay</surname>
+                <given-names>PB</given-names>
+              </name>
+            </person-group>
+            <article-title>Viewing through the asteroids.</article-title>
+            <source>Ophthalmology</source>
+            <year>1981</year>
+            <month>Jul</month>
+            <volume>88</volume>
+            <issue>7</issue>
+            <fpage>669</fpage>
+            <page-range>669-72</page-range>
+            <pub-id pub-id-type="pmid">7267035</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r19">
+          <label>19</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Motiani</surname>
+                <given-names>MV</given-names>
+              </name>
+              <name>
+                <surname>McCannel</surname>
+                <given-names>CA</given-names>
+              </name>
+              <name>
+                <surname>Almanzor</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>McCannel</surname>
+                <given-names>TA</given-names>
+              </name>
+            </person-group>
+            <article-title>Diagnosis of Choroidal Melanoma in Dense Asteroid Hyalosis.</article-title>
+            <source>Semin Ophthalmol</source>
+            <year>2017</year>
+            <volume>32</volume>
+            <issue>2</issue>
+            <fpage>257</fpage>
+            <page-range>257-259</page-range>
+            <pub-id pub-id-type="pmid">27058861</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r20">
+          <label>20</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Rani</surname>
+                <given-names>PK</given-names>
+              </name>
+              <name>
+                <surname>Prajapati</surname>
+                <given-names>RC</given-names>
+              </name>
+            </person-group>
+            <article-title>Role of OCT Angiography in the Detection of Retinal Vascular and Macular Abnormalities in Subjects with Asteroid Hyalosis.</article-title>
+            <source>Semin Ophthalmol</source>
+            <year>2019</year>
+            <month>Jan</month>
+            <day>02</day>
+            <volume>34</volume>
+            <issue>1</issue>
+            <fpage>42</fpage>
+            <page-range>42-46</page-range>
+            <pub-id pub-id-type="pmid">30475665</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r21">
+          <label>21</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Ogino</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Murakami</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Yoshimura</surname>
+                <given-names>N</given-names>
+              </name>
+            </person-group>
+            <article-title>Photocoagulation guided by wide-field fundus autofluorescence in eyes with asteroid hyalosis.</article-title>
+            <source>Eye (Lond)</source>
+            <year>2014</year>
+            <month>May</month>
+            <volume>28</volume>
+            <issue>5</issue>
+            <fpage>634</fpage>
+            <page-range>634-5</page-range>
+            <pub-id pub-id-type="pmid">24603417</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r22">
+          <label>22</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Hwang</surname>
+                <given-names>JC</given-names>
+              </name>
+              <name>
+                <surname>Barile</surname>
+                <given-names>GR</given-names>
+              </name>
+              <name>
+                <surname>Schiff</surname>
+                <given-names>WM</given-names>
+              </name>
+              <name>
+                <surname>Ober</surname>
+                <given-names>MD</given-names>
+              </name>
+              <name>
+                <surname>Smith</surname>
+                <given-names>RT</given-names>
+              </name>
+              <name>
+                <surname>Del Priore</surname>
+                <given-names>LV</given-names>
+              </name>
+              <name>
+                <surname>Turano</surname>
+                <given-names>MR</given-names>
+              </name>
+              <name>
+                <surname>Chang</surname>
+                <given-names>S</given-names>
+              </name>
+            </person-group>
+            <article-title>Optical coherence tomography in asteroid hyalosis.</article-title>
+            <source>Retina</source>
+            <year>2006</year>
+            <season>Jul-Aug</season>
+            <volume>26</volume>
+            <issue>6</issue>
+            <fpage>661</fpage>
+            <page-range>661-5</page-range>
+            <pub-id pub-id-type="pmid">16829809</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r23">
+          <label>23</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Alasil</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Adhi</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Liu</surname>
+                <given-names>JJ</given-names>
+              </name>
+              <name>
+                <surname>Fujimoto</surname>
+                <given-names>JG</given-names>
+              </name>
+              <name>
+                <surname>Duker</surname>
+                <given-names>JS</given-names>
+              </name>
+              <name>
+                <surname>Baumal</surname>
+                <given-names>CR</given-names>
+              </name>
+            </person-group>
+            <article-title>Spectral-domain and swept-source OCT imaging of asteroid hyalosis: a case report.</article-title>
+            <source>Ophthalmic Surg Lasers Imaging Retina</source>
+            <year>2014</year>
+            <season>Sep-Oct</season>
+            <volume>45</volume>
+            <issue>5</issue>
+            <fpage>459</fpage>
+            <page-range>459-61</page-range>
+            <pub-id pub-id-type="pmid">25230400</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r24">
+          <label>24</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Kachewar</surname>
+                <given-names>SG</given-names>
+              </name>
+              <name>
+                <surname>Kulkarni</surname>
+                <given-names>DS</given-names>
+              </name>
+            </person-group>
+            <article-title>An Imaging Review of Intra-ocular Calcifications.</article-title>
+            <source>J Clin Diagn Res</source>
+            <year>2014</year>
+            <month>Jan</month>
+            <volume>8</volume>
+            <issue>1</issue>
+            <fpage>203</fpage>
+            <page-range>203-5</page-range>
+            <pub-id pub-id-type="pmid">24596775</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r25">
+          <label>25</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Saurabh</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Roy</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Chowdhury</surname>
+                <given-names>M</given-names>
+              </name>
+            </person-group>
+            <article-title>Efficacy of Multicolor Imaging in Patients With Asteroid Hyalosis: Seeing the Unseen.</article-title>
+            <source>JAMA Ophthalmol</source>
+            <year>2018</year>
+            <month>Apr</month>
+            <day>01</day>
+            <volume>136</volume>
+            <issue>4</issue>
+            <fpage>446</fpage>
+            <page-range>446-447</page-range>
+            <pub-id pub-id-type="pmid">29522059</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r26">
+          <label>26</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Park</surname>
+                <given-names>SH</given-names>
+              </name>
+              <name>
+                <surname>Chey</surname>
+                <given-names>JH</given-names>
+              </name>
+              <name>
+                <surname>Heo</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Han</surname>
+                <given-names>KE</given-names>
+              </name>
+              <name>
+                <surname>Park</surname>
+                <given-names>SW</given-names>
+              </name>
+              <name>
+                <surname>Byon</surname>
+                <given-names>I</given-names>
+              </name>
+              <name>
+                <surname>Kwon</surname>
+                <given-names>HJ</given-names>
+              </name>
+            </person-group>
+            <article-title>Diagnostic ability of confocal scanning ophthalmoscope for the detection of concurrent retinal disease in eyes with asteroid hyalosis.</article-title>
+            <source>PLoS One</source>
+            <year>2024</year>
+            <volume>19</volume>
+            <issue>12</issue>
+            <fpage>e0306091</fpage>
+            <pub-id pub-id-type="pmid">39636945</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r27">
+          <label>27</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>van den Born</surname>
+                <given-names>LI</given-names>
+              </name>
+              <name>
+                <surname>van Soest</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>van Schooneveld</surname>
+                <given-names>MJ</given-names>
+              </name>
+              <name>
+                <surname>Riemslag</surname>
+                <given-names>FC</given-names>
+              </name>
+              <name>
+                <surname>de Jong</surname>
+                <given-names>PT</given-names>
+              </name>
+              <name>
+                <surname>Bleeker-Wagemakers</surname>
+                <given-names>EM</given-names>
+              </name>
+            </person-group>
+            <article-title>Autosomal recessive retinitis pigmentosa with preserved para-arteriolar retinal pigment epithelium.</article-title>
+            <source>Am J Ophthalmol</source>
+            <year>1994</year>
+            <month>Oct</month>
+            <day>15</day>
+            <volume>118</volume>
+            <issue>4</issue>
+            <fpage>430</fpage>
+            <page-range>430-9</page-range>
+            <pub-id pub-id-type="pmid">7943119</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r28">
+          <label>28</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Dodwell</surname>
+                <given-names>DG</given-names>
+              </name>
+              <name>
+                <surname>Freeman</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Shoch</surname>
+                <given-names>D</given-names>
+              </name>
+            </person-group>
+            <article-title>Juvenile asteroid hyalosis and pre-Descemet's dystrophy.</article-title>
+            <source>Am J Ophthalmol</source>
+            <year>1988</year>
+            <month>Oct</month>
+            <day>15</day>
+            <volume>106</volume>
+            <issue>4</issue>
+            <fpage>504</fpage>
+            <page-range>504-5</page-range>
+            <pub-id pub-id-type="pmid">3263047</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r29">
+          <label>29</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Ikeda</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Hisatomi</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Murakami</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Miyazaki</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Kohno</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Takahashi</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Hata</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Ishibashi</surname>
+                <given-names>T</given-names>
+              </name>
+            </person-group>
+            <article-title>Retinitis pigmentosa associated with asteroid hyalosis.</article-title>
+            <source>Retina</source>
+            <year>2010</year>
+            <month>Sep</month>
+            <volume>30</volume>
+            <issue>8</issue>
+            <fpage>1278</fpage>
+            <page-range>1278-81</page-range>
+            <pub-id pub-id-type="pmid">20827143</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r30">
+          <label>30</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Burris</surname>
+                <given-names>CKH</given-names>
+              </name>
+              <name>
+                <surname>Azari</surname>
+                <given-names>AA</given-names>
+              </name>
+              <name>
+                <surname>Kanavi</surname>
+                <given-names>MR</given-names>
+              </name>
+              <name>
+                <surname>Dubielzig</surname>
+                <given-names>RR</given-names>
+              </name>
+              <name>
+                <surname>Lee</surname>
+                <given-names>V</given-names>
+              </name>
+              <name>
+                <surname>Gottlieb</surname>
+                <given-names>JL</given-names>
+              </name>
+              <name>
+                <surname>Potter</surname>
+                <given-names>HD</given-names>
+              </name>
+              <name>
+                <surname>Kim</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Raven</surname>
+                <given-names>ML</given-names>
+              </name>
+              <name>
+                <surname>Rodriguez</surname>
+                <given-names>ME</given-names>
+              </name>
+              <name>
+                <surname>Reddy</surname>
+                <given-names>DN</given-names>
+              </name>
+              <name>
+                <surname>Albert</surname>
+                <given-names>DM</given-names>
+              </name>
+            </person-group>
+            <article-title>Is There an Increased Prevalence of Asteroid Hyalosis in Eyes with Uveal Melanoma? A Histopathologic Study.</article-title>
+            <source>Ocul Oncol Pathol</source>
+            <year>2017</year>
+            <month>Nov</month>
+            <volume>3</volume>
+            <issue>4</issue>
+            <fpage>259</fpage>
+            <page-range>259-261</page-range>
+            <pub-id pub-id-type="pmid">29344477</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r31">
+          <label>31</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Dabbs</surname>
+                <given-names>SG</given-names>
+              </name>
+              <name>
+                <surname>Feist</surname>
+                <given-names>JE</given-names>
+              </name>
+              <name>
+                <surname>Patel</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Feist</surname>
+                <given-names>RM</given-names>
+              </name>
+            </person-group>
+            <article-title>Increased Incidence of Asteroid Hyalosis in Bilaterial Macular Telangiectasia Type II Patients.</article-title>
+            <source>Retina</source>
+            <year>2025</year>
+            <month>Mar</month>
+            <day>10</day>
+            <pub-id pub-id-type="pmid">40106717</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r32">
+          <label>32</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Mouna</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Berrod</surname>
+                <given-names>JP</given-names>
+              </name>
+              <name>
+                <surname>Conart</surname>
+                <given-names>JB</given-names>
+              </name>
+            </person-group>
+            <article-title>Visual Outcomes of Pars Plana Vitrectomy with Epiretinal Membrane Peeling in Patients with Asteroid Hyalosis: A Matched Cohort Study.</article-title>
+            <source>Ophthalmic Res</source>
+            <year>2017</year>
+            <volume>58</volume>
+            <issue>1</issue>
+            <fpage>35</fpage>
+            <page-range>35-39</page-range>
+            <pub-id pub-id-type="pmid">28463846</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r33">
+          <label>33</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Martin</surname>
+                <given-names>RG</given-names>
+              </name>
+              <name>
+                <surname>Safir</surname>
+                <given-names>A</given-names>
+              </name>
+            </person-group>
+            <article-title>Asteroid hyalosis affecting the choice of intraocular lens implant.</article-title>
+            <source>J Cataract Refract Surg</source>
+            <year>1987</year>
+            <month>Jan</month>
+            <volume>13</volume>
+            <issue>1</issue>
+            <fpage>62</fpage>
+            <page-range>62-5</page-range>
+            <pub-id pub-id-type="pmid">3550044</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r34">
+          <label>34</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Wackernagel</surname>
+                <given-names>W</given-names>
+              </name>
+              <name>
+                <surname>Ettinger</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Weitgasser</surname>
+                <given-names>U</given-names>
+              </name>
+              <name>
+                <surname>Bakir</surname>
+                <given-names>BG</given-names>
+              </name>
+              <name>
+                <surname>Schmut</surname>
+                <given-names>O</given-names>
+              </name>
+              <name>
+                <surname>Goessler</surname>
+                <given-names>W</given-names>
+              </name>
+              <name>
+                <surname>Faschinger</surname>
+                <given-names>C</given-names>
+              </name>
+            </person-group>
+            <article-title>Opacification of a silicone intraocular lens caused by calcium deposits on the optic.</article-title>
+            <source>J Cataract Refract Surg</source>
+            <year>2004</year>
+            <month>Feb</month>
+            <volume>30</volume>
+            <issue>2</issue>
+            <fpage>517</fpage>
+            <page-range>517-20</page-range>
+            <pub-id pub-id-type="pmid">15030853</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r35">
+          <label>35</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Ortega-Usobiaga</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Bilbao-Calabuig</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Gonz&#x000e1;lez-L&#x000f3;pez</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Beltr&#x000e1;n-Sanz</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Wang</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Llovet-Osuna</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Figueroa</surname>
+                <given-names>MS</given-names>
+              </name>
+            </person-group>
+            <article-title>Phacoemulsification with implantation of a trifocal intraocular lens in eyes with asteroid hyalosis and synchysis scintillans.</article-title>
+            <source>J Fr Ophtalmol</source>
+            <year>2024</year>
+            <month>Apr</month>
+            <volume>47</volume>
+            <issue>4</issue>
+            <fpage>104105</fpage>
+            <pub-id pub-id-type="pmid">38428321</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r36">
+          <label>36</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Lee</surname>
+                <given-names>YJ</given-names>
+              </name>
+              <name>
+                <surname>Han</surname>
+                <given-names>SB</given-names>
+              </name>
+            </person-group>
+            <article-title>Laser treatment of silicone intraocular lens opacification associated with asteroid hyalosis.</article-title>
+            <source>Taiwan J Ophthalmol</source>
+            <year>2019</year>
+            <season>Jan-Mar</season>
+            <volume>9</volume>
+            <issue>1</issue>
+            <fpage>49</fpage>
+            <page-range>49-52</page-range>
+            <pub-id pub-id-type="pmid">30993069</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r37">
+          <label>37</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Platt</surname>
+                <given-names>SM</given-names>
+              </name>
+              <name>
+                <surname>Iezzi</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Mahr</surname>
+                <given-names>MA</given-names>
+              </name>
+              <name>
+                <surname>Erie</surname>
+                <given-names>JC</given-names>
+              </name>
+            </person-group>
+            <article-title>Surgical removal of dystrophic calcification on a silicone intraocular lens in association with asteroid hyalosis.</article-title>
+            <source>J Cataract Refract Surg</source>
+            <year>2017</year>
+            <month>Dec</month>
+            <volume>43</volume>
+            <issue>12</issue>
+            <fpage>1608</fpage>
+            <page-range>1608-1610</page-range>
+            <pub-id pub-id-type="pmid">29335107</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r38">
+          <label>38</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Espandar</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Mukherjee</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Werner</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Mamalis</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Kim</surname>
+                <given-names>T</given-names>
+              </name>
+            </person-group>
+            <article-title>Diagnosis and management of opacified silicone intraocular lenses in patients with asteroid hyalosis.</article-title>
+            <source>J Cataract Refract Surg</source>
+            <year>2015</year>
+            <month>Jan</month>
+            <volume>41</volume>
+            <issue>1</issue>
+            <fpage>222</fpage>
+            <page-range>222-5</page-range>
+            <pub-id pub-id-type="pmid">25532646</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r39">
+          <label>39</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Werner</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Wallace-Carrete</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Kelkar</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Eid</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Polson</surname>
+                <given-names>R</given-names>
+              </name>
+            </person-group>
+            <article-title>3D X-ray computed tomography in the analyses of intraocular lenses explanted because of postoperative opacification.</article-title>
+            <source>J Cataract Refract Surg</source>
+            <year>2024</year>
+            <month>Sep</month>
+            <day>01</day>
+            <volume>50</volume>
+            <issue>9</issue>
+            <fpage>970</fpage>
+            <page-range>970-975</page-range>
+            <pub-id pub-id-type="pmid">39025657</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r40">
+          <label>40</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Sebag</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Yee</surname>
+                <given-names>KMP</given-names>
+              </name>
+              <name>
+                <surname>Nguyen</surname>
+                <given-names>JH</given-names>
+              </name>
+              <name>
+                <surname>Nguyen-Cuu</surname>
+                <given-names>J</given-names>
+              </name>
+            </person-group>
+            <article-title>Long-Term Safety and Efficacy of Limited Vitrectomy for Vision Degrading Vitreopathy Resulting from Vitreous Floaters.</article-title>
+            <source>Ophthalmol Retina</source>
+            <year>2018</year>
+            <month>Sep</month>
+            <volume>2</volume>
+            <issue>9</issue>
+            <fpage>881</fpage>
+            <page-range>881-887</page-range>
+            <pub-id pub-id-type="pmid">31047219</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r41">
+          <label>41</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Okuda</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Kakurai</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Sato</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Morishita</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Fukumoto</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Kohmoto</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Takagi</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Kobayashi</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Kida</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Ikeda</surname>
+                <given-names>T</given-names>
+              </name>
+            </person-group>
+            <article-title>Two Cases of Rhegmatogenous Retinal Detachment Associated with Asteroid Hyalosis.</article-title>
+            <source>Case Rep Ophthalmol</source>
+            <year>2018</year>
+            <season>Jan-Apr</season>
+            <volume>9</volume>
+            <issue>1</issue>
+            <fpage>43</fpage>
+            <page-range>43-48</page-range>
+            <pub-id pub-id-type="pmid">29643781</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r42">
+          <label>42</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Renaldo</surname>
+                <given-names>DP</given-names>
+              </name>
+            </person-group>
+            <article-title>Pars plana vitrectomy for asteroid hyalosis.</article-title>
+            <source>Retina</source>
+            <year>1981</year>
+            <volume>1</volume>
+            <issue>3</issue>
+            <fpage>252</fpage>
+            <page-range>252-4</page-range>
+            <pub-id pub-id-type="pmid">7348845</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r43">
+          <label>43</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Lambrou</surname>
+                <given-names>FH</given-names>
+              </name>
+              <name>
+                <surname>Sternberg</surname>
+                <given-names>P</given-names>
+              </name>
+              <name>
+                <surname>Meredith</surname>
+                <given-names>TA</given-names>
+              </name>
+              <name>
+                <surname>Mines</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Fine</surname>
+                <given-names>SL</given-names>
+              </name>
+            </person-group>
+            <article-title>Vitrectomy when asteroid hyalosis prevents laser photocoagulation.</article-title>
+            <source>Ophthalmic Surg</source>
+            <year>1989</year>
+            <month>Feb</month>
+            <volume>20</volume>
+            <issue>2</issue>
+            <fpage>100</fpage>
+            <page-range>100-2</page-range>
+            <pub-id pub-id-type="pmid">2927889</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r44">
+          <label>44</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Karunatilake</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Fijardo</surname>
+                <given-names>B</given-names>
+              </name>
+              <name>
+                <surname>Michael</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>Somani</surname>
+                <given-names>R</given-names>
+              </name>
+            </person-group>
+            <article-title>Outcomes of pars plana vitrectomy for visually significant floaters in Northern Alberta.</article-title>
+            <source>Int J Retina Vitreous</source>
+            <year>2025</year>
+            <month>May</month>
+            <day>06</day>
+            <volume>11</volume>
+            <issue>1</issue>
+            <fpage>54</fpage>
+            <pub-id pub-id-type="pmid">40329415</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r45">
+          <label>45</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Duong</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Abou-Samra</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Bogaard</surname>
+                <given-names>JD</given-names>
+              </name>
+              <name>
+                <surname>Shildkrot</surname>
+                <given-names>Y</given-names>
+              </name>
+            </person-group>
+            <article-title>Asteroid Hyalosis: An Update on Prevalence, Risk Factors, Emerging Clinical Impact and Management Strategies.</article-title>
+            <source>Clin Ophthalmol</source>
+            <year>2023</year>
+            <volume>17</volume>
+            <fpage>1739</fpage>
+            <page-range>1739-1754</page-range>
+            <pub-id pub-id-type="pmid">37361691</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r46">
+          <label>46</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Navaratnam</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Faber</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Eide</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Lund-Iversen</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Garred</surname>
+                <given-names>&#x000d8;</given-names>
+              </name>
+              <name>
+                <surname>Munier</surname>
+                <given-names>FL</given-names>
+              </name>
+            </person-group>
+            <article-title>Retinocytoma Undergoing Retinoblastoma Transformation in an Adult Patient.</article-title>
+            <source>Case Rep Ophthalmol Med</source>
+            <year>2023</year>
+            <volume>2023</volume>
+            <fpage>8127245</fpage>
+            <pub-id pub-id-type="pmid">37529687</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r47">
+          <label>47</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Rozegna&#x00142;-Madej</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Wla&#x0017a;</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>&#x0017b;arnowski</surname>
+                <given-names>T</given-names>
+              </name>
+            </person-group>
+            <article-title>Limbal Approach Phacovitrectomy to Treat Cataract with Clinically Significant Asteroid Hyalosis-Presentation of the Technique and Preliminary Results.</article-title>
+            <source>J Clin Med</source>
+            <year>2021</year>
+            <month>Jul</month>
+            <day>28</day>
+            <volume>10</volume>
+            <issue>15</issue>
+            <pub-id pub-id-type="pmid">34362119</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r48">
+          <label>48</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Shah</surname>
+                <given-names>SM</given-names>
+              </name>
+              <name>
+                <surname>Bakri</surname>
+                <given-names>SJ</given-names>
+              </name>
+            </person-group>
+            <article-title>Full-thickness macular hole repair with associated asteroid hyalosis.</article-title>
+            <source>Can J Ophthalmol</source>
+            <year>2021</year>
+            <month>Oct</month>
+            <volume>56</volume>
+            <issue>5</issue>
+            <fpage>e164</fpage>
+            <page-range>e164-e166</page-range>
+            <pub-id pub-id-type="pmid">33839070</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-35479.r49">
+          <label>49</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Williams</surname>
+                <given-names>BK</given-names>
+              </name>
+              <name>
+                <surname>Elimimian</surname>
+                <given-names>EB</given-names>
+              </name>
+              <name>
+                <surname>Shields</surname>
+                <given-names>CL</given-names>
+              </name>
+            </person-group>
+            <article-title>Asteroid Hyalosis Simulating Vitreous Seeds in a Patient With Retinoblastoma.</article-title>
+            <source>J Pediatr Ophthalmol Strabismus</source>
+            <year>2019</year>
+            <month>Jul</month>
+            <day>05</day>
+            <volume>56</volume>
+            <fpage>e41</fpage>
+            <page-range>e41-e44</page-range>
+            <pub-id pub-id-type="pmid">31282959</pub-id>
+          </element-citation>
+        </ref>
+      </ref-list>
+    </back>
+  </book-part>
+</book-part-wrapper>

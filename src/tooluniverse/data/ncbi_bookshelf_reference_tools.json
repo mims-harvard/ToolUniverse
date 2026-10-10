@@ -1,0 +1,547 @@
+[
+  {
+    "name": "StatPearls_search",
+    "type": "StatPearlsSearchTool",
+    "description": "Full-text search of StatPearls, the peer-reviewed point-of-care clinical review library on NCBI Bookshelf (NBK430685; about 8,800 current chapters on diseases, injuries, procedures, drugs and anatomy). Use it for clinical questions that drug labels and guideline searches do not answer, including rare conditions, surgical and procedural management, and off-label drug use: disease chapters cover evaluation, differential diagnosis and Treatment / Management (first-line therapy, antibiotic choice, surgical versus conservative care); procedure chapters cover indications, technique and complications; drug chapters cover indications, Administration with adult/pediatric dosing, adverse effects, contraindications, monitoring and toxicity. Returns the best-matching chapters, each with its chapter_id, title, last-updated date, best-matching section heading and a short snippet; then read the section with StatPearls_get_chapter_section, or call StatPearls_get_management for a condition's treatment in one step. Short keyword queries work best (e.g. 'amitriptyline', 'dog bite antibiotic'); every word is optional (OR) and chapters are ranked by BM25, so a long question still returns results. Archived chapters, which the publisher no longer maintains, are searched only with include_archived=true. Reads a local index; the tools make no network requests. Install it once with `python -m tooluniverse.ncbi_bookshelf_index build --books statpearls` (about 2 GB download from NCBI; the index is kept in the ToolUniverse cache or $TOOLUNIVERSE_BOOKSHELF_DIR). Without it the tool returns an error naming that command.",
+    "requires_local_input": true,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Keywords: a drug, disease or clinical topic plus what you need, e.g. 'amitriptyline depression dosing' or 'atrial fibrillation rate control beta blocker'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Number of chapters to return (1-10, default 5).",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 10
+        },
+        "include_archived": {
+          "type": "boolean",
+          "description": "Also search the archived StatPearls chapters, which the publisher no longer maintains (default false).",
+          "default": false
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rank": {
+                    "type": "integer"
+                  },
+                  "chapter_id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "last_updated": {
+                    "type": "string"
+                  },
+                  "best_section": {
+                    "type": "string"
+                  },
+                  "snippet": {
+                    "type": "string"
+                  },
+                  "bm25": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            },
+            "source": {
+              "type": "object"
+            },
+            "license": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            },
+            "error_type": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query": "amitriptyline"
+      },
+      {
+        "query": "dog bite antibiotic",
+        "limit": 3
+      }
+    ]
+  },
+  {
+    "name": "StatPearls_get_management",
+    "type": "StatPearlsManagementTool",
+    "description": "How a disease, injury, condition or surgical problem is treated and managed, in one call: finds the best-matching StatPearls clinical review chapters (NCBI Bookshelf NBK430685, peer reviewed, about 8,800 current chapters) for a condition name and returns each chapter's Treatment / Management section (for procedure chapters Technique or Treatment, for drug chapters Administration, otherwise Clinical Significance), with the chapter title, last-updated date and link. Use it for 'what is the treatment of X', first-line therapy, medical versus surgical or conservative management, operative technique, postoperative care, and rare conditions that no guideline covers. Give the condition's name as a clinician would title it (e.g. 'intussusception', 'scaphoid fracture', 'ovarian torsion', 'Meckel diverticulum'), not the whole patient case. include_evaluation=true also returns the Evaluation (work-up) section. Long sections are shortened to fit; read any section in full with StatPearls_get_chapter_section. Reads a local index; the tools make no network requests. Install it once with `python -m tooluniverse.ncbi_bookshelf_index build --books statpearls` (about 2 GB download from NCBI; the index is kept in the ToolUniverse cache or $TOOLUNIVERSE_BOOKSHELF_DIR). Without it the tool returns an error naming that command.",
+    "requires_local_input": true,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "condition": {
+          "type": "string",
+          "description": "Name of the disease, injury, condition, procedure or drug, e.g. 'scaphoid fracture', 'diverticulitis', 'invasive cervical resorption'. Short names match best."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Number of chapters to return (1-3, default 2).",
+          "default": 2,
+          "minimum": 1,
+          "maximum": 3
+        },
+        "include_evaluation": {
+          "type": "boolean",
+          "description": "Also return each chapter's Evaluation (diagnostic work-up) section (default false).",
+          "default": false
+        },
+        "include_archived": {
+          "type": "boolean",
+          "description": "Also consider archived chapters, which the publisher no longer maintains (default false).",
+          "default": false
+        }
+      },
+      "required": [
+        "condition"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "rank": {
+                    "type": "integer"
+                  },
+                  "chapter_id": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "last_updated": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "section": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  },
+                  "truncated": {
+                    "type": "boolean"
+                  },
+                  "evaluation": {
+                    "type": "object",
+                    "properties": {
+                      "heading": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "truncated": {
+                        "type": "boolean"
+                      }
+                    }
+                  },
+                  "other_sections": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "metadata": {
+              "type": "object"
+            },
+            "source": {
+              "type": "object"
+            },
+            "license": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            },
+            "error_type": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "condition": "animal bites"
+      },
+      {
+        "condition": "tricyclic antidepressant toxicity",
+        "limit": 1,
+        "include_evaluation": true
+      }
+    ]
+  },
+  {
+    "name": "StatPearls_get_chapter_section",
+    "type": "StatPearlsChapterSectionTool",
+    "description": "Read a StatPearls clinical review chapter (NCBI Bookshelf NBK430685). Give the chapter as the chapter_id returned by StatPearls_search (e.g. 'article-17465') or as its title (case-insensitive, e.g. 'Amitriptyline'). Without section, returns the chapter's ordered list of section headings with their sizes. With section, returns that section's text including its sub-sections; the heading match is case-insensitive and tolerant (partial or close headings work, and 'dose', 'dosage' or 'dosing' finds the Administration section, 'side effects' finds Adverse Effects, 'treatment' finds Treatment / Management; a treatment request to a chapter without that section returns the chapter's own treatment section, such as Technique or Treatment in procedure chapters or Administration in drug chapters, with a section_note saying so). Long sections are split into pages of about 7,000 characters; use page to read further. Every result names the chapter, its last-updated date and the license. Reads a local index; the tools make no network requests. Install it once with `python -m tooluniverse.ncbi_bookshelf_index build --books statpearls` (about 2 GB download from NCBI; the index is kept in the ToolUniverse cache or $TOOLUNIVERSE_BOOKSHELF_DIR). Without it the tool returns an error naming that command.",
+    "requires_local_input": true,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chapter": {
+          "type": "string",
+          "description": "chapter_id from StatPearls_search (e.g. 'article-17465') or the chapter title (e.g. 'Amitriptyline', 'Animal Bites')."
+        },
+        "section": {
+          "type": "string",
+          "description": "Optional section heading to read, e.g. 'Administration', 'Adverse Effects', 'Treatment / Management'. Omit to list the sections."
+        },
+        "page": {
+          "type": "integer",
+          "description": "Page of a long section to return (default 1).",
+          "default": 1,
+          "minimum": 1
+        }
+      },
+      "required": [
+        "chapter"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "chapter_id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "sections": {
+                  "type": "array"
+                },
+                "section": {
+                  "type": "string"
+                },
+                "page": {
+                  "type": "integer"
+                },
+                "total_pages": {
+                  "type": "integer"
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            },
+            "source": {
+              "type": "object"
+            },
+            "license": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            },
+            "error_type": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "chapter": "Amitriptyline"
+      },
+      {
+        "chapter": "Amitriptyline",
+        "section": "Administration"
+      }
+    ]
+  },
+  {
+    "name": "LactMed_get_drug",
+    "type": "LactMedDrugTool",
+    "description": "Breastfeeding / lactation safety of one drug from LactMed, the Drugs and Lactation Database (NICHD, NCBI Bookshelf NBK501922; about 1,950 drug records). Returns the record's Summary of Use during Lactation, Drug Levels (maternal milk and infant serum levels), Effects in Breastfed Infants, Effects on Lactation and Breastmilk and Alternate Drugs to Consider, with the date the record was last revised. Use it for questions about nursing mothers, milk transfer or infant exposure, which drug labels often answer only generically. Give the generic name (case-insensitive); listed synonyms (including many brand names) and salt, dosage-form or strength variants (e.g. 'metoprolol tartrate', 'sertraline hydrochloride tablets') are resolved. A name with no record returns an error listing close record names. Reads a local index; the tools make no network requests. Install it once with `python -m tooluniverse.ncbi_bookshelf_index build --books lactmed` (about 210 MB download from NCBI; the index is kept in the ToolUniverse cache or $TOOLUNIVERSE_BOOKSHELF_DIR). Without it the tool returns an error naming that command.",
+    "requires_local_input": true,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_name": {
+          "type": "string",
+          "description": "Generic (preferred) or brand drug name, e.g. 'metoprolol' or 'Lopressor'."
+        },
+        "section": {
+          "type": "string",
+          "description": "Optional: return only this section in full, e.g. 'Drug Levels' or 'Effects in Breastfed Infants'. Omit to get all sections (long ones shortened)."
+        }
+      },
+      "required": [
+        "drug_name"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "drug": {
+                  "type": "string"
+                },
+                "matched": {
+                  "type": "string"
+                },
+                "sections": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "heading": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "source": {
+              "type": "object"
+            },
+            "license": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            },
+            "error_type": {
+              "type": "string"
+            },
+            "suggestions": {
+              "type": "array"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "drug_name": "metoprolol"
+      },
+      {
+        "drug_name": "amitriptyline",
+        "section": "Effects in Breastfed Infants"
+      }
+    ]
+  },
+  {
+    "name": "LiverTox_get_drug",
+    "type": "LiverToxDrugTool",
+    "description": "Drug-induced liver injury (hepatotoxicity) profile for one drug, herbal or dietary supplement, or drug class from LiverTox (NIDDK, NCBI Bookshelf NBK547852; about 1,380 chapters). Returns the LiverTox likelihood score with its wording (A = well-known cause, B = highly likely, C = probable, D = possible, E = unlikely, E* = unproven but suspected, X = unknown), the Introduction, Hepatotoxicity (frequency, latency, injury pattern), Mechanism of Injury, Outcome and Management, Background, case-report summaries, drug class and representative trade names, with the date the record was last updated. Use it for liver enzyme elevation, hepatitis, jaundice or liver-monitoring questions. Give the generic or brand name (case-insensitive; salt, dosage-form and strength variants are resolved). An agent covered inside a class or multi-agent chapter (e.g. 'desvenlafaxine', 'pentobarbital') is found through the LiverTox master list, and such chapters list one likelihood statement per agent; class chapters such as 'Angiotensin II Receptor Antagonists' can be read by title. A name with no record returns an error listing close record names. Reads a local index; the tools make no network requests. Install it once with `python -m tooluniverse.ncbi_bookshelf_index build --books livertox` (about 200 MB download from NCBI; the index is kept in the ToolUniverse cache or $TOOLUNIVERSE_BOOKSHELF_DIR). Without it the tool returns an error naming that command.",
+    "requires_local_input": true,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "drug_name": {
+          "type": "string",
+          "description": "Generic (preferred) or brand drug name, e.g. 'nabumetone' or 'Relafen'."
+        },
+        "section": {
+          "type": "string",
+          "description": "Optional: return only this section in full, e.g. 'Hepatotoxicity' or 'Outcome and Management'. Omit to get all sections (long ones shortened)."
+        }
+      },
+      "required": [
+        "drug_name"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "drug": {
+                  "type": "string"
+                },
+                "matched": {
+                  "type": "string"
+                },
+                "record_type": {
+                  "type": "string"
+                },
+                "likelihood_score": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "sections": {
+                  "type": "array"
+                }
+              }
+            },
+            "source": {
+              "type": "object"
+            },
+            "license": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "error": {
+              "type": "string"
+            },
+            "error_type": {
+              "type": "string"
+            },
+            "suggestions": {
+              "type": "array"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "drug_name": "nabumetone"
+      },
+      {
+        "drug_name": "metoprolol",
+        "section": "Hepatotoxicity"
+      }
+    ]
+  }
+]

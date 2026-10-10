@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper id="LM296" content-type="chapter" from-where="body" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">lactmed</book-id>
+    <book-title-group>
+      <book-title>Drugs and Lactation Database (LactMed&#x000ae;)</book-title>
+    </book-title-group>
+    <pub-date date-type="pubr" publication-format="electronic">
+      <year>2006</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>National Institute of Child Health and Human Development</publisher-name>
+      <publisher-loc>Bethesda (MD)</publisher-loc>
+    </publisher>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Chemicals and Drugs</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Health Care</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Public Health</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes specific-use="display-globally" notes-type="disclaimer">
+      <p><bold>Disclaimer: </bold>Information presented in this database is not meant as a substitute for professional judgment. You should consult your healthcare provider for breastfeeding advice related to your particular situation. The U.S. government does not warrant or assume any liability or responsibility for the accuracy or completeness of the information on this Site.</p>
+    </notes>
+    <notes specific-use="display-globally" notes-type="rights">
+      <p><bold>Attribution Statement:</bold> LactMed is a registered trademark of the U.S. Department of Health and Human Services.</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <book-part-id book-part-id-type="pmcid">LM296</book-part-id>
+      <title-group>
+        <title>Metoprolol</title>
+      </title-group>
+      <pub-history>
+        <date date-type="revised">
+          <day>15</day>
+          <month>11</month>
+          <year>2024</year>
+        </date>
+      </pub-history>
+      <related-object link-type="parent-book-link" source-id="lactmed">Drugs and Lactation Database (LactMed&#x000ae;)</related-object>
+      <related-object link-type="previous-part-link" source-id="lactmed" document-id="LM181" document-type="chapter">Metolazone</related-object>
+      <related-object link-type="next-part-link" source-id="lactmed" document-id="LM440" document-type="chapter">Metronidazole</related-object>
+      <kwd-group>
+        <kwd>Metoprolol</kwd>
+        <kwd>Aspargo</kwd>
+        <kwd>Beatrolol</kwd>
+        <kwd>Betalok</kwd>
+        <kwd>Lopresoretic</kwd>
+        <kwd>Lopressidone</kwd>
+        <kwd>Spesicor</kwd>
+        <kwd>Seroken</kwd>
+        <kwd>Toprol</kwd>
+        <kwd>Metohexal</kwd>
+        <kwd>Neobloc</kwd>
+        <kwd>Metrol</kwd>
+        <kwd>Preblok</kwd>
+        <kwd>Meijoprolol</kwd>
+        <kwd>Metoprololu</kwd>
+        <kwd>Presolol</kwd>
+        <kwd>Selo-Zok</kwd>
+        <kwd>Loresor</kwd>
+        <kwd>Toprol-XL</kwd>
+        <kwd>GEB06NHM23</kwd>
+        <kwd>CHEBI:6904</kwd>
+        <kwd>DTXSID2023309</kwd>
+        <kwd>-93/26</kwd>
+        <kwd>Metoprololum [INN-Latin</kwd>
+        <kwd>CCRIS 4198</kwd>
+        <kwd>HSDB 6531</kwd>
+        <kwd>CGP2175</kwd>
+        <kwd>UNII-GEB06NHM23</kwd>
+        <kwd>EINECS 257-166-4</kwd>
+        <kwd>Lopresol (Salt/Mix)</kwd>
+        <kwd>SCHEMBL4093</kwd>
+        <kwd>GTPL553</kwd>
+        <kwd>H 93/26</kwd>
+        <kwd>DTXCID503309</kwd>
+        <kwd>BDBM25756</kwd>
+        <kwd>HMS2090B15</kwd>
+        <kwd>HMS3886O04</kwd>
+        <kwd>BCA38451</kwd>
+        <kwd>BCP09038</kwd>
+        <kwd>GP-2175E</kwd>
+        <kwd>Tox21_303972</kwd>
+        <kwd>MFCD00599534</kwd>
+        <kwd>s5430</kwd>
+        <kwd>STL301858</kwd>
+        <kwd>AKOS005927923</kwd>
+        <kwd>BG-0006</kwd>
+        <kwd>CCG-204813</kwd>
+        <kwd>CS-3159</kwd>
+        <kwd>DB00264</kwd>
+        <kwd>SDCCGSBI-0050706.P005</kwd>
+        <kwd>NCGC00021148-03</kwd>
+        <kwd>NCGC00021148-04</kwd>
+        <kwd>NCGC00021148-05</kwd>
+        <kwd>NCGC00021148-21</kwd>
+        <kwd>NCGC00356981-01</kwd>
+        <kwd>AC-19022</kwd>
+        <kwd>HY-17503</kwd>
+        <kwd>SBI-0050706.P004</kwd>
+        <kwd>DB-049097</kwd>
+        <kwd>A2878</kwd>
+        <kwd>AB00053499</kwd>
+        <kwd>FT-0602794</kwd>
+        <kwd>FT-0672382</kwd>
+        <kwd>FT-0672383</kwd>
+        <kwd>FT-0672385</kwd>
+        <kwd>C07202</kwd>
+        <kwd>D02358</kwd>
+        <kwd>EN300-317058</kwd>
+        <kwd>AB00053499</kwd>
+        <kwd>21</kwd>
+        <kwd>AB00053499_22</kwd>
+        <kwd>AB00053499_23</kwd>
+        <kwd>A823609</kwd>
+        <kwd>A871296</kwd>
+        <kwd>L000669</kwd>
+        <kwd>Q409468</kwd>
+        <kwd>Q-201400</kwd>
+        <kwd>SR-01000003148-2</kwd>
+        <kwd>BRD-A03623303-045-02-0</kwd>
+        <kwd>BRD-A03623303-045-05-3</kwd>
+        <kwd>Z398538014</kwd>
+        <kwd>1-[4-(2-methoxyethyl)phenoxy]-3-(propan-2-ylamino)propan-2-ol</kwd>
+      </kwd-group>
+    </book-part-meta>
+    <body>
+      <p>CASRN: 37350-58-6</p>
+      <related-object link-type="ext-image-back-link" source-id="pubchem" document-id="403393902" document-id-type="sid" document-type="summary" object-id="403393902" object-id-type="sid" object-type="image"/>
+      <sec id="LM296.Drug_Levels_and_Effects">
+        <title>Drug Levels and Effects</title>
+        <sec id="LM296.Summary_of_Use_during_Lactation">
+          <title>Summary of Use during Lactation</title>
+          <p content-type="pubmed-excerpt">Because of the low levels of metoprolol in breastmilk, amounts ingested by the infant are small and would not be expected to cause any adverse effects in breastfed infants. Studies on the use of metoprolol during breastfeeding have found no adverse reactions in breastfed infants. Monitor breastfed infants for symptoms of beta blockade such as bradycardia and listlessness due to hypoglycemia.</p>
+        </sec>
+        <sec id="LM296.Drug_Levels">
+          <title>Drug Levels</title>
+          <p>The excretion of beta-adrenergic blocking drugs into breastmilk is largely determined by their protein binding. Those with low binding are more extensively excreted into breastmilk.[<xref ref-type="bibr" rid="LM296.REF.1">1</xref>] Accumulation of the drugs in the infant is related to the fraction excreted in urine. With 10% protein binding, 40% renal excretion and a moderate half-life, metoprolol presents moderately low risk for accumulation in infants.</p>
+          <p><italic toggle="yes">Maternal Levels.</italic> With metoprolol doses of 50 mg orally twice daily, milk levels are usually less than 420 mcg/L.[<xref ref-type="bibr" rid="LM296.REF.2">2</xref>-<xref ref-type="bibr" rid="LM296.REF.4">4</xref>] Five women taking oral metoprolol 100 to 200 mg daily had average milk metoprolol levels of 316 mcg/L.[<xref ref-type="bibr" rid="LM296.REF.5">5</xref>] It is estimated that a breastfed infant would receive a dose of about 0.07 mg/kg daily in breastmilk with a maternal dose of 200 mg daily.[<xref ref-type="bibr" rid="LM296.REF.4">4</xref>]</p>
+          <p>Peak milk levels of 106 to 689 mcg/L have been reported following doses of 100 mg orally twice daily.[<xref ref-type="bibr" rid="LM296.REF.4">4</xref>,<xref ref-type="bibr" rid="LM296.REF.6">6</xref>] Peak milk levels occurred about 30 minutes after peak serum levels, at 1.5 hours after the dose in two patients, and 6 hours after the dose in a third.[<xref ref-type="bibr" rid="LM296.REF.6">6</xref>]</p>
+          <p>Two women who were taking metoprolol (dosage not specified). Milk samples were obtained over one dosage interval. The dosage of metoprolol and alpha-hydroxymetoprolol in breastmilk was less than 2% of the mother's weight-adjusted dose.[<xref ref-type="bibr" rid="LM296.REF.7">7</xref>]</p>
+          <p>Three mothers who took metoprolol in unspecified dosages during breastfeeding had breastmilk samples collected every 2 to 3 hours over one dosage interval. The average amount of metoprolol excreted in breast milk was 71.5 mcg daily (range 17.0 to 158.7 mcg daily). The average relative infant dosage was 0.5% of the mother's weight-adjusted dosage. Renal clearance of metoprolol was increased during lactation at 3 to 4 months postpartum, possibly related to increased maternal prolactin.[<xref ref-type="bibr" rid="LM296.REF.8">8</xref>]</p>
+          <p><italic toggle="yes">Infant Levels.</italic> Metoprolol was undetectable (&#x0003c;2.7 mcg/L) in the plasma of 3 infants aged 4, 10 and 60 days after maternal oral doses of 100 mg daily.[<xref ref-type="bibr" rid="LM296.REF.2">2</xref>]</p>
+          <p>Metoprolol serum levels in 3- to 5-day-old breastfed infants ranged from 0.5 to 2.9 mcg/L after maternal doses of 50 or 100 mg twice daily.[<xref ref-type="bibr" rid="LM296.REF.3">3</xref>,<xref ref-type="bibr" rid="LM296.REF.9">9</xref>]</p>
+          <p>A woman was taking metoprolol 100 mg daily for hypertension during pregnancy and postpartum. Her breastfed infant's serum concentrations of metoprolol and its active metabolite, alpha-hydroxymetoprolol, were undetectable on days 4 and 182 postpartum.[<xref ref-type="bibr" rid="LM296.REF.10">10</xref>]</p>
+        </sec>
+        <sec id="LM296.Effects_in_Breastfed_Infants">
+          <title>Effects in Breastfed Infants</title>
+          <p>A study of mothers taking beta-blockers during nursing found a numerically, but not statistically significant increased number of adverse reactions in those taking any beta-blocker. Although the ages of infants were matched to control infants, the ages of the affected infants were not stated. Of 6 mothers taking metoprolol, none reported adverse effects in her breastfed infant.[<xref ref-type="bibr" rid="LM296.REF.11">11</xref>,<xref ref-type="bibr" rid="LM296.REF.12">12</xref>]</p>
+          <p>A prospective study of pregnant patients taking a beta-blocker asked mothers to complete a questionnaire about postpartum breastfeeding and any side effects in their breastfed infants. Two mothers reported taking metoprolol in unreported dosages while breastfeeding. Neither reported any adverse reactions in their breastfed infants.[<xref ref-type="bibr" rid="LM296.REF.13">13</xref>]</p>
+        </sec>
+        <sec id="LM296.Effects_on_Lactation_and_Breastmil">
+          <title>Effects on Lactation and Breastmilk</title>
+          <p>Relevant published information on the effects of beta-blockade or metoprolol during normal lactation was not found as of the revision date. A study in 6 patients with hyperprolactinemia and galactorrhea found no changes in serum prolactin levels following beta-adrenergic blockade with propranolol.[<xref ref-type="bibr" rid="LM296.REF.14">14</xref>]</p>
+        </sec>
+        <sec id="LM296.Alternate_Drugs_to_Consider">
+          <title>Alternate Drugs to Consider</title>
+          <p><related-object link-type="booklink" source-id="lactmed" document-id="LM301" document-type="book-part">Propranolol</related-object>, <related-object link-type="booklink" source-id="lactmed" document-id="LM291" document-type="book-part">Labetalol</related-object></p>
+        </sec>
+        <sec id="LM296.References">
+          <title>References</title>
+          <ref-list id="LM296.References.reflist0">
+            <ref id="LM296.REF.1">
+              <label>1</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Riant</surname>
+<given-names>P</given-names></string-name>, <string-name name-style="western"><surname>Urien</surname>
+<given-names>S</given-names></string-name>, <string-name name-style="western"><surname>Albengres</surname>
+<given-names>E</given-names></string-name>, <etal>et al.</etal>
+<article-title>High plasma protein binding as a parameter in the selection of betablockers for lactating women.</article-title>
+<source>Biochem Pharmacol</source>
+<year>1986</year>;<volume>35</volume>:<fpage>4579</fpage>-<lpage>81</lpage>.<pub-id pub-id-type="pmid">2878668</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM296.REF.2">
+              <label>2</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Kulas</surname>
+<given-names>J</given-names></string-name>, <string-name name-style="western"><surname>Lunell</surname>
+<given-names>NO</given-names></string-name>, <string-name name-style="western"><surname>Rosing</surname>
+<given-names>U</given-names></string-name>, <etal>et al.</etal>
+<article-title>Atenolol and metoprolol. A comparison of their excretion into human breast milk.</article-title>
+<source>Acta Obstet Gynecol Scand Suppl</source>
+<year>1984</year>;<volume>118</volume>:<fpage>65</fpage>-<lpage>9</lpage>.<pub-id pub-id-type="pmid">6587730</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM296.REF.3">
+              <label>3</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Lindeberg</surname>
+<given-names>S</given-names></string-name>, <string-name name-style="western"><surname>Sandstr&#x000f6;m</surname>
+<given-names>B</given-names></string-name>, <string-name name-style="western"><surname>Lundborg</surname>
+<given-names>P</given-names></string-name>, <etal>et al.</etal>
+<article-title>Disposition of the adrenergic blocker metoprolol in the late-pregnant woman, the amniotic fluid, the cord blood and the neonate.</article-title>
+<source>Acta Obstet Gynecol Scand Suppl</source>
+<year>1984</year>;<volume>118</volume>:<fpage>61</fpage>-<lpage>4</lpage>.<pub-id pub-id-type="pmid">6587729</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM296.REF.4">
+              <label>4</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Sandstr&#x000f6;m</surname>
+<given-names>B</given-names></string-name>, <string-name name-style="western"><surname>Regardh</surname>
+<given-names>CG</given-names></string-name>. <article-title>Metoprolol excretion into breast milk.</article-title>
+<source>Br J Clin Pharmacol</source>
+<year>1980</year>;<volume>9</volume>:<fpage>518</fpage>-<lpage>9</lpage>.<pub-id pub-id-type="pmid">7397065</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM296.REF.5">
+              <label>5</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Sandstr&#x000f6;m</surname>
+<given-names>B.</given-names></string-name>
+<article-title>Antihypertensive treatment with the adrenergic beta-receptor blocker metoprolol during pregnancy.</article-title>
+<source>Gynecol Invest</source>
+<year>1978</year>;<volume>9</volume>:<fpage>195</fpage>-<lpage>204</lpage>.<pub-id pub-id-type="pmid">750326</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM296.REF.6">
+              <label>6</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Liedholm</surname>
+<given-names>H</given-names></string-name>, <string-name name-style="western"><surname>Melander</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Bitz&#x000e9;n</surname>
+<given-names>PO</given-names></string-name>, <etal>et al.</etal>
+<article-title>Accumulation of atenolol and metoprolol in human breast milk.</article-title>
+<source>Eur J Clin Pharmacol</source>
+<year>1981</year>;<volume>20</volume>:<fpage>229</fpage>-<lpage>31</lpage>.<pub-id pub-id-type="pmid">7286041</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM296.REF.7">
+              <label>7</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Yep</surname>
+<given-names>T</given-names></string-name>, <string-name name-style="western"><surname>Eyal</surname>
+<given-names>S</given-names></string-name>, <string-name name-style="western"><surname>Easterling</surname>
+<given-names>TR</given-names></string-name>, <etal>et al.</etal>
+<article-title>The pharmacokinetics of metoprolol during pregnancy.</article-title>
+<source>Pharmacotherapy</source>
+<year>2011</year>;<volume>31</volume>:<fpage>439e</fpage>. doi:<pub-id pub-id-type="doi">10.1592/phco.31.10.311e</pub-id></mixed-citation>
+            </ref>
+            <ref id="LM296.REF.8">
+              <label>8</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Ryu</surname>
+<given-names>RJ</given-names></string-name>, <string-name name-style="western"><surname>Eyal</surname>
+<given-names>S</given-names></string-name>, <string-name name-style="western"><surname>Easterling</surname>
+<given-names>TR</given-names></string-name>, <etal>et al.</etal>
+<article-title>Pharmacokinetics of metoprolol during pregnancy and lactation.</article-title>
+<source>J Clin Pharmacol</source>
+<year>2016</year>;<volume>56</volume>:<fpage>581</fpage>-<lpage>9</lpage>.<pub-id pub-id-type="pmid">26461463</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM296.REF.9">
+              <label>9</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Sandstr&#x000f6;m</surname>
+<given-names>B</given-names></string-name>, <string-name name-style="western"><surname>Lindeberg</surname>
+<given-names>S</given-names></string-name>, <string-name name-style="western"><surname>Lundborg</surname>
+<given-names>P</given-names></string-name>, <etal>et al.</etal>
+<article-title>Disposition of the adrenergic blocker metoprolol in the late pregnant woman, the amniotic fluid, the cord blood and the neonate.</article-title>
+<source>Clin Exp Hypertens B</source>
+<year>1983</year>;<volume>2</volume>:<fpage>75</fpage>-<lpage>82</lpage>.<pub-id pub-id-type="pmid">6135523</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM296.REF.10">
+              <label>10</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Grundmann</surname>
+<given-names>M</given-names></string-name>, <string-name name-style="western"><surname>Kacirova</surname>
+<given-names>I</given-names></string-name>, <string-name name-style="western"><surname>Duricova</surname>
+<given-names>J</given-names></string-name>, <etal>et al.</etal>
+<article-title>Metoprolol and alfa-hydroxymetoprolol concentrations during lactation - a case report.</article-title>
+<source>Ther Drug Monit</source>
+<year>2011</year>;<volume>33</volume>:<fpage>504</fpage>. doi:<pub-id pub-id-type="doi">10.1097/01.ftd.0000400651.94145.ba</pub-id></mixed-citation>
+            </ref>
+            <ref id="LM296.REF.11">
+              <label>11</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Ho</surname>
+<given-names>TK</given-names></string-name>, <string-name name-style="western"><surname>Moretti</surname>
+<given-names>ME</given-names></string-name>, <string-name name-style="western"><surname>Schaeffer</surname>
+<given-names>JK</given-names></string-name>, <etal>et al.</etal>
+<article-title>Maternal beta-blocker usage and breast feeding in the neonate.</article-title>
+<source>Pediatr Res</source>
+<year>1999</year>;<volume>45</volume> (<issue>4, pt. 2</issue>):<fpage>67A</fpage>. doi:<pub-id pub-id-type="doi">10.1203/00006450-199904020-00402</pub-id></mixed-citation>
+            </ref>
+            <ref id="LM296.REF.12">
+              <label>12</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Schimmel</surname>
+<given-names>MS</given-names></string-name>, <string-name name-style="western"><surname>Eidelman</surname>
+<given-names>AI</given-names></string-name>, <string-name name-style="western"><surname>Wilschanski</surname>
+<given-names>MA</given-names></string-name>, <etal>et al.</etal>
+<article-title>Toxic effects of atenolol consumed during breast feeding.</article-title>
+<source>J Pediatr</source>
+<year>1989</year>;<volume>114</volume>:<fpage>476</fpage>-<lpage>8</lpage>.<pub-id pub-id-type="pmid">2921694</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM296.REF.13">
+              <label>13</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Freppel</surname>
+<given-names>R</given-names></string-name>, <string-name name-style="western"><surname>Gaboriau</surname>
+<given-names>L</given-names></string-name>, <string-name name-style="western"><surname>Richardson</surname>
+<given-names>M</given-names></string-name>, <etal>et al.</etal>
+<article-title>Beta-blockers and breastfeeding: A real-life prospective study.</article-title>
+<source>Eur J Clin Pharmacol</source>
+<year>2024</year>;<volume>80</volume>:<fpage>1937</fpage>-<lpage>43</lpage>.<pub-id pub-id-type="pmid">39259357</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM296.REF.14">
+              <label>14</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Board</surname>
+<given-names>JA</given-names></string-name>, <string-name name-style="western"><surname>Fierro</surname>
+<given-names>RJ</given-names></string-name>, <string-name name-style="western"><surname>Wasserman</surname>
+<given-names>AJ</given-names></string-name>, <etal>et al.</etal>
+<article-title>Effects of alpha- and beta-adrenergic blocking agents on serum prolactin levels in women with hyperprolactinemia and galactorrhea.</article-title>
+<source>Am J Obstet Gynecol</source>
+<year>1977</year>;<volume>127</volume>:<fpage>285</fpage>-<lpage>7</lpage>.<pub-id pub-id-type="pmid">556882</pub-id>
+</mixed-citation>
+            </ref>
+          </ref-list>
+        </sec>
+      </sec>
+      <sec id="LM296.Substance_Identification">
+        <title>Substance Identification</title>
+        <sec id="LM296.Substance_Name">
+          <title>Substance Name</title>
+          <p>Metoprolol</p>
+        </sec>
+        <sec id="LM296.CAS_Registry_Number">
+          <title>CAS Registry Number</title>
+          <p>37350-58-6</p>
+        </sec>
+        <sec id="LM296.Drug_Class">
+          <title>Drug Class</title>
+          <p>Breast Feeding</p>
+          <p>Lactation</p>
+          <p>Milk, Human</p>
+          <p>Antihypertensive Agents</p>
+          <p>Adrenergic Beta-Antagonists</p>
+          <p>Antiarrhythmics</p>
+        </sec>
+      </sec>
+    </body>
+  </book-part>
+</book-part-wrapper>

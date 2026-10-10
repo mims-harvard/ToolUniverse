@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper content-type="chapter" id="Metoprolol" from-where="body" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">livertox</book-id>
+    <book-title-group>
+      <book-title>LiverTox</book-title>
+      <subtitle>Clinical and Research Information on Drug-Induced Liver Injury</subtitle>
+    </book-title-group>
+    <pub-date date-type="pubr" publication-format="electronic">
+      <year>2012</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>National Institute of Diabetes and Digestive and Kidney Diseases</publisher-name>
+      <publisher-loc>Bethesda (MD)</publisher-loc>
+    </publisher>
+    <abstract>
+      <p>LiverTox<sup>&#x000ae;</sup> provides up-to-date, unbiased and easily accessed information on the diagnosis, cause, frequency, clinical patterns and management of liver injury attributable to prescription and nonprescription medications and selected herbal and dietary supplements. The LiverTox site is meant as a resource for both physicians and patients as well as for clinical academicians and researchers who specialize in idiosyncratic drug induced hepatotoxicity.</p>
+      <p>Information on a specific medication or supplement can be found by entering its name in the &#x0201c;Search this book&#x0201d; box shown above or by browsing the list of agents by its first letter using the alphabetic list shown below.</p>
+      <p>LiverTox is produced by the National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK) and is copyright free. It is requested that use of LiverTox data in publications be given appropriate acknowledgment.</p>
+      <p>The LiverTox team welcomes user comments and enquiries. <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/books/n/livertox/Contactus/">Contact Us</ext-link></p>
+    </abstract>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes notes-type="disclaimer">
+      <title>Disclaimer:</title>
+      <p>Information presented in the LiverTox database is derived from the scientific literature and public databases and reflects professional expertise of the authors. Such information does not represent official policy of the U.S. Government or any agency thereof. The information in LiverTox is not meant as a substitute for FDA approved product labeling and professional judgment in the diagnosis and treatment of drug induced liver injury. The U.S. Government and its individual agencies, including the NIDDK, NLM and NIH, does not warrant or assume any legal responsibility for the accuracy, completeness, or usefulness of the information contained on this Site.</p>
+      <p>NIH does not provide patient-specific medical advice concerning the potential of a drug or herbal supplement to cause hepatotoxicity; please consult with a physician for guidance.</p>
+      <p>As of September&#x0202f;2026, initial drafts of new and updated LiverTox chapters will be generated using Artificial Intelligence. Each draft will then undergo careful review, verification, and editing by the LiverTox editorial team. New chapters will also undergo independent peer review from an external expert in drug&#x02011;induced liver injury</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <book-part-id book-part-id-type="pmcid">Metoprolol</book-part-id>
+      <title-group>
+        <title>Metoprolol</title>
+      </title-group>
+      <pub-history>
+        <date date-type="updated">
+          <day>15</day>
+          <month>1</month>
+          <year>2017</year>
+        </date>
+      </pub-history>
+    </book-part-meta>
+    <body>
+      <sec id="Metoprolol.OVERVIEW">
+        <title>OVERVIEW</title>
+        <sec id="Metoprolol.Introduction" sec-type="pubmed-excerpt">
+          <title>Introduction</title>
+          <p>Metoprolol is a cardioselective beta-blocker that is widely used in the treatment of hypertension and angina pectoris. Metoprolol has been linked to rare cases of drug induced liver injury.</p>
+        </sec>
+        <sec id="Metoprolol.Background">
+          <title>Background</title>
+          <p>Metoprolol (met" oh proe' lol) is considered a &#x0201c;selective&#x0201d; beta-adrenergic receptor blocker in that it has potent activity against beta-1 adrenergic receptors which are found in cardiac muscle, but has little or no activity against beta-2 adrenergic receptors found on bronchial and vascular smooth muscle. Metoprolol was approved for use in the United States in 1978 and is still widely used in the therapy of hypertension and angina pectoris, with more than 27 million prescriptions filled yearly. Metoprolol is also used to reduce the risk of cardiovascular mortality after acute myocardial infarction. Metoprolol is available in standard 50 and 100 mg tablets as well as 25, 50, 100 and 200 mg extended release tablets in generic forms as well as under the trade name of Lopressor and Toprol XL, and as a fixed combination with a hydrochlorothiazide as Lopressor HCT and Dutoprolol. Parenteral formulations for intravenous use are also available. The usual initial oral dose of metoprolol in adults is 100 mg daily in one or two divided doses daily, with subsequent adjustment based upon clinical response and tolerance, the usual maintenance dosage being 100 to 400 mg daily. The entended release forms are given in doses of 25 to 100 mg once daily. Common side effects include bradycardia, hypotension, fatigue, dizziness, depression, insomnia, memory loss and impotence. Beta-blockers are contraindicated in patients with asthma, bradycardia and heart failure and should be used cautiously in the elderly and in patients with diabetes. As with all beta-blockers, sudden withdrawal can trigger rebound hypertension.</p>
+        </sec>
+        <sec id="Metoprolol.Hepatotoxicity">
+          <title>Hepatotoxicity</title>
+          <p>Metoprolol therapy has been associated with a low rate of mild-to-moderate elevations of serum aminotransferase levels which are usually asymptomatic and transient and resolve even with continuation of therapy. A few instances of clinically apparent, acute liver injury attributable to metoprolol have been reported. In view of its wide scale use, metoprolol induced liver injury is exceedingly rare. The typical liver injury associated with beta-blockers has a latency to onset of 2 to 12 weeks and a hepatocellular pattern of liver enzyme. Symptoms of hypersensitivity (rash, fever, eosinophilia) and autoantibody formation have not been reported. Reported cases due to metoprolol have included cases of acute liver failure, but ultimately all were self-limiting and resolved fairly rapidly once once drug was stopped.</p>
+          <p>Likelihood score: D (possible rare cause of clinically apparent liver injury).</p>
+        </sec>
+        <sec id="Metoprolol.Mechanism_of_Injury">
+          <title>Mechanism of Injury</title>
+          <p>The mechanism of drug induced liver injury from metoprolol is not known. The agent is metabolized in the liver via the cytochrome P450 (largely CYP 2D6). The rare instances of liver injury due to beta-blockers are likely to be idiosyncratic.</p>
+        </sec>
+        <sec id="Metoprolol.Outcome_and_Management">
+          <title>Outcome and Management</title>
+          <p>The severity of liver injury due to metoprolol ranges from mild serum aminotransferase elevations to mild acute hepatitis with jaundice. In large case series of acute liver failure due to medications, metoprolol has not been listed as a cause. Rechallenge has been reported to result in recurrence of injury and should be avoided. There is little information about cross reactivity among the beta-blockers to hepatic injury. Switching to another beta-blocker after metoprolol related acute liver injury should be done with caution and prospective monitoring.</p>
+          <p>References to the safety and potential hepatotoxicity of metoprolol are provided in the overview on Beta-Adrenergic Receptor Antagonists, last updated in June 2019.</p>
+          <p>Drug Class: <related-object source-id="livertox" document-id="Betablockers">Beta-Adrenergic Receptor Antagonists</related-object></p>
+        </sec>
+      </sec>
+      <sec id="Metoprolol.CASE_REPORT">
+        <title>CASE REPORT</title>
+        <sec id="Metoprolol.Case_1._Metoprolol_induced_ac">
+          <title>Case 1. Metoprolol induced acute liver injury.</title>
+          <p>[Modified from: Larrey D, Henrion J, Heller F, Babany G, Degott C, Pessayre D, Benhamou JP. Metoprolol-induced hepatitis: rechallenge and drug oxidation phenotyping. Ann Intern Med 1988; 108:67-8. <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/pubmed/3337519">PubMed Citation</ext-link>]</p>
+          <p>A 56 year old woman developed fatigue and abdominal pains 2 weeks after starting metoprolol (50 mg daily) for migraine headaches. She had no previous history of liver disease, jaundice, alcohol abuse or risk factors for viral hepatitis. She had been treated with doxycycline, aspirin and a cough suppressant two weeks earlier for an acute bronchitis. She had no jaundice, fever or rash. Laboratory testing showed marked elevations in serum aminotransferase with minimal increase in alkaline phosphatase levels and normal serum bilirubin (Table). All liver tests had been normal in the past. Tests for hepatitis A and B and for autoantibodies were negative. An abdominal ultrasound was normal. A liver biopsy showed moderate steatosis and occasional ballooned hepatocyte without inflammation or fibrosis. Metoprolol was discontinued and she rapidly improved symptomatically. Within 3 weeks, liver tests were normal. Rechallenge led to a recurrence of liver injury.</p>
+          <sec id="Metoprolol.Key_Points">
+            <title>Key Points</title>
+            <table-wrap id="Metoprolol.T1" position="anchor" orientation="portrait">
+              <table>
+                <tbody>
+                  <tr>
+                    <td rowspan="1" colspan="1">Medication:</td>
+                    <td rowspan="1" colspan="1">Metoprolol (200 mg daily)</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="1" colspan="1">Pattern:</td>
+                    <td rowspan="1" colspan="1">Hepatocellular (R=19)</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="1" colspan="1">Severity:</td>
+                    <td rowspan="1" colspan="1">1+ (enzyme elevations and symptoms without jaundice)</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="1" colspan="1">Latency:</td>
+                    <td rowspan="1" colspan="1">3 weeks</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="1" colspan="1">Recovery:</td>
+                    <td rowspan="1" colspan="1">3 weeks</td>
+                  </tr>
+                  <tr>
+                    <td rowspan="1" colspan="1">Other medications:</td>
+                    <td rowspan="1" colspan="1">Doxycycline, aspirin and cough suppressant 3 weeks previously</td>
+                  </tr>
+                </tbody>
+              </table>
+            </table-wrap>
+          </sec>
+          <sec id="Metoprolol.Laboratory_Values">
+            <title>Laboratory Values</title>
+            <table-wrap id="Metoprolol.T2" position="anchor" orientation="portrait">
+              <table>
+                <thead>
+                  <tr>
+                    <th id="hd_h_Metoprolol.T2_1_1_1_1" rowspan="1" colspan="1">Time After Starting</th>
+                    <th id="hd_h_Metoprolol.T2_1_1_1_2" rowspan="1" colspan="1">Weeks After Stopping</th>
+                    <th id="hd_h_Metoprolol.T2_1_1_1_3" rowspan="1" colspan="1">ALT* (U/L)</th>
+                    <th id="hd_h_Metoprolol.T2_1_1_1_4" rowspan="1" colspan="1">Alk P* (U/L)</th>
+                    <th id="hd_h_Metoprolol.T2_1_1_1_5" rowspan="1" colspan="1">GGT* (mg/dL)</th>
+                    <th id="hd_h_Metoprolol.T2_1_1_1_6" rowspan="1" colspan="1">Other</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_1" rowspan="1" colspan="1">Pre</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_2" rowspan="1" colspan="1"/>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_3" rowspan="1" colspan="1">26</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_4" rowspan="1" colspan="1">72</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_5" rowspan="1" colspan="1">20</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_6" rowspan="1" colspan="1"/>
+                  </tr>
+                  <tr>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_1 hd_h_Metoprolol.T2_1_1_1_2 hd_h_Metoprolol.T2_1_1_1_3 hd_h_Metoprolol.T2_1_1_1_4 hd_h_Metoprolol.T2_1_1_1_5 hd_h_Metoprolol.T2_1_1_1_6" colspan="6" rowspan="1">Metoprolol (50 mg daily) given for 3 weeks</td>
+                  </tr>
+                  <tr>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_1" rowspan="1" colspan="1">3 weeks</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_2" rowspan="1" colspan="1">0</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_3" rowspan="1" colspan="1">1140</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_4" rowspan="1" colspan="1">168</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_5" rowspan="1" colspan="1">244</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_6" rowspan="1" colspan="1">Bilirubin 0.7 mg/dL</td>
+                  </tr>
+                  <tr>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_1" rowspan="1" colspan="1"/>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_2" rowspan="1" colspan="1">2 days</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_3" rowspan="1" colspan="1">409</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_4" rowspan="1" colspan="1">132</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_5" rowspan="1" colspan="1">154</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_6" rowspan="1" colspan="1"/>
+                  </tr>
+                  <tr>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_1" rowspan="1" colspan="1">4 weeks</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_2" rowspan="1" colspan="1">5 days</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_3" rowspan="1" colspan="1">171</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_4" rowspan="1" colspan="1">108</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_5" rowspan="1" colspan="1">110</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_6" rowspan="1" colspan="1"/>
+                  </tr>
+                  <tr>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_1" rowspan="1" colspan="1">6 weeks</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_2" rowspan="1" colspan="1">3 weeks</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_3" rowspan="1" colspan="1">34</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_4" rowspan="1" colspan="1">84</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_5" rowspan="1" colspan="1">34</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_6" rowspan="1" colspan="1"/>
+                  </tr>
+                  <tr>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_1 hd_h_Metoprolol.T2_1_1_1_2 hd_h_Metoprolol.T2_1_1_1_3 hd_h_Metoprolol.T2_1_1_1_4 hd_h_Metoprolol.T2_1_1_1_5 hd_h_Metoprolol.T2_1_1_1_6" colspan="6" rowspan="1">Metoprolol (50 mg daily) restarted for 5 days</td>
+                  </tr>
+                  <tr>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_1" rowspan="1" colspan="1">5 days</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_2" rowspan="1" colspan="1">0</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_3" rowspan="1" colspan="1">66</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_4" rowspan="1" colspan="1">144</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_5" rowspan="1" colspan="1">Not done</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_6" rowspan="1" colspan="1"/>
+                  </tr>
+                  <tr>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_1" rowspan="1" colspan="1">7 weeks</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_2" rowspan="1" colspan="1">6 weeks</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_3" rowspan="1" colspan="1">24</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_4" rowspan="1" colspan="1">126</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_5" rowspan="1" colspan="1">26</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_6" rowspan="1" colspan="1"/>
+                  </tr>
+                  <tr>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_1 hd_h_Metoprolol.T2_1_1_1_2" colspan="2" rowspan="1">
+<bold>Normal Values</bold>
+</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_3" rowspan="1" colspan="1">
+<bold>&#x0003c;40</bold>
+</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_4" rowspan="1" colspan="1">
+<bold>&#x0003c;110</bold>
+</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_5" rowspan="1" colspan="1">
+<bold>&#x0003c;50</bold>
+</td>
+                    <td headers="hd_h_Metoprolol.T2_1_1_1_6" rowspan="1" colspan="1"/>
+                  </tr>
+                </tbody>
+              </table>
+            </table-wrap>
+            <p>* Converted from &#x003bc;Kat/L.</p>
+          </sec>
+          <sec id="Metoprolol.Comment">
+            <title>Comment</title>
+            <p>This patient developed an anicteric acute hepatitis-like clinical picture three weeks after starting metoprolol. A history of exposure to doxycycline raised the issue of whether the acute injury was due to metoprolol or to a delayed reaction to doxycycline, and a rechallenge was performed a few weeks after recovery. Within a week, serum ALT and alkaline phosphatase levels had increased and metoprolol was stopped. The short latency period, mild acute hepatocellular injury and rapid recovery are typical of the liver injury reported with beta-blockers.</p>
+          </sec>
+        </sec>
+      </sec>
+      <sec id="Metoprolol.PRODUCT_INFORMATION">
+        <title>PRODUCT INFORMATION</title>
+        <boxed-text position="anchor" id="Metoprolol.BPI" orientation="portrait">
+          <p>
+<bold>REPRESENTATIVE TRADE NAMES</bold>
+</p>
+          <p>Metoprolol &#x02013; Generic, Lopressor&#x000ae;, Toprol&#x000ae;</p>
+          <p>
+<bold>DRUG CLASS</bold>
+</p>
+          <p>Beta-Adrenergic Receptor Antagonists</p>
+          <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&#x00026;query=metoprolol">COMPLETE LABELING</ext-link>
+</p>
+          <p>Product labeling at DailyMed, National Library of Medicine, NIH</p>
+        </boxed-text>
+      </sec>
+      <sec id="Metoprolol.CHEMICAL_FORMULA_AND_STRUCTUR">
+        <title>CHEMICAL FORMULA AND STRUCTURE</title>
+        <table-wrap id="Metoprolol.T3" position="anchor" orientation="portrait">
+          <table>
+            <thead>
+              <tr>
+                <th id="hd_h_Metoprolol.T3_1_1_1_1" rowspan="1" colspan="1">DRUG</th>
+                <th id="hd_h_Metoprolol.T3_1_1_1_2" rowspan="1" colspan="1">CAS REGISTRY NUMBER</th>
+                <th id="hd_h_Metoprolol.T3_1_1_1_3" rowspan="1" colspan="1">MOLECULAR FORMULA</th>
+                <th id="hd_h_Metoprolol.T3_1_1_1_4" rowspan="1" colspan="1">STRUCTURE</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td headers="hd_h_Metoprolol.T3_1_1_1_1" rowspan="1" colspan="1">Metoprolol</td>
+                <td headers="hd_h_Metoprolol.T3_1_1_1_2" rowspan="1" colspan="1">51384-51-1</td>
+                <td headers="hd_h_Metoprolol.T3_1_1_1_3" rowspan="1" colspan="1">C15-H25-N-O3</td>
+                <td headers="hd_h_Metoprolol.T3_1_1_1_4" rowspan="1" colspan="1">
+<graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Metoprolol_Structure.jpg" mime-subtype="jpeg" position="anchor" orientation="portrait"><alt-text>Metoprolol Chemical Structure</alt-text></graphic>
+</td>
+              </tr>
+            </tbody>
+          </table>
+        </table-wrap>
+      </sec>
+      <sec id="Metoprolol.OTHER_REFERENCE_LINKS" sec-type="link-group">
+        <title>OTHER REFERENCE LINKS</title>
+        <list list-type="order">
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/sites/entrez?cmd=search&#x00026;db=pubmed&#x00026;pubmedfilters=true&#x00026;term=(Metoprolol/AE)+AND+Human%5BMH%5D+AND+(drug+induced+liver+injury+OR+jaundice/CI+OR+bile+duct+diseases/CI+OR+liver/DE+OR+liver+diseases/CI)+AND+(%221900/1/1%22%5BEDat%5D%3A%222999/12/31%22%5BEDat%5D)">Recent References on Metoprolol: from PubMed.gov</ext-link>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://clinicaltrials.gov/ct2/results?term=Metoprolol">Trials on Metoprolol: from ClinicalTrials.gov</ext-link>
+</p>
+          </list-item>
+        </list>
+      </sec>
+    </body>
+  </book-part>
+</book-part-wrapper>

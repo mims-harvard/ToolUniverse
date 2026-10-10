@@ -1,0 +1,2409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper id="article-18346" content-type="chapter" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">statpearls</book-id>
+    <book-id book-id-type="publisher-id">statpearls</book-id>
+    <book-title-group>
+      <book-title>StatPearls</book-title>
+    </book-title-group>
+    <pub-date publication-format="electronic" date-type="pubr">
+      <month>01</month>
+      <year>2026</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>StatPearls Publishing</publisher-name>
+      <publisher-loc>Treasure Island (FL)</publisher-loc>
+    </publisher>
+    <permissions>
+      <copyright-statement>Copyright &#x000a9; 2026, StatPearls Publishing LLC</copyright-statement>
+      <license xmlns:xlink="http://www.w3.org/1999/xlink" license-type="open-access" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">
+        <license-p>This book is distributed under the terms of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) (<ext-link ext-link-type="uri" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">http://creativecommons.org/licenses/by-nc-nd/4.0/</ext-link>), which permits others to distribute the work, provided that the article is not altered or used commercially. You are not required to obtain permission to distribute this article, provided that you credit the author and journal.</license-p>
+      </license>
+    </permissions>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes notes-type="disclaimer">
+      <p>The intent of StatPearls review books and articles is to identify knowledge deficits and assist you in the learning process. Review books and articles are not intended to be a source of the knowledge base of medicine. The authors and editors do not warrant the information is complete or accurate. The reader is encouraged to verify content and questions in several references. All drug indications and dosages should be verified before administration.</p>
+      <p>The authors and editors would like to extend special thanks to Erin Hughes and Gerson Rubio for their editorial support.</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <title-group>
+        <title>Animal Bites</title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Indramohan</surname>
+            <given-names>Gitanjali</given-names>
+          </name>
+        </contrib>
+      </contrib-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Marietta</surname>
+            <given-names>Mia</given-names>
+          </name>
+          <aff>University of Colorado Health Sciences</aff>
+        </contrib>
+      </contrib-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Collier</surname>
+            <given-names>Sara A.</given-names>
+          </name>
+          <aff>Oklahoma Dept of Corrections</aff>
+        </contrib>
+      </contrib-group>
+      <author-notes>
+        <fn id="article-18346.fn1" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Gitanjali Indramohan declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+        <fn id="article-18346.fn2" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Mia Marietta declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+        <fn id="article-18346.fn3" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Sara A Collier declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+      </author-notes>
+      <pub-history>
+        <date date-type="updated">
+          <day>5</day>
+          <month>7</month>
+          <year>2026</year>
+        </date>
+      </pub-history>
+    </book-part-meta>
+    <body>
+      <sec id="article-18346.s1" sec-type="Continuing Education Activity">
+        <title>Continuing Education Activity</title>
+        <p>Animal bites are a common cause of emergency department and primary care visits. They can result in significant morbidity, including soft tissue injury, infection, neurovascular damage, cosmetic deformity, and transmission of zoonotic diseases such as rabies and tetanus. Effective management requires prompt wound assessment, appropriate irrigation and debridement, risk stratification for infection, judicious use of antimicrobial prophylaxis, and consideration of rabies and tetanus prophylaxis when indicated. This activity provides a comprehensive review of the epidemiology, microbiology, clinical evaluation, treatment, and prevention of animal bite injuries. Participants will gain practical knowledge regarding wound management, infection prevention, antimicrobial selection, indications for specialist consultation, and patient education strategies. Upon completion, clinicians will be better equipped to evaluate animal bite injuries, implement evidence-based treatment plans, reduce complications, and improve patient outcomes.</p>
+        <p>
+<bold>Objectives:</bold>
+</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Differentiate between high-risk and low-risk bite wounds based on location, depth, and patient factors.</p>
+          </list-item>
+          <list-item>
+            <p>Screen patients for tetanus and rabies prophylaxis needs based on wound characteristics and exposure history.</p>
+          </list-item>
+          <list-item>
+            <p>Implement wound irrigation, debridement, delayed closure, and prophylactic antibiotics when indicated in animal bites.</p>
+          </list-item>
+          <list-item>
+            <p>Collaborate with interprofessional healthcare team members&#x02014;including infectious disease specialists, surgeons, and public health officials&#x02014;when managing complex animal bite cases.</p>
+          </list-item>
+        </list>
+        <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/account/trialuserreg/?articleid=18346&#x00026;utm_source=pubmed&#x00026;utm_campaign=reviews&#x00026;utm_content=18346">Access free multiple choice questions on this topic.</ext-link>
+</p>
+      </sec>
+      <sec id="article-18346.s2" sec-type="pubmed-excerpt">
+        <title>Introduction</title>
+        <p>Animal bites account for approximately 1% of all emergency department visits in the United States (US) each year, with injuries ranging from superficial wounds to severe, disfiguring, or even fatal outcomes. In the US alone, approximately 2 to 5 million animal bites occur each year, with dogs being the most common culprits, followed by cats and, less frequently, wild animals. Dog bites account for approximately 337,000 emergency visits annually. Children are particularly vulnerable, often sustaining injuries to the head and neck due to their smaller stature, while adults and adolescents more commonly experience bites to the hands and arms.<xref ref-type="bibr" rid="article-18346.r1">[1]</xref></p>
+        <p>While dog and cat bites account for the majority of animal bites encountered, other species, including rats, bats, and monkeys, which account for 1% of cases, also pose risks.<xref ref-type="bibr" rid="article-18346.r2">[2]</xref><xref ref-type="bibr" rid="article-18346.r3">[3]</xref><xref ref-type="bibr" rid="article-18346.r4">[4]</xref><xref ref-type="bibr" rid="article-18346.r5">[5]</xref> Though less common, rat bites can lead to rat-bite fever, an infectious disease affecting individuals with contact with rodents. Bats carry multiple viruses, including rabies, which can be transmitted to humans through bites. Particularly in regions where humans and primates interact closely, monkeys have been known to exhibit aggressive behavior, resulting in bites that can transmit serious infections.</p>
+        <p>Since dog and cat bites account for over 95% of bite wounds seen in emergency departments, this discussion will focus primarily on these incidents and their common sequelae. Prompt and appropriate wound management is crucial to reduce infection risks, including administering prophylactic antibiotics and, when indicated, rabies and tetanus prophylaxis.<xref ref-type="bibr" rid="article-18346.r6">[6]</xref><xref ref-type="bibr" rid="article-18346.r7">[7]</xref><xref ref-type="bibr" rid="article-18346.r8">[8]</xref><xref ref-type="bibr" rid="article-18346.r9">[9]</xref><xref ref-type="bibr" rid="article-18346.r10">[10]</xref> The microbial flora in animals' mouths is diverse, encompassing a range of bacteria and viruses. Unfortunately, standard culture techniques taken from animal bite wounds may not always detect all pathogens. This necessitates a thorough evaluation of each bite to assess penetration depth and the extent of injury, which makes diagnosis and treatment challenging.</p>
+      </sec>
+      <sec id="article-18346.s3" sec-type="Etiology">
+        <title>Etiology</title>
+        <p>In the US, animal bites requiring emergency care predominantly involve domesticated cats and dogs. Bites from other species, such as monkeys, rats, bears, pigs, ferrets, horses, sheep, alligators, crocodiles, guinea pigs, hamsters, prairie dogs, swans, and sharks, are documented primarily through small studies or individual case reports. Infections resulting from animal bites are typically polymicrobial, involving aerobic and anaerobic bacteria. The specific pathogens present often reflect the oral flora of the biting animal, which their diet and environment can influence. The individual's underlying immune status also determines the severity of secondary infection.</p>
+        <p>Additionally, bacteria from the victim's skin or the surrounding environment may contaminate the wound. Common aerobic bacteria in dog bites include <italic toggle="yes">Pasteurella</italic>, <italic toggle="yes">Staphylococcus</italic>, and <italic toggle="yes">Streptococcus</italic> species, with <italic toggle="yes">Pasteurella canis</italic> being the most frequently isolated organism. Anaerobic bacteria are also prevalent in these infections, the most common being <italic toggle="yes">Bacteroides</italic> species.<xref ref-type="bibr" rid="article-18346.r11">[11]</xref><xref ref-type="bibr" rid="article-18346.r12">[12]</xref><xref ref-type="bibr" rid="article-18346.r13">[13]</xref> Immunocompromised individuals, particularly those who are asplenic, face an increased risk of infection from <italic toggle="yes">Capnocytophaga canimorsus</italic>, a gram-negative bacterium commonly found in the canine oral cavity.<xref ref-type="bibr" rid="article-18346.r14">[14]</xref></p>
+        <p>Cat bites, often resulting in puncture wounds followed by lacerations, harbor aerobic and anaerobic bacteria. These injuries frequently lead to cellulitis and lymphangitis. <italic toggle="yes">Pasteurella multocida</italic> is the most commonly isolated pathogen, followed by <italic toggle="yes">Streptococcus</italic>, <italic toggle="yes">Staphylococcus</italic>, <italic toggle="yes">Neisseria</italic>, and <italic toggle="yes">Moraxella</italic> species. <italic toggle="yes">Bartonella henselae</italic>, transmitted via flea vectors, is classically associated with cat scratches but can also be isolated from cat bites. Anaerobic organisms, including <italic toggle="yes">Fusobacterium</italic> and <italic toggle="yes">Capnocytophaga</italic> species, are also present in these wounds.<xref ref-type="bibr" rid="article-18346.r12">[12]</xref><xref ref-type="bibr" rid="article-18346.r15">[15]</xref></p>
+        <p>Less common animal bites, such as those from monkeys and rats, pose unique infectious risks. Monkey saliva contains a bacterial spectrum similar to that of humans, including <italic toggle="yes">Neisseria</italic>, <italic toggle="yes">Streptococcus</italic>, and <italic toggle="yes">Haemophilus</italic> species. Viral transmission is also a concern with monkey bites. Rat bites can transmit <italic toggle="yes">Streptobacillus moniliformis</italic> and <italic toggle="yes">Spirillum minus</italic>, both gram-negative rods responsible for rat-bite fever, which carries a 10% mortality rate if untreated. Other potential infections from rat bites include leptospirosis, hantavirus, and tetanus.<xref ref-type="bibr" rid="article-18346.r16">[16]</xref></p>
+        <p>Rare infectious diseases can also be transmitted through animal bites. Tularemia, caused by <italic toggle="yes">Francisella tularensis</italic>, can be contracted via bites from infected animals or arthropods. Plague, resulting from <italic toggle="yes">Yersinia pestis</italic> infection, is another serious condition associated with animal bites. Fungal infections such as sporotrichosis, caused by <italic toggle="yes">Sporothrix schenckii</italic>, and blastomycosis, due to <italic toggle="yes">Blastomyces dermatitidis</italic>, have also been linked to animal bites. Additionally, rabies, a fatal viral encephalitis, remains a critical concern following bites from various mammals.<xref ref-type="bibr" rid="article-18346.r17">[17]</xref><xref ref-type="bibr" rid="article-18346.r18">[18]</xref></p>
+      </sec>
+      <sec id="article-18346.s4" sec-type="Epidemiology">
+        <title>Epidemiology</title>
+        <p>About 4.5 million people sustain animal bites in the US per year, about 750,000 of which require medical attention. Bites are a combination of laceration, crush, avulsion, and puncture injuries and can cause abscess, cellulitis, and lymphangitis.<xref ref-type="bibr" rid="article-18346.r19">[19]</xref> Most dog bite injuries are soft tissue injuries, fractures, sprains, strains, or crush injuries; less than 1% are skull fractures and damage to intrathoracic, abdominal, pelvic, or intracranial cavities. Dog bites account for 60% to 90%, and cat bites 5% to 20% of bites receiving care. Results from a retrospective study of dog and cat bites in California found dog bites were highest among boys younger than 10 and cat bites highest among women older than 80, with both occurring mainly in residences and during the summer.<xref ref-type="bibr" rid="article-18346.r20">[20]</xref></p>
+        <p>The incidence of infection after a dog bite ranges from 2% to 25%. Infection risk is increased by comorbidities, location, and bite size, including bites greater than 3 cm, bites on the hand, and time from bite to medical attention.<xref ref-type="bibr" rid="article-18346.r21">[21]</xref> Dog bites are most prevalent among men and children, and the dog is often known to the patient.<xref ref-type="bibr" rid="article-18346.r20">[20]</xref> Children are commonly bitten on the head, face, and neck due to their proportionately larger heads and shorter stature, while adults sustain bites on the hands and arms. Results from a study of pediatric head and neck dog bites over 9 years found approximately 43% were between 2 and 6 years, 77% had injuries to face or mouth, 82% occurred in the home, 61% of the bites were from animals known to the patient, and 33% of the dogs were pitbulls.<xref ref-type="bibr" rid="article-18346.r22">[22]</xref> In a longitudinal study of domestic animal bites in the US, facial injuries were highest among those younger than 5 and lowest among those older than 50. Bites on the head, neck, and face have a high mortality, especially in children, due to hemorrhage and proximity to the brain, increased risk for skull fracture, and brain abscesses. There is a high risk of exsanguination and injury to aerodigestive structures from neck injuries. Chest bites pose a risk for pneumothorax and spinal cord injury.<xref ref-type="bibr" rid="article-18346.r23">[23]</xref></p>
+        <p>Cat bites have an infection rate of about 30% due to the inoculation depth of pathogens. In children, cat bites are most common on the upper limbs and, in the very young, on the head and neck. Those bitten by cats often present after the bite becomes infected.<xref ref-type="bibr" rid="article-18346.r4">[4]</xref><xref ref-type="bibr" rid="article-18346.r24">[24]</xref> Most cat bites affect only soft tissue, with less than 1% impacting deeper musculoskeletal structures and 0.02% involving internal elements.<xref ref-type="bibr" rid="article-18346.r20">[20]</xref> Cat scratch fever is more common in children.<xref ref-type="bibr" rid="article-18346.r20">[20]</xref> Cases of tularemia transmission from cats have been reported to be higher in central and western US and parts of Europe, Asia, and Africa, and the incidence of tularemia in animals in the US is increasing.<xref ref-type="bibr" rid="article-18346.r20">[20]</xref><xref ref-type="bibr" rid="article-18346.r25">[25]</xref><xref ref-type="bibr" rid="article-18346.r26">[26]</xref> Rat bites account for less than 1% of emergency department visits in the US, with a stated 10% risk of infection. The mortality of rat bite fever is reported to be 13%, primarily due to sepsis, pneumonia, and cardiac dysfunction.<xref ref-type="bibr" rid="article-18346.r16">[16]</xref><xref ref-type="bibr" rid="article-18346.r27">[27]</xref> While monkey bites are more prevalent globally, they are rare in the US and can pose significant risks of exposure to numerous pathogens. Monkeys may carry rabies and other viruses that can be fatal to humans, including herpes B from <italic toggle="yes">Cercopithecine herpesvirus</italic>.<xref ref-type="bibr" rid="article-18346.r28">[28]</xref></p>
+      </sec>
+      <sec id="article-18346.s5" sec-type="Pathophysiology">
+        <title>Pathophysiology</title>
+        <p>The initial injury from an animal bite is the mechanical trauma of teeth puncturing, tearing, or avulsing soft tissue, and high pressure causing crush injuries or even bony fractures, depending on the force of the bite. Occasionally, bites can invade internal compartments and pose an immediate threat to life. Dog bites are more commonly macerated due to the ripping and tearing forces involved.</p>
+        <p>Cat bites are narrow and deep and may appear innocuous until infection is evident; pathogens are transmitted through a break in the skin's defensive barrier. Cat bites have the highest infection rate and often trigger significant localized or systemic inflammatory responses, leading to osteomyelitis, sepsis, meningitis, endocarditis, and pneumonia. Microbes travel in the blood and along nerves, bind, and replicate, causing infection and inflammation. For example, the rabies virus can be injected into deep tissues, where it replicates, binds to receptors at the neuromuscular junction, and travels within nerves, where it further replicates and infects the brain.<xref ref-type="bibr" rid="article-18346.r29">[29]</xref><xref ref-type="bibr" rid="article-18346.r30">[30]</xref></p>
+      </sec>
+      <sec id="article-18346.s6" sec-type="History and Physical">
+        <title>History and Physical</title>
+        <p>A comprehensive history and physical examination are essential when evaluating a patient who has sustained an animal bite. This will guide appropriate management and prevent complications.</p>
+        <p>
+<bold>History</bold>
+</p>
+        <p>Key elements to elicit during the patient's history include:</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Incident details</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Ascertain the time, location, and circumstances of the bite. Determine if the bite was provoked or unprovoked, as unprovoked attacks may raise concerns about rabies risk.</p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Animal information</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Identify the species involved and, if possible, its health status, vaccination history, behavior at the time of the incident, and current whereabouts.</p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Wound characteristics</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Note the number, location, and type of wounds (eg, punctures, lacerations, scratches).</p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Prehospital treatment</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Inquire about any first aid measures taken before seeking medical care.</p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Medical history</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Review the patient's medical background, focusing on allergies; immunosuppressive conditions; chronic diseases such as diabetes mellitus, human immunodeficiency virus, or sickle cell disease; and tetanus and rabies vaccination status.</p>
+              </list-item>
+            </list>
+          </list-item>
+        </list>
+        <p>
+<bold>Physical Examination</bold>
+</p>
+        <p>A thorough physical examination should assess:</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Wound assessment</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Evaluate the size, depth, and type of injury. Dog bites often result in crush injuries due to their strong jaws, leading to a combination of tearing, puncture wounds, and avulsions. In contrast, cat bites typically cause deep puncture wounds that can penetrate bones and joints, increasing the risk of septic arthritis and osteomyelitis.</p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Signs of infection</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Look for redness, swelling, warmth, pus, or lymphangitis, which may indicate an infection.</p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Neurovascular status</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Assess for any nerve or vascular injury by evaluating sensation, motor function, and distal pulses.</p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Range of motion</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Test the movement of affected and adjacent joints to detect potential tendon or joint involvement.</p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Foreign bodies</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Inspect for embedded teeth or debris within the wound.</p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Regional lymphadenopathy</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Examine nearby lymph nodes for swelling or tenderness, which may suggest systemic involvement.</p>
+              </list-item>
+            </list>
+          </list-item>
+        </list>
+        <p>
+<bold>Infection Presentations</bold>
+</p>
+        <p>Infections resulting from animal bites can manifest with various clinical presentations:</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Cat bites</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Infections typically present within 12 to 18 hours after injury, characterized by erythema, induration, pain, and purulent drainage.</p>
+              </list-item>
+              <list-item>
+                <p>Cat scratch disease, caused by <italic toggle="yes">Bartonella henselae</italic>, usually starts as a blister at the bite site followed by lymphadenopathy, myalgias, fever, and, less commonly, meningoencephalitis, endocarditis, or orbital cellulitis.</p>
+              </list-item>
+              <list-item>
+                <p>Tularemia may present with fever, headache, and weakness.<xref ref-type="bibr" rid="article-18346.r1">[1]</xref></p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Rabies</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Initial symptoms include myalgias, fever, and pain, progressing to paresthesias, confusion, vomiting, salivation, hallucinations, and coma.<xref ref-type="bibr" rid="article-18346.r31">[31]</xref> Rabies contracted from bats may differ in presentation from that contracted from dogs, often exhibiting motor-sensory dysfunction and tremors, usually with more rapid progression and high mortality.<xref ref-type="bibr" rid="article-18346.r7">[7]</xref><xref ref-type="bibr" rid="article-18346.r32">[32]</xref><xref ref-type="bibr" rid="article-18346.r33">[33]</xref></p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Rat bites</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Rat-bite fever can cause fever, headache, nausea, vomiting, rigors, lymphadenopathy, arthritis with pain and erythema, maculopapular rash, and petechiae of the extremities. Additional manifestations may include pericarditis, myocarditis, endocarditis, vasculitis, meningitis, hepatitis, and pneumonia. Leptospirosis can present severely with pulmonary hemorrhage, jaundice, and renal failure.<xref ref-type="bibr" rid="article-18346.r16">[16]</xref></p>
+              </list-item>
+            </list>
+          </list-item>
+        </list>
+      </sec>
+      <sec id="article-18346.s7" sec-type="Evaluation">
+        <title>Evaluation</title>
+        <p>When evaluating a patient with an animal bite, a thorough assessment involving laboratory tests, imaging studies, and other diagnostic procedures is crucial to determining the extent of injury, identifying potential infections, and guiding appropriate treatment.</p>
+        <p>
+<bold>Laboratory Tests</bold>
+</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Wound cultures</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>If there are signs of infection, such as redness, swelling, warmth, pus, or lymphangitis, obtaining a wound culture before initiating antibiotic therapy can help identify the causative pathogens and guide targeted treatment.</p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Blood cultures</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Blood cultures are warranted in patients exhibiting systemic signs of infection or sepsis to detect bacteremia and guide antibiotic therapy.</p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Complete blood count</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>A complete blood count may be performed to assess for leukocytosis, which can indicate an infectious process.</p>
+              </list-item>
+            </list>
+          </list-item>
+        </list>
+        <p>
+<bold>Radiographic Studies</bold>
+</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>X-rays</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>These are recommended in the following scenarios:</p>
+                <list list-type="bullet">
+                  <list-item>
+                    <p>Fracture detection</p>
+                    <list list-type="bullet">
+                      <list-item>
+                        <p>To identify bone involvement or fractures resulting from the bite</p>
+                      </list-item>
+                    </list>
+                  </list-item>
+                  <list-item>
+                    <p>Foreign body identification</p>
+                    <list list-type="bullet">
+                      <list-item>
+                        <p>To detect retained foreign bodies, such as teeth fragments or debris</p>
+                      </list-item>
+                    </list>
+                  </list-item>
+                  <list-item>
+                    <p>Gas in soft tissues</p>
+                    <list list-type="bullet">
+                      <list-item>
+                        <p>To reveal gas formation indicative of anaerobic infections</p>
+                      </list-item>
+                    </list>
+                  </list-item>
+                </list>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Advanced imaging</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>This includes computed tomography and magnetic resonance imaging. These modalities are considered when there is suspicion of deep tissue involvement, abscess formation, or complications not evident on standard x-rays.</p>
+              </list-item>
+            </list>
+          </list-item>
+        </list>
+        <p>
+<bold>Additional Diagnostic Considerations</bold>
+</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Tetanus prophylaxis</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Assess the patient's immunization status and administer tetanus toxoid or immunoglobulin as needed, especially for deep or contaminated wounds.</p>
+              </list-item>
+            </list>
+          </list-item>
+          <list-item>
+            <p>Rabies risk assessment</p>
+            <list list-type="bullet">
+              <list-item>
+                <p>Evaluate the risk based on the type of animal, its behavior, and the prevalence of rabies in the area. If indicated, initiate postexposure prophylaxis.</p>
+              </list-item>
+            </list>
+          </list-item>
+        </list>
+        <p>
+<bold>Special Considerations</bold>
+</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Rat bites may require a biopsy. Skin lesion biopsies may reveal leukocytoclastic vasculitis, a key finding in rat-bite fever.</p>
+          </list-item>
+          <list-item>
+            <p>If the biting animal is available, conducting serological tests or a necropsy can provide valuable information regarding potential zoonotic infections.<xref ref-type="bibr" rid="article-18346.r1">[1]</xref><xref ref-type="bibr" rid="article-18346.r5">[5]</xref><xref ref-type="bibr" rid="article-18346.r34">[34]</xref></p>
+          </list-item>
+        </list>
+      </sec>
+      <sec id="article-18346.s8" sec-type="Treatment / Management">
+        <title>Treatment / Management</title>
+        <p>Timely source control is essential in managing animal bites. Proper wound care, including thorough irrigation, debridement of devitalized tissue, and prompt antibiotic administration when indicated, significantly reduces the risk of infection. Irrigation can be performed with a syringe or a high-pressure system, using 1% to 5% povidone iodine in normal saline or potable water in out-of-hospital settings. Anesthesia may be required for extensive wounds for thorough exploration, while biopsies and cultures may guide treatment.<xref ref-type="bibr" rid="article-18346.r6">[6]</xref><xref ref-type="bibr" rid="article-18346.r35">[35]</xref></p>
+        <p>Vaccination status should be updated, including tetanus, diphtheria, and pertussis. Tetanus prophylaxis is indicated if more than 5 years have elapsed since the last dose; immunoglobulin and vaccination are required if more than 10 years have elapsed. Rabies post-exposure prophylaxis should be administered in cases of uncertain exposure, particularly in regions with a high prevalence of rabies. Prophylaxis consists of a rabies vaccine with or without intradermal immunoglobulin. According to the World Health Organization&#x02019;s 2018 guidelines, high-risk individuals should receive rabies vaccination on days 0, 3, 7, and 14, plus immunoglobulin. Immediate rabies prophylaxis is recommended for bites near the brain.<xref ref-type="bibr" rid="article-18346.r1">[1]</xref><xref ref-type="bibr" rid="article-18346.r35">[35]</xref></p>
+        <p>Prophylactic antibiotics targeting oral flora and skin microbes are warranted for all bites penetrating the epidermis or deeper.<xref ref-type="bibr" rid="article-18346.r21">[21]</xref> High-risk areas include the hands, feet, face, genitals, and puncture wounds. Immunocompromised individuals, particularly those with chronic diseases like diabetes, face an increased risk of infection.<xref ref-type="bibr" rid="article-18346.r36">[36]</xref> Cat bites are inherently high-risk and typically left open. The infection risk depends on whether to close the wound or leave it open for uncomplicated dog bites. If closed, a 7-day course of amoxicillin-clavulanate is prescribed. The Infectious Disease Society of America advises leaving bite wounds open unless there is a cosmetic concern, such as on the face. Deep puncture wounds and those involving joint spaces should not be closed. Consultation with surgical specialists, including plastic, orthopedic, or general surgeons, may be necessary. Uncomplicated wounds can be safely closed after extensive cleaning and debridement if presenting within 8 hours of injury.<xref ref-type="bibr" rid="article-18346.r37">[37]</xref><xref ref-type="bibr" rid="article-18346.r36">[36]</xref></p>
+        <p>Amoxicillin-clavulanate is the preferred prophylactic antibiotic, with extended-spectrum cephalosporins recommended for patients who are allergic to penicillin. Alternative regimens include doxycycline or trimethoprim-sulfamethoxazole (TMP-SMX) plus metronidazole or clindamycin.<xref ref-type="bibr" rid="article-18346.r1">[1]</xref><xref ref-type="bibr" rid="article-18346.r37">[37]</xref> Systemic infections or those involving joints or intracavitary spaces require broad-spectrum intravenous antibiotics, such as ampicillin-sulbactam, and hospital admission for further care. In pediatrics, the first-line treatment is amoxicillin-clavulanate (50 mg/kg), with clindamycin plus TMP-SMX or an extended-spectrum cephalosporin used in cases of penicillin allergy. Antibiotic therapy is adjusted based on culture results, with methicillin-resistant <italic toggle="yes">Staphylococcus aureus</italic> (MRSA) coverage including TMP-SMX, doxycycline, or clindamycin.<xref ref-type="bibr" rid="article-18346.r38">[38]</xref><xref ref-type="bibr" rid="article-18346.r39">[39]</xref><xref ref-type="bibr" rid="article-18346.r40">[40]</xref> In a 2016 prospective study by Jaindl involving over 5000 bite cases at a level 1 trauma center, 14% of dog bites were infected compared with 58% of cat bites.<xref ref-type="bibr" rid="article-18346.r41">[41]</xref> Puncture wounds and wounds &#x0003e;3 cm had a higher risk of bacterial infection.</p>
+        <p>Less common pathogens require targeted treatment based on culture results and established guidelines. <italic toggle="yes">Bartonella henselae</italic>, the causative agent of cat scratch disease, is treated with azithromycin. <italic toggle="yes">Francisella tularensis</italic>, responsible for tularemia, is treated with streptomycin or gentamicin for moderate-to-severe cases and with tetracycline or doxycycline for milder infections. Rat bites necessitate thorough irrigation, with fever cases treated using intravenous penicillin G or ceftriaxone. Cardiac involvement following a rat bite requires prolonged therapy with streptomycin and gentamicin. Leptospirosis is managed with supportive care, amoxicillin, and doxycycline.<xref ref-type="bibr" rid="article-18346.r16">[16]</xref><xref ref-type="bibr" rid="article-18346.r42">[42]</xref><xref ref-type="bibr" rid="article-18346.r43">[43]</xref></p>
+        <p>Monkey bites, which carry a high risk for infection due to deep puncture wounds, require irrigation, rabies, and tetanus prophylaxis, and antiviral prophylaxis for herpes B infections.<xref ref-type="bibr" rid="article-18346.r6">[6]</xref><xref ref-type="bibr" rid="article-18346.r44">[44]</xref> Rabies prophylaxis is particularly critical for individuals exposed to bats, including those with suspected or confirmed contact with bat saliva or neural tissue through open wounds or mucous membranes.</p>
+      </sec>
+      <sec id="article-18346.s9" sec-type="Differential Diagnosis">
+        <title>Differential Diagnosis</title>
+        <p>Several diseases and conditions can mimic the presentation of an animal bite, leading to potential misdiagnosis if a thorough history and examination are not performed. Skin infections such as cellulitis, abscesses, and necrotizing fasciitis may present with erythema, warmth, swelling, and pain similar to an infected bite wound. Insect bites, particularly from spiders, ticks, and fleas, can cause localized inflammation, ulceration, and systemic symptoms resembling zoonotic infections from animal bites. For example, <italic toggle="yes">Loxosceles reclusa</italic> (brown recluse) spider bites may lead to necrotic ulcers that could be mistaken for infected bite wounds.<xref ref-type="bibr" rid="article-18346.r45">[45]</xref></p>
+        <p>Human bites and self-inflicted injuries can also resemble animal bites, especially when dental patterns are unclear. Child abuse, domestic violence, and self-harm behaviors must be considered when the reported history does not align with the clinical findings. Crush injuries, thermal or chemical burns, and pressure ulcers can have irregular wound borders and necrosis, mimicking a poorly healing or infected bite wound. Additionally, atypical infections such as <italic toggle="yes">Mycobacterium marinum</italic>, <italic toggle="yes">Eikenella corrodens</italic>, and fungal infections can present with chronic ulcerations and draining wounds similar to those seen in animal bite complications.</p>
+        <p>Autoimmune diseases like pyoderma gangrenosum can lead to rapidly progressive ulcerations that may be mistaken for infected bites, primarily when associated with systemic inflammatory conditions such as inflammatory bowel disease or rheumatoid arthritis. Vasculitides, including leukocytoclastic vasculitides and granulomatosis with polyangiitis, can present with ulcerating lesions and purpuric changes resembling an infected or necrotic bite wound. In such cases, biopsy and additional laboratory testing, including inflammatory markers and autoantibody panels, may be necessary to differentiate these conditions from animal bites.</p>
+        <p>Maintaining an index of suspicion for related injuries such as bony fractures, tetanus, and rabies is essential in the setting of a known animal bite.<xref ref-type="bibr" rid="article-18346.r46">[46]</xref> Fractures may result from the crushing force of larger animal bites, necessitating radiographic evaluation. Additionally, tetanus prophylaxis should be considered based on immunization history, and rabies prophylaxis should be administered in cases of suspected exposure, particularly with bites from high-risk animals or those in endemic regions.</p>
+      </sec>
+      <sec id="article-18346.s10" sec-type="Prognosis">
+        <title>Prognosis</title>
+        <p>The prognosis for most animal bites is excellent with prompt intervention and appropriate infection control measures. However, dog bites result in approximately 30 to 50 fatalities annually.<xref ref-type="bibr" rid="article-18346.r47">[47]</xref><xref ref-type="bibr" rid="article-18346.r48">[48]</xref> The severity of these injuries has been increasing, often involving deeper structures and necessitating more complex interventions, including hospitalization and surgical management.<xref ref-type="bibr" rid="article-18346.r49">[49]</xref><xref ref-type="bibr" rid="article-18346.r50">[50]</xref></p>
+      </sec>
+      <sec id="article-18346.s11" sec-type="Complications">
+        <title>Complications</title>
+        <p>The complications of animal bites vary based on the biting mechanism and the pathogens involved. Common infectious complications include cellulitis, abscess formation, osteomyelitis, tenosynovitis, endocarditis, and meningitis. MRSA can be transmitted bidirectionally between animals and humans, posing a recurrent risk of infection. In immunocompromised individuals, anaerobic and gram-negative bacteria such as <italic toggle="yes">Bacteroides</italic>, <italic toggle="yes">Fusobacterium</italic>, <italic toggle="yes">Neisseria</italic>, and <italic toggle="yes">Prevotella</italic> can lead to severe morbidity and mortality. Without appropriate prophylaxis, tetanus and rabies can have fatal consequences. Additional complications include delayed-onset injuries, such as tendon rupture or nerve damage. Psychological effects, including post-traumatic stress disorder, may also develop following an animal bite in both adults and children.<xref ref-type="bibr" rid="article-18346.r51">[51]</xref><xref ref-type="bibr" rid="article-18346.r52">[52]</xref></p>
+      </sec>
+      <sec id="article-18346.s12" sec-type="Postoperative and Rehabilitation Care">
+        <title>Postoperative and Rehabilitation Care</title>
+        <p>Postoperative and rehabilitative care for animal bite injuries is essential to optimize healing, restore function, and prevent complications. Patients who undergo soft tissue or musculoskeletal reconstruction may require specialized wound care, infection surveillance, and structured rehabilitation.<xref ref-type="bibr" rid="article-18346.r46">[46]</xref> Close monitoring of the wound site is critical to detect early signs of infection, dehiscence, or necrosis, which may necessitate serial wound assessments and adjunctive treatments, such as negative pressure wound therapy or hyperbaric oxygen therapy in severe cases.</p>
+        <p>Patients with extensive soft-tissue loss, tendon injuries, or fractures may benefit from coordinated postoperative care that includes occupational and physical therapy to regain strength, dexterity, and range of motion.<xref ref-type="bibr" rid="article-18346.r46">[46]</xref> In cases of nerve involvement, neuromuscular retraining may be required to restore sensory and motor function. Pain management is tailored to the individual, often incorporating multimodal approaches, including nonsteroidal anti-inflammatory drugs, physical therapy, and, in some cases, nerve blocks. Psychological support is also crucial, particularly for patients with disfiguring injuries or post-traumatic stress related to the bite. Interprofessional collaboration between surgeons, infectious disease specialists, rehabilitation specialists, and mental health professionals ensures comprehensive patient-centered care.</p>
+      </sec>
+      <sec id="article-18346.s13" sec-type="Deterrence and Patient Education">
+        <title>Deterrence and Patient Education</title>
+        <p>Deterrence and patient education are essential in reducing the incidence and severity of animal bites. Preventative measures include promoting responsible pet ownership, proper animal handling, and increasing awareness of animal behavior. Patients should be advised to avoid provoking unfamiliar animals, particularly those exhibiting aggressive or erratic behavior. Parents should supervise children around pets, as children are at higher risk of severe injury. Education on rabies prevention is crucial, especially in endemic areas, emphasizing the need to avoid contact with wild animals such as bats, raccoons, and skunks.</p>
+        <p>Preexposure rabies vaccination should be considered for individuals frequently in contact with animals, such as veterinarians, animal handlers, and laboratory workers. Those traveling to regions with a high prevalence of rabies should also be informed about prophylactic vaccination. Additionally, patients should be counseled on the importance of seeking early medical attention after an animal bite, especially if the wound is deep, involves a high-risk anatomical site, or the animal&#x02019;s vaccination status is unknown.</p>
+        <p>Patients should be encouraged to remain up to date on their tetanus vaccination. All persons with pets should be counseled regarding the importance of pet vaccinations. Those with breeds designated as higher risk for bite-related morbidity and mortality, including pit bulls, Rottweilers, and German Shepherds, should be advised on methods to reduce the likelihood of biting behavior. Certain environmental conditions, such as higher temperatures and greater ozone exposure, may increase the incidence of animal bites. The public should be aware of the risk of infringing upon wildlife habitats, understand which wild animals are more susceptible to rabies, and take measures to reduce contact between domestic and wild animals.<xref ref-type="bibr" rid="article-18346.r1">[1]</xref><xref ref-type="bibr" rid="article-18346.r53">[53]</xref></p>
+        <p>Additionally, proper wound care education is critical, including thorough irrigation of the wound with soap and water immediately after a bite to reduce the bacterial load and the risk of infection. Patients should understand the signs of infection, such as increasing redness, swelling, warmth, and purulent drainage, and be instructed to seek medical care if these symptoms develop. Individuals at higher risk of severe infections, such as those with diabetes, immunosuppression, or asplenia, should be educated on the need for early medical evaluation and antibiotic prophylaxis.</p>
+        <p>Tetanus vaccination should be updated as needed, and patients should be informed that postexposure prophylaxis for rabies is required if exposure is suspected. Clear guidance on when to seek emergency care, such as for bites involving the face, hands, or genitals, or those with extensive tissue damage, should be provided. Increasing public awareness and implementing appropriate preventive strategies can significantly reduce the burden of animal bite-related morbidity.<xref ref-type="bibr" rid="article-18346.r51">[51]</xref></p>
+      </sec>
+      <sec id="article-18346.s14" sec-type="Pearls and Other Issues">
+        <title>Pearls and Other Issues</title>
+        <p>Time to treatment significantly determines morbidity and mortality from animal bites. Animal identification is key to guiding assessment and treatment. Hand and foot bites are at a higher risk due to the small compartments and lack of protective tissue. Hand bites require close monitoring, as nearly 33% of hand bites become infected. Signs of infection, such as edema, erythema, pain, and discharge, may be muted in the immunocompromised.<xref ref-type="bibr" rid="article-18346.r2">[2]</xref></p>
+        <p>Rabies prophylaxis and treatment are important considerations when treating animal bites. If the rabies status of the biting animal may be ascertained, rabies treatment may be deferred. However, any bite, or even a suspected bite, especially from high-risk animals such as bats and skunks, requires treatment. Immunocompromised persons with cat bites are treated prophylactically for cat scratch disease and against <italic toggle="yes">Capnocytophaga</italic> in the case of a dog bite.<xref ref-type="bibr" rid="article-18346.r54">[54]</xref></p>
+      </sec>
+      <sec id="article-18346.s15" sec-type="Enhancing Healthcare Team Outcomes">
+        <title>Enhancing Healthcare Team Outcomes</title>
+        <p>Effective management of animal bites requires collaboration among a multidisciplinary healthcare team, including advanced clinicians, nurses, pharmacists, and other health professionals. Clinicians who manage animal bites should know the latest guidelines for animal bites from various species.<xref ref-type="bibr" rid="article-18346.r55">[55]</xref><xref ref-type="bibr" rid="article-18346.r56">[56]</xref><xref ref-type="bibr" rid="article-18346.r57">[57]</xref> Advanced clinicians are responsible for diagnosing, managing, and making critical decisions regarding wound care, antibiotic therapy, vaccination, and possible referrals. They also guide the team in risk assessment for infections such as MRSA, rabies, and tetanus, and decide when surgical consultation or advanced imaging is necessary. Nurses play a crucial role in the direct care of patients by performing wound care, administering vaccines and antibiotics, monitoring for signs of infection, and educating patients about wound management and the importance of follow-up care. Pharmacists contribute by ensuring appropriate antibiotic selection and dosage and advising on drug interactions and potential side effects, particularly for patients with comorbidities.</p>
+        <p>Interprofessional communication is key to ensuring optimal outcomes. Clinicians must effectively communicate with nurses and pharmacists regarding treatment plans, including appropriate prophylactic measures and follow-up care. Nurses, in turn, relay important information about patient progress and any emerging complications. Clear communication about potential risks, including the need for rabies prophylaxis or tetanus updates, helps ensure patient safety. Coordination between the team and other specialists, such as plastic or orthopedic surgeons, physical and occupational therapists, is essential when wounds involve deep tissue injury or require surgical intervention. By leveraging the unique expertise of each team member, this collaborative approach enhances patient-centered care, minimizes the risk of complications, and ensures a comprehensive, patient-focused treatment plan, ultimately improving patient outcomes and ensuring safety.</p>
+      </sec>
+      <sec id="article-18346.s16">
+        <title>Review Questions</title>
+        <list list-type="bullet">
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/account/trialuserreg/?articleid=18346&#x00026;utm_source=pubmed&#x00026;utm_campaign=reviews&#x00026;utm_content=18346">Access free multiple choice questions on this topic.</ext-link>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://mdsearchlight.com/wilderness-and-environmental/animal-bites/?utm_source=pubmedlink&#x00026;utm_campaign=MDS&#x00026;utm_content=18346">Click here for a simplified version.</ext-link>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/articlelibrary/commentarticle/18346/?utm_source=pubmed&#x00026;utm_campaign=comments&#x00026;utm_content=18346">Comment on this article.</ext-link>
+</p>
+          </list-item>
+        </list>
+      </sec>
+    </body>
+    <back>
+      <ref-list id="article-18346.s17">
+        <title>References</title>
+        <ref id="article-18346.r1">
+          <label>1</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Ortiz</surname>
+                <given-names>DD</given-names>
+              </name>
+              <name>
+                <surname>Lezcano</surname>
+                <given-names>FO</given-names>
+              </name>
+            </person-group>
+            <article-title>Dog and Cat Bites: Rapid Evidence Review.</article-title>
+            <source>Am Fam Physician</source>
+            <year>2023</year>
+            <month>Nov</month>
+            <volume>108</volume>
+            <issue>5</issue>
+            <fpage>501</fpage>
+            <page-range>501-505</page-range>
+            <pub-id pub-id-type="pmid">37983702</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r2">
+          <label>2</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Elcock</surname>
+                <given-names>KL</given-names>
+              </name>
+              <name>
+                <surname>Reid</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Moncayo-Nieto</surname>
+                <given-names>OL</given-names>
+              </name>
+              <name>
+                <surname>Rust</surname>
+                <given-names>PA</given-names>
+              </name>
+            </person-group>
+            <article-title>Biting the hand that feeds you: Management of human and animal bites.</article-title>
+            <source>Injury</source>
+            <year>2022</year>
+            <month>Feb</month>
+            <volume>53</volume>
+            <issue>2</issue>
+            <fpage>227</fpage>
+            <page-range>227-236</page-range>
+            <pub-id pub-id-type="pmid">34838260</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r3">
+          <label>3</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Tolentino J&#x000fa;nior</surname>
+                <given-names>DS</given-names>
+              </name>
+              <name>
+                <surname>Marques</surname>
+                <given-names>MSV</given-names>
+              </name>
+              <name>
+                <surname>Krummenauer</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Duarte</surname>
+                <given-names>MMS</given-names>
+              </name>
+              <name>
+                <surname>Rocha</surname>
+                <given-names>SM</given-names>
+              </name>
+              <name>
+                <surname>de Brito</surname>
+                <given-names>MG</given-names>
+              </name>
+              <name>
+                <surname>de Santana</surname>
+                <given-names>LF</given-names>
+              </name>
+              <name>
+                <surname>de Oliveira</surname>
+                <given-names>RC</given-names>
+              </name>
+              <name>
+                <surname>de Assis</surname>
+                <given-names>EM</given-names>
+              </name>
+              <name>
+                <surname>de Sousa Cavalcante</surname>
+                <given-names>KK</given-names>
+              </name>
+              <name>
+                <surname>Alencar</surname>
+                <given-names>CH</given-names>
+              </name>
+            </person-group>
+            <article-title>Rabies outbreak in Brazil: first case series in children from an indigenous village.</article-title>
+            <source>Infect Dis Poverty</source>
+            <year>2023</year>
+            <month>Aug</month>
+            <day>24</day>
+            <volume>12</volume>
+            <issue>1</issue>
+            <fpage>78</fpage>
+            <pub-id pub-id-type="pmid">37620861</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r4">
+          <label>4</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Khazaei</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Karami</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Veisani</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Solgi</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Goodarzi</surname>
+                <given-names>S</given-names>
+              </name>
+            </person-group>
+            <article-title>Epidemiology of Animal Bites and Associated Factors with Delay in Post-Exposure Prophylaxis; A Cross-Sectional Study.</article-title>
+            <source>Bull Emerg Trauma</source>
+            <year>2018</year>
+            <month>Jul</month>
+            <volume>6</volume>
+            <issue>3</issue>
+            <fpage>239</fpage>
+            <page-range>239-244</page-range>
+            <pub-id pub-id-type="pmid">30090820</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r5">
+          <label>5</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Amparo</surname>
+                <given-names>ACB</given-names>
+              </name>
+              <name>
+                <surname>Jayme</surname>
+                <given-names>SI</given-names>
+              </name>
+              <name>
+                <surname>Roces</surname>
+                <given-names>MCR</given-names>
+              </name>
+              <name>
+                <surname>Quizon</surname>
+                <given-names>MCL</given-names>
+              </name>
+              <name>
+                <surname>Mercado</surname>
+                <given-names>MLL</given-names>
+              </name>
+              <name>
+                <surname>Dela Cruz</surname>
+                <given-names>MPZ</given-names>
+              </name>
+              <name>
+                <surname>Licuan</surname>
+                <given-names>DA</given-names>
+              </name>
+              <name>
+                <surname>Villalon</surname>
+                <given-names>EES</given-names>
+              </name>
+              <name>
+                <surname>Baquilod</surname>
+                <given-names>MS</given-names>
+              </name>
+              <name>
+                <surname>Hernandez</surname>
+                <given-names>LM</given-names>
+              </name>
+              <name>
+                <surname>Taylor</surname>
+                <given-names>LH</given-names>
+              </name>
+              <name>
+                <surname>Nel</surname>
+                <given-names>LH</given-names>
+              </name>
+            </person-group>
+            <article-title>The evaluation of Animal Bite Treatment Centers in the Philippines from a patient perspective.</article-title>
+            <source>PLoS One</source>
+            <year>2018</year>
+            <volume>13</volume>
+            <issue>7</issue>
+            <fpage>e0200873</fpage>
+            <pub-id pub-id-type="pmid">30048466</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r6">
+          <label>6</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Schlein</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Park</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Sethi</surname>
+                <given-names>S</given-names>
+              </name>
+            </person-group>
+            <article-title>Animal Bites and Attacks.</article-title>
+            <source>Emerg Med Clin North Am</source>
+            <year>2024</year>
+            <month>Aug</month>
+            <volume>42</volume>
+            <issue>3</issue>
+            <fpage>639</fpage>
+            <page-range>639-652</page-range>
+            <pub-id pub-id-type="pmid">38925779</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r7">
+          <label>7</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Vodopija</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Lojki&#x00107;</surname>
+                <given-names>I</given-names>
+              </name>
+              <name>
+                <surname>Hamidovi&#x00107;</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Boneta</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Primorac</surname>
+                <given-names>D</given-names>
+              </name>
+            </person-group>
+            <article-title>Bat Bites and Rabies PEP in the Croatian Reference Centre for Rabies 1995-2020.</article-title>
+            <source>Viruses</source>
+            <year>2024</year>
+            <month>May</month>
+            <day>30</day>
+            <volume>16</volume>
+            <issue>6</issue>
+            <pub-id pub-id-type="pmid">38932168</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r8">
+          <label>8</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Khoubfekr</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Rahmanian</surname>
+                <given-names>V</given-names>
+              </name>
+              <name>
+                <surname>Jokar</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Balouchi</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Pourvahed</surname>
+                <given-names>A</given-names>
+              </name>
+            </person-group>
+            <article-title>Epidemiological Analysis of Cases of Animal Bite Injuries at Rabies Prevention Centers Affiliated with Iranshahr University of Medical Sciences.</article-title>
+            <source>J Prev Med Hyg</source>
+            <year>2024</year>
+            <month>Dec</month>
+            <volume>65</volume>
+            <issue>4</issue>
+            <fpage>E491</fpage>
+            <page-range>E491-E498</page-range>
+            <pub-id pub-id-type="pmid">40026438</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r9">
+          <label>9</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Hochedez</surname>
+                <given-names>P</given-names>
+              </name>
+              <name>
+                <surname>Jidar</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Taieb</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Itani</surname>
+                <given-names>O</given-names>
+              </name>
+              <name>
+                <surname>Benabdelmoumen</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Parize</surname>
+                <given-names>P</given-names>
+              </name>
+              <name>
+                <surname>Bourhy</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Consigny</surname>
+                <given-names>PH</given-names>
+              </name>
+              <name>
+                <surname>Poujol</surname>
+                <given-names>P</given-names>
+              </name>
+            </person-group>
+            <article-title>Rabies exposure in international travellers: Experience from a single travel clinic in Paris, France, 2018-2022.</article-title>
+            <source>Travel Med Infect Dis</source>
+            <year>2025</year>
+            <season>Mar-Apr</season>
+            <volume>64</volume>
+            <fpage>102821</fpage>
+            <pub-id pub-id-type="pmid">39993516</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r10">
+          <label>10</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Ruengket</surname>
+                <given-names>P</given-names>
+              </name>
+              <name>
+                <surname>Roytrakul</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Tongthainan</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Boonnak</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Taruyanon</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Sangkharak</surname>
+                <given-names>B</given-names>
+              </name>
+              <name>
+                <surname>Fungfuang</surname>
+                <given-names>W</given-names>
+              </name>
+            </person-group>
+            <article-title>Analysis of the serum proteome profile of wild stump-tailed macaques (<italic>Macaca arctoides</italic>) seropositive for Zika virus antibodies in Thailand.</article-title>
+            <source>Front Vet Sci</source>
+            <year>2024</year>
+            <volume>11</volume>
+            <fpage>1463160</fpage>
+            <pub-id pub-id-type="pmid">39600882</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r11">
+          <label>11</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Septelici</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Carbone</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Cipri</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Esposito</surname>
+                <given-names>S</given-names>
+              </name>
+            </person-group>
+            <article-title>Management Strategies for Common Animal Bites in Pediatrics: A Narrative Review on the Latest Progress.</article-title>
+            <source>Microorganisms</source>
+            <year>2024</year>
+            <month>May</month>
+            <day>01</day>
+            <volume>12</volume>
+            <issue>5</issue>
+            <pub-id pub-id-type="pmid">38792754</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r12">
+          <label>12</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Abrahamian</surname>
+                <given-names>FM</given-names>
+              </name>
+              <name>
+                <surname>Goldstein</surname>
+                <given-names>EJ</given-names>
+              </name>
+            </person-group>
+            <article-title>Microbiology of animal bite wound infections.</article-title>
+            <source>Clin Microbiol Rev</source>
+            <year>2011</year>
+            <month>Apr</month>
+            <volume>24</volume>
+            <issue>2</issue>
+            <fpage>231</fpage>
+            <page-range>231-46</page-range>
+            <pub-id pub-id-type="pmid">21482724</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r13">
+          <label>13</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Giovane</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Pernia</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Guy</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Blevins</surname>
+                <given-names>H</given-names>
+              </name>
+            </person-group>
+            <article-title>An Infected Dog Bite With Neisseria canis: A Case Report and Review of the Literature.</article-title>
+            <source>Cureus</source>
+            <year>2024</year>
+            <month>Jan</month>
+            <volume>16</volume>
+            <issue>1</issue>
+            <fpage>e52712</fpage>
+            <pub-id pub-id-type="pmid">38384600</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r14">
+          <label>14</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Brandenburg</surname>
+                <given-names>WE</given-names>
+              </name>
+              <name>
+                <surname>Levandowski</surname>
+                <given-names>W</given-names>
+              </name>
+              <name>
+                <surname>Califf</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Manly</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Levandowski</surname>
+                <given-names>CB</given-names>
+              </name>
+            </person-group>
+            <article-title>Animal, Microbial, and Fungal Borne Skin Pathology in the Mountain Wilderness: A Review.</article-title>
+            <source>Wilderness Environ Med</source>
+            <year>2017</year>
+            <month>Jun</month>
+            <volume>28</volume>
+            <issue>2</issue>
+            <fpage>127</fpage>
+            <page-range>127-138</page-range>
+            <pub-id pub-id-type="pmid">28602271</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r15">
+          <label>15</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Taylor</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Iftikhar</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Sherin</surname>
+                <given-names>KM</given-names>
+              </name>
+              <name>
+                <surname>Ganti</surname>
+                <given-names>L</given-names>
+              </name>
+            </person-group>
+            <article-title>Dog Bite to the Hand: Infectious Disease Considerations.</article-title>
+            <source>Cureus</source>
+            <year>2024</year>
+            <month>Aug</month>
+            <volume>16</volume>
+            <issue>8</issue>
+            <fpage>e65964</fpage>
+            <pub-id pub-id-type="pmid">39221288</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r16">
+          <label>16</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Shugart</surname>
+                <given-names>WW</given-names>
+              </name>
+              <name>
+                <surname>Gross</surname>
+                <given-names>KG</given-names>
+              </name>
+              <name>
+                <surname>Freeman</surname>
+                <given-names>BE</given-names>
+              </name>
+              <name>
+                <surname>Williams</surname>
+                <given-names>TA</given-names>
+              </name>
+              <name>
+                <surname>Quader</surname>
+                <given-names>AM</given-names>
+              </name>
+            </person-group>
+            <article-title>Rat Bite Fever: A Sobering Lesson in History and Differential.</article-title>
+            <source>Clin Pediatr (Phila)</source>
+            <year>2025</year>
+            <month>Sep</month>
+            <volume>64</volume>
+            <issue>8</issue>
+            <fpage>1189</fpage>
+            <page-range>1189-1192</page-range>
+            <pub-id pub-id-type="pmid">39988739</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r17">
+          <label>17</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Brook</surname>
+                <given-names>I</given-names>
+              </name>
+            </person-group>
+            <article-title>Microbiology and management of human and animal bite wound infections.</article-title>
+            <source>Prim Care</source>
+            <year>2003</year>
+            <month>Mar</month>
+            <volume>30</volume>
+            <issue>1</issue>
+            <fpage>25</fpage>
+            <page-range>25-39, v</page-range>
+            <pub-id pub-id-type="pmid">12825249</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r18">
+          <label>18</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Rothe</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Tsokos</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Handrick</surname>
+                <given-names>W</given-names>
+              </name>
+            </person-group>
+            <article-title>Animal and Human Bite Wounds.</article-title>
+            <source>Dtsch Arztebl Int</source>
+            <year>2015</year>
+            <month>Jun</month>
+            <day>19</day>
+            <volume>112</volume>
+            <issue>25</issue>
+            <fpage>433</fpage>
+            <page-range>433-42; quiz 443</page-range>
+            <pub-id pub-id-type="pmid">26179017</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r19">
+          <label>19</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Tam</surname>
+                <given-names>B</given-names>
+              </name>
+              <name>
+                <surname>Matsushima</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Chiba</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Park</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Slocum</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Lam</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Inaba</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Demetriades</surname>
+                <given-names>D</given-names>
+              </name>
+            </person-group>
+            <article-title>Nationwide Analysis of Dog Bite Injuries: Different Age Groups, Different Injury Patterns.</article-title>
+            <source>Am Surg</source>
+            <year>2021</year>
+            <month>Dec</month>
+            <volume>87</volume>
+            <issue>10</issue>
+            <fpage>1612</fpage>
+            <page-range>1612-1615</page-range>
+            <pub-id pub-id-type="pmid">34130512</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r20">
+          <label>20</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Campagna</surname>
+                <given-names>RA</given-names>
+              </name>
+              <name>
+                <surname>Roberts</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>Porco</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Fritz</surname>
+                <given-names>CL</given-names>
+              </name>
+            </person-group>
+            <article-title>Clinical and epidemiologic features of persons accessing emergency departments for dog and cat bite injuries in California (2005-2019).</article-title>
+            <source>J Am Vet Med Assoc</source>
+            <year>2023</year>
+            <month>May</month>
+            <day>01</day>
+            <volume>261</volume>
+            <issue>5</issue>
+            <fpage>723</fpage>
+            <page-range>723-732</page-range>
+            <pub-id pub-id-type="pmid">36853875</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r21">
+          <label>21</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Greene</surname>
+                <given-names>SE</given-names>
+              </name>
+              <name>
+                <surname>Fritz</surname>
+                <given-names>SA</given-names>
+              </name>
+            </person-group>
+            <article-title>Infectious Complications of Bite Injuries.</article-title>
+            <source>Infect Dis Clin North Am</source>
+            <year>2021</year>
+            <month>Mar</month>
+            <volume>35</volume>
+            <issue>1</issue>
+            <fpage>219</fpage>
+            <page-range>219-236</page-range>
+            <pub-id pub-id-type="pmid">33494873</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r22">
+          <label>22</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Peifer</surname>
+                <given-names>SJ</given-names>
+              </name>
+              <name>
+                <surname>LoTurco</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Duffield</surname>
+                <given-names>SJ</given-names>
+              </name>
+              <name>
+                <surname>Zhang</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Javier</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Herman</surname>
+                <given-names>B</given-names>
+              </name>
+            </person-group>
+            <article-title>Pediatric Head and Neck Dog Bites in the United States: A NEISS Database Investigation of Risk Factors and Escalation of Care.</article-title>
+            <source>J Craniofac Surg</source>
+            <year>2024</year>
+            <month>May</month>
+            <day>20</day>
+            <pub-id pub-id-type="pmid">38767368</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r23">
+          <label>23</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Becerra</surname>
+                <given-names>CMC</given-names>
+              </name>
+              <name>
+                <surname>Hodge</surname>
+                <given-names>DO</given-names>
+              </name>
+              <name>
+                <surname>Bradley</surname>
+                <given-names>EA</given-names>
+              </name>
+            </person-group>
+            <article-title>Incidence and Characteristics of Facial and Ophthalmic Injuries From Domestic Mammal Bites: Parts of the data in the manuscript were presented at the American Academy of Ophthalmology Annual Meeting, 2022.</article-title>
+            <source>Am J Ophthalmol</source>
+            <year>2023</year>
+            <month>Aug</month>
+            <volume>252</volume>
+            <fpage>164</fpage>
+            <page-range>164-169</page-range>
+            <pub-id pub-id-type="pmid">37030493</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r24">
+          <label>24</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Ngugi</surname>
+                <given-names>JN</given-names>
+              </name>
+              <name>
+                <surname>Maza</surname>
+                <given-names>AK</given-names>
+              </name>
+              <name>
+                <surname>Omolo</surname>
+                <given-names>OJ</given-names>
+              </name>
+              <name>
+                <surname>Obonyo</surname>
+                <given-names>M</given-names>
+              </name>
+            </person-group>
+            <article-title>Epidemiology and surveillance of human animal-bite injuries and rabies post-exposure prophylaxis, in selected counties in Kenya, 2011-2016.</article-title>
+            <source>BMC Public Health</source>
+            <year>2018</year>
+            <month>Aug</month>
+            <day>09</day>
+            <volume>18</volume>
+            <issue>1</issue>
+            <fpage>996</fpage>
+            <pub-id pub-id-type="pmid">30092769</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r25">
+          <label>25</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Sullivan</surname>
+                <given-names>MD</given-names>
+              </name>
+              <name>
+                <surname>Glose</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Sward</surname>
+                <given-names>D</given-names>
+              </name>
+            </person-group>
+            <article-title>Tick-Borne Illnesses in Emergency and Wilderness Medicine.</article-title>
+            <source>Emerg Med Clin North Am</source>
+            <year>2024</year>
+            <month>Aug</month>
+            <volume>42</volume>
+            <issue>3</issue>
+            <fpage>597</fpage>
+            <page-range>597-611</page-range>
+            <pub-id pub-id-type="pmid">38925777</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r26">
+          <label>26</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Rich</surname>
+                <given-names>SN</given-names>
+              </name>
+              <name>
+                <surname>Hinckley</surname>
+                <given-names>AF</given-names>
+              </name>
+              <name>
+                <surname>Earley</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Petersen</surname>
+                <given-names>JM</given-names>
+              </name>
+              <name>
+                <surname>Mead</surname>
+                <given-names>PS</given-names>
+              </name>
+              <name>
+                <surname>Kugeler</surname>
+                <given-names>KJ</given-names>
+              </name>
+            </person-group>
+            <article-title>Tularemia - United States, 2011-2022.</article-title>
+            <source>MMWR Morb Mortal Wkly Rep</source>
+            <year>2025</year>
+            <month>Jan</month>
+            <day>02</day>
+            <volume>73</volume>
+            <issue>5152</issue>
+            <fpage>1152</fpage>
+            <page-range>1152-1156</page-range>
+            <pub-id pub-id-type="pmid">39736154</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r27">
+          <label>27</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Bland</surname>
+                <given-names>DM</given-names>
+              </name>
+              <name>
+                <surname>Long</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Rosenke</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Hinnebusch</surname>
+                <given-names>BJ</given-names>
+              </name>
+            </person-group>
+            <article-title>Yersinia pestis can infect the Pawlowsky glands of human body lice and be transmitted by louse bite.</article-title>
+            <source>PLoS Biol</source>
+            <year>2024</year>
+            <month>May</month>
+            <volume>22</volume>
+            <issue>5</issue>
+            <fpage>e3002625</fpage>
+            <pub-id pub-id-type="pmid">38771885</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r28">
+          <label>28</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Zhou</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Zhu</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Cao</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Shi</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Shen</surname>
+                <given-names>J</given-names>
+              </name>
+            </person-group>
+            <article-title>High mortality rates and long-term complications in children with infectious brainstem encephalitis: A study of sixteen cases.</article-title>
+            <source>PLoS One</source>
+            <year>2025</year>
+            <volume>20</volume>
+            <issue>2</issue>
+            <fpage>e0318818</fpage>
+            <pub-id pub-id-type="pmid">39903731</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r29">
+          <label>29</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Singh</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Singh</surname>
+                <given-names>KP</given-names>
+              </name>
+              <name>
+                <surname>Cherian</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Saminathan</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Kapoor</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Manjunatha Reddy</surname>
+                <given-names>GB</given-names>
+              </name>
+              <name>
+                <surname>Panda</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Dhama</surname>
+                <given-names>K</given-names>
+              </name>
+            </person-group>
+            <article-title>Rabies&#x000a0;-&#x000a0;epidemiology, pathogenesis, public health concerns and advances in diagnosis and control: a comprehensive review.</article-title>
+            <source>Vet Q</source>
+            <year>2017</year>
+            <month>Dec</month>
+            <volume>37</volume>
+            <issue>1</issue>
+            <fpage>212</fpage>
+            <page-range>212-251</page-range>
+            <pub-id pub-id-type="pmid">28643547</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r30">
+          <label>30</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Woo</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Michelow</surname>
+                <given-names>IC</given-names>
+              </name>
+              <name>
+                <surname>Choi</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Lee</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Park</surname>
+                <given-names>S</given-names>
+              </name>
+            </person-group>
+            <article-title>Transmission of Severe Fever with Thrombocytopenia Syndrome (SFTS) to humans: A systematic review of individual participant data and meta-analysis.</article-title>
+            <source>J Infect Public Health</source>
+            <year>2025</year>
+            <month>Jun</month>
+            <volume>18</volume>
+            <issue>6</issue>
+            <fpage>102685</fpage>
+            <pub-id pub-id-type="pmid">40073663</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r31">
+          <label>31</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Fooks</surname>
+                <given-names>AR</given-names>
+              </name>
+              <name>
+                <surname>Cliquet</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Finke</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Freuling</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Hemachudha</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Mani</surname>
+                <given-names>RS</given-names>
+              </name>
+              <name>
+                <surname>M&#x000fc;ller</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Nadin-Davis</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Picard-Meyer</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>Wilde</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Banyard</surname>
+                <given-names>AC</given-names>
+              </name>
+            </person-group>
+            <article-title>Rabies.</article-title>
+            <source>Nat Rev Dis Primers</source>
+            <year>2017</year>
+            <month>Nov</month>
+            <day>30</day>
+            <volume>3</volume>
+            <fpage>17091</fpage>
+            <pub-id pub-id-type="pmid">29188797</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r32">
+          <label>32</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Van de Vuurst</surname>
+                <given-names>P</given-names>
+              </name>
+              <name>
+                <surname>Qiao</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Soler-Tovar</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Escobar</surname>
+                <given-names>LE</given-names>
+              </name>
+            </person-group>
+            <article-title>Climate change linked to vampire bat expansion and rabies virus spillover.</article-title>
+            <source>Ecography</source>
+            <year>2024</year>
+            <month>Oct</month>
+            <volume>2024</volume>
+            <issue>10</issue>
+            <pub-id pub-id-type="pmid">39712434</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r33">
+          <label>33</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Daniels</surname>
+                <given-names>SA</given-names>
+              </name>
+              <name>
+                <surname>King</surname>
+                <given-names>EM</given-names>
+              </name>
+              <name>
+                <surname>Olivier</surname>
+                <given-names>CJ</given-names>
+              </name>
+              <name>
+                <surname>Harding</surname>
+                <given-names>JP</given-names>
+              </name>
+              <name>
+                <surname>Fehlner-Gardiner</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Nadin-Davis</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Murray</surname>
+                <given-names>MC</given-names>
+              </name>
+            </person-group>
+            <article-title>Rabies virus infection in a 21-year-old male presenting with ascending paralysis after a bat scratch.</article-title>
+            <source>J Assoc Med Microbiol Infect Dis Can</source>
+            <year>2020</year>
+            <month>Oct</month>
+            <volume>5</volume>
+            <issue>3</issue>
+            <fpage>201</fpage>
+            <page-range>201-208</page-range>
+            <pub-id pub-id-type="pmid">36341314</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r34">
+          <label>34</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>B&#x00142;a&#x0017c;</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Zalewski</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Masiak</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Kujawa</surname>
+                <given-names>MJ</given-names>
+              </name>
+              <name>
+                <surname>Gosz</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Buda</surname>
+                <given-names>N</given-names>
+              </name>
+            </person-group>
+            <article-title>Rat bite fever mimicking ANCA-associated vasculitis.</article-title>
+            <source>Rheumatol Int</source>
+            <year>2023</year>
+            <month>Oct</month>
+            <volume>43</volume>
+            <issue>10</issue>
+            <fpage>1957</fpage>
+            <page-range>1957-1964</page-range>
+            <pub-id pub-id-type="pmid">37450033</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r35">
+          <label>35</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Rosafio</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Schwaller</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Ribordy</surname>
+                <given-names>V</given-names>
+              </name>
+            </person-group>
+            <article-title>[Beware of cat bites].</article-title>
+            <source>Rev Med Suisse</source>
+            <year>2025</year>
+            <month>Feb</month>
+            <day>12</day>
+            <volume>21</volume>
+            <issue>905</issue>
+            <fpage>293</fpage>
+            <page-range>293-294</page-range>
+            <pub-id pub-id-type="pmid">39949230</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r36">
+          <label>36</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>&#x0017b;yluk</surname>
+                <given-names>A</given-names>
+              </name>
+            </person-group>
+            <article-title>Bite wounds to the hand - a review.</article-title>
+            <source>Pol Przegl Chir</source>
+            <year>2022</year>
+            <month>Feb</month>
+            <day>23</day>
+            <volume>94</volume>
+            <issue>5</issue>
+            <fpage>54</fpage>
+            <page-range>54-59</page-range>
+            <pub-id pub-id-type="pmid">36169586</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r37">
+          <label>37</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Cunningham</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Camilon</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Chao</surname>
+                <given-names>S</given-names>
+              </name>
+            </person-group>
+            <article-title>Surgical Management of Pediatric Dog Bites: A Systematic Review and Treatment Guideline.</article-title>
+            <source>J Pediatr Surg</source>
+            <year>2025</year>
+            <month>Feb</month>
+            <volume>60</volume>
+            <issue>2</issue>
+            <fpage>161984</fpage>
+            <pub-id pub-id-type="pmid">39462695</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r38">
+          <label>38</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Saverino</surname>
+                <given-names>KM</given-names>
+              </name>
+              <name>
+                <surname>Reiter</surname>
+                <given-names>AM</given-names>
+              </name>
+            </person-group>
+            <article-title>Clinical Presentation, Causes, Treatment, and Outcome of Lip Avulsion Injuries in Dogs and Cats: 24 Cases (2001-2017).</article-title>
+            <source>Front Vet Sci</source>
+            <year>2018</year>
+            <volume>5</volume>
+            <fpage>144</fpage>
+            <pub-id pub-id-type="pmid">30035113</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r39">
+          <label>39</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Beyene</surname>
+                <given-names>TJ</given-names>
+              </name>
+              <name>
+                <surname>Mourits</surname>
+                <given-names>MCM</given-names>
+              </name>
+              <name>
+                <surname>Kidane</surname>
+                <given-names>AH</given-names>
+              </name>
+              <name>
+                <surname>Hogeveen</surname>
+                <given-names>H</given-names>
+              </name>
+            </person-group>
+            <article-title>Estimating the burden of rabies in Ethiopia by tracing dog bite victims.</article-title>
+            <source>PLoS One</source>
+            <year>2018</year>
+            <volume>13</volume>
+            <issue>2</issue>
+            <fpage>e0192313</fpage>
+            <pub-id pub-id-type="pmid">29466403</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r40">
+          <label>40</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Barbosa Costa</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Gilbert</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Monroe</surname>
+                <given-names>B</given-names>
+              </name>
+              <name>
+                <surname>Blanton</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Ngam Ngam</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Recuenco</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Wallace</surname>
+                <given-names>R</given-names>
+              </name>
+            </person-group>
+            <article-title>The influence of poverty and rabies knowledge on healthcare seeking behaviors and dog ownership, Cameroon.</article-title>
+            <source>PLoS One</source>
+            <year>2018</year>
+            <volume>13</volume>
+            <issue>6</issue>
+            <fpage>e0197330</fpage>
+            <pub-id pub-id-type="pmid">29927935</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r41">
+          <label>41</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Jaindl</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Oberleitner</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Endler</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Thallinger</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Kovar</surname>
+                <given-names>FM</given-names>
+              </name>
+            </person-group>
+            <article-title>Management of bite wounds in children and adults-an analysis of over 5000 cases at a level I trauma centre.</article-title>
+            <source>Wien Klin Wochenschr</source>
+            <year>2016</year>
+            <month>May</month>
+            <volume>128</volume>
+            <issue>9-10</issue>
+            <fpage>367</fpage>
+            <page-range>367-75</page-range>
+            <pub-id pub-id-type="pmid">26659907</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r42">
+          <label>42</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Nelson</surname>
+                <given-names>CA</given-names>
+              </name>
+              <name>
+                <surname>Moore</surname>
+                <given-names>AR</given-names>
+              </name>
+              <name>
+                <surname>Perea</surname>
+                <given-names>AE</given-names>
+              </name>
+              <name>
+                <surname>Mead</surname>
+                <given-names>PS</given-names>
+              </name>
+            </person-group>
+            <article-title>Cat scratch disease: U.S. clinicians' experience and knowledge.</article-title>
+            <source>Zoonoses Public Health</source>
+            <year>2018</year>
+            <month>Feb</month>
+            <volume>65</volume>
+            <issue>1</issue>
+            <fpage>67</fpage>
+            <page-range>67-73</page-range>
+            <pub-id pub-id-type="pmid">28707827</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r43">
+          <label>43</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Mart&#x000ed;nez Lindado</surname>
+                <given-names>MA</given-names>
+              </name>
+              <name>
+                <surname>Praino</surname>
+                <given-names>ML</given-names>
+              </name>
+              <name>
+                <surname>Caratozzolo</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Toledano</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Zambrano</surname>
+                <given-names>CT</given-names>
+              </name>
+              <name>
+                <surname>Tineo</surname>
+                <given-names>MS</given-names>
+              </name>
+              <name>
+                <surname>Cazes</surname>
+                <given-names>CI</given-names>
+              </name>
+              <name>
+                <surname>Contrini</surname>
+                <given-names>MM</given-names>
+              </name>
+              <name>
+                <surname>L&#x000f3;pez</surname>
+                <given-names>EL</given-names>
+              </name>
+            </person-group>
+            <article-title>Cat Scratch Disease in Pediatrics: Who Has Systemic Involvement?</article-title>
+            <source>Pediatr Infect Dis J</source>
+            <year>2025</year>
+            <month>Jan</month>
+            <day>01</day>
+            <volume>44</volume>
+            <issue>1</issue>
+            <fpage>18</fpage>
+            <page-range>18-23</page-range>
+            <pub-id pub-id-type="pmid">39230263</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r44">
+          <label>44</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Johnston</surname>
+                <given-names>WF</given-names>
+              </name>
+              <name>
+                <surname>Yeh</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Nierenberg</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Procopio</surname>
+                <given-names>G</given-names>
+              </name>
+            </person-group>
+            <article-title>Exposure to Macaque Monkey Bite.</article-title>
+            <source>J Emerg Med</source>
+            <year>2015</year>
+            <month>Nov</month>
+            <volume>49</volume>
+            <issue>5</issue>
+            <fpage>634</fpage>
+            <page-range>634-7</page-range>
+            <pub-id pub-id-type="pmid">26281802</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r45">
+          <label>45</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Warpinski</surname>
+                <given-names>GP</given-names>
+              </name>
+              <name>
+                <surname>Ruha</surname>
+                <given-names>AM</given-names>
+              </name>
+            </person-group>
+            <article-title>North American Envenomation Syndromes.</article-title>
+            <source>Emerg Med Clin North Am</source>
+            <year>2022</year>
+            <month>May</month>
+            <volume>40</volume>
+            <issue>2</issue>
+            <fpage>313</fpage>
+            <page-range>313-326</page-range>
+            <pub-id pub-id-type="pmid">35461625</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r46">
+          <label>46</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Savu</surname>
+                <given-names>AN</given-names>
+              </name>
+              <name>
+                <surname>Schoenbrunner</surname>
+                <given-names>AR</given-names>
+              </name>
+              <name>
+                <surname>Politi</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Janis</surname>
+                <given-names>JE</given-names>
+              </name>
+            </person-group>
+            <article-title>Practical Review of the Management of Animal Bites.</article-title>
+            <source>Plast Reconstr Surg Glob Open</source>
+            <year>2021</year>
+            <month>Sep</month>
+            <volume>9</volume>
+            <issue>9</issue>
+            <fpage>e3778</fpage>
+            <pub-id pub-id-type="pmid">34522565</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r47">
+          <label>47</label>
+          <element-citation publication-type="journal">
+            <article-title>QuickStats: Number of Deaths Resulting from Being Bitten or Struck by a Dog,* by Sex - National Vital Statistics System, United States, 2011-2021.</article-title>
+            <source>MMWR Morb Mortal Wkly Rep</source>
+            <year>2023</year>
+            <month>Sep</month>
+            <day>08</day>
+            <volume>72</volume>
+            <issue>36</issue>
+            <fpage>999</fpage>
+            <pub-id pub-id-type="pmid">37676834</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r48">
+          <label>48</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Tuckel</surname>
+                <given-names>PS</given-names>
+              </name>
+              <name>
+                <surname>Milczarski</surname>
+                <given-names>W</given-names>
+              </name>
+            </person-group>
+            <article-title>The changing epidemiology of dog bite injuries in the United States, 2005-2018.</article-title>
+            <source>Inj Epidemiol</source>
+            <year>2020</year>
+            <month>Nov</month>
+            <day>01</day>
+            <volume>7</volume>
+            <issue>1</issue>
+            <fpage>57</fpage>
+            <pub-id pub-id-type="pmid">33129353</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r49">
+          <label>49</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>O'Hara</surname>
+                <given-names>N</given-names>
+              </name>
+            </person-group>
+            <article-title>Dog bites are increasing in frequency and severity - a sustained effect following the COVID-19 pandemic.</article-title>
+            <source>J Plast Reconstr Aesthet Surg</source>
+            <year>2024</year>
+            <month>Aug</month>
+            <volume>95</volume>
+            <fpage>21</fpage>
+            <page-range>21-23</page-range>
+            <pub-id pub-id-type="pmid">38865840</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r50">
+          <label>50</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Hurt</surname>
+                <given-names>JB</given-names>
+              </name>
+              <name>
+                <surname>Maday</surname>
+                <given-names>KR</given-names>
+              </name>
+            </person-group>
+            <article-title>Management and treatment of animal bites.</article-title>
+            <source>JAAPA</source>
+            <year>2018</year>
+            <month>Apr</month>
+            <volume>31</volume>
+            <issue>4</issue>
+            <fpage>27</fpage>
+            <page-range>27-31</page-range>
+            <pub-id pub-id-type="pmid">30973531</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r51">
+          <label>51</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Tulloch</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Ahearne</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Moxey-Butler</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>McNally</surname>
+                <given-names>J</given-names>
+              </name>
+            </person-group>
+            <article-title>Using civil claim enquiry data to understand the context and impact of dog-related injuries in England and Wales between 2017 and 2024.</article-title>
+            <source>Inj Prev</source>
+            <year>2026</year>
+            <month>Jan</month>
+            <day>08</day>
+            <pub-id pub-id-type="pmid">41506913</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r52">
+          <label>52</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Monti</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Kotzalidis</surname>
+                <given-names>GD</given-names>
+              </name>
+              <name>
+                <surname>Arcangeli</surname>
+                <given-names>V</given-names>
+              </name>
+              <name>
+                <surname>Brozzi</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Iacovino</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Giansanti</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Belella</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Marconi</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>Pulitan&#x000f2;</surname>
+                <given-names>SM</given-names>
+              </name>
+              <name>
+                <surname>Mazza</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Marano</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Conti</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Janiri</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Sani</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Chieffo</surname>
+                <given-names>DPR</given-names>
+              </name>
+            </person-group>
+            <article-title>Psychological Sequelae of Dog Bites in Children: A Review.</article-title>
+            <source>Children (Basel)</source>
+            <year>2024</year>
+            <month>Oct</month>
+            <day>07</day>
+            <volume>11</volume>
+            <issue>10</issue>
+            <pub-id pub-id-type="pmid">39457183</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r53">
+          <label>53</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Dey</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Zanobetti</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Linnman</surname>
+                <given-names>C</given-names>
+              </name>
+            </person-group>
+            <article-title>The risk of being bitten by a dog is higher on hot, sunny, and smoggy days.</article-title>
+            <source>Sci Rep</source>
+            <year>2023</year>
+            <month>Jun</month>
+            <day>15</day>
+            <volume>13</volume>
+            <issue>1</issue>
+            <fpage>8749</fpage>
+            <pub-id pub-id-type="pmid">37322022</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r54">
+          <label>54</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Chesdachai</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Tai</surname>
+                <given-names>DBG</given-names>
+              </name>
+              <name>
+                <surname>Yetmar</surname>
+                <given-names>ZA</given-names>
+              </name>
+              <name>
+                <surname>Misra</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Ough</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Abu Saleh</surname>
+                <given-names>O</given-names>
+              </name>
+            </person-group>
+            <article-title>The Characteristics of <italic>Capnocytophaga</italic> Infection: 10 Years of Experience.</article-title>
+            <source>Open Forum Infect Dis</source>
+            <year>2021</year>
+            <month>Jul</month>
+            <volume>8</volume>
+            <issue>7</issue>
+            <fpage>ofab175</fpage>
+            <pub-id pub-id-type="pmid">34327254</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r55">
+          <label>55</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Elizabeth Murray</surname>
+                <given-names>G</given-names>
+              </name>
+            </person-group>
+            <article-title>Examining evidence on dog bite injuries and their management in children.</article-title>
+            <source>Nurs Child Young People</source>
+            <year>2017</year>
+            <month>Apr</month>
+            <day>11</day>
+            <volume>29</volume>
+            <issue>3</issue>
+            <fpage>35</fpage>
+            <page-range>35-39</page-range>
+            <pub-id pub-id-type="pmid">28395618</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r56">
+          <label>56</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Seneschall</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Luna-Farro</surname>
+                <given-names>M</given-names>
+              </name>
+            </person-group>
+            <article-title>Controlling rabies through a multidisciplinary, public health system in Trujillo, La Libertad, Peru.</article-title>
+            <source>Pathog Glob Health</source>
+            <year>2013</year>
+            <month>Oct</month>
+            <volume>107</volume>
+            <issue>7</issue>
+            <fpage>361</fpage>
+            <page-range>361-6</page-range>
+            <pub-id pub-id-type="pmid">24392679</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18346.r57">
+          <label>57</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Aziz</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Rhee</surname>
+                <given-names>P</given-names>
+              </name>
+              <name>
+                <surname>Pandit</surname>
+                <given-names>V</given-names>
+              </name>
+              <name>
+                <surname>Tang</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Gries</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Joseph</surname>
+                <given-names>B</given-names>
+              </name>
+            </person-group>
+            <article-title>The current concepts in management of animal (dog, cat, snake, scorpion) and human bite wounds.</article-title>
+            <source>J Trauma Acute Care Surg</source>
+            <year>2015</year>
+            <month>Mar</month>
+            <volume>78</volume>
+            <issue>3</issue>
+            <fpage>641</fpage>
+            <page-range>641-8</page-range>
+            <pub-id pub-id-type="pmid">25710440</pub-id>
+          </element-citation>
+        </ref>
+      </ref-list>
+    </back>
+  </book-part>
+</book-part-wrapper>

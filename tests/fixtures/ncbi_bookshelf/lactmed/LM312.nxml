@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper id="LM312" content-type="chapter" from-where="body" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">lactmed</book-id>
+    <book-title-group>
+      <book-title>Drugs and Lactation Database (LactMed&#x000ae;)</book-title>
+    </book-title-group>
+    <pub-date date-type="pubr" publication-format="electronic">
+      <year>2006</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>National Institute of Child Health and Human Development</publisher-name>
+      <publisher-loc>Bethesda (MD)</publisher-loc>
+    </publisher>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Chemicals and Drugs</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Health Care</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Public Health</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes specific-use="display-globally" notes-type="disclaimer">
+      <p><bold>Disclaimer: </bold>Information presented in this database is not meant as a substitute for professional judgment. You should consult your healthcare provider for breastfeeding advice related to your particular situation. The U.S. government does not warrant or assume any liability or responsibility for the accuracy or completeness of the information on this Site.</p>
+    </notes>
+    <notes specific-use="display-globally" notes-type="rights">
+      <p><bold>Attribution Statement:</bold> LactMed is a registered trademark of the U.S. Department of Health and Human Services.</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <book-part-id book-part-id-type="pmcid">LM312</book-part-id>
+      <title-group>
+        <title>Amitriptyline</title>
+      </title-group>
+      <pub-history>
+        <date date-type="revised">
+          <day>15</day>
+          <month>8</month>
+          <year>2024</year>
+        </date>
+      </pub-history>
+      <related-object link-type="parent-book-link" source-id="lactmed">Drugs and Lactation Database (LactMed&#x000ae;)</related-object>
+      <related-object link-type="previous-part-link" source-id="lactmed" document-id="LM849" document-type="chapter">Amisulpride</related-object>
+      <related-object link-type="next-part-link" source-id="lactmed" document-id="amivantamab" document-type="chapter">Amivantamab</related-object>
+      <kwd-group>
+        <kwd>amitriptyline</kwd>
+        <kwd>Amitriptylin</kwd>
+        <kwd>Elavil</kwd>
+        <kwd>Damitriptyline</kwd>
+        <kwd>Triptanol</kwd>
+        <kwd>Damilen</kwd>
+        <kwd>Lantron</kwd>
+        <kwd>Seroten</kwd>
+        <kwd>Flavyl</kwd>
+        <kwd>Proheptadiene</kwd>
+        <kwd>Triptisol</kwd>
+        <kwd>Tryptanol</kwd>
+        <kwd>Adepress</kwd>
+        <kwd>Adepril</kwd>
+        <kwd>Triptilin</kwd>
+        <kwd>Redomex</kwd>
+        <kwd>Amitriptilina</kwd>
+        <kwd>Amitriptylinum</kwd>
+        <kwd>Amytriptylin</kwd>
+        <kwd>Tryptizol</kwd>
+        <kwd>Amitriptylin [German]</kwd>
+        <kwd>Amitriptilina [Italian]</kwd>
+        <kwd>Amitriptyline [INN:BAN]</kwd>
+        <kwd>Amitriptylinum [INN-Latin]</kwd>
+        <kwd>Amitriptilina [INN-Spanish]</kwd>
+        <kwd>50-48-6</kwd>
+        <kwd>Ro 4-1575</kwd>
+        <kwd>CCRIS 9174</kwd>
+        <kwd>MK 230</kwd>
+        <kwd>UNII-1806D8D52K</kwd>
+        <kwd>HSDB 3007</kwd>
+        <kwd>EINECS 200-041-6</kwd>
+        <kwd>BRN 2217885</kwd>
+        <kwd>1806D8D52K</kwd>
+        <kwd>N 750</kwd>
+        <kwd>5-(3-Dimethylaminopropylidene)-10,11-dihydro-5H-dibenzo(a,d)cycloheptene</kwd>
+        <kwd>EC 200-041-6</kwd>
+        <kwd>10,11-Dihydro-5-(gamma-dimethylaminopropylidene)-5H-dibenzo(a,d)cycloheptene</kwd>
+        <kwd>3-(10,11-Dihydro-5H-dibenzo(a,d)cyclohepten-5-ylidene)-N,N-dimethyl-1-propanamine</kwd>
+        <kwd>5-(3'-Dimethylaminopropylidene)-dibenzo-(a,d)(1,4)-cycloheptadiene</kwd>
+        <kwd>3-(10,11-Dihydro-5H-dibenzo(a,d)cyclohepten-5-yliden)-N,N-dimethylpropylamin</kwd>
+        <kwd>5-(gamma-Dimethylaminopropylidine)-5H-dibenzo(a,d)(1,4)cycloheptadiene</kwd>
+        <kwd>5-(gamma-Dimethylaminopropylidene)-10,11-dihydro-5H-dibenzo(a,d)cycloheptene</kwd>
+        <kwd>10,11-Dihydro-N,N-dimethyl-5H-dibenzo(a,d)heptalene-delta(sup 5),gamma-propylamine</kwd>
+        <kwd>1-Propanamine, 3-(10,11-dihydro-5H-dibenzo(a,d)cyclohepten-5-ylidene)-N,N-dimethyl-</kwd>
+        <kwd>5H-Dibenzo(a,d)cycloheptene-delta5,gamma-propylamine, 10,11-dihydro-N,N-dimethyl-</kwd>
+        <kwd>5H-Dibenzo(a,d)cycloheptene-delta(sup 5),gamma-propylamine, 10,11-dihydro-N,N-dimethyl-</kwd>
+      </kwd-group>
+    </book-part-meta>
+    <body>
+      <p>CASRN: 50-48-6</p>
+      <related-object link-type="ext-image-back-link" source-id="pubchem" document-id="134971346" document-id-type="sid" document-type="summary" object-id="134971346" object-id-type="sid" object-type="image"/>
+      <sec id="LM312.Drug_Levels_and_Effects">
+        <title>Drug Levels and Effects</title>
+        <sec id="LM312.Summary_of_Use_during_Lactation">
+          <title>Summary of Use during Lactation</title>
+          <p content-type="pubmed-excerpt">Milk levels of amitriptyline and its metabolites are low. Immediate side effects have not been reported and a limited amount of follow-up has found no adverse effects on infant growth and development. Amitriptyline use during breastfeeding would usually not be expected to cause any adverse effects in breastfed infants, especially if the infant is older than 2 months. A safety scoring system finds amitriptyline use to be possible with caution during breastfeeding.[<xref ref-type="bibr" rid="LM312.REF.1">1</xref>] However, rare sedation has been reported in a neonate. Other agents with fewer active metabolites may be preferred when large doses are required or while nursing a newborn or preterm infant.</p>
+        </sec>
+        <sec id="LM312.Drug_Levels">
+          <title>Drug Levels</title>
+          <p>Amitriptyline is metabolized to nortriptyline which has antidepressant activity equal to amitriptyline's.[<xref ref-type="bibr" rid="LM312.REF.2">2</xref>]</p>
+          <p><italic toggle="yes">Maternal Levels.</italic> A mother who had been taking amitriptyline 100 mg daily for 6 weeks postpartum had breastmilk levels of amitriptyline and nortriptyline of 151 and 59 mcg/L, respectively, 16 hours after a dose. Eleven days later, breastmilk levels of amitriptyline and nortriptyline were 135 and 52 mcg/L, respectively, 14 hours after the dose.[<xref ref-type="bibr" rid="LM312.REF.3">3</xref>] The amounts in milk represent an infant dosage of about 1.8% of the maternal weight-adjusted dosage.</p>
+          <p>Amitriptyline and nortriptyline were measured in breastmilk in a mother who was taking amitriptyline 75 mg daily. Her milk amitriptyline levels were 104 and 72 mcg/L and her nortriptyline levels were 75 and 63 mcg/L at 2 and 10 weeks, respectively, after starting treatment (time after dose not specified). After 19 weeks of therapy, an amitriptyline dose of 25 mg daily produced milk amitriptyline levels of 30 mcg/L; nortriptyline levels were not detectable (&#x0003c;30 mcg/L). The authors estimated that this infant would receive 1% of the maternal weight-adjusted dosage.[<xref ref-type="bibr" rid="LM312.REF.4">4</xref>]</p>
+          <p>Another mother who was taking amitriptyline 175 mg daily had amitriptyline and nortriptyline milk levels of 13 and 15 mcg/L each on the morning and evening of the first day of therapy. On days 2 to 26 of therapy, milk amitriptyline ranged from 23 to 38 mcg/L. On day 26 milk nortriptyline was about 64 mcg/L. E-10-hydroxynortriptyline was found in milk in levels averaging 89 mcg/L over this 26-day time period.[<xref ref-type="bibr" rid="LM312.REF.5">5</xref>]</p>
+          <p>A 2-week postpartum mother of a preterm infant had been taking amitriptyline 100 mg daily for 4 days when milk was analyzed. Milk amitriptyline levels were highest at 1.5 and 6 hours after the dose at 103 and 100 mcg/L, respectively. They fell to 29 mcg/L 24 hours after the dose. Milk nortriptyline levels were highest at 18 hours after the dose at 58 mcg/L.[<xref ref-type="bibr" rid="LM312.REF.6">6</xref>] Using the peak milk level data from this study, an exclusively breastfed infant would receive an estimated maximum of 0.9% of the maternal weight-adjusted dosage.</p>
+          <p>Two mothers who were taking amitriptyline had milk samples taken 12 to 15 hours after their daily dose. The mother taking 100 mg daily had a foremilk level of 30 mcg/L and a hindmilk level of 113 mcg/L. The mother taking 175 mg daily had a hindmilk level of 197 mcg/L.[<xref ref-type="bibr" rid="LM312.REF.7">7</xref>] Using the hindmilk data from this study, an exclusively breastfed infant would receive an estimated maximum of 1% of the maternal weight-adjusted dosage.</p>
+          <p><italic toggle="yes">Infant Levels.</italic> A mother who had been taking amitriptyline 150 mg daily for 3 weeks was nursing her infant (extent not stated). Amitriptyline and nortriptyline were undetectable (&#x0003c;28 mcg/L) in the infant's serum.[<xref ref-type="bibr" rid="LM312.REF.8">8</xref>]</p>
+          <p>A mother who had been taking amitriptyline 100 mg daily for 7.5 weeks postpartum was nursing her infant. Amitriptyline and nortriptyline were undetectable (&#x0003c;10 mcg/L) 14 hours after a dose.[<xref ref-type="bibr" rid="LM312.REF.3">3</xref>]</p>
+          <p>A 3-week-old breastfed had undetectable serum amitriptyline (&#x0003c;5 mcg/L) and nortriptyline (&#x0003c;15 mcg/L) during maternal amitriptyline use of 75 mg daily.[<xref ref-type="bibr" rid="LM312.REF.4">4</xref>]</p>
+          <p>After 26 days of breastfeeding (4 of 6 daily feedings; 500 to 600 mL daily) during maternal use of amitriptyline 175 mg daily, amitriptyline and its metabolites were undetectable in the serum of one infant.[<xref ref-type="bibr" rid="LM312.REF.5">5</xref>]</p>
+          <p>One infant whose mother was taking amitriptyline 100 mg daily, had a plasma level of 7.5 mcg/L at an unspecified time after the maternal dosage.[<xref ref-type="bibr" rid="LM312.REF.9">9</xref>]</p>
+        </sec>
+        <sec id="LM312.Effects_in_Breastfed_Infants">
+          <title>Effects in Breastfed Infants</title>
+          <p>At least 23 infants have been reported to have been exposed to amitriptyline in breastmilk up to 2002 with no reports of adverse reactions with maternal dosages from 75 to 175 mg daily.[<xref ref-type="bibr" rid="LM312.REF.4">4</xref>,<xref ref-type="bibr" rid="LM312.REF.7">7</xref>,<xref ref-type="bibr" rid="LM312.REF.10">10</xref>,<xref ref-type="bibr" rid="LM312.REF.11">11</xref>]</p>
+          <p>Follow-up for 1 to 3 years in a group of 20 breastfed infants whose mothers were taking a tricyclic antidepressant found no adverse effects on growth and development. One of the mothers whose infant was followed up at 18 months of age was taking amitriptyline 150 mg daily.[<xref ref-type="bibr" rid="LM312.REF.10">10</xref>]</p>
+          <p>Two small controlled studies indicate that other tricyclic antidepressants have no adverse effect on infant development.[<xref ref-type="bibr" rid="LM312.REF.9">9</xref>,<xref ref-type="bibr" rid="LM312.REF.12">12</xref>] In one of the studies, 2 mothers were taking amitriptyline 100 and 175 mg daily. One of the infants tested in the low normal range from birth and on repeat testing.[<xref ref-type="bibr" rid="LM312.REF.9">9</xref>]</p>
+          <p>In another study, 25 infants whose mothers took a tricyclic antidepressant during pregnancy and lactation were tested formally between 15 to 71 months and found to have normal growth and development. Some of the mothers were taking amitriptyline.[<xref ref-type="bibr" rid="LM312.REF.11">11</xref>]</p>
+          <p>A nursing mother was prescribed amitriptyline 10 mg daily for insomnia. After 3 days of the medication, her 15-day-old infant developed severe sedation and an estimated 80% decrease in breastfeeding because of the sedation. The infant was otherwise normal on examination. The drug was discontinued and symptoms decreased within 24 hours and were absent after 48 hours. Amitriptyline was restarted at 10 mg daily. The same effects reappeared in the infant and again disappeared by 48 hours after discontinuation of the drug.[<xref ref-type="bibr" rid="LM312.REF.13">13</xref>] The infant&#x02019;s sedation was probably caused by amitriptyline in breastmilk.</p>
+          <p>A case-control study in Israel compared 280 infants of nursing mothers taking long-term psychotropic drugs to the infants of 152 women taking antibiotics. Neonatal infant sleepiness was reported by 1 mother taking amitriptyline and none taking antibiotics.[<xref ref-type="bibr" rid="LM312.REF.14">14</xref>]</p>
+        </sec>
+        <sec id="LM312.Effects_on_Lactation_and_Breastmil">
+          <title>Effects on Lactation and Breastmilk</title>
+          <p>Amitriptyline has caused increased prolactin levels in nonpregnant, nonnursing patients.[<xref ref-type="bibr" rid="LM312.REF.15">15</xref>-<xref ref-type="bibr" rid="LM312.REF.17">17</xref>] The clinical relevance of these findings in nursing mothers is not known. The prolactin level in a mother with established lactation may not affect her ability to breastfeed.</p>
+          <p>An observational study looked at outcomes of 2859 women who took an antidepressant during the 2 years prior to pregnancy. Compared to women who did not take an antidepressant during pregnancy, mothers who took an antidepressant during all 3 trimesters of pregnancy were 37% less likely to be breastfeeding upon hospital discharge. Mothers who took an antidepressant only during the third trimester were 75% less likely to be breastfeeding at discharge. Those who took an antidepressant only during the first and second trimesters did not have a reduced likelihood of breastfeeding at discharge.[<xref ref-type="bibr" rid="LM312.REF.18">18</xref>] The antidepressants used by the mothers were not specified.</p>
+          <p>A retrospective cohort study of hospital electronic medical records from 2001 to 2008 compared women who had been dispensed an antidepressant during late gestation (n = 575; amitriptyline n = 30) to those who had a psychiatric illness but did not receive an antidepressant (n = 1552) and mothers who did not have a psychiatric diagnosis (n = 30,535). Women who received an antidepressant were 37% less likely to be breastfeeding at discharge than women without a psychiatric diagnosis, but no less likely to be breastfeeding than untreated mothers with a psychiatric diagnosis.[<xref ref-type="bibr" rid="LM312.REF.19">19</xref>]</p>
+          <p>In a study of 80,882 Norwegian mother-infant pairs from 1999 to 2008, new postpartum antidepressant use was reported by 392 women and 201 reported that they continued antidepressants from pregnancy. Compared with the unexposed comparison group, late pregnancy antidepressant use was associated with a 7% reduced likelihood of breastfeeding initiation, but with no effect on breastfeeding duration or exclusivity. Compared with the unexposed comparison group, new or restarted antidepressant use was associated with a 63% reduced likelihood of predominant, and a 51% reduced likelihood of any breastfeeding at 6 months, as well as a 2.6-fold increased risk of abrupt breastfeeding discontinuation. Specific antidepressants were not mentioned.[<xref ref-type="bibr" rid="LM312.REF.20">20</xref>]</p>
+        </sec>
+        <sec id="LM312.Alternate_Drugs_to_Consider">
+          <title>Alternate Drugs to Consider</title>
+          <p><related-object link-type="booklink" source-id="lactmed" document-id="LM314" document-type="book-part">Nortriptyline</related-object>, <related-object link-type="booklink" source-id="lactmed" document-id="LM327" document-type="book-part">Paroxetine</related-object>, <related-object link-type="booklink" source-id="lactmed" document-id="LM328" document-type="book-part">Sertraline</related-object></p>
+        </sec>
+        <sec id="LM312.References">
+          <title>References</title>
+          <ref-list id="LM312.References.reflist0">
+            <ref id="LM312.REF.1">
+              <label>1</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Uguz</surname>
+<given-names>F.</given-names></string-name>
+<article-title>A new safety scoring system for the use of psychotropic drugs during lactation.</article-title>
+<source>Am J Ther</source>
+<year>2021</year>;<volume>28</volume>:<fpage>e118</fpage>-<lpage>e26</lpage>.<pub-id pub-id-type="pmid">30601177</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.2">
+              <label>2</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Weissman</surname>
+<given-names>AM</given-names></string-name>, <string-name name-style="western"><surname>Levy</surname>
+<given-names>BT</given-names></string-name>, <string-name name-style="western"><surname>Hartz</surname>
+<given-names>AJ</given-names></string-name>, <etal>et al.</etal>
+<article-title>Pooled analysis of antidepressant levels in lactating mothers, breast milk, and nursing infants.</article-title>
+<source>Am J Psychiatry</source>
+<year>2004</year>;<volume>161</volume>:<fpage>1066</fpage>-<lpage>78</lpage>.<pub-id pub-id-type="pmid">15169695</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.3">
+              <label>3</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Bader</surname>
+<given-names>TF</given-names></string-name>, <string-name name-style="western"><surname>Newman</surname>
+<given-names>K</given-names></string-name>. <article-title>Amitriptyline in human breast milk and the nursing infant's serum.</article-title>
+<source>Am J Psychiatry</source>
+<year>1980</year>;<volume>137</volume>:<fpage>855</fpage>-<lpage>6</lpage>.<pub-id pub-id-type="pmid">7386673</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.4">
+              <label>4</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Brixen-Rasmussen</surname>
+<given-names>L</given-names></string-name>, <string-name name-style="western"><surname>Halgrener</surname>
+<given-names>J</given-names></string-name>, <string-name name-style="western"><surname>Jorgensen</surname>
+<given-names>A</given-names></string-name>. <article-title>Amitriptyline and nortriptyline excretion in human breast milk.</article-title>
+<source>Psychopharmacology (Berl)</source>
+<year>1982</year>;<volume>76</volume>:<fpage>94</fpage>-<lpage>5</lpage>.<pub-id pub-id-type="pmid">6805016</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.5">
+              <label>5</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Breyer-Pfaff</surname>
+<given-names>U</given-names></string-name>, <string-name name-style="western"><surname>Nill</surname>
+<given-names>K</given-names></string-name>, <string-name name-style="western"><surname>Entenmann</surname>
+<given-names>A</given-names></string-name>, <etal>et al.</etal>
+<article-title>Secretion of amitriptyline and metabolites into breast milk.</article-title>
+<source>Am J Psychiatry</source>
+<year>1995</year>;<volume>152</volume>:<fpage>812</fpage>-<lpage>3</lpage>.<pub-id pub-id-type="pmid">7726331</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.6">
+              <label>6</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Pittard</surname>
+<given-names>WB</given-names>, <suffix>III</suffix></string-name>, <string-name name-style="western"><surname>O'Neal</surname>
+<given-names>W</given-names>, <suffix>Jr</suffix></string-name>. <article-title>Amitriptyline excretion in human milk.</article-title>
+<source>J Clin Psychopharmacol</source>
+<year>1986</year>;<volume>6</volume>:<fpage>383</fpage>-<lpage>4</lpage>.<pub-id pub-id-type="pmid">3805339</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.7">
+              <label>7</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Yoshida</surname>
+<given-names>K</given-names></string-name>, <string-name name-style="western"><surname>Smith</surname>
+<given-names>B</given-names></string-name>, <string-name name-style="western"><surname>Kumar</surname>
+<given-names>R</given-names></string-name>. <article-title>Psychotropic drugs in mothers' milk: A comprehensive review of assay methods, pharmacokinetics and safety of breast-feeding.</article-title>
+<source>J Psychopharmacol</source>
+<year>1999</year>;<volume>13</volume>:<fpage>64</fpage>-<lpage>80</lpage>.<pub-id pub-id-type="pmid">10221361</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.8">
+              <label>8</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Erickson</surname>
+<given-names>SH</given-names></string-name>, <string-name name-style="western"><surname>Smith</surname>
+<given-names>GH</given-names></string-name>, <string-name name-style="western"><surname>Heidrich</surname>
+<given-names>F</given-names></string-name>. <article-title>Tricyclics and breast feeding.</article-title>
+<source>Am J Psychiatry</source>
+<year>1979</year>;<volume>136</volume>:<fpage>1483</fpage>.<pub-id pub-id-type="pmid">495815</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.9">
+              <label>9</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Yoshida</surname>
+<given-names>K</given-names></string-name>, <string-name name-style="western"><surname>Smith</surname>
+<given-names>B</given-names></string-name>, <string-name name-style="western"><surname>Craggs</surname>
+<given-names>M</given-names></string-name>, <etal>et al.</etal>
+<article-title>Investigation of pharmacokinetics and possible adverse effects in infants exposed to tricyclic antidepressants in breast-milk.</article-title>
+<source>J Affect Disord</source>
+<year>1997</year>;<volume>43</volume>:<fpage>225</fpage>-<lpage>37</lpage>.<pub-id pub-id-type="pmid">9186793</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.10">
+              <label>10</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Misri</surname>
+<given-names>S</given-names></string-name>, <string-name name-style="western"><surname>Sivertz</surname>
+<given-names>K</given-names></string-name>. <article-title>Tricyclic drugs in pregnancy and lactation: A preliminary report.</article-title>
+<source>Int J Psychiatry Med</source>
+<year>1991</year>;<volume>21</volume>:<fpage>157</fpage>-<lpage>71</lpage>.<pub-id pub-id-type="pmid">1894455</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.11">
+              <label>11</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Nulman</surname>
+<given-names>I</given-names></string-name>, <string-name name-style="western"><surname>Rovet</surname>
+<given-names>J</given-names></string-name>, <string-name name-style="western"><surname>Stewart</surname>
+<given-names>DE</given-names></string-name>, <etal>et al.</etal>
+<article-title>Child development following exposure to tricyclic antidepressants or fluoxetine throughout fetal life: A prospective, controlled study.</article-title>
+<source>Am J Psychiatry</source>
+<year>2002</year>;<volume>159</volume>:<fpage>1889</fpage>-<lpage>95</lpage>.<pub-id pub-id-type="pmid">12411224</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.12">
+              <label>12</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Buist</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Janson</surname>
+<given-names>H</given-names></string-name>. <article-title>Effect of exposure to dothiepin and northiaden in breast milk on child development.</article-title>
+<source>Br J Psychiatry</source>
+<year>1995</year>;<volume>167</volume>:<fpage>370</fpage>-<lpage>3</lpage>.<pub-id pub-id-type="pmid">7496646</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.13">
+              <label>13</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Uguz</surname>
+<given-names>F.</given-names></string-name>
+<article-title>Poor feeding and severe sedation in a newborn nursed by a mother on a low dose of amitriptyline.</article-title>
+<source>Breastfeed Med</source>
+<year>2017</year>;<volume>12</volume>:<fpage>67</fpage>-<lpage>8</lpage>.<pub-id pub-id-type="pmid">27870551</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.14">
+              <label>14</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Kronenfeld</surname>
+<given-names>N</given-names></string-name>, <string-name name-style="western"><surname>Ziv Baran</surname>, <given-names>T</given-names></string-name>, <string-name name-style="western"><surname>Berlin</surname>
+<given-names>M</given-names></string-name>, <etal>et al.</etal>
+<article-title>Chronic use of psychotropic medications in breastfeeding women: Is it safe?</article-title>
+<source>PLoS One</source>
+<year>2018</year>;<volume>13</volume>:<elocation-id>e0197196</elocation-id>.<pub-id pub-id-type="pmid">29782546</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.15">
+              <label>15</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Turkington</surname>
+<given-names>RW</given-names></string-name>. <article-title>Prolactin secretion in patients treated with various drugs: Phenothiazines, tricyclic antidepressants, reserpine, and methyldopa.</article-title>
+<source>Arch Intern Med</source>
+<year>1972</year>;<volume>130</volume>:<fpage>349</fpage>-<lpage>54</lpage>.<pub-id pub-id-type="pmid">4560178</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.16">
+              <label>16</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Coker</surname>
+<given-names>F</given-names></string-name>, <string-name name-style="western"><surname>Taylor</surname>
+<given-names>D.</given-names></string-name>
+<article-title>Antidepressant-induced hyperprolactinaemia: Incidence, mechanisms and management.</article-title>
+<source>CNS Drugs</source>
+<year>2010</year>;<volume>24</volume>:<fpage>563</fpage>-<lpage>74</lpage>.<pub-id pub-id-type="pmid">20527996</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.17">
+              <label>17</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Suthar</surname>
+<given-names>N</given-names></string-name>, <string-name name-style="western"><surname>Pareek</surname>
+<given-names>V</given-names></string-name>, <string-name name-style="western"><surname>Nebhinani</surname>
+<given-names>N</given-names></string-name>, <etal>et al.</etal>
+<article-title>Galactorrhea with antidepressants: A case series.</article-title>
+<source>Indian J Psychiatry</source>
+<year>2018</year>;<volume>60</volume>:<fpage>145</fpage>-<lpage>6</lpage>.<pub-id pub-id-type="pmid">29736080</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.18">
+              <label>18</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Venkatesh</surname>
+<given-names>KK</given-names></string-name>, <string-name name-style="western"><surname>Castro</surname>
+<given-names>VM</given-names></string-name>, <string-name name-style="western"><surname>Perlis</surname>
+<given-names>RH</given-names></string-name>, <etal>et al.</etal>
+<article-title>Impact of antidepressant treatment during pregnancy on obstetric outcomes among women previously treated for depression: An observational cohort study.</article-title>
+<source>J Perinatol</source>
+<year>2017</year>;<volume>37</volume>:<fpage>1003</fpage>-<lpage>9</lpage>.<pub-id pub-id-type="pmid">28682318</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.19">
+              <label>19</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Leggett</surname>
+<given-names>C</given-names></string-name>, <string-name name-style="western"><surname>Costi</surname>
+<given-names>L</given-names></string-name>, <string-name name-style="western"><surname>Morrison</surname>
+<given-names>JL</given-names></string-name>, <etal>et al.</etal>
+<article-title>Antidepressant use in late gestation and breastfeeding rates at discharge from hospital.</article-title>
+<source>J Hum Lact</source>
+<year>2017</year>;<volume>33</volume>:<fpage>701</fpage>-<lpage>9</lpage>.<pub-id pub-id-type="pmid">28984528</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM312.REF.20">
+              <label>20</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Grzeskowiak</surname>
+<given-names>LE</given-names></string-name>, <string-name name-style="western"><surname>Saha</surname>
+<given-names>MR</given-names></string-name>, <string-name name-style="western"><surname>Nordeng</surname>
+<given-names>H</given-names></string-name>, <etal>et al.</etal>
+<article-title>Perinatal antidepressant use and breastfeeding outcomes: Findings from the Norwegian Mother, Father and Child Cohort Study.</article-title>
+<source>Acta Obstet Gynecol Scand</source>
+<year>2022</year>;<volume>101</volume>:<fpage>344</fpage>-<lpage>54</lpage>.<pub-id pub-id-type="pmid">35170756</pub-id>
+</mixed-citation>
+            </ref>
+          </ref-list>
+        </sec>
+      </sec>
+      <sec id="LM312.Substance_Identification">
+        <title>Substance Identification</title>
+        <sec id="LM312.Substance_Name">
+          <title>Substance Name</title>
+          <p>Amitriptyline</p>
+        </sec>
+        <sec id="LM312.CAS_Registry_Number">
+          <title>CAS Registry Number</title>
+          <p>50-48-6</p>
+        </sec>
+        <sec id="LM312.Drug_Class">
+          <title>Drug Class</title>
+          <p>Breast Feeding</p>
+          <p>Lactation</p>
+          <p>Milk, Human</p>
+          <p>Antidepressive Agents</p>
+          <p>Antidepressive Agents, Tricyclic</p>
+        </sec>
+      </sec>
+    </body>
+  </book-part>
+</book-part-wrapper>

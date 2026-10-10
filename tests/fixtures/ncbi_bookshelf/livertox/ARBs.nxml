@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper content-type="chapter" id="ARBs" from-where="body" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">livertox</book-id>
+    <book-title-group>
+      <book-title>LiverTox</book-title>
+      <subtitle>Clinical and Research Information on Drug-Induced Liver Injury</subtitle>
+    </book-title-group>
+    <pub-date date-type="pubr" publication-format="electronic">
+      <year>2012</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>National Institute of Diabetes and Digestive and Kidney Diseases</publisher-name>
+      <publisher-loc>Bethesda (MD)</publisher-loc>
+    </publisher>
+    <abstract>
+      <p>LiverTox<sup>&#x000ae;</sup> provides up-to-date, unbiased and easily accessed information on the diagnosis, cause, frequency, clinical patterns and management of liver injury attributable to prescription and nonprescription medications and selected herbal and dietary supplements. The LiverTox site is meant as a resource for both physicians and patients as well as for clinical academicians and researchers who specialize in idiosyncratic drug induced hepatotoxicity.</p>
+      <p>Information on a specific medication or supplement can be found by entering its name in the &#x0201c;Search this book&#x0201d; box shown above or by browsing the list of agents by its first letter using the alphabetic list shown below.</p>
+      <p>LiverTox is produced by the National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK) and is copyright free. It is requested that use of LiverTox data in publications be given appropriate acknowledgment.</p>
+      <p>The LiverTox team welcomes user comments and enquiries. <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/books/n/livertox/Contactus/">Contact Us</ext-link></p>
+    </abstract>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes notes-type="disclaimer">
+      <title>Disclaimer:</title>
+      <p>Information presented in the LiverTox database is derived from the scientific literature and public databases and reflects professional expertise of the authors. Such information does not represent official policy of the U.S. Government or any agency thereof. The information in LiverTox is not meant as a substitute for FDA approved product labeling and professional judgment in the diagnosis and treatment of drug induced liver injury. The U.S. Government and its individual agencies, including the NIDDK, NLM and NIH, does not warrant or assume any legal responsibility for the accuracy, completeness, or usefulness of the information contained on this Site.</p>
+      <p>NIH does not provide patient-specific medical advice concerning the potential of a drug or herbal supplement to cause hepatotoxicity; please consult with a physician for guidance.</p>
+      <p>As of September&#x0202f;2026, initial drafts of new and updated LiverTox chapters will be generated using Artificial Intelligence. Each draft will then undergo careful review, verification, and editing by the LiverTox editorial team. New chapters will also undergo independent peer review from an external expert in drug&#x02011;induced liver injury</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <book-part-id book-part-id-type="pmcid">ARBs</book-part-id>
+      <title-group>
+        <title>Angiotensin II Receptor Antagonists</title>
+      </title-group>
+      <pub-history>
+        <date date-type="updated">
+          <day>13</day>
+          <month>1</month>
+          <year>2017</year>
+        </date>
+      </pub-history>
+    </book-part-meta>
+    <body>
+      <sec id="ARBs.OVERVIEW">
+        <title>OVERVIEW</title>
+        <p content-type="pubmed-excerpt">The angiotensin II receptor antagonists, also known as angiotensin receptor blockers (ARBs), are a family of agents that bind to and inhibit the angiotensin II type 1 receptor (AT1) and thus inhibit the renin-angiotensin system and its cascade of effects in causing arteriolar contraction and sodium retention. While angiotensin converting enzyme (ACE) inhibitors block the cleavage of angiotensin I to angiotensin II, the active peptide that causes a pressor response, the ARBs inhibit its peripheral action. The ARBs reduce blood pressure in animal models as well as in humans. Since their introduction in 1995, these agents have been used widely in the therapy of hypertension and to reduce the complications of hypertensive cardiovascular disease and diabetic nephropathy.</p>
+        <p content-type="pubmed-excerpt">The ARBs in clinical use in the United States include eight agents of similar chemical structure and activity, but somewhat different pharmacokinetics: losartan (Cozaar: 1995), valsartan (Diovan: 1996), irbesartan (Avapro: 1997), eprosartan (Teveten: 1997), candesartan (Atacand: 1998), telmisartan (Micardis: 1998), olmesartan (Benicar: 2002) and azilsartan (Edarbi: 2011). All of these agents have been associated with a minimal rate of serum enzyme elevations during chronic therapy (0.2% to 2%) which are usually mild-to-moderate in severity, self limited, and rarely require dose modification or discontinuation. As a class, the ARBs have been associated with rare instances of acute liver injury that is usually self limited in duration, but varies in clinical expression, being usually hepatocellular but occasional cholestatic in nature. The most common presentation of liver injury due to these agents is a cholestatic hepatitis arising within 1 to 8 weeks of starting and resolving as rapidly with stopping. Rare instances of prolonged jaundice have been described but not acute liver failure or autoimmune chronic hepatitis. Several Individual case reports of clinically apparent liver injury have been published in the literature for losartan, valsartan, irbesartan olmesartan and candesartan, but not specifically for azilsartan, eprosartan, and telmisartan, probably because these three have been in use for a shorter period of time and in fewer subjects.</p>
+        <p content-type="pubmed-excerpt">Most ARBs and particularly olmesartan have been linked to rare instances of severe sprue-like enteropathy. The enteropathy typically presents with severe diarrhea and weight loss with variable degrees of fatigue, nausea and abdominal discomfort arising 6 months to many years after starting the ARB. Small intestinal histological findings resemble those of celiac disease with flattening of the duodenal villuous pattern and villous atrophy. However, anti-transglutaminase and endomysial antibodies (the serologic markers of celiac disease) are negative and there is little or no response to a gluten-free diet. Withdrawal of the ARB, however, results in prompt improvement in the diarrhea and gradual resolution of duodenal villous flattening. Some cases of this drug induced enteropathy have had accompanying serum aminotransferase elevations and fatty liver by imaging or liver biopsy, which, along with the diarrhea, resolve rapidly with stopping the medication.</p>
+        <p>The different angiotensin II receptor antagonists are discussed separately, but references on their hepatotoxicity are given together after this introductory section.</p>
+        <p>The following links are to individual drug records.</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>
+<related-object source-id="livertox" document-id="Azilsartan">Azilsartan</related-object>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<related-object source-id="livertox" document-id="Candesartan">Candesartan</related-object>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<related-object source-id="livertox" document-id="Eprosartan">Eprosartan</related-object>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<related-object source-id="livertox" document-id="Irbesartan">Irbesartan</related-object>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<related-object source-id="livertox" document-id="Losartan">Losartan</related-object>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<related-object source-id="livertox" document-id="Olmesartan">Olmesartan</related-object>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<related-object source-id="livertox" document-id="Telmisartan">Telmisartan</related-object>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<related-object source-id="livertox" document-id="Valsartan">Valsartan</related-object>
+</p>
+          </list-item>
+        </list>
+      </sec>
+      <sec id="ARBs.CHEMICAL_FORMULAS_AND_STRUCTURES">
+        <title>CHEMICAL FORMULAS AND STRUCTURES</title>
+        <table-wrap id="ARBs.T1" position="anchor" orientation="portrait">
+          <table>
+            <tbody>
+              <tr>
+                <th id="hd_b_ARBs.T1_1_1_1_1" align="center" rowspan="1" colspan="1">DRUG</th>
+                <th id="hd_b_ARBs.T1_1_1_1_2" align="center" rowspan="1" colspan="1">CAS REGISTRY NO.</th>
+                <th id="hd_b_ARBs.T1_1_1_1_3" align="center" rowspan="1" colspan="1">MOLECULAR FORMULA</th>
+                <th id="hd_b_ARBs.T1_1_1_1_4" align="center" rowspan="1" colspan="1">STRUCTURE</th>
+              </tr>
+              <tr>
+                <td headers="hd_b_ARBs.T1_1_1_1_1" valign="middle" align="center" rowspan="1" colspan="1">Azilsartan</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_2" valign="middle" align="center" rowspan="1" colspan="1">147403-03-0</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_3" valign="middle" align="center" rowspan="1" colspan="1">C25-H20-N4-O5</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_4" valign="middle" align="center" rowspan="1" colspan="1">
+<graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Azilsartan_Structure_000.jpg" mime-subtype="jpeg" position="anchor" orientation="portrait"><alt-text>Azilsartan Chemical Structure</alt-text></graphic>
+</td>
+              </tr>
+              <tr>
+                <td headers="hd_b_ARBs.T1_1_1_1_1" valign="middle" align="center" rowspan="1" colspan="1">Candesartan</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_2" valign="middle" align="center" rowspan="1" colspan="1">
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pubchem" xlink:href="sid://135023846">139481-59-7</ext-link>
+</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_3" valign="middle" align="center" rowspan="1" colspan="1">C24-H20-N6-O3</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_4" valign="middle" align="center" rowspan="1" colspan="1">
+<graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Candesartan_Structure_000.jpg" mime-subtype="jpeg" position="anchor" orientation="portrait"><alt-text>Chemical Structure for Candesartan</alt-text></graphic>
+</td>
+              </tr>
+              <tr>
+                <td headers="hd_b_ARBs.T1_1_1_1_1" valign="middle" align="center" rowspan="1" colspan="1">Eprosartan</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_2" valign="middle" align="center" rowspan="1" colspan="1">
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pubchem" xlink:href="sid://135026481">133040-01-4</ext-link>
+</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_3" valign="middle" align="center" rowspan="1" colspan="1">C23-H24-N2-O4-S</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_4" valign="middle" align="center" rowspan="1" colspan="1">
+<graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Eprosartan_Structure_000.jpg" mime-subtype="jpeg" position="anchor" orientation="portrait"><alt-text>Chemical Structure for Eprosartan</alt-text></graphic>
+</td>
+              </tr>
+              <tr>
+                <td headers="hd_b_ARBs.T1_1_1_1_1" valign="middle" align="center" rowspan="1" colspan="1">Irbesartan</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_2" valign="middle" align="center" rowspan="1" colspan="1">
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pubchem" xlink:href="sid://135017843">138402-11-6</ext-link>
+</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_3" valign="middle" align="center" rowspan="1" colspan="1">C25-H28-N6-O</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_4" valign="middle" align="center" rowspan="1" colspan="1">
+<graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Irbesartan_Structure_000.jpg" mime-subtype="jpeg" position="anchor" orientation="portrait"><alt-text>Chemical Structure for Irbesartan</alt-text></graphic>
+</td>
+              </tr>
+              <tr>
+                <td headers="hd_b_ARBs.T1_1_1_1_1" valign="middle" align="center" rowspan="1" colspan="1">Losartan</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_2" valign="middle" align="center" rowspan="1" colspan="1">124750-99-8</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_3" valign="middle" align="center" rowspan="1" colspan="1">C22-H23-Cl-N6-O.K</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_4" valign="middle" align="center" rowspan="1" colspan="1">
+<graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Losartan_Structure_000.jpg" mime-subtype="jpeg" position="anchor" orientation="portrait"><alt-text>Chemical Structure for Losartan</alt-text></graphic>
+</td>
+              </tr>
+              <tr>
+                <td headers="hd_b_ARBs.T1_1_1_1_1" valign="middle" align="center" rowspan="1" colspan="1">Olmesartan</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_2" valign="middle" align="center" rowspan="1" colspan="1">
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pubchem" xlink:href="sid://135114358">144689-24-7</ext-link>
+</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_3" valign="middle" align="center" rowspan="1" colspan="1">C24-H26-N6-O3</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_4" valign="middle" align="center" rowspan="1" colspan="1">
+<graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Olmesartan_Structure_001.jpg" mime-subtype="jpeg" position="anchor" orientation="portrait"><alt-text>Chemical Structure for Olmesartan</alt-text></graphic>
+</td>
+              </tr>
+              <tr>
+                <td headers="hd_b_ARBs.T1_1_1_1_1" valign="middle" align="center" rowspan="1" colspan="1">Telmisartan</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_2" valign="middle" align="center" rowspan="1" colspan="1">
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pubchem" xlink:href="sid://135024022">144701-48-4</ext-link>
+</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_3" valign="middle" align="center" rowspan="1" colspan="1">C33-H30-N4-O2</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_4" valign="middle" align="center" rowspan="1" colspan="1">
+<graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Telmisartan_Structure_000.jpg" mime-subtype="jpeg" position="anchor" orientation="portrait"><alt-text>Chemical Structure for Telmisartan</alt-text></graphic>
+</td>
+              </tr>
+              <tr>
+                <td headers="hd_b_ARBs.T1_1_1_1_1" valign="middle" align="center" rowspan="1" colspan="1">Valsartan</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_2" valign="middle" align="center" rowspan="1" colspan="1">
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pubchem" xlink:href="sid://135024022">144701-48-4</ext-link>
+</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_3" valign="middle" align="center" rowspan="1" colspan="1">C24-H29-N5-O3</td>
+                <td headers="hd_b_ARBs.T1_1_1_1_4" valign="middle" align="center" rowspan="1" colspan="1">
+<graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="Valsartan_Structure_000.jpg" mime-subtype="jpeg" position="anchor" orientation="portrait"><alt-text>Chemical Structure for Valsartan</alt-text></graphic>
+</td>
+              </tr>
+            </tbody>
+          </table>
+        </table-wrap>
+      </sec>
+      <sec id="ARBs.ANNOTATED_BIBLIOGRAPHY">
+        <title>ANNOTATED BIBLIOGRAPHY</title>
+        <p>References updated: 13 January 2017</p>
+        <ref-list id="ARBs.ANNOTATED_BIBLIOGRAPHY.reflist0">
+          <ref id="ARBs.R1">
+            <mixed-citation publication-type="other">Zimmerman HJ. Cardiovascular agents. In, Zimmerman HJ. Hepatotoxicity: the adverse effects of drugs and other chemicals on the liver. 2nd ed. Philadelphia: Lippincott, 1999, pp. 623-5.<annotation><p><italic toggle="yes">(Expert review of hepatotoxicity published in 1999; mentions a single case of hepatotoxicity from losartan with a positive rechallenge [Bosch 1997]).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="ARBs.R2">
+            <mixed-citation publication-type="other">De Marzio DH, Navarro VJ. Antihypertensives. Hepatotoxicity of cardiovascular and antidiabetic medications. In, Kaplowitz N, DeLeve LD, eds. Drug-induced liver disease. 3rd ed. Amsterdam: Elsevier, 2013, pp. 522-6.<annotation><p><italic toggle="yes">(Review of hepatotoxicity of antihypertensive agents, mentions that cases of hepatotoxicity of candesartan, irbesartan, losartan and valsartan have been published, but none were fatal and were variable in both latency to onset [1 week to 6 months] and clinical presentation [cholestatic and hepatocellular]).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="ARBs.R3">
+            <mixed-citation publication-type="other">Michel T, Hoffman BB. Treatment of myocardial ischemia and hypertension. In, Brunton LL, Chabner BA, Knollman BC, eds. Goodman &#x00026; Gilman&#x02019;s the pharmacological basis of therapeutics. 12th ed. New York: McGraw-Hill, 2011, pp. 745-88.<annotation><p><italic toggle="yes">(Textbook of pharmacology and therapeutics).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="ARBs.R4">
+            <mixed-citation publication-type="other">Hillal-Dandan R. Nonpeptide angiotensin II receptor antagonists. Renin and angiotensin. In, Brunton LL, Chabner BA, Knollman BC, eds. Goodman &#x00026; Gilman&#x02019;s the pharmacological basis of therapeutics. 12th ed. New York: McGraw-Hill, 2011, pp. 736-9.<annotation><p><italic toggle="yes">(Textbook of pharmacology and therapeutics).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="ARBs.R5">
+            <mixed-citation publication-type="journal">Goldberg AI, Dunlay MC, Sweet CS. Safety and tolerability of losartan potassium, an angiotensin II receptor antagonist, compared with hydrochlorothiazide, atenolol, felodipine ER, and angiotensin-converting enzyme inhibitors for the treatment of systemic hypertension. Am J Cardiol 1995; 75: 793-5. <annotation><p><italic toggle="yes">(Summary of adverse events during losartan therapy in prelicensure clinical trials in more than 2000 patients; most symptoms were no more frequent than with placebo; ALT elevations occurred in 1.9% of patients on losartan, but rates were similar in comparator arms).</italic></p></annotation><pub-id pub-id-type="pmid">18800461</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R6">
+            <mixed-citation publication-type="journal">Nygaard B, Strandgaard S. Marked hepatotoxicity associated with losartan treatment. Blood Press 1996; 5: 190-1. <annotation><p><italic toggle="yes">(Two women developed anicteric hepatitis on losartan: 55 year old developed back pain 3 weeks after starting losartan [bilirubin 1.3 mg/dL, ALT 650 U/L, Alk P 396 U/L], resolving within a month of stopping; 46 year old developed chest pain &#x0201c;a few months&#x0201d; after starting losartan [ALT 311 U/L, no bilirubin or Alk P given], resolving within 2 weeks of stopping).</italic></p></annotation><pub-id pub-id-type="pmid">8790930</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R7">
+            <mixed-citation publication-type="journal">MacKay JH, Arcuri KE, Goldberg AI, Snapinn SM, Sweet CS. Losartan and low-dose hydrochlorothiazide in patients with essential hypertension. A double-blind, placebo-controlled trial of concomitant administration compared with individual components. Arch Intern Med 1996; 156: 278-85. <annotation><p><italic toggle="yes">(In a controlled trial of losartan with or without hydrochlorothiazide [HCTZ] vs placebo in 703 patients with hypertension, there were no overall changes in serum aminotransferase levels or serious adverse events or dose modifications for any laboratory abnormality).</italic></p></annotation><pub-id pub-id-type="pmid">8572837</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R8">
+            <mixed-citation publication-type="journal">Bosch X. Losartan-induced hepatotoxicity. JAMA 1997; 278: 1572. <annotation><p><italic toggle="yes">(46 year old man developed jaundice one month after starting losartan [bilirubin 9.6 mg/dL, ALT 2574 U/L, Alk P 738 U/L], resolving within 4 months of stopping; 3 week rechallenge led to jaundice [Case 1 for losartan]; reply from Merck mentioning 80 reports of liver abnormalities among an estimated 2 million patients treated).</italic></p></annotation><pub-id pub-id-type="pmid">9370501</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R9">
+            <mixed-citation publication-type="journal">Sever P, Holzgreve H. Long-term efficacy and tolerability of candesartan cilexetil in patients with mild to moderate hypertension. J Human Hypertens 1997; 11 [Suppl 2]: S69-73. <annotation><p><italic toggle="yes">(Analysis of two phase III trials [489 and 298 patients] of candesartan in hypertension for 6 to 12 months found low rate of side effects [headache and back pain most frequent] and &#x0201c;No clinically relevant changes in laboratory parameters [apart from two cases of increased hepatic enzymes]&#x0201d;).</italic></p></annotation><pub-id pub-id-type="pmid">9331014</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R10">
+            <mixed-citation publication-type="journal">Andrade RJ, Lucena MI, Santalla F. Hepatic injury associated with losartan. Ann Pharmacother 1998; 32: 1371. <italic toggle="yes">(77 year old man developed fatigue</italic><annotation><p><italic toggle="yes">3 weeks after starting an excessive dose of losartan [150 mg daily] for hypertension [bilirubin 1.7 mg/dL, ALT 410 U/L, Alk P normal], resolving within 4 weeks of stopping).</italic></p></annotation><pub-id pub-id-type="pmid">9876824</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R11">
+            <mixed-citation publication-type="journal">McClellan KJ, Goa KL. Candesartan cilexetil. A review of its use in essential hypertension. Drugs 1998; 56: 847-69. <annotation><p><italic toggle="yes">(Review of pharmacology, clinical use and safety of candesartan: studies in 4147 patients given doses of 8 or 16 mg daily found low rate of adverse events, headache in 10%, cough in 1.6%, similar rates with placebo; ALT elevations occur in &#x0201c;occasional&#x0201d; patients, reported in 2 of 632 patients in one trial of candesartan given for 12 months).</italic></p></annotation><pub-id pub-id-type="pmid">9829158</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R12">
+            <mixed-citation publication-type="journal">McClellan KJ, Balfour JA. Eprosartan. Drugs 1998; 55: 713-8. <annotation><p><italic toggle="yes">(Review of pharmacology, clinical studies and safety of eprosartan; tolerability at doses of 400 to 1200 mg daily was similar to placebo: no mention of ALT elevations or hepatotoxicity).</italic></p></annotation><pub-id pub-id-type="pmid">9585867</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R13">
+            <mixed-citation publication-type="journal">McClellan KJ, Markham A. Telmisartan. Drugs 1998; 56: 1039-44. <annotation><p><italic toggle="yes">(Review of pharmacology, clinical studies and safety of telmisartan; tolerability at doses of 20 to 160 mg daily was similar to placebo: no mention of ALT elevations or hepatotoxicity).</italic></p></annotation><pub-id pub-id-type="pmid">9878991</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R14">
+            <mixed-citation publication-type="journal">Mazzolai L, Burnier M. Comparative safety and tolerability of angiotensin II receptor antagonists. Drug Saf 1999; 21: 23-33. <annotation><p><italic toggle="yes">(Review of safety and tolerability of different ARBs in clinical trials: &#x0201c;None of the compounds induced a clear, specific, dose dependent adverse effect that could be attributed to the drug": common complaints being headache, dizziness, and fatigue; ALT elevations occurred rarely and were transient and resolved despite continuation of therapy, only one case of ALT requiring discontinuation has been reported, with losartan and from the sponsor).</italic></p></annotation><pub-id pub-id-type="pmid">10433351</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R15">
+            <mixed-citation publication-type="journal">Sega R. Efficacy and safety of eprosartan in severe hypertension. Eprosartan Multinational Study Group. Blood Press 1999; 8: 114-21. <annotation><p><italic toggle="yes">(Among 118 patients with hypertension treated with eprosartan or enalapril for 2 weeks, side effects were mild and similar in both groups; ALT results not given).</italic></p></annotation><pub-id pub-id-type="pmid">10451039</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R16">
+            <mixed-citation publication-type="journal">Shusterman NH. Safety and efficacy of eprosartan, a new angiotensin II receptor blocker. Am Heart J 1999; 138 (3 Pt 2): 238-45. <annotation><p><italic toggle="yes">(Review of clinical efficacy and safety of eprosartan; no mention of hepatotoxicity or ALT elevations).</italic></p></annotation><pub-id pub-id-type="pmid">10467219</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R17">
+            <mixed-citation publication-type="journal">Burnier M, Brunner HR. Angiotensin II receptor antagonists. Lancet 2000; 355: 637-45. <annotation><p><italic toggle="yes">(Review of history, pharmacology, mechanism of action, clinical efficacy and safety of the angiotensin II receptor antagonists; &#x0201c;Occasional minor increases in liver enzymes were usually transient&#x0201d;).</italic></p></annotation><pub-id pub-id-type="pmid">10696996</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R18">
+            <mixed-citation publication-type="journal">Hariraj R, Stoner E, Jader S, Preston DM. Drug points: prolonged cholestasis associated with irbesartan. BMJ 2000; 321: 547. <annotation><p><italic toggle="yes">(62 year old developed jaundice 1 month after starting irbesartan with bilirubin 23.6 mg/dL, AST 177 U/L, Alk P 3193 U/L, slow recovery, 2 biopsies).</italic></p></annotation><pub-id pub-id-type="pmid">10968816</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R19">
+            <mixed-citation publication-type="journal">Gonz&#x000e1;lez-Jim&#x000e9;nez D, Varela JM, Calder&#x000f3;n E, Galindo J, Gonz&#x000e1;lez de la Puente MA. Candesartan and acute liver injury. Eur J Clin Pharmacol 2000; 56: 769-70. <annotation><p><italic toggle="yes">(70 year old developed abdominal pain and jaundice 2 weeks after starting candesartan with bilirubin 21 mg/dL, ALT 244 U/L, Alk P 221 U/L, resolution in 2 months).</italic></p></annotation><pub-id pub-id-type="pmid">11214790</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R20">
+            <mixed-citation publication-type="journal">Vallejo I, Garc&#x000ed;a Morillo S, Pamies E. [Acute hepatitis induced by candesartan]. Med Clin (Barc) 2000; 115: 719. Spanish. <annotation><p><italic toggle="yes">(41 year old developed jaundice 5 weeks after starting candesartan [bilirubin 20 mg/dL, ALT 2700 U/L, Alk P 321 U/L], resolved with stopping).</italic></p></annotation><pub-id pub-id-type="pmid">11141435</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R21">
+            <mixed-citation publication-type="journal">Markham A, Spencer CM, Jarvis B. Irbesartan: an updated review of its use in cardiovascular disorders. Drugs. 2000; 59: 1187-206. <annotation><p><italic toggle="yes">(Review of pharmacology, clinical use and side effects of irbesartan; analysis of pooled data from 9 studies in 2606 patients found low rate of adverse events; no mention of hepatotoxicity or ALT elevations).</italic></p></annotation><pub-id pub-id-type="pmid">10852648</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R22">
+            <mixed-citation publication-type="journal">Re&#x000f1;&#x000e9; JM, Buenestado J, Ses&#x000e9; E, Mi&#x000f1;ana JM. Acute hepatitis induced by valsartan. Med Clin (Barc) 2001; 117: 637-8. <annotation><p><italic toggle="yes">(54 year old woman developed jaundice 18 weeks after starting valsartan for hypertension [bilirubin 23.6 mg/dL, ALT 1664 U/L, Alk P 385 U/L], resolving within 2 months of stopping).</italic></p></annotation><pub-id pub-id-type="pmid">11714476</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R23">
+            <mixed-citation publication-type="journal">Chitturi S, Farrell GC. Drug-induced cholestasis. Semin Gastrointest Dis 2001; 12: 113-24. <annotation><p><italic toggle="yes">(Review of the causes of drug induced liver injury with cholestatic features).</italic></p></annotation><pub-id pub-id-type="pmid">11352118</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R24">
+            <mixed-citation publication-type="journal">Andrade RJ, Lucena MI, Fern&#x000e1;ndez MC, Vega JL, Garc&#x000ed;a-Cort&#x000e9;s M, Casado M, Guerrero-Sanchez E, et al. Cholestatic hepatitis related to use of irbesartan: a case report and a literature review of angiotensin II antagonist-associated hepatotoxicity. Eur J Gastroenterol Hepatol 2002; 14: 887-90. <annotation><p><italic toggle="yes">(56 year old man developed jaundice 8 days after starting irbesartan [bilirubin 7.5 to 16.1 mg/dL, ALT 2646 U/L, Alk P 305 U/L], with Alk P remaining elevated for 16 months, but biopsy not showing vanishing bile ducts).</italic></p></annotation><pub-id pub-id-type="pmid">12172412</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R25">
+            <mixed-citation publication-type="journal">Tabak F, Mert A, Ozaras R, Biyikli M, Ozturk R, Ozbay G, Senturk H, et al. Losartan-induced hepatic injury. J Clin Gastroenterol 2002; 34: 585-6. <annotation><p><italic toggle="yes">(52 year old woman developed jaundice 5 month after starting losartan [bilirubin not given, ALT 750 U/L], resolving after stopping but recurring within 2 weeks of restarting [bilirubin 8.9 mg/dL, ALT 941 U/L, Alk P 419 U/L], then resolving within 4 months of stopping).</italic></p></annotation><pub-id pub-id-type="pmid">11960076</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R26">
+            <mixed-citation publication-type="journal">Basile G, Villari D, Gangemi S, Ferrara T, Accetta MG, Nicita-Mauro V. Candesartan cilexetil-induced severe hepatotoxicity. J Clin Gastroenterol 2003; 36: 273-5. <annotation><p><italic toggle="yes">(61 year old woman developed fever, abdominal pain and jaundice 1 month after starting candesartan [bilirubin 27.2 rising to 46.8 mg/dL, ALT 918 U/L, Alk P 142 U/L], resolving in 8 weeks with prednisone therapy, biopsy showing bile duct loss and fibrosis: Case 1 of candesartan).</italic></p></annotation><pub-id pub-id-type="pmid">12590242</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R27">
+            <mixed-citation publication-type="journal">Kiykim A, Altintas E, Sezgin O, Sezer K, Tiftik N, Akbay E, Seyrek E, et al. Valsartan-induced hepatotoxicity in a HBsAg-Positive patient. Am J Gastroenterol 2003; 98: 507. <annotation><p><italic toggle="yes">(52 year old woman with hypertension and HBsAg without chronic ALT elevations developed jaundice 4 weeks after starting valsartan [peak bilirubin 7.8 mg/dL, ALT 780 U/L, Alk P 1840 U/L], resolving within 3 months of stopping).</italic></p></annotation><pub-id pub-id-type="pmid">12591083</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R28">
+            <mixed-citation publication-type="journal">Foruny Olcina JR, Moreira Vicente VF, G&#x000f3;mez Garc&#x000ed;a M, Morell Hita JL. [Irbesartan-induced acute hepatitis] Gastroenterol Hepatol 2004; 27: 71-2. Spanish. <annotation><p><italic toggle="yes">(59 year old developed jaundice 2 weeks after starting irbesartan [bilirubin 8.5 mg/dL, ALT 1378 U/L, Alk P 244 U/L], slow resolution over 4 months).</italic></p></annotation><pub-id pub-id-type="pmid">14733885</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R29">
+            <mixed-citation publication-type="journal">P&#x000e9;ron JM, Robic MA, Bureau C, Vinel JP. [Irbesartan induced acute hepatitis: one case]. Gastroenterol Clin Biol 2005; 29: 747-8. French. <annotation><p><italic toggle="yes">(51 year old woman with fatty liver developed urticaria and myalgias 3 weeks after starting irbesartan [ALT 890 U/L, Alk P and bilirubin not given], resolving within 2-3 weeks of stopping).</italic></p></annotation><pub-id pub-id-type="pmid">16149188</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R30">
+            <mixed-citation publication-type="journal">Annicchiarico BE, Siciliano M. Could irbesartan trigger autoimmune cholestatic hepatitis? Eur J Gastroenterol Hepatol 2005; 17: 247-8. <annotation><p><italic toggle="yes">(69 year old man developed jaundice 1 month after starting irbesartan [bilirubin 31.9 mg/dL, ALT 1449 U/L, Alk P 515 U/L, ANA negative and normal IgG], responsing to corticosteroids, but relapsing on stopping, but then resolving without relapse after 2 years of corticosteroid therapy, still autoantibody negative).</italic></p></annotation><pub-id pub-id-type="pmid">15674105</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R31">
+            <mixed-citation publication-type="journal">White WB, Punzi HA, Murwin D, Koval SE, Davidai G, Neutel JM. Effects of the angiotensin II receptor blockers telmisartan vs valsartan in combination with hydrochlorothiazide 25 mg once daily for the treatment of hypertension. J Clin Hypertens(Greenwich) 2006; 8: 626-33. <annotation><p><italic toggle="yes">(Among 1109 patients with hypertension treated with either telmisartan or valsartan or placebo, therapy was well tolerated; no mention of ALT levels or liver injury).</italic></p></annotation><pub-id pub-id-type="pmid">16957424</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R32">
+            <mixed-citation publication-type="journal">Russo MW, Galanko JA, Shrestha R, Fried MW, Watkins P. Liver transplantation for acute liver failure from drug-induced liver injury in the United States. Liver Transpl 2004; 10: 1018-23. <annotation><p><italic toggle="yes">(Among ~50,000 liver transplants done in the United States between 1990 and 2002, 270 [0.5%] were done for drug induced acute liver failure, but no case was attributed to an angiotensin receptor blocker).</italic></p></annotation><pub-id pub-id-type="pmid">15390328</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R33">
+            <mixed-citation publication-type="journal">Chalasani N, Fontana RJ, Bonkovsky HL, Watkins PB, Davern T, Serrano J, Yang H, Rochon J; Drug Induced Liver Injury Network (DILIN). Causes, clinical features, and outcomes from a prospective study of drug-induced liver injury in the United States. Gastroenterology 2008; 135: 1924-34. <italic toggle="yes">(Among 300 </italic><annotation><p><italic toggle="yes">cases of drug induced liver disease in the US collected from 2004 to 2008, no cases were attributed to an angiotensin receptor blocker).</italic></p></annotation><pub-id pub-id-type="pmid">18955056</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R34">
+            <mixed-citation publication-type="journal">Schumacher H, Mancia G. The safety profile of telmisartan as monotherapy or combined with hydrochlorothiazide: a retrospective analysis of 50 studies. Blood Press Suppl 2008; 1: 32-40. <annotation><p><italic toggle="yes">(Among all patients enrolled in 50 clinical trials of telmisartan [~8000] alone or in combination with HCTZ, "hepatobiliary system disorders" developed in 0.1% of patients and changes in liver enzymes in &#x0003c;0.1%, but no details or definitions given).</italic></p></annotation><pub-id pub-id-type="pmid">18705533</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R35">
+            <mixed-citation publication-type="journal">Chrysant SG, Oparil S, Melino M, Karki S, Lee J, Heyrman R. Efficacy and safety of long-term treatment with the combination of amlodipine besylate and olmesartan medoxomil in patients with hypertension. J Clin Hypertens(Greenwich) 2009; 11: 475-82. <annotation><p><italic toggle="yes">(Among 1940 patients with hypertension treated for 8 weeks with varying combinations of olmesartan, amlodipine and placebo, safety and tolerability were comparable among groups: no mention of ALT elevations or liver injury).</italic></p></annotation><pub-id pub-id-type="pmid">19751459</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R36">
+            <mixed-citation publication-type="journal">Destro M, Preti P, D'Ospina A, Christian Achiri NN, Ricci AR, Cagnoni F. Olmesartan medoxomil: recent clinical and experimental acquisitions. Expert Opin Drug Metab Toxicol 2009; 5: 1149-57. <annotation><p><italic toggle="yes">(Review of olmesartan, 7th ARB approved for use in the United States, given as a medoxomil prodrug which is esterified during absorption; not metabolized by P450 system and rates of side effects are similar to those with placebo and include headache, dizziness and flu-like symptoms; no mention of ALT elevations or liver toxicity).</italic></p></annotation><pub-id pub-id-type="pmid">19689219</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R37">
+            <mixed-citation publication-type="journal">Punzi HA. Efficacy and safety of olmesartan medoxomil alone and in combination with hydrochlorothiazide. Expert Rev Cardiovasc Ther 2009; 7: 229-39. <annotation><p><italic toggle="yes">(Review of olmesartan, a specific inhibitor of the angiotensin II type 1 receptor [AT1] taken as a medoxomil prodrug, few drug-drug interactions, effective alone or in combinations, particularly with hydrochlorothiazide, well tolerated with only slightly increased frequency of side effects compared to placebo [dizziness]; no mention of ALT elevations or liver toxicity).</italic></p></annotation><pub-id pub-id-type="pmid">19296759</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R38">
+            <mixed-citation publication-type="journal">Drugs for hypertension. Treat Guidel Med Lett 2009; 7: 1-10. <annotation><p><italic toggle="yes">(Brief overview of drugs for hypertension with guidelines on their use with information on prices and toxicities, mentions that side effects of angiotensin II receptor antagonists are similar to those of ACE inhibitors but they do not cause cough and only rarely cause angioedema, loss of taste and hepatoxicity).</italic></p></annotation><pub-id pub-id-type="pmid">19107095</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R39">
+            <mixed-citation publication-type="journal">Jim&#x000e9;nez-S&#x000e1;enz M, Arroyo Q, Sanjuan M, Herrer&#x000ed;as JM. [Candesartan-induced cholestatic hepatitis: a case report]. Gastroenterol Hepatol 2010; 33: 66-7. Spanish. <annotation><p><italic toggle="yes">(82 year old man developed jaundice 3 weeks after starting candesartan [bilirubin 6.8 rising to 22.2 mg/dL, ALT 272 U/L, Alk P 1045 U/L], resolving 8 weeks after stopping with prednisone therapy).</italic></p></annotation><pub-id pub-id-type="pmid">19713003</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R40">
+            <mixed-citation publication-type="journal">Reuben A, Koch DG, Lee WM; Acute Liver Failure Study Group. Drug-induced acute liver failure: results of a U.S. multicenter, prospective study. Hepatology 2010; 52: 2065-76. <annotation><p><italic toggle="yes">(Among 1198 patients with acute liver failure enrolled in a US prospective study between 1998 and 2007, 133 were attributed to drug induced liver injury, two of which were atttributed to antihypertensive agents [hydralazine and methyldopa], but none to angiotensive II receptor blockers).</italic></p></annotation><pub-id pub-id-type="pmid">20949552</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R41">
+            <mixed-citation publication-type="journal">Oertelt-Prigione S, Crosignani A, Gallieni M, Vassallo E, Podda M, Zuin M. Severe hepatic encephalopathy in a patient with liver cirrhosis after administration of angiotensin-converting enzyme inhibitor/angiotensin II receptor blocker combination therapy: a case report. J Med Case Reports 2010; 4: 141. <annotation><p><italic toggle="yes">(40 year old man with cirrhosis and nephrotic syndrome developed coma within a day of adding ramipril to losartan, therapy with marked elevation in ammonia levels, recovery within days of stopping and recurrence on restarting the combination).</italic></p></annotation><pub-id pub-id-type="pmid">20482828</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R42">
+            <mixed-citation publication-type="journal">Taglietti F, Del Nonno F, Baiocchini A, Falasca L, Pieri S, Capone A, Grilli E, et al. Acute hepatocellular and cholestatic injury during therapy with hydrochlorothiazide - clinicohistopathologic findings: a case report. J Med Case Rep 2010; 4: 332. <annotation><p><italic toggle="yes">(68 year old man developed fatigue and jaundice 10 days after starting hydrochlorothiazide and olmesartan [bilirubin 6.3 rising to 14.7 mg/dL, ALT 346 U/L, Alk P 1091 U/L], resolving within 3 months of stopping both drugs).</italic></p></annotation><pub-id pub-id-type="pmid">20964809</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R43">
+            <mixed-citation publication-type="journal">Baker WL, White WB. Azilsartan medoxomil: a new angiotensin II receptor antagonist for treatment of hypertension. Ann Pharmacother 2011; 45: 1506-15. <annotation><p><italic toggle="yes">(Systematic review of literature on safety and efficacy of azilsartan identified 3 full publications and 5 abstracts describing clinical trials; "Other laboratory findings, such as increases in serum creatinine or liver enzyme levels, occurred infrequently and at similar rates between all groups"; no mention of hepatotoxicity or clinically apparent liver injury).</italic></p></annotation><pub-id pub-id-type="pmid">22116996</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R44">
+            <mixed-citation publication-type="journal">Azilsartan medoxomil (Edarbi) the eighth ARB. Med Lett Drugs Ther 2011; 53(1364): 39-40. (Concise summary of the clinical efficacy, safety and costs of azilsartan shortly after its approval in the US; hepatotoxicity was not mentioned).<pub-id pub-id-type="pmid">21566544</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R45">
+            <mixed-citation publication-type="journal">Rubio-Tapia A, Herman ML, Ludvigsson JF, Kelly DG, Mangan TF, Wu TT, Murray JA. Severe spruelike enteropathy associated with olmesartan. Mayo Clin Proc 2012: 87: 732-8. <annotation><p><italic toggle="yes">(Clinical description of 22 patients with suspected olmesartan induced enteropathy, ages 47 to 81 years, presenting with chronic diarrhea, weight loss and fatigue arising 0.5-7 years after starting olmesartan, with villous flattening and atrophy on intestinal biopsy, lack of anti-endomyoseal and transglutaminase antibodies, not respondive to a gluten-free diet, but resolving promptly on stopping olmesartan and subsequent improvement in intestinal histology and ability to tolerate reintroduction of gluten).</italic></p></annotation><pub-id pub-id-type="pmid">22728033</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R46">
+            <mixed-citation publication-type="journal">Bj&#x000f6;rnsson ES, Bergmann OM, Bj&#x000f6;rnsson HK, Kvaran RB, Olafsson S. Incidence, presentation and outcomes in patients with drug-induced liver injury in the general population of Iceland. Gastroenterology 2013; 144: 1419-25. <annotation><p><italic toggle="yes">(In a population based study of drug induced liver injury from Iceland, 96 cases were identified over a 2 year period, but none were attributed to antihypertensive agents or to angiotensin II receptor blockers).</italic></p></annotation><pub-id pub-id-type="pmid">23419359</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R47">
+            <mixed-citation publication-type="journal">Cyrany J, Vasatko T, Machac J, Nova M, Szanyi J, Kopacova M. Letter: telmisartan-associated enteropathy - is there any class effect? Aliment Pharmacol Ther 2014; 40: 569-70. .<annotation><p><italic toggle="yes">(71 year old woman developed diarrhea, weight loss, and duodenal villous atrophy, arising 2 months after starting telmisasrtan and resolving with stopping and without gluten withdrawal; no mention of liver test results).</italic></p></annotation><pub-id pub-id-type="pmid">25103353</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R48">
+            <mixed-citation publication-type="journal">Ianiro G, Bibb&#x000f2; S, Montalto M, Ricci R, Gasbarrini A, Cammarota G. Systematic review: Sprue-like enteropathy associated with olmesartan. Aliment Pharmacol Ther 2014; 40: 16-23. <annotation><p><italic toggle="yes">(Systematic review of 11 publications on olmesartan associated enteropathy in 54 patients, ages 47 to 87 years, half women, arising 6 months to 7 years after starting drug, marked by villous flattening and atrophy, absence of typical celiac-associated autoantibodies, non-response to gluten free diet, but prompt resolution with stopping olmesartan).</italic></p></annotation><pub-id pub-id-type="pmid">24805127</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R49">
+            <mixed-citation publication-type="journal">Hern&#x000e1;ndez N, Bessone F, S&#x000e1;nchez A, di Pace M, Brahm J, Zapata R, A Chirino R, et al. Profile of idiosyncratic drug induced liver injury in Latin America. An analysis of published reports. Ann Hepatol 2014; 13: 231-9. <annotation><p><italic toggle="yes"> (Systematic review of literature of drug induced liver injury in Latin American countries published from 1996 to 2012 identified 176 cases, none of which were attributed to an angiotensin II receptor blocker).</italic></p></annotation><pub-id pub-id-type="pmid">24552865</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R50">
+            <mixed-citation publication-type="journal">Al-Halawani MZ, Thawabi M, Asslo F, Shaaban H, Shamoon F, Baddoura WJ. Losartan-induced ischemic hepatocellular hepatotoxicity: a case report and literature review. J Family Med Prim Care 2014; 3: 272-4. <annotation><p><italic toggle="yes"> (65 year old woman developed abdominal pain and anusea 4 months after starting losartan for hypertension [bilirubin 2.7 mg/dL, ALT 1184 U/L, Alk P 142 U/L], with rapid improvement within 1-2 weeks of stopping).</italic></p></annotation><pub-id pub-id-type="pmid">25374869</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R51">
+            <mixed-citation publication-type="journal">Chalasani N, Bonkovsky HL, Fontana R, Lee W, Stolz A, Talwalkar J, Reddy KR, et al; United States Drug Induced Liver Injury Network. Features and outcomes of 899 patients with drug-induced liver injury: The DILIN Prospective Study. Gastroenterology 2015; 148: 1340-52. <annotation><p><italic toggle="yes"> (Among 899 cases of drug induced liver injury enrolled in a US prospective study between 2004 and 2013, 39 were attributed to antihypertensive medications including one each to losartan, irbesartan and valsartan).</italic></p></annotation><pub-id pub-id-type="pmid">25754159</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R52">
+            <mixed-citation publication-type="journal">Negro A, Rossi GM, Santi R, Iori V, De Marco L. A case of severe sprue-like enteropathy associated with losartan. J Clin Gastroenterol 2015; 49: 794. <annotation><p><italic toggle="yes"> (A 69 year old man developed chronic diarrhea, weight loss, anemia and low albumin, 3 years after starting losartan for hypertension with prompt resolution on stopping; no mention of liver test results).</italic></p></annotation><pub-id pub-id-type="pmid">26166143</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R53">
+            <mixed-citation publication-type="journal">Herman ML, Rubio-Tapia A, Wu TT, Murray JA. A case of severe sprue-like enteropathy associated with valsartan. ACG Case Rep J 2015; 2: 92-4. <annotation><p><italic toggle="yes">(71 year old woman with long history of refractory sprue unresponsive to gluten withdrawal had a prompt remission when valsartan was discontinued [duration of therapy not provided]; no mention of liver test abnormalities).</italic></p></annotation><pub-id pub-id-type="pmid">26157924</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="ARBs.R54">
+            <mixed-citation publication-type="journal">Non-Alcoholic Fatty Liver Disease Study Group, Dolci M, Nascimbeni F, Romagnoli D, Reggiani Bonetti L, Guaraldi G, Mascia MT, Lonardo A. Nonalcoholic steatohepatitis heralding olmesartan-induced sprue-like enteropathy. Dig Liver Dis 2016; 48: 1399-1401. <annotation><p><italic toggle="yes">(72 year old man developed fatigue and diarrhea 3 years after starting olmesartan [ALT 202, Alk P and bilirubin not given, liver biopsy showing steatosis, duodenal biopsy partial villous atrophy], with prompt resolution of ALT elevations and diarrhea within 3 weeks of stopping olmesartan).</italic></p></annotation><pub-id pub-id-type="pmid">27486047</pub-id>
+</mixed-citation>
+          </ref>
+        </ref-list>
+      </sec>
+      <sec id="ARBs.OTHER_REFERENCE_LINKS" sec-type="link-group">
+        <title>OTHER REFERENCE LINKS</title>
+        <list list-type="order">
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/sites/entrez?cmd=search&#x00026;db=pubmed&#x00026;pubmedfilters=true&#x00026;term=(Angiotensinr+II+Receptor+Antagonists)+AND+Human%5BMH%5D+AND+(jaundice/CI+OR+bile+duct+diseases/CI+OR+liver/DE+OR+liver+diseases/CI)+AND+(%221900/1/1%22%5BEDat%5D%3A%222999/12/31%22%5BEDat%5D)">Recent References on Angiotensin II Receptor Antagonists: from PubMed.gov</ext-link>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://clinicaltrials.gov/ct2/results?term=(Angiotensinr+II+Receptor+Antagonists)">Trials on Angiotensin II Receptor Antagonists: from ClinicalTrials.gov</ext-link>
+</p>
+          </list-item>
+        </list>
+      </sec>
+    </body>
+  </book-part>
+</book-part-wrapper>

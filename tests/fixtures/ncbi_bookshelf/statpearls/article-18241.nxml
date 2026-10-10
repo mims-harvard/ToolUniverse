@@ -1,0 +1,668 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper id="article-18241" content-type="chapter" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">statpearls</book-id>
+    <book-id book-id-type="publisher-id">statpearls</book-id>
+    <book-title-group>
+      <book-title>StatPearls</book-title>
+    </book-title-group>
+    <pub-date publication-format="electronic" date-type="pubr">
+      <month>01</month>
+      <year>2023</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>StatPearls Publishing</publisher-name>
+      <publisher-loc>Treasure Island (FL)</publisher-loc>
+    </publisher>
+    <permissions>
+      <copyright-statement>Copyright &#x000a9; 2023, StatPearls Publishing LLC</copyright-statement>
+      <license xmlns:xlink="http://www.w3.org/1999/xlink" license-type="open-access" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">
+        <license-p>This book is distributed under the terms of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) (<ext-link ext-link-type="uri" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">http://creativecommons.org/licenses/by-nc-nd/4.0/</ext-link>), which permits others to distribute the work, provided that the article is not altered or used commercially. You are not required to obtain permission to distribute this article, provided that you credit the author and journal.</license-p>
+      </license>
+    </permissions>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes notes-type="disclaimer">
+      <p>The intent of StatPearls review books and articles is to identify knowledge deficits and assist you in the learning process. Review books and articles are not intended to be a source of the knowledge base of medicine. The authors and editors do not warrant the information is complete or accurate. The reader is encouraged to verify content and questions in several references. All drug indications and dosages should be verified before administration.</p>
+      <p>The authors and editors would like to extend special thanks to Erin Hughes and Gerson Rubio for their editorial support.</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <title-group>
+        <title>Beta Blockers</title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Farzam</surname>
+            <given-names>Khashayar</given-names>
+          </name>
+          <aff>McMaster University</aff>
+        </contrib>
+      </contrib-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Jan</surname>
+            <given-names>Arif</given-names>
+          </name>
+          <aff>Drexel University</aff>
+        </contrib>
+      </contrib-group>
+      <author-notes>
+        <fn id="article-18241.fn1" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Khashayar Farzam declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+        <fn id="article-18241.fn2" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Arif Jan declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+      </author-notes>
+      <pub-history>
+        <date date-type="updated">
+          <day>22</day>
+          <month>8</month>
+          <year>2023</year>
+        </date>
+      </pub-history>
+    </book-part-meta>
+    <body>
+      <sec id="article-18241.s1" sec-type="Continuing Education Activity">
+        <title>Continuing Education Activity</title>
+        <p content-type="pubmed-excerpt">Beta-blockers, as a class of drugs, are primarily used to treat cardiovascular diseases and other conditions. Beta-blockers are indicated and have FDA approval for the treatment of tachycardia, hypertension, myocardial infarction, congestive heart failure, cardiac arrhythmias, coronary artery disease, hyperthyroidism, essential tremor, aortic dissection, portal hypertension, glaucoma, migraine prophylaxis, and other conditions. They are also used to treat less common conditions such as long QT syndrome and hypertrophic obstructive cardiomyopathy. This activity outlines the indications, mechanism of action, safe administration, adverse effects, contraindications, toxicology, and monitoring of the broad array of physiological possibilities when using beta-blockers in the clinical setting.</p>
+        <p>
+<bold>Objectives:</bold>
+</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Summarize the mechanism of action of the beta-blocker class of medications, including the difference between selective and non-selective agents.</p>
+          </list-item>
+          <list-item>
+            <p>Identify the indications for beta-blocker therapy.</p>
+          </list-item>
+          <list-item>
+            <p>Review the adverse events, contraindications, toxicities, and interactions of beta-blockers.</p>
+          </list-item>
+          <list-item>
+            <p>Outline the importance of improving care coordination among the interprofessional team to improve outcomes for patients using beta-blockers for indicated conditions.</p>
+          </list-item>
+        </list>
+        <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/account/trialuserreg/?articleid=18241&#x00026;utm_source=pubmed&#x00026;utm_campaign=reviews&#x00026;utm_content=18241">Access free multiple choice questions on this topic.</ext-link>
+</p>
+      </sec>
+      <sec id="article-18241.s2" sec-type="Indications">
+        <title>Indications</title>
+        <p>Beta-blockers, as a class of drugs, are primarily used to treat cardiovascular diseases and other conditions.<xref ref-type="bibr" rid="article-18241.r1">[1]</xref></p>
+        <p>Beta receptors exist in three distinct forms: beta-1 (B1), beta-2 (B2), and beta-3 (B3). Beta-1 receptors located primarily in the heart mediate cardiac activity. Beta-2 receptors, with their diverse location in many organ systems, control various aspects of metabolic activity and induce smooth muscle relaxation. Beta-3 receptors induce the breakdown of fat cells and are less clinically relevant at present. Blockade of these receptors by beta-blocking medicines is used to treat a broad range of illnesses.<xref ref-type="bibr" rid="article-18241.r1">[1]</xref> Beta-blockers, as a class of medications, are essential drugs and are first-line treatments in many acute and chronic conditions.</p>
+        <p>Beta-blockers are indicated and have FDA approval for the treatment of tachycardia, hypertension, myocardial infarction, congestive heart failure, cardiac arrhythmias, coronary artery disease, hyperthyroidism, essential tremor, aortic dissection, portal hypertension, glaucoma, migraine prophylaxis, and other conditions. They are also used to treat less common conditions such as long QT syndrome and hypertrophic obstructive cardiomyopathy. Beta-blockers are available for administration in three primary forms: oral, intravenous, and ophthalmic, and the route of administration often depends on the acuity of the illness (parenteral use in arrhythmias), disease type (topical use in glaucoma) and chronicity of the disease.</p>
+        <p>Congestive heart failure patients are treated with beta-blockers if they are in a compensated state. Specifically, the beta-blockers bisoprolol, carvedilol, and metoprolol succinate are the agents chosen. Metoprolol tartrate is not indicated for heart failure and is instead used for other conditions, such as atrial fibrillation.</p>
+        <p>Athletes and musicians may use beta-blockers for their anxiolytic effects as well as their inhibitory effects on the sympathetic nervous system. They are not FDA-approved for the treatment of anxiety-related disorders; however, they have a potent anxiolytic effect. Combined with a reduction in tremors, they may lead to improved stage performance. An example of a beta blocker that is commonly prescribed for anxiety or stage fright is propranolol; it may reduce some peripheral symptoms of anxiety, such as tachycardia, sweating, and general tension.<xref ref-type="bibr" rid="article-18241.r2">[2]</xref></p>
+        <p>Certain beta blockers are also used specifically in inpatient units rather than for outpatient prescriptions. A common example is esmolol, which is typically used either in the intensive care unit or a cardiac inpatient unit. It is generally used for refractory tachycardia, such as atrial fibrillation, and is titrable given its short onset of action and short half-life. It may also play a role in refractory ventricular tachycardia, which is also known as an electrical storm.</p>
+      </sec>
+      <sec id="article-18241.s3" sec-type="Mechanism of Action">
+        <title>Mechanism of Action</title>
+        <p>The catecholamines, epinephrine, and norepinephrine bind to B1 receptors and increase cardiac automaticity as well as conduction velocity. B1 receptors also induce renin release, and this leads to an increase in blood pressure. In contrast, binding to B2 receptors causes relaxation of the smooth muscles along with increased metabolic effects such as glycogenolysis.</p>
+        <p>Beta-blockers vary in their specificity towards different receptors, and accordingly, the effects produced depend on the type of receptor(s) blocked as well as the organ system involved. Some beta-blockers also bind to alpha receptors to some degree, allowing them to induce a different clinical outcome when used in specific settings.</p>
+        <p>Once beta-blockers bind to the B1 and B2 receptors, they inhibit these effects. Therefore, the chronotropic and inotropic effects on the heart undergo inhibition, and the heart rate slows down as a result. Beta-blockers also decrease blood pressure via several mechanisms, including decreased renin and reduced cardiac output. The negative chronotropic and inotropic effects lead to a decreased oxygen demand; that is how angina improves after beta-blocker usage. These medications also prolong the atrial refractory periods and have a potent antiarrhythmic effect.</p>
+        <p>Beta-blockers classify as either non-selective or beta-1 selective. There are also beta-blocking drugs that affect both beta-2 and/or beta-3 selectively; neither has a known clinical purpose to date. Non-selective agents bind to both beta-1 and beta-2 receptors and induce antagonizing effects via both receptors. Examples include propranolol, carvedilol, sotalol, and labetalol. Beta-1 receptor-selective blockers like atenolol, bisoprolol, metoprolol, and esmolol only bind to the beta-1 receptors; therefore, they are cardio-selective.<xref ref-type="bibr" rid="article-18241.r3">[3]</xref><xref ref-type="bibr" rid="article-18241.r4">[4]</xref><xref ref-type="bibr" rid="article-18241.r5">[5]</xref></p>
+        <p>Beta-blockers lower the secretion of melatonin and hence may cause insomnia and sleep changes in some patients.<xref ref-type="bibr" rid="article-18241.r6">[6]</xref></p>
+        <p>Alpha-1 receptors induce vasoconstriction and increased cardiac chronotropy; this means agonism at the alpha-1 receptors leads to higher blood pressure and an increased heart rate. In contrast, antagonism at the alpha-1 receptor leads to vasodilation and negative chronotropic, which leads to lower blood pressure and decreased heart rate. Some beta-blockers, such as carvedilol, labetalol, and bucindolol, have additional alpha-1 receptor blockage activity in addition to their non-selective beta receptor blockage. This property is clinically useful because beta-blockers that block the alpha-1 receptor have a more pronounced clinical effect on treating hypertension.<xref ref-type="bibr" rid="article-18241.r7">[7]</xref></p>
+        <p>Sotalol is a beta blocker and also blocks potassium channels. It is a class III antiarrhythmic.</p>
+      </sec>
+      <sec id="article-18241.s4" sec-type="Administration">
+        <title>Administration</title>
+        <p>Beta-blockers are available in oral, intravenous, or ophthalmic forms and are also injectable intramuscularly.</p>
+        <p>Dosages are available in various ranges, depending on the specific medication. Outpatient prescriptions may include once-a-day dosing for longer-acting beta-blockers, such as metoprolol succinate. However, most beta blockers are often dosed at least twice per day. Certain beta-blockers, such as propranolol, with a half-life of approximately 4 hours, are dosed up to 3 or 4 times a day, depending on the indication and dose.</p>
+      </sec>
+      <sec id="article-18241.s5" sec-type="Adverse Effects">
+        <title>Adverse Effects</title>
+        <p>Beta receptors are found all over the body and induce a broad range of physiologic effects. The blockade of these receptors with beta-blocker medications can lead to many adverse effects. Bradycardia and hypotension are two adverse effects that may commonly occur. Fatigue, dizziness, nausea, and constipation are also widely reported. Some patients report sexual dysfunction and erectile dysfunction.</p>
+        <p>Less commonly, bronchospasm presents in patients on beta-blockers. Asthmatic patients are at a higher risk.<xref ref-type="bibr" rid="article-18241.r8">[8]</xref> Patients with Raynaud syndrome are also at risk of exacerbation. Beta-blockers can induce hyperglycemia and mask the hemodynamic signs usually seen in a hypoglycemic patient, such as tachycardia.</p>
+        <p>Some patients report insomnia, sleep changes, and nightmares while using beta-blockers. This effect is more pronounced with beta-blockers that cross the blood-brain barrier. Some patients can experience fatigue or weight gain while on beta blockers. Managing these adverse events involves discontinuing the medication. Certain beta blockers are more likely to induce weight gain or fatigue.</p>
+        <p>Carvedilol may increase edema in some patients.<xref ref-type="bibr" rid="article-18241.r9">[9]</xref></p>
+        <p>Sotalol blocks the potassium channels in the heart and thereby induces QT prolongation. It increases the risk of torsades de pointes.<xref ref-type="bibr" rid="article-18241.r10">[10]</xref></p>
+        <p>All beta-blockers, especially in patients with cardiac risk factors, carry a risk of heart block.</p>
+      </sec>
+      <sec id="article-18241.s6" sec-type="Contraindications">
+        <title>Contraindications</title>
+        <p>Traditionally, beta-blockers have been contraindicated in asthmatic patients. However, recommendations have aligned for allowing cardio-selective beta-blockers, also known as beta-1 selective, in asthmatics but not non-selective beta-blockers. Non-selective beta-blockers should not be used in patients with asthma.</p>
+        <p>Patients who have either acute or chronic bradycardia and/or hypotension have relative contraindications to beta-blocker usage.</p>
+        <p>Specific beta-blockers are contraindicated depending on the patient's past medical history. Patients diagnosed with long QT syndrome or who have had torsades de pointes in the past should not use the drug sotalol. Patients with the Raynaud phenomenon should avoid beta-blockers due to the risk of exacerbation.<xref ref-type="bibr" rid="article-18241.r11">[11]</xref><xref ref-type="bibr" rid="article-18241.r10">[10]</xref></p>
+      </sec>
+      <sec id="article-18241.s7" sec-type="Monitoring">
+        <title>Monitoring</title>
+        <p>The patient's heart rate and blood pressure require monitoring while using beta-blockers. When using sotalol, the clinician must monitor the QTc interval as sotalol has QT-prolonging effects.<xref ref-type="bibr" rid="article-18241.r12">[12]</xref> Other side effects, such as fatigue and weight gain, can also occur with outpatient beta-blocker use.</p>
+      </sec>
+      <sec id="article-18241.s8" sec-type="Toxicity">
+        <title>Toxicity</title>
+        <p>The antidote for beta-blocker overdose is glucagon. It is especially useful in beta-blocker-induced cardiotoxicity. The second line of treatment is cardiac pacing if glucagon fails, and this may include transcutaneous pacing or transvenous pacing.</p>
+        <p>Potential acute toxicity can be mitigated by using extended-release formulations as a preventative strategy, which will delay peak toxicity.<xref ref-type="bibr" rid="article-18241.r13">[13]</xref> Please see StatPearls' companion topic, "<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/point-of-care/30313">Beta-Blocker Toxicity</ext-link>," for an in-depth discussion on the potential toxicity associated with beta-blockers.</p>
+      </sec>
+      <sec id="article-18241.s9" sec-type="Enhancing Healthcare Team Outcomes">
+        <title>Enhancing Healthcare Team Outcomes</title>
+        <p>Beta-blockers are a broad class of medications that are used for various clinical benefits but also carry the potential for adverse effects. They are prescribed by clinicians (MDs, DOs, NPs, or PAs) in both outpatient and inpatient settings, largely for the treatment of cardiovascular-related illnesses. When a patient is admitted to an inpatient ward, monitoring the clinical effects and potential adverse effects is an interprofessional task. This is crucial because excessively high serum levels can have serious or even fatal consequences.</p>
+        <p>Nurses will generally be the first caregivers to take note of any unwanted effects, such as a change in vital signs. In contrast, outpatient settings differ in that the pharmacist may be the closest line of healthcare contact for a patient. The pharmacist will dispense the medication, perform medication reconciliation, verify dosing, and also advise other interprofessional team members and the patient of any potential adverse effects. It is also imperative to take note of any patients who are currently on beta-blockers, as it provides a clinical context for potential symptoms. Many clinical trials have been conducted on beta-blockers and shown to prolong life in patients with cardiovascular disease.<xref ref-type="bibr" rid="article-18241.r14">[14]</xref><xref ref-type="bibr" rid="article-18241.r15">[15]</xref><xref ref-type="bibr" rid="article-18241.r16">[16]</xref> [Level 2]</p>
+        <p>The interprofessional healthcare team needs to prescribe, manage, and monitor the use of beta-blockers safely and effectively. [Level 5]</p>
+      </sec>
+      <sec id="article-18241.s10">
+        <title>Review Questions</title>
+        <list list-type="bullet">
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/account/trialuserreg/?articleid=18241&#x00026;utm_source=pubmed&#x00026;utm_campaign=reviews&#x00026;utm_content=18241">Access free multiple choice questions on this topic.</ext-link>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/articlelibrary/commentarticle/18241/?utm_source=pubmed&#x00026;utm_campaign=comments&#x00026;utm_content=18241">Comment on this article.</ext-link>
+</p>
+          </list-item>
+        </list>
+      </sec>
+    </body>
+    <back>
+      <ref-list id="article-18241.s11">
+        <title>References</title>
+        <ref id="article-18241.r1">
+          <label>1</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>do Vale</surname>
+                <given-names>GT</given-names>
+              </name>
+              <name>
+                <surname>Ceron</surname>
+                <given-names>CS</given-names>
+              </name>
+              <name>
+                <surname>Gonzaga</surname>
+                <given-names>NA</given-names>
+              </name>
+              <name>
+                <surname>Simplicio</surname>
+                <given-names>JA</given-names>
+              </name>
+              <name>
+                <surname>Padovan</surname>
+                <given-names>JC</given-names>
+              </name>
+            </person-group>
+            <article-title>Three Generations of &#x003b2;-blockers: History, Class Differences and Clinical Applicability.</article-title>
+            <source>Curr Hypertens Rev</source>
+            <year>2019</year>
+            <volume>15</volume>
+            <issue>1</issue>
+            <fpage>22</fpage>
+            <page-range>22-31</page-range>
+            <pub-id pub-id-type="pmid">30227820</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r2">
+          <label>2</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Steenen</surname>
+                <given-names>SA</given-names>
+              </name>
+              <name>
+                <surname>van Wijk</surname>
+                <given-names>AJ</given-names>
+              </name>
+              <name>
+                <surname>van der Heijden</surname>
+                <given-names>GJ</given-names>
+              </name>
+              <name>
+                <surname>van Westrhenen</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>de Lange</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>de Jongh</surname>
+                <given-names>A</given-names>
+              </name>
+            </person-group>
+            <article-title>Propranolol for the treatment of anxiety disorders: Systematic review and meta-analysis.</article-title>
+            <source>J Psychopharmacol</source>
+            <year>2016</year>
+            <month>Feb</month>
+            <volume>30</volume>
+            <issue>2</issue>
+            <fpage>128</fpage>
+            <page-range>128-39</page-range>
+            <pub-id pub-id-type="pmid">26487439</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r3">
+          <label>3</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Gorre</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Vandekerckhove</surname>
+                <given-names>H</given-names>
+              </name>
+            </person-group>
+            <article-title>Beta-blockers: focus on mechanism of action. Which beta-blocker, when and why?</article-title>
+            <source>Acta Cardiol</source>
+            <year>2010</year>
+            <month>Oct</month>
+            <volume>65</volume>
+            <issue>5</issue>
+            <fpage>565</fpage>
+            <page-range>565-70</page-range>
+            <pub-id pub-id-type="pmid">21125979</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r4">
+          <label>4</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Rehsia</surname>
+                <given-names>NS</given-names>
+              </name>
+              <name>
+                <surname>Dhalla</surname>
+                <given-names>NS</given-names>
+              </name>
+            </person-group>
+            <article-title>Mechanisms of the beneficial effects of beta-adrenoceptor antagonists in congestive heart failure.</article-title>
+            <source>Exp Clin Cardiol</source>
+            <year>2010</year>
+            <season>Winter</season>
+            <volume>15</volume>
+            <issue>4</issue>
+            <fpage>e86</fpage>
+            <page-range>e86-95</page-range>
+            <pub-id pub-id-type="pmid">21264074</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r5">
+          <label>5</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Machackova</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Sanganalmath</surname>
+                <given-names>SK</given-names>
+              </name>
+              <name>
+                <surname>Elimban</surname>
+                <given-names>V</given-names>
+              </name>
+              <name>
+                <surname>Dhalla</surname>
+                <given-names>NS</given-names>
+              </name>
+            </person-group>
+            <article-title>&#x003b2;-adrenergic blockade attenuates cardiac dysfunction and myofibrillar remodelling in congestive heart failure.</article-title>
+            <source>J Cell Mol Med</source>
+            <year>2011</year>
+            <month>Mar</month>
+            <volume>15</volume>
+            <issue>3</issue>
+            <fpage>545</fpage>
+            <page-range>545-54</page-range>
+            <pub-id pub-id-type="pmid">20082655</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r6">
+          <label>6</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Fares</surname>
+                <given-names>A</given-names>
+              </name>
+            </person-group>
+            <article-title>Night-time exogenous melatonin administration may be a beneficial treatment for sleeping disorders in beta blocker patients.</article-title>
+            <source>J Cardiovasc Dis Res</source>
+            <year>2011</year>
+            <month>Jul</month>
+            <volume>2</volume>
+            <issue>3</issue>
+            <fpage>153</fpage>
+            <page-range>153-5</page-range>
+            <pub-id pub-id-type="pmid">22022142</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r7">
+          <label>7</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Weir</surname>
+                <given-names>MR</given-names>
+              </name>
+            </person-group>
+            <article-title>Beta-blockers in the treatment of hypertension: are there clinically relevant differences?</article-title>
+            <source>Postgrad Med</source>
+            <year>2009</year>
+            <month>May</month>
+            <volume>121</volume>
+            <issue>3</issue>
+            <fpage>90</fpage>
+            <page-range>90-8</page-range>
+            <pub-id pub-id-type="pmid">19491545</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r8">
+          <label>8</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Marques de Mello</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Cruz</surname>
+                <given-names>&#x000c1;A</given-names>
+              </name>
+            </person-group>
+            <article-title>A proposed scheme to cope with comorbidities in asthma.</article-title>
+            <source>Pulm Pharmacol Ther</source>
+            <year>2018</year>
+            <month>Oct</month>
+            <volume>52</volume>
+            <fpage>41</fpage>
+            <page-range>41-51</page-range>
+            <pub-id pub-id-type="pmid">30149069</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r9">
+          <label>9</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Soma</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Yao</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Saito</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Inaba</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Ishikawa</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Hirata</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Komuro</surname>
+                <given-names>I</given-names>
+              </name>
+            </person-group>
+            <article-title>Regular Treatment Strategy with a Large Amount of Carvedilol for Heart Failure Improves Biventricular Systolic Failure in a Patient with Repaired Tetralogy of Fallot.</article-title>
+            <source>Int Heart J</source>
+            <year>2018</year>
+            <month>Sep</month>
+            <day>26</day>
+            <volume>59</volume>
+            <issue>5</issue>
+            <fpage>1169</fpage>
+            <page-range>1169-1173</page-range>
+            <pub-id pub-id-type="pmid">30101848</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r10">
+          <label>10</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Etchegoyen</surname>
+                <given-names>CV</given-names>
+              </name>
+              <name>
+                <surname>Keller</surname>
+                <given-names>GA</given-names>
+              </name>
+              <name>
+                <surname>Mrad</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Cheng</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Di Girolamo</surname>
+                <given-names>G</given-names>
+              </name>
+            </person-group>
+            <article-title>Drug-induced QT Interval Prolongation in the Intensive Care Unit.</article-title>
+            <source>Curr Clin Pharmacol</source>
+            <year>2017</year>
+            <volume>12</volume>
+            <issue>4</issue>
+            <fpage>210</fpage>
+            <page-range>210-222</page-range>
+            <pub-id pub-id-type="pmid">29473523</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r11">
+          <label>11</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>De Vecchis</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Ariano</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Di Biase</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Noutsias</surname>
+                <given-names>M</given-names>
+              </name>
+            </person-group>
+            <article-title>Acquired drug-induced long QTc: new insights coming from a retrospective study.</article-title>
+            <source>Eur J Clin Pharmacol</source>
+            <year>2018</year>
+            <month>Dec</month>
+            <volume>74</volume>
+            <issue>12</issue>
+            <fpage>1645</fpage>
+            <page-range>1645-1651</page-range>
+            <pub-id pub-id-type="pmid">30112668</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r12">
+          <label>12</label>
+          <element-citation publication-type="book">
+            <person-group person-group-type="author">
+              <name>
+                <surname>Farzam</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Tivakaran</surname>
+                <given-names>VS</given-names>
+              </name>
+            </person-group>
+            <chapter-title>QT Prolonging Drugs</chapter-title>
+            <source>StatPearls [Internet]</source>
+            <publisher-name>StatPearls Publishing</publisher-name>
+            <publisher-loc>Treasure Island (FL)</publisher-loc>
+            <year>2023</year>
+            <month>7</month>
+            <day>2</day>
+            <pub-id pub-id-type="pmid">30521285</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r13">
+          <label>13</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Graudins</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Lee</surname>
+                <given-names>HM</given-names>
+              </name>
+              <name>
+                <surname>Druda</surname>
+                <given-names>D</given-names>
+              </name>
+            </person-group>
+            <article-title>Calcium channel antagonist and beta-blocker overdose: antidotes and adjunct therapies.</article-title>
+            <source>Br J Clin Pharmacol</source>
+            <year>2016</year>
+            <month>Mar</month>
+            <volume>81</volume>
+            <issue>3</issue>
+            <fpage>453</fpage>
+            <page-range>453-61</page-range>
+            <pub-id pub-id-type="pmid">26344579</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r14">
+          <label>14</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Hoedemaker</surname>
+                <given-names>NP</given-names>
+              </name>
+              <name>
+                <surname>Roolvink</surname>
+                <given-names>V</given-names>
+              </name>
+              <name>
+                <surname>de Winter</surname>
+                <given-names>RJ</given-names>
+              </name>
+              <name>
+                <surname>van Royen</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Fuster</surname>
+                <given-names>V</given-names>
+              </name>
+              <name>
+                <surname>Garc&#x000ed;a-Ruiz</surname>
+                <given-names>JM</given-names>
+              </name>
+              <name>
+                <surname>Er</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Gassanov</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Hanada</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Okumura</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Ib&#x000e1;&#x000f1;ez</surname>
+                <given-names>B</given-names>
+              </name>
+              <name>
+                <surname>van 't Hof</surname>
+                <given-names>AW</given-names>
+              </name>
+              <name>
+                <surname>Damman</surname>
+                <given-names>P</given-names>
+              </name>
+            </person-group>
+            <article-title>Early intravenous beta-blockers in patients undergoing primary percutaneous coronary intervention for ST-segment elevation myocardial infarction: A patient-pooled meta-analysis of randomized clinical trials.</article-title>
+            <source>Eur Heart J Acute Cardiovasc Care</source>
+            <year>2020</year>
+            <month>Aug</month>
+            <volume>9</volume>
+            <issue>5</issue>
+            <fpage>469</fpage>
+            <page-range>469-477</page-range>
+            <pub-id pub-id-type="pmid">30759994</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r15">
+          <label>15</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Suissa</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Ernst</surname>
+                <given-names>P</given-names>
+              </name>
+            </person-group>
+            <article-title>Beta-Blockers in COPD: A Methodological Review of the Observational Studies.</article-title>
+            <source>COPD</source>
+            <year>2018</year>
+            <month>Oct</month>
+            <volume>15</volume>
+            <issue>5</issue>
+            <fpage>520</fpage>
+            <page-range>520-525</page-range>
+            <pub-id pub-id-type="pmid">30822238</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-18241.r16">
+          <label>16</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Jensen</surname>
+                <given-names>MT</given-names>
+              </name>
+            </person-group>
+            <article-title>Resting heart rate and relation to disease and longevity: past, present and future.</article-title>
+            <source>Scand J Clin Lab Invest</source>
+            <year>2019</year>
+            <season>Feb-Apr</season>
+            <volume>79</volume>
+            <issue>1-2</issue>
+            <fpage>108</fpage>
+            <page-range>108-116</page-range>
+            <pub-id pub-id-type="pmid">30761923</pub-id>
+          </element-citation>
+        </ref>
+      </ref-list>
+    </back>
+  </book-part>
+</book-part-wrapper>
