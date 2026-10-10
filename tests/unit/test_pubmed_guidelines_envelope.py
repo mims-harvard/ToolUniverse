@@ -90,3 +90,18 @@ def test_missing_query_still_errors_before_search():
     result = tool.run({})
 
     assert result == {"status": "error", "error": "Query parameter is required"}
+
+
+def test_the_ncbi_key_comes_from_the_environment_not_an_argument(monkeypatch):
+    """`api_key` was a tool parameter that agents filled with ""; the key is now read like every other NCBI tool's."""
+    from unittest.mock import MagicMock, patch
+
+    from tooluniverse.unified_guideline_tools import PubMedGuidelinesTool
+
+    monkeypatch.setenv("NCBI_API_KEY", "env-key")
+    tool = PubMedGuidelinesTool({"name": "PubMed_Guidelines_Search"})
+    search = MagicMock()
+    search.json.return_value = {"esearchresult": {"idlist": [], "count": "0"}}
+    with patch.object(tool.session, "get", return_value=search) as get:
+        tool.run({"query": "asthma", "api_key": "from-the-call"})
+    assert get.call_args.kwargs["params"]["api_key"] == "env-key"

@@ -448,7 +448,8 @@
       "icite_tools.json",
       "ncbi_datasets_tools.json",
       "pubmed_tools.json",
-      "pubtator3_ext_tools.json"
+      "pubtator3_ext_tools.json",
+      "unified_guideline_tools.json"
     ]
   },
   {

@@ -9,16 +9,12 @@ All parameters listed are verified by live API testing.
 
 ### WHO_Guidelines_Search
 - **Parameters**: `query` (str, required), `limit` (int, required)
-- **Returns**: list of `{title, url, description, content, source}`
-- **Note**: Results not reliably filtered by topic; may return unrelated recent WHO publications
+- **Returns**: envelope `{status, data: [...], metadata: {total, retrieved, returned, truncated}}`; rows `{title, url, description, content, source}`
+- **Note**: Answers from a WHO health-topic page when the query names one, otherwise from a WHO IRIS text search; there is no generic fallback, so an empty `data` means WHO has nothing matching
 
 ### WHO_Guideline_Full_Text
 - **Parameters**: `url` (str, required)
 - **Returns**: dict with guideline text (or PDF link)
-
-### GIN_Guidelines_Search
-- **Parameters**: `query` (str, required), `limit` (int, required)
-- **Returns**: list of `{title, url, description, source, organization}`
 
 ### CMA_Guidelines_Search
 - **Parameters**: `query` (str, required), `limit` (int, required)
@@ -29,8 +25,8 @@ All parameters listed are verified by live API testing.
 - **Returns**: list of `{number, title, topic, published, url}`
 
 ### SIGN_list_guidelines
-- **Parameters**: `limit` (int, optional)
-- **Returns**: list of all SIGN guidelines
+- **Parameters**: `topic` (str, optional — one of SIGN's topic names, e.g. `'Cardiovascular'`, `'Eye'`; an unknown topic returns an error listing them), `limit` (int, optional)
+- **Returns**: list of SIGN guidelines
 
 ### CTFPHC_list_guidelines
 - **Parameters**: `limit` (int, optional)
@@ -42,23 +38,23 @@ All parameters listed are verified by live API testing.
 
 ### TRIP_Database_Guidelines_Search
 - **Parameters**: `query` (str, required), `limit` (int, required), `search_type` (str, required — must be `'guidelines'`)
-- **Returns**: list of `{title, url, description, content, publication}`
+- **Returns**: envelope `{status, data: [...], metadata: {total, retrieved, returned, truncated}}`; rows `{title, url, description, content, publication}`
 
 ### OpenAlex_Guidelines_Search
 - **Parameters**: `query` (str, required), `limit` (int, required), `year_from` (int, **optional**), `year_to` (int, **optional**)
-- **Returns**: list of `{title, authors, institutions, year, doi}`
+- **Returns**: envelope `{status, data: [...], metadata: {total, retrieved, returned, truncated}}`; rows `{title, authors, institutions, year, doi}`
 
 ### EuropePMC_Guidelines_Search
 - **Parameters**: `query` (str, required), `limit` (int, required)
-- **Returns**: list of `{title, pmid, pmcid, doi, authors}`
+- **Returns**: envelope `{status, data: [...], metadata: {total, retrieved, returned, truncated}}`; rows `{title, pmid, pmcid, doi, authors, abstract, publication_type}`
 
 ### PubMed_Guidelines_Search
-- **Parameters**: `query` (str, required), `limit` (int, required), `api_key` (str, **optional** — use `''` or omit)
-- **Returns**: list of `{title, pmid, pmcid, doi}`
+- **Parameters**: `query` (str, required), `limit` (int, optional); set `NCBI_API_KEY` in the environment for higher rate limits
+- **Returns**: envelope `{status, data: [...], metadata: {total, retrieved, returned, truncated}}`; rows `{title, pmid, abstract, publication_types}`
 
 ### NICE_Clinical_Guidelines_Search
 - **Parameters**: `query` (str, required), `limit` (int, required)
-- **Returns**: list of `{title, url, summary, content, date}`
+- **Returns**: envelope `{status, data: [...], metadata: {total, retrieved, returned, truncated}}`; rows `{title, url, summary, content, date}`
 
 ### NICE_Guideline_Full_Text
 - **Parameters**: `url` (str, required)
@@ -243,10 +239,10 @@ All CPIC tools return **dict-wrapped**: access via `r.get('data', [])` or `r.get
 
 | Clinical question type | Start with |
 |------------------------|------------|
-| General disease guideline | NICE + GIN + TRIP |
+| General disease guideline | NICE + TRIP + EuropePMC |
 | UK-specific | NICE + SIGN |
 | Canadian | CMA + CTFPHC |
-| International | GIN + OpenAlex |
+| International | EuropePMC + OpenAlex |
 | Cardiology | AHA_ACC_search_guidelines + AHA_list_guidelines |
 | Oncology | NCCN_search_guidelines + NCCN_list_patient_guidelines |
 | Diabetes | ADA_list_standards_sections + ADA_search_standards |
