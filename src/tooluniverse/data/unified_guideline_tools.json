@@ -101,6 +101,9 @@
     "type": "PubMedGuidelinesTool",
     "name": "PubMed_Guidelines_Search",
     "description": "Search PubMed for peer-reviewed clinical practice guidelines using NCBI E-utilities. Filters results specifically for guideline and practice guideline publication types. Provides access to high-quality, evidence-based clinical guidelines from medical journals worldwide.",
+    "optional_api_keys": [
+      "NCBI_API_KEY"
+    ],
     "parameter": {
       "type": "object",
       "properties": {
@@ -112,13 +115,6 @@
           "type": "integer",
           "description": "Maximum number of guidelines to return (default: 10)",
           "default": 10
-        },
-        "api_key": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "description": "Optional NCBI API key for higher rate limits. Get your free key at https://www.ncbi.nlm.nih.gov/account/ (optional, leave empty or null for anonymous access)"
         }
       },
       "required": [
@@ -198,8 +194,7 @@
     "test_examples": [
       {
         "query": "machine learning optimization",
-        "limit": 1,
-        "api_key": ""
+        "limit": 1
       }
     ]
   },
@@ -971,7 +966,7 @@
   {
     "type": "SIGNSearchGuidelinesTool",
     "name": "SIGN_search_guidelines",
-    "description": "Search SIGN (Scottish Intercollegiate Guidelines Network) clinical guidelines by keyword. Fetches the complete SIGN guidelines table (84 evidence-based guidelines) and filters by keyword match in title or clinical topic. Returns guideline number, title, topic, publication year, and URL.",
+    "description": "Search SIGN (Scottish Intercollegiate Guidelines Network) clinical guidelines by keyword. Fetches the complete SIGN guidelines table and filters by keyword match in title or clinical topic. Returns guideline number, title, topic, publication year, and URL.",
     "parameter": {
       "type": "object",
       "properties": {

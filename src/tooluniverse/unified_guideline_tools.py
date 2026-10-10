@@ -417,7 +417,9 @@ class PubMedGuidelinesTool(BaseTool):
     def run(self, arguments):
         query = arguments.get("query", "")
         limit = arguments.get("limit", 10)
-        api_key = arguments.get("api_key", "")
+        # From the environment, never a tool argument: agents filled the old
+        # `api_key` parameter with "" on every call.
+        api_key = self.credential("NCBI_API_KEY") or ""
 
         if not query:
             return {"status": "error", "error": "Query parameter is required"}
