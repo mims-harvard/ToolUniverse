@@ -1,0 +1,20 @@
+{
+  "api_name": "Guidelines International Network (GIN) International Guidelines Library",
+  "base_url": "https://guidelines.ebmportal.com/",
+  "failure_mode": "HTTP 200 with results that do not depend on the query: the tool's ?q= filter searches only the portal's front-page collection, ?%3Fq= returns the whole unfiltered library",
+  "root_cause": "The portal (EBSCO Stacks on Drupal) exposes no programmatic search of the library. GIN_Guidelines_Search requested /guidelines-international-network?q=<query>, which now 301-redirects to /?q=<query>; that parameter filters the small set of promoted front-page items (31 for 'hypertension', 10 for 'melanoma', none for endometriosis, dyslipidemia, macular degeneration, statin or scaphoid fracture). The real library search is a POST of the stacks-search-bar form, which redirects to /?%3Fq=<query>: fetched directly that URL ignores the query and lists the whole library (3916 results, unrelated titles, for 'endometriosis'), and fetched within the form's own session it returned no results for any of four queries. In ATHENA's MedR and NOHARM runs the tool answered 'No guidelines found' to 63 of 65 calls, which the agent read as 'no guideline exists'.",
+  "confirmed_broken_date": "2026-10-10",
+  "last_retry_date": "2026-10-10",
+  "retry_count": 3,
+  "github_issues": [],
+  "retry_after": "2027-04-01",
+  "workaround": "Search guideline literature with EuropePMC_Guidelines_Search (publication type or title marks a guideline), PubMed_Guidelines_Search (guideline publication types), TRIP_Database_Guidelines_Search and OpenAlex_Guidelines_Search; NICE, WHO, SIGN, CTFPHC, CMA, ADA, AHA/ACC and NCCN have their own tools.",
+  "workaround_tool_file": "src/tooluniverse/data/unified_guideline_tools.json",
+  "investigation_notes": [
+    "Attempt 1 -- the shipped request, ?q=<query> (after the 301): article elements are the promoted collection items (class node--promoted); 0 of 30 replayed agent queries and 4 of 13 hand-written topics returned any.",
+    "Attempt 2 -- ?%3Fq=<query>, the URL the portal's own search form redirects to: 'endometriosis' listed 3916 results whose first titles were a European Academy of Neurology guideline and two French infection-control documents; 'hypertension', 'dyslipidemia', 'macular degeneration' returned 0.",
+    "Attempt 3 -- the form flow in one session (GET for form_build_id, POST stacks_search_bar, follow the 302): 0 results for endometriosis, hypertension, macular degeneration and melanoma immunotherapy.",
+    "The page loads no search API (no AJAX endpoint or data-url attributes in the 559 kB response); results are rendered by the Stacks platform from session state."
+  ],
+  "attempted_config_file": "src/tooluniverse/data/broken_apis/gin_guidelines_tools.json"
+}

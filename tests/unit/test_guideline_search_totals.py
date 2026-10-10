@@ -22,7 +22,7 @@ would be the very defect being fixed, so only `<total>` is used.
 
 The six now share the {status, data, metadata} envelope already used by
 PubMed_Guidelines_Search and by EuropePMC_search_articles elsewhere in the
-repo. The remaining guideline searches (GIN, CMA, SIGN x2, CTFPHC x2) keep
+repo. The remaining guideline searches (CMA, SIGN x2, CTFPHC x2) keep
 their bare-list contract deliberately: their sources publish no match count,
 so an envelope could only report `total == len(results)`.
 """
@@ -54,7 +54,6 @@ ENVELOPED = [
 ]
 
 BARE_LIST = [
-    "GIN_Guidelines_Search",
     "CMA_Guidelines_Search",
     "SIGN_search_guidelines",
     "SIGN_list_guidelines",
