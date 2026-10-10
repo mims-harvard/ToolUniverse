@@ -121,7 +121,7 @@ Guidelines give **population-level recommendations**. When presenting findings:
 | `CTFPHC_search_guidelines` | `query` (NOT `q`), `limit` | Canadian prevention |
 | `OpenAlex_Guidelines_Search` | `query`, `limit`, optional `year_from`/`year_to` | Academic publications |
 | `EuropePMC_Guidelines_Search` | `query`, `limit` | Records typed or titled as guidelines, with full abstracts |
-| `PubMed_Guidelines_Search` | `query`, `limit`, optional `api_key` | Literature fallback |
+| `PubMed_Guidelines_Search` | `query`, `limit` | Literature fallback; reads `NCBI_API_KEY` from the environment |
 
 NICE, TRIP, WHO, OpenAlex, EuropePMC and PubMed return `{status, data, metadata}`: rows are in `result['data']` and the match count in `result['metadata']['total']`; an empty `data` with `status: success` means the source has nothing on the query. CMA, SIGN and CTFPHC return lists directly.
 

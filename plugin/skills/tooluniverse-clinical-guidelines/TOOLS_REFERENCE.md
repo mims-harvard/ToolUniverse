@@ -49,7 +49,7 @@ All parameters listed are verified by live API testing.
 - **Returns**: envelope `{status, data: [...], metadata: {total, retrieved, returned, truncated}}`; rows `{title, pmid, pmcid, doi, authors, abstract, publication_type}`
 
 ### PubMed_Guidelines_Search
-- **Parameters**: `query` (str, required), `limit` (int, required), `api_key` (str, **optional** — use `''` or omit)
+- **Parameters**: `query` (str, required), `limit` (int, optional); set `NCBI_API_KEY` in the environment for higher rate limits
 - **Returns**: envelope `{status, data: [...], metadata: {total, retrieved, returned, truncated}}`; rows `{title, pmid, abstract, publication_types}`
 
 ### NICE_Clinical_Guidelines_Search
