@@ -112,7 +112,22 @@ def _extract_text_from_html(html_text: str) -> str:
                     return
                 if self._skip_depth:
                     return
-                if t in {"p", "br", "div", "section", "li", "tr"}:
+                # Headings end a block too: Europe PMC abstracts close one
+                # straight into its text ("<h4>Background</h4>The ...").
+                if t in {
+                    "p",
+                    "br",
+                    "div",
+                    "section",
+                    "li",
+                    "tr",
+                    "h1",
+                    "h2",
+                    "h3",
+                    "h4",
+                    "h5",
+                    "h6",
+                }:
                     self._parts.append(" ")
 
             def handle_data(self, data):

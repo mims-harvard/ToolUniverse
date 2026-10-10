@@ -311,7 +311,6 @@ STATIC_LAZY_REGISTRY = {
     "GEORESTTool": "geo_tool",
     "GEOSearchDatasets": "geo_tool",
     "GIABTool": "giab_tool",
-    "GINGuidelinesTool": "unified_guideline_tools",
     "GNPSTool": "gnps_tool",
     "GOAPITool": "go_api_tool",
     "GPCRdbTool": "gpcrdb_tool",
