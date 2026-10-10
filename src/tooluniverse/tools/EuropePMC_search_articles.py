@@ -1,7 +1,7 @@
 """
 EuropePMC_search_articles
 
-Search for articles on Europe PMC including abstracts and metadata. Returns the top `limit` resul...
+Search Europe PMC (PubMed/MEDLINE plus PMC full text and preprints) for published biomedical and ...
 """
 
 from typing import Any, Optional, Callable
@@ -22,7 +22,7 @@ def EuropePMC_search_articles(
     validate: bool = True,
 ) -> Any:
     """
-    Search for articles on Europe PMC including abstracts and metadata. Returns the top `limit` resul...
+    Search Europe PMC (PubMed/MEDLINE plus PMC full text and preprints) for published biomedical and ...
 
     Parameters
     ----------

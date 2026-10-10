@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper id="drugandlactglossary" content-type="glossary" from-where="back" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">lactmed</book-id>
+    <book-title-group>
+      <book-title>Drugs and Lactation Database (LactMed&#x000ae;)</book-title>
+    </book-title-group>
+    <pub-date date-type="pubr" publication-format="electronic">
+      <year>2006</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>National Institute of Child Health and Human Development</publisher-name>
+      <publisher-loc>Bethesda (MD)</publisher-loc>
+    </publisher>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Chemicals and Drugs</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Health Care</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Public Health</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes specific-use="display-globally" notes-type="disclaimer">
+      <p><bold>Disclaimer: </bold>Information presented in this database is not meant as a substitute for professional judgment. You should consult your healthcare provider for breastfeeding advice related to your particular situation. The U.S. government does not warrant or assume any liability or responsibility for the accuracy or completeness of the information on this Site.</p>
+    </notes>
+    <notes specific-use="display-globally" notes-type="rights">
+      <p><bold>Attribution Statement:</bold> LactMed is a registered trademark of the U.S. Department of Health and Human Services.</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="glossary">
+    <book-part-meta>
+      <book-part-id book-part-id-type="pmcid">drugandlactglossary</book-part-id>
+      <title-group>
+        <title>Drugs and Lactation Database (LactMed) &#x02013; Glossary</title>
+      </title-group>
+      <related-object link-type="parent-book-link" source-id="lactmed">Drugs and Lactation Database (LactMed&#x000ae;)</related-object>
+      <related-object link-type="previous-part-link" source-id="lactmed" document-id="lactmedfs" document-type="appendix"><italic toggle="yes">Fact Sheet.</italic> Drugs and Lactation Database (LactMed<sup>&#x000ae;</sup>)</related-object>
+      <related-object link-type="next-part-link" source-id="lactmed" document-id="LactMedrefs" document-type="appendix">LactMed Selected References</related-object>
+    </book-part-meta>
+    <body>
+      <def-list>
+        <def-item id="absorption">
+          <term>Absorption</term>
+          <def>
+            <p>The passage of a chemical or drug across the tissue of the gastrointestinal tract into the bloodstream that goes to the liver, where it may undergo metabolism before entry into the general circulation of the bloodstream.</p>
+          </def>
+        </def-item>
+        <def-item id="bioavailability">
+          <term>Bioavailability</term>
+          <def>
+            <p>The extent to which a chemical or drug crosses the tissue of the gastrointestinal tract and through the liver, and enters the general circulation of the bloodstream either as active drug or metabolite(s).</p>
+          </def>
+        </def-item>
+        <def-item id="colostrum">
+          <term>Colostrum</term>
+          <def>
+            <p>Breast fluid that is secreted during the first few days after birth, before the onset of mature milk.</p>
+          </def>
+        </def-item>
+        <def-item id="concentration">
+          <term>Concentration</term>
+          <def>
+            <p>The amount of a substance in a given volume of body fluid. The same as Level.</p>
+          </def>
+        </def-item>
+        <def-item id="ductus-arteriosus">
+          <term>Ductus Arteriosus</term>
+          <def>
+            <p>A blood vessel that connects the left pulmonary artery and the aorta of the fetus.</p>
+          </def>
+        </def-item>
+        <def-item id="exclusive-breastfeeding">
+          <term>Exclusive Breastfeeding</term>
+          <def>
+            <p>Feeding an infant with breastmilk alone, with no other intake, with the exception of prescribed medications and vitamins. According to the American Academy of Pediatrics and the World Health Organization, breastfeeding should be exclusive for the first six months of the baby's life.</p>
+          </def>
+        </def-item>
+        <def-item id="excretion">
+          <term>Excretion</term>
+          <def>
+            <p>The elimination of a chemical or drug from the body, usually by the kidneys, either as unchanged drug or its metabolite(s).</p>
+          </def>
+        </def-item>
+        <def-item id="expressed-milk">
+          <term>Expressed Milk</term>
+          <def>
+            <p>Milk that is extracted from the breast by means other than nursing, such as by hand or using a breast pump.</p>
+          </def>
+        </def-item>
+        <def-item id="foremilk">
+          <term>Foremilk</term>
+          <def>
+            <p>The first milk that is excreted from the breast at the beginning of a nursing bout or at the beginning of expression. It is relatively low in fat.</p>
+          </def>
+        </def-item>
+        <def-item id="galactagogue">
+          <term>Galactagogue</term>
+          <def>
+            <p>Medications or other substances believed to assist initiation, maintenance, or augmentation of the rate of maternal milk synthesis.</p>
+          </def>
+        </def-item>
+        <def-item id="galactorrhea">
+          <term>Galactorrhea</term>
+          <def>
+            <p>Abnormal production of milk in nonpregnant, nonlactating women or in men.</p>
+          </def>
+        </def-item>
+        <def-item id="gram-g-">
+          <term>Gram (g)</term>
+          <def>
+            <p>A unit of weight equal to about one-thirtieth of an ounce.</p>
+          </def>
+        </def-item>
+        <def-item id="halflife">
+          <term>Half-life</term>
+          <def>
+            <p>The time required for one-half of the total concentration of a chemical or drug in a body fluid, usually the general bloodstream, to be eliminated. It takes two half-lives for 75% of a drug to be eliminated and 5 half-lives for 97% of a drug to be eliminated.</p>
+          </def>
+        </def-item>
+        <def-item id="hindmilk">
+          <term>Hindmilk</term>
+          <def>
+            <p>The last milk that is excreted from the breast at the end of a nursing bout or at the end of expression. It is relatively high in fat compared to foremilk.</p>
+          </def>
+        </def-item>
+        <def-item id="infant">
+          <term>Infant</term>
+          <def>
+            <p>A young child, from birth through one year of age.</p>
+          </def>
+        </def-item>
+        <def-item id="in-utero">
+          <term>In Utero</term>
+          <def>
+            <p>Within the uterus.</p>
+          </def>
+        </def-item>
+        <def-item id="kilogram-kg-">
+          <term>Kilogram (kg)</term>
+          <def>
+            <p>A unit of weight equal to 1,000 grams or about 2.2 pounds.</p>
+          </def>
+        </def-item>
+        <def-item id="lactation">
+          <term>Lactation</term>
+          <def>
+            <p>The normal secretion of milk by the breast following pregnancy.</p>
+          </def>
+        </def-item>
+        <def-item id="level">
+          <term>Level</term>
+          <def>
+            <p>The amount of a substance in a given volume of body fluid. The same as Concentration.</p>
+          </def>
+        </def-item>
+        <def-item id="liter-l-">
+          <term>Liter (L)</term>
+          <def>
+            <p>A volume of liquid equal to about 1.05 quarts.</p>
+          </def>
+        </def-item>
+        <def-item id="metabolism">
+          <term>Metabolism</term>
+          <def>
+            <p>The process of the body's breaking down one chemical or drug into another. Metabolism changes a substance into active or inactive metabolite(s).</p>
+          </def>
+        </def-item>
+        <def-item id="metabolite">
+          <term>Metabolite</term>
+          <def>
+            <p>A chemical or drug that is formed by the actions of the body, usually the liver, on the parent compound. The metabolite may be inactive or have activity that is the same or different from the parent substance.</p>
+          </def>
+        </def-item>
+        <def-item id="microgram-mcg-">
+          <term>Microgram (mcg)</term>
+          <def>
+            <p>One-millionth of a gram.</p>
+          </def>
+        </def-item>
+        <def-item id="milligram-mg-">
+          <term>Milligram (mg)</term>
+          <def>
+            <p>One-thousandth of a gram.</p>
+          </def>
+        </def-item>
+        <def-item id="milliliter-ml-">
+          <term>Milliliter (mL)</term>
+          <def>
+            <p>One-thousandth of a liter of liquid.</p>
+          </def>
+        </def-item>
+        <def-item id="neonate">
+          <term>Neonate</term>
+          <def>
+            <p>An infant of 28 days of age or less. Same as a Newborn.</p>
+          </def>
+        </def-item>
+        <def-item id="newborn">
+          <term>Newborn</term>
+          <def>
+            <p>An infant of 28 days of age or less. Same as a Neonate.</p>
+          </def>
+        </def-item>
+        <def-item id="parent-compound">
+          <term>Parent compound</term>
+          <def>
+            <p>The original chemical or drug that is taken by the mother.</p>
+          </def>
+        </def-item>
+        <def-item id="peak">
+          <term>Peak</term>
+          <def>
+            <p>The highest concentration of a chemical, drug or metabolite within a body fluid.</p>
+          </def>
+        </def-item>
+        <def-item id="plasma">
+          <term>Plasma</term>
+          <def>
+            <p>The fluid portion of the blood which contains no red or white blood cells.</p>
+          </def>
+        </def-item>
+        <def-item id="postpartum">
+          <term>Postpartum</term>
+          <def>
+            <p>The time right after delivery of an infant.</p>
+          </def>
+        </def-item>
+        <def-item id="prenatal">
+          <term>Prenatal</term>
+          <def>
+            <p>Before birth.</p>
+          </def>
+        </def-item>
+        <def-item id="preterm">
+          <term>Preterm</term>
+          <def>
+            <p>Delivery of an infant prior to the 37th week of gestation.</p>
+          </def>
+        </def-item>
+        <def-item id="prodrug">
+          <term>Prodrug</term>
+          <def>
+            <p>A drug that is inactive when taken and then metabolized in the body to an active drug.</p>
+          </def>
+        </def-item>
+        <def-item id="prolactin">
+          <term>Prolactin</term>
+          <def>
+            <p>A hormone produced by the pituitary gland that stimulates milk production.</p>
+          </def>
+        </def-item>
+        <def-item id="relative-infant-dosage-rid-">
+          <term>Relative Infant Dosage (RID)</term>
+          <def>
+            <p>The dosage of a drug in mg/kg that the infant receives divided by the dosage of the drug that the mother received in mg/kg, multiplied by 100. Same as the Weight-adjusted Percentage of Maternal Dosage.</p>
+          </def>
+        </def-item>
+        <def-item id="serum">
+          <term>Serum</term>
+          <def>
+            <p>The clear fluid portion of the blood which contains no red or white blood cells or blood platelets.</p>
+          </def>
+        </def-item>
+        <def-item id="steadystate">
+          <term>Steady-state</term>
+          <def>
+            <p>The time at which the concentration of a substance remains constant (such as in blood), because the rate of drug administration equals the rate of drug elimination from the body.</p>
+          </def>
+        </def-item>
+        <def-item id="trough">
+          <term>Trough</term>
+          <def>
+            <p>The lowest concentration of a chemical, drug or metabolite within in a body fluid.</p>
+          </def>
+        </def-item>
+        <def-item id="weightadjusted-dosage">
+          <term>Weight-adjusted Dosage</term>
+          <def>
+            <p>The dosage of a drug divided by the weight of the individual.</p>
+          </def>
+        </def-item>
+        <def-item id="weightadjusted-percentage-of-maternal-dosage">
+          <term>Weight-adjusted Percentage of Maternal Dosage</term>
+          <def>
+            <p>The dosage of a drug in mg/kg that the infant receives divided by the dosage of the drug that the mother received in mg/kg, multiplied by 100. Same as the relative infant dosage.</p>
+          </def>
+        </def-item>
+      </def-list>
+    </body>
+  </book-part>
+</book-part-wrapper>

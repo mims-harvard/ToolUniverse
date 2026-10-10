@@ -2,7 +2,7 @@
   {
     "type": "EuropePMCTool",
     "name": "EuropePMC_search_articles",
-    "description": "Search for articles on Europe PMC including abstracts and metadata. Returns the top `limit` results ranked by relevance, which is normally a SLICE of the matches: `metadata.total_results` carries Europe PMC's own hitCount (every article matching the query) while `metadata.count` is only how many were returned, and a top-level `truncated: true` plus `truncation_note` appear whenever matches were left behind. Do not read a small `count` as 'few articles exist' — check `total_results`. Europe PMC supports fielded queries for indexed full text (e.g., BODY:\"term\") but only for records where Europe PMC has full text indexed (HAS_FT:Y). Use require_has_ft/fulltext_terms to avoid confusing 'has a full-text link somewhere' with 'full text searchable in Europe PMC'.",
+    "description": "Search Europe PMC (PubMed/MEDLINE plus PMC full text and preprints) for published biomedical and clinical literature, with abstracts and metadata. Use it for evidence on how a disease, injury or complication is treated, surgical and procedural techniques, trial results, reviews and outcomes; for case reports alone use EuropePMC_search_case_reports. Returns the top `limit` results ranked by relevance, which is normally a SLICE of the matches: `metadata.total_results` carries Europe PMC's own hitCount (every article matching the query) while `metadata.count` is only how many were returned, and a top-level `truncated: true` plus `truncation_note` appear whenever matches were left behind. Do not read a small `count` as 'few articles exist' — check `total_results`. Europe PMC supports fielded queries for indexed full text (e.g., BODY:\"term\") but only for records where Europe PMC has full text indexed (HAS_FT:Y). Use require_has_ft/fulltext_terms to avoid confusing 'has a full-text link somewhere' with 'full text searchable in Europe PMC'.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -124,6 +124,13 @@
                   "null"
                 ],
                 "description": "Publication year"
+              },
+              "first_publication_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "First publication date (YYYY-MM-DD), the earlier of the electronic and print dates; date filters (the FIRST_PDATE search field) use it"
               },
               "doi": {
                 "type": [
@@ -326,6 +333,329 @@
       {
         "query": "cancer therapy",
         "limit": 5
+      }
+    ]
+  },
+  {
+    "type": "EuropePMCCaseReportsTool",
+    "name": "EuropePMC_search_case_reports",
+    "description": "Find published clinical case reports about a disease, rare presentation, complication, injury or treatment, with their abstracts, from Europe PMC (PubMed/MEDLINE plus PMC). Use it for unusual or rare cases that guidelines and review chapters do not cover: how a similar patient was diagnosed, which surgery or drug was used, and the outcome. Searches the title and abstract of articles typed as Case Reports; every word must appear (Europe PMC does not stem words), so give the condition's name in 2-5 words (e.g. 'Meckel diverticulum torsion', 'anti-GFAP astrocytopathy', 'xanthogranulomatous prostatitis') rather than the whole patient description, and leave out ages, sexes and words like 'treatment' or 'management'. When no case report has every word, the search falls back to any of the words, ranked by relevance, and metadata.matching says so; check those reports against the case. Optional published_after / published_before (a year or YYYY-MM-DD) limit the publication date. Results are ranked by relevance; metadata.total_results is Europe PMC's count of every matching case report.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "The condition, presentation or treatment in plain words (2-5 words work best), e.g. 'invasive cervical resorption' or 'retrocaval ureter'. Quotes make a phrase; any other search syntax (fields, parentheses, AND/OR/NOT, -) is ignored."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Number of case reports to return (1-25, default 5).",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 25
+        },
+        "published_after": {
+          "type": "string",
+          "description": "Only case reports first published on or after this date: a year (2015) or YYYY-MM-DD."
+        },
+        "published_before": {
+          "type": "string",
+          "description": "Only case reports first published on or before this date: a year (2023) or YYYY-MM-DD."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "Case reports from Europe PMC matching the query",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Title of the article"
+              },
+              "abstract": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Abstract of the article"
+              },
+              "abstract_retrieval_trace": {
+                "type": "array",
+                "description": "Machine-readable trace of attempts used to retrieve/derive the abstract when enrichment is enabled.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "attempt": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status_code": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "content_type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "note": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of author names"
+              },
+              "journal": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Journal name where the article was published"
+              },
+              "year": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "Publication year"
+              },
+              "first_publication_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "First publication date (YYYY-MM-DD), the earlier of the electronic and print dates; date filters (the FIRST_PDATE search field) use it"
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Digital Object Identifier"
+              },
+              "doi_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DOI resolver URL"
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "URL to the article on Europe PMC"
+              },
+              "source_db": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Europe PMC source database for the record (e.g., MED, PMC)."
+              },
+              "article_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Record identifier within the Europe PMC source database (e.g., PMID for MED)."
+              },
+              "pmid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PubMed ID (when available)"
+              },
+              "pmcid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PubMed Central ID (when available)"
+              },
+              "fulltext_xml_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Europe PMC fullTextXML URL (when derivable)"
+              },
+              "abstract_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source of abstract text (e.g., Europe PMC core or fullTextXML)"
+              },
+              "fulltext_snippets": {
+                "type": "array",
+                "description": "Full-text snippets around search terms (only present when extract_terms_from_fulltext is provided and article is OA)",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "term": {
+                      "type": "string",
+                      "description": "The search term that was matched"
+                    },
+                    "snippet": {
+                      "type": "string",
+                      "description": "Text snippet with context around the matched term"
+                    }
+                  }
+                }
+              },
+              "fulltext_snippets_count": {
+                "type": "integer",
+                "description": "Number of snippets extracted (only present when fulltext_snippets exists)"
+              },
+              "fulltext_snippets_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Provenance for snippet extraction (e.g., Europe PMC fullTextXML, NCBI PMC OAI (JATS), NCBI PMC HTML)."
+              },
+              "fulltext_snippets_retrieval_trace": {
+                "type": "array",
+                "description": "Machine-readable trace of attempts used to retrieve full text for snippet extraction.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "attempt": {
+                      "type": "string"
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "status_code": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "content_type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "note": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "citations": {
+                "type": "integer",
+                "description": "Number of citations"
+              },
+              "open_access": {
+                "type": "boolean",
+                "description": "Open access status"
+              },
+              "keywords": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of keywords"
+              },
+              "source": {
+                "type": "string",
+                "description": "Source identifier (always 'Europe PMC')"
+              },
+              "data_quality": {
+                "type": "object",
+                "description": "Data quality indicators",
+                "properties": {
+                  "has_abstract": {
+                    "type": "boolean"
+                  },
+                  "has_authors": {
+                    "type": "boolean"
+                  },
+                  "has_journal": {
+                    "type": "boolean"
+                  },
+                  "has_year": {
+                    "type": "boolean"
+                  },
+                  "has_doi": {
+                    "type": "boolean"
+                  },
+                  "has_citations": {
+                    "type": "boolean"
+                  },
+                  "has_keywords": {
+                    "type": "boolean"
+                  },
+                  "has_url": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "data"
+          ]
+        },
+        {
+          "type": "object",
+          "description": "Error response",
+          "properties": {
+            "error": {
+              "type": "string",
+              "description": "Error message"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query": "Meckel diverticulum torsion",
+        "limit": 3
+      },
+      {
+        "query": "retrocaval ureter",
+        "published_before": "2023-12-31"
       }
     ]
   },

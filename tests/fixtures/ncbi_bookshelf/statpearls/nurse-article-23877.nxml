@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper id="nurse-article-23877" content-type="chapter" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">statpearls</book-id>
+    <book-id book-id-type="publisher-id">statpearls</book-id>
+    <book-title-group>
+      <book-title>StatPearls</book-title>
+    </book-title-group>
+    <pub-date publication-format="electronic" date-type="pubr">
+      <month>01</month>
+      <year>2023</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>StatPearls Publishing</publisher-name>
+      <publisher-loc>Treasure Island (FL)</publisher-loc>
+    </publisher>
+    <permissions>
+      <copyright-statement>Copyright &#x000a9; 2023, StatPearls Publishing LLC</copyright-statement>
+      <license xmlns:xlink="http://www.w3.org/1999/xlink" license-type="open-access" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">
+        <license-p>This book is distributed under the terms of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) (<ext-link ext-link-type="uri" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">http://creativecommons.org/licenses/by-nc-nd/4.0/</ext-link>), which permits others to distribute the work, provided that the article is not altered or used commercially. You are not required to obtain permission to distribute this article, provided that you credit the author and journal.</license-p>
+      </license>
+    </permissions>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes notes-type="disclaimer">
+      <p>The intent of StatPearls review books and articles is to identify knowledge deficits and assist you in the learning process. Review books and articles are not intended to be a source of the knowledge base of medicine. The authors and editors do not warrant the information is complete or accurate. The reader is encouraged to verify content and questions in several references. All drug indications and dosages should be verified before administration.</p>
+      <p>The authors and editors would like to extend special thanks to Erin Hughes and Gerson Rubio for their editorial support.</p>
+    </notes>
+  </book-meta>
+  <book-part indexed="no" book-part-type="chapter">
+    <book-part-meta>
+      <title-group>
+        <title>Ketoacidosis (Nursing)</title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Ghimire</surname>
+            <given-names>Pranita</given-names>
+          </name>
+        </contrib>
+      </contrib-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Dhamoon</surname>
+            <given-names>Amit S.</given-names>
+          </name>
+          <aff>SUNY Upstate Medical University</aff>
+        </contrib>
+      </contrib-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Doerr</surname>
+            <given-names>Chaddie</given-names>
+          </name>
+          <aff>University of Louisville</aff>
+        </contrib>
+      </contrib-group>
+      <author-notes>
+        <fn id="nurse-article-23877.fn1" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Pranita Ghimire declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+        <fn id="nurse-article-23877.fn2" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Amit S Dhamoon declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+        <fn id="nurse-article-23877.fn3" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Chaddie Doerr declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+      </author-notes>
+      <pub-history>
+        <date date-type="updated">
+          <day>8</day>
+          <month>8</month>
+          <year>2023</year>
+        </date>
+      </pub-history>
+    </book-part-meta>
+    <body>
+      <sec id="nurse-article-23877.s1" sec-type="Learning Outcome">
+        <title>Learning Outcome</title>
+        <list list-type="order">
+          <list-item>
+            <p>Recall the cause of diabetic ketoacidosis</p>
+          </list-item>
+          <list-item>
+            <p>Describe the presentation of ketoacidosis</p>
+          </list-item>
+          <list-item>
+            <p>Summarize the treatment of ketoacidosis</p>
+          </list-item>
+          <list-item>
+            <p>List the nursing management roles in a patient with ketoacidosis</p>
+          </list-item>
+        </list>
+      </sec>
+      <sec id="nurse-article-23877.s2" sec-type="pubmed-excerpt">
+        <title>Introduction</title>
+        <p>Ketoacidosis is a metabolic state associated with pathologically high serum and urine concentrations of ketone bodies, namely acetone, acetoacetate, and beta-hydroxybutyrate. During catabolic states, fatty acids are metabolized to ketone bodies, which can be readily utilized for fuel by individual cells in the body. Of the three major ketone bodies, acetoacetic acid is the only true ketoacid chemically, while beta-hydroxybutyric acid is a hydroxy acid, and acetone is a true ketone. Figure 1 shows the schematic of ketogenesis where the fatty acids generated after lipolysis in the adipose tissues enter the hepatocytes via the bloodstream and undergo beta-oxidation to form the various ketone bodies. This biochemical cascade is stimulated by the combination of low insulin levels and high glucagon levels (i.e., a low insulin/glucagon ratio). Low insulin levels, most often secondary to absolute or relative hypoglycemia as with fasting, activate hormone-sensitive lipase, which is responsible for the breakdown of triglycerides to free fatty acid and glycerol.</p>
+        <p>The clinically relevant ketoacidoses to be discussed include diabetic ketoacidosis (DKA), alcoholic ketoacidosis (AKA), and starvation ketoacidosis. DKA is a potentially life-threatening complication of uncontrolled diabetes mellitus if not recognized and treated early. It typically occurs in the setting of hyperglycemia with relative or absolute insulin deficiency. The paucity of insulin causes unopposed lipolysis and oxidation of free fatty acids, resulting in ketone body production and subsequent increased anion gap metabolic acidosis. Alcoholic ketoacidosis occurs in patients with chronic alcohol abuse, liver disease, and acute alcohol ingestion. Starvation ketoacidosis occurs after the body is deprived of glucose as the primary source of energy for a prolonged time, and fatty acids replace glucose as the major metabolic fuel.</p>
+      </sec>
+      <sec id="nurse-article-23877.s3" sec-type="Nursing Diagnosis">
+        <title>Nursing Diagnosis</title>
+        <list list-type="bullet">
+          <list-item>
+            <p>Nausea, vomiting</p>
+          </list-item>
+          <list-item>
+            <p>Abdominal pain</p>
+          </list-item>
+          <list-item>
+            <p>Excess thirst</p>
+          </list-item>
+          <list-item>
+            <p>Dyspnea</p>
+          </list-item>
+          <list-item>
+            <p>Malaise</p>
+          </list-item>
+          <list-item>
+            <p>Excessive urination</p>
+          </list-item>
+          <list-item>
+            <p>Confusion</p>
+          </list-item>
+          <list-item>
+            <p>Elevated blood sugar levels</p>
+          </list-item>
+          <list-item>
+            <p>Fruit scented breath</p>
+          </list-item>
+          <list-item>
+            <p>High levels of ketones in the urine</p>
+          </list-item>
+        </list>
+      </sec>
+      <sec id="nurse-article-23877.s4" sec-type="Causes">
+        <title>Causes</title>
+        <p>DKA can occur in patients with diabetes mellitus, most frequently associated with relative insulin deficiency. This may be caused by precipitating physiologic stress or in some cases, may be the initial clinical presentation in patients with previously undiagnosed diabetes. Some of the more common risk factors that can precipitate the development of extreme hyperglycemia and subsequent ketoacidosis are infection, non-adherence to insulin therapy, acute major illnesses like myocardial infarction, sepsis, pancreatitis, stress, trauma, and the use of certain medications, such as glucocorticoids or atypical antipsychotic agents which have the potential to affect carbohydrate metabolism.<xref ref-type="bibr" rid="nurse-article-23877.r1">[1]</xref></p>
+        <p>AKA occurs in patients with chronic alcohol abuse. Patients can have a long-standing history of alcohol use and may also present following binges. Acetic acid is a product of the metabolism of alcohol and also a substrate for ketogenesis. The conversion to acetyl CoA and subsequent entry into various pathways or cycles, one of which is the ketogenesis pathway is determined by the availability of insulin in proportion to the counter-regulatory hormones, which are discussed in more detail below.</p>
+        <p>Under normal conditions, cells rely on free blood glucose as the primary energy source, which is regulated with insulin, glucagon, and somatostatin. As the name implies, starvation ketoacidosis is a bodily response to prolonged fasting hypoglycemia, which decreases insulin secretion, shunting the biochemistry towards lipolysis and the oxidation of the by-product fatty acids to ensure a fuel source for the body.</p>
+      </sec>
+      <sec id="nurse-article-23877.s5" sec-type="Risk Factors">
+        <title>Risk Factors</title>
+        <p>DKA occurs more frequently with type 1 diabetes, although 10% to 30% of cases occur in patients with type 2 diabetes,<xref ref-type="bibr" rid="nurse-article-23877.r2">[2]</xref> in situations of extreme physiologic stress or acute illness. According to the morbidity and mortality review of the CDC, diabetes itself is one of the most common chronic conditions in the world and affects an estimated 30 million people in the United States. Age-adjusted DKA hospitalization rates were on the downward trend in the 2000s but have steadily been increasing from thereafter till the mid-2010s at an average annual rate of 6.3%,<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pmid" xlink:href="29596400">[3]</ext-link> while there has been a decline in in-hospital case-fatality rates during this period.</p>
+        <p>For AKA, the prevalence correlates with the incidence of alcohol abuse without racial or gender differences in incidence. It can occur at any age and mainly in chronic alcoholics but rarely in binge drinkers.<xref ref-type="bibr" rid="nurse-article-23877.r3">[4]</xref></p>
+        <p>For starvation ketosis, mild ketosis generally develops after a 12- to 14-hour fast. If there is no food source, as in the case of extreme socio-economic deprivation or eating disorders, this will cause the body&#x02019;s biochemistry to transform from ketosis to ketoacidosis progressively, as described below. It can be seen in cachexia due to underlying malignancy, patients with postoperative or post-radiation dysphagia, and prolonged poor oral intake.</p>
+      </sec>
+      <sec id="nurse-article-23877.s6" sec-type="Assessment">
+        <title>Assessment</title>
+        <p>Patients with DKA may have a myriad of symptoms on presentation, usually within several hours of the inciting event. Symptoms of hyperglycemia are common, including polyuria, polydipsia, and sometimes more severe presentations include unintentional weight loss, vomiting, weakness, and mentation changes. Dehydration and metabolic abnormalities worsen with progressive uncontrolled osmolar stress, which can lead to lethargy, obtundation, and may even cause respiratory failure, coma, and death. Abdominal pain is also a common complaint in DKA. AKA patients usually present with abdominal pain and vomiting after abruptly stopping alcohol.</p>
+        <p>On physical exam, most of the patients with ketoacidoses present with features of hypovolemia from gastrointestinal or renal fluid and electrolyte losses. In severe cases, patients may be hypotensive and in frank shock. They may have a rapid and deep respiratory effort as a compensatory mechanism, known as Kussmaul breathing. They may have a distinct fruity odor to their breath, mainly because of acetone production. There may be neurological deficits in DKA, but less often in AKA. AKA patients may have signs of withdrawal like hypertension and tachycardia. There are signs of muscle wasting in patients with starvation ketoacidosis like poor muscle mass, minimal body fat, obvious bony prominences, temporal wasting, tooth decay, sparse, thin, dry hair and low blood pressure, pulse, and temperature.</p>
+      </sec>
+      <sec id="nurse-article-23877.s7" sec-type="Evaluation">
+        <title>Evaluation</title>
+        <p>The initial laboratory evaluation of a patient with suspected DKA includes blood levels of glucose, ketones, blood urea nitrogen, creatinine, electrolytes, calculated anion gap, arterial blood gases, osmolality, complete blood count with differential, blood cultures and urine studies including ketones, urinalysis, urine culture, chest radiograph, and an electrocardiogram. Hyperglycemia is the typical finding at presentation with DKA, but patients can present with a range of plasma glucose values. Although ketone levels are generally elevated in DKA, a negative measurement initially does not exclude the diagnosis because ketone laboratory measurements often use the nitroprusside reaction, which only estimates acetoacetate and acetone levels that may not be elevated initially as beta-hydroxybutyrate is the major ketone that is elevated. The anion-gap is elevated, as mentioned above because ketones are unmeasured anions. Leukocytosis may indicate an infectious pathology as the trigger and cultures are sent from blood, urine, or other samples as clinically indicated. Serum sodium is usually relatively low because of shifts of solvent (water) from the intracellular to extracellular spaces because of the osmotic pull of hyperglycemia, and hence, normal or elevated serum sodium is indicative of severe volume depletion. Serum potassium levels may be elevated due to shifts from the intracellular compartment for exchange with acids in the absence of insulin and normal or low potassium, indicating an overall depleted body store and subsequent need for correction before initiation of insulin therapy.</p>
+        <p>In AKA, transaminitis, and hyperbilirubinemia due to concurrent alcoholic hepatitis may also be present. The alcohol level itself need not be elevated as the more severe ketoacidosis is seen once the level falls, and the counter-regulatory response begins and shunts the metabolism towards lipolysis. Hypokalemia and increased anion-gap are usually seen with similar mechanisms to those seen in DKA.</p>
+        <p>Hypomagnesemia and hypophosphatemia are common problems seen on lab evaluation due to decreased dietary intake and increased losses. As mentioned above, the direct measurement of serum beta-hydroxybutyrate is more sensitive and specific than the measurement of urine ketones. Starvation ketoacidoses patients may again have multiple electrolyte abnormalities due to chronic malnutrition, along with vitamin deficiencies. The pH may not be as low as in DKA or AKA, and the glucose levels may be relatively normal.</p>
+      </sec>
+      <sec id="nurse-article-23877.s8" sec-type="Medical Management">
+        <title>Medical Management</title>
+        <p>After initial stabilization of circulation, airway, and breathing as a priority, specific treatment of DKA requires correction of hyperglycemia with intravenous insulin, frequent monitoring, and replacement of electrolytes, mainly potassium, correction of hypovolemia with intravenous fluids, and correction of acidosis. Given the potential severity and the need for frequent monitoring for intravenous insulin therapy and possible arrhythmias, patients may be admitted to the intensive care unit. Blood glucose levels and electrolytes should be monitored on an hourly basis during the initial phase of management.</p>
+        <p>Aggressive volume resuscitation with isotonic saline infusion is recommended in the initial management of DKA. Volume expansion not only corrects the hemodynamic instability but also improves insulin sensitivity and reduces counter-regulatory hormone levels. After starting with isotonic saline, the subsequent options can be decided on the serum sodium levels that are corrected for the level of hyperglycemia. Normal or high serum sodium levels warrant replacement with hypotonic saline, and low sodium levels warrant continuation of the isotonic saline. This fluid has to be supplemented with dextrose once the level reaches around 200 to 250 mg/dl. Along with fluids, an intravenous infusion of regular insulin has to be initiated to maintain the blood glucose level between 150 to 200 mg/dl and until the high anion-gap acidosis is resolved in DKA. Like mentioned above, potassium levels are usually high because of the transcellular shifts due to the acidosis and the lack of insulin. When the potassium levels are low, this means that the total body potassium is low. Hence, insulin therapy should be postponed until at least the level of serum potassium is greater than 3.3 mEq/L. Otherwise, a further drop in levels would put the patient at risk for cardiac arrhythmias. In the 3.3 to 5 mEq/L; range, supplementation should be added in the maintenance fluids to target a steady 4.0 to 5.0 mEq/L range, and if higher than that, insulin and intravenous fluids alone can be started with just the frequent monitoring of the serum potassium level. The treatment of the acidosis itself is more controversial. Treatment with sodium bicarbonate therapy is controversial. It has been studied and found to provide no added benefit when the arterial blood pH is greater than 6.9 and may be associated with more harm.<xref ref-type="bibr" rid="nurse-article-23877.r6">[5]</xref> A 2011 systematic review found that bicarbonate administration worsened ketonemia. Several studies have found higher potassium requirements in patients receiving bicarbonate. Studies in children have observed a possible association between bicarbonate therapy and cerebral edema.<xref ref-type="bibr" rid="nurse-article-23877.r7">[6]</xref></p>
+        <p>AKA typically responds to treatment with intravenous saline and intravenous glucose, with rapid clearance of the associated ketones due to a reduction in counter-regulatory hormones and the induction of endogenous insulin. Like in DKA, this is the first step in management because of the need for correction the hypovolemia/shock. Thiamine replacement is important in alcohol-related presentations, including intoxication, withdrawal, and ketoacidosis, and should be initially done parenterally and after that maintained orally. Electrolyte replacement is critical. Potassium losses that occur through gastrointestinal (GI) or renal losses should be monitored and replaced closely as glucose in the replacement fluid induces endogenous insulin, which in turn drives the extracellular potassium inside the cells. Also of paramount importance is monitoring and replacing the magnesium and phosphate levels, which are usually low in both chronic alcoholism and prolonged dietary deprivation as in starvation.</p>
+        <p>The treatment of starvation ketoacidosis is similar to AKA. Patients need to be monitored for refeeding syndrome, which is associated with electrolyte abnormalities seen when aggressive feeding is started in an individual starved for a prolonged time. The resultant insulin secreted causes significant transcellular shifts, and hence, similar to AKA, monitoring and replacing potassium, phosphate, and magnesium is very important.</p>
+      </sec>
+      <sec id="nurse-article-23877.s9" sec-type="Nursing Management">
+        <title>Nursing Management</title>
+        <list list-type="bullet">
+          <list-item>
+            <p>Monitor vitals</p>
+          </list-item>
+          <list-item>
+            <p>Check blood sugars and treat with insulin as ordered</p>
+          </list-item>
+          <list-item>
+            <p>Start two large-bore IVs</p>
+          </list-item>
+          <list-item>
+            <p>Administer fluids as recommended</p>
+          </list-item>
+          <list-item>
+            <p>Check electrolytes as potassium levels will drop with insulin treatment</p>
+          </list-item>
+          <list-item>
+            <p>Check renal function</p>
+          </list-item>
+          <list-item>
+            <p>Assess mental status</p>
+          </list-item>
+          <list-item>
+            <p>Look for signs of infection (a common cause of DKA)</p>
+          </list-item>
+          <list-item>
+            <p>Educate the patient on the importance of compliance with diabetic medications</p>
+          </list-item>
+          <list-item>
+            <p>Educate the patient on the importance of follow up</p>
+          </list-item>
+          <list-item>
+            <p>Check urine output</p>
+          </list-item>
+          <list-item>
+            <p>Encourage patient to quit smoking and abstain from alcohol</p>
+          </list-item>
+          <list-item>
+            <p>Encourage a healthy diet</p>
+          </list-item>
+          <list-item>
+            <p>Ask the patient to wear an ID bracelet signifying that he or she has had a DKA episode</p>
+          </list-item>
+          <list-item>
+            <p>Check urine and blood cultures</p>
+          </list-item>
+          <list-item>
+            <p>Listen to the lungs for rales and crackles</p>
+          </list-item>
+        </list>
+      </sec>
+      <sec id="nurse-article-23877.s10" sec-type="When To Seek Help">
+        <title>When To Seek Help</title>
+        <list list-type="bullet">
+          <list-item>
+            <p>Altered mental status</p>
+          </list-item>
+          <list-item>
+            <p>Dyspnea</p>
+          </list-item>
+          <list-item>
+            <p>Respiratory distress</p>
+          </list-item>
+          <list-item>
+            <p>Abnormal vital signs</p>
+          </list-item>
+          <list-item>
+            <p>Unresponsive</p>
+          </list-item>
+        </list>
+      </sec>
+      <sec id="nurse-article-23877.s11" sec-type="Outcome Identification">
+        <title>Outcome Identification</title>
+        <p>Euglycemic</p>
+        <p>No symptoms</p>
+      </sec>
+      <sec id="nurse-article-23877.s12" sec-type="Coordination of Care">
+        <title>Coordination of Care</title>
+        <p>Diabetes, once diagnosed, is mostly managed with changes in diet, lifestyle, and medication adherence. The goal is to prevent high glucose levels, which helps prevent diabetic complications. The nurse practitioner, pharmacist, primary care provider, and an endocrinologist should educate the patient on glucose control at every opportunity.</p>
+        <p>Empowering the patient regarding management is hence of the utmost importance. Diabetes self-management education (DSME) and diabetes self-management support (DSMS) are recommended at the time of diagnosis of prediabetes or diabetes and throughout the lifetime of the patient. DSMS is an individualized plan that provides opportunities for educational and motivational support for diabetes self-management. DSME and DSMS jointly provide an opportunity for collaboration between the patient and health care providers to assess educational needs and abilities, develop personal treatment goals, learn self-management skills, and provide ongoing psychosocial and clinical support. Improved outcomes and reduced costs have been associated with DSME and DSMS.<xref ref-type="bibr" rid="nurse-article-23877.r9">[7]</xref><xref ref-type="bibr" rid="nurse-article-23877.r10">[8]</xref></p>
+      </sec>
+      <sec id="nurse-article-23877.s13" sec-type="Discharge Planning">
+        <title>Discharge Planning</title>
+        <p>Diabetes, once diagnosed, is mostly managed with changes in diet, lifestyle, and medication adherence. The goal is to prevent high glucose levels, which helps prevent diabetic complications. To prevent the complications of diabetes like ketoacidosis, the condition is best managed by an interprofessional team that includes the nurse practitioner, pharmacist, primary care provider, and an endocrinologist; all these clinicians should educate the patient on glucose control at every opportunity.</p>
+        <p>The diabetic nurse should follow all outpatients to ensure medication compliance, followup with clinicians, and adopting a positive lifestyle. Further, the nurse should teach the patient how to monitor home blood glucose and the importance of careful monitoring of blood sugars during infection, stress, or trauma. The physical therapist should be involved in educating the patient on exercise and the importance of maintaining healthy body weight.</p>
+        <p>The social worker should be involved to ensure that the patient has the support services and financial assistance to undergo treatment. The members of the interprofessional team should communicate to ensure that the patient is receiving the optimal standard of care.</p>
+      </sec>
+      <sec id="nurse-article-23877.s14" sec-type="Evidence-Based Issues">
+        <title>Evidence-Based Issues</title>
+        <p>Empowering the patient regarding management is hence of the utmost importance. Diabetes self-management education (DSME) and diabetes self-management support (DSMS) are recommended at the time of diagnosis of prediabetes or diabetes and throughout the lifetime of the patient. DSMS is an individualized plan that provides opportunities for educational and motivational support for diabetes self-management. DSME and DSMS jointly provide an opportunity for collaboration between the patient and health care providers to assess educational needs and abilities, develop personal treatment goals, learn self-management skills, and provide ongoing psychosocial and clinical support.</p>
+        <p>Improved outcomes and reduced costs have been associated with DSME and DSMS.<xref ref-type="bibr" rid="nurse-article-23877.r9">[7]</xref><xref ref-type="bibr" rid="nurse-article-23877.r10">[8]</xref></p>
+      </sec>
+      <sec id="nurse-article-23877.s15" sec-type="Pearls and Other issues">
+        <title>Pearls and Other issues</title>
+        <p>The American Association of Clinical Endocrinologists and the American College of Endocrinology have reviewed reported cases of DKA in patients taking SGLT2 inhibitors.<xref ref-type="bibr" rid="nurse-article-23877.r8">[9]</xref> This association is weak; however, if DKA develops in patients taking SGLT2 inhibitors, stop the drug immediately, and proceed with traditional DKA treatment protocols. When DKA is found in patients using SGLT2 inhibitors, it is often &#x0201c;euglycemic&#x0201d; DKA, defined as glucose less than 250. Therefore, rather than relying on the presence of hyperglycemia, close attention to signs and symptoms of DKA is needed.</p>
+        <p>In May 2015, the US Food and Drug Administration (FDA) issued a warning [B] that treatment with sodium-glucose transporter-2 (SGLT2) inhibitors, which include canagliflozin, dapagliflozin, and empagliflozin, may increase the risk of diabetic ketoacidosis (DKA) in patients with diabetes mellitus. The FDA Adverse Event Reporting System database identified 20 cases of DKA in patients treated with SGLT2 inhibitors from March 2013 to June 2014.</p>
+      </sec>
+      <sec id="nurse-article-23877.s16">
+        <title>Review Questions</title>
+        <list list-type="bullet">
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/account/trialuserreg/?articleid=23877&#x00026;utm_source=pubmed&#x00026;utm_campaign=reviews&#x00026;utm_content=23877">Access free multiple choice questions on this topic.</ext-link>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/articlelibrary/commentarticle/23877/?utm_source=pubmed&#x00026;utm_campaign=comments&#x00026;utm_content=23877">Comment on this article.</ext-link>
+</p>
+          </list-item>
+        </list>
+      </sec>
+    </body>
+    <back>
+      <floats-group id="nurse-article-23877.s17">
+        <fig id="nurse-article-23877.image.f1" position="float" orientation="portrait">
+          <label>Figure 1</label>
+          <caption>
+            <p>Ketoacidosis. Orawan</p>
+          </caption>
+          <graphic xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="ketogenesis" mimetype="image" position="float" orientation="portrait"/>
+        </fig>
+      </floats-group>
+      <ref-list id="nurse-article-23877.s18">
+        <title>References</title>
+        <ref id="nurse-article-23877.r1">
+          <label>1</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Newcomer</surname>
+                <given-names>JW</given-names>
+              </name>
+            </person-group>
+            <article-title>Second-generation (atypical) antipsychotics and metabolic effects: a comprehensive literature review.</article-title>
+            <source>CNS Drugs</source>
+            <year>2005</year>
+            <volume>19 Suppl 1</volume>
+            <fpage>1</fpage>
+            <page-range>1-93</page-range>
+            <pub-id pub-id-type="pmid">15998156</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="nurse-article-23877.r2">
+          <label>2</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Nyenwe</surname>
+                <given-names>EA</given-names>
+              </name>
+              <name>
+                <surname>Kitabchi</surname>
+                <given-names>AE</given-names>
+              </name>
+            </person-group>
+            <article-title>The evolution of diabetic ketoacidosis: An update of its etiology, pathogenesis and management.</article-title>
+            <source>Metabolism</source>
+            <year>2016</year>
+            <month>Apr</month>
+            <volume>65</volume>
+            <issue>4</issue>
+            <fpage>507</fpage>
+            <page-range>507-21</page-range>
+            <pub-id pub-id-type="pmid">26975543</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="nurse-article-23877.r3">
+          <label>3</label>
+          <element-citation publication-type="book">
+            <person-group person-group-type="author">
+              <name>
+                <surname>Howard</surname>
+                <given-names>RD</given-names>
+              </name>
+              <name>
+                <surname>Bokhari</surname>
+                <given-names>SRA</given-names>
+              </name>
+            </person-group>
+            <chapter-title>Alcoholic Ketoacidosis</chapter-title>
+            <source>StatPearls [Internet]</source>
+            <publisher-name>StatPearls Publishing</publisher-name>
+            <publisher-loc>Treasure Island (FL)</publisher-loc>
+            <year>2025</year>
+            <month>9</month>
+            <day>15</day>
+            <pub-id pub-id-type="pmid">28613672</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="nurse-article-23877.r4">
+          <label>4</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Allison</surname>
+                <given-names>MG</given-names>
+              </name>
+              <name>
+                <surname>McCurdy</surname>
+                <given-names>MT</given-names>
+              </name>
+            </person-group>
+            <article-title>Alcoholic metabolic emergencies.</article-title>
+            <source>Emerg Med Clin North Am</source>
+            <year>2014</year>
+            <month>May</month>
+            <volume>32</volume>
+            <issue>2</issue>
+            <fpage>293</fpage>
+            <page-range>293-301</page-range>
+            <pub-id pub-id-type="pmid">24766933</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="nurse-article-23877.r5">
+          <label>5</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Krebs</surname>
+                <given-names>HA</given-names>
+              </name>
+              <name>
+                <surname>Freedland</surname>
+                <given-names>RA</given-names>
+              </name>
+              <name>
+                <surname>Hems</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Stubbs</surname>
+                <given-names>M</given-names>
+              </name>
+            </person-group>
+            <article-title>Inhibition of hepatic gluconeogenesis by ethanol.</article-title>
+            <source>Biochem J</source>
+            <year>1969</year>
+            <month>Mar</month>
+            <volume>112</volume>
+            <issue>1</issue>
+            <fpage>117</fpage>
+            <page-range>117-24</page-range>
+            <pub-id pub-id-type="pmid">5774487</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="nurse-article-23877.r6">
+          <label>6</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Chua</surname>
+                <given-names>HR</given-names>
+              </name>
+              <name>
+                <surname>Schneider</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Bellomo</surname>
+                <given-names>R</given-names>
+              </name>
+            </person-group>
+            <article-title>Bicarbonate in diabetic ketoacidosis - a systematic review.</article-title>
+            <source>Ann Intensive Care</source>
+            <year>2011</year>
+            <month>Jul</month>
+            <day>06</day>
+            <volume>1</volume>
+            <issue>1</issue>
+            <fpage>23</fpage>
+            <pub-id pub-id-type="pmid">21906367</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="nurse-article-23877.r7">
+          <label>7</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Wilson</surname>
+                <given-names>JF</given-names>
+              </name>
+            </person-group>
+            <article-title>In clinic. Diabetic ketoacidosis.</article-title>
+            <source>Ann Intern Med</source>
+            <year>2010</year>
+            <month>Jan</month>
+            <day>05</day>
+            <volume>152</volume>
+            <issue>1</issue>
+            <fpage>ITC1</fpage>
+            <page-range>ITC1-1, ITC1-2, ITC1-3,ITC1-4, ITC1-5, ITC1-6, ITC1-7, ITC1-8, ITC1-9, ITC1-10, ITC1-11, ITC1-12, ITC1-13, ITC1-14, ITC1-15, table of contents; quiz ITC1-16</page-range>
+            <pub-id pub-id-type="pmid">20048266</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="nurse-article-23877.r8">
+          <label>8</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Handelsman</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Henry</surname>
+                <given-names>RR</given-names>
+              </name>
+              <name>
+                <surname>Bloomgarden</surname>
+                <given-names>ZT</given-names>
+              </name>
+              <name>
+                <surname>Dagogo-Jack</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>DeFronzo</surname>
+                <given-names>RA</given-names>
+              </name>
+              <name>
+                <surname>Einhorn</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Ferrannini</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>Fonseca</surname>
+                <given-names>VA</given-names>
+              </name>
+              <name>
+                <surname>Garber</surname>
+                <given-names>AJ</given-names>
+              </name>
+              <name>
+                <surname>Grunberger</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>LeRoith</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Umpierrez</surname>
+                <given-names>GE</given-names>
+              </name>
+              <name>
+                <surname>Weir</surname>
+                <given-names>MR</given-names>
+              </name>
+            </person-group>
+            <article-title>AMERICAN ASSOCIATION OF CLINICAL ENDOCRINOLOGISTS AND AMERICAN COLLEGE OF ENDOCRINOLOGY POSITION STATEMENT ON THE ASSOCIATION OF SGLT-2 INHIBITORS AND DIABETIC KETOACIDOSIS.</article-title>
+            <source>Endocr Pract</source>
+            <year>2016</year>
+            <month>Jun</month>
+            <volume>22</volume>
+            <issue>6</issue>
+            <fpage>753</fpage>
+            <page-range>753-62</page-range>
+            <pub-id pub-id-type="pmid">27082665</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="nurse-article-23877.r9">
+          <label>9</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Seckold</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Fisher</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>de Bock</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>King</surname>
+                <given-names>BR</given-names>
+              </name>
+              <name>
+                <surname>Smart</surname>
+                <given-names>CE</given-names>
+              </name>
+            </person-group>
+            <article-title>The ups and downs of low-carbohydrate diets in the management of Type 1 diabetes: a review of clinical outcomes.</article-title>
+            <source>Diabet Med</source>
+            <year>2019</year>
+            <month>Mar</month>
+            <volume>36</volume>
+            <issue>3</issue>
+            <fpage>326</fpage>
+            <page-range>326-334</page-range>
+            <pub-id pub-id-type="pmid">30362180</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="nurse-article-23877.r10">
+          <label>10</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>George</surname>
+                <given-names>JT</given-names>
+              </name>
+              <name>
+                <surname>Mishra</surname>
+                <given-names>AK</given-names>
+              </name>
+              <name>
+                <surname>Iyadurai</surname>
+                <given-names>R</given-names>
+              </name>
+            </person-group>
+            <article-title>Correlation between the outcomes and severity of diabetic ketoacidosis: A retrospective pilot study.</article-title>
+            <source>J Family Med Prim Care</source>
+            <year>2018</year>
+            <season>Jul-Aug</season>
+            <volume>7</volume>
+            <issue>4</issue>
+            <fpage>787</fpage>
+            <page-range>787-790</page-range>
+            <pub-id pub-id-type="pmid">30234054</pub-id>
+          </element-citation>
+        </ref>
+      </ref-list>
+    </back>
+  </book-part>
+</book-part-wrapper>
