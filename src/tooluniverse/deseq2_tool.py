@@ -166,12 +166,13 @@ sig_lfc <- res[!is.na(res$padj) & res$padj < {alpha} & abs(res$log2FoldChange) >
 result$sig_with_lfc_filter <- nrow(sig_lfc)
 """
 
-        r_script += """
+        r_script += f"""
 cat(jsonlite::toJSON(result, auto_unbox=TRUE))
 cat("\\nRESULT_JSON_END\\n")
 
 # Save full results
-out_file <- file.path(tempdir(), "deseq2_results.csv")
+# Keep the CSV outside R's session tempdir(), which is deleted on exit.
+out_file <- tempfile("deseq2_results_", tmpdir={json.dumps(tempfile.gettempdir())}, fileext=".csv")
 write.csv(as.data.frame(res), out_file)
 cat("RESULTS_FILE:", out_file, "\\n")
 """
@@ -198,6 +199,12 @@ cat("RESULTS_FILE:", out_file, "\\n")
             for line in output.split("\n"):
                 if line.startswith("RESULTS_FILE:"):
                     results_file = line.split(":", 1)[1].strip()
+
+            if not results_file or not Path(results_file).is_file():
+                return {
+                    "status": "error",
+                    "error": f"Results file not found: {results_file}",
+                }
 
             result_data["results_file"] = results_file
 
@@ -269,7 +276,8 @@ cat(jsonlite::toJSON(top, auto_unbox=TRUE))
 cat("\\nRESULT_JSON_END\\n")
 
 # Save full results
-out_file <- file.path(tempdir(), "enrichgo_simplified.csv")
+# Keep the CSV outside R's session tempdir(), which is deleted on exit.
+out_file <- tempfile("enrichgo_simplified_", tmpdir={json.dumps(tempfile.gettempdir())}, fileext=".csv")
 write.csv(df, out_file, row.names=FALSE)
 cat("RESULTS_FILE:", out_file, "\\n")
 """
@@ -294,6 +302,12 @@ cat("RESULTS_FILE:", out_file, "\\n")
             for line in output.split("\n"):
                 if line.startswith("RESULTS_FILE:"):
                     results_file = line.split(":", 1)[1].strip()
+
+            if not results_file or not Path(results_file).is_file():
+                return {
+                    "status": "error",
+                    "error": f"Results file not found: {results_file}",
+                }
 
             return {
                 "status": "success",

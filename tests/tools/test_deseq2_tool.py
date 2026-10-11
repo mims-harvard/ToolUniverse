@@ -93,3 +93,79 @@ def test_enrichgo_missing_gene_list():
     )
     assert res["status"] == "error"
     assert "not found" in res["error"]
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(not _has_rscript(), reason="Rscript not installed")
+@pytest.mark.parametrize("operation", ["deseq2", "enrichgo"])
+def test_results_remain_readable_after_r_exits(operation, tmp_path, monkeypatch):
+    """Run the actual CSV writer in R; later runs must preserve earlier results."""
+    import csv
+    from pathlib import Path
+
+    import tooluniverse.deseq2_tool as mod
+
+    # Exercise quoting as well as the lifetime of the external output directory.
+    output_dir = tmp_path / 'results with spaces " and 中文'
+    output_dir.mkdir()
+    monkeypatch.setattr(mod.tempfile, "tempdir", str(output_dir))
+    input_file = tmp_path / "input.csv"
+    input_file.write_text("placeholder\n")
+    tool = DESeq2Tool.__new__(DESeq2Tool)
+    real_run = tool._run_rscript
+
+    def run_csv_writer(script):
+        # Isolate file lifetime from statistical fitting so only base R is
+        # needed. Execute the production save/announce fragment unchanged.
+        writer = script.split("# Save full results\n", 1)[1]
+        return real_run('res <- df <- data.frame(value=c(1, 2))\n' + writer)
+
+    monkeypatch.setattr(tool, "_run_rscript", run_csv_writer)
+    args = {
+        "operation": operation,
+        "counts_file": str(input_file),
+        "metadata_file": str(input_file),
+        "gene_list_file": str(input_file),
+    }
+    paths = []
+    try:
+        for _ in range(2):
+            result = tool.run(args)
+            assert result["status"] == "success", result
+            path = Path(result["data"]["results_file"])
+            paths.append(path)
+            with path.open(newline="") as handle:
+                rows = list(csv.DictReader(handle))
+            assert [row["value"] for row in rows] == ["1", "2"]
+        assert paths[0] != paths[1]
+        assert paths[0].read_bytes() == paths[1].read_bytes()
+    finally:
+        for path in paths:
+            path.unlink(missing_ok=True)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize("operation", ["deseq2", "enrichgo"])
+def test_missing_results_file_is_an_error(operation, tmp_path, monkeypatch):
+    """A zero R exit code must not make an unreadable result look successful."""
+    input_file = tmp_path / "input.csv"
+    input_file.write_text("placeholder\n")
+    missing_file = tmp_path / "missing.csv"
+    tool = DESeq2Tool.__new__(DESeq2Tool)
+    monkeypatch.setattr(
+        tool,
+        "_run_rscript",
+        lambda script: subprocess.CompletedProcess(
+            args=[], returncode=0, stdout=f"RESULTS_FILE: {missing_file}\n", stderr=""
+        ),
+    )
+    result = tool.run(
+        {
+            "operation": operation,
+            "counts_file": str(input_file),
+            "metadata_file": str(input_file),
+            "gene_list_file": str(input_file),
+        }
+    )
+    assert result["status"] == "error", result
+    assert "Results file not found" in result["error"]
