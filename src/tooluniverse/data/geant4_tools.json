@@ -1,0 +1,112 @@
+[
+  {
+    "name": "geant4_depth_dose_simulation",
+    "type": "Geant4DepthDoseTool",
+    "description": "Monte Carlo depth-dose simulation with GEANT4: fire a particle beam into a slab of one NIST material and get the energy deposited in each depth bin, plus the peak depth (the Bragg peak for ions). Use it for range and shielding questions — how deep a 150 MeV proton beam deposits its dose in water, how much of a gamma beam a lead slab absorbs, how an ion's range changes with energy or tissue. One fixed application is compiled against the local GEANT4 on first use; nothing but the numbers below can vary, so no geometry or macro is accepted. Requires a local GEANT4 installation with its physics data (geant4-config on PATH, or GEANT4_CONFIG set); a 200-event proton run takes about a second.",
+    "requires_local_input": false,
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "particle": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "proton",
+            "neutron",
+            "e-",
+            "e+",
+            "gamma",
+            "alpha",
+            "mu-",
+            "mu+",
+            "pi-",
+            "pi+",
+            "deuteron",
+            "triton",
+            "He3",
+            "C12",
+            "O16",
+            null
+          ],
+          "description": "Beam particle (default 'proton')."
+        },
+        "energy_mev": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Kinetic energy of each primary particle in MeV, from 0.001 to 100000 (default 150)."
+        },
+        "material": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "G4_WATER",
+            "G4_AIR",
+            "G4_A-150_TISSUE",
+            "G4_ADIPOSE_TISSUE_ICRP",
+            "G4_BONE_COMPACT_ICRU",
+            "G4_BONE_CORTICAL_ICRP",
+            "G4_BRAIN_ICRP",
+            "G4_LUNG_ICRP",
+            "G4_MUSCLE_SKELETAL_ICRP",
+            "G4_SKIN_ICRP",
+            "G4_TISSUE_SOFT_ICRP",
+            "G4_PMMA",
+            "G4_POLYETHYLENE",
+            "G4_POLYSTYRENE",
+            "G4_GRAPHITE",
+            "G4_ALUMINUM_OXIDE",
+            "G4_Al",
+            "G4_Si",
+            "G4_Ti",
+            "G4_Fe",
+            "G4_Cu",
+            "G4_W",
+            "G4_Pb",
+            "G4_CESIUM_IODIDE",
+            "G4_SODIUM_IODIDE",
+            "G4_BGO",
+            "G4_CONCRETE",
+            "G4_Galactic",
+            null
+          ],
+          "description": "Target material, a NIST name GEANT4 builds itself (default 'G4_WATER')."
+        },
+        "thickness_cm": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Depth of the target along the beam in cm, from 0.01 to 500 (default 20). Make it larger than the expected range, or the beam leaves the target before stopping."
+        },
+        "bins": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Number of equal depth bins to score, from 1 to 2000 (default 100). thickness_cm / bins is the depth resolution."
+        },
+        "events": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Primary particles to simulate, from 1 to 200000 (default 200). More events mean a smoother curve and a longer run."
+        },
+        "timeout_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Give up after this many seconds, from 1 to 1800 (default 600)."
+        }
+      }
+    }
+  }
+]
