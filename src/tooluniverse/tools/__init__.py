@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2869 scientific tools.
+Type-safe Python interface to 2872 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -1162,6 +1162,7 @@ from .GEO_search_chipseq_datasets import GEO_search_chipseq_datasets
 from .GEO_search_methylation_datasets import GEO_search_methylation_datasets
 from .GEO_search_rnaseq_datasets import GEO_search_rnaseq_datasets
 from .GIAB_list_directory import GIAB_list_directory
+from .GIN_Guidelines_Search import GIN_Guidelines_Search
 from .GMrepo_get_phenotypes import GMrepo_get_phenotypes
 from .GMrepo_search_species import GMrepo_search_species
 from .GNPS_compare_spectra import GNPS_compare_spectra
@@ -2229,6 +2230,12 @@ from .ProtVar_map_variant import ProtVar_map_variant
 from .ProtacDB_get_protac import ProtacDB_get_protac
 from .ProtacDB_search_protacs import ProtacDB_search_protacs
 from .ProtacDB_search_targets import ProtacDB_search_targets
+from .ProteinSimilarity_search_sequence_local import (
+    ProteinSimilarity_search_sequence_local,
+)
+from .ProteinSimilarity_search_structure_local import (
+    ProteinSimilarity_search_structure_local,
+)
 from .Protein_MSA_inspect import Protein_MSA_inspect
 from .ProteinsPlus_analyze_binding_site_similarity import (
     ProteinsPlus_analyze_binding_site_similarity,
@@ -4335,6 +4342,7 @@ __all__ = [
     "GEO_search_methylation_datasets",
     "GEO_search_rnaseq_datasets",
     "GIAB_list_directory",
+    "GIN_Guidelines_Search",
     "GMrepo_get_phenotypes",
     "GMrepo_search_species",
     "GNPS_compare_spectra",
@@ -5232,6 +5240,8 @@ __all__ = [
     "ProtacDB_get_protac",
     "ProtacDB_search_protacs",
     "ProtacDB_search_targets",
+    "ProteinSimilarity_search_sequence_local",
+    "ProteinSimilarity_search_structure_local",
     "Protein_MSA_inspect",
     "ProteinsPlus_analyze_binding_site_similarity",
     "ProteinsPlus_generate_interaction_diagram",

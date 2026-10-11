@@ -62,6 +62,30 @@ class DESeq2Tool(BaseTool):
             except OSError:
                 pass
 
+    @staticmethod
+    def _result_dir(prefix: str, name: str) -> str:
+        """Create a private directory for one run's result CSV.
+
+        R deletes its session ``tempdir()`` when ``Rscript`` exits, so the CSV
+        has to be written elsewhere to stay readable. The shared temporary root
+        is world-readable, and expression results are not ours to expose, so
+        Python makes the directory (mode 0700) instead of letting R drop the
+        file straight into the root.
+        """
+        return os.path.join(tempfile.mkdtemp(prefix=prefix), name)
+
+    @staticmethod
+    def _discard_empty_result_dir(out_file: str) -> None:
+        """Drop the result directory when R never wrote into it.
+
+        ``os.rmdir`` only succeeds while the directory is empty, so a result
+        that was produced is never removed.
+        """
+        try:
+            os.rmdir(os.path.dirname(out_file))
+        except OSError:
+            pass
+
     def _run_deseq2(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Run DESeq2 differential expression analysis."""
         counts_file = arguments.get("counts_file", "")
@@ -166,12 +190,13 @@ sig_lfc <- res[!is.na(res$padj) & res$padj < {alpha} & abs(res$log2FoldChange) >
 result$sig_with_lfc_filter <- nrow(sig_lfc)
 """
 
-        r_script += """
+        out_file = self._result_dir("deseq2_results_", "deseq2_results.csv")
+        r_script += f"""
 cat(jsonlite::toJSON(result, auto_unbox=TRUE))
 cat("\\nRESULT_JSON_END\\n")
 
 # Save full results
-out_file <- file.path(tempdir(), "deseq2_results.csv")
+out_file <- {json.dumps(out_file)}
 write.csv(as.data.frame(res), out_file)
 cat("RESULTS_FILE:", out_file, "\\n")
 """
@@ -199,6 +224,12 @@ cat("RESULTS_FILE:", out_file, "\\n")
                 if line.startswith("RESULTS_FILE:"):
                     results_file = line.split(":", 1)[1].strip()
 
+            if not results_file or not Path(results_file).is_file():
+                return {
+                    "status": "error",
+                    "error": f"Results file not found: {results_file}",
+                }
+
             result_data["results_file"] = results_file
 
             return {"status": "success", "data": result_data}
@@ -207,6 +238,8 @@ cat("RESULTS_FILE:", out_file, "\\n")
             return {"status": "error", "error": "DESeq2 timed out after 300s"}
         except Exception as e:
             return {"status": "error", "error": str(e)[:500]}
+        finally:
+            self._discard_empty_result_dir(out_file)
 
     def _run_enrichgo(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Run clusterProfiler enrichGO + simplify."""
@@ -244,6 +277,7 @@ universe_ids <- bg_entrez$ENTREZID
         else:
             r_script += "universe_ids <- NULL\n"
 
+        out_file = self._result_dir("enrichgo_simplified_", "enrichgo_simplified.csv")
         r_script += f"""
 ego <- enrichGO(
   gene = gene_entrez$ENTREZID,
@@ -269,7 +303,7 @@ cat(jsonlite::toJSON(top, auto_unbox=TRUE))
 cat("\\nRESULT_JSON_END\\n")
 
 # Save full results
-out_file <- file.path(tempdir(), "enrichgo_simplified.csv")
+out_file <- {json.dumps(out_file)}
 write.csv(df, out_file, row.names=FALSE)
 cat("RESULTS_FILE:", out_file, "\\n")
 """
@@ -294,6 +328,12 @@ cat("RESULTS_FILE:", out_file, "\\n")
             for line in output.split("\n"):
                 if line.startswith("RESULTS_FILE:"):
                     results_file = line.split(":", 1)[1].strip()
+
+            if not results_file or not Path(results_file).is_file():
+                return {
+                    "status": "error",
+                    "error": f"Results file not found: {results_file}",
+                }
 
             return {
                 "status": "success",
@@ -327,3 +367,5 @@ cat("RESULTS_FILE:", out_file, "\\n")
             return {"status": "error", "error": "enrichGO timed out after 300s"}
         except Exception as e:
             return {"status": "error", "error": str(e)[:500]}
+        finally:
+            self._discard_empty_result_dir(out_file)
