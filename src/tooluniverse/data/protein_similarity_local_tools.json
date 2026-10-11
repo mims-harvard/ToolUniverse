@@ -9,7 +9,7 @@
         "query_path": {
           "type": "string",
           "minLength": 1,
-          "description": "Local protein FASTA with up to50 unique identifiers, uppercase standard residues/X and no gaps/stops; builtin:1UBQ is bundled public ubiquitin."
+          "description": "Local protein FASTA with up to 50 unique identifiers, uppercase standard residues/X and no gaps/stops; builtin:1UBQ is bundled public ubiquitin."
         },
         "reference_path": {
           "type": "string",
@@ -23,7 +23,7 @@
           ],
           "minimum": 1,
           "maximum": 8,
-          "description": "CPU threads; defaults to2."
+          "description": "CPU threads; defaults to 2."
         },
         "timeout_seconds": {
           "type": [
@@ -32,7 +32,7 @@
           ],
           "minimum": 1,
           "maximum": 3600,
-          "description": "Bounded process runtime; defaults to300 seconds."
+          "description": "Bounded process runtime; defaults to 300 seconds."
         },
         "max_hits_per_query": {
           "type": [
@@ -41,7 +41,7 @@
           ],
           "minimum": 1,
           "maximum": 100,
-          "description": "Returned hits per query, defaults to20; truncation is explicit."
+          "description": "Returned hits per query, defaults to 20; truncation is explicit."
         },
         "minimum_query_coverage": {
           "type": [
@@ -50,7 +50,7 @@
           ],
           "minimum": 0,
           "maximum": 1,
-          "description": "Minimum fraction of query residues covered; defaults to0."
+          "description": "Minimum fraction of query residues covered; defaults to 0."
         },
         "sensitivity": {
           "type": [
@@ -59,7 +59,7 @@
           ],
           "minimum": 1,
           "maximum": 7.5,
-          "description": "MMseqs2 search sensitivity; defaults to7.5."
+          "description": "MMseqs2 search sensitivity; defaults to 7.5."
         },
         "evalue_threshold": {
           "type": [
@@ -68,7 +68,7 @@
           ],
           "minimum": 0,
           "maximum": 1000,
-          "description": "MMseqs2 reported E-value cutoff; defaults to0.001. No hit does not certify novelty."
+          "description": "MMseqs2 reported E-value cutoff; defaults to 0.001. No hit does not certify novelty."
         }
       },
       "required": [
@@ -206,7 +206,7 @@
         "query_path": {
           "type": "string",
           "minLength": 1,
-          "description": "Local single-chain one-model .pdb file, or directory of1\u201350 such files with standard CA records and no alternate locations; builtin:1UBQ is bundled public ubiquitin."
+          "description": "Local single-chain one-model .pdb file, or directory of 1\u201350 such files with standard CA records and no alternate locations; builtin:1UBQ is bundled public ubiquitin."
         },
         "reference_path": {
           "type": "string",
@@ -220,7 +220,7 @@
           ],
           "minimum": 1,
           "maximum": 8,
-          "description": "CPU threads; defaults to2."
+          "description": "CPU threads; defaults to 2."
         },
         "timeout_seconds": {
           "type": [
@@ -229,7 +229,7 @@
           ],
           "minimum": 1,
           "maximum": 3600,
-          "description": "Bounded process runtime; defaults to300 seconds."
+          "description": "Bounded process runtime; defaults to 300 seconds."
         },
         "max_hits_per_query": {
           "type": [
@@ -238,7 +238,7 @@
           ],
           "minimum": 1,
           "maximum": 100,
-          "description": "Returned hits per query, defaults to20; truncation is explicit."
+          "description": "Returned hits per query, defaults to 20; truncation is explicit."
         },
         "minimum_query_coverage": {
           "type": [
@@ -247,7 +247,7 @@
           ],
           "minimum": 0,
           "maximum": 1,
-          "description": "Minimum fraction of query residues covered; defaults to0."
+          "description": "Minimum fraction of query residues covered; defaults to 0."
         },
         "expand_cluster_members": {
           "type": [

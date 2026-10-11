@@ -210,7 +210,9 @@ def test_direct_call_schema_and_staged_inputs(tmp_path, monkeypatch, operation):
     )
     assert result["status"] == "success" and result["data"]["hits"] == []
     assert result["data"]["novelty_certified"] is False
-    assert commands[1][commands[1].index("--gpu") + 1] == "0"
+    # CPU-only is the environment's job, not an argument's: see
+    # test_no_argument_is_passed_that_an_older_native_build_rejects.
+    assert "--gpu" not in commands[1]
     if operation == "structure":
         fields = commands[1][commands[1].index("--format-output") + 1]
         assert "alntmscore" not in fields
@@ -384,3 +386,77 @@ def test_query_snapshot_survives_caller_file_change(tmp_path, monkeypatch):
         {"query_path": str(query), "reference_path": "builtin:1UBQ"}
     )
     assert result["status"] == "success"
+
+
+def test_no_argument_is_passed_that_an_older_native_build_rejects(tmp_path, monkeypatch):
+    """`--gpu` exists only from Foldseek 10, and rejecting it looked like a bug.
+
+    Foldseek 9 -- still what several package channels carry -- stops at argument
+    parsing with `Unrecognized parameter "--gpu"`, which this tool reported as a
+    bare "exited 1" because native logs are deliberately not echoed. CPU-only is
+    enforced by the environment, so the flag bought nothing.
+    """
+    seen = {}
+    binary = tmp_path / "binary"
+    binary.write_text("public-test-binary")
+    binary.chmod(0o755)
+    monkeypatch.setenv("TOOLUNIVERSE_FOLDSEEK_BINARY", str(binary))
+
+    def execute(argv, folder, timeout):
+        log = folder / "process.log"
+        log.write_text("public-test-version")
+        if argv[1] != "version":
+            seen["argv"] = argv
+            Path(argv[4]).write_text("")
+        return log
+
+    monkeypatch.setattr(MODULE + "._execute", execute)
+    result = LocalProteinSimilarityTool(config("structure")).run(
+        {"query_path": "builtin:1UBQ", "reference_path": "builtin:1UBQ"}
+    )
+    assert result["status"] == "success", result
+    assert "--gpu" not in seen["argv"], seen["argv"]
+
+
+def test_a_native_build_too_old_for_an_argument_says_so(tmp_path):
+    """The one native log line worth lifting out, since it names no path."""
+    complaint = (
+        b"easy-search /tmp/caller/secret.pdb\n"
+        b'Unrecognized parameter "--gpu". Did you mean "--gap-open" (Gap open cost)?\n'
+    )
+
+    class _Process:
+        returncode = 1
+
+        @staticmethod
+        def wait(timeout=None):
+            return 1
+
+    def popen(*args, **kwargs):
+        kwargs["stdout"].write(complaint)
+        kwargs["stdout"].flush()
+        return _Process()
+
+    import tooluniverse.protein_similarity_local_tool as module
+
+    original = module.subprocess.Popen
+    module.subprocess.Popen = popen
+    try:
+        with pytest.raises(RuntimeError) as raised:
+            _execute(["local-tool", "easy-search"], tmp_path, 10)
+    finally:
+        module.subprocess.Popen = original
+    message = str(raised.value)
+    assert "--gpu" in message
+    assert "older than this tool expects" in message
+    # The native log holds the caller's paths; the message must not.
+    assert "secret.pdb" not in message
+
+
+def test_every_parameter_description_reads_as_prose():
+    """These descriptions are what an agent reads to choose arguments."""
+    import re
+
+    text = (DATA / "protein_similarity_local_tools.json").read_text()
+    glued = re.findall(r"\b(?:to|of)[0-9–]\S*", text)
+    assert glued == [], glued

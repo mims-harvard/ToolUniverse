@@ -27,17 +27,17 @@ def ProteinSimilarity_search_structure_local(
     Parameters
     ----------
     query_path : str
-        Local single-chain one-model .pdb file, or directory of1–50 such files with s...
+        Local single-chain one-model .pdb file, or directory of 1–50 such files with ...
     reference_path : str
         Local reference PDB file or prebuilt Foldseek database prefix (.dbtype must e...
     threads : int
-        CPU threads; defaults to2.
+        CPU threads; defaults to 2.
     timeout_seconds : int
-        Bounded process runtime; defaults to300 seconds.
+        Bounded process runtime; defaults to 300 seconds.
     max_hits_per_query : int
-        Returned hits per query, defaults to20; truncation is explicit.
+        Returned hits per query, defaults to 20; truncation is explicit.
     minimum_query_coverage : float
-        Minimum fraction of query residues covered; defaults to0.
+        Minimum fraction of query residues covered; defaults to 0.
     expand_cluster_members : bool
         For a prebuilt clustered Foldseek database, align members of matched represen...
     stream_callback : Callable, optional

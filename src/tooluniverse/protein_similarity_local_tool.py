@@ -196,8 +196,28 @@ def _execute(argv, directory, timeout):
             )
     if process.returncode:
         # Do not echo native logs, which can contain the caller's file paths.
+        # One line is worth lifting out: a build too old for an argument we pass
+        # fails here with nothing else to go on, and the flag name is not a path.
+        rejected = _rejected_argument(log)
+        if rejected:
+            raise RuntimeError(
+                f"The local alignment program does not accept {rejected}, so it is "
+                "older than this tool expects. Update MMseqs2 or Foldseek, or point "
+                "TOOLUNIVERSE_MMSEQS2_BINARY / TOOLUNIVERSE_FOLDSEEK_BINARY at a "
+                "newer build."
+            )
         raise RuntimeError(f"Local alignment program exited {process.returncode}.")
     return log
+
+
+def _rejected_argument(log):
+    """The argument a too-old native build refused, if that is why it stopped."""
+    try:
+        text = log.read_text(errors="replace")
+    except OSError:
+        return None
+    match = re.search(r'Unrecognized parameter "(-[-\w]+)"', text)
+    return match.group(1) if match else None
 
 
 def _parse(path, operation, limit, query_lengths=None):
@@ -379,8 +399,11 @@ class LocalProteinSimilarityTool(BaseTool):
                     str(work / "tmp"),
                     "--threads",
                     str(threads),
-                    "--gpu",
-                    "0",
+                    # No --gpu 0 here. The flag only exists from Foldseek 10 and
+                    # recent MMseqs2; older builds reject it during argument
+                    # parsing, which surfaced as a bare "exited 1". CPU-only is
+                    # enforced by CUDA_VISIBLE_DEVICES="" in _execute instead,
+                    # which every version honours.
                     "--max-seqs",
                     "1000",
                     "-c",

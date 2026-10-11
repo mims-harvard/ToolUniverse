@@ -28,21 +28,21 @@ def ProteinSimilarity_search_sequence_local(
     Parameters
     ----------
     query_path : str
-        Local protein FASTA with up to50 unique identifiers, uppercase standard resid...
+        Local protein FASTA with up to 50 unique identifiers, uppercase standard resi...
     reference_path : str
         Local reference file or prebuilt database prefix (.dbtype must exist); builti...
     threads : int
-        CPU threads; defaults to2.
+        CPU threads; defaults to 2.
     timeout_seconds : int
-        Bounded process runtime; defaults to300 seconds.
+        Bounded process runtime; defaults to 300 seconds.
     max_hits_per_query : int
-        Returned hits per query, defaults to20; truncation is explicit.
+        Returned hits per query, defaults to 20; truncation is explicit.
     minimum_query_coverage : float
-        Minimum fraction of query residues covered; defaults to0.
+        Minimum fraction of query residues covered; defaults to 0.
     sensitivity : float
-        MMseqs2 search sensitivity; defaults to7.5.
+        MMseqs2 search sensitivity; defaults to 7.5.
     evalue_threshold : float
-        MMseqs2 reported E-value cutoff; defaults to0.001. No hit does not certify no...
+        MMseqs2 reported E-value cutoff; defaults to 0.001. No hit does not certify n...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -13,6 +13,11 @@ executable paths. Neither is a Python import or a base-package dependency.
 Missing binaries return an actionable dependency error, without an online
 fallback. No API key is used.
 
+Exercised against Foldseek `9-427df8a` and `10-941cd33` and MMseqs2
+`564f40d8`, so no version floor is known. Should a build prove too old for one
+of the arguments these tools pass, the error names the argument it refused
+instead of reporting only a non-zero exit.
+
 ```python
 from tooluniverse import ToolUniverse
 
