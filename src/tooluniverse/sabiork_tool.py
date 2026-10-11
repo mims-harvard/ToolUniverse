@@ -16,6 +16,7 @@ import requests
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 SABIORK_BASE = "https://sabiork.h-its.org/sabioRestWebServices"
 
@@ -330,7 +331,7 @@ class SABIORKTool(BaseTool):
         if resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"SABIO-RK Solr returned HTTP {resp.status_code}: {resp.text[:200]}",
+                "error": f"SABIO-RK Solr returned HTTP {resp.status_code}{upstream_reason_suffix(resp)}",
             }
 
         try:

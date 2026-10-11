@@ -371,6 +371,9 @@ default_tool_files = {
         current_dir, "data", "boltz_mcp_loader_tools.json"
     ),
     "boltz_api": os.path.join(current_dir, "data", "boltz_api_tools.json"),
+    "mcp_auto_loader_rfdiffusion2": os.path.join(
+        current_dir, "data", "rfdiffusion2_mcp_loader_tools.json"
+    ),
     "mcp_auto_loader_esm": os.path.join(
         current_dir, "data", "mcp_auto_loader_esm.json"
     ),
@@ -1110,6 +1113,9 @@ default_tool_files = {
     "nasa_osdr": os.path.join(current_dir, "data", "nasa_osdr_tools.json"),
     # EWAS Catalog - epigenome-wide association study results (MRC-IEU)
     "ewas_catalog": os.path.join(current_dir, "data", "ewas_catalog_tools.json"),
+    # EWAS Atlas - curated EWAS knowledgebase (NGDC/CNCB); independent of the
+    # EWAS Catalog, which answered HTTP 503 site-wide from 2026-10-05
+    "ewas_atlas": os.path.join(current_dir, "data", "ewas_atlas_tools.json"),
     # NIH DSLD - Dietary Supplement Label Database, a regulatory category
     # separate from FDA drug labels with no prior coverage
     "nih_dsld": os.path.join(current_dir, "data", "nih_dsld_tools.json"),

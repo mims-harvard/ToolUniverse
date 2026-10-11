@@ -19,6 +19,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Any, List, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 # Base URLs for ClinGen APIs
 CLINGEN_BASE_URL = "https://search.clinicalgenome.org"
@@ -225,7 +226,7 @@ class ClinGenTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             return {
                 "status": "error",
-                "error": f"HTTP {e.response.status_code}: {e.response.text[:200]}",
+                "error": f"HTTP {e.response.status_code}{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {"status": "error", "error": str(e)}
@@ -270,7 +271,7 @@ class ClinGenTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             return {
                 "status": "error",
-                "error": f"HTTP {e.response.status_code}: {e.response.text[:200]}",
+                "error": f"HTTP {e.response.status_code}{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {"status": "error", "error": str(e)}
@@ -321,7 +322,7 @@ class ClinGenTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             return {
                 "status": "error",
-                "error": f"HTTP {e.response.status_code}: {e.response.text[:200]}",
+                "error": f"HTTP {e.response.status_code}{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {"status": "error", "error": str(e)}
@@ -370,7 +371,7 @@ class ClinGenTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             return {
                 "status": "error",
-                "error": f"HTTP {e.response.status_code}: {e.response.text[:200]}",
+                "error": f"HTTP {e.response.status_code}{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {"status": "error", "error": str(e)}
@@ -454,7 +455,7 @@ class ClinGenTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             return {
                 "status": "error",
-                "error": f"HTTP {e.response.status_code}: {e.response.text[:200]}",
+                "error": f"HTTP {e.response.status_code}{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {"status": "error", "error": str(e)}
@@ -808,7 +809,7 @@ class ClinGenTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             return {
                 "status": "error",
-                "error": f"HTTP {e.response.status_code}: {e.response.text[:200]}",
+                "error": f"HTTP {e.response.status_code}{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {"status": "error", "error": str(e)}

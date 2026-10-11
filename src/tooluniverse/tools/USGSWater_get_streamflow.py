@@ -1,7 +1,7 @@
 """
 USGSWater_get_streamflow
 
-Get real-time streamflow (discharge) data from USGS water monitoring stations. Returns instantane...
+Get recent streamflow (discharge) readings from USGS stream gages, in cubic feet per second (ft^3...
 """
 
 from typing import Any, Optional, Callable
@@ -11,20 +11,23 @@ from ._shared_client import get_shared_client
 def USGSWater_get_streamflow(
     sites: str,
     period: Optional[str] = None,
+    max_values: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
-    Get real-time streamflow (discharge) data from USGS water monitoring stations. Returns instantane...
+    Get recent streamflow (discharge) readings from USGS stream gages, in cubic feet per second (ft^3...
 
     Parameters
     ----------
     sites : str
-        USGS site number(s), comma-separated (e.g., '01646500' for Potomac River near...
+        USGS site number(s), comma-separated, up to 25 (e.g. '01646500' for the Potom...
     period : str
-        Time period for data in ISO 8601 duration format (e.g., 'PT2H' for 2 hours, '...
+        How far back from now, as an ISO 8601 duration (e.g. 'PT2H' for 2 hours, 'P1D...
+    max_values : int
+        Max values per site, newest kept, 1-10000 (shared across a site's sensors whe...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,13 +37,15 @@ def USGSWater_get_streamflow(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"sites": sites, "period": period}.items() if v is not None
+        k: v
+        for k, v in {"sites": sites, "period": period, "max_values": max_values}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2865 scientific tools.
+Type-safe Python interface to 2871 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -599,6 +599,11 @@ from .EVA_get_variants_by_region import EVA_get_variants_by_region
 from .EVA_list_studies import EVA_list_studies
 from .EVE_get_gene_info import EVE_get_gene_info
 from .EVE_get_variant_score import EVE_get_variant_score
+from .EWASAtlas_get_probe import EWASAtlas_get_probe
+from .EWASAtlas_get_publication import EWASAtlas_get_publication
+from .EWASAtlas_get_study import EWASAtlas_get_study
+from .EWASAtlas_search_by_gene import EWASAtlas_search_by_gene
+from .EWASAtlas_search_by_region import EWASAtlas_search_by_region
 from .EWASCatalog_search_by_cpg import EWASCatalog_search_by_cpg
 from .EWASCatalog_search_by_gene import EWASCatalog_search_by_gene
 from .Enamine_get_compound import Enamine_get_compound
@@ -3333,6 +3338,7 @@ from .loinc_search_codes import loinc_search_codes
 from .mcp_auto_loader_boltz import mcp_auto_loader_boltz
 from .mcp_auto_loader_esm import mcp_auto_loader_esm
 from .mcp_auto_loader_expert_feedback import mcp_auto_loader_expert_feedback
+from .mcp_auto_loader_rfdiffusion2 import mcp_auto_loader_rfdiffusion2
 from .mcp_auto_loader_txagent import mcp_auto_loader_txagent
 from .mcp_auto_loader_uspto_downloader import mcp_auto_loader_uspto_downloader
 from .mesh_get_subjects_by_pharmacological_action import (
@@ -3990,6 +3996,11 @@ __all__ = [
     "EVA_list_studies",
     "EVE_get_gene_info",
     "EVE_get_variant_score",
+    "EWASAtlas_get_probe",
+    "EWASAtlas_get_publication",
+    "EWASAtlas_get_study",
+    "EWASAtlas_search_by_gene",
+    "EWASAtlas_search_by_region",
     "EWASCatalog_search_by_cpg",
     "EWASCatalog_search_by_gene",
     "Enamine_get_compound",
@@ -6210,6 +6221,7 @@ __all__ = [
     "mcp_auto_loader_boltz",
     "mcp_auto_loader_esm",
     "mcp_auto_loader_expert_feedback",
+    "mcp_auto_loader_rfdiffusion2",
     "mcp_auto_loader_txagent",
     "mcp_auto_loader_uspto_downloader",
     "mesh_get_subjects_by_pharmacological_action",

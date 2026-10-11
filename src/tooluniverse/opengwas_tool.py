@@ -20,6 +20,7 @@ import requests
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 OPENGWAS_BASE = "https://api.opengwas.io/api"
 
@@ -58,7 +59,6 @@ class OpenGWASTool(BaseTool):
             }
         except requests.exceptions.HTTPError as e:
             code = e.response.status_code if e.response is not None else "?"
-            detail = e.response.text[:200] if e.response is not None else ""
             hint = (
                 " The OPENGWAS_JWT token is missing/expired/invalid — get a free"
                 " one at https://api.opengwas.io."
@@ -67,7 +67,7 @@ class OpenGWASTool(BaseTool):
             )
             return {
                 "status": "error",
-                "error": f"OpenGWAS HTTP {code}: {detail}{hint}",
+                "error": f"OpenGWAS HTTP {code}{upstream_reason_suffix(e.response)}{hint}",
             }
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"OpenGWAS request failed: {e}"}

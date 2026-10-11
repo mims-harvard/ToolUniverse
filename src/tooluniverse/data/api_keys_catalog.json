@@ -585,6 +585,18 @@
     ]
   },
   {
+    "name": "RFDIFFUSION2_MCP_SERVER_HOST",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://github.com/RosettaCommons/RFdiffusion2",
+    "purpose": "Host of a self-hosted RFdiffusion2 protein-design MCP server.",
+    "without": "Leave blank unless you run your own RFdiffusion2 server.",
+    "used_by": [
+      "rfdiffusion2_mcp_loader_tools.json"
+    ]
+  },
+  {
     "name": "RXN4CHEMISTRY_API_KEY",
     "requirement": "required",
     "type": "secret",
@@ -655,6 +667,18 @@
     "without": "UMLS/SNOMED/LOINC tools are blocked without it (free UMLS license).",
     "used_by": [
       "umls_tools.json"
+    ]
+  },
+  {
+    "name": "USGS_WATER_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Other",
+    "register_url": "https://api.waterdata.usgs.gov/signup/",
+    "purpose": "Raise the rate limit for USGS Water Data API requests (streamflow, gage height, water temperature).",
+    "without": "Works anonymously at a lower rate limit.",
+    "used_by": [
+      "usgs_water_tools.json"
     ]
   },
   {

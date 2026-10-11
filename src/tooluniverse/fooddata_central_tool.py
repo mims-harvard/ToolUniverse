@@ -14,6 +14,7 @@ from typing import Dict, Any
 from .base_tool import BaseTool
 from .credentials import has_credential_context
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 # Base URL for USDA FoodData Central API
 FDC_BASE_URL = "https://api.nal.usda.gov/fdc/v1"
@@ -88,9 +89,6 @@ class FoodDataCentralTool(BaseTool):
             status_code = (
                 e.response.status_code if e.response is not None else "unknown"
             )
-            detail = ""
-            if e.response is not None:
-                detail = e.response.text[:200]
             if status_code == 403:
                 return {
                     "status": "error",
@@ -110,7 +108,8 @@ class FoodDataCentralTool(BaseTool):
                 }
             return {
                 "status": "error",
-                "error": f"FoodData Central API HTTP error {status_code}: {detail}",
+                "error": f"FoodData Central API HTTP error {status_code}"
+                f"{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {
