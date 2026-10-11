@@ -117,6 +117,11 @@ ToolUniverse is an ecosystem for creating AI scientist systems from any large la
 **Medea: An Omics AI Agent for Therapeutic Discovery** [[Project]](https://medea.openscientist.ai) [[Paper]](https://www.biorxiv.org/content/early/2026/01/20/2026.01.16.696667) [[GitHub]](https://github.com/mims-harvard/Medea)
 > Medea integrates ToolUniverse tools for multi-omics analysis to identify therapeutic targets and predict drug responses across cancer, autoimmune, and other diseases.
 
+## Workshops and Education
+
+**[Building AI Co-Scientists with ToolUniverse](https://github.com/ccb-hms/tooluniverse-ai-workshop)**
+> Materials from the October 8, 2026 workshop in the Core for Computational Biomedicine (CCB) AI Seminar & Workshop Series at Harvard Medical School. Includes the ToolUniverse workshop slides, CCB introduction slides, and a follow-along Markdown guide for using ToolUniverse live with clinical and genetics examples.
+
 ## Documentation
 
 Full documentation: [zitniklab.hms.harvard.edu/ToolUniverse](https://zitniklab.hms.harvard.edu/ToolUniverse/)
