@@ -1612,11 +1612,17 @@ class ToolUniverse:
                         "LLM API keys (AZURE_OPENAI_API_KEY, OPENAI_API_KEY, "
                         "OPENROUTER_API_KEY, GEMINI_API_KEY, or VLLM_SERVER_URL)"
                     )
+                    # Each of these ungates the tool on its own, so each is
+                    # worth naming to someone who has none of them.
+                    # VLLM_SERVER_URL was missing here while the warning just
+                    # above already offered it, and AZURE_OPENAI_API_KEY stands
+                    # for the Azure pair, whose endpoint is no use by itself.
                     self._excluded_any_api_key_tools[tool_name] = [
                         "AZURE_OPENAI_API_KEY",
                         "OPENAI_API_KEY",
                         "OPENROUTER_API_KEY",
                         "GEMINI_API_KEY",
+                        "VLLM_SERVER_URL",
                     ]
                     continue
 
@@ -3564,6 +3570,16 @@ class ToolUniverse:
                     f"{', '.join(alternative_credentials)}. Provide one as a request "
                     "credential or environment variable.",
                     retriable=False,
+                    # Without these, ToolUnavailableError's network-flavoured
+                    # defaults ("Check network connection", "Verify service
+                    # status") answer a missing LLM key -- the same mistake the
+                    # required-key branch above was already taught not to make.
+                    next_steps=[
+                        "Pass one of the missing keys in "
+                        "run_one_function(credentials={...})",
+                        "Or set one of them as a local environment variable",
+                        "Run `tu status` to check which API keys are configured",
+                    ],
                 )
             )
 
@@ -3828,6 +3844,16 @@ class ToolUniverse:
                     f"{', '.join(alternative_credentials)}. Provide one as a request "
                     "credential or environment variable.",
                     retriable=False,
+                    # Without these, ToolUnavailableError's network-flavoured
+                    # defaults ("Check network connection", "Verify service
+                    # status") answer a missing LLM key -- the same mistake the
+                    # required-key branch above was already taught not to make.
+                    next_steps=[
+                        "Pass one of the missing keys in "
+                        "run_one_function(credentials={...})",
+                        "Or set one of them as a local environment variable",
+                        "Run `tu status` to check which API keys are configured",
+                    ],
                 )
             )
 

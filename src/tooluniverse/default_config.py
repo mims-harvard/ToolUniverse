@@ -333,6 +333,7 @@ default_tool_files = {
     ),
     # DESeq2 — R-based differential expression + enrichGO
     "deseq2": os.path.join(current_dir, "data", "deseq2_tools.json"),
+    "geant4": os.path.join(current_dir, "data", "geant4_tools.json"),
     # Compound tools — multi-database queries in a single call
     "compound_gene_disease": os.path.join(
         current_dir, "data", "compound_gene_disease_tools.json"
