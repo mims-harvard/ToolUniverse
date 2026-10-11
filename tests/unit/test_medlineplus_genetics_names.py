@@ -127,6 +127,17 @@ def test_a_name_without_a_page_lists_the_closest_pages_and_fetches_nothing_else(
 def test_a_gene_without_a_page_says_so():
     result, _urls = _run("MedlinePlus_get_genetics_gene_by_name", {"gene": "APOL1"}, GENE)
     assert result["status"] == "error" and "no gene page named 'APOL1'" in result["error"]
+    assert "search_topics_by_keyword" not in result["hint"]
+
+
+def test_a_common_disease_is_pointed_to_the_health_topics_search():
+    # In a clinical agent's run: "chronic kidney disease", "genetic kidney disease".
+    result, urls = _run(
+        "MedlinePlus_get_genetics_condition_by_name", {"condition": "chronic kidney disease"}, CONDITION
+    )
+    assert result["status"] == "error" and result["suggestions"] == []
+    assert "MedlinePlus_search_topics_by_keyword" in result["hint"]
+    assert urls == [M._GENETICS_INDEX_URL]
 
 
 def test_the_slug_form_is_used_when_the_index_cannot_be_read():

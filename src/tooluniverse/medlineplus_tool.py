@@ -558,17 +558,28 @@ class MedlinePlusRESTTool(BaseTool):
             )
         ]
         suggestions = list(dict.fromkeys(close + containing))[:8]
+        if suggestions:
+            hint = (
+                "Call again with one of the suggested names; "
+                "MedlinePlus_get_genetics_index lists every page."
+            )
+        else:
+            hint = (
+                "MedlinePlus Genetics covers about 1,300 genetic conditions and "
+                "1,500 genes; this one is not among them."
+            )
+        if kind == "condition":
+            # Agents ask the genetics endpoint for common diseases too.
+            hint += (
+                " For a condition that is not a genetic disorder, "
+                "MedlinePlus_search_topics_by_keyword searches MedlinePlus's "
+                "general health topics."
+            )
         return None, {
             "status": "error",
             "error": f"MedlinePlus Genetics has no {kind} page named '{text}'.",
             "suggestions": suggestions,
-            "hint": (
-                "Call again with one of the suggested names; "
-                "MedlinePlus_get_genetics_index lists every page."
-                if suggestions
-                else "MedlinePlus Genetics covers about 1,300 conditions and "
-                "1,500 genes; this one is not among them."
-            ),
+            "hint": hint,
         }
 
     def run(self, arguments: dict):
