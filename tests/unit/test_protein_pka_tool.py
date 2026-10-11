@@ -65,6 +65,71 @@ def test_multi_model_and_altloc_rejected():
     assert "Alternate" in tool().run({"pdb_content": alternate})["error"]
 
 
+@pytest.mark.parametrize("index", [0, 1])
+@pytest.mark.parametrize("displacement", [30.0, 0.0])
+def test_broken_carbonyl_rejected_before_worker(monkeypatch, index, displacement):
+    lines = PDB.read_text().splitlines()
+    carbon = next(
+        line
+        for line in lines
+        if line.startswith("ATOM  ")
+        and line[12:16].strip() == "C"
+        and int(line[22:26]) == 76
+    )
+    for i, line in enumerate(lines):
+        if (
+            line.startswith("ATOM  ")
+            and line[12:16].strip() == "O"
+            and int(line[22:26]) == 76
+        ):
+            # Two distinct defects: displaced oxygen or an oxygen coincident with C.
+            xyz = (
+                carbon[30:54]
+                if displacement == 0
+                else f"{float(line[30:38]) + displacement:8.3f}" + line[38:54]
+            )
+            lines[i] = line[:30] + xyz + line[54:]
+    monkeypatch.setattr(
+        "tooluniverse.protein_pka_tool.subprocess.run",
+        lambda *a, **k: pytest.fail("Broken backbone reached PROPKA"),
+    )
+    args = {"pdb_content": "\n".join(lines) + "\n"}
+    if index == 1:
+        args["partner_chain"] = "A"
+    response = tool(index).run(args)
+    assert response["status"] == "error" and "backbone bond C-O" in response["error"]
+    assert "76" in response["error"]
+
+
+def test_backbone_sanity_does_not_claim_missing_or_ligand_atoms_are_valid():
+    from tooluniverse.protein_pka_tool import _backbone_geometry
+
+    content = PDB.read_text()
+    report = _backbone_geometry(content)
+    assert report["checked_observed_bonds"] >= 3 * 76
+    assert report["missing_N_CA_C_O_atoms"] == 0
+    n = next(line for line in content.splitlines() if line.startswith("ATOM  "))
+    partial = _backbone_geometry(n + "\n")
+    assert partial["checked_observed_bonds"] == 0
+    assert partial["missing_N_CA_C_O_atoms"] == 3
+    # A ligand named LIG with CA/C/O-like names is outside the protein sanity scope.
+    ligand = n[:17] + "LIG" + n[20:]
+    assert _backbone_geometry(ligand + "\n")["standard_protein_residues"] == 0
+
+
+def test_backbone_sanity_keeps_insertion_codes_and_TER_segments_distinct():
+    from tooluniverse.protein_pka_tool import _backbone_geometry
+
+    atom = next(
+        line for line in PDB.read_text().splitlines() if line.startswith("ATOM  ")
+    )
+    inserted = atom[:26] + "A" + atom[27:]
+    assert _backbone_geometry(atom + "\n" + inserted)["standard_protein_residues"] == 2
+    assert _backbone_geometry(atom + "\nTER\n" + atom)["standard_protein_residues"] == 2
+    with pytest.raises(ValueError, match="Duplicate protein backbone atom"):
+        _backbone_geometry(atom + "\n" + atom)
+
+
 def test_wrong_partner_rejected_before_model(monkeypatch):
     monkeypatch.setattr(
         "tooluniverse.protein_pka_tool.subprocess.run",
@@ -90,6 +155,7 @@ def test_real_prediction_preserves_residue_number_and_fractions():
     jsonschema.validate(result, CONFIGS[0]["return_schema"])
     assert result["status"] == "success", result
     data = result["data"]
+    assert data["input_backbone_geometry"]["checked_observed_bonds"] >= 3 * 76
     his = next(g for g in data["prediction"]["groups"] if g["group_type"] == "HIS")
     assert (his["chain"], his["residue_number"], his["insertion_code"]) == ("A", 68, "")
     assert math.isfinite(his["pka"])

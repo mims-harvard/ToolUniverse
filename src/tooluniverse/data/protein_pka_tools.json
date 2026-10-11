@@ -2,7 +2,7 @@
   {
     "name": "PROPKA_predict_pka",
     "type": "ProteinPKATool",
-    "description": "Predict protein pKa locally from one PDB model using optional PROPKA. Returns numbered groups, warnings and independent-site protonated fractions. Accept a PDB ID, path or text; e.g. 1UBQ. Predictions do not validate pH-dependent binding.",
+    "description": "Predict protein pKa locally from one PDB model using optional PROPKA. Returns numbered groups, warnings and independent-site protonated fractions. Accept a PDB ID, path or text; e.g. 1UBQ. Predictions do not validate pH-dependent binding. Rejects gross observed intraresidue backbone bond defects before prediction; this is not full structure validation.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -117,6 +117,10 @@
                 },
                 "pH_selectivity_verified": {
                   "const": false
+                },
+                "input_backbone_geometry": {
+                  "type": "object",
+                  "description": "Conservative observed standard-protein backbone-bond sanity counts and limitations; does not certify full structural integrity."
                 }
               },
               "required": [
@@ -166,7 +170,7 @@
   {
     "name": "PROPKA_compare_partner_pka",
     "type": "ProteinPKATool",
-    "description": "Compare protein pKa in a complex with the same-coordinate free partner using local PROPKA. Explicitly retain associated chains (e.g. glycan/cofactor chains) with free_keep_chains; default extracts only partner_chain. No automatic molecular inference, affinity or pH validation.",
+    "description": "Compare protein pKa in a complex with the same-coordinate free partner using local PROPKA. Explicitly retain associated chains (e.g. glycan/cofactor chains) with free_keep_chains; default extracts only partner_chain. No automatic molecular inference, affinity or pH validation. Rejects gross observed intraresidue backbone bond defects before prediction; this is not full structure validation.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -322,6 +326,10 @@
                 "free_partner_coordinate_records": {
                   "type": "integer",
                   "minimum": 1
+                },
+                "input_backbone_geometry": {
+                  "type": "object",
+                  "description": "Conservative observed standard-protein backbone-bond sanity counts and limitations; does not certify full structural integrity."
                 }
               },
               "required": [
