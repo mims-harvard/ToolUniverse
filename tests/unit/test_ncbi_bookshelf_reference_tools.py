@@ -1346,3 +1346,171 @@ def test_management_flags_chapters_that_match_only_in_their_text(call):
     assert result["status"] == "success", result
     assert all(item["title_matches"] == [] for item in result["data"])
     assert "matched only in their text" in result["metadata"]["relevance_note"]
+
+
+# ---------------------------------------------------------------------------
+# chapter ranking
+# ---------------------------------------------------------------------------
+#
+# Real StatPearls behaviour, condensed into a few chapters added to a copy of
+# the fixture index. For "gangrenous Meckel's diverticulum with axial
+# torsion", the introduction of "Meckel Scan" matches more query words than
+# any one section of "Meckel Diverticulum", so ranking chapters by their single
+# best section put the scan chapter first (BM25 -30.5 against -26.4 on the
+# full index). And "Anatomy, ..." chapters qualified for the management lookup
+# through their "Clinical Significance" section.
+
+RANKING_CHAPTERS = {
+    "Meckel Diverticulum": [
+        ("Introduction", "Meckel diverticulum is the commonest congenital anomaly "
+         "of the small intestine, a remnant of the vitelline duct."),
+        ("Pathophysiology", "The diverticulum can twist on its base; torsion "
+         "leads to ischemia and gangrene."),
+        ("Treatment / Management", "A symptomatic Meckel diverticulum is resected; "
+         "a gangrenous or twisted diverticulum needs segmental resection."),
+        ("Complications", "Obstruction, bleeding and diverticulitis of a Meckel "
+         "diverticulum."),
+    ],
+    "Meckel Scan": [
+        ("Introduction", "A Meckel scan images ectopic gastric mucosa in a Meckel "
+         "diverticulum. Gangrenous Meckel diverticulum, axial torsion of a Meckel "
+         "diverticulum and a gangrenous diverticulum after axial torsion give a "
+         "false-negative scan, because a gangrenous twisted Meckel diverticulum "
+         "takes up no tracer."),
+        ("Clinical Significance", "A positive scan supports surgery."),
+    ],
+    "Anatomy, Abdomen and Pelvis, Ovary Corpus Luteum": [
+        ("Introduction", "The corpus luteum forms from the follicle after ovulation."),
+        ("Clinical Significance", "A ruptured corpus luteum cyst causes "
+         "hemoperitoneum: corpus luteum cyst rupture, corpus luteum hemorrhage and "
+         "hemoperitoneum from a ruptured corpus luteum cyst."),
+    ],
+    "Ovarian Cyst": [
+        ("Introduction", "Functional ovarian cysts include follicular and "
+         "corpus luteum cysts."),
+        ("Treatment / Management", "A ruptured cyst with hemoperitoneum and "
+         "hemodynamic instability needs laparoscopy."),
+    ],
+}
+
+
+@pytest.fixture(scope="module")
+def ranking_index(tmp_path_factory, fixture_index, index_mod):
+    import sqlite3
+
+    out = tmp_path_factory.mktemp("bookshelf_ranking")
+    for path in fixture_index.iterdir():
+        shutil.copy(path, out / path.name)
+    conn = sqlite3.connect(out / "statpearls.sqlite")
+    with conn:
+        for n, (title, sections) in enumerate(RANKING_CHAPTERS.items()):
+            chapter_id = "article-9%04d" % n
+            conn.execute(
+                "INSERT INTO chapters VALUES (?, ?, ?, '2024', 0, 0, 1, 1, ?, ?, 0)",
+                (chapter_id, title, index_mod.normalize_name(title), chapter_id, len(sections)),
+            )
+            for order, (heading, text) in enumerate(sections):
+                conn.execute(
+                    "INSERT INTO sections(chapter_id, ord, level, heading, path, title, text)"
+                    " VALUES (?, ?, 1, ?, ?, ?, ?)",
+                    (chapter_id, order, heading, heading, title, text),
+                )
+        conn.execute("INSERT INTO sections_fts(sections_fts) VALUES ('rebuild')")
+    conn.close()
+    return out
+
+
+@pytest.fixture
+def ranked(make_tool, monkeypatch, ranking_index):
+    """ranked(query, management=False) -> chapter titles in result order."""
+    monkeypatch.setenv(INDEX_ENV, str(ranking_index))
+
+    def titles(query, management=False):
+        if management:
+            result = make_tool("StatPearls_get_management").run(
+                {"condition": query, "limit": 3}
+            )
+        else:
+            result = make_tool("StatPearls_search").run({"query": query, "limit": 5})
+        assert result["status"] == "success", result
+        return [item["title"] for item in result["data"]]
+
+    return titles
+
+
+def test_the_chapter_on_the_condition_outranks_a_dense_mention_elsewhere(ranked):
+    query = "gangrenous Meckel's diverticulum with axial torsion"
+    assert ranked(query)[:2] == ["Meckel Diverticulum", "Meckel Scan"]
+    assert ranked(query, management=True)[0] == "Meckel Diverticulum"
+
+
+def test_single_best_section_ranking_would_put_the_dense_mention_first(
+    make_tool, monkeypatch, ranking_index
+):
+    # The fixture reproduces the failure: by best section alone the scan
+    # chapter comes first.
+    monkeypatch.setenv(INDEX_ENV, str(ranking_index))
+    tool = make_tool("StatPearls_search")
+    monkeypatch.setattr(tool, "SECTION_WEIGHTS", (1.0,))
+    monkeypatch.setattr(tool, "TITLE_WEIGHT", 0.0)
+    result = tool.run({"query": "gangrenous Meckel's diverticulum with axial torsion"})
+    assert result["data"][0]["title"] == "Meckel Scan"
+
+
+def test_management_ranks_basic_science_chapters_after_clinical_ones(ranked):
+    query = "ruptured corpus luteum cyst with hemoperitoneum"
+    assert ranked(query)[0] == "Anatomy, Abdomen and Pelvis, Ovary Corpus Luteum"
+    management = ranked(query, management=True)
+    assert management[0] == "Ovarian Cyst"
+    assert management.index("Anatomy, Abdomen and Pelvis, Ovary Corpus Luteum") > 0
+
+
+def test_an_exact_title_still_ranks_first(ranked):
+    assert ranked("Meckel Scan")[0] == "Meckel Scan"
+
+
+@pytest.mark.parametrize(
+    "title, expected",
+    [
+        ("Anatomy, Head and Neck, Teeth", True),
+        ("Physiology, Phosphate", True),
+        ("Neuroanatomy, Spinal Cord Veins", True),
+        ("Genetics: X-Linked Inheritance", True),
+        ("Physiologic Gingival Pigmentation", False),
+        ("Anatomy", False),
+        ("Hypovolemia and Hypovolemic Shock", False),
+        ("Oral Surgery, Extraction of Unerupted Teeth", False),
+    ],
+)
+def test_is_basic_science(tool_mod, title, expected):
+    assert tool_mod.is_basic_science(title) is expected
+
+
+def test_fts_terms_stem_like_the_index(tool_mod):
+    assert tool_mod.fts_terms(["Meckel's Diverticula", "intussusceptions"]) == [
+        ["meckel", "s", "diverticula"],
+        ["intussuscept"],
+    ]
+
+
+def test_title_share_weights_title_words_by_rarity(tool_mod):
+    idf = {"meckel": 3.0, "diverticulum": 2.0, "scan": 1.0, "anatomi": 0.1, None: 4.0}
+    query = {"gangren", "meckel", "diverticulum", "axial", "torsion"}
+    assert tool_mod.title_share({"meckel", "diverticulum"}, query, idf) == 1.0
+    assert tool_mod.title_share({"meckel", "scan"}, query, idf) == 0.75
+    assert tool_mod.title_share({"meckel", "rare"}, query, idf) == 3.0 / 7.0
+    assert tool_mod.title_share(set(), query, idf) == 0.0
+
+
+def test_title_vocabulary_is_read_once_per_index_version(tool_mod, ranking_index):
+    path = ranking_index / "statpearls.sqlite"
+    first = tool_mod._title_vocabulary(str(path.resolve()), path.stat().st_mtime_ns)
+    again = tool_mod._title_vocabulary(str(path.resolve()), path.stat().st_mtime_ns)
+    assert first is again
+    titles, terms, idf = first
+    meckel = next(cid for cid, title in titles.items() if title == "Meckel Scan")
+    assert terms[meckel] == {"meckel", "scan"}
+    # Nursing editions and archived chapters do not count towards rarity, so
+    # "(Nursing)" and "(Archived)" weigh as much as the rarest title word.
+    assert "nurs" not in idf and "archiv" not in idf
+    assert idf[None] == max(idf.values())

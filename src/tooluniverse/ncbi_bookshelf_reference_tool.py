@@ -29,6 +29,7 @@ saying how much was left out and how to read it.
 import difflib
 import functools
 import json
+import math
 import re
 import sqlite3
 from pathlib import Path
@@ -37,6 +38,7 @@ from .base_tool import BaseTool
 from .medical_spelling import us_spelling
 from .ncbi_bookshelf_index import (
     BOOKS,
+    FTS_TOKENIZER,
     INDEX_DIR_ENV,
     default_index_dir,
     install_command,
@@ -872,6 +874,85 @@ def fts_query(text, max_terms=16):
     return " OR ".join('"%s"' % w for w in words[:max_terms]), words[:max_terms]
 
 
+def fts_terms(texts):
+    """Each text's terms as the index's FTS5 tokenizer makes them (porter
+    stems), so words can be compared with indexed titles."""
+    conn = sqlite3.connect(":memory:")
+    try:
+        conn.execute(
+            "CREATE VIRTUAL TABLE t USING fts5(x, tokenize='%s')" % FTS_TOKENIZER
+        )
+        conn.execute("CREATE VIRTUAL TABLE v USING fts5vocab(t, 'instance')")
+        conn.executemany(
+            "INSERT INTO t(rowid, x) VALUES (?, ?)", enumerate(texts, start=1)
+        )
+        terms = [[] for _ in texts]
+        for doc, term in conn.execute("SELECT doc, term FROM v ORDER BY doc, offset"):
+            terms[doc - 1].append(term)
+        return terms
+    finally:
+        conn.close()
+
+
+def _content_terms(terms):
+    return frozenset(
+        t for t in terms if t not in STOPWORDS and (len(t) > 1 or t.isdigit())
+    )
+
+
+@functools.lru_cache(maxsize=4)
+def _title_vocabulary(path, mtime_ns):
+    """``(titles, title terms, idf)`` for the chapters of one StatPearls index
+    file: each term's inverse document frequency over the current clinical
+    chapter titles (not nursing editions or archived chapters). ``mtime_ns``
+    keys the cache to the file's version."""
+    conn = sqlite3.connect(Path(path).as_uri() + "?mode=ro&immutable=1", uri=True)
+    try:
+        rows = conn.execute(
+            "SELECT chapter_id, title, nursing, archived FROM chapters"
+        ).fetchall()
+    finally:
+        conn.close()
+    titles, terms, df, current = {}, {}, {}, 0
+    for (chapter_id, title, nursing, archived), words in zip(
+        rows, fts_terms([row[1] for row in rows])
+    ):
+        titles[chapter_id] = title
+        terms[chapter_id] = _content_terms(words)
+        if not nursing and not archived:
+            current += 1
+            for term in terms[chapter_id]:
+                df[term] = df.get(term, 0) + 1
+    idf = {term: math.log(current / (1 + n)) for term, n in df.items()}
+    # A term in no current clinical title is as rare as a title term gets.
+    idf[None] = math.log(max(current, 1))
+    return titles, terms, idf
+
+
+def title_share(title_terms, query_terms, idf):
+    """The share of a chapter title's terms, weighted by IDF, that the query
+    contains: 1 for "Meckel Diverticulum" and about 0.5 for "Meckel Scan"
+    given "gangrenous Meckel's diverticulum with axial torsion"."""
+    weights = {t: max(idf.get(t, idf[None]), 0.0) for t in title_terms}
+    total = sum(weights.values())
+    if not total:
+        return 0.0
+    return sum(w for t, w in weights.items() if t in query_terms) / total
+
+
+# StatPearls' basic-science series ("Anatomy, Head and Neck, Teeth",
+# "Physiology, Phosphate"). Their "Clinical Significance" section is not how
+# a condition is managed, so the management lookup ranks them last.
+BASIC_SCIENCE_SERIES = frozenset(
+    "anatomy biochemistry embryology genetics histology neuroanatomy physiology".split()
+)
+
+
+def is_basic_science(title):
+    series = re.match(r"([^,:]+)[,:]", title)
+    return bool(series) and series.group(1).strip().lower() in BASIC_SCIENCE_SERIES
+
+
 @register_tool("StatPearlsSearchTool")
 class StatPearlsSearchTool(_BookshelfIndexTool):
     """BM25 search over StatPearls chapter sections, grouped by chapter."""
@@ -879,7 +960,14 @@ class StatPearlsSearchTool(_BookshelfIndexTool):
     SOURCE = "statpearls"
     # bm25() column weights: chapter title, section heading, section text.
     COLUMN_WEIGHTS = (8.0, 3.0, 1.0)
-    CANDIDATE_SECTIONS = 400
+    CANDIDATE_SECTIONS = 1500
+    # A chapter scores its best section's BM25 plus these shares of its next
+    # best: a chapter on the condition matches it in several sections, a
+    # passing mention (however dense) in one.
+    SECTION_WEIGHTS = (1.0, 0.5, 0.25)
+    # A chapter's score is raised by up to this fraction, in proportion to the
+    # share of its title (by IDF) made of query words.
+    TITLE_WEIGHT = 0.5
     SNIPPET_TOKENS = 60
 
     def query(self, conn, arguments):
@@ -939,8 +1027,9 @@ class StatPearlsSearchTool(_BookshelfIndexTool):
             "data": hits,
             "metadata": {
                 "query_terms": words,
-                "matching": "any term (OR), ranked by BM25 over chapter title, "
-                "section heading and section text",
+                "matching": "any term (OR); chapters ranked by BM25 (chapter "
+                "title, section heading and section text) of their best "
+                "sections, raised for titles made of query words",
                 "archived_chapters": "included"
                 if include_archived
                 else "excluded (StatPearls no longer maintains them; pass "
@@ -960,9 +1049,24 @@ class StatPearlsSearchTool(_BookshelfIndexTool):
             out["metadata"]["dropped_to_fit_output_bound"] = True
         return out
 
-    def rank_chapters(self, conn, query, match, limit, include_archived):
+    def rank_chapters(
+        self, conn, query, match, limit, include_archived, clinical_first=False
+    ):
         """Chapters for ``query`` in result order: ``(chapter_ids, best
-        sections per chapter, chapter rows)``."""
+        sections per chapter, chapter rows)``.
+
+        A chapter scores by its best-matching sections (``SECTION_WEIGHTS``),
+        raised by the share of its title that is query words
+        (``TITLE_WEIGHT``), so that "Meckel Diverticulum" outranks "Meckel
+        Scan" for a gangrenous Meckel's diverticulum although the scan
+        chapter's introduction alone matches more words. On 136 conditions
+        with hand-picked right chapters (MedR-Bench diagnoses and an agent's
+        requests), ranking by the best section alone put a right chapter in
+        the first two for 100 and this ranking for 112.
+
+        ``clinical_first`` ranks the basic-science series (anatomy,
+        physiology ...) after clinical chapters.
+        """
         weights = ", ".join(str(w) for w in self.COLUMN_WEIGHTS)
         rows = conn.execute(
             "SELECT s.sec_rowid, s.chapter_id, s.heading, s.path,"
@@ -977,17 +1081,16 @@ class StatPearlsSearchTool(_BookshelfIndexTool):
             ),
             (match,),
         ).fetchall()
-        chapters, order = {}, []
-        self._group(rows, chapters, order, limit)
+        chapters = {}
+        self._group(rows, chapters)
         # A query that is exactly a chapter title ranks that chapter first,
-        # even when shorter sections of another chapter outscore it on BM25.
+        # even when other chapters outscore it.
         exact = conn.execute(
             "SELECT chapter_id FROM chapters WHERE title_norm = ? %s ORDER BY nursing LIMIT 1"
             % ("" if include_archived else "AND archived = 0"),
             (normalize_name(us_spelling(query)),),
         ).fetchone()
         if exact and exact[0] not in chapters:
-            # Its best sections, to place it although it ranked below the limit.
             own = conn.execute(
                 "SELECT s.sec_rowid, s.chapter_id, s.heading, s.path,"
                 " bm25(sections_fts, %s) AS score FROM sections_fts JOIN sections s"
@@ -995,33 +1098,51 @@ class StatPearlsSearchTool(_BookshelfIndexTool):
                 " AND s.chapter_id = ? ORDER BY score LIMIT 4" % weights,
                 (match, exact[0]),
             ).fetchall()
-            self._group(own, chapters, order, limit + 1)
+            self._group(own, chapters)
+        path = self.index_path()
+        titles, title_terms, idf = _title_vocabulary(
+            str(path.resolve()), path.stat().st_mtime_ns
+        )
+        query_terms = _content_terms(fts_terms([" ".join(fts_query(query)[1])])[0])
+
+        def score(chapter_id):
+            entry = chapters[chapter_id]
+            bm25 = sum(w * s for w, s in zip(self.SECTION_WEIGHTS, entry["scores"]))
+            share = title_share(title_terms.get(chapter_id, ()), query_terms, idf)
+            # bm25() is negative, lower is better.
+            return bm25 * (1 + self.TITLE_WEIGHT * share)
+
+        order = sorted(chapters, key=score)
+        if clinical_first:
+            order.sort(key=lambda cid: is_basic_science(titles.get(cid, "")))
         if exact and exact[0] in chapters:
             order.remove(exact[0])
             order.insert(0, exact[0])
+        top = order[: limit + 1]
+        order = nursing_after_parent(top, {cid: titles.get(cid, "") for cid in top})
+        order = order[:limit]
         info_of = {
             cid: conn.execute(
                 "SELECT * FROM chapters WHERE chapter_id = ?", (cid,)
             ).fetchone()
             for cid in order
         }
-        order = nursing_after_parent(
-            order, {cid: info_of[cid]["title"] for cid in order}
-        )
-        return order[:limit], chapters, info_of
+        return order, chapters, info_of
 
-    @staticmethod
-    def _group(rows, chapters, order, limit):
-        """Best section per chapter, in score order, up to ``limit`` chapters."""
+    @classmethod
+    def _group(cls, rows, chapters):
+        """Per chapter, from rows in score order: its best section, the scores
+        of its best ``SECTION_WEIGHTS`` sections, and up to three other
+        matching sections."""
         for row in rows:
-            entry = chapters.get(row["chapter_id"])
-            if entry is None:
-                if len(order) >= limit:
-                    continue
-                chapters[row["chapter_id"]] = {"best": row, "others": []}
-                order.append(row["chapter_id"])
-            elif (
-                len(entry["others"]) < 3
+            entry = chapters.setdefault(
+                row["chapter_id"], {"best": row, "scores": [], "others": []}
+            )
+            if len(entry["scores"]) < len(cls.SECTION_WEIGHTS):
+                entry["scores"].append(row["score"])
+            if (
+                row is not entry["best"]
+                and len(entry["others"]) < 3
                 and row["path"] not in entry["others"]
                 and row["path"] != entry["best"]["path"]
             ):
@@ -1315,7 +1436,12 @@ class StatPearlsManagementTool(StatPearlsSearchTool):
         include_archived = arguments.get("include_archived") is True
         include_evaluation = arguments.get("include_evaluation") is True
         order, chapters, info_of = self.rank_chapters(
-            conn, condition, match, self.CANDIDATES, include_archived
+            conn,
+            condition,
+            match,
+            self.CANDIDATES,
+            include_archived,
+            clinical_first=True,
         )
         if not order:
             return _error(
@@ -1390,7 +1516,8 @@ class StatPearlsManagementTool(StatPearlsSearchTool):
                 "condition": condition,
                 "query_terms": words,
                 "chapter_choice": "best-ranked StatPearls chapters for the condition "
-                "(same ranking as StatPearls_search) that have a "
+                "(ranked as by StatPearls_search, with the basic-science "
+                "chapters such as 'Anatomy, ...' last) that have a "
                 "treatment or management section",
                 "section_preference": list(MANAGEMENT_HEADINGS),
                 "returned": len(data),
