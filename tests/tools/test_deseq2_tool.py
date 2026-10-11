@@ -12,6 +12,7 @@ behavior and the surrounding error handling.
 import os
 import shutil
 import subprocess
+import tempfile
 
 import pytest
 
@@ -169,3 +170,71 @@ def test_missing_results_file_is_an_error(operation, tmp_path, monkeypatch):
     )
     assert result["status"] == "error", result
     assert "Results file not found" in result["error"]
+
+
+def _arguments(operation, tmp_path):
+    input_file = tmp_path / "input.csv"
+    input_file.write_text("placeholder\n")
+    return {
+        "operation": operation,
+        "counts_file": str(input_file),
+        "metadata_file": str(input_file),
+        "gene_list_file": str(input_file),
+    }
+
+
+@pytest.mark.integration
+@pytest.mark.skipif(not _has_rscript(), reason="Rscript not installed")
+@pytest.mark.parametrize("operation", ["deseq2", "enrichgo"])
+def test_results_are_not_readable_by_other_users(operation, tmp_path, monkeypatch):
+    """A result that outlives R must not become readable to everyone.
+
+    R's own session directory is mode 0700, so moving the CSV out of it to
+    survive ``Rscript`` exiting can expose expression results to every other
+    user of the machine. This runs the production writer with base R and
+    checks the file R actually produced.
+    """
+    import stat
+
+    tool = DESeq2Tool.__new__(DESeq2Tool)
+    real_run = tool._run_rscript
+
+    def run_csv_writer(script):
+        writer = script.split("# Save full results\n", 1)[1]
+        return real_run("res <- df <- data.frame(value=c(1, 2))\n" + writer)
+
+    monkeypatch.setattr(tool, "_run_rscript", run_csv_writer)
+    result = tool.run(_arguments(operation, tmp_path))
+    assert result["status"] == "success", result
+    results_file = result["data"]["results_file"]
+    directory = os.path.dirname(results_file)
+    try:
+        # The temp root is world-writable by design, so the CSV cannot sit
+        # directly in it; every directory below the root must be closed.
+        assert directory != tempfile.gettempdir(), results_file
+        while directory != tempfile.gettempdir():
+            mode = stat.S_IMODE(os.stat(directory).st_mode)
+            assert not mode & (stat.S_IRWXG | stat.S_IRWXO), (directory, oct(mode))
+            directory = os.path.dirname(directory)
+    finally:
+        shutil.rmtree(os.path.dirname(results_file), ignore_errors=True)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize("operation", ["deseq2", "enrichgo"])
+def test_a_failed_run_leaves_nothing_in_the_temp_root(operation, tmp_path, monkeypatch):
+    """A run that produces no CSV must not leave its scratch space behind."""
+    temp_root = tmp_path / "temp root"
+    temp_root.mkdir()
+    monkeypatch.setattr(tempfile, "tempdir", str(temp_root))
+    tool = DESeq2Tool.__new__(DESeq2Tool)
+    monkeypatch.setattr(
+        tool,
+        "_run_rscript",
+        lambda script: subprocess.CompletedProcess(
+            args=[], returncode=1, stdout="", stderr="R died"
+        ),
+    )
+    result = tool.run(_arguments(operation, tmp_path))
+    assert result["status"] == "error", result
+    assert list(temp_root.iterdir()) == []
