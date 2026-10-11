@@ -239,6 +239,56 @@ class TestUnavailableToolNextSteps:
         assert "network" not in steps.lower()
 
     @pytest.mark.unit
+    def test_a_tool_gated_on_any_one_key_also_gets_api_key_steps(self, monkeypatch):
+        """The any-of gate is how every AgenticTool is held back.
+
+        ``run`` answers it from its own branch, which inherited the
+        network-flavoured defaults that the required-key branch beside it had
+        already been taught to replace -- so someone with no LLM key was told
+        to check their network connection.
+        """
+        from tooluniverse import ToolUniverse
+        from tooluniverse.agentic_tool import API_KEY_ENV_VARS
+
+        for keys in API_KEY_ENV_VARS.values():
+            for key in keys:
+                monkeypatch.delenv(key, raising=False)
+
+        tu = ToolUniverse()
+        tu.load_tools()
+        tu._excluded_any_api_key_tools["AgenticDemo"] = ["OPENAI_API_KEY"]
+        result = tu.run({"name": "AgenticDemo", "arguments": {}})
+
+        assert "OPENAI_API_KEY" in result["error"], result
+        steps = " ".join(result["error_details"]["next_steps"])
+        assert "network" not in steps.lower(), steps
+        assert "service status" not in steps.lower(), steps
+        assert "tu status" in steps, steps
+
+    @pytest.mark.unit
+    def test_an_agentic_tool_offers_every_key_that_would_unlock_it(self):
+        """A vLLM server ungates these tools, so it belongs in the message."""
+        from tooluniverse.agentic_tool import API_KEY_ENV_VARS
+
+        # Azure needs two variables, so its key alone does not stand for a
+        # route someone can complete from the message; the rest do.
+        single_variable_routes = {
+            keys[0] for keys in API_KEY_ENV_VARS.values() if len(keys) == 1
+        }
+        source = (
+            pathlib.Path(__file__).resolve().parents[2]
+            / "src/tooluniverse/execute_function.py"
+        )
+        if not source.exists():  # running against an installed package
+            pytest.skip("needs the source tree")
+        marker = "_excluded_any_api_key_tools[tool_name] = ["
+        text = source.read_text()
+        start = text.index(marker) + len(marker)
+        offered = text[start : text.index("]", start)]
+        missing = sorted(key for key in single_variable_routes if key not in offered)
+        assert not missing, missing
+
+    @pytest.mark.unit
     def test_gated_tool_lookup_warning_names_the_key(self, caplog):
         """Fix-R3-05: a key-gated tool is not reported as a spelling problem."""
         tu = self._tu(excluded={"GatedTool": ["MY_KEY"]})
