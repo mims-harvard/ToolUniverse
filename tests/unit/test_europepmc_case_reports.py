@@ -260,3 +260,22 @@ def test_config_parameters_match_what_the_tool_reads():
             "properties"
         ]
     )
+
+
+def test_british_spellings_are_also_searched_in_american_form():
+    assert _search_terms('carcinoid tumour "oesophageal atresia" tumor') == [
+        "carcinoid",
+        "(tumour OR tumor)",
+        '("oesophageal atresia" OR "esophageal atresia")',
+        "tumor",
+    ]
+    _result, request = _run({"query": "X-linked hypophosphataemia"})
+    assert set(_sent_queries(request)) == {
+        'TITLE_ABS:(X-linked (hypophosphataemia OR hypophosphatemia)) AND PUB_TYPE:"Case Reports"'
+    }
+
+
+def test_limit_above_the_old_schema_maximum_is_accepted():
+    jsonschema = pytest.importorskip("jsonschema")
+    spec = {t["name"]: t for t in json.loads(CONFIG.read_text())}["EuropePMC_search_case_reports"]
+    jsonschema.validate({"query": "x", "limit": 100}, spec["parameter"])

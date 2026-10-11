@@ -34,6 +34,7 @@ import sqlite3
 from pathlib import Path
 
 from .base_tool import BaseTool
+from .medical_spelling import us_spelling
 from .ncbi_bookshelf_index import (
     BOOKS,
     INDEX_DIR_ENV,
@@ -503,6 +504,10 @@ class _DrugRecordTool(_BookshelfIndexTool):
     def describe(self, conn, record, drug_name):
         return {}
 
+    def alternate_names(self, drug_name):
+        """Other names to try when ``drug_name`` matches no record."""
+        return []
+
     def query(self, conn, arguments):
         drug_name = arguments.get("drug_name")
         if not isinstance(drug_name, str) or not drug_name.strip():
@@ -511,6 +516,16 @@ class _DrugRecordTool(_BookshelfIndexTool):
                 "invalid_argument",
             )
         record, how, others = resolve_record(conn, drug_name)
+        if record is None:
+            for alternate in self.alternate_names(drug_name):
+                record, how, others = resolve_record(conn, alternate)
+                if record is not None:
+                    how = "%s, via LactMed's synonym list ('%s' is LactMed's '%s')" % (
+                        how,
+                        drug_name,
+                        alternate,
+                    )
+                    break
         if record is None:
             return _error(
                 "%s has no record matching '%s' (tried the name as given, without "
@@ -786,6 +801,30 @@ class LiverToxDrugTool(_DrugRecordTool):
             info["trade_names"] = trade[:12]
         return info
 
+    def alternate_names(self, drug_name):
+        """The US (USAN) name LactMed lists an international or British name
+        under, when the LactMed index sits beside this one: LiverTox titles use
+        US names and list few synonyms, so 'paracetamol', 'frusemide',
+        'lignocaine' and 'pethidine' match nothing in it, while LactMed's
+        synonym lists resolve all four."""
+        path = self.index_path().parent / BOOKS["lactmed"]["index_file"]
+        if not path.is_file():
+            return []
+        try:
+            if meta_problem(read_meta(path), "lactmed", path):
+                return []
+            conn = sqlite3.connect(
+                path.resolve().as_uri() + "?mode=ro&immutable=1", uri=True
+            )
+            conn.row_factory = sqlite3.Row
+            try:
+                record, _how, _others = resolve_record(conn, drug_name)
+            finally:
+                conn.close()
+        except sqlite3.Error:
+            return []
+        return [record["title"]] if record is not None else []
+
     @staticmethod
     def master_list_entry(conn, record, drug_name):
         """The LiverTox master-list row for the requested ingredient, when it
@@ -821,9 +860,11 @@ def fts_query(text, max_terms=16):
     OR (not FTS5's implicit AND) so a long natural-language question still
     returns the chapters that match most of it, ranked by BM25, instead of
     nothing. Quoting keeps words like NOT/NEAR from being read as operators.
+    British spellings are searched in their American form, the one StatPearls
+    uses ("tumour" occurs in 33 sections, "tumor" in 8,831).
     """
     words = []
-    for word in re.findall(r"[0-9a-z]+", normalize_name(text)):
+    for word in re.findall(r"[0-9a-z]+", normalize_name(us_spelling(text))):
         if word in STOPWORDS or (len(word) < 2 and not word.isdigit()):
             continue
         if word not in words:
@@ -943,7 +984,7 @@ class StatPearlsSearchTool(_BookshelfIndexTool):
         exact = conn.execute(
             "SELECT chapter_id FROM chapters WHERE title_norm = ? %s ORDER BY nursing LIMIT 1"
             % ("" if include_archived else "AND archived = 0"),
-            (normalize_name(query),),
+            (normalize_name(us_spelling(query)),),
         ).fetchone()
         if exact and exact[0] not in chapters:
             # Its best sections, to place it although it ranked below the limit.
@@ -1105,7 +1146,7 @@ class StatPearlsChapterSectionTool(_BookshelfIndexTool):
                 "SELECT * FROM chapters WHERE chapter_id = ?", (ident,)
             ).fetchone()
             return row, []
-        norm = normalize_name(text)
+        norm = normalize_name(us_spelling(text))
         rows = conn.execute(
             "SELECT * FROM chapters WHERE title_norm = ? ORDER BY archived, nursing",
             (norm,),
@@ -1273,7 +1314,7 @@ class StatPearlsManagementTool(StatPearlsSearchTool):
             )
         include_archived = arguments.get("include_archived") is True
         include_evaluation = arguments.get("include_evaluation") is True
-        order, _chapters, info_of = self.rank_chapters(
+        order, chapters, info_of = self.rank_chapters(
             conn, condition, match, self.CANDIDATES, include_archived
         )
         if not order:
@@ -1304,6 +1345,9 @@ class StatPearlsManagementTool(StatPearlsSearchTool):
                 "title": info["title"],
                 "last_updated": info["updated"],
                 "url": self.chapter_url(chapter_id),
+                "title_matches": self.title_matches(
+                    conn, chapters[chapter_id]["best"]["sec_rowid"], words
+                ),
                 "section": nodes[index]["heading"],
                 "text": section_text(nodes, index),
             }
@@ -1358,8 +1402,26 @@ class StatPearlsManagementTool(StatPearlsSearchTool):
         }
         if passed_over:
             out["metadata"]["passed_over_without_management_section"] = passed_over
+        if not any(item["title_matches"] for item in data):
+            out["metadata"]["relevance_note"] = (
+                "No returned chapter has a word of the condition in its title: they "
+                "matched only in their text, and StatPearls may have no chapter on "
+                "this condition. Check that each concerns the patient's problem."
+            )
         self._size_texts(out)
         return out
+
+    @staticmethod
+    def title_matches(conn, sec_rowid, words):
+        """The query words (stemmed as the index stems them) in a chapter's title."""
+        return [
+            word
+            for word in words
+            if conn.execute(
+                "SELECT 1 FROM sections_fts WHERE sections_fts MATCH ? AND rowid = ?",
+                ('title : "%s"' % word, sec_rowid),
+            ).fetchone()
+        ]
 
     # Least text worth returning per chapter; below it, fewer chapters are better.
     MIN_TEXT_PER_CHAPTER = 400

@@ -1283,3 +1283,66 @@ def test_management_drops_low_ranked_chapters_under_a_tiny_bound(make_tool, inde
     assert result["metadata"]["dropped_to_fit_output_bound"] is True
     assert result["metadata"]["returned"] == len(result["data"]) < 3
     assert all(len(item["text"]) > 100 for item in result["data"])
+
+
+# ---------------------------------------------------------------------------
+# 2026-10-11: failures seen in an agent's dev runs
+# ---------------------------------------------------------------------------
+
+
+def test_british_spelling_is_searched_in_its_american_form(call, tool_mod):
+    _match, words = tool_mod.fts_query("carcinoid tumour in paediatric patients")
+    assert words == ["carcinoid", "tumor", "pediatric"]
+    result = call("StatPearls_search", query="haemorrhage")
+    assert result["status"] == "success"
+    assert result["metadata"]["query_terms"] == ["hemorrhage"]
+    assert "Asteroid Hyalosis" in [hit["title"] for hit in result["data"]]
+
+
+@pytest.mark.parametrize(
+    "name, arguments",
+    [
+        ("StatPearls_get_management", {"condition": "animal bites", "limit": 5}),
+        ("StatPearls_search", {"query": "amitriptyline", "limit": 50}),
+    ],
+)
+def test_a_large_limit_is_clamped_not_rejected_by_the_schema(index_env, specs, name, arguments):
+    """An agent asked for limit 5; the schema's maximum 3 refused the call before
+    the tool (which clamps) ever ran."""
+    jsonschema = pytest.importorskip("jsonschema")
+    jsonschema.validate(arguments, specs[name]["parameter"])
+    from tooluniverse import ToolUniverse
+
+    tu = ToolUniverse()
+    tu.load_tools(tool_type=["ncbi_bookshelf_reference"])
+    result = tu.run_one_function({"name": name, "arguments": arguments})
+    if isinstance(result, str):
+        result = json.loads(result)
+    assert result["status"] == "success", result
+
+
+def test_livertox_resolves_names_through_lactmeds_synonyms(call, make_tool, monkeypatch, tmp_path, index_mod):
+    # 'Betalok', a European brand of metoprolol, is in LactMed's synonym list only
+    result = call("LiverTox_get_drug", drug_name="Betalok")
+    assert result["status"] == "success", result
+    assert result["data"]["drug"] == "Metoprolol"
+    assert "via LactMed's synonym list ('Betalok' is LactMed's 'Metoprolol')" in result["data"]["matched"]
+    # without the LactMed index beside it, the name is simply not found
+    index_mod.build({"livertox": str(FIXTURES / "livertox")}, str(tmp_path), log=quiet)
+    monkeypatch.setenv(INDEX_ENV, str(tmp_path))
+    alone = make_tool("LiverTox_get_drug").run({"drug_name": "Betalok"})
+    assert alone["error_type"] == "not_found"
+
+
+def test_management_reports_which_condition_words_are_in_each_title(call):
+    result = call("StatPearls_get_management", condition="animal bites", limit=3)
+    first = result["data"][0]
+    assert first["title"] == "Animal Bites" and set(first["title_matches"]) == {"animal", "bites"}
+    assert "relevance_note" not in result["metadata"]
+
+
+def test_management_flags_chapters_that_match_only_in_their_text(call):
+    result = call("StatPearls_get_management", condition="calcium", limit=3)
+    assert result["status"] == "success", result
+    assert all(item["title_matches"] == [] for item in result["data"])
+    assert "matched only in their text" in result["metadata"]["relevance_note"]

@@ -339,7 +339,7 @@
   {
     "type": "EuropePMCCaseReportsTool",
     "name": "EuropePMC_search_case_reports",
-    "description": "Find published clinical case reports about a disease, rare presentation, complication, injury or treatment, with their abstracts, from Europe PMC (PubMed/MEDLINE plus PMC). Use it for unusual or rare cases that guidelines and review chapters do not cover: how a similar patient was diagnosed, which surgery or drug was used, and the outcome. Searches the title and abstract of articles typed as Case Reports; every word must appear (Europe PMC does not stem words), so give the condition's name in 2-5 words (e.g. 'Meckel diverticulum torsion', 'anti-GFAP astrocytopathy', 'xanthogranulomatous prostatitis') rather than the whole patient description, and leave out ages, sexes and words like 'treatment' or 'management'. When no case report has every word, the search falls back to any of the words, ranked by relevance, and metadata.matching says so; check those reports against the case. Optional published_after / published_before (a year or YYYY-MM-DD) limit the publication date. Results are ranked by relevance; metadata.total_results is Europe PMC's count of every matching case report.",
+    "description": "Find published clinical case reports about a disease, rare presentation, complication, injury or treatment, with their abstracts, from Europe PMC (PubMed/MEDLINE plus PMC). Use it for unusual or rare cases that guidelines and review chapters do not cover: how a similar patient was diagnosed, which surgery or drug was used, and the outcome. Searches the title and abstract of articles typed as Case Reports; every word must appear (Europe PMC does not stem words; British spellings such as 'tumour' are also searched in their American form), so give the condition's name in 2-5 words (e.g. 'Meckel diverticulum torsion', 'anti-GFAP astrocytopathy', 'xanthogranulomatous prostatitis') rather than the whole patient description, and leave out ages, sexes and words like 'treatment' or 'management'. When no case report has every word, the search falls back to any of the words, ranked by relevance, and metadata.matching says so; check those reports against the case. Optional published_after / published_before (a year or YYYY-MM-DD) limit the publication date. Results are ranked by relevance; metadata.total_results is Europe PMC's count of every matching case report.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -349,10 +349,8 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Number of case reports to return (1-25, default 5).",
-          "default": 5,
-          "minimum": 1,
-          "maximum": 25
+          "description": "Number of case reports to return (default 5). At most 25 are returned; larger values are treated as 25.",
+          "default": 5
         },
         "published_after": {
           "type": "string",

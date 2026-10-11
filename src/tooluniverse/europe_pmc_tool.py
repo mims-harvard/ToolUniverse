@@ -3,6 +3,7 @@ import requests
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 from .http_utils import request_with_retry
+from .medical_spelling import us_spelling
 import xml.etree.ElementTree as ET
 import re
 
@@ -904,10 +905,18 @@ def _search_terms(text: str) -> list:
         if token.startswith('"'):
             words = _WORD.findall(token)
             if words:
-                terms.append('"%s"' % " ".join(words))
+                terms.append(_with_us_spelling('"%s"' % " ".join(words)))
         elif token.lower() not in _OPERATOR_WORDS:
-            terms.append(token)
+            terms.append(_with_us_spelling(token))
     return terms
+
+
+def _with_us_spelling(term: str) -> str:
+    """A British spelling also searched in its American form: Europe PMC does
+    not fold them ("carcinoid tumour" 908 case reports, "carcinoid tumor"
+    3,593, both 4,413)."""
+    american = us_spelling(term)
+    return term if american == term else "(%s OR %s)" % (term, american)
 
 
 def _date_bound(value, key, year_suffix):
