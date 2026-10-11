@@ -196,7 +196,7 @@
       "properties": {
         "condition": {
           "type": "string",
-          "description": "URL slug of genetic condition, e.g., \"alzheimer-disease\", must match MedlinePlus page path."
+          "description": "Genetic condition: its name or one of its other names (e.g. 'Alport syndrome', 'Marfan syndrome') or the page slug (e.g. 'alport-syndrome'). A name with no MedlinePlus Genetics page returns an error listing the closest page names."
         },
         "format": {
           "type": "string",
@@ -275,7 +275,7 @@
       "properties": {
         "gene": {
           "type": "string",
-          "description": "URL slug of gene name, e.g., \"BRCA1\", must match MedlinePlus page path."
+          "description": "Gene symbol (e.g. 'BRCA1'), full gene name (e.g. 'fibrillin 1') or page slug. A gene with no MedlinePlus Genetics page returns an error listing the closest page names."
         },
         "format": {
           "type": "string",

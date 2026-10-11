@@ -52,16 +52,29 @@ def test_pubmed_guideline_result_keeps_all_abstract_sections():
     )
 
 
-def test_europepmc_abstract_fetch_keeps_all_sections_and_inline_text():
+def test_europepmc_abstract_keeps_all_sections_and_inline_text():
     tool = EuropePMCGuidelinesTool({"name": "EuropePMC_Guidelines_Search"})
     response = MagicMock()
-    response.content = _MULTI_SECTION_XML.encode()
     response.raise_for_status.return_value = None
+    response.json.return_value = {
+        "hitCount": 1,
+        "resultList": {
+            "result": [
+                {
+                    "title": "Evidence guideline for testing",
+                    "pmid": "123",
+                    "pubTypeList": {"pubType": ["Practice Guideline"]},
+                    "abstractText": "<h4>BACKGROUND</h4>Background <i>evidence</i>."
+                    "<h4>RESULTS</h4>Results &amp; conclusions.",
+                }
+            ]
+        },
+    }
 
     with patch.object(tool.session, "get", return_value=response):
-        abstract = tool._get_europepmc_abstract("123")
+        abstract = tool.run({"query": "evidence"})["data"][0]["abstract"]
 
-    assert abstract == "Background evidence. Results & conclusions."
+    assert abstract == "BACKGROUND Background evidence. RESULTS Results & conclusions."
 
 
 def test_pubmed_malformed_abstract_xml_returns_a_visible_error():

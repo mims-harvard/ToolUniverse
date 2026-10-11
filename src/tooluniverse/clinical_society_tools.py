@@ -162,9 +162,13 @@ def _build_article_result(pmid, summary, abstract=""):
     }
 
 
-def _search_and_fetch(query, limit=5):
-    """Combined search + summary + abstract fetch pipeline."""
-    pmids = _pubmed_search(query, limit=limit)
+def _search_and_fetch(query, limit=5, sort="relevance"):
+    """Combined search + summary + abstract fetch pipeline.
+
+    Ranked by relevance; listings of an organisation's newest guidelines pass
+    sort="date".
+    """
+    pmids = _pubmed_search(query, limit=limit, sort=sort)
     if not pmids:
         return []
 
@@ -491,7 +495,7 @@ class AHAACCGuidelineTool(BaseTool):
             f'("guideline"[Title] OR "practice guideline"[Publication Type])'
             f"{date_filter}"
         )
-        return _search_and_fetch(pubmed_query, limit=limit)
+        return _search_and_fetch(pubmed_query, limit=limit, sort="date")
 
 
 # ---------------------------------------------------------------------------

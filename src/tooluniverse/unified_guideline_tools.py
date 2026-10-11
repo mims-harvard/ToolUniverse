@@ -17,6 +17,7 @@ try:
 except ImportError:  # pragma: no cover - optional dependency
     MARKITDOWN_AVAILABLE = False
 from .base_tool import BaseTool
+from .europe_pmc_tool import _extract_text_from_html
 from .extras import install_hint
 from .tool_registry import register_tool
 
@@ -118,12 +119,29 @@ def _extract_meaningful_terms(query):
     return meaningful if meaningful else tokens
 
 
-def _markitdown():
-    """Build a converter, or say which extra supplies it.
+def _rank_by_terms(rows, query, fields):
+    """Rows of a small catalogue matching any significant query term, best first.
 
-    The three call sites sit inside ``except Exception`` handlers that return
-    ``str(e)``, so raising here reaches the caller with the instruction intact.
+    Matching the whole query as one substring found nothing for any query
+    that was not a title verbatim ("asthma management in children").
     """
+    terms = _extract_meaningful_terms(query)
+    # Whole query words, numbers included, break ties: the term list drops a
+    # bare "2", which is what separates "type 2 diabetes" from type 1.
+    words = set(re.findall(r"[^\W_]+", query.lower()))
+    scored = []
+    for row in rows:
+        text = " ".join(str(row.get(field, "")) for field in fields).lower()
+        hits = sum(term in text for term in terms)
+        if hits:
+            exact = len(words & set(re.findall(r"[^\W_]+", text)))
+            scored.append((-hits, -exact, row))
+    # sorted() is stable, so ties keep the catalogue's order
+    return [row for *_, row in sorted(scored, key=lambda item: item[:2])]
+
+
+def _markitdown():
+    """Build a converter, or raise saying which extra supplies it."""
     if not MARKITDOWN_AVAILABLE:
         raise RuntimeError(
             f"markitdown is required to extract this guideline. "
@@ -132,8 +150,18 @@ def _markitdown():
     return MarkItDown()
 
 
+# A guideline in Europe PMC: typed as one (PUB_TYPE), or titled as a guideline,
+# consensus, position statement or recommendations (TITLE). PUB_TYPE, TITLE and
+# TITLE_ABS are search fields Europe PMC lists at /fields.
+_EUROPEPMC_GUIDELINE_FILTER = (
+    'PUB_TYPE:"guideline" OR PUB_TYPE:"practice guideline" OR TITLE:"guideline" '
+    'OR TITLE:"guidelines" OR TITLE:"consensus" OR TITLE:"recommendations" '
+    'OR TITLE:"position statement"'
+)
+
+
 class _ContentUnavailable(Exception):
-    """A per-record content fetch failed; the record stays, without that text."""
+    """A per-row content fetch failed; the row stays, without that text."""
 
 
 def _abstract_text_from_sections(element: ET.Element) -> str:
@@ -152,6 +180,8 @@ class NICEWebScrapingTool(BaseTool):
     Real NICE guidelines search using web scraping.
     Makes actual HTTP requests to NICE website and parses HTML responses.
     """
+
+    SUMMARY_BUDGET_S = 10
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
@@ -173,11 +203,11 @@ class NICEWebScrapingTool(BaseTool):
 
         return self._search_nice_guidelines_real(query, limit)
 
-    def _fetch_guideline_summary(self, url):
+    def _fetch_guideline_summary(self, url, timeout=15):
         """Fetch summary from a guideline detail page."""
         try:
             time.sleep(0.5)  # Be respectful
-            response = self.session.get(url, timeout=15)
+            response = self.session.get(url, timeout=timeout)
             response.raise_for_status()
             soup = BeautifulSoup(response.content, "html.parser")
 
@@ -222,8 +252,11 @@ class NICEWebScrapingTool(BaseTool):
             if not script_tag:
                 return {
                     "status": "error",
-                    "error": "No search results found",
-                    "suggestion": "Try different search terms or check if the NICE website is accessible",
+                    "error": (
+                        "Could not read the NICE search page: it carries no "
+                        "__NEXT_DATA__ block, so its format may have changed"
+                    ),
+                    "source": "NICE",
                 }
 
             # Parse the JSON data
@@ -249,13 +282,14 @@ class NICEWebScrapingTool(BaseTool):
                 }
 
             if not documents:
-                return {
-                    "status": "error",
-                    "error": "No NICE guidelines found",
-                    "suggestion": "Try different search terms or check if the NICE website is accessible",
-                }
+                # NICE has nothing on this query: an empty result, not a failure.
+                return _guideline_envelope(
+                    [], total=total or 0, retrieved=0, source="NICE"
+                )
 
-            # Process the documents
+            # A row without a summary costs a detail-page request, within one
+            # budget per call; past it, the row is kept without a summary.
+            deadline = time.monotonic() + self.SUMMARY_BUDGET_S
             results = []
             for doc in documents[:limit]:
                 try:
@@ -276,8 +310,18 @@ class NICEWebScrapingTool(BaseTool):
                     )
 
                     # If still no summary, try to fetch from the detail page
+                    content_unavailable = None
                     if not summary and url:
-                        summary = self._fetch_guideline_summary(url)
+                        remaining = deadline - time.monotonic()
+                        if remaining > 0:
+                            summary = self._fetch_guideline_summary(
+                                url, timeout=max(1.0, min(15, remaining))
+                            )
+                        else:
+                            content_unavailable = (
+                                f"summary not fetched: this call's "
+                                f"{self.SUMMARY_BUDGET_S} s budget for detail pages was used"
+                            )
 
                     # Extract date
                     publication_date = doc.get("publicationDate", "")
@@ -321,6 +365,8 @@ class NICEWebScrapingTool(BaseTool):
                         "is_guideline": is_guideline,
                         "category": category,
                     }
+                    if content_unavailable:
+                        result["content_unavailable"] = content_unavailable
 
                     results.append(result)
 
@@ -331,8 +377,11 @@ class NICEWebScrapingTool(BaseTool):
             if not results:
                 return {
                     "status": "error",
-                    "error": "No NICE guidelines found",
-                    "suggestion": "Try different search terms or check if the NICE website is accessible",
+                    "error": (
+                        f"NICE returned {len(documents)} documents but none could "
+                        f"be read; the search page format may have changed"
+                    ),
+                    "source": "NICE",
                 }
 
             return _guideline_envelope(
@@ -368,7 +417,9 @@ class PubMedGuidelinesTool(BaseTool):
     def run(self, arguments):
         query = arguments.get("query", "")
         limit = arguments.get("limit", 10)
-        api_key = arguments.get("api_key", "")
+        # From the environment, never a tool argument: agents filled the old
+        # `api_key` parameter with "" on every call.
+        api_key = self.credential("NCBI_API_KEY") or ""
 
         if not query:
             return {"status": "error", "error": "Query parameter is required"}
@@ -573,17 +624,22 @@ class EuropePMCGuidelinesTool(BaseTool):
         return self._search_europepmc_guidelines(query, limit)
 
     def _search_europepmc_guidelines(self, query, limit):
-        """Search Europe PMC for guideline publications."""
+        """Search Europe PMC for guideline publications, in one request.
+
+        Guidelines are selected by Europe PMC's own publication-type and title
+        fields, not by keywords matched anywhere in the full text, and
+        `resultType=core` carries each abstract, so nothing is fetched per row.
+        """
         try:
-            # Search with unquoted query so individual terms match (not exact phrase)
-            guideline_query = f'{query} AND (guideline OR "practice guideline" OR "clinical guideline" OR recommendation OR "consensus statement")'
-
             params = {
-                "query": guideline_query,
+                # About the topic (in its title or abstract), not mentioning it
+                # somewhere in the full text: on 40 agent queries, full-text
+                # matching returned 117 rows of which a third named the topic.
+                "query": f"TITLE_ABS:({query}) AND ({_EUROPEPMC_GUIDELINE_FILTER})",
                 "format": "json",
-                "pageSize": limit * 2,
-            }  # Get more to filter
-
+                "resultType": "core",
+                "pageSize": max(1, min(int(limit), 100)),
+            }
             response = self.session.get(self.base_url, params=params, timeout=30)
             response.raise_for_status()
             data = response.json()
@@ -591,65 +647,15 @@ class EuropePMCGuidelinesTool(BaseTool):
             hit_count = data.get("hitCount", 0)
             results_list = data.get("resultList", {}).get("result", [])
 
-            # Process results with stricter filtering
             results = []
             for result in results_list:
                 title = result.get("title", "")
-                pub_type = result.get("pubType", "")
+                pub_types = (result.get("pubTypeList") or {}).get("pubType") or []
+                abstract = _extract_text_from_html(result.get("abstractText", ""))
 
-                # Get abstract from detailed API call. A failed fetch leaves the
-                # record without text and says so; it must neither sink the whole
-                # search nor put an error message where the abstract belongs.
-                content_unavailable = []
-                try:
-                    abstract = self._get_europepmc_abstract(result.get("pmid", ""))
-                except _ContentUnavailable as e:
-                    abstract = ""
-                    content_unavailable.append(str(e))
-
-                # If abstract is too short or just a question, try to get more content
-                if len(abstract) < 200 or abstract.endswith("?"):
-                    # Try to get full text or more detailed content, keeping the
-                    # short abstract when there is nothing fuller to replace it.
-                    try:
-                        fuller = self._get_europepmc_full_content(
-                            result.get("pmid", ""), result.get("pmcid", "")
-                        )
-                    except _ContentUnavailable as e:
-                        fuller = ""
-                        content_unavailable.append(str(e))
-                    if fuller:
-                        abstract = fuller
-
-                # More strict guideline detection
-                title_lower = title.lower()
-                abstract_lower = abstract.lower()
-
-                # Must contain guideline-related keywords in title or abstract
-                guideline_keywords = [
-                    "guideline",
-                    "practice guideline",
-                    "clinical guideline",
-                    "recommendation",
-                    "consensus statement",
-                    "position statement",
-                    "clinical practice",
-                    "best practice",
-                ]
-
-                has_guideline_keywords = any(
-                    keyword in title_lower or keyword in abstract_lower
-                    for keyword in guideline_keywords
-                )
-
-                # Determine if it's a guideline — keyword match is sufficient
-                is_guideline = has_guideline_keywords and len(title) > 20
-
-                # Build URL
                 pmid = result.get("pmid", "")
                 pmcid = result.get("pmcid", "")
                 doi = result.get("doi", "")
-
                 url = ""
                 if pmid:
                     url = f"https://europepmc.org/article/MED/{pmid}"
@@ -658,35 +664,26 @@ class EuropePMCGuidelinesTool(BaseTool):
                 elif doi:
                     url = f"https://doi.org/{doi}"
 
-                abstract_text = (
-                    abstract[:500] + "..." if len(abstract) > 500 else abstract
+                journal = ((result.get("journalInfo") or {}).get("journal") or {}).get(
+                    "title", ""
                 )
-
-                # Only add if it's actually a guideline
-                if is_guideline:
-                    guideline_result = {
+                results.append(
+                    {
                         "title": title,
                         "pmid": pmid,
                         "pmcid": pmcid,
                         "doi": doi,
                         "authors": result.get("authorString", ""),
-                        "journal": result.get("journalTitle", ""),
+                        "journal": journal,
                         "publication_date": result.get("firstPublicationDate", ""),
-                        "publication_type": pub_type,
-                        "abstract": abstract_text,
-                        "content": abstract_text,  # Copy abstract to content field
-                        "is_guideline": is_guideline,
+                        "publication_type": ", ".join(pub_types),
+                        "abstract": abstract,
+                        "content": abstract,
+                        "is_guideline": True,  # the query admits nothing else
                         "url": url,
                         "source": "Europe PMC",
                     }
-                    if content_unavailable:
-                        guideline_result["content_unavailable"] = content_unavailable
-
-                    results.append(guideline_result)
-
-                    # Stop when we have enough guidelines
-                    if len(results) >= limit:
-                        break
+                )
 
             return _guideline_envelope(
                 results,
@@ -708,104 +705,6 @@ class EuropePMCGuidelinesTool(BaseTool):
                 "source": "Europe PMC",
             }
 
-    def _get_europepmc_abstract(self, pmid):
-        """Get abstract for a specific PMID using PubMed API."""
-        if not pmid:
-            return ""
-
-        try:
-            # Use PubMed's E-utilities API
-            base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi"
-            params = {
-                "db": "pubmed",
-                "id": pmid,
-                "retmode": "xml",
-                "rettype": "abstract",
-            }
-
-            response = self.session.get(base_url, params=params, timeout=15)
-            response.raise_for_status()
-
-            root = ET.fromstring(response.content)
-
-            # PubMed structured abstracts may have multiple sections and
-            # inline markup; retain each section instead of the first node's
-            # direct text only.
-            abstract = _abstract_text_from_sections(root)
-            if abstract:
-                return abstract
-
-            # Try alternative path
-            abstract_elem = root.find(".//abstract")
-            if abstract_elem is not None:
-                return abstract_elem.text or ""
-
-            return ""
-
-        except ET.ParseError as e:
-            raise ValueError(f"Failed to parse Europe PMC abstract XML: {e}") from e
-        except Exception as e:
-            raise _ContentUnavailable(
-                f"abstract for PMID {pmid}: {type(e).__name__}: {e}"
-            ) from e
-
-    def _get_europepmc_full_content(self, pmid, pmcid):
-        """Get more detailed content from Europe PMC."""
-        if not pmid and not pmcid:
-            return ""
-
-        try:
-            # Try to get full text from Europe PMC
-            if pmcid:
-                full_text_url = f"https://www.ebi.ac.uk/europepmc/webservices/rest/{pmcid}/fullTextXML"
-            else:
-                full_text_url = f"https://www.ebi.ac.uk/europepmc/webservices/rest/MED/{pmid}/fullTextXML"
-
-            response = self.session.get(full_text_url, timeout=15)
-            if response.status_code == 200:
-                # Parse XML to extract meaningful content
-                root = ET.fromstring(response.content)
-
-                # Extract sections that might contain clinical recommendations
-                content_parts = []
-
-                # Look for methods, results, conclusions, recommendations
-                for section in root.findall(".//sec"):
-                    title_elem = section.find("title")
-                    if title_elem is not None:
-                        title = title_elem.text or ""
-                        if any(
-                            keyword in title.lower()
-                            for keyword in [
-                                "recommendation",
-                                "conclusion",
-                                "method",
-                                "result",
-                                "guideline",
-                                "clinical",
-                            ]
-                        ):
-                            # Extract text from this section
-                            text_content = ""
-                            for p in section.findall(".//p"):
-                                if p.text:
-                                    text_content += p.text + " "
-
-                            if text_content.strip():
-                                content_parts.append(f"{title}: {text_content.strip()}")
-
-                if content_parts:
-                    return " ".join(
-                        content_parts[:3]
-                    )  # Limit to first 3 relevant sections
-
-            return ""
-
-        except Exception as e:
-            raise _ContentUnavailable(
-                f"full text for {pmcid or 'PMID ' + str(pmid)}: {type(e).__name__}: {e}"
-            ) from e
-
 
 @register_tool()
 class TRIPDatabaseTool(BaseTool):
@@ -813,6 +712,10 @@ class TRIPDatabaseTool(BaseTool):
     Search TRIP Database (Turning Research into Practice).
     Specialized evidence-based medicine database with clinical guidelines filter.
     """
+
+    FULL_TEXT_BUDGET_S = 15
+    PAGE_TIMEOUT_S = 10
+    PAGE_MAX_BYTES = 5_000_000
 
     def __init__(self, tool_config):
         super().__init__(tool_config)
@@ -853,6 +756,9 @@ class TRIPDatabaseTool(BaseTool):
             total = int(total_elem.text) if total_elem is not None else None
 
             documents = root.findall("document")
+            # Full text is fetched page by page within one budget per call;
+            # past it, rows keep TRIP's own description.
+            deadline = time.monotonic() + self.FULL_TEXT_BUDGET_S
 
             # Process results
             results = []
@@ -861,23 +767,31 @@ class TRIPDatabaseTool(BaseTool):
                 link_elem = doc.find("link")
                 publication_elem = doc.find("publication")
                 category_elem = doc.find("category")
-                description_elem = doc.find("description")
 
-                description_text = (
-                    description_elem.text if description_elem is not None else ""
-                )
+                # findtext gives None for an empty <description/>
+                description_text = doc.findtext("description") or ""
                 url = link_elem.text if link_elem is not None else ""
 
                 key_recommendations = []
                 evidence_strength = []
 
                 fetched_content = None
+                content_unavailable = None
                 requires_detailed_fetch = url and any(
                     domain in url for domain in ["bmj.com/content/", "e-dmj.org"]
                 )
 
-                if (not description_text and url) or requires_detailed_fetch:
-                    fetched_content = self._fetch_guideline_content(url)
+                needs_fetch = (not description_text and url) or requires_detailed_fetch
+                if needs_fetch and time.monotonic() >= deadline:
+                    content_unavailable = (
+                        f"full text not fetched: this call's "
+                        f"{self.FULL_TEXT_BUDGET_S} s budget for full text was used"
+                    )
+                elif needs_fetch:
+                    try:
+                        fetched_content = self._fetch_guideline_content(url, deadline)
+                    except _ContentUnavailable as e:
+                        content_unavailable = str(e)
 
                 if isinstance(fetched_content, dict):
                     description_text = (
@@ -927,6 +841,8 @@ class TRIPDatabaseTool(BaseTool):
                     guideline_result["key_recommendations"] = key_recommendations
                 if evidence_strength:
                     guideline_result["evidence_strength"] = evidence_strength
+                if content_unavailable:
+                    guideline_result["content_unavailable"] = content_unavailable
 
                 results.append(guideline_result)
 
@@ -956,29 +872,64 @@ class TRIPDatabaseTool(BaseTool):
                 "source": "TRIP Database",
             }
 
-    def _fetch_guideline_content(self, url):
-        """Extract content from a guideline URL using targeted parsers when available."""
+    def _page_text(self, url, deadline=None):
+        """A guideline page as text; raises _ContentUnavailable on any failure.
+
+        Downloaded here, not by MarkItDown, whose URL fetch sets no timeout. A
+        requests timeout bounds each read, not the download, so the body is
+        read against a wall clock -- the page limit or what is left of the
+        call's budget, whichever is sooner -- and a size cap.
+        """
+        limit = self.PAGE_TIMEOUT_S
+        if deadline is not None:
+            limit = max(1.0, min(limit, deadline - time.monotonic()))
         try:
-            time.sleep(0.5)  # Be respectful
-
-            if "bmj.com/content/" in url:
-                return self._extract_bmj_guideline_content(url)
-
-            if "e-dmj.org" in url:
-                return self._extract_dmj_guideline_content(url)
-
-            # Fallback: generic MarkItDown extraction
-            md = _markitdown()
-            result = md.convert(url)
-
-            if not result or not getattr(result, "text_content", None):
-                return f"Content extraction failed. Document available at: {url}"
-
-            content = self._clean_generic_content(result.text_content)
-            return content
-
+            with self.session.get(url, timeout=limit, stream=True) as response:
+                response.raise_for_status()
+                if (
+                    int(response.headers.get("Content-Length") or 0)
+                    > self.PAGE_MAX_BYTES
+                ):
+                    raise ValueError(f"page larger than {self.PAGE_MAX_BYTES} bytes")
+                started, body = time.monotonic(), bytearray()
+                for chunk in response.iter_content(65536):
+                    body.extend(chunk)
+                    if time.monotonic() - started > limit:
+                        raise TimeoutError(f"download exceeded {limit:.0f} s")
+                    if len(body) > self.PAGE_MAX_BYTES:
+                        raise ValueError(
+                            f"page larger than {self.PAGE_MAX_BYTES} bytes"
+                        )
+            # Hand MarkItDown the body already read, as requests would have.
+            response._content, response._content_consumed = bytes(body), True
+            result = _markitdown().convert_response(response, url=url)
         except Exception as e:
-            return f"Error extracting content: {str(e)}"
+            raise _ContentUnavailable(
+                f"full text of {url}: {type(e).__name__}: {e}"
+            ) from e
+        text = getattr(result, "text_content", None)
+        if not text:
+            raise _ContentUnavailable(f"full text of {url}: no text could be extracted")
+        return text
+
+    def _fetch_guideline_content(self, url, deadline=None):
+        """Extract content from a guideline URL using targeted parsers when available.
+
+        Raises _ContentUnavailable when the page cannot be read or parsed, so a
+        failure never becomes the row's description.
+        """
+        time.sleep(0.5)  # Be respectful
+        text = self._page_text(url, deadline)
+        try:
+            if "bmj.com/content/" in url:
+                return self._extract_bmj_guideline_content(text)
+            if "e-dmj.org" in url:
+                return self._extract_dmj_guideline_content(text)
+            return self._clean_generic_content(text)
+        except Exception as e:
+            raise _ContentUnavailable(
+                f"guideline content of {url}: {type(e).__name__}: {e}"
+            ) from e
 
     def _clean_generic_content(self, raw_text):
         """Clean generic text content to emphasise clinical lines."""
@@ -1050,179 +1001,139 @@ class TRIPDatabaseTool(BaseTool):
 
         return content
 
-    def _extract_bmj_guideline_content(self, url):
-        """Fetch BMJ Rapid Recommendation content with key recommendations."""
-        try:
-            md = _markitdown()
-            result = md.convert(url)
-            if not result or not getattr(result, "text_content", None):
-                return {
-                    "content": f"Content extraction failed. Document available at: {url}",
-                    "key_recommendations": [],
-                    "evidence_strength": [],
-                }
+    def _extract_bmj_guideline_content(self, text):
+        """BMJ Rapid Recommendation content and key recommendations, from page text."""
+        content = self._clean_generic_content(text)
 
-            text = result.text_content
-            content = self._clean_generic_content(text)
+        lines = [line.strip() for line in text.splitlines() if line.strip()]
+        recommendations = []
+        grading = []
+        tokens = [
+            "strong recommendation",
+            "conditional recommendation",
+            "weak recommendation",
+            "good practice statement",
+        ]
 
-            lines = [line.strip() for line in text.splitlines() if line.strip()]
-            recommendations = []
-            grading = []
-            tokens = [
-                "strong recommendation",
-                "conditional recommendation",
-                "weak recommendation",
-                "good practice statement",
-            ]
+        for idx, line in enumerate(lines):
+            lower = line.lower()
+            if "recommendation" not in lower:
+                continue
+            if len(line) > 180:
+                continue
 
-            for idx, line in enumerate(lines):
-                lower = line.lower()
-                if "recommendation" not in lower:
+            title_clean = line.lstrip("#").strip()
+            if title_clean.startswith("+"):
+                continue
+            if title_clean.lower().startswith("rapid recommendations"):
+                continue
+
+            summary_lines = []
+            for following in lines[idx + 1 : idx + 10]:
+                if "recommendation" in following.lower() and len(following) < 180:
+                    break
+                if len(following) < 40:
                     continue
-                if len(line) > 180:
-                    continue
+                summary_lines.append(following)
+                if len(summary_lines) >= 3:
+                    break
 
-                title_clean = line.lstrip("#").strip()
-                if title_clean.startswith("+"):
-                    continue
-                if title_clean.lower().startswith("rapid recommendations"):
-                    continue
+            summary = " ".join(summary_lines)
+            if summary:
+                recommendations.append({"title": title_clean, "summary": summary[:400]})
 
-                summary_lines = []
-                for following in lines[idx + 1 : idx + 10]:
-                    if "recommendation" in following.lower() and len(following) < 180:
-                        break
-                    if len(following) < 40:
-                        continue
-                    summary_lines.append(following)
-                    if len(summary_lines) >= 3:
-                        break
+            strength = None
+            for token in tokens:
+                if token in lower or any(token in s.lower() for s in summary_lines):
+                    strength = token.title()
+                    break
 
-                summary = " ".join(summary_lines)
-                if summary:
-                    recommendations.append(
-                        {"title": title_clean, "summary": summary[:400]}
-                    )
-
-                strength = None
-                for token in tokens:
-                    if token in lower or any(token in s.lower() for s in summary_lines):
-                        strength = token.title()
-                        break
-
-                if not strength:
-                    grade_match = re.search(r"grade\s+[A-D1-9]+", lower)
-                    if grade_match:
-                        strength = grade_match.group(0).title()
-
-                if strength and not any(
-                    entry.get("section") == title_clean for entry in grading
-                ):
-                    grading.append({"section": title_clean, "strength": strength})
-
-            return {
-                "content": content,
-                "key_recommendations": recommendations[:5],
-                "evidence_strength": grading,
-            }
-
-        except Exception as e:
-            return {
-                "content": f"Error extracting BMJ content: {str(e)}",
-                "key_recommendations": [],
-                "evidence_strength": [],
-            }
-
-    def _extract_dmj_guideline_content(self, url):
-        """Fetch Diabetes & Metabolism Journal guideline content and GRADE statements."""
-        try:
-            md = _markitdown()
-            result = md.convert(url)
-            if not result or not getattr(result, "text_content", None):
-                return {
-                    "content": f"Content extraction failed. Document available at: {url}",
-                    "key_recommendations": [],
-                    "evidence_strength": [],
-                }
-
-            text = result.text_content
-            content = self._clean_generic_content(text)
-
-            lines = [line.strip() for line in text.splitlines() if line.strip()]
-            recommendations = []
-            grading = []
-
-            for idx, line in enumerate(lines):
-                lower = line.lower()
-                if not any(
-                    keyword in lower
-                    for keyword in ["recommendation", "statement", "guideline"]
-                ):
-                    continue
-                if len(line) > 200:
-                    continue
-
-                title_clean = line.lstrip("#").strip()
-                if title_clean.startswith("+") or title_clean.startswith("Table"):
-                    continue
-
-                summary_lines = []
-                for following in lines[idx + 1 : idx + 10]:
-                    if (
-                        any(
-                            keyword in following.lower()
-                            for keyword in ["recommendation", "statement", "guideline"]
-                        )
-                        and len(following) < 200
-                    ):
-                        break
-                    if len(following) < 30:
-                        continue
-                    summary_lines.append(following)
-                    if len(summary_lines) >= 3:
-                        break
-
-                summary = " ".join(summary_lines)
-                if summary:
-                    recommendations.append(
-                        {"title": title_clean, "summary": summary[:400]}
-                    )
-
-                strength = None
-                grade_match = re.search(r"grade\s+[A-E]\b", lower)
+            if not strength:
+                grade_match = re.search(r"grade\s+[A-D1-9]+", lower)
                 if grade_match:
                     strength = grade_match.group(0).title()
-                level_match = re.search(r"level\s+[0-4]", lower)
-                if level_match:
-                    level_text = level_match.group(0).title()
-                    strength = f"{strength} ({level_text})" if strength else level_text
 
-                for line_text in summary_lines:
-                    lower_line = line_text.lower()
-                    if "strong" in lower_line and "recommendation" in lower_line:
-                        strength = "Strong recommendation"
-                        break
-                    if "conditional" in lower_line and "recommendation" in lower_line:
-                        strength = "Conditional recommendation"
-                        break
+            if strength and not any(
+                entry.get("section") == title_clean for entry in grading
+            ):
+                grading.append({"section": title_clean, "strength": strength})
 
-                if strength and not any(
-                    entry.get("section") == title_clean for entry in grading
+        return {
+            "content": content,
+            "key_recommendations": recommendations[:5],
+            "evidence_strength": grading,
+        }
+
+    def _extract_dmj_guideline_content(self, text):
+        """Diabetes & Metabolism Journal guideline content and GRADE statements, from page text."""
+        content = self._clean_generic_content(text)
+
+        lines = [line.strip() for line in text.splitlines() if line.strip()]
+        recommendations = []
+        grading = []
+
+        for idx, line in enumerate(lines):
+            lower = line.lower()
+            if not any(
+                keyword in lower
+                for keyword in ["recommendation", "statement", "guideline"]
+            ):
+                continue
+            if len(line) > 200:
+                continue
+
+            title_clean = line.lstrip("#").strip()
+            if title_clean.startswith("+") or title_clean.startswith("Table"):
+                continue
+
+            summary_lines = []
+            for following in lines[idx + 1 : idx + 10]:
+                if (
+                    any(
+                        keyword in following.lower()
+                        for keyword in ["recommendation", "statement", "guideline"]
+                    )
+                    and len(following) < 200
                 ):
-                    grading.append({"section": title_clean, "strength": strength})
+                    break
+                if len(following) < 30:
+                    continue
+                summary_lines.append(following)
+                if len(summary_lines) >= 3:
+                    break
 
-            return {
-                "content": content,
-                "key_recommendations": recommendations[:5],
-                "evidence_strength": grading,
-            }
+            summary = " ".join(summary_lines)
+            if summary:
+                recommendations.append({"title": title_clean, "summary": summary[:400]})
 
-        except Exception as e:
-            return {
-                "content": f"Error extracting DMJ content: {str(e)}",
-                "key_recommendations": [],
-                "evidence_strength": [],
-            }
+            strength = None
+            grade_match = re.search(r"grade\s+[A-E]\b", lower)
+            if grade_match:
+                strength = grade_match.group(0).title()
+            level_match = re.search(r"level\s+[0-4]", lower)
+            if level_match:
+                level_text = level_match.group(0).title()
+                strength = f"{strength} ({level_text})" if strength else level_text
+
+            for line_text in summary_lines:
+                lower_line = line_text.lower()
+                if "strong" in lower_line and "recommendation" in lower_line:
+                    strength = "Strong recommendation"
+                    break
+                if "conditional" in lower_line and "recommendation" in lower_line:
+                    strength = "Conditional recommendation"
+                    break
+
+            if strength and not any(
+                entry.get("section") == title_clean for entry in grading
+            ):
+                grading.append({"section": title_clean, "strength": strength})
+
+        return {
+            "content": content,
+            "key_recommendations": recommendations[:5],
+            "evidence_strength": grading,
+        }
 
 
 def _dc_value(metadata, field):
@@ -2030,102 +1941,6 @@ class WHOGuidelineFullTextTool(BaseTool):
 
 
 @register_tool()
-class GINGuidelinesTool(BaseTool):
-    """
-    Guidelines International Network (GIN) Guidelines Search Tool.
-    Searches the global guidelines database with 6400+ guidelines from various organizations.
-    """
-
-    def __init__(self, tool_config):
-        super().__init__(tool_config)
-        self.base_url = "https://guidelines.ebmportal.com"
-        self.search_url = f"{self.base_url}/guidelines-international-network"
-        self.session = requests.Session()
-        self.session.headers.update(
-            {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-                "Accept-Language": "en-US,en;q=0.5",
-            }
-        )
-
-    def run(self, arguments):
-        query = arguments.get("query", "")
-        limit = arguments.get("limit", 10)
-
-        if not query:
-            return {"status": "error", "error": "Query parameter is required"}
-
-        return self._search_gin_guidelines(query, limit)
-
-    def _search_gin_guidelines(self, query, limit):
-        """Search GIN guidelines via the EBM Portal."""
-        try:
-            time.sleep(1)
-
-            response = self.session.get(
-                self.search_url, params={"q": query}, timeout=30
-            )
-            response.raise_for_status()
-
-            soup = BeautifulSoup(response.content, "html.parser")
-            articles = soup.find_all("article")
-
-            guidelines = []
-            for article in articles[:limit]:
-                try:
-                    title_elem = article.find(["h1", "h2", "h3", "h4"])
-                    if not title_elem:
-                        continue
-                    title = title_elem.get_text().strip()
-                    if not title or len(title) < 5:
-                        continue
-
-                    link_elem = article.find("a", href=True)
-                    if not link_elem:
-                        continue
-                    href = link_elem["href"]
-                    url = href if href.startswith("http") else self.base_url + href
-
-                    guidelines.append(
-                        {
-                            "title": title,
-                            "url": url,
-                            "description": "",
-                            "source": "GIN",
-                            "organization": "Guidelines International Network",
-                            "is_guideline": True,
-                            "official": True,
-                        }
-                    )
-                except Exception:
-                    continue
-
-            return (
-                guidelines
-                if guidelines
-                else {
-                    "error": "No guidelines found for query",
-                    "source": "GIN",
-                    "search_url": f"{self.search_url}?q={query}",
-                }
-            )
-
-        except requests.exceptions.RequestException as e:
-            return {
-                "status": "error",
-                "error": f"GIN search failed: {str(e)}",
-                "source": "GIN",
-            }
-        except Exception as e:
-            return {
-                "status": "error",
-                "error": f"Error processing GIN guidelines: {str(e)}",
-                "source": "GIN",
-            }
-
-
-@register_tool()
 class CMAGuidelinesTool(BaseTool):
     """
     Canadian clinical practice guidelines search tool.
@@ -2238,55 +2053,6 @@ class CMAGuidelinesTool(BaseTool):
                 "source": "CMA",
             }
 
-    def _extract_guideline_content(self, url):
-        """Extract actual content from a guideline URL."""
-        try:
-            time.sleep(0.5)  # Be respectful
-            response = requests.get(url, timeout=15)
-            response.raise_for_status()
-
-            soup = BeautifulSoup(response.content, "html.parser")
-
-            # Extract main content
-            content_selectors = [
-                "main",
-                ".content",
-                ".article-content",
-                ".guideline-content",
-                "article",
-                ".main-content",
-            ]
-
-            content_text = ""
-            for selector in content_selectors:
-                content_elem = soup.select_one(selector)
-                if content_elem:
-                    # Get all text content
-                    paragraphs = content_elem.find_all("p")
-                    content_parts = []
-                    for p in paragraphs:
-                        text = p.get_text().strip()
-                        if len(text) > 20:  # Skip very short paragraphs
-                            content_parts.append(text)
-
-                    if content_parts:
-                        content_text = "\n\n".join(
-                            content_parts[:10]
-                        )  # Limit to first 10 paragraphs
-                        break
-
-            # If no main content found, try to get any meaningful text
-            if not content_text:
-                all_text = soup.get_text()
-                # Clean up the text
-                lines = [line.strip() for line in all_text.split("\n") if line.strip()]
-                content_text = "\n".join(lines[:20])  # First 20 meaningful lines
-
-            return content_text[:2000]  # Limit content length
-
-        except Exception as e:
-            return f"Error extracting content: {str(e)}"
-
 
 # ---------------------------------------------------------------------------
 # SIGN (Scottish Intercollegiate Guidelines Network) Tools
@@ -2370,14 +2136,7 @@ class SIGNSearchGuidelinesTool(BaseTool):
                 "error": f"Error parsing SIGN guidelines page: {exc}",
             }
 
-        query_lower = query.lower()
-        results = [
-            row
-            for row in rows
-            if query_lower in row["title"].lower()
-            or query_lower in row["topic"].lower()
-        ]
-        return results[:limit]
+        return _rank_by_terms(rows, query, ("title", "topic"))[:limit]
 
 
 @register_tool()
@@ -2407,7 +2166,21 @@ class SIGNListGuidelinesTool(BaseTool):
 
         if topic:
             topic_lower = topic.lower()
-            rows = [r for r in rows if topic_lower in r["topic"].lower()]
+            matched = [r for r in rows if topic_lower in r["topic"].lower()]
+            if not matched:
+                # SIGN files its guidelines under a dozen fixed topic names, so a
+                # topic it does not use ("ophthalmology" for "Eye") is a wrong
+                # value, not an empty specialty: say which names exist.
+                topics = sorted({r["topic"] for r in rows if r["topic"]})
+                return {
+                    "status": "error",
+                    "error": (
+                        f"No SIGN topic matches '{topic}'. SIGN topics: "
+                        f"{', '.join(topics)}."
+                    ),
+                    "available_topics": topics,
+                }
+            rows = matched
 
         return rows[:limit]
 
@@ -2521,6 +2294,4 @@ class CTFPHCSearchGuidelinesTool(BaseTool):
                 "error": f"Error parsing CTFPHC guidelines page: {exc}",
             }
 
-        query_lower = query.lower()
-        results = [g for g in guidelines if query_lower in g["title"].lower()]
-        return results[:limit]
+        return _rank_by_terms(guidelines, query, ("title",))[:limit]

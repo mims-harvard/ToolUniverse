@@ -22,7 +22,7 @@ def MedlinePlus_get_genetics_gene_by_name(
     Parameters
     ----------
     gene : str
-        URL slug of gene name, e.g., "BRCA1", must match MedlinePlus page path.
+        Gene symbol (e.g. 'BRCA1'), full gene name (e.g. 'fibrillin 1') or page slug....
     format : str
         Format parameter for the endpoint (note: API always returns XML regardless of...
     stream_callback : Callable, optional
