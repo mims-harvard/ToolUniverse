@@ -141,6 +141,9 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "cluster_members_requested": {
+                  "type": "boolean"
                 }
               },
               "required": [
@@ -208,7 +211,7 @@
         "reference_path": {
           "type": "string",
           "minLength": 1,
-          "description": "Local reference file or prebuilt database prefix (.dbtype must exist); builtin:1UBQ uses bundled public ubiquitin."
+          "description": "Local reference PDB file or prebuilt Foldseek database prefix (.dbtype must exist); builtin:1UBQ uses the bundled public control. Clustered prefixes search representatives by default; request expand_cluster_members to align matching members."
         },
         "threads": {
           "type": [
@@ -245,6 +248,13 @@
           "minimum": 0,
           "maximum": 1,
           "description": "Minimum fraction of query residues covered; defaults to0."
+        },
+        "expand_cluster_members": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "For a prebuilt clustered Foldseek database, align members of matched representative clusters. Defaults to false. Use the representative prefix with _clu.dbtype and _seq.dbtype companions; the member _seq prefix is not a directly searchable reference."
         }
       },
       "required": [
@@ -317,6 +327,9 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "cluster_members_requested": {
+                  "type": "boolean"
                 }
               },
               "required": [

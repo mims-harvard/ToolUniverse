@@ -39,6 +39,25 @@ or stereochemical validation. Query contents are staged from the validated
 snapshot. References are a local FASTA/PDB file or a prebuilt database prefix
 with its `.dbtype` file; maintain a fixed reference snapshot during a call.
 
+Clustered Foldseek references search representatives by default. To also align
+members of matching clusters, set `expand_cluster_members=True` with the
+representative database prefix. The tool checks for its `_clu.dbtype` and
+`_seq.dbtype` companions before launching the backend. Do not pass the member
+`_seq` prefix as a standalone structure database. For example:
+
+```python
+members = tu.tools.ProteinSimilarity_search_structure_local(
+    query_path="builtin:1UBQ",
+    reference_path="local_foldseek_pdb_database",
+    expand_cluster_members=True,
+)
+```
+
+The result records `cluster_members_requested`. Expansion considers members of
+matched representative clusters and does not claim exhaustive coverage of
+every reference record. A representative-only result can miss an exact known
+member, which matters when interpreting public retrieval controls or novelty.
+
 For a public calibration that also works from an installed package, explicitly
 set both paths to `builtin:1UBQ`. This selects bundled experimental protein
 coordinates or the matching 76-residue sequence from

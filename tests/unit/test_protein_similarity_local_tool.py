@@ -241,6 +241,71 @@ def test_native_public_control(operation):
     validate(result, config(operation)["return_schema"])
 
 
+@pytest.mark.parametrize("value", [1, "true", [], {}])
+def test_cluster_expansion_rejects_non_boolean(value):
+    result = LocalProteinSimilarityTool(config("structure")).run(
+        {
+            "query_path": "builtin:1UBQ",
+            "reference_path": "builtin:1UBQ",
+            "expand_cluster_members": value,
+        }
+    )
+    assert result["status"] == "error" and result["stage"] == "input_validation"
+
+
+def test_cluster_expansion_requires_companion_databases(tmp_path, monkeypatch):
+    reference = tmp_path / "pdb"
+    Path(str(reference) + ".dbtype").write_bytes(bytes(4))
+    monkeypatch.setattr(
+        MODULE + "._execute",
+        lambda *_: pytest.fail("Invalid cluster reference must not launch a backend"),
+    )
+    result = LocalProteinSimilarityTool(config("structure")).run(
+        {
+            "query_path": "builtin:1UBQ",
+            "reference_path": str(reference),
+            "expand_cluster_members": True,
+        }
+    )
+    assert result["status"] == "error" and result["stage"] == "input_validation"
+    assert "representative prefix" in result["error"]
+
+
+def test_cluster_member_option_reaches_native_search(tmp_path, monkeypatch):
+    reference = tmp_path / "pdb"
+    for suffix in [".dbtype", "_clu.dbtype", "_seq.dbtype"]:
+        Path(str(reference) + suffix).write_bytes(bytes(4))
+    binary = tmp_path / "foldseek"
+    binary.write_text("public-test-binary")
+    binary.chmod(0o755)
+    monkeypatch.setenv("TOOLUNIVERSE_FOLDSEEK_BINARY", str(binary))
+    commands = []
+
+    def execute(argv, directory, timeout):
+        commands.append(argv)
+        log = directory / "process.log"
+        log.write_text("public-test-version")
+        if argv[1] == "easy-search":
+            Path(argv[4]).write_text(
+                "protein_similarity_1ubq\t1ubq_A\t1\t1\t76\t1\t76\t76\t1\t76\t76\t1\t1\t1\n"
+            )
+        return log
+
+    monkeypatch.setattr(MODULE + "._execute", execute)
+    result = LocalProteinSimilarityTool(config("structure")).run(
+        {
+            "query_path": "builtin:1UBQ",
+            "reference_path": str(reference),
+            "expand_cluster_members": True,
+        }
+    )
+    assert result["status"] == "success", result
+    assert commands[1][commands[1].index("--cluster-search") + 1] == "1"
+    assert result["data"]["cluster_members_requested"] is True
+    assert result["data"]["hits"][0]["qtmscore"] == 1
+    validate(result, config("structure")["return_schema"])
+
+
 def test_sdk_loading_and_dispatch(monkeypatch, tmp_path):
     """The tool category must load and dispatch through the SDK."""
     from tooluniverse import ToolUniverse

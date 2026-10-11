@@ -297,6 +297,22 @@ class LocalProteinSimilarityTool(BaseTool):
                 raise ValueError(
                     "reference_path must be a local reference file or prebuilt database prefix with .dbtype."
                 )
+            expand_members = arguments.get("expand_cluster_members")
+            expand_members = False if expand_members is None else expand_members
+            if not isinstance(expand_members, bool):
+                raise ValueError("expand_cluster_members must be a boolean.")
+            if expand_members:
+                if operation != "structure" or not is_database:
+                    raise ValueError(
+                        "Cluster expansion requires a prebuilt clustered Foldseek reference prefix."
+                    )
+                if not all(
+                    Path(str(reference) + suffix).is_file()
+                    for suffix in ["_clu.dbtype", "_seq.dbtype"]
+                ):
+                    raise ValueError(
+                        "Cluster expansion requires the representative prefix with _clu.dbtype and _seq.dbtype companions; use that prefix, not the member _seq prefix."
+                    )
             threads = _integer(arguments, "threads", 2, 1, 8)
             timeout = _integer(arguments, "timeout_seconds", 300, 1, 3600)
             limit = _integer(arguments, "max_hits_per_query", 20, 1, 100)
@@ -400,6 +416,8 @@ class LocalProteinSimilarityTool(BaseTool):
                         "--format-output",
                         STRUCTURE_FIELDS,
                     ]
+                    if expand_members:
+                        argv += ["--cluster-search", "1"]
                 _execute(argv, work, timeout)
                 stage = "output_validation"
                 hits, total = _parse(
@@ -437,6 +455,7 @@ class LocalProteinSimilarityTool(BaseTool):
                         "query_fingerprints": query_info,
                         "GPU_enabled": False,
                         "scientific_service_uploads": 0,
+                        "cluster_members_requested": expand_members,
                         "fraction_units": "fident/qcov/tcov and TM-scores are fractions in 0–1, not percentages.",
                         "ranking": "Within-query bit score"
                         if operation == "sequence"
@@ -447,6 +466,7 @@ class LocalProteinSimilarityTool(BaseTool):
                             "Only the supplied local reference snapshot is searched; no hit is not proof of novelty.",
                             "Sequence similarity is not affinity or function; structural similarity is not a binding test.",
                             "Structure mode uses whole single chains, not consensus domain segmentation or an official novelty classifier.",
+                            "Cluster expansion aligns members of matched representative clusters; it is not an exhaustive search of every reference record.",
                         ],
                     },
                 }

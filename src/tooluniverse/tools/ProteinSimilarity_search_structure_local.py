@@ -15,6 +15,7 @@ def ProteinSimilarity_search_structure_local(
     timeout_seconds: Optional[int] = None,
     max_hits_per_query: Optional[int] = None,
     minimum_query_coverage: Optional[float] = None,
+    expand_cluster_members: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,7 +29,7 @@ def ProteinSimilarity_search_structure_local(
     query_path : str
         Local single-chain one-model .pdb file, or directory of1–50 such files with s...
     reference_path : str
-        Local reference file or prebuilt database prefix (.dbtype must exist); builti...
+        Local reference PDB file or prebuilt Foldseek database prefix (.dbtype must e...
     threads : int
         CPU threads; defaults to2.
     timeout_seconds : int
@@ -37,6 +38,8 @@ def ProteinSimilarity_search_structure_local(
         Returned hits per query, defaults to20; truncation is explicit.
     minimum_query_coverage : float
         Minimum fraction of query residues covered; defaults to0.
+    expand_cluster_members : bool
+        For a prebuilt clustered Foldseek database, align members of matched represen...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def ProteinSimilarity_search_structure_local(
             "timeout_seconds": timeout_seconds,
             "max_hits_per_query": max_hits_per_query,
             "minimum_query_coverage": minimum_query_coverage,
+            "expand_cluster_members": expand_cluster_members,
         }.items()
         if v is not None
     }
