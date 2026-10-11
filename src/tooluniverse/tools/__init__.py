@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2871 scientific tools.
+Type-safe Python interface to 2877 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -678,6 +678,7 @@ from .EuropePMC_get_fulltext import EuropePMC_get_fulltext
 from .EuropePMC_get_fulltext_snippets import EuropePMC_get_fulltext_snippets
 from .EuropePMC_get_references import EuropePMC_get_references
 from .EuropePMC_search_articles import EuropePMC_search_articles
+from .EuropePMC_search_case_reports import EuropePMC_search_case_reports
 from .Eurostat_get_dataset import Eurostat_get_dataset
 from .Evo2_score_variant import Evo2_score_variant
 from .ExperimentalDesignScorer import ExperimentalDesignScorer
@@ -1448,6 +1449,7 @@ from .LOVD_get_gene import LOVD_get_gene
 from .LOVD_get_variants import LOVD_get_variants
 from .LOVD_search_variants import LOVD_search_variants
 from .LabelGenerator import LabelGenerator
+from .LactMed_get_drug import LactMed_get_drug
 from .LipidMaps_get_compound_by_id import LipidMaps_get_compound_by_id
 from .LipidMaps_get_compound_by_xref import LipidMaps_get_compound_by_xref
 from .LipidMaps_get_gene import LipidMaps_get_gene
@@ -1460,6 +1462,7 @@ from .LitVar_search_variants import LitVar_search_variants
 from .LiteratureContextReviewer import LiteratureContextReviewer
 from .LiteratureSearchTool import LiteratureSearchTool
 from .LiteratureSynthesisAgent import LiteratureSynthesisAgent
+from .LiverTox_get_drug import LiverTox_get_drug
 from .MAGICapp_get_guideline import MAGICapp_get_guideline
 from .MAGICapp_get_recommendations import MAGICapp_get_recommendations
 from .MAGICapp_get_sections import MAGICapp_get_sections
@@ -2539,6 +2542,9 @@ from .SpliceAI_get_max_delta import SpliceAI_get_max_delta
 from .SpliceAI_predict_pangolin import SpliceAI_predict_pangolin
 from .SpliceAI_predict_splice import SpliceAI_predict_splice
 from .StarAlleles_search import StarAlleles_search
+from .StatPearls_get_chapter_section import StatPearls_get_chapter_section
+from .StatPearls_get_management import StatPearls_get_management
+from .StatPearls_search import StatPearls_search
 from .Statistics_test import Statistics_test
 from .Structure_annotate_per_residue import Structure_annotate_per_residue
 from .SunriseSunset_get_times import SunriseSunset_get_times
@@ -4071,6 +4077,7 @@ __all__ = [
     "EuropePMC_get_fulltext_snippets",
     "EuropePMC_get_references",
     "EuropePMC_search_articles",
+    "EuropePMC_search_case_reports",
     "Eurostat_get_dataset",
     "Evo2_score_variant",
     "ExperimentalDesignScorer",
@@ -4613,6 +4620,7 @@ __all__ = [
     "LOVD_get_variants",
     "LOVD_search_variants",
     "LabelGenerator",
+    "LactMed_get_drug",
     "LipidMaps_get_compound_by_id",
     "LipidMaps_get_compound_by_xref",
     "LipidMaps_get_gene",
@@ -4625,6 +4633,7 @@ __all__ = [
     "LiteratureContextReviewer",
     "LiteratureSearchTool",
     "LiteratureSynthesisAgent",
+    "LiverTox_get_drug",
     "MAGICapp_get_guideline",
     "MAGICapp_get_recommendations",
     "MAGICapp_get_sections",
@@ -5510,6 +5519,9 @@ __all__ = [
     "SpliceAI_predict_pangolin",
     "SpliceAI_predict_splice",
     "StarAlleles_search",
+    "StatPearls_get_chapter_section",
+    "StatPearls_get_management",
+    "StatPearls_search",
     "Statistics_test",
     "Structure_annotate_per_residue",
     "SunriseSunset_get_times",
