@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2871 scientific tools.
+Type-safe Python interface to 2870 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -2230,12 +2230,6 @@ from .ProtVar_map_variant import ProtVar_map_variant
 from .ProtacDB_get_protac import ProtacDB_get_protac
 from .ProtacDB_search_protacs import ProtacDB_search_protacs
 from .ProtacDB_search_targets import ProtacDB_search_targets
-from .ProteinSimilarity_search_sequence_local import (
-    ProteinSimilarity_search_sequence_local,
-)
-from .ProteinSimilarity_search_structure_local import (
-    ProteinSimilarity_search_structure_local,
-)
 from .Protein_MSA_inspect import Protein_MSA_inspect
 from .ProteinsPlus_analyze_binding_site_similarity import (
     ProteinsPlus_analyze_binding_site_similarity,
@@ -3003,6 +2997,7 @@ from .gather_disease_profile import gather_disease_profile
 from .gather_drug_profile import gather_drug_profile
 from .gather_gene_disease_associations import gather_gene_disease_associations
 from .gather_target_profile import gather_target_profile
+from .geant4_depth_dose_simulation import geant4_depth_dose_simulation
 from .genomics_england_disease_target_score import genomics_england_disease_target_score
 from .geo_get_dataset_info import geo_get_dataset_info
 from .geo_get_sample_info import geo_get_sample_info
@@ -5239,8 +5234,6 @@ __all__ = [
     "ProtacDB_get_protac",
     "ProtacDB_search_protacs",
     "ProtacDB_search_targets",
-    "ProteinSimilarity_search_sequence_local",
-    "ProteinSimilarity_search_structure_local",
     "Protein_MSA_inspect",
     "ProteinsPlus_analyze_binding_site_similarity",
     "ProteinsPlus_generate_interaction_diagram",
@@ -5910,6 +5903,7 @@ __all__ = [
     "gather_drug_profile",
     "gather_gene_disease_associations",
     "gather_target_profile",
+    "geant4_depth_dose_simulation",
     "genomics_england_disease_target_score",
     "geo_get_dataset_info",
     "geo_get_sample_info",

@@ -335,7 +335,7 @@ py-modules = ["tooluniverse_cli_entry"]
 where = ["src"]
 
 [tool.setuptools.package-data]
-tooluniverse = ["data/*", "data/packages/*"]
+tooluniverse = ["data/*", "data/packages/*", "data/geant4/*"]
 
 [dependency-groups]
 dev = [
