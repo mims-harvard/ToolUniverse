@@ -420,6 +420,48 @@ def explain_remote_load_failure(
     return message, False
 
 
+def describe_missing_keys(missing, credentials_call):
+    """How to supply the named keys, and the steps that actually work.
+
+    ``required_api_keys`` holds two different kinds of name. A provider
+    credential can be passed per request, but a server URL or a data path is
+    deployment configuration: ``_get_api_key`` reads those from the process
+    environment on purpose, so a caller who passes one as a request credential
+    is ignored. Telling everyone to "provide them as request credentials" sent
+    that caller to retry the one route that cannot work for their key.
+
+    Returns ``(sentence, next_steps)``.
+    """
+    scoped = [name for name in missing if is_credential_name(name)]
+    process_only = [name for name in missing if not is_credential_name(name)]
+
+    if not process_only:
+        return (
+            "Provide them as request credentials or environment variables.",
+            [
+                f"Pass the missing keys in {credentials_call}(credentials={{...}})",
+                "Or set them as local environment variables",
+            ],
+        )
+    only = ", ".join(process_only)
+    if not scoped:
+        return (
+            f"Set them as environment variables: {only} "
+            "names deployment configuration, which is read from the process "
+            "environment and cannot be passed as a request credential.",
+            [f"Set {only} in the environment of the process serving these tools"],
+        )
+    return (
+        f"Provide {', '.join(scoped)} as request credentials or environment "
+        f"variables, and {only} as environment variables only -- it names "
+        "deployment configuration, which cannot be passed per request.",
+        [
+            f"Pass {', '.join(scoped)} in {credentials_call}(credentials={{...}})",
+            f"Set {only} in the environment of the process serving these tools",
+        ],
+    )
+
+
 class ToolUniverse:
     """
     A comprehensive tool management system for loading, organizing, and executing various scientific and data tools.
@@ -1021,7 +1063,15 @@ class ToolUniverse:
                 for key in tool_config.get("required_api_keys", [])
                 if not self._get_api_key(key)
             ]
-        return list(self._excluded_api_key_tools.get(function_name, []))
+        gated = list(self._excluded_api_key_tools.get(function_name, []))
+        # The list was taken when the tool was gated at load time, so it names
+        # every required key. Reporting a key the caller has just supplied sends
+        # them looking for a problem they already fixed, so only the ones still
+        # unresolved are named -- unless that leaves nothing to report, in which
+        # case the tool is unavailable for some other reason and the full list
+        # is still the most useful thing to say.
+        unresolved = [key for key in gated if not self._get_api_key(key)]
+        return unresolved or gated
 
     def _missing_alternative_credentials(self, function_name: str) -> List[str]:
         """Return an any-of credential group when none of its choices is available."""
@@ -3549,16 +3599,13 @@ class ToolUniverse:
 
         missing_credentials = self._missing_required_credentials(function_name)
         if missing_credentials:
+            how, steps = describe_missing_keys(missing_credentials, "run_one_function")
             return self._create_dual_format_error(
                 ToolUnavailableError(
                     f"Tool '{function_name}' requires API key(s): "
-                    f"{', '.join(missing_credentials)}. Provide them as request "
-                    "credentials or environment variables.",
+                    f"{', '.join(missing_credentials)}. {how}",
                     retriable=False,
-                    next_steps=[
-                        "Pass the missing keys in run_one_function(credentials={...})",
-                        "Or set them as local environment variables",
-                    ],
+                    next_steps=steps,
                 )
             )
 
@@ -3824,16 +3871,13 @@ class ToolUniverse:
 
         missing_credentials = self._missing_required_credentials(function_name)
         if missing_credentials:
+            how, steps = describe_missing_keys(missing_credentials, "run_one_function_async")
             return self._create_dual_format_error(
                 ToolUnavailableError(
                     f"Tool '{function_name}' requires API key(s): "
-                    f"{', '.join(missing_credentials)}. Provide them as request "
-                    "credentials or environment variables.",
+                    f"{', '.join(missing_credentials)}. {how}",
                     retriable=False,
-                    next_steps=[
-                        "Pass the missing keys in run_one_function_async(credentials={...})",
-                        "Or set them as local environment variables",
-                    ],
+                    next_steps=steps,
                 )
             )
         alternative_credentials = self._missing_alternative_credentials(function_name)
