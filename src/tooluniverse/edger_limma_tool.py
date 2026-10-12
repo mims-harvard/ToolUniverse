@@ -17,28 +17,34 @@ import tempfile
 from typing import Any, Dict
 
 from .base_tool import BaseTool
+from .r_literals import r_formula, r_number, r_string
 from .tool_registry import register_tool
 
 # Ported verbatim from r_edger_limma_wrapper.py (validated), with a structured
 # RESULT_JSON block appended for the tool. `.format()` substitution: literal R
 # braces are doubled, `{name}` are parameters.
+#
+# Every `{name}` below is an *already quoted* R literal, not a bare value: the
+# string parameters arrive as `_r_string(...)` output, so the template carries no
+# quotes of its own. A path or a design formula containing a quote would
+# otherwise close the literal and the rest of it would be read as R code.
 _R_TEMPLATE = r"""
 suppressMessages({{
   library(edgeR)
   library(limma)
 }})
 
-args_counts   <- "{counts_path}"
-args_meta     <- "{meta_path}"
-args_design   <- "{design}"
-args_method   <- "{method}"
-args_exclude_samples <- "{exclude_samples}"
-args_report_genes    <- "{report_genes}"
+args_counts   <- {counts_path}
+args_meta     <- {meta_path}
+args_design   <- {design}
+args_method   <- {method}
+args_exclude_samples <- {exclude_samples}
+args_report_genes    <- {report_genes}
 args_lfc_thr  <- {lfc_thr}
 args_fdr_thr  <- {fdr_thr}
 args_expr_thr <- {expr_thr}
-args_workdir  <- "{workdir}"
-contrast_str  <- "{contrast}"
+args_workdir  <- {workdir}
+contrast_str  <- {contrast}
 
 counts <- read.csv(args_counts, row.names=1, check.names=FALSE)
 metadata <- read.csv(args_meta, check.names=FALSE)
@@ -184,21 +190,44 @@ class EdgeRLimmaTool(BaseTool):
                 "error": "contrast must be 'factor,level1,level2'.",
             }
 
+        # Every argument becomes a quoted R literal here rather than in the
+        # template: these values reach us from a model or an upstream request,
+        # and a bare one would be R code.
+        try:
+            substitutions = dict(
+                design=r_formula(design, "design"),
+                method=r_string(method),
+                exclude_samples=r_string(arguments.get("exclude_samples", "") or ""),
+                report_genes=r_string(arguments.get("report_genes", "") or ""),
+                lfc_thr=r_number(arguments.get("lfc_threshold", 0.5), "lfc_threshold"),
+                fdr_thr=r_number(arguments.get("fdr_threshold", 0.05), "fdr_threshold"),
+                expr_thr=r_number(
+                    arguments.get("expr_threshold", 0.0), "expr_threshold"
+                ),
+                contrast=r_string(contrast),
+            )
+        except ValueError as e:
+            return {"status": "error", "error": str(e)}
+
         workdir = tempfile.mkdtemp(prefix=f"{method}_de_")
         r_script = _R_TEMPLATE.format(
-            counts_path=counts_file,
-            meta_path=metadata_file,
-            design=design,
-            method=method,
-            exclude_samples=arguments.get("exclude_samples", "") or "",
-            report_genes=arguments.get("report_genes", "") or "",
-            lfc_thr=float(arguments.get("lfc_threshold", 0.5)),
-            fdr_thr=float(arguments.get("fdr_threshold", 0.05)),
-            expr_thr=float(arguments.get("expr_threshold", 0.0)),
-            workdir=workdir,
-            contrast=contrast,
+            counts_path=r_string(counts_file),
+            meta_path=r_string(metadata_file),
+            workdir=r_string(workdir),
+            **substitutions,
         )
 
+        try:
+            return self._run(r_script, method)
+        finally:
+            # Only an empty directory is removed, so a run that produced the
+            # ranked table keeps it; a run that failed leaves nothing behind.
+            try:
+                os.rmdir(workdir)
+            except OSError:
+                pass
+
+    def _run(self, r_script: str, method: str) -> Dict[str, Any]:
         try:
             r = subprocess.run(
                 ["Rscript", "-e", r_script],
@@ -226,8 +255,25 @@ class EdgeRLimmaTool(BaseTool):
         json_block = out.split("RESULT_JSON_START\n", 1)[1].split("\nRESULT_JSON_END")[
             0
         ]
-        data = json.loads(json_block)
+        try:
+            data = json.loads(json_block)
+        except ValueError:
+            return {
+                "status": "error",
+                "error": f"unreadable result: {json_block[:500]}",
+            }
+
+        results_file = ""
         for line in out.splitlines():
             if line.startswith("RESULTS_FILE:"):
-                data["results_file"] = line.split(":", 1)[1].strip()
+                results_file = line.split(":", 1)[1].strip()
+        # The ranked table is most of what a caller asked for, so a run that did
+        # not leave it on disk is not a success -- without this check the path
+        # is simply absent from the result and the caller finds out by KeyError.
+        if not results_file or not os.path.isfile(results_file):
+            return {
+                "status": "error",
+                "error": f"Results file not found: {results_file}",
+            }
+        data["results_file"] = results_file
         return {"status": "success", "data": data}

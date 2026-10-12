@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any, Dict
 
 from .base_tool import BaseTool
+from .r_literals import r_formula, r_identifier, r_level, r_number, r_string
 from .tool_registry import register_tool
 
 
@@ -106,14 +107,24 @@ class DESeq2Tool(BaseTool):
                 "error": f"Metadata file not found: {metadata_file}",
             }
 
+        # These values reach us from a model or an upstream request and are
+        # pasted into R source, where a bare one is code rather than data. Each
+        # becomes a quoted literal or is refused by name.
+        try:
+            design_literal = r_formula(design, "design")
+            alpha_literal = r_number(alpha, "alpha")
+            lfc_literal = r_number(lfc_threshold, "lfc_threshold")
+        except ValueError as e:
+            return {"status": "error", "error": str(e)}
+
         # Build R script
         r_script = f"""
 suppressMessages({{
   library(DESeq2)
 }})
 
-counts <- read.csv("{counts_file}", row.names=1, check.names=FALSE)
-meta <- read.csv("{metadata_file}")
+counts <- read.csv({r_string(counts_file)}, row.names=1, check.names=FALSE)
+meta <- read.csv({r_string(metadata_file)})
 
 # Try to match sample IDs
 if ("AzentaName" %in% colnames(meta)) {{
@@ -139,32 +150,50 @@ counts <- counts[, common]
 meta <- meta[common, ]
 
 # Factorize design variables
-for (v in all.vars(as.formula("{design}"))) {{
+for (v in all.vars(as.formula({design_literal}))) {{
   if (v %in% colnames(meta)) {{
     meta[[v]] <- factor(meta[[v]])
   }}
 }}
 """
         if ref_level:
-            parts = ref_level.split(",")
+            parts = str(ref_level).split(",")
             if len(parts) == 2:
-                r_script += f'\nmeta${parts[0].strip()} <- relevel(meta${parts[0].strip()}, ref="{parts[1].strip()}")\n'
+                # `meta[[name]]` instead of `meta$name`: the column is then
+                # looked up by a string rather than spelled into the source, so
+                # a factor name is data like every other argument.
+                try:
+                    column = r_level(parts[0], "ref_level factor")
+                    level = r_level(parts[1], "ref_level reference level")
+                except ValueError as e:
+                    return {"status": "error", "error": str(e)}
+                r_script += f"""
+if (!({column} %in% colnames(meta))) {{
+  stop(paste("ref_level names a column the metadata does not have:", {column}))
+}}
+meta[[{column}]] <- relevel(meta[[{column}]], ref={level})
+"""
 
         r_script += f"""
-dds <- DESeqDataSetFromMatrix(round(as.matrix(counts)), meta, {design})
+dds <- DESeqDataSetFromMatrix(
+  round(as.matrix(counts)), meta, as.formula({design_literal})
+)
 dds <- DESeq(dds{", quiet=TRUE" if not refit_cooks else ""})
 """
         if refit_cooks:
             r_script += "dds <- DESeq(dds, quiet=TRUE)\n"
 
         if contrast:
-            parts = [p.strip().strip('"').strip("'") for p in contrast.split(",")]
+            parts = [p.strip().strip('"').strip("'") for p in str(contrast).split(",")]
             if len(parts) == 3:
-                r_script += f'res <- results(dds, contrast=c("{parts[0]}", "{parts[1]}", "{parts[2]}"), alpha={alpha})\n'
+                terms = ", ".join(r_string(p) for p in parts)
+                r_script += (
+                    f"res <- results(dds, contrast=c({terms}), alpha={alpha_literal})\n"
+                )
             else:
-                r_script += f"res <- results(dds, alpha={alpha})\n"
+                r_script += f"res <- results(dds, alpha={alpha_literal})\n"
         else:
-            r_script += f"res <- results(dds, alpha={alpha})\n"
+            r_script += f"res <- results(dds, alpha={alpha_literal})\n"
 
         if lfc_shrinkage:
             r_script += """
@@ -174,7 +203,7 @@ res$log2FoldChange_shrunk <- res_shrunk$log2FoldChange
 
         r_script += f"""
 # Summary
-sig <- res[!is.na(res$padj) & res$padj < {alpha}, ]
+sig <- res[!is.na(res$padj) & res$padj < {alpha_literal}, ]
 cat("RESULT_JSON_START\\n")
 result <- list(
   total_genes = nrow(res),
@@ -184,9 +213,9 @@ result <- list(
   dispersion_below_1e5 = sum(mcols(dds)$dispGeneEst < 1e-05, na.rm=TRUE)
 )
 """
-        if lfc_threshold > 0:
+        if float(lfc_threshold) > 0:
             r_script += f"""
-sig_lfc <- res[!is.na(res$padj) & res$padj < {alpha} & abs(res$log2FoldChange) > {lfc_threshold}, ]
+sig_lfc <- res[!is.na(res$padj) & res$padj < {alpha_literal} & abs(res$log2FoldChange) > {lfc_literal}, ]
 result$sig_with_lfc_filter <- nrow(sig_lfc)
 """
 
@@ -256,22 +285,33 @@ cat("RESULTS_FILE:", out_file, "\\n")
                 "error": f"Gene list file not found: {gene_list_file}",
             }
 
+        # `organism` names an annotation package, so it is the one argument that
+        # has to stay unquoted R code -- hence it is checked to be a plain R
+        # name. Everything else becomes a literal.
+        try:
+            org_name = r_identifier(organism, "organism")
+            id_literal = r_string(id_type)
+            ont_literal = r_string(ont)
+            cutoff_literal = r_number(simplify_cutoff, "simplify_cutoff")
+        except ValueError as e:
+            return {"status": "error", "error": str(e)}
+
         r_script = f"""
 suppressMessages({{
   library(clusterProfiler)
-  library({organism})
+  library({org_name})
 }})
 
-genes <- readLines("{gene_list_file}")
+genes <- readLines({r_string(gene_list_file)})
 genes <- sub("\\\\..*", "", genes)  # Strip Ensembl version
 
-gene_entrez <- bitr(genes, fromType="{id_type}", toType="ENTREZID", OrgDb={organism})
+gene_entrez <- bitr(genes, fromType={id_literal}, toType="ENTREZID", OrgDb={org_name})
 """
         if background_file and os.path.exists(background_file):
             r_script += f"""
-bg <- readLines("{background_file}")
+bg <- readLines({r_string(background_file)})
 bg <- sub("\\\\..*", "", bg)
-bg_entrez <- bitr(bg, fromType="{id_type}", toType="ENTREZID", OrgDb={organism})
+bg_entrez <- bitr(bg, fromType={id_literal}, toType="ENTREZID", OrgDb={org_name})
 universe_ids <- bg_entrez$ENTREZID
 """
         else:
@@ -282,8 +322,8 @@ universe_ids <- bg_entrez$ENTREZID
 ego <- enrichGO(
   gene = gene_entrez$ENTREZID,
   universe = universe_ids,
-  OrgDb = {organism},
-  ont = "{ont}",
+  OrgDb = {org_name},
+  ont = {ont_literal},
   pAdjustMethod = "BH",
   pvalueCutoff = 0.05,
   qvalueCutoff = 0.2,
@@ -291,7 +331,7 @@ ego <- enrichGO(
 )
 cat("enrichGO terms:", nrow(ego), "\\n")
 
-ego2 <- clusterProfiler::simplify(ego, cutoff={simplify_cutoff}, by="p.adjust", select_fun=min)
+ego2 <- clusterProfiler::simplify(ego, cutoff={cutoff_literal}, by="p.adjust", select_fun=min)
 cat("Simplified terms:", nrow(ego2), "\\n")
 
 df <- as.data.frame(ego2)
