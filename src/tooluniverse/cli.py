@@ -2534,9 +2534,13 @@ def cmd_remote_room(args):
     """
     import json
 
-    from tooluniverse.remote_resident import admission, backend
+    from tooluniverse.remote_resident import admission
 
-    held = backend.running()
+    # `machine_holdings`, not `backend.running()`: this command must answer with
+    # the same holdings the gate in `ensure_started` decides on, or an operator
+    # is told one thing and refused for another. `backend.running()` would also
+    # report nothing at all here, since this CLI process started no workers.
+    held = admission.machine_holdings()
     cap, cap_source = admission.capacity_gib()
     mem = admission.meminfo_gib()
     tenants = admission._nvidia_pids()

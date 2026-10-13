@@ -2071,3 +2071,196 @@ class TestRemoteRoomCommand:
             f"a 60 GiB reserve admitted what a 1 GiB reserve did not: "
             f"{sorted(fits_large - fits_small)}"
         )
+
+
+class TestMachineWideHoldings:
+    """What the whole machine holds, which is the question that was being dodged.
+
+    `backend.running()` sees this interpreter's workers. The ones that wedged
+    this host belonged to another worktree of this same repository, and while
+    these tests were written a `protenix_v1` worker from
+    `worktrees/tnf-alpha-competition-20261008` was resident and invisible to it.
+    """
+
+    WORKER = (
+        "/home/u/ws/tooluniverse/ToolUniverse/.venv/bin/python "
+        "/home/u/ws/tooluniverse/ToolUniverse/src/tooluniverse/remote/{slug}/"
+        "resident/{slug}_resident_worker.py --socket /run/user/1000/x.sock --slug {slug}"
+    )
+    FOREIGN = (
+        "/home/u/ws/tooluniverse/worktrees/{tree}/.venv/bin/python "
+        "/home/u/ws/tooluniverse/worktrees/{tree}/src/tooluniverse/remote/{slug}/"
+        "resident/{slug}_resident_worker.py --socket /run/user/1000/x.sock --slug {slug}"
+    )
+
+    def _holdings(self, *lines, budgets=None):
+        from tooluniverse.remote_resident import admission
+
+        budgets = budgets or {}
+        return admission.machine_holdings(
+            ps_output="\n".join(lines), budget_of=lambda s: budgets.get(s)
+        )
+
+    def test_a_worker_in_this_tree_is_keyed_by_slug(self):
+        held = self._holdings(self.WORKER.format(slug="boltz"), budgets={"boltz": 5.54})
+        assert held == {"boltz": 5.54}
+
+    def test_a_worker_in_another_worktree_names_the_tree(self):
+        """Naming the tree was the guard script's lesson: not knowing was the mistake."""
+        held = self._holdings(
+            self.FOREIGN.format(slug="protenix_v1", tree="tnf_alpha"),
+            budgets={"protenix_v1": 9.65},
+        )
+        assert held == {"protenix_v1@tnf_alpha": 9.65}
+
+    def test_two_processes_of_one_slug_are_two_holders(self):
+        """The second process is what turned 12 GiB into a wedged host."""
+        held = self._holdings(
+            self.FOREIGN.format(slug="boltzgen", tree="comp_a"),
+            self.FOREIGN.format(slug="boltzgen", tree="comp_a"),
+            budgets={"boltzgen": 7.89},
+        )
+        assert len(held) == 2, f"collapsed to {held}"
+        assert sum(held.values()) == pytest.approx(15.78)
+
+    def test_a_shell_quoting_a_worker_path_is_not_a_worker(self):
+        """The first run of this scan reported a holder called `<slug>`.
+
+        It was matched out of the `bash -c` that was writing the scan, whose
+        comment carried the path template. Requiring a token with `/resident/`
+        does not exclude it, because the template has one.
+        """
+        held = self._holdings(
+            "/bin/bash -c echo .../remote/<slug>/resident/<slug>_resident_worker.py --socket x",
+            budgets={},
+        )
+        assert held == {}
+
+    def test_a_glob_or_template_slug_is_rejected_by_shape(self):
+        for bogus in ("<slug>", "*", "SLUG", "$slug", ""):
+            held = self._holdings(self.WORKER.format(slug=bogus))
+            assert held == {}, f"{bogus!r} was accepted as a provider"
+
+    def test_a_worker_whose_checkout_was_deleted_still_counts(self):
+        """It is still holding the memory, so the file test cannot be existence."""
+        held = self._holdings(
+            self.FOREIGN.format(slug="esmfold2", tree="deleted_tree"),
+            budgets={"esmfold2": 25.28},
+        )
+        assert held == {"esmfold2@deleted_tree": 25.28}
+
+    def test_an_unknown_slug_is_none_not_zero(self):
+        """A provider this checkout does not have is uncosted, not free."""
+        held = self._holdings(self.WORKER.format(slug="somethingelse"), budgets={})
+        assert held == {"somethingelse": None}
+
+    def test_room_for_releases_only_its_own_trees_budget(self):
+        """Restarting mine frees mine; another tree's worker is still holding."""
+        from tooluniverse.remote_resident import admission
+
+        ps = "\n".join(
+            [
+                self.WORKER.format(slug="boltz"),
+                self.FOREIGN.format(slug="boltz", tree="other"),
+            ]
+        )
+        held = admission.machine_holdings(ps_output=ps, budget_of=lambda s: 5.54)
+        held.pop("boltz", None)  # what room_for does
+        assert held == {"boltz@other": 5.54}, (
+            "a restart must not release another checkout's budget"
+        )
+
+    def test_the_live_machine_is_readable(self):
+        """Not what it returns -- that changes -- but that it answers in shape."""
+        from tooluniverse.remote_resident import admission
+
+        held = admission.machine_holdings()
+        assert isinstance(held, dict)
+        for key, value in held.items():
+            assert admission.SLUG_RE.match(key.split("@")[0].split("#")[0]), key
+            assert value is None or isinstance(value, float)
+
+
+class TestTheCliAndTheGateAgree:
+    """One question, one answer. Two code paths reading different holdings would
+    tell an operator a provider fits and then refuse to start it, which is worse
+    than either answer alone being wrong. The first version of `tu remote room`
+    did exactly that: it read `backend.running()`, which in a fresh CLI process
+    is always empty, while the gate read the process table.
+    """
+
+    def test_both_paths_read_the_same_holdings_function(self, monkeypatch):
+        """Behavioural, not a grep: an earlier version of this test asserted the
+        string "backend.running()" was absent from the source and failed on the
+        comment explaining why it is not called. Patch the function and see who
+        picks the patch up.
+        """
+        import json
+
+        from tooluniverse.remote_resident import admission
+
+        calls = []
+
+        def fake_holdings(**kw):
+            calls.append(True)
+            return {"ghost@elsewhere": 100.0}
+
+        monkeypatch.setattr(admission, "machine_holdings", fake_holdings)
+
+        doc = json.loads(_run_room("--json"))
+        assert calls, "the command did not consult machine_holdings"
+        assert doc["declared_held_gb"] == 100.0
+        assert doc["held"] == {"ghost@elsewhere": 100.0}
+        # The largest provider, because that one cannot fit under any reading:
+        # 100 held + 38.63 + 4 reserved is past a 121.6 GiB pool. Asserting
+        # that NOTHING fits would be wrong and was: with 100 GiB held, boltz's
+        # 5.54 + 4 still leaves the sum under the pool, and it genuinely fits.
+        biggest = max(doc["providers"], key=lambda r: r["vram_budget_gb"] or 0)
+        assert not biggest["fits"], f"{biggest['slug']} fits with 100 GiB held"
+        assert "already declared held" in biggest["reason"]
+
+        before = len(calls)
+        v = admission.room_for("boltz", 5.54)
+        assert len(calls) > before, "the gate did not consult machine_holdings"
+        # That the patched holdings reached the decision, not that boltz is
+        # refused -- 100 held plus 5.54 plus 4 is still under a 121.6 pool, so
+        # it fits, and asserting otherwise was arithmetic by intuition twice.
+        assert v.declared_held_gb == 100.0
+
+    def test_they_produce_the_same_verdict_for_the_same_provider(self):
+        """Not the same numbers -- the machine moves -- but the same source."""
+        import json
+
+        from tooluniverse.remote_resident import admission
+
+        held = admission.machine_holdings()
+        v = admission.decide(
+            "boltz", 5.54, {k: x for k, x in held.items() if k != "boltz"}
+        )
+        doc = json.loads(_run_room("--json"))
+        assert doc["declared_held_gb"] == pytest.approx(
+            round(sum(x for x in held.values() if x is not None), 2), abs=0.01
+        )
+        row = next(r for r in doc["providers"] if r["slug"] == "boltz")
+        assert row["fits"] == v.admit
+
+
+def _run_room(*argv):
+    import contextlib
+    import io
+    import sys as _sys
+
+    from tooluniverse import cli
+
+    out = io.StringIO()
+    old = _sys.argv
+    try:
+        _sys.argv = ["tu", "remote", "room", *argv]
+        with contextlib.redirect_stdout(out):
+            try:
+                cli.main()
+            except SystemExit:
+                pass
+    finally:
+        _sys.argv = old
+    return out.getvalue()

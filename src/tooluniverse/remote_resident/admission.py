@@ -12,13 +12,15 @@ fifth provider's 28 GiB smoke was started on top. The host stopped responding.
 Two things made that possible and both are requirements here:
 
 1. **The sum of what THIS process holds is not what the machine holds.** The
-   workers that turned 12 GiB into a wedge were five `boltzgen` workers from a
+   workers that turned 12 GiB into a wedge were `boltzgen` workers from a
    different checkout entirely, started by a session that had no reason to
-   announce them. A decision made from `backend.running()` alone is blind in
-   exactly the direction that caused the harm, so admission reads the machine as
-   well, and the two gates are independent: the declared sum protects against
-   peaks that have not happened yet, and the live reading protects against
-   tenants this process cannot see.
+   announce them. `backend.running()` is blind in exactly the direction that
+   caused the harm, so the holdings come from `machine_holdings` -- the process
+   table, which sees every checkout's workers and counts two processes of one
+   provider as two holders. The two gates then cover different unknowns: the
+   declared sum protects against peaks that have not happened yet, and the live
+   reading protects against everything on this machine that is not a resident
+   worker at all.
 2. **On unified memory the two budgets are one budget.** `nvidia-smi
    --query-gpu=memory.total` answers `[N/A]` on this GB10 because device memory
    IS system memory: 121 GiB for the host and the card together. So capacity is
@@ -54,6 +56,7 @@ A refusal here names the numbers and does not round them, per §8.
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 from dataclasses import dataclass, field
 from typing import Dict, Mapping, Optional, Tuple
@@ -157,6 +160,115 @@ def _nvidia_pids() -> int:
     except (OSError, subprocess.SubprocessError):
         return 0
     return len([ln for ln in (out.stdout or "").splitlines() if ln.strip()])
+
+
+# .../remote/<slug>/resident/<slug>_resident_worker.py, and the segment after
+# `worktrees` when the holder is a different checkout of this repository.
+SLUG_RE = re.compile(r"^[a-z][a-z0-9_]*$")
+
+
+def _holder_of(path: str) -> Tuple[str, Optional[str]]:
+    parts = path.split("/")
+    slug = parts[-3] if len(parts) >= 3 else "?"
+    tree = next(
+        (
+            parts[i + 1]
+            for i, seg in enumerate(parts)
+            if seg == "worktrees" and i + 1 < len(parts)
+        ),
+        None,
+    )
+    return slug, tree
+
+
+def machine_holdings(
+    *, ps_output: Optional[str] = None, budget_of=None
+) -> Dict[str, Optional[float]]:
+    """Every resident worker on this machine, not only this process's.
+
+    THIS IS THE HOLE THE REST OF THIS MODULE WAS WRITTEN AROUND. `backend.running()`
+    knows what this interpreter started; the workers that wedged this host were
+    started by a session in another worktree of this same repository, and the
+    whole mistake was not knowing they were there. The process table does know:
+    a resident worker is a `*_resident_worker.py` invoked with `--socket`, and
+    its own path names the provider and the checkout.
+
+    Scanning sockets instead would undercount, because the socket path is one per
+    slug per uid: two checkouts running the same provider are one socket and two
+    processes, and the second process is the one that turns a comfortable sum
+    into a wedge. A stale socket also outlives its worker -- there is one in that
+    directory as this is written -- so a socket is evidence of a past worker and
+    a process is evidence of a present one.
+
+    Keys are `slug` for a holder in this tree and `slug@tree` for one elsewhere,
+    so a restart can release its own budget without releasing someone else's.
+    Values are the DECLARED budget from the local manifest, because that is what
+    a budget is for; a slug this checkout does not have returns None, which
+    `decide` refuses on rather than treating as free.
+    """
+    if ps_output is None:
+        try:
+            ps_output = subprocess.run(
+                ["ps", "-eo", "args"], capture_output=True, text=True, timeout=20
+            ).stdout
+        except (OSError, subprocess.SubprocessError):
+            return {}
+    if budget_of is None:
+        budget_of = _declared_budget
+
+    out: Dict[str, Optional[float]] = {}
+    for line in (ps_output or "").splitlines():
+        if "resident_worker.py" not in line or "--socket" not in line:
+            continue
+        worker = next((tok for tok in line.split() if "/resident/" in tok), "")
+        if not worker:
+            continue  # a shell wrapper that merely mentions the worker
+        slug, tree = _holder_of(worker)
+        # A SHELL WHOSE COMMAND LINE QUOTES A WORKER PATH IS NOT A WORKER, and
+        # the token test above does not catch it: the first run of this function
+        # reported a holder called `<slug>`, matched out of the `bash -c` that
+        # was writing this very function and had the path template in a comment.
+        # Checking that the file exists would not do -- a worker outlives a
+        # deleted worktree, and that holder is real -- so the shape of the slug
+        # is the test, which a template or a glob fails and a deleted checkout
+        # still passes.
+        if not SLUG_RE.match(slug):
+            continue
+        if tree is not None and not SLUG_RE.match(tree.replace("-", "_")):
+            tree = None
+        key = f"{slug}@{tree}" if tree else slug
+        # Two processes of the same slug in the same tree are two holders: the
+        # second is exactly what made 12 GiB into a wedged host.
+        suffix = 2
+        base = key
+        while key in out:
+            key = f"{base}#{suffix}"
+            suffix += 1
+        out[key] = budget_of(slug)
+    return out
+
+
+def _declared_budget(slug: str) -> Optional[float]:
+    """`[gpu] vram_budget_gb` from this checkout's manifest for `slug`.
+
+    Another checkout's copy of the same provider could in principle declare a
+    different figure; using the local one assumes the checkouts agree, which is
+    worth stating because it is an assumption and not a reading.
+    """
+    from . import manifest as M
+
+    path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "remote",
+        slug,
+        "provider.toml",
+    )
+    if not os.path.exists(path):
+        return None
+    try:
+        return M.load(path).vram_budget_gb
+    except Exception:  # noqa: BLE001 - a broken manifest is `tu remote check`'s to report
+        return None
 
 
 def decide(
@@ -287,12 +399,17 @@ def decide(
 
 
 def room_for(slug: str, budget_gb: Optional[float], **kw) -> Verdict:
-    """`decide` against what this process is holding, which is not all of it.
+    """`decide` against what the MACHINE is holding, not what this process is.
 
-    Imported lazily because `backend` imports this module's siblings; the
-    docstring of the function it calls is the one that explains why the answer
-    is only half the question.
+    `backend.running()` was the obvious source and is the wrong one: it sees the
+    workers this interpreter started, and the ones that wedged this host came
+    from another worktree. `machine_holdings` reads the process table instead,
+    which covers both, so this function does not need to add them up.
+
+    A holder in this tree with the same slug is dropped, because restarting a
+    worker releases its own budget. A holder of the same slug in ANOTHER tree is
+    kept, because that one is still holding it.
     """
-    from . import backend
-
-    return decide(slug, budget_gb, backend.running(), **kw)
+    held = machine_holdings()
+    held.pop(slug, None)
+    return decide(slug, budget_gb, held, **kw)
