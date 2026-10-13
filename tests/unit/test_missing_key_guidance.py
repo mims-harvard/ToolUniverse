@@ -217,3 +217,39 @@ def test_icd_reports_an_unreachable_auth_service_as_such(monkeypatch):
     assert out["status"] == "error"
     assert "Could not reach the ICD authentication service" in out["error"]
     assert "connection refused" in out["error"]
+
+
+# --- a service that keeps logins for its users says where to add one --------
+
+
+def test_a_service_can_say_where_its_users_add_a_missing_login(monkeypatch):
+    """A scientist chatting with an AI app on a hosted service cannot pass credentials={...}."""
+    monkeypatch.setenv(
+        "TOOLUNIVERSE_CREDENTIAL_HELP",
+        "The user can add it at https://example.org/credentials?key={key}, then ask again.",
+    )
+    how, steps = describe_missing_keys(["OMIM_API_KEY"], "run_one_function")
+    assert how == "The user can add it at https://example.org/credentials?key=OMIM_API_KEY, then ask again."
+    assert steps == [how]
+    assert "environment" not in how and "credentials={" not in how
+
+
+def test_without_a_service_message_local_users_keep_the_python_guidance(monkeypatch):
+    monkeypatch.delenv("TOOLUNIVERSE_CREDENTIAL_HELP", raising=False)
+    how, steps = describe_missing_keys(["OMIM_API_KEY"], "run_one_function")
+    assert how == "Provide them as request credentials or environment variables."
+    assert any("credentials={" in step for step in steps)
+
+
+def test_deployment_configuration_is_never_sent_to_the_service_page(monkeypatch):
+    """A server host is not a user login, so the service's login page is the wrong place for it."""
+    monkeypatch.setenv("TOOLUNIVERSE_CREDENTIAL_HELP", "Add it at https://example.org/credentials?key={key}.")
+    how, _ = describe_missing_keys(["ESM_MCP_SERVER_HOST"], "run_one_function")
+    assert "example.org" not in how
+
+
+def test_a_gated_tool_on_a_service_names_the_page(monkeypatch, tu):
+    monkeypatch.setenv("TOOLUNIVERSE_CREDENTIAL_HELP", "Add it at https://example.org/credentials?key={key}.")
+    error, steps = _error(tu.run_one_function({"name": "ICD11_search_diseases", "arguments": {"query": "asthma"}}))
+    assert "https://example.org/credentials?key=ICD_CLIENT_ID" in error
+    assert steps == ["Add it at https://example.org/credentials?key=ICD_CLIENT_ID."]

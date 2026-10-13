@@ -420,6 +420,38 @@ def explain_remote_load_failure(
     return message, False
 
 
+#: A service that keeps users' logins for them (for example a hosted ToolUniverse website) sets
+#: this to tell its users where to add a missing login, instead of the Python-oriented
+#: "pass credentials={...} or set an environment variable", which is wrong advice for a
+#: scientist chatting with an AI app. ``{key}`` is the first missing key, ``{keys}`` all of them.
+CREDENTIAL_HELP_ENV = "TOOLUNIVERSE_CREDENTIAL_HELP"
+
+
+def _service_credential_help(missing):
+    template = os.environ.get(CREDENTIAL_HELP_ENV, "").strip()
+    if not template or not missing:
+        return None
+    try:
+        return template.format(keys=", ".join(missing), key=missing[0])
+    except (KeyError, IndexError, ValueError):
+        return template
+
+
+def describe_alternative_keys(missing, credentials_call):
+    """How to supply one of several keys (any one is enough). Returns ``(sentence, next_steps)``."""
+    help_text = _service_credential_help(missing)
+    if help_text:
+        return help_text, [help_text]
+    return (
+        "Provide one as a request credential or environment variable.",
+        [
+            f"Pass one of the missing keys in {credentials_call}(credentials={{...}})",
+            "Or set one of them as a local environment variable",
+            "Run `tu status` to check which API keys are configured",
+        ],
+    )
+
+
 def describe_missing_keys(missing, credentials_call):
     """How to supply the named keys, and the steps that actually work.
 
@@ -436,6 +468,9 @@ def describe_missing_keys(missing, credentials_call):
     process_only = [name for name in missing if not is_credential_name(name)]
 
     if not process_only:
+        help_text = _service_credential_help(missing)
+        if help_text:
+            return help_text, [help_text]
         return (
             "Provide them as request credentials or environment variables.",
             [
@@ -3611,22 +3646,16 @@ class ToolUniverse:
 
         alternative_credentials = self._missing_alternative_credentials(function_name)
         if alternative_credentials:
+            how, steps = describe_alternative_keys(alternative_credentials, "run_one_function")
             return self._create_dual_format_error(
                 ToolUnavailableError(
                     f"Tool '{function_name}' requires at least one API key: "
-                    f"{', '.join(alternative_credentials)}. Provide one as a request "
-                    "credential or environment variable.",
+                    f"{', '.join(alternative_credentials)}. {how}",
                     retriable=False,
-                    # Without these, ToolUnavailableError's network-flavoured
-                    # defaults ("Check network connection", "Verify service
-                    # status") answer a missing LLM key -- the same mistake the
-                    # required-key branch above was already taught not to make.
-                    next_steps=[
-                        "Pass one of the missing keys in "
-                        "run_one_function(credentials={...})",
-                        "Or set one of them as a local environment variable",
-                        "Run `tu status` to check which API keys are configured",
-                    ],
+                    # Without explicit steps, ToolUnavailableError's network-flavoured
+                    # defaults ("Check network connection", "Verify service status")
+                    # answer a missing LLM key.
+                    next_steps=steps,
                 )
             )
 
@@ -3882,22 +3911,16 @@ class ToolUniverse:
             )
         alternative_credentials = self._missing_alternative_credentials(function_name)
         if alternative_credentials:
+            how, steps = describe_alternative_keys(alternative_credentials, "run_one_function")
             return self._create_dual_format_error(
                 ToolUnavailableError(
                     f"Tool '{function_name}' requires at least one API key: "
-                    f"{', '.join(alternative_credentials)}. Provide one as a request "
-                    "credential or environment variable.",
+                    f"{', '.join(alternative_credentials)}. {how}",
                     retriable=False,
-                    # Without these, ToolUnavailableError's network-flavoured
-                    # defaults ("Check network connection", "Verify service
-                    # status") answer a missing LLM key -- the same mistake the
-                    # required-key branch above was already taught not to make.
-                    next_steps=[
-                        "Pass one of the missing keys in "
-                        "run_one_function(credentials={...})",
-                        "Or set one of them as a local environment variable",
-                        "Run `tu status` to check which API keys are configured",
-                    ],
+                    # Without explicit steps, ToolUnavailableError's network-flavoured
+                    # defaults ("Check network connection", "Verify service status")
+                    # answer a missing LLM key.
+                    next_steps=steps,
                 )
             )
 
