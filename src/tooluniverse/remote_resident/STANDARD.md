@@ -279,6 +279,40 @@ framework's own preallocation into the figure: `XLA_PYTHON_CLIENT_PREALLOCATE`
 left at its default reports 91.22 GiB where the model needs 2.0, which would
 make a small provider look unschedulable on any card.
 
+**And on such a stack the pool is the budget, because the pool is what the other
+tenants cannot have.** colabdesign's worst `peak_bytes_in_use` is 10.21 GiB
+against a pool of 12.0. The 1.79 GiB between them is not slack a host can lend:
+JAX took it from the device and does not return it. `peak_bytes_in_use` answers
+"what does this input cost"; the pool answers "what does holding this provider
+cost everyone else", and a budget exists for the second question.
+
+**A budget may err high. It may never err low.** Two providers here disagreed
+with their own declarations in opposite directions, and only one of them was a
+defect. complexa declares 20.25 GiB and a quiet-machine corner measurement read
+17.75, 17.85 and 19.00 — the declared figure was the bring-up's derived one and
+did not reproduce. It stayed at 20.25. colabdesign declared 8.0 and the
+acceptance read 12.0. It moved to 12.0. The asymmetry is the whole point: a
+budget above every observation costs a host one tenant's worth of throughput and
+nothing fails, while a budget below one observation admits a tenant that cannot
+fit, and the failure lands on whichever tenant allocates next rather than on the
+one that was mis-declared. So a budget is never lowered to the highest figure
+that happens to reproduce; when it sits above everything reproducible, the
+manifest says so and names which figures reproduced. A comment calling a number
+a placeholder is honest about its author and invisible to the scheduler reading
+it: `vram_budget_gb` is an upper bound or it is a defect.
+
+**If the allocator never releases, each corner needs its own worker.** The
+ascending-ladder rule below exists because `peak_reserved_gib` is a running
+high-water mark in most workers. colabdesign is the case where that is not a
+reporting artefact but the allocator itself: its pool reads 4.0 at 100 and 200
+tokens, 12.0 at 400, and after the 400 rung every later request in that worker
+reports 12.0 — the 100-token ones included. A peak read from a worker that has
+already run something larger is that worker's whole-life high-water mark and not
+a measurement of the shape in front of it, so a corner is measured in a worker
+started for it. The corollary is a warning about reading any harness output: a
+column headed with a per-request peak is, for such a provider, telling you the
+process's high-water mark and not which request caused it.
+
 **When peak depends on the input, the budget states the envelope it was
 measured at.** The first three providers hid this, because a folding smoke is
 roughly a folding request. The fourth broke it: RFdiffusion3's smoke is a
@@ -567,7 +601,7 @@ that looks like the majority behaves like nothing in it.
 answerable by reading a wheel, an ELF header or a table. A kernel that compiles
 for this architecture and then asks for more shared memory per block than the
 part provides is not visible in any of them — the code is correct, the compiler
-targets the card, and the arch lists agree. §12 has the case and the method for
+targets the card, and the arch lists agree. §13 has the case and the method for
 finding it. Budget for it when a kit's own kernels (Triton, Pallas, CUTLASS)
 carry tile tables rather than compiling from shapes, and read the kit's flag
 list before writing anything: both times a kit's own kernels have failed on this
@@ -657,8 +691,162 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | A worker can die between requests invisibly | measured: 6 starts, 5 clean shutdowns, one silent exit |
 | A residency multiple is largest at the smallest input | measured: af3_jax 26x at 35 aa, 3.5x at its budget row |
 | A launch must STRIP undeclared names, not merely not set them | measured: af3_jax's `.pth` exits 3 on an inherited variable |
+| A budget may err high, never low | measured: complexa kept 20.25 above 19.00 reproduced; colabdesign's placeholder 8.0 sat below a 12.0 it produces |
+| On a non-releasing allocator the pool is the budget | measured: colabdesign pool 12.0 vs peak_in_use 10.21, and the pool never reads less once read |
+| A corner needs a worker started for it | measured: after colabdesign's 400 rung every later request, 100 aa included, reports 12.0 |
+| Each axis is swept alone before a corner is named | measured: colabdesign's recycles move the step time 1.14->1.79 s and the memory not at all |
+| The kit PROBE must run under the worker's conditions | measured: ask_kit inherited OPENDDE_OPT_* and the kit's `.pth` killed the probe, not the worker |
+| A refusal that exists is not a refusal that runs | measured: two ceilings recorded as unexercised; running one found the ask_kit defect |
+| A claim a measurement rests on is tested, not cited | measured: shape-not-steps held, 65 and 50 iterations both reading 12.0 / 10.21 |
 
-## 12. What providers nineteen through twenty-three changed: five checks that passed where the defect was invisible
+## 12. What providers twenty-four through twenty-seven changed: a budget has a direction, and a probe ran unprotected
+
+complexa, mosaic, opendde and colabdesign. Two of the four were binder designers
+and two were folders, but what they changed is almost all about the budget: what
+number it is, which direction it may err in, and what has to be true of the
+worker it was read from.
+
+### A budget's two wrong directions are not symmetric
+
+complexa declares 20.25 GiB and the corner measurement could not reproduce it:
+three sequences on a quiet machine read 17.75, 17.85 and 19.00, and the third
+bring-up figure — 20.25 "after a shape change" — turned out to be the derived
+one, 17.75 + 2.51, where the reserve buffer measured here is 1.25. The budget
+STAYED at 20.25.
+
+colabdesign declared 8.0 and the acceptance run read 12.0.
+The budget MOVED to 12.0.
+
+Those are the same discrepancy with opposite signs and they are not the same
+mistake. A budget is what a host adds up before it admits a tenant, so:
+
+- **Above every observation**: the host admits one tenant fewer than it could.
+  It loses throughput and nothing fails. Keep it, and record which observations
+  reproduced and which did not — complexa's manifest names all three figures and
+  says that 20.25 is not among the reproduced ones.
+- **Below one observation**: the host admits a tenant that cannot fit. The
+  failure lands on whichever tenant allocates next, which is usually not the one
+  that was mis-declared.
+
+So a budget is never lowered to the highest figure that happens to reproduce,
+and a budget that sits below a figure the provider has actually produced is a
+defect regardless of how it was arrived at. `vram_budget_gb` is an upper bound,
+not an estimate, and "placeholder" is not a status a verified provider may hold:
+colabdesign's 8.0 had a comment saying it was a placeholder, which is honest
+about the author's knowledge and useless to the scheduler that reads the number.
+
+### The allocator may never give it back, and that changes how it is measured
+
+colabdesign is the first JAX provider whose pool is observably not the whole
+device. `peak_pool_bytes` reads 4.0 GiB at 100 and 200 tokens and 12.0 at 400 —
+and once it has read 12.0 it never reads less. After the acceptance run's 400
+rung, every later request in that worker reported 12.0, the 100-token ones
+included. JAX takes the pool from the device and does not return it.
+
+Three consequences, each of which changed what this standard asks for:
+
+1. **The budget is the pool, not what the model needs.** colabdesign's worst
+   `peak_bytes_in_use` is 10.21 GiB against a pool of 12.0. The 1.79 GiB
+   difference is not slack the host can lend to anyone: the other tenants
+   cannot have it. `peak_in_use` is what this provider needs; the pool is what
+   it costs everyone else, and a budget exists for the second question.
+2. **One fresh worker per corner.** A peak read from a worker that has already
+   run something larger is that worker's whole-life high-water mark and not a
+   measurement of the shape in front of it. complexa taught the same lesson from
+   the other side — there the ORDER of shapes was the measurement, 17.75 fresh
+   against 19.00 after climbing the design axis — but for a monotone allocator
+   the order does not merely perturb the reading, it destroys it.
+3. **A per-request peak column is a lie for such a provider.** The acceptance
+   harness prints a peak per row. For colabdesign every row after the 400 rung
+   reads 12.0 regardless of its own shape. The column is not wrong about the
+   provider's cost; it is wrong about which request caused it, which is exactly
+   what a reader uses that column for.
+
+### An axis you assumed drives the peak may cost only time
+
+colabdesign's bring-up left the budget axis open because `peak_pool` was flat at
+4.0 through 200 tokens while `peak_in_use` grew, so the two had not separated;
+the plan was a corner at tokens 400 x recycles 3. Swept separately, recycles
+does not move memory at all: pool 4.0 / 4.0 / 4.0 at 1, 2 and 3 recycles, with
+`peak_in_use` identical to the hundredth at 2.31, and only the step time growing
+(1.14 / 1.46 / 1.79 s). Recycling reuses the same buffers. The corner collapsed
+to the token row — 400 x 3 and 400 x 1 both read pool 12.0 and in_use 10.21 in
+two fresh workers.
+
+So: **sweep each axis on its own before declaring where the corner is.** A
+corner named from two axes that were never separated is a guess with a decimal
+point on it. And an axis that costs time rather than memory still belongs in the
+manifest, because a second-level scheduler budgets both.
+
+### The probe must run under the conditions the worker will
+
+opendde's ceiling test would not start. Not because of the ceiling: because
+`kit_launch.ask_kit` runs a subprocess in the model interpreter to read the
+kit's mode row, and that probe inherited the operator's stray `OPENDDE_OPT_*`,
+and this kit's `.pth` kills any interpreter that inherits an undeclared one:
+
+    KitUnavailable: could not read opendde_opt's mode row for mode='off' (rc 3)
+    [opendde-opt] NOT ACTIVE: reason=undeclared variable(s)
+      OPENDDE_OPT_BOGUS, OPENDDE_OPT_X
+
+A provider's launcher strips those names from the worker by mapping them to
+None, and that works — read from `/proc/<worker pid>/environ`, the child has
+neither, and keeps `OPENDDE_OPT=off`, the one policed name that must stay. But
+the supervisor applies that mapping to the command `build_command` produces, and
+`ask_kit` runs INSIDE `build_command`, before the command exists.
+
+`ask_kit`'s own docstring already carried the principle. It explains at length
+that `levers_off` has to be set in the PROBE's environment and not only in the
+worker's, because a probe run without it reports the unablated row. The
+principle was right and was applied to one variable. This is the third time that
+shape has appeared in this work — four launchers whose strip removed nothing, a
+framework gate fixed in one place of several, and now this — so the fix is
+mechanical rather than per-provider: every kit package is `<slug>_opt`, so
+`package.upper()` is the name the kit declares, anything extending it with an
+underscore is undeclared and is dropped from the probe, and the declared name is
+kept because the probe exists to read the row it selects.
+
+### "The code exists" and "the code ran" are different claims
+
+Both bring-ups recorded their token ceilings as present but never exercised, and
+listed that honestly. Running them cost one worker each and found the defect
+above. Exercised now, in both providers and at both layers: opendde admits 400
+and refuses 401 and 800 at the worker, by its own named `ValueError`;
+colabdesign admits 400 and refuses 401 and 800 at the tool layer, and refuses
+`num_recycles_design = 4` at the worker.
+
+colabdesign's tool-layer check RETURNS `{"error": ...}` rather than raising,
+which is worth stating because the first probe written against it reported all
+three sizes admitted: it had selected a validator by name prefix, called the
+wrong function, and read "did not raise" as "admitted". Two mistakes producing
+one plausible-looking table is the failure mode that makes an unexercised
+refusal dangerous in the first place.
+
+### The provider may refuse your shortcut, and it should
+
+400 tokens x 3 recycles at the smoke's iteration profile is hours. The first
+attempt to shorten it asked for 5 soft iterations and was refused by the
+provider's own validation — `'soft_iterations' must be an integer between 50 and
+200` — because BindCraft's ranges are the ones that mean something. The corner
+ran at the provider's floors instead (50/0/0/0 against the smoke's 50/10/5/5), a
+23% cut rather than a substitute.
+
+That left the shaper's claim — that the memory is a function of the shape and
+not of how many steps are taken at it — load-bearing, so it was checked instead
+of quoted: 400 tokens at 65 iterations and at 50 both read pool 12.0 and in_use
+10.21. A claim that a measurement depends on becomes a thing to test, not a
+thing to cite.
+
+### Read the request shape out of the worker, do not invent it
+
+Three times now a measurement script has been written against an invented
+request: `target_input="A1-300"` against a 115-residue crop (`No atoms found for
+selection: A/*/116`), then `"op": "design"` where the worker takes `predict`,
+then `num_recycles` where it takes `num_recycles_design`. Each cost a run. The
+provider's own shaper in the acceptance harness and the worker's own dispatch
+are the authorities on what a request looks like, and both are a grep away.
+
+## 13. What providers nineteen through twenty-three changed: five checks that passed where the defect was invisible
 
 ESM-IF1, ColabFold, OpenFold3-OpenBind-0, AF2-initial-guess and GPN-Star.
 Twenty-three verified. The findings that matter most here are not about any of
@@ -692,7 +880,7 @@ tested without starting a process, and the end-to-end test is the one that
 should have been run first: export three hostile variables and start a real
 worker.
 
-**And the same class of mistake was sitting in `tu remote check`.** §12's
+**And the same class of mistake was sitting in `tu remote check`.** §13's
 earlier entry records `_arch_problem` refusing af3_jax because it judged the
 card by torch while JAX drove it. The fix went into `remote_resident.setup`
 and into nothing else, so `remote_runtime`'s two probes kept asking torch
@@ -729,7 +917,7 @@ Both strings live in `jax_plugins/xla_cuda12/xla_cuda_plugin.so` — LLVM's
 NVPTX instruction selector inside jaxlib, refusing one (src, dst, rounding)
 triple on this target. It aborts through `report_fatal_error`, so it is
 uncatchable and nameless: a compile failure of the whole module with no
-traceback. §12's HLO method found it again — the dump stops at
+traceback. §13's HLO method found it again — the dump stops at
 `before_optimizations.txt` with no PTX and no LLVM IR where every module that
 compiled has all three — and two lines out of 17,010 explain why those dtypes
 meet at all. ColabFold keeps its two recycle-state tensors in **float16** to
@@ -983,7 +1171,7 @@ question is which compiler does that and whether it knows the card.** Both
 failed here while everything around them was correctly pinned.
 
 
-## 13. What the eighteenth provider changed: the first one that is not PyTorch
+## 14. What the eighteenth provider changed: the first one that is not PyTorch
 
 AF3-JAX. Eighteen verified. Seventeen of the eighteen are PyTorch, and five of
 the seven findings below exist only because this one is not.
@@ -1117,7 +1305,7 @@ residues paid 234.8 / 269.9 / 468.7 s, one compile-plus-autotune each, and a
 mixed sequence of 100, 100, 200, 100 afterwards paid 14.4 / 13.2 / 31.1 / 13.3
 because every one of those buckets was already held. Four identical requests
 exercise ONE bucket and ONE compile, which is why they are the cheap half here.
-§14's blind-spot finding, which came from genie3, lands here as a measurement
+§15's blind-spot finding, which came from genie3, lands here as a measurement
 rather than a hazard — and note what the mixed sequence actually proves that
 repeats cannot: the engine switched 100 → 200 → 100 and the third request was
 not slower than the first, so the worker holds both and chooses, rather than
@@ -1148,7 +1336,7 @@ worker exit 3 on import. Not setting a variable and removing it are different
 operations, and only one of them is safe against an environment you did not
 build.
 
-## 14. What providers fifteen through seventeen changed
+## 15. What providers fifteen through seventeen changed
 
 ProGen2, Protenix and Genie 3, plus the two still in flight. Seventeen verified.
 Five of this batch's findings change what the acceptance test is for.
@@ -1191,7 +1379,7 @@ tested nothing it did not already know.
 
 **A resident worker may have to reset UPSTREAM's module state, not just the
 kit's.** This is the sixth resident-worker hazard and the first that is neither a
-fork, a lever, nor a graph. Section 15 names the kit's own recovery for a failed
+fork, a lever, nor a graph. Section 16 names the kit's own recovery for a failed
 capture; this is the same shape one layer down, with nobody naming it, in a
 library that is entitled to assume one model per process because the kits' own
 determinism contracts say one process per request. The cheap generalisable check
@@ -1237,7 +1425,7 @@ preloads. The result imports fine and is simply not the stack that was measured.
 A lock may now declare ordered passes with `# --- pass break ---`.
 
 **Residency's payoff tracks the ratio of fixed cost to work, not the kind of
-fixed cost.** Section 16 explains the 2.0x–12x range by what a kit does at import
+fixed cost.** Section 17 explains the 2.0x–12x range by what a kit does at import
 and at first call. Genie 3 reaches 12x with no compile trace and no held-weights
 advantage over Boltz-2, purely because a 20-step 50-residue pass is *shorter than
 the per-process set-up it is compared against*. Both terms matter, and the
@@ -1270,7 +1458,7 @@ true of the providers already shipped will refuse the next one shaped
 differently, and that costs more than a missing check, because a refusal is
 believed.** Each was fixed by measuring instead of asserting.
 
-## 15. What providers eleven through fourteen changed
+## 16. What providers eleven through fourteen changed
 
 AF3-torch, Evo 2, ESMFold2-binder-design, AtlasFold and BoltzGen — brought up by
 one agent each, with the GPU serialized. Fourteen providers are verified now.
@@ -1366,7 +1554,7 @@ showed 86-91% — which belonged to an unrelated session. The usable signal is
 utilisation *plus* `/proc/<pid>/stat` CPU, on a quiet card. Peaks reproduce under
 contention; wall times do not.
 
-## 16. What providers seven through ten changed
+## 17. What providers seven through ten changed
 
 RoseTTAFold3, BoltzGen, ESM Cambrian and AF3-torch, brought up by one agent
 each in parallel, with the GPU serialized by the caller. The four together
@@ -1471,7 +1659,7 @@ that takes 15-19 s quiet. Peak reserved reproduced to the hundredth of a GiB
 across both; wall time did not. Report peaks from any run, and wall times only
 from an idle card.
 
-## 17. What providers four, five and six changed
+## 18. What providers four, five and six changed
 
 Three at once — RFdiffusion3, ESMFold2 and OpenFold3 — brought up in parallel
 by one agent each, with the GPU serialized by the caller. Two passed; the third
@@ -1555,7 +1743,7 @@ a shared scratchpad is shared: one agent's `weights.log` was overwritten
 mid-download by a sibling writing the same filename. Neither is deep; both cost
 an hour.
 
-## 18. What the third provider changed
+## 19. What the third provider changed
 
 Chai-1 is the first whose upstream loads its model inside the call that uses
 it. `chai_lab.load_exported` is not memoised and `run_folding_on_context` calls
@@ -1589,7 +1777,7 @@ policy in force (`alloc_effective=true` on the kit's own EXIT line) and costs
 only the bookkeeping, which the kit then records as a PARTIAL activation. That
 is the accurate word and the manifest says why.
 
-## 19. What the second provider changed
+## 20. What the second provider changed
 
 Enformer was brought onto the standard next, deliberately unlike the first, and
 four things that looked settled after one provider were not.
