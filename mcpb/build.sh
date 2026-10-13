@@ -28,7 +28,19 @@ cp "$MCPB_SRC/src/bootstrap.py"  "$BUILD_DIR/src/bootstrap.py"
 # to failure against a blackholed index, which Desktop shows as "Server
 # disconnected". With the lock and --frozen, startup touches no network at all,
 # and the update is the launcher's bounded refresh instead.
-( cd "$BUILD_DIR" && uv lock --quiet )
+#
+# --refresh-package, because uv's own index cache is what pins the previous
+# release. The workflow waits for the version to be installable before building,
+# and that wait passes -- it probes with `pip download --no-cache-dir` -- but
+# setup-uv restores uv's cache from a previous run, where /simple/tooluniverse/
+# was fetched before this release existed. uv then resolves it without asking
+# PyPI ("Found fresh response for: https://pypi.org/simple/tooluniverse/") and
+# locks the version that cache knows. That is why 1.5.7's publish failed with
+# "bundle 1.5.7 would install tooluniverse 1.5.6" after the wait had already
+# reported 1.5.7 installable, and why re-running it failed the same way: the
+# re-run restores the same cache. Refreshing one package revalidates that one
+# index response and leaves the rest of the cache doing its job.
+( cd "$BUILD_DIR" && uv lock --quiet --refresh-package tooluniverse )
 
 PYTHON_PIN=$(tr -d "[:space:]" < "$MCPB_SRC/.python-version")
 
