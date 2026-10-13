@@ -1976,3 +1976,98 @@ class TestAdmissionIsWiredToTheStartPath:
         assert not undecidable, (
             f"these providers cannot be admitted on an empty machine: {undecidable}"
         )
+
+
+class TestRemoteRoomCommand:
+    """`tu remote room` answers "what fits right now", which `list` cannot.
+
+    `list` prints what a provider costs. Whether the machine can carry it is a
+    different question with a different answer every few minutes, and it is the
+    one an operator has before starting anything.
+    """
+
+    def _run(self, *argv):
+        """The command through the real argument parser, output captured."""
+        import contextlib
+        import io
+        import sys as _sys
+
+        from tooluniverse import cli
+
+        out, err = io.StringIO(), io.StringIO()
+        code = 0
+        argv = ["tu", "remote", "room", *argv]
+        old = _sys.argv
+        try:
+            _sys.argv = argv
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                try:
+                    cli.main()
+                except SystemExit as exc:
+                    code = exc.code or 0
+        finally:
+            _sys.argv = old
+        return code, out.getvalue(), err.getvalue()
+
+    def test_it_lists_every_gpu_resident_provider_with_a_verdict(self):
+        code, out, _ = self._run()
+        assert code == 0
+        assert "declared held by" in out, "the header must show what is held"
+        lines = [ln for ln in out.splitlines() if " GiB   " in ln]
+        assert len(lines) >= 20, f"only {len(lines)} providers judged"
+        for ln in lines:
+            assert ln.strip().startswith(("fits", "NO")), ln
+
+    def test_the_unregistered_providers_are_included(self):
+        """Registration is a later step than a manifest, and two are waiting.
+
+        A provider you cannot ask about is one you will start without asking.
+        """
+        _, out, _ = self._run()
+        for slug in ("opendde", "colabdesign"):
+            assert slug in out, f"{slug} has a manifest and must be judged"
+
+    def test_an_unknown_slug_exits_two_and_says_where_to_look(self):
+        """main() drops a command's return value, so a refusal must sys.exit."""
+        code, _, err = self._run("nosuch")
+        assert code == 2, "a returned code would be a refusal nobody can detect"
+        assert "tu remote list" in err
+
+    def test_one_slug_prints_the_reason(self):
+        code, out, _ = self._run("boltz")
+        assert code == 0
+        assert "boltz" in out
+        assert "GiB" in out.splitlines()[-1] or "GiB" in out
+
+    def test_json_carries_the_numbers_the_decision_used(self):
+        code, out, _ = self._run("--json")
+        assert code == 0
+        doc = json.loads(out)
+        for key in (
+            "capacity_gib",
+            "capacity_source",
+            "declared_held_gb",
+            "held",
+            "mem_free_gib",
+            "mem_available_gib",
+            "processes_on_card",
+            "reserve_gb",
+            "providers",
+        ):
+            assert key in doc, f"{key} missing from the machine-readable form"
+        assert doc["providers"], "no providers judged"
+        assert {"slug", "fits", "reason", "vram_budget_gb", "status"} <= set(
+            doc["providers"][0]
+        )
+
+    def test_a_bigger_reserve_can_only_narrow_what_fits(self):
+        """The reserve is the host's room, so raising it never admits more."""
+
+        small = json.loads(self._run("--json", "--reserve", "1")[1])
+        large = json.loads(self._run("--json", "--reserve", "60")[1])
+        fits_small = {r["slug"] for r in small["providers"] if r["fits"]}
+        fits_large = {r["slug"] for r in large["providers"] if r["fits"]}
+        assert fits_large <= fits_small, (
+            f"a 60 GiB reserve admitted what a 1 GiB reserve did not: "
+            f"{sorted(fits_large - fits_small)}"
+        )

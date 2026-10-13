@@ -2525,6 +2525,123 @@ def cmd_remote_list(args: argparse.Namespace) -> None:
         print(f"{row['implementation']:<22} {endpoint:<32} {tail}")
 
 
+def cmd_remote_room(args):
+    """What fits right now: the question the measured budgets exist to answer.
+
+    `tu remote list` says what a provider costs. This says whether the machine
+    can carry it at this moment, which is a different question with a different
+    answer every few minutes, and the one an operator actually has.
+    """
+    import json
+
+    from tooluniverse.remote_resident import admission, backend
+
+    held = backend.running()
+    cap, cap_source = admission.capacity_gib()
+    mem = admission.meminfo_gib()
+    tenants = admission._nvidia_pids()
+
+    manifests = _gpu_resident_manifests()
+    if args.slug:
+        manifests = [m for m in manifests if m.slug == args.slug]
+        if not manifests:
+            # `sys.exit`, not `return`: main() calls `args.func(args)` and drops
+            # the result, so a returned code is a refusal nobody can detect --
+            # the same defect one layer up as a refusal that never runs.
+            print(
+                f"no GPU resident provider called {args.slug!r}. "
+                f"`tu remote list` names them.",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+
+    rows = []
+    for m in sorted(manifests, key=lambda m: -(m.vram_budget_gb or 0)):
+        v = admission.decide(
+            m.slug,
+            m.vram_budget_gb,
+            held,
+            reserve_gb=args.reserve,
+            mem=mem,
+            capacity=(cap, cap_source),
+            co_tenants=tenants,
+        )
+        rows.append(
+            {
+                "slug": m.slug,
+                "status": m.status,
+                "vram_budget_gb": m.vram_budget_gb,
+                "fits": v.admit,
+                "reason": v.reason,
+            }
+        )
+
+    if args.json:
+        print(
+            json.dumps(
+                {
+                    "capacity_gib": None if cap is None else round(cap, 2),
+                    "capacity_source": cap_source,
+                    "declared_held_gb": round(
+                        sum(x for x in held.values() if x is not None), 2
+                    ),
+                    "held": held,
+                    "mem_free_gib": round(mem["MemFree"], 1),
+                    "mem_available_gib": round(mem["MemAvailable"], 1),
+                    "processes_on_card": tenants,
+                    "reserve_gb": args.reserve,
+                    "providers": rows,
+                },
+                indent=2,
+            )
+        )
+        return
+
+    declared = sum(x for x in held.values() if x is not None)
+    gate = "MemFree" if tenants else "MemAvailable"
+    print(
+        f"pool {'unknown' if cap is None else f'{cap:.1f} GiB'} ({cap_source}); "
+        f"{declared:.2f} GiB declared held by {len(held)} worker(s); "
+        f"{gate} {mem[gate]:.1f} GiB; {tenants} process(es) on the card; "
+        f"{args.reserve} GiB reserved for the host"
+    )
+    if held:
+        print("  holding: " + ", ".join(f"{k}={v}" for k, v in sorted(held.items())))
+    print()
+    for row in rows:
+        mark = "fits" if row["fits"] else "NO"
+        budget = "?" if row["vram_budget_gb"] is None else f"{row['vram_budget_gb']}"
+        print(f"  {mark:<4} {row['slug']:<16} {budget:>7} GiB   {row['status']}")
+    if args.slug:
+        print()
+        print(" ", rows[0]["reason"])
+    return
+
+
+def _gpu_resident_manifests():
+    """Every provider on disk that spends from the pool, registered or not.
+
+    Registration is a later step than a working manifest -- two providers are
+    sitting measured and unregistered right now -- and a provider you cannot
+    ask about is one you will start without asking.
+    """
+    import glob
+    import os
+
+    from tooluniverse.remote_resident import manifest as M
+
+    here = os.path.dirname(os.path.abspath(__file__))
+    out = []
+    for path in sorted(glob.glob(os.path.join(here, "remote", "*", "provider.toml"))):
+        try:
+            m = M.load(path)
+        except Exception:  # noqa: BLE001 - `tu remote check` is where that is reported
+            continue
+        if m.mode == "resident" and m.gpu_policy != "none":
+            out.append(m)
+    return out
+
+
 def _manifests_without_deployment(registered):
     """Providers that declare a manifest but have no entry point yet."""
     import importlib.util
@@ -3238,6 +3355,25 @@ def main() -> None:
     p = remote_sub.add_parser("list", help="List reviewed remote-tool providers")
     p.add_argument("--json", action="store_true", help="output machine-readable JSON")
     p.set_defaults(func=cmd_remote_list)
+
+    p = remote_sub.add_parser(
+        "room",
+        help="what fits on this machine right now, and why not",
+    )
+    p.add_argument(
+        "slug",
+        nargs="?",
+        help="ask about one provider; omit to rank every GPU provider",
+    )
+    p.add_argument(
+        "--reserve",
+        type=float,
+        default=4.0,
+        metavar="GIB",
+        help="room left for the host itself (default: 4.0)",
+    )
+    p.add_argument("--json", action="store_true", help="output machine-readable JSON")
+    p.set_defaults(func=cmd_remote_room)
 
     p = remote_sub.add_parser(
         "login",
