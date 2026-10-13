@@ -1,4 +1,4 @@
-"""Local C-alpha orientation checks; distances cannot detect a reflection."""
+"""Local alpha and Ile/Thr beta orientation checks, with explicit coverage."""
 
 import math
 import re
@@ -11,10 +11,11 @@ from .tool_registry import register_tool
 
 
 def signed_determinant(points: List[Tuple[float, float, float]]) -> float:
-    """det(N-CA, C-CA, CB-CA), in A^3; positive for L orientation.
+    """Determinant of three vectors about a supplied center, in A^3.
 
-    This atom ordering is a geometric convention, not CIP R/S assignment.
-    Cysteine uses the same convention despite its different CIP priorities.
+    CA/N/C/CB is positive for natural L alpha geometry, including cysteine.
+    CB/CA/CG1-or-OG1/CG2 is positive for natural Ile/Thr beta geometry.
+    These atom orderings are geometric conventions, not CIP R/S assignment.
     """
     center, nitrogen, carbonyl, beta = points
     u, v, w = [
@@ -34,7 +35,9 @@ def inspect_centers(
     epsilon: float,
     minimum_normalized_volume: float,
     limit: int,
+    center_type: str = "alpha",
 ) -> Dict[str, Any]:
+    beta = center_type == "beta"
     residues: Dict[Tuple[Any, ...], Dict[str, Any]] = {}
     segments: Counter = Counter()
     for line in lines:
@@ -52,7 +55,12 @@ def inspect_centers(
         residue = residues.setdefault(key, {"names": set(), "atoms": {}})
         residue["names"].add(name)
         atom = line[12:16].strip()
-        if atom not in ("CA", "N", "C", "CB"):
+        relevant = (
+            ("CA", "N", "C", "CB", "CG1", "OG1", "CG2")
+            if beta
+            else ("CA", "N", "C", "CB")
+        )
+        if atom not in relevant:
             continue
         xyz = tuple(float(line[i : i + 8]) for i in (30, 38, 46))
         if not all(math.isfinite(x) for x in xyz):
@@ -91,15 +99,26 @@ def inspect_centers(
         residue_name = next(iter(canonical))
         if residue_name == "GLY":
             counts["glycine_nonchiral_residues"] += 1
+        if beta and residue_name not in ("ILE", "THR"):
+            counts["residues_without_eligible_beta_center"] += 1
             continue
+        if not beta and residue_name == "GLY":
+            continue
+        if beta:
+            counts["eligible_beta_residues"] += 1
+        ordered = (
+            ("CB", "CA", "CG1" if residue_name == "ILE" else "OG1", "CG2")
+            if beta
+            else ("CA", "N", "C", "CB")
+        )
         atoms = residue["atoms"]
         alts = sorted(
-            {a["alt"] for values in atoms.values() for a in values if a["alt"]}
+            {a["alt"] for name in ordered for a in atoms.get(name, []) if a["alt"]}
         ) or [""]
         for alt in alts:
             selected = []
             error = None
-            for name in ("CA", "N", "C", "CB"):
+            for name in ordered:
                 specific = [a for a in atoms.get(name, []) if a["alt"] == alt]
                 shared = [a for a in atoms.get(name, []) if not a["alt"]]
                 candidates = specific or shared
@@ -107,12 +126,17 @@ def inspect_centers(
                     error = "Missing or ambiguous " + name
                     break
                 value = candidates[0]
-                if value["element"] != ("N" if name == "N" else "C"):
+                expected_element = "O" if name == "OG1" else "N" if name == "N" else "C"
+                if value["element"] != expected_element:
                     error = "Unexpected element for " + name
                     break
                 selected.append(value["xyz"])
             row = dict(
-                identity, canonical_residue_name=residue_name, alternate_location=alt
+                identity,
+                canonical_residue_name=residue_name,
+                alternate_location=alt,
+                center_type=center_type,
+                ordered_atoms=list(ordered),
             )
             if error:
                 counts["uncheckable_centers"] += 1
@@ -132,8 +156,13 @@ def inspect_centers(
                 or normalized is None
                 or abs(normalized) < minimum_normalized_volume
             )
+            positive, negative = ("natural", "opposite") if beta else ("L", "D")
             orientation = (
-                "degenerate" if degenerate else ("L" if determinant > 0 else "D")
+                "degenerate"
+                if degenerate
+                else positive
+                if determinant > 0
+                else negative
             )
             match = orientation == expected
             counts["checked_centers"] += 1
@@ -178,6 +207,22 @@ def inspect_centers(
         "issues": issues[:limit],
         "issue_count": len(issues),
         "issues_truncated": len(issues) > limit,
+        "checked_center_type": center_type,
+        **(
+            {
+                "eligible_beta_residues": counts["eligible_beta_residues"],
+                "residues_without_eligible_beta_center": counts[
+                    "residues_without_eligible_beta_center"
+                ],
+                "beta_check_applicable": True
+                if counts["eligible_beta_residues"]
+                else None
+                if counts["uncheckable_centers"]
+                else False,
+            }
+            if beta
+            else {}
+        ),
     }
 
 
@@ -185,6 +230,10 @@ def inspect_centers(
 class PDBStereochemistryTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         try:
+            center_type = (self.tool_config.get("fields") or {}).get("center", "alpha")
+            if center_type not in ("alpha", "beta"):
+                raise ValueError("Configured center must be alpha or beta")
+            beta = center_type == "beta"
             index = arguments.get("model_index")
             index = 1 if index is None else index
             limit = arguments.get("max_residue_details")
@@ -203,9 +252,11 @@ class PDBStereochemistryTool(BaseTool):
                 raise ValueError(
                     "max_residue_details must be an integer from 0 to 1000"
                 )
-            expected = arguments.get("expected_orientation") or "L"
-            if expected not in ("L", "D"):
-                raise ValueError("expected_orientation must be L or D")
+            expected = arguments.get("expected_orientation")
+            expected = ("natural" if beta else "L") if expected is None else expected
+            allowed = ("natural", "opposite") if beta else ("L", "D")
+            if expected not in allowed:
+                raise ValueError("expected_orientation must be " + " or ".join(allowed))
             epsilon = arguments.get("degenerate_tolerance_A3")
             epsilon = 1e-6 if epsilon is None else epsilon
             if (
@@ -244,7 +295,13 @@ class PDBStereochemistryTool(BaseTool):
             if not models or index > len(models):
                 raise ValueError("Requested model does not exist")
             data = inspect_centers(
-                models[index - 1][1], aliases, expected, epsilon, normalized, limit
+                models[index - 1][1],
+                aliases,
+                expected,
+                epsilon,
+                normalized,
+                limit,
+                center_type,
             )
             data.update(
                 input_sha256=digest,
@@ -259,7 +316,12 @@ class PDBStereochemistryTool(BaseTool):
                 binding_verified=False,
                 pH_selectivity_verified=False,
                 structure_chemistry_verified=False,
-                scope="C-alpha N/CA/C/CB orientation only; not CIP R/S, Ile/Thr sidechain chirality, complete stereochemistry, energy or binding validation. Coverage is coordinate-only; SEQRES omissions are not assessed.",
+                scope=(
+                    "Ile/Thr C-beta CB/CA/CG1-or-OG1/CG2 orientation only; natural versus opposite, not C-alpha L/D or formal CIP R/S. No eligible sites reports applicability false and no vacuous pass. "
+                    if beta
+                    else "C-alpha N/CA/C/CB orientation only; not CIP R/S or Ile/Thr sidechain chirality. "
+                )
+                + "Not complete stereochemistry, energy or binding validation. Coverage is coordinate-only; SEQRES omissions are not assessed.",
             )
             return {"status": "success", "data": data}
         except Exception as exc:
