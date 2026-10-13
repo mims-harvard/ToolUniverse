@@ -335,7 +335,14 @@ py-modules = ["tooluniverse_cli_entry"]
 where = ["src"]
 
 [tool.setuptools.package-data]
-tooluniverse = ["data/*", "data/packages/*", "data/geant4/*"]
+# Recursive, because naming subdirectories one by one silently drops the ones
+# nobody remembered. "data/*" does not reach into a subdirectory, so
+# data/remote_tools/ -- the 42 remote tool definitions that list_built_in_tools
+# reads -- was in no wheel from its introduction through 1.5.6, and
+# data/schemas/ and most of data/broken_apis/ were missing too.
+# tests/unit/test_package_data_covers_data_dir.py fails if a file under data/
+# stops being covered.
+tooluniverse = ["data/*", "data/**/*"]
 
 [dependency-groups]
 dev = [
