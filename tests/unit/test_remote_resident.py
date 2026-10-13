@@ -1667,3 +1667,91 @@ class TestAcceptanceHarness:
         ).read_text()
         assert "NO SHAPER FOR" in source
         assert "return 2" in source
+
+
+class TestKitProbeRunsWithoutStrayVariables:
+    """`ask_kit`'s probe must not inherit the operator's undeclared kit names.
+
+    Most kits' `.pth` kills any interpreter that inherits an undeclared
+    `<PACKAGE>_*` name. A provider's launcher strips those from the WORKER by
+    mapping them to None, but the supervisor applies that mapping to the command
+    `kit_launch.build_command` helps build -- and `ask_kit` runs a probe INSIDE
+    that call, before the command exists. So the probe inherited them and died,
+    which surfaced as `KitUnavailable: could not read opendde_opt's mode row`
+    carrying the kit's own `NOT ACTIVE: reason=undeclared variable(s)`.
+
+    Found by running the ceiling test opendde's bring-up had listed as untested,
+    with two hostile names exported. The function's own docstring already had
+    the principle -- the probe must run under the conditions the worker will --
+    applied to one variable only.
+    """
+
+    @staticmethod
+    def _probe_env(package, environ):
+        """What `ask_kit` hands the probe, without running a subprocess.
+
+        `None` is a real and correct answer: it means "inherit", which is what
+        `ask_kit` passes when there is nothing to strip and no ablation to set.
+        """
+        import inspect
+        import re as _re
+
+        from tooluniverse.remote_resident import kit_launch
+
+        src = inspect.getsource(kit_launch.ask_kit)
+        body = src[src.index("declared = package.upper()") :]
+        body = body[: body.index("proc = subprocess.run")]
+        scope = {
+            "package": package,
+            "env": None,
+            "levers_off": (),
+            "os": type("os", (), {"environ": dict(environ)}),
+        }
+        exec(_re.sub(r"^    ", "", body, flags=_re.M), scope)
+        return scope["env"]
+
+    def test_the_undeclared_names_are_removed(self):
+        env = self._probe_env(
+            "opendde_opt",
+            {
+                "OPENDDE_OPT": "off",
+                "OPENDDE_OPT_BOGUS": "1",
+                "OPENDDE_OPT_X": "stray",
+                "PATH": "/usr/bin",
+            },
+        )
+        assert env is not None, "a strip was needed, so the probe needs its own env"
+        assert "OPENDDE_OPT_BOGUS" not in env
+        assert "OPENDDE_OPT_X" not in env
+
+    def test_the_declared_name_survives_the_strip(self):
+        """The probe exists to read the row that name selects."""
+        env = self._probe_env(
+            "opendde_opt", {"OPENDDE_OPT": "off", "OPENDDE_OPT_X": "stray"}
+        )
+        assert env["OPENDDE_OPT"] == "off"
+
+    def test_nothing_to_strip_means_inherit(self):
+        """`None` here is deliberate: do not copy an environment for no reason."""
+        assert (
+            self._probe_env("opendde_opt", {"OPENDDE_OPT": "off", "PATH": "/usr/bin"})
+            is None
+        )
+
+    def test_an_unrelated_name_is_untouched_when_a_strip_happens(self):
+        env = self._probe_env(
+            "opendde_opt",
+            {"OPENDDE_OPT_X": "stray", "OPENDDE_ROOT_DIR": "/w", "HF_HOME": "/h"},
+        )
+        assert env["OPENDDE_ROOT_DIR"] == "/w"
+        assert env["HF_HOME"] == "/h"
+
+    def test_ask_kit_still_sets_levers_off_in_the_probe(self):
+        """The behaviour the docstring was written for must survive the fix."""
+        import inspect
+
+        from tooluniverse.remote_resident import kit_launch
+
+        src = inspect.getsource(kit_launch.ask_kit)
+        assert 'env["MODEL_OPT_LEVERS_OFF"]' in src
+        assert "declared = package.upper()" in src

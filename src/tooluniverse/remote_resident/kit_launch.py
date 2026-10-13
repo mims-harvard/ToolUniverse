@@ -197,6 +197,25 @@ def ask_kit(
     worker carries a ``_reconcile_kit_row`` to work around exactly that, which
     is a workaround every later provider with both a row and an ablation would
     have had to re-derive.
+    AND THE SAME PRINCIPLE APPLIES TO THE OPERATOR'S STRAY VARIABLES, which is
+    a gap this function had until opendde's acceptance ran into it. Most kits'
+    ``.pth`` kills any interpreter that inherits an UNDECLARED ``<PACKAGE>_*``
+    name -- opendde's exits 3 on ``OPENDDE_OPT_X=1 python -c "print('x')"``. A
+    provider's launcher strips those from the WORKER by mapping them to None,
+    but the supervisor applies that mapping to the command this function helps
+    build, so the probe had already inherited them and died:
+
+        KitUnavailable: could not read opendde_opt's mode row for mode='off'
+        (rc 3). Its own words:
+        [opendde-opt] NOT ACTIVE: reason=undeclared variable(s)
+          OPENDDE_OPT_BOGUS, OPENDDE_OPT_X
+
+    The probe has to run under the conditions the worker will, and the stray
+    names are one of those conditions. The policed prefix is mechanical: every
+    kit package is ``<slug>_opt``, so ``package.upper()`` is the name the kit
+    declares and anything extending it with an underscore is undeclared. The
+    declared name itself is KEPT, because the probe exists to read the row that
+    name selects.
     """
     if isinstance(python_or_env, (str, os.PathLike)):
         argv, env, python = (
@@ -207,6 +226,16 @@ def ask_kit(
     else:
         argv, env = python_or_env.argv(["-c", _PROBE, package, mode])
         python = python_or_env.describe()
+    declared = package.upper()
+    undeclared = [
+        name
+        for name in (env if env is not None else os.environ)
+        if name.startswith(declared + "_")
+    ]
+    if levers_off or undeclared:
+        env = dict(env if env is not None else os.environ)
+        for name in undeclared:
+            env.pop(name, None)
     if levers_off:
         env = dict(env if env is not None else os.environ)
         env["MODEL_OPT_LEVERS_OFF"] = ",".join(str(x) for x in levers_off)

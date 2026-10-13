@@ -1,0 +1,113 @@
+# ColabDesign provider -- the ColabDesign optimisation kit's pinned stack, translated to PyPI for aarch64.
+# Installed with --no-deps. Python 3.10.18 (stock/PINS.json `python`).
+#
+# WHY THIS FILE IS NOT THE KIT'S OWN requirements.lock: the kit's lock lists TWO
+# distributions (colabdesign at its pinned commit, freesasa) because every other
+# member of the stack is a CONDA package of `environment/conda-linux-64.lock`, a
+# linux-64 lock that cannot be installed on this architecture. The pinned stack
+# is expressed here as PyPI distributions, at the versions the kit pins:
+#
+#   jax / jaxlib / jax-cuda12-plugin / jax-cuda12-pjrt 0.6.0
+#   dm-haiku 0.0.17, numpy 1.26.4, scipy 1.15.2, biopython 1.88, chex 0.1.90,
+#   optax 0.2.8, ml-collections 1.0.0, colabdesign 1.1.3 @ e31a56fe, freesasa 2.2.1
+#
+# THE INDEX WAS CHECKED PER FILE, NOT BELIEVED. A claim had been recorded that
+# cp310 has no aarch64 jaxlib; a correction to it said the opposite. Neither was
+# taken: the per-file listing of the PyPI index says that jaxlib
+# 0.6.0 publishes `manylinux2014_aarch64` wheels for cp310, cp311, cp312, cp313 and
+# cp313t (`jaxlib-0.6.0-cp310-cp310-manylinux2014_aarch64.whl` among them); jax-cuda12-plugin 0.6.0 publishes `manylinux2014_aarch64` for the same
+# interpreters; jax-cuda12-pjrt 0.6.0 publishes one `py3-none-manylinux2014_aarch64`
+# wheel. So CPython 3.10 -- the kit's pin -- has every artifact it needs here.
+#
+# THE CUDA LIBRARIES ARE THE KIT'S OWN PINS, CARRIED AS PyPI FILES. The conda lock
+# names cudart 12.9.79, cuBLAS 12.9.2.10, cuFFT 11.4.1.4, cuSOLVER 11.7.5.82,
+# cuSPARSE 12.5.10.65, nvJitLink 12.9.86, cuPTI 12.9.79, NVRTC 12.9.86, cuDNN
+# 9.10.2.21, NCCL 2.30.7.1 and cuda-nvcc 12.9.86 (ptxas); every one is a PyPI
+# `nvidia-*-cu12` wheel with a `manylinux*_aarch64` file at that version, EXCEPT
+# that conda's NCCL build suffix `.1` has no PyPI twin, so NCCL is 2.30.7 (one
+# device, never loaded for a collective). A first resolver run had picked cuDNN
+# 9.27.0.42 and NCCL 2.32.3 for `jax-cuda12-plugin[with-cuda]`; they were replaced
+# by the kit's pins rather than left as drift, after checking that
+# `nvidia_cudnn_cu12-9.10.2.21-py3-none-manylinux_2_27_aarch64.whl` exists.
+# `nvidia-cuda-nvcc-cu12` is how XLA gets its `ptxas` (no host CUDA toolkit).
+#
+# `imageio-ffmpeg` carries an aarch64 `ffmpeg` binary; BindCraft's trajectory
+# animation writes through matplotlib's ffmpeg writer. The provider turns the
+# animation off (see provider.toml), so it is in the lock for a caller who runs
+# the kit's own CLI against this same interpreter.
+#
+# The kit (`colabdesign_opt`) and its shared core (`opt_core`) are NOT in this
+# file: they install editable from the pinned checkout in the kit step
+# (`bash run.sh install`), which is the kit's own route.
+absl-py==2.5.0
+aiofiles==25.1.0
+attrs==26.1.0
+biopython==1.88
+chex==0.1.90
+colabdesign @ git+https://github.com/sokrypton/ColabDesign.git@e31a56fe1d9b4de25c8697f3a28b75892941cc72
+contourpy==1.3.2
+cycler==0.12.1
+dm-haiku==0.0.17
+dm-tree==0.1.9
+etils==1.13.0
+flax==0.9.0
+fonttools==4.65.0
+freesasa==2.2.1
+fsspec==2026.9.0
+humanize==4.16.0
+imageio-ffmpeg==0.6.0
+immutabledict==4.3.1
+importlib_resources==7.1.0
+jax==0.6.0
+jax-cuda12-pjrt==0.6.0
+jax-cuda12-plugin==0.6.0
+jaxlib==0.6.0
+jmp==0.0.4
+joblib==1.5.3
+kiwisolver==1.5.1
+markdown-it-py==4.2.0
+matplotlib==3.10.9
+mdurl==0.1.2
+ml_collections==1.0.0
+ml_dtypes==0.5.4
+msgpack==1.2.3
+numpy==1.26.4
+nvidia-cublas-cu12==12.9.2.10
+nvidia-cuda-cupti-cu12==12.9.79
+nvidia-cuda-nvcc-cu12==12.9.86
+nvidia-cuda-nvrtc-cu12==12.9.86
+nvidia-cuda-runtime-cu12==12.9.79
+nvidia-cudnn-cu12==9.10.2.21
+nvidia-cufft-cu12==11.4.1.4
+nvidia-cusolver-cu12==11.7.5.82
+nvidia-cusparse-cu12==12.5.10.65
+nvidia-nccl-cu12==2.30.7
+nvidia-nvjitlink-cu12==12.9.86
+opt_einsum==3.4.0
+optax==0.2.8
+orbax-checkpoint==0.11.39
+packaging==26.3
+pandas==2.3.3
+pillow==12.3.0
+protobuf==7.36.2
+psutil==7.2.2
+py3Dmol==2.5.4
+Pygments==2.21.0
+pyparsing==3.3.3
+python-dateutil==2.9.0.post0
+pytz==2026.4
+PyYAML==6.0.3
+rich==15.0.0
+scipy==1.15.2
+seaborn==0.13.2
+simplejson==4.1.2
+six==1.17.0
+tabulate==0.10.0
+tensorstore==0.1.78
+toolz==1.1.0
+tqdm==4.70.0
+typing_extensions==4.16.0
+tzdata==2026.4
+uvloop==0.23.0
+wrapt==2.5.0
+zipp==4.1.0
