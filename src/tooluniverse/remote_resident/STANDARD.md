@@ -366,6 +366,71 @@ manifest that implied one would be the dangerous kind of wrong.
 
 ---
 
+### And something adds them up: `remote_resident/admission.py`
+
+For twenty-seven providers this section described a host that did not exist.
+Every manifest declared a measured budget, `backend.running()` returned
+`{slug: budget}` with a docstring saying a scheduler above it reads them, and
+nothing read them. The admission layer is that reader, and it is in the start
+path rather than beside it: `ensure_started` consults it, because starting is
+where the budget is spent.
+
+**Two gates, because each covers what the other cannot see.**
+
+- The DECLARED SUM protects against peaks that have not happened yet. A worker
+  three requests in has not necessarily reached the figure it owes, and the
+  live reading cannot know what it will ask for.
+- The LIVE READING protects against everything on the machine that is not a
+  resident worker: a build, a notebook, another user's job, a page cache that a
+  device allocation will not get to reclaim in time.
+
+**The holdings come from the process table, not from this interpreter.** This is
+the part that was got wrong first and it is the whole reason the layer exists.
+`backend.running()` knows the workers this process started; the workers that
+wedged this host came from another worktree of the same repository, and not
+knowing they were there was the entire mistake. A resident worker is a
+`*_resident_worker.py` invoked with `--socket`, and its path names both the
+provider and the checkout, so the process table answers machine-wide. Scanning
+the socket directory does not: the path is one socket per slug per uid, so two
+checkouts running one provider are two processes and one socket -- and the second
+process is what turns a comfortable sum into a wedge. A stale socket also
+outlives its worker, which makes a socket evidence of a past worker and a
+process evidence of a present one.
+
+**On unified memory capacity is `MemTotal`.** `nvidia-smi
+--query-gpu=memory.total` answers `[N/A]` on this GB10 because the device has no
+total of its own, and a VRAM budget comes out of the same 121 GiB as a page
+cache. A provider's budget cannot be checked against a device total that does
+not exist, which is the scheduler's version of the arithmetic this already
+breaks for a kit.
+
+**The live gate asks a narrower question when it has competition.** `MemFree`
+when another process is on the card, `MemAvailable` when none is. Both readings
+are true and they answer different questions: the first guard here gated on
+available and waved a worker through at 60.4 GiB available with 5 GiB free,
+which died of CUDA OOM, and gating on free alone was then too strict, because an
+uncontended probe reclaimed its way to 24 GiB starting from 18.7 GiB free. So
+reclaim works, and losing a race for it is what an out-of-memory on this host
+actually is.
+
+**A provider with no declared budget is not admitted, and that is not the same
+as a provider that needs no budget.** The manifest layer already refuses to load
+a resident provider whose `[gpu] policy` is not `none` without a
+`vram_budget_gb`, so an absent budget means the provider does not spend from the
+pool at all -- esm_if1's case -- and the gate skips it. A budget that is absent
+where one is required is a manifest error, not an admission decision.
+
+The escape hatch is an attribute on the worker, not an environment variable. A
+host with its own scheduler above this one turns the check off and owns the
+decision; a stray name in the environment is the class of defect §8's launchers
+are full of, and it would have been a strange thing to introduce here.
+
+`tu remote room` is the same decision with a face on it, for every provider on
+disk whether or not it has a deployment entry yet. It must read the same
+holdings the gate reads -- its first version read `backend.running()`, which in
+a fresh CLI process is always empty, so it would have told an operator a
+provider fits and the gate would then have refused to start it.
+
 ## 7. Third-party kits are referenced, never vendored
 
 ```toml
@@ -698,6 +763,11 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | The kit PROBE must run under the worker's conditions | measured: ask_kit inherited OPENDDE_OPT_* and the kit's `.pth` killed the probe, not the worker |
 | A refusal that exists is not a refusal that runs | measured: two ceilings recorded as unexercised; running one found the ask_kit defect |
 | A claim a measurement rests on is tested, not cited | measured: shape-not-steps held, 65 and 50 iterations both reading 12.0 / 10.21 |
+| Something has to add the budgets up | measured: 27 providers declared one and `backend.running()` had no caller |
+| Holdings come from the process table, not this interpreter | measured: a protenix_v1 worker in another worktree held 9.65 GiB invisibly |
+| Sockets undercount holders | measured: one socket per slug per uid, and a stale one outliving its worker |
+| Capacity on unified memory is MemTotal | measured: nvidia-smi memory.total answers [N/A] on this GB10 |
+| The operator-facing answer must share the gate's source | measured: `room` read backend.running() and would have promised what the gate refuses |
 
 ## 12. What providers twenty-four through twenty-seven changed: a budget has a direction, and a probe ran unprotected
 
