@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2877 scientific tools.
+Type-safe Python interface to 2879 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -255,6 +255,8 @@ from .CancerPrognosis_get_study_summary import CancerPrognosis_get_study_summary
 from .CancerPrognosis_get_survival_data import CancerPrognosis_get_survival_data
 from .CancerPrognosis_search_studies import CancerPrognosis_search_studies
 from .CancerVar_classify_variant import CancerVar_classify_variant
+from .Carbon_A_get_benchmark_genome import Carbon_A_get_benchmark_genome
+from .Carbon_A_list_benchmark_genomes import Carbon_A_list_benchmark_genomes
 from .CellMarker_list_cell_types import CellMarker_list_cell_types
 from .CellMarker_search_by_cell_type import CellMarker_search_by_cell_type
 from .CellMarker_search_by_gene import CellMarker_search_by_gene
@@ -3664,6 +3666,8 @@ __all__ = [
     "CancerPrognosis_get_survival_data",
     "CancerPrognosis_search_studies",
     "CancerVar_classify_variant",
+    "Carbon_A_get_benchmark_genome",
+    "Carbon_A_list_benchmark_genomes",
     "CellMarker_list_cell_types",
     "CellMarker_search_by_cell_type",
     "CellMarker_search_by_gene",

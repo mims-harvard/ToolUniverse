@@ -84,6 +84,8 @@ STATIC_LAZY_REGISTRY = {
     "CancerPPD2SearchPeptidesTool": "cancerppd2_tool",
     "CancerPrognosisTool": "cancer_prognosis_tool",
     "CancerVarTool": "cancervar_tool",
+    "CarbonABenchmarkTool": "carbon_a_benchmark_tool",
+    "CarbonATool": "carbon_a_tool",
     "CellMarkerTool": "cellmarker_tool",
     "CellPaintingTool": "cellpainting_tool",
     "CellTypistCatalogTool": "celltypist_catalog_tool",

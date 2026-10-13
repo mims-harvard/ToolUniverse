@@ -203,6 +203,7 @@ class RemoteSchemaParityTests(unittest.TestCase):
                 "expert_feedback_tools.json"
             ),
             "rfdiffusion2/rfdiffusion2_client_tools.json": "rfdiffusion2_tools.json",
+            "carbon_a/carbon_a_client_tools.json": "carbon_a_tools.json",
         }
         problems = []
         for internal_relative, published_name in pairs.items():
@@ -721,7 +722,7 @@ class RemoteSchemaParityTests(unittest.TestCase):
             if "from fastmcp import FastMCP" in source:
                 fastmcp_sources.append((source_path, source))
 
-        self.assertEqual(len(fastmcp_sources), 7)
+        self.assertEqual(len(fastmcp_sources), 8)
         problems = []
         for source_path, source in fastmcp_sources:
             relative = source_path.relative_to(REMOTE_SOURCE_ROOT)
@@ -746,6 +747,9 @@ class RemoteSchemaParityTests(unittest.TestCase):
             "rfdiffusion2_design": REMOTE_SOURCE_ROOT
             / "rfdiffusion2"
             / "rfdiffusion2_mcp_server.py",
+            "carbon_a_annotate_cds": REMOTE_SOURCE_ROOT
+            / "carbon_a"
+            / "carbon_a_mcp_server.py",
             "get_abstract_from_patent_app_number": REMOTE_SOURCE_ROOT
             / "uspto_downloader"
             / "uspto_downloader_mcp_server.py",
