@@ -1755,3 +1755,224 @@ class TestKitProbeRunsWithoutStrayVariables:
         src = inspect.getsource(kit_launch.ask_kit)
         assert 'env["MODEL_OPT_LEVERS_OFF"]' in src
         assert "declared = package.upper()" in src
+
+
+class TestAdmission:
+    """The decision the budgets exist for, which nothing made until now.
+
+    Every case here is a reading this project actually took. The first is the
+    one that wedged the host: four providers held, about 12 GiB of RSS between
+    them, a 28 GiB smoke started on top, and five more workers on the card from
+    a checkout this process could not see.
+    """
+
+    CAP = (121.6, "/proc/meminfo MemTotal (unified memory)")
+    QUIET = {"MemTotal": 121.6, "MemFree": 100.0, "MemAvailable": 110.0}
+    WEDGE = {"MemTotal": 121.6, "MemFree": 5.0, "MemAvailable": 60.4}
+
+    def _decide(self, **kw):
+        from tooluniverse.remote_resident import admission
+
+        kw.setdefault("capacity", self.CAP)
+        kw.setdefault("mem", self.QUIET)
+        kw.setdefault("co_tenants", 0)
+        return admission.decide(**kw)
+
+    def test_the_wedge_is_refused(self):
+        """5 GiB free, 60.4 available, co-tenants: the OOM reading exactly."""
+        v = self._decide(
+            slug="ef2inv",
+            budget_gb=28.0,
+            held={"boltzgen": 11.9},
+            mem=self.WEDGE,
+            co_tenants=5,
+        )
+        assert not v
+        assert v.gate == "MemFree", "with co-tenants the narrow reading must gate"
+        assert "5.0 GiB free" in v.reason and "60.4 GiB available" in v.reason
+
+    def test_the_gate_widens_when_nothing_competes(self):
+        """Reclaim is only a race when there is someone to lose it to."""
+        v = self._decide(slug="ef2inv", budget_gb=28.0, held={}, mem=self.WEDGE)
+        assert v.gate == "MemAvailable"
+
+    def test_a_full_pool_is_refused_on_the_declared_sum_alone(self):
+        """The machine looks idle; the budgets say it is not. Both gates matter."""
+        v = self._decide(
+            slug="opendde",
+            budget_gb=22.55,
+            held={
+                "esmfold2": 25.28,
+                "ef2inv": 28.0,
+                "complexa": 20.25,
+                "colabdesign": 12.0,
+                "evo2": 18.0,
+            },
+        )
+        assert not v
+        assert "103.53 GiB is already declared held" in v.reason
+        assert v.available_gib == 110.0, "refused with the machine looking empty"
+
+    def test_an_undeclared_held_budget_is_not_treated_as_zero(self):
+        v = self._decide(
+            slug="opendde", budget_gb=22.55, held={"mystery": None, "boltz": 5.54}
+        )
+        assert not v
+        assert v.unknown_budgets == ("mystery",)
+        assert "would be a guess" in v.reason
+
+    def test_a_provider_without_a_budget_is_never_admitted(self):
+        v = self._decide(slug="newthing", budget_gb=None, held={})
+        assert not v
+        assert "declares no vram_budget_gb" in v.reason
+
+    def test_restarting_what_is_held_frees_its_own_budget(self):
+        """Otherwise a worker could never be restarted while the pool is tight."""
+        v = self._decide(
+            slug="complexa", budget_gb=20.25, held={"complexa": 20.25, "boltz": 5.54}
+        )
+        assert v
+        assert v.declared_held_gb == 5.54
+
+    def test_an_unknown_capacity_refuses_rather_than_assuming(self):
+        v = self._decide(
+            slug="boltz",
+            budget_gb=5.54,
+            held={},
+            capacity=(None, "nvidia-smi did not run"),
+        )
+        assert not v
+        assert "could not be established" in v.reason
+
+    def test_unified_memory_is_read_as_a_capacity_not_an_error(self):
+        """`nvidia-smi` answers [N/A] here because the device has no total."""
+        from tooluniverse.remote_resident import admission
+
+        cap, source = admission.capacity_gib()
+        assert cap is not None, (
+            "this host has a pool even though the device has no total"
+        )
+        assert cap > 1.0
+        assert "MemTotal" in source or "memory.total" in source
+
+    def test_the_reason_always_carries_the_numbers(self):
+        """Section 8: a refusal names what happened, not that something did."""
+        import re
+
+        for kw in (
+            dict(
+                slug="a", budget_gb=28.0, held={"b": 11.9}, mem=self.WEDGE, co_tenants=5
+            ),
+            dict(slug="a", budget_gb=130.0, held={}),
+            dict(slug="a", budget_gb=None, held={}),
+        ):
+            v = self._decide(**kw)
+            assert not v
+            assert v.reason.strip()
+            # A refusal quotes the figures it decided on -- except the one about
+            # a figure that does not exist, which has to name the field instead.
+            assert re.search(r"\d", v.reason) or "vram_budget_gb" in v.reason, v.reason
+
+    def test_raise_if_refused_carries_the_same_message(self):
+        from tooluniverse.remote_resident.admission import AdmissionRefused
+
+        v = self._decide(slug="a", budget_gb=130.0, held={})
+        try:
+            v.raise_if_refused()
+        except AdmissionRefused as exc:
+            assert str(exc) == v.reason
+        else:
+            raise AssertionError("a refused verdict must raise")
+        assert self._decide(slug="a", budget_gb=1.0, held={}).raise_if_refused()
+
+
+class TestAdmissionIsWiredToTheStartPath:
+    """A decision nothing consults is what this replaced, so check the wiring.
+
+    `backend.running()`'s docstring said a scheduler above it reads the budgets,
+    and for twenty-seven providers nothing did. A verdict function with no caller
+    would have been the same gap one layer up.
+    """
+
+    def _worker(self, budget, monkeypatch, verdict_admits):
+        from tooluniverse.remote_resident import admission, supervisor
+
+        started = []
+
+        def fake_decide(slug, budget_gb, held=None, **kw):
+            return admission.Verdict(
+                admit=verdict_admits,
+                reason=f"stub verdict for {slug} at {budget_gb}",
+                slug=slug,
+                budget_gb=budget_gb,
+            )
+
+        monkeypatch.setattr(admission, "decide", fake_decide)
+        monkeypatch.setattr(
+            admission, "room_for", lambda slug, b, **kw: fake_decide(slug, b)
+        )
+        w = supervisor.ResidentWorker(
+            slug="probe",
+            build_command=lambda _w: (["/bin/true"], {}),
+            vram_budget_gb=budget,
+        )
+        monkeypatch.setattr(w, "_start", lambda: started.append(True))
+        return w, started
+
+    def test_a_refusal_stops_the_start(self, monkeypatch):
+        from tooluniverse.remote_resident.admission import AdmissionRefused
+
+        w, started = self._worker(22.55, monkeypatch, verdict_admits=False)
+        with pytest.raises(AdmissionRefused):
+            w.ensure_started()
+        assert not started, "the worker was started despite a refusal"
+
+    def test_an_admission_lets_it_through(self, monkeypatch):
+        w, started = self._worker(22.55, monkeypatch, verdict_admits=True)
+        w.ensure_started()
+        assert started == [True]
+
+    def test_a_cpu_provider_is_not_asked(self, monkeypatch):
+        """esm_if1's case: policy "none", no budget, nothing spent from the pool."""
+        w, started = self._worker(None, monkeypatch, verdict_admits=False)
+        w.ensure_started()
+        assert started == [True], "a provider with no budget must not need admission"
+
+    def test_the_escape_hatch_is_an_attribute_not_a_variable(self, monkeypatch):
+        """A host with its own scheduler owns the decision, and says so in code.
+
+        An environment variable would be the exact class of mistake the
+        launchers in this package are full of.
+        """
+        w, started = self._worker(22.55, monkeypatch, verdict_admits=False)
+        w.admit = False
+        w.ensure_started()
+        assert started == [True]
+
+    def test_a_real_manifest_declares_what_admission_needs(self):
+        """Every GPU resident provider on disk can be decided about."""
+        import glob
+
+        from tooluniverse.remote_resident import admission, manifest as M
+
+        undecidable = []
+        for path in sorted(glob.glob("src/tooluniverse/remote/*/provider.toml")):
+            try:
+                m = M.load(path)
+            except Exception:  # noqa: BLE001 - a broken manifest is another test's
+                continue
+            if m.gpu_policy == "none" or m.mode != "resident":
+                continue
+            v = admission.decide(
+                m.slug,
+                m.vram_budget_gb,
+                {},
+                capacity=(121.6, "test"),
+                mem={"MemTotal": 121.6, "MemFree": 110.0, "MemAvailable": 115.0},
+                co_tenants=0,
+            )
+            if not v.admit:
+                undecidable.append((m.slug, v.reason[:70]))
+        assert not undecidable, (
+            f"these providers cannot be admitted on an empty machine: {undecidable}"
+        )

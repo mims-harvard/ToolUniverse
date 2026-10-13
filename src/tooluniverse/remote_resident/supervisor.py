@@ -95,6 +95,10 @@ class ResidentWorker:
     # 0 disables retirement: the worker holds the card until it is stopped.
     idle_timeout_s: float = 0.0
     vram_budget_gb: Optional[float] = None
+    # Whether `ensure_started` consults `admission` before spending the budget.
+    # True is the default because the alternative has wedged this host; a host
+    # with its own scheduler above this one turns it off and owns the decision.
+    admit: bool = True
     log_path: Optional[str] = None
     # The provider's manifest, so a command builder has the declaration it was
     # built from without a second load.
@@ -124,7 +128,19 @@ class ResidentWorker:
 
     # ------------------------------------------------------------------ start
     def ensure_started(self) -> None:
-        """Start the worker if it is not already serving. Holds :attr:`lock`."""
+        """Start the worker if it is not already serving. Holds :attr:`lock`.
+
+        STARTING IS WHERE THE BUDGET IS SPENT, so it is where the budget is
+        checked. `admission.room_for` adds up what is already held and reads the
+        machine, and a refusal raises :class:`AdmissionRefused` rather than
+        starting a worker the host cannot carry -- this project wedged the host
+        once by starting one anyway, with the numbers available.
+
+        `admit` is the escape hatch and it is an ATTRIBUTE, not an environment
+        variable: a stray name in the environment is the class of mistake this
+        module's siblings are full of, and a host that genuinely wants an
+        unchecked start says so in the object it is holding.
+        """
         with self.lock:
             if self.is_running() and os.path.exists(self.socket_path):
                 return
@@ -132,6 +148,15 @@ class ResidentWorker:
                 # Process alive but no socket: it died between bind and now, or
                 # is still coming up from an earlier call that timed out.
                 self._terminate()
+            # No declared budget means nothing is spent from the pool, and the
+            # manifest layer already guarantees that reading: a resident provider
+            # whose `[gpu] policy` is not "none" cannot load without a
+            # `vram_budget_gb`. So None here is esm_if1's case -- CPU only -- and
+            # admitting it is not a decision anyone needs to make.
+            if self.admit and self.vram_budget_gb is not None:
+                from . import admission
+
+                admission.room_for(self.slug, self.vram_budget_gb).raise_if_refused()
             self._start()
 
     def _start(self) -> None:
