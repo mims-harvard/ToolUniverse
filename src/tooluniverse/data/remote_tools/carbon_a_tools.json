@@ -1,0 +1,258 @@
+[
+  {
+    "name": "carbon_a_annotate_cds",
+    "type": "RemoteTool",
+    "description": "Annotate protein-coding genes in a eukaryotic DNA sequence with Carbon-A (HuggingFaceBio/Carbon-A-1.2B), a 1.2B-parameter DNA model that predicts coding sequence at single-base resolution on both strands, followed by its annotation pipeline: a transition network, a Viterbi decode over a gene grammar (start codon to in-frame stop, GT-AG/GC-AG/AT-AC introns, reading frame continued across introns), and a confidence network that scores each gene. Returns gene coordinates, strand, exon count, per-gene confidence and optionally the GFF3 and translated proteins. Give either an inline sequence of at least 100,000 bp or a FASTA file in the provider's input directory. Needs a provider with a CUDA GPU and runs at roughly 10 kbp per second. Use for: finding genes in a newly assembled eukaryotic genome, re-annotating a region, or scoring how confidently a locus codes for protein.",
+    "label": "Carbon-A CDS annotation",
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Genomic DNA to annotate, as bare IUPAC nucleotides with no FASTA header. Carbon-A reads 98,304 bp windows and the pipeline skips records shorter than min_record_length, so this must be at least 100,000 bp unless you lower that deliberately. Pass input_file instead for a whole genome.",
+          "minLength": 1000,
+          "maxLength": 3000000
+        },
+        "sequence_id": {
+          "type": "string",
+          "description": "Name for the inline record, used as the GFF seqid. Default 'query'.",
+          "minLength": 1,
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._|-]{0,63}$"
+        },
+        "input_file": {
+          "type": "string",
+          "description": "FASTA or GenBank file name relative to the provider's Carbon-A input directory, for example 'yeast/GCF_000146045.2.fna', optionally gzip-compressed. Absolute paths, '..' segments and URLs are rejected.",
+          "minLength": 1,
+          "maxLength": 512,
+          "pattern": "^\\.*[A-Za-z0-9_-][A-Za-z0-9._-]*(/\\.*[A-Za-z0-9_-][A-Za-z0-9._-]*)*$"
+        },
+        "genetic_code": {
+          "type": "string",
+          "enum": [
+            "standard",
+            "tetrahymena_table6"
+          ],
+          "description": "Translation table used to close genes at an in-frame stop. 'standard' is the default; 'tetrahymena_table6' is NCBI table 6, which Tetrahymena thermophila (GCF_000189635.1) needs. A code that does not fit the sequence makes the pipeline flag the run, and that flag is returned in warnings.",
+          "default": "standard"
+        },
+        "min_confidence": {
+          "type": "number",
+          "description": "Only return genes whose confidence reaches this. Confidence is the model's own probability that a gene's structure is exactly right. 0.1 is the threshold the model card reports its gene counts at. Genes the pipeline gave no confidence are always returned.",
+          "default": 0.1,
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "min_record_length": {
+          "type": "integer",
+          "description": "Records shorter than this are skipped by the pipeline rather than annotated. Its own floor is 100,000 bp, which is the default here; below that the model is outside its reported range.",
+          "default": 100000,
+          "minimum": 1,
+          "maximum": 10000000
+        },
+        "attn_implementation": {
+          "type": "string",
+          "enum": [
+            "flash_attention_2",
+            "sdpa"
+          ],
+          "description": "Attention kernel. flash_attention_2 produced every result the model card reports and needs the flash-attn package on the provider; sdpa needs no extra package and is not bit-identical. Omit to use the provider's configured default."
+        },
+        "max_genes": {
+          "type": "integer",
+          "description": "Maximum gene records to return, in genome order. The counts reported alongside them cover every gene, not just the returned ones.",
+          "default": 200,
+          "minimum": 1,
+          "maximum": 2000
+        },
+        "return_gff": {
+          "type": "boolean",
+          "description": "Include the full prediction as GFF3 text.",
+          "default": false
+        },
+        "return_proteins": {
+          "type": "boolean",
+          "description": "Include each returned gene's translated protein sequence.",
+          "default": false
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "description": "Maximum time for the call, including any wait for another annotation to finish on the provider. Carbon-A runs at roughly 10 kbp per second on one GPU.",
+          "default": 900,
+          "minimum": 1,
+          "maximum": 3600
+        },
+        "dry_run": {
+          "type": "boolean",
+          "description": "Validate the arguments, including that input_file exists on the provider, and return the command that would run without running Carbon-A.",
+          "default": false
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "error": {
+          "type": "string",
+          "description": "Sanitized validation or provider error."
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "dry_run": {
+              "type": "boolean"
+            },
+            "command": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Command a dry run would execute, with per-call paths elided."
+            },
+            "input": {
+              "type": "string",
+              "description": "What was annotated."
+            },
+            "sequence_length": {
+              "type": "integer",
+              "description": "Length of the inline sequence, when one was passed."
+            },
+            "genetic_code": {
+              "type": "string"
+            },
+            "attn_implementation": {
+              "type": "string"
+            },
+            "min_confidence": {
+              "type": "number"
+            },
+            "min_record_length": {
+              "type": "integer"
+            },
+            "runtime_seconds": {
+              "type": "number"
+            },
+            "genes_predicted": {
+              "type": "integer",
+              "description": "Genes in the prediction, before the confidence filter."
+            },
+            "genes_at_or_above_min_confidence": {
+              "type": "integer"
+            },
+            "genes_returned": {
+              "type": "integer"
+            },
+            "genes_note": {
+              "type": "string",
+              "description": "Present when fewer genes are returned than passed the filter."
+            },
+            "coding_bases": {
+              "type": "integer",
+              "description": "Total length of predicted CDS features."
+            },
+            "records_annotated": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "warnings": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The pipeline's own warnings, notably a genetic code that may not fit the sequence."
+            },
+            "gff": {
+              "type": "string",
+              "description": "Full prediction in GFF3, when return_gff is true."
+            },
+            "genes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Gene id from the prediction."
+                  },
+                  "record": {
+                    "type": "string",
+                    "description": "Sequence the gene is on."
+                  },
+                  "strand": {
+                    "type": "string",
+                    "enum": [
+                      "+",
+                      "-"
+                    ]
+                  },
+                  "start": {
+                    "type": "integer",
+                    "description": "1-based start, GFF convention."
+                  },
+                  "end": {
+                    "type": "integer"
+                  },
+                  "confidence": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Probability that the gene's structure is exactly right; null when the pipeline reported none."
+                  },
+                  "exons": {
+                    "type": "integer",
+                    "description": "CDS features in the gene."
+                  },
+                  "incomplete": {
+                    "type": "boolean",
+                    "description": "True when the gene is truncated by a record edge."
+                  },
+                  "protein_length": {
+                    "type": "integer"
+                  },
+                  "protein": {
+                    "type": "string",
+                    "description": "Translated protein, when return_proteins is true."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "CarbonATool",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/carbon_a.html",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/carbon_a",
+      "mcp_tool_name": "carbon_a_annotate_cds"
+    },
+    "test_examples": [
+      {
+        "input_file": "GCF_000146045.2/GCF_000146045.2_R64_genomic.fna",
+        "dry_run": true
+      },
+      {
+        "input_file": "GCF_000146045.2/GCF_000146045.2_R64_genomic.fna",
+        "max_genes": 5,
+        "timeout_seconds": 3600
+      }
+    ]
+  }
+]

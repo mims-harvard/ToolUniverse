@@ -132,6 +132,18 @@
     ]
   },
   {
+    "name": "CARBON_A_MCP_SERVER_HOST",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Models & Infrastructure",
+    "register_url": "https://huggingface.co/HuggingFaceBio/Carbon-A-1.2B",
+    "purpose": "Host of a self-hosted Carbon-A gene-annotation MCP server.",
+    "without": "Leave blank unless you run your own Carbon-A server.",
+    "used_by": [
+      "carbon_a_mcp_loader_tools.json"
+    ]
+  },
+  {
     "name": "CELLXGENE_CENSUS_PACKAGE_INSTALLED",
     "requirement": "required",
     "type": "secret",

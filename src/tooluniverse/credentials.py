@@ -26,6 +26,12 @@ _CREDENTIAL_NAME_SUFFIXES = (
     "USERNAME",
     "EMAIL",
     "JWT",
+    # An OAuth client id is half of a credential pair, not deployment config:
+    # it identifies the caller and is useless to the tool without its secret.
+    # Left out, ICD_CLIENT_ID resolved from the process environment while
+    # ICD_CLIENT_SECRET resolved from the request, so a caller who passed both
+    # could never complete the pair and the ICD-11 tools stayed unavailable.
+    "CLIENT_ID",
 )
 
 # ``None`` means there is no request scope and tools may use their normal environment fallback.

@@ -189,6 +189,8 @@
   "CancerPrognosis_get_survival_data": "a39604f100d9a92ac411125475466293",
   "CancerPrognosis_search_studies": "c065425c9fa748cc176b5f77a6790288",
   "CancerVar_classify_variant": "8d43a6704b91ff71eeee56ac2366e334",
+  "Carbon_A_get_benchmark_genome": "927a173be22ceee8d2a461d1ceb4f5c7",
+  "Carbon_A_list_benchmark_genomes": "0b130fa8dcb3126e0aba7fc5bc49b963",
   "CellMarker_list_cell_types": "edda8824b867609caa36f8ce6b523c71",
   "CellMarker_search_by_cell_type": "2024b4d9ceccf751533f2784f579c19f",
   "CellMarker_search_by_gene": "0b0c954fdc5387669e594275f540cd46",

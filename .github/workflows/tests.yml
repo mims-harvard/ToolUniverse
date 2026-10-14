@@ -58,6 +58,41 @@ jobs:
           assert "tooluniverse.platform_remote_tool" not in sys.modules
           PY
 
+      # The step above loads a single tool, so it cannot notice a data file the
+      # wheel left behind: data/remote_tools/ was missing from every release up
+      # to 1.5.6 and this job stayed green. Compare the installed data tree
+      # against the checkout instead.
+      - name: Verify the wheel carries every data file
+        run: |
+          python - <<'PY'
+          import pathlib
+
+          import tooluniverse
+
+          installed_root = pathlib.Path(tooluniverse.__file__).parent
+          source_root = pathlib.Path("src/tooluniverse")
+
+          def data_files(root):
+              data = root / "data"
+              return {
+                  p.relative_to(data).as_posix()
+                  for p in data.rglob("*")
+                  if p.is_file()
+                  and "__pycache__" not in p.parts
+                  and not p.name.endswith(".pyc")
+              }
+
+          source = data_files(source_root)
+          installed = data_files(installed_root)
+          assert source, "no data files found in the checkout"
+          missing = sorted(source - installed)
+          assert not missing, (
+              f"{len(missing)} data file(s) in the checkout are missing from the "
+              f"installed wheel, e.g. {missing[:5]}"
+          )
+          print(f"wheel carries all {len(source)} data files")
+          PY
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest

@@ -367,6 +367,10 @@ default_tool_files = {
     "uspto": os.path.join(current_dir, "data", "uspto_tools.json"),
     # protocols.io - public repository of peer-reviewed/community lab protocols.
     "protocolsio": os.path.join(current_dir, "data", "protocolsio_tools.json"),
+    # Carbon-A's published benchmark genomes and their NCBI reference annotations.
+    "carbon_a_benchmark": os.path.join(
+        current_dir, "data", "carbon_a_benchmark_tools.json"
+    ),
     "xml": os.path.join(current_dir, "data", "xml_tools.json"),
     "mcp_auto_loader_boltz": os.path.join(
         current_dir, "data", "boltz_mcp_loader_tools.json"
@@ -374,6 +378,9 @@ default_tool_files = {
     "boltz_api": os.path.join(current_dir, "data", "boltz_api_tools.json"),
     "mcp_auto_loader_rfdiffusion2": os.path.join(
         current_dir, "data", "rfdiffusion2_mcp_loader_tools.json"
+    ),
+    "mcp_auto_loader_carbon_a": os.path.join(
+        current_dir, "data", "carbon_a_mcp_loader_tools.json"
     ),
     "mcp_auto_loader_esm": os.path.join(
         current_dir, "data", "mcp_auto_loader_esm.json"

@@ -1,0 +1,287 @@
+[
+  {
+    "name": "Carbon_A_list_benchmark_genomes",
+    "type": "CarbonABenchmarkTool",
+    "description": "List the eukaryotic genomes in the Carbon-A evaluation collection, the benchmark set published with the Carbon-A gene-annotation model (HuggingFaceBio/Carbon-A-1.2B). 41 genomes spanning mammals, other vertebrates, invertebrates, plants, fungi and protozoa, each paired with the NCBI reference annotation a prediction is scored against. Returns accession, organism, NCBI taxon id, assembly name, genome size and file count. Filter by the publisher's split label ('seen', 'unseen', 'nonstandard_code') or by organism name. Use for: choosing a genome to annotate or to benchmark a gene finder against, or finding the reference annotation for one. Sequence payloads are not returned; Carbon_A_get_benchmark_genome gives download URLs and checksums.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "split": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "all",
+            "seen",
+            "unseen",
+            "nonstandard_code",
+            null
+          ],
+          "description": "Restrict to one eval/ subdirectory. These are the publisher's own labels, reported as given and not interpreted here: nothing published with the collection defines 'seen' and 'unseen' further. 'nonstandard_code' holds the single genome that uses a non-standard genetic code. Default 'all'.",
+          "default": "all"
+        },
+        "organism_contains": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Case-insensitive substring of the organism name, for example 'Saccharomyces', 'sapiens' or 'Arabidopsis'."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "error": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "bucket": {
+              "type": "string",
+              "description": "Hugging Face bucket holding the collection."
+            },
+            "model": {
+              "type": "string",
+              "description": "The model the collection evaluates."
+            },
+            "count": {
+              "type": "integer",
+              "description": "Genomes returned after filtering."
+            },
+            "total_in_collection": {
+              "type": "integer",
+              "description": "Genomes in the collection, before filtering."
+            },
+            "counts_by_split": {
+              "type": "object",
+              "description": "Number of genomes per split label."
+            },
+            "truncated": {
+              "type": "string",
+              "description": "Present only when the bucket listing hit its page limit, so the catalog may be incomplete."
+            },
+            "genomes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "accession": {
+                    "type": "string",
+                    "description": "NCBI assembly accession, for example GCF_000146045.2."
+                  },
+                  "organism": {
+                    "type": "string"
+                  },
+                  "tax_id": {
+                    "type": "integer",
+                    "description": "NCBI taxonomy id."
+                  },
+                  "split": {
+                    "type": "string"
+                  },
+                  "assembly_name": {
+                    "type": "string",
+                    "description": "Assembly name as it appears in the genome FASTA file name, for example R64."
+                  },
+                  "genome_fasta_bytes": {
+                    "type": "integer"
+                  },
+                  "files": {
+                    "type": "integer",
+                    "description": "Number of files published for this genome."
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    "fields": {
+      "operation": "list_genomes"
+    },
+    "test_examples": [
+      {},
+      {
+        "split": "unseen"
+      },
+      {
+        "organism_contains": "Saccharomyces"
+      }
+    ]
+  },
+  {
+    "name": "Carbon_A_get_benchmark_genome",
+    "type": "CarbonABenchmarkTool",
+    "description": "Get the files and assembly details of one genome in the Carbon-A evaluation collection. Returns every published file with its size, md5 checksum, download URL and role (genomic DNA, NCBI reference annotation, reference CDS, reference proteins, reference RNA, assembly report), plus the per-molecule sequence report: chromosome names, RefSeq accessions, lengths and GC content. Use for: downloading a benchmark genome and its reference annotation, checking an assembly's size and chromosome count before annotating it, or verifying a download against its checksum. The sequence data itself is not returned, only the URLs to fetch it from.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "accession": {
+          "type": "string",
+          "description": "NCBI assembly accession of a genome in the collection, for example 'GCF_000146045.2' (Saccharomyces cerevisiae). Call Carbon_A_list_benchmark_genomes for the accessions."
+        },
+        "include_sequence_report": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Include the per-molecule sequence report. Default true.",
+          "default": true
+        }
+      },
+      "required": [
+        "accession"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "error": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "accession": {
+              "type": "string"
+            },
+            "organism": {
+              "type": "string"
+            },
+            "tax_id": {
+              "type": "integer"
+            },
+            "split": {
+              "type": "string"
+            },
+            "assembly_name": {
+              "type": "string"
+            },
+            "bucket": {
+              "type": "string"
+            },
+            "download_url_base": {
+              "type": "string",
+              "description": "Directory URL the file names resolve against."
+            },
+            "total_bytes": {
+              "type": "integer",
+              "description": "Combined size of every file published for this genome."
+            },
+            "genetic_code_note": {
+              "type": "string",
+              "description": "Present only for a genome that does not use the standard genetic code."
+            },
+            "files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "filename": {
+                    "type": "string"
+                  },
+                  "bytes": {
+                    "type": "integer"
+                  },
+                  "url": {
+                    "type": "string"
+                  },
+                  "md5": {
+                    "type": "string",
+                    "description": "From the collection's md5sum.txt; absent when it does not list the file."
+                  },
+                  "role": {
+                    "type": "string",
+                    "description": "What the file is, for the files the collection publishes for every genome."
+                  }
+                }
+              }
+            },
+            "sequence_report": {
+              "type": "object",
+              "properties": {
+                "available": {
+                  "type": "boolean"
+                },
+                "sequences_in_assembly": {
+                  "type": "integer"
+                },
+                "total_length_bp": {
+                  "type": "integer"
+                },
+                "roles": {
+                  "type": "object",
+                  "description": "Count of sequences per assembly role."
+                },
+                "sequences_note": {
+                  "type": "string",
+                  "description": "Present when only the longest sequences are listed."
+                },
+                "sequences": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "refseq_accession": {
+                        "type": "string"
+                      },
+                      "length": {
+                        "type": "integer"
+                      },
+                      "gc_percent": {
+                        "type": "number"
+                      },
+                      "role": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "status"
+      ]
+    },
+    "fields": {
+      "operation": "get_genome"
+    },
+    "test_examples": [
+      {
+        "accession": "GCF_000146045.2"
+      },
+      {
+        "accession": "GCF_000189635.1",
+        "include_sequence_report": false
+      }
+    ]
+  }
+]
