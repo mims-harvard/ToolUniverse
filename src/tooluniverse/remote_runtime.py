@@ -220,6 +220,20 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="recommended",
     ),
     RemoteDeployment(
+        "enformer_deepmind",
+        "tooluniverse.remote.enformer_deepmind.enformer_deepmind_tool",
+        8060,
+        ("run_enformer_deepmind_predict",),
+        ("TOOLUNIVERSE_ENFORMER_DEEPMIND_PYTHON",),
+        ("TFHUB_CACHE_DIR",),
+        # `policy = "none"`: the official release is TensorFlow, and TensorFlow
+        # publishes no GPU-capable aarch64 wheel at any version, so this one
+        # reserves no VRAM and is admitted while the card is full. It is the
+        # complement of `enformer` above (the torch port, on the card), not its
+        # replacement.
+        gpu_policy="none",
+    ),
+    RemoteDeployment(
         "esm",
         "tooluniverse.remote.esm.esm_tool",
         8008,

@@ -18,8 +18,11 @@ description: Set up, launch, validate, and troubleshoot the ProteinMPNN / Solubl
 > weight sets — comparing every field stock writes, which came out **identical**.
 > The optimization kit's `exact` line also runs on this CPU host and is also
 > byte-identical to stock there, and it was **declined on the clock**: 38.53 s of
-> generation against stock's 30.45 s, because every lever that survives a CPU
-> host is a way of filling a GPU. `provider.toml`'s header has the numbers.
+> generation against stock's 30.45 s. Both of those were measured together on a
+> contended host, so the decision stands while the absolute figures do not -- a
+> later quiet-host pair read stock's generation at 14.4-15.2 s. Residency itself
+> is worth **1.13x** here, not the 1.40x first recorded; `provider.toml`'s header
+> has that correction and its arithmetic.
 > Public publication, cross-user isolation, concurrency and recovery are
 > untested; keep this deployment private.
 

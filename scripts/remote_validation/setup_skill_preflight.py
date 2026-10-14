@@ -167,6 +167,13 @@ DEPLOYMENTS = (
         ("TOOLUNIVERSE_ENFORMER_PYTHON",),
         path_env=("HF_HOME",),
     ),
+    Deployment(
+        "enformer_deepmind",
+        8060,
+        ("run_enformer_deepmind_predict",),
+        ("TOOLUNIVERSE_ENFORMER_DEEPMIND_PYTHON",),
+        path_env=("TFHUB_CACHE_DIR",),
+    ),
     Deployment("esm", 8008, ("esm_embed_sequence",)),
     Deployment(
         "e1",
