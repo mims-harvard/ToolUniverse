@@ -30,7 +30,7 @@ class MyTool(BaseTool):          MyAPI_search()
 
 One class handles multiple operations. JSON defines individual wrappers. Need BOTH.
 
-## Three-Step Registration
+## Registration and Generated Metadata
 
 **Step 1**: Class registration via `@register_tool("MyAPITool")`
 
@@ -42,6 +42,16 @@ TOOLS_CONFIGS = {
 ```
 
 **Step 3**: Automatic wrapper generation on `tu.load_tools()`
+
+**Step 4**: After adding, renaming, or removing a registered tool class, regenerate the committed lazy registry and test it:
+
+```bash
+python src/tooluniverse/generate_lazy_registry.py
+pytest tests/unit/test_generator_invariants.py -q --no-cov
+```
+
+Commit the generated `_lazy_registry_static.py` change. Do not append entries by hand. Dynamic wrapper and `test_new_tools.py` checks can pass through fallback discovery while this file is stale; CI also requires the generator consistency test.
+
 
 ---
 
@@ -183,6 +193,7 @@ Full guide: [references/testing-guide.md](references/testing-guide.md)
 2. **Level 2** — ToolUniverse test: `tu.tools.YourTool_op1(...)`, check registration
 3. **Level 3** — Real API test: use real IDs, verify actual responses
 4. **MANDATORY** — Run `python scripts/test_new_tools.py your_tool -v` → 0 failures
+5. **Generated registry** — Regenerate and run `tests/unit/test_generator_invariants.py`; include the generated diff in the PR
 
 ### Verification Script
 

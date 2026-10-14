@@ -52,6 +52,18 @@ python scripts/test_new_tools.py your_tool_name --fail-fast
 
 Validates: execution succeeds, response matches return_schema, 404s indicate bad test_examples.
 
+### Committed registry consistency
+
+Dynamic discovery is not sufficient. After adding, renaming, or removing a registered class, run:
+
+```bash
+python src/tooluniverse/generate_lazy_registry.py
+pytest tests/unit/test_generator_invariants.py -q --no-cov
+```
+
+Commit the sorted generated `_lazy_registry_static.py` diff. This test catches stale registry metadata even when direct calls and the generated interface work through fallback discovery.
+
+
 ## Systematic Testing for Multiple Tools
 
 1. **Sample test** 1-2 tools per API to catch common issues
