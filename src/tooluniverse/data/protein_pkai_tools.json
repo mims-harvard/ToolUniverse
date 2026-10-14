@@ -1,0 +1,200 @@
+[
+  {
+    "name": "PKAI_predict_sidechain_pka",
+    "type": "ProteinPKAITool",
+    "description": "Predict six protein side-chain pKa types from one PDB with local CPU pKAI/pKAI+ weights. Returns residue predictions and coverage. ARG/termini unsupported; not affinity or a complete pH binding cycle. Requires optional pKAI.",
+    "parameter": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "pdb_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Public four-character RCSB PDB ID; alternative to pdb_path/pdb_content. Only this option downloads public coordinates."
+        },
+        "pdb_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Local single-model PDB file; no upload. Alternative to pdb_id/pdb_content."
+        },
+        "pdb_content": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Single-model PDB text; processed locally without upload. Alternative to pdb_id/pdb_path."
+        },
+        "python_executable": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional same-host Python interpreter with pKAI and torch installed; default current interpreter. No shell command."
+        },
+        "model_variant": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "pKAI",
+            "pKAI+",
+            null
+          ],
+          "description": "pKAI+ (default) for single-structure diagnostics; pKAI for conformation sensitivity. Correlated variants of one model family."
+        },
+        "threads": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 16,
+          "description": "CPU threads, default1."
+        },
+        "timeout_seconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 600,
+          "description": "Finite worker timeout in seconds, default180."
+        }
+      }
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "data"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "required": [
+                "groups",
+                "model_variant",
+                "backend",
+                "supported_sidechain_inventory_complete",
+                "complete_protein_ionization_inventory",
+                "unsupported_groups",
+                "input_sha256"
+              ],
+              "properties": {
+                "groups": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "chain",
+                      "residue_number",
+                      "residue_name",
+                      "pka",
+                      "close_SG_pair",
+                      "eligible_for_acid_base_interpretation"
+                    ],
+                    "properties": {
+                      "chain": {
+                        "type": "string"
+                      },
+                      "residue_number": {
+                        "type": "integer"
+                      },
+                      "residue_name": {
+                        "enum": [
+                          "ASP",
+                          "GLU",
+                          "HIS",
+                          "LYS",
+                          "CYS",
+                          "TYR"
+                        ]
+                      },
+                      "pka": {
+                        "type": "number"
+                      },
+                      "close_SG_pair": {
+                        "type": "boolean"
+                      },
+                      "eligible_for_acid_base_interpretation": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                },
+                "model_variant": {
+                  "enum": [
+                    "pKAI",
+                    "pKAI+"
+                  ]
+                },
+                "backend": {
+                  "type": "object"
+                },
+                "supported_sidechain_inventory_complete": {
+                  "const": true
+                },
+                "complete_protein_ionization_inventory": {
+                  "const": false
+                },
+                "unsupported_groups": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "input_sha256": {
+                  "type": "string"
+                },
+                "binding_verified": {
+                  "const": false
+                },
+                "pH_selectivity_verified": {
+                  "const": false
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "pdb_id": "1UBQ",
+        "model_variant": "pKAI+",
+        "threads": 1
+      },
+      {
+        "pdb_id": "1UBQ",
+        "model_variant": "pKAI",
+        "threads": 1
+      }
+    ],
+    "cacheable": false
+  }
+]
