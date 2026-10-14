@@ -121,6 +121,24 @@ is one dependency-free file (`remote_resident/protocol.py`) loaded by path.
    the ablation for the largest input the provider accepts — and check whether
    stock itself survives that size, because atlasfold's does not.
 
+22. **Surveying whether four locks install, when the deciding question was
+   whether stock needs the card.** A gate script ranked flashzoi the cheapest of
+   four candidates on 46 of 51 pins installing as pinned. The kit's own dry run
+   on the host answered in one line — `would_refuse='no usable GPU: no CUDA
+   device visible to torch (the stock needs a CUDA device as much as the kit)'`
+   — and the full reason took two more commands: stock `borzoi_pytorch`
+   imports `flash_attn.modules.mha` unconditionally
+   (`pytorch_borzoi_transformer.py:151`, `use_flash_attn=True`), flash-attn
+   ships **sdist only on PyPI at every version**, and 2.7.0.post2's `setup.py`
+   emits `code=sm_80` and `code=sm_90` with no PTX, so even a from-source
+   aarch64 build runs no kernel on an sm_121 card. Installing was never the
+   deciding question. **The deciding one was already written down one section
+   below, in a table that names flashzoi first among the kits whose pinned torch
+   cannot drive this card** — so the survey restated my own notes and inverted
+   their conclusion. Ask the host before the index: `run.sh check --mode <kit
+   mode>` costs one command, needs no weights, and prints the refusal. Then ask
+   it of *stock*, which is the row the table had been missing.
+
 ## What eight verified providers cost, and where the time went
 
 Every figure measured on one GB10 (aarch64, cc 12.1), held worker, steady state. "cold → warm" is
@@ -234,7 +252,8 @@ committing to a download:
 
 | question | how many fail it | what `setup` does |
 | --- | --- | --- |
-| Can its pinned torch drive this card? | 5 pin torch < 2.7 (sm_90 ceiling): flashzoi, proteinmpnn, rfdiffusion1, caliby; borzoi is TensorFlow | refuses `torch_arch_unsupported` after install, by binary compatibility — an sm_120 cubin runs on sm_121 |
+| Can its pinned torch drive this card? | 6 pin torch < 2.7 (sm_90 ceiling): proteinmpnn and flashzoi 2.5.1, caliby 2.6.0, rfdiffusion1 and esm_if1 2.4.0, pxdesign 2.3.1 — two of them by direct URL, so resolve the URL before counting; borzoi and chrombpnet are TensorFlow and have their own floor | refuses `torch_arch_unsupported` after install, by binary compatibility — an sm_120 cubin runs on sm_121 |
+| …and when it cannot, does **stock** still run on the CPU? | proteinmpnn and caliby fall back (`device = "cuda" if torch.cuda.is_available() else "cpu"`); flashzoi does not — its own dry run says `no usable GPU … the stock needs a CUDA device as much as the kit` | nothing checks it: only `run.sh check --mode <kit mode>`, on the host, prints it as `would_refuse` |
 | Does it carry prebuilt host objects? | 8 do; all 39 such files are x86-64, none aarch64 | refuses `kit_foreign_objects` from the ELF header, before installing |
 | Does its lock pin an architecture by URL? | ~20 name a wheel by direct x86-64 link | ship a lock pinning by version instead, and say so in its header |
 | How does it activate? | 30 by mode variable + `.pth`, 1 by `worker_launch` (boltz2), 1 not in-process at all (chrombpnet) | detected, not declared |
@@ -249,15 +268,29 @@ what happened, because the static reads are insufficient: atlasfold passed both 
 `TRITON_<BINARY>_PATH`, and `ptxas-blackwell` is selected above cc 100 — so `TRITON_PTXAS_PATH` alone
 is the wrong name on every Blackwell-class card.
 
-**On aarch64, the torch floor is harder than it looks.** Six kits pin torch below 2.7, and PyPI
-publishes **no CUDA-enabled aarch64 torch wheel below 2.7 at all** — checked by inspecting the
-2.3.1 / 2.4.0 / 2.5.1 / 2.6.0 `manylinux*_aarch64` wheels, which each carry `libtorch_cpu.so` and
-no `libtorch_cuda.so`, with every `nvidia-*` dependency marked
-`platform_machine == "x86_64"`. Forward PTX JIT does not rescue this: there is no CUDA code in the
-artifact to JIT. The honest ways out are to run the model on the CPU (`[gpu] policy = "none"` —
-right rather than consolation for a small model; proteinmpnn's whole weight set is 10 MB), to build
-torch from source for this architecture at the pinned version (days), or to abandon the pin and
-reach `[kit] mode = "off"`, which is to say to stop using the kit.
+**On aarch64, the torch floor is harder than it looks — and the obvious reason for it is the
+wrong one.** Six kits pin torch below 2.7. PyPI's `manylinux*_aarch64` wheels at 2.3.1 / 2.4.0 /
+2.5.1 / 2.6.0 each carry `libtorch_cpu.so` and no `libtorch_cuda.so`, with every `nvidia-*`
+dependency marked `platform_machine == "x86_64"` — but **do not stop at one index and call it the
+world**: `download.pytorch.org` publishes CUDA aarch64 wheels at 2.4.0, 2.4.1 and 2.5.1 on its cu124
+index. Those do not rescue the pin either, and their reason is the one worth knowing, because it is
+the one a later kit will hit: `cuobjdump` on 2.5.1's 935 MB `libtorch_cuda.so` lists cubins
+sm_50..sm_90a and **no PTX at all**, so the first device allocation — before any GEMM — raises
+`no kernel image is available for execution on the device`. Forward PTX JIT cannot rescue what ships
+no PTX. Measured on this GB10 (sm_121): the lowest aarch64 CUDA wheel that executes is
+`torch-2.7.0+cu128` (`sm_90, sm_100, sm_120`, and an sm_120 cubin runs on sm_121); the cu126 index
+answers 403 for the same version.
+
+Four ways out, and the first two are not always open. Run the model on the CPU
+(`[gpu] policy = "none"` — right rather than consolation for a small model; proteinmpnn's whole
+weight set is 10 MB), which needs stock itself to tolerate the CPU and so is closed for flashzoi.
+Build torch from source for this architecture at the pinned version (days). Abandon the pin and
+reach `[kit] mode = "off"`, which is to say stop using the kit — and note this does **not** help a
+kit whose stock needs the card, since `off` *is* stock. Or deviate the pin forward to 2.7.0 and say
+so in the lock's header: that buys the card back, and takes the kit's triton pin with it (2.7.0
+requires triton 3.3.0 against the kits' 3.1.0), so the kit's own bitwise claim must be re-earned
+here rather than quoted — which the kit says itself, appending
+`bitwise vs stock unverified on this class` to its `drift=[…]`.
 
 ## Six things to read out of the kit, never guess
 

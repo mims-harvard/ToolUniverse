@@ -136,22 +136,31 @@ fits -- "5.54 GiB on top of 0.0 GiB declared held". The bug has been latent
 since esm_if1, the first `policy = "none"` provider; it took a second one and a
 `room` check with a live worker to surface it.
 
-TIMINGS ARE OWED AND DELIBERATELY NOT QUOTED AS A RATIO. Every run above
-happened while another session held this host at 681 % CPU with a load average
-of 20.6 on 20 cores. Equivalence does not care -- determinism is not a clock --
-but speed does, so the numbers are recorded as what they are and no residency
-ratio is derived from them:
+THE OWED QUIET-HOST PAIR, NOW PAID, AND IT CUT THE EXPECTATION IN HALF. The
+first pair ran while another session held this host at 681 % CPU, load 20.6 on
+20 cores, and read 43.91 s generation / 53.5 s wall for the stock route against
+28.70 s / 28.9 s resident -- 1.85x, which was not claimed, with 1.4x recorded
+as the honest expectation. Re-measured at load 3.25, same request (5L33 alone,
+8 designs, seed 37, batch 8), two runs each:
 
-    stock route, 5L33 alone, 8 designs   43.91 s generation, 53.5 s wall
-    resident worker, same request        28.70 s design,     28.9 s wall
+    stock route      15.22 s and 14.40 s generation   22.05 s and 20.66 s wall
+    resident worker  18.3 s  and 19.2 s  design       18.4 s  and 19.5 s  wall
 
-Those would read as 1.85x on wall, and that figure is NOT claimed: the two runs
-saw different amounts of competing load, and a fixed start-up cost and a
-compute phase do not dilate together. The uncontended parts measured earlier --
-torch import 2.10 s, stock's modules 0.03 s, the checkpoint 0.01 s, so 2.83 s
-of process start-up, plus the stock parser's 1.32 s against the kit parser's
-0.47 s -- put the honest expectation near 1.4x, and ONE QUIET-HOST PAIR IS
-OWED. It changes nothing about whether to deploy this provider: its value is
+Both of the first pair's numbers were inflated about 2.4x by contention, and
+the real ratio on wall is 21.36 / 18.95 = **1.13x**, not 1.85x and not 1.40x.
+The 1.40x estimate was arithmetic on a contended baseline: a fixed ~3 s of
+start-up removed from a 42.8 s request reads as 1.40x, and the same 3 s removed
+from a true 21 s request reads as 1.13x. Residency's saving is a constant, so
+quoting it as a ratio makes it a function of whatever the denominator was
+contending with.
+
+Note also what the contended pair hid completely: the resident's generation
+step is NOT faster than stock's here -- 18.3-19.2 s against 14.4-15.2 s -- and
+it should not be, since it is the same code producing byte-identical output.
+That gap is contention too (load climbed from 3.25 to 10.49 across these four
+runs; the stock runs got the quieter half), which is the remaining honest
+caveat: this pair bounds the claim from above rather than pinning it. It
+changes nothing about whether to deploy this provider: its value is
 `vram_budget_gb = None`, not its clock.
 
 What else is untested: public publication, cross-user isolation, concurrency,
@@ -178,14 +187,17 @@ outputs = []
 output_keys = ["structures", "n_designs"]
 smoke = "smoke/input.json"
 smoke_timeout_s = 900.0
-mode_reason = """What residency buys here, measured in parts rather than
-quoted as a ratio: torch's import 2.10 s, stock's modules 0.03 s, the
-checkpoint 0.01 s -- 2.83 s of process start-up -- on top of which a
-non-resident request pays the kit driver's own start-up and the stock parser's
-352 re-reads per file. The whole of it is about 11 s of the ~42.8 s a
-non-resident `--mode off` pass takes, so roughly 1.40x, which is at the low end
-of this standard's 1.13x-26x range and expected to be: a 1.66M-parameter model
-has almost no weights to hold. THE RATIO IS NOT THE POINT FOR THIS PROVIDER --
+mode_reason = """What residency buys here is a constant, not a ratio, and it
+is recorded as one: torch's import 2.10 s, stock's modules 0.03 s, the
+checkpoint 0.01 s -- 2.83 s of process start-up -- plus the kit driver's own
+start-up and the stock parser's 352 re-reads per file (1.32 s against the kit
+parser's 0.47 s). Measured on a quiet host that constant is worth 1.13x on a
+one-structure 8-design request (21.36 s non-resident wall against 18.95 s
+resident), the bottom of this standard's 1.13x-26x range and expected to be: a
+1.66M-parameter model has almost no weights to hold, and a saving that is
+constant shrinks as a ratio with every residue added. An earlier 1.40x came
+from dividing the same constant into a contended 42.8 s baseline and is
+withdrawn. THE RATIO IS NOT THE POINT FOR THIS PROVIDER --
 `vram_budget_gb = None` is. It is the only kind of provider that can be
 resident while the card is full."""
 
