@@ -251,6 +251,22 @@ def machine_holdings(
 def _declared_budget(slug: str) -> Optional[float]:
     """`[gpu] vram_budget_gb` from this checkout's manifest for `slug`.
 
+    None means UNDECLARED, which `decide` reports rather than summing as zero:
+    a provider whose cost is unknown cannot be added up.
+
+    **A CPU-ONLY PROVIDER IS 0.0, NOT None**, and the distinction is the whole
+    difference between a useful co-tenant and a blocker. A manifest with
+    `[gpu] policy = "none"` is the one case where an absent `vram_budget_gb` is
+    legal -- the manifest layer enforces that -- and it means the provider holds
+    no device memory at all, not that nobody measured it. Mapping it to None
+    made a held esm_if1 or proteinmpnn worker refuse every GPU provider on the
+    box with "already held without a declared budget, so what the card is
+    carrying cannot be summed": exactly inverted, since a CPU provider is the
+    one thing that can safely be resident while the card is full. Found by
+    running `tu remote room boltz` with a real proteinmpnn worker up, which
+    reported `held: {"proteinmpnn": null}` and refused boltz on a card holding
+    nothing.
+
     Another checkout's copy of the same provider could in principle declare a
     different figure; using the local one assumes the checkouts agree, which is
     worth stating because it is an assumption and not a reading.
@@ -266,9 +282,12 @@ def _declared_budget(slug: str) -> Optional[float]:
     if not os.path.exists(path):
         return None
     try:
-        return M.load(path).vram_budget_gb
+        m = M.load(path)
     except Exception:  # noqa: BLE001 - a broken manifest is `tu remote check`'s to report
         return None
+    if m.vram_budget_gb is None and (m.gpu_policy or "").lower() == "none":
+        return 0.0
+    return m.vram_budget_gb
 
 
 def decide(

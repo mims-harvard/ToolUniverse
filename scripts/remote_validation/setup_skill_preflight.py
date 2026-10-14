@@ -319,6 +319,13 @@ DEPLOYMENTS = (
         path_env=("PROGEN2_WEIGHTS",),
     ),
     Deployment(
+        "proteinmpnn",
+        8049,
+        ("proteinmpnn_design",),
+        ("TOOLUNIVERSE_PROTEINMPNN_PYTHON",),
+        path_env=("TOOLUNIVERSE_PROTEINMPNN_WEIGHTS",),
+    ),
+    Deployment(
         "protenix_v1",
         8046,
         ("protenix_v1_fold",),

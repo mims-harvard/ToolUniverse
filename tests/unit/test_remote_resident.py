@@ -2228,21 +2228,47 @@ class TestTheCliAndTheGateAgree:
         assert v.declared_held_gb == 100.0
 
     def test_they_produce_the_same_verdict_for_the_same_provider(self):
-        """Not the same numbers -- the machine moves -- but the same source."""
+        """The same logic over the same numbers, not two reads of a moving host.
+
+        A first version called `admission.room_for` and then the CLI and
+        asserted the two verdicts matched. They match on a quiet box and NOT on
+        a busy one: each call reads `/proc/meminfo` at its own instant, and the
+        first time this ran while another session was loading the machine the
+        two readings straddled the reserve -- `MemFree` 1.8 GiB, a refusal on
+        one side and an admission on the other. The test was right that the two
+        should agree and wrong about what agreement means. So the CLI's OWN
+        reported figures are fed back through `decide`, which compares the
+        logic and cannot drift: if the CLI reaches a verdict its own numbers do
+        not support, that is the defect this test is for.
+        """
         import json
 
         from tooluniverse.remote_resident import admission
 
-        held = admission.machine_holdings()
-        v = admission.decide(
-            "boltz", 5.54, {k: x for k, x in held.items() if k != "boltz"}
-        )
         doc = json.loads(_run_room("--json"))
+        row = next(r for r in doc["providers"] if r["slug"] == "boltz")
+        replayed = admission.decide(
+            "boltz",
+            row["vram_budget_gb"],
+            {},
+            reserve_gb=doc["reserve_gb"],
+            mem={
+                "MemFree": doc["mem_free_gib"],
+                "MemAvailable": doc["mem_available_gib"],
+            },
+            capacity=(doc["capacity_gib"], doc["capacity_source"]),
+            co_tenants=doc["processes_on_card"],
+        )
+        assert row["fits"] == replayed.admit, (
+            f"the CLI said fits={row['fits']} where its own numbers give "
+            f"{replayed.admit}: {replayed.reason}"
+        )
+        # and the holdings both sides read come from the process table, which is
+        # the point of the pairing: a fresh CLI process has no backend state.
+        held = admission.machine_holdings()
         assert doc["declared_held_gb"] == pytest.approx(
             round(sum(x for x in held.values() if x is not None), 2), abs=0.01
         )
-        row = next(r for r in doc["providers"] if r["slug"] == "boltz")
-        assert row["fits"] == v.admit
 
 
 def _run_room(*argv):
@@ -2264,3 +2290,63 @@ def _run_room(*argv):
     finally:
         _sys.argv = old
     return out.getvalue()
+
+
+class TestACpuProviderIsZeroNotUnknown:
+    """`policy = "none"` holds no device memory, and the gate must know it.
+
+    This class exists because the opposite shipped. `_declared_budget` returned
+    the manifest's `vram_budget_gb` as-is, so a CPU provider -- whose manifest
+    legally has none -- came back None, which the gate reads as "undeclared" and
+    refuses to sum. A held proteinmpnn worker then refused every GPU provider on
+    the host: `tu remote room boltz` printed `held: {"proteinmpnn": null}` and
+    `proteinmpnn is already held without a declared budget, so what the card is
+    carrying cannot be summed`. A CPU provider is the one thing that can safely
+    be resident while the card is full, so that was exactly inverted.
+    """
+
+    def test_a_cpu_only_provider_declares_zero(self):
+        from tooluniverse.remote_resident import admission
+
+        # esm_if1 and proteinmpnn are the two `policy = "none"` providers; both
+        # are read from their real manifests, so this fails if either grows a
+        # budget without this rule being revisited.
+        for slug in ("esm_if1", "proteinmpnn"):
+            assert admission._declared_budget(slug) == 0.0, slug
+
+    def test_a_gpu_provider_still_declares_its_budget(self):
+        from tooluniverse.remote_resident import admission
+
+        assert admission._declared_budget("boltz") == 5.54
+        # and a slug with no manifest is still unknown rather than free
+        assert admission._declared_budget("not-a-provider") is None
+
+    def test_a_held_cpu_provider_does_not_block_a_gpu_one(self):
+        from tooluniverse.remote_resident import admission
+
+        v = admission.decide(
+            "boltz",
+            5.54,
+            {"proteinmpnn": 0.0, "esm_if1": 0.0},
+            mem={"MemFree": 60.0, "MemAvailable": 60.0},
+            capacity=(121.6, "test"),
+            co_tenants=0,
+        )
+        assert v.admit, v.reason
+        assert v.declared_held_gb == 0.0
+        assert "cannot be summed" not in v.reason
+
+    def test_an_undeclared_budget_still_refuses(self):
+        """The None path is the one being narrowed, not removed."""
+        from tooluniverse.remote_resident import admission
+
+        v = admission.decide(
+            "boltz",
+            5.54,
+            {"mystery": None},
+            mem={"MemFree": 60.0, "MemAvailable": 60.0},
+            capacity=(121.6, "test"),
+            co_tenants=0,
+        )
+        assert not v.admit
+        assert "mystery" in v.reason

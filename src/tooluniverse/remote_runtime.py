@@ -420,6 +420,17 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "proteinmpnn",
+        "tooluniverse.remote.proteinmpnn.proteinmpnn_tool",
+        8049,
+        ("proteinmpnn_design",),
+        ("TOOLUNIVERSE_PROTEINMPNN_PYTHON",),
+        ("TOOLUNIVERSE_PROTEINMPNN_WEIGHTS",),
+        # `policy = "none"`: no card is required and none is used, which is why
+        # this one can be resident while every other provider is.
+        gpu_policy="none",
+    ),
+    RemoteDeployment(
         "protenix_v1",
         "tooluniverse.remote.protenix_v1.protenix_v1_tool",
         8046,

@@ -128,6 +128,16 @@ _SECTIONS = {
         "sparse",
         "mode",
         "levers_declined",
+        # The complement of `levers_declined`, for a provider that keeps a
+        # strict SUBSET of a mode's levers. Documentation, like
+        # `levers_declined`: nothing reads it at launch. proteinmpnn is the
+        # first to need it -- it declines every lever of the kit's `exact` line
+        # on a measured timing and keeps the one lever with no device in it
+        # (`fast_parse`, the read-once PDB parser), which its launcher refuses
+        # to start without. A declined list alone would read as "the kit is
+        # inert here", which is the conclusion that was wrong about this kit
+        # twice.
+        "levers_kept",
         "levers_off",
         "install",
         "package",
