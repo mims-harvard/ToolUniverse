@@ -94,7 +94,7 @@ import tooluniverse.your_tool_module
 assert "YourToolClass" in get_tool_registry()
 
 # Step 2: Config registered
-from tooluniverse.default_config import TOOLS_CONFIGS
+from tooluniverse.default_config import default_tool_files
 assert "your_category" in TOOLS_CONFIGS
 
 # Step 3: Wrappers generated

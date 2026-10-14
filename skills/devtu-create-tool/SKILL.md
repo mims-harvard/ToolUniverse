@@ -36,7 +36,7 @@ One class handles multiple operations. JSON defines individual wrappers. Need BO
 
 **Step 2** (MOST COMMONLY MISSED): Config registration in `default_config.py`:
 ```python
-TOOLS_CONFIGS = {
+default_tool_files = {
     "my_category": os.path.join(current_dir, "data", "my_category_tools.json"),
 }
 ```
@@ -66,8 +66,8 @@ Commit the generated `_lazy_registry_static.py` change. Do not append entries by
 
 ```python
 from typing import Dict, Any
-from tooluniverse.tool import BaseTool
-from tooluniverse.tool_utils import register_tool
+from tooluniverse.base_tool import BaseTool
+from tooluniverse.tool_registry import register_tool
 import requests
 
 @register_tool("MyAPITool")
@@ -113,7 +113,7 @@ class MyAPITool(BaseTool):
 [
   {
     "name": "MyAPI_search",
-    "class": "MyAPITool",
+    "type": "MyAPITool",
     "description": "Search items. Returns array of results. Supports Boolean operators. Example: 'protein AND membrane'.",
     "parameter": {
       "type": "object",
@@ -204,8 +204,8 @@ import sys; sys.path.insert(0, 'src')
 from tooluniverse.tool_registry import get_tool_registry
 import tooluniverse.your_tool_module
 assert 'YourToolClass' in get_tool_registry(), 'Step 1 FAILED'
-from tooluniverse.default_config import TOOLS_CONFIGS
-assert 'your_category' in TOOLS_CONFIGS, 'Step 2 FAILED'
+from tooluniverse.default_config import default_tool_files
+assert 'your_category' in default_tool_files, 'Step 2 FAILED'
 from tooluniverse import ToolUniverse
 tu = ToolUniverse(); tu.load_tools()
 assert hasattr(tu.tools, 'YourCategory_op1'), 'Step 3 FAILED'
