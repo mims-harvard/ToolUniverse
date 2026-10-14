@@ -101,7 +101,8 @@
                       "residue_name",
                       "pka",
                       "close_SG_pair",
-                      "eligible_for_acid_base_interpretation"
+                      "eligible_for_acid_base_interpretation",
+                      "declared_disulfide"
                     ],
                     "properties": {
                       "chain": {
@@ -127,6 +128,9 @@
                         "type": "boolean"
                       },
                       "eligible_for_acid_base_interpretation": {
+                        "type": "boolean"
+                      },
+                      "declared_disulfide": {
                         "type": "boolean"
                       }
                     }

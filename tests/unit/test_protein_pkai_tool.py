@@ -25,7 +25,7 @@ def tool():
 def fake_worker(monkeypatch, mutate=None):
     def run(argv, **kwargs):
         request = json.loads(Path(argv[-2]).read_text())
-        expected, _, _ = _inventory(Path(request["pdb_path"]).read_text())
+        expected, _, _, _ = _inventory(Path(request["pdb_path"]).read_text())
         groups = [
             dict(chain=c, residue_number=n, residue_name=r, pka=6.5)
             for c, n, r in expected
@@ -176,7 +176,7 @@ def test_close_sg_pairs_are_geometry_flags_not_valid_ionization():
     def atom(serial, chain, number, x):
         return f"ATOM  {serial:5d}  SG  CYS {chain}{number:4d}    {x:8.3f}{0.0:8.3f}{0.0:8.3f}  1.00 20.00           S"
 
-    expected, close, _ = _inventory(
+    expected, close, _, _ = _inventory(
         atom(1, "A", 1, 0) + "\n" + atom(2, "B", 2, 2.05) + "\n"
     )
     assert len(expected) == 2 and close == {("A", 1), ("B", 2)}
@@ -198,3 +198,45 @@ def test_real_public_ubiquitin_model(variant):
     )
     assert not data["complete_protein_ionization_inventory"]
     assert len(data["backend"]["checkpoint_sha256"]) == 64
+
+
+def ssbond(chain1, number1, chain2, number2):
+    # wwPDB fixed-column annotation; parser-only test input.
+    line = list(" " * 80)
+    line[:6] = "SSBOND"
+    line[11:14] = "CYS"
+    line[15] = chain1
+    line[17:21] = f"{number1:4d}"
+    line[25:28] = "CYS"
+    line[29] = chain2
+    line[31:35] = f"{number2:4d}"
+    return "".join(line)
+
+
+def test_declared_disulfide_masks_cys_without_close_coordinates(monkeypatch):
+    # Reuse a public backbone; this is mocked annotation handling, not model evidence.
+    lines = PDB.read_text().splitlines()
+    changed = []
+    for line in lines:
+        if line.startswith("ATOM  ") and line[21] == "A" and int(line[22:26]) == 1:
+            line = line[:17] + "CYS" + line[20:]
+            if line[12:16].strip() == "SD":
+                line = line[:12] + " SG " + line[16:]
+        changed.append(line)
+    content = ssbond("A", 1, "B", 99) + "\n" + "\n".join(changed)
+    fake_worker(monkeypatch)
+    result = tool().run({"pdb_content": content})
+    assert result["status"] == "success", result
+    cys = next(x for x in result["data"]["groups"] if x["residue_name"] == "CYS")
+    assert cys["declared_disulfide"] and not cys["close_SG_pair"]
+    assert not cys["eligible_for_acid_base_interpretation"]
+    jsonschema.validate(result, CONFIG["return_schema"])
+
+
+@pytest.mark.parametrize(
+    "annotation",
+    ["SSBOND", ssbond("A", 1, "B", 2)[:21] + "A" + ssbond("A", 1, "B", 2)[22:]],
+)
+def test_ambiguous_disulfide_annotations_are_not_silently_ignored(annotation):
+    with pytest.raises(ValueError, match="SSBOND"):
+        _inventory(annotation + "\n" + PDB.read_text())

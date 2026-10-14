@@ -26,7 +26,7 @@ LIMITATIONS = [
     "pKAI and pKAI+ are correlated variants of one learned model family, not experiments.",
     "ARG, N-termini and C-termini are not predicted by the supported backend; "
     "this is never a complete protein ionization inventory or a full pH binding cycle.",
-    "Close SG pairs are flagged as potentially disulfide-bonded; their CYS predictions "
+    "Close SG pairs and explicit SSBOND annotations flag cysteines; their raw CYS predictions "
     "are not eligible for acid-base interpretation without chemistry review.",
     "Only observed backbone bonds and required ionizing atoms are checked; no full "
     "side-chain, peptide, stereochemical, collision, glycan or conformational validation.",
@@ -38,9 +38,18 @@ LIMITATIONS = [
 
 def _inventory(content):
     residues, segments = {}, {}
+    declared = set()
     segment = 0
     hetero = 0
     for line in content.splitlines():
+        if line.startswith("SSBOND"):
+            if len(line) < 36:
+                raise ValueError("Truncated SSBOND annotation")
+            if line[21].strip() or line[35].strip():
+                raise ValueError("SSBOND insertion codes require explicit renumbering")
+            declared.update(
+                [(line[15], int(line[17:21])), (line[29], int(line[31:35]))]
+            )
         if line.startswith("TER"):
             segment += 1
         if line.startswith("HETATM"):
@@ -93,7 +102,7 @@ def _inventory(content):
         for second, b in cysteines[i + 1 :]:
             if math.dist(a, b) <= 2.3:
                 close.update([first, second])
-    return sorted(expected), close, hetero
+    return sorted(expected), close, hetero, declared
 
 
 @register_tool("ProteinPKAITool")
@@ -132,7 +141,7 @@ class ProteinPKAITool(BaseTool):
             if resolved is None:
                 raise ValueError("python_executable was not found")
             content, kind, digest = _read_pdb(arguments)
-            expected, close, hetero = _inventory(content)
+            expected, close, hetero, declared = _inventory(content)
             geometry = _backbone_geometry(content)
             if geometry["missing_N_CA_C_O_atoms"]:
                 raise ValueError("Complete observed N, CA, C and O atoms are required")
@@ -176,9 +185,10 @@ class ProteinPKAITool(BaseTool):
                     raise ValueError("Nonfinite pKAI prediction")
                 actual.append(key)
                 group["close_SG_pair"] = key[:2] in close
-                group["eligible_for_acid_base_interpretation"] = not group[
-                    "close_SG_pair"
-                ]
+                group["declared_disulfide"] = key[2] == "CYS" and key[:2] in declared
+                group["eligible_for_acid_base_interpretation"] = not (
+                    group["close_SG_pair"] or group["declared_disulfide"]
+                )
             if len(actual) != len(set(actual)) or sorted(actual) != expected:
                 raise ValueError(
                     "pKAI returned duplicate, missing or unexpected side-chain groups"
@@ -193,6 +203,9 @@ class ProteinPKAITool(BaseTool):
                 unsupported_groups=["ARG", "N+", "C-"],
                 close_SG_cysteines=[
                     {"chain": c, "residue_number": n} for c, n in sorted(close)
+                ],
+                declared_disulfide_cysteines=[
+                    {"chain": c, "residue_number": n} for c, n in sorted(declared)
                 ],
                 ignored_HETATM_records=hetero,
                 limitations=LIMITATIONS,
