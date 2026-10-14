@@ -127,6 +127,13 @@ DEPLOYMENTS = (
         path_env=("CHROMBPNET_MODEL_PATH",),
     ),
     Deployment(
+        "colabdesign",
+        8054,
+        ("colabdesign_design",),
+        ("TOOLUNIVERSE_COLABDESIGN_PYTHON",),
+        path_env=("COLABDESIGN_PARAMS_DIR",),
+    ),
+    Deployment(
         "colabfold",
         8051,
         ("colabfold_predict",),
@@ -270,6 +277,13 @@ DEPLOYMENTS = (
         ("mosaic_design_binder",),
         ("TOOLUNIVERSE_MOSAIC_PYTHON",),
         path_env=("MOSAIC_CACHE_DIR",),
+    ),
+    Deployment(
+        "opendde",
+        8058,
+        ("opendde_fold",),
+        ("TOOLUNIVERSE_OPENDDE_PYTHON",),
+        path_env=("OPENDDE_ROOT_DIR",),
     ),
     Deployment(
         "openfold3",

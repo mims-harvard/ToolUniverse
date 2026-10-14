@@ -167,6 +167,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="recommended",
     ),
     RemoteDeployment(
+        "colabdesign",
+        "tooluniverse.remote.colabdesign.colabdesign_tool",
+        8054,
+        ("colabdesign_design",),
+        ("TOOLUNIVERSE_COLABDESIGN_PYTHON",),
+        ("COLABDESIGN_PARAMS_DIR",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "colabfold",
         "tooluniverse.remote.colabfold.colabfold_tool",
         8051,
@@ -356,6 +365,15 @@ REMOTE_DEPLOYMENTS = (
         ("mosaic_design_binder",),
         ("TOOLUNIVERSE_MOSAIC_PYTHON",),
         ("MOSAIC_CACHE_DIR",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "opendde",
+        "tooluniverse.remote.opendde.opendde_tool",
+        8058,
+        ("opendde_fold",),
+        ("TOOLUNIVERSE_OPENDDE_PYTHON",),
+        ("OPENDDE_ROOT_DIR",),
         gpu_policy="required",
     ),
     RemoteDeployment(

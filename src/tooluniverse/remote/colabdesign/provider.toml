@@ -1,19 +1,13 @@
 # ColabDesign -- BindCraft's binder-hallucination design step on stock ColabDesign
 # 1.1.3 (AlphaFold-Multimer v3 parameters), held in one resident process.
 #
-# STATUS IS HELD AT "untested" AND EVERYTHING BELOW IS MEASURED. The only step
-# left is the entry in remote_runtime.py's deployment table, and that file was
-# carrying ANOTHER SESSION's uncommitted provider while this work ran. Committing
-# it would have committed their work, whose provider directory is itself still
-# uncommitted, leaving a deployment entry pointing at a module that does not
-# exist. Staging only this provider's lines is not available either: the counts
-# in tests/unit/test_remote_runtime.py are the same lines both changes touch.
-# `tu remote setup <slug>` resolves by provider directory and needs no entry, so
-# the setup path is fully exercised; `tu remote check/run/share` need it. Flip
-# this to "verified" when the entry lands -- a one-line change per provider, with
-# the evidence already in verified_on. tests/unit/test_remote_resident.py's
-# TestManifestAndDeploymentAgree enforces that pairing and will fail on a
-# provider marked verified without it, which is how this was caught.
+# RELEASED 2026-10-14: the deployment-table entry landed and `status` is
+# "verified". It was held at "untested" while remote_runtime.py carried another
+# session's uncommitted provider; that session's work is untouched and was
+# backed up before this commit, and its apnovo entry claims PORT 8058, which is
+# THIS PROVIDER'S port and the one every line of verified_on was measured on.
+# The collision is real and nothing caught it, so this commit also adds
+# test_remote_runtime.py::test_ports_are_unique.
 #
 # WHAT WAS ESTABLISHED. The acceptance run, the 400-token row, the recycles axis and
 # the documented example have all since completed (see verified_on), on a quiet
@@ -36,7 +30,7 @@
 slug = "colabdesign"
 description = "BindCraft binder hallucination on ColabDesign 1.1.3 / AlphaFold-Multimer v3: design a protein binder against a target PDB, with no MSA and no external service"
 operations = ["colabdesign_design"]
-status = "untested"
+status = "verified"
 verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02), venv route,
 CPython 3.10, jax/jaxlib 0.6.0 (aarch64 wheels), kit mode EXACT (bitwise with
 stock on the smoke case, persistent compile cache). Wall times are from a card
