@@ -31,6 +31,13 @@
           ],
           "description": "Maximum characters returned per clinical section (default: 2000, 0 = no limit). Sections longer than this are cut and the response then carries top-level 'truncated': true plus 'truncation_note' naming the affected sections. Raise this value to retrieve longer sections; note that a 20-result search at a high limit returns a very large response.",
           "default": 2000
+        },
+        "route": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional route of administration of the product whose label you want, as openFDA names it (case-insensitive), for example ORAL, TOPICAL, OPHTHALMIC, INTRAVENOUS, INTRAMUSCULAR, SUBCUTANEOUS, RECTAL, NASAL, TRANSDERMAL, VAGINAL, SUBLINGUAL, RESPIRATORY (INHALATION) or AURICULAR (OTIC). One name often covers products of several routes (atropine: injection, eye drops, and combination tablets); without a route the tool returns whichever labels openFDA lists first. A label whose openFDA block names no route is matched when its description or carton text names the route. An unknown route is rejected with the full list."
         }
       },
       "required": []
@@ -168,6 +175,13 @@
           ],
           "description": "Maximum characters returned per clinical section (default: 25000, 0 = no limit). Sections longer than this are cut and the response then carries top-level 'truncated': true plus 'truncation_note' naming the affected sections. Raise this value (or pass 0) to retrieve those sections in full; a complete label is roughly 50-110 KB of text.",
           "default": 25000
+        },
+        "route": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional route of administration of the product whose label you want, as openFDA names it (case-insensitive), for example ORAL, TOPICAL, OPHTHALMIC, INTRAVENOUS, INTRAMUSCULAR, SUBCUTANEOUS, RECTAL, NASAL, TRANSDERMAL, VAGINAL, SUBLINGUAL, RESPIRATORY (INHALATION) or AURICULAR (OTIC). One name often covers products of several routes (atropine: injection, eye drops, and combination tablets); without a route the tool returns whichever labels openFDA lists first. A label whose openFDA block names no route is matched when its description or carton text names the route. An unknown route is rejected with the full list."
         }
       },
       "required": [
