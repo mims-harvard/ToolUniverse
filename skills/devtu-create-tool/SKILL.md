@@ -119,15 +119,15 @@ class MyAPITool(BaseTool):
       "type": "object",
       "required": ["operation", "query"],
       "properties": {
-        "operation": {"const": "search", "description": "Operation (fixed)"},
+        "operation": {"type": "string", "const": "search", "description": "Operation (fixed)"},
         "query": {"type": "string", "description": "Search term"},
         "limit": {"type": ["integer", "null"], "description": "Max results (1-100)"}
       }
     },
     "return_schema": {
       "oneOf": [
-        {"type": "object", "properties": {"data": {"type": "array"}}},
-        {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        {"type": "object", "properties": {"status": {"const": "success"}, "data": {"type": "array"}}, "required": ["status", "data"]},
+        {"type": "object", "properties": {"status": {"const": "error"}, "error": {"type": "string"}}, "required": ["status", "error"]}
       ]
     },
     "test_examples": [{"operation": "search", "query": "protein", "limit": 10}]
@@ -143,7 +143,7 @@ class MyAPITool(BaseTool):
 - **Description 150-250 chars**: what, format, example, notes
 - **NEVER raise in run()**: return `{"status": "error", "error": "..."}`
 - **Set timeout** on all HTTP requests (30s)
-- **Standard response**: `{"status": "success|error", "data": {...}}`
+- **Standard response**: success `{"status": "success", "data": ...}`; failure `{"status": "error", "error": "..."}`. Envelope schemas declare `status` and require the appropriate payload; do not nest a `data` property in a payload-only schema.
 
 ---
 

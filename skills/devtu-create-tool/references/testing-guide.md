@@ -80,7 +80,7 @@ Commit the sorted generated `_lazy_registry_static.py` diff. This test catches s
 | Schema Mismatch | Response doesn't match return_schema | Update schema |
 | "None is not of type 'integer'" | Non-nullable mutually exclusive param | Use `["integer", "null"]` |
 | Exception | Code bug | Check error, fix implementation |
-| Tool not found | Missing default_config.py entry | Add category to TOOLS_CONFIGS |
+| Tool not found | Missing default_config.py entry | Add category to default_tool_files |
 
 ## Verification Script
 
@@ -95,7 +95,7 @@ assert "YourToolClass" in get_tool_registry()
 
 # Step 2: Config registered
 from tooluniverse.default_config import default_tool_files
-assert "your_category" in TOOLS_CONFIGS
+assert "your_category" in default_tool_files
 
 # Step 3: Wrappers generated
 from tooluniverse import ToolUniverse
