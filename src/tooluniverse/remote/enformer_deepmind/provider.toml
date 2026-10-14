@@ -63,6 +63,11 @@ outputs = []
 output_keys = ["centre"]
 smoke = "smoke/input.txt"
 smoke_timeout_s = 1800.0
+# WHY THIS PROVIDER WANTS NO SHAPER in `verify_provider.py`. Its cost is FLAT in
+# the input: every request is centre-cropped or N-padded to 393,216 bases, so an
+# 8 kb sequence and a 393 kb one cost the same ~200 s. A ladder over input
+# length would scale nothing and measure nothing. Repeats are the right test
+# here, which is what a provider with no shaper gets.
 
 [gpu]
 # `policy = "none"` IS A MEASUREMENT, not a preference, and it is read off the

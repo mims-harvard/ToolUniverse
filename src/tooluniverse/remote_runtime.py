@@ -124,6 +124,23 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="recommended",
     ),
     RemoteDeployment(
+        "borzoi_calico",
+        "tooluniverse.remote.borzoi_calico.borzoi_calico_tool",
+        8061,
+        ("run_borzoi_calico_sad",),
+        (
+            "TOOLUNIVERSE_BORZOI_CALICO_PYTHON",
+            "BORZOI_DIR",
+            "BASKERVILLE_DIR",
+        ),
+        ("BORZOI_CALICO_WEIGHTS",),
+        # `policy = "none"`: TensorFlow publishes no GPU-capable aarch64 wheel at
+        # any version, so this reserves no VRAM and is admitted while the card is
+        # full. Not a replacement for `borzoi` above -- a different operation
+        # (upstream's SAD statistics from coordinates, against pinned hg38).
+        gpu_policy="none",
+    ),
+    RemoteDeployment(
         "cell2location",
         "tooluniverse.remote.cell2location.cell2location_tool",
         8019,

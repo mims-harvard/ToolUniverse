@@ -92,6 +92,17 @@ DEPLOYMENTS = (
     ),
     Deployment("borzoi", 8012, ("run_borzoi_predict", "run_borzoi_variant_effect")),
     Deployment(
+        "borzoi_calico",
+        8061,
+        ("run_borzoi_calico_sad",),
+        (
+            "TOOLUNIVERSE_BORZOI_CALICO_PYTHON",
+            "BORZOI_DIR",
+            "BASKERVILLE_DIR",
+        ),
+        path_env=("BORZOI_CALICO_WEIGHTS",),
+    ),
+    Deployment(
         "cell2location",
         8019,
         ("run_cell2location_deconvolution",),

@@ -139,6 +139,51 @@ is one dependency-free file (`remote_resident/protocol.py`) loaded by path.
    mode>` costs one command, needs no weights, and prints the refusal. Then ask
    it of *stock*, which is the row the table had been missing.
 
+23. **A wheel that installs and contains nothing.** `tensorflow==2.15.1` has an
+   aarch64 wheel on PyPI; its RECORD is **six lines of dist-info** and
+   `Requires-Dist: tensorflow-cpu-aws ==2.15.1 ; platform_machine == "aarch64"`
+   hands the real library to another distribution of the same version. With
+   `--no-deps` -- which is how every lock on this standard installs -- that
+   redirect is never followed, so the install succeeds, `pip list` shows
+   `tensorflow 2.15.1`, and `import tensorflow` raises `ModuleNotFoundError`.
+   A gate that asks "does an aarch64 wheel of this exact version exist" answers
+   yes and is useless. Read `info.requires_dist` from the same PyPI JSON you
+   already fetched and flag a platform-gated redirect to another name; the fix
+   is to keep the pin and add that name beside it. At 2.17.1 the same project's
+   aarch64 wheel is the real library (13,509 RECORD lines), so this is per
+   version, not per project.
+
+24. **Reading the pinned command instead of the option table it binds to.** The
+   kit records borzoi's pinned invocation as `-u`, which reads as
+   "untransform". `-u` is declared `dest='untransform_old'` with no help string
+   (`borzoi_sad.py:98-103`), so the pinned run takes `untransform_preds1`, not
+   `untransform_preds` -- a different function, different numbers. Two more in
+   the same 500-line script: `--stats` and `--shifts` are both converted from
+   strings to **lists** before use (`:158-159`), so passing the comma-joined
+   string to stock's own writer makes `for sad_stat in sad_stats` iterate
+   CHARACTERS and die on the second `S` with "name already exists", while
+   passing `--shifts` as a bare int makes `build_ensemble` raise on `len()` --
+   and that raise is the good case, because a signature that accepted it would
+   have scored every variant without the reverse-complement average the pinned
+   command asks for. And one the gate cannot see at all:
+   `sum_length = (options.sad_stats == 'SAD')` at `:210` compares the already
+   split **list** against a **string**, so it is always False, `build_sad()` is
+   dead, and `write_snp_len` always runs. **Reproduce that bug rather than
+   fixing it** -- the provider's claim is that it answers what stock answers --
+   and note that no output comparison could have found it, because the pinned
+   stats make the bug and a corrected version agree. Read the option table and
+   the conversions; the command line is a summary, not the behaviour.
+
+25. **Being the load you launched a measurement to escape.** Three borzoi pairs
+   gave 1.19x, 0.97x and 1.01x while the host's load climbed 7.79 -> 22.88, so I
+   started a balanced-order repeat to cancel the drift -- and then started the
+   provider's acceptance run beside it, two 600-850 % CPU TensorFlow processes
+   competing, which is the same contamination with me as its source. **Before
+   timing anything, check `/proc/loadavg` AND your own background jobs, and
+   serialise them.** The within-mode spread across nine runs (42-50 s) stayed
+   larger than the between-mode difference (15 s), so the honest answer is "no
+   ratio established" -- which is a result, and is what the provider records.
+
 ## What eight verified providers cost, and where the time went
 
 Every figure measured on one GB10 (aarch64, cc 12.1), held worker, steady state. "cold → warm" is
