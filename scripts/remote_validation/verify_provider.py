@@ -36,6 +36,7 @@ Run it from the repository root.
 import argparse
 import json
 import os
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -500,6 +501,40 @@ def _mosaic_design(text, n):
     return json.dumps(doc)
 
 
+def _boltz_msa_mode(text):
+    """The smoke's single-sequence line dropped, so the MSA server is used."""
+    kept = [line for line in text.splitlines() if line.strip() != "msa: empty"]
+    if len(kept) == len(text.splitlines()):
+        raise ValueError(
+            "boltz msa mode: the smoke no longer carries `msa: empty`, so this "
+            "transform does not know what to drop -- re-derive it from the smoke"
+        )
+    return "\n".join(kept) + "\n"
+
+
+# A provider whose ACCURACY depends on a mode the smoke does not exercise
+# declares that mode here, and a run that skips it is INCOMPLETE.
+#
+# Measured for boltz on five PDB entries released after every model's training
+# cutoff, two of them with no pre-2024 PDB relative at >=20% identity: mean
+# TM-score to the experiment 0.960 through the MSA server and 0.637 without it,
+# with one 180-residue target at 0.197 -- which is what two unrelated proteins
+# score. The smoke, every ladder rung and every repeat run `msa: empty`, so
+# four green repeats certify the configuration no user should choose. The
+# provider's own pLDDT reports the collapse honestly (rho 0.99 against measured
+# TM over both modes), so this case asserts a record came back at all; grading
+# the geometry is a benchmark's job, not an acceptance test's.
+MODES = {
+    "boltz": [
+        {
+            "label": "msa server",
+            "transform": _boltz_msa_mode,
+            "options": {"use_msa_server": True},
+            "network": True,
+        }
+    ],
+}
+
 SHAPERS = {
     "mosaic": _mosaic_design,
     "protenix_v1": lambda x, n: _json_seq(
@@ -539,6 +574,12 @@ def main() -> int:
     ap.add_argument("slug")
     ap.add_argument("--lengths", default="100,200,400,800")
     ap.add_argument("--repeats", type=int, default=4)
+    ap.add_argument(
+        "--no-network",
+        action="store_true",
+        help="skip declared modes that need a service off this host; the run "
+        "then reports INCOMPLETE rather than a pass",
+    )
     a = ap.parse_args()
 
     root = Path(__file__).resolve().parents[2] / "src" / "tooluniverse" / "remote"
@@ -556,7 +597,7 @@ def main() -> int:
     w.request_timeout_s = m.smoke_timeout_s
     w.start_timeout_s = max(w.start_timeout_s, m.smoke_timeout_s)
 
-    def ask(label, payload, name):
+    def ask(label, payload, name, options=None):
         t0 = time.time()
         try:
             r = w.request(
@@ -566,7 +607,7 @@ def main() -> int:
                     "out_dir": str(out / name),
                     "name": name,
                     "seed": 0,
-                    "options": {},
+                    "options": dict(options or {}),
                 }
             )["result"]
         except Exception as exc:
@@ -613,6 +654,31 @@ def main() -> int:
         if ask(f"repeat {i}", text, f"r{i}") is not None:
             ok += 1
     print(f"   -> {ok}/{a.repeats} answered")
+
+    modes = MODES.get(a.slug, [])
+    modes_rc = 0
+    if modes:
+        print("-- declared modes the smoke does not exercise")
+        for mode in modes:
+            label = mode["label"]
+            if mode.get("network") and a.no_network:
+                print(
+                    f"  {'mode ' + label:22} SKIPPED (--no-network): this run "
+                    f"is INCOMPLETE, and {a.slug} is only verified in the "
+                    f"mode its smoke runs"
+                )
+                modes_rc = max(modes_rc, 2)
+                continue
+            name = "mode_" + label.replace(" ", "_")
+            # Start clean, or the case cannot fail. process_inputs skips a
+            # record its processed tree already holds, so a second run over a
+            # previous run's directory answers in 0.05 s WITHOUT calling the
+            # service this case exists to exercise -- measured, with the mode
+            # pointed at a server that could not answer and passing anyway.
+            shutil.rmtree(out / name, ignore_errors=True)
+            if ask(f"mode {label}", mode["transform"](text), name, mode["options"]) is None:
+                modes_rc = max(modes_rc, 1)
+
     if not shaper:
         print(
             f"!! NO SHAPER FOR {a.slug}: this run is INCOMPLETE, and not "
@@ -627,9 +693,15 @@ def main() -> int:
         )
 
     w.stop(grace_s=60)
+    # A failure outranks an incompleteness, and boltz is why: it has a declared
+    # mode and no shaper, so returning 2 for the missing shaper first would
+    # report a mode that FAILED as merely unestablished.
+    if ok != a.repeats or modes_rc == 1:
+        return 1
     if not shaper:
         return 2
-    return 0 if ok == a.repeats else 1
+    # A skipped mode leaves the run incomplete.
+    return modes_rc
 
 
 if __name__ == "__main__":

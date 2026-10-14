@@ -36,6 +36,7 @@ import argparse
 import json
 import os
 import random
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -309,40 +310,80 @@ def _predict_one(req: dict) -> dict:
 
     timing = {}
     t = time.time()
-    parsed = PREP.parse(
-        str(yaml_path),
-        str(item_out),
-        str(CCD_PATH),
-        str(MOL_DIR),
-        boltz2=True,
-        use_msa_server=bool(opts.get("use_msa_server", False)),
-        msa_server_url=opts.get("msa_server_url", "https://api.colabfold.com"),
-        msa_pairing_strategy=opts.get("msa_pairing_strategy", "greedy"),
-        preprocessing_threads=int(opts.get("preprocessing_threads", 1)),
-        max_msa_seqs=int(opts.get("max_msa_seqs", 8192)),
-    )
-    sys.stdout.write(parsed.out)
-    sys.stderr.write(parsed.err)
-    sys.stdout.flush()
-    sys.stderr.flush()
-    timing["process_inputs_s"] = round(time.time() - t, 2)
-    if parsed.rc != 0:
-        raise RuntimeError(
-            f"parsing {yaml_path} in the zygote's child failed (rc {parsed.rc}); "
-            f"its traceback is above"
-        )
-
-    # The zygote's child wrote boltz's processed tree; assemble the same
-    # BoltzProcessedInput stock's own predict() hands the data module.
+    use_msa_server = bool(opts.get("use_msa_server", False))
+    # A fetch from the MSA server is the one part of parsing that fails for a
+    # reason retrying can fix. Measured: one of six fetches of real targets
+    # answered with a body that is not a tar at all ("not a gzip file ...
+    # truncated header"), process_inputs caught it, printed "Failed to process
+    # ... Skipping." and left the record out, and the SAME input parsed on the
+    # next attempt. Without this loop that request is simply lost.
+    attempts = max(1, int(opts.get("msa_server_attempts", 3)))
+    # Doubling, and short: the observed failure was a bad response, not a queue
+    # to wait out. Both sleeps fit inside request_timeout_s with the fold.
+    backoff_s = float(opts.get("msa_server_backoff_s", 5.0))
     pdir = item_out / "processed"
-    manifest = Manifest.load(pdir / "manifest.json")
-    if stem not in [r.id for r in manifest.records]:
+    attempt = 0
+    while True:
+        attempt += 1
+        parsed = PREP.parse(
+            str(yaml_path),
+            str(item_out),
+            str(CCD_PATH),
+            str(MOL_DIR),
+            boltz2=True,
+            use_msa_server=use_msa_server,
+            msa_server_url=opts.get("msa_server_url", "https://api.colabfold.com"),
+            msa_pairing_strategy=opts.get("msa_pairing_strategy", "greedy"),
+            preprocessing_threads=int(opts.get("preprocessing_threads", 1)),
+            max_msa_seqs=int(opts.get("max_msa_seqs", 8192)),
+        )
+        sys.stdout.write(parsed.out)
+        sys.stderr.write(parsed.err)
+        sys.stdout.flush()
+        sys.stderr.flush()
+        if parsed.rc != 0:
+            raise RuntimeError(
+                f"parsing {yaml_path} in the zygote's child failed (rc {parsed.rc}); "
+                f"its traceback is above"
+            )
+
+        # The zygote's child wrote boltz's processed tree; assemble the same
+        # BoltzProcessedInput stock's own predict() hands the data module.
+        manifest = Manifest.load(pdir / "manifest.json")
+        if stem in [r.id for r in manifest.records]:
+            break
+
         # process_inputs catches its own parse error, prints "Failed to process
         # ... Skipping." and leaves the record out. Nothing reached the model.
-        raise ValueError(
-            f"the stock parser skipped {stem}: no record in the manifest "
-            f"(its own words are above)"
+        # Only a failure that got as far as the server is worth another go: a
+        # malformed YAML or an unknown ligand is refused BEFORE "Calling MSA
+        # server" is printed and fails identically every time, so retrying it
+        # would treble the wait and bury the reason.
+        reached_server = "Calling MSA server" in (parsed.out + parsed.err)
+        if not (use_msa_server and reached_server) or attempt >= attempts:
+            raise ValueError(
+                f"the stock parser skipped {stem}: no record in the manifest "
+                f"(its own words are above)"
+                + (
+                    f" -- {attempt} attempts, each of which reached the MSA "
+                    f"server at {opts.get('msa_server_url', 'https://api.colabfold.com')}"
+                    if use_msa_server and reached_server
+                    else ""
+                )
+            )
+        # The failed attempt left a half-written processed tree, and its msa/
+        # directory is what the next parse would read instead of fetching.
+        shutil.rmtree(item_out, ignore_errors=True)
+        item_out.mkdir(parents=True, exist_ok=True)
+        wait = backoff_s * (2 ** (attempt - 1))
+        print(
+            f"[boltz] the MSA server fetch for {stem} produced no record "
+            f"(attempt {attempt}/{attempts}); retrying in {wait:.0f}s",
+            flush=True,
         )
+        time.sleep(wait)
+    timing["process_inputs_s"] = round(time.time() - t, 2)
+    timing["process_inputs_attempts"] = attempt
     processed = BoltzProcessedInput(
         manifest=manifest,
         targets_dir=pdir / "structures",

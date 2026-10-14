@@ -8,15 +8,19 @@
 slug = "boltz"
 description = "Boltz-2 protein-ligand co-folding with an affinity pass"
 operations = ["boltz2_docking"]
-# "verified" is a claim about hardware, so it names the hardware. Every number
-# in this file was measured there; on anything else they are a reference to
-# re-measure against, not a prediction. See STANDARD.md section 9.
+# "verified" is a claim about hardware AND about mode, so it names both. Every
+# number in this file was measured there; on anything else they are a reference
+# to re-measure against, not a prediction. See STANDARD.md section 9.
 status = "verified"
 verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02).
 All three execution routes, same peak reserved 3.21 GiB on the same input:
 venv 15 s, docker 13 s, apptainer 22 s. The apptainer run was SingularityCE
 4.1.1, not Linux Foundation Apptainer -- Ubuntu 24.04 packages that one and
-upstream Apptainer publishes no aarch64 build."""
+upstream Apptainer publishes no aarch64 build. Both modes: the smoke's
+`msa: empty`, and `use_msa_server` against api.colabfold.com, which is the one
+a user should choose -- single-sequence mean TM-score to experiment was 0.637
+against 0.960 with the server, on five PDB entries released after every model's
+cutoff, so a pass in the smoke's mode alone does not verify this provider."""
 
 [runtime]
 mode = "resident"

@@ -540,6 +540,29 @@ Therefore:
   Everything else is `untested`: installable, and said so. `[provider] status =
   "verified"` must carry `verified_on` naming that hardware — a bare "verified"
   claims every machine.
+- **`verified` is per MODE as well as per machine**, and a mode the smoke does
+  not run is not verified by it. The smoke is deliberately chosen to need
+  nothing off the host, which is right for an install gate and makes it, for
+  some providers, the one configuration a user must not choose.
+
+  *Evidence:* measured for boltz on five PDB entries released after every
+  model's training cutoff, two of them with no pre-2024 PDB relative at ≥20%
+  identity. Mean TM-score to the experiment was 0.960 through the MSA server
+  and 0.637 in the `msa: empty` mode the smoke runs, with one 180-residue
+  target at 0.197 — what two unrelated proteins score. The smoke, every ladder
+  rung and every repeat run `msa: empty`, so four green repeats certified
+  precisely the mode that does not work, and the harness had never fetched an
+  MSA at all. A provider with such a mode declares it in
+  `verify_provider.py`'s `MODES`, and a run that skips it (`--no-network`)
+  exits 2 — INCOMPLETE — rather than 0.
+
+  This is the second tier above failing in the other direction: the smoke is
+  `checkable`, and what it checks is not what the provider is for. Nothing
+  here grades geometry — that is a benchmark's job — but an accuracy that
+  collapses between two modes is a property of the deployment, so the
+  acceptance test has to enter both. ESMFold2 is the counter-case worth
+  keeping in view: it needs no MSA by construction, scored 0.953 on the same
+  five targets, and its smoke is its only mode.
 
 ---
 
