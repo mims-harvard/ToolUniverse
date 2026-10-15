@@ -266,11 +266,13 @@ class Engine:
             return self._generate(req)
         if task == "resequence":
             return self._resequence(req)
+        if task == "ingest_folded":
+            return self._ingest_folded(req)
         if task == "evaluate":
             return self._evaluate(req)
         raise ValueError(
             f"unknown task {task!r}; this worker serves validate_motif, "
-            f"generate, resequence and evaluate"
+            f"generate, resequence, ingest_folded and evaluate"
         )
 
     # -- tasks ------------------------------------------------------------
@@ -627,6 +629,140 @@ class Engine:
             ),
         }
 
+    # Upstream's own filename rules, read from
+    # `alphaprotein_novo/data/design_manifest.py` at the pinned commit rather
+    # than inferred from a directory listing:
+    #   folded_state_paths() -> f"{sample}_{state}_folded_seed{n}.cif"
+    #                           f"{sample}_{state}_confidences_seed{n}.json"
+    #   find_state_confidences() counts seeds UP FROM 0 and STOPS at the first
+    #   gap, so seeds must be contiguous from 0 or the tail is silently lost.
+    #   metadata_dir(stage) is `stage.parent / "metadata"`, i.e. the run root's
+    #   -- shared by every stage, which is why ingesting a folded stage needs
+    #   no metadata of its own.
+    FOLDED_STAGE = "03_folded"
+
+    def _ingest_folded(self, req: dict) -> dict:
+        """Lay externally predicted structures out as upstream's folded stage.
+
+        This provider has no folding operation and will not get one while the
+        AlphaFold 3 weights question is unsettled, but `evaluate_design.py`
+        does not need THIS provider to have folded anything -- it needs a
+        directory shaped like `run_alphafold.py` output. Any structure
+        predictor that has settled its own weights question can produce the
+        structures; this writes them where upstream looks.
+        """
+        run_dir = Path(req["run_dir"])
+        if not run_dir.is_dir():
+            raise ValueError(
+                f"run_dir {run_dir} does not exist on this host; pass the "
+                f"run_dir that apnovo_generate_designs returned"
+            )
+        if not (run_dir / "01_generation").is_dir():
+            raise ValueError(
+                f"{run_dir} is not a campaign directory: it has no "
+                f"01_generation stage"
+            )
+        states = req.get("states")
+        if not isinstance(states, list) or not states:
+            raise ValueError(
+                "'states' must be a non-empty list of folded states, each "
+                "naming its design, its state and its seed"
+            )
+
+        stage = run_dir / self.FOLDED_STAGE
+        stage.mkdir(parents=True, exist_ok=True)
+        written: list = []
+        designed_cifs: set = set()
+        for i, entry in enumerate(states):
+            if not isinstance(entry, dict):
+                raise ValueError(f"states[{i}] must be an object")
+            sample = entry.get("sample_name")
+            state = entry.get("state")
+            seed = entry.get("seed", 0)
+            cif = entry.get("folded_cif")
+            conf = entry.get("confidences")
+            designed = entry.get("designed_cif")
+            for label, value in (("sample_name", sample), ("state", state)):
+                # These two become a filename, so they are checked the way
+                # _lay_out checks a caller-supplied name: this is the second
+                # check, the first being on the other side of a socket.
+                if not isinstance(value, str) or not value:
+                    raise ValueError(f"states[{i}].{label} must be a non-empty string")
+                if "/" in value or value.startswith("."):
+                    raise ValueError(f"refusing states[{i}].{label} {value!r}")
+            if not isinstance(seed, int) or seed < 0:
+                raise ValueError(f"states[{i}].seed must be an integer >= 0")
+            if not isinstance(cif, str) or not cif.strip():
+                raise ValueError(f"states[{i}].folded_cif must be mmCIF text")
+            if conf is not None and not isinstance(conf, dict):
+                raise ValueError(f"states[{i}].confidences must be an object")
+
+            stem = f"{sample}_{state}"
+            (stage / f"{stem}_folded_seed{seed}.cif").write_text(cif)
+            # Whatever the predictor reported rides along: _load_confidences
+            # turns every key it does not recognise into a prefixed metric, so
+            # a sibling's pTM/ipTM/pLDDT reach the rows without a mapping here.
+            # Only `seed` and `designed_cif` are load-bearing -- _load_metadata
+            # reads exactly those two and nothing else from this file.
+            payload = dict(conf or {})
+            payload["seed"] = seed
+            if designed:
+                if "/" in designed or designed.startswith("."):
+                    raise ValueError(f"refusing states[{i}].designed_cif {designed!r}")
+                payload["designed_cif"] = designed
+                designed_cifs.add(designed)
+            (stage / f"{stem}_confidences_seed{seed}.json").write_text(
+                json.dumps(payload)
+            )
+            written.append({"sample_name": sample, "state": state, "seed": seed})
+
+        # `designed_cif` is resolved as `folded_dir / designed_cif`, so the
+        # generated structure has to be reachable from the folded stage too.
+        # It already exists one directory over; link rather than copy, and
+        # fall back to copying where linking is refused.
+        gen = run_dir / "01_generation"
+        missing: list = []
+        for name in sorted(designed_cifs):
+            dst = stage / name
+            if dst.exists():
+                continue
+            src = gen / name
+            if not src.is_file():
+                missing.append(name)
+                continue
+            try:
+                os.link(src, dst)
+            except OSError:
+                shutil.copyfile(src, dst)
+
+        # find_state_confidences() stops at the first missing seed index, so a
+        # non-contiguous ingest loses its tail without saying so. Say so.
+        gaps: list = []
+        by_key: dict = {}
+        for row in written:
+            by_key.setdefault((row["sample_name"], row["state"]), []).append(row["seed"])
+        for (sample, state), seeds in sorted(by_key.items()):
+            got = sorted(set(seeds))
+            # How far upstream actually gets: the contiguous run from 0.
+            reach = 0
+            while reach in got:
+                reach += 1
+            if reach != len(got):
+                gaps.append(
+                    f"{sample}/{state}: ingested seeds {got}, but upstream "
+                    f"counts up from 0 and stops at the first gap, so it will "
+                    f"read {list(range(reach))} and ignore the rest"
+                )
+
+        return {
+            "status": "success",
+            "folded_dir": str(stage),
+            "n_states_written": len(written),
+            "states": written,
+            "designed_cifs_missing": missing,
+            "seed_gaps": gaps,
+        }
+
     def _evaluate(self, req: dict) -> dict:
         """Upstream's metrics, as a subprocess. CPU work, nothing to hold."""
         run_dir = Path(req["run_dir"])
@@ -646,6 +782,36 @@ class Engine:
             raise ValueError(
                 f"unknown eval_suite {suite!r}; upstream ships {list(SUITES)}"
             )
+        # `--input_dir` must be the FOLDING output, not the generation stage.
+        # Its help says "Directory with the output of run_alphafold.py", and
+        # the code backs that: `_discover_folded_designs_for_metadata` lists
+        # `in_dir` and `find_state_confidences` looks for
+        # `<sample>_<state>_confidences_seed<n>.json` IN IT. A generation
+        # stage holds none, so every design resolves to zero seeds and
+        # `_load_metadata` raises "records no folding seed".
+        #
+        # This used to pass `01_generation` unconditionally, which meant a
+        # campaign that HAD been folded failed identically to one that had
+        # not -- and since this provider could not fold, the two causes were
+        # indistinguishable and the error got read as the stronger claim
+        # ("upstream refuses an unfolded campaign") when the weaker one
+        # ("we pointed it at the wrong directory") was also true. Only the
+        # metadata directory is shared between stages: `metadata_dir(stage)`
+        # is `stage.parent / "metadata"`, the run root's, either way.
+        folded = run_dir / self.FOLDED_STAGE
+        if not folded.is_dir():
+            raise RuntimeError(
+                f"{run_dir} has no {self.FOLDED_STAGE} stage, so there are no "
+                f"predicted structures to evaluate. Upstream's evaluation "
+                f"reads folding output and does not fall back to the metrics "
+                f"that need no structure prediction -- measured, not assumed. "
+                f"This provider has no folding operation, because AlphaFold 3 "
+                f"weights carry terms separate from AP Novo's and that "
+                f"question is unsettled here. Fold this campaign's designs "
+                f"with a structure predictor that has settled its own weights "
+                f"question, then send the results to apnovo_ingest_folded, "
+                f"which lays them out as upstream expects."
+            )
         out_dir = run_dir / "04_eval"
         argv = [
             sys.executable,
@@ -653,11 +819,7 @@ class Engine:
             # `--input_dir`, singular, repeatable. The module-level variable
             # is named `_INPUT_DIRS` and the flag it declares is not: reading
             # the variable rather than the flag string cost a round here.
-            # Its own help says "Directory with the output of
-            # run_alphafold.py", which is the folding stage -- so with no
-            # folding on disk this reads the generation stage and can only
-            # produce the metrics that need no prediction.
-            f"--input_dir={stage}",
+            f"--input_dir={folded}",
             f"--output_dir={out_dir}",
             "--noresume",
         ]

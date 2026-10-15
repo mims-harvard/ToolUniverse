@@ -22,13 +22,30 @@
 # reason the acceptance is an explicit environment variable rather than an
 # implicit consequence of running setup.
 #
-# FOLDING IS DELIBERATELY ABSENT. Upstream's pipeline is four stages;
-# `operations` names three. The folding stage needs AlphaFold 3 / AF3-LA
-# weights whose terms are separate from AP Novo's, and the sibling `af3_jax`
-# provider deliberately avoids them by converting public OpenFold3-preview2
-# weights instead. Adding folding here is an entitlement decision, not a
-# packaging one, and it has not been made. Generated designs can be folded by
-# a structure-prediction provider that has settled its own weights question.
+# FOLDING IS DELIBERATELY ABSENT, AND THAT NO LONGER MAKES EVALUATION
+# UNREACHABLE. The folding stage needs AlphaFold 3 / AF3-LA weights whose
+# terms are separate from AP Novo's, and the sibling `af3_jax` provider
+# deliberately avoids them by converting public OpenFold3-preview2 weights
+# instead. Adding folding here is an entitlement decision, not a packaging
+# one, and it has not been made.
+#
+# What changed is the route around it. Upstream's evaluation does not require
+# THIS provider to have folded anything; it requires a directory shaped like
+# `run_alphafold.py` output, and `design_manifest.folded_state_paths` at the
+# pinned commit says exactly what that is:
+# `<sample>_<state>_folded_seed<n>.cif` beside
+# `<sample>_<state>_confidences_seed<n>.json`, with the metadata directory
+# shared at the run root. `apnovo_ingest_folded` writes that from predictions
+# made anywhere, so a caller folds with a provider that has settled its own
+# weights question -- openfold3, protenix_v1, esmfold2, chai1 and
+# rosettafold3 are five on this same standard -- and then evaluates.
+#
+# The operation was published before that route existed and could only ever
+# return a named error, which was a defect rather than a documented limit.
+# The second half of it was ours: `_evaluate` passed
+# `--input_dir=01_generation` unconditionally, against a flag whose help says
+# "Directory with the output of run_alphafold.py", so a campaign that HAD
+# been folded failed identically to one that had not.
 #
 # RESEQUENCING RUNS IN A THIRD ENVIRONMENT, ON THE CPU, AND BOTH HALVES OF THAT
 # ARE DELIBERATE. LigandMPNN pins torch==2.2.1 / triton==2.2.0 and CUDA 12.1
@@ -65,6 +82,7 @@ operations = [
     "apnovo_validate_motif",
     "apnovo_generate_designs",
     "apnovo_resequence_designs",
+    "apnovo_ingest_folded",
     "apnovo_evaluate_designs",
 ]
 status = "untested"

@@ -23,12 +23,28 @@ folding operation, because AlphaFold 3 weights carry terms separate from AP
 Novo's and that question is unsettled here. `provider.toml` and README.md carry
 the reasoning.
 
-The consequence for callers is sharper than it first looks, and sharper than an
-earlier draft of this file claimed. Upstream's evaluation does not degrade
-gracefully on an unfolded campaign: it reads each design's metadata, finds no
-folding seed, and refuses the whole run. So `apnovo_evaluate_designs` cannot
-return a partial score here -- it returns a named error saying the campaign has
-not been folded. Measured, after that draft said otherwise.
+The consequence for callers is sharper than it first looks. Upstream's
+evaluation does not degrade gracefully on an unfolded campaign: it reads each
+design's metadata, finds no folding seed, and refuses the whole run, rather
+than computing the subset of metrics that need no structure prediction.
+
+But upstream does not require THIS provider to have folded anything -- it
+requires a directory shaped like `run_alphafold.py` output, and the filenames
+it looks for are plain:
+`<sample>_<state>_folded_seed<n>.cif` beside
+`<sample>_<state>_confidences_seed<n>.json`, read from
+`design_manifest.folded_state_paths` at the pinned commit. So
+`apnovo_ingest_folded` takes predictions from any structure predictor that has
+settled its own weights question -- five of them ship on this same standard --
+and writes them where the evaluation looks. The entitlement question stays
+unsettled and unanswered here; it just stops being the thing that makes the
+operation unusable.
+
+Two things were wrong before that, and only one of them was the licence.
+`_evaluate` passed `--input_dir=01_generation` unconditionally, while the
+flag's own help says "Directory with the output of run_alphafold.py" -- so a
+campaign that HAD been folded failed in exactly the same way as one that had
+not, and the shared error got read as the stronger claim.
 
 There is no subprocess fallback, deliberately. When the resident worker cannot
 start, this names the reason instead of quietly paying the start-up cost on
@@ -611,6 +627,168 @@ class ApNovoResequenceDesignsTool:
 
 
 @register_mcp_tool(
+    tool_type_name="apnovo_ingest_folded",
+    config={
+        "description": (
+            "Lay externally predicted structures into a campaign as "
+            "upstream's folded stage, so apnovo_evaluate_designs can score "
+            "it. This provider has no folding operation — AlphaFold 3 "
+            "weights carry terms separate from AP Novo's — but upstream's "
+            "evaluation does not require THIS provider to have folded "
+            "anything: it requires a directory shaped like run_alphafold.py "
+            "output. Fold each design's states with any structure predictor "
+            "that has settled its own weights question (openfold3, "
+            "protenix_v1, esmfold2, chai1 and rosettafold3 are siblings on "
+            "this standard), then send the mmCIF text here. Whatever "
+            "confidence fields the predictor reported ride along into the "
+            "metric rows; only the seed and the designed-structure filename "
+            "are load-bearing."
+        ),
+        "parameter_schema": {
+            "type": "object",
+            "additionalProperties": False,
+            "properties": {
+                "run_dir": {
+                    "type": "string",
+                    "description": (
+                        "The server-side campaign directory returned by "
+                        "apnovo_generate_designs."
+                    ),
+                },
+                "states": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 512,
+                    "description": (
+                        "One entry per (design, state, seed) that was folded. "
+                        "Seeds must start at 0 and be contiguous: upstream "
+                        "counts up from 0 and stops at the first gap, so a "
+                        "missing seed silently truncates the rest."
+                    ),
+                    "items": {
+                        "type": "object",
+                        "additionalProperties": False,
+                        "required": ["sample_name", "state", "folded_cif"],
+                        "properties": {
+                            "sample_name": {
+                                "type": "string",
+                                "description": (
+                                    "The design's name, as "
+                                    "apnovo_generate_designs reported it."
+                                ),
+                            },
+                            "state": {
+                                "type": "string",
+                                "description": (
+                                    "The folding state's name, from the "
+                                    "manifest's folding.states."
+                                ),
+                            },
+                            "seed": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "default": 0,
+                                "description": "Prediction seed index.",
+                            },
+                            "folded_cif": {
+                                "type": "string",
+                                "description": "Predicted structure as mmCIF text.",
+                            },
+                            "confidences": {
+                                "type": "object",
+                                "description": (
+                                    "The predictor's own confidence record. "
+                                    "Every key becomes a prefixed metric on "
+                                    "the evaluation row."
+                                ),
+                            },
+                            "designed_cif": {
+                                "type": "string",
+                                "description": (
+                                    "Filename of the generated structure this "
+                                    "prediction is scored against, as it "
+                                    "appears in 01_generation. Required on "
+                                    "the first state of each design; upstream "
+                                    "refuses a design whose first confidence "
+                                    "record does not name one."
+                                ),
+                            },
+                        },
+                    },
+                },
+            },
+            "required": ["run_dir", "states"],
+        },
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string"},
+                "error": {"type": "string"},
+                "folded_dir": {"type": "string"},
+                "n_states_written": {"type": "integer"},
+                "states": {"type": "array", "items": {"type": "object"}},
+                "designed_cifs_missing": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": (
+                        "Named designed structures that were not found in "
+                        "01_generation; evaluation will refuse these designs."
+                    ),
+                },
+                "seed_gaps": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": (
+                        "Designs whose seeds are not contiguous from 0, with "
+                        "how far upstream will actually read."
+                    ),
+                },
+            },
+        },
+    },
+    mcp_config={
+        "server_name": "AlphaProtein Novo MCP Server",
+        "host": "127.0.0.1",
+        "port": 8059,
+        "transport": "http",
+    },
+)
+class ApNovoIngestFoldedTool:
+    """Write a folded stage upstream's evaluation can read."""
+
+    def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        if not isinstance(arguments, dict):
+            return {"error": "Arguments must be an object."}
+        run_dir = arguments.get("run_dir")
+        if not isinstance(run_dir, str) or not run_dir.strip():
+            return {
+                "error": (
+                    "'run_dir' must be the campaign directory returned by "
+                    "apnovo_generate_designs."
+                )
+            }
+        states = arguments.get("states")
+        if not isinstance(states, list) or not states:
+            return {
+                "error": (
+                    "'states' must be a non-empty list of folded states, each "
+                    "naming its design, its state and its mmCIF text."
+                )
+            }
+        try:
+            return _result(_worker().request(
+                {
+                    "op": "predict",
+                    "task": "ingest_folded",
+                    "run_dir": run_dir,
+                    "states": states,
+                }
+            ))
+        except Exception as exc:  # noqa: BLE001 - the reason is the answer
+            return _unavailable(exc)
+
+
+@register_mcp_tool(
     tool_type_name="apnovo_evaluate_designs",
     config={
         "description": (
@@ -620,10 +798,11 @@ class ApNovoResequenceDesignsTool:
             "refuses an unfolded campaign outright — it does not fall back to "
             "the metrics that need no structure prediction. This provider has "
             "no folding operation (AlphaFold 3 weights carry terms separate "
-            "from AP Novo's), so unless the campaign directory already holds "
-            "predicted structures laid out as upstream's 03_folded stage, "
-            "this operation returns a named error explaining that rather than "
-            "a partial score. Fold elsewhere, then evaluate."
+            "from AP Novo's), so the structures have to come from elsewhere: "
+            "fold each design's states with any structure predictor that has "
+            "settled its own weights question, send them to "
+            "apnovo_ingest_folded, then call this. On a campaign with no "
+            "folded stage this returns a named error saying so."
         ),
         "parameter_schema": {
             "type": "object",

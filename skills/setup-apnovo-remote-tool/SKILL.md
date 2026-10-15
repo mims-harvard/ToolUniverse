@@ -193,27 +193,62 @@ it before the first `run` and after anything changes.
 | `apnovo_validate_motif` | no | no | parses a motif CIF + `motif_str` with upstream's own `MotifSpec`; reports fixed atoms, ligand chains, whether conditioning is indexed |
 | `apnovo_generate_designs` | yes | AP Novo | runs the diffusion generator over a campaign manifest |
 | `apnovo_resequence_designs` | no (CPU) | LigandMPNN | LigandMPNN over a campaign's backbones, in a third interpreter |
-| `apnovo_evaluate_designs` | no | no | runs upstream's metrics over a campaign output directory |
+| `apnovo_ingest_folded` | no | no | writes predictions from elsewhere into the campaign as upstream's folded stage |
+| `apnovo_evaluate_designs` | no | no | runs upstream's metrics over a folded campaign |
 
 `apnovo_validate_motif` exists because `motif_str` is the field that silently
 wastes GPU-hours: a malformed one is otherwise only visible after generation.
 Run it first, always.
 
-**`apnovo_evaluate_designs` cannot run on an unfolded campaign at all.** It is
-worth being exact, because the obvious guess is wrong and was written here
-before it was tested: upstream's evaluation does not fall back to the metrics
-that need no structure prediction. It reads each design's metadata, finds no
-folding seed, and refuses the run —
+**`apnovo_evaluate_designs` needs a folded campaign, and this provider does not
+fold.** Upstream's evaluation does not fall back to the metrics that need no
+structure prediction: it reads each design's metadata, finds no folding seed,
+and refuses the run —
 
 ~~~
 ValueError: …/metadata/kemp_0000_metadata.json records no folding seed for
 kemp_0000 in …/01_generation, so it describes a design that has not been folded
 ~~~
 
-— so with folding absent this operation returns a named error, not a partial
-score. Fold the campaign's `01_generation` output with a structure predictor
-that has settled its own weights question, lay it out as upstream's `03_folded`
-stage, and evaluate that.
+Read that message closely, because **half of it was our bug**. It names the
+directory it searched, and `01_generation` is the wrong one: the flag's own
+help says "Directory with the output of run_alphafold.py", and
+`_discover_folded_designs_for_metadata` looks for
+`<sample>_<state>_confidences_seed<n>.json` inside the directory it is given.
+A generation stage holds none, so a campaign that HAD been folded failed in
+exactly this way too, and the two causes were indistinguishable. Fixed: the
+worker now reads `03_folded`.
+
+The other half is real and stays: the structures have to come from somewhere,
+and that somewhere is not this provider while the AlphaFold 3 weights question
+is unsettled. **`apnovo_ingest_folded` closes it.** Fold each design's states
+with any predictor that has settled its own weights question — `openfold3`,
+`protenix_v1`, `esmfold2`, `chai1` and `rosettafold3` are five on this same
+standard — and post the mmCIF text:
+
+```json
+{
+  "run_dir": "/path/to/campaign/returned/by/apnovo_generate_designs",
+  "states": [
+    {
+      "sample_name": "kemp_0000",
+      "state": "apo",
+      "seed": 0,
+      "folded_cif": "data_kemp_0000\n_entry.id kemp_0000\n",
+      "designed_cif": "kemp_0000.cif"
+    }
+  ]
+}
+```
+
+Then call `apnovo_evaluate_designs`. Two rules the layout imposes, both read
+from `design_manifest.py` at the pinned commit rather than guessed: **seeds
+must be contiguous from 0**, because upstream counts up and stops at the first
+gap (the response reports any gap it would hit), and the **first state of each
+design must carry `designed_cif`**, because upstream refuses a design whose
+first confidence record names no structure to score against. Every other key
+in `confidences` is carried through into the metric row, so a sibling's pTM,
+ipTM and pLDDT arrive without any mapping here.
 
 ## Troubleshooting
 

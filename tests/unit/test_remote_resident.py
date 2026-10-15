@@ -2387,3 +2387,163 @@ class TestACpuProviderIsZeroNotUnknown:
         )
         assert not v.admit
         assert "mystery" in v.reason
+
+
+class TestApNovoFoldedStageLayout:
+    """`apnovo_ingest_folded` writes what upstream's evaluator reads.
+
+    This path cannot be exercised end to end here: it needs a real campaign,
+    folded by a second provider, and the evaluation is a subprocess into a
+    checkout that setup clones. So the filenames are pinned instead, against
+    what `alphaprotein_novo/data/design_manifest.py` says at the commit
+    `provider.toml` pins -- `folded_state_paths()` builds
+    ``f"{sample}_{state}_folded_seed{n}.cif"`` and
+    ``f"{sample}_{state}_confidences_seed{n}.json"``, and
+    `find_state_confidences()` counts seeds up from 0 and stops at the first
+    gap. A test that only said "it wrote some files" would not have caught
+    the bug this operation exists because of.
+    """
+
+    @staticmethod
+    def _worker_module():
+        import importlib.util
+
+        path = (
+            Path(__file__).resolve().parents[2]
+            / "src/tooluniverse/remote/apnovo/resident/apnovo_resident_worker.py"
+        )
+        spec = importlib.util.spec_from_file_location("_apnovo_worker_t", path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    @staticmethod
+    def _engine(mod):
+        return mod.Engine.__new__(mod.Engine)
+
+    def _campaign(self, tmp_path):
+        run_dir = tmp_path / "campaign"
+        (run_dir / "01_generation").mkdir(parents=True)
+        (run_dir / "01_generation" / "kemp_0000.cif").write_text("data_kemp\n")
+        return run_dir
+
+    def test_filenames_are_upstreams(self, tmp_path):
+        mod = self._worker_module()
+        run_dir = self._campaign(tmp_path)
+        out = self._engine(mod)._ingest_folded(
+            {
+                "run_dir": str(run_dir),
+                "states": [
+                    {
+                        "sample_name": "kemp_0000",
+                        "state": "apo",
+                        "seed": 0,
+                        "folded_cif": "data_folded\n",
+                        "confidences": {"ptm": 0.81},
+                        "designed_cif": "kemp_0000.cif",
+                    }
+                ],
+            }
+        )
+        stage = run_dir / "03_folded"
+        assert out["folded_dir"] == str(stage)
+        assert (stage / "kemp_0000_apo_folded_seed0.cif").read_text() == "data_folded\n"
+        conf = json.loads((stage / "kemp_0000_apo_confidences_seed0.json").read_text())
+        # Only these two are load-bearing: `_load_metadata` reads `seed` and
+        # `designed_cif` and nothing else from this file.
+        assert conf["seed"] == 0
+        assert conf["designed_cif"] == "kemp_0000.cif"
+        # Everything else the predictor reported survives, because
+        # `_load_confidences` turns each unrecognised key into a metric.
+        assert conf["ptm"] == 0.81
+
+    def test_the_designed_structure_is_reachable_from_the_folded_stage(self, tmp_path):
+        """`designed_cif` resolves as `folded_dir / designed_cif`, not run root."""
+        mod = self._worker_module()
+        run_dir = self._campaign(tmp_path)
+        self._engine(mod)._ingest_folded(
+            {
+                "run_dir": str(run_dir),
+                "states": [
+                    {
+                        "sample_name": "kemp_0000",
+                        "state": "apo",
+                        "folded_cif": "x\n",
+                        "designed_cif": "kemp_0000.cif",
+                    }
+                ],
+            }
+        )
+        assert (run_dir / "03_folded" / "kemp_0000.cif").read_text() == "data_kemp\n"
+
+    def test_a_named_design_that_is_not_there_is_reported(self, tmp_path):
+        mod = self._worker_module()
+        run_dir = self._campaign(tmp_path)
+        out = self._engine(mod)._ingest_folded(
+            {
+                "run_dir": str(run_dir),
+                "states": [
+                    {
+                        "sample_name": "kemp_0001",
+                        "state": "apo",
+                        "folded_cif": "x\n",
+                        "designed_cif": "kemp_0001.cif",
+                    }
+                ],
+            }
+        )
+        assert out["designed_cifs_missing"] == ["kemp_0001.cif"]
+
+    def test_a_seed_gap_says_how_far_upstream_will_read(self, tmp_path):
+        """Seeds 0 and 2: upstream stops at 1, so seed 2 is silently ignored."""
+        mod = self._worker_module()
+        run_dir = self._campaign(tmp_path)
+        out = self._engine(mod)._ingest_folded(
+            {
+                "run_dir": str(run_dir),
+                "states": [
+                    {"sample_name": "k", "state": "apo", "seed": s, "folded_cif": "x\n"}
+                    for s in (0, 2)
+                ],
+            }
+        )
+        assert len(out["seed_gaps"]) == 1
+        assert "[0]" in out["seed_gaps"][0]
+        assert out["n_states_written"] == 2
+
+    def test_contiguous_seeds_raise_no_gap(self, tmp_path):
+        mod = self._worker_module()
+        run_dir = self._campaign(tmp_path)
+        out = self._engine(mod)._ingest_folded(
+            {
+                "run_dir": str(run_dir),
+                "states": [
+                    {"sample_name": "k", "state": "apo", "seed": s, "folded_cif": "x\n"}
+                    for s in (0, 1, 2)
+                ],
+            }
+        )
+        assert out["seed_gaps"] == []
+
+    @pytest.mark.parametrize("bad", ["../escape", "a/b", ".hidden"])
+    def test_a_name_that_becomes_a_path_is_refused(self, tmp_path, bad):
+        mod = self._worker_module()
+        run_dir = self._campaign(tmp_path)
+        with pytest.raises(ValueError, match="refusing"):
+            self._engine(mod)._ingest_folded(
+                {
+                    "run_dir": str(run_dir),
+                    "states": [
+                        {"sample_name": bad, "state": "apo", "folded_cif": "x\n"}
+                    ],
+                }
+            )
+
+    def test_evaluate_refuses_a_campaign_with_no_folded_stage(self, tmp_path):
+        """And names the operation that fixes it, rather than only the licence."""
+        mod = self._worker_module()
+        run_dir = self._campaign(tmp_path)
+        with pytest.raises(RuntimeError) as exc:
+            self._engine(mod)._evaluate({"run_dir": str(run_dir)})
+        assert "03_folded" in str(exc.value)
+        assert "apnovo_ingest_folded" in str(exc.value)

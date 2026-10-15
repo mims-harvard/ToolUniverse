@@ -72,7 +72,7 @@
   {
     "type": "RemoteTool",
     "name": "apnovo_generate_designs",
-    "description": "Generate de novo enzyme designs with AlphaProtein Novo: a joint sequence–structure diffusion model co-generates backbones and sequences conditioned on a fixed catalytic motif and fixed ligand atoms. Returns the designs as mmCIF plus a server-side run directory that apnovo_evaluate_designs reads. This runs the generation stage only — neither LigandMPNN resequencing nor AlphaFold 3 folding is part of this provider, so a manifest's 'resequence' and 'folding' sections are recorded but not acted on. Validate the motif first with apnovo_validate_motif.",
+    "description": "Generate de novo enzyme designs with AlphaProtein Novo: a joint sequence\u2013structure diffusion model co-generates backbones and sequences conditioned on a fixed catalytic motif and fixed ligand atoms. Returns the designs as mmCIF plus a server-side run directory that apnovo_evaluate_designs reads. This runs the generation stage only \u2014 neither LigandMPNN resequencing nor AlphaFold 3 folding is part of this provider, so a manifest's 'resequence' and 'folding' sections are recorded but not acted on. Validate the motif first with apnovo_validate_motif.",
     "parameter": {
       "type": "object",
       "additionalProperties": false,
@@ -263,8 +263,129 @@
   },
   {
     "type": "RemoteTool",
+    "name": "apnovo_ingest_folded",
+    "description": "Lay externally predicted structures into a campaign as upstream's folded stage, so apnovo_evaluate_designs can score it. This provider has no folding operation \u2014 AlphaFold 3 weights carry terms separate from AP Novo's \u2014 but upstream's evaluation does not require THIS provider to have folded anything: it requires a directory shaped like run_alphafold.py output. Fold each design's states with any structure predictor that has settled its own weights question (openfold3, protenix_v1, esmfold2, chai1 and rosettafold3 are siblings on this standard), then send the mmCIF text here. Whatever confidence fields the predictor reported ride along into the metric rows; only the seed and the designed-structure filename are load-bearing.",
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run_dir": {
+          "type": "string",
+          "description": "The server-side campaign directory returned by apnovo_generate_designs."
+        },
+        "states": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 512,
+          "description": "One entry per (design, state, seed) that was folded. Seeds must start at 0 and be contiguous: upstream counts up from 0 and stops at the first gap, so a missing seed silently truncates the rest.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "sample_name",
+              "state",
+              "folded_cif"
+            ],
+            "properties": {
+              "sample_name": {
+                "type": "string",
+                "description": "The design's name, as apnovo_generate_designs reported it."
+              },
+              "state": {
+                "type": "string",
+                "description": "The folding state's name, from the manifest's folding.states."
+              },
+              "seed": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0,
+                "description": "Prediction seed index."
+              },
+              "folded_cif": {
+                "type": "string",
+                "description": "Predicted structure as mmCIF text."
+              },
+              "confidences": {
+                "type": "object",
+                "description": "The predictor's own confidence record. Every key becomes a prefixed metric on the evaluation row."
+              },
+              "designed_cif": {
+                "type": "string",
+                "description": "Filename of the generated structure this prediction is scored against, as it appears in 01_generation. Required on the first state of each design; upstream refuses a design whose first confidence record does not name one."
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "run_dir",
+        "states"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "folded_dir": {
+          "type": "string"
+        },
+        "n_states_written": {
+          "type": "integer"
+        },
+        "states": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "designed_cifs_missing": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Named designed structures that were not found in 01_generation; evaluation will refuse these designs."
+        },
+        "seed_gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Designs whose seeds are not contiguous from 0, with how far upstream will actually read."
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "ApNovoIngestFoldedTool",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/apnovo.html",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/apnovo",
+      "mcp_tool_name": "apnovo_ingest_folded"
+    },
+    "test_examples": [
+      {
+        "run_dir": "/path/to/campaign/returned/by/apnovo_generate_designs",
+        "states": [
+          {
+            "sample_name": "design_0000",
+            "state": "apo",
+            "seed": 0,
+            "folded_cif": "data_design\n_entry.id design\n# mmCIF text from a structure predictor\n",
+            "designed_cif": "design_0000.cif"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "RemoteTool",
     "name": "apnovo_evaluate_designs",
-    "description": "Score an AlphaProtein Novo campaign with upstream's own metrics and return one row per design. REQUIRES A FOLDED CAMPAIGN: upstream's evaluation reads each design's folding seeds and refuses an unfolded campaign outright — it does not fall back to the metrics that need no structure prediction. This provider has no folding operation (AlphaFold 3 weights carry terms separate from AP Novo's), so unless the campaign directory already holds predicted structures laid out as upstream's 03_folded stage, this operation returns a named error explaining that rather than a partial score. Fold elsewhere, then evaluate.",
+    "description": "Score an AlphaProtein Novo campaign with upstream's own metrics and return one row per design. REQUIRES A FOLDED CAMPAIGN: upstream's evaluation reads each design's folding seeds and refuses an unfolded campaign outright \u2014 it does not fall back to the metrics that need no structure prediction. This provider has no folding operation (AlphaFold 3 weights carry terms separate from AP Novo's), so the structures have to come from elsewhere: fold each design's states with any structure predictor that has settled its own weights question, send them to apnovo_ingest_folded, then call this. On a campaign with no folded stage this returns a named error saying so.",
     "parameter": {
       "type": "object",
       "additionalProperties": false,
@@ -306,7 +427,7 @@
           "items": {
             "type": "string"
           },
-          "description": "The metric families present in the rows, e.g. ['apo', 'complex', 'sampled', 'sequence'] — the state-prefixed ones exist only for states that were folded."
+          "description": "The metric families present in the rows, e.g. ['apo', 'complex', 'sampled', 'sequence'] \u2014 the state-prefixed ones exist only for states that were folded."
         },
         "metrics": {
           "type": "array",
