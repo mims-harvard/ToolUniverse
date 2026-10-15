@@ -44,7 +44,12 @@
 [provider]
 slug = "openfold3"
 description = "OpenFold3 all-atom structure prediction from a query JSON of chains"
-operations = ["openfold3_predict"]
+# `openfold3_fold`, not `openfold3_predict`. The decorator in
+# openfold3_tool.py and the setup skill's `Operation:` line both say `_fold`;
+# this line said `_predict` and nothing cross-checked the two, so the name a
+# scheduler reads off the manifest was one no server answers to. Found by
+# generating the catalogue entry from the decorators.
+operations = ["openfold3_fold"]
 status = "verified"
 # Set back to "verified" on 2026-09-29 against the run this file's previous
 # comment demanded: four consecutive identical requests in one held worker,

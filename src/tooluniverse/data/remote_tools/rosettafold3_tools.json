@@ -1,0 +1,157 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "rosettafold3_predict",
+    "description": "Predict the all-atom structure of a biomolecular assembly with RoseTTAFold3 and return the per-sample confidence scores (pTM, ipTM, ranking score) with the paths to the predicted mmCIF models. Input is RoseTTAFold3's own specification as text: a JSON list of items, each {\"name\": ..., \"components\": [{\"seq\": ..., \"chain_id\": ..., \"chain_type\": ...}]}, or a CIF/PDB structure to re-predict. No MSA server is used; set LOCAL_MSA_DIRS on the worker or give a component an msa_path to fold with MSAs.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "spec": {
+          "type": "string",
+          "description": "RoseTTAFold3 input specification. Example:\n[{\"name\": \"barstar\", \"components\": [\n  {\"seq\": \"KKAVINGEQIRSISDLHQTL...\", \"chain_id\": \"A\", \"chain_type\": \"polypeptide(L)\"}]}]\nchain_type is a PDB polymer type: 'polypeptide(L)', 'polyribonucleotide', 'polydeoxyribonucleotide'.",
+          "minLength": 10,
+          "maxLength": 1048576
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed; the same seed reproduces the fold.",
+          "default": 0,
+          "minimum": 0
+        },
+        "annotate_b_factor_with_plddt": {
+          "type": "boolean",
+          "description": "Write per-atom pLDDT into the mmCIF B-factor column (default false).",
+          "default": false
+        },
+        "dump_trajectories": {
+          "type": "boolean",
+          "description": "Also write the diffusion trajectory of each sample (default false; large).",
+          "default": false
+        },
+        "one_model_per_file": {
+          "type": "boolean",
+          "description": "Write each sampled model to its own file (default false).",
+          "default": false
+        },
+        "add_missing_atoms": {
+          "type": "boolean",
+          "description": "When the input is a CIF/PDB structure, add atoms missing from its residues using the CCD (default true; no effect on a JSON specification).",
+          "default": true
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the mmCIF text of every sampled structure (default false: five models of a real assembly are megabytes, and a reply that large is what a transport truncates into invalid JSON). The scores come back either way; the paths do too, but they name a temporary directory this call removes on return, so set this to keep the coordinates.",
+          "default": false
+        }
+      },
+      "required": [
+        "spec"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "predictions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "cif": {
+                "type": "string"
+              },
+              "summary_confidences": {
+                "type": "string"
+              },
+              "ptm": {
+                "type": "number"
+              },
+              "iptm": {
+                "type": "number"
+              },
+              "ranking_score": {
+                "type": "number"
+              },
+              "has_clash": {
+                "type": "boolean"
+              },
+              "top_ranked": {
+                "type": "boolean"
+              },
+              "early_stopped": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "n_structures": {
+          "type": "integer"
+        },
+        "structures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "cif": {
+                "type": "string"
+              },
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "out_dir": {
+          "type": "string"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "settings": {
+          "type": "object"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "RoseTTAFold3PredictTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/rosettafold3",
+      "mcp_tool_name": "rosettafold3_predict"
+    },
+    "test_examples": [
+      {
+        "spec": "[{\"name\": \"barstar\", \"components\": [{\"seq\": \"KKAVINGEQIRSISDLHQTLKKELALPEYYGENLDALWDALTGWVEYPLVLEWRQFEQSKQLTENGAESVLQVFREAKAEGADITIILS\", \"chain_id\": \"A\", \"chain_type\": \"polypeptide(L)\"}]}]",
+        "seed": 0
+      }
+    ]
+  }
+]

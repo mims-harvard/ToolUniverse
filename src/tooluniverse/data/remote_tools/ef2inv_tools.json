@@ -1,0 +1,146 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "ef2inv_design",
+    "description": "Design a binder SEQUENCE against a target protein with the ESM cookbook's gradient-guided ESMFold2 recipe. Give a built-in target name (cd45, ctla4, egfr, pd-l1, pdgfr) or any label plus its 'target_sequence', and a 'binder_len'. Returns each design's binder sequence and the four hero critics' scores; the refolded structure is opt-in. One design is a fixed 150-step optimisation -- the step count is the recipe's own constant and cannot be lowered.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "target_name": {
+          "type": "string",
+          "description": "A built-in target (cd45, ctla4, egfr, pd-l1, pdgfr: the recipe's own sequences, give no target_sequence), or any label for a target_sequence you supply."
+        },
+        "target_sequence": {
+          "type": "string",
+          "description": "The target's amino-acid sequence, required when target_name is not one of the built-ins and forbidden when it is. Up to 280 residues."
+        },
+        "binder_len": {
+          "type": "integer",
+          "description": "Length of the binder to design, 8-200. target_len + binder_len must not exceed 300 tokens.",
+          "minimum": 8,
+          "maximum": 200
+        },
+        "n_designs": {
+          "type": "integer",
+          "description": "How many designs to run (default 1, max 4). Each is an independent 150-step optimisation at seed+k, run one after another: the count costs time, not memory.",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 4
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed of the first design.",
+          "default": 0,
+          "minimum": 0
+        },
+        "target_hotspot_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Target residue ids to treat as the epitope, e.g. [\"56\", \"57\"]. Omit to let the recipe choose."
+        },
+        "epitope_contact_distance": {
+          "type": "number",
+          "description": "The recipe's epitope contact distance in angstroms.",
+          "default": 12.0
+        },
+        "warm_only": {
+          "type": "boolean",
+          "description": "Run the recipe's one-time costs and a single design-step-shaped gradient pass instead of a design (seconds rather than minutes). Use it to check that the provider is live and what it costs on this card.",
+          "default": false
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return each design's refolded mmCIF text (default false: hundreds of kilobytes per design).",
+          "default": false
+        }
+      },
+      "required": [
+        "target_name"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "pass": {
+          "type": "string"
+        },
+        "target_name": {
+          "type": "string"
+        },
+        "target_len": {
+          "type": "integer"
+        },
+        "binder_len": {
+          "type": "integer"
+        },
+        "n_tokens": {
+          "type": "integer"
+        },
+        "n_designs": {
+          "type": "integer"
+        },
+        "steps": {
+          "type": "integer"
+        },
+        "designs": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "evidence_ok": {
+          "type": "boolean"
+        },
+        "kit_evidence": {
+          "type": "object"
+        },
+        "warning": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "EF2InvDesignTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/ef2inv",
+      "mcp_tool_name": "ef2inv_design"
+    },
+    "test_examples": [
+      {
+        "target_name": "pd-l1",
+        "binder_len": 60,
+        "n_designs": 1,
+        "seed": 0
+      }
+    ]
+  }
+]

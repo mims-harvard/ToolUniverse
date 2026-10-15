@@ -1,0 +1,163 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "esm_if1_design",
+    "description": "Design protein SEQUENCES for a given backbone with ESM-IF1 (inverse folding). Give the backbone as PDB or mmCIF text and, optionally, the chain to design; returns num_samples sampled sequences, the structure's own sequence, and each sample's sequence recovery against it. Raise 'temperature' for diversity. Use multichain_backbone=true to design one chain of a complex while conditioning on all of its backbones. Runs on the CPU: expect ~1.5 s for a 64-residue backbone and ~40 s for 800 residues, roughly linear in length.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "structure": {
+          "type": "string",
+          "description": "The backbone, as the text of a PDB or mmCIF file. Only the N, CA and C atoms of amino-acid residues are read; side chains, waters and ligands are ignored. Up to 8 MB."
+        },
+        "structure_format": {
+          "type": "string",
+          "enum": [
+            "pdb",
+            "cif"
+          ],
+          "description": "Which of the two the 'structure' text is (default pdb). Upstream's loader dispatches on this, so a cif sent as pdb fails to parse rather than being sniffed.",
+          "default": "pdb"
+        },
+        "chain": {
+          "type": "string",
+          "description": "The chain id to design. Omit to take every chain the file's loader returns as one backbone. Required when multichain_backbone is true."
+        },
+        "num_samples": {
+          "type": "integer",
+          "description": "How many sequences to sample (default 1, max 64). Samples are independent draws from the same conditional distribution.",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 64
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Sampling temperature (default 1.0). Higher is more diverse and lower recovers the native sequence more often.",
+          "default": 1.0,
+          "exclusiveMinimum": 0,
+          "maximum": 10.0
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed, applied once per request (default 37, the kit's own). At a fixed seed, num_samples and batch_size the sampled sequences repeat exactly.",
+          "default": 37,
+          "minimum": 0
+        },
+        "batch_size": {
+          "type": "integer",
+          "description": "How many samples share one forward pass (default 64, max 64). It changes speed and memory, not the distribution. min(batch_size, num_samples) x the backbone's length must not exceed 6400.",
+          "default": 64,
+          "minimum": 1,
+          "maximum": 64
+        },
+        "multichain_backbone": {
+          "type": "boolean",
+          "description": "Design 'chain' conditioned on the backbones of every chain in the file (upstream's multichain route) rather than on that chain alone. Needs 'chain'.",
+          "default": false
+        }
+      },
+      "required": [
+        "structure"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "sequences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "native_sequence": {
+          "type": "string"
+        },
+        "sequence_recovery": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "chain": {
+          "type": "string"
+        },
+        "route": {
+          "type": "string"
+        },
+        "n_tokens": {
+          "type": "integer"
+        },
+        "designed_length": {
+          "type": "integer"
+        },
+        "num_samples": {
+          "type": "integer"
+        },
+        "temperature": {
+          "type": "number"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "batch_size": {
+          "type": "integer"
+        },
+        "rows_per_forward": {
+          "type": "integer"
+        },
+        "n_batches": {
+          "type": "integer"
+        },
+        "device": {
+          "type": "string"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "peak_rss_gib": {
+          "type": "number"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "kit_levers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "ESMIF1DesignTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/esm_if1",
+      "mcp_tool_name": "esm_if1_design"
+    },
+    "test_examples": [
+      {
+        "structure": "ATOM   3461  N   SER C 134      -5.555  22.103 -75.953  1.00 70.85           N\nATOM   3462  CA  SER C 134      -4.121  21.850 -75.885  1.00 74.77           C\nATOM   3463  C   SER C 134      -3.849  20.353 -75.765  1.00 85.14           C\nATOM   3467  N   VAL C 135      -4.510  19.712 -74.797  1.00 88.32           N\nATOM   3468  CA  VAL C 135      -4.308  18.282 -74.566  1.00 85.66           C\nATOM   3469  C   VAL C 135      -4.707  17.486 -75.801  1.00 86.60           C\nATOM   3474  N   LEU C 136      -5.911  17.750 -76.317  1.00 83.95           N\nATOM   3475  CA  LEU C 136      -6.370  17.079 -77.527  1.00 79.86           C\nATOM   3476  C   LEU C 136      -5.490  17.441 -78.714  1.00 79.96           C\nATOM   3482  N   GLN C 137      -5.102  18.713 -78.812  1.00 78.74           N\nATOM   3483  CA  GLN C 137      -4.166  19.129 -79.848  1.00 81.85           C\nATOM   3484  C   GLN C 137      -2.866  18.340 -79.753  1.00 85.22           C\nATOM   3491  N   SER C 138      -2.378  18.113 -78.528  1.00 90.62           N\nATOM   3492  CA  SER C 138      -1.123  17.387 -78.341  1.00 88.57           C\nATOM   3493  C   SER C 138      -1.299  15.896 -78.588  1.00 84.29           C\nATOM   3497  N   LEU C 139      -2.460  15.345 -78.217  1.00 83.51           N\nATOM   3498  CA  LEU C 139      -2.689  13.915 -78.395  1.00 83.46           C\nATOM   3499  C   LEU C 139      -2.560  13.523 -79.859  1.00 77.50           C\nATOM   3505  N   PHE C 140      -3.298  14.207 -80.735  1.00 77.84           N\nATOM   3506  CA  PHE C 140      -3.184  13.933 -82.159  1.00 74.98           C\nATOM   3507  C   PHE C 140      -1.818  14.331 -82.701  1.00 75.13           C\nATOM   3516  N   GLU C 141      -1.067  15.152 -81.961  1.00 78.09           N\nATOM   3517  CA  GLU C 141       0.297  15.501 -82.332  1.00 81.27           C\nATOM   3518  C   GLU C 141       1.306  14.447 -81.899  1.00 77.28           C\nATOM   3525  N   HIS C 142       0.877  13.444 -81.128  1.00 71.75           N\nATOM   3526  CA  HIS C 142       1.757  12.361 -80.722  1.00 72.48           C\nATOM   3527  C   HIS C 142       2.204  11.564 -81.947  1.00 76.35           C\nATOM   3535  N   PRO C 143       3.322  10.836 -81.850  1.00 78.08           N\nATOM   3536  CA  PRO C 143       3.702   9.912 -82.929  1.00 79.13           C\nATOM   3537  C   PRO C 143       2.972   8.578 -82.900  1.00 72.64           C\nEND",
+        "structure_format": "pdb",
+        "chain": "C",
+        "num_samples": 2,
+        "temperature": 1.0,
+        "seed": 37
+      }
+    ]
+  }
+]

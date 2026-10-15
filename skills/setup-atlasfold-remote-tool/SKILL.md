@@ -168,7 +168,7 @@ saturation, and persistent supervision are untested.
 Operation: atlasfold_predict
 
 ~~~json
-{"chains":[{"molecule_type":"protein","sequence":"LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF"}]}
+{"chains":["LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF"]}
 ~~~
 
 Invoke the example through the live local MCP endpoint:
@@ -180,7 +180,7 @@ import json
 from fastmcp import Client
 
 async def main():
-    arguments = json.loads(r'''{"chains":[{"molecule_type":"protein","sequence":"LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF"}]}''')
+    arguments = json.loads(r'''{"chains":["LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF"]}''')
     async with Client("http://127.0.0.1:8043/mcp") as client:
         result = await client.call_tool("atlasfold_predict", arguments)
         print(result)

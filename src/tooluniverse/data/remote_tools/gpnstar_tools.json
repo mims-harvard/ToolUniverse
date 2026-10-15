@@ -1,0 +1,206 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_gpnstar_vep",
+    "description": "Score single-nucleotide variants with GPN-Star, a language model over a multiple-species alignment (human hg38, 100 vertebrates for the primary model). Each variant gets a log-likelihood ratio logit(alt) - logit(ref) at its position, averaged over the forward and reverse-complement windows: negative means the alternate base is less likely than the reference given the alignment, i.e. more likely to be deleterious. Coordinates are 1-based; chromosome names follow the alignment store (1..22, X, Y; a chr prefix is accepted); the reference base must match the alignment's human base, and a mismatch is refused rather than scored. Returns one score per variant in input order. The alignment store is held by the server operator: unless a full hg38 store has been configured, only the windows of the kit's eight example variants (chromosomes 1, 2, 3 and 5) can be scored, and any other position is refused with 'the alignment holds no data'. SNVs only: no indels.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variants": {
+          "type": "array",
+          "description": "The variants to score, in the order the scores come back. At most 2048 per call.",
+          "minItems": 1,
+          "maxItems": 2048,
+          "items": {
+            "type": "object",
+            "properties": {
+              "chrom": {
+                "type": "string",
+                "description": "Chromosome as the alignment store names it, e.g. \"1\" or \"X\" (\"chr1\" is accepted).",
+                "minLength": 1
+              },
+              "pos": {
+                "type": "integer",
+                "description": "1-based position on the hg38 chromosome.",
+                "minimum": 1
+              },
+              "ref": {
+                "type": "string",
+                "description": "Reference base, which must equal the alignment's human base at this position.",
+                "enum": [
+                  "A",
+                  "C",
+                  "G",
+                  "T"
+                ]
+              },
+              "alt": {
+                "type": "string",
+                "description": "Alternate base; differs from ref.",
+                "enum": [
+                  "A",
+                  "C",
+                  "G",
+                  "T"
+                ]
+              }
+            },
+            "required": [
+              "chrom",
+              "pos",
+              "ref",
+              "alt"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "window_size": {
+          "type": "integer",
+          "description": "Alignment columns read around each variant (even). The primary model's native window is 128. Peak GPU memory follows batch_size x window_size, which may not exceed 8192; variants x window_size may not exceed 524288.",
+          "default": 128,
+          "minimum": 16,
+          "maximum": 512,
+          "multipleOf": 2
+        },
+        "batch_size": {
+          "type": "integer",
+          "description": "Variants per forward pass. Does not change the scores' meaning; it trades memory for speed. batch_size x window_size may not exceed 8192.",
+          "default": 8,
+          "minimum": 1,
+          "maximum": 64
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "Decimal places for returned scores (default 5).",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 8
+        }
+      },
+      "required": [
+        "variants"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "task": {
+          "type": "string"
+        },
+        "n_variants": {
+          "type": "integer"
+        },
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "chrom:pos:ref>alt for each variant, in input order."
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "logit(alt) - logit(ref), mean of both strands."
+        },
+        "scores_sha256": {
+          "type": "string"
+        },
+        "window_size": {
+          "type": "integer"
+        },
+        "batch_size": {
+          "type": "integer"
+        },
+        "n_batches": {
+          "type": "integer"
+        },
+        "single_variant_sent_twice": {
+          "type": "boolean",
+          "description": "True when the call held one variant: upstream's own command fails on a one-row table, so the variant was scored in a batch of two copies and the first score kept."
+        },
+        "levers_declined": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "alignment": {
+          "type": "string"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "levers_applied": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "kit_kv_routes": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "GpnstarVepTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/gpnstar",
+      "mcp_tool_name": "run_gpnstar_vep"
+    },
+    "test_examples": [
+      {
+        "variants": [
+          {
+            "chrom": "1",
+            "pos": 1425822,
+            "ref": "C",
+            "alt": "G"
+          },
+          {
+            "chrom": "2",
+            "pos": 5718743,
+            "ref": "A",
+            "alt": "G"
+          },
+          {
+            "chrom": "3",
+            "pos": 213423,
+            "ref": "A",
+            "alt": "G"
+          },
+          {
+            "chrom": "5",
+            "pos": 850655,
+            "ref": "C",
+            "alt": "T"
+          }
+        ],
+        "window_size": 128,
+        "batch_size": 8
+      }
+    ]
+  }
+]

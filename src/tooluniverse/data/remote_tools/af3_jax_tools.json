@@ -1,0 +1,157 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "af3_jax_predict",
+    "description": "Predict an all-atom biomolecular structure with AlphaFold 3 (the open JAX fork) on public OpenFold3-preview2 weights. Give either 'sequences' -- a simple list of chains, which is run MSA-free -- or 'fold_input', a complete AlphaFold 3 fold-input JSON carrying your own MSAs and templates. No alignment is built here and no external service is contacted. Returns per-sample confidence scores ranked best-first; the mmCIF text itself is opt-in.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequences": {
+          "type": "array",
+          "description": "The chains of one complex, run MSA-free. Mutually exclusive with 'fold_input'.",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "properties": {
+              "molecule_type": {
+                "type": "string",
+                "enum": [
+                  "protein",
+                  "dna",
+                  "rna",
+                  "ligand"
+                ],
+                "default": "protein"
+              },
+              "sequence": {
+                "type": "string",
+                "description": "Residue sequence, or SMILES when molecule_type is 'ligand'.",
+                "minLength": 1
+              },
+              "chain_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Chain labels; defaults to A, B, C... Give several to place identical copies."
+              }
+            },
+            "required": [
+              "sequence"
+            ]
+          }
+        },
+        "fold_input": {
+          "type": "object",
+          "description": "A complete AlphaFold 3 fold-input JSON object (dialect 'alphafold3'). Use this when you have real MSAs or templates: every protein chain needs 'unpairedMsa', 'pairedMsa' and 'templates', where an empty string means MSA-free and null means 'the data pipeline will fill this', which this provider does not run."
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed; replaces 'modelSeeds' in a supplied fold_input. The same seed reproduces the prediction.",
+          "default": 1,
+          "minimum": 0
+        },
+        "num_diffusion_samples": {
+          "type": "integer",
+          "description": "Structures to sample per seed (upstream's default is 5). Each is scored separately, so this is how to compare conformations. Changing it recompiles the held model.",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "num_recycles": {
+          "type": "integer",
+          "description": "Trunk recycling iterations (upstream's default is 10). Fewer is faster and less accurate. Changing it recompiles the held model.",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the mmCIF text (default false: megabytes per sample). The confidence scores come back either way.",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "n_structures": {
+          "type": "integer"
+        },
+        "structures": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "seeds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "best": {
+          "type": "string"
+        },
+        "num_recycles": {
+          "type": "integer"
+        },
+        "num_diffusion_samples": {
+          "type": "integer"
+        },
+        "config_rebuilt": {
+          "type": "boolean"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "AF3JaxPredictTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/af3_jax",
+      "mcp_tool_name": "af3_jax_predict"
+    },
+    "test_examples": [
+      {
+        "sequences": [
+          {
+            "molecule_type": "protein",
+            "sequence": "LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF"
+          }
+        ],
+        "seed": 1
+      }
+    ]
+  }
+]

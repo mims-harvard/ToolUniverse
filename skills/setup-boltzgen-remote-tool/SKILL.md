@@ -169,7 +169,7 @@ saturation, and persistent supervision are untested.
 Operation: boltzgen_design
 
 ~~~json
-{"spec": "entities:\n  - protein:\n      id: A\n      sequence: 60..60\n", "num_designs": 1, "seed": 0}
+{"spec": "entities:\n  - protein:\n      id: A\n      sequence: 60..60\n", "num_designs": 2, "seed": 0}
 ~~~
 
 Invoke the example through the live local MCP endpoint:
@@ -181,7 +181,7 @@ import json
 from fastmcp import Client
 
 async def main():
-    arguments = json.loads(r'''{"spec": "entities:\n  - protein:\n      id: A\n      sequence: 60..60\n", "num_designs": 1, "seed": 0}''')
+    arguments = json.loads(r'''{"spec": "entities:\n  - protein:\n      id: A\n      sequence: 60..60\n", "num_designs": 2, "seed": 0}''')
     async with Client("http://127.0.0.1:8035/mcp") as client:
         result = await client.call_tool("boltzgen_design", arguments)
         print(result)
