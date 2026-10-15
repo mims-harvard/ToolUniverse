@@ -1,7 +1,7 @@
 """
 FDA_get_drug_label
 
-Get the complete FDA-approved prescribing information for a specific drug by name. Returns all cl...
+Get the complete FDA-approved prescribing information for a specific drug by name. Pass 'route' w...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def FDA_get_drug_label(
     validate: bool = True,
 ) -> Any:
     """
-    Get the complete FDA-approved prescribing information for a specific drug by name. Returns all cl...
+    Get the complete FDA-approved prescribing information for a specific drug by name. Pass 'route' w...
 
     Parameters
     ----------

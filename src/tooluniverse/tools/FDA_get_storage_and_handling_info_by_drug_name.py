@@ -1,7 +1,7 @@
 """
 FDA_get_storage_and_handling_info_by_drug_name
 
-Retrieve storage and handling information based on the drug name.
+Retrieve storage and handling information based on the drug name. Pass 'route' whenever the produ...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_storage_and_handling_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve storage and handling information based on the drug name.
+    Retrieve storage and handling information based on the drug name. Pass 'route' whenever the produ...
 
     Parameters
     ----------

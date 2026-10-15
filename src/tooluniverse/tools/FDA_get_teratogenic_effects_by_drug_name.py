@@ -1,7 +1,7 @@
 """
 FDA_get_teratogenic_effects_by_drug_name
 
-Retrieve teratogenic effects information based on the drug name.
+Retrieve teratogenic effects information based on the drug name. Pass 'route' whenever the produc...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_teratogenic_effects_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve teratogenic effects information based on the drug name.
+    Retrieve teratogenic effects information based on the drug name. Pass 'route' whenever the produc...
 
     Parameters
     ----------

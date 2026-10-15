@@ -1,7 +1,7 @@
 [
   {
     "name": "FDA_get_active_ingredient_info_by_drug_name",
-    "description": "Fetch a list of active ingredients in a specific drug product.",
+    "description": "Fetch a list of active ingredients in a specific drug product. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "label": [
       "ActiveIngredient",
       "Drug",
@@ -137,7 +137,7 @@
   },
   {
     "name": "FDA_get_dosage_and_storage_information_by_drug_name",
-    "description": "Retrieve dosage and storage information for a specific drug.",
+    "description": "Retrieve dosage and storage information for a specific drug. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "label": [
       "DosageAndAdministration",
       "StorageAndHandling",
@@ -428,7 +428,7 @@
   },
   {
     "name": "FDA_get_abuse_info_by_drug_name",
-    "description": "Retrieve information about types of abuse based on the drug name.",
+    "description": "Retrieve information about types of abuse based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -707,7 +707,7 @@
   },
   {
     "name": "FDA_get_accessories_info_by_drug_name",
-    "description": "Retrieve information about accessories based on the drug name.",
+    "description": "Retrieve information about accessories based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -986,7 +986,7 @@
   },
   {
     "name": "FDA_get_manufacturer_name_NDC_number_by_drug_name",
-    "description": "Retrieve detailed information about a drug's active ingredient, FDA application number, manufacturer name, National Drug Code (NDC) number, and route of administration; all based on the drug name.",
+    "description": "Retrieve detailed information about a drug's active ingredient, FDA application number, manufacturer name, National Drug Code (NDC) number, and route of administration; all based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1443,7 +1443,7 @@
   },
   {
     "name": "FDA_get_adverse_reactions_by_drug_name",
-    "description": "Retrieve adverse reactions information based on the drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings, boxed_warning, precautions, general_precautions (tools: FDA_get_warnings_by_drug_name, FDA_get_boxed_warning_info_by_drug_name, FDA_get_precautions_by_drug_name, FDA_get_general_precautions_by_drug_name).",
+    "description": "Retrieve adverse reactions information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings, boxed_warning, precautions, general_precautions (tools: FDA_get_warnings_by_drug_name, FDA_get_boxed_warning_info_by_drug_name, FDA_get_precautions_by_drug_name, FDA_get_general_precautions_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1789,7 +1789,7 @@
   },
   {
     "name": "FDA_get_alarms_by_drug_name",
-    "description": "Retrieve alarms based on the specified drug name.",
+    "description": "Retrieve alarms based on the specified drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -2066,7 +2066,7 @@
   },
   {
     "name": "FDA_get_animal_pharmacology_info_by_drug_name",
-    "description": "Retrieve animal pharmacology and toxicology information based on drug names.",
+    "description": "Retrieve animal pharmacology and toxicology information based on drug names. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -2332,7 +2332,7 @@
     "aliases": [
       "FDA_get_info_on_conditions_for_doctor_consultation_by_drug_name"
     ],
-    "description": "Get information about when a doctor should be consulted before using a specific drug.",
+    "description": "Get information about when a doctor should be consulted before using a specific drug. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -2615,7 +2615,7 @@
     "aliases": [
       "FDA_get_info_on_consulting_doctor_pharmacist_by_drug_name"
     ],
-    "description": "Get information about when a doctor or pharmacist should be consulted regarding drug interactions for a specific drug.",
+    "description": "Get information about when a doctor or pharmacist should be consulted regarding drug interactions for a specific drug. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -2893,7 +2893,7 @@
   },
   {
     "name": "FDA_get_assembly_installation_info_by_drug_name",
-    "description": "Retrieve assembly or installation instructions based on drug names.",
+    "description": "Retrieve assembly or installation instructions based on drug names. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -3171,7 +3171,7 @@
   },
   {
     "name": "FDA_get_boxed_warning_info_by_drug_name",
-    "description": "Retrieve boxed warning and adverse effects information for a specific drug. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name).",
+    "description": "Retrieve boxed warning and adverse effects information for a specific drug. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -3489,7 +3489,7 @@
   },
   {
     "name": "FDA_get_carcinogenic_mutagenic_fertility_by_drug_name",
-    "description": "Retrieve carcinogenic, mutagenic, or fertility impairment information based on the drug name.",
+    "description": "Retrieve carcinogenic, mutagenic, or fertility impairment information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -3926,7 +3926,7 @@
   },
   {
     "name": "FDA_get_clinical_pharmacology_by_drug_name",
-    "description": "Retrieve clinical pharmacology information based on drug names.",
+    "description": "Retrieve clinical pharmacology information based on drug names. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -4207,7 +4207,7 @@
   },
   {
     "name": "FDA_get_clinical_studies_info_by_drug_name",
-    "description": "Retrieve clinical studies information based on the drug name.",
+    "description": "Retrieve clinical studies information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -4488,7 +4488,7 @@
   },
   {
     "name": "FDA_get_contraindications_by_drug_name",
-    "description": "Retrieve contraindications information based on the drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name).",
+    "description": "Retrieve contraindications information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -4810,7 +4810,7 @@
     "aliases": [
       "FDA_get_controlled_substance_DEA_schedule_info_by_drug_name"
     ],
-    "description": "Retrieve information about the controlled substance Drug Enforcement Administratino (DEA) schedule for a specific drug.",
+    "description": "Retrieve information about the controlled substance Drug Enforcement Administratino (DEA) schedule for a specific drug. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -5074,7 +5074,7 @@
   },
   {
     "name": "FDA_get_dependence_info_by_drug_name",
-    "description": "Retrieve information about dependence characteristics based on the drug name.",
+    "description": "Retrieve information about dependence characteristics based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -5352,7 +5352,7 @@
   },
   {
     "name": "FDA_get_disposal_info_by_drug_name",
-    "description": "Retrieve disposal and waste handling information based on the drug name.",
+    "description": "Retrieve disposal and waste handling information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -5753,7 +5753,7 @@
   },
   {
     "name": "FDA_get_dosage_forms_and_strengths_by_drug_name",
-    "description": "Retrieve dosage forms and strengths information based on the drug name.",
+    "description": "Retrieve dosage forms and strengths information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -6017,7 +6017,7 @@
   },
   {
     "name": "FDA_get_abuse_dependence_info_by_drug_name",
-    "description": "Get information about drug abuse and dependence based on the drug name, specifically information on whether the drug is a controlled substances, the types of possible abuse, and adverse reactions relevant to those abuse types.",
+    "description": "Get information about drug abuse and dependence based on the drug name, specifically information on whether the drug is a controlled substances, the types of possible abuse, and adverse reactions relevant to those abuse types. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -6295,7 +6295,7 @@
   },
   {
     "name": "FDA_get_lab_test_interference_info_by_drug_name",
-    "description": "Retrieve information about laboratory test interferences for a specific drug.",
+    "description": "Retrieve information about laboratory test interferences for a specific drug. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -6573,7 +6573,7 @@
   },
   {
     "name": "FDA_get_drug_interactions_by_drug_name",
-    "description": "Retrieve drug interactions based on the specified drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings, precautions (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name, FDA_get_precautions_by_drug_name).",
+    "description": "Retrieve drug interactions based on the specified drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings, precautions (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name, FDA_get_precautions_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -6895,7 +6895,7 @@
   },
   {
     "name": "FDA_get_effective_time_by_drug_name",
-    "description": "Retrieve effective time of the labeling document based on the drug name.",
+    "description": "Retrieve effective time of the labeling document based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -7147,7 +7147,7 @@
   },
   {
     "name": "FDA_get_environmental_warning_by_drug_name",
-    "description": "Fetch environmental warnings for a specific drug based on its name.",
+    "description": "Fetch environmental warnings for a specific drug based on its name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -7597,7 +7597,7 @@
   },
   {
     "name": "FDA_get_general_precautions_by_drug_name",
-    "description": "Retrieve general precautions information based on the drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: precautions, warnings_and_cautions, warnings (tools: FDA_get_precautions_by_drug_name, FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name).",
+    "description": "Retrieve general precautions information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: precautions, warnings_and_cautions, warnings (tools: FDA_get_precautions_by_drug_name, FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -7925,7 +7925,7 @@
   },
   {
     "name": "FDA_get_geriatric_use_info_by_drug_name",
-    "description": "Retrieve information about geriatric use based on the drug name.",
+    "description": "Retrieve information about geriatric use based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -8064,7 +8064,7 @@
     "aliases": [
       "FDA_get_dear_health_care_provider_letter_info_by_drug_name"
     ],
-    "description": "Fetch information about dear health care provider letters for a specific drug. The letters are sent by drug manufacturers to provide new or updated information about the drug.",
+    "description": "Fetch information about dear health care provider letters for a specific drug. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). The letters are sent by drug manufacturers to provide new or updated information about the drug.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -8483,7 +8483,7 @@
   },
   {
     "name": "FDA_get_health_claims_by_drug_name",
-    "description": "Retrieve health claims associated with a specific drug name.",
+    "description": "Retrieve health claims associated with a specific drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -8735,7 +8735,7 @@
   },
   {
     "name": "FDA_get_document_id_by_drug_name",
-    "description": "Retrieve the document ID based on the drug name.",
+    "description": "Retrieve the document ID based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -8992,7 +8992,7 @@
   },
   {
     "name": "FDA_get_inactive_ingredient_info_by_drug_name",
-    "description": "Fetch a list of inactive ingredients in a specific drug product based on the drug name.",
+    "description": "Fetch a list of inactive ingredients in a specific drug product based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -9254,7 +9254,7 @@
   },
   {
     "name": "FDA_get_indications_by_drug_name",
-    "description": "Retrieve indications and usage information based on a specific drug name.",
+    "description": "Retrieve indications and usage information based on a specific drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -9537,7 +9537,7 @@
     "aliases": [
       "FDA_get_information_for_owners_or_caregivers_by_drug_name"
     ],
-    "description": "Retrieve specific information for owners or caregivers based on the drug name.",
+    "description": "Retrieve specific information for owners or caregivers based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -9672,7 +9672,7 @@
   },
   {
     "name": "FDA_get_info_for_patients_by_drug_name",
-    "description": "Fetch information for patients based on the drug name.",
+    "description": "Fetch information for patients based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -9948,7 +9948,7 @@
   },
   {
     "name": "FDA_get_instructions_for_use_by_drug_name",
-    "description": "Retrieve instructions for use information based on the drug name.",
+    "description": "Retrieve instructions for use information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -10202,7 +10202,7 @@
   },
   {
     "name": "FDA_retrieve_device_use_by_drug_name",
-    "description": "Retrieve the intended use of the device based on the drug name.",
+    "description": "Retrieve the intended use of the device based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -10480,7 +10480,7 @@
   },
   {
     "name": "FDA_get_child_safety_info_by_drug_name",
-    "description": "Retrieve the FDA label's keep_out_of_reach_of_children section by drug name. This section contains child-access and accidental-ingestion warnings; it does not provide a general assessment of pediatric use. For pediatric-use labeling, use FDA_get_pediatric_use_info_by_drug_name. A missing section does not establish safety or lack of risk.",
+    "description": "Retrieve the FDA label's keep_out_of_reach_of_children section by drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). This section contains child-access and accidental-ingestion warnings; it does not provide a general assessment of pediatric use. For pediatric-use labeling, use FDA_get_pediatric_use_info_by_drug_name. A missing section does not establish safety or lack of risk.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -10744,7 +10744,7 @@
   },
   {
     "name": "FDA_get_labor_and_delivery_info_by_drug_name",
-    "description": "Retrieve information about the drug\u2019s use during labor or delivery based on the drug name.",
+    "description": "Retrieve information about the drug\u2019s use during labor or delivery based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11024,7 +11024,7 @@
   },
   {
     "name": "FDA_get_lab_tests_by_drug_name",
-    "description": "Retrieve laboratory tests information based on drug names.",
+    "description": "Retrieve laboratory tests information based on drug names. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11159,7 +11159,7 @@
   },
   {
     "name": "FDA_get_mechanism_of_action_by_drug_name",
-    "description": "Retrieve the mechanism of action information for a specific drug.",
+    "description": "Retrieve the mechanism of action information for a specific drug. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11568,7 +11568,7 @@
   },
   {
     "name": "FDA_get_microbiology_info_by_drug_name",
-    "description": "Retrieve microbiology information based on the drug name.",
+    "description": "Retrieve microbiology information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11846,7 +11846,7 @@
   },
   {
     "name": "FDA_get_nonclinical_toxicology_info_by_drug_name",
-    "description": "Retrieve nonclinical toxicology information based on drug names.",
+    "description": "Retrieve nonclinical toxicology information based on drug names. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12122,7 +12122,7 @@
   },
   {
     "name": "FDA_get_nonteratogenic_effects_by_drug_name",
-    "description": "Retrieve information about nonteratogenic effects based on the drug name.",
+    "description": "Retrieve information about nonteratogenic effects based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12399,7 +12399,7 @@
   },
   {
     "name": "FDA_get_info_for_nursing_mothers_by_drug_name",
-    "description": "Retrieve information about nursing mothers for a specific drug.",
+    "description": "Retrieve information about nursing mothers for a specific drug. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12657,7 +12657,7 @@
   },
   {
     "name": "FDA_get_other_safety_info_by_drug_name",
-    "description": "Retrieve safety information that may not be specified in other fields based on the provided drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name).",
+    "description": "Retrieve safety information that may not be specified in other fields based on the provided drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12972,7 +12972,7 @@
   },
   {
     "name": "FDA_get_overdosage_info_by_drug_name",
-    "description": "Retrieve information about signs, symptoms, and laboratory findings of acute overdosage based on the drug name.",
+    "description": "Retrieve information about signs, symptoms, and laboratory findings of acute overdosage based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13230,7 +13230,7 @@
   },
   {
     "name": "FDA_get_principal_display_panel_by_drug_name",
-    "description": "Retrieve the content of the principal display panel of the product package based on the drug name.",
+    "description": "Retrieve the content of the principal display panel of the product package based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13486,7 +13486,7 @@
   },
   {
     "name": "FDA_retrieve_patient_medication_info_by_drug_name",
-    "description": "Retrieve patient medication information (which is about safe use of the drug) based on drug names.",
+    "description": "Retrieve patient medication information (which is about safe use of the drug) based on drug names. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13761,7 +13761,7 @@
   },
   {
     "name": "FDA_get_pediatric_use_info_by_drug_name",
-    "description": "Retrieve the FDA label's pediatric_use section by drug name. Use this section for statements about use in pediatric populations, including age-specific evidence or limitations when present. It is distinct from keep_out_of_reach_of_children access warnings. A missing section does not establish safety or lack of risk; relevant information may appear in other label sections.",
+    "description": "Retrieve the FDA label's pediatric_use section by drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). Use this section for statements about use in pediatric populations, including age-specific evidence or limitations when present. It is distinct from keep_out_of_reach_of_children access warnings. A missing section does not establish safety or lack of risk; relevant information may appear in other label sections.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14019,7 +14019,7 @@
   },
   {
     "name": "FDA_get_pharmacodynamics_by_drug_name",
-    "description": "Retrieve pharmacodynamics information based on the drug name.",
+    "description": "Retrieve pharmacodynamics information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14275,7 +14275,7 @@
   },
   {
     "name": "FDA_get_pharmacogenomics_info_by_drug_name",
-    "description": "Retrieve pharmacogenomics information based on the drug name.",
+    "description": "Retrieve pharmacogenomics information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14558,7 +14558,7 @@
   },
   {
     "name": "FDA_get_pharmacokinetics_by_drug_name",
-    "description": "Retrieve pharmacokinetics information (e.g. absorption, distribution, elimination, metabolism, drug interactions, and specific patient populations) for a specific drug based on its name.",
+    "description": "Retrieve pharmacokinetics information (e.g. absorption, distribution, elimination, metabolism, drug interactions, and specific patient populations) for a specific drug based on its name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14822,7 +14822,7 @@
   },
   {
     "name": "FDA_get_precautions_by_drug_name",
-    "description": "Retrieve precautions information based on the drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings, general_precautions (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name, FDA_get_general_precautions_by_drug_name).",
+    "description": "Retrieve precautions information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, warnings, general_precautions (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_warnings_by_drug_name, FDA_get_general_precautions_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -15150,7 +15150,7 @@
   },
   {
     "name": "FDA_get_pregnancy_effects_info_by_drug_name",
-    "description": "Retrieve information about the effects on pregnancy for a specific drug.",
+    "description": "Retrieve information about the effects on pregnancy for a specific drug. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -15413,7 +15413,7 @@
   },
   {
     "name": "FDA_get_pregnancy_or_breastfeeding_info_by_drug_name",
-    "description": "Retrieve the pregnancy or breastfeeding information based on the specified drug name.",
+    "description": "Retrieve the pregnancy or breastfeeding information based on the specified drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -15560,7 +15560,7 @@
   },
   {
     "name": "FDA_get_contact_for_questions_info_by_drug_name",
-    "description": "Retrieve information on who to contact with questions about the drug based on the provided drug name.",
+    "description": "Retrieve information on who to contact with questions about the drug based on the provided drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -15696,7 +15696,7 @@
   },
   {
     "name": "FDA_get_recent_changes_by_drug_name",
-    "description": "Retrieve recent major changes in labeling for a specific drug.",
+    "description": "Retrieve recent major changes in labeling for a specific drug. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -15954,7 +15954,7 @@
   },
   {
     "name": "FDA_get_reference_info_by_drug_name",
-    "description": "Retrieve reference information based on the drug name provided.",
+    "description": "Retrieve reference information based on the drug name provided. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -16373,7 +16373,7 @@
   },
   {
     "name": "FDA_get_risk_info_by_drug_name",
-    "description": "Retrieve risk information (especially regarding pregnancy or breastfeeding) based on the drug name.",
+    "description": "Retrieve risk information (especially regarding pregnancy or breastfeeding) based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -16657,7 +16657,7 @@
   },
   {
     "name": "FDA_get_route_info_by_drug_name",
-    "description": "Retrieve the route of administration information based on the drug name.",
+    "description": "Retrieve the route of administration information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -16944,7 +16944,7 @@
   },
   {
     "name": "FDA_get_safe_handling_warnings_by_drug_name",
-    "description": "Retrieve safe handling warnings for a specific drug based on its name.",
+    "description": "Retrieve safe handling warnings for a specific drug based on its name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -17340,7 +17340,7 @@
   },
   {
     "name": "FDA_get_spl_indexing_data_elements_by_drug_name",
-    "description": "Retrieve Structured Product Labeling (SPL) indexing data elements based on drug names.",
+    "description": "Retrieve Structured Product Labeling (SPL) indexing data elements based on drug names. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -17617,7 +17617,7 @@
   },
   {
     "name": "FDA_get_medication_guide_info_by_drug_name",
-    "description": "Retrieve medication guide information based on the drug name.",
+    "description": "Retrieve medication guide information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -17879,7 +17879,7 @@
   },
   {
     "name": "FDA_get_patient_package_insert_from_drug_name",
-    "description": "Retrieve the patient package insert information based on the drug name.",
+    "description": "Retrieve the patient package insert information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -18146,7 +18146,7 @@
   },
   {
     "name": "FDA_get_ingredients_by_drug_name",
-    "description": "Retrieve a list of drug ingredients based on the drug name.",
+    "description": "Retrieve a list of drug ingredients based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -18272,7 +18272,7 @@
   },
   {
     "name": "FDA_get_spl_unclassified_section_by_drug_name",
-    "description": "Retrieve the SPL unclassified section information based on the drug name.",
+    "description": "Retrieve the SPL unclassified section information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -18534,7 +18534,7 @@
   },
   {
     "name": "FDA_get_stop_use_info_by_drug_name",
-    "description": "Retrieve stop use information based on the drug name provided.",
+    "description": "Retrieve stop use information based on the drug name provided. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -18795,7 +18795,7 @@
   },
   {
     "name": "FDA_get_storage_and_handling_info_by_drug_name",
-    "description": "Retrieve storage and handling information based on the drug name.",
+    "description": "Retrieve storage and handling information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19071,7 +19071,7 @@
   },
   {
     "name": "FDA_get_safety_summary_by_drug_name",
-    "description": "Retrieve a summary of safety and effectiveness information based on the drug name.",
+    "description": "Retrieve a summary of safety and effectiveness information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19342,7 +19342,7 @@
   },
   {
     "name": "FDA_get_teratogenic_effects_by_drug_name",
-    "description": "Retrieve teratogenic effects information based on the drug name.",
+    "description": "Retrieve teratogenic effects information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19622,7 +19622,7 @@
   },
   {
     "name": "FDA_get_population_use_info_by_drug_name",
-    "description": "Retrieve information about the use of a drug in specific populations based on the drug name.",
+    "description": "Retrieve information about the use of a drug in specific populations based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19758,7 +19758,7 @@
   },
   {
     "name": "FDA_get_user_safety_warning_by_drug_names",
-    "description": "Retrieve specific user safety warnings based on drug names. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings, warnings_and_cautions (tools: FDA_get_warnings_by_drug_name, FDA_get_warnings_and_cautions_by_drug_name).",
+    "description": "Retrieve specific user safety warnings based on drug names. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings, warnings_and_cautions (tools: FDA_get_warnings_by_drug_name, FDA_get_warnings_and_cautions_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -20199,7 +20199,7 @@
   },
   {
     "name": "FDA_get_warnings_by_drug_name",
-    "description": "Retrieve warning information based on the drug name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, precautions, general_precautions (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_precautions_by_drug_name, FDA_get_general_precautions_by_drug_name).",
+    "description": "Retrieve warning information based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings_and_cautions, precautions, general_precautions (tools: FDA_get_warnings_and_cautions_by_drug_name, FDA_get_precautions_by_drug_name, FDA_get_general_precautions_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -20395,7 +20395,7 @@
   },
   {
     "name": "FDA_get_warnings_and_cautions_by_drug_name",
-    "description": "Retrieve warnings and cautions information for a specific drug based on its name. IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings, boxed_warning, precautions, general_precautions (tools: FDA_get_warnings_by_drug_name, FDA_get_boxed_warning_info_by_drug_name, FDA_get_precautions_by_drug_name, FDA_get_general_precautions_by_drug_name).",
+    "description": "Retrieve warnings and cautions information for a specific drug based on its name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). IMPORTANT -- FDA labels file safety content under different section names depending on the label's FORMAT, not the drug: modern PLR-format labels (Physician Labeling Rule, 2006 onward) use 'warnings_and_cautions' and usually carry NO 'warnings' section, while legacy and OTC-monograph labels use 'warnings'/'precautions' and usually carry no 'warnings_and_cautions'. Measured against openFDA drug/label on 2026-08-11 (search=_exists_:<field>): 261,639 labels total; 208,073 have 'warnings'; 46,925 have 'warnings_and_cautions'; 43,486 have 'warnings_and_cautions' but no 'warnings' at all; 33,054 have 'boxed_warning'. A null section therefore does NOT mean the drug lacks that content. When every requested section comes back null for a matched label but that same label carries a related section, the related section's content is added to the row under ITS OWN key (never rewritten into the requested key), its name is listed in 'related_sections_present', and a top-level 'section_note' explains the split and names the sibling tool that returns it. Example: GIAPREZA (angiotensin II) has warnings=null and boxed_warning=null but documents its thrombosis risk in 'warnings_and_cautions'. Related sections consulted for this tool: warnings, boxed_warning, precautions, general_precautions (tools: FDA_get_warnings_by_drug_name, FDA_get_boxed_warning_info_by_drug_name, FDA_get_precautions_by_drug_name, FDA_get_general_precautions_by_drug_name).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -20734,7 +20734,7 @@
   },
   {
     "name": "FDA_get_when_using_info",
-    "description": "Retrieve information about side effects and substances or activities to avoid while using a specific drug.",
+    "description": "Retrieve information about side effects and substances or activities to avoid while using a specific drug. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -20984,7 +20984,7 @@
   },
   {
     "name": "FDA_get_do_not_use_info_by_drug_name",
-    "description": "Retrieve information about all contraindications for use based on the drug name.",
+    "description": "Retrieve information about all contraindications for use based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -21119,7 +21119,7 @@
   },
   {
     "name": "FDA_get_purpose_info_by_drug_name",
-    "description": "Retrieve about the drug product\u2019s indications for use based on the drug name.",
+    "description": "Retrieve about the drug product\u2019s indications for use based on the drug name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops).",
     "parameter": {
       "type": "object",
       "properties": {

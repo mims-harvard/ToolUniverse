@@ -1,7 +1,7 @@
 """
 FDA_get_spl_indexing_data_elements_by_drug_name
 
-Retrieve Structured Product Labeling (SPL) indexing data elements based on drug names.
+Retrieve Structured Product Labeling (SPL) indexing data elements based on drug names. Pass 'rout...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_spl_indexing_data_elements_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve Structured Product Labeling (SPL) indexing data elements based on drug names.
+    Retrieve Structured Product Labeling (SPL) indexing data elements based on drug names. Pass 'rout...
 
     Parameters
     ----------

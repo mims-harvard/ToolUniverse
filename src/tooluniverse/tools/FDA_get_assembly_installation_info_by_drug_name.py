@@ -1,7 +1,7 @@
 """
 FDA_get_assembly_installation_info_by_drug_name
 
-Retrieve assembly or installation instructions based on drug names.
+Retrieve assembly or installation instructions based on drug names. Pass 'route' whenever the pro...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_assembly_installation_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve assembly or installation instructions based on drug names.
+    Retrieve assembly or installation instructions based on drug names. Pass 'route' whenever the pro...
 
     Parameters
     ----------

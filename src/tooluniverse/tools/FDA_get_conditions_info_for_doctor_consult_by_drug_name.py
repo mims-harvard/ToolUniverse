@@ -1,7 +1,7 @@
 """
 FDA_get_conditions_info_for_doctor_consult_by_drug_name
 
-Get information about when a doctor should be consulted before using a specific drug.
+Get information about when a doctor should be consulted before using a specific drug. Pass 'route...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_conditions_info_for_doctor_consult_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get information about when a doctor should be consulted before using a specific drug.
+    Get information about when a doctor should be consulted before using a specific drug. Pass 'route...
 
     Parameters
     ----------

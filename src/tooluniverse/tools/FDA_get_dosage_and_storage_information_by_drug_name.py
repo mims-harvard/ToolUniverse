@@ -1,7 +1,7 @@
 """
 FDA_get_dosage_and_storage_information_by_drug_name
 
-Retrieve dosage and storage information for a specific drug.
+Retrieve dosage and storage information for a specific drug. Pass 'route' whenever the product's ...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_dosage_and_storage_information_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve dosage and storage information for a specific drug.
+    Retrieve dosage and storage information for a specific drug. Pass 'route' whenever the product's ...
 
     Parameters
     ----------

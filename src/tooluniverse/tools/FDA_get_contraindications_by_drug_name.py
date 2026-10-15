@@ -1,7 +1,7 @@
 """
 FDA_get_contraindications_by_drug_name
 
-Retrieve contraindications information based on the drug name. IMPORTANT -- FDA labels file safet...
+Retrieve contraindications information based on the drug name. Pass 'route' whenever the product'...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_contraindications_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve contraindications information based on the drug name. IMPORTANT -- FDA labels file safet...
+    Retrieve contraindications information based on the drug name. Pass 'route' whenever the product'...
 
     Parameters
     ----------

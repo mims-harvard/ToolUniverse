@@ -1,7 +1,7 @@
 """
 FDA_get_spl_unclassified_section_by_drug_name
 
-Retrieve the SPL unclassified section information based on the drug name.
+Retrieve the SPL unclassified section information based on the drug name. Pass 'route' whenever t...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_spl_unclassified_section_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve the SPL unclassified section information based on the drug name.
+    Retrieve the SPL unclassified section information based on the drug name. Pass 'route' whenever t...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 FDA_get_route_info_by_drug_name
 
-Retrieve the route of administration information based on the drug name.
+Retrieve the route of administration information based on the drug name. Pass 'route' whenever th...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_route_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve the route of administration information based on the drug name.
+    Retrieve the route of administration information based on the drug name. Pass 'route' whenever th...
 
     Parameters
     ----------

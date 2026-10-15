@@ -1,7 +1,7 @@
 """
 FDA_search_drug_labels
 
-Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Dru...
+Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Pas...
 """
 
 from typing import Any, Optional, Callable
@@ -20,7 +20,7 @@ def FDA_search_drug_labels(
     validate: bool = True,
 ) -> Any:
     """
-    Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Dru...
+    Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Pas...
 
     Parameters
     ----------

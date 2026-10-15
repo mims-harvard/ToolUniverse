@@ -1,7 +1,7 @@
 """
 FDA_get_clinical_pharmacology_by_drug_name
 
-Retrieve clinical pharmacology information based on drug names.
+Retrieve clinical pharmacology information based on drug names. Pass 'route' whenever the product...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_clinical_pharmacology_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve clinical pharmacology information based on drug names.
+    Retrieve clinical pharmacology information based on drug names. Pass 'route' whenever the product...
 
     Parameters
     ----------

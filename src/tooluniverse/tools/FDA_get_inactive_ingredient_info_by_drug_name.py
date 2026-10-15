@@ -1,7 +1,7 @@
 """
 FDA_get_inactive_ingredient_info_by_drug_name
 
-Fetch a list of inactive ingredients in a specific drug product based on the drug name.
+Fetch a list of inactive ingredients in a specific drug product based on the drug name. Pass 'rou...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_inactive_ingredient_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Fetch a list of inactive ingredients in a specific drug product based on the drug name.
+    Fetch a list of inactive ingredients in a specific drug product based on the drug name. Pass 'rou...
 
     Parameters
     ----------

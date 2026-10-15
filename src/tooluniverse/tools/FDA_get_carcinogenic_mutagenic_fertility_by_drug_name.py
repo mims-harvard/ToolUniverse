@@ -1,7 +1,7 @@
 """
 FDA_get_carcinogenic_mutagenic_fertility_by_drug_name
 
-Retrieve carcinogenic, mutagenic, or fertility impairment information based on the drug name.
+Retrieve carcinogenic, mutagenic, or fertility impairment information based on the drug name. Pas...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_carcinogenic_mutagenic_fertility_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve carcinogenic, mutagenic, or fertility impairment information based on the drug name.
+    Retrieve carcinogenic, mutagenic, or fertility impairment information based on the drug name. Pas...
 
     Parameters
     ----------

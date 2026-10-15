@@ -1,7 +1,7 @@
 """
 FDA_get_dhcp_letter_info_by_drug_name
 
-Fetch information about dear health care provider letters for a specific drug. The letters are se...
+Fetch information about dear health care provider letters for a specific drug. Pass 'route' whene...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_dhcp_letter_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Fetch information about dear health care provider letters for a specific drug. The letters are se...
+    Fetch information about dear health care provider letters for a specific drug. Pass 'route' whene...
 
     Parameters
     ----------

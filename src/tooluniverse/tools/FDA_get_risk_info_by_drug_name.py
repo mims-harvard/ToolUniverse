@@ -1,7 +1,7 @@
 """
 FDA_get_risk_info_by_drug_name
 
-Retrieve risk information (especially regarding pregnancy or breastfeeding) based on the drug name.
+Retrieve risk information (especially regarding pregnancy or breastfeeding) based on the drug nam...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_risk_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve risk information (especially regarding pregnancy or breastfeeding) based on the drug name.
+    Retrieve risk information (especially regarding pregnancy or breastfeeding) based on the drug nam...
 
     Parameters
     ----------

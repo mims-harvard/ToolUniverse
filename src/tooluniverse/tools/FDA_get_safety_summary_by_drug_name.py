@@ -1,7 +1,7 @@
 """
 FDA_get_safety_summary_by_drug_name
 
-Retrieve a summary of safety and effectiveness information based on the drug name.
+Retrieve a summary of safety and effectiveness information based on the drug name. Pass 'route' w...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_safety_summary_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve a summary of safety and effectiveness information based on the drug name.
+    Retrieve a summary of safety and effectiveness information based on the drug name. Pass 'route' w...
 
     Parameters
     ----------

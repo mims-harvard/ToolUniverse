@@ -1,7 +1,7 @@
 """
 FDA_get_patient_package_insert_from_drug_name
 
-Retrieve the patient package insert information based on the drug name.
+Retrieve the patient package insert information based on the drug name. Pass 'route' whenever the...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_patient_package_insert_from_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve the patient package insert information based on the drug name.
+    Retrieve the patient package insert information based on the drug name. Pass 'route' whenever the...
 
     Parameters
     ----------

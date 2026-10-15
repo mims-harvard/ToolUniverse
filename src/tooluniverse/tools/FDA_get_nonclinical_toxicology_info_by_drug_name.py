@@ -1,7 +1,7 @@
 """
 FDA_get_nonclinical_toxicology_info_by_drug_name
 
-Retrieve nonclinical toxicology information based on drug names.
+Retrieve nonclinical toxicology information based on drug names. Pass 'route' whenever the produc...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_nonclinical_toxicology_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve nonclinical toxicology information based on drug names.
+    Retrieve nonclinical toxicology information based on drug names. Pass 'route' whenever the produc...
 
     Parameters
     ----------

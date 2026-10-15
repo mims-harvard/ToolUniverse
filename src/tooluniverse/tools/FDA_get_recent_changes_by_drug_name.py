@@ -1,7 +1,7 @@
 """
 FDA_get_recent_changes_by_drug_name
 
-Retrieve recent major changes in labeling for a specific drug.
+Retrieve recent major changes in labeling for a specific drug. Pass 'route' whenever the product'...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_recent_changes_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve recent major changes in labeling for a specific drug.
+    Retrieve recent major changes in labeling for a specific drug. Pass 'route' whenever the product'...
 
     Parameters
     ----------

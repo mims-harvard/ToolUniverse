@@ -1,7 +1,7 @@
 """
 FDA_get_purpose_info_by_drug_name
 
-Retrieve about the drug product’s indications for use based on the drug name.
+Retrieve about the drug product’s indications for use based on the drug name. Pass 'route' whenev...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_purpose_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve about the drug product’s indications for use based on the drug name.
+    Retrieve about the drug product’s indications for use based on the drug name. Pass 'route' whenev...
 
     Parameters
     ----------

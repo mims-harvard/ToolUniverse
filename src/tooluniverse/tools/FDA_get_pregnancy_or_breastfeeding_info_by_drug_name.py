@@ -1,7 +1,7 @@
 """
 FDA_get_pregnancy_or_breastfeeding_info_by_drug_name
 
-Retrieve the pregnancy or breastfeeding information based on the specified drug name.
+Retrieve the pregnancy or breastfeeding information based on the specified drug name. Pass 'route...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_pregnancy_or_breastfeeding_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve the pregnancy or breastfeeding information based on the specified drug name.
+    Retrieve the pregnancy or breastfeeding information based on the specified drug name. Pass 'route...
 
     Parameters
     ----------

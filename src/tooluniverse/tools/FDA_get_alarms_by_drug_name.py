@@ -1,7 +1,7 @@
 """
 FDA_get_alarms_by_drug_name
 
-Retrieve alarms based on the specified drug name.
+Retrieve alarms based on the specified drug name. Pass 'route' whenever the product's form is kno...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_alarms_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve alarms based on the specified drug name.
+    Retrieve alarms based on the specified drug name. Pass 'route' whenever the product's form is kno...
 
     Parameters
     ----------

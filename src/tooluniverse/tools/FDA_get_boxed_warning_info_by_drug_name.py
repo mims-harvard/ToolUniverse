@@ -1,7 +1,7 @@
 """
 FDA_get_boxed_warning_info_by_drug_name
 
-Retrieve boxed warning and adverse effects information for a specific drug. IMPORTANT -- FDA labe...
+Retrieve boxed warning and adverse effects information for a specific drug. Pass 'route' whenever...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_boxed_warning_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve boxed warning and adverse effects information for a specific drug. IMPORTANT -- FDA labe...
+    Retrieve boxed warning and adverse effects information for a specific drug. Pass 'route' whenever...
 
     Parameters
     ----------

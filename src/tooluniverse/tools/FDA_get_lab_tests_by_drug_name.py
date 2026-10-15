@@ -1,7 +1,7 @@
 """
 FDA_get_lab_tests_by_drug_name
 
-Retrieve laboratory tests information based on drug names.
+Retrieve laboratory tests information based on drug names. Pass 'route' whenever the product's fo...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_lab_tests_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve laboratory tests information based on drug names.
+    Retrieve laboratory tests information based on drug names. Pass 'route' whenever the product's fo...
 
     Parameters
     ----------

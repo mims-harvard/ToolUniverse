@@ -1,7 +1,7 @@
 """
 FDA_get_population_use_info_by_drug_name
 
-Retrieve information about the use of a drug in specific populations based on the drug name.
+Retrieve information about the use of a drug in specific populations based on the drug name. Pass...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_population_use_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve information about the use of a drug in specific populations based on the drug name.
+    Retrieve information about the use of a drug in specific populations based on the drug name. Pass...
 
     Parameters
     ----------

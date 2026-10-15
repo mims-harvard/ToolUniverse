@@ -1,7 +1,7 @@
 """
 FDA_retrieve_device_use_by_drug_name
 
-Retrieve the intended use of the device based on the drug name.
+Retrieve the intended use of the device based on the drug name. Pass 'route' whenever the product...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_retrieve_device_use_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve the intended use of the device based on the drug name.
+    Retrieve the intended use of the device based on the drug name. Pass 'route' whenever the product...
 
     Parameters
     ----------

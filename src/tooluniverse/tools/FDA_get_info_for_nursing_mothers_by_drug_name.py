@@ -1,7 +1,7 @@
 """
 FDA_get_info_for_nursing_mothers_by_drug_name
 
-Retrieve information about nursing mothers for a specific drug.
+Retrieve information about nursing mothers for a specific drug. Pass 'route' whenever the product...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_info_for_nursing_mothers_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve information about nursing mothers for a specific drug.
+    Retrieve information about nursing mothers for a specific drug. Pass 'route' whenever the product...
 
     Parameters
     ----------

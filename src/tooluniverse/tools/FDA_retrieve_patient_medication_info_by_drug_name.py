@@ -1,7 +1,7 @@
 """
 FDA_retrieve_patient_medication_info_by_drug_name
 
-Retrieve patient medication information (which is about safe use of the drug) based on drug names.
+Retrieve patient medication information (which is about safe use of the drug) based on drug names...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_retrieve_patient_medication_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve patient medication information (which is about safe use of the drug) based on drug names.
+    Retrieve patient medication information (which is about safe use of the drug) based on drug names...
 
     Parameters
     ----------

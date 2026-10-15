@@ -1,7 +1,7 @@
 """
 FDA_get_stop_use_info_by_drug_name
 
-Retrieve stop use information based on the drug name provided.
+Retrieve stop use information based on the drug name provided. Pass 'route' whenever the product'...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_stop_use_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve stop use information based on the drug name provided.
+    Retrieve stop use information based on the drug name provided. Pass 'route' whenever the product'...
 
     Parameters
     ----------

@@ -239,6 +239,28 @@ def test_every_label_section_tool_declares_the_route():
         assert props["route"]["type"] == ["string", "null"], name
 
 
+def test_every_tool_that_takes_the_route_says_when_to_pass_it():
+    # agents choose arguments from the description; the parameter text alone was not enough
+    tools = list(_configs().values()) + list(
+        _configs("openfda_label_tools.json").values()
+    )
+    routed = [
+        t
+        for t in tools
+        if "route" in t["parameter"]["properties"]
+        and t["name"] != "FDA_get_drug_names_by_route"
+    ]
+    assert len(routed) == 79
+    for tool in routed:
+        description = tool["description"]
+        assert "Pass 'route' whenever the product's form is known" in description, (
+            tool["name"]
+        )
+        assert "eye drops -> OPHTHALMIC" in description, tool["name"]
+        if "IMPORTANT" in description:  # ahead of the long section-format note
+            assert description.index("Pass 'route'") < description.index("IMPORTANT")
+
+
 def test_the_label_window_points_at_the_route():
     rows = [_label("ORAL", drug_interactions=[f"oral {i}"]) for i in range(9)] + [
         _label("OPHTHALMIC", drug_interactions=["eye"])

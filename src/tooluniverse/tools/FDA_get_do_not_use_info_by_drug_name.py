@@ -1,7 +1,7 @@
 """
 FDA_get_do_not_use_info_by_drug_name
 
-Retrieve information about all contraindications for use based on the drug name.
+Retrieve information about all contraindications for use based on the drug name. Pass 'route' whe...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_do_not_use_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve information about all contraindications for use based on the drug name.
+    Retrieve information about all contraindications for use based on the drug name. Pass 'route' whe...
 
     Parameters
     ----------

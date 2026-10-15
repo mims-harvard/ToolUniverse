@@ -1,7 +1,7 @@
 """
 FDA_get_mechanism_of_action_by_drug_name
 
-Retrieve the mechanism of action information for a specific drug.
+Retrieve the mechanism of action information for a specific drug. Pass 'route' whenever the produ...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_mechanism_of_action_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve the mechanism of action information for a specific drug.
+    Retrieve the mechanism of action information for a specific drug. Pass 'route' whenever the produ...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 FDA_get_dosage_forms_and_strengths_by_drug_name
 
-Retrieve dosage forms and strengths information based on the drug name.
+Retrieve dosage forms and strengths information based on the drug name. Pass 'route' whenever the...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_dosage_forms_and_strengths_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve dosage forms and strengths information based on the drug name.
+    Retrieve dosage forms and strengths information based on the drug name. Pass 'route' whenever the...
 
     Parameters
     ----------

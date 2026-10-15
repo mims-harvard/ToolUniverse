@@ -1,7 +1,7 @@
 """
 FDA_get_info_for_patients_by_drug_name
 
-Fetch information for patients based on the drug name.
+Fetch information for patients based on the drug name. Pass 'route' whenever the product's form i...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_info_for_patients_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Fetch information for patients based on the drug name.
+    Fetch information for patients based on the drug name. Pass 'route' whenever the product's form i...
 
     Parameters
     ----------

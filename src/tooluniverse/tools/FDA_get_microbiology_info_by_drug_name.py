@@ -1,7 +1,7 @@
 """
 FDA_get_microbiology_info_by_drug_name
 
-Retrieve microbiology information based on the drug name.
+Retrieve microbiology information based on the drug name. Pass 'route' whenever the product's for...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_microbiology_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve microbiology information based on the drug name.
+    Retrieve microbiology information based on the drug name. Pass 'route' whenever the product's for...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 FDA_get_document_id_by_drug_name
 
-Retrieve the document ID based on the drug name.
+Retrieve the document ID based on the drug name. Pass 'route' whenever the product's form is know...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_document_id_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve the document ID based on the drug name.
+    Retrieve the document ID based on the drug name. Pass 'route' whenever the product's form is know...
 
     Parameters
     ----------

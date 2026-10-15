@@ -1,7 +1,7 @@
 """
 FDA_get_indications_by_drug_name
 
-Retrieve indications and usage information based on a specific drug name.
+Retrieve indications and usage information based on a specific drug name. Pass 'route' whenever t...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_indications_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve indications and usage information based on a specific drug name.
+    Retrieve indications and usage information based on a specific drug name. Pass 'route' whenever t...
 
     Parameters
     ----------

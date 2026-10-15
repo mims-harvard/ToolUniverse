@@ -1,7 +1,7 @@
 """
 FDA_get_animal_pharmacology_info_by_drug_name
 
-Retrieve animal pharmacology and toxicology information based on drug names.
+Retrieve animal pharmacology and toxicology information based on drug names. Pass 'route' wheneve...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_animal_pharmacology_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve animal pharmacology and toxicology information based on drug names.
+    Retrieve animal pharmacology and toxicology information based on drug names. Pass 'route' wheneve...
 
     Parameters
     ----------

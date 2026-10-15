@@ -1,7 +1,7 @@
 """
 FDA_get_active_ingredient_info_by_drug_name
 
-Fetch a list of active ingredients in a specific drug product.
+Fetch a list of active ingredients in a specific drug product. Pass 'route' whenever the product'...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_active_ingredient_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Fetch a list of active ingredients in a specific drug product.
+    Fetch a list of active ingredients in a specific drug product. Pass 'route' whenever the product'...
 
     Parameters
     ----------

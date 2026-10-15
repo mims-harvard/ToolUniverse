@@ -1,7 +1,7 @@
 """
 FDA_get_pharmacodynamics_by_drug_name
 
-Retrieve pharmacodynamics information based on the drug name.
+Retrieve pharmacodynamics information based on the drug name. Pass 'route' whenever the product's...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_pharmacodynamics_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve pharmacodynamics information based on the drug name.
+    Retrieve pharmacodynamics information based on the drug name. Pass 'route' whenever the product's...
 
     Parameters
     ----------

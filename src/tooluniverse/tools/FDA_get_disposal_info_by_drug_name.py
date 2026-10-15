@@ -1,7 +1,7 @@
 """
 FDA_get_disposal_info_by_drug_name
 
-Retrieve disposal and waste handling information based on the drug name.
+Retrieve disposal and waste handling information based on the drug name. Pass 'route' whenever th...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_disposal_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve disposal and waste handling information based on the drug name.
+    Retrieve disposal and waste handling information based on the drug name. Pass 'route' whenever th...
 
     Parameters
     ----------

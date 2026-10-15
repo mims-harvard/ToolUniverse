@@ -1,7 +1,7 @@
 """
 FDA_get_ingredients_by_drug_name
 
-Retrieve a list of drug ingredients based on the drug name.
+Retrieve a list of drug ingredients based on the drug name. Pass 'route' whenever the product's f...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_ingredients_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve a list of drug ingredients based on the drug name.
+    Retrieve a list of drug ingredients based on the drug name. Pass 'route' whenever the product's f...
 
     Parameters
     ----------

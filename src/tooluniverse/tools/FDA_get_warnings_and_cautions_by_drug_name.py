@@ -1,7 +1,7 @@
 """
 FDA_get_warnings_and_cautions_by_drug_name
 
-Retrieve warnings and cautions information for a specific drug based on its name. IMPORTANT -- FD...
+Retrieve warnings and cautions information for a specific drug based on its name. Pass 'route' wh...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_warnings_and_cautions_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve warnings and cautions information for a specific drug based on its name. IMPORTANT -- FD...
+    Retrieve warnings and cautions information for a specific drug based on its name. Pass 'route' wh...
 
     Parameters
     ----------

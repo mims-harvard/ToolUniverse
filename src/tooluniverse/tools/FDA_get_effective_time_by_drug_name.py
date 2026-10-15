@@ -1,7 +1,7 @@
 """
 FDA_get_effective_time_by_drug_name
 
-Retrieve effective time of the labeling document based on the drug name.
+Retrieve effective time of the labeling document based on the drug name. Pass 'route' whenever th...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_effective_time_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve effective time of the labeling document based on the drug name.
+    Retrieve effective time of the labeling document based on the drug name. Pass 'route' whenever th...
 
     Parameters
     ----------

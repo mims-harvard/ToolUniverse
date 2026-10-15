@@ -1,7 +1,7 @@
 """
 FDA_get_info_for_owner_caregiver_by_drug_name
 
-Retrieve specific information for owners or caregivers based on the drug name.
+Retrieve specific information for owners or caregivers based on the drug name. Pass 'route' whene...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_info_for_owner_caregiver_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve specific information for owners or caregivers based on the drug name.
+    Retrieve specific information for owners or caregivers based on the drug name. Pass 'route' whene...
 
     Parameters
     ----------

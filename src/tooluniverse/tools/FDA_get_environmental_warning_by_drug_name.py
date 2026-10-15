@@ -1,7 +1,7 @@
 """
 FDA_get_environmental_warning_by_drug_name
 
-Fetch environmental warnings for a specific drug based on its name.
+Fetch environmental warnings for a specific drug based on its name. Pass 'route' whenever the pro...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_environmental_warning_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Fetch environmental warnings for a specific drug based on its name.
+    Fetch environmental warnings for a specific drug based on its name. Pass 'route' whenever the pro...
 
     Parameters
     ----------

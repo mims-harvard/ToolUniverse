@@ -1,7 +1,7 @@
 """
 FDA_get_principal_display_panel_by_drug_name
 
-Retrieve the content of the principal display panel of the product package based on the drug name.
+Retrieve the content of the principal display panel of the product package based on the drug name...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_principal_display_panel_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve the content of the principal display panel of the product package based on the drug name.
+    Retrieve the content of the principal display panel of the product package based on the drug name...
 
     Parameters
     ----------

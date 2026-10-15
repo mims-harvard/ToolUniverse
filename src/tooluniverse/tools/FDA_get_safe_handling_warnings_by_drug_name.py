@@ -1,7 +1,7 @@
 """
 FDA_get_safe_handling_warnings_by_drug_name
 
-Retrieve safe handling warnings for a specific drug based on its name.
+Retrieve safe handling warnings for a specific drug based on its name. Pass 'route' whenever the ...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_safe_handling_warnings_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve safe handling warnings for a specific drug based on its name.
+    Retrieve safe handling warnings for a specific drug based on its name. Pass 'route' whenever the ...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 FDA_get_health_claims_by_drug_name
 
-Retrieve health claims associated with a specific drug name.
+Retrieve health claims associated with a specific drug name. Pass 'route' whenever the product's ...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_health_claims_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve health claims associated with a specific drug name.
+    Retrieve health claims associated with a specific drug name. Pass 'route' whenever the product's ...
 
     Parameters
     ----------

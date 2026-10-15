@@ -1,7 +1,7 @@
 """
 FDA_get_pregnancy_effects_info_by_drug_name
 
-Retrieve information about the effects on pregnancy for a specific drug.
+Retrieve information about the effects on pregnancy for a specific drug. Pass 'route' whenever th...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_pregnancy_effects_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve information about the effects on pregnancy for a specific drug.
+    Retrieve information about the effects on pregnancy for a specific drug. Pass 'route' whenever th...
 
     Parameters
     ----------

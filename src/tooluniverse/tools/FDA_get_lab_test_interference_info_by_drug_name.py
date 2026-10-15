@@ -1,7 +1,7 @@
 """
 FDA_get_lab_test_interference_info_by_drug_name
 
-Retrieve information about laboratory test interferences for a specific drug.
+Retrieve information about laboratory test interferences for a specific drug. Pass 'route' whenev...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FDA_get_lab_test_interference_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve information about laboratory test interferences for a specific drug.
+    Retrieve information about laboratory test interferences for a specific drug. Pass 'route' whenev...
 
     Parameters
     ----------
