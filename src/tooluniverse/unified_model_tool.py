@@ -1,22 +1,23 @@
 """User-facing tools for the unified ML-model interface.
 
-Four tool classes, each registered once per task so that an agent browsing the
-catalogue sees ``predict_variant_effect`` and ``compare_structure_prediction``
-with concrete schemas rather than one generic endpoint behind a ``task``
-string:
+Two tool classes, and the asymmetry between them is deliberate:
 
 ``UnifiedModelPredictTool``
-    One input, one backend, canonical output.
-``UnifiedModelCompareTool``
-    One input, every applicable backend, run concurrently, with a consensus and
-    an explicit account of who disagreed and who could not answer.
-``UnifiedModelListTool``
-    What tasks and backends exist, what each needs, and what is runnable right
-    now given the keys and packages actually present.
+    The agent-facing one, registered once per task so that a catalogue shows
+    ``predict_variant_effect`` with a concrete schema rather than one generic
+    endpoint behind a ``task`` string. It takes one backend id, a list, or
+    ``"all"``, plus a ``list_models`` flag -- the three tools this replaced
+    (``predict``, ``compare``, ``list``) shared 13 of their 18 parameters and
+    ran the same resolver, so they are one tool with a wider ``models``
+    argument. ``data/unified_model_tools.json`` declares the four instances.
 ``UnifiedModelBenchmarkTool``
-    A public dataset through every backend, into a leaderboard.
+    Maintainer-facing, and deliberately NOT in the catalogue: a benchmark run
+    costs hundreds of backend calls against a public dataset, which is a thing
+    a maintainer decides to spend rather than a thing an agent reaches for
+    mid-task. No JSON declares it; ``scripts/run_model_benchmark.py``
+    constructs it directly.
 
-The design rule running through all four: **a backend that could not answer is
+The design rule running through both: **a backend that could not answer is
 reported, never dropped.** Silently omitting failures is what turns a
 comparison into a misleading one -- four models agreeing looks conclusive until
 you learn the other six were skipped because the input never resolved.

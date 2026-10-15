@@ -4303,10 +4303,10 @@ class ToolUniverse:
                     "ExecuteTool",
                     # The unified-model tools dispatch to other tools, so they
                     # need the live ToolUniverse rather than building their own.
+                    # Only the predict tool is declared by a JSON config;
+                    # UnifiedModelBenchmarkTool is maintainer-facing and is
+                    # constructed directly by scripts/run_model_benchmark.py.
                     "UnifiedModelPredictTool",
-                    "UnifiedModelCompareTool",
-                    "UnifiedModelListTool",
-                    "UnifiedModelBenchmarkTool",
                 ]:
                     # Tool discovery tools need tooluniverse parameter
                     new_tool = tool_class(tool_config=tool, tooluniverse=self)

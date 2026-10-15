@@ -3,8 +3,14 @@
 Offline by default: the pieces that matter for correctness -- score
 calibration, argument templating, payload extraction, backend selection,
 consensus, metrics -- are pure functions over data and are tested with a
-stub caller. Network tests are marked ``integration`` and skipped unless
-explicitly selected.
+stub caller.
+
+The ones that reach the network carry BOTH ``integration`` and ``network``.
+``network`` is the load-bearing half: ``pytest.ini`` filters on
+``-m "not slow and not require_api_keys and not network"`` and says nothing
+about ``integration``, so an ``integration``-only mark would have run them --
+and downloaded ProteinGym -- in every default run. Select them with
+``-m network``.
 """
 
 import json
@@ -633,6 +639,7 @@ class TestDatasets:
         assert "label" in str(excinfo.value)
 
     @pytest.mark.integration
+    @pytest.mark.network
     def test_proteingym_downloads_and_parses(self):
         from tooluniverse.unified_model_datasets import load
 
@@ -645,6 +652,7 @@ class TestDatasets:
         assert item["sequence"][item["position"] - 1] == item["wild_type"]
 
     @pytest.mark.integration
+    @pytest.mark.network
     def test_tdc_admet_downloads_and_parses(self):
         from tooluniverse.unified_model_datasets import load
 
@@ -663,6 +671,7 @@ class TestLabelOrientation:
     """
 
     @pytest.mark.integration
+    @pytest.mark.network
     def test_continuous_target_agrees_with_binary_label(self):
         from tooluniverse.unified_model_datasets import load
 
@@ -673,6 +682,7 @@ class TestLabelOrientation:
         assert sum(damaging) / len(damaging) > sum(tolerated) / len(tolerated)
 
     @pytest.mark.integration
+    @pytest.mark.network
     def test_a_good_predictor_gets_a_positive_spearman(self):
         """An oracle ranking must not be punished by the sign convention."""
         from tooluniverse.unified_model_datasets import load
@@ -871,6 +881,7 @@ class TestBindingAffinityResolution:
         assert notes and "4-character" in notes[0]
 
     @pytest.mark.integration
+    @pytest.mark.network
     def test_every_docking_backend_can_satisfy_its_needs(self):
         pytest.importorskip("rdkit")
         from tooluniverse.unified_model_resolvers import resolve_binding_affinity
@@ -1436,12 +1447,17 @@ class TestToolDescriptionsAreTrue:
 
     @staticmethod
     def _configs():
+        # Read the file through default_tool_files rather than by walking up
+        # from __file__: that makes every test below also an assertion that
+        # the category is registered. It was not, for the life of this file --
+        # the JSON existed, no entry pointed at it, and the four tools could
+        # not be loaded by name -- and a path computed here would not have
+        # noticed.
         import pathlib
 
-        path = (
-            pathlib.Path(__file__).resolve().parents[1]
-            / "src/tooluniverse/data/unified_model_tools.json"
-        )
+        from tooluniverse.default_config import default_tool_files
+
+        path = pathlib.Path(default_tool_files["unified_model"])
         return {c["name"]: c for c in json.loads(path.read_text())}
 
     def test_every_tool_has_a_substantive_description(self):
