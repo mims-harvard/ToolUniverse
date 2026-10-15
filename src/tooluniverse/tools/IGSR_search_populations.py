@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def IGSR_search_populations(
     operation: Optional[str] = "search_populations",
-    superpopulation: Optional[str | Any] = None,
-    query: Optional[str | Any] = None,
+    superpopulation: Optional[str] = None,
+    query: Optional[str] = None,
     limit: Optional[int] = 25,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -25,9 +25,9 @@ def IGSR_search_populations(
     ----------
     operation : str
         Operation type (fixed: search_populations).
-    superpopulation : str | Any
+    superpopulation : str
         Filter by superpopulation code: AFR (African), AMR (Admixed American), EAS (E...
-    query : str | Any
+    query : str
         Free-text search query to find populations by name or description (e.g., 'Chi...
     limit : int
         Maximum number of results to return.

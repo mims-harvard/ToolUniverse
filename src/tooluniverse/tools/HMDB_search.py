@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def HMDB_search(
     query: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

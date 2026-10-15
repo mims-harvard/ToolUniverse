@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def NASACMR_search_collections(
     keyword: str,
-    page_size: Optional[int | Any] = None,
-    data_center: Optional[str | Any] = None,
-    platform: Optional[str | Any] = None,
+    page_size: Optional[int] = None,
+    data_center: Optional[str] = None,
+    platform: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def NASACMR_search_collections(
     ----------
     keyword : str
         Free-text keyword search. Examples: 'sea surface temperature', 'land cover', ...
-    page_size : int | Any
+    page_size : int
         Number of results to return (default 10, max 2000)
-    data_center : str | Any
+    data_center : str
         Filter by data center short name. Examples: 'NSIDC', 'PODAAC', 'GES_DISC', 'L...
-    platform : str | Any
+    platform : str
         Filter by satellite/instrument platform. Examples: 'Terra', 'Aqua', 'Landsat-...
     stream_callback : Callable, optional
         Callback for streaming output

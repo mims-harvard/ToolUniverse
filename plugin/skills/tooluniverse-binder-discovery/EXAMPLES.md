@@ -56,7 +56,7 @@ activities = tu.tools.ChEMBL_get_target_activities(
 # → 4,847 activity records
 
 # Step 2.2: Filter to potent compounds
-potent = [a for a in activities['activities'] 
+potent = [a for a in activities['data']['activities'] 
           if a['standard_type'] in ['IC50', 'Ki'] 
           and a['standard_value'] and float(a['standard_value']) < 100]
 # → 312 compounds with IC50/Ki < 100 nM
@@ -70,8 +70,8 @@ for activity in potent[:20]:
     top_actives.append({
         'chembl_id': activity['molecule_chembl_id'],
         'ic50': activity['standard_value'],
-        'smiles': mol['molecule_structures']['canonical_smiles'],
-        'max_phase': mol['max_phase']
+        'smiles': mol['data']['molecule_structures']['canonical_smiles'],
+        'max_phase': mol['data']['max_phase']
     })
 
 # Step 2.4: Get chemical probes
@@ -164,7 +164,8 @@ for seed_id, seed_smiles in seeds:
         query=seed_smiles,
         similarity_threshold=75
     )
-    all_similar.extend(similar['result'][0]['similar_molecules'])
+    for hit in similar:  # the tool returns a list (empty when nothing is similar enough)
+        all_similar.extend(hit['similar_molecules'])
 # → 892 similar compounds
 
 # Step 4.3: PubChem expansion

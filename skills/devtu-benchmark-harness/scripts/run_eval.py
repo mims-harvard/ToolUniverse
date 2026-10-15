@@ -174,7 +174,6 @@ def precompute_for_capsule(capsule_path: Path, question_text: str) -> str:
         return ""
 
     files = {p.name: p for p in capsule_path.iterdir() if p.is_file()}
-    files_lower = {k.lower(): v for k, v in files.items()}
     blocks = []
     repo_root = Path(__file__).resolve().parents[3]
 
@@ -881,6 +880,7 @@ def run_benchmark(
 
 
 def main():
+    global BIXBENCH_DATA_DIRS, CLEAN_DATA_DIR, CHECKSUMS_FILE, PLUGIN_DIR
     parser = argparse.ArgumentParser(description="Run ToolUniverse benchmark")
     parser.add_argument(
         "--benchmark", required=True, choices=["lab-bench", "bixbench", "custom"]
@@ -898,6 +898,8 @@ def main():
                              "injects verbose script output the agent must parse. "
                              "Drop to 300 for cheaper baseline-style runs.")
     parser.add_argument("--data-file", help="Custom questions JSON")
+    parser.add_argument("--data-dir", type=Path, help="Canonical BixBench capsule directory")
+    parser.add_argument("--plugin-dir", type=Path, help="Built ToolUniverse plugin to evaluate")
     parser.add_argument("--guidance", help="Custom guidance file path")
     parser.add_argument("--category", default="", help="Filter by category")
     parser.add_argument("--resume", help="Resume from existing results file")
@@ -931,6 +933,17 @@ def main():
              "exist but the agent reinvents them.",
     )
     args = parser.parse_args()
+    if args.data_dir:
+        CLEAN_DATA_DIR = args.data_dir.resolve()
+        if not CLEAN_DATA_DIR.is_dir():
+            parser.error("--data-dir must be an existing capsule directory")
+        BIXBENCH_DATA_DIRS = [CLEAN_DATA_DIR]
+        CHECKSUMS_FILE = CLEAN_DATA_DIR / "checksums.json"
+    if args.plugin_dir:
+        plugin = args.plugin_dir.resolve()
+        if not (plugin / ".mcp.json").is_file():
+            parser.error("--plugin-dir must contain a built .mcp.json")
+        PLUGIN_DIR = str(plugin)
 
     # Load questions
     if args.data_file:

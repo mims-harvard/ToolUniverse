@@ -2878,7 +2878,7 @@
         "repo_id": "agenticx/DrugBank",
         "path_in_repo": "drugbank_full_database.xml",
         "token": null,
-        "save_to_local_dir": "src/tooluniverse/test"
+        "save_to_local_dir": null
       },
       "namespaces": {
         "db": "http://www.drugbank.ca"
@@ -3093,7 +3093,7 @@
         "repo_id": "agenticx/DrugBank",
         "path_in_repo": "drugbank_full_database.xml",
         "token": null,
-        "save_to_local_dir": "src/tooluniverse/test"
+        "save_to_local_dir": null
       },
       "namespaces": {
         "db": "http://www.drugbank.ca"
@@ -3295,7 +3295,7 @@
         "repo_id": "agenticx/DrugBank",
         "path_in_repo": "drugbank_full_database.xml",
         "token": null,
-        "save_to_local_dir": "src/tooluniverse/test"
+        "save_to_local_dir": null
       },
       "namespaces": {
         "db": "http://www.drugbank.ca"
@@ -3488,7 +3488,7 @@
         "repo_id": "agenticx/DrugBank",
         "path_in_repo": "drugbank_full_database.xml",
         "token": null,
-        "save_to_local_dir": "src/tooluniverse/test"
+        "save_to_local_dir": null
       },
       "namespaces": {
         "db": "http://www.drugbank.ca"

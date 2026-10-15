@@ -230,7 +230,7 @@ Use this template when generating the `antibody_optimization_report.md` output f
 
 - **CDR-H3 Extension**: Add Gly-Tyr at C-terminus (+2-3x affinity)
 - **Tyrosine Enrichment**: Tyr provides pi-stacking and H-bonds (+2-4x)
-- **pH-Dependent Binding** (optional): Add His residues for tumor selectivity
+- **pH-Dependent Binding** (optional): State acidic binding versus acidic release, computed hypotheses and unverified assay outcomes; His substitutions alone do not establish tumor selectivity
 
 *Source: In silico modeling, structural analysis*
 ```

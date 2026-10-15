@@ -1,7 +1,7 @@
 """
 iPTMnet_get_proteoforms
 
-Get proteoform records for a protein from iPTMnet. Proteoforms represent specific combinations of...
+NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has ...
 """
 
 from typing import Any, Optional, Callable
@@ -9,15 +9,15 @@ from ._shared_client import get_shared_client
 
 
 def iPTMnet_get_proteoforms(
-    operation: str,
     uniprot_id: str,
+    operation: Optional[str] = "get_proteoforms",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get proteoform records for a protein from iPTMnet. Proteoforms represent specific combinations of...
+    NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has ...
 
     Parameters
     ----------

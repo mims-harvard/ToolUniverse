@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def Tool_RAG(
     description: str,
     limit: Optional[int] = None,
+    embedding_model: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +26,8 @@ def Tool_RAG(
         The description of the tool capability required.
     limit : int
         The number of tools to retrieve (default: 10)
+    embedding_model : str
+        Optional: embedding encoder to use for this search. 'default' = the fine-tune...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def Tool_RAG(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"description": description, "limit": limit}.items()
+        for k, v in {
+            "description": description,
+            "limit": limit,
+            "embedding_model": embedding_model,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

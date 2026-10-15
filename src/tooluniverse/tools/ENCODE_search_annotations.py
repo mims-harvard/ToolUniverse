@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ENCODE_search_annotations(
     annotation_type: Optional[str] = "candidate Cis-Regulatory Elements",
-    biosample_term_name: Optional[str | Any] = None,
+    biosample_term_name: Optional[str] = None,
     organism: Optional[str] = "Homo sapiens",
     assembly: Optional[str] = "GRCh38",
     limit: Optional[int] = 25,
@@ -26,7 +26,7 @@ def ENCODE_search_annotations(
     ----------
     annotation_type : str
         Annotation type filter. Options: 'candidate Cis-Regulatory Elements' (cCREs),...
-    biosample_term_name : str | Any
+    biosample_term_name : str
         Biosample filter (e.g., 'K562', 'HepG2'). Leave empty for all.
     organism : str
         Organism scientific name.

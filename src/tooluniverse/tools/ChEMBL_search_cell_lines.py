@@ -28,9 +28,9 @@ def ChEMBL_search_cell_lines(
     cell_name__contains : str
         Filter by cell line name (contains)
     limit : int
-
+        Maximum number of results (default: 20, max: 1000)
     offset : int
-
+        Offset for pagination (default: 0)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

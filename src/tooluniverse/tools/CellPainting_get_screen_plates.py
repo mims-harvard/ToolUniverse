@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def CellPainting_get_screen_plates(
-    operation: str,
     screen_id: int,
+    operation: Optional[str] = "get_screen_plates",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

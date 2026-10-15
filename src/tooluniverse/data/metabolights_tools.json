@@ -156,7 +156,7 @@
   {
     "type": "MetaboLightsRESTTool",
     "name": "metabolights_get_study_samples",
-    "description": "Get all samples associated with a MetaboLights study. Returns sample metadata including sample names, characteristics, and factor values. Note: The samples endpoint may return 400 errors for some studies. This tool automatically falls back to extracting sample information from the study endpoint (ISA investigation structure). If both methods fail, access samples via MetaboLights website. NOTE (checked 2026-09-20): the upstream /samples endpoint currently returns HTTP 400, so this tool falls back to the study record, which returned no sample rows for MTBLS1; for study metadata use metabolights_get_study or metabolights_get_study_assays.",
+    "description": "Get the samples of a MetaboLights study: one row per sample with its source name, characteristics (organism, organism part, variant, sample type ...) and factor values, as columns of the study's ISA-Tab sample sheet. The upstream /samples endpoint returns HTTP 400 for every study (checked 2026-09-21), so this tool reads the public archive copy of the sample sheet (s_<study_id>.txt) instead; that works for public studies only and returns an error for others. At most 1000 rows are returned; 'total_count' and 'truncated' say whether more exist. For study-level metadata use metabolights_get_study or metabolights_get_study_assays.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -173,7 +173,7 @@
     },
     "return_schema": {
       "type": "array",
-      "description": "List of samples with characteristics",
+      "description": "List of samples, one object per row of the study's sample sheet (column name -> value)",
       "items": {
         "type": "object"
       }

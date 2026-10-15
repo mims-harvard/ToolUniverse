@@ -1,0 +1,28 @@
+[
+  {
+    "name": "mcp_auto_loader_rfdiffusion2",
+    "description": "Run RFdiffusion2 protein backbone design using MCP protocol",
+    "type": "MCPAutoLoaderTool",
+    "server_url": "http://${RFDIFFUSION2_MCP_SERVER_HOST}:8033/mcp",
+    "required_api_keys": [
+      "RFDIFFUSION2_MCP_SERVER_HOST"
+    ],
+    "api_key_info": {
+      "RFDIFFUSION2_MCP_SERVER_HOST": {
+        "domain": "Models & Infrastructure",
+        "type": "endpoint",
+        "register_url": "https://github.com/RosettaCommons/RFdiffusion2",
+        "purpose": "Host of a self-hosted RFdiffusion2 protein-design MCP server.",
+        "without": "Leave blank unless you run your own RFdiffusion2 server."
+      }
+    },
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    }
+  }
+]

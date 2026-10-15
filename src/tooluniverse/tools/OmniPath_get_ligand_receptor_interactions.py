@@ -9,12 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def OmniPath_get_ligand_receptor_interactions(
-    partners: Optional[str | Any] = None,
-    sources: Optional[str | Any] = None,
-    targets: Optional[str | Any] = None,
-    databases: Optional[str | Any] = None,
-    organisms: Optional[int | Any] = None,
-    limit: Optional[int | Any] = None,
+    partners: Optional[str | list[Any]] = None,
+    sources: Optional[str | list[Any]] = None,
+    targets: Optional[str | list[Any]] = None,
+    databases: Optional[str] = None,
+    organisms: Optional[int] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,17 +25,17 @@ def OmniPath_get_ligand_receptor_interactions(
 
     Parameters
     ----------
-    partners : str | Any
+    partners : str | list[Any]
         Gene symbol(s) or UniProt ID(s) to query as interaction partners (either sour...
-    sources : str | Any
+    sources : str | list[Any]
         Gene symbol(s) or UniProt ID(s) for source (ligand) proteins only. Use instea...
-    targets : str | Any
+    targets : str | list[Any]
         Gene symbol(s) or UniProt ID(s) for target (receptor) proteins only. Use inst...
-    databases : str | Any
+    databases : str
         Filter by specific source database(s), comma-separated. Options include: Cell...
-    organisms : int | Any
+    organisms : int
         NCBI taxonomy ID for species filter. Default: 9606 (human). Options: 9606 (hu...
-    limit : int | Any
+    limit : int
         Maximum number of interactions to return. Default: no limit (returns all).
     stream_callback : Callable, optional
         Callback for streaming output

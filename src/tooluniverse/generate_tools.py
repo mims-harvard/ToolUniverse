@@ -5,6 +5,7 @@ import keyword
 import os
 import re
 import shutil
+import sys
 import subprocess
 from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple
@@ -563,30 +564,53 @@ def _format_files(paths: List[str]) -> None:
 
     # Fallback to ruff formatter and linter to match pre-commit hooks
     # Pre-commit uses: ruff-format and ruff-check with --fix
-    ruff = shutil.which("ruff")
-    if ruff:
-        # First run ruff format (matches ruff-format hook)
-        try:
-            subprocess.run(
-                [ruff, "format", *paths],
-                check=False,
-            )
-        except Exception:
-            pass
+    ruff_cmd = _ruff_command()
+    if ruff_cmd is None:
+        # Silence here means every generated file is committed unformatted and
+        # then rewritten by the next person whose environment does have ruff,
+        # so say so rather than producing output that looks fine.
+        print(
+            "WARNING: neither pre-commit nor ruff is available, so generated "
+            "files are NOT formatted. Install the dev extra (pip install -e "
+            "'.[dev]') and re-run, or the next formatted build will rewrite "
+            "every file.",
+            file=sys.stderr,
+        )
+        return
 
-        # Then run ruff check with --fix (matches ruff-check hook with --fix)
-        try:
-            subprocess.run(
-                [
-                    ruff,
-                    "check",
-                    "--fix",
-                    *paths,
-                ],
-                check=False,
-            )
-        except Exception:
-            pass
+    # First run ruff format (matches ruff-format hook)
+    try:
+        subprocess.run([*ruff_cmd, "format", *paths], check=False)
+    except Exception:
+        pass
+
+    # Then run ruff check with --fix (matches ruff-check hook with --fix)
+    try:
+        subprocess.run([*ruff_cmd, "check", "--fix", *paths], check=False)
+    except Exception:
+        pass
+
+
+def _ruff_command() -> Optional[List[str]]:
+    """Locate ruff, preferring PATH but falling back to the running interpreter.
+
+    ruff is a dev dependency, so it is normally importable even when its
+    executable is not on PATH -- which is the usual case for a venv invoked by
+    absolute path. Looking only at PATH made formatting skip itself silently,
+    leaving the committed wrappers and the generator permanently disagreeing.
+    """
+    found = shutil.which("ruff")
+    if found:
+        return [found]
+    try:
+        subprocess.run(
+            [sys.executable, "-m", "ruff", "--version"],
+            check=True,
+            capture_output=True,
+        )
+    except Exception:
+        return None
+    return [sys.executable, "-m", "ruff"]
 
 
 def main(
@@ -666,6 +690,7 @@ def main(
         metadata_file,
         force_regenerate=force_regenerate,
         verbose=verbose,
+        known_tool_names=all_config_tool_names,
     )
 
     # Check for missing files - tools that exist in config but not as files
@@ -735,7 +760,28 @@ def main(
     # __init__.py in that directory is never executed by Python — the installed
     # package's __init__.py already extends __path__ to find wrapper files there.
     if output_dir is None:
-        init_path = generate_init(list(builtin_tool_dict.keys()), output)
+        # Export every built-in tool that has a wrapper file, not just the ones
+        # this machine could load.
+        #
+        # cleanup_orphaned_files above already keeps a wrapper whose API key is
+        # absent -- the comment there names BRENDA, NvidiaNIM, OMIM and
+        # DisGeNET -- but the index was generated from the key-filtered set, so
+        # the file stayed and the import line went. 157 wrappers were in that
+        # state, and the effect is worse than a missing name: Python falls
+        # through to the submodule, so `from tooluniverse.tools import
+        # Addgene_get_plasmid` hands back a module that looks importable and
+        # is not callable.
+        #
+        # It also made the committed index depend on which credentials the
+        # generating machine held, so regenerating anywhere else produced a
+        # diff. Restricted to names that have a file, because an import line
+        # for a missing module would break the package at import time.
+        exportable = sorted(
+            name
+            for name in all_config_tool_names
+            if (output / f"{name}.py").exists()
+        )
+        init_path = generate_init(exportable, output)
         generated_paths.append(str(init_path))
 
     # Always ensure _shared_client.py exists (wrappers import it at call time)

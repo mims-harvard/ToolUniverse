@@ -27,7 +27,7 @@ def Pharos_get_disease_targets(
     tdl : str
         Optional filter by Target Development Level
     top : int
-        Maximum number of results (1-100)
+        Maximum number of results (1-100). Pharos' API currently returns at most 10 t...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

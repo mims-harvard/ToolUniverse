@@ -1,7 +1,7 @@
 """
 BindingDB_get_targets_by_compound
 
-Find protein targets for a compound by SMILES structure. Returns proteins with binding affinity d...
+Find protein targets for a compound by SMILES (Simplified Molecular Input Line Entry System) stru...
 """
 
 from typing import Any, Optional, Callable
@@ -15,16 +15,16 @@ def BindingDB_get_targets_by_compound(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Find protein targets for a compound by SMILES structure. Returns proteins with binding affinity d...
+    Find protein targets for a compound by SMILES (Simplified Molecular Input Line Entry System) stru...
 
     Parameters
     ----------
     smiles : str
         SMILES structure of compound
     similarity_cutoff : float
-        Similarity threshold 0-1 (default: 0.85)
+        NOT APPLIED: BindingDB's getTargetByCompound endpoint ignores this threshold ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,7 +34,7 @@ def BindingDB_get_targets_by_compound(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

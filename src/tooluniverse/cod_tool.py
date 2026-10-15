@@ -24,7 +24,13 @@ class CODTool(BaseRESTTool):
     - spacegroup -> sg
     - cod_id -> id
     - max_results / results -> client-side truncation
+    - mineral / commonname -> free-text search, filtered client-side on the
+      record's own mineral / commonname field (COD's server ignores both
+      parameters: alone they match nothing, combined with an element filter
+      they are dropped and every structure comes back)
     """
+
+    NAME_FILTERS = ("mineral", "commonname")
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         args = dict(arguments)
@@ -45,7 +51,35 @@ class CODTool(BaseRESTTool):
         # Extract limit before calling parent (COD JSON API ignores it)
         limit = args.pop("results", None)
 
+        name_filters = {}
+        for field in self.NAME_FILTERS:
+            value = args.pop(field, None)
+            if isinstance(value, str) and value.strip():
+                name_filters[field] = value.strip().lower()
+        if name_filters and not args.get("text"):
+            args["text"] = next(iter(name_filters.values()))
+
         result = super().run(args)
+
+        if name_filters and result.get("status") == "success":
+            data = result.get("data")
+            if isinstance(data, list):
+                result["data"] = [
+                    row
+                    for row in data
+                    if isinstance(row, dict)
+                    and all(
+                        needle in str(row.get(field) or "").lower()
+                        for field, needle in name_filters.items()
+                    )
+                ]
+                result["count"] = len(result["data"])
+                result["note"] = (
+                    "COD cannot filter on "
+                    + " / ".join(name_filters)
+                    + " server-side; rows come from a free-text search and are "
+                    "kept when the record's own field contains the value"
+                )
 
         # Apply client-side result limiting
         if limit is not None and result.get("status") == "success":

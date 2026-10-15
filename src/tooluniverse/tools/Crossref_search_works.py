@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def Crossref_search_works(
     query: str,
     limit: Optional[int] = 10,
+    offset: Optional[int] = None,
     filter: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -25,7 +26,9 @@ def Crossref_search_works(
     query : str
         Search query for Crossref works. Use keywords separated by spaces to refine y...
     limit : int
-        Number of articles to return. This sets the maximum number of articles retrie...
+        Number of articles to return in this page. This sets the maximum number of ar...
+    offset : int
+        Skip this many matching works before returning results. Use with 'limit' to p...
     filter : str
         Optional filter string for Crossref API. Examples: 'type:journal-article' (on...
     stream_callback : Callable, optional
@@ -44,7 +47,12 @@ def Crossref_search_works(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "limit": limit, "filter": filter}.items()
+        for k, v in {
+            "query": query,
+            "limit": limit,
+            "offset": offset,
+            "filter": filter,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

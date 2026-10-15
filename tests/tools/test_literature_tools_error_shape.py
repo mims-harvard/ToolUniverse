@@ -22,12 +22,23 @@ from tooluniverse.semantic_scholar_tool import SemanticScholarTool
     [
         (EuropePMCTool, {"limit": 1}),
         (SemanticScholarTool, {"limit": 1}),
-        (PMCTool, {"limit": 1}),
     ],
 )
-def test_missing_query_returns_list_with_error_item(tool_cls, args):
+def test_missing_query_returns_standard_error(tool_cls, args):
+    """EuropePMC and Semantic Scholar report argument errors in the standard
+    {"status": "error", "error": ...} envelope (4641138a), not as a list."""
     tool = tool_cls({"name": "x"})
     result = tool.run(args)
+
+    assert isinstance(result, dict)
+    assert result["status"] == "error"
+    assert "query" in result["error"]
+
+
+@pytest.mark.unit
+def test_pmc_missing_query_returns_list_with_error_item():
+    tool = PMCTool({"name": "x"})
+    result = tool.run({"limit": 1})
 
     assert isinstance(result, list)
     assert len(result) == 1

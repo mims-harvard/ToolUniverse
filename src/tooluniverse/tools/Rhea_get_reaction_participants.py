@@ -1,7 +1,7 @@
 """
 Rhea_get_reaction_participants
 
-Return just the structured ChEBI participants (reactants and products) of a single Rhea biochemic...
+Return the structured reactants and products of one Rhea biochemical reaction, including each par...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def Rhea_get_reaction_participants(
     validate: bool = True,
 ) -> Any:
     """
-    Return just the structured ChEBI participants (reactants and products) of a single Rhea biochemic...
+    Return the structured reactants and products of one Rhea biochemical reaction, including each par...
 
     Parameters
     ----------

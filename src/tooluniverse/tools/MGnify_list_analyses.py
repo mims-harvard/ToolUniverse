@@ -15,7 +15,7 @@ def MGnify_list_analyses(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     List analyses associated with a study accession (taxonomic/functional outputs). Use to enumerate ...
 
@@ -34,7 +34,7 @@ def MGnify_list_analyses(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

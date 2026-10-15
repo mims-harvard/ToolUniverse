@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GPCRdb_list_proteins(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "list_proteins",
     protein_class: Optional[str] = None,
     family: Optional[str] = None,
     *,

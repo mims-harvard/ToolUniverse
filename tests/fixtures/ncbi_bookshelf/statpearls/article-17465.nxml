@@ -1,0 +1,2223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper id="article-17465" content-type="chapter" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">statpearls</book-id>
+    <book-id book-id-type="publisher-id">statpearls</book-id>
+    <book-title-group>
+      <book-title>StatPearls</book-title>
+    </book-title-group>
+    <pub-date publication-format="electronic" date-type="pubr">
+      <month>01</month>
+      <year>2026</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>StatPearls Publishing</publisher-name>
+      <publisher-loc>Treasure Island (FL)</publisher-loc>
+    </publisher>
+    <permissions>
+      <copyright-statement>Copyright &#x000a9; 2026, StatPearls Publishing LLC</copyright-statement>
+      <license xmlns:xlink="http://www.w3.org/1999/xlink" license-type="open-access" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">
+        <license-p>This book is distributed under the terms of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) (<ext-link ext-link-type="uri" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">http://creativecommons.org/licenses/by-nc-nd/4.0/</ext-link>), which permits others to distribute the work, provided that the article is not altered or used commercially. You are not required to obtain permission to distribute this article, provided that you credit the author and journal.</license-p>
+      </license>
+    </permissions>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes notes-type="disclaimer">
+      <p>The intent of StatPearls review books and articles is to identify knowledge deficits and assist you in the learning process. Review books and articles are not intended to be a source of the knowledge base of medicine. The authors and editors do not warrant the information is complete or accurate. The reader is encouraged to verify content and questions in several references. All drug indications and dosages should be verified before administration.</p>
+      <p>The authors and editors would like to extend special thanks to Erin Hughes and Gerson Rubio for their editorial support.</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <title-group>
+        <title>Amitriptyline</title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Thour</surname>
+            <given-names>Amit</given-names>
+          </name>
+          <aff>Primary Care Telemedicine Clinic</aff>
+        </contrib>
+      </contrib-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Alag</surname>
+            <given-names>Poorvanshi</given-names>
+          </name>
+          <aff>UT Health San Antonio, Texas Tech University Health Sciences Center School of Medicine</aff>
+        </contrib>
+      </contrib-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Patel</surname>
+            <given-names>Preeti</given-names>
+          </name>
+        </contrib>
+      </contrib-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Marwaha</surname>
+            <given-names>Raman</given-names>
+          </name>
+          <aff>Case Western Reserve Un/MetroHealth MC</aff>
+        </contrib>
+      </contrib-group>
+      <author-notes>
+        <fn id="article-17465.fn1" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Amit Thour declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+        <fn id="article-17465.fn2" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Poorvanshi Alag declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+        <fn id="article-17465.fn3" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Preeti Patel declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+        <fn id="article-17465.fn4" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Raman Marwaha declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+      </author-notes>
+      <pub-history>
+        <date date-type="updated">
+          <day>14</day>
+          <month>9</month>
+          <year>2026</year>
+        </date>
+      </pub-history>
+    </book-part-meta>
+    <body>
+      <sec id="article-17465.s1" sec-type="Continuing Education Activity">
+        <title>Continuing Education Activity</title>
+        <p content-type="pubmed-excerpt">Amitriptyline is an FDA-approved tricyclic antidepressant used to treat major depressive disorder and is widely prescribed off-label for chronic pain syndromes, migraine prophylaxis, insomnia, anxiety disorders, and other neurologic and psychiatric disorders. Although effective, its anticholinergic, antihistaminic, and cardiovascular effects, clinically significant drug interactions, pharmacogenomic variability, and risk of toxicity require careful patient selection, individualized dosing, and ongoing monitoring. This activity reviews the pharmacology of amitriptyline, including its mechanism of action, approved and off-label indications, dosing strategies, contraindications, adverse effects, pharmacogenomic considerations, and clinically important drug interactions. Participants review monitoring recommendations, recognition and management of overdose, and special considerations for older adults and patients with hepatic or renal impairment and during pregnancy and lactation. Emphasis is placed on applying evidence-based prescribing practices, recognizing adverse effects, optimizing medication safety, and promoting effective interprofessional collaboration to improve therapeutic outcomes and patient safety.</p>
+        <p>
+<bold>Objectives:</bold>
+</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Identify appropriate patient selection criteria, dosing strategies, contraindications, and monitoring parameters for amitriptyline therapy.</p>
+          </list-item>
+          <list-item>
+            <p>Evaluate adverse effects, drug interactions, and pharmacogenomic factors to identify patients requiring modification of amitriptyline therapy.</p>
+          </list-item>
+          <list-item>
+            <p>Apply evidence-based strategies to recognize and manage amitriptyline toxicity, including overdose-related neurologic, cardiovascular, and anticholinergic manifestations.</p>
+          </list-item>
+          <list-item>
+            <p>Collaborate with interprofessional healthcare team members to optimize medication safety, coordinate monitoring, and improve patient outcomes during amitriptyline treatment.</p>
+          </list-item>
+        </list>
+        <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/account/trialuserreg/?articleid=17465&#x00026;utm_source=pubmed&#x00026;utm_campaign=reviews&#x00026;utm_content=17465">Access free multiple choice questions on this topic.</ext-link>
+</p>
+      </sec>
+      <sec id="article-17465.s2" sec-type="Indications">
+        <title>Indications</title>
+        <p>
+<bold>FDA-Approved Indication</bold>
+</p>
+        <p>Amitriptyline is approved by the US Food and Drug Administration (FDA) for the treatment of major depressive disorder (MDD) in adults.<xref ref-type="bibr" rid="article-17465.r1">[1]</xref></p>
+        <p>
+<bold>Off-Label Uses</bold>
+</p>
+        <p>Common off-label uses include anxiety disorders, posttraumatic stress disorder, insomnia, chronic pain syndromes (eg, diabetic neuropathy and fibromyalgia), irritable bowel syndrome, interstitial cystitis (bladder pain syndrome), migraine prophylaxis, postherpetic neuralgia, and sialorrhea.<xref ref-type="bibr" rid="article-17465.r2">[2]</xref><xref ref-type="bibr" rid="article-17465.r3">[3]</xref><xref ref-type="bibr" rid="article-17465.r4">[4]</xref> Additional reported off-label uses include post-COVID headache, bulimia nervosa, nocturnal enuresis, and persistent singultus (hiccups).<xref ref-type="bibr" rid="article-17465.r5">[5]</xref><xref ref-type="bibr" rid="article-17465.r6">[6]</xref><xref ref-type="bibr" rid="article-17465.r7">[7]</xref><xref ref-type="bibr" rid="article-17465.r8">[8]</xref></p>
+      </sec>
+      <sec id="article-17465.s3" sec-type="Mechanism of Action">
+        <title>Mechanism of Action</title>
+        <p>Amitriptyline is a tricyclic antidepressant (TCA) that acts by blocking the reuptake of both serotonin and norepinephrine. The 3-ring central structure and a side chain constitute the basic structure of TCAs. Amitriptyline is a tertiary amine with strong binding affinities for alpha-adrenergic, histamine (H1), and muscarinic (M1) receptors.<xref ref-type="bibr" rid="article-17465.r9">[9]</xref></p>
+        <p>Amitriptyline increases noradrenergic and serotonergic neurotransmission by blocking the norepinephrine and serotonin transporters (NET and SERT) at presynaptic terminals. Chronic amitriptyline treatment desensitizes presynaptic autoreceptors and heteroreceptors, producing long-lasting changes in monoaminergic neurotransmission.<xref ref-type="bibr" rid="article-17465.r10">[10]</xref> Amitriptyline is more sedating and has greater anticholinergic effects than other TCAs. As with other antidepressants, therapeutic effects typically begin within 2 to 4 weeks.</p>
+        <p>Brain-derived neurotrophic factor (BDNF) is a neurotrophin that plays a significant role in neuronal survival and development and is implicated in several diseases, including Alzheimer disease and MDD. The association between BDNF and MDD is the subject of extensive research.<xref ref-type="bibr" rid="article-17465.r11">[11]</xref> Chronic antidepressant treatment increases BDNF levels, thereby improving symptoms associated with MDD.<xref ref-type="bibr" rid="article-17465.r12">[12]</xref></p>
+        <p>
+<bold>Pharmacokinetics</bold>
+</p>
+        <p><bold>Absorption</bold>: Amitriptyline is well absorbed after oral administration. Bioavailability is 30% to 60% due to high first-pass metabolism.</p>
+        <p><bold>Distribution</bold>: After intravenous (IV) administration, the volume of distribution of amitriptyline is 17.1 &#x000b1; 2.4 L/kg. Amitriptyline can cross the placental barrier.<xref ref-type="bibr" rid="article-17465.r13">[13]</xref></p>
+        <p><bold>Metabolism</bold>: Amitriptyline is metabolized to nortriptyline by CYP2C19. CYP3A4 and CYP2D6 are also involved in the metabolism of amitriptyline.<xref ref-type="bibr" rid="article-17465.r14">[14]</xref><xref ref-type="bibr" rid="article-17465.r15">[15]</xref></p>
+        <p><bold>Excretion</bold>: Amitriptyline has a half-life of 10 to 28 hours. Amitriptyline and its metabolites are primarily excreted via the kidneys.</p>
+      </sec>
+      <sec id="article-17465.s4" sec-type="Administration">
+        <title>Administration</title>
+        <p>
+<bold>Available Dosage Forms and Strengths</bold>
+</p>
+        <p>Amitriptyline is available as oral tablets in 10, 25, 50, 75, 100, and 150 mg strengths.</p>
+        <p>
+<bold>Adult Dosage</bold>
+</p>
+        <p>Because amitriptyline can cause sedation, it is preferably administered at bedtime.<xref ref-type="bibr" rid="article-17465.r16">[16]</xref> The recommended initial dose for depression is 75 mg daily in divided doses. Based on clinical response and tolerability, the dose may be increased to a maximum of 150 mg daily. If the dose needs adjustment, the bedtime dose should be adjusted. When discontinuing therapy, the dose should be gradually tapered to minimize withdrawal symptoms.<xref ref-type="bibr" rid="article-17465.r17">[17]</xref></p>
+        <p>For outpatients, an alternative initiation strategy is to administer 50 to 100 mg as a single bedtime dose. If additional symptom control is needed and the medication is well tolerated, the bedtime dose may be increased in 25- or 50-mg increments, up to a maximum of 150 mg daily.</p>
+        <p>The maintenance dose of amitriptyline is typically 50 to 100 mg daily, preferably administered as a single dose at bedtime. Once satisfactory improvement is achieved, the dose should be reduced to the lowest amount to relieve symptoms. Once the patient is stable, amitriptyline should be continued for at least 3 months to reduce the risk of depression relapse.</p>
+        <p>For off-label use, such as chronic pain, therapy can start at a lower dose of 10 to 20 mg daily. The dose can be increased by 25 mg every 3 to 7 days, up to a maximum of 150 to 300 mg daily.</p>
+        <p><bold>Plasma levels</bold>: Because of the wide variation in amitriptyline absorption and distribution among body fluids, plasma levels do not directly correlate with therapeutic effects. However, measuring plasma levels may help identify patients with toxic effects from excessively high levels or those in whom noncompliance is suspected. Elderly patients have decreased hepatic metabolism and increased intestinal transit time, so plasma levels are usually higher for any given oral dose of amitriptyline than in younger patients. Clinicians must monitor older patients carefully and obtain quantitative amitriptyline serum levels as clinically indicated. Clinicians should adjust the amitriptyline dose according to the patient&#x02019;s clinical response, not plasma levels.<xref ref-type="bibr" rid="article-17465.r18">[18]</xref></p>
+        <p>
+<bold>Specific Patient Populations</bold>
+</p>
+        <p><bold>Hepatic impairment</bold>: Amitriptyline hydrochloride should be used cautiously in patients with impaired liver function because of the increased risk of hepatotoxicity.<xref ref-type="bibr" rid="article-17465.r19">[19]</xref></p>
+        <p><bold>Renal impairment</bold>: The manufacturer provides no specific dosage recommendations; however, mild to moderate impairment does not require dose adjustment.<xref ref-type="bibr" rid="article-17465.r20">[20]</xref></p>
+        <p><bold>Pregnancy considerations</bold>: Amitriptyline is a pregnancy category C drug that can cross the placenta. Although no definitive causal relationship has been established, limited reports have linked its use during pregnancy to fetal and neonatal adverse effects, including developmental and central nervous system abnormalities. Due to the lack of well-controlled studies in pregnant women, amitriptyline should be used only when the potential maternal benefits outweigh the risks to the fetus.<xref ref-type="bibr" rid="article-17465.r21">[21]</xref><xref ref-type="bibr" rid="article-17465.r22">[22]</xref></p>
+        <p><bold>Breastfeeding considerations</bold>: Amitriptyline is excreted into breast milk; however, it generally does not cause adverse effects in breastfed infants, particularly those older than 2 months. However, rare cases of neonatal sedation have been reported. Therefore, caution is advised during breastfeeding, especially when treating preterm infants, newborns, or when high maternal doses are required.<xref ref-type="bibr" rid="article-17465.r23">[23]</xref></p>
+        <p><bold>Pediatric patients</bold>: Because of limited experience with this drug in pediatric patients, it is not recommended for patients younger than 12 years.</p>
+        <p><bold>Older patients</bold>: According to the American Geriatrics Society Beers Criteria, amitriptyline should be avoided in older patients because of its strong anticholinergic effects.<xref ref-type="bibr" rid="article-17465.r24">[24]</xref> Therefore, clinicians should initiate therapy at lower doses in older patients, typically starting at approximately 10 mg daily at bedtime. The maintenance dose can be divided, that is, 10 mg 3 times daily, with 20 mg at bedtime for those who do not tolerate higher doses.<xref ref-type="bibr" rid="article-17465.r25">[25]</xref></p>
+        <p>Amitriptyline may provide pain relief in older adults, particularly for neuropathic conditions such as postherpetic neuralgia. However, the evidence is limited and inconsistent, with some studies showing benefits while others report no significant differences compared with other treatments.<xref ref-type="bibr" rid="article-17465.r26">[26]</xref></p>
+        <p><bold>Hospitalized patients</bold>: These patients may initially require 100 mg daily, which can be increased gradually to 200 mg daily if needed. In selected patients who do not achieve an adequate response, doses up to 300 mg daily may be necessary under close clinical supervision.</p>
+      </sec>
+      <sec id="article-17465.s5" sec-type="Adverse Effects">
+        <title>Adverse Effects</title>
+        <p>The most commonly encountered adverse effects of amitriptyline include constipation, xerostomia, dizziness, headache, and somnolence. Other adverse effects, including serious adverse drug reactions associated with amitriptyline, are as follows:</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Due to alpha-adrenergic receptor blockade, amitriptyline can cause orthostatic hypotension, dizziness, and sedation. Amitriptyline may also induce various arrhythmias. Amitriptyline has been associated with ventricular tachycardia, sinus tachycardia, electrocardiographic (ECG) abnormalities, atrioventricular block, palpitations, edema, hypertension, hypotension, and orthostatic hypotension with syncope. Severe reactions, including myocardial infarction and stroke, have also been reported.</p>
+          </list-item>
+          <list-item>
+            <p>Anticholinergic adverse effects include blurred vision, dry mouth, urinary retention, tachycardia, acute angle glaucoma, confusion, and delirium.<xref ref-type="bibr" rid="article-17465.r27">[27]</xref></p>
+          </list-item>
+          <list-item>
+            <p>Antihistaminic adverse effects related to histamine (H1) receptor blockade include sedation, increased appetite, and weight gain.<xref ref-type="bibr" rid="article-17465.r28">[28]</xref><xref ref-type="bibr" rid="article-17465.r29">[29]</xref></p>
+          </list-item>
+          <list-item>
+            <p>Amitriptyline can decrease the seizure threshold in a dose-dependent manner; therefore, caution is required in patients with a seizure disorder. The seizure rate is 1% to 4% at doses of 250 to 450 mg daily.<xref ref-type="bibr" rid="article-17465.r30">[30]</xref><xref ref-type="bibr" rid="article-17465.r31">[31]</xref></p>
+          </list-item>
+          <list-item>
+            <p>Liver function test abnormalities are usually mild, asymptomatic, transient, and reversible after discontinuation. Liver enzyme elevations are typically less than 3 times the upper limit of normal and rarely result in acute liver injury.<xref ref-type="bibr" rid="article-17465.r19">[19]</xref></p>
+          </list-item>
+          <list-item>
+            <p>TCAs, including amitriptyline, can increase the risk of bone fractures and, rarely, bone marrow suppression.<xref ref-type="bibr" rid="article-17465.r32">[32]</xref></p>
+          </list-item>
+          <list-item>
+            <p>Amitriptyline is metabolized by cytochrome P450 2D6 (CYP2D6). Several drugs alter CYP2D6 activity; therefore, the dose should be adjusted accordingly, and the patient's entire medication regimen should be reviewed for CYP2D6 inducers and inhibitors.</p>
+          </list-item>
+          <list-item>
+            <p>As an antidepressant, amitriptyline can rarely induce mania. Risk factors include a history of bipolar disorder, a family history of mania, and pharmacologically induced hypomania.<xref ref-type="bibr" rid="article-17465.r33">[33]</xref></p>
+          </list-item>
+          <list-item>
+            <p>The syndrome of inappropriate antidiuretic hormone secretion (SIADH) can occur with amitriptyline use and may result in hyponatremia.<xref ref-type="bibr" rid="article-17465.r34">[34]</xref></p>
+          </list-item>
+        </list>
+        <p>
+<bold>Pharmacogenomics</bold>
+</p>
+        <p>
+<bold>CYP2D6</bold>
+</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>CYP2D6 ultrarapid metabolizers have increased amitriptyline metabolism, which may lead to reduced efficacy.</p>
+          </list-item>
+          <list-item>
+            <p>Individuals who are CYP2D6 poor metabolizers have higher amitriptyline levels than those who are normal metabolizers. Tricyclic antidepressant use should be avoided due to the potential for adverse effects. Prescribers should use alternative drugs not metabolized by CYP2D6.</p>
+          </list-item>
+        </list>
+        <p>
+<bold>CYP2C19</bold>
+</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Cytochrome P450 2C19 (CYP2C19) poor metabolizers have a reduced rate of amitriptyline metabolism compared with normal metabolizers. As a result, standard doses of amitriptyline can lead to increased plasma levels.</p>
+          </list-item>
+          <list-item>
+            <p>CYP2C19 ultrarapid metabolizers exhibit significantly increased amitriptyline metabolism compared with normal metabolizers. Amitriptyline should be avoided due to the possibility of a suboptimal response; prescribers should consider drugs not metabolized by CYP2C19, such as nortriptyline or desipramine.<xref ref-type="bibr" rid="article-17465.r15">[15]</xref> However, clinicians must recognize that implementing pharmacogenomics requires significant resources, and its usefulness may be limited to research settings.</p>
+          </list-item>
+        </list>
+        <p>
+<bold>Drug-Drug Interactions</bold>
+</p>
+        <p><bold>Monoamine oxidase inhibitors</bold>: The combined use of TCAs and monoamine oxidase inhibitors (MAOIs; eg, phenelzine, tranylcypromine, isocarboxazid, linezolid, and methylene blue) increases the risk of serotonin syndrome; therefore, these agents should not be used concomitantly. A washout period of at least 14 days is recommended when switching between amitriptyline and an MAOI.</p>
+        <p>According to the reviewed literature, TCAs may produce hepatocellular, cholestatic, or mixed patterns of liver injury, with rare cases progressing to fulminant hepatic failure and death. Similarly, MAOIs, particularly phenelzine, have been implicated in severe hepatitis, cirrhosis, and liver failure requiring transplantation. These findings emphasize the importance of careful monitoring for hepatic dysfunction in patients receiving these antidepressant classes.<xref ref-type="bibr" rid="article-17465.r35">[35]</xref></p>
+        <p><bold>QT-prolonging drugs</bold>: Amitriptyline has been associated with clinically significant QTc interval prolongation. The risk of arrhythmogenic events may be further increased when amitriptyline is administered concurrently with other QT-prolonging antidepressants or antipsychotic agents. Careful medication reconciliation, ECG monitoring, and assessment of patient-specific cardiovascular risk factors are recommended during therapy.<xref ref-type="bibr" rid="article-17465.r36">[36]</xref><xref ref-type="bibr" rid="article-17465.r37">[37]</xref></p>
+        <p><bold>Serotonergic drugs</bold>: Amitriptyline increases serotonergic activity by inhibiting serotonin reuptake into the presynaptic terminal, thereby elevating serotonin levels and increasing the risk of serotonin syndrome when combined with other serotonergic agents. Such drugs include selective serotonin reuptake inhibitors, serotonin-norepinephrine reuptake inhibitors, tramadol, triptans, linezolid, MAOIs (eg, isocarboxazid, phenelzine, selegiline, and tranylcypromine), procarbazine, and safinamide.<xref ref-type="bibr" rid="article-17465.r38">[38]</xref><xref ref-type="bibr" rid="article-17465.r39">[39]</xref></p>
+        <p><bold>Central nervous system depressants and opioids</bold>: Concomitant use with opioids and other central nervous system (CNS) depressants may increase sedation, respiratory depression, and the risk of serotonin syndrome, particularly with serotonergic opioids such as methadone, tramadol, fentanyl, and meperidine. Avoid concurrent use whenever possible. If concomitant use is necessary, use the lowest effective doses and monitor for signs of CNS depression and serotonin syndrome. Discontinue both agents if serotonin syndrome is suspected.</p>
+        <p><bold>CYP2D6 inhibitors &#x02192; &#x02191; amitriptyline levels</bold>: CYP2D6 inhibitors can significantly increase plasma concentrations of amitriptyline by reducing its metabolism. This interaction may enhance the risk of dose-dependent adverse effects. Individuals receiving stable TCA therapy may develop toxicity when a CYP2D6 inhibitor is added. These patients may develop acute toxicity after initiation of a CYP2D6 inhibitor. Dose reduction of the TCA or the CYP2D6 inhibitor may be required. Monitor TCA plasma levels when a TCA is coadministered with a known CYP2D6 inhibitor.</p>
+        <p>Omeprazole is metabolized by CYP2C19 and also inhibits CYP2C19. Concomitant use with amitriptyline may increase the risk of delirium.[<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/books/NBK534480/">Management of Physical Health Conditions in Adults with Severe Mental Disorders</ext-link>. Geneva: World Health Organization; 2018. Annex 6, Drug &#x02013; drug interactions.]</p>
+      </sec>
+      <sec id="article-17465.s6" sec-type="Contraindications">
+        <title>Contraindications</title>
+        <p>
+<bold>Boxed Warnings</bold>
+</p>
+        <p>The FDA has issued a box warning regarding the use of antidepressants, including amitriptyline, in children, adolescents, and young adults (younger than 24 years). The drug can increase the risk of suicidal ideation and behavior. Patients should be monitored closely for clinical worsening, suicidality, or unusual behavioral changes.<xref ref-type="bibr" rid="article-17465.r40">[40]</xref></p>
+        <p>Contraindications to amitriptyline include the following:</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Amitriptyline is contraindicated in patients with hypersensitivity to the drug or its inactive ingredients in the dosage form, according to the FDA product labeling.</p>
+          </list-item>
+          <list-item>
+            <p>Amitriptyline should not be used in patients with a history of QTc prolongation, arrhythmias, recent myocardial infarction, or heart failure, according to the FDA product labeling. Amitriptyline toxicity may cause acute myocardial infarction.<xref ref-type="bibr" rid="article-17465.r41">[41]</xref></p>
+          </list-item>
+          <list-item>
+            <p>Amitriptyline should be used with caution in patients with angle-closure glaucoma, urinary retention, and seizures.<xref ref-type="bibr" rid="article-17465.r42">[42]</xref></p>
+          </list-item>
+          <list-item>
+            <p>Lower doses are recommended in patients with hepatic impairment.<xref ref-type="bibr" rid="article-17465.r43">[43]</xref></p>
+          </list-item>
+          <list-item>
+            <p>Amitriptyline should be discontinued before elective surgery because of possible interactions with anesthetic agents and an increased risk of arrhythmia.<xref ref-type="bibr" rid="article-17465.r44">[44]</xref></p>
+          </list-item>
+        </list>
+      </sec>
+      <sec id="article-17465.s7" sec-type="Monitoring">
+        <title>Monitoring</title>
+        <p>A baseline ECG is recommended before initiating amitriptyline in patients with a history of cardiovascular disease, conduction abnormalities, or other risk factors for QT prolongation before initiating amitriptyline. Consider baseline ECG assessment in older adults, particularly those receiving higher doses or concomitant QT-prolonging medications.<xref ref-type="bibr" rid="article-17465.r45">[45]</xref> Given its adverse effect profile, clinicians should monitor body weight and/or body mass index (BMI), liver function tests when clinically indicated, mental status, and anticholinergic adverse effects. Serum amitriptyline concentrations may be measured in patients with suspected toxicity, nonadherence, significant drug interactions, or inadequate therapeutic response.<xref ref-type="bibr" rid="article-17465.r42">[42]</xref> While patients are receiving amitriptyline, clinicians should monitor them for increased suicidality and unusual behavioral changes, especially during the first 1 to 2 months after treatment initiation or during dosage adjustments.<xref ref-type="bibr" rid="article-17465.r46">[46]</xref></p>
+      </sec>
+      <sec id="article-17465.s8" sec-type="Toxicity">
+        <title>Toxicity</title>
+        <p>
+<bold>Signs and Symptoms of Overdose</bold>
+</p>
+        <p>Ingestion of amitriptyline at doses exceeding approximately 5 mg/kg is associated with an increased risk of clinically significant toxicity. Clinical symptoms of amitriptyline toxicity include neurologic, cardiac, and anticholinergic adverse reactions. Neurologic symptoms include sedation, seizures, and coma. Cardiac symptoms include tachycardia, hypotension, conduction abnormalities, and QTc prolongation. Anticholinergic symptoms include dilated pupils, dry mouth, decreased or absent bowel sounds, and urinary retention. A case report suggests that amitriptyline toxicity may cause acute myocardial infarction.<xref ref-type="bibr" rid="article-17465.r41">[41]</xref></p>
+        <p>
+<bold>Management of Overdose</bold>
+</p>
+        <p>Amitriptyline toxicity can be serious and even fatal. The initial priority in managing amitriptyline toxicity is patient stabilization, which may require intensive care unit (ICU) admission for monitoring. The most important steps include securing the airway, supporting breathing, and stabilizing circulation. Some patients may require tracheal intubation; if required, administer supplemental oxygen. Activated charcoal may be considered within 1 to 2 hours of a potentially life-threatening overdose in patients with an intact or protected airway.<xref ref-type="bibr" rid="article-17465.r47">[47]</xref><xref ref-type="bibr" rid="article-17465.r48">[48]</xref> Seizures secondary to overdose are treatable with diazepam or lorazepam.<xref ref-type="bibr" rid="article-17465.r49">[49]</xref></p>
+        <p>If the patient is hypotensive, an IV bolus of isotonic crystalloid is a therapeutic option. Vasopressors are the next choice if the patient remains hypotensive despite fluid resuscitation. If the QRS duration exceeds 100 ms, IV sodium bicarbonate is the appropriate intervention. Sodium bicarbonate is cardioprotective because it increases extracellular sodium concentration and diminishes amitriptyline's effect on the cardiac membrane, thereby reducing sodium channel blockade. Alkalization favors the neutral form of amitriptyline and decreases the amount of active tricyclic antidepressant.<xref ref-type="bibr" rid="article-17465.r50">[50]</xref><xref ref-type="bibr" rid="article-17465.r51">[51]</xref></p>
+        <p>IV lipid emulsion has been used in severe overdose.<xref ref-type="bibr" rid="article-17465.r52">[52]</xref> A recent case report describes the successful use of esmolol for intractable ventricular arrhythmias and ventricular tachycardia associated with amitriptyline overdose.<xref ref-type="bibr" rid="article-17465.r53">[53]</xref></p>
+      </sec>
+      <sec id="article-17465.s9" sec-type="Enhancing Healthcare Team Outcomes">
+        <title>Enhancing Healthcare Team Outcomes</title>
+        <p>Amitriptyline is a TCA approved by the FDA to treat depression in adults. The drug is also used off-label to treat chronic pain syndrome, anxiety, and insomnia. Amitriptyline has a substantial adverse-effect burden and is no longer commonly used as a first-line treatment for depression because newer agents are better tolerated. Amitriptyline may be useful for patients with insomnia, severe depression, treatment-resistant depression, and patients with comorbid chronic pain syndromes.</p>
+        <p>Patients taking amitriptyline may experience anticholinergic, antihistaminic, and alpha-adrenergic blocking adverse effects. Amitriptyline may not be appropriate for patients with cardiovascular diseases. Amitriptyline has many potential drug interactions, which may increase the risk of arrhythmias and serotonin syndrome. Amitriptyline toxicity can be life-threatening, and affected patients should be stabilized and closely monitored. Healthcare providers should also recognize the increased risk of suicidality among children, adolescents, and young adults and discuss this risk with patients and their families.<xref ref-type="bibr" rid="article-17465.r46">[46]</xref></p>
+        <p>Clinicians should counsel patients about the risks associated with amitriptyline therapy. Amitriptyline has significant drug interactions with other medications; therefore, pharmacists should report any concerns to the prescriber. Pharmacists should also perform medication reconciliation, ensure appropriate dosing, and provide additional patient counseling on administration and potential adverse effects.</p>
+        <p>Specially trained nurses can provide medication counseling, assess patient adherence, and monitor for adverse effects during follow-up visits. Nurses should report concerns about therapy and provide recommendations to the treating clinicians. In an acute amitriptyline overdose, emergency medicine clinicians and triage nurses should rapidly stabilize the patient. Critical care clinician supervision is necessary if the patient requires continued ICU care. In severe overdose, clinicians should consult a medical toxicologist and contact a poison control center. In an intentional overdose, the clinician should obtain a psychiatric consultation.</p>
+        <p>As described above, excellent communication is essential among interprofessional health care professionals caring for patients receiving amitriptyline. Each provider should understand their responsibilities and work collaboratively. Through collaboration in therapeutic decision-making, the interprofessional team can help ensure that amitriptyline is used effectively to treat depression and that patients achieve optimal outcomes with minimal adverse effects.</p>
+      </sec>
+      <sec id="article-17465.s10">
+        <title>Review Questions</title>
+        <list list-type="bullet">
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/account/trialuserreg/?articleid=17465&#x00026;utm_source=pubmed&#x00026;utm_campaign=reviews&#x00026;utm_content=17465">Access free multiple choice questions on this topic.</ext-link>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/articlelibrary/commentarticle/17465/?utm_source=pubmed&#x00026;utm_campaign=comments&#x00026;utm_content=17465">Comment on this article.</ext-link>
+</p>
+          </list-item>
+        </list>
+      </sec>
+    </body>
+    <back>
+      <ref-list id="article-17465.s11">
+        <title>References</title>
+        <ref id="article-17465.r1">
+          <label>1</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Dopheide</surname>
+                <given-names>JA</given-names>
+              </name>
+            </person-group>
+            <article-title>Recognizing and treating depression in children and adolescents.</article-title>
+            <source>Am J Health Syst Pharm</source>
+            <year>2006</year>
+            <month>Feb</month>
+            <day>01</day>
+            <volume>63</volume>
+            <issue>3</issue>
+            <fpage>233</fpage>
+            <page-range>233-43</page-range>
+            <pub-id pub-id-type="pmid">16434782</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r2">
+          <label>2</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Radley</surname>
+                <given-names>DC</given-names>
+              </name>
+              <name>
+                <surname>Finkelstein</surname>
+                <given-names>SN</given-names>
+              </name>
+              <name>
+                <surname>Stafford</surname>
+                <given-names>RS</given-names>
+              </name>
+            </person-group>
+            <article-title>Off-label prescribing among office-based physicians.</article-title>
+            <source>Arch Intern Med</source>
+            <year>2006</year>
+            <month>May</month>
+            <day>08</day>
+            <volume>166</volume>
+            <issue>9</issue>
+            <fpage>1021</fpage>
+            <page-range>1021-6</page-range>
+            <pub-id pub-id-type="pmid">16682577</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r3">
+          <label>3</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Tesfaye</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Sloan</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Petrie</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>White</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Bradburn</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Julious</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Rajbhandari</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Sharma</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Rayman</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Gouni</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Alam</surname>
+                <given-names>U</given-names>
+              </name>
+              <name>
+                <surname>Cooper</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Loban</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Sutherland</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Glover</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Waterhouse</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Turton</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>Horspool</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Gandhi</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Maguire</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Jude</surname>
+                <given-names>EB</given-names>
+              </name>
+              <name>
+                <surname>Ahmed</surname>
+                <given-names>SH</given-names>
+              </name>
+              <name>
+                <surname>Vas</surname>
+                <given-names>P</given-names>
+              </name>
+              <name>
+                <surname>Hariman</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>McDougall</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Devers</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Tsatlidis</surname>
+                <given-names>V</given-names>
+              </name>
+              <name>
+                <surname>Johnson</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Rice</surname>
+                <given-names>ASC</given-names>
+              </name>
+              <name>
+                <surname>Bouhassira</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Bennett</surname>
+                <given-names>DL</given-names>
+              </name>
+              <name>
+                <surname>Selvarajah</surname>
+                <given-names>D</given-names>
+              </name>
+              <collab>OPTION-DM trial group</collab>
+            </person-group>
+            <article-title>Comparison of amitriptyline supplemented with pregabalin, pregabalin supplemented with amitriptyline, and duloxetine supplemented with pregabalin for the treatment of diabetic peripheral neuropathic pain (OPTION-DM): a multicentre, double-blind, randomised crossover trial.</article-title>
+            <source>Lancet</source>
+            <year>2022</year>
+            <month>Aug</month>
+            <day>27</day>
+            <volume>400</volume>
+            <issue>10353</issue>
+            <fpage>680</fpage>
+            <page-range>680-690</page-range>
+            <pub-id pub-id-type="pmid">36007534</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r4">
+          <label>4</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Farag</surname>
+                <given-names>HM</given-names>
+              </name>
+              <name>
+                <surname>Yunusa</surname>
+                <given-names>I</given-names>
+              </name>
+              <name>
+                <surname>Goswami</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Sultan</surname>
+                <given-names>I</given-names>
+              </name>
+              <name>
+                <surname>Doucette</surname>
+                <given-names>JA</given-names>
+              </name>
+              <name>
+                <surname>Eguale</surname>
+                <given-names>T</given-names>
+              </name>
+            </person-group>
+            <article-title>Comparison of Amitriptyline and US Food and Drug Administration-Approved Treatments for Fibromyalgia: A Systematic Review and Network Meta-analysis.</article-title>
+            <source>JAMA Netw Open</source>
+            <year>2022</year>
+            <month>May</month>
+            <day>02</day>
+            <volume>5</volume>
+            <issue>5</issue>
+            <fpage>e2212939</fpage>
+            <pub-id pub-id-type="pmid">35587348</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r5">
+          <label>5</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Gonzalez-Martinez</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Guerrero-Peral</surname>
+                <given-names>&#x000c1;L</given-names>
+              </name>
+              <name>
+                <surname>Arias-Rivas</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Silva</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Sierra</surname>
+                <given-names>&#x000c1;</given-names>
+              </name>
+              <name>
+                <surname>Gago-Veiga</surname>
+                <given-names>AB</given-names>
+              </name>
+              <name>
+                <surname>Garc&#x000ed;a-Azor&#x000ed;n</surname>
+                <given-names>D</given-names>
+              </name>
+            </person-group>
+            <article-title>Amitriptyline for post-COVID headache: effectiveness, tolerability, and response predictors.</article-title>
+            <source>J Neurol</source>
+            <year>2022</year>
+            <month>Nov</month>
+            <volume>269</volume>
+            <issue>11</issue>
+            <fpage>5702</fpage>
+            <page-range>5702-5709</page-range>
+            <pub-id pub-id-type="pmid">35829760</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r6">
+          <label>6</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Yu</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Zhang</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Shen</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Shao</surname>
+                <given-names>F</given-names>
+              </name>
+            </person-group>
+            <article-title>Efficacy of pharmacotherapies for bulimia nervosa: a systematic review and meta-analysis.</article-title>
+            <source>BMC Pharmacol Toxicol</source>
+            <year>2023</year>
+            <month>Dec</month>
+            <day>02</day>
+            <volume>24</volume>
+            <issue>1</issue>
+            <fpage>72</fpage>
+            <pub-id pub-id-type="pmid">38042827</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r7">
+          <label>7</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Praharaj</surname>
+                <given-names>SK</given-names>
+              </name>
+              <name>
+                <surname>Arora</surname>
+                <given-names>M</given-names>
+              </name>
+            </person-group>
+            <article-title>Amitriptyline for clozapine-induced nocturnal enuresis and sialorrhoea.</article-title>
+            <source>Br J Clin Pharmacol</source>
+            <year>2007</year>
+            <month>Jan</month>
+            <volume>63</volume>
+            <issue>1</issue>
+            <fpage>128</fpage>
+            <page-range>128-9</page-range>
+            <pub-id pub-id-type="pmid">16939528</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r8">
+          <label>8</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Chowdhury</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>McCarthy</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Bateman</surname>
+                <given-names>MT</given-names>
+              </name>
+            </person-group>
+            <article-title>Amitriptyline for Refractory Idiopathic Intractable Hiccups: A Case Report.</article-title>
+            <source>Clin Neuropharmacol</source>
+            <string-date>2026 Mar-Apr 01</string-date>
+            <volume>49</volume>
+            <issue>2</issue>
+            <fpage>95</fpage>
+            <page-range>95-99</page-range>
+            <pub-id pub-id-type="pmid">41348394</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r9">
+          <label>9</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Gillman</surname>
+                <given-names>PK</given-names>
+              </name>
+            </person-group>
+            <article-title>Tricyclic antidepressant pharmacology and therapeutic drug interactions updated.</article-title>
+            <source>Br J Pharmacol</source>
+            <year>2007</year>
+            <month>Jul</month>
+            <volume>151</volume>
+            <issue>6</issue>
+            <fpage>737</fpage>
+            <page-range>737-48</page-range>
+            <pub-id pub-id-type="pmid">17471183</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r10">
+          <label>10</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Hamon</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Blier</surname>
+                <given-names>P</given-names>
+              </name>
+            </person-group>
+            <article-title>Monoamine neurocircuitry in depression and strategies for new treatments.</article-title>
+            <source>Prog Neuropsychopharmacol Biol Psychiatry</source>
+            <year>2013</year>
+            <month>Aug</month>
+            <day>01</day>
+            <volume>45</volume>
+            <fpage>54</fpage>
+            <page-range>54-63</page-range>
+            <pub-id pub-id-type="pmid">23602950</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r11">
+          <label>11</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Correia</surname>
+                <given-names>AS</given-names>
+              </name>
+              <name>
+                <surname>Cardoso</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Vale</surname>
+                <given-names>N</given-names>
+              </name>
+            </person-group>
+            <article-title>BDNF Unveiled: Exploring Its Role in Major Depression Disorder Serotonergic Imbalance and Associated Stress Conditions.</article-title>
+            <source>Pharmaceutics</source>
+            <year>2023</year>
+            <month>Aug</month>
+            <day>03</day>
+            <volume>15</volume>
+            <issue>8</issue>
+            <pub-id pub-id-type="pmid">37631295</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r12">
+          <label>12</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Levy</surname>
+                <given-names>MJF</given-names>
+              </name>
+              <name>
+                <surname>Boulle</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Steinbusch</surname>
+                <given-names>HW</given-names>
+              </name>
+              <name>
+                <surname>van den Hove</surname>
+                <given-names>DLA</given-names>
+              </name>
+              <name>
+                <surname>Kenis</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Lanfumey</surname>
+                <given-names>L</given-names>
+              </name>
+            </person-group>
+            <article-title>Neurotrophic factors and neuroplasticity pathways in the pathophysiology and treatment of depression.</article-title>
+            <source>Psychopharmacology (Berl)</source>
+            <year>2018</year>
+            <month>Aug</month>
+            <volume>235</volume>
+            <issue>8</issue>
+            <fpage>2195</fpage>
+            <page-range>2195-2220</page-range>
+            <pub-id pub-id-type="pmid">29961124</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r13">
+          <label>13</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Schulz</surname>
+                <given-names>P</given-names>
+              </name>
+              <name>
+                <surname>Turner-Tamiyasu</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Smith</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Giacomini</surname>
+                <given-names>KM</given-names>
+              </name>
+              <name>
+                <surname>Blaschke</surname>
+                <given-names>TF</given-names>
+              </name>
+            </person-group>
+            <article-title>Amitriptyline disposition in young and elderly normal men.</article-title>
+            <source>Clin Pharmacol Ther</source>
+            <year>1983</year>
+            <month>Mar</month>
+            <volume>33</volume>
+            <issue>3</issue>
+            <fpage>360</fpage>
+            <page-range>360-6</page-range>
+            <pub-id pub-id-type="pmid">6825390</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r14">
+          <label>14</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Venkatakrishnan</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Schmider</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Harmatz</surname>
+                <given-names>JS</given-names>
+              </name>
+              <name>
+                <surname>Ehrenberg</surname>
+                <given-names>BL</given-names>
+              </name>
+              <name>
+                <surname>von Moltke</surname>
+                <given-names>LL</given-names>
+              </name>
+              <name>
+                <surname>Graf</surname>
+                <given-names>JA</given-names>
+              </name>
+              <name>
+                <surname>Mertzanis</surname>
+                <given-names>P</given-names>
+              </name>
+              <name>
+                <surname>Corbett</surname>
+                <given-names>KE</given-names>
+              </name>
+              <name>
+                <surname>Rodriguez</surname>
+                <given-names>MC</given-names>
+              </name>
+              <name>
+                <surname>Shader</surname>
+                <given-names>RI</given-names>
+              </name>
+              <name>
+                <surname>Greenblatt</surname>
+                <given-names>DJ</given-names>
+              </name>
+            </person-group>
+            <article-title>Relative contribution of CYP3A to amitriptyline clearance in humans: in vitro and in vivo studies.</article-title>
+            <source>J Clin Pharmacol</source>
+            <year>2001</year>
+            <month>Oct</month>
+            <volume>41</volume>
+            <issue>10</issue>
+            <fpage>1043</fpage>
+            <page-range>1043-54</page-range>
+            <pub-id pub-id-type="pmid">11583471</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r15">
+          <label>15</label>
+          <element-citation publication-type="book">
+            <person-group person-group-type="author">
+              <name>
+                <surname>Dean</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Kane</surname>
+                <given-names>M</given-names>
+              </name>
+            </person-group>
+            <chapter-title>Amitriptyline Therapy and <italic>CYP2D6</italic> and <italic>CYP2C19</italic> Genotype</chapter-title>
+            <person-group person-group-type="editor">
+              <name>
+                <surname>Pratt</surname>
+                <given-names>VM</given-names>
+              </name>
+              <name>
+                <surname>Scott</surname>
+                <given-names>SA</given-names>
+              </name>
+              <name>
+                <surname>Pirmohamed</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Esquivel</surname>
+                <given-names>B</given-names>
+              </name>
+              <name>
+                <surname>Kattman</surname>
+                <given-names>BL</given-names>
+              </name>
+              <name>
+                <surname>Malheiro</surname>
+                <given-names>AJ</given-names>
+              </name>
+            </person-group>
+            <source>Medical Genetics Summaries [Internet]</source>
+            <publisher-name>National Center for Biotechnology Information (US)</publisher-name>
+            <publisher-loc>Bethesda (MD)</publisher-loc>
+            <year>2017</year>
+            <month>3</month>
+            <day>23</day>
+            <pub-id pub-id-type="pmid">28520380</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r16">
+          <label>16</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Leucht</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Huhn</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Leucht</surname>
+                <given-names>S</given-names>
+              </name>
+            </person-group>
+            <article-title>Amitriptyline versus placebo for major depressive disorder.</article-title>
+            <source>Cochrane Database Syst Rev</source>
+            <year>2012</year>
+            <month>Dec</month>
+            <day>12</day>
+            <volume>12</volume>
+            <issue>12</issue>
+            <fpage>CD009138</fpage>
+            <pub-id pub-id-type="pmid">23235671</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r17">
+          <label>17</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Wolfe</surname>
+                <given-names>RM</given-names>
+              </name>
+            </person-group>
+            <article-title>Antidepressant withdrawal reactions.</article-title>
+            <source>Am Fam Physician</source>
+            <year>1997</year>
+            <month>Aug</month>
+            <volume>56</volume>
+            <issue>2</issue>
+            <fpage>455</fpage>
+            <page-range>455-62</page-range>
+            <pub-id pub-id-type="pmid">9262526</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r18">
+          <label>18</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Hollister</surname>
+                <given-names>LE</given-names>
+              </name>
+            </person-group>
+            <article-title>Monitoring tricyclic antidepressant plasma concentrations.</article-title>
+            <source>JAMA</source>
+            <year>1979</year>
+            <month>Jun</month>
+            <day>08</day>
+            <volume>241</volume>
+            <issue>23</issue>
+            <fpage>2530</fpage>
+            <page-range>2530-3</page-range>
+            <pub-id pub-id-type="pmid">439339</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r19">
+          <label>19</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Voican</surname>
+                <given-names>CS</given-names>
+              </name>
+              <name>
+                <surname>Corruble</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>Naveau</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Perlemuter</surname>
+                <given-names>G</given-names>
+              </name>
+            </person-group>
+            <article-title>Antidepressant-induced liver injury: a review for clinicians.</article-title>
+            <source>Am J Psychiatry</source>
+            <year>2014</year>
+            <month>Apr</month>
+            <volume>171</volume>
+            <issue>4</issue>
+            <fpage>404</fpage>
+            <page-range>404-15</page-range>
+            <pub-id pub-id-type="pmid">24362450</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r20">
+          <label>20</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Nagler</surname>
+                <given-names>EV</given-names>
+              </name>
+              <name>
+                <surname>Webster</surname>
+                <given-names>AC</given-names>
+              </name>
+              <name>
+                <surname>Vanholder</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Zoccali</surname>
+                <given-names>C</given-names>
+              </name>
+            </person-group>
+            <article-title>Antidepressants for depression in stage 3-5 chronic kidney disease: a systematic review of pharmacokinetics, efficacy and safety with recommendations by European Renal Best Practice (ERBP).</article-title>
+            <source>Nephrol Dial Transplant</source>
+            <year>2012</year>
+            <month>Oct</month>
+            <volume>27</volume>
+            <issue>10</issue>
+            <fpage>3736</fpage>
+            <page-range>3736-45</page-range>
+            <pub-id pub-id-type="pmid">22859791</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r21">
+          <label>21</label>
+          <element-citation publication-type="journal">
+            <collab>ACOG Committee on Practice Bulletins--Obstetrics</collab>
+            <article-title>ACOG Practice Bulletin: Clinical management guidelines for obstetrician-gynecologists number 92, April 2008 (replaces practice bulletin number 87, November 2007). Use of psychiatric medications during pregnancy and lactation.</article-title>
+            <source>Obstet Gynecol</source>
+            <year>2008</year>
+            <month>Apr</month>
+            <volume>111</volume>
+            <issue>4</issue>
+            <fpage>1001</fpage>
+            <page-range>1001-20</page-range>
+            <pub-id pub-id-type="pmid">18378767</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r22">
+          <label>22</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Yonkers</surname>
+                <given-names>KA</given-names>
+              </name>
+              <name>
+                <surname>Wisner</surname>
+                <given-names>KL</given-names>
+              </name>
+              <name>
+                <surname>Stewart</surname>
+                <given-names>DE</given-names>
+              </name>
+              <name>
+                <surname>Oberlander</surname>
+                <given-names>TF</given-names>
+              </name>
+              <name>
+                <surname>Dell</surname>
+                <given-names>DL</given-names>
+              </name>
+              <name>
+                <surname>Stotland</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Ramin</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Chaudron</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Lockwood</surname>
+                <given-names>C</given-names>
+              </name>
+            </person-group>
+            <article-title>The management of depression during pregnancy: a report from the American Psychiatric Association and the American College of Obstetricians and Gynecologists.</article-title>
+            <source>Obstet Gynecol</source>
+            <year>2009</year>
+            <month>Sep</month>
+            <volume>114</volume>
+            <issue>3</issue>
+            <fpage>703</fpage>
+            <page-range>703-713</page-range>
+            <pub-id pub-id-type="pmid">19701065</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r23">
+          <label>23</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Uguz</surname>
+                <given-names>F</given-names>
+              </name>
+            </person-group>
+            <article-title>A New Safety Scoring System for the Use of Psychotropic Drugs During Lactation.</article-title>
+            <source>Am J Ther</source>
+            <string-date>2021 Jan-Feb 01</string-date>
+            <volume>28</volume>
+            <issue>1</issue>
+            <fpage>e118</fpage>
+            <page-range>e118-e126</page-range>
+            <pub-id pub-id-type="pmid">30601177</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r24">
+          <label>24</label>
+          <element-citation publication-type="journal">
+            <collab>By the 2019 American Geriatrics Society Beers Criteria&#x000ae; Update Expert Panel</collab>
+            <article-title>American Geriatrics Society 2019 Updated AGS Beers Criteria&#x000ae; for Potentially Inappropriate Medication Use in Older Adults.</article-title>
+            <source>J Am Geriatr Soc</source>
+            <year>2019</year>
+            <month>Apr</month>
+            <volume>67</volume>
+            <issue>4</issue>
+            <fpage>674</fpage>
+            <page-range>674-694</page-range>
+            <pub-id pub-id-type="pmid">30693946</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r25">
+          <label>25</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Williams</surname>
+                <given-names>GO</given-names>
+              </name>
+            </person-group>
+            <article-title>Management of depression in the elderly.</article-title>
+            <source>Prim Care</source>
+            <year>1989</year>
+            <month>Jun</month>
+            <volume>16</volume>
+            <issue>2</issue>
+            <fpage>451</fpage>
+            <page-range>451-74</page-range>
+            <pub-id pub-id-type="pmid">2664841</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r26">
+          <label>26</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Narayan</surname>
+                <given-names>SW</given-names>
+              </name>
+              <name>
+                <surname>Naganathan</surname>
+                <given-names>V</given-names>
+              </name>
+              <name>
+                <surname>Vizza</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Underwood</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Ivers</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>McLachlan</surname>
+                <given-names>AJ</given-names>
+              </name>
+              <name>
+                <surname>Zhou</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Singh</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Tao</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Xi</surname>
+                <given-names>X</given-names>
+              </name>
+              <name>
+                <surname>Abdel Shaheed</surname>
+                <given-names>C</given-names>
+              </name>
+            </person-group>
+            <article-title>Efficacy and safety of antidepressants for pain in older adults: A systematic review and meta-analysis.</article-title>
+            <source>Br J Clin Pharmacol</source>
+            <year>2024</year>
+            <month>Dec</month>
+            <volume>90</volume>
+            <issue>12</issue>
+            <fpage>3097</fpage>
+            <page-range>3097-3118</page-range>
+            <pub-id pub-id-type="pmid">39265130</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r27">
+          <label>27</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>G&#x000fc;loglu</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Orak</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Ust&#x000fc;ndag</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Altunci</surname>
+                <given-names>YA</given-names>
+              </name>
+            </person-group>
+            <article-title>Analysis of amitriptyline overdose in emergency medicine.</article-title>
+            <source>Emerg Med J</source>
+            <year>2011</year>
+            <month>Apr</month>
+            <volume>28</volume>
+            <issue>4</issue>
+            <fpage>296</fpage>
+            <page-range>296-9</page-range>
+            <pub-id pub-id-type="pmid">20923818</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r28">
+          <label>28</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Zechnich</surname>
+                <given-names>R</given-names>
+              </name>
+            </person-group>
+            <article-title>Delirium and tricyclic antidepressants.</article-title>
+            <source>Am J Psychiatry</source>
+            <year>1984</year>
+            <month>Dec</month>
+            <volume>141</volume>
+            <issue>12</issue>
+            <fpage>1642</fpage>
+            <page-range>1642-3</page-range>
+            <pub-id pub-id-type="pmid">6507674</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r29">
+          <label>29</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Bulut</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Berilgen</surname>
+                <given-names>MS</given-names>
+              </name>
+              <name>
+                <surname>Baran</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Tekatas</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Atmaca</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Mungen</surname>
+                <given-names>B</given-names>
+              </name>
+            </person-group>
+            <article-title>Venlafaxine versus amitriptyline in the prophylactic treatment of migraine: randomized, double-blind, crossover study.</article-title>
+            <source>Clin Neurol Neurosurg</source>
+            <year>2004</year>
+            <month>Dec</month>
+            <volume>107</volume>
+            <issue>1</issue>
+            <fpage>44</fpage>
+            <page-range>44-8</page-range>
+            <pub-id pub-id-type="pmid">15567552</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r30">
+          <label>30</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Nishimura</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Maruguchi</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Nakao</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Nakayama</surname>
+                <given-names>S</given-names>
+              </name>
+            </person-group>
+            <article-title>Unusual complications from amitriptyline intoxication.</article-title>
+            <source>BMJ Case Rep</source>
+            <year>2017</year>
+            <month>Oct</month>
+            <day>10</day>
+            <volume>2017</volume>
+            <pub-id pub-id-type="pmid">29018010</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r31">
+          <label>31</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Pisani</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Oteri</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Costa</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Di Raimondo</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Di Perri</surname>
+                <given-names>R</given-names>
+              </name>
+            </person-group>
+            <article-title>Effects of psychotropic drugs on seizure threshold.</article-title>
+            <source>Drug Saf</source>
+            <year>2002</year>
+            <volume>25</volume>
+            <issue>2</issue>
+            <fpage>91</fpage>
+            <page-range>91-110</page-range>
+            <pub-id pub-id-type="pmid">11888352</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r32">
+          <label>32</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Rabenda</surname>
+                <given-names>V</given-names>
+              </name>
+              <name>
+                <surname>Nicolet</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Beaudart</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Bruy&#x000e8;re</surname>
+                <given-names>O</given-names>
+              </name>
+              <name>
+                <surname>Reginster</surname>
+                <given-names>JY</given-names>
+              </name>
+            </person-group>
+            <article-title>Relationship between use of antidepressants and risk of fractures: a meta-analysis.</article-title>
+            <source>Osteoporos Int</source>
+            <year>2013</year>
+            <month>Jan</month>
+            <volume>24</volume>
+            <issue>1</issue>
+            <fpage>121</fpage>
+            <page-range>121-37</page-range>
+            <pub-id pub-id-type="pmid">22638709</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r33">
+          <label>33</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Nasrallah</surname>
+                <given-names>HA</given-names>
+              </name>
+              <name>
+                <surname>Lyskowksi</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Schroeder</surname>
+                <given-names>D</given-names>
+              </name>
+            </person-group>
+            <article-title>TCA-induced mania: differences between switchers and nonswitchers.</article-title>
+            <source>Biol Psychiatry</source>
+            <year>1982</year>
+            <month>Feb</month>
+            <volume>17</volume>
+            <issue>2</issue>
+            <fpage>271</fpage>
+            <page-range>271-4</page-range>
+            <pub-id pub-id-type="pmid">7074184</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r34">
+          <label>34</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Shepshelovich</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Schechter</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Calvarysky</surname>
+                <given-names>B</given-names>
+              </name>
+              <name>
+                <surname>Diker-Cohen</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Rozen-Zvi</surname>
+                <given-names>B</given-names>
+              </name>
+              <name>
+                <surname>Gafter-Gvili</surname>
+                <given-names>A</given-names>
+              </name>
+            </person-group>
+            <article-title>Medication-induced SIADH: distribution and characterization according to medication class.</article-title>
+            <source>Br J Clin Pharmacol</source>
+            <year>2017</year>
+            <month>Aug</month>
+            <volume>83</volume>
+            <issue>8</issue>
+            <fpage>1801</fpage>
+            <page-range>1801-1807</page-range>
+            <pub-id pub-id-type="pmid">28168757</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r35">
+          <label>35</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>DeSanty</surname>
+                <given-names>KP</given-names>
+              </name>
+              <name>
+                <surname>Amabile</surname>
+                <given-names>CM</given-names>
+              </name>
+            </person-group>
+            <article-title>Antidepressant-induced liver injury.</article-title>
+            <source>Ann Pharmacother</source>
+            <year>2007</year>
+            <month>Jul</month>
+            <volume>41</volume>
+            <issue>7</issue>
+            <fpage>1201</fpage>
+            <page-range>1201-11</page-range>
+            <pub-id pub-id-type="pmid">17609231</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r36">
+          <label>36</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Michalets</surname>
+                <given-names>EL</given-names>
+              </name>
+              <name>
+                <surname>Williams</surname>
+                <given-names>CR</given-names>
+              </name>
+            </person-group>
+            <article-title>Drug interactions with cisapride: clinical implications.</article-title>
+            <source>Clin Pharmacokinet</source>
+            <year>2000</year>
+            <month>Jul</month>
+            <volume>39</volume>
+            <issue>1</issue>
+            <fpage>49</fpage>
+            <page-range>49-75</page-range>
+            <pub-id pub-id-type="pmid">10926350</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r37">
+          <label>37</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Rochester</surname>
+                <given-names>MP</given-names>
+              </name>
+              <name>
+                <surname>Kane</surname>
+                <given-names>AM</given-names>
+              </name>
+              <name>
+                <surname>Linnebur</surname>
+                <given-names>SA</given-names>
+              </name>
+              <name>
+                <surname>Fixen</surname>
+                <given-names>DR</given-names>
+              </name>
+            </person-group>
+            <article-title>Evaluating the risk of QTc prolongation associated with antidepressant use in older adults: a review of the evidence.</article-title>
+            <source>Ther Adv Drug Saf</source>
+            <year>2018</year>
+            <month>Jun</month>
+            <volume>9</volume>
+            <issue>6</issue>
+            <fpage>297</fpage>
+            <page-range>297-308</page-range>
+            <pub-id pub-id-type="pmid">29854391</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r38">
+          <label>38</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Alderman</surname>
+                <given-names>CP</given-names>
+              </name>
+              <name>
+                <surname>Lee</surname>
+                <given-names>PC</given-names>
+              </name>
+            </person-group>
+            <article-title>Comment: Serotonin syndrome associated with combined sertraline-amitriptyline treatment.</article-title>
+            <source>Ann Pharmacother</source>
+            <year>1996</year>
+            <month>Dec</month>
+            <volume>30</volume>
+            <issue>12</issue>
+            <fpage>1499</fpage>
+            <page-range>1499-500</page-range>
+            <pub-id pub-id-type="pmid">8968471</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r39">
+          <label>39</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Dougherty</surname>
+                <given-names>JA</given-names>
+              </name>
+              <name>
+                <surname>Young</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Shafi</surname>
+                <given-names>T</given-names>
+              </name>
+            </person-group>
+            <article-title>Serotonin syndrome induced by amitriptyline, meperidine, and venlafaxine.</article-title>
+            <source>Ann Pharmacother</source>
+            <year>2002</year>
+            <month>Oct</month>
+            <volume>36</volume>
+            <issue>10</issue>
+            <fpage>1647</fpage>
+            <page-range>1647-8</page-range>
+            <pub-id pub-id-type="pmid">12243617</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r40">
+          <label>40</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Fornaro</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Anastasia</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Valchera</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Carano</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Orsolini</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Vellante</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Rapini</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Olivieri</surname>
+                <given-names>L</given-names>
+              </name>
+              <name>
+                <surname>Di Natale</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Perna</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Martinotti</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Di Giannantonio</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>De Berardis</surname>
+                <given-names>D</given-names>
+              </name>
+            </person-group>
+            <article-title>The FDA "Black Box" Warning on Antidepressant Suicide Risk in Young Adults: More Harm Than Benefits?</article-title>
+            <source>Front Psychiatry</source>
+            <year>2019</year>
+            <volume>10</volume>
+            <fpage>294</fpage>
+            <pub-id pub-id-type="pmid">31130881</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r41">
+          <label>41</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Kiyan</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Aksay</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>Yanturali</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Atilla</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Ersel</surname>
+                <given-names>M</given-names>
+              </name>
+            </person-group>
+            <article-title>Acute myocardial infarction associated with amitriptyline overdose.</article-title>
+            <source>Basic Clin Pharmacol Toxicol</source>
+            <year>2006</year>
+            <month>May</month>
+            <volume>98</volume>
+            <issue>5</issue>
+            <fpage>462</fpage>
+            <page-range>462-6</page-range>
+            <pub-id pub-id-type="pmid">16635104</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r42">
+          <label>42</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Sabah</surname>
+                <given-names>KMN</given-names>
+              </name>
+              <name>
+                <surname>Chowdhury</surname>
+                <given-names>AW</given-names>
+              </name>
+              <name>
+                <surname>Islam</surname>
+                <given-names>MS</given-names>
+              </name>
+              <name>
+                <surname>Saha</surname>
+                <given-names>BP</given-names>
+              </name>
+              <name>
+                <surname>Kabir</surname>
+                <given-names>SR</given-names>
+              </name>
+              <name>
+                <surname>Kawser</surname>
+                <given-names>S</given-names>
+              </name>
+            </person-group>
+            <article-title>Amitriptyline-induced ventricular tachycardia: a case report.</article-title>
+            <source>BMC Res Notes</source>
+            <year>2017</year>
+            <month>Jul</month>
+            <day>14</day>
+            <volume>10</volume>
+            <issue>1</issue>
+            <fpage>286</fpage>
+            <pub-id pub-id-type="pmid">28709467</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r43">
+          <label>43</label>
+          <element-citation publication-type="book">
+            <chapter-title>Amitriptyline</chapter-title>
+            <source>LiverTox: Clinical and Research Information on Drug-Induced Liver Injury [Internet]</source>
+            <publisher-name>National Institute of Diabetes and Digestive and Kidney Diseases</publisher-name>
+            <publisher-loc>Bethesda (MD)</publisher-loc>
+            <year>2016</year>
+            <month>3</month>
+            <day>1</day>
+            <pub-id pub-id-type="pmid">31643729</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r44">
+          <label>44</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Yoshida</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Hisatome</surname>
+                <given-names>I</given-names>
+              </name>
+              <name>
+                <surname>Nawada</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Sasaki</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Taniguchi</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Tanaka</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Manabe</surname>
+                <given-names>I</given-names>
+              </name>
+              <name>
+                <surname>Ahmmed</surname>
+                <given-names>GU</given-names>
+              </name>
+              <name>
+                <surname>Sato</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Mori</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Hattori</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Ueta</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Mitani</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Watanabe</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Igawa</surname>
+                <given-names>O</given-names>
+              </name>
+              <name>
+                <surname>Fujimoto</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Shigemasa</surname>
+                <given-names>C</given-names>
+              </name>
+            </person-group>
+            <article-title>Amitriptyline inhibits the G protein and K+ channel in the cloned thyroid cell line.</article-title>
+            <source>Eur J Pharmacol</source>
+            <year>1996</year>
+            <month>Sep</month>
+            <day>19</day>
+            <volume>312</volume>
+            <issue>1</issue>
+            <fpage>115</fpage>
+            <page-range>115-9</page-range>
+            <pub-id pub-id-type="pmid">8891586</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r45">
+          <label>45</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Unterecker</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Pfuhlmann</surname>
+                <given-names>B</given-names>
+              </name>
+              <name>
+                <surname>Kopf</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Kittel-Schneider</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Reif</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Deckert</surname>
+                <given-names>J</given-names>
+              </name>
+            </person-group>
+            <article-title>Increase of Heart Rate and QTc by Amitriptyline, But Not by Venlafaxine, Is Correlated to Serum Concentration.</article-title>
+            <source>J Clin Psychopharmacol</source>
+            <year>2015</year>
+            <month>Aug</month>
+            <volume>35</volume>
+            <issue>4</issue>
+            <fpage>460</fpage>
+            <page-range>460-3</page-range>
+            <pub-id pub-id-type="pmid">26035054</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r46">
+          <label>46</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Montgomery</surname>
+                <given-names>SA</given-names>
+              </name>
+            </person-group>
+            <article-title>Suicide and antidepressants.</article-title>
+            <source>Ann N Y Acad Sci</source>
+            <year>1997</year>
+            <month>Dec</month>
+            <day>29</day>
+            <volume>836</volume>
+            <fpage>329</fpage>
+            <page-range>329-38</page-range>
+            <pub-id pub-id-type="pmid">9616807</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r47">
+          <label>47</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Hult&#x000e9;n</surname>
+                <given-names>BA</given-names>
+              </name>
+              <name>
+                <surname>Adams</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Askenasi</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Dallos</surname>
+                <given-names>V</given-names>
+              </name>
+              <name>
+                <surname>Dawling</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Heath</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Volans</surname>
+                <given-names>G</given-names>
+              </name>
+            </person-group>
+            <article-title>Activated charcoal in tricyclic antidepressant poisoning.</article-title>
+            <source>Hum Toxicol</source>
+            <year>1988</year>
+            <month>Jul</month>
+            <volume>7</volume>
+            <issue>4</issue>
+            <fpage>307</fpage>
+            <page-range>307-10</page-range>
+            <pub-id pub-id-type="pmid">3410479</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r48">
+          <label>48</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Hoegberg</surname>
+                <given-names>LCG</given-names>
+              </name>
+              <name>
+                <surname>Gosselin</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Buckley</surname>
+                <given-names>NA</given-names>
+              </name>
+              <name>
+                <surname>Wood</surname>
+                <given-names>DM</given-names>
+              </name>
+              <name>
+                <surname>Shepherd</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Hanley</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Bates</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>St-Onge</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Caravati</surname>
+                <given-names>EM</given-names>
+              </name>
+              <name>
+                <surname>Smith</surname>
+                <given-names>SW</given-names>
+              </name>
+              <name>
+                <surname>Shadnia</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Gudjonsdottir</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Jiranantakan</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Johnson</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Olson</surname>
+                <given-names>KR</given-names>
+              </name>
+              <name>
+                <surname>B&#x000e9;dry</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Eyer</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Tse</surname>
+                <given-names>ML</given-names>
+              </name>
+              <name>
+                <surname>Chan</surname>
+                <given-names>WL</given-names>
+              </name>
+              <name>
+                <surname>Stolbach</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Lang</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>Hoffman</surname>
+                <given-names>RS</given-names>
+              </name>
+            </person-group>
+            <article-title>Recommendations from the Clinical Toxicology Recommendations Collaborative on the administration of activated charcoal in acute oral overdose.</article-title>
+            <source>Clin Toxicol (Phila)</source>
+            <year>2026</year>
+            <month>Jun</month>
+            <volume>64</volume>
+            <issue>6</issue>
+            <fpage>419</fpage>
+            <page-range>419-475</page-range>
+            <pub-id pub-id-type="pmid">41906697</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r49">
+          <label>49</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Lynch</surname>
+                <given-names>R</given-names>
+              </name>
+            </person-group>
+            <article-title>Tricyclic antidepressant overdose.</article-title>
+            <source>Emerg Med J</source>
+            <year>2002</year>
+            <month>Nov</month>
+            <volume>19</volume>
+            <issue>6</issue>
+            <fpage>596</fpage>
+            <pub-id pub-id-type="pmid">12421805</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r50">
+          <label>50</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Mirrakhimov</surname>
+                <given-names>AE</given-names>
+              </name>
+              <name>
+                <surname>Ayach</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Barbaryan</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Talari</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Chadha</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Gray</surname>
+                <given-names>A</given-names>
+              </name>
+            </person-group>
+            <article-title>The Role of Sodium Bicarbonate in the Management of Some Toxic Ingestions.</article-title>
+            <source>Int J Nephrol</source>
+            <year>2017</year>
+            <volume>2017</volume>
+            <fpage>7831358</fpage>
+            <pub-id pub-id-type="pmid">28932601</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r51">
+          <label>51</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Ramasubbu</surname>
+                <given-names>B</given-names>
+              </name>
+              <name>
+                <surname>James</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Scurr</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Sandilands</surname>
+                <given-names>EA</given-names>
+              </name>
+            </person-group>
+            <article-title>Serum alkalinisation is the cornerstone of treatment for amitriptyline poisoning.</article-title>
+            <source>BMJ Case Rep</source>
+            <year>2016</year>
+            <month>Apr</month>
+            <day>11</day>
+            <volume>2016</volume>
+            <fpage>10.1136/bcr</fpage>
+            <page-range>10.1136/bcr-2016-214685</page-range>
+            <pub-id pub-id-type="pmid">27068728</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r52">
+          <label>52</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Angel-Isaza</surname>
+                <given-names>AM</given-names>
+              </name>
+              <name>
+                <surname>Bustamante-Cristancho</surname>
+                <given-names>LA</given-names>
+              </name>
+              <name>
+                <surname>Uribe-B</surname>
+                <given-names>FL</given-names>
+              </name>
+            </person-group>
+            <article-title>Successful Outcome Following Intravenous Lipid Emulsion Rescue Therapy in a Patient with Cardiac Arrest Due to Amitriptyline Overdose.</article-title>
+            <source>Am J Case Rep</source>
+            <year>2020</year>
+            <month>May</month>
+            <day>24</day>
+            <volume>21</volume>
+            <fpage>e922206</fpage>
+            <pub-id pub-id-type="pmid">32447341</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-17465.r53">
+          <label>53</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Garrett</surname>
+                <given-names>P</given-names>
+              </name>
+              <name>
+                <surname>Klupfel</surname>
+                <given-names>S</given-names>
+              </name>
+            </person-group>
+            <article-title>Esmolol for intractable ventricular arrhythmias in major amitriptyline toxicity.</article-title>
+            <source>BMJ Case Rep</source>
+            <year>2022</year>
+            <month>Jul</month>
+            <day>22</day>
+            <volume>15</volume>
+            <issue>7</issue>
+            <pub-id pub-id-type="pmid">35868803</pub-id>
+          </element-citation>
+        </ref>
+      </ref-list>
+    </back>
+  </book-part>
+</book-part-wrapper>

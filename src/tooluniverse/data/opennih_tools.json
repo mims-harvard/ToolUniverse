@@ -35,13 +35,13 @@
         "query": {"type": ["string", "null"], "minLength": 2, "maxLength": 64, "description": "Natural-language topic or combined search string."},
         "text_search": {"type": ["string", "null"], "minLength": 2, "maxLength": 64, "description": "Text to match in grant fields."},
         "project_num": {"type": ["string", "null"], "pattern": "^[A-Z0-9-]{1,24}$", "description": "Full NIH project number."},
-        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed fiscal_year_end."},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below fiscal_year_start."},
         "activity_code": {"type": ["string", "null"], "pattern": "^[A-Z0-9]{1,5}$", "description": "NIH activity code such as R01 or K23."},
         "ic": {"type": ["string", "null"], "minLength": 2, "maxLength": 64, "description": "NIH Institute/Center abbreviation, code, or name. Prefer an exact abbreviation; a name fragment can select multiple or unexpected historical labels, so inspect returned ic_scope. In the verified deployment, fragment ic_scope.n can differ from the length of matched_ic_names and modernized names can repeat; do not infer a precise IC count from either field."},
         "institution": {"type": ["string", "null"], "minLength": 2, "maxLength": 64, "description": "Case-insensitive substring over raw organization names. This can match multiple canonical institutions or campuses (for example, Harvard); inspect org_name values and use rank_institutions to resolve one entity_id before institution-level analysis."},
-        "pi_name": {"type": ["string", "null"], "minLength": 2, "maxLength": 64},
-        "limit": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20},
+        "pi_name": {"type": ["string", "null"], "minLength": 2, "maxLength": 64, "description": "Principal investigator name to filter by (2-64 characters)."},
+        "limit": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20, "description": "Maximum number of rows to return (1-50, default 20)."},
         "offset": {"type": "integer", "minimum": 0, "maximum": 100000, "default": 0, "description": "Zero-based row offset, capped at 100000. With limit=50 the largest fully retrievable matching slice is 100050 rows."}
       },
       "required": [],
@@ -66,12 +66,12 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "ic": {"type": ["string", "null"], "minLength": 2, "maxLength": 64},
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed fiscal_year_end."},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below fiscal_year_start."},
+        "ic": {"type": ["string", "null"], "minLength": 2, "maxLength": 64, "description": "NIH Institute/Center abbreviation, code, or name. Prefer an exact abbreviation."},
         "sort_by": {"type": "string", "enum": ["composite", "funding_scale", "portfolio_breadth", "new_grant_activity", "avg_award_size"], "default": "composite", "description": "Ranking objective. Use funding_scale for 'top-funded'; composite is a weighted multi-dimensional score and can order institutions differently. The other values rank by their named dimension."},
-        "limit": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20},
-        "offset": {"type": "integer", "minimum": 0, "maximum": 100000, "default": 0}
+        "limit": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20, "description": "Maximum number of rows to return (1-50, default 20)."},
+        "offset": {"type": "integer", "minimum": 0, "maximum": 100000, "default": 0, "description": "Zero-based row offset for paging, capped at 100000."}
       },
       "required": [],
       "additionalProperties": false
@@ -96,10 +96,10 @@
       "type": "object",
       "properties": {
         "profile_id": {"type": "string", "pattern": "^[0-9]{1,20}$", "description": "NIH RePORTER PI profile identifier from a search result."},
-        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "limit": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20},
-        "offset": {"type": "integer", "minimum": 0, "maximum": 100000, "default": 0}
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed fiscal_year_end."},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below fiscal_year_start."},
+        "limit": {"type": "integer", "minimum": 1, "maximum": 50, "default": 20, "description": "Maximum number of rows to return (1-50, default 20)."},
+        "offset": {"type": "integer", "minimum": 0, "maximum": 100000, "default": 0, "description": "Zero-based row offset for paging, capped at 100000."}
       },
       "required": ["profile_id"],
       "additionalProperties": false
@@ -124,8 +124,8 @@
       "type": "object",
       "properties": {
         "entity_id": {"type": "string", "minLength": 2, "maxLength": 256, "description": "Canonical institution identifier returned by rank_institutions."},
-        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100}
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed fiscal_year_end."},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below fiscal_year_start."}
       },
       "required": ["entity_id"],
       "additionalProperties": false
@@ -149,8 +149,8 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed fiscal_year_end."},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below fiscal_year_start."},
         "ic": {"type": ["string", "null"], "description": "NIH Institute/Center filter."},
         "activity_code": {"type": ["string", "null"], "description": "Activity code such as R01."},
         "institution": {"type": ["string", "null"], "description": "Institution name substring."}
@@ -178,8 +178,8 @@
       "type": "object",
       "properties": {
         "query": {"type": "string", "minLength": 2, "maxLength": 64, "description": "Topic words to match in grant titles."},
-        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100}
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed fiscal_year_end."},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below fiscal_year_start."}
       },
       "required": ["query"],
       "additionalProperties": false
@@ -203,8 +203,8 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed fiscal_year_end."},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below fiscal_year_start."},
         "ic": {"type": ["string", "null"], "description": "NIH Institute/Center filter."}
       },
       "required": [],
@@ -229,8 +229,8 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100}
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed fiscal_year_end."},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below fiscal_year_start."}
       },
       "required": [],
       "additionalProperties": false
@@ -255,8 +255,8 @@
       "type": "object",
       "properties": {
         "entity_id": {"type": ["string", "null"], "description": "Canonical institution identifier from rank_institutions."},
-        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100}
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed fiscal_year_end."},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below fiscal_year_start."}
       },
       "required": [],
       "additionalProperties": false
@@ -282,9 +282,9 @@
       "properties": {
         "ic": {"type": "string", "minLength": 2, "maxLength": 64, "description": "One Institute/Center abbreviation, code, or name; use ALL for one combined all-IC scope. ALL does not produce separate rows for each IC."},
         "query": {"type": "string", "minLength": 2, "maxLength": 64, "description": "Research topic or RCDC category."},
-        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "match_strategy": {"type": "string", "enum": ["auto", "rcdc", "text"], "default": "auto"}
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed fiscal_year_end."},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below fiscal_year_start."},
+        "match_strategy": {"type": "string", "enum": ["auto", "rcdc", "text"], "default": "auto", "description": "How to match the topic: auto uses official RCDC categories when coverage permits and title-text matching otherwise; rcdc forces RCDC categories; text forces title-text matching."}
       },
       "required": ["ic", "query"],
       "additionalProperties": false
@@ -309,8 +309,8 @@
       "type": "object",
       "properties": {
         "entity_id": {"type": ["string", "null"], "description": "Canonical institution identifier or null for all NIH."},
-        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100},
-        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100}
+        "fiscal_year_start": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "First NIH fiscal year of the window (inclusive, 1985-2100); must not exceed fiscal_year_end."},
+        "fiscal_year_end": {"type": ["integer", "null"], "minimum": 1985, "maximum": 2100, "description": "Last NIH fiscal year of the window (inclusive, 1985-2100); must not be below fiscal_year_start."}
       },
       "required": [],
       "additionalProperties": false

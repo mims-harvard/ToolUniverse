@@ -1,7 +1,7 @@
 """
 FAERS_count_death_related_by_drug
 
-Count adverse events associated with patient death for a given drug. Only medicinalproduct is req...
+Count reports for a given drug by the FAERS 'seriousnessdeath' seriousness criterion. Only medici...
 """
 
 from typing import Any, Optional, Callable

@@ -13,6 +13,7 @@ import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 MODOMICS_BASE = "https://iimcb.genesilico.pl/modomics/api"
 
@@ -78,7 +79,7 @@ class MODOMICSTool(BaseTool):
         if resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"API returned {resp.status_code}: {resp.text[:200]}",
+                "error": f"API returned {resp.status_code}{upstream_reason_suffix(resp)}",
             }
 
         data = resp.json()
@@ -116,23 +117,26 @@ class MODOMICSTool(BaseTool):
                 "error": "modification_id parameter is required",
             }
 
+        # MODOMICS's own {mod_id} path segment is decorative: the endpoint
+        # ignores it and always answers with the full ~433-entry catalog
+        # (confirmed live: modifications/78, /2 and /58 all return the same
+        # 433-key dict), so mod_id must be looked up client-side instead of
+        # taking whatever happens to come first.
         url = f"{MODOMICS_BASE}/modifications/{mod_id}"
         resp = requests.get(url, timeout=self.timeout)
         if resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"API returned {resp.status_code}: {resp.text[:200]}",
+                "error": f"API returned {resp.status_code}{upstream_reason_suffix(resp)}",
             }
 
         data = resp.json()
-        # Response is a dict keyed by ID, even for single item
-        if not data:
+        mod_data = data.get(str(mod_id))
+        if not mod_data:
             return {
                 "status": "error",
                 "error": f"No modification found with ID {mod_id}",
             }
-
-        mod_data = list(data.values())[0]
         return {
             "status": "success",
             "data": {
@@ -165,7 +169,7 @@ class MODOMICSTool(BaseTool):
         if resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"API returned {resp.status_code}: {resp.text[:200]}",
+                "error": f"API returned {resp.status_code}{upstream_reason_suffix(resp)}",
             }
 
         data = resp.json()

@@ -34,7 +34,6 @@ API: https://docs.nvidia.com/nim/bionemo/evo2/latest/endpoints.html
 import base64
 import io
 import json
-import os
 import zipfile
 from typing import Any, Dict, Optional, Tuple
 
@@ -43,6 +42,7 @@ import requests
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 _ARC_BASE = "https://health.api.nvidia.com/v1/biology/arc"
 _DEFAULT_MODEL = "evo2-40b"
@@ -72,7 +72,7 @@ class Evo2VariantEffectTool(BaseTool):
     # ------------------------------------------------------------------ run
     def run(self, arguments: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         args = arguments or {}
-        api_key = os.environ.get("NVIDIA_API_KEY")
+        api_key = self.credential("NVIDIA_API_KEY")
         if not api_key:
             return self._err(
                 "NVIDIA_API_KEY not set (free key at https://build.nvidia.com)."
@@ -237,7 +237,9 @@ class Evo2VariantEffectTool(BaseTool):
         except requests.exceptions.RequestException as exc:
             return self._err(f"Evo 2 request failed: {exc}")
         if resp.status_code != 200:
-            return self._err(f"Evo 2 HTTP {resp.status_code}: {resp.text[:200]}")
+            return self._err(
+                f"Evo 2 HTTP {resp.status_code}{upstream_reason_suffix(resp)}"
+            )
 
         try:
             decoded = self._decode_response(resp)

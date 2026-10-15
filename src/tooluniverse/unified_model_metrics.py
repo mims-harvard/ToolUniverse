@@ -28,6 +28,21 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 
+# scipy is an optional extra, and only the two rank metrics need it. Importing
+# it at the top of a function hid that from `test_extras.py`'s guard check: a
+# machine without the extra got an ImportError in the middle of a benchmark run
+# instead of a metric reported as unavailable. Spearman and Pearson now return
+# None without it, which is the same thing they return when the overlap is too
+# small -- and `coverage` and `n` are reported beside every metric, so a None
+# is never mistaken for a score.
+try:
+    from scipy import stats as _scipy_stats
+
+    HAS_SCIPY = True
+except ImportError:  # pragma: no cover - depends on the installed extras
+    _scipy_stats = None
+    HAS_SCIPY = False
+
 CLASSIFICATION_METRICS = (
     "auroc",
     "auprc",
@@ -167,9 +182,10 @@ def spearman(
         return None
     if not higher_is_positive:
         s = -s
-    from scipy import stats
+    if not HAS_SCIPY:
+        return None
 
-    rho = stats.spearmanr(s, t).statistic
+    rho = _scipy_stats.spearmanr(s, t).statistic
     return (
         None
         if rho is None or (isinstance(rho, float) and math.isnan(rho))
@@ -185,9 +201,10 @@ def pearson(
         return None
     if not higher_is_positive:
         s = -s
-    from scipy import stats
+    if not HAS_SCIPY:
+        return None
 
-    r = stats.pearsonr(s, t).statistic
+    r = _scipy_stats.pearsonr(s, t).statistic
     return None if r is None or (isinstance(r, float) and math.isnan(r)) else float(r)
 
 

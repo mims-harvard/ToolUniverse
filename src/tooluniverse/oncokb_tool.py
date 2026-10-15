@@ -8,7 +8,6 @@ API Documentation: https://api.oncokb.org/
 Requires API token: https://www.oncokb.org/apiAccess
 """
 
-import os
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
@@ -38,11 +37,18 @@ class OncoKBTool(BaseTool):
         super().__init__(tool_config)
         self.timeout: int = tool_config.get("timeout", 30)
         self.parameter = tool_config.get("parameter", {})
-        # Get API token from environment
-        self.api_token = os.environ.get("ONCOKB_API_TOKEN", "")
-        # Use demo API if no token provided
-        self.use_demo = not bool(self.api_token)
-        self.base_url = ONCOKB_DEMO_URL if self.use_demo else ONCOKB_API_URL
+
+    @property
+    def api_token(self) -> str:
+        return self.credential("ONCOKB_API_TOKEN") or ""
+
+    @property
+    def use_demo(self) -> bool:
+        return not bool(self.api_token)
+
+    @property
+    def base_url(self) -> str:
+        return ONCOKB_DEMO_URL if self.use_demo else ONCOKB_API_URL
 
     @property
     def _api_mode(self) -> str:

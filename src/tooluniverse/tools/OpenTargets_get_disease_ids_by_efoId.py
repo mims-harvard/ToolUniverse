@@ -21,7 +21,7 @@ def OpenTargets_get_disease_ids_by_efoId(
     Parameters
     ----------
     efoId : str
-        The disease ID (e.g. a MONDO ID such as MONDO_0008383). Legacy EFO disease IDs no longer resolve in OpenTargets.
+        The disease ID (e.g. a MONDO ID such as MONDO_0008383). Legacy EFO disease ID...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

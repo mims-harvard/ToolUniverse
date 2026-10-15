@@ -11,8 +11,8 @@ from ._shared_client import get_shared_client
 def BioPortal_get_hierarchy(
     ontology: str,
     concept_id: str,
-    direction: Optional[str | Any] = None,
-    page_size: Optional[int | Any] = None,
+    direction: Optional[str] = None,
+    page_size: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,9 +27,9 @@ def BioPortal_get_hierarchy(
         Ontology acronym in BioPortal. Examples: 'GO', 'HP', 'DOID', 'CHEBI', 'UBERON...
     concept_id : str
         Full IRI of the concept. Example: 'http://purl.obolibrary.org/obo/DOID_9351' ...
-    direction : str | Any
+    direction : str
         Direction of hierarchy traversal: 'children' (narrower terms, default), 'pare...
-    page_size : int | Any
+    page_size : int
         Number of results to return (default: 25, max: 100).
     stream_callback : Callable, optional
         Callback for streaming output

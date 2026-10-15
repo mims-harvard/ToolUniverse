@@ -16,6 +16,7 @@ from typing import Any, Dict
 import requests
 
 from .base_tool import BaseTool
+from .http_utils import cloudflare_challenge
 from .tool_registry import register_tool
 
 FOODB_BASE = "https://foodb.ca/compounds"
@@ -51,6 +52,12 @@ class FooDBCompoundTool(BaseTool):
                         "query_fdb_id": fdb_id,
                         "note": f"No FooDB compound '{fdb_id}'.",
                     },
+                }
+            challenge = cloudflare_challenge(resp)
+            if challenge:
+                return {
+                    "status": "error",
+                    "error": f"FooDB is unreachable: {challenge}.",
                 }
             resp.raise_for_status()
             c = resp.json()

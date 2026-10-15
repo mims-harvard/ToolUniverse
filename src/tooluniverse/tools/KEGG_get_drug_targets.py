@@ -1,7 +1,7 @@
 """
 KEGG_get_drug_targets
 
-Get human gene targets linked to a KEGG drug. Returns KEGG gene IDs (hsa:XXXXX format) for known ...
+Get human gene targets linked to a KEGG drug. Returns raw KEGG gene IDs only (hsa:XXXXX format), ...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def KEGG_get_drug_targets(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get human gene targets linked to a KEGG drug. Returns KEGG gene IDs (hsa:XXXXX format) for known ...
+    Get human gene targets linked to a KEGG drug. Returns raw KEGG gene IDs only (hsa:XXXXX format), ...
 
     Parameters
     ----------

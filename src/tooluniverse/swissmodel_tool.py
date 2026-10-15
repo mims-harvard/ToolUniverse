@@ -153,7 +153,8 @@ class SwissModelTool(BaseTool):
             "uniprot_id": uniprot_id,
             "sequence_length": result_data.get("sequence_length"),
             "crc64": result_data.get("crc64"),
-            "model_count": len(models),
+            "model_count": len(models[:30]),
+            "total_models": len(models),
             "models": models[:30],
         }
         # Echo applied filters so the agent knows the result is scoped

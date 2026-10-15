@@ -144,46 +144,93 @@ class XenbaseTool(BaseTool):
             gene_id = f"Xenbase:{gene_id}"
 
         url = f"{ALLIANCE_BASE}/gene/{gene_id}"
-        resp = requests.get(url, timeout=self.timeout)
-        if resp.status_code == 404:
+        resp = requests.get(
+            url, headers={"Accept": "application/json"}, timeout=self.timeout
+        )
+        # Alliance answers an unknown gene with HTTP 400 ("No gene found with ID"),
+        # older deployments with 404.
+        if resp.status_code in (400, 404):
             return {"status": "error", "error": f"Gene not found: {gene_id}"}
         resp.raise_for_status()
-        data = resp.json()
+        payload = resp.json()
 
-        species_info = data.get("species", {})
-        genome_locations = data.get("genomeLocations", [])
+        # The Alliance API nests the record under "gene" (with displayText-wrapped
+        # labels); reading the top level returned every field as null. Fall back to
+        # the payload itself in case the older flat schema comes back.
+        data = payload.get("gene") or payload
+
+        def text(value):
+            if isinstance(value, dict):
+                return value.get("displayText") or value.get("formatText")
+            return value
+
+        taxon = data.get("taxon") or {}
+        species = taxon.get("species") or {}
+        provider = data.get("dataProvider")
+        if isinstance(provider, dict):
+            provider = provider.get("abbreviation")
+
         location = None
-        if genome_locations:
-            loc = genome_locations[0]
+        locations = (
+            data.get("geneGenomicLocationAssociations")
+            or data.get("genomeLocations")
+            or []
+        )
+        if locations:
+            loc = locations[0]
+            component = loc.get("geneGenomicLocationAssociationObject") or {}
             location = {
-                "chromosome": loc.get("chromosome"),
+                "chromosome": component.get("name") or loc.get("chromosome"),
                 "start": loc.get("start"),
                 "end": loc.get("end"),
                 "strand": loc.get("strand"),
-                "assembly": loc.get("assembly"),
+                "assembly": (species.get("genomeAssembly") or {}).get(
+                    "primaryExternalId"
+                )
+                or loc.get("assembly"),
             }
 
+        xenbase_url = data.get("modCrossRefCompleteUrl")
+        cross_references = {}
+        raw_refs = data.get("crossReferences")
+        if isinstance(raw_refs, list):
+            for ref in raw_refs:
+                curie = ref.get("referencedCurie") or ""
+                prefix, _, local_id = curie.partition(":")
+                page = ref.get("resourceDescriptorPage") or {}
+                template = page.get("urlTemplate")
+                if prefix == "Xenbase" and page.get("name") == "gene" and template:
+                    xenbase_url = xenbase_url or template.replace("[%s]", local_id)
+                elif prefix and local_id:
+                    cross_references.setdefault(prefix, []).append(local_id)
+        else:
+            cross_references = {
+                k: v for k, v in (data.get("crossReferenceMap") or {}).items() if v
+            }
+
+        gene_type = data.get("geneType") or data.get("soTerm") or {}
         result = {
-            "gene_id": data.get("id"),
-            "symbol": data.get("symbol"),
-            "name": data.get("name"),
+            "gene_id": data.get("primaryExternalId") or data.get("id"),
+            "symbol": text(data.get("geneSymbol")) or data.get("symbol"),
+            "name": text(data.get("geneFullName")) or data.get("name"),
             "species": {
-                "name": species_info.get("name"),
-                "short_name": species_info.get("shortName"),
-                "taxon_id": species_info.get("taxonId"),
-                "data_provider": species_info.get("dataProviderShortName"),
+                "name": taxon.get("name") or species.get("fullName"),
+                "short_name": species.get("displayName")
+                or species.get("abbreviation")
+                or taxon.get("shortName"),
+                "taxon_id": taxon.get("curie") or taxon.get("taxonId"),
+                "data_provider": provider,
             },
-            "synonyms": data.get("synonyms", []),
+            "synonyms": [
+                text(x)
+                for x in (data.get("geneSynonyms") or data.get("synonyms") or [])
+            ],
             "gene_synopsis": data.get("geneSynopsis"),
             "automated_gene_synopsis": data.get("automatedGeneSynopsis"),
-            "so_term": data.get("soTerm", {}).get("name")
-            if data.get("soTerm")
-            else None,
+            "so_term": gene_type.get("name") if gene_type else None,
             "genomic_location": location,
-            "xenbase_url": data.get("modCrossRefCompleteUrl"),
-            "cross_references": {
-                k: v for k, v in (data.get("crossReferenceMap") or {}).items() if v
-            },
+            "xenbase_url": xenbase_url,
+            "cross_references": cross_references,
         }
 
         return {"status": "success", "data": result}

@@ -12,11 +12,6 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 
 default_tool_files = {
     "special_tools": os.path.join(current_dir, "data", "special_tools.json"),
-    # Unified interface over interchangeable ML model backends: one canonical
-    # input/output contract per task (variant effect, protein structure, ADMET,
-    # binding affinity) with many models behind it, so they can be compared and
-    # benchmarked against each other.
-    "unified_models": os.path.join(current_dir, "data", "unified_model_tools.json"),
     "tooluniverse_page": os.path.join(
         current_dir, "data", "tooluniverse_page_tools.json"
     ),
@@ -99,6 +94,8 @@ default_tool_files = {
     ),
     "dataset": os.path.join(current_dir, "data", "dataset_tools.json"),
     "datagov": os.path.join(current_dir, "data", "datagov_tools.json"),
+    # Verified Source Directory - explicit, allowlisted public JSON sources
+    "vsd": os.path.join(current_dir, "data", "vsd_tools.json"),
     # 'mcp_clients': os.path.join(current_dir, 'data', 'mcp_client_tools_example.json'),
     "mcp_auto_loader_txagent": os.path.join(
         current_dir, "data", "txagent_client_tools.json"
@@ -235,6 +232,10 @@ default_tool_files = {
     "replicate": os.path.join(current_dir, "data", "replicate_tools.json"),
     # DTU protein predictors (DeepTMHMM / SignalP via biolib)
     "dtu_protein": os.path.join(current_dir, "data", "dtu_protein_tools.json"),
+    "protein_pka": os.path.join(current_dir, "data", "protein_pka_tools.json"),
+    "protein_similarity_local": os.path.join(
+        current_dir, "data", "protein_similarity_local_tools.json"
+    ),
     # Cellpose deep-learning cell/nucleus segmentation (local, cellpose pkg)
     "cellpose": os.path.join(current_dir, "data", "cellpose_tools.json"),
     # DeepSpot-M spatial gene expression from an H&E tile (local, deepspotm pkg)
@@ -335,6 +336,7 @@ default_tool_files = {
     ),
     # DESeq2 — R-based differential expression + enrichGO
     "deseq2": os.path.join(current_dir, "data", "deseq2_tools.json"),
+    "geant4": os.path.join(current_dir, "data", "geant4_tools.json"),
     # Compound tools — multi-database queries in a single call
     "compound_gene_disease": os.path.join(
         current_dir, "data", "compound_gene_disease_tools.json"
@@ -344,6 +346,15 @@ default_tool_files = {
     ),
     "compound_disease": os.path.join(
         current_dir, "data", "compound_disease_tools.json"
+    ),
+    "compound_identifier": os.path.join(
+        current_dir, "data", "compound_identifier_tools.json"
+    ),
+    "compound_drug_profile": os.path.join(
+        current_dir, "data", "compound_drug_profile_tools.json"
+    ),
+    "compound_target_profile": os.path.join(
+        current_dir, "data", "compound_target_profile_tools.json"
     ),
     "python_executor": os.path.join(current_dir, "data", "python_executor_tools.json"),
     "idmap": os.path.join(current_dir, "data", "idmap_tools.json"),
@@ -356,11 +367,21 @@ default_tool_files = {
     "uspto": os.path.join(current_dir, "data", "uspto_tools.json"),
     # protocols.io - public repository of peer-reviewed/community lab protocols.
     "protocolsio": os.path.join(current_dir, "data", "protocolsio_tools.json"),
+    # Carbon-A's published benchmark genomes and their NCBI reference annotations.
+    "carbon_a_benchmark": os.path.join(
+        current_dir, "data", "carbon_a_benchmark_tools.json"
+    ),
     "xml": os.path.join(current_dir, "data", "xml_tools.json"),
     "mcp_auto_loader_boltz": os.path.join(
         current_dir, "data", "boltz_mcp_loader_tools.json"
     ),
     "boltz_api": os.path.join(current_dir, "data", "boltz_api_tools.json"),
+    "mcp_auto_loader_rfdiffusion2": os.path.join(
+        current_dir, "data", "rfdiffusion2_mcp_loader_tools.json"
+    ),
+    "mcp_auto_loader_carbon_a": os.path.join(
+        current_dir, "data", "carbon_a_mcp_loader_tools.json"
+    ),
     "mcp_auto_loader_esm": os.path.join(
         current_dir, "data", "mcp_auto_loader_esm.json"
     ),
@@ -382,6 +403,7 @@ default_tool_files = {
     "url": os.path.join(current_dir, "data", "url_fetch_tools.json"),
     "file_download": os.path.join(current_dir, "data", "file_download_tools.json"),
     # 'langchain': os.path.join(current_dir, 'data', 'langchain_tools.json'),
+    "protein_msa": os.path.join(current_dir, "data", "protein_msa_tools.json"),
     "rcsb_pdb": os.path.join(current_dir, "data", "rcsb_pdb_tools.json"),
     "rcsb_search": os.path.join(current_dir, "data", "rcsb_search_tools.json"),
     "tool_composition": os.path.join(
@@ -416,6 +438,12 @@ default_tool_files = {
     # Clinical guidelines - MAGICapp, NCI R4R, NCI Drug Dict extended, DailyMed drug classes
     "clinical_guidelines": os.path.join(
         current_dir, "data", "clinical_guidelines_tools.json"
+    ),
+    # NCBI Bookshelf references from a local index built once by
+    # `python -m tooluniverse.ncbi_bookshelf_index build`: StatPearls search,
+    # sections and condition management; LactMed and LiverTox drug records
+    "ncbi_bookshelf_reference": os.path.join(
+        current_dir, "data", "ncbi_bookshelf_reference_tools.json"
     ),
     # FDA drug labels - official prescribing information with clinical recommendations
     "openfda_labels": os.path.join(current_dir, "data", "openfda_label_tools.json"),
@@ -579,6 +607,8 @@ default_tool_files = {
     ),
     # ProteinsPlus - Protein-ligand docking and binding site analysis
     "proteinsplus": os.path.join(current_dir, "data", "proteinsplus_tools.json"),
+    "pdb_inventory": os.path.join(current_dir, "data", "pdb_inventory_tools.json"),
+    "pdb_link_audit": os.path.join(current_dir, "data", "pdb_link_audit_tools.json"),
     # SwissDock - Molecular docking with AutoDock Vina and Attracting Cavities
     "swissdock": os.path.join(current_dir, "data", "swissdock_tools.json"),
     # LIPID MAPS - Lipid Structure Database (lipidomics)
@@ -1072,19 +1102,34 @@ default_tool_files = {
     "biorxiv_ext": os.path.join(current_dir, "data", "biorxiv_ext_tools.json"),
     # World Bank - World Development Indicators (GDP, population, health, education, 200+ countries)
     "worldbank": os.path.join(current_dir, "data", "worldbank_tools.json"),
+    # PubMed ID conversion (PMC ID Converter) and citation lookup (ECitMatch)
+    "pubmed_utils": os.path.join(current_dir, "data", "pubmed_utils_tools.json"),
+    # Synapse.org (Sage Bionetworks) public search / entity metadata
+    "synapse": os.path.join(current_dir, "data", "synapse_tools.json"),
+    # Open Targets Platform free-form GraphQL query + schema
+    "opentargets_graphql": os.path.join(
+        current_dir, "data", "opentargets_graphql_tools.json"
+    ),
     # IMF - World Economic Outlook macroeconomic data (GDP growth, inflation, unemployment, debt)
     # Open-Meteo - Free weather forecast, historical climate, air quality, and geocoding
     "open_meteo": os.path.join(current_dir, "data", "open_meteo_tools.json"),
     # EVA - European Variation Archive (EBI) for population variant data
     "eva": os.path.join(current_dir, "data", "eva_tools.json"),
     # eQTL Catalogue - Expression quantitative trait loci associations
-    "eqtl": os.path.join(current_dir, "data", "eqtl_tools.json"),
+    # Archived at: src/tooluniverse/data/broken_apis/eqtl_tools.json
+    # EBI retired the REST API: every path and version answers 410 Gone. The data
+    # moved to FTP/HDF5/Tabix (ftp.ebi.ac.uk/pub/databases/spot/eQTL/), so there is
+    # no endpoint to repoint at; use OpenTargets for eQTL evidence per gene/variant.
+    # "eqtl": os.path.join(current_dir, "data", "eqtl_tools.json"),
     # OSDR - NASA Open Science Data Repository (space biology studies).
     # Re-added: the domain from the prior attempt (genelab-data.ndc.nasa.gov)
     # is dead, but OSDR has since migrated to osdr.nasa.gov, verified live.
     "nasa_osdr": os.path.join(current_dir, "data", "nasa_osdr_tools.json"),
     # EWAS Catalog - epigenome-wide association study results (MRC-IEU)
     "ewas_catalog": os.path.join(current_dir, "data", "ewas_catalog_tools.json"),
+    # EWAS Atlas - curated EWAS knowledgebase (NGDC/CNCB); independent of the
+    # EWAS Catalog, which answered HTTP 503 site-wide from 2026-10-05
+    "ewas_atlas": os.path.join(current_dir, "data", "ewas_atlas_tools.json"),
     # NIH DSLD - Dietary Supplement Label Database, a regulatory category
     # separate from FDA drug labels with no prior coverage
     "nih_dsld": os.path.join(current_dir, "data", "nih_dsld_tools.json"),
@@ -1100,9 +1145,7 @@ default_tool_files = {
     "nih_reporter": os.path.join(current_dir, "data", "nih_reporter_tools.json"),
     # SciCrunch RRID resolver - any RRID prefix beyond the existing
     # antibody-specific AntibodyRegistry tool
-    "scicrunch_rrid": os.path.join(
-        current_dir, "data", "scicrunch_rrid_tools.json"
-    ),
+    "scicrunch_rrid": os.path.join(current_dir, "data", "scicrunch_rrid_tools.json"),
     # CMS Open Payments - drug/device manufacturer payments to physicians,
     # a health-economics/conflict-of-interest layer with no prior coverage
     "cms_open_payments": os.path.join(
@@ -1121,9 +1164,7 @@ default_tool_files = {
     "nci_evs": os.path.join(current_dir, "data", "nci_evs_tools.json"),
     # openFDA device - recalls and MAUDE adverse events, the device side of
     # openFDA (existing tools cover only drug/label, drug/event, drugsfda)
-    "openfda_device": os.path.join(
-        current_dir, "data", "openfda_device_tools.json"
-    ),
+    "openfda_device": os.path.join(current_dir, "data", "openfda_device_tools.json"),
     # FHIR Terminology Service - SNOMED CT code lookup and hierarchy
     # expansion (LOINC/RxNorm/ICD-10-CM already have dedicated tools)
     "fhir_terminology": os.path.join(
@@ -1233,7 +1274,7 @@ default_tool_files = {
     "usgs_water": os.path.join(current_dir, "data", "usgs_water_tools.json"),
     # Spaceflight News API - 30K+ space news articles from major sites
     # Launch Library 2 - upcoming rocket launches worldwide (all providers)
-    # US Census Bureau - population and demographic data (no key required)
+    # US Census Bureau - population and demographic data (free key required)
     "uscensus": os.path.join(current_dir, "data", "uscensus_tools.json"),
     # Open-Meteo Marine - ocean wave/swell forecasts for any coastal location
     "open_meteo_marine": os.path.join(

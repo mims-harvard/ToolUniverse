@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def NASA_DONKI_get_solar_energetic_particles(
-    startDate: Optional[str | Any] = None,
-    endDate: Optional[str | Any] = None,
+    startDate: Optional[str] = None,
+    endDate: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -21,9 +21,9 @@ def NASA_DONKI_get_solar_energetic_particles(
 
     Parameters
     ----------
-    startDate : str | Any
+    startDate : str
         Start date in YYYY-MM-DD format (e.g., '2024-01-01'). Defaults to 30 days bef...
-    endDate : str | Any
+    endDate : str
         End date in YYYY-MM-DD format (e.g., '2024-06-30'). Defaults to today.
     stream_callback : Callable, optional
         Callback for streaming output

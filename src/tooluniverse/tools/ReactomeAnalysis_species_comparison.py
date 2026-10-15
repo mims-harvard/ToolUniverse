@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def ReactomeAnalysis_species_comparison(
-    identifiers: str,
-    species: Optional[int | Any] = None,
-    page_size: Optional[int | Any] = None,
+    identifiers: str | list[Any],
+    species: Optional[int] = None,
+    page_size: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,11 +22,11 @@ def ReactomeAnalysis_species_comparison(
 
     Parameters
     ----------
-    identifiers : str
+    identifiers : str | list[Any]
         Newline-separated list of gene/protein identifiers from any species. Supports...
-    species : int | Any
+    species : int
         NCBI taxonomy ID of the source species (default 9606 for human). Examples: 10...
-    page_size : int | Any
+    page_size : int
         Number of pathways to return (default 20, max 50).
     stream_callback : Callable, optional
         Callback for streaming output

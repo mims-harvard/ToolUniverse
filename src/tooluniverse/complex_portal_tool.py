@@ -233,16 +233,31 @@ class ComplexPortalTool(BaseTool):
             response.raise_for_status()
             data = response.json()
 
-            # Parse complex details
+            # Parse complex details. The record now uses complexAc/name/species
+            # ("Mus musculus; 10090") and lists its description under `functions`;
+            # the older complexAC/complexName/organismName keys are kept as fallbacks.
+            # Reading only those made name, species and description come back null.
+            species_text = data.get("species") or data.get("organismName")
+            species_name, _, species_taxid = (species_text or "").partition(";")
+            functions = data.get("functions") or []
+            assemblies = data.get("complexAssemblies") or []
             complex_data = {
-                "complex_id": data.get("complexAC"),
-                "name": data.get("complexName"),
+                "complex_id": data.get("complexAc")
+                or data.get("complexAC")
+                or data.get("ac"),
+                "name": data.get("name") or data.get("complexName"),
                 "systematic_name": data.get("systematicName"),
-                "species": data.get("organismName"),
-                "taxonomy_id": data.get("organismTaxId"),
-                "description": data.get("description"),
+                "synonyms": data.get("synonyms") or [],
+                "species": species_name.strip() or None,
+                "taxonomy_id": species_taxid.strip()
+                or data.get("organismTaxId")
+                or None,
+                "description": data.get("description")
+                or ("\n".join(functions) if functions else None),
                 "properties": data.get("properties"),
-                "complex_type": data.get("complexType"),
+                "complex_type": data.get("complexType")
+                or (", ".join(assemblies) if assemblies else None),
+                "predicted": data.get("predictedComplex"),
                 "evidence_type": data.get("evidenceType"),
                 "subunits": [],
                 "cross_references": [],
@@ -271,7 +286,7 @@ class ComplexPortalTool(BaseTool):
                 }
                 if db.lower() in ("efo", "orphanet", "mondo"):
                     complex_data["diseases"].append(xref_entry)
-                elif db.lower() == "go":
+                elif db.lower() in ("go", "gene ontology"):
                     complex_data["go_annotations"].append(xref_entry)
                 else:
                     complex_data["cross_references"].append(xref_entry)

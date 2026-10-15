@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ols_get_term_xrefs(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_term_xrefs",
     id: Optional[str] = None,
     term_id: Optional[str] = None,
     obo_id: Optional[str] = None,

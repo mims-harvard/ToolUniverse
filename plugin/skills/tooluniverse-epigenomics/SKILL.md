@@ -153,6 +153,15 @@ See `ANALYSIS_PROCEDURES.md` for decision tree.
 
 **EWAS Catalog** (published epigenome-wide association study results, not raw methylation data): `EWASCatalog_search_by_cpg` (`cpg_id`, e.g. `"cg00000029"`) or `EWASCatalog_search_by_gene` (`gene_symbol`) — use when the question is "has this CpG/gene been associated with a trait in a published EWAS," not for processing methylation data you already have.
 
+**EWAS Atlas** (curated EWAS knowledgebase, independent of the EWAS Catalog; use it when `EWASCatalog_*` returns HTTP 503, which it has since 2026-10-05, or to cross-check): `EWASAtlas_get_probe` (`probe_id`), `EWASAtlas_search_by_gene` (`gene_symbol`; probes ranked by association count plus `metadata.top_traits`), `EWASAtlas_search_by_region` (`chromosome`, `start`, `end` on GRCh37/hg19, window at most 1 Mb), `EWASAtlas_get_study` (`study_id` like `"ES00033"`: cohorts, tissue, platform, per-probe p-values), `EWASAtlas_get_publication` (`pmid`).
+
+```python
+hits = tu.tools.EWASAtlas_search_by_gene(gene_symbol="AHRR", limit=5)
+top = hits["metadata"]["top_traits"][:3]          # e.g. smoking, maternal smoking
+probe = hits["data"][0]                            # cg05575921, 131 associations
+study = tu.tools.EWASAtlas_get_study(study_id=probe["associations"][0]["study_id"])
+```
+
 **Other**: `ensembl_lookup_gene` (requires `species='homo_sapiens'`), `ensembl_get_regulatory_features` (NO "chr" prefix), `SCREEN_get_regulatory_elements`, `ChIPAtlas_*` (requires `operation` param), `SRA_search_experiments` (library_strategy: "ChIP-Seq"/"Bisulfite-Seq"/"ATAC-seq")
 
 ### Phase 7: Genome-Wide Statistics

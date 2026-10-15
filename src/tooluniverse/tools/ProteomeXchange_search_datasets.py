@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def ProteomeXchange_search_datasets(
-    query: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    query: Optional[str] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -21,9 +21,9 @@ def ProteomeXchange_search_datasets(
 
     Parameters
     ----------
-    query : str | Any
+    query : str
         Optional search filter (dataset accession or keyword). Examples: 'MSV00009181...
-    limit : int | Any
+    limit : int
         Maximum results to return (1-50, default 10).
     stream_callback : Callable, optional
         Callback for streaming output

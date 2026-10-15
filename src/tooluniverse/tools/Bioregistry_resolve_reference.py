@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def Bioregistry_resolve_reference(
     prefix: str,
     identifier: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "resolve_reference",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

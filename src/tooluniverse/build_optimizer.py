@@ -3,11 +3,22 @@
 import json
 import hashlib
 from pathlib import Path
-from typing import Dict, Any, Set, Tuple
+from typing import Any, Dict, Optional, Set, Tuple
 
 # Fields excluded from hash calculation and comparison (metadata/timestamp fields)
+# `source_file` is the absolute path the config was loaded from, so including
+# it made every hash depend on the checkout directory: the stored metadata
+# never matched on another machine, and the first build anywhere rewrote all
+# of it. It says nothing about the tool's contract, so it is excluded.
 _EXCLUDED_FIELDS = frozenset(
-    {"timestamp", "last_updated", "created_at", "_cache", "_metadata"}
+    {
+        "timestamp",
+        "last_updated",
+        "created_at",
+        "_cache",
+        "_metadata",
+        "source_file",
+    }
 )
 
 
@@ -70,10 +81,17 @@ def load_metadata(metadata_file: Path) -> Dict[str, str]:
 
 
 def save_metadata(metadata: Dict[str, str], metadata_file: Path) -> None:
-    """Save tool metadata to file."""
+    """Save tool metadata to file.
+
+    Ends with a newline, as the end-of-file-fixer pre-commit hook requires.
+    Without it the hook added one on every commit that touched the file, the
+    next build removed it again, and each PR adding a tool (#749, #750, #757)
+    arrived with a one-byte drift against what the generator writes.
+    """
     metadata_file.parent.mkdir(parents=True, exist_ok=True)
     with open(metadata_file, "w", encoding="utf-8") as f:
         json.dump(metadata, f, indent=2, sort_keys=True)
+        f.write("\n")
 
 
 def cleanup_orphaned_files(tools_dir: Path, current_tool_names: Set[str]) -> int:
@@ -122,6 +140,7 @@ def get_changed_tools(
     metadata_file: Path,
     force_regenerate: bool = False,
     verbose: bool = False,
+    known_tool_names: Optional[Set[str]] = None,
 ) -> Tuple[list, list, list, Dict[str, list]]:
     """Get lists of new, changed, and unchanged tools.
 
@@ -130,6 +149,16 @@ def get_changed_tools(
         metadata_file: Path to metadata file storing previous hashes
         force_regenerate: If True, mark all tools as changed
         verbose: If True, provide detailed change information
+        known_tool_names: Every tool declared in a built-in config. An entry
+            for a tool missing from *current_tools* is carried forward when
+            its name is still declared, and dropped when it is not.
+
+            Without this the file was rebuilt from current_tools alone, which
+            is the key-filtered set, so a machine holding no credentials wrote
+            19 fewer entries than one holding them and regenerating anywhere
+            else produced a diff. A carried-forward hash stays correct: if the
+            tool's config changed while it was ungated, the mismatch is caught
+            the moment it loads again.
 
     Returns:
         Tuple of (new_tools, changed_tools, unchanged_tools, change_details)
@@ -175,7 +204,14 @@ def get_changed_tools(
             else:
                 unchanged_tools.append(tool_name)
 
+    # Carry forward an entry whose tool this environment could not load, so
+    # the file records every built-in tool rather than today's loadable subset.
+    if known_tool_names is not None:
+        for tool_name, old_hash in old_metadata.items():
+            if tool_name not in new_metadata and tool_name in known_tool_names:
+                new_metadata[tool_name] = old_hash
+
     # Save updated metadata
-    save_metadata(new_metadata, metadata_file)
+    save_metadata(dict(sorted(new_metadata.items())), metadata_file)
 
     return new_tools, changed_tools, unchanged_tools, change_details

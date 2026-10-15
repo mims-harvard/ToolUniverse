@@ -37,21 +37,50 @@ def _load_tool_config(filename, tool_name):
     raise AssertionError(f"{tool_name} not found in {filename}")
 
 
-class TestGtoPdbSearchDiseasesValidation:
-    def test_schema_declares_additional_properties_false(self):
-        cfg = _load_tool_config("gtopdb_tools.json", "GtoPdb_search_diseases")
+# GtoPdb_search_diseases, the tool this guard was written against, is retired:
+# GtoPdb's REST service is key-gated and publishes no open disease file, so it
+# moved to data/broken_apis/gtopdb_rest.json. The invariant outlived it, and
+# checking it found that the original fix never reached the siblings -- all four
+# surviving tools omitted additionalProperties, so each still accepted a
+# misspelled filter and answered as though it had filtered.
+GTOPDB_TOOLS = {
+    "GtoPdb_search_targets": ({"target_name": "EGFR"}, {"name": "EGFR"}),
+    "GtoPdb_search_ligands": ({"ligand_name": "aspirin"}, {"name": "aspirin"}),
+    "GtoPdb_get_interactions": ({"gene": "KRAS"}, {"gene_symbol": "KRAS"}),
+    "GtoPdb_get_ligand_properties": ({"id": 4139}, {"ligand_id": 4139}),
+}
+
+
+class TestGtoPdbParameterValidation:
+    @pytest.mark.parametrize("tool_name", sorted(GTOPDB_TOOLS))
+    def test_schema_declares_additional_properties_false(self, tool_name):
+        cfg = _load_tool_config("gtopdb_tools.json", tool_name)
         assert cfg["parameter"]["additionalProperties"] is False
 
-    def test_unrecognized_param_is_rejected(self):
-        tool = GtoPdbRESTTool(_load_tool_config("gtopdb_tools.json", "GtoPdb_search_diseases"))
-        error = tool.validate_parameters({"disease_name": "Crohn"})
-        assert error is not None
-        assert "disease_name" in str(error)
+    @pytest.mark.parametrize("tool_name", sorted(GTOPDB_TOOLS))
+    def test_unrecognized_param_is_rejected(self, tool_name):
+        misspelled, _ = GTOPDB_TOOLS[tool_name]
+        tool = GtoPdbRESTTool(_load_tool_config("gtopdb_tools.json", tool_name))
 
-    def test_documented_params_are_accepted(self):
-        tool = GtoPdbRESTTool(_load_tool_config("gtopdb_tools.json", "GtoPdb_search_diseases"))
-        assert tool.validate_parameters({"name": "Crohn"}) is None
-        assert tool.validate_parameters({"query": "Crohn"}) is None
+        error = tool.validate_parameters(misspelled)
+
+        assert error is not None, (
+            f"{tool_name} accepted {misspelled} and would answer as though it "
+            "had filtered on it"
+        )
+        assert next(iter(misspelled)) in str(error)
+
+    @pytest.mark.parametrize("tool_name", sorted(GTOPDB_TOOLS))
+    def test_documented_params_are_accepted(self, tool_name):
+        _, documented = GTOPDB_TOOLS[tool_name]
+        tool = GtoPdbRESTTool(_load_tool_config("gtopdb_tools.json", tool_name))
+
+        assert tool.validate_parameters(documented) is None
+
+
+def test_the_retired_disease_tool_is_gone():
+    configs = json.loads((_DATA_DIR / "gtopdb_tools.json").read_text())
+    assert "GtoPdb_search_diseases" not in {cfg["name"] for cfg in configs}
 
 
 class TestGMrepoGetPhenotypesValidation:

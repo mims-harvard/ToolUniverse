@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def OpenTopoData_get_elevation(
     locations: str,
-    dataset: Optional[str | Any] = None,
-    interpolation: Optional[str | Any] = None,
+    dataset: Optional[str] = None,
+    interpolation: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def OpenTopoData_get_elevation(
     ----------
     locations : str
         One or more lat,lng coordinate pairs separated by | (pipe). Examples: '36.455...
-    dataset : str | Any
+    dataset : str
         Elevation dataset to use. Values: 'srtm30m' (global 30m), 'srtm90m' (global 9...
-    interpolation : str | Any
+    interpolation : str
         Interpolation method. Values: 'nearest', 'bilinear', 'cubic'. Default: bilinear
     stream_callback : Callable, optional
         Callback for streaming output

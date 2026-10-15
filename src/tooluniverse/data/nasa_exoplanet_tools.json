@@ -150,7 +150,7 @@
         "query": "select hostname,st_teff,sy_pnum,sy_dist from stellarhosts where sy_pnum >= 5 order by sy_pnum desc"
       },
       {
-        "query": "select hostname,st_spectype,st_teff from stellarhosts where hostname = 'Kepler-90'"
+        "query": "select hostname,st_spectype,st_teff from stellarhosts where hostname = 'TOI-700'"
       }
     ],
     "return_schema": {

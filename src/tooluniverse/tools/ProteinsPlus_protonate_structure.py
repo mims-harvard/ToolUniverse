@@ -1,7 +1,7 @@
 """
 ProteinsPlus_protonate_structure
 
-Add hydrogens and optimize protonation states of a protein-ligand complex using ProtoSS (Protonat...
+Add hydrogens and optimize protonation with ProtoSS. Accept exactly one PDB ID or raw PDB text. C...
 """
 
 from typing import Any, Optional, Callable
@@ -11,14 +11,13 @@ from ._shared_client import get_shared_client
 def ProteinsPlus_protonate_structure(
     pdb_id: Optional[str] = None,
     pdb_content: Optional[str] = None,
-    ligand_content: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Add hydrogens and optimize protonation states of a protein-ligand complex using ProtoSS (Protonat...
+    Add hydrogens and optimize protonation with ProtoSS. Accept exactly one PDB ID or raw PDB text. C...
 
     Parameters
     ----------
@@ -26,8 +25,6 @@ def ProteinsPlus_protonate_structure(
         PDB identifier (e.g., '1cbs', '1KZK', '4HHB'). Use either pdb_id or pdb_conte...
     pdb_content : str
         Raw PDB file content as a string (multi-line text). Use either pdb_id or pdb_...
-    ligand_content : str
-        Optional raw ligand SDF content to protonate alongside the protein. Only used...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,11 +41,7 @@ def ProteinsPlus_protonate_structure(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {
-            "pdb_id": pdb_id,
-            "pdb_content": pdb_content,
-            "ligand_content": ligand_content,
-        }.items()
+        for k, v in {"pdb_id": pdb_id, "pdb_content": pdb_content}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

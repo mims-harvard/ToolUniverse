@@ -7,9 +7,17 @@ all of them exceeded 100 GB). The parsed tree is read-only, so it is now shared 
 (file, record_xpath, namespaces); per-tool state must stay independent.
 
 Uses a tiny synthetic XML file via `local_dataset_path` -- no network, no big data.
+
+main arrived at the same sharing independently and went further (two caches, a
+tree per path plus a record list per (path, xpath, namespaces), and a public
+`clear_dataset_cache()`), so its implementation is the one that survived the
+merge and these tests were moved onto it. One property went with the older
+version: main keys the tree on the path alone, so a file REPLACED inside a live
+process is served from the cache rather than re-parsed. That is deliberate --
+these are static reference datasets -- and the test that asserted re-parsing
+was dropped rather than quietly reinstated as a behaviour change here.
 """
 
-import os
 import sys
 from pathlib import Path
 
@@ -24,11 +32,11 @@ NS = "http://www.drugbank.ca"
 
 @pytest.fixture(autouse=True)
 def _fresh_cache():
-    from tooluniverse import xml_tool
+    from tooluniverse.xml_tool import clear_dataset_cache
 
-    xml_tool._PARSED_DATASETS.clear()
+    clear_dataset_cache()
     yield
-    xml_tool._PARSED_DATASETS.clear()
+    clear_dataset_cache()
 
 
 def _write(tmp_path, names=("Aspirin", "Ibuprofen"), filename="db.xml"):
@@ -96,19 +104,6 @@ def test_per_tool_field_mappings_and_caches_stay_independent(tmp_path):
     assert "blurb" not in ra  # ... but each tool extracts its own fields
     assert rb["blurb"] == "Aspirin description"
     assert a._record_cache is not b._record_cache
-
-
-def test_replaced_file_is_reparsed_not_served_stale(tmp_path):
-    path = _write(tmp_path, names=("Aspirin", "Ibuprofen"))
-    a = _tool(path)
-    assert len(a.records) == 2
-    _write(tmp_path, names=("Aspirin", "Ibuprofen", "Naproxen"))
-    st = os.stat(path)
-    os.utime(path, ns=(st.st_atime_ns, st.st_mtime_ns + 5_000_000_000))
-    b = _tool(path)
-    assert len(b.records) == 3
-    assert b.records is not a.records
-    assert len(a.records) == 2  # the earlier instance keeps its own parse
 
 
 def test_missing_file_still_yields_an_empty_tool_without_raising(tmp_path):

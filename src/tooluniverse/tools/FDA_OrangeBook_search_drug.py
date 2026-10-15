@@ -9,9 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def FDA_OrangeBook_search_drug(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_drug",
     brand_name: Optional[str] = None,
     generic_name: Optional[str] = None,
+    drug_name: Optional[str] = None,
     application_number: Optional[str] = None,
     limit: Optional[int] = 10,
     *,
@@ -30,6 +31,8 @@ def FDA_OrangeBook_search_drug(
         Brand/trade name of drug (e.g., 'ADVIL', 'LIPITOR')
     generic_name : str
         Generic/active ingredient name (e.g., 'IBUPROFEN', 'ATORVASTATIN')
+    drug_name : str
+        Drug name of either kind when you do not know whether it is a brand or a gene...
     application_number : str
         FDA application number (e.g., 'NDA020402', 'ANDA078394')
     limit : int
@@ -54,6 +57,7 @@ def FDA_OrangeBook_search_drug(
             "operation": operation,
             "brand_name": brand_name,
             "generic_name": generic_name,
+            "drug_name": drug_name,
             "application_number": application_number,
             "limit": limit,
         }.items()

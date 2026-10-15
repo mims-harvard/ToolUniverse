@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper id="LM416" content-type="chapter" from-where="body" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">lactmed</book-id>
+    <book-title-group>
+      <book-title>Drugs and Lactation Database (LactMed&#x000ae;)</book-title>
+    </book-title-group>
+    <pub-date date-type="pubr" publication-format="electronic">
+      <year>2006</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>National Institute of Child Health and Human Development</publisher-name>
+      <publisher-loc>Bethesda (MD)</publisher-loc>
+    </publisher>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Chemicals and Drugs</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Health Care</meta-value>
+      </custom-meta>
+      <custom-meta>
+        <meta-name>books-subject</meta-name>
+        <meta-value>Public Health</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes specific-use="display-globally" notes-type="disclaimer">
+      <p><bold>Disclaimer: </bold>Information presented in this database is not meant as a substitute for professional judgment. You should consult your healthcare provider for breastfeeding advice related to your particular situation. The U.S. government does not warrant or assume any liability or responsibility for the accuracy or completeness of the information on this Site.</p>
+    </notes>
+    <notes specific-use="display-globally" notes-type="rights">
+      <p><bold>Attribution Statement:</bold> LactMed is a registered trademark of the U.S. Department of Health and Human Services.</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <book-part-id book-part-id-type="pmcid">LM416</book-part-id>
+      <title-group>
+        <title>Sulfisoxazole</title>
+      </title-group>
+      <pub-history>
+        <date date-type="revised">
+          <day>15</day>
+          <month>5</month>
+          <year>2024</year>
+        </date>
+      </pub-history>
+      <related-object link-type="parent-book-link" source-id="lactmed">Drugs and Lactation Database (LactMed&#x000ae;)</related-object>
+      <related-object link-type="previous-part-link" source-id="lactmed" document-id="LM442" document-type="chapter">Sulfasalazine</related-object>
+      <related-object link-type="next-part-link" source-id="lactmed" document-id="LM1348" document-type="chapter">Sulfur</related-object>
+      <kwd-group>
+        <kwd>sulfisoxazole</kwd>
+        <kwd>Sulfafurazole</kwd>
+        <kwd>Sulphafurazole</kwd>
+        <kwd>Sulfisoxazol</kwd>
+        <kwd>Sulfaisoxazole</kwd>
+        <kwd>Sulfofurazole</kwd>
+        <kwd>Sulfafurazol</kwd>
+        <kwd>Sulfisoxasole</kwd>
+        <kwd>Sulphaisoxazole</kwd>
+        <kwd>Gantrisin</kwd>
+        <kwd>Alphazole</kwd>
+        <kwd>Amidoxal</kwd>
+        <kwd>Sulfalar</kwd>
+        <kwd>Sulfoxol</kwd>
+        <kwd>Sulphafurazolum</kwd>
+        <kwd>Renosulfan</kwd>
+        <kwd>Accuzole</kwd>
+        <kwd>Soxomide</kwd>
+        <kwd>Sulfazin</kwd>
+        <kwd>Sulfizin</kwd>
+        <kwd>Sulsoxin</kwd>
+        <kwd>Sosol</kwd>
+        <kwd>Roxosul tablets</kwd>
+        <kwd>Sulfadimethylisoxazole</kwd>
+        <kwd>Cosoxazole</kwd>
+        <kwd>Gantrisona</kwd>
+        <kwd>Gantrosan</kwd>
+        <kwd>Uritrisin</kwd>
+        <kwd>Chemouag</kwd>
+        <kwd>Isoxamin</kwd>
+        <kwd>Neazolin</kwd>
+        <kwd>Neoxazol</kwd>
+        <kwd>Sulfagan</kwd>
+        <kwd>Sulfasol</kwd>
+        <kwd>Entusil</kwd>
+        <kwd>Entusul</kwd>
+        <kwd>Soxisol</kwd>
+        <kwd>Stansin</kwd>
+        <kwd>Thiasin</kwd>
+        <kwd>Unisulf</kwd>
+        <kwd>Pancid</kwd>
+        <kwd>Sulbio</kwd>
+        <kwd>Sulfafurazolum</kwd>
+        <kwd>Novosaxazole</kwd>
+        <kwd>Gantrisine</kwd>
+        <kwd>Saxosozine</kwd>
+        <kwd>Sulfapolar</kwd>
+        <kwd>Dorsulfan</kwd>
+        <kwd>Sulfizole</kwd>
+        <kwd>Novazolo</kwd>
+        <kwd>Sodizole</kwd>
+        <kwd>Soxamide</kwd>
+        <kwd>Soxazole</kwd>
+        <kwd>Soxitabs</kwd>
+        <kwd>Sulfisin</kwd>
+        <kwd>Sulfizol</kwd>
+        <kwd>Urisoxin</kwd>
+        <kwd>Roxosul</kwd>
+        <kwd>Vagilia</kwd>
+        <kwd>Urogan</kwd>
+        <kwd>Tl-azole</kwd>
+        <kwd>Norilgan-S</kwd>
+        <kwd>SK-Soxazole</kwd>
+        <kwd>Sulfisoxazolum</kwd>
+        <kwd>Sulphisoxazole</kwd>
+        <kwd>Azo Gantrisin</kwd>
+        <kwd>Sulfisoxazole dialamine</kwd>
+        <kwd>Koro-sulf</kwd>
+        <kwd>V-Sul</kwd>
+        <kwd>Dorsulfan warthausen</kwd>
+        <kwd>Sulphadimethylisoxazole</kwd>
+        <kwd>Solfafurazolo</kwd>
+        <kwd>SOXO</kwd>
+        <kwd>J-Sul</kwd>
+        <kwd>127-69-5</kwd>
+        <kwd>Sulfazin (VAN)</kwd>
+        <kwd>Solfafurazolo [DCIT]</kwd>
+        <kwd>Sulfafurazolum [INN-Latin]</kwd>
+        <kwd>3,4-Dimethyl-5-sulfonamidoisoxazole</kwd>
+        <kwd>Sulfafurazole [INN]</kwd>
+        <kwd>3,4-Dimethyl-5-sulfanilamidoisoxazole</kwd>
+        <kwd>5-Sulfanilamido-3,4-dimethylisoxazole</kwd>
+        <kwd>3,4-Dimethyl-5-sulphonamidoisoxazole</kwd>
+        <kwd>Sulfisoxazole [USP:JAN]</kwd>
+        <kwd>3,4-Dimethylisoxazole-5-sulfanilamide</kwd>
+        <kwd>CCRIS 568</kwd>
+        <kwd>NCI-C50022</kwd>
+        <kwd>3,4-Dimethyl-5-sulphanilamidoisoxazole</kwd>
+        <kwd>3,4-Dimethylisoxazole-5-sulphanilamide</kwd>
+        <kwd>HSDB 797</kwd>
+        <kwd>5-Sulphanilamido-3,4-dimethyl-isoxazole</kwd>
+        <kwd>NU 445</kwd>
+        <kwd>UNII-740T4C525W</kwd>
+        <kwd>U.S.-67</kwd>
+        <kwd>Benzenesulfonamide, 4-amino-N-(3,4-dimethyl-5-isoxazolyl)-</kwd>
+        <kwd>EINECS 204-858-9</kwd>
+        <kwd>NSC 13120</kwd>
+        <kwd>N1-(3,4-Dimethyl-5-isoxazolyl)sulfanilamide</kwd>
+        <kwd>N'-(3,4)Dimethylisoxazol-5-yl-sulphanilamide</kwd>
+        <kwd>NSC 683536</kwd>
+        <kwd>5-(4-Aminophenylsulfonamido)-3,4-dimethylisoxazole</kwd>
+        <kwd>5-(p-Aminobenzenesulfonamido)-3,4-dimethylisoxazole</kwd>
+        <kwd>BRN 0263871</kwd>
+        <kwd>5-(p-Aminobenzenesulphonamido)-3,4-dimethylisoxazole</kwd>
+        <kwd>740T4C525W</kwd>
+        <kwd>AI3-24003</kwd>
+        <kwd>N(Sup1)-(3,4-Dimethyl-5-isoxazolyl)sulfanilamide</kwd>
+        <kwd>4-Amino-N-(3,4-dimethyl-5-isoxazolyl)benzenesulphonamide</kwd>
+        <kwd>N(sup 1)-(3,4-Dimethyl-5-isoxazolyl)sulphanilamide</kwd>
+        <kwd>N(sup 1)-(3,4-Dimethyl-5-isoxazolyl)sulfanilamide</kwd>
+        <kwd>Sulfanilamide, N1-(3,4-dimethyl-5-isoxazolyl)-</kwd>
+        <kwd>4-27-00-04747 (Beilstein Handbook Reference)</kwd>
+        <kwd>Sulfanilamide, N(sup 1)-(3,4-dimethyl-5-isoxazolyl)-</kwd>
+      </kwd-group>
+    </book-part-meta>
+    <body>
+      <p>CASRN: 127-69-5</p>
+      <related-object link-type="ext-image-back-link" source-id="pubchem" document-id="134974221" document-id-type="sid" document-type="summary" object-id="134974221" object-id-type="sid" object-type="image"/>
+      <sec id="LM416.Drug_Levels_and_Effects">
+        <title>Drug Levels and Effects</title>
+        <sec id="LM416.Summary_of_Use_during_Lactation">
+          <title>Summary of Use during Lactation</title>
+          <p content-type="pubmed-excerpt">With healthy, fullterm infants it appears acceptable to use sulfisoxazole during breastfeeding after the newborn period.[<xref ref-type="bibr" rid="LM416.REF.1">1</xref>,<xref ref-type="bibr" rid="LM416.REF.2">2</xref>] Until further data are accumulated, alternate agents should probably be used in jaundiced, ill, stressed or premature infants, because of the risk of bilirubin displacement and kernicterus. Sulfisoxazole should be avoided while breastfeeding a glucose-6-phosphate dehydrogenase (G6PD) deficient infant.</p>
+        </sec>
+        <sec id="LM416.Drug_Levels">
+          <title>Drug Levels</title>
+          <p><italic toggle="yes">Maternal Levels.</italic> Following oral sulfisoxazole doses of 1 g every 6 hours for 4 doses to 6 women (time postpartum not stated), an average total recovery of sulfisoxazole and N4-acetylsulfisoxazole of 18 mg was obtained during the 48 hours from the time of the first dose. About 77% of the drug in milk was recovered as the metabolite. This averaged 0.45% of the maternal dose (not weight-adjusted).[<xref ref-type="bibr" rid="LM416.REF.3">3</xref>] This study may have underestimated the amount excreted by a small fraction, because steady-state metabolite serum levels were not achieved during the study period.[<xref ref-type="bibr" rid="LM416.REF.1">1</xref>,<xref ref-type="bibr" rid="LM416.REF.4">4</xref>]</p>
+          <p><italic toggle="yes">Infant Levels.</italic> A 9-month-old infant was breastfed twice daily during maternal treatment for a urinary tract infection (dosage not stated). Urine was collected during a 24-hour time period from the infant. The infant excreted 1.1 mg of sulfisoxazole plus N4-acetylsulfisoxazole over the time period.[<xref ref-type="bibr" rid="LM416.REF.3">3</xref>]</p>
+        </sec>
+        <sec id="LM416.Effects_in_Breastfed_Infants">
+          <title>Effects in Breastfed Infants</title>
+          <p>Relevant published information was not found as of the revision date.</p>
+        </sec>
+        <sec id="LM416.Effects_on_Lactation_and_Breastmil">
+          <title>Effects on Lactation and Breastmilk</title>
+          <p>Relevant published information was not found as of the revision date.</p>
+        </sec>
+        <sec id="LM416.Alternate_Drugs_to_Consider">
+          <title>Alternate Drugs to Consider</title>
+          <p><related-object link-type="booklink" source-id="lactmed" document-id="LM418" document-type="book-part">Sulfamethoxazole</related-object>, <related-object link-type="booklink" source-id="lactmed" document-id="LM417" document-type="book-part">Trimethoprim-Sulfamethoxazole</related-object></p>
+        </sec>
+        <sec id="LM416.References">
+          <title>References</title>
+          <ref-list id="LM416.References.reflist0">
+            <ref id="LM416.REF.1">
+              <label>1</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Kauffman</surname>
+<given-names>RE</given-names></string-name>. <article-title>Sulfisoxazole in human milk.</article-title>
+<comment>Reply</comment>. <source>J Pediatr</source>
+<year>1981</year>;<volume>99</volume>:<fpage>172</fpage>-<lpage>3</lpage>.<pub-id pub-id-type="pmid">7431180</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM416.REF.2">
+              <label>2</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Chung</surname>
+<given-names>AM</given-names></string-name>, <string-name name-style="western"><surname>Reed</surname>
+<given-names>MD</given-names></string-name>, <string-name name-style="western"><surname>Blumer</surname>
+<given-names>JL</given-names></string-name>. <article-title>Antibiotics and breast-feeding: A critical review of the literature.</article-title>
+<source>Paediatr Drugs</source>
+<year>2002</year>;<volume>4</volume>:<fpage>817</fpage>-<lpage>37</lpage>.<pub-id pub-id-type="pmid">12431134</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM416.REF.3">
+              <label>3</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Kauffman</surname>
+<given-names>RE</given-names></string-name>, <string-name name-style="western"><surname>O'Brien</surname>
+<given-names>C</given-names></string-name>, <string-name name-style="western"><surname>Gilford</surname>
+<given-names>P</given-names></string-name>. <article-title>Sulfisoxazole secretion into human milk.</article-title>
+<source>J Pediatr</source>
+<year>1980</year>;<volume>97</volume>:<fpage>839</fpage>-<lpage>41</lpage>.<pub-id pub-id-type="pmid">7431180</pub-id>
+</mixed-citation>
+            </ref>
+            <ref id="LM416.REF.4">
+              <label>4</label>
+              <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Elliott</surname>
+<given-names>GT</given-names></string-name>, <string-name name-style="western"><surname>Quinn</surname>
+<given-names>SL</given-names></string-name>. <article-title>Sulfisoxazole in human milk.</article-title>
+<source>J Pediatr</source>
+<year>1981</year>;<volume>99</volume>:<fpage>171</fpage>-<lpage>3</lpage>.<pub-id pub-id-type="pmid">7252664</pub-id>
+</mixed-citation>
+            </ref>
+          </ref-list>
+        </sec>
+      </sec>
+      <sec id="LM416.Substance_Identification">
+        <title>Substance Identification</title>
+        <sec id="LM416.Substance_Name">
+          <title>Substance Name</title>
+          <p>Sulfisoxazole</p>
+        </sec>
+        <sec id="LM416.CAS_Registry_Number">
+          <title>CAS Registry Number</title>
+          <p>127-69-5</p>
+        </sec>
+        <sec id="LM416.Drug_Class">
+          <title>Drug Class</title>
+          <p>Breast Feeding</p>
+          <p>Lactation</p>
+          <p>Milk, Human</p>
+          <p>Anti-Infective Agents</p>
+          <p>Antibacterial Agents</p>
+          <p>Sulfonamides</p>
+        </sec>
+      </sec>
+    </body>
+  </book-part>
+</book-part-wrapper>

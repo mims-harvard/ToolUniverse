@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def OMA_get_orthologs(
     protein_id: str,
-    rel_type: Optional[str | Any] = None,
-    per_page: Optional[int | Any] = None,
+    rel_type: Optional[str] = None,
+    per_page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,10 +24,10 @@ def OMA_get_orthologs(
     ----------
     protein_id : str
         UniProt accession (e.g., 'P04637' for human p53) or OMA ID.
-    rel_type : str | Any
+    rel_type : str
         Filter by orthology relationship type. Options: '1:1' (one-to-one), '1:n' (on...
-    per_page : int | Any
-        Number of orthologs to return (default: 20, max: 100).
+    per_page : int
+        Number of orthologs to return (default: 20). OMA does not paginate this endpo...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

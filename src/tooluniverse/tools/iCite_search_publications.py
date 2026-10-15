@@ -10,13 +10,13 @@ from ._shared_client import get_shared_client
 
 def iCite_search_publications(
     query: str,
-    limit: Optional[int | Any] = None,
-    offset: Optional[int | Any] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search PubMed publications by query and get citation metrics from NIH's iCite API. Returns papers...
 
@@ -24,9 +24,9 @@ def iCite_search_publications(
     ----------
     query : str
         Search query for PubMed (e.g., 'BRCA1 cancer', 'COVID-19 vaccine efficacy', '...
-    limit : int | Any
+    limit : int
         Maximum number of results (default 10, max 1000)
-    offset : int | Any
+    offset : int
         Offset for pagination (default 0)
     stream_callback : Callable, optional
         Callback for streaming output
@@ -37,7 +37,7 @@ def iCite_search_publications(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

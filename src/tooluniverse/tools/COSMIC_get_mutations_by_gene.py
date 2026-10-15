@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def COSMIC_get_mutations_by_gene(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_by_gene",
     gene: Optional[str] = None,
     gene_name: Optional[str] = None,
     max_results: Optional[int] = 100,

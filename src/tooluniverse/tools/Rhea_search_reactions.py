@@ -10,7 +10,8 @@ from ._shared_client import get_shared_client
 
 def Rhea_search_reactions(
     query: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,8 +24,10 @@ def Rhea_search_reactions(
     ----------
     query : str
         Search keyword for reactions. Can be a compound name, reaction term, or gener...
-    limit : int | Any
-        Maximum number of results (default 20, max 50).
+    limit : int
+        Maximum number of reactions to return per page (default 20, max 1000). This c...
+    offset : int
+        Number of matching reactions to skip before returning a page (default 0). Com...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -39,7 +42,11 @@ def Rhea_search_reactions(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"query": query, "limit": limit}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"query": query, "limit": limit, "offset": offset}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "Rhea_search_reactions",

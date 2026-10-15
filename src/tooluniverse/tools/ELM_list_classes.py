@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def ELM_list_classes(
-    operation: str,
-    motif_type: Optional[str | Any] = None,
-    query: Optional[str | Any] = None,
+    operation: Optional[str] = "list_classes",
+    motif_type: Optional[str] = None,
+    query: Optional[str] = None,
     max_results: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -25,9 +25,9 @@ def ELM_list_classes(
     ----------
     operation : str
         Operation type
-    motif_type : str | Any
+    motif_type : str
         Filter by motif functional type. CLV=cleavage, DEG=degradation, DOC=docking, ...
-    query : str | Any
+    query : str
         Search keyword to filter by name, identifier, or description. E.g., 'caspase'...
     max_results : int
         Maximum results to return (default: 50, max: 400 covers all classes)

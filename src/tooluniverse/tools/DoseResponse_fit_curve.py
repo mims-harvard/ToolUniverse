@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def DoseResponse_fit_curve(
-    operation: str,
     concentrations: list[Any],
     responses: list[Any],
+    operation: Optional[str] = "fit_curve",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

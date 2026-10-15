@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper content-type="appendix" id="aboutus" from-where="back" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">livertox</book-id>
+    <book-title-group>
+      <book-title>LiverTox</book-title>
+      <subtitle>Clinical and Research Information on Drug-Induced Liver Injury</subtitle>
+    </book-title-group>
+    <pub-date date-type="pubr" publication-format="electronic">
+      <year>2012</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>National Institute of Diabetes and Digestive and Kidney Diseases</publisher-name>
+      <publisher-loc>Bethesda (MD)</publisher-loc>
+    </publisher>
+    <abstract>
+      <p>LiverTox<sup>&#x000ae;</sup> provides up-to-date, unbiased and easily accessed information on the diagnosis, cause, frequency, clinical patterns and management of liver injury attributable to prescription and nonprescription medications and selected herbal and dietary supplements. The LiverTox site is meant as a resource for both physicians and patients as well as for clinical academicians and researchers who specialize in idiosyncratic drug induced hepatotoxicity.</p>
+      <p>Information on a specific medication or supplement can be found by entering its name in the &#x0201c;Search this book&#x0201d; box shown above or by browsing the list of agents by its first letter using the alphabetic list shown below.</p>
+      <p>LiverTox is produced by the National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK) and is copyright free. It is requested that use of LiverTox data in publications be given appropriate acknowledgment.</p>
+      <p>The LiverTox team welcomes user comments and enquiries. <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/books/n/livertox/Contactus/">Contact Us</ext-link></p>
+    </abstract>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes notes-type="disclaimer">
+      <title>Disclaimer:</title>
+      <p>Information presented in the LiverTox database is derived from the scientific literature and public databases and reflects professional expertise of the authors. Such information does not represent official policy of the U.S. Government or any agency thereof. The information in LiverTox is not meant as a substitute for FDA approved product labeling and professional judgment in the diagnosis and treatment of drug induced liver injury. The U.S. Government and its individual agencies, including the NIDDK, NLM and NIH, does not warrant or assume any legal responsibility for the accuracy, completeness, or usefulness of the information contained on this Site.</p>
+      <p>NIH does not provide patient-specific medical advice concerning the potential of a drug or herbal supplement to cause hepatotoxicity; please consult with a physician for guidance.</p>
+      <p>As of September&#x0202f;2026, initial drafts of new and updated LiverTox chapters will be generated using Artificial Intelligence. Each draft will then undergo careful review, verification, and editing by the LiverTox editorial team. New chapters will also undergo independent peer review from an external expert in drug&#x02011;induced liver injury</p>
+    </notes>
+  </book-meta>
+  <book-app book-part-type="appendix">
+    <book-part-meta>
+      <book-part-id book-part-id-type="pmcid">aboutus</book-part-id>
+      <title-group>
+        <title>About LIVERTOX<sup>&#x000ae;</sup></title>
+      </title-group>
+      <pub-history>
+        <date date-type="updated">
+          <day>1</day>
+          <month>7</month>
+          <year>2020</year>
+        </date>
+      </pub-history>
+    </book-part-meta>
+    <body>
+      <p>LIVERTOX is a freely available website that provides up-to-date, comprehensive and unbiased information about drug induced liver injury caused by prescription and nonprescription drugs, herbal products and dietary supplements. LiverTox represents a collaborative effort by medical and scientific specialists to provide a central repository of clinical information in support of clinical and basic research on the prevention and control of drug induced liver injury. LiverTox also provides guidance to clinicians and healthcare providers on the diagnosis and management of this important cause of liver disease. LiverTox is a joint effort of the Liver Disease Research Branch of the National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK) and the National Library of Medicine (NLM), National Institutes of Health. The authors of LiverTox welcome any and all comments, particularly corrections or additions. The website is a living textbook that will be regularly updated and improved. The text of LiverTox is not copyright protected and its general use is encouraged. LiverTox can be referenced as a website: livertox.nih.gov/ <italic toggle="yes">or</italic> ncbi.nlm.nih.gov/books/NBK547852/ [date accessed].</p>
+      <sec id="aboutus.LiverTox_Components">
+        <title>LiverTox Components</title>
+        <p>LiverTox has two major components:</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Introduction and overview of drug induced liver injury</p>
+          </list-item>
+          <list-item>
+            <p>Specific drug records that provide concise data on the hepatotoxicity of medications, herbals and dietary supplements</p>
+          </list-item>
+        </list>
+        <p>The <bold>Introductory Section</bold> provides an overview of drug induced liver injury, diagnostic criteria, assessment of causality and severity, descriptions of different clinical patterns (phenotypes), information on diagnosis, management and treatment, and standardized nomenclature. The role of liver biopsy and major histological patterns of drug induced liver disease are also given.</p>
+        <p><bold>Drug Records</bold> are the central component of LiverTox. These records provide concise descriptions of the hepatotoxicity of individual agents. A search box on the LiverTox Home Page directs users to specific drug, herbal product or dietary supplement records. The agents covered are those that are currently approved or available in the United States. With few exceptions, marketed drugs that were subsequently withdrawn or no longer produced, and drugs that are available only abroad are not discussed. Drugs covered in LiverTox are those with systemic absorption and, thus, theoretically capable of reaching and affecting the liver. Drugs that have been implicated in causing liver injury as well as those that have not been implicated and are unlikely to cause injury are included. Topical or locally applied creams and lotions, nasal sprays, eye and ear drops are not included. In addition, vaccines, plasma products, diagnostic reagents, radiology dyes, and agents with very special and limited use are generally not discussed. As of 2019, over 1200 agents are described and indexed.</p>
+      </sec>
+      <sec id="aboutus.Drug_Record_Format">
+        <title>Drug Record Format</title>
+        <p>In LiverTox, each agent is discussed in a formulaic manner summarizing currently available information derived from the published literature.</p>
+        <sec id="aboutus.Introduction">
+          <title>Introduction</title>
+          <p>The drug record begins with an introduction describing the agent, what it is used for, and whether it causes liver injury.</p>
+        </sec>
+        <sec id="aboutus.Background">
+          <title>Background</title>
+          <p>Information is next provided about the agent's class and chemical structure, mechanism of action, efficacy, when it was approved for use in the United States, its current frequency of use, indications and common "off-label" uses, available forms of the medication, brand names, recommended dosages and most common side effects. Importantly, this background information is provided only to introduce the issue of liver injury and should not be used for prescribing information or interpreted as a complete discussion of efficacy and safety.</p>
+        </sec>
+        <sec id="aboutus.Hepatotoxicity">
+          <title>Hepatotoxicity</title>
+          <p>A short description is provided about the hepatotoxicity associated with the agent, the rate of serum enzyme elevations during use, and the frequency and character of the clinically apparent liver injury associated with the medication. The description of injury includes the time to onset, pattern of serum enzyme elevations, immunoallergic or autoimmune features, time to recovery and spectrum of severity. If several forms of hepatotoxicity from the medication exist, each is described separately.</p>
+          <p>This section concludes with a "likelihood score" which ranges through E (unlikely), to E* (unproven but suspected), D (possible), C (probable), B (highly likely) or A (definite likelihood of causing clinically apparent liver injury). These likelihood scores are based upon the published literature or documentation from FDA websites. They provide a rough guide of the frequency of reported instances of clinically apparent liver injury from the agent.</p>
+        </sec>
+        <sec id="aboutus.Mechanism_of_Liver_Injury">
+          <title>Mechanism of Liver Injury</title>
+          <p>A short paragraph describes current understanding of the mechanism of liver injury.</p>
+        </sec>
+        <sec id="aboutus.Outcome_and_Management">
+          <title>Outcome and Management</title>
+          <p>The introductory material concludes with a brief discussion about the range of severity of injury, whether acute liver failure or chronic injury occurs, information on management and treatment, and whether rechallenge or switching to another related agent is appropriate.</p>
+        </sec>
+        <sec id="aboutus.Case_Reports">
+          <title>Case Reports</title>
+          <p>The introductory material in the record is followed by one or more case studies of drug induced liver injury caused by the agent which are derived from the literature or from clinical databases, such as data maintained by the Drug Induced Liver Injury Network or files from the Clinical Center of the National Institutes of Health. The clinical examples are presented in a formulaic manner, including the important clinical, laboratory, radiologic and histologic findings, and a short concluding discussion and comment.</p>
+        </sec>
+        <sec id="aboutus.Chemical_and_Product_Information">
+          <title>Chemical and Product Information</title>
+          <p>Each substance-specific record also includes a diagram of the chemical structure, chemical formula, and links to FDA approved product information (package insert), if available.</p>
+        </sec>
+        <sec id="aboutus.References">
+          <title>References</title>
+          <p>The drug record concludes with a comprehensive bibliography of references prepared principally from searches of PubMed and textbooks on hepatotoxicity. Each reference is briefly annotated and links to PubMed are provided. The references provided include case reports and case series on drug induced liver injury as well as large clinical trials or post marketing studies of safety in humans. Mechanistic studies and articles on animal models are not included in the references, unless they are directly applicable to the clinical syndrome that occurs in humans. The references are updated on an every 3- to 4-year basis.</p>
+        </sec>
+      </sec>
+      <sec id="aboutus.Status_of_LiverTox_Development">
+        <title>Status of LiverTox Development</title>
+        <p>At the time of the first release of LiverTox (April 2012), approximately 600 drug records were completed and during the first 3 years of its availability another 250 records were added. As of 2019, approximately 1200 records were available. The initial records represented the most common causes of drug induced liver injury and the most commonly used prescription drugs. Thereafter classes of drugs were completed and toxic agents, herbal products, nutritional supplements and illicit agents were added. Current plans are for LiverTox to be updated with newly approved medications and newly published articles from the literature on an every 3 to 4- year basis. By 2019, the Liver website had more than 26,000 annotated references, 400 clinical cases and greater than 2 million words.</p>
+      </sec>
+      <sec id="aboutus.Writing_LiverTox">
+        <title>Writing LiverTox</title>
+        <sec id="aboutus.Authorship_and_Database_Creation">
+          <title>Authorship and Database Creation</title>
+          <p>The LiverTox website is the product of a large effort by many individuals over several years. LiverTox is authored by members of the Liver Disease Research Branch of the Division of Digestive Diseases and Nutrition of the National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK), and the website was developed by members of the National Library of Medicine (NLM), NIH. The primary responsibility for the writing of LiverTox fell to Dr. Jay H. Hoofnagle, Chief of the Liver Diseases Research Branch. Major writing was also supplied by Dr. Victor J. Navarro, Professor of Medicine in the Hepatology Division, Thomas Jefferson University, Philadelphia, Pennsylvania (currently Chief, Division of Hepatology and Liver Transplantation, Einstein Healthcare Network, Philadelphia). Some section drafts were prepared by summer students who are now physicians, including Drs. Gramen Tontchev and Steven Harris, Jr., as well as by Drs. Jose Serrano and Leonard B. Seeff of the Liver Diseases Research Branch. The histology sections and photomicrographs were provided by Dr. David E. Kleiner of the Laboratory of Pathology, National Cancer Institute, NIH. The major editing and proofing of text and addition of links was done by Dr. James E. Knoben of the NLM with support from the NLM staff. Development of the website was primarily the responsibility of the technology team of the Biomedical Files Implementation Branch, Specialized Information Services Division, NLM. The Case Registry and interactive sections of LiverTox were developed by the technology team of the Computer Technology Branch, NIDDK, based upon a design developed by Drs. Jose Serrano and Jay Hoofnagle of the NIDDK. Secretarial and administrative help was provided by Mrs. Gina Bethea, NIDDK. In 2019, the LiverTox website was migrated to the platform Bookshelf maintained by the National Center for Biotechnology Information, NLM. At that time, an external expert review committee was established to provide scientific oversight of the LiverTox content and peer review of new content and updates of drug records. Dr. Jay Hoofnagle continues as the senior editor of LiverTox. Dr. James Knoben was appointed the deputy editor and Ms. Marge Worrest was appointed as the administrative assistant for LiverTox. (See <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/books/NBK548242/">Editors and Review Committee</ext-link> for further information.)</p>
+        </sec>
+        <sec id="aboutus.Reviewers">
+          <title>Reviewers</title>
+          <p>All sections of LiverTox were reviewed for accuracy and completeness by at least one outside referee. Individuals who have helped with these reviews include many of the investigators of the Drug Induced Liver Injury Network (DILIN), including Drs. Paul Watkins, Robert Fontana, Naga Chalasani, Timothy Davern, Herbert Bonkovsky, Jay Talwalkar, Victor Navarro, Rajender Reddy, Andrew Stolz, Hari Conjeevaram, John McHutchison, Paul Hayashi, and Hans Tillman. Specific sections were reviewed for content by Dr. George McDonald of the Fred Hutchinson Cancer Research Center, Seattle; Dr. Einar Bjornsson of the National University Hospital of Iceland, Reykjavik; Dr. Ynto de Boer of the University of Amsterdam Academic Medical Center, the Netherlands; Drs. Mark Gorley, Mila Chernick, Theodore Nash and John Bennett of the Clinical Center of the National Institutes of Health, Drs. Jose Serrano, Edward Doo, Averell Sherker and Susan Yanovski of the Division of Digestive Diseases and Nutrition, NIDDK, and Dr. June Cai and Russell Fleischer of the Food and Drug Administration. (See <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/books/NBK548242/">Editors and Review Committee</ext-link> for further information.)</p>
+          <p>The aim of LiverTox is to provide factual, accurate and unbiased information about drug-induced liver injury. For this reason, the Expert Review Committee members and External Reviewers shall provide full disclosure of potential conflicts of interest at the time of their appointment. They will update it with any changes over the course of their term or affirm in writing &#x0201c;no change&#x0201d; on an annual basis. Examples of conflict of interest might include active financial interests in a medication, ownership of stock or serving in an advisory capacity to a pharmaceutical company. This information is kept on file by the LiverTox Senior Editor and Administrative Assistant and will be used to determine if conflicts are present, prior to assigning a chapter(s) to an individual for review. Reviewers shall decline a review assignment should they be aware of a possible conflict of interest.</p>
+        </sec>
+        <sec id="aboutus.Resources">
+          <title>Resources</title>
+          <p>Composition of LiverTox was highly dependent upon several textbooks and resources in hepatotoxicity and pharmacology. The background information on medications were extracted from the well organized and concise "Physician's Drug Handbook", 12th Edition and the comprehensive and reliable "Goodman &#x00026; Gilman's The Pharmacological Basis of Therapeutics", 11th edition, edited by Laurence L. Brunton, John S. Lazo and Keith L. Parker, the 12th edition, edited by Laurence L. Brunton, Bruce Chabner and Bjorn Knollman and the 13th edition (2018) edited by Laurence L. Brunton, Ruth Hilal-Dandan and Bjorn Knollman. Background information on herbal medications was generally based on monographs from the "PDR for Herbal Medicines", 4th Edition, Thomson Healthcare Inc, Montvale, NJ, scientific editors Gruenwald J, Brendler T, Jaenicke C. The writing of a hepatotoxicity section of the drug record began with review of the section on the medication in the scholarly and invaluable textbook "Hepatotoxicity: The Adverse Effects of Drugs and Other Chemicals on the Liver" by the late Hyman J. Zimmerman, the father of modern understanding of hepatotoxicity. The extensive references provided in Dr. Zimmerman's textbook were the basis for the start of the reference section to the drug records. A similar approach was taken to the more recently published and highly useful textbook "Drug-Induced Liver Disease" [3rd edition, 2013] edited by Neil Kaplowitz and Laurie D. DeLeve, which provided a more updated survey of hepatotoxicity and further references.</p>
+          <p>Composition of the references section began with the citations in the two textbooks on hepatotoxicity, but importantly was then supplemented by a thorough search of PubMed performed by Dr. James Knoben or by NIDDK staff. Older references were also sought from the unique monograph "Drug-Induced Hepatic Injury: A Comprehensive Survey of the Literature on Adverse Drug Reactions up to January 1985" by B. H. Ch. Stricker and P. Spoelstra. Finally, references were sought from other references during their annotation for LiverTox. Using the information from the references and the discussion from the hepatotoxicity textbooks, the sections on hepatotoxicity, mechanisms of injury, and outcome and management were composed. Help in translating articles in the literature was provided by Drs. Solko Schalm, Erasmus University, Rotterdam; Cihan Yurdaydin, Ankara University, Turkey; Barbara Rehermann, Yaron Rotman, Jose Serrano, Su Hyung Park, Yun Ju Kim and Zhensheng Zhang, NIDDK. Valuable websites used in development and writing of LiverTox included those for PubMed, DailyMed, the FDA, CDC, NIAID, and NCI. The product labels of drugs available on DailyMed and the FDA were used to verify current indications and reported adverse reactions. For recently approved medications, the FDA review of efficacy and safety was used, available on the FDA website: <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.accessdata.fda.gov/scripts/cder/daf/">https://www.accessdata.fda.gov/scripts/cder/daf/</ext-link>. Pronunciation of drug names was based upon information from the USP Dictionary of USAN and International Drug Names, U.S. Pharmacopeia. Invaluable assistance was provided by the NIH Library in providing electronic copies of thousands of publications not available at journal websites.</p>
+        </sec>
+        <sec id="aboutus.Case_Reports_1">
+          <title>Case Reports</title>
+          <p>Cases representative of the hepatotoxicity of the medications were included in each drug record if available. As of 2019, approximately 430 case reports are provided in LiverTox. These case reports were sought from several sources, including the published literature, the database of the Drug Induced Liver Injury Network and individual cases seen at the Clinical Center of the National Institutes of Health. The cases are actual and not fabricated or modified in content. All cases are described in a formulaic fashion and those from the literature were often rearranged and simplified. Except for age and sex, no personal or identifying information is given. Cases were selected that were fully described, provided serial laboratory results (sometimes estimated from published figures) and adequately excluded other causes of liver injury. In some instances, however, no cases that satisfied these criteria were available. Furthermore, cases from the older literature often lacked important information in establishing causality in drug induced liver injury, such as testing for hepatitis A, B, C and E or modern imaging of the hepatobiliary system or even serum ALT levels. Unfortunately, case reports of drug induced liver injury are often not published unless the injury is considered "new." Furthermore, published clinical cases are often poorly described and without adequate causality assessment and exclusion of other causes. The publication bias for new or unusual forms of injury causes significant gaps. For instance, there have been no individual case reports of acetaminophen or aspirin hepatotoxicity published in the last 40 years, and few and spotty reports of hepatotoxicity of important agents such as erythromycin, tetracycline, amoxicillin, penicillin, and phenytoin. The publication bias in cases of drug induced liver injury has been a long-term problem making assessment of frequency of hepatotoxicity difficult to estimate.</p>
+          <p>The purpose of the LiverTox website is to provide clear and unbiased information on drug induced liver injury to support clinical management of patients and to stimulate interest and research directed at the prevention or treatment of this important form of liver disease.</p>
+          <disp-quote>
+            <p>
+<italic toggle="yes">This website is dedicated to the memory of those persons with drug induced liver injury who did not survive.</italic>
+</p>
+          </disp-quote>
+        </sec>
+      </sec>
+      <sec id="aboutus.What_s_New">
+        <title>What&#x02019;s New</title>
+        <p>
+<inline-supplementary-material xmlns:xlink="http://www.w3.org/1999/xlink" content-type="local-data" xlink:title="media" xlink:href="SurveyResultsSummary2022.docx">Survey Results Summary 2022</inline-supplementary-material>
+</p>
+      </sec>
+    </body>
+  </book-app>
+</book-part-wrapper>

@@ -29,7 +29,7 @@
       ]
     },
     "fields": {
-      "endpoint": "https://datadryad.org/api/v2/datasets"
+      "endpoint": "https://datadryad.org/api/v2/search"
     },
     "type": "BaseRESTTool",
     "test_examples": [

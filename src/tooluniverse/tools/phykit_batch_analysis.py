@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def phykit_batch_analysis(
-    operation: str,
+    operation: Optional[str] = "single",
     function: Optional[str] = None,
     file: Optional[str] = None,
     directory: Optional[str] = None,
@@ -21,7 +21,7 @@ def phykit_batch_analysis(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Run PhyKIT phylogenetics functions (treeness, saturation, dvmc, long_branch_score, total_tree_len...
 
@@ -30,7 +30,7 @@ def phykit_batch_analysis(
     operation : str
         single: one file, batch: all files in directory, gap_percentage: compute gap ...
     function : str
-        PhyKIT function to run
+        PhyKIT function to run. 'treeness_over_rcv' (treeness/RCV) is distinct from '...
     file : str
         Path to single tree/alignment file (for operation=single)
     directory : str
@@ -52,7 +52,7 @@ def phykit_batch_analysis(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

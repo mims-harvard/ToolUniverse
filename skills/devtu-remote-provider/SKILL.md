@@ -21,7 +21,7 @@ agent ──MCP──> remote/<slug>/<slug>_mcp_server.py     ToolUniverse's env
 
 Two environments because their pinned stacks conflict. Boltz-2 needs torch
 2.12.0+cu130 / triton 3.7.0 / numpy 1.26.4, which cannot be installed alongside
-ToolUniverse's other 600+ tools. **The MCP server must not import the model's
+ToolUniverse's other 1000+ tools. **The MCP server must not import the model's
 dependencies, and the worker must not import ToolUniverse** — the shared surface
 is one dependency-free file (`remote_resident/protocol.py`) loaded by path.
 

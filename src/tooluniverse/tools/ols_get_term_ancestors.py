@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ols_get_term_ancestors(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_term_ancestors",
     term_iri: Optional[str] = None,
     term_id: Optional[str] = None,
     ontology: Optional[str] = None,

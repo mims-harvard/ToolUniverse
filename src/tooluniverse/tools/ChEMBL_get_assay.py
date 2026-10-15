@@ -24,7 +24,7 @@ def ChEMBL_get_assay(
     assay_chembl_id : str
         ChEMBL assay ID, e.g., 'CHEMBL1217641'
     format : str
-
+        Response format (json, xml or yaml; default json)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

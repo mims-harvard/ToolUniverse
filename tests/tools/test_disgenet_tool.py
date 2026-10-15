@@ -30,10 +30,11 @@ class TestDisGeNETToolDirect:
             return next(t for t in tools if t["name"] == "DisGeNET_search_gene")
 
     @pytest.fixture
-    def tool(self, tool_config):
-        with patch.dict(os.environ, {"DISGENET_API_KEY": "test_key"}):
-            from tooluniverse.disgenet_tool import DisGeNETTool
-            return DisGeNETTool(tool_config)
+    def tool(self, tool_config, monkeypatch):
+        monkeypatch.setenv("DISGENET_API_KEY", "test_key")
+        from tooluniverse.disgenet_tool import DisGeNETTool
+
+        return DisGeNETTool(tool_config)
 
     def test_missing_api_key(self, tool_config):
         with patch.dict(os.environ, {"DISGENET_API_KEY": ""}, clear=False):

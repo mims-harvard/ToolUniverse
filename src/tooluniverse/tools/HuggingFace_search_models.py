@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def HuggingFace_search_models(
     search: str,
-    limit: Optional[int | Any] = None,
-    pipeline_tag: Optional[str | Any] = None,
-    library: Optional[str | Any] = None,
+    limit: Optional[int] = None,
+    pipeline_tag: Optional[str] = None,
+    library: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def HuggingFace_search_models(
     ----------
     search : str
         Search query for model name, task, or topic (e.g., 'protein language model', ...
-    limit : int | Any
+    limit : int
         Maximum number of results to return (default 20, max 1000)
-    pipeline_tag : str | Any
+    pipeline_tag : str
         Filter by ML task type. Common values: 'text-classification', 'token-classifi...
-    library : str | Any
+    library : str
         Filter by ML framework/library. Common values: 'transformers', 'diffusers', '...
     stream_callback : Callable, optional
         Callback for streaming output

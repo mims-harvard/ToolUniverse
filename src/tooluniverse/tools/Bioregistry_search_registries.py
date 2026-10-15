@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def Bioregistry_search_registries(
     query: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_registries",
     limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

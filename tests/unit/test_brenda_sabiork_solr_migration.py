@@ -149,10 +149,9 @@ def test_end_to_end_failure_now_reaches_sabiork_error(monkeypatch):
 
 
 def test_no_parameter_summary_fabricated_when_values_unavailable():
-    """The new Solr endpoint doesn't expose raw numeric parameter values
-    (confirmed live -- SABIORKTool's own "parameters" field is always
-    empty too). parameter_summary must stay honestly absent, not be
-    fabricated from empty data."""
+    """Numeric values come only from a doc's Json field. A doc without
+    one yields no values, and parameter_summary must stay absent rather
+    than be fabricated from empty data."""
     tool = _tool()
     monkeypatch_docs = [
         {

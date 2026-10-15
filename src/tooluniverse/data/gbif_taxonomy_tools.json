@@ -304,7 +304,7 @@
           "description": "A single scientific name string to parse, e.g. 'Panthera leo (Linnaeus, 1758)'. Provide either 'name' or 'names'."
         },
         "names": {
-          "type": ["array", "null"],
+          "type": ["array", "string", "null"],
           "items": {"type": "string"},
           "description": "A list of scientific name strings to parse in one call, e.g. ['Homo sapiens Linnaeus, 1758', 'Quercus robur L.']. Provide either 'name' or 'names'."
         }

@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def FDA_list_drug_classes(
-    limit: int,
+    limit: Optional[int] = 20,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

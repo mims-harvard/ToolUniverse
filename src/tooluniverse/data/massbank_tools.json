@@ -14,7 +14,9 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of spectra to return (default 10)"
+          "description": "Maximum number of spectra to return (default 10)",
+          "default": 10,
+          "minimum": 1
         }
       },
       "required": [
@@ -22,7 +24,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://massbank.eu/MassBank-api/records"
+      "endpoint": "https://massbank.eu/MassBank-api/records",
+      "client_side_limit": true
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -153,7 +156,9 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of spectra to return (default 10)"
+          "description": "Maximum number of spectra to return (default 10)",
+          "default": 10,
+          "minimum": 1
         }
       },
       "required": [
@@ -161,7 +166,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://massbank.eu/MassBank-api/records"
+      "endpoint": "https://massbank.eu/MassBank-api/records",
+      "client_side_limit": true
     },
     "type": "BaseRESTTool",
     "test_examples": [

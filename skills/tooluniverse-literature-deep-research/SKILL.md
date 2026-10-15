@@ -141,6 +141,8 @@ Run the **core multi-field set on every review** (catches what any single index 
 **Multi-source**: `advanced_literature_search_agent` (12+ DBs; needs Azure key -- fallback: query the core set individually).
 **Citation impact**: `iCite_search_publications` (RCR/APT), `iCite_get_publications` (by PMID), `scite_get_tallies` (support/contradict). PubMed-only; for CS use SemanticScholar.
 
+**Identifiers and reference lists**: `PubMed_convert_article_ids {"ids": ["23193287", "10.1093/nar/gks1195"]}` converts between PMID, PMCID and DOI (auto-detected; only articles in PubMed Central convert, others return `found: false`) -- use it to turn a DOI into the PMCID that `EuropePMC_get_full_text` needs. `PubMed_lookup_article_by_citation {"journal": "Nature", "year": 2015, "volume": 521, "first_page": 436, "author": "lecun y"}` resolves a reference-list entry to a PMID (`status`: found / ambiguous / not_found; pass `citations` for a batch). The match is exact on the fields given, so an unfound citation is a signal to re-check the fields, not proof the paper is missing.
+
 A domain-specific index returning 0 (e.g. ArXiv on a pure-clinical topic) is normal — only worry if the whole core set is empty.
 
 ### 2.3-2.4 Full-Text & PubMed Zero-Result Fallback

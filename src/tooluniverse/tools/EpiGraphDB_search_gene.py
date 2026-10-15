@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def EpiGraphDB_search_gene(
-    gene_name: Optional[str | Any] = None,
-    gene_id: Optional[str | Any] = None,
+    gene_name: Optional[str] = None,
+    gene_id: Optional[str] = None,
     limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -22,9 +22,9 @@ def EpiGraphDB_search_gene(
 
     Parameters
     ----------
-    gene_name : str | Any
+    gene_name : str
         Gene symbol to search for (e.g., 'BRCA1', 'TP53', 'EGFR'). Either gene_name o...
-    gene_id : str | Any
+    gene_id : str
         Ensembl gene ID (e.g., 'ENSG00000012048'). Either gene_name or gene_id required.
     limit : int
         Maximum results to return (default 10, max 50).

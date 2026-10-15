@@ -10,7 +10,8 @@ from ._shared_client import get_shared_client
 
 def Rhea_search_by_ec(
     ec_number: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,8 +24,10 @@ def Rhea_search_by_ec(
     ----------
     ec_number : str
         EC (Enzyme Commission) number. Can include or omit 'EC:' prefix. Examples: 'E...
-    limit : int | Any
-        Maximum number of results (default 20, max 50).
+    limit : int
+        Maximum number of reactions to return per page (default 20, max 1000). This c...
+    offset : int
+        Number of matching reactions to skip before returning a page (default 0). Com...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,7 @@ def Rhea_search_by_ec(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"ec_number": ec_number, "limit": limit}.items()
+        for k, v in {"ec_number": ec_number, "limit": limit, "offset": offset}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

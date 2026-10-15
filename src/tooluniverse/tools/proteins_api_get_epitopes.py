@@ -15,7 +15,7 @@ def proteins_api_get_epitopes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get the epitope features for a protein from the EBI Proteins API epitope endpoint (IEDB-derived)....
 
@@ -34,7 +34,7 @@ def proteins_api_get_epitopes(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -174,7 +174,15 @@ class ToolFinderKeyword(BaseTool):
 
         # Initialize tool index for TF-IDF scoring
         self._tool_index = None
+        # Identity of the tool set the current index was built from.
+        self._index_key = None
         self._document_frequencies = None
+        # Built alongside the index: term -> tool names, and the same for the
+        # distinct type/category strings. Empty until the first index build.
+        self._postings = {}
+        self._type_postings = {}
+        self._category_postings = {}
+        self._name_word_postings = {}
         self._total_documents = 0
         self._avg_token_count = (
             0  # average raw token count, used for BM25 normalization
@@ -266,6 +274,26 @@ class ToolFinderKeyword(BaseTool):
 
         return phrases
 
+    def _make_index_key(self, tools: List[Dict]) -> frozenset:
+        """
+        Identity of the tool set an index is built from.
+
+        Used to decide whether a cached index can be reused. Tool counts are
+        not enough: two different category filters can select the same number
+        of tools.
+
+        Args:
+            tools (List[Dict]): List of tool configurations
+
+        Returns
+            frozenset: Names of the tools that would be indexed
+        """
+        return frozenset(
+            name
+            for tool in tools
+            if (name := tool.get("name", "")) not in self.exclude_tools
+        )
+
     def _build_tool_index(self, tools: List[Dict]) -> None:
         """
         Build TF-IDF index for all tools to enable efficient relevance scoring.
@@ -274,7 +302,22 @@ class ToolFinderKeyword(BaseTool):
             tools (List[Dict]): List of tool configurations
         """
         self._tool_index = {}
+        self._index_key = self._make_index_key(tools)
         term_doc_count = defaultdict(int)
+        # term -> [(tool name, term frequency)]. Scoring walks these postings, so
+        # it touches only the (query term, tool) pairs that exist. Scoring tool by
+        # tool instead means looking up every query term in every tool: on this
+        # catalogue that is about 84,000 lookups per query to find 2,600 matches.
+        self._postings = defaultdict(list)
+        # Distinct type/category strings -> tool names, for the exact-match bonus
+        # branch that tests the query against those fields.
+        self._type_postings = defaultdict(list)
+        self._category_postings = defaultdict(list)
+        # The exact-match bonus compares raw query words against the raw
+        # underscore-separated words of a tool name, without tokenizing, stemming
+        # or dropping stop words. A tool can therefore earn a bonus on a word the
+        # term index never stored, so those words get their own postings.
+        self._name_word_postings = defaultdict(list)
         self._total_documents = 0
 
         for tool in tools:
@@ -303,6 +346,10 @@ class ToolFinderKeyword(BaseTool):
             self._tool_index[tool_name] = {
                 "tool": tool,
                 "terms": term_freq,
+                # Lowercased forms the exact-match bonus compares against. They are
+                # derived from static tool metadata, so computing them per search
+                # meant lowercasing every description in the catalogue on every query.
+                "match_fields": self._match_fields(tool),
                 "total_terms": len(phrases),
                 # raw_token_count stores word-only length for document-length
                 # normalization; using phrase count would unfairly penalize tools
@@ -311,9 +358,18 @@ class ToolFinderKeyword(BaseTool):
             }
 
             # Count document frequency for each term
-            unique_terms = set(phrases)
-            for term in unique_terms:
+            for term, freq in term_freq.items():
                 term_doc_count[term] += 1
+                self._postings[term].append((tool_name, freq))
+
+            fields = self._tool_index[tool_name]["match_fields"]
+            if fields["type_lower"]:
+                self._type_postings[fields["type_lower"]].append(tool_name)
+            if fields["category_lower"]:
+                self._category_postings[fields["category_lower"]].append(tool_name)
+            for word in fields["name_words"]:
+                if len(word) >= 3:
+                    self._name_word_postings[word].append(tool_name)
 
             self._total_documents += 1
 
@@ -327,6 +383,143 @@ class ToolFinderKeyword(BaseTool):
             self._avg_token_count = total_tokens / self._total_documents
         else:
             self._avg_token_count = 1
+
+    def _match_fields(self, tool: Dict) -> Dict[str, object]:
+        """Lowercased tool fields that the exact-match bonus compares against.
+
+        Args:
+            tool (Dict): Tool configuration
+
+        Returns
+            Dict[str, object]: Lowercased name, the name split into its
+                underscore-separated words, and lowercased description, type and
+                category.
+        """
+        name_lower = (tool.get("name", "") or "").lower()
+        return {
+            "name_lower": name_lower,
+            "name_words": frozenset(name_lower.split("_")),
+            "desc_lower": (tool.get("description", "") or "").lower(),
+            "type_lower": (tool.get("type", "") or "").lower(),
+            "category_lower": (tool.get("category", "") or "").lower(),
+        }
+
+    def _query_match_forms(self, query: str):
+        """Query shapes the exact-match bonus needs, derived once per search.
+
+        Args:
+            query (str): Original query string
+
+        Returns
+            tuple: (lowercased query, underscore-normalized query, query words)
+        """
+        query_lower = query.lower()
+        return query_lower, query_lower.replace(" ", "_"), query_lower.split()
+
+    def _score_terms(self, query_phrases: List[str]) -> Dict[str, float]:
+        """BM25 scores for every tool that shares at least one term with the query.
+
+        Walks the postings term by term and accumulates into the tools they name,
+        which visits only the (term, tool) pairs that exist. Terms are visited in
+        the same order :meth:`_calculate_tfidf_score` visits them and a tool
+        accumulates only the terms it holds, so each tool's score is summed in the
+        same order and comes out to the same float.
+
+        Args:
+            query_phrases (List[str]): Processed query terms and phrases
+
+        Returns
+            Dict[str, float]: Tool name -> BM25 score, omitting tools that match
+                no term at all.
+        """
+        # BM25 hyperparameters, and the phrase discount, as documented on
+        # _calculate_tfidf_score.
+        k1 = 1.5
+        b = 0.75
+        phrase_discount = 0.3
+
+        index = self._tool_index
+        postings = self._postings
+        doc_freqs = self._document_frequencies or {}
+        total_documents = self._total_documents
+        avgdl = max(self._avg_token_count, 1)
+
+        scores: Dict[str, float] = {}
+        for term, query_freq in Counter(query_phrases).items():
+            hits = postings.get(term)
+            if not hits:
+                continue
+
+            doc_freq = doc_freqs.get(term, 1)
+            idf = math.log((total_documents + 1) / (doc_freq + 0.5))
+            # A unigram carries full weight, a bigram phrase_discount, a trigram
+            # phrase_discount squared.
+            phrase_weight = phrase_discount ** term.count(" ")
+            term_weight = idf * math.log(1 + query_freq) * phrase_weight
+
+            for tool_name, tf in hits:
+                entry = index.get(tool_name)
+                if entry is None:
+                    continue
+                dl = max(entry.get("raw_token_count", entry["total_terms"]), 1)
+                bm25_tf = (tf * (k1 + 1)) / (tf + k1 * (1 - b + b * dl / avgdl))
+                contribution = term_weight * bm25_tf
+                if tool_name in scores:
+                    scores[tool_name] += contribution
+                else:
+                    scores[tool_name] = contribution
+        return scores
+
+    def _bonus_candidate_names(self, forms) -> set:
+        """Tools that can earn a non-zero exact-match bonus for this query.
+
+        Every branch of the bonus needs either a raw query word to equal a raw word
+        of the tool name, the query to sit inside the name (or the name inside the
+        query), the query phrase to sit inside the description, or the query to sit
+        inside the type or category. None of those go through the term index -- the
+        bonus compares raw text, without tokenizing, stemming or dropping stop
+        words -- so they are resolved here, and every other tool scores a bonus of
+        exactly zero without being asked.
+
+        Args:
+            forms (tuple): Output of ``_query_match_forms``
+
+        Returns
+            set: Tool names that may earn a bonus
+        """
+        query_lower, query_underscored, query_words = forms
+        names = set()
+
+        for word in query_words:
+            if len(word) >= 3:
+                hits = self._name_word_postings.get(word)
+                if hits:
+                    names.update(hits)
+
+        for field_postings in (self._type_postings, self._category_postings):
+            for value, hits in field_postings.items():
+                if query_lower in value:
+                    names.update(hits)
+
+        # The substring branches cannot be answered from any word index, so they
+        # take one pass of substring tests over the precomputed lowercased fields.
+        query_phrase = " ".join(query_words) if len(query_words) > 1 else ""
+        for name, entry in self._tool_index.items():
+            if name in names:
+                continue
+            fields = entry["match_fields"]
+            name_lower = fields["name_lower"]
+            if name_lower and (
+                name_lower in query_lower
+                or query_lower in name_lower
+                or name_lower in query_underscored
+                or query_underscored in name_lower
+            ):
+                names.add(name)
+            elif query_phrase and query_phrase in fields["desc_lower"]:
+                names.add(name)
+
+        return names
 
     def _extract_parameter_text(self, parameter_schema: Dict) -> List[str]:
         """
@@ -455,11 +648,31 @@ class ToolFinderKeyword(BaseTool):
         Returns
             float: Exact match bonus score
         """
-        query_lower = query.lower()
-        # Underscore-normalized version of the full query for matching tool names
-        query_underscored = query_lower.replace(" ", "_")
-        tool_name = tool.get("name", "").lower()
-        tool_desc = tool.get("description", "").lower()
+        entry = (self._tool_index or {}).get(tool.get("name", ""))
+        fields = (
+            entry["match_fields"]
+            if entry and "match_fields" in entry
+            else self._match_fields(tool)
+        )
+        return self._exact_match_bonus(self._query_match_forms(query), fields)
+
+    def _exact_match_bonus(self, forms, fields) -> float:
+        """Exact-match bonus from pre-derived query shapes and tool fields.
+
+        Split out of :meth:`_calculate_exact_match_bonus` so that a search derives
+        the query shapes once and reads the tool's lowercased fields from the index,
+        instead of redoing both for every tool on every query.
+
+        Args:
+            forms (tuple): Output of ``_query_match_forms``
+            fields (dict): Output of ``_match_fields``
+
+        Returns
+            float: Exact match bonus score
+        """
+        query_lower, query_underscored, query_words = forms
+        tool_name = fields["name_lower"]
+        tool_desc = fields["desc_lower"]
 
         bonus = 0.0
 
@@ -487,8 +700,7 @@ class ToolFinderKeyword(BaseTool):
             # of "rfam_get_alignment" — the token must be an entire word in the
             # name. Each matching token adds a small bonus scaled by its length
             # to favour specific acronyms (e.g. "blast") over generic words.
-            tool_name_words = set(tool_name.split("_"))
-            query_words = query_lower.split()
+            tool_name_words = fields["name_words"]
             token_bonus = 0.0
             for word in query_words:
                 if len(word) >= 3 and word in tool_name_words:
@@ -497,15 +709,14 @@ class ToolFinderKeyword(BaseTool):
             bonus += token_bonus
 
         # Exact phrase matches in description
-        query_words = query_lower.split()
         if len(query_words) > 1:
             query_phrase = " ".join(query_words)
             if query_phrase in tool_desc:
                 bonus += 1.5
 
         # Category or type exact matches
-        tool_type = tool.get("type", "").lower()
-        tool_category = tool.get("category", "").lower()
+        tool_type = fields["type_lower"]
+        tool_category = fields["category_lower"]
 
         if query_lower in tool_type or query_lower in tool_category:
             bonus += 1.0
@@ -684,7 +895,7 @@ class ToolFinderKeyword(BaseTool):
                 # Force full load by clearing filters and loading everything
                 self.tooluniverse.load_tools(include_tools=None, tool_type=None)
 
-            all_tools = list(self.tooluniverse.return_all_loaded_tools())
+            all_tools = self.tooluniverse.return_all_loaded_tools(copy_tools=False)
 
             # Tools with unmet ``required_api_keys`` are deliberately excluded
             # from execution, but they must remain discoverable. Merge the
@@ -708,13 +919,12 @@ class ToolFinderKeyword(BaseTool):
             else:
                 filtered_tools = all_tools
 
-            # Build search index if not already built or if tools changed
-            if self._tool_index is None or self._total_documents != len(
-                [
-                    t
-                    for t in filtered_tools
-                    if t.get("name", "") not in self.exclude_tools
-                ]
+            # Build search index if not already built or if tools changed.
+            # The comparison is on the indexed tool set, not its size: two
+            # `categories=[...]` filters of equal size used to reuse each
+            # other's index, so every tool in the second category scored 0.0.
+            if self._tool_index is None or self._index_key != self._make_index_key(
+                filtered_tools
             ):
                 self._build_tool_index(filtered_tools)
 
@@ -753,7 +963,15 @@ class ToolFinderKeyword(BaseTool):
                     indent=2,
                 )
 
-            # Calculate relevance scores for all tools
+            # Score the query against the postings, and work out which tools can
+            # earn an exact-match bonus. Everything else scores zero and is dropped,
+            # so only the union of the two is worth visiting. Iteration still follows
+            # ``filtered_tools`` so that tools with equal scores keep their catalogue
+            # order, which is the tie-break the sort below relies on.
+            forms = self._query_match_forms(query)
+            term_scores = self._score_terms(query_phrases)
+            bonus_names = self._bonus_candidate_names(forms)
+            candidates = bonus_names.union(term_scores)
             tool_scores = []
 
             for tool in filtered_tools:
@@ -761,6 +979,9 @@ class ToolFinderKeyword(BaseTool):
 
                 # Skip excluded tools
                 if tool_name in self.exclude_tools:
+                    continue
+
+                if tool_name not in candidates:
                     continue
 
                 # Apply category filters if specified
@@ -773,47 +994,57 @@ class ToolFinderKeyword(BaseTool):
                 if self.exclude_categories and tool_category in self.exclude_categories:
                     continue
 
-                # Calculate TF-IDF score
-                tfidf_score = self._calculate_tfidf_score(query_phrases, tool_name)
+                # BM25 score, already accumulated from the postings
+                tfidf_score = term_scores.get(tool_name, 0.0)
 
-                # Calculate exact match bonus
-                exact_bonus = self._calculate_exact_match_bonus(query, tool)
+                # Exact match bonus, only for the tools that can earn one
+                if tool_name in bonus_names:
+                    entry = self._tool_index.get(tool_name)
+                    fields = (
+                        entry["match_fields"]
+                        if entry and "match_fields" in entry
+                        else self._match_fields(tool)
+                    )
+                    exact_bonus = self._exact_match_bonus(forms, fields)
+                else:
+                    exact_bonus = 0.0
 
                 # Combined relevance score
                 total_score = tfidf_score + exact_bonus
 
-                # Only include tools with positive relevance
+                # Only include tools with positive relevance. Keep a light tuple per
+                # hit: a natural-language query matches a term in most of the
+                # catalogue, and the response only ever carries one page of results,
+                # so building a result dict for every hit was work thrown away.
                 if total_score > 0:
-                    # tool_name is already shortened (primary identifier)
-                    tool_info = {
-                        "name": tool_name,
-                        "description": tool.get("description", ""),
-                        "type": tool.get("type", ""),
-                        "category": tool_category,
-                        "parameters": tool.get("parameter", {}),
-                        # Feature-R12B-03/R13B-04: removed top-level "required" field —
-                        # it was always [] (the real list lives inside parameters.required).
-                        "relevance_score": round(total_score, 4),
-                        "tfidf_score": round(tfidf_score, 4),
-                        "exact_match_bonus": round(exact_bonus, 4),
-                    }
-                    missing_keys = getattr(
-                        self.tooluniverse, "_excluded_api_key_tools", {}
-                    ).get(tool_name)
-                    if missing_keys:
-                        tool_info["available"] = False
-                        tool_info["missing_api_keys"] = list(missing_keys)
-                    tool_scores.append(tool_info)
+                    tool_scores.append((round(total_score, 4), tool, tool_category))
 
             # Sort by relevance score (highest first) and limit results
-            tool_scores.sort(key=lambda x: x["relevance_score"], reverse=True)
+            tool_scores.sort(key=lambda hit: hit[0], reverse=True)
             total_scored = len(tool_scores)
-            matching_tools = tool_scores[offset : offset + limit] if limit > 0 else []
+            page = tool_scores[offset : offset + limit] if limit > 0 else []
 
-            # Remove internal scoring details from final output
-            for tool in matching_tools:
-                tool.pop("tfidf_score", None)
-                tool.pop("exact_match_bonus", None)
+            matching_tools = []
+            for relevance_score, tool, tool_category in page:
+                # tool name is already shortened (primary identifier)
+                tool_name = tool.get("name", "")
+                tool_info = {
+                    "name": tool_name,
+                    "description": tool.get("description", ""),
+                    "type": tool.get("type", ""),
+                    "category": tool_category,
+                    "parameters": tool.get("parameter", {}),
+                    # Feature-R12B-03/R13B-04: removed top-level "required" field —
+                    # it was always [] (the real list lives inside parameters.required).
+                    "relevance_score": relevance_score,
+                }
+                missing_keys = getattr(
+                    self.tooluniverse, "_excluded_api_key_tools", {}
+                ).get(tool_name)
+                if missing_keys:
+                    tool_info["available"] = False
+                    tool_info["missing_api_keys"] = list(missing_keys)
+                matching_tools.append(tool_info)
 
             has_more = (
                 total_scored > offset  # limit=0: items exist at this offset

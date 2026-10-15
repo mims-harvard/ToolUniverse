@@ -13,6 +13,7 @@ import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason
 
 ENSEMBL_BASE_URL = "https://rest.ensembl.org"
 ENSEMBL_HEADERS = {"User-Agent": "ToolUniverse/1.0", "Accept": "application/json"}
@@ -59,12 +60,7 @@ class EnsemblComparaTool(BaseTool):
             # pattern already used by ensembl_map_tool.py and
             # ensembl_variation_ext_tool.py.
             status = e.response.status_code if e.response is not None else "unknown"
-            body = ""
-            if e.response is not None:
-                try:
-                    body = e.response.json().get("error", "")
-                except Exception:
-                    body = e.response.text[:200]
+            body = upstream_reason(e.response)
             gene = arguments.get("gene", "")
             hint = (
                 f" -- gene symbol '{gene}' may not exist for the requested "

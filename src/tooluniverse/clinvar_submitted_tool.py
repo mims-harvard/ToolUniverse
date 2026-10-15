@@ -22,6 +22,7 @@ from typing import Any, Dict, List, Optional
 import requests
 
 from .base_tool import BaseTool
+from .provider_rate_limit import enforce_provider_rate_limit
 from .tool_registry import register_tool
 
 
@@ -173,6 +174,16 @@ class ClinVarSubmittedRecordsTool(BaseTool):
             }
 
         params = {"db": "clinvar", "rettype": "vcv", "id": vcv}
+        # NCBI publishes its ceiling in the response -- X-Ratelimit-Limit: 3
+        # without a key, 10 with one -- and pubmed, icite and medgen already
+        # share a process-wide "ncbi" bucket at those rates. This tool called
+        # efetch with neither the key nor the bucket, so a sweep running it
+        # alongside those three spent their budget as well as its own, and it
+        # answered "NCBI efetch returned HTTP 429". Same provider, same bucket.
+        api_key = self.credential("NCBI_API_KEY") or ""
+        if api_key:
+            params["api_key"] = api_key
+        enforce_provider_rate_limit("ncbi", api_key, 10.0 if api_key else 3.0)
         try:
             response = requests.get(
                 self.EFETCH_URL,

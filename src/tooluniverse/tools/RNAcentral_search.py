@@ -1,7 +1,7 @@
 """
 RNAcentral_search
 
-Search aggregated ncRNA records (miRNA, rRNA, lncRNA, etc.) across sources via RNAcentral. Use to...
+Search aggregated ncRNA records (miRNA, rRNA, lncRNA, etc.) across sources via RNAcentral. Keywor...
 """
 
 from typing import Any, Optional, Callable
@@ -17,12 +17,12 @@ def RNAcentral_search(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search aggregated ncRNA records (miRNA, rRNA, lncRNA, etc.) across sources via RNAcentral. Use to...
+    Search aggregated ncRNA records (miRNA, rRNA, lncRNA, etc.) across sources via RNAcentral. Keywor...
 
     Parameters
     ----------
     query : str
-        Keyword, accession, or sequence-based query (per RNAcentral API).
+        RNA or gene name (e.g. 'MALAT1', 'let-7') or an RNAcentral accession (URS0000...
     page_size : int
         Number of records per page (1–100).
     stream_callback : Callable, optional

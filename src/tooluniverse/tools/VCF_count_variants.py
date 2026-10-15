@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def VCF_count_variants(
-    operation: str,
     vcf_path: str,
+    operation: Optional[str] = None,
     pass_only: Optional[bool] = None,
     regions: Optional[str] = None,
     min_qual: Optional[float] = None,
@@ -19,7 +19,7 @@ def VCF_count_variants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Count variants in a local VCF/BCF after applying filters, via bcftools. Returns total records plu...
 
@@ -46,7 +46,7 @@ def VCF_count_variants(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

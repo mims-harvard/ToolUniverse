@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def ENAPortal_search_studies(
     query: str,
-    limit: Optional[int | Any] = None,
-    fields: Optional[str | Any] = None,
+    limit: Optional[int] = None,
+    fields: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def ENAPortal_search_studies(
     ----------
     query : str
         ENA search query. IMPORTANT: Plain text keywords (e.g., 'cancer') will cause ...
-    limit : int | Any
+    limit : int
         Maximum results to return (1-100, default 10).
-    fields : str | Any
+    fields : str
         Comma-separated fields to return. Default: 'study_accession,study_title,cente...
     stream_callback : Callable, optional
         Callback for streaming output

@@ -9,13 +9,13 @@ from ._shared_client import get_shared_client
 
 
 def MEME_discover_motifs(
-    operation: str,
     sequences: str,
-    nmotifs: Optional[int | Any] = 3,
-    minw: Optional[int | Any] = 6,
-    maxw: Optional[int | Any] = 50,
-    distribution: Optional[str | Any] = "zoops",
-    scan_rc: Optional[bool | Any] = True,
+    operation: Optional[str] = "discover_motifs",
+    nmotifs: Optional[int] = 3,
+    minw: Optional[int] = 6,
+    maxw: Optional[int] = 50,
+    distribution: Optional[str] = "zoops",
+    scan_rc: Optional[bool] = True,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,15 +30,15 @@ def MEME_discover_motifs(
         Operation type
     sequences : str
         Multiple DNA sequences in FASTA format (minimum 2 sequences). Should contain ...
-    nmotifs : int | Any
+    nmotifs : int
         Maximum number of motifs to find. Default 3.
-    minw : int | Any
+    minw : int
         Minimum motif width in nucleotides. Default 6.
-    maxw : int | Any
+    maxw : int
         Maximum motif width in nucleotides. Default 50.
-    distribution : str | Any
+    distribution : str
         Motif site distribution model. 'oops' = one per sequence, 'zoops' = zero or o...
-    scan_rc : bool | Any
+    scan_rc : bool
         If true (default), search both strands.
     stream_callback : Callable, optional
         Callback for streaming output

@@ -26,9 +26,9 @@ def ChEMBL_get_target_activities(
     target_chembl_id__exact : str
         ChEMBL target ID (e.g., 'CHEMBL2074'). To find a target ID, use ChEMBL_search...
     limit : int
-
+        Maximum number of results (default: 20, max: 1000)
     offset : int
-
+        Offset for pagination (default: 0)
     target_chembl_id : str
         Alias for target_chembl_id__exact. ChEMBL target ID (e.g., CHEMBL213).
     stream_callback : Callable, optional

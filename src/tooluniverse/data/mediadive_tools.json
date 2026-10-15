@@ -185,6 +185,7 @@
             "formula": {"type": ["string", "null"]},
             "molecular_mass": {"type": ["number", "null"]},
             "used_in_media_count": {"type": "integer"},
+            "total_used_in_media_sample": {"type": "integer"},
             "used_in_media_sample": {"type": "array", "items": {"type": ["string", "integer"]}}
           }
         },

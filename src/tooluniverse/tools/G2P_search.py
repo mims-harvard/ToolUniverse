@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def G2P_search(
     query: str,
-    page: Optional[int | Any] = None,
+    page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def G2P_search(
     ----------
     query : str
         Search query - gene symbol (e.g., 'BRCA1', 'TP53') or disease name (e.g., 'ep...
-    page : int | Any
+    page : int
         Page number for pagination (default 1)
     stream_callback : Callable, optional
         Callback for streaming output

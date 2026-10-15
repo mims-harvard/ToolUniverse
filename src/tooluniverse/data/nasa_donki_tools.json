@@ -23,7 +23,7 @@
       "required": []
     },
     "fields": {
-      "endpoint": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/CME"
+      "endpoint": "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/CME"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -170,7 +170,7 @@
       "required": []
     },
     "fields": {
-      "endpoint": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR"
+      "endpoint": "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/FLR"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -284,13 +284,13 @@
       "required": []
     },
     "fields": {
-      "endpoint": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/GST"
+      "endpoint": "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/GST"
     },
     "type": "BaseRESTTool",
     "test_examples": [
       {
         "startDate": "2024-01-01",
-        "endDate": "2024-03-31"
+        "endDate": "2024-02-29"
       },
       {
         "startDate": "2024-05-01",
@@ -298,7 +298,7 @@
       },
       {
         "startDate": "2024-10-01",
-        "endDate": "2024-12-31"
+        "endDate": "2024-11-29"
       }
     ],
     "return_schema": {
@@ -384,13 +384,13 @@
       "required": []
     },
     "fields": {
-      "endpoint": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP"
+      "endpoint": "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/SEP"
     },
     "type": "BaseRESTTool",
     "test_examples": [
       {
         "startDate": "2024-01-01",
-        "endDate": "2024-06-30"
+        "endDate": "2024-02-29"
       },
       {
         "startDate": "2024-05-01",
@@ -398,7 +398,7 @@
       },
       {
         "startDate": "2024-10-01",
-        "endDate": "2024-12-31"
+        "endDate": "2024-11-29"
       }
     ],
     "return_schema": {
@@ -476,13 +476,13 @@
       "required": []
     },
     "fields": {
-      "endpoint": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/IPS"
+      "endpoint": "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/IPS"
     },
     "type": "BaseRESTTool",
     "test_examples": [
       {
         "startDate": "2024-01-01",
-        "endDate": "2024-03-31"
+        "endDate": "2024-02-29"
       },
       {
         "startDate": "2024-05-01",
@@ -491,7 +491,7 @@
       },
       {
         "startDate": "2024-10-01",
-        "endDate": "2024-12-31"
+        "endDate": "2024-11-29"
       }
     ],
     "return_schema": {
@@ -569,13 +569,13 @@
       "required": []
     },
     "fields": {
-      "endpoint": "https://kauai.ccmc.gsfc.nasa.gov/DONKI/WS/get/HSS"
+      "endpoint": "https://ccmc.gsfc.nasa.gov/DONKI/WS/get/HSS"
     },
     "type": "BaseRESTTool",
     "test_examples": [
       {
         "startDate": "2024-01-01",
-        "endDate": "2024-03-31"
+        "endDate": "2024-02-29"
       },
       {
         "startDate": "2024-05-01",
@@ -583,7 +583,7 @@
       },
       {
         "startDate": "2024-10-01",
-        "endDate": "2024-12-31"
+        "endDate": "2024-11-29"
       }
     ],
     "return_schema": {

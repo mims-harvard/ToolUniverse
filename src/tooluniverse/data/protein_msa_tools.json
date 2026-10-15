@@ -1,0 +1,193 @@
+[
+  {
+    "name": "Protein_MSA_inspect",
+    "type": "ProteinMSAInventoryTool",
+    "description": "Inspect local single-component protein A3M or aligned FASTA. Reports raw/unique depth, query-only or duplicate-only inputs, query match, gaps and insertions. No uploads, homology search, Neff or folding validation. Inspect each complex component separately.",
+    "cacheable": false,
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "alignment_path": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Local single-component protein A3M or aligned FASTA path; stays local. Exactly one input source."
+        },
+        "alignment_content": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Inline single-component protein A3M or aligned FASTA; stays local. Exactly one input source."
+        },
+        "format": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "a3m",
+            "aligned_fasta",
+            null
+          ],
+          "description": "Default a3m: lowercase residues and dots are insertions. aligned_fasta normalizes lowercase and treats dots as gaps."
+        },
+        "expected_query_sequence": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional expected ungapped protein sequence, compared to first record. Mismatch is reported; no sequences returned."
+        },
+        "max_row_details": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Bound per-row summaries; default 10. Counts stay complete."
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "alignment_path"
+          ],
+          "properties": {
+            "alignment_path": {
+              "type": "string"
+            }
+          },
+          "not": {
+            "required": [
+              "alignment_content"
+            ],
+            "properties": {
+              "alignment_content": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "required": [
+            "alignment_content"
+          ],
+          "properties": {
+            "alignment_content": {
+              "type": "string"
+            }
+          },
+          "not": {
+            "required": [
+              "alignment_path"
+            ],
+            "properties": {
+              "alignment_path": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "data"
+          ],
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "required": [
+                "input_sha256",
+                "row_count",
+                "aligned_column_count",
+                "unique_aligned_row_count",
+                "unique_nonempty_nonquery_row_count",
+                "query_only",
+                "has_distinct_nonquery_sequence",
+                "expected_query_matches",
+                "homology_verified",
+                "folding_verified"
+              ],
+              "properties": {
+                "input_sha256": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{64}$"
+                },
+                "row_count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "aligned_column_count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "unique_aligned_row_count": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "unique_nonempty_nonquery_row_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "query_only": {
+                  "type": "boolean"
+                },
+                "has_distinct_nonquery_sequence": {
+                  "type": "boolean"
+                },
+                "expected_query_matches": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "homology_verified": {
+                  "const": false
+                },
+                "folding_verified": {
+                  "const": false
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "status",
+            "error"
+          ],
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "alignment_content": ">query\nACDE\n",
+        "expected_query_sequence": "ACDE"
+      },
+      {
+        "alignment_path": "tests/fixtures/protein_msa/insertion_duplicate.a3m",
+        "expected_query_sequence": "ACDE"
+      }
+    ]
+  }
+]

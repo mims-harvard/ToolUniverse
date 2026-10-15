@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def ProteomicsDB_get_peptides_for_protein(
-    operation: str,
     uniprot_id: str,
+    operation: Optional[str] = "get_peptides_for_protein",
     max_results: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

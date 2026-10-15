@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def BVBRC_search_epitopes(
-    taxon_id: Optional[str | Any] = None,
-    protein_name: Optional[str | Any] = None,
-    epitope_type: Optional[str | Any] = None,
-    organism: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    taxon_id: Optional[str] = None,
+    protein_name: Optional[str] = None,
+    epitope_type: Optional[str] = None,
+    organism: Optional[str] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,15 +24,15 @@ def BVBRC_search_epitopes(
 
     Parameters
     ----------
-    taxon_id : str | Any
+    taxon_id : str
         NCBI Taxonomy ID for the pathogen organism. Examples: '2697049' (SARS-CoV-2),...
-    protein_name : str | Any
+    protein_name : str
         Target protein name to filter epitopes. Examples: 'Spike glycoprotein', 'Nucl...
-    epitope_type : str | Any
+    epitope_type : str
         Type of epitope. Options: 'Linear peptide', 'Discontinuous peptide'. Most epi...
-    organism : str | Any
+    organism : str
         Organism name keyword to search across epitope records. Example: 'coronavirus...
-    limit : int | Any
+    limit : int
         Maximum number of results. Default: 25. Max: 100.
     stream_callback : Callable, optional
         Callback for streaming output

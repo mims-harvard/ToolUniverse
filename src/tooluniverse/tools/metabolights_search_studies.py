@@ -1,7 +1,7 @@
 """
 metabolights_search_studies
 
-List MetaboLights study IDs. NOTE: The MetaboLights API does not support keyword filtering — the ...
+Keyword-search MetaboLights studies and return the matching study accessions (MTBLS###). Searches...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def metabolights_search_studies(
     validate: bool = True,
 ) -> list[Any]:
     """
-    List MetaboLights study IDs. NOTE: The MetaboLights API does not support keyword filtering — the ...
+    Keyword-search MetaboLights studies and return the matching study accessions (MTBLS###). Searches...
 
     Parameters
     ----------

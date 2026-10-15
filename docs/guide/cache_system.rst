@@ -43,6 +43,11 @@ Overview
   code and parameter schema. When either changes, the cache key changes and old
   entries are ignored.
 
+Error results are not stored. A result that reports an error, such as
+``{"status": "error", ...}``, is returned to the caller but not cached, so the
+next call with the same arguments runs the tool again instead of replaying a
+timeout or a rate limit response.
+
 Quick Start
 -----------
 

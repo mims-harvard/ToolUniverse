@@ -5,6 +5,21 @@ description: Set up, launch, validate, and troubleshoot the immune COMPASS ToolU
 
 # Set up immune COMPASS as a remote tool
 
+> **Sharing this model for a user, not developing it?** Follow the `tooluniverse-share-computer` guide; no ToolUniverse source checkout is needed. The model runs in its own Python environment, with its dependencies:
+>
+> ```bash
+> ~/.local/bin/uv venv --python 3.12 ~/.tooluniverse/envs/immune-compass
+> curl -fsSL -o ~/.tooluniverse/envs/immune-compass-tooluniverse.txt https://connect.aiscientist.tools/install-requirements.txt
+> curl -fsSL -o ~/.tooluniverse/envs/immune-compass-requirements.txt https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/src/tooluniverse/remote/immune_compass/requirements.txt
+> ~/.local/bin/uv pip install --python ~/.tooluniverse/envs/immune-compass/bin/python -r ~/.tooluniverse/envs/immune-compass-tooluniverse.txt -r ~/.tooluniverse/envs/immune-compass-requirements.txt
+> ~/.local/bin/tu remote check immune-compass --python ~/.tooluniverse/envs/immune-compass/bin/python   # lists anything still missing
+> ~/.local/bin/tu serve --allow immune-compass --python ~/.tooluniverse/envs/immune-compass/bin/python --share --detach --name "<computer name>" --service https://tooluniverse-backend.onrender.com
+> ```
+>
+> If the check reports a missing environment variable (a data folder, a model cache, a provider key), set it in the same shell before `tu serve`; "Obtain credentials, data, and model weights" below says what each one is. The model reads only the variables it declares.
+>
+> The rest of this guide is for developers working from the ToolUniverse source, and for diagnosing problems with this model.
+
 > Validation status (2026-08-16): working CPU deployment. The live MCP call ran the official all-cohort COMPASS checkpoint, converted to safetensors plus data-only preprocessing, on the official GIDE sample. In the pinned `torch==2.10.0` environment, the safe artifact and upstream checkpoint had zero difference in both class probabilities and all 44 concept scores. This is execution-equivalence evidence, not a clinical-accuracy benchmark. Authenticated private Platform import and owner testing passed on 2026-08-16; public publication and independent-caller authorization/isolation remain untested.
 
 ## Prerequisites

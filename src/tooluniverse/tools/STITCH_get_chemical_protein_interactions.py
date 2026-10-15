@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def STITCH_get_chemical_protein_interactions(
-    identifiers: Optional[list[str]] = None,
+    identifiers: Optional[list[str] | str] = None,
     chemical: Optional[str] = None,
     species: Optional[int] = 9606,
     required_score: Optional[int] = 400,
@@ -24,7 +24,7 @@ def STITCH_get_chemical_protein_interactions(
 
     Parameters
     ----------
-    identifiers : list[str]
+    identifiers : list[str] | str
         Chemical names, drug names, or STITCH IDs (e.g., ['aspirin', 'ibuprofen'] or ...
     chemical : str
         Single chemical name or STITCH ID (alias for identifiers, e.g., 'aspirin' or ...

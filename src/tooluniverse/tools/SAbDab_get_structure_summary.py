@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def SAbDab_get_structure_summary(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_structure_summary",
     pdb_id: Optional[str] = None,
     pdb_code: Optional[str] = None,
     pdb: Optional[str] = None,
@@ -17,7 +17,7 @@ def SAbDab_get_structure_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get per-structure curated antibody annotations from SAbDab for a PDB ID. Returns the SAbDab summa...
 
@@ -40,7 +40,7 @@ def SAbDab_get_structure_summary(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -124,10 +124,10 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
-          "default": "json"
+          "default": "json",
+          "description": "Response format. Only 'json' is produced by this endpoint."
         }
       },
       "required": [
@@ -167,10 +167,10 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
-          "default": "json"
+          "default": "json",
+          "description": "Response format. Only 'json' is produced by this endpoint."
         }
       },
       "required": [
@@ -238,10 +238,10 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
-          "default": "json"
+          "default": "json",
+          "description": "Response format. Only 'json' is produced by this endpoint."
         },
         "protein_name": {
           "type": "string",
@@ -309,10 +309,10 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
-          "default": "json"
+          "default": "json",
+          "description": "Response format. Only 'json' is produced by this endpoint."
         }
       },
       "required": [
@@ -364,10 +364,10 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
-          "default": "json"
+          "default": "json",
+          "description": "Response format. Only 'json' is produced by this endpoint."
         }
       },
       "required": [
@@ -407,10 +407,10 @@
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
-          "default": "json"
+          "default": "json",
+          "description": "Response format. Only 'json' is produced by this endpoint."
         }
       },
       "required": [

@@ -17,7 +17,7 @@ def cdc_data_search_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Search for datasets on Data.CDC.gov (CDC's Socrata-based open data portal). Returns a list of ava...
 
@@ -26,7 +26,7 @@ def cdc_data_search_datasets(
     search_query : str
         Search term to find datasets (e.g., 'mortality', 'vaccination', 'covid')
     category : str
-        Optional category filter (e.g., 'Health', 'Public Safety')
+        Optional exact data.cdc.gov category name (e.g., 'National Center for Health ...
     limit : int
         Maximum number of datasets to return (default: 50, max: 1000)
     offset : int
@@ -40,7 +40,7 @@ def cdc_data_search_datasets(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

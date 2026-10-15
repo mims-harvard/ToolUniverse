@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def CoL_get_children(
     parentId: str,
-    limit: Optional[int | Any] = None,
-    offset: Optional[int | Any] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def CoL_get_children(
     ----------
     parentId : str
         CoL ID of the parent taxon whose children to retrieve (e.g., '636X2' for genu...
-    limit : int | Any
+    limit : int
         Maximum number of children to return (default 10, max 1000)
-    offset : int | Any
+    offset : int
         Offset for pagination
     stream_callback : Callable, optional
         Callback for streaming output

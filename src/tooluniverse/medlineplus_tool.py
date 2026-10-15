@@ -1,12 +1,17 @@
 # medlineplus_tool.py
 
+import difflib
+import functools
 import re
+import unicodedata
+import xml.etree.ElementTree as ET
 from typing import Any, Dict, Optional
 
 import requests
 import xmltodict
 
 from .base_tool import BaseTool
+from .http_utils import upstream_reason_suffix
 from .logging_config import get_logger
 from .tool_registry import register_tool
 
@@ -29,6 +34,53 @@ _HIGHLIGHT_SPAN_RE = re.compile(r"</?span[^>]*>")
 # terms. The values stay accepted so existing callers keep working; they just
 # now get an explanation instead of a generic "no results".
 _SERVED_SEARCH_DBS = ("healthTopics", "healthTopicsSpanish")
+
+# The genetics endpoints take a page slug ("alport-syndrome", "brca1"), not a
+# name: "Alport syndrome" 404s although the page exists. MedlinePlus publishes
+# every condition and gene page, with its title and other names, in one index
+# (about 1,300 conditions and 1,500 genes, 0.8 MB), so a name can be resolved
+# to its page, and a name with no page answered with the closest names.
+_GENETICS_INDEX_URL = "https://medlineplus.gov/download/TopicIndex.xml"
+_GENETICS_TOOLS = {
+    "MedlinePlus_get_genetics_condition_by_name": "condition",
+    "MedlinePlus_get_genetics_gene_by_name": "gene",
+}
+
+
+def _name_key(text: str) -> str:
+    """Case-, accent- and punctuation-insensitive form of a page name."""
+    text = unicodedata.normalize("NFKD", str(text))
+    text = "".join(ch for ch in text if not unicodedata.combining(ch)).lower()
+    text = re.sub(r"'s\b", "", text)
+    return " ".join(re.sub(r"[^0-9a-z]+", " ", text).split())
+
+
+@functools.lru_cache(maxsize=1)
+def _genetics_pages() -> Dict[str, Dict[str, Any]]:
+    """{kind: {"slugs": {slug: title}, "names": {name_key: slug}}} from the
+    MedlinePlus Genetics index. A failed download raises (and is not cached)."""
+    response = requests.get(_GENETICS_INDEX_URL, timeout=30)
+    response.raise_for_status()
+    root = ET.fromstring(response.content)
+    pages = {kind: {"slugs": {}, "names": {}} for kind in ("condition", "gene")}
+    for topic in root.iter("topic"):
+        match = re.search(
+            r"/genetics/(condition|gene)/([^/]+)/?$", topic.findtext("url") or ""
+        )
+        if not match:
+            continue
+        kind, slug = match.groups()
+        title = (topic.findtext("title") or "").strip()
+        names = [title] + [o.text or "" for o in topic.iter("other_name")]
+        if kind == "gene" and ":" in title:
+            # "AAAS: aladin WD repeat nucleoporin" -> the symbol and the full name
+            names += [part.strip() for part in title.split(":", 1)]
+        pages[kind]["slugs"][slug] = title
+        for name in names:
+            key = _name_key(name)
+            if key:
+                pages[kind]["names"].setdefault(key, slug)
+    return pages
 
 
 @register_tool("MedlinePlusRESTTool")
@@ -476,12 +528,74 @@ class MedlinePlusRESTTool(BaseTool):
 
         return {"raw_response": response}
 
+    @staticmethod
+    def _resolve_genetics_page(kind: str, value: str):
+        """``(slug, resolved_note)`` for a condition or gene name or slug, or
+        an error dict naming the closest pages when MedlinePlus has none."""
+        text = str(value).strip()
+        try:
+            pages = _genetics_pages()[kind]
+        except (requests.RequestException, ET.ParseError, TypeError, ValueError) as exc:
+            # unreachable, or not the XML index
+            logger.debug("MedlinePlus genetics index unavailable: %s", exc)
+            # Without the index, the best guess is the slug form of the name.
+            return "-".join(_name_key(text).split()), None
+        if text.lower() in pages["slugs"]:
+            return text.lower(), None
+        key = _name_key(text)
+        slug = pages["names"].get(key)
+        if slug is not None:
+            return slug, {"query": text, "page": pages["slugs"][slug]}
+        containing = [
+            pages["slugs"][s]
+            for name, s in pages["names"].items()
+            if key and f" {key} " in f" {name} "
+        ]
+        close = [
+            pages["slugs"][pages["names"][name]]
+            for name in difflib.get_close_matches(
+                key, list(pages["names"]), n=5, cutoff=0.75
+            )
+        ]
+        suggestions = list(dict.fromkeys(close + containing))[:8]
+        if suggestions:
+            hint = (
+                "Call again with one of the suggested names; "
+                "MedlinePlus_get_genetics_index lists every page."
+            )
+        else:
+            hint = (
+                "MedlinePlus Genetics covers about 1,300 genetic conditions and "
+                "1,500 genes; this one is not among them."
+            )
+        if kind == "condition":
+            # Agents ask the genetics endpoint for common diseases too.
+            hint += (
+                " For a condition that is not a genetic disorder, "
+                "MedlinePlus_search_topics_by_keyword searches MedlinePlus's "
+                "general health topics."
+            )
+        return None, {
+            "status": "error",
+            "error": f"MedlinePlus Genetics has no {kind} page named '{text}'.",
+            "suggestions": suggestions,
+            "hint": hint,
+        }
+
     def run(self, arguments: dict):
         """Execute tool call"""
         # Apply default values for optional parameters
         for key, prop in self.param_schema.items():
             if key not in arguments and "default" in prop:
                 arguments[key] = prop["default"]
+
+        resolved = None
+        kind = _GENETICS_TOOLS.get(self.tool_config.get("name"))
+        if kind and arguments.get(kind):
+            slug, resolved = self._resolve_genetics_page(kind, arguments[kind])
+            if slug is None:
+                return resolved
+            arguments = dict(arguments, **{kind: slug})
 
         # Build URL
         url = self._build_url(arguments)
@@ -500,8 +614,8 @@ class MedlinePlusRESTTool(BaseTool):
             if resp.status_code != 200:
                 return {
                     "status": "error",
-                    "error": f"MedlinePlus returned non-200 status code: {resp.status_code}",
-                    "detail": resp.text,
+                    "error": f"MedlinePlus returned non-200 status code: "
+                    f"{resp.status_code}{upstream_reason_suffix(resp)}",
                 }
 
             logger.debug(
@@ -550,7 +664,10 @@ class MedlinePlusRESTTool(BaseTool):
             if isinstance(response, dict):
                 logger.debug("Top-level dictionary keys: %s", list(response.keys()))
 
-            return self._format_response(response, tool_name, arguments)
+            result = self._format_response(response, tool_name, arguments)
+            if resolved and isinstance(result, dict):
+                result["resolved_name"] = resolved
+            return result
 
         except requests.RequestException as e:
             return {

@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def Figshare_search_articles(
     search_for: str,
-    item_type: Optional[int | Any] = None,
-    page_size: Optional[int | Any] = None,
-    published_since: Optional[str | Any] = None,
+    item_type: Optional[int] = None,
+    page_size: Optional[int] = None,
+    published_since: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def Figshare_search_articles(
     ----------
     search_for : str
         Keyword search query (e.g., 'CRISPR knockout RNA-seq', 'protein structure cry...
-    item_type : int | Any
+    item_type : int
         Filter by item type: 3=dataset, 2=media, 1=figure, 9=code, 7=thesis, 6=book, ...
-    page_size : int | Any
+    page_size : int
         Number of results (default 10, max 1000)
-    published_since : str | Any
+    published_since : str
         Filter to articles published after this date in format 'YYYY-MM-DD' (e.g., '2...
     stream_callback : Callable, optional
         Callback for streaming output

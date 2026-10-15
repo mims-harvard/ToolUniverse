@@ -1,0 +1,21 @@
+{
+  "api_name": "NCI Resources for Researchers (R4R) API",
+  "base_url": "https://webapis.cancer.gov/r4r/v1/resources",
+  "failure_mode": "HTTP 404 on every path, including the API root",
+  "root_cause": "NCI withdrew the Resources for Researchers API. /r4r/v1/resources, /r4r/v2/resources and /r4r/ itself all answer 404, and so does the cancer.gov page that documented it (https://www.cancer.gov/research/infrastructure/cancer-research-resources). The host is not the problem: https://webapis.cancer.gov/ answers 200, and the sibling NCI Drug Dictionary tools on https://webapis.cancer.gov/drugdictionary/v1/ still pass, so only this dataset's API was removed.",
+  "confirmed_broken_date": "2026-10-03",
+  "last_retry_date": "2026-10-03",
+  "retry_count": 3,
+  "github_issues": [],
+  "retry_after": "2027-04-01",
+  "workaround": "No ToolUniverse tool replaces it: NCI publishes no successor JSON API for this catalogue. The adjacent NCI data that is still served is the Drug Dictionary, used by NCI_get_drug_by_name and NCI_expand_drugs_by_letter. For trials, clinicaltrialsapi.cancer.gov is live but now requires an API key (it answers 401 without one), and ClinicalTrials.gov's own API remains open and is covered by the clinicaltrials_gov tools.",
+  "workaround_tool_file": "src/tooluniverse/data/clinical_guidelines_tools.json",
+  "investigation_notes": [
+    "Surfaced by the weekly tool health check as 'NCI_search_cancer_resources API error'; the status code in the payload was 404 and the body an HTML error page.",
+    "Three consecutive calls with the shipped examples returned 404 (2026-10-03).",
+    "Probed /r4r/v1/resources, /r4r/v2/resources, /r4r/resources and /r4r/ -- all 404.",
+    "Control: https://webapis.cancer.gov/ returns 200, so the host is up and the path is gone.",
+    "The documentation page on cancer.gov also 404s, so this is a withdrawal rather than a move."
+  ],
+  "attempted_config_file": "src/tooluniverse/data/broken_apis/nci_r4r_tools.json"
+}

@@ -14,6 +14,7 @@ import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 ENSEMBL_BASE_URL = "https://rest.ensembl.org"
 ENSEMBL_HEADERS = {"User-Agent": "ToolUniverse/1.0", "Accept": "application/json"}
@@ -55,7 +56,7 @@ class EnsemblVEPTool(BaseTool):
         except requests.exceptions.HTTPError as e:
             return {
                 "status": "error",
-                "error": f"Ensembl API HTTP error: {e.response.status_code} - {e.response.text[:200]}",
+                "error": f"Ensembl API HTTP error: {e.response.status_code}{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {

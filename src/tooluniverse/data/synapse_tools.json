@@ -1,0 +1,350 @@
+[
+  {
+    "type": "SynapseTool",
+    "name": "Synapse_search_entities",
+    "fields": {
+      "operation": "search"
+    },
+    "description": "Search public Synapse.org (Sage Bionetworks) content by keyword: projects, folders, files, tables and datasets shared by consortia such as AD Knowledge Portal, NF-OSI, PsychENCODE, HTAN and DREAM challenges. Returns id (synNNN), name, type, a description excerpt and dates for each hit, plus the total number of matches. Anonymous and read-only: only public entities are searchable and no file contents are downloaded. Follow up with Synapse_get_entity for metadata/annotations and Synapse_list_children to browse a project.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search words, e.g. 'alzheimer proteomics' (all words are matched)"
+        },
+        "node_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Restrict to one entity type: project, folder, file, table, dataset"
+        },
+        "size": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Hits per page (1-100, default 10)",
+          "default": 10
+        },
+        "start": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset of the first hit, for paging (default 0)",
+          "default": 0
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Matching Synapse entities",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "node_type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_on": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "modified_on": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_by": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "query": "breast cancer",
+        "node_type": "project",
+        "size": 3
+      },
+      {
+        "query": "alzheimer proteomics",
+        "size": 5
+      }
+    ],
+    "label": [
+      "Synapse",
+      "Sage Bionetworks",
+      "Data discovery"
+    ],
+    "metadata": {
+      "tags": [
+        "dataset",
+        "search",
+        "consortium",
+        "biomedical"
+      ],
+      "estimated_execution_time": "1-3 seconds"
+    }
+  },
+  {
+    "type": "SynapseTool",
+    "name": "Synapse_get_entity",
+    "fields": {
+      "operation": "get_entity"
+    },
+    "description": "Get metadata and annotations of one public Synapse entity by its Synapse ID (e.g. syn22364283): name, type (Project, Folder, File, Table, Dataset), description, parent, creation/modification dates, version, and the annotation key/value pairs curators attached (assay, species, disease, tissue, consortium ...). Restricted or private entities return a clear 'not public' error; nothing is downloaded and no login is used.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "description": "Synapse ID, e.g. 'syn22364283'"
+        }
+      },
+      "required": [
+        "entity_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "parent_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "created_on": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "modified_on": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "created_by": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "version_number": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "version_label": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "data_file_handle_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "annotations": {
+          "type": "object"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "entity_id": "syn22364283"
+      },
+      {
+        "entity_id": "syn22364365"
+      }
+    ],
+    "label": [
+      "Synapse",
+      "Sage Bionetworks",
+      "Metadata"
+    ],
+    "metadata": {
+      "tags": [
+        "dataset",
+        "metadata",
+        "annotations"
+      ],
+      "estimated_execution_time": "1-2 seconds"
+    }
+  },
+  {
+    "type": "SynapseTool",
+    "name": "Synapse_list_children",
+    "fields": {
+      "operation": "list_children"
+    },
+    "description": "List what a public Synapse project or folder contains: the child folders, files, tables and datasets with their Synapse IDs, names, types, versions and dates. Paged: when metadata.next_page_token is set, pass it back as next_page_token for the next page. Restricted containers return a clear 'not public' error.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "description": "Synapse ID of a project or folder, e.g. 'syn22364283'"
+        },
+        "include_types": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "project",
+              "folder",
+              "file",
+              "table",
+              "link",
+              "entityview",
+              "dockerrepo",
+              "submissionview",
+              "dataset",
+              "datasetcollection",
+              "materializedview",
+              "virtualtable"
+            ]
+          },
+          "description": "Child types to list (default: folder, file, table, dataset)"
+        },
+        "next_page_token": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Token from the previous page's metadata.next_page_token"
+        }
+      },
+      "required": [
+        "entity_id"
+      ]
+    },
+    "return_schema": {
+      "type": "array",
+      "description": "Child entities",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "type": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "version_number": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "created_on": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "modified_on": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "created_by": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "entity_id": "syn22364283"
+      }
+    ],
+    "label": [
+      "Synapse",
+      "Sage Bionetworks",
+      "Browse"
+    ],
+    "metadata": {
+      "tags": [
+        "dataset",
+        "browse",
+        "files"
+      ],
+      "estimated_execution_time": "1-2 seconds"
+    }
+  }
+]

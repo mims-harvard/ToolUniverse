@@ -13,7 +13,7 @@ def DGIdb_get_drug_gene_interactions(
     gene_name: Optional[str] = None,
     gene: Optional[str] = None,
     interaction_sources: Optional[list[str]] = None,
-    interaction_types: Optional[list[str]] = None,
+    interaction_types: Optional[list[str] | str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -32,7 +32,7 @@ def DGIdb_get_drug_gene_interactions(
         Alias for genes. Single gene symbol (e.g., 'EGFR').
     interaction_sources : list[str]
         Optional filter by data sources (e.g., ['DrugBank', 'ChEMBL']).
-    interaction_types : list[str]
+    interaction_types : list[str] | str
         Optional filter by interaction types (e.g., ['inhibitor', 'antagonist']).
     stream_callback : Callable, optional
         Callback for streaming output

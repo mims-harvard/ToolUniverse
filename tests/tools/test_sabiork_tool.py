@@ -47,6 +47,21 @@ SBML_XML = """<?xml version='1.0' encoding='UTF-8'?>
 </sbml>"""
 
 
+def _param(name, value, unit, value_si, unit_si, species=None):
+    species_ref = {"species_ref_type": "species"}
+    if species:
+        species_ref["species_key"] = f"1 | {species} | Substrate"
+    return {
+        "name": name,
+        "role": "Constant",
+        "parameter_type": {"name": name},
+        "species": species_ref,
+        "start_value": value,
+        "unit": {"name": unit, "n_name": unit_si},
+        "n_start_value": value_si,
+    }
+
+
 class TestSABIORKToolDirect:
     @pytest.fixture
     def tool_config(self):
@@ -89,11 +104,21 @@ class TestSABIORKToolDirect:
                         "EnzymeName": ["alcohol dehydrogenase"],
                         "Substrate": ["Ethanol"],
                         "Product": ["Acetaldehyde"],
-                        "Parameter": [
-                            {"type": "kcat", "value": 4.916667, "unit": "s^{-1}"},
-                            {"type": "Km", "value": 0.0041, "unit": "M"},
-                            {"type": "Ki", "value": 4.3e-7, "unit": "M"},
-                        ],
+                        # The index has no "Parameter" field; the constants
+                        # are inside the "Json" string (shape checked live).
+                        "Json": json.dumps(
+                            {
+                                "kineticlaw": {
+                                    "parameter": [
+                                        _param(
+                                            "kcat", 295.0, "s^(-1)", 295.0, "s^(-1)"
+                                        ),
+                                        _param("Km", 4.1, "mM", 0.0041, "M", "Ethanol"),
+                                        _param("Ki", 0.43, "uM", 4.3e-7, "M"),
+                                    ]
+                                }
+                            }
+                        ),
                     }
                 ],
             }

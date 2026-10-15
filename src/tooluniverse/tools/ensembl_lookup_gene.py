@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def ensembl_lookup_gene(
     gene_id: str,
-    species: Optional[str] = None,
+    species: Optional[str] = "homo_sapiens",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

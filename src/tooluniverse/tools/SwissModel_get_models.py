@@ -1,7 +1,7 @@
 """
 SwissModel_get_models
 
-Get all available protein homology models from SWISS-MODEL Repository for a UniProt accession. Re...
+Get protein structure models from SWISS-MODEL Repository for a UniProt accession. Returns pre-com...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,27 @@ from ._shared_client import get_shared_client
 
 def SwissModel_get_models(
     uniprot_id: str,
+    range: Optional[str] = None,
+    provider: Optional[str] = None,
+    template: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get all available protein homology models from SWISS-MODEL Repository for a UniProt accession. Re...
+    Get protein structure models from SWISS-MODEL Repository for a UniProt accession. Returns pre-com...
 
     Parameters
     ----------
     uniprot_id : str
         UniProt accession identifier. Examples: 'P04637' (human p53), 'P00533' (human...
+    range : str
+        Optional residue range filter; only models covering this range are returned. ...
+    provider : str
+        Optional model-provider filter. 'swissmodel' returns only SWISS-MODEL homolog...
+    template : str
+        Optional template filter; restrict results to models built from this template...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +45,16 @@ def SwissModel_get_models(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"uniprot_id": uniprot_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "uniprot_id": uniprot_id,
+            "range": range,
+            "provider": provider,
+            "template": template,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "SwissModel_get_models",

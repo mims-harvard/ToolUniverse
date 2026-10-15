@@ -66,4 +66,7 @@ class WikidataSPARQLTool(BaseTool):
             for k, v in b.items():
                 row[k] = v.get("value")
             normalized.append(row)
+        if max_results:
+            # A LIMIT already in the query would otherwise win over max_results.
+            normalized = normalized[: max(1, int(max_results))]
         return normalized

@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def Enamine_get_libraries(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_libraries",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

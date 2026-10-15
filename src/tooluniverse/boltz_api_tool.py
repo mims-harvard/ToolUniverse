@@ -120,7 +120,7 @@ class BoltzAPITool(BaseTool):
         if self._client is not None:
             return self._client
 
-        api_key = os.environ.get("BOLTZ_API_KEY")
+        api_key = self.credential("BOLTZ_API_KEY")
         if not api_key:
             raise RuntimeError(
                 "BOLTZ_API_KEY is required. Create a workspace or test key in "

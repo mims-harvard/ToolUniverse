@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def EnsemblPheno_get_by_region(
     region: str,
     species: Optional[str] = "homo_sapiens",
-    feature_type: Optional[str | Any] = None,
+    feature_type: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def EnsemblPheno_get_by_region(
         Species name. Use 'homo_sapiens' for human. Default: 'homo_sapiens'.
     region : str
         Genomic region in format 'chromosome:start-end'. Example: '17:7661779-7687538...
-    feature_type : str | Any
+    feature_type : str
         Filter by feature type: 'Variation' (variants only), 'Gene' (genes only), 'QT...
     stream_callback : Callable, optional
         Callback for streaming output

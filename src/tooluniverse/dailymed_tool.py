@@ -5,6 +5,7 @@ import requests
 from typing import Dict, Any, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 try:
     from lxml import etree
@@ -379,7 +380,7 @@ class DailyMedSPLParserTool(BaseTool):
         elif resp.status_code != 200:
             return {
                 "status": "error",
-                "error": f"HTTP {resp.status_code}: {resp.text[:200]}",
+                "error": f"HTTP {resp.status_code}{upstream_reason_suffix(resp)}",
             }
 
         return {"status": "success", "xml": resp.text}

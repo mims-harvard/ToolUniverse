@@ -22,7 +22,7 @@ def LiteratureContextReviewer(
     Parameters
     ----------
     paper_title : str
-
+        Title of the paper under review
     literature_review : str
         Full literature-review text
     stream_callback : Callable, optional

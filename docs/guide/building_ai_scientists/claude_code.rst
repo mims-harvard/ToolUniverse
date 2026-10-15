@@ -103,7 +103,7 @@ What you get
      - What it does
      - How to invoke
    * - **MCP server**
-     - 1000+ scientific tools via ``find_tools``, ``get_tool_info``, ``execute_tool``
+     - 2,700+ scientific tools via ``find_tools``, ``get_tool_info``, ``execute_tool``
      - Auto-loaded; no action needed
    * - **Slash commands**
      - Discipline-enforcing prompts for common research tasks

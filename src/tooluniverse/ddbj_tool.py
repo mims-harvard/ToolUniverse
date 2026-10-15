@@ -93,6 +93,40 @@ def _organism(value: Any) -> Dict[str, Any]:
     return {"name": None, "taxonomy_id": None}
 
 
+def _bioproject_organism(raw: Dict[str, Any]) -> Dict[str, Any]:
+    """BioProject records leave the top-level organism null.
+
+    The organism sits in the submitted project XML instead, under
+    properties.Project.Project.ProjectType.<ProjectTypeSubmission>.Target.Organism
+    or, for umbrella projects, <ProjectTypeTopAdmin>.Organism, as
+    {taxID, OrganismName}. Multispecies projects carry none.
+    """
+    try:
+        project_type = raw["properties"]["Project"]["Project"]["ProjectType"]
+    except (KeyError, TypeError):
+        return {"name": None, "taxonomy_id": None}
+    for kind in project_type.values() if isinstance(project_type, dict) else []:
+        if not isinstance(kind, dict):
+            continue
+        target = kind.get("Target")
+        for holder in (target, kind):
+            organism = holder.get("Organism") if isinstance(holder, dict) else None
+            if isinstance(organism, dict) and organism.get("OrganismName"):
+                return {
+                    "name": organism["OrganismName"],
+                    "taxonomy_id": organism.get("taxID"),
+                }
+    return {"name": None, "taxonomy_id": None}
+
+
+def _record_organism(raw: Dict[str, Any]) -> Dict[str, Any]:
+    """Top-level organism when DDBJ fills it, else the BioProject XML's."""
+    organism = _organism(raw.get("organism"))
+    if organism["name"] is None:
+        return _bioproject_organism(raw)
+    return organism
+
+
 def _summarize_xrefs(xrefs: Any, limit: int = 25) -> List[Dict[str, Any]]:
     """Trim cross-references, which can run to thousands of runs per study."""
     items = xrefs if isinstance(xrefs, list) else []
@@ -208,6 +242,7 @@ class DDBJTool(BaseTool):
 
         raw = fetched["raw"]
         entry_type = fetched["entry_type"]
+        organism = _record_organism(raw)
 
         return {
             "status": "success",
@@ -216,8 +251,8 @@ class DDBJTool(BaseTool):
                 "type": raw.get("type") or entry_type,
                 "title": raw.get("title"),
                 "description": raw.get("description"),
-                "organism": _organism(raw.get("organism"))["name"],
-                "taxonomy_id": _organism(raw.get("organism"))["taxonomy_id"],
+                "organism": organism["name"],
+                "taxonomy_id": organism["taxonomy_id"],
                 "organization": _organizations(raw.get("organization")),
                 "status_field": raw.get("status"),
                 "accessibility": raw.get("accessibility"),
@@ -338,7 +373,7 @@ class DDBJTool(BaseTool):
                 "identifier": item.get("identifier"),
                 "title": item.get("title"),
                 "description": item.get("description"),
-                "organism": _organism(item.get("organism"))["name"],
+                "organism": _record_organism(item)["name"],
                 "accessibility": item.get("accessibility"),
                 "date_published": item.get("datePublished"),
             }
@@ -354,8 +389,7 @@ class DDBJTool(BaseTool):
                 "organism_taxid": organism or None,
                 "total_matching": (payload.get("pagination") or {}).get("total"),
                 "returned": len(rows),
-                "note": "identifier is what get_entry and "
-                "get_cross_references expect.",
+                "note": "identifier is what get_entry and get_cross_references expect.",
                 "source": "DNA Data Bank of Japan (DDBJ), INSDC member",
             },
         }

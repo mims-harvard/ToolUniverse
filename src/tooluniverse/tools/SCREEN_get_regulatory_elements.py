@@ -17,7 +17,7 @@ def SCREEN_get_regulatory_elements(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get candidate cis-regulatory elements (cCREs) from SCREEN database for specific genomic regions
 
@@ -40,7 +40,7 @@ def SCREEN_get_regulatory_elements(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -13,7 +13,7 @@ AI-guided de novo protein design using RFdiffusion backbone generation, ProteinM
 2. **Target-guided** - Design binders with target structure in mind
 3. **Iterative validation** - Predict structure to validate designs
 4. **Developability-aware** - Consider aggregation, immunogenicity, expression
-5. **Evidence-graded** - Grade designs by confidence metrics
+5. **Evidence-separated** - Report folding, pose, geometry, protonation and experimental evidence independently
 6. **Actionable output** - Provide sequences ready for experimental testing
 7. **English-first queries** - Always use English terms in tool calls
 
@@ -63,13 +63,19 @@ Phase 6: Report Synthesis
 
 ## Critical Requirements
 
+For iterative campaigns, conflicting predictions, glycosylated receptor checks,
+conditional pH binding, or competition preparation, use
+[Protein Design Campaign](../tooluniverse-protein-design-campaign/SKILL.md)
+alongside this workflow. Verify installed tool schemas before executing examples;
+model confidence and successful execution do not establish binding.
+
 ### Report-First Approach (MANDATORY)
 1. Create `[TARGET]_protein_design_report.md` first with section headers
 2. Progressively update as designs are generated
 3. Output `[TARGET]_designed_sequences.fasta` and `[TARGET]_top_candidates.csv`
 
 ### Design Documentation (MANDATORY)
-Every design MUST include: Sequence, Length, Target, Method, and Quality Metrics (pLDDT, pTM, MPNN score, binding prediction).
+Every design MUST include: Sequence, Length, Target, Method, and available Quality Metrics (pLDDT, pTM, MPNN score, binding prediction). Mark unavailable metrics unmeasured or uncomputed; do not fabricate binding predictions or experimental values.
 
 ---
 
@@ -113,11 +119,16 @@ Every design MUST include: Sequence, Length, Target, Method, and Quality Metrics
 
 ---
 
-## Evidence Grading
+## Folding and Developability Screening
+
+These are illustrative computational screening tiers, not binding-evidence grades
+or calibrated success probabilities. Benchmark screening with appropriate controls.
+Monomer pLDDT/pTM cannot establish a complex pose, affinity, cross-species binding
+or pH selectivity. Report those dimensions separately, including missing evidence.
 
 | Tier | Criteria |
 |------|----------|
-| T1 (best) | pLDDT >85, pTM >0.8, low aggregation, neutral pI |
+| T1 (strongest in this screen) | pLDDT >85, pTM >0.8, low aggregation, neutral pI |
 | T2 | pLDDT >75, pTM >0.7, acceptable developability |
 | T3 | pLDDT >70, pTM >0.65, developability concerns |
 | T4 | Failed validation or major developability issues |

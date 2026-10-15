@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def GTDB_get_species(
-    operation: str,
     species: str,
+    operation: Optional[str] = "get_species",
     max_genomes: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

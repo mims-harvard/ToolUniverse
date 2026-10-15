@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def KEGG_search_disease(
     keyword: Optional[str] = None,
     max_results: Optional[int] = 25,
-    query: Optional[str | Any] = None,
+    query: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def KEGG_search_disease(
         Search keyword for disease name (e.g., 'leukemia', 'diabetes', 'breast cancer...
     max_results : int
         Maximum number of results to return (default: 25).
-    query : str | Any
+    query : str
         Alias for keyword: search keyword for disease name (e.g., 'diabetes', 'leukem...
     stream_callback : Callable, optional
         Callback for streaming output

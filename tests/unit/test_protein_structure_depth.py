@@ -334,20 +334,25 @@ class TestProteinsPlusProtonate(unittest.TestCase):
         self.assertEqual(body, {"protoss": {"pdbCode": "1cbs"}})
 
     def test_transform_params_pdb_content(self):
-        """Raw PDB content maps to protoss.pdbData (not pdbCode)."""
+        """Custom PDB content must be uploaded before the ProtoSS request."""
         tool = _protoss_tool()
-        body = tool._transform_params({"pdb_content": "HEADER ...\nATOM ..."})
-        self.assertIn("protoss", body)
-        self.assertEqual(body["protoss"]["pdbData"], "HEADER ...\nATOM ...")
-        self.assertNotIn("pdbCode", body["protoss"])
+        content = "HEADER ...\nATOM  ..."
+        with patch.object(tool, "_upload_pdb", return_value="loaded-id") as upload:
+            prepared = tool._prepare_protoss({"pdb_content": content})
+        upload.assert_called_once_with(content)
+        self.assertEqual(
+            tool._transform_params(prepared), {"protoss": {"pdbCode": "loaded-id"}}
+        )
 
     def test_transform_params_with_ligand(self):
-        """Optional ligand content is forwarded as protoss.ligandData."""
+        """Separate ligand data must fail before an unsupported HTTP request."""
         tool = _protoss_tool()
-        body = tool._transform_params(
-            {"pdb_content": "HEADER", "ligand_content": "LIGSDF"}
-        )
-        self.assertEqual(body["protoss"]["ligandData"], "LIGSDF")
+        with patch.object(tool, "_upload_pdb") as upload:
+            with self.assertRaisesRegex(ValueError, "include ligands in the PDB"):
+                tool._prepare_protoss(
+                    {"pdb_content": "HEADER", "ligand_content": "LIGSDF"}
+                )
+        upload.assert_not_called()
 
     def test_submit_job_returns_location(self):
         """submit_job posts the nested body and returns the job location URL."""

@@ -81,12 +81,14 @@ class TestPaperSearchTools(unittest.TestCase):
         }
         result = self.tu.run_one_function(function_call)
 
-        self.assertIsInstance(result, list)
-        if result:
-            paper = result[0]
-            if isinstance(paper, dict) and paper.get("error"):
-                print(f"Europe PMC API error (skipping): {paper.get('error')}")
-                return
+        # Standard {status, data, metadata} envelope since aa386a98.
+        if result.get("status") == "error":
+            print(f"Europe PMC API error (skipping): {result.get('error')}")
+            return
+        papers = result["data"]
+        self.assertIsInstance(papers, list)
+        if papers:
+            paper = papers[0]
             self.assertIn("title", paper)
             self.assertIn("abstract", paper)
             self.assertIn("authors", paper)
@@ -153,12 +155,11 @@ class TestPaperSearchTools(unittest.TestCase):
             print(f"PubMed API error (skipping): {result['error']}")
             return  # Skip test if API is not available
 
-        self.assertIsInstance(result, list)
-        if result:
-            paper = result[0]
-            if isinstance(paper, dict) and paper.get("error"):
-                print(f"PubMed API error (skipping): {paper.get('error')}")
-                return
+        # Standard {status, data, metadata} envelope since 1dfddff1.
+        papers = result["data"]
+        self.assertIsInstance(papers, list)
+        if papers:
+            paper = papers[0]
             self.assertIsInstance(paper, dict)
             self.assertIn("pmid", paper)
             self.assertIn("title", paper)

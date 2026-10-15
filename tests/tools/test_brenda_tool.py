@@ -113,10 +113,10 @@ class TestBRENDAGetEnzymeKinetics:
 
     @patch("tooluniverse.brenda_tool.requests.get")
     def test_sabiork_no_data(self, mock_get, tool):
-        """Test handling of SABIO-RK 'no data found' response."""
+        """An EC number SABIO-RK's Solr index has no entries for."""
         mock_resp = MagicMock()
         mock_resp.status_code = 200
-        mock_resp.text = "no data found"
+        mock_resp.json.return_value = {"response": {"numFound": 0, "docs": []}}
         mock_get.return_value = mock_resp
 
         result = tool._fetch_sabiork_kinetics("9.9.9.9")

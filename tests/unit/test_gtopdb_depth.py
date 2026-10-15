@@ -1,40 +1,60 @@
-"""Unit tests for the two GtoPdb depth tools.
+"""Error and alias paths for GtoPdb_get_ligand_properties.
 
-Covers parsing and error paths for:
-- GtoPdb_get_ligand_properties (merges /structure + /molecularProperties)
-- GtoPdb_get_disease_associations (merges /diseaseTargets + /diseaseLigands)
+This file used to mock /structure + /molecularProperties and
+/diseaseTargets + /diseaseLigands. Both pairs are gone: GtoPdb's REST service
+answers 401 everywhere, so the four surviving tools read the open bulk CSVs
+(see test_gtopdb_reads_the_open_bulk_files.py) and the two disease tools are
+retired to data/broken_apis/gtopdb_rest.json.
 
-All HTTP is mocked at request_with_retry so no network access is needed.
-The two tools issue two sequential GET calls each, so mocks use side_effect
-to return a distinct response per endpoint (in call order).
+The invariants below outlived the transport, so they are kept and pointed at
+the new implementation: both spellings of the ligand ID work, a bad or missing
+ID is an error rather than an exception, and a download failure comes back as
+an envelope because run() must never raise.
+
+The property names and numeric types are asserted against what the REST
+endpoint used to return. They match it exactly for aspirin -- every one of the
+seven values, including molecularWeight 180.0422588 and logP 1.422 -- which is
+how the repoint was shown to be lossless rather than merely green.
 """
 
-from unittest.mock import Mock, patch
+import json
+from pathlib import Path
 
-from tooluniverse.gtopdb_tool import GtoPdbRESTTool
+import pytest
+import requests
 
+import tooluniverse.gtopdb_tool as gtopdb
 
-def _make_tool(endpoint):
-    return GtoPdbRESTTool({"fields": {"endpoint": endpoint}})
+pytestmark = pytest.mark.unit
 
+DATA = Path(__file__).resolve().parents[2] / "src" / "tooluniverse" / "data"
 
-def _mock_response(status_code, payload):
-    resp = Mock()
-    resp.status_code = status_code
-    resp.json.return_value = payload
-    resp.text = str(payload)
-    return resp
-
-
-LIGAND_ENDPOINT = (
-    "https://www.guidetopharmacology.org/services/ligands/ligandProperties"
+# Aspirin, as GtoPdb publishes it in the two bulk files.
+PHYSCHEM_CSV = (
+    '"# GtoPdb Version: 2026.3 - published: 2026-09-16"\n'
+    '"Ligand ID","Ligand Name","HBond Acceptors","HBond Donors",'
+    '"Rotatable Bonds","TPSA","Mol Weight","XLogP","LipinskiRO5"\n'
+    '"4139","aspirin","3","1","3","63.6","180.0422588","1.422","0"\n'
+    '"9999","a peptide","","","","","","",""\n'
 )
-DISEASE_ENDPOINT = (
-    "https://www.guidetopharmacology.org/services/diseases/diseaseAssociations"
+LIGANDS_CSV = (
+    '"# GtoPdb Version: 2026.3 - published: 2026-09-16"\n'
+    '"Ligand ID","Name","Species","Type","Approved","Withdrawn","Labelled",'
+    '"Radioactive","PubChem SID","PubChem CID","UniProt ID","Ensembl ID",'
+    '"ChEMBL ID","Ligand Subunit IDs","Ligand Subunit Name",'
+    '"Ligand Subunit UniProt IDs","Ligand Subunit Ensembl IDs","IUPAC name",'
+    '"INN","Synonyms","SMILES","InChIKey","InChI"\n'
+    '"4139","aspirin","","Synthetic organic","yes","","","","","2244","","",'
+    '"CHEMBL25","","","","","2-acetyloxybenzoic acid","aspirin",'
+    '"acetylsalicylic acid","CC(=O)Oc1ccccc1C(=O)O",'
+    '"BSYNRYMUTXBXSQ-UHFFFAOYSA-N","InChI=1S/C9H8O4/c1-6(10)13-8-5-3-2-4-7(8)'
+    '9(11)12/h2-5H,1H3,(H,11,12)"\n'
+    '"8888","a ligand with no properties row","","Peptide","","","","","","",'
+    '"","","","","","","","","","","","",""\n'
 )
 
-# Real shapes captured live from GtoPdb (ligand 4139 = aspirin).
-ASPIRIN_PROPS = {
+# What /molecularProperties and /structure returned for ligand 4139.
+REST_PROPERTIES = {
     "hydrogenBondAcceptors": 3,
     "hydrogenBondDonors": 1,
     "rotatableBonds": 3,
@@ -43,205 +63,121 @@ ASPIRIN_PROPS = {
     "logP": 1.422,
     "lipinskisRuleOfFive": 0,
 }
-ASPIRIN_STRUCTURE = {
-    "ligandId": 4139,
-    "ligandName": "aspirin",
+REST_STRUCTURE = {
     "iupacName": "2-acetyloxybenzoic acid",
     "smiles": "CC(=O)Oc1ccccc1C(=O)O",
-    "inchi": "InChI=1S/C9H8O4/c1-6(10)13-8-5-3-2-4-7(8)9(11)12/h2-5H,1H3,(H,11,12)",
     "inchiKey": "BSYNRYMUTXBXSQ-UHFFFAOYSA-N",
 }
 
-# Disease 1161 (non-allergic asthma): one target, no ligands.
-ASTHMA_TARGETS = [
-    {
-        "targetId": 2805,
-        "disease": {"diseaseId": 1161, "name": "Non-allergic (intrinsic) asthma"},
-        "role": "",
-        "ligandTargetInteractions": [],
-    }
-]
+FIXTURES = {
+    gtopdb.PHYSCHEM_FILE: PHYSCHEM_CSV,
+    gtopdb.LIGANDS_FILE: LIGANDS_CSV,
+}
 
 
-# ---------------------------------------------------------------------------
-# GAP 1: GtoPdb_get_ligand_properties
-# ---------------------------------------------------------------------------
+class _Response:
+    status_code = 200
+
+    def __init__(self, text):
+        self.text = text
 
 
-def test_ligand_properties_merges_structure_and_properties():
-    tool = _make_tool(LIGAND_ENDPOINT)
-    # Call order in _run_ligand_properties: molecularProperties, then structure.
-    with patch(
-        "tooluniverse.gtopdb_tool.request_with_retry",
-        side_effect=[
-            _mock_response(200, ASPIRIN_PROPS),
-            _mock_response(200, ASPIRIN_STRUCTURE),
-        ],
-    ):
-        result = tool.run({"ligand_id": 4139})
+@pytest.fixture(autouse=True)
+def _recorded_bulk(monkeypatch):
+    gtopdb.clear_bulk_cache()
 
-    assert result["status"] == "success"
-    data = result["data"]
-    # Structure fields merged at top level.
-    assert data["smiles"] == "CC(=O)Oc1ccccc1C(=O)O"
-    assert data["inchiKey"] == "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
-    assert data["iupacName"] == "2-acetyloxybenzoic acid"
-    assert data["ligandName"] == "aspirin"
-    # molecularProperties nested.
-    assert data["molecularProperties"]["molecularWeight"] == 180.0422588
-    assert data["molecularProperties"]["lipinskisRuleOfFive"] == 0
-    assert "note" not in result
+    def fake_request(session, method, url, **kwargs):
+        return _Response(FIXTURES[url.rsplit("/", 1)[-1]])
+
+    monkeypatch.setattr(gtopdb, "request_with_retry", fake_request)
+    yield
+    gtopdb.clear_bulk_cache()
 
 
-def test_ligand_properties_accepts_camelcase_alias():
-    tool = _make_tool(LIGAND_ENDPOINT)
-    with patch(
-        "tooluniverse.gtopdb_tool.request_with_retry",
-        side_effect=[
-            _mock_response(200, ASPIRIN_PROPS),
-            _mock_response(200, ASPIRIN_STRUCTURE),
-        ],
-    ):
-        result = tool.run({"ligandId": 4139})
-    assert result["status"] == "success"
-    assert result["data"]["inchiKey"] == "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"
+def _properties_tool():
+    config = {
+        t["name"]: t
+        for t in json.loads((DATA / "gtopdb_tools.json").read_text("utf-8"))
+    }["GtoPdb_get_ligand_properties"]
+    return gtopdb.GtoPdbRESTTool(config)
 
 
-def test_ligand_properties_partial_when_one_endpoint_missing():
-    """molecularProperties 404 but structure 200 -> still success with note."""
-    tool = _make_tool(LIGAND_ENDPOINT)
-    with patch(
-        "tooluniverse.gtopdb_tool.request_with_retry",
-        side_effect=[
-            _mock_response(404, {"error": "not found"}),
-            _mock_response(200, ASPIRIN_STRUCTURE),
-        ],
-    ):
-        result = tool.run({"ligand_id": 4139})
-    assert result["status"] == "success"
-    assert result["data"]["smiles"] == "CC(=O)Oc1ccccc1C(=O)O"
-    assert "molecularProperties" not in result["data"]
-    assert "molecularProperties" in result["note"]
+def test_the_property_names_and_types_match_the_retired_rest_shape():
+    result = _properties_tool().run({"ligand_id": 4139})
+
+    assert result["data"]["properties"] == REST_PROPERTIES, (
+        "these came from /molecularProperties before and callers may read them "
+        "by name; the bulk column headings are spelled differently"
+    )
 
 
-def test_ligand_properties_invalid_id_returns_error():
-    """Both endpoints fail (404 + 500) -> structured error, no exception."""
-    tool = _make_tool(LIGAND_ENDPOINT)
-    with patch(
-        "tooluniverse.gtopdb_tool.request_with_retry",
-        side_effect=[
-            _mock_response(404, {"error": "not found"}),
-            _mock_response(500, {"error": "Server error: l is null"}),
-        ],
-    ):
-        result = tool.run({"ligand_id": 99999999})
+def test_the_structure_fields_survived_the_repoint():
+    """These needed a second GET to /structure and are now in ligands.csv."""
+    ligand = _properties_tool().run({"ligand_id": 4139})["data"]["ligand"]
+
+    for field, expected in REST_STRUCTURE.items():
+        assert ligand[field] == expected, field
+
+
+def test_either_spelling_of_the_ligand_id_works():
+    tool = _properties_tool()
+
+    snake = tool.run({"ligand_id": 4139})
+    camel = tool.run({"ligandId": 4139})
+
+    assert snake == camel
+    assert snake["status"] == "success"
+
+
+def test_an_unknown_ligand_is_an_error_not_an_empty_success():
+    result = _properties_tool().run({"ligand_id": 999999})
+
     assert result["status"] == "error"
-    assert "99999999" in result["error"]
+    assert "999999" in result["error"]
 
 
-def test_ligand_properties_missing_id_returns_error():
-    tool = _make_tool(LIGAND_ENDPOINT)
-    result = tool.run({})
+def test_a_missing_ligand_id_is_an_error():
+    result = _properties_tool().run({})
+
     assert result["status"] == "error"
     assert "ligand_id" in result["error"]
 
 
-def test_ligand_properties_network_exception_is_caught():
-    """request_with_retry raising -> error dict, never propagates."""
-    tool = _make_tool(LIGAND_ENDPOINT)
-    with patch(
-        "tooluniverse.gtopdb_tool.request_with_retry",
-        side_effect=ConnectionError("boom"),
-    ):
-        result = tool.run({"ligand_id": 4139})
-    assert result["status"] == "error"
-    assert "boom" in result["error"]
-
-
-# ---------------------------------------------------------------------------
-# GAP 2: GtoPdb_get_disease_associations
-# ---------------------------------------------------------------------------
-
-
-def test_disease_associations_merges_targets_and_ligands():
-    tool = _make_tool(DISEASE_ENDPOINT)
-    # Call order: diseaseTargets, then diseaseLigands.
-    with patch(
-        "tooluniverse.gtopdb_tool.request_with_retry",
-        side_effect=[
-            _mock_response(200, ASTHMA_TARGETS),
-            _mock_response(200, []),
-        ],
-    ):
-        result = tool.run({"disease_id": 1161})
+def test_a_ligand_with_no_properties_row_says_so():
+    """11266 of 13991 ligands have properties; peptides mostly do not."""
+    result = _properties_tool().run({"ligand_id": 8888})
 
     assert result["status"] == "success"
-    assert result["target_count"] == 1
-    assert result["ligand_count"] == 0
-    data = result["data"]
-    assert data["diseaseId"] == 1161
-    assert data["diseaseTargets"][0]["targetId"] == 2805
-    assert data["diseaseLigands"] == []
+    assert result["data"]["properties"] is None
+    note = result["data"]["note"]
+    assert "11266 have a row" in note and "13991 ligands" in note
+    assert result["data"]["ligand"]["name"] == "a ligand with no properties row"
 
 
-def test_disease_associations_with_ligands():
-    tool = _make_tool(DISEASE_ENDPOINT)
-    ligands = [{"ligandId": 5702, "approved": True}, {"ligandId": 8001}]
-    with patch(
-        "tooluniverse.gtopdb_tool.request_with_retry",
-        side_effect=[
-            _mock_response(200, ASTHMA_TARGETS),
-            _mock_response(200, ligands),
-        ],
-    ):
-        result = tool.run({"disease_id": 34})
-    assert result["status"] == "success"
-    assert result["ligand_count"] == 2
-    assert result["data"]["diseaseLigands"][0]["ligandId"] == 5702
+def test_a_download_failure_comes_back_as_an_envelope(monkeypatch):
+    """run() must never raise, whatever the network does."""
 
+    def boom(session, method, url, **kwargs):
+        raise requests.exceptions.ConnectionError("no route to host")
 
-def test_disease_associations_accepts_camelcase_alias():
-    tool = _make_tool(DISEASE_ENDPOINT)
-    with patch(
-        "tooluniverse.gtopdb_tool.request_with_retry",
-        side_effect=[
-            _mock_response(200, ASTHMA_TARGETS),
-            _mock_response(200, []),
-        ],
-    ):
-        result = tool.run({"diseaseId": 1161})
-    assert result["status"] == "success"
-    assert result["data"]["diseaseId"] == 1161
+    monkeypatch.setattr(gtopdb, "request_with_retry", boom)
 
+    result = _properties_tool().run({"ligand_id": 4139})
 
-def test_disease_associations_invalid_id_returns_error():
-    """diseaseTargets 500 + diseaseLigands quirk 200/[] -> error (not empty success)."""
-    tool = _make_tool(DISEASE_ENDPOINT)
-    with patch(
-        "tooluniverse.gtopdb_tool.request_with_retry",
-        side_effect=[
-            _mock_response(500, {"error": "Server error: d is null"}),
-            _mock_response(200, []),
-        ],
-    ):
-        result = tool.run({"disease_id": 99999999})
     assert result["status"] == "error"
-    assert "99999999" in result["error"]
+    assert "bulk downloads" in result["error"]
 
 
-def test_disease_associations_missing_id_returns_error():
-    tool = _make_tool(DISEASE_ENDPOINT)
-    result = tool.run({})
+def test_a_timeout_names_the_download_rather_than_an_api_call(monkeypatch):
+    def slow(session, method, url, **kwargs):
+        raise requests.exceptions.Timeout("too slow")
+
+    monkeypatch.setattr(gtopdb, "request_with_retry", slow)
+
+    result = _properties_tool().run({"ligand_id": 4139})
+
     assert result["status"] == "error"
-    assert "disease_id" in result["error"]
-
-
-def test_disease_associations_network_exception_is_caught():
-    tool = _make_tool(DISEASE_ENDPOINT)
-    with patch(
-        "tooluniverse.gtopdb_tool.request_with_retry",
-        side_effect=RuntimeError("kaboom"),
-    ):
-        result = tool.run({"disease_id": 1161})
-    assert result["status"] == "error"
-    assert "kaboom" in result["error"]
+    assert "once per session" in result["error"], (
+        "a few MB fetched once reads differently from a slow per-call API, and "
+        "the message should say which one timed out"
+    )

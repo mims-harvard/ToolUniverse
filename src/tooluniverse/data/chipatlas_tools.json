@@ -2,7 +2,7 @@
   {
     "name": "ChIPAtlas_enrichment_analysis",
     "type": "ChIPAtlasTool",
-    "description": "Perform enrichment analysis to identify transcription factors and histone modifications enriched in your data. **Required: Provide ONE input type** - (1) BED genomic regions, (2) DNA sequence motif (IUPAC notation: A/T/G/C/W/S/M/K/R/Y/B/D/H/V/N), or (3) gene symbol list. Compares your input against 433,000+ ChIP-seq/ATAC-seq/Bisulfite-seq experiments to identify significant enrichment. Returns ranked list of proteins bound to your regions/motif or regulating your genes. Note: Returns submission URL (web form-based analysis). Use for: identifying regulators of genomic regions, finding proteins bound to sequence motifs, discovering transcription factors regulating gene sets.",
+    "description": "NON-FUNCTIONAL / stub (checked 2026-09-22): ChIP-Atlas's enrichment analysis (identifying transcription factors enriched in a set of BED regions, a motif, or a gene list) is only available as a JavaScript web form at chip-atlas.org/enrichment_analysis with no REST/CGI endpoint behind it; this tool does not call it and cannot rank or score anything. Whatever input you give (bed_data, motif, or gene_list), it returns a fixed instructional message plus the submission URL and your echoed parameters -- 'genome' and every other filter are accepted but have no effect on the response, which is identical regardless of their value. For the one direction ChIP-Atlas does expose programmatically -- given a transcription factor, its ranked target genes -- use ChIPAtlas_get_target_genes instead.",
     "parameter": {
       "type": "object",
       "properties": {

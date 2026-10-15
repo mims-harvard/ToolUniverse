@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def FDA_OrangeBook_check_generic_availability(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "check_generic_availability",
     brand_name: Optional[str] = None,
     generic_name: Optional[str] = None,
     *,

@@ -5,6 +5,21 @@ description: Set up, launch, validate, and troubleshoot the CellRank ToolUnivers
 
 # Set up CellRank as a remote tool
 
+> **Sharing this model for a user, not developing it?** Follow the `tooluniverse-share-computer` guide; no ToolUniverse source checkout is needed. The model runs in its own Python environment, with its dependencies:
+>
+> ```bash
+> ~/.local/bin/uv venv --python 3.12 ~/.tooluniverse/envs/cellrank
+> curl -fsSL -o ~/.tooluniverse/envs/cellrank-tooluniverse.txt https://connect.aiscientist.tools/install-requirements.txt
+> curl -fsSL -o ~/.tooluniverse/envs/cellrank-requirements.txt https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/src/tooluniverse/remote/cellrank/requirements.txt
+> ~/.local/bin/uv pip install --python ~/.tooluniverse/envs/cellrank/bin/python -r ~/.tooluniverse/envs/cellrank-tooluniverse.txt -r ~/.tooluniverse/envs/cellrank-requirements.txt
+> ~/.local/bin/tu remote check cellrank --python ~/.tooluniverse/envs/cellrank/bin/python   # lists anything still missing
+> ~/.local/bin/tu serve --allow cellrank --python ~/.tooluniverse/envs/cellrank/bin/python --share --detach --name "<computer name>" --service https://tooluniverse-backend.onrender.com
+> ```
+>
+> If the check reports a missing environment variable (a data folder, a model cache, a provider key), set it in the same shell before `tu serve`; "Obtain credentials, data, and model weights" below says what each one is. The model reads only the variables it declares.
+>
+> The rest of this guide is for developers working from the ToolUniverse source, and for diagnosing problems with this model.
+
 > Validation status (2026-08-16): CellRank dependencies, loopback discovery, and a bounded deterministic pseudotime-kernel fate call passed with aligned finite probabilities. Public publication, cross-user isolation, representative biology, broad concurrency, and recovery remain incomplete; keep this deployment private. Authenticated private Platform import and owner testing passed on 2026-08-16; public publication and independent-caller authorization/isolation remain untested.
 
 ## Prerequisites

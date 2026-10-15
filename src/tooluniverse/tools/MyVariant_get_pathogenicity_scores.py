@@ -12,7 +12,7 @@ def MyVariant_get_pathogenicity_scores(
     variant_id: str,
     fields: Optional[
         str
-    ] = "dbnsfp.revel.score,dbnsfp.cadd.phred,dbnsfp.alphamissense.score,dbnsfp.alphamissense.pred,dbnsfp.sift.score,dbnsfp.sift.pred,dbnsfp.polyphen2_hdiv.score,dbnsfp.polyphen2_hdiv.pred,dbnsfp.metarnn.score,dbnsfp.metarnn.pred,dbnsfp.gerp_rs,dbnsfp.phylop100way_vertebrate.rankscore,dbnsfp.phastcons100way_vertebrate.rankscore,dbnsfp.vest4.score,dbnsfp.mutationtaster.pred,clinvar.rcv.clinical_significance,dbsnp.rsid",
+    ] = "dbnsfp.revel.score,cadd.phred,dbnsfp.alphamissense.score,dbnsfp.alphamissense.pred,dbnsfp.sift.score,dbnsfp.sift.pred,dbnsfp.polyphen2.hdiv.score,dbnsfp.polyphen2.hdiv.pred,dbnsfp.metarnn.score,dbnsfp.metarnn.pred,cadd.gerp.rs,dbnsfp.phylop.100way_vertebrate.rankscore,dbnsfp.phastcons.100way_vertebrate.rankscore,dbnsfp.vest4.score,dbnsfp.mutationtaster.pred,clinvar.rcv.clinical_significance,dbsnp.rsid",
     assembly: Optional[str] = "hg19",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

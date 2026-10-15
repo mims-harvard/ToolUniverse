@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def OrthoDB_search_groups(
     query: str,
-    species: Optional[int | Any] = None,
-    level: Optional[int | Any] = None,
+    species: Optional[int] = None,
+    level: Optional[int] = None,
     limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -25,9 +25,9 @@ def OrthoDB_search_groups(
     ----------
     query : str
         Gene or protein name to search. Examples: 'BRCA1', 'TP53', 'insulin', 'EGFR'.
-    species : int | Any
+    species : int
         NCBI taxonomy ID to filter by species. Examples: 9606 (human), 10090 (mouse),...
-    level : int | Any
+    level : int
         Taxonomic level for group definition. Examples: 7742 (Vertebrata), 33208 (Met...
     limit : int
         Maximum number of groups to return (1-50). Default: 10.

@@ -17,7 +17,7 @@ def ebi_get_entry(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get detailed information about a specific entry from an EBI domain by its ID. IMPORTANT: EBI Sear...
 
@@ -30,7 +30,7 @@ def ebi_get_entry(
     fields : str
         Comma-separated list of specific fields to return. If not specified, returns ...
     format : str
-
+        Response format. Only 'json' is produced by this endpoint.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +40,7 @@ def ebi_get_entry(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

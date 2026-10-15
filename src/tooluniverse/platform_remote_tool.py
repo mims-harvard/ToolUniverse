@@ -12,10 +12,12 @@ import urllib.request
 from typing import Any, Dict
 
 from .base_tool import BaseTool
+from .remote_connections import BORROWER_KEY_ENV, api_keys_page, global_env_file
 from .tool_registry import register_tool
 
 
 _MAX_RESPONSE_BYTES = 16 << 20
+_DEFAULT_TIMEOUT = 930.0
 _DEFAULT_BASE_URL = "https://tooluniverse-backend.onrender.com"
 
 
@@ -57,10 +59,14 @@ class PlatformRemoteTool(BaseTool):
             raise ValueError("PlatformRemoteTool requires resource_id")
         configured_url = tool_config.get("base_url") or os.getenv("TU_BASE_URL")
         self.base_url = _validated_base_url(configured_url or _DEFAULT_BASE_URL)
-        self.timeout = float(tool_config.get("timeout", 120))
-        if not math.isfinite(self.timeout) or not 1 <= self.timeout <= 900:
+        # The platform enforces each published tool's own deadline, up to 15 minutes, and
+        # answers when it passes. Waiting a little longer than that lets its answer arrive. The
+        # default was 120 seconds: measured, a tool its owner configured for 300 seconds failed
+        # for the person calling it at 121 with "Error: timed out".
+        self.timeout = float(tool_config.get("timeout", _DEFAULT_TIMEOUT))
+        if not math.isfinite(self.timeout) or not 1 <= self.timeout <= _DEFAULT_TIMEOUT:
             raise ValueError(
-                "PlatformRemoteTool timeout must be between 1 and 900 seconds"
+                f"PlatformRemoteTool timeout must be between 1 and {_DEFAULT_TIMEOUT:.0f} seconds"
             )
         self._opener = urllib.request.build_opener(_NoRedirect)
 
@@ -87,7 +93,9 @@ class PlatformRemoteTool(BaseTool):
         request = urllib.request.Request(
             self.base_url + path, data=body, method=method, headers=headers
         )
-        request_timeout = min(self.timeout if timeout is None else timeout, 120)
+        # The whole remaining deadline: a synchronous call is one request that lasts as long as
+        # the tool does, so a fixed per-request cap was a second, shorter deadline.
+        request_timeout = self.timeout if timeout is None else timeout
         if request_timeout <= 0:
             raise TimeoutError("platform tool deadline expired")
         with self._opener.open(request, timeout=request_timeout) as response:
@@ -147,22 +155,31 @@ class PlatformRemoteTool(BaseTool):
         }
 
     @staticmethod
-    def _api_key() -> str:
+    def _api_key_and_source() -> tuple[str, str]:
+        for name in (BORROWER_KEY_ENV, "TOOLUNIVERSE_SERVICE_KEY"):
+            value = (os.getenv(name) or "").strip()
+            if value:
+                return value, name
+        return "", ""
+
+    @classmethod
+    def _api_key(cls) -> str:
+        return cls._api_key_and_source()[0]
+
+    def _missing_key_message(self) -> str:
+        # The old text said to "set the variable", which in practice means export it in one
+        # shell -- and the tool is then missing again from the next terminal. The global .env
+        # is loaded on every start without overriding the shell, so saving it there once works.
         return (
-            os.getenv("TU_API_KEY") or os.getenv("TOOLUNIVERSE_SERVICE_KEY") or ""
-        ).strip()
+            f"This connected platform tool requires {BORROWER_KEY_ENV}. Create a connection "
+            f"key at {api_keys_page(self.base_url)} and save it once as "
+            f"{BORROWER_KEY_ENV}=<your key> in {global_env_file()} so every terminal has it."
+        )
 
     def run(self, arguments: Dict[str, Any]):
-        api_key = self._api_key()
+        api_key, key_source = self._api_key_and_source()
         if not api_key:
-            return {
-                "status": "error",
-                "error": (
-                    "This connected platform tool requires TU_API_KEY. "
-                    "Create a private connection at "
-                    "https://connect.aiscientist.tools/api-keys and set the variable."
-                ),
-            }
+            return {"status": "error", "error": self._missing_key_message()}
 
         try:
             deadline = time.monotonic() + self.timeout
@@ -185,6 +202,25 @@ class PlatformRemoteTool(BaseTool):
                     detail = str(parsed["detail"])
             except Exception:
                 pass
+            if exc.code == 403 and "computer-only connection" in detail:
+                # Someone who also shares their own machine has the computer-only key in
+                # TOOLUNIVERSE_SERVICE_KEY, and with no TU_API_KEY that is what got sent. The
+                # platform's sentence is accurate but assumes the reader knows there are two
+                # kinds of key.
+                detail = (
+                    f"{key_source} holds this computer's sharing connection, which can "
+                    f"register this machine but cannot call tools. "
+                    + self._missing_key_message()
+                )
             return {"status": "error", "error": detail}
+        except TimeoutError:
+            return {
+                "status": "error",
+                "error": (
+                    f"The tool did not answer within {self.timeout:.0f} seconds. It may still be "
+                    f"running on its owner's machine, so wait before calling it again rather "
+                    f"than starting it twice."
+                ),
+            }
         except Exception as exc:
             return {"status": "error", "error": str(exc)}

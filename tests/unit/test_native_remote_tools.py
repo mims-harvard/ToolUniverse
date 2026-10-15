@@ -244,6 +244,7 @@ def test_smcp_does_not_reload_a_preconfigured_remote_tool_universe():
     server.tool_categories = None
     server.auto_expose_tools = True
     server.compact_mode = False
+    server.expose_agentic_prompts = False
     server.search_enabled = False
     server.logger = MagicMock()
     server._load_tools_with_filters = MagicMock()
@@ -625,9 +626,12 @@ def test_platform_remote_tool_requires_key(monkeypatch):
     assert "TU_API_KEY" in result["error"]
 
 
-@pytest.mark.parametrize("timeout", [0, 901, float("inf"), float("nan")])
+# The ceiling is 930 s: the platform enforces each published tool's deadline up
+# to 15 minutes and answers when it passes, so the client waits slightly longer
+# to receive that answer. 931 is the first value past it.
+@pytest.mark.parametrize("timeout", [0, 931, float("inf"), float("nan")])
 def test_platform_remote_tool_rejects_unsafe_timeout(timeout):
-    with pytest.raises(ValueError, match="between 1 and 900"):
+    with pytest.raises(ValueError, match="between 1 and 930"):
         PlatformRemoteTool(
             {
                 "name": "remote_model",

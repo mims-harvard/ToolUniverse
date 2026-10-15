@@ -2,7 +2,7 @@
   {
     "type": "DBLPTool",
     "name": "DBLP_search_publications",
-    "description": "Search DBLP Computer Science Bibliography for publications. Returns publications with title, authors, year, venue, URL, and electronic edition link.",
+    "description": "Search DBLP Computer Science Bibliography for publications. Returns publications with title, authors, year, venue, URL, and electronic edition link. NOTE: dblp.org currently serves an anti-bot challenge page (\"Making sure you're not a bot!\") on this endpoint, so this tool can return an HTML-instead-of-data error; ToolUniverse does not attempt to bypass it. Alternatives: Crossref_search_works, SemanticScholar_search_papers, openalex_search_works.",
     "parameter": {
       "type": "object",
       "properties": {

@@ -1,0 +1,17 @@
+{
+  "api_name": "FooDB compound API",
+  "base_url": "https",
+  "failure_mode": "HTTP 403 with cf-mitigated: challenge and a \"Just a moment... Enable JavaScript and cookies to continue\" page, for every request",
+  "root_cause": "The site enabled Cloudflare's managed JavaScript challenge. Passing it requires executing JavaScript and holding a cookie, which no HTTP client does, so this is not a credential, header or rate-limit problem. Verified against four User-Agents on 2026-10-03 -- the requests default, ToolUniverse/1.5.4, curl/8.5.0 and a current Chrome string -- all four answered 403 with cf-mitigated: challenge. Contrast ConoServer, whose nginx blocked only the literal 'python-requests' User-Agent and answers 200 to any other, which is why that one was fixable here.",
+  "confirmed_broken_date": "2026-10-03",
+  "last_retry_date": "2026-10-03",
+  "retry_count": 4,
+  "retry_after": "2026-12-01",
+  "retry_notes": "Request any endpoint with no special headers. A 200 means the challenge is off again. Check the cf-mitigated response header: while it reads 'challenge' there is nothing to implement on this side. The tools now name the challenge in their error instead of reporting a bare 403, so a user is not sent looking for a credential problem.",
+  "workaround": "None from an API client. The data is still browsable by a human at the site itself, and these tools stay registered so the error explains what happened rather than the tool vanishing.",
+  "investigation_notes": "Found while triaging the 2026-10-03 sweep, where this showed up only as 'HTTP error: 403'. http_utils.cloudflare_challenge() now recognises the signature so any tool can report it the same way.",
+  "tool_file": "foodb_tools.json:src/tooluniverse/foodb_tool.py",
+  "affected_tools": [
+    "FooDB_get_compound"
+  ]
+}

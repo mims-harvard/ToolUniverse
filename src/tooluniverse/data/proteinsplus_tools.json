@@ -76,7 +76,8 @@
       {
         "pdb_id": "2OZR"
       }
-    ]
+    ],
+    "long_running": true
   },
   {
     "name": "ProteinsPlus_predict_binding_sites_v3",
@@ -210,7 +211,8 @@
         "ligand": "JE2_A_701",
         "ligand_bias": true
       }
-    ]
+    ],
+    "long_running": true
   },
   {
     "name": "ProteinsPlus_generate_interaction_diagram",
@@ -287,7 +289,8 @@
         "pdb_id": "1KZK",
         "ligand": "JE2_A_701"
       }
-    ]
+    ],
+    "long_running": true
   },
   {
     "name": "ProteinsPlus_analyze_binding_site_similarity",
@@ -437,7 +440,8 @@
         "mode": "screening",
         "ligand": "JE2_A_701"
       }
-    ]
+    ],
+    "long_running": true
   },
   {
     "name": "ProteinsPlus_profile_structure_quality",
@@ -532,29 +536,56 @@
         "pdb_id": "4HHB",
         "setting": "platinum"
       }
-    ]
+    ],
+    "long_running": true
   },
   {
     "name": "ProteinsPlus_protonate_structure",
-    "description": "Add hydrogens and optimize protonation states of a protein-ligand complex using ProtoSS (Protonation Structure Solver) on ProteinsPlus. ProtoSS places hydrogen atoms, assigns tautomers and protonation states, and optimizes the hydrogen-bond network of the protein and any co-crystallized ligands. Protonation is the standard prerequisite step before molecular docking, interaction-fingerprint analysis, or binding-energy calculations, because raw PDB structures lack hydrogen positions. Input a PDB ID (or raw PDB content). Returns URLs to the protonated protein (PDB), protonated ligand(s) (SDF), and a log file. Example: pdbCode '1cbs' returns protein=.../1cbs.pdb (protonated), ligands=.../1cbs.sdf, log=.../1cbs_log.txt.",
+    "description": "Add hydrogens and optimize protonation with ProtoSS. Accept exactly one PDB ID or raw PDB text. Custom PDBs are uploaded via the documented multipart API before processing. Include ligands in the PDB; returns protein, ligand and log URLs.",
     "type": "ProteinsPlusRESTTool",
     "parameter": {
       "type": "object",
       "properties": {
         "pdb_id": {
-          "type": "string",
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "PDB identifier (e.g., '1cbs', '1KZK', '4HHB'). Use either pdb_id or pdb_content, not both."
         },
         "pdb_content": {
-          "type": "string",
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Raw PDB file content as a string (multi-line text). Use either pdb_id or pdb_content, not both."
-        },
-        "ligand_content": {
-          "type": "string",
-          "description": "Optional raw ligand SDF content to protonate alongside the protein. Only used with pdb_content uploads."
         }
       },
-      "required": []
+      "required": [],
+      "oneOf": [
+        {
+          "required": [
+            "pdb_id"
+          ],
+          "properties": {
+            "pdb_id": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        },
+        {
+          "required": [
+            "pdb_content"
+          ],
+          "properties": {
+            "pdb_content": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
     },
     "fields": {
       "endpoint": "/protoss_rest",
@@ -609,6 +640,7 @@
       {
         "pdb_id": "1cbs"
       }
-    ]
+    ],
+    "long_running": true
   }
 ]

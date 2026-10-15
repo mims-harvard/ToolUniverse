@@ -1,6 +1,5 @@
 # faers_analytics_tool.py
 
-import os
 import requests
 import math
 from typing import Dict, Any, List, Tuple, Optional
@@ -509,7 +508,12 @@ class FAERSAnalyticsTool(BaseTool):
         super().__init__(tool_config)
         self.parameter = tool_config.get("parameter", {})
         self.required = self.parameter.get("required", [])
-        self.api_key = os.getenv("FDA_API_KEY")
+
+    @property
+    def api_key(self):
+        """Resolve the optional openFDA key from the active request."""
+
+        return self.credential("FDA_API_KEY")
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Route to analytics operation."""

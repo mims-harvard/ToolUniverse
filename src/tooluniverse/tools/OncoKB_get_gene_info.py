@@ -9,14 +9,14 @@ from ._shared_client import get_shared_client
 
 
 def OncoKB_get_gene_info(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_gene_info",
     gene: Optional[str] = None,
     gene_symbol: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get gene-level oncogenic information from OncoKB. Returns whether gene is an oncogene, tumor supp...
 
@@ -37,7 +37,7 @@ def OncoKB_get_gene_info(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

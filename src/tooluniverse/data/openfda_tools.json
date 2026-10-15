@@ -1,7 +1,7 @@
 [
     {
         "name": "OpenFDA_search_drug_labels",
-        "description": "Search the FDA drug label (SPL - Structured Product Labeling) database via openFDA. Contains approved prescription and OTC drug labels including indications, warnings, dosage, adverse reactions, contraindications, and pharmacology sections. Use Lucene query syntax: 'openfda.brand_name:aspirin', 'openfda.generic_name:ibuprofen', 'openfda.manufacturer_name:pfizer'. Returns label text sections and openFDA cross-references (brand name, generic name, substance name, product type).",
+        "description": "Search the FDA drug label (SPL - Structured Product Labeling) database via openFDA. Contains approved prescription and OTC drug labels including indications, warnings, dosage, adverse reactions, contraindications, and pharmacology sections. Use Lucene query syntax: 'openfda.brand_name:aspirin', 'openfda.generic_name:ibuprofen', 'openfda.manufacturer_name:pfizer'. Returns label text sections and openFDA cross-references (brand name, generic name, substance name, product type). Some labels are not linked to openFDA fields (for example TAGRISSO / osimertinib), so an 'openfda.*' query can find nothing even though the label exists: search the name as free text ('TAGRISSO'), or use FDA_search_drug_labels with drug_name, which also checks unlinked labels.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -26,7 +26,8 @@
             "auth_param": {
                 "env_var": "FDA_API_KEY",
                 "param": "api_key"
-            }
+            },
+            "unreachable_alternatives": "If this was a 'no matches' answer to an openfda.* query, the label may still exist without openFDA fields (for example TAGRISSO / osimertinib): retry with the name as free text, for example search='TAGRISSO', or use FDA_search_drug_labels with drug_name."
         },
         "type": "BaseRESTTool",
         "test_examples": [

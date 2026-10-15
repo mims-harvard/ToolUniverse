@@ -22,7 +22,7 @@ def gwas_get_studies_for_trait(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get studies for a specific trait with optional filters for cohort, GxE interactions, and summary ...
 
@@ -55,7 +55,7 @@ def gwas_get_studies_for_trait(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

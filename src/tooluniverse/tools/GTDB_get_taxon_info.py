@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def GTDB_get_taxon_info(
-    operation: str,
     taxon: str,
+    operation: Optional[str] = "get_taxon_info",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

@@ -8,7 +8,10 @@ from .tool_registry import register_tool
 class RegulomeDBRESTTool(BaseTool):
     def __init__(self, tool_config: Dict):
         super().__init__(tool_config)
-        self.base_url = "https://regulomedb.org"
+        # The search API moved to its own subdomain: regulomedb.org/regulome-search/
+        # now 404s for every variant, and api.regulomedb.org/search answers with
+        # the same response shape. The endpoint itself is in the tool config.
+        self.base_url = "https://api.regulomedb.org"
         self.session = requests.Session()
         self.session.headers.update({"Accept": "application/json"})
         self.timeout = 30

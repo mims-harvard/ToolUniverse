@@ -1,7 +1,7 @@
 """
 HPA_get_rna_expression_by_source
 
-Get RNA expression level (nTPM) for a gene in a specific biological source using optimized column...
+Get RNA expression for a gene in a specific biological source, read from HPA's dedicated per-sour...
 """
 
 from typing import Any, Optional, Callable
@@ -18,16 +18,16 @@ def HPA_get_rna_expression_by_source(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get RNA expression level (nTPM) for a gene in a specific biological source using optimized column...
+    Get RNA expression for a gene in a specific biological source, read from HPA's dedicated per-sour...
 
     Parameters
     ----------
     gene_name : str
         Gene name or gene symbol, e.g., 'GFAP', 'TP53', 'BRCA1', etc.
     source_type : str
-        The type of biological source. Choose from: 'tissue', 'blood', 'brain', 'sing...
+        The type of biological source. Choose from: 'tissue' (51 consensus tissues, n...
     source_name : str
-        The specific name of the biological source, e.g., 'liver', 'heart_muscle', 't...
+        The specific source name, e.g. 'liver', 'heart_muscle', 'skin', 't_cell', 'he...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

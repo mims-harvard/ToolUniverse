@@ -49,6 +49,7 @@ Search repositories specialized for your data type.
 - Proteomics: PRIDE, MassIVE
 - Metabolomics: MetaboLights, Metabolomics Workbench
 - Clinical: ClinicalTrials.gov (for trial data with results)
+- Consortium research portals (AD Knowledge Portal, NF-OSI, PsychENCODE, HTAN, DREAM challenges and others): `Synapse_search_entities` finds public Synapse projects/folders/files/tables/datasets by keyword (`node_type` narrows it), `Synapse_get_entity` returns the curated annotations (assay, species, tissue, disease), and `Synapse_list_children` browses a project. Anonymous and read-only: restricted entities return a clear "not public" error and file contents are not downloaded -- data access still goes through synapse.org.
 
 **Layer 3 — Literature-based discovery:**
 Many datasets aren't in any repository — they're described in paper methods sections.

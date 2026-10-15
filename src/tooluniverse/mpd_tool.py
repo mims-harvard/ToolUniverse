@@ -35,25 +35,42 @@ class MPDRESTTool(BaseTool):
             )
 
             response = self.session.get(url, timeout=self.timeout)
-
-            data = None
+            # ENCODE answers a search with no hits with 404, not an empty
+            # result set. DBA/2J has no ENCODE data -- the comment above says
+            # so, having checked it -- so Ex 3 of this tool's own examples
+            # turned "nothing matched" into "MPD API error: 404 Client Error".
+            # A search that found nothing is a successful search.
             if response.status_code == 404:
-                # ENCODE answers a search with zero hits with HTTP 404 and a normal
-                # JSON body ({"total": 0, "@graph": [], "notification": "No results
-                # found"}). That is an empty result, not a failed request.
+                # The 404 body is a complete ENCODE search response --
+                # @context "/terms/", @graph [], total 0, notification
+                # "No results found" -- so it is handed back as-is rather than
+                # synthesised, which also keeps it inside the declared schema.
                 try:
-                    body = response.json()
+                    empty = response.json()
                 except ValueError:
-                    body = None
-                if (
-                    isinstance(body, dict)
-                    and body.get("total") == 0
-                    and body.get("@graph") == []
-                ):
-                    data = body
-            if data is None:
-                response.raise_for_status()
-                data = response.json()
+                    empty = {"@context": "/terms/", "@graph": [], "total": 0}
+                return {
+                    "status": "success",
+                    "data": empty,
+                    "url": url,
+                    "query_info": {
+                        "strain": strain,
+                        "limit": limit,
+                        "data_source": "ENCODE (MPD alternative)",
+                        "note": (
+                            f"ENCODE has no experiment mentioning {strain!r}. "
+                            "Its search endpoint reports no hits as HTTP 404, so "
+                            "this is an empty result rather than a failure. For "
+                            "curated mouse phenotype data, query the Mouse "
+                            "Phenome Database directly at "
+                            "https://phenome.jax.org/api."
+                        ),
+                    },
+                }
+            response.raise_for_status()
+
+            # Parse JSON response
+            data = response.json()
 
             return {
                 "status": "success",

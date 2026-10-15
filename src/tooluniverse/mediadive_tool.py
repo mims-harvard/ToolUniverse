@@ -68,9 +68,7 @@ class MediaDiveTool(BaseTool):
     def __init__(self, tool_config: Dict[str, Any]):
         super().__init__(tool_config)
         self.timeout = tool_config.get("timeout", 45)
-        self.operation = tool_config.get("fields", {}).get(
-            "operation", "search_media"
-        )
+        self.operation = tool_config.get("fields", {}).get("operation", "search_media")
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the MediaDive lookup."""
@@ -304,13 +302,15 @@ class MediaDiveTool(BaseTool):
                 "pubchem_id": data.get("PubChem"),
                 "formula": data.get("formula"),
                 "molecular_mass": data.get("mass"),
-                "used_in_media_count": len(media_ids),
+                "used_in_media_count": len(media_ids[:20]),
+                "total_used_in_media_sample": len(media_ids),
                 "used_in_media_sample": media_ids[:20],
             },
             "metadata": {
                 "ingredient_id": ingredient_id,
                 "note": "used_in_media_sample lists up to 20 medium_ids using "
-                "this ingredient; used_in_media_count is the true total.",
+                "this ingredient and used_in_media_count counts that sample; "
+                "total_used_in_media_sample is the number of media that use it.",
                 "source": "MediaDive (DSMZ)",
             },
         }

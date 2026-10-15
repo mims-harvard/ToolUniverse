@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ChEBI_get_compound(
-    chebi_id: int,
+    chebi_id: int | str,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -20,8 +20,8 @@ def ChEBI_get_compound(
 
     Parameters
     ----------
-    chebi_id : int
-        ChEBI numeric identifier (without the 'CHEBI:' prefix). Examples: 15365 (aspi...
+    chebi_id : int | str
+        ChEBI identifier as a bare integer (e.g. 15365) or the 'CHEBI:15365' CURIE fo...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

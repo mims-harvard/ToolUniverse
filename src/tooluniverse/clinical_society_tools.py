@@ -8,7 +8,6 @@ Network (NCCN).  Also provides web scraping for NCCN patient guidelines.
 """
 
 import io
-import os
 import re
 import time
 import xml.etree.ElementTree as ET
@@ -18,6 +17,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from .base_tool import BaseTool
+from .credentials import get_credential
 from .tool_registry import register_tool
 
 # ---------------------------------------------------------------------------
@@ -35,7 +35,7 @@ EUTILS_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 def _eutils_params(extra=None):
     """Return base params with optional NCBI API key."""
     params = {}
-    api_key = os.environ.get("NCBI_API_KEY")
+    api_key = get_credential("NCBI_API_KEY")
     if api_key:
         params["api_key"] = api_key
     if extra:
@@ -45,7 +45,7 @@ def _eutils_params(extra=None):
 
 def _rate_limit():
     """Respect NCBI rate limit (3 requests/sec without key, 10 with key)."""
-    if os.environ.get("NCBI_API_KEY"):
+    if get_credential("NCBI_API_KEY"):
         time.sleep(0.15)
     else:
         time.sleep(0.4)
@@ -162,9 +162,13 @@ def _build_article_result(pmid, summary, abstract=""):
     }
 
 
-def _search_and_fetch(query, limit=5):
-    """Combined search + summary + abstract fetch pipeline."""
-    pmids = _pubmed_search(query, limit=limit)
+def _search_and_fetch(query, limit=5, sort="relevance"):
+    """Combined search + summary + abstract fetch pipeline.
+
+    Ranked by relevance; listings of an organisation's newest guidelines pass
+    sort="date".
+    """
+    pmids = _pubmed_search(query, limit=limit, sort=sort)
     if not pmids:
         return []
 
@@ -491,7 +495,7 @@ class AHAACCGuidelineTool(BaseTool):
             f'("guideline"[Title] OR "practice guideline"[Publication Type])'
             f"{date_filter}"
         )
-        return _search_and_fetch(pubmed_query, limit=limit)
+        return _search_and_fetch(pubmed_query, limit=limit, sort="date")
 
 
 # ---------------------------------------------------------------------------

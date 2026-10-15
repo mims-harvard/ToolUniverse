@@ -121,7 +121,16 @@ class GrepToolsTool(BaseTool):
             # Search in specified field
             search_text = ""
             if field == "name":
+                # 96 of the shipped tools have a registered name longer than
+                # MAX_TOOL_NAME_LENGTH and are keyed here by an abbreviated
+                # form with the middle segments clipped. Their documented name
+                # is the full one, so searching only ``name`` returned nothing
+                # for the spelling users actually have in front of them, while
+                # ``execute_tool`` accepted it. Search both spellings.
                 search_text = tool.get("name", "")
+                original = tool.get("original_name", "")
+                if original and original != search_text:
+                    search_text = f"{search_text} {original}"
             elif field == "description":
                 search_text = tool.get("description", "")
             elif field == "type":
@@ -722,6 +731,30 @@ class GetToolInfoTool(BaseTool):
         super().__init__(tool_config)
         self.tooluniverse = tooluniverse
 
+    def _registered_name(self, name: str) -> str:
+        """Return the key a tool is registered under, for either spelling.
+
+        96 shipped tools have a registered name longer than
+        ``MAX_TOOL_NAME_LENGTH``. The MCP layer keys those by an abbreviated
+        form, with the middle segments clipped, while their documentation, the
+        website and the Python SDK all use the full name. ``execute_tool``
+        resolves both spellings, so this tool reporting "not found" for a name
+        the runner accepts was a contradiction users hit by pasting a
+        documented name. Falls back to the input when nothing resolves, so a
+        genuinely unknown name still reports not found.
+        """
+        tu = self.tooluniverse
+        if not tu or name in getattr(tu, "all_tool_dict", {}):
+            return name
+        resolver = getattr(tu, "_resolve_tool_name", None)
+        if resolver is None:
+            return name
+        try:
+            resolved = resolver(name)
+        except Exception:  # noqa: BLE001 - resolution is best effort
+            return name
+        return resolved if resolved in tu.all_tool_dict else name
+
     def _not_found_error(self, tool_name: str) -> str:
         """Fix-R13D-1: a tool with unmet required_api_keys is dropped from
         all_tool_dict entirely during loading, so this previously reported a
@@ -787,6 +820,10 @@ class GetToolInfoTool(BaseTool):
             is_single = False
         else:
             return {"status": "error", "error": "tool_names must be a string or list"}
+
+        # Accept either spelling of a shortened tool's name (see
+        # ``_registered_name``) before any lookup runs.
+        tool_names = [self._registered_name(name) for name in tool_names]
 
         try:
             if detail_level == "description":

@@ -1,7 +1,7 @@
 """
 DisProt_search
 
-Search DisProt for intrinsically disordered proteins by text query (gene name, protein name, orga...
+Search DisProt for intrinsically disordered proteins by gene name, protein-name fragment, organis...
 """
 
 from typing import Any, Optional, Callable
@@ -17,12 +17,12 @@ def DisProt_search(
     validate: bool = True,
 ) -> Any:
     """
-    Search DisProt for intrinsically disordered proteins by text query (gene name, protein name, orga...
+    Search DisProt for intrinsically disordered proteins by gene name, protein-name fragment, organis...
 
     Parameters
     ----------
     query : str
-        Search term: gene name (e.g., 'TP53'), protein name (e.g., 'kinase'), organis...
+        Gene name (e.g., 'TP53'), protein-name fragment (e.g., 'kinase', 'amyloid'), ...
     page_size : int
         Number of results to return (default 10, max 20).
     stream_callback : Callable, optional

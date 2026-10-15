@@ -30,7 +30,7 @@ def alphafold_get_annotations(
     uniprot_accession : str
         Alias for qualifier. UniProt accession (e.g., 'P69905').
     accession : str
-        Alias for qualifier. UniProt accession (e.g., 'P04637') -- the...
+        Alias for qualifier. UniProt accession (e.g., 'P04637') -- the same parameter...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

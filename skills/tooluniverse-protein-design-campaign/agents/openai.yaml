@@ -1,0 +1,4 @@
+interface:
+  display_name: "Protein Design Campaign"
+  short_description: "Validate protein designs and prepare reviewed submissions"
+  default_prompt: "Use $tooluniverse-protein-design-campaign to validate my protein binder candidates, prioritize the next informative computation, and prepare an evidence-based submission."

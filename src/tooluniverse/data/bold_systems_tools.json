@@ -17,7 +17,7 @@
         "rank": {
           "type": ["string", "null"],
           "enum": ["genus", "family", "order", "species", null],
-          "description": "Taxonomic rank of taxon_name. Default 'genus'."
+          "description": "Taxonomic rank of taxon_name. Default 'genus', or 'species' when taxon_name has two words (e.g. 'Apis mellifera')."
         },
         "country": {
           "type": ["string", "null"],

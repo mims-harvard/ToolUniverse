@@ -16,7 +16,7 @@ def RGD_search_strains(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search the Rat Genome Database (RGD) rat strain catalog by keyword and/or strain type. Rat inbred...
 
@@ -37,7 +37,7 @@ def RGD_search_strains(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

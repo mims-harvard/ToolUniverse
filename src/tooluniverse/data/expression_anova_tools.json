@@ -139,6 +139,7 @@
         "group_a": "GroupC",
         "group_b": "GroupA"
       }
-    ]
+    ],
+    "requires_local_input": true
   }
 ]

@@ -9,12 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def ToolGraphComposer(
-    output_path: str,
-    analysis_depth: str,
-    min_compatibility_score: int,
-    exclude_categories: list[str],
-    max_tools_per_category: int,
-    force_rebuild: bool,
+    output_path: Optional[str] = "./tool_composition_graph",
+    analysis_depth: Optional[str] = "detailed",
+    min_compatibility_score: Optional[int] = 60,
+    exclude_categories: Optional[list[str]] = None,
+    max_tools_per_category: Optional[int] = 50,
+    force_rebuild: Optional[bool] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -49,7 +49,8 @@ def ToolGraphComposer(
     dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
-
+    if exclude_categories is None:
+        exclude_categories = ["tool_finder", "special_tools"]
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v

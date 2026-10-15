@@ -5,6 +5,21 @@ description: Set up, launch, validate, and troubleshoot the ESM ToolUniverse rem
 
 # Set up ESM as a remote tool
 
+> **Sharing this model for a user, not developing it?** Follow the `tooluniverse-share-computer` guide; no ToolUniverse source checkout is needed. The model runs in its own Python environment, with its dependencies:
+>
+> ```bash
+> ~/.local/bin/uv venv --python 3.12 ~/.tooluniverse/envs/esm
+> curl -fsSL -o ~/.tooluniverse/envs/esm-tooluniverse.txt https://connect.aiscientist.tools/install-requirements.txt
+> curl -fsSL -o ~/.tooluniverse/envs/esm-requirements.txt https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/src/tooluniverse/remote/esm/requirements.txt
+> ~/.local/bin/uv pip install --python ~/.tooluniverse/envs/esm/bin/python -r ~/.tooluniverse/envs/esm-tooluniverse.txt -r ~/.tooluniverse/envs/esm-requirements.txt
+> ~/.local/bin/tu remote check esm --python ~/.tooluniverse/envs/esm/bin/python   # lists anything still missing
+> ~/.local/bin/tu serve --allow esm --python ~/.tooluniverse/envs/esm/bin/python --share --detach --name "<computer name>" --service https://tooluniverse-backend.onrender.com
+> ```
+>
+> If the check reports a missing environment variable (a data folder, a model cache, a provider key), set it in the same shell before `tu serve`; "Obtain credentials, data, and model weights" below says what each one is. The model reads only the variables it declares.
+>
+> The rest of this guide is for developers working from the ToolUniverse source, and for diagnosing problems with this model.
+
 > Validation status (2026-08-16): the pinned official ESM source and esmc_300m checkpoint loaded on the GB10; a live loopback call returned a finite 960-dimensional embedding. Public publication, cross-user isolation, broad concurrency, recovery, and embedding-quality validation remain incomplete. Authenticated private Platform import and owner testing passed on 2026-08-16; public publication and independent-caller authorization/isolation remain untested.
 
 ## Prerequisites

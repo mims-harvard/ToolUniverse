@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def DNA_codon_optimize(
-    operation: str,
     sequence: str,
-    species: Optional[str | Any] = "human",
+    operation: Optional[str] = "codon_optimize",
+    species: Optional[str] = "human",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,10 +23,10 @@ def DNA_codon_optimize(
     Parameters
     ----------
     operation : str
-        Operation type
+        Operation (optional; defaults to 'codon_optimize' for this tool).
     sequence : str
         Amino acid sequence in single-letter code (e.g., 'MEPVDDLPL'). Stop codon (*)...
-    species : str | Any
+    species : str
         Target expression organism. Options: 'human' (default), 'ecoli', 'mouse', 'ye...
     stream_callback : Callable, optional
         Callback for streaming output

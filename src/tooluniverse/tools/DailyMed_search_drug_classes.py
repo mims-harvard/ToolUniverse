@@ -16,7 +16,7 @@ def DailyMed_search_drug_classes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the DailyMed database for FDA Established Pharmacologic Classes (EPC). Returns drug class ...
 
@@ -37,7 +37,7 @@ def DailyMed_search_drug_classes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

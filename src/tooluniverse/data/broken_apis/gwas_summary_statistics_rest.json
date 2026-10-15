@@ -1,0 +1,22 @@
+{
+  "api_name": "GWAS Catalog Summary Statistics REST API (EMBL-EBI)",
+  "base_url": "https://www.ebi.ac.uk/gwas/summary-statistics/api",
+  "failure_mode": "HTTP 410 Gone on every path",
+  "root_cause": "EBI deprecated the summary-statistics API. /studies, /traits/{id}/studies and /chromosomes/{c}/associations all answer 410 with 'This API has been deprecated. For ways to access summary statistics see: https://www.ebi.ac.uk/gwas/docs/methods/summary-statistics'.",
+  "confirmed_broken_date": "2026-09-22",
+  "last_retry_date": "2026-09-22",
+  "retry_count": 3,
+  "github_issues": [],
+  "retry_after": "2027-03-01",
+  "workaround": "Study listing and per-trait lookup moved to the GWAS Catalog v2 API (https://www.ebi.ac.uk/gwas/api/v2/studies), and GWASSumStats_list_studies and GWASSumStats_get_trait_studies were repointed there. Region-level variant statistics did NOT move: v2 serves associations only per study (/studies/{accession}/associations) and ignores chromosome, bp_lower, bp_upper and p_upper -- a filtered request returns the same rows as an unfiltered one. Per-study files are on FTP at https://ftp.ebi.ac.uk/pub/databases/gwas/summary_statistics/ and are tabix-indexed, so a future region tool should query those rather than an endpoint.",
+  "workaround_tool_file": "src/tooluniverse/data/gwas_sumstats_tools.json",
+  "investigation_notes": [
+    "Surfaced by the weekly tool health check: all three tools returned 410.",
+    "v2 probed for region support: bp_lower/bp_upper, chromosome and p_upper are all accepted and ignored -- GCST000392 returns 38 associations with or without them.",
+    "There is no global /gwas/api/v2/associations endpoint (404).",
+    "v2 filters studies on the EFO trait LABEL, case-insensitively and as a substring: 'alzheimer' -> 438 studies, 'Alzheimer disease' -> 250, 'ALZHEIMER' -> 438, 'zzznotatrait' -> 0. An ontology id returns 0 rather than an error, which reads as 'this trait has no studies'.",
+    "Some EFO ids callers still hold are obsolete: OLS resolves EFO_0000249 to \"obsolete_Alzheimer's disease\".",
+    "PRESERVED FOR A FUTURE FTP-BASED REGION TOOL: the summary-statistics store encoded 'not reported' as the numeric sentinel -99.0, for p_value and odds_ratio alike. Those rows were served even when the caller asked for p_upper=5e-8, because -99 <= 5e-8 is numerically true, and they sorted to the top of any ascending-by-p ranking. The upstream 'code' field is NOT a usable discriminator: code 10 means harmonisation succeeded and code 14 'invalid for harmonisation' appears on rows with real p-values. The test that works is on the value: a real p-value is a finite number in [0, 1], keeping 0.0 because sumstats legitimately underflow for extremely significant hits. Observed live on GCST004415 in chr2:179000000-179600000."
+  ],
+  "attempted_config_file": "src/tooluniverse/data/gwas_sumstats_tools.json"
+}

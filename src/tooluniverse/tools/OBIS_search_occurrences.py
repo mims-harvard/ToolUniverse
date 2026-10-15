@@ -16,7 +16,7 @@ def OBIS_search_occurrences(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Retrieve marine species occurrence records (with coordinates/time) from OBIS using flexible filte...
 
@@ -37,7 +37,7 @@ def OBIS_search_occurrences(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

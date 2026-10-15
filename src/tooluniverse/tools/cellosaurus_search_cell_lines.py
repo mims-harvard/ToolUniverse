@@ -12,6 +12,7 @@ def cellosaurus_search_cell_lines(
     q: str,
     offset: Optional[int] = 0,
     size: Optional[int] = 20,
+    fields: Optional[list[str]] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +29,8 @@ def cellosaurus_search_cell_lines(
         Number of results to skip (for pagination)
     size : int
         Maximum number of results to return
+    fields : list[str]
+        Field abbreviations to return, e.g. ['id','ac','ox','ca']. A full record is v...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,7 @@ def cellosaurus_search_cell_lines(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"q": q, "offset": offset, "size": size}.items()
+        for k, v in {"q": q, "offset": offset, "size": size, "fields": fields}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

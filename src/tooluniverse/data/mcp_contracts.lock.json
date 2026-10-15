@@ -1908,7 +1908,7 @@
                     }
                   ],
                   "default": null,
-                  "description": "0-based offset of the transcription start site into the sequence, counted in bases (whitespace is ignored). Required unless the sequence is exactly 9,198 bp; must leave 4,599 bp on each side. The API scores only sequence[tss_index-4599 : tss_index+4599] and reports the slice it used as meta.task_specific_counts.scored_window \u2014 check it: a wrong-but-in-range offset scores the wrong window silently.",
+                  "description": "0-based offset of the transcription start site into the sequence, counted in bases (whitespace is ignored). Required unless the sequence is exactly 9,198 bp; must leave at least 4,599 bp on each side (4,599 <= tss_index <= length - 4,599). The model reads the sequence around this offset (9,198 bp for g0-expression, more flank for a model with a larger bio_spec.recommended_flank_bp) and the API reports the slice it used as meta.task_specific_counts.scored_window. Check it: a wrong-but-in-range offset scores the wrong window silently.",
                   "title": "Tss Index"
                 }
               },

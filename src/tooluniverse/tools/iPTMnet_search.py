@@ -1,7 +1,7 @@
 """
 iPTMnet_search
 
-Search the iPTMnet database for proteins with post-translational modification (PTM) data. Find pr...
+NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has ...
 """
 
 from typing import Any, Optional, Callable
@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def iPTMnet_search(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search",
     search_term: Optional[str] = None,
     role: Optional[str] = "Substrate",
-    ptm_type: Optional[str | Any] = None,
+    ptm_type: Optional[str] = None,
     term_type: Optional[str] = "All",
     max_results: Optional[int] = 25,
     query: Optional[str] = None,
@@ -22,7 +22,7 @@ def iPTMnet_search(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search the iPTMnet database for proteins with post-translational modification (PTM) data. Find pr...
+    NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has ...
 
     Parameters
     ----------
@@ -32,7 +32,7 @@ def iPTMnet_search(
         Search query: gene name (TP53, EGFR, AKT1), protein name (p53, insulin recept...
     role : str
         Filter by protein role. Substrate = proteins that are modified; Enzyme = prot...
-    ptm_type : str | Any
+    ptm_type : str
         Filter by PTM type: Phosphorylation, Acetylation, Ubiquitination, Methylation...
     term_type : str
         Type of search term. Default: All (searches across all fields)

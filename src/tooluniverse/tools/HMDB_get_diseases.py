@@ -9,9 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def HMDB_get_diseases(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_diseases",
     hmdb_id: Optional[str] = None,
     compound_name: Optional[str] = None,
+    pubchem_cid: Optional[str] = None,
+    limit: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +30,10 @@ def HMDB_get_diseases(
         HMDB ID (e.g., HMDB0000122)
     compound_name : str
         Compound name (e.g., glucose)
+    pubchem_cid : str
+        PubChem CID as an alternative identifier to hmdb_id or compound_name.
+    limit : int
+        Maximum number of disease associations to return (default 50).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +54,8 @@ def HMDB_get_diseases(
             "operation": operation,
             "hmdb_id": hmdb_id,
             "compound_name": compound_name,
+            "pubchem_cid": pubchem_cid,
+            "limit": limit,
         }.items()
         if v is not None
     }

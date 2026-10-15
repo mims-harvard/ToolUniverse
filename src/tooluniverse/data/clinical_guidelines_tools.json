@@ -2234,294 +2234,6 @@
     }
   },
   {
-    "name": "NCI_search_cancer_resources",
-    "description": "Search NCI (National Cancer Institute) Resources for Researchers (R4R) for cancer research tools, databases, datasets, and clinical research resources. The R4R collection includes bioinformatics tools, clinical research tools, lab instruments, datasets, specimen repositories, and community resources. Returns resource descriptions, links, tool types, research areas, and research types. Useful for finding cancer-specific research resources, analysis tools, and clinical resources.",
-    "parameter": {
-      "type": "object",
-      "properties": {
-        "q": {
-          "type": "string",
-          "description": "Search query for cancer research resources (e.g., 'breast cancer treatment', 'genomics analysis', 'clinical trial design')"
-        },
-        "size": {
-          "type": "integer",
-          "description": "Number of results to return (default: 20, max: 50)",
-          "default": 20
-        },
-        "from": {
-          "type": "integer",
-          "description": "Offset for pagination (default: 0)",
-          "default": 0
-        },
-        "toolTypes": {
-          "type": "string",
-          "description": "Filter by tool type key: 'analysis_tools', 'datasets_databases', 'lab_tools', 'community_research_tools', 'clinical_research_tools', 'terminology'"
-        },
-        "researchAreas": {
-          "type": "string",
-          "description": "Filter by research area key: 'cancer_treatment', 'cancer_biology', 'cancer_omics', 'screening_detection', 'causes_of_cancer', 'cancer_health_disparities', 'cancer_statistics', 'cancer_prevention', 'cancer_diagnosis', 'cancer_survivorship'"
-        }
-      },
-      "required": [
-        "q"
-      ]
-    },
-    "fields": {
-      "endpoint": "https://webapis.cancer.gov/r4r/v1/resources"
-    },
-    "type": "BaseRESTTool",
-    "test_examples": [
-      {
-        "q": "breast cancer treatment",
-        "size": 5
-      },
-      {
-        "q": "genomics analysis tools",
-        "size": 5,
-        "toolTypes": "analysis_tools"
-      },
-      {
-        "q": "clinical trial",
-        "size": 5,
-        "researchAreas": "cancer_treatment"
-      }
-    ],
-    "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "meta": {
-              "type": "object",
-              "properties": {
-                "totalResults": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "from": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "originalQuery": {
-                  "type": "string"
-                }
-              }
-            },
-            "results": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": [
-                      "integer",
-                      "number"
-                    ]
-                  },
-                  "title": {
-                    "type": "string"
-                  },
-                  "website": {
-                    "type": "string"
-                  },
-                  "body": {
-                    "type": "string"
-                  },
-                  "description": {
-                    "type": "string"
-                  },
-                  "toolTypes": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "key": {
-                          "type": "string"
-                        },
-                        "label": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  "toolSubtypes": {
-                    "type": "null"
-                  },
-                  "researchAreas": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "key": {
-                          "type": "string"
-                        },
-                        "label": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  "researchTypes": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "key": {
-                          "type": "string"
-                        },
-                        "label": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  "resourceAccess": {
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
-                      },
-                      "notes": {
-                        "type": [
-                          "null",
-                          "string"
-                        ]
-                      }
-                    }
-                  },
-                  "doCs": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "key": {
-                          "type": "string"
-                        },
-                        "label": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  "poCs": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "object",
-                          "properties": {
-                            "prefix": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
-                            },
-                            "firstName": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
-                            },
-                            "middleName": {
-                              "type": "null"
-                            },
-                            "lastName": {
-                              "type": [
-                                "null",
-                                "string"
-                              ]
-                            },
-                            "suffix": {
-                              "type": "null"
-                            }
-                          }
-                        },
-                        "title": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
-                        },
-                        "phone": {
-                          "type": [
-                            "null",
-                            "string"
-                          ]
-                        },
-                        "email": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            },
-            "facets": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "type": "string"
-                  },
-                  "param": {
-                    "type": "string"
-                  },
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "key": {
-                          "type": "string"
-                        },
-                        "label": {
-                          "type": "string"
-                        },
-                        "count": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "selected": {
-                          "type": "boolean"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "required": [
-            "meta"
-          ]
-        },
-        {
-          "type": "object",
-          "properties": {
-            "error": {
-              "type": "string"
-            }
-          },
-          "required": [
-            "error"
-          ]
-        }
-      ]
-    }
-  },
-  {
     "name": "NCI_get_drug_by_name",
     "description": "Get detailed information about a cancer drug from the NCI Drug Dictionary by its pretty-url-name (slug). Returns comprehensive drug information including definition, aliases (brand names, chemical names, code names, CAS registry numbers), NCI concept ID, and links to drug information summaries. The pretty-url-name is a lowercase hyphenated slug (e.g., 'pembrolizumab', 'tamoxifen-citrate', 'nivolumab'). You can find drug names from NCIDrugDict_search results (prettyUrlName field).",
     "parameter": {
@@ -2785,7 +2497,7 @@
     "fields": {
       "endpoint": "https://dailymed.nlm.nih.gov/dailymed/services/v2/drugclasses.json"
     },
-    "type": "BaseRESTTool",
+    "type": "DailyMedDrugClassesTool",
     "test_examples": [
       {
         "drug_class_name": "kinase inhibitor",
@@ -2801,96 +2513,81 @@
       }
     ],
     "return_schema": {
-      "oneOf": [
-        {
-          "type": "object",
-          "properties": {
-            "data": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string"
-                  },
-                  "codingSystem": {
-                    "type": "string"
-                  },
-                  "type": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  }
-                }
-              }
-            },
-            "metadata": {
-              "type": "object",
-              "properties": {
-                "db_published_date": {
-                  "type": "string"
-                },
-                "elements_per_page": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "current_url": {
-                  "type": "string"
-                },
-                "next_page_url": {
-                  "type": "string"
-                },
-                "total_elements": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "total_pages": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "current_page": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                },
-                "previous_page": {
-                  "type": "string"
-                },
-                "previous_page_url": {
-                  "type": "string"
-                },
-                "next_page": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
-                }
-              }
-            }
-          },
-          "required": [
-            "data"
-          ]
+      "type": "object",
+      "description": "Drug classes whose name contains the search term. DailyMed cannot filter, so `data` is the matching subset of its catalogue and `metadata` records that ToolUniverse applied the filter. On failure `status` is 'error', `error` carries the reason and `data` is absent.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "'success' or 'error'"
         },
-        {
+        "error": {
+          "type": "string",
+          "description": "Present only when status is 'error'."
+        },
+        "data": {
+          "type": "array",
+          "description": "The matches on the requested page. Empty when nothing matched, which is an answer rather than a failure.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "NDF-RT code, e.g. 'N0000175809'"
+              },
+              "codingSystem": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "description": "EPC, MoA, PE or Chemical/Ingredient"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "metadata": {
           "type": "object",
           "properties": {
-            "error": {
-              "type": "string"
+            "drug_class_name": {
+              "type": "string",
+              "description": "The term that was searched for."
+            },
+            "total_matches": {
+              "type": "integer",
+              "description": "Matches across the whole catalogue, not just this page."
+            },
+            "returned": {
+              "type": "integer",
+              "description": "Rows in `data`."
+            },
+            "page": {
+              "type": "integer"
+            },
+            "pagesize": {
+              "type": "integer"
+            },
+            "classes_searched": {
+              "type": "integer",
+              "description": "Size of the catalogue that was filtered, 1210 today."
+            },
+            "upstream_pages_read": {
+              "type": "integer",
+              "description": "DailyMed pages fetched to assemble it; it caps a page at 100."
+            },
+            "filtered_by": {
+              "type": "string",
+              "description": "Records that the filter was applied by ToolUniverse, not upstream."
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
+        },
+        "url": {
+          "type": "string"
         }
+      },
+      "required": [
+        "status"
       ]
     }
   }

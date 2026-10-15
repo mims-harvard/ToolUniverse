@@ -40,7 +40,7 @@ def CTIS_search_trials_filtered(
     medical_condition : str
         Medical condition / indication filter, e.g. 'breast cancer', 'leukemia'.
     status : list[Any] | int | str
-        Trial status code(s), e.g. [3] for ongoing. Accepts a single value or a list.
+        CTIS numeric trial status code(s) -- NOT free text. Accepts a single code or ...
     trial_phase_code : list[str] | str
         Trial phase code(s) as strings, e.g. ['3'] for Phase III. Accepts a single va...
     age_group_code : list[str] | str

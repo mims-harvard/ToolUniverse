@@ -70,7 +70,11 @@ def _run(query_type, arguments, corpus):
     """
     issued = []
 
-    def fake_get(url, params=None, timeout=None):
+    # headers= arrives because request_with_retry now always sends a
+    # User-Agent, and this module's adapter forwards every kwarg the caller
+    # set. Accepting **kwargs keeps the stub from pinning a call signature it
+    # does not assert anything about.
+    def fake_get(url, params=None, timeout=None, headers=None, **kwargs):
         q = params["search"]
         issued.append(q)
         if q in corpus:

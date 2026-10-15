@@ -21,7 +21,7 @@ def OMA_get_group(
     Parameters
     ----------
     group_id : str
-        OMA Group number (numeric ID). Examples: '1388790' (p53 group), '839588' (EGF...
+        OMA Group number (numeric ID). Verified example: '1458663' (p53 group). Use O...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

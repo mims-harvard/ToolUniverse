@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GPCRdb_get_mutations(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_mutations",
     protein: Optional[str] = None,
     protein_id: Optional[str] = None,
     receptor_name: Optional[str] = None,

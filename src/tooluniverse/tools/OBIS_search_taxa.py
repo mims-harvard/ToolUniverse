@@ -15,7 +15,7 @@ def OBIS_search_taxa(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Resolve marine taxa in OBIS by scientific name to obtain standardized identifiers (AphiaID), rank...
 
@@ -34,7 +34,7 @@ def OBIS_search_taxa(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

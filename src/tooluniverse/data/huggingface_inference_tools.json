@@ -98,7 +98,10 @@
     ],
     "fields": {
       "operation": "classify_text"
-    }
+    },
+    "required_api_keys": [
+      "HF_TOKEN"
+    ]
   },
   {
     "name": "HFInference_embed_text",
@@ -188,7 +191,10 @@
     ],
     "fields": {
       "operation": "embed_text"
-    }
+    },
+    "required_api_keys": [
+      "HF_TOKEN"
+    ]
   },
   {
     "name": "HFInference_fill_mask",
@@ -303,7 +309,10 @@
     ],
     "fields": {
       "operation": "fill_mask"
-    }
+    },
+    "required_api_keys": [
+      "HF_TOKEN"
+    ]
   },
   {
     "name": "HFInference_summarize",
@@ -392,7 +401,10 @@
     ],
     "fields": {
       "operation": "summarize"
-    }
+    },
+    "required_api_keys": [
+      "HF_TOKEN"
+    ]
   },
   {
     "name": "HFInference_zero_shot_classify",
@@ -509,7 +521,10 @@
     ],
     "fields": {
       "operation": "zero_shot_classify"
-    }
+    },
+    "required_api_keys": [
+      "HF_TOKEN"
+    ]
   },
   {
     "name": "HFInference_ner",
@@ -620,7 +635,10 @@
     ],
     "fields": {
       "operation": "ner"
-    }
+    },
+    "required_api_keys": [
+      "HF_TOKEN"
+    ]
   },
   {
     "name": "HFInference_question_answering",
@@ -720,7 +738,10 @@
     ],
     "fields": {
       "operation": "question_answering"
-    }
+    },
+    "required_api_keys": [
+      "HF_TOKEN"
+    ]
   },
   {
     "name": "HFInference_translate",
@@ -793,7 +814,10 @@
     ],
     "fields": {
       "operation": "translate"
-    }
+    },
+    "required_api_keys": [
+      "HF_TOKEN"
+    ]
   },
   {
     "name": "HFInference_classify_image",
@@ -898,7 +922,10 @@
     ],
     "fields": {
       "operation": "classify_image"
-    }
+    },
+    "required_api_keys": [
+      "HF_TOKEN"
+    ]
   },
   {
     "name": "HFInference_detect_objects",
@@ -1029,6 +1056,9 @@
     ],
     "fields": {
       "operation": "detect_objects"
-    }
+    },
+    "required_api_keys": [
+      "HF_TOKEN"
+    ]
   }
 ]

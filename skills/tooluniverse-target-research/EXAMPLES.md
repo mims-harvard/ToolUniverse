@@ -17,10 +17,10 @@ tu.load_tools()
 # Resolve EGFR to all IDs
 # Search UniProt for human EGFR
 search_result = tu.tools.UniProt_search(
-    query='gene:EGFR AND organism_id:9606',
+    query='gene:EGFR AND organism_id:9606 AND reviewed:true',
     limit=1
 )
-uniprot_id = search_result['results'][0]['primaryAccession']  # P00533
+uniprot_id = search_result['data']['results'][0]['accession']  # P00533
 
 # Map to Ensembl
 mapping = tu.tools.UniProt_id_mapping(
@@ -28,7 +28,7 @@ mapping = tu.tools.UniProt_id_mapping(
     from_db='UniProtKB_AC-ID',
     to_db='Ensembl'
 )
-ensembl_id = mapping['results'][0]['to']  # ENSG00000146648
+ensembl_id = mapping['data']['results'][0]['to'].split('.')[0]  # ENSG00000146648 (the tool returns the versioned ID)
 
 ids = {
     'symbol': 'EGFR',
@@ -270,12 +270,15 @@ drugs = tu.tools.OpenTargets_get_associated_drugs_by_target_ensemblID(
 
 # ChEMBL bioactivity
 # First get ChEMBL target ID
+# (a bare pref_name__contains='EGFR' returns a chimera entry first; the full
+#  protein name plus target_type pins the canonical target)
 chembl_target = tu.tools.ChEMBL_search_targets(
-    pref_name__contains='EGFR',
+    pref_name__contains='Epidermal growth factor receptor',
     organism='Homo sapiens',
+    target_type='SINGLE PROTEIN',
     limit=1
 )
-target_chembl_id = chembl_target['targets'][0]['target_chembl_id']  # CHEMBL203
+target_chembl_id = chembl_target['data']['targets'][0]['target_chembl_id']  # CHEMBL203
 
 activities = tu.tools.ChEMBL_get_target_activities(
     target_chembl_id__exact='CHEMBL203',
@@ -595,7 +598,8 @@ def validate_target(gene_symbol, disease_area='cancer'):
     )
     validation_results['genetic_evidence'] = {
         'disease_associations': disease_assoc,
-        'score': 'HIGH' if any(d.get('score', 0) > 0.5 for d in disease_assoc.get('data', [])) else 'LOW'
+        # data.target.associatedDiseases.rows: [{score, disease: {id, name}, datasourceScores}]
+        'score': 'HIGH' if any(row.get('score', 0) > 0.5 for row in disease_assoc['data']['target']['associatedDiseases']['rows']) else 'LOW'
     }
     
     # Constraint score
@@ -610,7 +614,7 @@ def validate_target(gene_symbol, disease_area='cancer'):
     # 3. FUNCTIONAL EVIDENCE
     # Pathways
     pathways = tu.tools.Reactome_map_uniprot_to_pathways(uniprot_id='P11802')
-    go_terms = tu.tools.GO_get_annotations_for_gene(gene_id='UniProtKB:P11802')
+    go_terms = tu.tools.GO_get_annotations_for_gene(gene_id='CDK4')  # gene symbol (a UniProtKB: id finds nothing)
     validation_results['function'] = {
         'pathways': pathways,
         'go_terms': go_terms
@@ -646,8 +650,8 @@ def validate_target(gene_symbol, disease_area='cancer'):
         limit=0
     )
     validation_results['competitive'] = {
-        'publication_count': lit_count.get('count', 0),
-        'maturity': 'mature' if lit_count.get('count', 0) > 1000 else 'emerging'
+        'publication_count': lit_count['metadata']['total'],  # 'count' is the number returned (0 here)
+        'maturity': 'mature' if lit_count['metadata']['total'] > 1000 else 'emerging'
     }
     
     return validation_results
@@ -734,7 +738,7 @@ def find_targets_for_disease(disease_name):
             'disease_score': target['score'],
             'tractability': tract,
             'drug_count': drugs['data']['target']['drugAndClinicalCandidates']['count'],
-            'safety_flags': len(safety['data']['target']['safetyLiabilities'])
+            'safety_flags': len(safety['data']['target'].get('safetyLiabilities') or [])
         })
     
     return target_assessments

@@ -4,7 +4,10 @@ Converted to use AsyncPollingTool for cleaner code and automatic polling managem
 Maintains all original functionality while reducing boilerplate.
 """
 
+import asyncio
 import requests
+import time
+from urllib.parse import urlparse
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from .async_base import AsyncPollingTool
 from .tool_registry import register_tool
@@ -101,13 +104,9 @@ class ProteinsPlusRESTTool(AsyncPollingTool):
             }
 
         if endpoint == "/protoss_rest":
-            if "pdb_content" in arguments and arguments["pdb_content"]:
-                protoss = {"pdbData": arguments["pdb_content"]}
-            else:
-                protoss = {"pdbCode": arguments.get("pdb_id", "")}
-            if arguments.get("ligand_content"):
-                protoss["ligandData"] = arguments["ligand_content"]
-            return {"protoss": protoss}
+            # Custom structures must first be uploaded to /pdb_files_rest.
+            # ProtoSS accepts only pdbCode, including a returned upload ID.
+            return {"protoss": {"pdbCode": arguments.get("pdb_id", "")}}
 
         if endpoint == "/poseview_rest":
             return {
@@ -158,6 +157,93 @@ class ProteinsPlusRESTTool(AsyncPollingTool):
         if missing:
             raise ValueError(f"Missing required parameter(s): {', '.join(missing)}")
 
+    def _prepare_protoss(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        sources = [
+            key for key in ("pdb_id", "pdb_content") if arguments.get(key) is not None
+        ]
+        if len(sources) != 1:
+            raise ValueError("Provide exactly one of pdb_id or pdb_content")
+        source = sources[0]
+        value = arguments[source]
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"{source} must be a nonempty string")
+        if arguments.get("ligand_content"):
+            raise ValueError(
+                "Separate ligand_content is unsupported by ProtoSS REST; include ligands in the PDB"
+            )
+        if source == "pdb_id":
+            return arguments
+        if len(value.encode("utf-8")) > 5 * 1024 * 1024:
+            raise ValueError("pdb_content exceeds the 5 MiB upload limit")
+        if not any(
+            line.startswith(("ATOM  ", "HETATM")) for line in value.splitlines()
+        ):
+            raise ValueError("pdb_content must contain PDB ATOM or HETATM records")
+        upload_id = self._upload_pdb(value)
+        # Work on a copy; never overwrite the caller's structure or cache an ID
+        # on this shared tool instance across calls.
+        return {"pdb_id": upload_id}
+
+    def _upload_pdb(self, content: str) -> str:
+        """Use the documented multipart upload and wait for its loaded ID."""
+        duration = min(120, self.max_duration)
+        deadline = time.monotonic() + duration
+        response = requests.post(
+            PROTEINSPLUS_BASE_URL + "/pdb_files_rest",
+            files={
+                "pdb_file[pathvar]": (
+                    "input.pdb",
+                    content.encode("utf-8"),
+                    "chemical/x-pdb",
+                )
+            },
+            headers=_STATUS_HEADERS,
+            timeout=min(60.0, duration),
+        )
+        if response.status_code not in (200, 202):
+            raise RuntimeError(f"PDB upload returned HTTP {response.status_code}")
+        data = response.json()
+        if response.status_code == 200:
+            upload_id = data.get("id")
+            if not isinstance(upload_id, str) or not upload_id:
+                raise RuntimeError("Loaded PDB upload response has no id")
+            return upload_id
+        location = data.get("location")
+        if not isinstance(location, str):
+            raise RuntimeError("PDB upload response has no polling location")
+        parsed = urlparse(location)
+        if (
+            parsed.scheme != "https"
+            or parsed.netloc != "proteins.plus"
+            or not parsed.path.startswith("/api/pdb_files_rest/")
+        ):
+            raise RuntimeError("Unexpected PDB upload polling location")
+        while True:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise TimeoutError(
+                    f"PDB upload did not finish within {duration} seconds"
+                )
+            response = requests.get(
+                location, headers=_STATUS_HEADERS, timeout=min(30.0, remaining)
+            )
+            if response.status_code == 200:
+                data = response.json()
+                upload_id = data.get("id")
+                if not isinstance(upload_id, str) or not upload_id:
+                    raise RuntimeError("Loaded PDB upload response has no id")
+                return upload_id
+            if response.status_code != 202:
+                raise RuntimeError(
+                    f"PDB upload status returned HTTP {response.status_code}"
+                )
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise TimeoutError(
+                    f"PDB upload did not finish within {duration} seconds"
+                )
+            time.sleep(min(2, remaining))
+
     # ========================================================================
     # AsyncPollingTool Required Methods
     # ========================================================================
@@ -169,6 +255,8 @@ class ProteinsPlusRESTTool(AsyncPollingTool):
         it's not called (handled by run() override).
         """
         self._validate_required(arguments)
+        if self.endpoint == "/protoss_rest":
+            arguments = self._prepare_protoss(arguments)
         url = self._build_api_url(arguments)
         request_data = self._transform_params(arguments)
 
@@ -296,6 +384,15 @@ class ProteinsPlusRESTTool(AsyncPollingTool):
 
         # For async tools, use AsyncPollingTool's run()
         if self.is_async:
+            if self.endpoint == "/protoss_rest":
+                try:
+                    # Upload polling can take up to two minutes; keep that
+                    # synchronous HTTP work off the caller's event loop.
+                    arguments = await asyncio.to_thread(
+                        self._prepare_protoss, arguments
+                    )
+                except Exception as exc:
+                    return self.handle_error(exc)
             return await super().run(arguments, progress)
 
         # For sync tools, execute directly

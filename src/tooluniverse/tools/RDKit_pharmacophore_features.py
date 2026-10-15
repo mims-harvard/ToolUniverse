@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def RDKit_pharmacophore_features(
     smiles: str,
-    include_features: Optional[list[str] | Any] = None,
+    include_features: Optional[list[str]] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def RDKit_pharmacophore_features(
     ----------
     smiles : str
         SMILES string of the molecule. Examples: 'CC(=O)Oc1ccccc1C(=O)O' (aspirin), '...
-    include_features : list[str] | Any
+    include_features : list[str]
         List of feature types to extract (default: all). Options: 'HBD', 'HBA', 'Arom...
     stream_callback : Callable, optional
         Callback for streaming output

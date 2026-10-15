@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def OpenCitations_get_citations(
     doi: str,
-    limit: Optional[int | Any] = 100,
+    limit: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def OpenCitations_get_citations(
     ----------
     doi : str
         DOI of the paper to find citations for. Do not include 'https://doi.org/' pre...
-    limit : int | Any
+    limit : int
         Maximum number of citations to return. Highly-cited papers can have 10,000+ c...
     stream_callback : Callable, optional
         Callback for streaming output

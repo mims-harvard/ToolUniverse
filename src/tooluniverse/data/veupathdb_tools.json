@@ -42,19 +42,7 @@
   {
     "name": "VEuPathDB_list_gene_searches",
     "type": "BaseRESTTool",
-    "optional_api_keys": [
-      "VEUPATHDB_API_KEY"
-    ],
-    "api_key_info": {
-      "VEUPATHDB_API_KEY": {
-        "domain": "Genetics & Variants",
-        "type": "secret",
-        "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess",
-        "purpose": "List VEuPathDB gene and organism search definitions (pathogen, vector and host genomics).",
-        "without": "VEuPathDB_list_gene_searches and VEuPathDB_list_organism_searches return HTTP 401 without a key; the other VEuPathDB tools work keyless."
-      }
-    },
-    "description": "List all available gene search strategies in VEuPathDB. Returns the search types that can be used to query genes across pathogen, vector, and host genomes. Each search has a URL segment, display name, description, and the parameters it accepts. Common searches include: GenesByTaxonGene (by organism), GenesFromTranscripts (transform transcript results to genes), and single gene lookups. Use this to discover what types of gene queries are available before constructing searches. Requires a free VEUPATHDB_API_KEY (register on VEuPathDB; the endpoint returns HTTP 401 without one), sent in the Authorization header.",
+    "description": "List all available gene search strategies in VEuPathDB. Returns the search types that can be used to query genes across pathogen, vector, and host genomes. Each search has a URL segment, display name, description, and the parameters it accepts. Common searches include: GenesByTaxonGene (by organism), GenesFromTranscripts (transform transcript results to genes), and single gene lookups. Use this to discover what types of gene queries are available before constructing searches.",
     "parameter": {
       "type": "object",
       "properties": {},
@@ -66,6 +54,7 @@
       "auth_header": {
         "env_var": "VEUPATHDB_API_KEY",
         "header": "Authorization",
+        "required": true,
         "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess"
       }
     },
@@ -132,24 +121,24 @@
     },
     "test_examples": [
       {}
-    ]
-  },
-  {
-    "name": "VEuPathDB_list_organism_searches",
-    "type": "BaseRESTTool",
-    "optional_api_keys": [
+    ],
+    "required_api_keys": [
       "VEUPATHDB_API_KEY"
     ],
     "api_key_info": {
       "VEUPATHDB_API_KEY": {
-        "domain": "Genetics & Variants",
+        "domain": "Pathogens & Microbiology",
         "type": "secret",
         "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess",
-        "purpose": "List VEuPathDB gene and organism search definitions (pathogen, vector and host genomics).",
-        "without": "VEuPathDB_list_gene_searches and VEuPathDB_list_organism_searches return HTTP 401 without a key; the other VEuPathDB tools work keyless."
+        "purpose": "Query the VEuPathDB WDK service for pathogen gene searches and records.",
+        "without": "VEuPathDB returns 401 'Valid API Key required for this endpoint.' Only the record-type listing stays open."
       }
-    },
-    "description": "List all available organism search strategies in VEuPathDB. Returns the search types that can be used to query organisms in the VEuPathDB database, covering 785+ pathogen, vector, and host organism genomes. Useful for discovering what organism queries are available. Common searches include: AllOrganisms (list all), GenomeDataTypes (genome statistics), GeneMetrics (gene counts), and OrganismsByText (text search). Requires a free VEUPATHDB_API_KEY (register on VEuPathDB; the endpoint returns HTTP 401 without one), sent in the Authorization header.",
+    }
+  },
+  {
+    "name": "VEuPathDB_list_organism_searches",
+    "type": "BaseRESTTool",
+    "description": "List all available organism search strategies in VEuPathDB. Returns the search types that can be used to query organisms in the VEuPathDB database, covering 785+ pathogen, vector, and host organism genomes. Useful for discovering what organism queries are available. Common searches include: AllOrganisms (list all), GenomeDataTypes (genome statistics), GeneMetrics (gene counts), and OrganismsByText (text search).",
     "parameter": {
       "type": "object",
       "properties": {},
@@ -161,6 +150,7 @@
       "auth_header": {
         "env_var": "VEUPATHDB_API_KEY",
         "header": "Authorization",
+        "required": true,
         "register_url": "https://w1.veupathdb.org/veupathdb/app/user/profile#serviceAccess"
       }
     },
@@ -212,6 +202,9 @@
     },
     "test_examples": [
       {}
+    ],
+    "required_api_keys": [
+      "VEUPATHDB_API_KEY"
     ]
   },
   {
@@ -331,7 +324,10 @@
           ]
         }
       ]
-    }
+    },
+    "required_api_keys": [
+      "VEUPATHDB_API_KEY"
+    ]
   },
   {
     "name": "VEuPathDB_get_gene_record",
@@ -459,6 +455,9 @@
           ]
         }
       ]
-    }
+    },
+    "required_api_keys": [
+      "VEUPATHDB_API_KEY"
+    ]
   }
 ]

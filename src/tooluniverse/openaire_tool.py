@@ -38,7 +38,11 @@ class OpenAIRETool(BaseTool):
 
         if not query:
             return {
-                "status": "success",
+                # Top-level error, so the result cache and every caller see a
+                # failure; the old inner fields stay in `data` for callers that
+                # read data["status"].
+                "status": "error",
+                "error": "`query` parameter is required.",
                 "data": {
                     "status": "error",
                     "error": "`query` parameter is required.",
@@ -52,7 +56,11 @@ class OpenAIRETool(BaseTool):
         endpoint = self._endpoint_for_type(prod_type)
         if endpoint is None:
             return {
-                "status": "success",
+                # Top-level error, so the result cache and every caller see a
+                # failure; the old inner fields stay in `data` for callers that
+                # read data["status"].
+                "status": "error",
+                "error": "Unsupported type. Use publications/datasets/software.",
                 "data": {
                     "status": "error",
                     "error": "Unsupported type. Use publications/datasets/software.",
@@ -77,7 +85,11 @@ class OpenAIRETool(BaseTool):
             data = resp.json()
         except requests.RequestException as e:
             return {
-                "status": "success",
+                # Top-level error, so the result cache and every caller see a
+                # failure; the old inner fields stay in `data` for callers that
+                # read data["status"].
+                "status": "error",
+                "error": f"Network/API error calling OpenAIRE: {e}",
                 "data": {
                     "status": "error",
                     "error": "Network/API error calling OpenAIRE",
@@ -90,7 +102,11 @@ class OpenAIRETool(BaseTool):
             }
         except ValueError:
             return {
-                "status": "success",
+                # Top-level error, so the result cache and every caller see a
+                # failure; the old inner fields stay in `data` for callers that
+                # read data["status"].
+                "status": "error",
+                "error": "Failed to decode OpenAIRE response as JSON",
                 "data": {
                     "status": "error",
                     "error": "Failed to decode OpenAIRE response as JSON",

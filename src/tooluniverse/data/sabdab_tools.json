@@ -118,32 +118,41 @@
       "required": []
     },
     "return_schema": {
-      "oneOf": [
-        {
+      "type": "object",
+      "description": "Curated SAbDab annotations for one PDB entry. Flat rather than a oneOf of success and error: `data` has to sit at the schema's top level for the validator to recognise the {status,data} envelope and check the whole result.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "'success', or 'error' with an 'error' message and no 'data'"
+        },
+        "error": {
+          "type": "string",
+          "description": "Present only when status is 'error'. A PDB entry SAbDab does not hold -- it keeps antibody and nanobody structures only -- is an error rather than an empty answer."
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "data": {
           "type": "object",
           "properties": {
             "pdb_id": {
-              "type": "string"
-            },
-            "antigen_name": {
               "type": [
                 "string",
                 "null"
-              ]
+              ],
+              "description": "SAbDab's extended PDB ID, e.g. 'pdb_00003hfm'"
             },
-            "antigen_species": {
+            "query_pdb_id": {
               "type": [
                 "string",
                 "null"
-              ]
+              ],
+              "description": "The id as asked for, e.g. '3hfm'"
             },
-            "heavy_species": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "light_species": {
+            "name": {
               "type": [
                 "string",
                 "null"
@@ -152,99 +161,175 @@
             "resolution": {
               "type": [
                 "number",
-                "string",
                 "null"
-              ]
+              ],
+              "description": "Angstroms; null for methods that do not report one"
             },
-            "method": {
+            "structure_method": {
               "type": [
                 "string",
+                "null"
+              ],
+              "description": "e.g. 'X-ray diffraction'"
+            },
+            "r_work": {
+              "type": [
+                "number",
                 "null"
               ]
             },
             "r_free": {
               "type": [
                 "number",
-                "string",
                 "null"
               ]
             },
-            "r_factor": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "heavy_subclass": {
+            "deposition_date": {
               "type": [
                 "string",
                 "null"
               ]
             },
-            "light_subclass": {
+            "release_date": {
               "type": [
                 "string",
                 "null"
               ]
             },
-            "scfv": {
+            "journal_references": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Free-text citation as SAbDab stores it. The API carries no PMID field, so this is the only citation available."
+            },
+            "antibody_type": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Distinct SAbDab types of the antibodies present, e.g. ['FAB']"
+            },
+            "antibody_count": {
+              "type": "integer",
+              "description": "Paired antibodies in the entry; 1AHW has two copies"
+            },
+            "heavy_chains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Chain identifiers typed H"
+            },
+            "light_chains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Chain identifiers typed K (kappa) or L (lambda). Testing for 'L' alone drops every kappa chain."
+            },
+            "single_chain_constructs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Chain identifiers typed M, such as an scFv"
+            },
+            "heavy_chain_species": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "light_chain_species": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "antigen_chains": {
+              "type": "array",
+              "description": "Chains typed N: the antigen side of the complex.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chain": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. 'HEN EGG WHITE LYSOZYME'"
+                  },
+                  "organism_scientific": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "unclassified_chains": {
+              "type": "array",
+              "description": "Chains whose SAbDab type is none of H/K/L/M/N. Reported rather than folded into the antigen list, so a type added upstream is visible instead of mislabelled.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "chain": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "chain_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "all_cdr_coords_resolved": {
               "type": [
                 "boolean",
                 "null"
-              ]
-            },
-            "engineered": {
-              "type": [
-                "boolean",
-                "null"
-              ]
-            },
-            "affinity": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "delta_g": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "pmid": {
-              "type": [
-                "integer",
-                "string",
-                "null"
-              ]
-            },
-            "chains": {
-              "type": "array"
-            },
-            "count": {
-              "type": "integer"
+              ],
+              "description": "True when every antibody in the entry has all CDR coordinates resolved; null when the entry has no paired antibody."
             }
           },
           "required": [
             "pdb_id",
-            "chains",
-            "count"
+            "antibody_count",
+            "heavy_chains",
+            "light_chains",
+            "antigen_chains"
           ]
         },
-        {
+        "metadata": {
           "type": "object",
           "properties": {
-            "error": {
+            "source": {
               "type": "string"
+            },
+            "url": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string",
+              "description": "Records that this comes from the SAbDab 2 JSON entry, and that IMGT V-gene subclass is absent from it rather than guessed."
             }
-          },
-          "required": [
-            "error"
-          ]
+          }
         }
+      },
+      "required": [
+        "status"
       ]
     },
     "test_examples": [

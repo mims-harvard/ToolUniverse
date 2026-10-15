@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def OpenFDA_search_drug_labels(
     search: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def OpenFDA_search_drug_labels(
     ----------
     search : str
         Lucene query to search drug labels (e.g., 'openfda.brand_name:aspirin', 'open...
-    limit : int | Any
+    limit : int
         Maximum number of results (default 1, max 100)
     stream_callback : Callable, optional
         Callback for streaming output

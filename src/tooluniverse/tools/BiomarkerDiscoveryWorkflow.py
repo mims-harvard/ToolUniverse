@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def BiomarkerDiscoveryWorkflow(
     disease_condition: str,
-    sample_type: str,
+    sample_type: Optional[str] = "blood",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

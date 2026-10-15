@@ -1,0 +1,28 @@
+[
+  {
+    "name": "mcp_auto_loader_carbon_a",
+    "description": "Annotate protein-coding genes in eukaryotic genomes with Carbon-A using MCP protocol",
+    "type": "MCPAutoLoaderTool",
+    "server_url": "http://${CARBON_A_MCP_SERVER_HOST}:8034/mcp",
+    "required_api_keys": [
+      "CARBON_A_MCP_SERVER_HOST"
+    ],
+    "api_key_info": {
+      "CARBON_A_MCP_SERVER_HOST": {
+        "domain": "Models & Infrastructure",
+        "type": "endpoint",
+        "register_url": "https://huggingface.co/HuggingFaceBio/Carbon-A-1.2B",
+        "purpose": "Host of a self-hosted Carbon-A gene-annotation MCP server.",
+        "without": "Leave blank unless you run your own Carbon-A server."
+      }
+    },
+    "test_examples": [
+      {}
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "Output of the tool execution.",
+      "properties": {}
+    }
+  }
+]

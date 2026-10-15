@@ -319,7 +319,7 @@ def cdr_optimization_strategies(cdr_sequence, cdr_name):
         strategies.append({
             'strategy': 'CDR-H3 extension',
             'rationale': 'Add 1-2 residues to increase contact surface',
-            'expected_impact': '+2-5x affinity improvement'
+            'expected_impact': 'unquantified interface hypothesis; requires validation'
         })
 
     # Strategy 2: Tyrosine enrichment
@@ -327,7 +327,7 @@ def cdr_optimization_strategies(cdr_sequence, cdr_name):
         strategies.append({
             'strategy': 'Tyrosine enrichment',
             'rationale': 'Tyr provides pi-stacking and H-bonds',
-            'expected_impact': '+2-3x affinity improvement'
+            'expected_impact': 'unquantified contact hypothesis; requires validation'
         })
 
     # Strategy 3: Salt bridge formation
@@ -335,7 +335,7 @@ def cdr_optimization_strategies(cdr_sequence, cdr_name):
         strategies.append({
             'strategy': 'Salt bridge formation',
             'rationale': 'Charged residues for electrostatic interactions',
-            'expected_impact': '+1-2x affinity and pH sensitivity'
+            'expected_impact': 'unverified electrostatic hypothesis; pH direction depends on bound/free context'
         })
 
     return strategies

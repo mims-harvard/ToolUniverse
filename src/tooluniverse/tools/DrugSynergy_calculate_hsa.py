@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def DrugSynergy_calculate_hsa(
-    operation: str,
     effects_a: list[Any],
     effects_b: list[Any],
     effects_combo: list[Any],
+    operation: Optional[str] = "calculate_hsa",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

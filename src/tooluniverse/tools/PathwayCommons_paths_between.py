@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def PathwayCommons_paths_between(
-    genes: list[str],
+    genes: list[str] | str,
     limit: Optional[int] = 1,
     datasource: Optional[str] = None,
     max_results: Optional[int] = 200,
@@ -23,7 +23,7 @@ def PathwayCommons_paths_between(
 
     Parameters
     ----------
-    genes : list[str]
+    genes : list[str] | str
         Two or more gene symbols / identifiers to connect, e.g. ["BRCA1", "BRCA2", "T...
     limit : int
         Path length limit (graph search distance). Default 1 (direct mechanistic link...

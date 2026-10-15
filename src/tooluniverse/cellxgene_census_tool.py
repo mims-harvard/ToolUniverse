@@ -219,7 +219,7 @@ class CELLxGENECensusTool(BaseTool):
                     "nnz": presence_matrix.nnz,
                     "density": presence_matrix.nnz
                     / (presence_matrix.shape[0] * presence_matrix.shape[1]),
-                    "message": "Presence matrix retrieved. Shape: (genes, datasets)",
+                    "message": "Presence matrix retrieved. Shape: (datasets, genes)",
                 }
         except Exception as e:
             return {"status": "error", "error": str(e)}

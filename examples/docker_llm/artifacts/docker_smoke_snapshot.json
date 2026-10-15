@@ -1,0 +1,178 @@
+{
+  "case": "reviewed_docker_llm_lifecycle_and_complex_prompt",
+  "docker_server_version": "28.0.4",
+  "generated_at": "2026-08-01T02:16:31.676797+00:00",
+  "interpretation_boundary": "Infrastructure validation only; the deterministic fixture is not a real model and does not validate scientific synthesis quality.",
+  "lifecycle": {
+    "absent_after_remove": true,
+    "remove": {
+      "client_record_removed": true,
+      "container_name": "tooluniverse-docker-llm-smoke-case",
+      "removed": true
+    },
+    "running_status_verified": true,
+    "stop": {
+      "container_name": "tooluniverse-docker-llm-smoke-case",
+      "stopped": true,
+      "was_running": true
+    },
+    "stopped_status_verified": true
+  },
+  "plan": {
+    "container_name": "tooluniverse-docker-llm-smoke-case",
+    "docker_argv": [
+      "docker",
+      "run",
+      "--detach",
+      "--name",
+      "tooluniverse-docker-llm-smoke-case",
+      "--pull",
+      "never",
+      "--label",
+      "org.tooluniverse.managed=true",
+      "--label",
+      "org.tooluniverse.profile-sha256=5de381c0fe30a88ddd896b1e830a10ea40f794a09090cd9726e0de7c96fb81d8",
+      "--label",
+      "org.tooluniverse.service-id=tooluniverse-docker-llm-smoke",
+      "--publish",
+      "127.0.0.1:19090:8000",
+      "--read-only",
+      "--cap-drop",
+      "ALL",
+      "--security-opt",
+      "no-new-privileges:true",
+      "--pids-limit",
+      "64",
+      "--memory",
+      "256m",
+      "--cpus",
+      "1.0",
+      "--tmpfs",
+      "/tmp:rw,noexec,nosuid,size=64m",
+      "tooluniverse/docker-llm-smoke:test"
+    ],
+    "host_binding": "127.0.0.1:19090:8000",
+    "image": "tooluniverse/docker-llm-smoke:test",
+    "profile_name": "docker-llm-smoke",
+    "profile_sha256": "5de381c0fe30a88ddd896b1e830a10ea40f794a09090cd9726e0de7c96fb81d8"
+  },
+  "provisioning": {
+    "container_name": "tooluniverse-docker-llm-smoke-case",
+    "created_at": "2026-08-01T02:16:21.210741+00:00",
+    "docker_context": "default",
+    "docker_server_version": "28.0.4",
+    "health": {
+      "model": "fixture-evidence-synthesizer",
+      "service_id": "tooluniverse-docker-llm-smoke",
+      "status": "ok"
+    },
+    "host_port": 19090,
+    "image": "tooluniverse/docker-llm-smoke:test",
+    "image_id": "sha256:6f9459d804c3546c24e184e5099fad16a9aea73c0e957bba4425c08824ded58a",
+    "profile_name": "docker-llm-smoke",
+    "profile_sha256": "5de381c0fe30a88ddd896b1e830a10ea40f794a09090cd9726e0de7c96fb81d8",
+    "record_sha256": "e422bb0cf2470c22f8dc9d6ea0663172ef9defc71ff73f895a6e2fda3c3d5951",
+    "security": {
+      "bind_mounts": 0,
+      "cap_drop": [
+        "ALL"
+      ],
+      "cpus": 1.0,
+      "host_binding": "127.0.0.1:19090",
+      "memory_mb": 256,
+      "no_new_privileges": true,
+      "pids_limit": 64,
+      "privileged": false,
+      "read_only_rootfs": true,
+      "running": true
+    },
+    "tool_config": {
+      "cacheable": false,
+      "category": "special_tools",
+      "description": "Send a bounded evidence-synthesis prompt to the reviewed loopback Docker service.",
+      "docker_llm": {
+        "endpoint": "http://127.0.0.1:19090/v1/chat/completions",
+        "image_id": "sha256:6f9459d804c3546c24e184e5099fad16a9aea73c0e957bba4425c08824ded58a",
+        "max_prompt_chars": 20000,
+        "max_tokens_cap": 1024,
+        "model": "fixture-evidence-synthesizer",
+        "profile_sha256": "5de381c0fe30a88ddd896b1e830a10ea40f794a09090cd9726e0de7c96fb81d8",
+        "request_timeout_seconds": 15,
+        "service_id": "tooluniverse-docker-llm-smoke"
+      },
+      "mcp_annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": true
+      },
+      "name": "DockerEvidenceSynthesizer",
+      "parameter": {
+        "additionalProperties": false,
+        "properties": {
+          "max_tokens": {
+            "default": 512,
+            "maximum": 1024,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "prompt": {
+            "maxLength": 20000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "temperature": {
+            "default": 0.0,
+            "maximum": 2,
+            "minimum": 0,
+            "type": "number"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "model": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "object"
+          },
+          "response": {
+            "type": "string"
+          },
+          "usage": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "required": [
+          "response",
+          "model",
+          "provenance"
+        ],
+        "type": "object"
+      },
+      "type": "DockerLLMClientTool"
+    },
+    "version": 1
+  },
+  "tooluniverse_inference": {
+    "evidence_sections": 6,
+    "model": "fixture-evidence-synthesizer",
+    "payload_sha256": "b2cce5603b057dedf95450141f3f60b98bb3dd1205a8dac3b656f3224a6a6dac",
+    "prompt_hash_verified": true,
+    "prompt_sha256": "1d9f7583b5f03ec83efb79e858fdc8dd7ce22d6a3d713a5c294d76ad37508673",
+    "prompt_words": 199,
+    "response": "service_id=tooluniverse-docker-llm-smoke; prompt_sha256=1d9f7583b5f03ec83efb79e858fdc8dd7ce22d6a3d713a5c294d76ad37508673; word_count=199; evidence_sections=6; contract=openai-chat-completions",
+    "tool_name": "DockerEvidenceSynthesizer",
+    "usage": {
+      "completion_tokens": 5,
+      "prompt_tokens": 199,
+      "total_tokens": 204
+    }
+  }
+}

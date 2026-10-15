@@ -2,13 +2,13 @@
   {
     "name": "RNAcentral_search",
     "type": "RNAcentralSearchTool",
-    "description": "Search aggregated ncRNA records (miRNA, rRNA, lncRNA, etc.) across sources via RNAcentral. Use to find accessions, types, species, and descriptions for ncRNA analysis.",
+    "description": "Search aggregated ncRNA records (miRNA, rRNA, lncRNA, etc.) across sources via RNAcentral. Keyword queries (RNA or gene name, e.g. 'MALAT1', 'let-7') use the EBI Search index of RNAcentral, ranked by relevance; an RNAcentral accession (URS...) is fetched directly. Returns accessions, RNA types, lengths and descriptions. Sequence queries are not supported.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
-          "description": "Keyword, accession, or sequence-based query (per RNAcentral API)."
+          "description": "RNA or gene name (e.g. 'MALAT1', 'let-7') or an RNAcentral accession (URS0000D5CD72 or URS0000D5CD72_9606). Sequences are not supported."
         },
         "page_size": {
           "type": "integer",

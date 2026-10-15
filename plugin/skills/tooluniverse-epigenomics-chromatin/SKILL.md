@@ -172,7 +172,8 @@ result = tu.tools.GTEx_get_multi_tissue_eqtls(
 
 ```python
 result = tu.tools.GTEx_get_expression_summary(gene_symbol="BRCA1")
-top_tissues = sorted(result["data"], key=lambda x: x["median"], reverse=True)[:5]
+# data: {geneExpression: [{tissueSiteDetailId, median (string TPM), unit, ...}]}
+top_tissues = sorted(result["data"]["geneExpression"], key=lambda x: float(x["median"]), reverse=True)[:5]
 ```
 
 **GTEx_get_median_gene_expression**: Requires `operation="get_median_gene_expression"` + exact versioned `gencode_id`. Use only when version precision is needed.

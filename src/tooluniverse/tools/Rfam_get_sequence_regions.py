@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def Rfam_get_sequence_regions(
-    operation: str,
     family_id: str,
+    operation: Optional[str] = "get_sequence_regions",
     format: Optional[str] = "text",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

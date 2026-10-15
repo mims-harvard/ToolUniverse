@@ -15,7 +15,7 @@ def TDC_predict_oracle_score(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Score one or more molecules (SMILES) with a pretrained Therapeutics Data Commons (TDC) oracle, co...
 
@@ -34,7 +34,7 @@ def TDC_predict_oracle_score(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

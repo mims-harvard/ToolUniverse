@@ -315,12 +315,14 @@ class DrugPropertiesTool(BaseTool):
                 "brenk": {
                     "pass": len(brenk_matches) == 0,
                     "matches": brenk_matches[:10],
-                    "count": len(brenk_matches),
+                    "count": len(brenk_matches[:10]),
+                    "total_matches": len(brenk_matches),
                 },
                 "nih": {
                     "pass": len(nih_matches) == 0,
                     "matches": nih_matches[:10],
-                    "count": len(nih_matches),
+                    "count": len(nih_matches[:10]),
+                    "total_matches": len(nih_matches),
                 },
                 "recommendation": recommendation,
             },

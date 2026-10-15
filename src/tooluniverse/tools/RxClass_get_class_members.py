@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def RxClass_get_class_members(
     class_id: str,
-    rela_source: Optional[str | Any] = None,
-    ttys: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    rela_source: Optional[str] = None,
+    ttys: Optional[str] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def RxClass_get_class_members(
     ----------
     class_id : str
         Drug class identifier. ATC class codes: 'M01AE' (propionic acid derivatives),...
-    rela_source : str | Any
+    rela_source : str
         Classification source system. Options: 'ATC' (default), 'FDASPL', 'MESH', 'VA...
-    ttys : str | Any
+    ttys : str
         RxNorm term types to include. Options: 'IN' (ingredients, default), 'PIN' (pr...
-    limit : int | Any
+    limit : int
         Maximum number of drugs to return (default 50).
     stream_callback : Callable, optional
         Callback for streaming output

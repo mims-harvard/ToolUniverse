@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def PANTHER_gene_info(
     gene_id: str,
-    organism: Optional[int | Any] = None,
+    organism: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def PANTHER_gene_info(
     ----------
     gene_id : str
         Gene identifier - UniProt accession, Ensembl ID, or gene symbol. Examples: 'P...
-    organism : int | Any
+    organism : int
         NCBI taxonomy ID. Default: 9606 (human). Others: 10090 (mouse), 10116 (rat), ...
     stream_callback : Callable, optional
         Callback for streaming output

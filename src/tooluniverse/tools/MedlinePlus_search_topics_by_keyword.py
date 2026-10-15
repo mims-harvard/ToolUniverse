@@ -1,7 +1,7 @@
 """
 MedlinePlus_search_topics_by_keyword
 
-Search for relevant information in MedlinePlus Web Service by keyword across health topics or oth...
+Search MedlinePlus health topics by keyword via NLM's wsearch Web Service. IMPORTANT: although th...
 """
 
 from typing import Any, Optional, Callable
@@ -18,16 +18,16 @@ def MedlinePlus_search_topics_by_keyword(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for relevant information in MedlinePlus Web Service by keyword across health topics or oth...
+    Search MedlinePlus health topics by keyword via NLM's wsearch Web Service. IMPORTANT: although th...
 
     Parameters
     ----------
     term : str
         Search keyword, e.g., "diabetes", needs to be URL encoded before passing.
     db : str
-        Specify the database to search, e.g., healthTopics (English health topics), h...
+        Database to search. Only two values are actually served by NLM's wsearch endp...
     rettype : str
-        Result return format, options: brief (concise information, default), topic (d...
+        Result return format (default: topic). topic returns the full structured heal...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -23,8 +23,8 @@
         },
         "sortBy": {
           "type": "string",
-          "description": "Sort field (e.g., 'relevance', 'accession', 'release_date')",
-          "enum": ["relevance", "accession", "release_date", "views"]
+          "description": "Sort field: 'relevance' (default), 'release_date', 'views', 'files' or 'links'. Other values (e.g. 'accession', 'title') are not supported by BioStudies and return no results.",
+          "enum": ["relevance", "release_date", "views", "files", "links"]
         },
         "sortOrder": {
           "type": "string",

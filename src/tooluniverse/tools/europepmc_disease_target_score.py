@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def europepmc_disease_target_score(
     efoId: str,
-    pageSize: int,
+    pageSize: Optional[int] = 100,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,7 +22,7 @@ def europepmc_disease_target_score(
     Parameters
     ----------
     efoId : str
-        The EFO (Experimental Factor Ontology) ID of the disease, e.g., 'MONDO_0011996'...
+        The EFO (Experimental Factor Ontology) ID of the disease, e.g., 'MONDO_001199...
     pageSize : int
         Upstream fetch batch size (max 100), NOT a limit on results returned. The too...
     stream_callback : Callable, optional

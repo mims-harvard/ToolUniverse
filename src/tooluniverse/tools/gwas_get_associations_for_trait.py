@@ -1,7 +1,7 @@
 """
 gwas_get_associations_for_trait
 
-Get all associations for a specific trait, sorted by p-value (most significant first).
+Get all associations for a specific trait, sorted by p-value (most significant first). A free-tex...
 """
 
 from typing import Any, Optional, Callable
@@ -19,9 +19,9 @@ def gwas_get_associations_for_trait(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Get all associations for a specific trait, sorted by p-value (most significant first).
+    Get all associations for a specific trait, sorted by p-value (most significant first). A free-tex...
 
     Parameters
     ----------
@@ -46,7 +46,7 @@ def gwas_get_associations_for_trait(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

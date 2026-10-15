@@ -94,13 +94,16 @@ def test_pubmed_search_include_abstract_adds_abstract(monkeypatch):
 
     result = tool.run({"query": "x", "limit": 1, "include_abstract": True})
 
-    assert isinstance(result, list)
-    assert len(result) == 1
-    assert result[0]["pmid"] == "1"
-    assert result[0]["abstract"] == "Abstract text."
-    assert result[0]["abstract_source"] == "PubMed"
-    assert result[0]["doi_url"] == "https://doi.org/10.1000/example"
-    assert result[0]["pmc_url"].endswith("/PMC12345/")
+    # Standard {status, data, metadata} envelope since 1dfddff1.
+    assert result["status"] == "success"
+    papers = result["data"]
+    assert isinstance(papers, list)
+    assert len(papers) == 1
+    assert papers[0]["pmid"] == "1"
+    assert papers[0]["abstract"] == "Abstract text."
+    assert papers[0]["abstract_source"] == "PubMed"
+    assert papers[0]["doi_url"] == "https://doi.org/10.1000/example"
+    assert papers[0]["pmc_url"].endswith("/PMC12345/")
 
 
 @pytest.mark.unit
@@ -155,4 +158,4 @@ def test_pubmed_search_include_abstract_handles_inline_xml_tags(monkeypatch):
 
     result = tool.run({"query": "x", "limit": 1, "include_abstract": True})
 
-    assert result[0]["abstract"] == "First italic second."
+    assert result["data"][0]["abstract"] == "First italic second."

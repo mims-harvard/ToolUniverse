@@ -21,7 +21,7 @@ def OMA_get_hog(
     Parameters
     ----------
     hog_id : str
-        Hierarchical Orthologous Group ID. Examples: 'HOG:E0739094' (p53 family), 'HO...
+        Hierarchical Orthologous Group ID. Examples: 'HOG:F0782425' (p53 family), 'HO...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

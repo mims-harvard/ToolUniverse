@@ -5,6 +5,21 @@ description: Set up, launch, validate, and troubleshoot the Human expert feedbac
 
 # Set up Human expert feedback as a remote tool
 
+> **Sharing this model for a user, not developing it?** Follow the `tooluniverse-share-computer` guide; no ToolUniverse source checkout is needed. The model runs in its own Python environment, with its dependencies:
+>
+> ```bash
+> ~/.local/bin/uv venv --python 3.12 ~/.tooluniverse/envs/expert-feedback
+> curl -fsSL -o ~/.tooluniverse/envs/expert-feedback-tooluniverse.txt https://connect.aiscientist.tools/install-requirements.txt
+> ~/.local/bin/uv pip install --python ~/.tooluniverse/envs/expert-feedback/bin/python -r ~/.tooluniverse/envs/expert-feedback-tooluniverse.txt
+> # then this model's own dependencies, as in "Create an isolated environment" below
+> ~/.local/bin/tu remote check expert-feedback --python ~/.tooluniverse/envs/expert-feedback/bin/python   # lists anything still missing
+> ~/.local/bin/tu serve --allow expert-feedback --python ~/.tooluniverse/envs/expert-feedback/bin/python --share --detach --name "<computer name>" --service https://tooluniverse-backend.onrender.com
+> ```
+>
+> If the check reports a missing environment variable (a data folder, a model cache, a provider key), set it in the same shell before `tu serve`; "Obtain credentials, data, and model weights" below says what each one is. The model reads only the variables it declares.
+>
+> The rest of this guide is for developers working from the ToolUniverse source, and for diagnosing problems with this model.
+
 > Validation status (2026-08-16): a clean Python 3.12.3 dependency install, loopback discovery of all five MCP tools, a complete two-client synthetic request/response lifecycle, and the Flask companion health endpoint passed. Public publication, independent-identity authorization, production WSGI deployment, retention/consent procedures, concurrency, and resource measurements remain incomplete; keep this deployment private until they pass. Authenticated private Platform import and owner testing passed on 2026-08-16; public publication and independent-caller authorization/isolation remain untested.
 
 ## Prerequisites

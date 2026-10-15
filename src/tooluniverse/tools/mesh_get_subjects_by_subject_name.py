@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def mesh_get_subjects_by_subject_name(
     query: str,
-    case_sensitive: bool,
-    exact_match: bool,
-    limit: int,
+    case_sensitive: Optional[bool] = False,
+    exact_match: Optional[bool] = False,
+    limit: Optional[int] = 50,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

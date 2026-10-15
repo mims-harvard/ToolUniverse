@@ -10,13 +10,13 @@ from ._shared_client import get_shared_client
 
 def OpenAIRE_search_publications(
     query: str,
-    max_results: int,
-    type_: str,
+    max_results: Optional[int] = 10,
+    type_: Optional[str] = "publications",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search OpenAIRE Explore for research products including publications, datasets, and software. Ope...
 
@@ -37,7 +37,7 @@ def OpenAIRE_search_publications(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

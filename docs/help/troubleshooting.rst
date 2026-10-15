@@ -91,6 +91,40 @@ If you only need the ``tu`` command line and not the Python API::
 
    uv tool install tooluniverse
 
+faiss-cpu tries to compile on an Apple Silicon Mac
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Symptom:** on an Apple Silicon Mac the install stops on ``faiss-cpu``,
+either building it for a long time and failing, or reporting that no binary
+distribution is available::
+
+   Distribution `faiss-cpu==1.12.0 @ registry+https://pypi.org/simple` can't be
+   installed because it is marked as `--no-build` but has no binary distribution
+
+**Cause:** your macOS is older than 14. ``faiss-cpu`` publishes no arm64 wheel
+older than ``macosx_14_0`` for any release ToolUniverse can depend on -- it
+moved from ``macosx_11_0`` to ``macosx_14_0`` at version 1.11.0 -- so pip or uv
+falls back to the source distribution, which needs a C++ toolchain and SWIG.
+It is the only base dependency with this floor; everything else has arm64
+wheels back to macOS 11.
+
+**Solution:** update to macOS 14 or newer. That is the supported
+configuration, and macOS 13 has been outside Apple's security support since
+2025.
+
+If you cannot update the OS, override the pin. ToolUniverse requires
+``faiss-cpu==1.12.0`` exactly, so installing an older one afterwards conflicts;
+``uv`` needs to be told to substitute it during resolution::
+
+   echo 'faiss-cpu==1.10.0' > overrides.txt
+   uv pip install --overrides overrides.txt tooluniverse
+
+1.10.0 is the last release with ``macosx_11_0`` arm64 wheels, and the faiss API
+ToolUniverse uses (``IndexFlatIP``, ``read_index``, ``write_index``) is the same
+in both. This is unsupported and untested: it holds one package back from the
+version the test suite runs against. The vector-search tools are what depend on
+it; the rest of the catalogue does not.
+
 ImportError: No module named 'tooluniverse'
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -382,8 +416,8 @@ Many services limit how many requests you can make per second/minute. API keys t
      - 3 req/sec
      - 10 req/sec (3x faster, set NCBI_API_KEY)
    * - Semantic Scholar
-     - 1 req/sec
-     - 100 req/sec (100x faster, set SEMANTIC_SCHOLAR_API_KEY)
+     - Shared adaptive pool
+     - 1 req/sec introductory per-key quota (set SEMANTIC_SCHOLAR_API_KEY)
    * - OpenFDA
      - 40 req/min
      - 240 req/min (6x faster, set FDA_API_KEY)

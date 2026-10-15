@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def Orphanet_search_diseases(
     query: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_diseases",
     limit: Optional[int] = 20,
     lang: Optional[str] = "en",
     *,

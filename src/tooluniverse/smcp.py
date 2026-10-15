@@ -97,14 +97,43 @@ import functools
 import json
 import os
 import sys
-from concurrent.futures import ThreadPoolExecutor
 from typing import Any, Dict, List, Optional, Union, Callable, Literal
 
 from fastmcp import FastMCP
 
 FASTMCP_AVAILABLE = True
 
+# FastMCP's banner checks PyPI and says "Update available: 4.x -- Run: pip install --upgrade
+# fastmcp". ToolUniverse requires fastmcp<4, so following that advice breaks the install it was
+# printed by -- shown to everyone who ran `tu serve my_tool.py --share`. Someone who wants the
+# check can still ask for it with FASTMCP_CHECK_FOR_UPDATES.
+if not os.environ.get("FASTMCP_CHECK_FOR_UPDATES"):
+    import fastmcp as _fastmcp
+
+    _fastmcp.settings.check_for_updates = "off"
+
+
+def _json_default(value: Any) -> Any:
+    """Turn the values scientific code returns into JSON, not their str().
+
+    json.dumps(default=_json_default) turned a numpy array into the text "[0. 3. 6. 9.]" -- measured with
+    a @remote_tool returning an embedding -- so the caller received a string where it expected
+    numbers. numpy arrays and scalars, and pandas frames and series, all have exact JSON forms.
+    Anything else keeps the old fallback.
+    """
+    to_dict = getattr(value, "to_dict", None)
+    if callable(to_dict) and hasattr(value, "columns"):
+        return to_dict(orient="records")
+    tolist = getattr(value, "tolist", None)
+    if callable(tolist):
+        return tolist()
+    if isinstance(value, (set, frozenset)):
+        return sorted(value, key=str)
+    return str(value)
+
 from .execute_function import ToolUniverse
+from .agentic_tool import render_agentic_instruction
+from .credentials import ContextThreadPoolExecutor
 from .logging_config import (
     get_logger,
 )
@@ -160,7 +189,7 @@ def _truncate_response(
         lo, hi = 1, total
         while lo < hi:
             mid = (lo + hi + 1) // 2
-            trial = json.dumps(result[:mid], ensure_ascii=False, default=str)
+            trial = json.dumps(result[:mid], ensure_ascii=False, default=_json_default)
             if len(trial) <= max_chars - 500:  # leave room for metadata
                 lo = mid
             else:
@@ -175,7 +204,7 @@ def _truncate_response(
                 **truncation_meta,
             },
             ensure_ascii=False,
-            default=str,
+            default=_json_default,
         )
 
     # If result is a dict, try to truncate the largest list value
@@ -197,7 +226,7 @@ def _truncate_response(
                     f"_{largest_key}_total": total,
                     **truncation_meta,
                 }
-                trial = json.dumps(trimmed, ensure_ascii=False, default=str)
+                trial = json.dumps(trimmed, ensure_ascii=False, default=_json_default)
                 if len(trial) <= max_chars:
                     return trial
                 keep = keep // 2
@@ -207,6 +236,17 @@ def _truncate_response(
     if full_path:
         suffix += f"\nFull response saved to: {full_path}"
     return serialized[:max_chars] + suffix
+
+
+def _readable_tool_title(name: str) -> str:
+    """Human-readable title for a tool that declares none.
+
+    The directory requires ``title`` on every tool. Registered names read
+    ``Vendor_verb_what``, so replacing the separators is enough to give a
+    reviewer and a user something legible without inventing wording that could
+    drift from the description.
+    """
+    return name.replace("_", " ").strip() or name
 
 
 class SMCP(FastMCP):
@@ -335,6 +375,12 @@ class SMCP(FastMCP):
         When True, all loaded tools become available via the MCP interface
         with automatic schema conversion and execution wrapping.
 
+    expose_agentic_prompts : bool, default False
+        Whether to expose loaded AgenticTool prompt templates as MCP prompts for
+        execution by the connected host model. This path only renders instructions;
+        it does not initialize or call a ToolUniverse backend LLM client. The legacy
+        AgenticTool execution path remains available when credentials are configured.
+
     search_enabled : bool, default True
         Enable AI-powered tool search functionality via tools/find method.
         Includes ToolFinderLLM (cost-optimized LLM-based), Tool_RAG (embedding-based),
@@ -408,6 +454,7 @@ class SMCP(FastMCP):
         workspace: Optional[str] = None,
         use_global: bool = False,
         auto_expose_tools: bool = True,
+        expose_agentic_prompts: bool = False,
         search_enabled: bool = True,
         max_workers: int = 5,
         hooks_enabled: bool = False,
@@ -489,6 +536,7 @@ class SMCP(FastMCP):
         self.strict_input_schemas = strict_input_schemas
         # In compact mode, don't auto-expose all tools
         self.auto_expose_tools = False if compact_mode else auto_expose_tools
+        self.expose_agentic_prompts = expose_agentic_prompts
         self.search_enabled = search_enabled
         self.max_workers = max_workers
         self.hooks_enabled = hooks_enabled
@@ -500,10 +548,14 @@ class SMCP(FastMCP):
         self.profile_metadata = None
 
         # Thread pool for concurrent tool execution
-        self.executor = ThreadPoolExecutor(max_workers=max_workers)
+        # Preserve request-scoped credentials and tracing context across the async-to-sync
+        # boundary. Standard ThreadPoolExecutor drops ContextVars and can therefore make a hosted
+        # request silently fall back to process-global credentials.
+        self.executor = ContextThreadPoolExecutor(max_workers=max_workers)
 
         # Track exposed tools to avoid duplicates
         self._exposed_tools = set()
+        self._exposed_agentic_prompts = set()
 
         # Initialize TaskManager for MCP Tasks support
         from .task_manager import TaskManager
@@ -953,7 +1005,7 @@ class SMCP(FastMCP):
                         {"tools": [], "result": result}, ensure_ascii=False
                     )
             elif isinstance(result, dict) or isinstance(result, list):
-                serialized = json.dumps(result, ensure_ascii=False, default=str)
+                serialized = json.dumps(result, ensure_ascii=False, default=_json_default)
             else:
                 serialized = json.dumps(
                     {"tools": [], "result": str(result)}, ensure_ascii=False
@@ -993,7 +1045,7 @@ class SMCP(FastMCP):
             str: Tool name to use for search
         """
         # Get available tools
-        all_tools = self.tooluniverse.return_all_loaded_tools()
+        all_tools = self.tooluniverse.return_all_loaded_tools(copy_tools=False)
         available_tool_names = [tool.get("name", "") for tool in all_tools]
 
         # Handle specific method requests
@@ -1049,7 +1101,11 @@ class SMCP(FastMCP):
             self._load_by_categories()
         elif (
             preloaded_count == 0
-            and (self.auto_expose_tools or self.compact_mode)
+            and (
+                self.auto_expose_tools
+                or self.compact_mode
+                or self.expose_agentic_prompts
+            )
             and not profile_loaded
         ):
             # Load all tools by default (unless Profile already handled it)
@@ -1064,6 +1120,12 @@ class SMCP(FastMCP):
         # In compact mode, _expose_tooluniverse_tools will call _expose_core_discovery_tools
         if self.auto_expose_tools or self.compact_mode:
             self._expose_tooluniverse_tools()
+
+        # AgenticTool configs can also be exposed as host-executed MCP prompts.
+        # This path is independent of backend LLM credentials and intentionally
+        # opt-in so existing servers retain their current surface area.
+        if self.expose_agentic_prompts:
+            self._expose_agentic_tool_prompts()
 
         # Add search functionality if enabled
         if self.search_enabled:
@@ -1133,6 +1195,157 @@ class SMCP(FastMCP):
         exposed_count = len(self._exposed_tools)
         self.logger.info(f"Successfully exposed {exposed_count} tools to MCP interface")
 
+    def _iter_agentic_prompt_configs(self):
+        """Yield filtered AgenticTool configs, including configs hidden for no API key.
+
+        ``ToolUniverse.load_tools`` retains the raw per-category configurations in
+        ``tool_category_dicts`` before availability filtering removes AgenticTools
+        from ``all_tools``. Reading both collections lets SMCP expose instructions
+        even when the backend-executed tool cannot initialize an LLM client.
+        """
+        candidates = []
+        category_dicts = getattr(self.tooluniverse, "tool_category_dicts", {}) or {}
+        for configs in category_dicts.values():
+            if isinstance(configs, list):
+                candidates.extend(configs)
+        candidates.extend(getattr(self.tooluniverse, "all_tools", []) or [])
+
+        include_names = set(self.include_tools or [])
+        if self.tools_file:
+            try:
+                include_names.update(
+                    self.tooluniverse._load_tool_names_from_file(self.tools_file)
+                )
+            except Exception as e:
+                self.logger.warning(
+                    f"Could not apply tools-file filtering to AgenticTool prompts: {e}"
+                )
+
+        exclude_names = set(self.exclude_tools or [])
+        include_types = set(self.include_tool_types or [])
+        exclude_types = set(self.exclude_tool_types or [])
+        seen = set()
+
+        for tool_config in candidates:
+            if not isinstance(tool_config, dict):
+                continue
+            tool_name = tool_config.get("name")
+            tool_type = tool_config.get("type")
+            if not tool_name or tool_name in seen or tool_type != "AgenticTool":
+                continue
+            if tool_name in exclude_names:
+                continue
+            if include_names and tool_name not in include_names:
+                continue
+            if include_types and tool_type not in include_types:
+                continue
+            if tool_type in exclude_types:
+                continue
+            if not tool_config.get("prompt") or not tool_config.get("input_arguments"):
+                self.logger.warning(
+                    f"Skipping invalid AgenticTool prompt config: {tool_name}"
+                )
+                continue
+
+            seen.add(tool_name)
+            yield tool_config
+
+    def _expose_agentic_tool_prompts(self):
+        """Register loaded AgenticTool prompt templates as MCP prompts."""
+        exposed_count = 0
+        for tool_config in self._iter_agentic_prompt_configs():
+            tool_name = tool_config["name"]
+            if tool_name in self._exposed_agentic_prompts:
+                continue
+            try:
+                self._create_mcp_prompt_from_agentic_tool(tool_config)
+                self._exposed_agentic_prompts.add(tool_name)
+                exposed_count += 1
+            except Exception as e:
+                self.logger.error(
+                    f"Failed to expose AgenticTool prompt {tool_name}: {e}"
+                )
+
+        self.logger.info(
+            f"Successfully exposed {exposed_count} AgenticTool prompts to MCP interface"
+        )
+
+    def _create_mcp_prompt_from_agentic_tool(self, tool_config: Dict[str, Any]):
+        """Create a typed, host-executed MCP prompt from an AgenticTool config."""
+        import inspect
+        from typing import Annotated
+
+        from pydantic import Field
+
+        tool_name = tool_config["name"]
+        tool_description = tool_config.get("description", "")
+        prompt_description = (
+            "Host-executed instruction derived from the ToolUniverse AgenticTool "
+            f"'{tool_name}'. {tool_description}"
+        ).strip()
+        parameters = tool_config.get("parameter", {}) or {}
+        properties = parameters.get("properties", {}) or {}
+        input_arguments = tool_config.get("input_arguments", []) or []
+        required_params = parameters.get("required", []) or []
+
+        func_params = []
+        param_annotations = {}
+        for is_required_phase in (True, False):
+            for param_name in input_arguments:
+                param_info = properties.get(param_name, {}) or {}
+                is_required = param_name in required_params
+                if is_required != is_required_phase:
+                    continue
+
+                python_type, extra_kwargs = self._resolve_param_type(param_info)
+                field = Field(
+                    description=param_info.get(
+                        "description", f"{param_name} parameter"
+                    ),
+                    **extra_kwargs,
+                )
+                if is_required:
+                    annotated_type = Annotated[python_type, field]
+                    default = inspect.Parameter.empty
+                else:
+                    annotated_type = Annotated[Union[python_type, type(None)], field]
+                    default = None
+
+                param_annotations[param_name] = annotated_type
+                func_params.append(
+                    inspect.Parameter(
+                        param_name,
+                        inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                        default=default,
+                        annotation=annotated_type,
+                    )
+                )
+
+        def dynamic_prompt_function(**kwargs) -> str:
+            prompt_arguments = {
+                key: value for key, value in kwargs.items() if value is not None
+            }
+            return render_agentic_instruction(tool_config, prompt_arguments)
+
+        dynamic_prompt_function.__name__ = tool_name
+        dynamic_prompt_function.__signature__ = inspect.Signature(func_params)
+        annotations = param_annotations.copy()
+        annotations["return"] = str
+        dynamic_prompt_function.__annotations__ = annotations
+        dynamic_prompt_function.__doc__ = prompt_description
+
+        self.prompt(
+            name=tool_name,
+            description=prompt_description,
+            tags={"tooluniverse", "agentic-instruction"},
+            meta={
+                "tooluniverse": {
+                    "source_type": "AgenticTool",
+                    "execution": "host",
+                }
+            },
+        )(dynamic_prompt_function)
+
     def _expose_core_discovery_tools(self):
         """
         Expose only core tool discovery tools in compact mode.
@@ -1182,6 +1395,7 @@ class SMCP(FastMCP):
 
         @self.tool(
             annotations=ToolAnnotations(
+                title="Find tools by description",
                 readOnlyHint=True,  # Search tool is read-only
                 destructiveHint=False,
             )
@@ -1248,7 +1462,7 @@ class SMCP(FastMCP):
 
         # Check if ToolFinderLLM is available in loaded tools
         try:
-            all_tools = self.tooluniverse.return_all_loaded_tools()
+            all_tools = self.tooluniverse.return_all_loaded_tools(copy_tools=False)
             available_tool_names = [tool.get("name", "") for tool in all_tools]
 
             # Try ToolFinderLLM first (more advanced)
@@ -1294,7 +1508,7 @@ class SMCP(FastMCP):
                     self.logger.debug(f"Could not load tool_finder category: {e}")
 
             # Re-check availability after potential loading
-            all_tools = self.tooluniverse.return_all_loaded_tools()
+            all_tools = self.tooluniverse.return_all_loaded_tools(copy_tools=False)
             available_tool_names = [tool.get("name", "") for tool in all_tools]
 
             if "Tool_Finder_LLM" in available_tool_names:
@@ -1678,7 +1892,9 @@ class SMCP(FastMCP):
                 for option in alternatives
                 if isinstance(option, dict)
             ]
-            return Union[tuple(types)] if len(types) > 1 else (types[0] if types else Any)
+            return (
+                Union[tuple(types)] if len(types) > 1 else (types[0] if types else Any)
+            )
 
         param_type = param_info.get("type", "string")
         if isinstance(param_type, list):
@@ -1710,6 +1926,19 @@ class SMCP(FastMCP):
         """Translate common JSON Schema limits into Pydantic Field limits."""
         constraints: Dict[str, Any] = {}
         param_type = param_info.get("type")
+        # "type" may be a list. ["integer", "null"] is how an optional parameter
+        # is spelled across the shipped configs, and it is also what
+        # mcp_tool_registry._py_type_to_json_schema infers for Optional[int].
+        # The set membership test below hashes its left operand, so a list
+        # raised TypeError: unhashable type: 'list'. Narrow to the first
+        # non-null member, the same way _resolve_param_type does in its
+        # non-strict branch, so the limits are still applied. The first
+        # non-null member is the right one to read: of the 1674 list typed
+        # parameters under data/, the 59 that carry a limit are either nullable
+        # or ["array", "string"], so that member is what the limit describes.
+        if isinstance(param_type, list):
+            non_null = [item for item in param_type if item != "null"]
+            param_type = non_null[0] if non_null else None
         if param_type == "string":
             mapping = {
                 "minLength": "min_length",
@@ -2126,11 +2355,13 @@ class SMCP(FastMCP):
                                 {"result": result}, ensure_ascii=False
                             )
                     elif isinstance(result, (dict, list)):
-                        serialized = json.dumps(result, ensure_ascii=False, default=str)
+                        serialized = json.dumps(result, ensure_ascii=False, default=_json_default)
                     else:
                         # For other types, convert to JSON
                         serialized = json.dumps(
-                            {"result": str(result)}, ensure_ascii=False
+                            {"result": result},
+                            ensure_ascii=False,
+                            default=_json_default,
                         )
 
                     # Guard against oversized responses that overflow LLM context
@@ -2186,6 +2417,14 @@ Returns:
             from mcp.types import ToolAnnotations
 
             tool_annotations = ToolAnnotations(
+                # The connectors directory requires a title on every tool, and
+                # rejects a submission without one. Tools that set their own in
+                # ``mcp_annotations`` keep it; the rest get their registered
+                # name made readable, which beats shipping no title at all.
+                title=annotations_dict.get("title")
+                or _readable_tool_title(
+                    tool_config.get("original_name") or tool_config.get("name", "")
+                ),
                 readOnlyHint=annotations_dict.get("readOnlyHint"),
                 destructiveHint=annotations_dict.get("destructiveHint"),
             )
@@ -2217,9 +2456,7 @@ Returns:
                     # metadata. Bypass that normalization after construction; the
                     # callable's strict signature remains the runtime validator.
                     strict_parameters = copy.deepcopy(parameters)
-                    object.__setattr__(
-                        registered_tool, "parameters", strict_parameters
-                    )
+                    object.__setattr__(registered_tool, "parameters", strict_parameters)
                     # FastMCP 3 stores a validated copy in its local provider.
                     # Update that copy as well; get_tool()/tools/list read it.
                     local_provider = getattr(self, "_local_provider", None)

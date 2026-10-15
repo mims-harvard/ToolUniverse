@@ -555,12 +555,16 @@
                 }
               },
               "pubchem": {
-                "type": "object",
+                "type": [
+                  "object",
+                  "array"
+                ],
                 "properties": {
                   "cid": {
                     "type": "integer"
                   }
-                }
+                },
+                "description": "PubChem annotations. MyChem merges source records, so this is an object for one PubChem entry and an array when a compound has several: measured across 12 queries and 120 hits, 53 objects and 11 arrays. chembl (64) and drugbank (50) were objects in every one of those hits, so they are left as declared."
               }
             }
           }

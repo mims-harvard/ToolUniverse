@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def hca_get_file_manifest(
-    action: str,
     project_id: str,
+    action: Optional[str] = "get_file_manifest",
     limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

@@ -578,9 +578,10 @@ class TestFormatTermCollection:
         self.tool = OLSTool(self.config)
 
     def test_format_term_collection_empty(self):
-        """Test formatting empty term collection."""
+        """An empty collection keeps the populated shape (318f2f35), so a
+        caller reading result["terms"] gets [] instead of a KeyError."""
         result = self.tool._format_term_collection({}, 10)
-        assert result == {}
+        assert result == {"terms": [], "total_items": 0, "showing": 0}
 
     def test_format_term_collection_with_elements(self):
         """Test formatting term collection with elements."""

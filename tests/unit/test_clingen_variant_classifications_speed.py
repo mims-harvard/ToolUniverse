@@ -85,9 +85,14 @@ class TestQueriesFilteredEndpoint:
             result = tool.run({"gene": "PAH"})
 
         called_url = mock_get.call_args.args[0]
-        assert called_url == "https://erepo.clinicalgenome.org/evrepo/api/classifications"
+        assert (
+            called_url == "https://erepo.clinicalgenome.org/evrepo/api/classifications"
+        )
         assert "/all" not in called_url
-        assert mock_get.call_args.kwargs["params"] == {"gene": "PAH", "matchLimit": 5000}
+        assert mock_get.call_args.kwargs["params"] == {
+            "gene": "PAH",
+            "matchLimit": 5000,
+        }
         assert result["status"] == "success"
         assert result["total"] == 1
         assert result["data"][0]["HGNC Gene Symbol"] == "PAH"
@@ -187,32 +192,51 @@ class TestVariantFilterPrecision:
     """
 
     @staticmethod
-    def _params_for(variant):
+    def _first_call(variant):
         with patch(
             "tooluniverse.clingen_tool.requests.get",
             return_value=_resp({"variantInterpretations": [_PAH_ITEM]}),
         ) as mock_get:
             _tool().run({"variant": variant})
-        return mock_get.call_args.kwargs["params"]
+        first = mock_get.call_args_list[0]
+        return first.args[0], first.kwargs.get("params", {})
 
-    def test_caid_is_sent_as_caid(self):
-        assert self._params_for("CA114360")["caid"] == "CA114360"
+    @staticmethod
+    def _all_params(variant):
+        with patch(
+            "tooluniverse.clingen_tool.requests.get",
+            return_value=_resp({"variantInterpretations": [_PAH_ITEM]}),
+        ) as mock_get:
+            _tool().run({"variant": variant})
+        return [c.kwargs.get("params") or {} for c in mock_get.call_args_list]
+
+    # CAids and ClinVar VariationIDs are matched exactly on the summary
+    # endpoint (#683); see test_clingen_erepo_identifier_lookups.py.
+    def test_caid_is_matched_exactly_on_summary(self):
+        url, params = self._first_call("CA114360")
+        assert url.endswith("/summary/classifications")
+        assert params["columns"] == "caId"
+        assert params["values"] == "CA114360"
+        assert params["matchTypes"] == "exact"
 
     def test_prefixed_caid_is_normalised(self):
-        assert self._params_for("CAR:CA114360")["caid"] == "CA114360"
+        assert self._first_call("CAR:CA114360")[1]["values"] == "CA114360"
 
-    def test_clinvar_variation_id_is_sent_as_variation_id(self):
-        assert self._params_for("586")["variationId"] == "586"
+    def test_clinvar_variation_id_is_matched_exactly_on_summary(self):
+        url, params = self._first_call("586")
+        assert url.endswith("/summary/classifications")
+        assert params["columns"] == "cvId"
+        assert params["values"] == "586"
 
     def test_hgvs_and_protein_change_are_sent_as_hgvs(self):
-        assert self._params_for("NM_000277.3:c.1315+1G>T")["hgvs"] == (
+        assert self._first_call("NM_000277.3:c.1315+1G>T")[1]["hgvs"] == (
             "NM_000277.3:c.1315+1G>T"
         )
-        assert self._params_for("p.Arg408Trp")["hgvs"] == "p.Arg408Trp"
+        assert self._first_call("p.Arg408Trp")[1]["hgvs"] == "p.Arg408Trp"
 
     def test_the_ignored_variant_param_is_never_sent(self):
         for variant in ("CA114360", "586", "p.Arg408Trp"):
-            assert "variant" not in self._params_for(variant)
+            assert all("variant" not in p for p in self._all_params(variant))
 
     def test_server_filtered_result_is_published_verbatim(self):
         """No client-side narrowing left: what the server matched is the answer."""
@@ -221,7 +245,7 @@ class TestVariantFilterPrecision:
             "tooluniverse.clingen_tool.requests.get",
             return_value=_resp({"variantInterpretations": [_PAH_ITEM]}),
         ):
-            result = tool.run({"variant": "CA114360"})
+            result = tool.run({"variant": "p.Met1Val"})
 
         assert result["total"] == 1
         assert result["data"][0]["ClinVar Variation Id"] == "586"
@@ -234,8 +258,7 @@ class TestTotalCountsTheQueryNotThePage:
     def _many(n):
         return {
             "variantInterpretations": [
-                dict(_PAH_ITEM, caid=f"CAR:CA{i}", variationId=str(i))
-                for i in range(n)
+                dict(_PAH_ITEM, caid=f"CAR:CA{i}", variationId=str(i)) for i in range(n)
             ]
         }
 
@@ -315,5 +338,5 @@ class TestAbsentVariantIsNotBlamedOnTheGene:
 
         note = result["note"]
         assert "VCEP" not in note
-        assert "caid" in note
-        assert "server-side" in note
+        assert "CA16020993" in note
+        assert "genuinely uncurated" not in note

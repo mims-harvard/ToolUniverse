@@ -1,0 +1,52 @@
+[
+  {
+    "type": "GINGuidelinesTool",
+    "name": "GIN_Guidelines_Search",
+    "description": "Search Guidelines International Network (GIN) guidelines database. GIN maintains the world's largest database of clinical guidelines with over 6400 guidelines from various organizations worldwide.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Medical condition, treatment, or clinical topic to search for in GIN guidelines (e.g., 'diabetes management', 'hypertension treatment', 'cancer screening')"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of guidelines to return (default: 10)",
+          "default": 10
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "List of GIN guidelines"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "query": "machine learning optimization",
+        "limit": 1
+      }
+    ]
+  }
+]

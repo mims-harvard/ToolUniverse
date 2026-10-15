@@ -9,10 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def CellMarker_search_cancer_markers(
-    operation: str,
     cancer_type: Optional[str] = None,
     gene_symbol: Optional[str] = None,
     cell_type: Optional[str] = None,
+    limit: Optional[int] = 200,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,14 +24,16 @@ def CellMarker_search_cancer_markers(
 
     Parameters
     ----------
-    operation : str
-        Operation type
     cancer_type : str
         Cancer tissue type (e.g., 'Breast', 'Lung', 'Brain', 'Liver'). Filters by tis...
     gene_symbol : str
         Marker gene to search in cancer context (e.g., 'CD274' for PD-L1, 'EPCAM')
     cell_type : str
         Cancer cell type to search for (e.g., 'Cancer stem cell', 'T cell', 'Macropha...
+    limit : int
+        Maximum records to return. Default 200; total_records reports how many matche...
+    offset : int
+        Records to skip before returning, for paging through total_records.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,10 +51,11 @@ def CellMarker_search_cancer_markers(
     _args = {
         k: v
         for k, v in {
-            "operation": operation,
             "cancer_type": cancer_type,
             "gene_symbol": gene_symbol,
             "cell_type": cell_type,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

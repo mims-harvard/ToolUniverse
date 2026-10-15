@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def COSMIC_search_mutations(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search",
     terms: Optional[str] = None,
     query: Optional[str] = None,
     max_results: Optional[int] = 20,

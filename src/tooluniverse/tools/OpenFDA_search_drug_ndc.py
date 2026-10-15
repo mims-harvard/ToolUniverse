@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def OpenFDA_search_drug_ndc(
     search: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def OpenFDA_search_drug_ndc(
     ----------
     search : str
         Lucene query for NDC products (e.g., 'brand_name:lipitor', 'generic_name:ator...
-    limit : int | Any
+    limit : int
         Maximum number of results (default 5, max 100)
     stream_callback : Callable, optional
         Callback for streaming output

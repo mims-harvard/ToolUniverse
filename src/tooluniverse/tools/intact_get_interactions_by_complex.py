@@ -30,7 +30,7 @@ def intact_get_interactions_by_complex(
     first : int
         First result index for pagination (default: 0)
     format : str
-
+        Response format. Only 'json' is produced by this endpoint.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

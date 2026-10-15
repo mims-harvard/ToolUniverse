@@ -21,7 +21,7 @@ def WritingPresentationReviewer(
     Parameters
     ----------
     manuscript_text : str
-
+        Full manuscript text to review
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

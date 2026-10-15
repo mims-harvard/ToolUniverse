@@ -1,0 +1,20 @@
+{
+  "api_name": "Open Targets Platform GraphQL — Target Enabling Packages (tep)",
+  "base_url": "https://api.platform.opentargets.org/api/v4/graphql",
+  "failure_mode": "HTTP 400 on every call: \"Cannot query field 'tep' on type 'Target'\"",
+  "root_cause": "Open Targets removed Target Enabling Packages from the Platform API. The field is not merely renamed: a full introspection of the live schema finds no type whose name contains 'tep' and no field on any type named tep or matching 'enablingpackage', so there is nothing to repoint the query at. The sibling fields this tool also selected (id, approvedSymbol) still exist, which is why the failure is specific to tep rather than to the tool's whole query.",
+  "confirmed_broken_date": "2026-10-02",
+  "last_retry_date": "2026-10-02",
+  "retry_count": 3,
+  "github_issues": [],
+  "retry_after": "2027-04-01",
+  "workaround": "TEPs are produced by the Structural Genomics Consortium and are published at https://www.thesgc.org/tep — there is no public JSON API for them, so no ToolUniverse tool replaces this one. For the adjacent question of whether a target is tractable or has chemical probes, OpenTargets still serves tractability and chemicalProbes, which OpenTargets_get_target_tractability_by_ensemblID and OpenTargets_get_chemical_probes_by_target_ensemblID use.",
+  "workaround_tool_file": "src/tooluniverse/data/opentarget_tools.json",
+  "investigation_notes": [
+    "Surfaced by the weekly tool health check, which reported it only as 'No data returned from API'; the tool swallows the upstream body, and the real cause is the HTTP 400 GraphQL error.",
+    "Three consecutive calls (the shipped example plus ENSG00000141510 and ENSG00000157764) all returned the same 400 (2026-10-02).",
+    "Introspected __schema{types{name fields{name}}}: zero types named *tep*, zero fields named tep or *enablingpackage* anywhere in the schema.",
+    "The Query root still exposes target/targets, so the API itself is healthy; only this dataset is gone."
+  ],
+  "attempted_config_file": "src/tooluniverse/data/broken_apis/opentargets_tep_tools.json"
+}

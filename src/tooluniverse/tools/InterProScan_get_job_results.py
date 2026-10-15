@@ -14,7 +14,7 @@ def InterProScan_get_job_results(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Retrieve results from a completed InterProScan job. Returns domain predictions, GO annotations, a...
 
@@ -31,7 +31,7 @@ def InterProScan_get_job_results(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

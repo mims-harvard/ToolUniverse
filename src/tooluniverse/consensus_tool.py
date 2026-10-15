@@ -1,5 +1,3 @@
-import os
-
 import requests
 
 from .base_tool import BaseTool
@@ -53,7 +51,7 @@ class ConsensusTool(BaseTool):
         if not query:
             return {"status": "error", "error": "`query` parameter is required."}
 
-        api_key = os.environ.get("CONSENSUS_API_KEY", "")
+        api_key = self.credential("CONSENSUS_API_KEY") or ""
         if not api_key:
             return {
                 "status": "error",

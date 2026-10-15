@@ -304,6 +304,9 @@ def connection_configs(path: Path | None = None) -> List[Dict[str, Any]]:
                 "tool_prefix": connection.get("prefix", "remote_"),
                 "category": "connected_remote_tools",
                 "timeout": 30,
+                # The name the person chose or was shown when connecting. The loader's own
+                # name is connected_mcp_<n>, which means nothing to them in an error.
+                "connection_name": connection.get("name", ""),
             }
             if connection.get("auth_env"):
                 config["auth_env"] = connection["auth_env"]
@@ -322,3 +325,30 @@ def connection_configs(path: Path | None = None) -> List[Dict[str, Any]]:
                 }
             )
     return configs
+
+
+# The platform's public site, for the default service. A local or self-hosted service has no
+# known site, and naming the wrong one would send someone to an account they do not have.
+SITE_FOR_SERVICE = {
+    "https://tooluniverse-backend.onrender.com": "https://connect.aiscientist.tools",
+}
+
+# The account key a consumer of shared machines and published tools uses. Kept apart from
+# TOOLUNIVERSE_SERVICE_KEY, which is the computer-only key `tu remote login` and
+# `tu serve --share` use to share *this* machine -- the platform refuses that kind for anything
+# but registering its one machine, so it can neither join a machine nor call a tool.
+BORROWER_KEY_ENV = "TU_API_KEY"
+
+
+def global_env_file() -> str:
+    """Where a key saved for every terminal lives, as this computer writes the path.
+
+    Messages used to say "~/.tooluniverse/.env". On Windows "~" means nothing to Notepad or cmd,
+    and on any system the real path is the one a person can paste.
+    """
+    return str(Path.home() / ".tooluniverse" / ".env")
+
+
+def api_keys_page(service: str) -> str:
+    site = SITE_FOR_SERVICE.get((service or "").rstrip("/"))
+    return f"{site}/api-keys" if site else "the API keys page of your ToolUniverse account"

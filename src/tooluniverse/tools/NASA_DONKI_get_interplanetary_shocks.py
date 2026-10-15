@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def NASA_DONKI_get_interplanetary_shocks(
-    startDate: Optional[str | Any] = None,
-    endDate: Optional[str | Any] = None,
-    location: Optional[str | Any] = None,
+    startDate: Optional[str] = None,
+    endDate: Optional[str] = None,
+    location: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,11 +22,11 @@ def NASA_DONKI_get_interplanetary_shocks(
 
     Parameters
     ----------
-    startDate : str | Any
+    startDate : str
         Start date in YYYY-MM-DD format (e.g., '2024-01-01'). Defaults to 30 days bef...
-    endDate : str | Any
+    endDate : str
         End date in YYYY-MM-DD format (e.g., '2024-03-31'). Defaults to today.
-    location : str | Any
+    location : str
         Shock detection location. Options: 'Earth', 'STEREO A', 'STEREO B', 'MESSENGE...
     stream_callback : Callable, optional
         Callback for streaming output

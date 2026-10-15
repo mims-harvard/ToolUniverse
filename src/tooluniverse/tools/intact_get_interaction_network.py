@@ -47,7 +47,7 @@ def intact_get_interaction_network(
     size : int
         Alias for limit. Maximum number of interactions to return (default: 50).
     format : str
-
+        Response format. Only 'json' is produced by this endpoint.
     protein_name : str
         Alias for gene_symbol/identifier. Common protein name (e.g., MDM2, TP53).
     protein : str

@@ -3,17 +3,17 @@
 Compact Mode Guide
 ==================
 
-Compact mode exposes only 4-5 core tools instead of 1000+ tools, reducing context window usage by ~99% while maintaining full functionality.
+Compact mode exposes only 4-5 core tools instead of 2,700+ tools, reducing context window usage by ~99% while maintaining full functionality.
 
 What is Compact Mode?
 ---------------------
 
-Compact mode is a context window optimization that exposes only 4-5 core discovery tools instead of listing all 1000+ tools. All tools remain accessible through the ``execute_tool`` function.
+Compact mode is a context window optimization that exposes only 4-5 core discovery tools instead of listing all 2,700+ tools. All tools remain accessible through the ``execute_tool`` function.
 
 Why Use Compact Mode?
 ---------------------
 
-**The Problem**: AI assistants have limited context windows. Listing 1000+ tools consumes significant context space, leaving less room for:
+**The Problem**: AI assistants have limited context windows. Listing 2,700+ tools consumes significant context space, leaving less room for:
 
 - Your research questions
 - Tool outputs and data
@@ -25,7 +25,7 @@ Why Use Compact Mode?
 **Impact**:
 
 - **99% reduction** in exposed tools (4-5 vs 1000+)
-- **Full functionality** - All 1000+ tools still accessible via ``execute_tool``
+- **Full functionality** - All 2,700+ tools still accessible via ``execute_tool``
 - **Better AI reasoning** - More context available for analysis
 - **Faster responses** - Less token processing overhead
 
@@ -117,7 +117,7 @@ Add to ``~/.gemini/settings.json`` or project ``.gemini/settings.json``:
 
 - **500 tool limit**: Gemini CLI has a 500 tool limit per MCP server
 - **Minimal context usage**: Compact mode exposes only 4-5 tools, well within limits
-- **Full functionality**: All 1000+ tools still accessible via ``execute_tool``
+- **Full functionality**: All 2,700+ tools still accessible via ``execute_tool``
 - **Progressive disclosure**: Discover tools on demand using ``list_tools``, ``grep_tools``, and ``get_tool_info``
 
 Usage
@@ -142,7 +142,7 @@ Comparison
      - Normal Mode
      - Compact Mode
    * - Tools Exposed
-     - ~1000 tools
+     - ~2,700 tools
      - 4-5 tools (4 core + find_tools if search enabled)
    * - Context Usage
      - High

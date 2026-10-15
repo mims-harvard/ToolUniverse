@@ -147,7 +147,7 @@ Phase 8: Final Report & Recommendations
 **Goal**: Annotate sequences, identify species/germline, find clinical precedents.
 
 **Key steps**:
-1. Annotate CDRs using IMGT numbering (CDR-H1: 27-38, CDR-H2: 56-65, CDR-H3: 105-117)
+1. Annotate CDRs using an antibody-numbering tool and map labels back to sequence indices (IMGT CDR-H1: 27-38, CDR-H2: 56-65, CDR-H3: 105-117). These labels are not literal array offsets, especially with insertions or terminal extensions.
 2. Identify closest human germline genes via `IMGT_search_genes`
 3. Search clinical precedents via `TheraSAbDab_search_by_target`
 4. Get target antigen info via `UniProt_get_entry_by_accession`
@@ -200,12 +200,12 @@ See `WORKFLOW_DETAILS.md` Phase 3 for code examples.
 **Key steps**:
 1. Identify interface residues (distance cutoff 4.5 A)
 2. Screen all amino acid substitutions at CDR interface positions
-3. Rank by predicted binding energy change (ddG < -0.5 kcal/mol = favorable)
+3. Rank by computed binding-energy change only when the method and calibration support it; state the sign convention and uncertainty. An illustrative cutoff is not a universal binding gate.
 4. Design combination strategy: single -> double -> triple mutants
 5. Consider CDR-H3 extension, tyrosine enrichment, salt bridge formation
-6. Optional: pH-dependent binding via histidine substitutions
+6. Optional: specify stronger acidic binding or neutral binding with acidic release before considering histidine substitutions. Neither direction follows automatically from His pKa. Validate complete bound/free protonation assumptions with controls and matched assays; use [Protein Design Campaign](../tooluniverse-protein-design-campaign/SKILL.md) and its [pH reference](../tooluniverse-protein-design-campaign/references/ph-selectivity.md).
 
-**Output**: Ranked mutation list, combination strategy, expected affinity improvements.
+**Output**: Ranked mutation hypotheses, combination strategy, computed metrics where supported, and explicit unverified affinity/conditional-binding claims. Do not invent KD ranges or fold improvements.
 
 See `WORKFLOW_DETAILS.md` Phase 4 for code examples.
 

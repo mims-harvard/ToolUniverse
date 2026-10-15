@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def IMGT_get_germline_gene_fasta(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_germline_fasta",
     gene_type: Optional[str] = None,
     gene: Optional[str] = None,
     species: Optional[str] = "Homo sapiens",

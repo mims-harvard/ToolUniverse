@@ -10,10 +10,11 @@ OpenAPI Spec: https://fdc.nal.usda.gov/api-spec/fdc_api.html
 """
 
 import requests
-import os
 from typing import Dict, Any
 from .base_tool import BaseTool
+from .credentials import has_credential_context
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 # Base URL for USDA FoodData Central API
 FDC_BASE_URL = "https://api.nal.usda.gov/fdc/v1"
@@ -40,8 +41,19 @@ class FoodDataCentralTool(BaseTool):
         self.timeout = tool_config.get("timeout", 30)
         # Get the operation type from config
         self.operation = tool_config.get("fields", {}).get("operation", "search")
-        # API key from environment (DEMO_KEY as fallback for testing)
-        self.api_key = os.environ.get("FDC_API_KEY", "DEMO_KEY")
+        self._api_key_override = None
+
+    @property
+    def api_key(self) -> str:
+        """Resolve the FDC key for the active request, falling back to DEMO_KEY."""
+        scoped_key = self.credential("FDC_API_KEY", "DEMO_KEY")
+        if has_credential_context():
+            return scoped_key or "DEMO_KEY"
+        return self._api_key_override or scoped_key or "DEMO_KEY"
+
+    @api_key.setter
+    def api_key(self, value):
+        self._api_key_override = value
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the FoodData Central API call based on the configured operation."""
@@ -77,9 +89,6 @@ class FoodDataCentralTool(BaseTool):
             status_code = (
                 e.response.status_code if e.response is not None else "unknown"
             )
-            detail = ""
-            if e.response is not None:
-                detail = e.response.text[:200]
             if status_code == 403:
                 return {
                     "status": "error",
@@ -99,7 +108,8 @@ class FoodDataCentralTool(BaseTool):
                 }
             return {
                 "status": "error",
-                "error": f"FoodData Central API HTTP error {status_code}: {detail}",
+                "error": f"FoodData Central API HTTP error {status_code}"
+                f"{upstream_reason_suffix(e.response)}",
             }
         except Exception as e:
             return {

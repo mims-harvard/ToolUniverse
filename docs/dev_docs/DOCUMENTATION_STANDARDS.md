@@ -70,7 +70,7 @@ All other `.rst` and `.md` files are manually maintained:
 
 **Standard**: Use `1000+ tools` consistently across documentation.
 
-- Actual count (as of latest): 1962 tools
+- Actual count: run `tu status`; hard-coding it here is how it went stale
 - Use rounded public-facing number for simplicity
 - Update only when crossing major milestones (e.g., 1500+ tools)
 

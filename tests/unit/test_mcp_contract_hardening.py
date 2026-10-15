@@ -1,5 +1,5 @@
 import copy
-from unittest.mock import AsyncMock, patch
+from unittest.mock import ANY, AsyncMock, patch
 
 import pytest
 
@@ -150,6 +150,8 @@ async def test_resolved_auth_header_is_passed_to_streamable_http(
         "https://example.test/mcp",
         headers={"X-GI-Key": "secret-value"},
         timeout=600,
+        # Records the last HTTP error so a refusal's status reaches the caller.
+        httpx_client_factory=ANY,
     )
 
 

@@ -56,7 +56,14 @@ class Molecule2DTool(VisualizationTool):
                 input_data = inchi
             elif molecule_name:
                 # Try to resolve molecule name to SMILES using PubChem
-                smiles_resolved = self._resolve_molecule_name(molecule_name)
+                failures: list = []
+                smiles_resolved = self._resolve_molecule_name(molecule_name, failures)
+                if not smiles_resolved and failures:
+                    return self.create_error_response(
+                        f"Could not resolve molecule name '{molecule_name}': "
+                        f"PubChem did not answer ({failures[0]}). Retry later, "
+                        "or pass smiles directly."
+                    )
                 if smiles_resolved:
                     mol = Chem.MolFromSmiles(smiles_resolved)
                     input_type = "Molecule Name"
@@ -143,8 +150,14 @@ class Molecule2DTool(VisualizationTool):
             )
             return {"status": "error", "data": error_response}
 
-    def _resolve_molecule_name(self, name: str) -> Optional[str]:
-        """Resolve molecule name to SMILES using PubChem."""
+    def _resolve_molecule_name(
+        self, name: str, failures: Optional[list] = None
+    ) -> Optional[str]:
+        """Resolve molecule name to SMILES using PubChem.
+
+        PubChem answers 404 for a name it does not know; any other failure is
+        appended to `failures`, so it is not reported as an unknown name.
+        """
         try:
             # Use PubChem PUG REST API
             # PubChem renamed "IsomericSMILES" to "SMILES"; accept either key
@@ -154,14 +167,17 @@ class Molecule2DTool(VisualizationTool):
                 f"{name}/property/SMILES/JSON"
             )
             response = requests.get(url, timeout=10)
+            if response.status_code not in (200, 404) and failures is not None:
+                failures.append(f"PubChem HTTP {response.status_code}")
             if response.status_code == 200:
                 data = response.json()
                 if "PropertyTable" in data and "Properties" in data["PropertyTable"]:
                     props = data["PropertyTable"]["Properties"]
                     if props:
                         return props[0].get("SMILES") or props[0].get("IsomericSMILES")
-        except Exception:
-            pass
+        except Exception as e:
+            if failures is not None:
+                failures.append(str(e) or type(e).__name__)
         return None
 
     def _calculate_molecular_properties(self, mol) -> Dict[str, Any]:

@@ -30,7 +30,7 @@ def ebi_cross_reference_search(
     size : int
         Number of results to return
     format : str
-
+        Response format. Only 'json' is produced by this endpoint.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

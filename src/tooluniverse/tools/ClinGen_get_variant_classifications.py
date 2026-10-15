@@ -24,7 +24,7 @@ def ClinGen_get_variant_classifications(
     gene : str
         Optional: Filter by gene symbol
     variant : str
-        Optional: Filter by variant (HGVS notation or protein change)
+        Optional: filter to one variant. Accepts a ClinGen canonical allele ID ('CA16...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

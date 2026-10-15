@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def GitHub_search_repositories(
     q: str,
-    sort: Optional[str | Any] = None,
-    order: Optional[str | Any] = None,
-    per_page: Optional[int | Any] = None,
+    sort: Optional[str] = None,
+    order: Optional[str] = None,
+    per_page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def GitHub_search_repositories(
     ----------
     q : str
         Search query with optional qualifiers. Examples: 'bioinformatics language:pyt...
-    sort : str | Any
+    sort : str
         Sort by: 'stars', 'forks', 'help-wanted-issues', 'updated'. Default: best match.
-    order : str | Any
+    order : str
         Sort direction: 'desc' (default) or 'asc'
-    per_page : int | Any
+    per_page : int
         Results per page (default 30, max 100)
     stream_callback : Callable, optional
         Callback for streaming output

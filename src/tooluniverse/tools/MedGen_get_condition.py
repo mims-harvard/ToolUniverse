@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def MedGen_get_condition(
     uid: Optional[str] = None,
     cui: Optional[str] = None,
-    concept_id: Optional[str | Any] = None,
+    concept_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,7 +26,7 @@ def MedGen_get_condition(
         MedGen UID (e.g., '41393' for cystic fibrosis). Get from MedGen_search_condit...
     cui : str
         UMLS Concept Unique Identifier (e.g., 'C0010674' for cystic fibrosis). Altern...
-    concept_id : str | Any
+    concept_id : str
         Alias for cui. UMLS CUI identifier (e.g., "C0017205" for Gaucher disease).
     stream_callback : Callable, optional
         Callback for streaming output

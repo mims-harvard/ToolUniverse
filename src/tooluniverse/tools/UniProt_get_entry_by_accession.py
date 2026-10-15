@@ -10,12 +10,12 @@ from ._shared_client import get_shared_client
 
 def UniProt_get_entry_by_accession(
     accession: str,
-    compact: Optional[bool] = None,
+    compact: Optional[bool] = True,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get the complete JSON entry for a specified UniProtKB accession. WARNING: This tool returns the c...
 
@@ -23,8 +23,8 @@ def UniProt_get_entry_by_accession(
     ----------
     accession : str
         UniProtKB entry accession, e.g., P05067.
-    compact : bool, optional
-        Return a bounded summary instead of the complete UniProtKB JSON entry. Defaults to true in the tool configuration.
+    compact : bool
+        Return a bounded summary instead of the complete UniProtKB JSON entry. Defaul...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,7 +34,7 @@ def UniProt_get_entry_by_accession(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

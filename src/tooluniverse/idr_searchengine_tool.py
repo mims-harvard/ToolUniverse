@@ -27,6 +27,7 @@ import requests
 from typing import Any, Dict, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .http_utils import upstream_reason_suffix
 
 
 @register_tool("IDRSearchEngineTool")
@@ -79,7 +80,7 @@ class IDRSearchEngineTool(BaseTool):
         url = f"{self.SEARCH_BASE}/{path}"
         resp = self.session.get(url, params=params, timeout=self.timeout)
         if resp.status_code != 200:
-            return None, f"HTTP {resp.status_code}: {resp.text[:200]}"
+            return None, f"HTTP {resp.status_code}{upstream_reason_suffix(resp)}"
         try:
             payload = resp.json()
         except ValueError:

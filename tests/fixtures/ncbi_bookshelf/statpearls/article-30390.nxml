@@ -1,0 +1,1047 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper id="article-30390" content-type="chapter" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">statpearls</book-id>
+    <book-id book-id-type="publisher-id">statpearls</book-id>
+    <book-title-group>
+      <book-title>StatPearls</book-title>
+    </book-title-group>
+    <pub-date publication-format="electronic" date-type="pubr">
+      <month>01</month>
+      <year>2026</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>StatPearls Publishing</publisher-name>
+      <publisher-loc>Treasure Island (FL)</publisher-loc>
+    </publisher>
+    <permissions>
+      <copyright-statement>Copyright &#x000a9; 2026, StatPearls Publishing LLC</copyright-statement>
+      <license xmlns:xlink="http://www.w3.org/1999/xlink" license-type="open-access" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">
+        <license-p>This book is distributed under the terms of the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0) (<ext-link ext-link-type="uri" xlink:href="https://creativecommons.org/licenses/by-nc-nd/4.0/">http://creativecommons.org/licenses/by-nc-nd/4.0/</ext-link>), which permits others to distribute the work, provided that the article is not altered or used commercially. You are not required to obtain permission to distribute this article, provided that you credit the author and journal.</license-p>
+      </license>
+    </permissions>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes notes-type="disclaimer">
+      <p>The intent of StatPearls review books and articles is to identify knowledge deficits and assist you in the learning process. Review books and articles are not intended to be a source of the knowledge base of medicine. The authors and editors do not warrant the information is complete or accurate. The reader is encouraged to verify content and questions in several references. All drug indications and dosages should be verified before administration.</p>
+      <p>The authors and editors would like to extend special thanks to Erin Hughes and Gerson Rubio for their editorial support.</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <title-group>
+        <title>Tricyclic Antidepressant Toxicity</title>
+      </title-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Waseem</surname>
+            <given-names>Muhammad</given-names>
+          </name>
+          <aff>Weill Cornell Medicine New York, New York Medical College, Valhalla NY, St. George University, Grenada</aff>
+        </contrib>
+      </contrib-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Khalid</surname>
+            <given-names>Muhammad M.</given-names>
+          </name>
+          <aff>University Of Oklahoma Health Sciences Center</aff>
+        </contrib>
+      </contrib-group>
+      <contrib-group>
+        <contrib contrib-type="author">
+          <name name-style="western">
+            <surname>Schaffer</surname>
+            <given-names>David H.</given-names>
+          </name>
+          <aff>Prisma Health, University of South Carolina School of Medicine, Greenville, SC</aff>
+        </contrib>
+      </contrib-group>
+      <author-notes>
+        <fn id="article-30390.fn1" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Muhammad Waseem declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+        <fn id="article-30390.fn2" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>Muhammad M Khalid declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+        <fn id="article-30390.fn3" fn-type="COI-statement">
+          <p><bold>Disclosure: </bold>David H Schaffer declares no relevant financial relationships with ineligible companies.</p>
+        </fn>
+      </author-notes>
+      <pub-history>
+        <date date-type="updated">
+          <day>14</day>
+          <month>9</month>
+          <year>2026</year>
+        </date>
+      </pub-history>
+    </book-part-meta>
+    <body>
+      <sec id="article-30390.s1" sec-type="Continuing Education Activity">
+        <title>Continuing Education Activity</title>
+        <p>Tricyclic antidepressants (TCAs) were introduced in the late 1950s for the treatment of depression. The development of newer antidepressants, such as selective serotonin reuptake inhibitors, reduced TCA use, although TCAs remain an option for depression refractory to less toxic medications. In adults, TCAs are also prescribed for migraine prevention, neuropathy, and obsessive-compulsive disorder. In children, these pharmacologic agents have been used to treat nocturnal enuresis. Although the use of these medications has declined, TCA poisoning remains associated with significant morbidity and mortality. This activity for healthcare professionals is designed to sharpen learners' skills in evaluating and managing TCA poisoning. Participants will deepen their understanding of the relevant toxicokinetics, as well as the condition's risk factors, pathophysiology, clinical presentation, and evidence-based diagnostic and therapeutic recommendations. Greater competence will empower clinicians to collaborate with interprofessional teams caring for affected individuals.</p>
+        <p>
+<bold>Objectives:</bold>
+</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>Identify patients with tricyclic antidepressant toxicity based on their clinical presentation, risk factors, and diagnostic findings.</p>
+          </list-item>
+          <list-item>
+            <p>Implement individualized, evidence-based strategies for managing tricyclic antidepressant poisoning and mitigating its potential complications.</p>
+          </list-item>
+          <list-item>
+            <p>Improve awareness among patients and families of overdose prevention measures, safe medication storage, and timely recognition of tricyclic antidepressant toxicity.</p>
+          </list-item>
+          <list-item>
+            <p>Collaborate with all members of the interprofessional team, including specialists such as emergency medicine physicians, toxicologists, and critical care providers, to provide efficient, comprehensive, and coordinated care for individuals experiencing tricyclic antidepressant poisoning.</p>
+          </list-item>
+        </list>
+        <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/account/trialuserreg/?articleid=30390&#x00026;utm_source=pubmed&#x00026;utm_campaign=reviews&#x00026;utm_content=30390">Access free multiple choice questions on this topic.</ext-link>
+</p>
+      </sec>
+      <sec id="article-30390.s2" sec-type="pubmed-excerpt">
+        <title>Introduction</title>
+        <p>Tricyclic antidepressants (TCAs) are effective for treating depression, though safety concerns often limit their use. Common adverse effects of TCAs include anticholinergic symptoms, orthostatic hypotension, sedation, and cardiotoxicity, particularly in overdose. Major depressive disorder is an indication for TCA administration when selective serotonin reuptake inhibitors (SSRIs) or serotonin-norepinephrine reuptake inhibitors (SNRIs) are ineffective, not tolerated, or contraindicated. Additional indications include neuropathic and chronic pain conditions and sleep disorders, including chronic insomnia refractory to other agents.<xref ref-type="bibr" rid="article-30390.r1">[1]</xref> TCAs are also prescribed for obsessive-compulsive disorder when 1st-line treatments fail, as well as for enuresis in children. Antidepressants were among the most commonly reported substance classes to US Poison Centers in 2022 and 2023, and TCA exposures were associated with more serious outcomes than other antidepressant exposures.<xref ref-type="bibr" rid="article-30390.r2">[2]</xref></p>
+      </sec>
+      <sec id="article-30390.s3" sec-type="Etiology">
+        <title>Etiology</title>
+        <p>TCAs are associated with severe toxicity because of their narrow therapeutic index, activity at multiple receptors, and frequent prescription to patients with conditions that increase the risk of suicide by overdose. Intentional self-harm is the leading cause of TCA overdose in adults. In children, accidental or exploratory ingestions can cause significant toxicity because of the narrow therapeutic index of these drugs.</p>
+      </sec>
+      <sec id="article-30390.s4" sec-type="Epidemiology">
+        <title>Epidemiology</title>
+        <p>TCAs account for a small proportion of overall antidepressant prescriptions compared with SSRIs and SNRIs.<xref ref-type="bibr" rid="article-30390.r3">[3]</xref> In 2022, America's Poison Centers received reports of more than 3,000 TCA poisoning cases, although the true incidence is likely substantially higher because of known underreporting.<xref ref-type="bibr" rid="article-30390.r4">[4]</xref> The frequency of TCA overdoses has declined since the 1980s, whereas SSRI overdoses have increased significantly, reflecting changes in prescribing practices.<xref ref-type="bibr" rid="article-30390.r5">[5]</xref></p>
+      </sec>
+      <sec id="article-30390.s5" sec-type="Pathophysiology">
+        <title>Pathophysiology</title>
+        <p>The therapeutic effect of TCAs in depression results from norepinephrine inhibition and serotonin reuptake within the central nervous system (CNS). However, TCAs exert 7 distinct pharmacologic actions that contribute to adverse effects and toxicity, as follows:</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>&#x003b1;1-Adrenergic receptor inhibition: Causes vasodilation, hypotension, and reflex tachycardia</p>
+          </list-item>
+          <list-item>
+            <p>Histamine receptor inhibition: Produces sedation, altered mental status, and increased seizure risk</p>
+          </list-item>
+          <list-item>
+            <p>Muscarinic receptor inhibition: Leads to antimuscarinic (anticholinergic) effects, including tachycardia, mydriasis, urinary retention, decreased bowel sounds, dry skin, and delirium</p>
+          </list-item>
+          <list-item>
+            <p>Cardiac sodium channel inhibition: Slows phase 0 of the cardiac action potential, prolonging the QRS interval and increasing the risk of hypotension and dysrhythmias</p>
+          </list-item>
+          <list-item>
+            <p>Cardiac potassium efflux channel inhibition: Slows phase 3 of the cardiac action potential, prolonging the QT interval and increasing the risk of torsades de pointes</p>
+          </list-item>
+          <list-item>
+            <p>&#x003b3;-aminobutyric acid (GABA) type A receptor antagonism: Reduces chloride conductance, causing neuroexcitation and seizures</p>
+          </list-item>
+          <list-item>
+            <p>Biogenic amine reuptake inhibition: Contributes to CNS and autonomic nervous system effects, including seizures</p>
+          </list-item>
+        </list>
+        <p>Overall, TCA toxicity results from the combined CNS, antimuscarinic, and cardiotoxic effects of these mechanisms. Severe overdose can be life-threatening.</p>
+      </sec>
+      <sec id="article-30390.s6" sec-type="Toxicokinetics">
+        <title>Toxicokinetics</title>
+        <p>TCAs are rapidly absorbed from the gastrointestinal tract and exhibit high bioavailability. TCA poisoning produces anticholinergic effects that slow gastrointestinal motility, delaying absorption and peak drug concentrations. Coingestion of other agents with anticholinergic properties, such as antiparkinsonian medications and 1st-generation antihistamines, further contributes to unpredictable absorption. TCAs are highly lipid-soluble and extensively protein-bound. Most TCAs undergo substantial 1st-pass hepatic metabolism, primarily through cytochrome P450 2D6 (CYP2D6), before renal elimination. TCAs are often formulated as immediate-release products with relatively short elimination half-lives, although coingestion of cytochrome P450 2D6 inducers or inhibitors can alter TCA metabolism.<xref ref-type="bibr" rid="article-30390.r6">[6]</xref> Toxicity results from both the parent drug and active metabolites. Respiratory or metabolic acidosis increases the free, pharmacologically active TCA fraction, enhancing toxicity.</p>
+        <p>The manifestations of toxicity usually become apparent within 2 hours of ingestion. Patients without signs or symptoms 6 hours after ingestion are unlikely to have sustained a clinically significant overdose and may be medically cleared for subsequent psychiatric care after this observation period. Toxicity usually lasts 24 to 48 hours but is highly dose-dependent.<xref ref-type="bibr" rid="article-30390.r7">[7]</xref></p>
+      </sec>
+      <sec id="article-30390.s7" sec-type="History and Physical">
+        <title>History and Physical</title>
+        <p>When TCA toxicity is suspected, the history should include the specific drug ingested, estimated dose, formulation, time of ingestion, and any coingestants, including prescription, over-the-counter, and herbal products. Past medical history should document cardiac disease, seizure disorders, and psychiatric conditions. Initial symptoms commonly include CNS manifestations, such as agitation, confusion, delirium, drowsiness, and seizures, as well as autonomic findings, including dry mouth and urinary retention.</p>
+        <p>Physical examination may reveal tachycardia, hypotension, and, in severe cases, hyperthermia. Physical findings may also include flushed, dry skin, mydriasis, and decreased bowel sounds. Neurologic examination may demonstrate CNS depression, delirium, ankle clonus, hyperreflexia, or seizures. Cardiovascular evaluation often detects conduction abnormalities, including QRS and QT interval prolongation, with increasing interval duration associated with a greater risk of arrhythmias. Overall, these findings reflect the anticholinergic, cardiotoxic, and CNS effects of TCA toxicity. Careful monitoring is essential for effective management.</p>
+      </sec>
+      <sec id="article-30390.s8" sec-type="Evaluation">
+        <title>Evaluation</title>
+        <p>The history and physical examination are the cornerstones of TCA poisoning diagnosis because laboratory testing has limited utility for identifying specific TCAs. Symptoms often appear within 2 hours of acute ingestion, although severity and duration vary widely.<xref ref-type="bibr" rid="article-30390.r8">[8]</xref> Symptom severity does not always correlate with the amount ingested because individual differences in absorption, metabolism, and protein binding limit clinical prediction.<xref ref-type="bibr" rid="article-30390.r9">[9]</xref> Acute ingestion often causes anticholinergic symptoms followed by rapid mental status decline. Early recognition of the anticholinergic toxidrome is essential and typically includes tachycardia, mydriasis, decreased bowel sounds, urinary retention, and dry mouth or dry skin. Hyperthermia can occur but is less common. TCA-induced cardiovascular toxicity arises through multiple mechanisms. Sinus tachycardia is a common initial electrocardiographic (ECG) finding. Hypotension can result from dehydration, anticholinergic effects, cardiac toxicity, and &#x003b1;-adrenergic blockade.</p>
+        <p>An ECG should be obtained early in the evaluation of suspected TCA overdose. Evidence of sodium or potassium channel blockade requires prompt treatment. QRS prolongation greater than 100 milliseconds, resulting from sodium channel blockade, predicts seizures, whereas QRS durations greater than 160 milliseconds indicate a higher risk of life-threatening dysrhythmias. An R/S ratio of 0.7 or greater in lead aVR or an R wave greater than 3 mm in lead aVR is strongly associated with both seizures and arrhythmias. A deep S wave in lead I is also common. A Brugada pattern has been reported after amitriptyline overdose.<xref ref-type="bibr" rid="article-30390.r10">[10]</xref></p>
+        <p>Standard laboratory evaluation should include assessment for potential coingestants, such as acetaminophen and aspirin. Additional evaluation should exclude other causes of altered mental status in patients unable to provide a clear history, including hypoglycemia or stroke. Cross-sectional brain imaging may be indicated. Serum TCA concentrations do not reliably correlate with toxicity severity and are not always clinically available, although measurement may help confirm an unknown overdose when clinical findings suggest TCA ingestion. Patients with signs of toxicity generally require hospital admission until sustained clinical improvement occurs. Asymptomatic patients should undergo serial monitoring for toxicity, including vital signs and ECGs, for at least 6 hours.<xref ref-type="bibr" rid="article-30390.r11">[11]</xref><xref ref-type="bibr" rid="article-30390.r12">[12]</xref><xref ref-type="bibr" rid="article-30390.r13">[13]</xref></p>
+      </sec>
+      <sec id="article-30390.s9" sec-type="Treatment / Management">
+        <title>Treatment / Management</title>
+        <p>Management of TCA poisoning begins with prompt stabilization of the airway, breathing, and circulation. Gastrointestinal decontamination with activated charcoal should only be performed in patients with a protected airway who are not vomiting. Activated charcoal provides the greatest benefit when administered within 2 hours of ingestion but may remain effective in the setting of delayed gastric emptying or decreased bowel sounds. Prevention of acidemia is critical because metabolic and respiratory acidosis increase TCA binding to cardiac sodium channels, increasing the risk of dysrhythmias and cardiac arrest.</p>
+        <p>TCA-induced seizures generally respond to benzodiazepines or other GABA agonists. Other antiseizure medications, such as levetiracetam, are not indicated for TCA-induced seizures. Although highly effective for status epilepticus, these agents have limited utility because of the underlying pathophysiology of TCA-induced seizures. Refractory seizures may require phenobarbital or propofol, typically after endotracheal intubation for airway protection.</p>
+        <p>Sodium bicarbonate is indicated for hemodynamic instability, acidemia, seizures, or QRS prolongation greater than 100 milliseconds. Therapeutic effects include restoration of inward cardiac sodium current and reduction of the free TCA fraction. Initial treatment consists of a 1 mEq/kg bolus followed by a continuous intravenous infusion, with goals of narrowing the QRS complex and maintaining a serum pH of 7.5 to 7.55.</p>
+        <p>Sodium bicarbonate infusions are commonly prepared by adding 150 mEq of sodium bicarbonate to 1 L of D5W and administered at 150 to 250 mL/hour in adults or 1.5 times the maintenance rate in children. Hypokalemia commonly develops during sodium bicarbonate therapy, and continuous infusions should include potassium supplementation when hypokalemia is present.</p>
+        <p>Careful monitoring of serum pH is essential before endotracheal intubation because peri-intubation respiratory acidosis may occur. Therefore, an additional sodium bicarbonate bolus may be administered immediately before intubation. Initial management of hypotension includes intravenous fluids and sodium bicarbonate. Persistent hypotension may require &#x003b1;-adrenergic vasopressors, such as norepinephrine. Sodium bicarbonate also plays a central role in managing dysrhythmias associated with QRS widening, in addition to standard Advanced Cardiac Life Support (ACLS) measures.<xref ref-type="bibr" rid="article-30390.r14">[14]</xref></p>
+        <p>Intravenous magnesium is the 1st-line treatment for QT prolongation caused by TCA toxicity. A typical initial dose is 2 g of magnesium sulfate. Treatment is indicated for a corrected QT interval greater than 500 milliseconds. Unlike sodium bicarbonate, which may shorten a prolonged QRS interval, magnesium does not shorten the QT interval. Instead, magnesium prevents early afterdepolarizations that increase the risk of torsades de pointes (polymorphic ventricular tachycardia). Patients who develop torsades de pointes should be managed according to ACLS protocols, and additional magnesium may be administered during cardiopulmonary resuscitation when feasible. Intermittent, refractory torsades de pointes may require chemical overdrive pacing with isoproterenol or electrical pacing.</p>
+        <p>Physostigmine, class IA, IC, and III antiarrhythmic agents, and flumazenil are relatively contraindicated in TCA toxicity. Intralipid emulsion therapy may be considered for hemodynamically unstable patients after overdose with highly lipophilic TCAs, although supporting evidence is limited. Large volumes of distribution and extensive protein binding render enhanced elimination techniques, such as hemodialysis and hemoperfusion, generally ineffective. Rare cases may require advanced support with extracorporeal membrane oxygenation.</p>
+      </sec>
+      <sec id="article-30390.s10" sec-type="Differential Diagnosis">
+        <title>Differential Diagnosis</title>
+        <p>The differential diagnosis of TCA toxicity depends on the clinical presentation. Initial manifestations often resemble those of an anticholinergic toxidrome caused by antihistamines, such as diphenhydramine and chlorpheniramine; antipsychotics, including olanzapine, quetiapine, chlorpromazine, and clozapine; skeletal muscle relaxants, such as cyclobenzaprine; appetite stimulants, such as cyproheptadine; and classical tropane belladonna alkaloids found in plants or medications, including atropine, scopolamine, and hyoscyamine. Other psychoactive drug ingestions should also be considered, including SSRIs, SNRIs, and monoamine oxidase inhibitors.</p>
+        <p>Cardiotoxic agents can produce ECG abnormalities that mimic those of TCA poisoning. Examples include class I antiarrhythmic agents, such as quinidine, procainamide, and flecainide; class III antiarrhythmic agents, such as amiodarone; and stimulants like cocaine.</p>
+        <p>Withdrawal syndromes may also present with altered mental status. Important considerations include alcohol withdrawal, benzodiazepine withdrawal, and precipitated withdrawal from opiates or opioids. Metabolic disorders may likewise cause altered mental status. Potential etiologies include hypoglycemia, hyperglycemia, hyponatremia, hypernatremia, hepatic encephalopathy, uremic encephalopathy, and thyroid storm.</p>
+      </sec>
+      <sec id="article-30390.s11" sec-type="Prognosis">
+        <title>Prognosis</title>
+        <p>Most patients with TCA poisoning recover with close monitoring, targeted treatment of seizures and cardiotoxicity, and supportive care. Cardiac dysrhythmias account for most deaths and become increasingly refractory to treatment as acidosis progresses. Hyperthermia is associated with a greater risk of poor outcomes.<xref ref-type="bibr" rid="article-30390.r15">[15]</xref> A risk assessment study of 100 patients with severe TCA overdose reported a fatality rate of 6%.<xref ref-type="bibr" rid="article-30390.r16">[16]</xref></p>
+      </sec>
+      <sec id="article-30390.s12" sec-type="Complications">
+        <title>Complications</title>
+        <p>Complications of TCA poisoning include seizures, anticholinergic effects, and severe cardiotoxicity. Less severe poisoning may present with altered mental status or mild hemodynamic abnormalities. Hyperthermia is uncommon and generally results from the combined effects of biogenic amine reuptake inhibition and anticholinergic activity. Hyperthermia can also lead to secondary complications, including rhabdomyolysis and disseminated intravascular coagulation.</p>
+        <p>Dysrhythmias are the most feared complication of TCA poisoning. Prevention measures include optimization of serum pH, seizure control to prevent acidosis, and magnesium administration to reduce the risk of torsades de pointes.</p>
+      </sec>
+      <sec id="article-30390.s13" sec-type="Consultations">
+        <title>Consultations</title>
+        <p>Consultation with a medical toxicologist or regional poison center is recommended for all cases of known or suspected TCA poisoning. Cardiology consultation may be appropriate for persistent conduction abnormalities, refractory dysrhythmias, or hemodynamic instability despite the administration of standard therapy. Critical care consultation is warranted for patients requiring mechanical ventilation, continuous sodium bicarbonate infusion, vasopressor support, or management of severe complications. Psychiatric consultation should be obtained after medical stabilization in cases of intentional overdose to assess suicide risk and guide further treatment.</p>
+      </sec>
+      <sec id="article-30390.s14" sec-type="Deterrence and Patient Education">
+        <title>Deterrence and Patient Education</title>
+        <p>Patients should receive education regarding the risks of TCA overdose, including adverse effects after accidental double-dose errors, which may cause mild anticholinergic symptoms, such as dry mouth and urinary retention. Safe medication storage out of the reach of children should also be emphasized.</p>
+      </sec>
+      <sec id="article-30390.s15" sec-type="Pearls and Other Issues">
+        <title>Pearls and Other Issues</title>
+        <p>Crucial points to remember when managing TCA poisoning include the following:</p>
+        <list list-type="bullet">
+          <list-item>
+            <p>TCAs affect multiple receptors, producing primarily cardiac and neurologic toxicity.</p>
+          </list-item>
+          <list-item>
+            <p>Early manifestations of TCA overdose often include anticholinergic features, though seizures, wide-complex dysrhythmias, and cardiac arrest can develop rapidly.</p>
+          </list-item>
+          <list-item>
+            <p>ECG is a quick and readily available diagnostic tool for TCA poisoning. QRS prolongation correlates with toxicity severity and prognosis.</p>
+          </list-item>
+          <list-item>
+            <p>Sodium bicarbonate is the cornerstone of treatment for TCA poisoning and is indicated for acidemia, QRS prolongation, dysrhythmias, and hemodynamic instability.</p>
+          </list-item>
+        </list>
+        <p>Patients with hemodynamic compromise, life-threatening dysrhythmias, or cardiac arrest should be managed according to ACLS protocols while receiving TCA-specific therapy. Preventive counseling should emphasize adherence to prescribed dosing, avoidance of unsupervised dose adjustments, and safe medication storage out of the reach of children.</p>
+      </sec>
+      <sec id="article-30390.s16" sec-type="Enhancing Healthcare Team Outcomes">
+        <title>Enhancing Healthcare Team Outcomes</title>
+        <p>TCA toxicity can be life-threatening and is best managed by an interprofessional team that includes emergency clinicians, medical toxicologists or poison center specialists, cardiologists, and critical care staff. As with all poisonings, initial management focuses on airway, breathing, and circulation. Supportive care and close monitoring by nursing staff and intensivists are essential. Prompt treatment is associated with generally favorable outcomes, whereas delayed care or ingestion of multiple agents worsens prognosis. Before discharge, patients with suspected suicide attempts should receive mental health referrals, and caregivers should be advised to store all medications securely and out of the reach of children.<xref ref-type="bibr" rid="article-30390.r17">[17]</xref><xref ref-type="bibr" rid="article-30390.r18">[18]</xref></p>
+      </sec>
+      <sec id="article-30390.s17">
+        <title>Review Questions</title>
+        <list list-type="bullet">
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/account/trialuserreg/?articleid=30390&#x00026;utm_source=pubmed&#x00026;utm_campaign=reviews&#x00026;utm_content=30390">Access free multiple choice questions on this topic.</ext-link>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://mdsearchlight.com/medications/tricyclic-antidepressant-toxicity/?utm_source=pubmedlink&#x00026;utm_campaign=MDS&#x00026;utm_content=30390">Click here for a simplified version.</ext-link>
+</p>
+          </list-item>
+          <list-item>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.statpearls.com/articlelibrary/commentarticle/30390/?utm_source=pubmed&#x00026;utm_campaign=comments&#x00026;utm_content=30390">Comment on this article.</ext-link>
+</p>
+          </list-item>
+        </list>
+      </sec>
+    </body>
+    <back>
+      <ref-list id="article-30390.s18">
+        <title>References</title>
+        <ref id="article-30390.r1">
+          <label>1</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Soliman</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Moisset</surname>
+                <given-names>X</given-names>
+              </name>
+              <name>
+                <surname>Ferraro</surname>
+                <given-names>MC</given-names>
+              </name>
+              <name>
+                <surname>de Andrade</surname>
+                <given-names>DC</given-names>
+              </name>
+              <name>
+                <surname>Baron</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Belton</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Bennett</surname>
+                <given-names>DLH</given-names>
+              </name>
+              <name>
+                <surname>Calvo</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Dougherty</surname>
+                <given-names>P</given-names>
+              </name>
+              <name>
+                <surname>Gilron</surname>
+                <given-names>I</given-names>
+              </name>
+              <name>
+                <surname>Hietaharju</surname>
+                <given-names>AJ</given-names>
+              </name>
+              <name>
+                <surname>Hosomi</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Kamerman</surname>
+                <given-names>PR</given-names>
+              </name>
+              <name>
+                <surname>Kemp</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Enax-Krumova</surname>
+                <given-names>EK</given-names>
+              </name>
+              <name>
+                <surname>McNicol</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>Price</surname>
+                <given-names>TJ</given-names>
+              </name>
+              <name>
+                <surname>Raja</surname>
+                <given-names>SN</given-names>
+              </name>
+              <name>
+                <surname>Rice</surname>
+                <given-names>ASC</given-names>
+              </name>
+              <name>
+                <surname>Smith</surname>
+                <given-names>BH</given-names>
+              </name>
+              <name>
+                <surname>Talkington</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Truini</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Vollert</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Attal</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Finnerup</surname>
+                <given-names>NB</given-names>
+              </name>
+              <name>
+                <surname>Haroutounian</surname>
+                <given-names>S</given-names>
+              </name>
+              <collab>NeuPSIG Review Update Study Group</collab>
+            </person-group>
+            <article-title>Pharmacotherapy and non-invasive neuromodulation for neuropathic pain: a systematic review and meta-analysis.</article-title>
+            <source>Lancet Neurol</source>
+            <year>2025</year>
+            <month>May</month>
+            <volume>24</volume>
+            <issue>5</issue>
+            <fpage>413</fpage>
+            <page-range>413-428</page-range>
+            <pub-id pub-id-type="pmid">40252663</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r2">
+          <label>2</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Gummin</surname>
+                <given-names>DD</given-names>
+              </name>
+              <name>
+                <surname>Mowry</surname>
+                <given-names>JB</given-names>
+              </name>
+              <name>
+                <surname>Beuhler</surname>
+                <given-names>MC</given-names>
+              </name>
+              <name>
+                <surname>Spyker</surname>
+                <given-names>DA</given-names>
+              </name>
+              <name>
+                <surname>Rivers</surname>
+                <given-names>LJ</given-names>
+              </name>
+              <name>
+                <surname>Feldman</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Brown</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Pham</surname>
+                <given-names>NPT</given-names>
+              </name>
+              <name>
+                <surname>Bronstein</surname>
+                <given-names>AC</given-names>
+              </name>
+              <name>
+                <surname>DesLauriers</surname>
+                <given-names>C</given-names>
+              </name>
+            </person-group>
+            <article-title>2023 Annual Report of the National Poison Data System&#x000ae; (NPDS) from America's Poison Centers&#x000ae;: 41st Annual Report.</article-title>
+            <source>Clin Toxicol (Phila)</source>
+            <year>2024</year>
+            <month>Dec</month>
+            <volume>62</volume>
+            <issue>12</issue>
+            <fpage>793</fpage>
+            <page-range>793-1027</page-range>
+            <pub-id pub-id-type="pmid">39688840</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r3">
+          <label>3</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Luo</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Kataoka</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Ostinelli</surname>
+                <given-names>EG</given-names>
+              </name>
+              <name>
+                <surname>Cipriani</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Furukawa</surname>
+                <given-names>TA</given-names>
+              </name>
+            </person-group>
+            <article-title>National Prescription Patterns of Antidepressants in the Treatment of Adults With Major Depression in the US Between 1996 and 2015: A Population Representative Survey Based Analysis.</article-title>
+            <source>Front Psychiatry</source>
+            <year>2020</year>
+            <volume>11</volume>
+            <fpage>35</fpage>
+            <pub-id pub-id-type="pmid">32116850</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r4">
+          <label>4</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Gummin</surname>
+                <given-names>DD</given-names>
+              </name>
+              <name>
+                <surname>Mowry</surname>
+                <given-names>JB</given-names>
+              </name>
+              <name>
+                <surname>Beuhler</surname>
+                <given-names>MC</given-names>
+              </name>
+              <name>
+                <surname>Spyker</surname>
+                <given-names>DA</given-names>
+              </name>
+              <name>
+                <surname>Rivers</surname>
+                <given-names>LJ</given-names>
+              </name>
+              <name>
+                <surname>Feldman</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Brown</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Pham</surname>
+                <given-names>NPT</given-names>
+              </name>
+              <name>
+                <surname>Bronstein</surname>
+                <given-names>AC</given-names>
+              </name>
+              <name>
+                <surname>DesLauriers</surname>
+                <given-names>C</given-names>
+              </name>
+            </person-group>
+            <article-title>2022 Annual Report of the National Poison Data System<sup>&#x000ae;</sup> (NPDS) from America's Poison Centers<sup>&#x000ae;</sup>: 40th Annual Report.</article-title>
+            <source>Clin Toxicol (Phila)</source>
+            <year>2023</year>
+            <month>Oct</month>
+            <volume>61</volume>
+            <issue>10</issue>
+            <fpage>717</fpage>
+            <page-range>717-939</page-range>
+            <pub-id pub-id-type="pmid">38084513</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r5">
+          <label>5</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>McKenzie</surname>
+                <given-names>MS</given-names>
+              </name>
+              <name>
+                <surname>McFarland</surname>
+                <given-names>BH</given-names>
+              </name>
+            </person-group>
+            <article-title>Trends in antidepressant overdoses.</article-title>
+            <source>Pharmacoepidemiol Drug Saf</source>
+            <year>2007</year>
+            <month>May</month>
+            <volume>16</volume>
+            <issue>5</issue>
+            <fpage>513</fpage>
+            <page-range>513-23</page-range>
+            <pub-id pub-id-type="pmid">17200994</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r6">
+          <label>6</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Gillman</surname>
+                <given-names>PK</given-names>
+              </name>
+            </person-group>
+            <article-title>Tricyclic antidepressant pharmacology and therapeutic drug interactions updated.</article-title>
+            <source>Br J Pharmacol</source>
+            <year>2007</year>
+            <month>Jul</month>
+            <volume>151</volume>
+            <issue>6</issue>
+            <fpage>737</fpage>
+            <page-range>737-48</page-range>
+            <pub-id pub-id-type="pmid">17471183</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r7">
+          <label>7</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>O'Connor</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Greene</surname>
+                <given-names>S</given-names>
+              </name>
+              <name>
+                <surname>Dargan</surname>
+                <given-names>P</given-names>
+              </name>
+              <name>
+                <surname>Wyncoll</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Jones</surname>
+                <given-names>A</given-names>
+              </name>
+            </person-group>
+            <article-title>Prolonged clinical effects in modified-release amitriptyline poisoning.</article-title>
+            <source>Clin Toxicol (Phila)</source>
+            <year>2006</year>
+            <volume>44</volume>
+            <issue>1</issue>
+            <fpage>77</fpage>
+            <page-range>77-80</page-range>
+            <pub-id pub-id-type="pmid">16496498</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r8">
+          <label>8</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Dawson</surname>
+                <given-names>AH</given-names>
+              </name>
+              <name>
+                <surname>Buckley</surname>
+                <given-names>NA</given-names>
+              </name>
+            </person-group>
+            <article-title>Pharmacological management of anticholinergic delirium - theory, evidence and practice.</article-title>
+            <source>Br J Clin Pharmacol</source>
+            <year>2016</year>
+            <month>Mar</month>
+            <volume>81</volume>
+            <issue>3</issue>
+            <fpage>516</fpage>
+            <page-range>516-24</page-range>
+            <pub-id pub-id-type="pmid">26589572</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r9">
+          <label>9</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Levraut</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Giunti</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Ciebiera</surname>
+                <given-names>JP</given-names>
+              </name>
+              <name>
+                <surname>de Sousa</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Ramhani</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>Payan</surname>
+                <given-names>P</given-names>
+              </name>
+              <name>
+                <surname>Grimaud</surname>
+                <given-names>D</given-names>
+              </name>
+            </person-group>
+            <article-title>Initial effect of sodium bicarbonate on intracellular pH depends on the extracellular nonbicarbonate buffering capacity.</article-title>
+            <source>Crit Care Med</source>
+            <year>2001</year>
+            <month>May</month>
+            <volume>29</volume>
+            <issue>5</issue>
+            <fpage>1033</fpage>
+            <page-range>1033-9</page-range>
+            <pub-id pub-id-type="pmid">11378618</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r10">
+          <label>10</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Palaniswamy</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Selvaraj</surname>
+                <given-names>DR</given-names>
+              </name>
+              <name>
+                <surname>Chugh</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Singh</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Khalique</surname>
+                <given-names>O</given-names>
+              </name>
+              <name>
+                <surname>Tsai</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Sandhu</surname>
+                <given-names>R</given-names>
+              </name>
+            </person-group>
+            <article-title>Brugada electrocardiographic pattern induced by amitriptyline overdose.</article-title>
+            <source>Am J Ther</source>
+            <year>2010</year>
+            <season>Sep-Oct</season>
+            <volume>17</volume>
+            <issue>5</issue>
+            <fpage>529</fpage>
+            <page-range>529-32</page-range>
+            <pub-id pub-id-type="pmid">19636245</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r11">
+          <label>11</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Carr</surname>
+                <given-names>MJ</given-names>
+              </name>
+              <name>
+                <surname>Ashcroft</surname>
+                <given-names>DM</given-names>
+              </name>
+              <name>
+                <surname>Kontopantelis</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>While</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Awenat</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>Cooper</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Chew-Graham</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Kapur</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Webb</surname>
+                <given-names>RT</given-names>
+              </name>
+            </person-group>
+            <article-title>Clinical management following self-harm in a UK-wide primary care cohort.</article-title>
+            <source>J Affect Disord</source>
+            <year>2016</year>
+            <month>Jun</month>
+            <volume>197</volume>
+            <fpage>182</fpage>
+            <page-range>182-8</page-range>
+            <pub-id pub-id-type="pmid">26994436</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r12">
+          <label>12</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Bergen</surname>
+                <given-names>H</given-names>
+              </name>
+              <name>
+                <surname>Murphy</surname>
+                <given-names>E</given-names>
+              </name>
+              <name>
+                <surname>Cooper</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Kapur</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Stalker</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Waters</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Hawton</surname>
+                <given-names>K</given-names>
+              </name>
+            </person-group>
+            <article-title>A comparative study of non-fatal self-poisoning with antidepressants relative to prescribing in three centres in England.</article-title>
+            <source>J Affect Disord</source>
+            <year>2010</year>
+            <month>Jun</month>
+            <volume>123</volume>
+            <issue>1-3</issue>
+            <fpage>95</fpage>
+            <page-range>95-101</page-range>
+            <pub-id pub-id-type="pmid">19864029</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r13">
+          <label>13</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Bek</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Ozkaya</surname>
+                <given-names>O</given-names>
+              </name>
+              <name>
+                <surname>Mutlu</surname>
+                <given-names>B</given-names>
+              </name>
+              <name>
+                <surname>Da&#x0011f;demir</surname>
+                <given-names>A</given-names>
+              </name>
+              <name>
+                <surname>Sungur</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>A&#x000e7;ikg&#x000f6;z</surname>
+                <given-names>Y</given-names>
+              </name>
+              <name>
+                <surname>I&#x0015f;lek</surname>
+                <given-names>I</given-names>
+              </name>
+              <name>
+                <surname>Baysal</surname>
+                <given-names>K</given-names>
+              </name>
+            </person-group>
+            <article-title>Charcoal haemoperfusion in amitriptyline poisoning: experience in 20 children.</article-title>
+            <source>Nephrology (Carlton)</source>
+            <year>2008</year>
+            <month>Jun</month>
+            <volume>13</volume>
+            <issue>3</issue>
+            <fpage>193</fpage>
+            <page-range>193-7</page-range>
+            <pub-id pub-id-type="pmid">18315701</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r14">
+          <label>14</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Woolf</surname>
+                <given-names>AD</given-names>
+              </name>
+              <name>
+                <surname>Erdman</surname>
+                <given-names>AR</given-names>
+              </name>
+              <name>
+                <surname>Nelson</surname>
+                <given-names>LS</given-names>
+              </name>
+              <name>
+                <surname>Caravati</surname>
+                <given-names>EM</given-names>
+              </name>
+              <name>
+                <surname>Cobaugh</surname>
+                <given-names>DJ</given-names>
+              </name>
+              <name>
+                <surname>Booze</surname>
+                <given-names>LL</given-names>
+              </name>
+              <name>
+                <surname>Wax</surname>
+                <given-names>PM</given-names>
+              </name>
+              <name>
+                <surname>Manoguerra</surname>
+                <given-names>AS</given-names>
+              </name>
+              <name>
+                <surname>Scharman</surname>
+                <given-names>EJ</given-names>
+              </name>
+              <name>
+                <surname>Olson</surname>
+                <given-names>KR</given-names>
+              </name>
+              <name>
+                <surname>Chyka</surname>
+                <given-names>PA</given-names>
+              </name>
+              <name>
+                <surname>Christianson</surname>
+                <given-names>G</given-names>
+              </name>
+              <name>
+                <surname>Troutman</surname>
+                <given-names>WG</given-names>
+              </name>
+            </person-group>
+            <article-title>Tricyclic antidepressant poisoning: an evidence-based consensus guideline for out-of-hospital management.</article-title>
+            <source>Clin Toxicol (Phila)</source>
+            <year>2007</year>
+            <volume>45</volume>
+            <issue>3</issue>
+            <fpage>203</fpage>
+            <page-range>203-33</page-range>
+            <pub-id pub-id-type="pmid">17453872</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r15">
+          <label>15</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Eyer</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Zilker</surname>
+                <given-names>T</given-names>
+              </name>
+            </person-group>
+            <article-title>Bench-to-bedside review: mechanisms and management of hyperthermia due to toxicity.</article-title>
+            <source>Crit Care</source>
+            <year>2007</year>
+            <volume>11</volume>
+            <issue>6</issue>
+            <fpage>236</fpage>
+            <pub-id pub-id-type="pmid">18096088</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r16">
+          <label>16</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Eyer</surname>
+                <given-names>F</given-names>
+              </name>
+              <name>
+                <surname>Stenzel</surname>
+                <given-names>J</given-names>
+              </name>
+              <name>
+                <surname>Schuster</surname>
+                <given-names>T</given-names>
+              </name>
+              <name>
+                <surname>Felgenhauer</surname>
+                <given-names>N</given-names>
+              </name>
+              <name>
+                <surname>Pfab</surname>
+                <given-names>R</given-names>
+              </name>
+              <name>
+                <surname>von Bary</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Zilker</surname>
+                <given-names>T</given-names>
+              </name>
+            </person-group>
+            <article-title>Risk assessment of severe tricyclic antidepressant overdose.</article-title>
+            <source>Hum Exp Toxicol</source>
+            <year>2009</year>
+            <month>Aug</month>
+            <volume>28</volume>
+            <issue>8</issue>
+            <fpage>511</fpage>
+            <page-range>511-9</page-range>
+            <pub-id pub-id-type="pmid">19736278</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r17">
+          <label>17</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>Cao</surname>
+                <given-names>D</given-names>
+              </name>
+              <name>
+                <surname>Heard</surname>
+                <given-names>K</given-names>
+              </name>
+              <name>
+                <surname>Foran</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Koyfman</surname>
+                <given-names>A</given-names>
+              </name>
+            </person-group>
+            <article-title>Intravenous lipid emulsion in the emergency department: a systematic review of recent literature.</article-title>
+            <source>J Emerg Med</source>
+            <year>2015</year>
+            <month>Mar</month>
+            <volume>48</volume>
+            <issue>3</issue>
+            <fpage>387</fpage>
+            <page-range>387-97</page-range>
+            <pub-id pub-id-type="pmid">25534900</pub-id>
+          </element-citation>
+        </ref>
+        <ref id="article-30390.r18">
+          <label>18</label>
+          <element-citation publication-type="journal">
+            <person-group>
+              <name>
+                <surname>G&#x000fc;loglu</surname>
+                <given-names>C</given-names>
+              </name>
+              <name>
+                <surname>Orak</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Ust&#x000fc;ndag</surname>
+                <given-names>M</given-names>
+              </name>
+              <name>
+                <surname>Altunci</surname>
+                <given-names>YA</given-names>
+              </name>
+            </person-group>
+            <article-title>Analysis of amitriptyline overdose in emergency medicine.</article-title>
+            <source>Emerg Med J</source>
+            <year>2011</year>
+            <month>Apr</month>
+            <volume>28</volume>
+            <issue>4</issue>
+            <fpage>296</fpage>
+            <page-range>296-9</page-range>
+            <pub-id pub-id-type="pmid">20923818</pub-id>
+          </element-citation>
+        </ref>
+      </ref-list>
+    </back>
+  </book-part>
+</book-part-wrapper>

@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def OpenFDA_search_device_510k(
     search: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def OpenFDA_search_device_510k(
     ----------
     search : str
         Lucene query for 510(k) devices (e.g., 'device_name:stethoscope', 'applicant:...
-    limit : int | Any
+    limit : int
         Maximum number of results (default 5, max 100)
     stream_callback : Callable, optional
         Callback for streaming output

@@ -126,6 +126,21 @@ def _union_nodes_by_id(preferred: list, extra: list) -> list:
     return merged
 
 
+def _gene_lookup_error(gene_name: str, failures: list) -> Dict[str, Any]:
+    if failures:
+        return {
+            "status": "error",
+            "error": (
+                f"Could not look up gene '{gene_name}': CIViC did not answer "
+                f"({failures[0]}). This is not a 'not found'; retry later."
+            ),
+        }
+    return {
+        "status": "error",
+        "error": f"Gene '{gene_name}' not found in CIViC database",
+    }
+
+
 @register_tool("CIViCTool")
 class CIViCTool(BaseTool):
     """
@@ -202,8 +217,15 @@ class CIViCTool(BaseTool):
 
         return payload
 
-    def _lookup_gene_id(self, gene_name: str) -> Optional[int]:
-        """Look up CIViC gene ID by gene symbol via GraphQL."""
+    def _lookup_gene_id(
+        self, gene_name: str, failures: Optional[list] = None
+    ) -> Optional[int]:
+        """Look up CIViC gene ID by gene symbol via GraphQL.
+
+        None means "not found" only when `failures` is still empty: a request
+        that failed appends its reason there. The two used to be the same None,
+        so a timeout was reported as "Gene 'X' not found in CIViC database".
+        """
         payload = {
             "query": "query GetGenes($entrezSymbols: [String!]) { genes(entrezSymbols: $entrezSymbols) { nodes { id name } } }",
             "variables": {"entrezSymbols": [gene_name.upper()]},
@@ -218,12 +240,15 @@ class CIViCTool(BaseTool):
                     "Accept": "application/json",
                 },
             )
+            if resp.status_code != 200:
+                raise RuntimeError(f"HTTP {resp.status_code}")
             data = resp.json().get("data", {})
             nodes = data.get("genes", {}).get("nodes", [])
             if nodes:
                 return nodes[0]["id"]
-        except Exception:
-            pass
+        except Exception as e:
+            if failures is not None:
+                failures.append(str(e) or type(e).__name__)
         return None
 
     def _get_variants_for_gene_id(
@@ -370,12 +395,10 @@ class CIViCTool(BaseTool):
                         "status": "error",
                         "error": "gene_id or gene_name is required for civic_get_variants_by_gene",
                     }
-                gene_id = self._lookup_gene_id(gene_name)
+                failures: list = []
+                gene_id = self._lookup_gene_id(gene_name, failures)
                 if gene_id is None:
-                    return {
-                        "status": "error",
-                        "error": f"Gene '{gene_name}' not found in CIViC database",
-                    }
+                    return _gene_lookup_error(gene_name, failures)
                 arguments = dict(arguments)
                 arguments["gene_id"] = gene_id
             return self._get_variants_for_gene_id(
@@ -530,12 +553,10 @@ class CIViCTool(BaseTool):
                 arguments = dict(arguments)
                 arguments["query"] = query_term
             if gene_name:
-                gene_id = self._lookup_gene_id(gene_name)
+                failures: list = []
+                gene_id = self._lookup_gene_id(gene_name, failures)
                 if gene_id is None:
-                    return {
-                        "status": "error",
-                        "error": f"Gene '{gene_name}' not found in CIViC database",
-                    }
+                    return _gene_lookup_error(gene_name, failures)
                 # Feature-43B-01: when gene+query combined, always fetch up to 200 variants
                 # before client-side filtering; the user's limit applies to the OUTPUT,
                 # not the pre-filter fetch — otherwise alphabetically early variants may

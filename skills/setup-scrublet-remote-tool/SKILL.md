@@ -5,6 +5,21 @@ description: Set up, launch, validate, and troubleshoot the Scrublet ToolUnivers
 
 # Set up Scrublet as a remote tool
 
+> **Sharing this model for a user, not developing it?** Follow the `tooluniverse-share-computer` guide; no ToolUniverse source checkout is needed. The model runs in its own Python environment, with its dependencies:
+>
+> ```bash
+> ~/.local/bin/uv venv --python 3.12 ~/.tooluniverse/envs/scrublet
+> curl -fsSL -o ~/.tooluniverse/envs/scrublet-tooluniverse.txt https://connect.aiscientist.tools/install-requirements.txt
+> curl -fsSL -o ~/.tooluniverse/envs/scrublet-requirements.txt https://raw.githubusercontent.com/mims-harvard/ToolUniverse/main/src/tooluniverse/remote/scrublet/requirements.txt
+> ~/.local/bin/uv pip install --python ~/.tooluniverse/envs/scrublet/bin/python -r ~/.tooluniverse/envs/scrublet-tooluniverse.txt -r ~/.tooluniverse/envs/scrublet-requirements.txt
+> ~/.local/bin/tu remote check scrublet --python ~/.tooluniverse/envs/scrublet/bin/python   # lists anything still missing
+> ~/.local/bin/tu serve --allow scrublet --python ~/.tooluniverse/envs/scrublet/bin/python --share --detach --name "<computer name>" --service https://tooluniverse-backend.onrender.com
+> ```
+>
+> If the check reports a missing environment variable (a data folder, a model cache, a provider key), set it in the same shell before `tu serve`; "Obtain credentials, data, and model weights" below says what each one is. The model reads only the variables it declares.
+>
+> The rest of this guide is for developers working from the ToolUniverse source, and for diagnosing problems with this model.
+
 > Validation status (2026-08-16): installation, direct/live MCP calls, traversal rejection, and prior same-host concurrency levels 1, 2, and 4 passed. Two current 500-cell calls returned finite aligned results and 429 synthetic predictions; that 85.8% fixture rate is not an accuracy result. Public publication, cross-user isolation, representative accuracy, cancellation, and recovery remain incomplete. Authenticated private Platform import and owner testing passed on 2026-08-16; public publication and independent-caller authorization/isolation remain untested.
 
 ## Prerequisites

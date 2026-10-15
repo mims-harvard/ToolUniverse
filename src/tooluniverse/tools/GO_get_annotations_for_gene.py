@@ -1,7 +1,7 @@
 """
 GO_get_annotations_for_gene
 
-Finds all GO annotations for a specific gene/protein using GOlr search.
+Finds GO annotations for a specific gene/protein using GOlr search. Returns one row per annotatio...
 """
 
 from typing import Any, Optional, Callable
@@ -17,14 +17,14 @@ def GO_get_annotations_for_gene(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Finds all GO annotations for a specific gene/protein using GOlr search.
+    Finds GO annotations for a specific gene/protein using GOlr search. Returns one row per annotatio...
 
     Parameters
     ----------
     gene_id : str
         A gene identifier such as gene symbol (e.g., 'TP53') or database ID.
     rows : int
-        Maximum number of annotations to return. Default: 100. Use a lower value (e.g...
+        Maximum number of annotation rows to return. Default: 100. Raise it (e.g. 200...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

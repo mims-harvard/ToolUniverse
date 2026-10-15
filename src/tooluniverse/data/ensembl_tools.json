@@ -1027,7 +1027,7 @@
   {
     "type": "EnsemblRESTTool",
     "name": "ensembl_get_ontology_ancestors",
-    "description": "Get ancestor terms for a GO (Gene Ontology) term. Returns parent terms up the ontology hierarchy showing broader biological concepts. Use this to understand term relationships and perform hierarchical analysis.",
+    "description": "WARNING (checked 2026-09-21): Ensembl's REST server currently answers this endpoint with the term's DESCENDANTS/children, not its ancestors (e.g. GO:0007165 signal transduction returns 582 more specific signalling terms), for GO, SO and HPO alike. To list real ancestors use ols_get_term_ancestors (any OBO ontology) or ensembl_get_ontology_descendants (which currently returns the parents). Original description: Get ancestor terms for a GO (Gene Ontology) term. Returns parent terms up the ontology hierarchy showing broader biological concepts. Use this to understand term relationships and perform hierarchical analysis.",
     "endpoint": "/ontology/ancestors/{id}",
     "parameter": {
       "type": "object",
@@ -1067,7 +1067,7 @@
   {
     "type": "EnsemblRESTTool",
     "name": "ensembl_get_ontology_descendants",
-    "description": "Get descendant terms for a GO (Gene Ontology) term. Returns child terms down the ontology hierarchy showing more specific biological concepts. Use this to find related specific terms and expand queries.",
+    "description": "WARNING (checked 2026-09-21): Ensembl's REST server currently answers this endpoint with the term's PARENTS/ancestors, not its children (e.g. GO:0006915 apoptotic process returns only GO:0012501 programmed cell death), for GO, SO and HPO alike; many terms return an empty list. To list real children use QuickGO_get_term_children (GO), ols_get_term_children (any OBO ontology) or ensembl_get_ontology_ancestors (which currently returns the children). Original description: Get descendant terms for a GO (Gene Ontology) term. Returns child terms down the ontology hierarchy showing more specific biological concepts. Use this to find related specific terms and expand queries.",
     "endpoint": "/ontology/descendants/{id}",
     "parameter": {
       "type": "object",
@@ -1105,7 +1105,7 @@
     },
     "test_examples": [
       {
-        "id": "GO:0005737",
+        "id": "GO:0007165",
         "closest_term": false
       }
     ]

@@ -26,6 +26,7 @@ import requests
 from lxml import etree
 
 from .base_tool import BaseTool
+from .http_utils import request_with_retry
 from .tool_registry import register_tool
 
 _URL = "https://www.conoserver.org/download/conoserver_protein.xml.gz"
@@ -126,6 +127,23 @@ def _parse_entry(elem) -> Dict[str, Any]:
     }
 
 
+class _RetryableGet:
+    """Adapts ``request_with_retry``'s session protocol onto ``requests.get``.
+
+    Same indirection as fda_label_tool: it keeps this module's HTTP surface as
+    ``requests.get``, so the call shape stays what it has always been and the
+    tests that patch it still mean something. ``requests`` is resolved at call
+    time rather than captured at import.
+    """
+
+    @staticmethod
+    def request(method, url, **kwargs):
+        # Only what the caller set. request_with_retry always passes
+        # headers/json/data, and forwarding explicit Nones would change the
+        # signature this module has always used.
+        return requests.get(url, **{k: v for k, v in kwargs.items() if v is not None})
+
+
 @lru_cache(maxsize=1)
 def _load_entries() -> List[Dict[str, Any]]:
     """Download, sanitize and parse the bulk ConoServer protein export.
@@ -133,7 +151,14 @@ def _load_entries() -> List[Dict[str, Any]]:
     Cached for the process lifetime (the export changes rarely). Raises on a
     network/parse failure so the failure is never cached.
     """
-    resp = requests.get(_URL, timeout=_TIMEOUT)
+    # ConoServer's nginx answers 403 to the User-Agent requests sends by
+    # default and 200 to anything else: measured on the same URL, 52 bytes of
+    # HTML by default against 856975 bytes of the export otherwise. Going
+    # through request_with_retry supplies one, and brings the retry behaviour
+    # the bare call never had.
+    resp = request_with_retry(
+        _RetryableGet, "GET", _URL, timeout=_TIMEOUT, max_attempts=3
+    )
     resp.raise_for_status()
     xml_text = gzip.decompress(resp.content).decode("utf-8", "replace")
     parser = etree.XMLParser(recover=True, huge_tree=True, resolve_entities=False)

@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def FDA_get_drug_label(
     drug_name: str,
-    max_section_chars: Optional[int | Any] = None,
+    max_section_chars: Optional[int] = 25000,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def FDA_get_drug_label(
     ----------
     drug_name : str
         Brand or generic drug name (e.g., 'warfarin', 'Eliquis', 'apixaban', 'atorvas...
-    max_section_chars : int | Any
+    max_section_chars : int
         Maximum characters returned per clinical section (default: 25000, 0 = no limi...
     stream_callback : Callable, optional
         Callback for streaming output

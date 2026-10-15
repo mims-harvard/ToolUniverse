@@ -477,9 +477,15 @@ targets = ['APP', 'APOE', 'MAPT', 'PSEN1', 'PSEN2']
 
 all_drugs = []
 for target in targets:
-    drugs = tu.tools.DGIdb_get_drug_gene_interactions(gene_name=target)
-    if drugs and 'data' in drugs:
-        all_drugs.extend([{**d, 'target': target} for d in drugs['data']])
+    result = tu.tools.DGIdb_get_drug_gene_interactions(gene_name=target)
+    # data: {genes: {nodes: [{name, interactions: [{drug: {name, conceptId}, interactionTypes, sources}]}]}}
+    for node in (result.get('data') or {}).get('genes', {}).get('nodes', []):
+        for interaction in node['interactions']:
+            all_drugs.append({
+                'drug_name': interaction['drug']['name'],
+                'interaction_types': interaction['interactionTypes'],
+                'target': target,
+            })
 
 # Deduplicate by drug name
 unique_drugs = {d['drug_name']: d for d in all_drugs}.values()

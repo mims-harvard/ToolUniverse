@@ -30,12 +30,14 @@ class TestHPATools(unittest.TestCase):
             "format": "json"
         })
         
-        # Verify basic structure
-        self.assertIsInstance(result, list)
-        self.assertGreater(len(result), 0)
+        # Verify basic structure: the standard envelope since 2bf51984
+        self.assertEqual(result["status"], "success")
+        hits = result["data"]
+        self.assertIsInstance(hits, list)
+        self.assertGreater(len(hits), 0)
         
         # Verify content of first result
-        first_hit = result[0]
+        first_hit = hits[0]
         self.assertIn("Gene", first_hit)
         self.assertIn("Gene synonym", first_hit)
 
@@ -48,10 +50,12 @@ class TestHPATools(unittest.TestCase):
             "format": "json"
         })
         
-        self.assertIsInstance(result, list)
-        self.assertGreater(len(result), 0)
+        self.assertEqual(result["status"], "success")
+        hits = result["data"]
+        self.assertIsInstance(hits, list)
+        self.assertGreater(len(hits), 0)
         
-        first_hit = result[0]
+        first_hit = hits[0]
         self.assertIn("Gene", first_hit)
         self.assertIn("Gene description", first_hit)
         

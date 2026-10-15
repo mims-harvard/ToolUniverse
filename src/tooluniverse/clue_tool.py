@@ -9,7 +9,6 @@ Authentication: Requires CLUE_API_KEY environment variable (free key from clue.i
 """
 
 import json
-import os
 
 import requests
 from typing import Dict, Any, Optional
@@ -69,7 +68,7 @@ class ClueTool(BaseTool):
 
     def _get_headers(self) -> Dict[str, str]:
         headers = {"Accept": "application/json"}
-        api_key = os.environ.get("CLUE_API_KEY")
+        api_key = self.credential("CLUE_API_KEY")
         if api_key:
             headers["user_key"] = api_key
         return headers
@@ -78,7 +77,7 @@ class ClueTool(BaseTool):
         self, endpoint: str, params: Optional[Dict] = None
     ) -> Dict[str, Any]:
         """Make GET request to CLUE.io API."""
-        api_key = os.environ.get("CLUE_API_KEY")
+        api_key = self.credential("CLUE_API_KEY")
         if not api_key:
             return {
                 "ok": False,

@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ELM_get_interaction_domains(
-    operation: str,
+    operation: Optional[str] = "get_interaction_domains",
     elm_identifier: Optional[str] = None,
     query: Optional[str] = None,
     max_results: Optional[int] = 100,

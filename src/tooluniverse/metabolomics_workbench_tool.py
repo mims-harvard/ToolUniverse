@@ -177,12 +177,17 @@ class MetabolomicsWorkbenchTool(BaseTool):
         """Parse a tab-separated response body into a list of row dicts.
 
         Returns None (caller falls back to the raw string) if the text
-        doesn't actually look like a tab-delimited table.
+        doesn't actually look like a tab-delimited table. A header row with
+        no data rows -- a moverz search with no matches sends back exactly
+        that (confirmed live: tolerance 0.0001 around m/z 180.0634) -- is
+        zero results, not "not a table", so it returns [] rather than None.
         """
         lines = [ln for ln in text.strip().split("\n") if ln]
-        if len(lines) < 2 or "\t" not in lines[0]:
+        if not lines or "\t" not in lines[0]:
             return None
         headers = lines[0].split("\t")
+        if len(lines) == 1:
+            return []
         rows = []
         for line in lines[1:]:
             values = line.split("\t")
@@ -374,9 +379,7 @@ class MetabolomicsWorkbenchTool(BaseTool):
         # Reject upfront with actionable guidance instead of leaking that
         # HTML error page to the caller.
         bad_slots = [
-            name
-            for name, value in zip(self._METSTAT_SLOTS, slots)
-            if "/" in value
+            name for name, value in zip(self._METSTAT_SLOTS, slots) if "/" in value
         ]
         if bad_slots:
             return {

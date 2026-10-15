@@ -15,7 +15,7 @@ def MetabolomicsWorkbench_get_compound_by_pubchem_cid(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get metabolite information by PubChem compound ID (CID). Useful for cross-referencing with PubChe...
 
@@ -34,7 +34,7 @@ def MetabolomicsWorkbench_get_compound_by_pubchem_cid(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

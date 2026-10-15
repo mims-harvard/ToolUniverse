@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def ProteomicsDB_get_protein_expression(
-    operation: str,
     uniprot_id: str,
+    operation: Optional[str] = "get_protein_expression",
     tissue_category: Optional[str] = None,
     calculation_method: Optional[str] = None,
     *,

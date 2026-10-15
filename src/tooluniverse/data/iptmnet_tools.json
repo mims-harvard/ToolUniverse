@@ -2,7 +2,7 @@
   {
     "name": "iPTMnet_search",
     "type": "iPTMnetTool",
-    "description": "Search the iPTMnet database for proteins with post-translational modification (PTM) data. Find proteins by gene name, protein name, or keyword. Filter by role (Substrate = modified protein, Enzyme = modifier) and PTM type (Phosphorylation, Acetylation, Ubiquitination, Methylation, etc.). iPTMnet integrates data from PhosphoSitePlus, UniProt, PRO ontology, and text mining. Returns UniProt IDs, PTM site counts, enzyme/substrate roles, and isoform counts.",
+    "description": "NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has answered HTTP 503 for every request since at least 2026-09-20 while the iPTMnet website stays up, so this tool currently returns that error. For enzyme-substrate PTM relationships use OmniPath_get_enzyme_substrate (substrates='TP53' or enzymes='TP53'); for a protein's modified residues use UniProt_get_ptm_processing_by_accession. Original description: Search the iPTMnet database for proteins with post-translational modification (PTM) data. Find proteins by gene name, protein name, or keyword. Filter by role (Substrate = modified protein, Enzyme = modifier) and PTM type (Phosphorylation, Acetylation, Ubiquitination, Methylation, etc.). iPTMnet integrates data from PhosphoSitePlus, UniProt, PRO ontology, and text mining. Returns UniProt IDs, PTM site counts, enzyme/substrate roles, and isoform counts.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -122,7 +122,7 @@
   {
     "name": "iPTMnet_get_ptm_sites",
     "type": "iPTMnetTool",
-    "description": "Get all post-translational modification (PTM) sites for a protein from iPTMnet. Returns residue, position, PTM type, confidence score, source databases, catalytic enzymes, and PubMed references for each site. Data aggregated from PhosphoSitePlus, UniProt, and text mining. Covers phosphorylation, acetylation, ubiquitination, methylation, glycosylation, sumoylation, and more. Results organized by protein isoform. Use with UniProt accession (e.g., P04637 for TP53).",
+    "description": "NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has answered HTTP 503 for every request since at least 2026-09-20 while the iPTMnet website stays up, so this tool currently returns that error. For a protein's modified residues (with the modifying enzyme where curated) use UniProt_get_ptm_processing_by_accession, and EBIProteins_get_proteomics_ptm for mass-spectrometry PTM evidence. Original description: Get all post-translational modification (PTM) sites for a protein from iPTMnet. Returns residue, position, PTM type, confidence score, source databases, catalytic enzymes, and PubMed references for each site. Data aggregated from PhosphoSitePlus, UniProt, and text mining. Covers phosphorylation, acetylation, ubiquitination, methylation, glycosylation, sumoylation, and more. Results organized by protein isoform. Use with UniProt accession (e.g., P04637 for TP53).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -226,7 +226,7 @@
   {
     "name": "iPTMnet_get_proteoforms",
     "type": "iPTMnetTool",
-    "description": "Get proteoform records for a protein from iPTMnet. Proteoforms represent specific combinations of PTM sites on a protein, as defined by the PRO ontology. Each proteoform has a PRO ID, modified sites, the responsible enzyme (if known), source database, and PubMed references. Useful for understanding which specific PTM combinations have been experimentally observed. Use with UniProt accession (e.g., P04637 for TP53).",
+    "description": "NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has answered HTTP 503 for every request since at least 2026-09-20 while the iPTMnet website stays up, so this tool currently returns that error. No other tool returns proteoform records; UniProt_get_ptm_processing_by_accession lists the individual modified residues. Original description: Get proteoform records for a protein from iPTMnet. Proteoforms represent specific combinations of PTM sites on a protein, as defined by the PRO ontology. Each proteoform has a PRO ID, modified sites, the responsible enzyme (if known), source database, and PubMed references. Useful for understanding which specific PTM combinations have been experimentally observed. Use with UniProt accession (e.g., P04637 for TP53).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -302,7 +302,7 @@
   {
     "name": "iPTMnet_get_ptm_ppi",
     "type": "iPTMnetTool",
-    "description": "Get PTM-dependent protein-protein interactions from iPTMnet. Returns interactions where a post-translational modification on one protein affects its binding to another protein. Each interaction includes the PTM type, modified substrate with site position, the interacting partner, association type (association/dissociation), data source, and PubMed reference. Essential for understanding how PTMs regulate protein interaction networks. Use with UniProt accession (e.g., P04637 for TP53).",
+    "description": "NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has answered HTTP 503 for every request since at least 2026-09-20 while the iPTMnet website stays up, so this tool currently returns that error. No other tool returns PTM-dependent interactions; OmniPath_get_enzyme_substrate gives the enzyme-substrate pairs behind many of them. Original description: Get PTM-dependent protein-protein interactions from iPTMnet. Returns interactions where a post-translational modification on one protein affects its binding to another protein. Each interaction includes the PTM type, modified substrate with site position, the interacting partner, association type (association/dissociation), data source, and PubMed reference. Essential for understanding how PTMs regulate protein interaction networks. Use with UniProt accession (e.g., P04637 for TP53).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -395,7 +395,7 @@
   {
     "name": "iPTMnet_get_proteoform_ppi",
     "type": "iPTMnetTool",
-    "description": "Get proteoform-state-level protein-protein interactions from iPTMnet. Unlike iPTMnet_get_ptm_ppi (residue-level: 'a PTM at site X on protein A affects binding to partner Y'), this returns interactions keyed on PRO ontology proteoform IDs that encode the specific isoform AND modification state of each interactant (e.g., PR:000025934 'hSMAD2/iso:Long/Phos:1' binding PR:Q13485 'hSMAD4'). Each record gives both interacting proteoforms (PRO ID + human-readable label), the relation type, data source, and PubMed references. Use this to find which exact modified/spliced forms of a protein engage in documented interactions. Use with UniProt accession (e.g., Q15796 for SMAD2, P04637 for TP53).",
+    "description": "NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has answered HTTP 503 for every request since at least 2026-09-20 while the iPTMnet website stays up, so this tool currently returns that error. No other tool returns proteoform-level interactions; OmniPath_get_enzyme_substrate gives enzyme-substrate pairs. Original description: Get proteoform-state-level protein-protein interactions from iPTMnet. Unlike iPTMnet_get_ptm_ppi (residue-level: 'a PTM at site X on protein A affects binding to partner Y'), this returns interactions keyed on PRO ontology proteoform IDs that encode the specific isoform AND modification state of each interactant (e.g., PR:000025934 'hSMAD2/iso:Long/Phos:1' binding PR:Q13485 'hSMAD4'). Each record gives both interacting proteoforms (PRO ID + human-readable label), the relation type, data source, and PubMed references. Use this to find which exact modified/spliced forms of a protein engage in documented interactions. Use with UniProt accession (e.g., Q15796 for SMAD2, P04637 for TP53).",
     "parameter": {
       "type": "object",
       "properties": {

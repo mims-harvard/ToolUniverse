@@ -9,7 +9,7 @@ import re
 import requests
 from .base_tool import BaseTool
 from .tool_registry import register_tool
-from .http_utils import request_with_retry
+from .http_utils import request_with_retry, upstream_reason_suffix
 
 # Ensembl REST API Base URL
 ENSEMBL_BASE_URL = "https://rest.ensembl.org"
@@ -191,8 +191,8 @@ class EnsemblRESTTool(BaseTool):
             return {
                 "status": "error",
                 "error": (
-                    f"Ensembl API returned HTTP {e.response.status_code}: "
-                    f"{e.response.text[:200]}"
+                    f"Ensembl API returned HTTP {e.response.status_code}"
+                    f"{upstream_reason_suffix(e.response)}"
                 ),
                 "url": url,
             }

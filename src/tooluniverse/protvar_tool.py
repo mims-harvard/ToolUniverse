@@ -270,16 +270,72 @@ class ProtVarFunctionTool:
         return {"status": "success", "data": data}
 
 
+MAX_XREFS_PER_VARIANT = 25
+
+
+def _population_entry(v: Dict[str, Any]) -> Dict[str, Any]:
+    """Reduce one ProtVar population variant record to the fields users need."""
+    locations = v.get("genomicLocation")
+    if not isinstance(locations, list):
+        locations = [locations] if locations else []
+    predictions = []
+    for p in v.get("predictions") or []:
+        entry = {
+            "algorithm": p.get("predAlgorithmNameType"),
+            "prediction": p.get("predictionValType"),
+            "score": p.get("score"),
+        }
+        if entry not in predictions:
+            predictions.append(entry)
+    xrefs = [
+        {"database": x.get("name"), "id": x.get("id"), "url": x.get("url")}
+        for x in v.get("xrefs") or []
+    ]
+    diseases = []
+    for a in v.get("association") or []:
+        name = a.get("name")
+        if name and a.get("disease") is not False and name not in diseases:
+            diseases.append(name)
+    return {
+        "source": v.get("sourceType") or v.get("type"),
+        "wild_type": v.get("wildType"),
+        "alt_sequence": v.get("alternativeSequence"),
+        "consequence": v.get("consequenceType"),
+        "codon": v.get("codon"),
+        "genomic_location": locations[0] if locations else None,
+        "genomic_locations": locations,
+        "cytogenetic_band": v.get("cytogeneticBand"),
+        "clinical_significance": [
+            {"type": c.get("type"), "sources": c.get("sources") or []}
+            for c in v.get("clinicalSignificances") or []
+        ],
+        "frequencies": [
+            {
+                "population": pf.get("populationName"),
+                "frequency": pf.get("frequency"),
+                "source": pf.get("source"),
+            }
+            for pf in v.get("populationFrequencies") or []
+        ],
+        "predictions": predictions,
+        "diseases": diseases,
+        "xref_count": len(xrefs),
+        "xrefs": xrefs[:MAX_XREFS_PER_VARIANT],
+    }
+
+
 @register_tool(
     "ProtVarPopulationTool",
     config={
         "name": "ProtVar_get_population",
         "type": "ProtVarPopulationTool",
         "description": (
-            "Get population observation data for a protein variant position from "
-            "ProtVar. Returns co-located variants with population allele "
-            "frequencies (gnomAD, 1000Genomes), clinical significance (ClinVar), "
-            "and computational predictions (SIFT, PolyPhen)."
+            "Get the known variants at a protein position from ProtVar's "
+            "population observations: one row per amino-acid change with its "
+            "consequence, clinical significance (ClinVar/UniProt/Ensembl), "
+            "population allele frequencies (gnomAD, ClinVar MAF), SIFT/PolyPhen "
+            "predictions, associated diseases and cross-references. Only "
+            "accession and position are needed."
         ),
         "parameter": {
             "type": "object",
@@ -295,12 +351,12 @@ class ProtVarFunctionTool:
                 "genomic_location": {
                     "type": "integer",
                     "description": (
-                        "Genomic coordinate (GRCh38) for the variant. "
-                        "Obtain from ProtVar_map_variant output."
+                        "Optional genomic coordinate (GRCh38); ProtVar answers "
+                        "for the whole protein position without it."
                     ),
                 },
             },
-            "required": ["accession", "position", "genomic_location"],
+            "required": ["accession", "position"],
         },
         "settings": {"base_url": _BASE, "timeout": 30},
     },
@@ -313,72 +369,31 @@ class ProtVarPopulationTool:
         acc = arguments.get("accession", "").strip()
         pos = arguments.get("position")
         gloc = arguments.get("genomic_location")
-        if not acc or pos is None or gloc is None:
+        if not acc or pos is None:
             return {
                 "status": "error",
-                "error": "accession, position, and genomic_location are required",
+                "error": "accession and position are required",
             }
 
         base = self.tool_config.get("settings", {}).get("base_url", _BASE)
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
 
-        url = f"{base}/population/{acc}/{pos}?genomicLocation={gloc}"
+        url = f"{base}/population/{acc}/{pos}"
+        if gloc is not None:
+            url += f"?genomicLocation={gloc}"
 
         try:
             result = _get_json(url, timeout=timeout)
         except Exception as e:
             return {"status": "error", "error": f"ProtVar API error: {e}"}
 
-        # Parse co-located variants
-        variants = []
+        # ProtVar 2.x returns one flat variants list for the position; the
+        # 1.x keys below are read too so an old-shape payload still parses.
+        items = list(result.get("variants") or [])
         for key in ("proteinColocatedVariant", "genomicColocatedVariant"):
-            items = result.get(key)
-            if not items:
-                continue
-            if not isinstance(items, list):
-                items = [items]
-            for v in items:
-                entry = {
-                    "source": key.replace("ColocatedVariant", ""),
-                    "wild_type": v.get("wildType"),
-                    "alt_sequence": v.get("alternativeSequence"),
-                    "genomic_location": v.get("genomicLocation"),
-                    "cytogenetic_band": v.get("cytogeneticBand"),
-                }
-                # Population frequencies
-                freqs = []
-                for pf in v.get("populationFrequencies", []):
-                    freqs.append(
-                        {
-                            "population": pf.get("populationName"),
-                            "frequency": pf.get("frequency"),
-                            "source": pf.get("source"),
-                        }
-                    )
-                entry["frequencies"] = freqs
-                # Predictions
-                preds = []
-                for p in v.get("predictions", []):
-                    preds.append(
-                        {
-                            "algorithm": p.get("predAlgorithmNameType"),
-                            "prediction": p.get("predictionValType"),
-                            "score": p.get("score"),
-                        }
-                    )
-                entry["predictions"] = preds
-                # Cross-references (ClinVar etc)
-                xrefs = []
-                for x in v.get("xrefs", []):
-                    xrefs.append(
-                        {
-                            "database": x.get("name"),
-                            "id": x.get("id"),
-                            "url": x.get("url"),
-                        }
-                    )
-                entry["xrefs"] = xrefs
-                variants.append(entry)
+            legacy = result.get(key) or []
+            items.extend(legacy if isinstance(legacy, list) else [legacy])
+        variants = [_population_entry(v) for v in items if isinstance(v, dict)]
 
         return {
             "status": "success",

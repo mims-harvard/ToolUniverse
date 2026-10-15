@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def IDT_check_self_dimer(
     sequence: str,
-    na_concentration_mm: Optional[float | Any] = None,
-    mg_concentration_mm: Optional[float | Any] = None,
-    temperature_celsius: Optional[float | Any] = None,
+    na_concentration_mm: Optional[float] = None,
+    mg_concentration_mm: Optional[float] = None,
+    temperature_celsius: Optional[float] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def IDT_check_self_dimer(
     ----------
     sequence : str
         Oligonucleotide sequence (5' to 3'). Must contain only A, T, C, G, U bases. L...
-    na_concentration_mm : float | Any
+    na_concentration_mm : float
         Sodium (Na+) concentration in millimolar (mM). Affects dimer stability. Defau...
-    mg_concentration_mm : float | Any
+    mg_concentration_mm : float
         Magnesium (Mg2+) concentration in millimolar (mM). Default: 0 mM.
-    temperature_celsius : float | Any
+    temperature_celsius : float
         Temperature in Celsius for dimer stability calculation. Use your expected ann...
     stream_callback : Callable, optional
         Callback for streaming output

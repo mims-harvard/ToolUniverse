@@ -25,9 +25,9 @@ def ChEMBL_search_atc_classification(
     level4 : str
         Filter by ATC level 4 code
     limit : int
-
+        Maximum number of results (default: 20, max: 1000)
     offset : int
-
+        Offset for pagination (default: 0)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

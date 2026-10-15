@@ -48,10 +48,43 @@ class OmniPathTool(BaseTool):
         fields = tool_config.get("fields", {})
         self.endpoint = fields.get("endpoint", "ligand_receptor")
 
+    # Gene-name parameters OmniPath takes as a comma-separated string.
+    _LIST_LIKE_PARAMS = (
+        "partners",
+        "sources",
+        "targets",
+        "proteins",
+        "enzymes",
+        "substrates",
+        "tf_gene",
+        "target_gene",
+        "databases",
+        "datasets",
+        "types",
+        "categories",
+        "entity_types",
+    )
+
+    @classmethod
+    def _flatten_list_arguments(cls, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Accept ["EGFR"] as well as "EGFR".
+
+        The sibling interactome tool (humanbase_ppi_analysis) takes a list and
+        refuses a string, so an agent moving between them reliably gets one of
+        the two wrong. Joining here costs nothing and removes the round trip.
+        """
+        flattened = dict(arguments)
+        for key in cls._LIST_LIKE_PARAMS:
+            value = flattened.get(key)
+            if isinstance(value, (list, tuple)):
+                parts = [str(item).strip() for item in value if str(item).strip()]
+                flattened[key] = ",".join(parts) if parts else None
+        return flattened
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the OmniPath API call."""
         try:
-            return self._query(arguments)
+            return self._query(self._flatten_list_arguments(arguments))
         except requests.exceptions.Timeout:
             return {
                 "status": "error",
@@ -566,7 +599,14 @@ class OmniPathTool(BaseTool):
 
         params = {
             "genesymbols": "yes",
-            "fields": "sources,references,curation_effort,type",
+            # dorothea_level must be requested explicitly: OmniPath only
+            # includes a field in the response when it's named here, so
+            # without it every item.get("dorothea_level") was None and the
+            # confidence_level filter below never had anything to compare
+            # against. The API also answers it as a *list* of letters (a
+            # TF-target pair can have evidence at more than one level, e.g.
+            # ["A", "D"]), not a single string -- confirmed live for TP53.
+            "fields": "sources,references,curation_effort,type,dorothea_level",
             "datasets": "dorothea,collectri",
         }
 
@@ -585,11 +625,11 @@ class OmniPathTool(BaseTool):
 
         interactions = []
         for item in data:
-            dorothea_level = item.get("dorothea_level")
+            dorothea_levels = item.get("dorothea_level") or []
             if (
                 confidence_level
-                and dorothea_level
-                and dorothea_level != confidence_level
+                and dorothea_levels
+                and confidence_level not in dorothea_levels
             ):
                 continue
 
@@ -601,7 +641,7 @@ class OmniPathTool(BaseTool):
                     "target_genesymbol": item.get("target_genesymbol"),
                     "is_stimulation": bool(item.get("is_stimulation", 0)),
                     "is_inhibition": bool(item.get("is_inhibition", 0)),
-                    "dorothea_level": dorothea_level,
+                    "dorothea_level": dorothea_levels,
                     "sources": item.get("sources", []),
                     "curation_effort": item.get("curation_effort"),
                 }
@@ -662,7 +702,9 @@ class OmniPathTool(BaseTool):
 
             if confidence_levels:
                 requested = {
-                    level.strip() for level in confidence_levels.split(",") if level.strip()
+                    level.strip()
+                    for level in confidence_levels.split(",")
+                    if level.strip()
                 }
                 if not level_set & requested:
                     continue

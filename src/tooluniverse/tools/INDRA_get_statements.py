@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def INDRA_get_statements(
     agent: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_statements",
     type_: Optional[str] = None,
     agent2: Optional[str] = None,
     limit: Optional[int] = 10,

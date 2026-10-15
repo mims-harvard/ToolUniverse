@@ -155,7 +155,7 @@ def main():
     p.add_argument("--nmads-counts", type=float, default=5.0)
     p.add_argument("--nmads-mt", type=float, default=3.0)
     p.add_argument("--mt-ceiling", type=float, default=20.0,
-                   help="biological %MT ceiling (raise for mito-rich tissue)")
+                   help="biological %%MT ceiling (raise for mito-rich tissue)")
     p.add_argument("--min-genes", type=int, default=200)
     p.add_argument("--min-cells", type=int, default=3)
     p.add_argument("--doublets", action="store_true",

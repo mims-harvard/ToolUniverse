@@ -137,63 +137,58 @@ def test_pymupdf_is_an_explicit_root_extra_only():
     assert "pdf" not in all_extra
 
 
-def test_mcpb_dependencies_mirror_root():
-    """The bundle list is documented as a mirror of the root list."""
-    root_requirements = _requirements_by_name(ROOT_PYPROJECT)
+def test_mcpb_declares_the_package_rather_than_mirroring_its_dependency_list():
+    """The bundle installs ToolUniverse from PyPI, so its metadata is the list.
+
+    This test used to require the bundle's dependency list to mirror the root
+    package's, which was the right invariant while the bundle carried the
+    source: nothing else would have installed what that source imports. The
+    bundle now declares ``tooluniverse`` itself, so the package's own metadata
+    supplies those, and duplicating them here would only create a second list
+    to keep in sync.
+
+    What still has to hold is the part that is not carried by the package
+    metadata: the sealed runtime needs the LLM-provider extras, which are
+    optional in the root package, because a Desktop user has no way to install
+    an extra into the bundle.
+    """
     mcpb_requirements = _requirements_by_name(MCPB_PYPROJECT)
-    root = set(root_requirements)
-    mcpb = set(mcpb_requirements)
 
-    missing = root - mcpb
-    assert not missing, (
-        f"mcpb/pyproject.toml is missing dependencies present in the root "
-        f"pyproject.toml: {sorted(missing)}. Add them to the bundle dependency "
-        f"list."
+    # The bundle declares tooluniverse and nothing else; what a sealed runtime
+    # needs beyond the defaults it asks for as extras on that one requirement,
+    # which is checked below.
+    assert set(mcpb_requirements) == {"tooluniverse"}, (
+        "the bundle should declare tooluniverse plus only what a sealed runtime "
+        "cannot get any other way; everything else is supplied by the package "
+        f"metadata: {sorted(mcpb_requirements)}"
     )
 
-    extra = mcpb - root - KNOWN_MCPB_ADDITIONS
-    assert not extra, (
-        f"mcpb/pyproject.toml declares dependencies absent from the root "
-        f"pyproject.toml: {sorted(extra)}. Add them to the root list, or record "
-        f"them in KNOWN_MCPB_ADDITIONS with a reason."
-    )
-
-    # A bundle-only dependency must still track the constraint of the root
-    # extra it mirrors, so the two cannot drift apart silently.
-    root_extra_requirements = {
-        _distribution_name(requirement): requirement
-        for requirements in _load_pyproject(ROOT_PYPROJECT)[
-            "optional-dependencies"
-        ].values()
-        for requirement in requirements
-    }
-    drifted = {
-        name: (root_extra_requirements[name], mcpb_requirements[name])
-        for name in KNOWN_MCPB_ADDITIONS & mcpb
-        if name in root_extra_requirements
-        and root_extra_requirements[name] != mcpb_requirements[name]
-    }
-    assert not drifted, (
-        "mcpb/pyproject.toml pins a bundle-only dependency differently from the "
-        f"root extra that declares it: {drifted}."
-    )
-
-    mismatched = {
-        name: (root_requirements[name], mcpb_requirements[name])
-        for name in root & mcpb
-        if root_requirements[name] != mcpb_requirements[name]
-    }
-    assert not mismatched, (
-        "mcpb/pyproject.toml has dependency constraints that differ from the "
-        f"root pyproject.toml: {mismatched}."
+    requirement = mcpb_requirements["tooluniverse"]
+    for extra in ("openai", "gemini", "stats", "chem"):
+        assert extra in requirement, (
+            f"the {extra} extra is optional upstream but mandatory in a sealed "
+            f"bundle -- without it that client is unavailable in Desktop: {requirement}"
+        )
+    assert "<2" in requirement, (
+        f"a major-version ceiling keeps an unreviewed major release out: {requirement}"
     )
 
 
 def _markitdown_requirements():
-    """Every declared markitdown requirement, keyed by the file that declares it."""
+    """Every declared markitdown requirement, keyed by the file that declares it.
+
+    The extras are searched as well as the base list: markitdown backs 10 tools
+    and costs 91 MB, so it moved behind ``tooluniverse[documents]``. Wherever it
+    is declared, the converter extras it names still have to be the explicit
+    set rather than markitdown's own ``all``.
+    """
     found = {}
     for pyproject in (ROOT_PYPROJECT, MCPB_PYPROJECT):
-        for requirement in _load_dependencies(pyproject):
+        data = _load_pyproject(pyproject)
+        declarations = list(data.get("dependencies", []))
+        for requirements in (data.get("optional-dependencies") or {}).values():
+            declarations.extend(requirements)
+        for requirement in declarations:
             if _distribution_name(requirement) == "markitdown":
                 found.setdefault(pyproject, []).append(requirement)
     return found
@@ -395,4 +390,55 @@ def test_sources_use_canonical_pymupdf_import():
     assert not offenders, (
         "Use `import pymupdf as fitz` instead of the deprecated `fitz` alias:\n"
         + "\n".join(offenders)
+    )
+
+
+def test_the_documented_macos_floor_matches_the_one_the_build_enforces():
+    """One dependency sets a minimum macOS, and three docs repeat the number.
+
+    `faiss-cpu` backs the vector-search tools and is pinned exactly. It moved
+    its arm64 wheels from `macosx_11_0` to `macosx_14_0` at 1.11.0, so below
+    macOS 14 an Apple Silicon install falls back to the sdist and tries to
+    compile faiss. Nothing else in the dependency set has that floor: overriding
+    faiss-cpu alone makes the whole base install resolve from wheels at
+    macOS 11.
+
+    build.sh encodes the floor as MACOS_FLOOR and dry-runs the locked
+    environment against it, so a bump that lost arm64 wheels fails the build.
+    That check cannot tell anyone what to do about it -- the docs do that -- and
+    a silent divergence between the enforced number and the documented one is
+    how a user ends up compiling faiss on a machine we said was supported.
+    """
+    build_sh = (REPO_ROOT / "mcpb" / "build.sh").read_text(encoding="utf-8")
+    floor_match = re.search(r"^MACOS_FLOOR=(\d+)\.0$", build_sh, re.MULTILINE)
+    assert floor_match, "mcpb/build.sh no longer defines MACOS_FLOOR=<major>.0"
+    floor = floor_match.group(1)
+
+    assert f"macosx_{floor}_0" in build_sh, (
+        f"build.sh enforces macOS {floor} but does not say which wheel tag that "
+        "is; the comment above MACOS_FLOOR is what explains the number."
+    )
+
+    documents = {
+        "README.md": REPO_ROOT / "README.md",
+        "mcpb/README.md": REPO_ROOT / "mcpb" / "README.md",
+        "docs/help/troubleshooting.rst": (
+            REPO_ROOT / "docs" / "help" / "troubleshooting.rst"
+        ),
+    }
+    for label, path in documents.items():
+        text = path.read_text(encoding="utf-8")
+        assert f"macOS {floor}" in text, (
+            f"{label} does not state the macOS {floor} requirement that "
+            "mcpb/build.sh enforces via MACOS_FLOOR."
+        )
+        assert "faiss-cpu" in text or "faiss_cpu" in text, (
+            f"{label} states a macOS floor without naming faiss-cpu as the "
+            "reason, so a reader cannot tell what would lift it."
+        )
+
+    assert "faiss-cpu" in _names(ROOT_PYPROJECT), (
+        "faiss-cpu is no longer a base dependency. If it moved to an extra the "
+        "macOS floor no longer applies to the default install, and these docs "
+        "plus MACOS_FLOOR in build.sh need revisiting."
     )

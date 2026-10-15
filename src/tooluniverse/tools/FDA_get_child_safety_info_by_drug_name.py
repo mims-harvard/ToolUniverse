@@ -1,7 +1,7 @@
 """
 FDA_get_child_safety_info_by_drug_name
 
-Retrieve child safety information for a specific drug based on its name.
+Retrieve the FDA label's keep_out_of_reach_of_children section by drug name. This section contain...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def FDA_get_child_safety_info_by_drug_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve child safety information for a specific drug based on its name.
+    Retrieve the FDA label's keep_out_of_reach_of_children section by drug name. This section contain...
 
     Parameters
     ----------

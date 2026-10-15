@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def PharmacoDB_get_drug_targets(
-    operation: str,
+    operation: Optional[str] = "get_drug_targets",
     gene_name: Optional[str] = None,
     gene_id: Optional[int] = None,
     compound_name: Optional[str] = None,

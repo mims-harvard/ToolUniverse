@@ -1,0 +1,18 @@
+{
+  "api_name": "Plants of the World Online (POWO) API",
+  "base_url": "https://powo.science.kew.org/api/2",
+  "failure_mode": "HTTP 403 with cf-mitigated: challenge and a \"Just a moment... Enable JavaScript and cookies to continue\" page, for every request",
+  "root_cause": "Kew enabled Cloudflare's managed JavaScript challenge, the same as WormBase and FooDB. Passing it requires executing JavaScript and holding a cookie, which no HTTP client does, so this is not a credential, header or rate-limit problem. Verified 2026-10-03 on /api/2/search and /api/2/taxon.",
+  "confirmed_broken_date": "2026-10-03",
+  "last_retry_date": "2026-10-03",
+  "retry_count": 3,
+  "retry_after": "2026-12-01",
+  "retry_notes": "GET https://powo.science.kew.org/api/2/search?q=Quercus with no special headers. A 200 means the challenge is off. While the cf-mitigated header reads 'challenge' there is nothing to implement on this side.",
+  "workaround": "None from an API client. POWO is browsable by a human at the site. These tools are config-driven (BaseRESTTool), so the challenge is now named by the shared error path rather than per tool -- POWO reported only 'POWO_search_plants API error' before, which sends a user looking for a credential problem.",
+  "investigation_notes": "Found in the 2026-10-03 sweep as 6 failures under the powo category, originally filed as 'other -- needs reading' because the message said nothing. Third instance of this signature after wormbase and foodb, which is why the detection moved into BaseRESTTool where every config-driven tool shares it.",
+  "tool_file": "src/tooluniverse/base_rest_tool.py",
+  "affected_tools": [
+    "POWO_search_plants",
+    "POWO_get_taxon"
+  ]
+}

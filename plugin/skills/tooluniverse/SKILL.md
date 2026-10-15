@@ -142,6 +142,7 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 | "**drug repurposing**", "new indication", "existing drugs for [disease]", "repurpose [drug]" | `Skill(skill="tooluniverse-drug-repurposing")` |
 | "**drug target validation**", "target druggability", "validate target", "target assessment" | `Skill(skill="tooluniverse-drug-target-validation")` |
 | "**network pharmacology**", "polypharmacology", "compound-target network", "multi-target" | `Skill(skill="tooluniverse-network-pharmacology")` |
+| **Ongoing protein design validation** — "protein design campaign", "validate binder candidates", "conflicting binder models", "conditional pH binder", "glycan clash validation", "protein competition submission" | `Skill(skill="tooluniverse-protein-design-campaign")` |
 | "**design protein**", "protein binder", "de novo protein", "RFdiffusion", "ProteinMPNN" | `Skill(skill="tooluniverse-protein-therapeutic-design")` |
 | "**antibody engineering**", "antibody design", "humanization", "affinity maturation" | `Skill(skill="tooluniverse-antibody-engineering")` |
 | "**ADMET prediction**", "ADME", "absorption", "distribution", "metabolism", "excretion", "toxicity prediction" | `Skill(skill="tooluniverse-admet-prediction")` |
@@ -288,6 +289,15 @@ These reminders are for fast pattern recognition during routing. Detailed `❌ W
 | "**SDK**", "Python SDK", "build AI scientist", "programmatic access", "**import tooluniverse**", "**coding API**", "**tu build**", "**typed wrappers**" | `Skill(skill="tooluniverse-sdk")` |
 | "**install skills**", "missing skills", "skill not found", "add skills" | `Skill(skill="tooluniverse-install-skills")` |
 | "**self-review**", "eval current work", "evaluate this work", "check my work", "is this complete", "definition of done", "evaluation rubric", "success criteria", "grading criteria", "LLM-as-judge" | `Skill(skill="tooluniverse-self-review")` |
+
+### 13. Sharing & Account Tasks (you do the work; the user only answers and clicks Allow)
+
+| Keywords | Action |
+|----------|--------|
+| "**share my model/script/function**", "let my lab/colleague use this", "make this a tool", "share my GPU", "**keep my tool running**" | `Skill(skill="tooluniverse-share-computer")` |
+| "**publish my tool**", "put it in Discover", "let anyone use my tool", "unpublish" | `Skill(skill="tooluniverse-publish-tool")` |
+| "**API key missing**", "login/token rejected", "add my OMIM/NCBI/DisGeNET key", "which logins do I need" | `Skill(skill="tooluniverse-database-logins")` |
+| "**TU-SHARE-**" code, "use my colleague's model/computer", "run it on the lab GPU", "shared or community tools" | `Skill(skill="tooluniverse-use-shared-computer")` |
 
 ---
 

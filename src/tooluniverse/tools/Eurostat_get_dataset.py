@@ -10,10 +10,10 @@ from ._shared_client import get_shared_client
 
 def Eurostat_get_dataset(
     datasetCode: str,
-    geo: Optional[str | Any] = None,
-    unit: Optional[str | Any] = None,
-    na_item: Optional[str | Any] = None,
-    time: Optional[str | Any] = None,
+    geo: Optional[str] = None,
+    unit: Optional[str] = None,
+    na_item: Optional[str] = None,
+    time: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -26,13 +26,13 @@ def Eurostat_get_dataset(
     ----------
     datasetCode : str
         Eurostat dataset code. Examples: 'demo_pjan' (population by age/sex), 'nama_1...
-    geo : str | Any
+    geo : str
         Country/region code filter. EU country codes: DE (Germany), FR (France), IT (...
-    unit : str | Any
+    unit : str
         Unit of measurement filter (dataset-specific). Examples: 'PC' (percentage), '...
-    na_item : str | Any
+    na_item : str
         National accounts item filter for economic datasets (e.g., 'B1GQ' for GDP, 'P...
-    time : str | Any
+    time : str
         Time filter (year or time range). Examples: '2022', '2015:2022' (range)
     stream_callback : Callable, optional
         Callback for streaming output

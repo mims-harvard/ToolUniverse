@@ -1,0 +1,290 @@
+[
+  {
+    "name": "NCI_search_cancer_resources",
+    "description": "Search NCI (National Cancer Institute) Resources for Researchers (R4R) for cancer research tools, databases, datasets, and clinical research resources. The R4R collection includes bioinformatics tools, clinical research tools, lab instruments, datasets, specimen repositories, and community resources. Returns resource descriptions, links, tool types, research areas, and research types. Useful for finding cancer-specific research resources, analysis tools, and clinical resources.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "q": {
+          "type": "string",
+          "description": "Search query for cancer research resources (e.g., 'breast cancer treatment', 'genomics analysis', 'clinical trial design')"
+        },
+        "size": {
+          "type": "integer",
+          "description": "Number of results to return (default: 20, max: 50)",
+          "default": 20
+        },
+        "from": {
+          "type": "integer",
+          "description": "Offset for pagination (default: 0)",
+          "default": 0
+        },
+        "toolTypes": {
+          "type": "string",
+          "description": "Filter by tool type key: 'analysis_tools', 'datasets_databases', 'lab_tools', 'community_research_tools', 'clinical_research_tools', 'terminology'"
+        },
+        "researchAreas": {
+          "type": "string",
+          "description": "Filter by research area key: 'cancer_treatment', 'cancer_biology', 'cancer_omics', 'screening_detection', 'causes_of_cancer', 'cancer_health_disparities', 'cancer_statistics', 'cancer_prevention', 'cancer_diagnosis', 'cancer_survivorship'"
+        }
+      },
+      "required": [
+        "q"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://webapis.cancer.gov/r4r/v1/resources"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "q": "breast cancer treatment",
+        "size": 5
+      },
+      {
+        "q": "genomics analysis tools",
+        "size": 5,
+        "toolTypes": "analysis_tools"
+      },
+      {
+        "q": "clinical trial",
+        "size": 5,
+        "researchAreas": "cancer_treatment"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "meta": {
+              "type": "object",
+              "properties": {
+                "totalResults": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "from": {
+                  "type": [
+                    "integer",
+                    "number"
+                  ]
+                },
+                "originalQuery": {
+                  "type": "string"
+                }
+              }
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "number"
+                    ]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "website": {
+                    "type": "string"
+                  },
+                  "body": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "toolTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "toolSubtypes": {
+                    "type": "null"
+                  },
+                  "researchAreas": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "researchTypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "resourceAccess": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      },
+                      "notes": {
+                        "type": [
+                          "null",
+                          "string"
+                        ]
+                      }
+                    }
+                  },
+                  "doCs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "poCs": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "object",
+                          "properties": {
+                            "prefix": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "firstName": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "middleName": {
+                              "type": "null"
+                            },
+                            "lastName": {
+                              "type": [
+                                "null",
+                                "string"
+                              ]
+                            },
+                            "suffix": {
+                              "type": "null"
+                            }
+                          }
+                        },
+                        "title": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "phone": {
+                          "type": [
+                            "null",
+                            "string"
+                          ]
+                        },
+                        "email": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "facets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "param": {
+                    "type": "string"
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "label": {
+                          "type": "string"
+                        },
+                        "count": {
+                          "type": [
+                            "integer",
+                            "number"
+                          ]
+                        },
+                        "selected": {
+                          "type": "boolean"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "meta"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

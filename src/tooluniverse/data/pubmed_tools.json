@@ -2,7 +2,7 @@
   {
     "type": "PubMedRESTTool",
     "name": "PubMed_search_articles",
-    "description": "Search PubMed biomedical literature database using NCBI E-utilities (esearch + esummary). Returns articles with PMID, title, authors, journal, publication year, DOI, article type, and PubMed URL. Automatically fetches rich metadata for each article. Use this to discover medical/life sciences literature, find articles by topic, or search for publications by author or journal. Rate limiting is automatically handled (3 req/sec without API key, 10 req/sec with key set via NCBI_API_KEY environment variable).",
+    "description": "Search PubMed (MEDLINE), the main index of published biomedical and clinical literature, using NCBI E-utilities (esearch + esummary). Use it for published evidence on a disease, injury or procedure: clinical trials, systematic reviews, case reports and case series on diagnosis, medical or surgical treatment, operative technique, outcomes and complications, including rare conditions that guidelines do not cover; and to find articles by topic, author or journal. PubMed syntax works, e.g. 'retrocaval ureter[ti] AND laparoscopic' or 'Meckel diverticulum AND Case Reports[pt]'. Returns articles with PMID, title, authors, journal, publication year, DOI, article type, and PubMed URL (include_abstract adds abstracts). Automatically fetches rich metadata for each article. Rate limiting is automatically handled (3 req/sec without API key, 10 req/sec with key set via NCBI_API_KEY environment variable).",
     "optional_api_keys": [
       "NCBI_API_KEY"
     ],

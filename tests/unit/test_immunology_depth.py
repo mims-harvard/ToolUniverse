@@ -58,36 +58,13 @@ def _sabdab_tool():
 
 
 class TestSAbDabStructureSummary(unittest.TestCase):
-    def test_parses_summary_row_with_typed_fields(self):
-        """SAbDab TSV row is parsed with numeric/boolean/None coercion."""
-        tool = _sabdab_tool()
-        resp = MagicMock()
-        resp.status_code = 200
-        resp.headers = {"Content-Type": "text/tab-separated-values; charset=utf-8"}
-        resp.text = _SABDAB_TSV
-        resp.raise_for_status.return_value = None
-
-        with patch("tooluniverse.sabdab_tool.requests.get", return_value=resp):
-            result = tool.run({"operation": "get_structure_summary", "pdb_id": "7d6i"})
-
-        self.assertEqual(result["status"], "success")
-        data = result["data"]
-        self.assertEqual(data["pdb_id"], "7d6i")
-        self.assertEqual(data["antigen_name"], "sars-cov-2 receptor binding domain")
-        self.assertEqual(data["heavy_species"], "homo sapiens")
-        self.assertEqual(data["light_species"], "homo sapiens")
-        # Numeric coercion
-        self.assertEqual(data["resolution"], 3.41)
-        self.assertEqual(data["r_free"], 0.255)
-        # Boolean coercion
-        self.assertIs(data["scfv"], False)
-        self.assertIs(data["engineered"], True)
-        self.assertEqual(data["heavy_subclass"], "IGHV3")
-        self.assertEqual(data["light_subclass"], "IGLV6")
-        # "None" string -> None
-        self.assertIsNone(data["affinity"])
-        self.assertIsNone(data["pmid"])
-        self.assertEqual(data["count"], 1)
+    # The summary TSV this parsed is no longer served. SAbDab 2 serves JSON
+    # (see tests/unit/test_sabdab_reads_the_api.py), and four of the columns
+    # asserted here have no counterpart anywhere in the JSON entry: IMGT
+    # heavy/light V-gene subclass, affinity, the engineered flag and the PMID.
+    # They are absent from the output rather than guessed; `journal_references`
+    # is the only citation the API carries. The scfv boolean is readable from
+    # `antibody_type` and `single_chain_constructs` instead.
 
     def test_missing_pdb_id_errors(self):
         """Missing pdb_id returns an error envelope, never raises."""
@@ -106,7 +83,11 @@ class TestSAbDabStructureSummary(unittest.TestCase):
         with patch("tooluniverse.sabdab_tool.requests.get", return_value=resp):
             result = tool.run({"operation": "get_structure_summary", "pdb_id": "9zzz"})
         self.assertEqual(result["status"], "error")
-        self.assertIn("not found", result["error"].lower())
+        # The message now says why rather than just "not found": SAbDab holds
+        # antibody and nanobody structures only, so a 404 for a real PDB entry
+        # means it is not an antibody structure, not that the lookup failed.
+        self.assertIn("no entry for", result["error"].lower())
+        self.assertIn("antibody", result["error"].lower())
 
 
 # ---------------------------------------------------------------------------

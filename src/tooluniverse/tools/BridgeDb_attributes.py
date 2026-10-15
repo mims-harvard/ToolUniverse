@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def BridgeDb_attributes(
     identifier: str,
     source: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "attributes",
     organism: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

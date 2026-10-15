@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def CryoET_get_dataset(
-    operation: str,
     dataset_id: int,
+    operation: Optional[str] = "get_dataset",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

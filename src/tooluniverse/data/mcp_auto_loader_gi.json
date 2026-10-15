@@ -158,7 +158,7 @@
         "name": "predict_expression",
         "title": "Predict gene expression",
         "description": "Predict expression from the required TSS-centred window and experimental context. Use fetch_gene_for_expression; raw sequence input is sent to the configured service.",
-        "contract_sha256": "41b8c67d2d1a022ea3b6c043eb8161d54685d60a4eca82a14f4cfcb84eb7e2ce",
+        "contract_sha256": "72275af77a902805405c4c13e05cabc8245f5ffc228a1faff6ccd5b2feb5c1cb",
         "annotations": {
           "readOnlyHint": true,
           "destructiveHint": false,

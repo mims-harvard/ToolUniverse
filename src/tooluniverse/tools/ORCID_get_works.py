@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def ORCID_get_works(
-    operation: str,
     orcid: str,
+    operation: Optional[str] = "get_works",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

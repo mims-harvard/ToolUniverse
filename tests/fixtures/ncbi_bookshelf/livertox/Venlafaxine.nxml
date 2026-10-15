@@ -1,0 +1,1215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper content-type="chapter" id="Venlafaxine" from-where="body" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">livertox</book-id>
+    <book-title-group>
+      <book-title>LiverTox</book-title>
+      <subtitle>Clinical and Research Information on Drug-Induced Liver Injury</subtitle>
+    </book-title-group>
+    <pub-date date-type="pubr" publication-format="electronic">
+      <year>2012</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>National Institute of Diabetes and Digestive and Kidney Diseases</publisher-name>
+      <publisher-loc>Bethesda (MD)</publisher-loc>
+    </publisher>
+    <abstract>
+      <p>LiverTox<sup>&#x000ae;</sup> provides up-to-date, unbiased and easily accessed information on the diagnosis, cause, frequency, clinical patterns and management of liver injury attributable to prescription and nonprescription medications and selected herbal and dietary supplements. The LiverTox site is meant as a resource for both physicians and patients as well as for clinical academicians and researchers who specialize in idiosyncratic drug induced hepatotoxicity.</p>
+      <p>Information on a specific medication or supplement can be found by entering its name in the &#x0201c;Search this book&#x0201d; box shown above or by browsing the list of agents by its first letter using the alphabetic list shown below.</p>
+      <p>LiverTox is produced by the National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK) and is copyright free. It is requested that use of LiverTox data in publications be given appropriate acknowledgment.</p>
+      <p>The LiverTox team welcomes user comments and enquiries. <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/books/n/livertox/Contactus/">Contact Us</ext-link></p>
+    </abstract>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes notes-type="disclaimer">
+      <title>Disclaimer:</title>
+      <p>Information presented in the LiverTox database is derived from the scientific literature and public databases and reflects professional expertise of the authors. Such information does not represent official policy of the U.S. Government or any agency thereof. The information in LiverTox is not meant as a substitute for FDA approved product labeling and professional judgment in the diagnosis and treatment of drug induced liver injury. The U.S. Government and its individual agencies, including the NIDDK, NLM and NIH, does not warrant or assume any legal responsibility for the accuracy, completeness, or usefulness of the information contained on this Site.</p>
+      <p>NIH does not provide patient-specific medical advice concerning the potential of a drug or herbal supplement to cause hepatotoxicity; please consult with a physician for guidance.</p>
+      <p>As of September&#x0202f;2026, initial drafts of new and updated LiverTox chapters will be generated using Artificial Intelligence. Each draft will then undergo careful review, verification, and editing by the LiverTox editorial team. New chapters will also undergo independent peer review from an external expert in drug&#x02011;induced liver injury</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <book-part-id book-part-id-type="pmcid">Venlafaxine</book-part-id>
+      <title-group>
+        <title>Venlafaxine, Desvenlafaxine</title>
+      </title-group>
+      <pub-history>
+        <date date-type="updated">
+          <day>6</day>
+          <month>3</month>
+          <year>2020</year>
+        </date>
+      </pub-history>
+    </book-part-meta>
+    <body>
+      <sec id="Venlafaxine.OVERVIEW">
+        <title>OVERVIEW</title>
+        <sec id="Venlafaxine.Introduction" sec-type="pubmed-excerpt">
+          <title>Introduction</title>
+          <p>Venlafaxine is a serotonin and norepinephrine reuptake inhibitor widely used as an antidepressant. Venlafaxine therapy can be associated with transient asymptomatic elevations in serum aminotransferase levels and has been linked to rare instances of clinically apparent acute liver injury.</p>
+        </sec>
+        <sec id="Venlafaxine.Background">
+          <title>Background</title>
+          <p>Venlafaxine (ven" la fax' een) is a both a serotonin and norepinephrine reuptake inhibitor that acts by blocking the reuptake of these neurotransmitters in CNS synaptic clefts, thus increasing active levels in the brain which is associated with an antidepressant effect. Venlafaxine was approved for use in the United States in 1995 and is still widely used with more than 16 million prescriptions filled yearly. Current indications include major depressive disorder, generalized and social anxiety disorder, panic disorder and bipolar mood disorder. Venlafaxine is available as tablets of 25, 37.5, 50, 75, 100 and 150 mg and as extended release capsules of 37.5, 75 and 150 mg in multiple generic forms and under the brand name of Effexor. The recommended dosage in adults is 75 mg daily in two or three divided doses, increasing based on tolerance and effects to a maximum of 225 mg daily. Common side effects are drowsiness, dyspepsia, nausea, headache, increased sweating, increased appetite, weight gain and sexual dysfunction. Uncommon but potentially severe adverse events include suicidal thoughts and behaviors, serotonin syndrome, activation of mania, hypertension, abnormal bleedings and angle-closure glaucoma.</p>
+          <p>Desvenlafaxine (des&#x0201d; ven la fax' een) is the major active metabolite of venlafaxine and has been marketed separately as a serotonin and norepinephrine reuptake inhibitor. Desvenlafaxine is believed to act by blocking the reuptake of neurotransmitters in CNS synaptic clefts, thus increasing active levels in the brain which is associated with an antidepressant effect. Desvenlafaxine was approved for use in the United States in 2008 and is still used with more than 1 million prescriptions filled yearly. Current indications are limited to major depressive disorder. There is little evidence to suggest that it is more effective or has a different spectrum or rate of adverse events as venlafaxine. Desvenlafaxine is available as extended release tablets of 25, 50, or 100 mg in generic forms and under the brand name of Pristiq. The recommended dosage in adults is 50 mg once daily; increasing the dose has not been shown to improve efficacy. While believed to be better tolerated than venlafaxine, desvenlafaxine appears to have a similar spectrum and frequency of side effects.</p>
+        </sec>
+        <sec id="Venlafaxine.Hepatotoxicity">
+          <title>Hepatotoxicity</title>
+          <p>Liver test abnormalities have been reported to occur in less than 1% of patients on venlafaxine or desvenlafaxine, and elevations are usually modest and usually do not require dose modification or discontinuation. Rare instances of acute, clinically apparent episodes of liver injury with marked liver enzyme elevations with or without jaundice have been reported in patients on both venlafaxine but not desvenlafaxine, perhaps because of less overall use of the more recently approved agent. The onset of injury is usually within 1 to 3 months. The patterns of serum enzyme elevation have varied from cholestatic to hepatocellular. All cases have been self-limiting and resolved within a few months. Autoimmune (autoantibodies) and immunoallergic features (rash, fever, eosinophilia) are uncommon or mild. The estimated frequency is 1 per 5000 patients years of exposure.</p>
+          <p>Likelihood score (venlafaxine): B (highly likely rare causes of clinically apparent liver injury).</p>
+          <p>Likelihood score (desvenlafaxine): E* (suspected but unproven cause of clinically apparent liver injury).</p>
+        </sec>
+        <sec id="Venlafaxine.Mechanism_of_Injury">
+          <title>Mechanism of Injury</title>
+          <p>The mechanism by which venlafaxine and desvenlafaxine cause liver injury is not known. Venlafaxine and desvenlafaxine are metabolized by the liver, mainly via the cytochrome P450 system (predominantly CYP 2D6), and hepatotoxicity may be mediated by toxic intermediates of their metabolism. Both agents can also result in significant drug-drug interactions.</p>
+        </sec>
+        <sec id="Venlafaxine.Outcome_and_Management">
+          <title>Outcome and Management</title>
+          <p>The serum aminotransferase elevations that occur on venlafaxine and desvenlafaxine therapy are usually self-limited and do not require dose modification or discontinuation of therapy. Cases of acute and prolonged or severe liver injury have been reported in patients receiving venlafaxine, but there have been no convincing instances of acute liver failure due to venlafaxine or desvenlafaxine therapy in the published literature. Persons with intolerance to venlafaxine or desvenlafaxine may have similar reactions to each other as well as other SSRIs and careful monitoring is warranted if other such agents are used.</p>
+          <p>Drug Class: <related-object link-type="booklink" source-id="livertox" document-id="Antidepressants" document-type="chapter">Antidepressant Agents</related-object></p>
+          <p>Other Drugs in the Subclass, SNRIs/SSRIs: <related-object link-type="booklink" source-id="livertox" document-id="CitalopramEscitalopr" document-type="chapter">Citalopram</related-object>, <related-object link-type="booklink" source-id="livertox" document-id="CitalopramEscitalopr" document-type="chapter">Escitalopram</related-object>, <related-object link-type="booklink" source-id="livertox" document-id="Duloxetine" document-type="chapter">Duloxetine</related-object>, <related-object link-type="booklink" source-id="livertox" document-id="Fluoxetine" document-type="chapter">Fluoxetine</related-object>, <related-object link-type="booklink" source-id="livertox" document-id="Fluvoxamine" document-type="chapter">Fluvoxamine</related-object>, <related-object link-type="booklink" source-id="livertox" document-id="MilnacipranLevomilna" document-type="chapter">Levomilnacipran</related-object>, <related-object link-type="booklink" source-id="livertox" document-id="Paroxetine" document-type="chapter">Paroxetine</related-object>, <related-object link-type="booklink" source-id="livertox" document-id="Sertraline" document-type="chapter">Sertraline</related-object>, <related-object link-type="booklink" source-id="livertox" document-id="Vilazodone" document-type="chapter">Vilazodone</related-object>, <related-object link-type="booklink" source-id="livertox" document-id="Vortioxetine" document-type="chapter">Vortioxetine</related-object></p>
+        </sec>
+      </sec>
+      <sec id="Venlafaxine.CASE_REPORT">
+        <title>CASE REPORT</title>
+        <sec id="Venlafaxine.Case_1_Acute_hepatitis_with">
+          <title>Case 1. Acute hepatitis with jaundice due to venlafaxine.(<xref ref-type="bibr" rid="Venlafaxine.REF.1">1</xref>)</title>
+          <p>A 39 year old woman developed nausea, vomiting, pruritus and jaundice having been on oral therapy with venlafaxine for depression for two and half years, but also having recently increased the dose (from 75 to 300 mg daily) 2 months previously. She had had a cholecystectomy 20 years previously, but had no history of chronic liver disease, alcohol use, or exposures to hepatitis. She was mildly jaundiced and laboratory findings showed a serum bilirubin of 2.6 mg/dL, ALT 2063 U/L, and alkaline phosphatase 274 U/L. Tests for hepatitis A, B, C and E were negative, as were tests for HIV, cytomegalovirus and Epstein Barr virus infections. Autoantibodies were not present, and abdominal ultrasound showed no evidence of biliary obstruction. A liver biopsy showed a cholestatic hepatitis compatible with drug-induced liver injury. Of interest, three years previously she had a similar episode of acute liver injury with jaundice that arose 3 to 4 months after increasing her dose of venlafaxine from 75 to 150 mg daily, having been on this agent for 6 years. Upon stopping venlafaxine after the second episode, she improved minimally and serum bilirubin levels rose to 11.2 mg/dL. She was started on a course of methylprednisolone for 7 days which resulted in a prompt and lasting improvement in liver tests.</p>
+          <sec id="Venlafaxine.Key_Points">
+            <title>Key Points</title>
+            <table-wrap id="Venlafaxine.Tc" orientation="portrait" position="anchor">
+              <table frame="hsides" rules="groups">
+                <tbody>
+                  <tr>
+                    <th id="hd_b_Venlafaxine.Tc_1_1_1_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">Medication:</th>
+                    <td headers="hd_b_Venlafaxine.Tc_1_1_1_1" valign="top" align="left" rowspan="1" colspan="1">Venlafaxine (300 mg daily)</td>
+                  </tr>
+                  <tr>
+                    <th id="hd_b_Venlafaxine.Tc_1_1_2_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">Pattern:</th>
+                    <td headers="hd_b_Venlafaxine.Tc_1_1_2_1" valign="top" align="left" rowspan="1" colspan="1">Hepatocellular (R=25)</td>
+                  </tr>
+                  <tr>
+                    <th id="hd_b_Venlafaxine.Tc_1_1_3_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">Severity:</th>
+                    <td headers="hd_b_Venlafaxine.Tc_1_1_3_1" valign="top" align="left" rowspan="1" colspan="1">3+ (jaundice, hospitalization)</td>
+                  </tr>
+                  <tr>
+                    <th id="hd_b_Venlafaxine.Tc_1_1_4_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">Latency:</th>
+                    <td headers="hd_b_Venlafaxine.Tc_1_1_4_1" valign="top" align="left" rowspan="1" colspan="1">2.5 years, 2 months after dose increase</td>
+                  </tr>
+                  <tr>
+                    <th id="hd_b_Venlafaxine.Tc_1_1_5_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">Recovery:</th>
+                    <td headers="hd_b_Venlafaxine.Tc_1_1_5_1" valign="top" align="left" rowspan="1" colspan="1">Unclear</td>
+                  </tr>
+                  <tr>
+                    <th id="hd_b_Venlafaxine.Tc_1_1_6_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">Other medications:</th>
+                    <td headers="hd_b_Venlafaxine.Tc_1_1_6_1" valign="top" align="left" rowspan="1" colspan="1">None mentioned</td>
+                  </tr>
+                </tbody>
+              </table>
+            </table-wrap>
+          </sec>
+          <sec id="Venlafaxine.Comment">
+            <title>Comment</title>
+            <p>In this case, the pattern of serum enzyme elevations was hepatocellular, but symptoms and liver biopsy findings suggested a cholestatic hepatitis. Striking in the history was a previous episode arising years after starting venlafaxine but only a few months after an increase in the daily dose. The long latency to onset of an acute hepatitis is unusual, but a history of a change in drug dose or source of the medication is sometimes given. Cases such as this suggest that idiosyncratic acute liver injury is not completely independent of drug dose.</p>
+          </sec>
+        </sec>
+      </sec>
+      <sec id="Venlafaxine.PRODUCT_INFORMATION">
+        <title>PRODUCT INFORMATION</title>
+        <p>
+<bold>REPRESENTATIVE TRADE NAMES</bold>
+</p>
+        <p>Venlafaxine &#x02013; Generic, Effexor&#x000ae;</p>
+        <p>Desvenlafaxine &#x02013; Generic, Pristiq&#x000ae;</p>
+        <p>
+<bold>DRUG CLASS</bold>
+</p>
+        <p>Antidepressant Agents</p>
+        <p><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&#x00026;query=Venlafaxine">COMPLETE LABELING</ext-link> (Venlafaxine)</p>
+        <p><ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://dailymed.nlm.nih.gov/dailymed/search.cfm?labeltype=all&#x00026;query=VENLAFAXINE">COMPLETE LABELING</ext-link> (Desvenlafaxine)</p>
+        <p>Product labeling at DailyMed, National Library of Medicine, NIH</p>
+      </sec>
+      <sec id="Venlafaxine.CHEMICAL_FORMULA_AND_STRUCTU">
+        <title>CHEMICAL FORMULA AND STRUCTURE</title>
+        <table-wrap id="Venlafaxine.Td" orientation="portrait" position="anchor">
+          <table frame="hsides" rules="groups">
+            <tbody>
+              <tr>
+                <th id="hd_b_Venlafaxine.Td_1_1_1_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">DRUG</th>
+                <th id="hd_b_Venlafaxine.Td_1_1_1_2" valign="top" align="left" rowspan="1" colspan="1">CAS REGISTRY NUMBER</th>
+                <th id="hd_b_Venlafaxine.Td_1_1_1_3" valign="top" align="left" rowspan="1" colspan="1">MOLECULAR FORMULA</th>
+                <th id="hd_b_Venlafaxine.Td_1_1_1_4" valign="top" align="left" rowspan="1" colspan="1">STRUCTURE</th>
+              </tr>
+              <tr>
+                <td headers="hd_b_Venlafaxine.Td_1_1_1_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">Venlafaxine</td>
+                <td headers="hd_b_Venlafaxine.Td_1_1_1_2" valign="top" align="left" rowspan="1" colspan="1">
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pubchem" xlink:href="sid://135015286">93413-69-5</ext-link>
+</td>
+                <td headers="hd_b_Venlafaxine.Td_1_1_1_3" valign="top" align="left" rowspan="1" colspan="1">C17-H27-N-O2</td>
+                <td headers="hd_b_Venlafaxine.Td_1_1_1_4" valign="top" align="left" rowspan="1" colspan="1">
+<related-object link-type="ext-image-back-link" source-id="pubchem" document-id="135015286" document-id-type="sid" document-type="summary" object-id="135015286" object-id-type="sid" object-type="image"/>
+</td>
+              </tr>
+              <tr>
+                <td headers="hd_b_Venlafaxine.Td_1_1_1_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">Desvenlafaxine</td>
+                <td headers="hd_b_Venlafaxine.Td_1_1_1_2" valign="top" align="left" rowspan="1" colspan="1">
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pubchem" xlink:href="sid://135080249">93413-62-8</ext-link>
+</td>
+                <td headers="hd_b_Venlafaxine.Td_1_1_1_3" valign="top" align="left" rowspan="1" colspan="1">C16-H25-N-O2</td>
+                <td headers="hd_b_Venlafaxine.Td_1_1_1_4" valign="top" align="left" rowspan="1" colspan="1">
+<related-object link-type="ext-image-back-link" source-id="pubchem" document-id="135080249" document-id-type="sid" document-type="summary" object-id="135080249" object-id-type="sid" object-type="image"/>
+</td>
+              </tr>
+            </tbody>
+          </table>
+        </table-wrap>
+      </sec>
+      <sec id="Venlafaxine.CITED_REFERENCE">
+        <title>CITED REFERENCE</title>
+        <ref-list id="Venlafaxine.CITED_REFERENCE.reflist0">
+          <ref id="Venlafaxine.REF.1">
+            <label>1</label>
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Stadlmann</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Portmann</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Tschopp</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Terracciano</surname><given-names>LM</given-names></name>
+</person-group>
+              <article-title>Venlafaxine-induced cholestatic hepatitis: case report and review of literature.</article-title>
+              <source>Am J Surg Pathol</source>
+              <year>2012</year>
+              <volume>36</volume>
+              <fpage>1724</fpage>
+              <lpage>8</lpage>
+              <pub-id pub-id-type="pmid">23073329</pub-id>
+            </element-citation>
+          </ref>
+        </ref-list>
+      </sec>
+      <sec id="Venlafaxine.ANNOTATED_BIBLIOGRAPHY">
+        <title>ANNOTATED BIBLIOGRAPHY</title>
+        <p>References updated: 06 March 2020</p>
+        <ref-list id="Venlafaxine.ANNOTATED_BIBLIOGRAPHY.reflist0">
+          <ref id="Venlafaxine.REF.zimmerman.1999">
+            <mixed-citation publication-type="book">Zimmerman HJ. Antidepressants. In, Zimmerman HJ. Hepatotoxicity: the adverse effects of drugs and other chemicals on the liver. 2nd ed. Philadelphia: Lippincott, 1999, pp. 493-8.<annotation><p><italic toggle="yes">(Expert review of hepatotoxicity published in 1999; venlafaxine is not mentioned).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.larrey.2013">
+            <mixed-citation publication-type="book">Larrey D, Ripault MP. Hepatotoxicity of psychotropic drugs and drugs of abuse. In, Kaplowitz N, DeLeve LD, eds. Drug-induced liver disease. 3rd ed. Amsterdam: Elsevier, 2013, pp. 443-62.<annotation><p><italic toggle="yes">(Review of hepatotoxicity of antidepressants mentions that clinically apparent liver injury from the SNRIs is rare, venlafaxine having been implicated in occasional cases of cholestatic injury).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.odonnell.2018">
+            <mixed-citation publication-type="book">O'Donnell JM, Bies RR, Shelton RC. Drug therapy of depression and anxiety disorders. In, Brunton LL, Hilal-Dandan R, Knollman BC, eds. Goodman &#x00026; Gilman&#x02019;s the pharmacological basis of therapeutics. 13th ed. New York: McGraw-Hill, 2018, pp. 267-78.<annotation><p><italic toggle="yes">(Textbook of pharmacology and therapeutics).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.schweizer.1997.65">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Schweizer</surname><given-names>E</given-names></name>
+<name name-style="western"><surname>Thielen</surname><given-names>RJ</given-names></name>
+<name name-style="western"><surname>Frazer</surname><given-names>A</given-names></name>
+</person-group>
+              <article-title>Venlafaxine: a novel antidepressant compound.</article-title>
+              <source>Expert Opin Investig Drugs</source>
+              <year>1997</year>
+              <volume>6</volume>
+              <fpage>65</fpage>
+              <lpage>78</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Review of the structure, pharmacology, mechanism of action, efficacy and side effects of venlafaxine; no mention of hepatotoxicity or ALT elevations).</italic>
+</p>
+              </annotation>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.mourilhe.1998.57">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Mourilhe</surname><given-names>P</given-names></name>
+<name name-style="western"><surname>Stokes</surname><given-names>PE</given-names></name>
+</person-group>
+              <article-title>Risks and benefits of selective serotonin reuptake inhibitors in the treatment of depression.</article-title>
+              <source>Drug Saf</source>
+              <year>1998</year>
+              <volume>18</volume>
+              <fpage>57</fpage>
+              <lpage>82</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Review of pharmacology, efficacy and safety of SSRIs; no mention of ALT elevations or hepatotoxicity).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">9466088</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.kim.1999.381">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Kim</surname><given-names>KY</given-names></name>
+<name name-style="western"><surname>Hwang</surname><given-names>W</given-names></name>
+<name name-style="western"><surname>Narendran</surname><given-names>R</given-names></name>
+</person-group>
+              <article-title>Acute liver damage possibly related to sertraline and venlafaxine ingestion.</article-title>
+              <source>Ann Pharmacother</source>
+              <year>1999</year>
+              <volume>33</volume>
+              <fpage>381</fpage>
+              <lpage>2</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(27 year old man took overdose of sertraline and cephalexin and had elevations of ALT to 1247 U/L, bilirubin 2.1 mg/dL; switched to venlafaxine but 1 week later developed abdominal pain [bilirubin 1.6 mg/dL, ALT 814 U/L], improving on stopping but relapsing 3 days after restarting sertraline; recovered fully on stopping all SSRIs).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">10200868</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.grohmann.1999.21">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Grohmann</surname><given-names>R</given-names></name>
+<name name-style="western"><surname>R&#x000fc;ther</surname><given-names>E</given-names></name>
+<name name-style="western"><surname>Engel</surname><given-names>RR</given-names></name>
+<name name-style="western"><surname>Hippius</surname><given-names>H</given-names></name>
+</person-group>
+              <article-title>Assessment of adverse drug reactions in psychiatric inpatients with the AMSP drug safety program: methods and first results for tricyclic antidepressants and SSRI.</article-title>
+              <source>Pharmacopsychiatry</source>
+              <year>1999</year>
+              <volume>32</volume>
+              <fpage>21</fpage>
+              <lpage>8</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Analysis of reporting of adverse events among inpatients in 29 German hospitals between 1993 to 1997; 896 severe adverse events among 48,564 patients [1.8%], both total and hepatic events were more common with tricyclics than SSRIs).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">10071179</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.horsmans.1999.944">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Horsmans</surname><given-names>Y</given-names></name>
+<name name-style="western"><surname>De Clercq</surname><given-names>M</given-names></name>
+<name name-style="western"><surname>Sernpoux</surname><given-names>C.</given-names></name>
+</person-group>
+              <article-title>Venlafaxine-associated hepatitis.</article-title>
+              <source>Ann Intern Med</source>
+              <year>1999</year>
+              <volume>130</volume>
+              <fpage>944</fpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(44 year old woman developed fatigue 6 months after starting venlafaxine [ALT 1082 U/L], improving over 6 months after stopping venlafaxine while continuing trazodone; no mention of bilirubin or Alk P levels).</italic>
+</p>
+              </annotation>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.cardona.2000.417">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Cardona</surname><given-names>X</given-names></name>
+<name name-style="western"><surname>Avila</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Castellanos</surname><given-names>P.</given-names></name>
+</person-group>
+              <article-title>Venlafaxine-associated hepatitis.</article-title>
+              <source>Ann Intern Med</source>
+              <year>2000</year>
+              <volume>132</volume>
+              <issue>5</issue>
+              <fpage>417</fpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(78 year old man developed jaundice 6 weeks after starting venlafaxine [bilirubin 5.1 mg/dL, ALT 238 U/L, Alk P 680 U/L], resolving within 5 weeks of stopping).</italic>
+</p>
+              </annotation>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.carvajal_garc_apando.2002.135">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Carvajal Garc&#x000ed;a-Pando</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Garc&#x000ed;a del Pozo</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>S&#x000e1;nchez</surname><given-names>AS</given-names></name>
+<name name-style="western"><surname>Velasco</surname><given-names>MA</given-names></name>
+<name name-style="western"><surname>Rueda de Castro</surname><given-names>AM</given-names></name>
+<name name-style="western"><surname>Lucena</surname><given-names>MI</given-names></name>
+</person-group>
+              <article-title>Hepatotoxicity associated with the new antidepressants.</article-title>
+              <source>J Clin Psychiatry</source>
+              <year>2002</year>
+              <volume>63</volume>
+              <fpage>135</fpage>
+              <lpage>7</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Analysis of cases of hepatotoxicity from antidepressants in Spanish Pharmacovigilance System from 1989-1999, identified 99 cases; among SSRIs, 26 due to fluoxetine, 14 paroxetine, 6 fluvoxamine, 5 sertraline, 3 venlafaxine and 2 citalopram; among tricyclics, 16 clomipramine 7 amitriptyline, 6 imipramine; among miscellaneous, 3 nefazodone and 1 trazodone; but all similar in rate ~1-3 per 100,000 patient-years of exposure, except for nefazodone=29/100,000).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">11874214</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.maroy.2002.804">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Maroy</surname><given-names>B.</given-names></name>
+</person-group>
+              <article-title>Hepatite aigue cytolytique apres de venlafaxine.</article-title>
+              <comment>[Acute cytolytic hepatitis after venlafaxine therapy]</comment>
+              <source>Gastroenterol Clin Biol</source>
+              <year>2002</year>
+              <volume>26</volume>
+              <fpage>804</fpage>
+              <comment>French.</comment>
+              <annotation>
+                <p>
+<italic toggle="yes">(51 year old man developed jaundice 2 months after starting venlafaxine with mild rash [bilirubin 5.8 mg/dL, ALT 73 times ULN, Alk P 2 times ULN], resolving within 2 months of stopping).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">12434090</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.lucena.2003.249">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Lucena</surname><given-names>M</given-names></name>
+<name name-style="western"><surname>Carvajal</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Andrade</surname><given-names>R</given-names></name>
+<name name-style="western"><surname>Velasco</surname><given-names>A.</given-names></name>
+</person-group>
+              <article-title>Antidepressant-induced hepatotoxicity.</article-title>
+              <source>Expert Opin Drug Saf</source>
+              <year>2003</year>
+              <volume>2</volume>
+              <fpage>249</fpage>
+              <lpage>62</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Review of hepatotoxicity of antidepressants; antidepressant use has increased markedly between 1992 and 2002, accounting for 5% of cases of hepatotoxicity; SSRIs are less likely to cause injury than tricyclics and MAO inhibitors but SSRI liver injury has a range of presentations, although typically self-limited and with rapid recovery and without hallmarks of hypersensitivity).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">12904104</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.spigset.2003.157">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Spigset</surname><given-names>O</given-names></name>
+<name name-style="western"><surname>H&#x000e4;gg</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Bate</surname><given-names>A</given-names></name>
+</person-group>
+              <article-title>Hepatic injury and pancreatitis during treatment with serotonin reuptake inhibitors: data from the World Health Organization (WHO) database of adverse drug reactions.</article-title>
+              <source>Int Clin Psychopharmacol</source>
+              <year>2003</year>
+              <volume>18</volume>
+              <fpage>157</fpage>
+              <lpage>61</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 27,542 reports of hepatic injury in WHO database, 786 were related to SSRIs [3%], including citalopram 42, fluoxetine 222, fluvoxamine 54, paroxetine 191, sertraline 112, nefazodone 91 and venlafaxine 74; only nefazodone has an excess of hepatic reports in relationship to total reports).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">12702895</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.sencan.2004.352">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Sencan</surname><given-names>I</given-names></name>
+<name name-style="western"><surname>Sahin</surname><given-names>I</given-names></name>
+<name name-style="western"><surname>Ozcetin</surname><given-names>A</given-names></name>
+</person-group>
+              <article-title>Low-dose venlafaxine-associated liver toxicity in chronic hepatitis.</article-title>
+              <source>Ann Pharmacother</source>
+              <year>2004</year>
+              <volume>38</volume>
+              <fpage>352</fpage>
+              <lpage>3</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(30 year old woman with chronic hepatitis B developed ALT elevations [689 U/L] without jaundice 2 months after stopping interferon and 6 weeks after starting venlafaxine, resolving in 6 weeks; unclear whether hepatotoxicity or posttreatment flare of hepatitis B).</italic>
+</p>
+              </annotation>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.degner.2004.s39">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Degner</surname><given-names>D</given-names></name>
+<name name-style="western"><surname>Grohmann</surname><given-names>R</given-names></name>
+<name name-style="western"><surname>Kropp</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>R&#x000fc;ther</surname><given-names>E</given-names></name>
+<name name-style="western"><surname>Bender</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Engel</surname><given-names>RR</given-names></name>
+<name name-style="western"><surname>Schmidt</surname><given-names>LG</given-names></name>
+</person-group>
+              <article-title>Severe adverse drug reactions of antidepressants: results of the German multicenter drug surveillance program AMSP.</article-title>
+              <source>Pharmacopsychiatry</source>
+              <year>2004</year>
+              <volume>37</volume>
+              <supplement>Suppl 1</supplement>
+              <fpage>S39</fpage>
+              <lpage>45</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Analysis of adverse drug reactions reported from 1993-2000 in 35 psychiatric hospitals; 0.7% of SSRI recipients had a severe adverse event; hepatic in 0.05%).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">15052513</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.pinzani.2006.s256">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Pinzani</surname><given-names>V</given-names></name>
+<name name-style="western"><surname>Peyriere</surname><given-names>H</given-names></name>
+<name name-style="western"><surname>Hillaire-Buys</surname><given-names>D</given-names></name>
+<name name-style="western"><surname>Pageaux</surname><given-names>GP</given-names></name>
+<name name-style="western"><surname>Blayac</surname><given-names>BP</given-names></name>
+<name name-style="western"><surname>Larrey</surname><given-names>D</given-names></name>
+</person-group>
+              <article-title>Specific serotonin recapture inhibitor (SSRI) antidepressants: hepatoxicity assessment in a large cohort in France.</article-title>
+              <source>J Hepatol</source>
+              <year>2006</year>
+              <volume>44</volume>
+              <fpage>S256</fpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Abstract; Analysis of French Pharmacovigilance data on SSRIs found 63 cases of hepatotoxicity from paroxetine, 45 fluoxetine, 30 citalopram, 18 sertraline, and 2 fluvoxamine).</italic>
+</p>
+              </annotation>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.phillips.2006.323">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Phillips</surname><given-names>BB</given-names></name>
+<name name-style="western"><surname>Digmann</surname><given-names>RR</given-names></name>
+<name name-style="western"><surname>Beck</surname><given-names>MG</given-names></name>
+</person-group>
+              <article-title>Hepatitis associated with low-dose venlafaxine for postmenopausal vasomotor symptoms.</article-title>
+              <source>Ann Pharmacother</source>
+              <year>2006</year>
+              <volume>40</volume>
+              <fpage>323</fpage>
+              <lpage>7</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(60 year old woman developed abdominal pain 1 month after starting venlafaxine [bilirubin normal, ALT 372 U/L, Alk P 758 U/L], with rapid resolution upon stopping and relapse within 6 days of restarting).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">16418323</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.christensen.2006.10">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Christensen</surname><given-names>RC</given-names></name>
+<name name-style="western"><surname>Garces</surname><given-names>LK</given-names></name>
+</person-group>
+              <article-title>Hepatotoxic effects with high-dose venlafaxine.</article-title>
+              <source>Psychiatry (Edgmont)</source>
+              <year>2006</year>
+              <volume>3</volume>
+              <fpage>10</fpage>
+              <lpage>1</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(33 year old man with bipolar disorder developed fatigue and abnormal liver tests 6 months after increasing his daily venlafaxine dose from 150 to 225 mg daily [ALT 188 U/L, bilirubin and Alk P not given], which fell to normal within 2 weeks of reducing the dose back to 150 mg daily).</italic>
+</p>
+              </annotation>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.sabat_.2007.1401">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Sabat&#x000e9;</surname><given-names>M</given-names></name>
+<name name-style="western"><surname>Ib&#x000e1;&#x000f1;ez</surname><given-names>L</given-names></name>
+<name name-style="western"><surname>P&#x000e9;rez</surname><given-names>E</given-names></name>
+<name name-style="western"><surname>Vidal</surname><given-names>X</given-names></name>
+<name name-style="western"><surname>Buti</surname><given-names>M</given-names></name>
+<name name-style="western"><surname>Xiol</surname><given-names>X</given-names></name>
+<name name-style="western"><surname>Mas</surname><given-names>A</given-names></name>
+<etal/>
+</person-group>
+              <article-title>Risk of acute liver injury associated with the use of drugs: a multicentre population survey.</article-title>
+              <source>Aliment Pharmacol Ther</source>
+              <year>2007</year>
+              <volume>25</volume>
+              <fpage>1401</fpage>
+              <lpage>9</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 126 cases of drug induced liver injury seen in Spain between 1993-2000, 3 were attributed to paroxetine and 3 to fluoxetine, with a relative risk of injury to rate of use in the population of 3.0 and 1.8 respectively).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">17539979</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.desanty.2007.1201">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>DeSanty</surname><given-names>KP</given-names></name>
+<name name-style="western"><surname>Amabile</surname><given-names>CM</given-names></name>
+</person-group>
+              <article-title>Antidepressant-induced liver injury.</article-title>
+              <source>Ann Pharmacother</source>
+              <year>2007</year>
+              <volume>41</volume>
+              <fpage>1201</fpage>
+              <lpage>11</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Review of drug induced liver injury and reports of injury from MAO inhibitors, SSRIs, tricyclics and atypical agents).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">17609231</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.chalasani.2008.1924">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Chalasani</surname><given-names>N</given-names></name>
+<name name-style="western"><surname>Fontana</surname><given-names>RJ</given-names></name>
+<name name-style="western"><surname>Bonkovsky</surname><given-names>HL</given-names></name>
+<name name-style="western"><surname>Watkins</surname><given-names>PB</given-names></name>
+<name name-style="western"><surname>Davern</surname><given-names>T</given-names></name>
+<name name-style="western"><surname>Serrano</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Yang</surname><given-names>H</given-names></name>
+<name name-style="western"><surname>Rochon</surname><given-names>J</given-names></name>
+<collab>Drug Induced Liver Injury Network (DILIN)</collab>
+</person-group>
+              <article-title>Causes, clinical features, and outcomes from a prospective study of drug-induced liver injury in the United States.</article-title>
+              <source>Gastroenterology</source>
+              <year>2008</year>
+              <volume>135</volume>
+              <fpage>1924</fpage>
+              <lpage>34</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 300 cases of drug induced liver disease in the US collected from 2004 to 2008, 6 were attributed to duloxetine, 3 to atomoxetine, 2 to fluoxetine, 2 to bupropion, and 1 to sertraline as single agents; venlafaxine not mentioned).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">18955056</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.yildirim.2009.271">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Yildirim</surname><given-names>B</given-names></name>
+<name name-style="western"><surname>Tuncer</surname><given-names>C</given-names></name>
+<name name-style="western"><surname>Ergun</surname><given-names>M</given-names></name>
+<name name-style="western"><surname>Unal</surname><given-names>S</given-names></name>
+</person-group>
+              <article-title>Venlafaxine-induced hepatotoxicity in a patient with ulcerative colitis.</article-title>
+              <source>Ann Hepatol</source>
+              <year>2009</year>
+              <volume>8</volume>
+              <fpage>271</fpage>
+              <lpage>2</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(55 year old man with ulcerative colitis developed fatigue and abdominal pain 2 months after starting venlafaxine [bilirubin normal, ALT 192 U/L, Alk P 419 rising to 696 U/L], resolving within 2 months of stopping).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">19841512</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.detry.2009.3435">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Detry</surname><given-names>O</given-names></name>
+<name name-style="western"><surname>Delwaide</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>De Roover</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Hans</surname><given-names>MF</given-names></name>
+<name name-style="western"><surname>Delbouille</surname><given-names>MH</given-names></name>
+<name name-style="western"><surname>Monard</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Honore</surname><given-names>P</given-names></name>
+</person-group>
+              <article-title>Fulminant hepatic failure induced by venlafaxine and trazodone therapy: a case report.</article-title>
+              <source>Transplant Proc</source>
+              <year>2009</year>
+              <volume>41</volume>
+              <fpage>3435</fpage>
+              <lpage>6</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(48 year old woman developed jaundice and liver failure 4 months after starting venlafaxine and trazodone [bilirubin 30 mg/dL, ALT 990 U/L, INR 4.6], undergoing liver transplantation 3 days after admission).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">19857765</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.arroyo.2009.382">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Arroyo</surname><given-names>VC</given-names></name>
+<name name-style="western"><surname>Hallal</surname><given-names>H</given-names></name>
+<name name-style="western"><surname>Agudo</surname><given-names>JL</given-names></name>
+<name name-style="western"><surname>Aniorte</surname><given-names>JP</given-names></name>
+</person-group>
+              <comment>[Venlafaxine-induced cholestatic hepatitis]</comment>
+              <source>Gastroenterol Hepatol</source>
+              <year>2009</year>
+              <volume>32</volume>
+              <fpage>382</fpage>
+              <lpage>3</lpage>
+              <comment>Spanish.</comment>
+              <annotation>
+                <p>
+<italic toggle="yes">(39 year old man developed abdominal pain 10 days after starting venlafaxine [bilirubin rising to 18.6 mg/dL, ALT 103 U/L, Alk P 880 U/L], resolving within 5 months of stopping).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">19442411</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.tourian.2009.1405">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Tourian</surname><given-names>KA</given-names></name>
+<name name-style="western"><surname>Padmanabhan</surname><given-names>SK</given-names></name>
+<name name-style="western"><surname>Groark</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Brisard</surname><given-names>C</given-names></name>
+<name name-style="western"><surname>Farrington</surname><given-names>D</given-names></name>
+</person-group>
+              <article-title>Desvenlafaxine 50 and 100 mg/d in the treatment of major depressive disorder: an 8-week, phase III, multicenter, randomized, double-blind, placebo-controlled, parallel-group trial and a post hoc pooled analysis of three studies.</article-title>
+              <source>Clin Ther</source>
+              <year>2009</year>
+              <volume>31</volume>
+              <issue>Pt 1</issue>
+              <fpage>1405</fpage>
+              <lpage>23</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 615 adults with major depression treated with desvenlafaxine [50 or 100 mg], duloxetine [60 mg] or placebo once daily for 8 weeks, there were minimal changes in mean levels of ALT and AST during treatment and significant isolated elevations of ALT or AST occurred in only 2 patients on desvenlafaxine, 1 on duloxetine and 2 on placebo).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">19698901</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.clayton.2009.183">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Clayton</surname><given-names>AH</given-names></name>
+<name name-style="western"><surname>Kornstein</surname><given-names>SG</given-names></name>
+<name name-style="western"><surname>Rosas</surname><given-names>G</given-names></name>
+<name name-style="western"><surname>Guico-Pabia</surname><given-names>C</given-names></name>
+<name name-style="western"><surname>Tourian</surname><given-names>KA</given-names></name>
+</person-group>
+              <article-title>An integrated analysis of the safety and tolerability of desvenlafaxine compared with placebo in the treatment of major depressive disorder.</article-title>
+              <source>CNS Spectr</source>
+              <year>2009</year>
+              <volume>14</volume>
+              <fpage>183</fpage>
+              <lpage>95</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Analysis of safety from 9 placebo controlled trials of desvenlafaxine [50 to 400 mg daily] for major depression found that discontinuation due to adverse events was dose related, but rates were similar for the recommended 50 of 50 mg daily to placebo [4.1% vs 3.9%], and that the proportion with &#x0201c;clinically important&#x0201d; changes in liver enzymes were similar between venlafaxine and placebo [1% vs 2%] and there were no serious hepatic adverse events).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">19407730</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.perry.2009.1374">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Perry</surname><given-names>R</given-names></name>
+<name name-style="western"><surname>Cassagnol</surname><given-names>M.</given-names></name>
+</person-group>
+              <article-title>Desvenlafaxine: a new serotonin-norepinephrine reuptake inhibitor for the treatment of adults with major depressive disorder.</article-title>
+              <source>Clin Ther</source>
+              <year>2009</year>
+              <volume>31</volume>
+              <issue>Pt 1</issue>
+              <fpage>1374</fpage>
+              <lpage>404</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Systematic review of 8 controlled trials of desvenlafaxine for major depression found efficacy with 50 mg daily and no additional effect with higher doses, while adverse events included nausea, suicidal ideation, weight change and increase in blood pressure; no mention of ALT levels or hepatotoxicity).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">19698900</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.reuben.2010.2065">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Reuben</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Koch</surname><given-names>DG</given-names></name>
+<name name-style="western"><surname>Lee</surname><given-names>WM</given-names></name>
+<collab>Acute Liver Failure Study Group</collab>
+</person-group>
+              <article-title>Drug-induced acute liver failure: results of a U.S. multicenter, prospective study.</article-title>
+              <source>Hepatology</source>
+              <year>2010</year>
+              <volume>52</volume>
+              <fpage>2065</fpage>
+              <lpage>76</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 1198 patients with acute liver failure enrolled in a US prospective study between 1998 and 2007, 133 were attributed to drug induced liver injury, including 1 due to venlafaxine and 1 to fluoxetine but none to other SSRIs).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">20949552</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.molleston.2011.182">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Molleston</surname><given-names>JP</given-names></name>
+<name name-style="western"><surname>Fontana</surname><given-names>RJ</given-names></name>
+<name name-style="western"><surname>Lopez</surname><given-names>MJ</given-names></name>
+<name name-style="western"><surname>Kleiner</surname><given-names>DE</given-names></name>
+<name name-style="western"><surname>Gu</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Chalasani</surname><given-names>N</given-names></name>
+</person-group>
+              <article-title>Drug-induced Liver Injury Network. Characteristics of idiosyncratic drug-induced liver injury in children: results from the DILIN prospective study.</article-title>
+              <source>J Pediatr Gastroenterol Nutr</source>
+              <year>2011</year>
+              <volume>53</volume>
+              <fpage>182</fpage>
+              <lpage>9</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 30 children with suspected drug induced liver injury, half [n=15] were due to antimicrobials [minocycline 4, INH 3, azithromycin 3] and the rest largely due to CNS agents and anticonvulsants; one case was attributed to amitriptyline, but no other antidepressant was listed).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">21788760</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.stadlmann.2012.1724">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Stadlmann</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Portmann</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Tschopp</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Terracciano</surname><given-names>LM</given-names></name>
+</person-group>
+              <article-title>Venlafaxine-induced cholestatic hepatitis: case report and review of literature.</article-title>
+              <source>Am J Surg Pathol</source>
+              <year>2012</year>
+              <volume>36</volume>
+              <fpage>1724</fpage>
+              <lpage>8</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(39 year old woman developed jaundice 2.5 years after starting and 3 months after dose increase of venlafaxine [bilirubin 4.6 mg/dL, ALT 2064 U/L, Alk P 274 U/L], with a history of a similar episode when dose was increased in the past).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">23073329</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.coleman.2012.131">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Coleman</surname><given-names>KA</given-names></name>
+<name name-style="western"><surname>Xavier</surname><given-names>VY</given-names></name>
+<name name-style="western"><surname>Palmer</surname><given-names>TL</given-names></name>
+<name name-style="western"><surname>Meaney</surname><given-names>JV</given-names></name>
+<name name-style="western"><surname>Radalj</surname><given-names>LM</given-names></name>
+<name name-style="western"><surname>Canny</surname><given-names>LM</given-names></name>
+</person-group>
+              <article-title>An indirect comparison of the efficacy and safety of desvenlafaxine and venlafaxine using placebo as the common comparator.</article-title>
+              <source>CNS Spectr</source>
+              <year>2012</year>
+              <volume>17</volume>
+              <fpage>131</fpage>
+              <lpage>41</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Metaanalysis of controlled trials of desvenlafaxine and venlafaxine as therapy for major depression found similar rates of efficacy as measured by depression rating scales and slightly lower rates of nausea and dropout because of adverse events for desvenlafaxine).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">22883424</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.liebowitz.2013.94">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Liebowitz</surname><given-names>MR</given-names></name>
+<name name-style="western"><surname>Tourian</surname><given-names>KA</given-names></name>
+<name name-style="western"><surname>Hwang</surname><given-names>E</given-names></name>
+<name name-style="western"><surname>Mele</surname><given-names>L</given-names></name>
+<collab>Study 3362 Investigators</collab>
+</person-group>
+              <article-title>A double-blind, randomized, placebo-controlled study assessing the efficacy and tolerability of desvenlafaxine 10 and 50 mg/day in adult outpatients with major depressive disorder.</article-title>
+              <source>BMC Psychiatry</source>
+              <year>2013</year>
+              <volume>13</volume>
+              <fpage>94</fpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 673 adults with major depression treated with desvenlafaxine [10 or 50 mg] or placebo once daily for 8 weeks, there were no differences among treatment groups in response or adverse event rates and no liver related severe adverse events and no mention of ALT elevations).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">23517291</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.rosenthal.2013.158">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Rosenthal</surname><given-names>JZ</given-names></name>
+<name name-style="western"><surname>Boyer</surname><given-names>P</given-names></name>
+<name name-style="western"><surname>Vialet</surname><given-names>C</given-names></name>
+<name name-style="western"><surname>Hwang</surname><given-names>E</given-names></name>
+<name name-style="western"><surname>Tourian</surname><given-names>KA</given-names></name>
+</person-group>
+              <article-title>Efficacy and safety of desvenlafaxine 50 mg/d for prevention of relapse in major depressive disorder: a randomized controlled trial.</article-title>
+              <source>J Clin Psychiatry</source>
+              <year>2013</year>
+              <volume>74</volume>
+              <fpage>158</fpage>
+              <lpage>66</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 548 adults with a history of major depression treated with desvenlafaxine [50 mg] or placebo once daily for 8 months, the probability of relapse was less with desvenlafaxine [14% vs 30%] and adverse event rates were similar; no mention of ALT elevations or hepatotoxicity).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">23473348</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.bj_rnsson.2013.1419">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Bj&#x000f6;rnsson</surname><given-names>ES</given-names></name>
+<name name-style="western"><surname>Bergmann</surname><given-names>OM</given-names></name>
+<name name-style="western"><surname>Bj&#x000f6;rnsson</surname><given-names>HK</given-names></name>
+<name name-style="western"><surname>Kvaran</surname><given-names>RB</given-names></name>
+<name name-style="western"><surname>Olafsson</surname><given-names>S</given-names></name>
+</person-group>
+              <article-title>Incidence, presentation and outcomes in patients with drug-induced liver injury in the general population of Iceland.</article-title>
+              <source>Gastroenterology</source>
+              <year>2013</year>
+              <volume>144</volume>
+              <fpage>1419</fpage>
+              <lpage>25</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(In a population based study of drug induced liver injury from Iceland, 96 cases were identified over a 2 year period, but none were attributed to venlafaxine despite it being one of the 50 most prescribed drugs in Iceland).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">23419359</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.park.2013.207">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Park</surname><given-names>SH</given-names></name>
+<name name-style="western"><surname>Ishino</surname><given-names>R</given-names></name>
+</person-group>
+              <article-title>Liver injury associated with antidepressants.</article-title>
+              <source>Curr Drug Saf</source>
+              <year>2013</year>
+              <volume>8</volume>
+              <fpage>207</fpage>
+              <lpage>23</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Review of hepatotoxicity of modern antidepressants).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">23914755</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.voican.2014.404">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Voican</surname><given-names>CS</given-names></name>
+<name name-style="western"><surname>Corruble</surname><given-names>E</given-names></name>
+<name name-style="western"><surname>Naveau</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Perlemuter</surname><given-names>G</given-names></name>
+</person-group>
+              <article-title>Antidepressant-induced liver injury: a review for clinicians.</article-title>
+              <source>Am J Psychiatry</source>
+              <year>2014</year>
+              <volume>171</volume>
+              <fpage>404</fpage>
+              <lpage>15</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Review of hepatotoxicity of antidepressants, mentions 9 case reports from venlafaxine with latency of 10 days to 6 months, both hepatocellular and cholestatic injury, with liver transplant in 1 and with recovery in 9).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">24362450</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.findling.2014.201">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Findling</surname><given-names>RL</given-names></name>
+<name name-style="western"><surname>Groark</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Chiles</surname><given-names>D</given-names></name>
+<name name-style="western"><surname>Ramaker</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Yang</surname><given-names>L</given-names></name>
+<name name-style="western"><surname>Tourian</surname><given-names>KA</given-names></name>
+</person-group>
+              <article-title>Safety and tolerability of desvenlafaxine in children and adolescents with major depressive disorder.</article-title>
+              <source>J Child Adolesc Psychopharmacol</source>
+              <year>2014</year>
+              <volume>24</volume>
+              <fpage>201</fpage>
+              <lpage>9</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 40 children and adolescents with major depression enrolled in a 6 month, open label extension trial of desvenlafaxine, 21 discontinued therapy early but none because of liver disease or ALT elevations; mean levels of ALT and AST did not change).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">24611442</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.boyer.2015">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Boyer</surname><given-names>P</given-names></name>
+<name name-style="western"><surname>Vialet</surname><given-names>C</given-names></name>
+<name name-style="western"><surname>Hwang</surname><given-names>E</given-names></name>
+<name name-style="western"><surname>Tourian</surname><given-names>KA</given-names></name>
+</person-group>
+              <article-title>Efficacy of desvenlafaxine 50 mg/d versus placebo in the long-term treatment of major depressive disorder: a randomized, double-blind trial.</article-title>
+              <source>Prim Care Companion CNS Disord</source>
+              <year>2015</year>
+              <volume>17</volume>
+              <issue>4</issue>
+              <pub-id pub-id-type="doi">10.4088/PCC.14m01711</pub-id>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 548 patients with major depression who responded to an open label course of desvenlafaxine and then were randomized to continue therapy or be withdrawn [placebo], 74% on venlafaxine maintained a remission vs 52% on placebo; adverse event rates and ALT results were not reported ).</italic>
+</p>
+              </annotation>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.clayton.2015.562">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Clayton</surname><given-names>AH</given-names></name>
+<name name-style="western"><surname>Tourian</surname><given-names>KA</given-names></name>
+<name name-style="western"><surname>Focht</surname><given-names>K</given-names></name>
+<name name-style="western"><surname>Hwang</surname><given-names>E</given-names></name>
+<name name-style="western"><surname>Cheng</surname><given-names>RF</given-names></name>
+<name name-style="western"><surname>Thase</surname><given-names>ME</given-names></name>
+</person-group>
+              <article-title>Desvenlafaxine 50 and 100 mg/d versus placebo or the treatment of major depressive disorder: a phase 4, randomized controlled trial.</article-title>
+              <source>J Clin Psychiatry</source>
+              <year>2015</year>
+              <volume>76</volume>
+              <fpage>562</fpage>
+              <lpage>9</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 909 patients with major depression treated with desvenlafaxine [50 or 100 mg] or placebo for 8 weeks, improvements in depression rating scores were greater for desvenlafaxine while rates of adverse events were similar and there were no serious hepatic adverse events).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">25375652</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.chalasani.2015.1340">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Chalasani</surname><given-names>N</given-names></name>
+<name name-style="western"><surname>Bonkovsky</surname><given-names>HL</given-names></name>
+<name name-style="western"><surname>Fontana</surname><given-names>R</given-names></name>
+<name name-style="western"><surname>Lee</surname><given-names>W</given-names></name>
+<name name-style="western"><surname>Stolz</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Talwalkar</surname><given-names>J</given-names></name>
+<name name-style="western"><surname>Reddy</surname><given-names>KR</given-names></name>
+<etal/>
+<collab>United States Drug Induced Liver Injury Network</collab>
+</person-group>
+              <article-title>Features and outcomes of 899 patients with drug-induced liver injury: The DILIN Prospective Study.</article-title>
+              <source>Gastroenterology</source>
+              <year>2015</year>
+              <volume>148</volume>
+              <fpage>1340</fpage>
+              <lpage>52.e7</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 899 cases of drug induced liver injury enrolled in a US prospective study between 2004 and 2013, 20 cases [2%] were attributed to antidepressants including 9 due to SNRIs including duloxetine [n=7], nefazodone [n=1], trazodone [n=1], and 5 to SSRIs including escitalopram [n=3], fluoxetine [n=1] and sertraline [n=1], but none were attributed to venlafaxine).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">25754159</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.friedrich.2016.pyv126">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Friedrich</surname><given-names>ME</given-names></name>
+<name name-style="western"><surname>Akimova</surname><given-names>E</given-names></name>
+<name name-style="western"><surname>Huf</surname><given-names>W</given-names></name>
+<name name-style="western"><surname>Konstantinidis</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>Papageorgiou</surname><given-names>K</given-names></name>
+<name name-style="western"><surname>Winkler</surname><given-names>D</given-names></name>
+<name name-style="western"><surname>Toto</surname><given-names>S</given-names></name>
+<etal/>
+</person-group>
+              <article-title>Drug-induced liver injury during antidepressant treatment: results of AMSP, a drug surveillance program.</article-title>
+              <source>Int J Neuropsychopharmacol</source>
+              <year>2016</year>
+              <volume>19</volume>
+              <comment>pii</comment>
+              <elocation-id>pyv126</elocation-id>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 184,234 psychiatric inpatients from 80 hospitals, 149 cases [0.08%] of drug induced liver injury were reported including 25 [0.09%] attributed to venlafaxine, most cases being asymptomatic and anicteric).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">26721950</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.iragavarapu.2016.e1082">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Iragavarapu</surname><given-names>C</given-names></name>
+<name name-style="western"><surname>Gupta</surname><given-names>T</given-names></name>
+<name name-style="western"><surname>Chugh</surname><given-names>SS</given-names></name>
+<name name-style="western"><surname>Aronow</surname><given-names>WS</given-names></name>
+<name name-style="western"><surname>Frishman</surname><given-names>WH</given-names></name>
+</person-group>
+              <article-title>Type B lactic acidosis associated with venlafaxine overdose.</article-title>
+              <source>Am J Ther</source>
+              <year>2016</year>
+              <volume>23</volume>
+              <fpage>e1082</fpage>
+              <lpage>4</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(55 year old man developed nausea, tachycardia and high lactate levels within hours of taking an overdose of venlafaxine [lactate 8.6 mmol/L, pH 7.39] with normal liver tests, resolving within 24 hours with hydration and medical support).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">25405896</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.poitras.2017">
+            <mixed-citation publication-type="web">Poitras V, Visintini S. Desvenlafaxine versus venlafaxine for the treatment of adult patients with major depressive disorder: a review of the comparative clinical and cost-effectiveness [Internet]. Ottawa (ON): Canadian Agency for Drugs and Technologies in Health; 2017 Oct 25. Available from <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/books/NBK507133/">http://www.ncbi.nlm.nih.gov/books/NBK507133/</ext-link><annotation><p><italic toggle="yes">(Review of systematic reviews on the comparison of the efficacy of desvenlafaxine and venlafaxine concluded that the two agents were similar in effectiveness).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.ferrajolo.2018.95">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Ferrajolo</surname><given-names>C</given-names></name>
+<name name-style="western"><surname>Scavone</surname><given-names>C</given-names></name>
+<name name-style="western"><surname>Donati</surname><given-names>M</given-names></name>
+<name name-style="western"><surname>Bortolami</surname><given-names>O</given-names></name>
+<name name-style="western"><surname>Stoppa</surname><given-names>G</given-names></name>
+<name name-style="western"><surname>Motola</surname><given-names>D</given-names></name>
+<name name-style="western"><surname>Vannacci</surname><given-names>A</given-names></name>
+<etal/>
+<collab>DILI-IT Study Group</collab>
+</person-group>
+              <article-title>Antidepressant-induced acute liver injury: a case-control study in an Italian inpatient population.</article-title>
+              <source>Drug Saf</source>
+              <year>2018</year>
+              <volume>41</volume>
+              <fpage>95</fpage>
+              <lpage>102</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 179 cases of hospitalizations for unexplained acute liver injury enrolled in an Italian prospective study between 2010 and 2014, 17 had been exposed to antidepressants including citalopram [n=4], sertraline [n=3], amitriptyline [n=3] and paroxetine [n=2], but venlafaxine was not implicated in any case).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">28770534</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.billioti_de_gage.2018.673">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Billioti de Gage</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Collin</surname><given-names>C</given-names></name>
+<name name-style="western"><surname>Le-Tri</surname><given-names>T</given-names></name>
+<name name-style="western"><surname>Pariente</surname><given-names>A</given-names></name>
+<name name-style="western"><surname>B&#x000e9;gaud</surname><given-names>B</given-names></name>
+<name name-style="western"><surname>Verdoux</surname><given-names>H</given-names></name>
+<name name-style="western"><surname>Dray-Spira</surname><given-names>R</given-names></name>
+<etal/>
+</person-group>
+              <article-title>Antidepressants and hepatotoxicity: A cohort study among 5 million individuals registered in the French National Health Insurance Database.</article-title>
+              <source>CNS Drugs</source>
+              <year>2018</year>
+              <volume>32</volume>
+              <fpage>673</fpage>
+              <lpage>84</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 5 million persons identified in a national French health insurance database who started an antidepressant between 2010 and 2015, 382 developed serious liver injury resulting in hospitalization, rates per 100,0000 persons-years being 19 for SSRIs, 22 venlafaxine, 13 duloxetine, and 33 mirtazapine).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">29959758</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.atkinson.2018.55">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Atkinson</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Lubaczewski</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Ramaker</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>England</surname><given-names>RD</given-names></name>
+<name name-style="western"><surname>Wajsbrot</surname><given-names>DB</given-names></name>
+<name name-style="western"><surname>Abbas</surname><given-names>R</given-names></name>
+<name name-style="western"><surname>Findling</surname><given-names>RL</given-names></name>
+</person-group>
+              <article-title>Desvenlafaxine versus placebo in the treatment of children and adolescents with major depressive disorder.</article-title>
+              <source>J Child Adolesc Psychopharmacol</source>
+              <year>2018</year>
+              <volume>28</volume>
+              <fpage>55</fpage>
+              <lpage>65</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Among 363 children with major depression treated with desvenlafaxine in two doses or placebo for 8 weeks, there were no changes in depression rating scores and side effect rates were similar in all groups, mean ALT, AST and Alk P levels not changing significantly).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">29185786</pub-id>
+            </element-citation>
+          </ref>
+          <ref id="Venlafaxine.REF.atkinson.2019.496">
+            <element-citation publication-type="journal">
+              <person-group>
+<name name-style="western"><surname>Atkinson</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Thurman</surname><given-names>L</given-names></name>
+<name name-style="western"><surname>Ramaker</surname><given-names>S</given-names></name>
+<name name-style="western"><surname>Buckley</surname><given-names>G</given-names></name>
+<name name-style="western"><surname>Jones</surname><given-names>SR</given-names></name>
+<name name-style="western"><surname>England</surname><given-names>R</given-names></name>
+<name name-style="western"><surname>Wajsbrot</surname><given-names>D</given-names></name>
+</person-group>
+              <article-title>Safety, tolerability, and efficacy of desvenlafaxine in children and adolescents with major depressive disorder: results from two open-label extension trials.</article-title>
+              <source>CNS Spectr</source>
+              <year>2019</year>
+              <volume>24</volume>
+              <fpage>496</fpage>
+              <lpage>506</lpage>
+              <annotation>
+                <p>
+<italic toggle="yes">(Analysis and comparison of two 6-month open-label trials of desvenlafaxine in 552 children and adolescents with major depression found no new safety signals; no discussion of ALT elevations or hepatotoxicity).</italic>
+</p>
+              </annotation>
+              <pub-id pub-id-type="pmid">30419989</pub-id>
+            </element-citation>
+          </ref>
+        </ref-list>
+      </sec>
+      <sec sec-type="link-group" id="Venlafaxine.OTHER_REFERENCE_LINKS">
+        <title>OTHER REFERENCE LINKS</title>
+        <list list-type="order">
+          <list-item>
+            <label>1</label>
+            <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/sites/entrez?cmd=search&#x00026;db=pubmed&#x00026;pubmedfilters=true&#x00026;term=venlafaxine+AND+Human%5BMH%5D+AND+(drug+induced+liver+injury+OR+jaundice/CI+OR+bile+duct+diseases/CI+OR+liver/DE+OR+liver+diseases/CI)+AND+(%221900/1/1%22%5BEDat%5D:%222999/12/31%22%5BEDat%5D)">Recent References on Venlafaxine: from PubMed.gov2. </ext-link>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://clinicaltrials.gov/ct2/results?term=venlafaxine">Trials on Venlafaxine: from ClinicalTrials.gov</ext-link>
+</p>
+            <list list-type="order">
+              <list-item>
+                <label>3</label>
+                <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/sites/entrez?cmd=search&#x00026;db=pubmed&#x00026;pubmedfilters=true&#x00026;term=desvenlafaxine+AND+Human%5BMH%5D+AND+(drug+induced+liver+injury+OR+jaundice/CI+OR+bile+duct+diseases/CI+OR+liver/DE+OR+liver+diseases/CI)+AND+(%221900/1/1%22%5BEDat%5D:%222999/12/31%22%5BEDat%5D)">Recent References on Desvenlafaxine: from PubMed.gov4. </ext-link>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.clinicaltrials.gov/ct2/results?term=desvenlafaxine">Trials on Desvenlafaxine: from ClinicalTrials.gov</ext-link>
+</p>
+              </list-item>
+            </list>
+          </list-item>
+        </list>
+      </sec>
+    </body>
+  </book-part>
+</book-part-wrapper>

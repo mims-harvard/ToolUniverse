@@ -28,7 +28,10 @@
           "description": "Optional filter by data sources (e.g., ['DrugBank', 'ChEMBL'])."
         },
         "interaction_types": {
-          "type": "array",
+          "type": [
+            "array",
+            "string"
+          ],
           "items": {
             "type": "string"
           },

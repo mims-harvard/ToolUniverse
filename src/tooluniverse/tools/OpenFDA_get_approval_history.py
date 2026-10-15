@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def OpenFDA_get_approval_history(
-    operation: str,
-    drug_name: Optional[str | Any] = None,
-    application_number: Optional[str | Any] = None,
+    operation: Optional[str] = "get_approval_history",
+    drug_name: Optional[str] = None,
+    application_number: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def OpenFDA_get_approval_history(
     ----------
     operation : str
         Operation type
-    drug_name : str | Any
+    drug_name : str
         Drug name (brand or generic, e.g., 'warfarin', 'Eliquis', 'pembrolizumab')
-    application_number : str | Any
+    application_number : str
         FDA application number (e.g., 'NDA021457'). More specific than drug_name.
     stream_callback : Callable, optional
         Callback for streaming output

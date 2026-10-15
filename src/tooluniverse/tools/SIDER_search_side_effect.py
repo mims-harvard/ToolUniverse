@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def SIDER_search_side_effect(
-    operation: str,
     side_effect_name: str,
+    operation: Optional[str] = "search_side_effect",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

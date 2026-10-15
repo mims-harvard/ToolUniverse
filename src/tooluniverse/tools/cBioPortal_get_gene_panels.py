@@ -1,7 +1,7 @@
 """
 cBioPortal_get_gene_panels
 
-Get all gene panels used in cBioPortal studies. Gene panels define which genes were sequenced in ...
+Get gene panels used in cBioPortal studies. Gene panels define which genes were sequenced in a st...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def cBioPortal_get_gene_panels(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get all gene panels used in cBioPortal studies. Gene panels define which genes were sequenced in ...
+    Get gene panels used in cBioPortal studies. Gene panels define which genes were sequenced in a st...
 
     Parameters
     ----------

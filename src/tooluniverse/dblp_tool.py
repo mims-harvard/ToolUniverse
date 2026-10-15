@@ -1,5 +1,6 @@
 import requests
 from .base_tool import BaseTool
+from .provider_rate_limit import enforce_provider_rate_limit
 from .tool_registry import register_tool
 
 
@@ -31,6 +32,12 @@ class DBLPTool(BaseTool):
             "format": "json",
         }
         try:
+            # DBLP refuses a burst hard. Measured 2026-10-03 against
+            # /search/publ/api: requests 1-3 answered 200, the 4th answered
+            # 429, and every request after that failed to connect at all --
+            # so an over-eager client loses the endpoint, not just one call.
+            # DBLP publishes no rate-limit header, hence a conservative 1/s.
+            enforce_provider_rate_limit("dblp", "", 1.0)
             response = requests.get(self.base_url, params=params, timeout=20)
         except requests.RequestException as e:
             return {
@@ -46,7 +53,21 @@ class DBLPTool(BaseTool):
                 "reason": response.reason,
             }
 
-        hits = response.json().get("result", {}).get("hits", {}).get("hit", [])
+        try:
+            payload = response.json()
+        except ValueError:
+            return {
+                "status": "error",
+                "error": "DBLP returned an HTML page instead of JSON",
+                "reason": (
+                    "dblp.org answers programmatic clients with a bot-check page "
+                    "('Making sure you're not a bot!'), which this tool does not "
+                    "bypass. Use Crossref_search_works, SemanticScholar_search_papers "
+                    "or openalex_search_works instead."
+                ),
+            }
+
+        hits = payload.get("result", {}).get("hits", {}).get("hit", [])
         results = []
         for hit in hits:
             info = hit.get("info", {})

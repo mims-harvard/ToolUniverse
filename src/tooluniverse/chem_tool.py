@@ -13,9 +13,16 @@ from typing import Any, Dict, Optional
 
 # from rdkit import Chem
 from .base_tool import BaseTool
+from .extras import install_hint
 from .tool_registry import register_tool
 from .http_utils import request_with_retry
-from indigo import Indigo
+
+try:
+    from indigo import Indigo
+
+    HAS_INDIGO = True
+except ImportError:  # pragma: no cover - optional dependency
+    HAS_INDIGO = False
 
 # Query parameters that shape the response rather than filter it, so they are
 # absent from ChEMBL's per-resource "filtering" list by design.
@@ -397,7 +404,9 @@ class ChEMBLRESTTool(BaseTool):
         except Exception:
             return None
 
-    def _lookup_chembl_id_by_name(self, drug_name: str) -> Optional[str]:
+    def _lookup_chembl_id_by_name(
+        self, drug_name: str, failures: Optional[list] = None
+    ) -> Optional[str]:
         """Look up a ChEMBL molecule ID by preferred name (case-insensitive).
 
         Feature-79B-001: Uses icontains first (most reliable), then iexact as
@@ -428,8 +437,11 @@ class ChEMBLRESTTool(BaseTool):
                         if (mol.get("pref_name") or "").lower() == drug_name.lower():
                             return self._extract_parent_chembl_id(mol)
                     return self._extract_parent_chembl_id(molecules[0])
-            except Exception:
-                pass
+            except Exception as e:
+                # A failed lookup is not a miss: the caller reports these
+                # instead of "not found in ChEMBL".
+                if failures is not None:
+                    failures.append(str(e) or type(e).__name__)
         return None
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -478,7 +490,16 @@ class ChEMBLRESTTool(BaseTool):
                     # Feature-42A-01: auto-lookup ChEMBL ID by drug_name if provided
                     drug_name = arguments.get("drug_name")
                     if drug_name:
-                        mol_id = self._lookup_chembl_id_by_name(drug_name)
+                        failures: list = []
+                        mol_id = self._lookup_chembl_id_by_name(drug_name, failures)
+                        if not mol_id and len(failures) == 2:
+                            # both lookups failed: ChEMBL did not answer
+                            return {
+                                "status": "error",
+                                "error": f"Could not look up drug '{drug_name}': "
+                                f"ChEMBL did not answer ({failures[-1]}). This is "
+                                "not a 'not found'; retry later.",
+                            }
                         if mol_id:
                             arguments = dict(arguments)
                             arguments["drug_chembl_id"] = mol_id
@@ -767,7 +788,7 @@ class ChEMBLTool(BaseTool):
     def __init__(self, tool_config, base_url="https://www.ebi.ac.uk/chembl/api/data"):
         super().__init__(tool_config)
         self.base_url = base_url
-        self.indigo = Indigo()
+        self.indigo = Indigo() if HAS_INDIGO else None
         # Match ChEMBLRESTTool: a pooled session and an explicit timeout, so no
         # request can hang indefinitely when the upstream service stops
         # responding rather than returning an error.
@@ -775,6 +796,13 @@ class ChEMBLTool(BaseTool):
         self.timeout = 30
 
     def run(self, arguments):
+        if not HAS_INDIGO:
+            return {
+                "status": "error",
+                "error": f"epam.indigo is required for structure similarity search. "
+                f"{install_hint('chem', 'epam.indigo')} The other ChEMBL tools "
+                "do not need it.",
+            }
         query = arguments.get("query")
         similarity_threshold = arguments.get("similarity_threshold", 80)
         max_results = arguments.get("max_results", 20)

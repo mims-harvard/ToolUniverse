@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def Epidemiology_r0_herd(
-    operation: str,
     R0: float,
+    operation: Optional[str] = "r0_herd",
     VE: Optional[float] = None,
     coverage: Optional[float] = None,
     *,

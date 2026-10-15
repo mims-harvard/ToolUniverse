@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book-part-wrapper PUBLIC "-//NLM//DTD BITS Book Interchange DTD v2.0 20151225//EN" "http://jats.nlm.nih.gov/extensions/bits/2.0/BITS-book2.dtd">
+<book-part-wrapper content-type="chapter" id="Nabumetone" from-where="body" dtd-version="2.0">
+  <book-meta>
+    <book-id book-id-type="pmcid">livertox</book-id>
+    <book-title-group>
+      <book-title>LiverTox</book-title>
+      <subtitle>Clinical and Research Information on Drug-Induced Liver Injury</subtitle>
+    </book-title-group>
+    <pub-date date-type="pubr" publication-format="electronic">
+      <year>2012</year>
+    </pub-date>
+    <publisher>
+      <publisher-name>National Institute of Diabetes and Digestive and Kidney Diseases</publisher-name>
+      <publisher-loc>Bethesda (MD)</publisher-loc>
+    </publisher>
+    <abstract>
+      <p>LiverTox<sup>&#x000ae;</sup> provides up-to-date, unbiased and easily accessed information on the diagnosis, cause, frequency, clinical patterns and management of liver injury attributable to prescription and nonprescription medications and selected herbal and dietary supplements. The LiverTox site is meant as a resource for both physicians and patients as well as for clinical academicians and researchers who specialize in idiosyncratic drug induced hepatotoxicity.</p>
+      <p>Information on a specific medication or supplement can be found by entering its name in the &#x0201c;Search this book&#x0201d; box shown above or by browsing the list of agents by its first letter using the alphabetic list shown below.</p>
+      <p>LiverTox is produced by the National Institute of Diabetes and Digestive and Kidney Diseases (NIDDK) and is copyright free. It is requested that use of LiverTox data in publications be given appropriate acknowledgment.</p>
+      <p>The LiverTox team welcomes user comments and enquiries. <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/books/n/livertox/Contactus/">Contact Us</ext-link></p>
+    </abstract>
+    <custom-meta-group>
+      <custom-meta>
+        <meta-name>books-source-type</meta-name>
+        <meta-value>Database</meta-value>
+      </custom-meta>
+    </custom-meta-group>
+    <notes notes-type="disclaimer">
+      <title>Disclaimer:</title>
+      <p>Information presented in the LiverTox database is derived from the scientific literature and public databases and reflects professional expertise of the authors. Such information does not represent official policy of the U.S. Government or any agency thereof. The information in LiverTox is not meant as a substitute for FDA approved product labeling and professional judgment in the diagnosis and treatment of drug induced liver injury. The U.S. Government and its individual agencies, including the NIDDK, NLM and NIH, does not warrant or assume any legal responsibility for the accuracy, completeness, or usefulness of the information contained on this Site.</p>
+      <p>NIH does not provide patient-specific medical advice concerning the potential of a drug or herbal supplement to cause hepatotoxicity; please consult with a physician for guidance.</p>
+      <p>As of September&#x0202f;2026, initial drafts of new and updated LiverTox chapters will be generated using Artificial Intelligence. Each draft will then undergo careful review, verification, and editing by the LiverTox editorial team. New chapters will also undergo independent peer review from an external expert in drug&#x02011;induced liver injury</p>
+    </notes>
+  </book-meta>
+  <book-part book-part-type="chapter">
+    <book-part-meta>
+      <book-part-id book-part-id-type="pmcid">Nabumetone</book-part-id>
+      <title-group>
+        <title>Nabumetone</title>
+      </title-group>
+      <pub-history>
+        <date date-type="updated">
+          <day>10</day>
+          <month>8</month>
+          <year>2025</year>
+        </date>
+      </pub-history>
+    </book-part-meta>
+    <body>
+      <sec id="Nabumetone.OVERVIEW">
+        <title>OVERVIEW</title>
+        <sec id="Nabumetone.Introduction" sec-type="pubmed-excerpt">
+          <title>Introduction</title>
+          <p>Nabumetone is a long acting nonsteroidal antiinflammatory drug (NSAID) that is available by prescription only and is used in therapy of chronic arthritis. Nabumetone has been linked to rare instances of clinically apparent, idiosyncratic drug induced liver disease.</p>
+        </sec>
+        <sec id="Nabumetone.Background">
+          <title>Background</title>
+          <p>Nabumetone (nab ue' me tone) is a naphthyl alkanone and orally available antiinflammatory agent. Like other NSAIDs, nabumetone is a potent cyclo-oxygenase (Cox-1 and -2) inhibitor, which blocks the formation of proinflammatory prostaglandins that are important mediators in pain and inflammatory pathways. Nabumetone is a pro-drug and exerts anti-cyclo-oxygenase activity only after absorption and activation in the liver. Like other NSAIDs, it has analgesic, antipyretic, and antiinflammatory activities. Nabumetone was approved in the United States in 1991 but is now rarely used with fewer than 300,000 prescriptions filled yearly. Its current indications are limited to treatment of osteoarthritis and rheumatoid arthritis. Nabumetone is available by prescription only. Generic formulations are available of 500, 750 and 1000 mg; specific commercially available names include Relafen. The usual dose in adults is 1000 mg once daily, increasing to as much as 2000 mg daily based upon response and tolerance. As with other NSAIDs, nabumetone is generally well tolerated, but side effects can include headache, dizziness, somnolence, dyspepsia, nausea, abdominal discomfort, heartburn, peripheral edema and hypersensitivity reactions. Rare but potentially serious adverse events from NSAIDs such as nabumetone include gastrointestinal ulceration, bleeding, and perforation, an increased risk for serious cardiovascular disease including myocardial infarction and stroke, renal dysfunction, exacerbation of asthma, infertility, fetal toxicity, and acute hypersensitivity reactions including anaphylaxis, exfoliative dermatitis, and Stevens Johnson syndrome.</p>
+        </sec>
+        <sec id="Nabumetone.Hepatotoxicity">
+          <title>Hepatotoxicity</title>
+          <p>Prospective studies show that 1% to 5% of patients taking nabumetone experience at least transient serum aminotransferase elevations. These may resolve even with drug continuation. Marked aminotransferase elevations (above 3 times ULN) occur in 0.5% of patients, a rate similar to that in placebo treated controls. Clinically apparent liver injury with jaundice from nabumetone is rare and in large clinical trials, no instances of acute liver injury with jaundice were reported. Since its approval and release, nabumetone has been reported to cause rare instances of serious hepatic adverse events (~1.3 per million prescriptions), but there have been no cases of clinically apparent liver injury due to nabumetone described in the published literature. Furthermore, nabumetone is not mentioned as a cause in large case series on drug induced liver injury or acute liver failure. Thus, the latency, clinical features and outcome of nabumetone induced liver injury have not been described and clinically apparent hepatotoxicity due to nabumetone must be very rare.</p>
+          <p>Likelihood score: E* (unproven but suspected rare cause of clinically apparent liver injury).</p>
+        </sec>
+        <sec id="Nabumetone.Mechanism_of_Injury">
+          <title>Mechanism of Injury</title>
+          <p>The mechanism by which nabumetone causes hepatotoxicity is not known. Nabumetone undergoes rapid biotransformation in the liver to methoxy-2-naphthylacetic acid, the principal active metabolite.</p>
+        </sec>
+        <sec id="Nabumetone.Outcome_and_Management">
+          <title>Outcome and Management</title>
+          <p>The minor aminotransferase elevations that occur in a small proportion of patients during chronic therapy with nabumetone are usually subclinical and not progressive. The clinically apparent liver injury from nabumetone has not been characterized, but most NSAID related hepatotoxicity is self-limited and mild-to-moderate in severity. The cross reactivity in liver injury between various NSAIDs has not been well defined, but can occur. For these reasons, switching to another NSAID after clinically apparent liver injury from nabumetone should be done with caution.</p>
+          <p>Drug Class: <related-object link-type="booklink" source-id="livertox" document-id="NonsteroidalAntiinfl" document-type="book-part">Nonsteroidal Antiinflammatory Drugs</related-object></p>
+        </sec>
+      </sec>
+      <sec id="Nabumetone.PRODUCT_INFORMATION">
+        <title>PRODUCT INFORMATION</title>
+        <p>
+<bold>REPRESENTATIVE TRADE NAMES</bold>
+</p>
+        <p>Nabumetone &#x02013; Generic, Relafen&#x000ae;</p>
+        <p>
+<bold>DRUG CLASS</bold>
+</p>
+        <p>Nonsteroidal Antiinflammatory Drugs</p>
+        <p>
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://dailymed.nlm.nih.gov/dailymed/search.cfm?adv=1&#x00026;labeltype=all&#x00026;=&#x00026;pagesize=20&#x00026;page=1&#x00026;query=Nabumetone%28Nabumetone%29+">COMPLETE LABELING</ext-link>
+</p>
+        <p>Product labeling at DailyMed, National Library of Medicine, NIH</p>
+      </sec>
+      <sec id="Nabumetone.CHEMICAL_FORMULA_AND_STRUCTUR">
+        <title>CHEMICAL FORMULA AND STRUCTURE</title>
+        <table-wrap id="Nabumetone.Tc" orientation="portrait" position="anchor">
+          <table frame="hsides" rules="groups">
+            <tbody>
+              <tr>
+                <th id="hd_b_Nabumetone.Tc_1_1_1_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">DRUG</th>
+                <th id="hd_b_Nabumetone.Tc_1_1_1_2" valign="top" align="left" rowspan="1" colspan="1">CAS REGISTRY NO</th>
+                <th id="hd_b_Nabumetone.Tc_1_1_1_3" valign="top" align="left" rowspan="1" colspan="1">MOLECULAR FORMULA</th>
+                <th id="hd_b_Nabumetone.Tc_1_1_1_4" valign="top" align="left" rowspan="1" colspan="1">STRUCTURE</th>
+              </tr>
+              <tr>
+                <td headers="hd_b_Nabumetone.Tc_1_1_1_1" valign="top" align="left" scope="row" rowspan="1" colspan="1">Nabumetone</td>
+                <td headers="hd_b_Nabumetone.Tc_1_1_1_2" valign="top" align="left" rowspan="1" colspan="1">
+<ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="pubchem" xlink:href="sid://135000869">42924-53-8</ext-link>
+</td>
+                <td headers="hd_b_Nabumetone.Tc_1_1_1_3" valign="top" align="left" rowspan="1" colspan="1">C15-H16-O2</td>
+                <td headers="hd_b_Nabumetone.Tc_1_1_1_4" valign="top" align="left" rowspan="1" colspan="1">
+<related-object link-type="ext-image-back-link" source-id="pubchem" document-id="135000869" document-id-type="sid" document-type="summary" object-id="135000869" object-id-type="sid" object-type="image"/>
+</td>
+              </tr>
+            </tbody>
+          </table>
+        </table-wrap>
+      </sec>
+      <sec id="Nabumetone.ANNOTATED_BIBLIOGRAPHY">
+        <title>ANNOTATED BIBLIOGRAPHY</title>
+        <p>References updated: 10 August 2025</p>
+        <p>Abbreviations: NSAIDs, nonsteroidal antiinflammatory drugs.</p>
+        <ref-list id="Nabumetone.ANNOTATED_BIBLIOGRAPHY.reflist0">
+          <ref id="Nabumetone.REF.zimmerman.1999">
+            <mixed-citation publication-type="book">Zimmerman HJ. Drugs used to treat rheumatic and musculospastic disease. In, Zimmerman HJ. Hepatotoxicity: the adverse effects of drugs and other chemicals on the liver. 2nd ed. Philadelphia: Lippincott, 1999, pp. 517-53.<annotation><p><italic toggle="yes">(Expert review of hepatotoxicity published in 1999; mentions an unpublished case of cholestatic hepatitis in a patient taking nabumetone).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.lewis.2013">
+            <mixed-citation publication-type="book">Lewis JH, Stine JG. Nonsteroidal anti-inflammatory drugs and leukotriene receptor antagonists: pathology and clinical presentation of hepatotoxicity. In, Kaplowitz N, DeLeve LD, eds. Drug-induced liver disease. 3rd Edition. Amsterdam: Elsevier, 2013. pp. 370-402.<annotation><p><italic toggle="yes">(Review of hepatotoxicity of NSAIDs mentions that nabumetone is associated with mild elevations in ALT in &#x0003c;1% of patients and that there have been no reports of severe liver injury).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.grossner.2018">
+            <mixed-citation publication-type="book">Grossner T, Smyth EM, Fitzgerald GA. Pharmacotherapy of inflammation, fever, pain and gout. In, Brunton LL, Hilal-Dandan R, Knollman BC. Goodman &#x00026; Gilman&#x02019;s The pharmacological basis of therapeutics, 13th ed. New York: McGraw-Hill, 2018. pp. 685-709.<annotation><p><italic toggle="yes">(Textbook of pharmacology and therapeutics).</italic></p></annotation></mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.jackson.1987.115">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Jackson</surname>
+<given-names>RE</given-names></string-name>, <string-name name-style="western"><surname>Mitchell</surname>
+<given-names>FN</given-names></string-name>, <string-name name-style="western"><surname>Brindley</surname>
+<given-names>DA</given-names></string-name>. <article-title>Safety evaluation of nabumetone in United States clinical trials.</article-title>
+<source>Am J Med</source>
+<year>1987</year>; <volume>83</volume>: <fpage>115</fpage>-<lpage>20</lpage>.<annotation><p><italic toggle="yes">(Summary of safety evaluation of nabumetone in 1924 US patients with rheumatoid arthritis or osteoarthritis found similar pattern of adverse events to other NSAIDs; 18 patients [1%] had ALT &#x0003e;2 times ULN, but 6 had some degree of abnormality before therapy; no patient developed hepatitis or jaundice).</italic></p></annotation><pub-id pub-id-type="pmid">3318422</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.jenner.1990.80">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Jenner</surname>
+<given-names>PN</given-names></string-name>. <article-title>A 12-month postmarketing surveillance study of nabumetone. A preliminary report.</article-title>
+<source>Drugs</source>
+<year>1990</year>; <volume>40</volume> (<supplement>Suppl 5</supplement>): <fpage>80</fpage>-<lpage>6</lpage>.<annotation><p><italic toggle="yes">(Analysis of postmarketing surveillance of nabumetone using follow up forms sent to physicians; 7 gastrointestinal bleeds, one fatal; but no mention of cases of clinically apparent liver injury).</italic></p></annotation><pub-id pub-id-type="pmid">2081502</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.zimmerman.1990.322">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Zimmerman</surname>
+<given-names>HJ</given-names></string-name>. <article-title>Update of hepatotoxicity due to classes of drugs in common clinical use: non-steroidal drugs, anti-inflammatory drugs, antibiotics, antihypertensives, and cardiac and psychotropic agents.</article-title>
+<source>Semin Liver Dis</source>
+<year>1990</year>; <volume>10</volume>: <fpage>322</fpage>-<lpage>38</lpage>.<annotation><p><italic toggle="yes">(Extensive review article on liver injury due to NSAIDs; nabumetone is not discussed).</italic></p></annotation><pub-id pub-id-type="pmid">2281340</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.bernhard.1992.48">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Bernhard</surname>
+<given-names>GC</given-names></string-name>. <article-title>Worldwide safety experience with nabumetone.</article-title>
+<source>J Rheumatol Suppl</source>
+<year>1992</year>; <volume>36</volume>: <fpage>48</fpage>-<lpage>57</lpage>.<annotation><p><italic toggle="yes">(Summary of adverse effects in premarketing studies of nabumetone; 11 of 1677 patients had ALT elevations &#x0003e;3 times ULN, but all resolved with stopping; in postmarketing surveillance on 44,953 patients treated for 3 weeks to 8 years, no case of hepatitis or liver serious adverse event reported).</italic></p></annotation><pub-id pub-id-type="pmid">1474535</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.eversmeyer.1993.10s">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Eversmeyer</surname>
+<given-names>W</given-names></string-name>, <string-name name-style="western"><surname>Poland</surname>
+<given-names>M</given-names></string-name>, <string-name name-style="western"><surname>DeLapp</surname>
+<given-names>RE</given-names></string-name>, <string-name name-style="western"><surname>Jensen</surname>
+<given-names>CP</given-names></string-name>. <article-title>Safety experience with nabumetone versus diclofenac, naproxen, ibuprofen, and piroxicam in osteoarthritis and rheumatoid arthritis.</article-title>
+<source>Am J Med</source>
+<year>1993</year>; <volume>95</volume>: <fpage>10S</fpage>-<lpage>18S</lpage>.<annotation><p><italic toggle="yes">(Major focus of analysis was on gastrointestinal side effects in this study of patients given nabumetone [n=3,315], diclofenac [296], naproxen [279], piroxicam [286] or ibuprofen [235] for 12 weeks; ALT elevations &#x0003e;2 to 3 times ULN occurred in 0.2 to 0.5% of patients on nabumetone, 1.1 to 4% on diclofenac, and 0.4% on naproxen, ibuprofen or piroxicam; no mention of hepatitis or jaundice).</italic></p></annotation><pub-id pub-id-type="pmid">8356997</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.friedel.1993.131">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Friedel</surname>
+<given-names>HA</given-names></string-name>, <string-name name-style="western"><surname>Langtry</surname>
+<given-names>HD</given-names></string-name>, <string-name name-style="western"><surname>Buckley</surname>
+<given-names>MM</given-names></string-name>. <article-title>Nabumetone. A reappraisal of its pharmacology and therapeutic use in rheumatic diseases.</article-title>
+<source>Drugs</source>
+<year>1993</year>; <volume>45</volume>: <fpage>131</fpage>-<lpage>56</lpage>.<annotation><p><italic toggle="yes">(Thorough review of structure, pharmacology, efficacy and safety of nabumetone; among 1677 patients, 0.4% showed marked elevations in both ALT and AST, but no mention of clinically apparent liver injury or jaundice).</italic></p></annotation><pub-id pub-id-type="pmid">7680981</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.bellamy.1995.915">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Bellamy</surname>
+<given-names>N</given-names></string-name>, <string-name name-style="western"><surname>Bensen</surname>
+<given-names>WG</given-names></string-name>, <string-name name-style="western"><surname>Beaulieu</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Siminovitch</surname>
+<given-names>KA</given-names></string-name>, <string-name name-style="western"><surname>Kraag</surname>
+<given-names>GR</given-names></string-name>, <string-name name-style="western"><surname>Lussier</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Ahmad</surname>
+<given-names>S</given-names></string-name>, <etal>et al.</etal>
+<article-title>A multicenter study of nabumetone and diclofenac sustained release in patients with osteoarthritis.</article-title>
+<source>J Rheumatol</source>
+<year>1995</year>; <volume>22</volume>: <fpage>915</fpage>-<lpage>20</lpage>.<annotation><p><italic toggle="yes">(Among 382 patients enrolled in controlled trials of 6 months of nabumetone vs diclofenac, there was similar efficacy, but better tolerance with nabumetone; ALT above 2 times ULN occurred in less than 1% [n=2] of nabumetone vs 3% of diclofenac recipients; no mention of hepatitis or jaundice).</italic></p></annotation><pub-id pub-id-type="pmid">8587082</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.schnitzer.1995.602">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Schnitzer</surname>
+<given-names>TJ</given-names></string-name>, <string-name name-style="western"><surname>Ballard</surname>
+<given-names>IM</given-names></string-name>, <string-name name-style="western"><surname>Constantine</surname>
+<given-names>G</given-names></string-name>, <string-name name-style="western"><surname>McDonald</surname>
+<given-names>P</given-names></string-name>. <article-title>Double-blind, placebo-controlled comparison of the safety and efficacy of orally administered etodolac and nabumetone in patients with active osteoarthritis of the knee.</article-title>
+<source>Clin Ther</source>
+<year>1995</year>; <volume>17</volume>: <fpage>602</fpage>-<lpage>12</lpage>.<annotation><p><italic toggle="yes">(Mild ALT elevations occurred in 3 of 89 nabumetone, none of 90 etodolac, and 2 of 90 placebo treated patients; no mention of outcome or symptoms).</italic></p></annotation><pub-id pub-id-type="pmid">8565024</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.weaver.1995.735">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Weaver</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Rubin</surname>
+<given-names>B</given-names></string-name>, <string-name name-style="western"><surname>Caldwell</surname>
+<given-names>J</given-names></string-name>, <string-name name-style="western"><surname>McMahon</surname>
+<given-names>FG</given-names></string-name>, <string-name name-style="western"><surname>Lee</surname>
+<given-names>D</given-names></string-name>, <string-name name-style="western"><surname>Makarowski</surname>
+<given-names>W</given-names></string-name>, <string-name name-style="western"><surname>Offenberg</surname>
+<given-names>H</given-names></string-name>, <etal>et al.</etal>
+<article-title>Comparison of the efficacy and safety of oxaprozin and nabumetone in the treatment of patients with osteoarthritis of the knee.</article-title>
+<source>Clin Ther</source>
+<year>1995</year>; <volume>17</volume>: <fpage>735</fpage>-<lpage>45</lpage>.<annotation><p><italic toggle="yes">(In an analysis of a six week placebo controlled trial, ALT elevations occurred in none of 109 nabumetone, but in 9 of 109 oxaprozin treated patients).</italic></p></annotation><pub-id pub-id-type="pmid">8565037</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.morgan.2001.310">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Morgan</surname>
+<given-names>GJ</given-names>
+<suffix>Jr</suffix></string-name>, <string-name name-style="western"><surname>Kaine</surname>
+<given-names>J</given-names></string-name>, <string-name name-style="western"><surname>DeLapp</surname>
+<given-names>R</given-names></string-name>, <string-name name-style="western"><surname>Palmer</surname>
+<given-names>R</given-names></string-name>. <article-title>Treatment of elderly patients with nabumetone or diclofenac: gastrointestinal safety profile.</article-title>
+<source>J Clin Gastroenterol</source>
+<year>2001</year>; <volume>32</volume>: <fpage>310</fpage>-<lpage>4</lpage>.<annotation><p><italic toggle="yes">(335 elderly patients with osteoarthritis were enrolled in randomized clinical trials of nabumetone [1 or 2 g/day] vs diclofenac for 12 weeks; ALT above 2 times ULN occurred in 0% [0/155] of nabumetone vs 4% of diclofenac recipients).</italic></p></annotation><pub-id pub-id-type="pmid">11276273</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.rubenstein.2004.373">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Rubenstein</surname>
+<given-names>JH</given-names></string-name>, <string-name name-style="western"><surname>Laine</surname>
+<given-names>L</given-names></string-name>. <article-title>Systematic review: the hepatotoxicity of non-steroidal anti-inflammatory drugs.</article-title>
+<source>Aliment Pharmacol Ther</source>
+<year>2004</year>; <volume>20</volume>: <fpage>373</fpage>-<lpage>80</lpage>.<annotation><p><italic toggle="yes">(NSAIDs are the most commonly used drugs in the US and account for a large proportion of cases of hepatic injury, but the frequency is quite rare. Among 7 population based studies, hospitalization occurred in 22.4/100,000 patient-years [rate ratio 1.5] and ~1 death/100,000 patient-years due to liver injury; not increased with age or associated with gender; in case controlled studies, higher odds ratio with sulindac, indomethacin, piroxicam and diclofenac, no mention of nabumetone).</italic></p></annotation><pub-id pub-id-type="pmid">15298630</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.bj_rnsson.2005.1095">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Bj&#x000f6;rnsson</surname>
+<given-names>E</given-names></string-name>, <string-name name-style="western"><surname>Jerlstad</surname>
+<given-names>P</given-names></string-name>, <string-name name-style="western"><surname>Bergqvist</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Olsson</surname>
+<given-names>R</given-names></string-name>. <article-title>Fulminant drug-induced hepatic failure leading to death or liver transplantation in Sweden.</article-title>
+<source>Scand J Gastroenterol</source>
+<year>2005</year>; <volume>40</volume>: <fpage>1095</fpage>-<lpage>101</lpage>.<annotation><p><italic toggle="yes">(Survey of all cases of drug induced liver injury with fatal outcome from Swedish Adverse Drug Reporting system from 1966-2002; among 103 cases, 3 attributed to naproxen, but none to nabumetone).</italic></p></annotation><pub-id pub-id-type="pmid">16165719</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.rostom.2005.489">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Rostom</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Goldkind</surname>
+<given-names>L</given-names></string-name>, <string-name name-style="western"><surname>Laine</surname>
+<given-names>L</given-names></string-name>. <article-title>Nonsteroidal anti-inflammatory drugs and hepatic toxicity: a systematic review of randomized controlled trials in arthritis patients.</article-title>
+<source>Clin Gastroenterol Hepatol</source>
+<year>2005</year>; <volume>3</volume>: <fpage>489</fpage>-<lpage>98</lpage>.<annotation><p><italic toggle="yes">(Review of randomized clinical trials of NSAIDS for frequency of adverse events; ALT above 3 times ULN in 0.43% of ibuprofen, 0.43% naproxen, 0.42% celecoxib, 1.8% rofecoxib, 3.55% diclofenac, and 0.29% of placebo recipients, rare liver related serious adverse events or deaths with any; no mention on nabumetone).</italic></p></annotation><pub-id pub-id-type="pmid">15880319</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.arellano.2006.861">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Arellano</surname>
+<given-names>FM</given-names></string-name>, <string-name name-style="western"><surname>Yood</surname>
+<given-names>MU</given-names></string-name>, <string-name name-style="western"><surname>Wentworth</surname>
+<given-names>CE</given-names></string-name>, <string-name name-style="western"><surname>Oliveria</surname>
+<given-names>SA</given-names></string-name>, <string-name name-style="western"><surname>Rivero</surname>
+<given-names>E</given-names></string-name>, <string-name name-style="western"><surname>Verma</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Rothman</surname>
+<given-names>KJ</given-names></string-name>. <article-title>Use of cyclo-oxygenase 2 inhibitors (COX-2) and prescription non-steroidal anti-inflammatory drugs (NSAIDS) in UK and USA populations. Implications for COX-2 cardiovascular profile.</article-title>
+<source>Pharmacoepidemiol Drug Saf</source>
+<year>2006</year>; <volume>15</volume>: <fpage>861</fpage>-<lpage>72</lpage>.<annotation><p><italic toggle="yes">(Survey of NSAID use in UK and US indicates ibuprofen, naproxen and diclofenac are the most commonly used NSAIDs; nabumetone not in top 10 agents used).</italic></p></annotation><pub-id pub-id-type="pmid">17086563</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.lapeyremestre.2006.391">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Lapeyre-Mestre</surname>
+<given-names>M</given-names></string-name>, <string-name name-style="western"><surname>de Castro</surname>
+<given-names>AM</given-names></string-name>, <string-name name-style="western"><surname>Bareille</surname>
+<given-names>MP</given-names></string-name>, <string-name name-style="western"><surname>Garcia del Pozo</surname>
+<given-names>J</given-names></string-name>, <string-name name-style="western"><surname>Requejo</surname>
+<given-names>AA</given-names></string-name>, <string-name name-style="western"><surname>Arias</surname>
+<given-names>LM</given-names></string-name>, <string-name name-style="western"><surname>Montastruc</surname>
+<given-names>J-L</given-names></string-name>, <etal>et al.</etal>
+<article-title>Non-steroidal anti-inflammatory drug-related hepatic damage in France and Spain: analysis from national spontaneous reporting systems.</article-title>
+<source>Fundam Clin Pharmacol</source>
+<year>2006</year>; <volume>20</volume>: <fpage>391</fpage>-<lpage>5</lpage>.<annotation><p><italic toggle="yes">(Analysis of reports of liver injury from NSAIDs from France and Spain from 1982-2001; among more than 29,000 liver adverse event reports, only 3 were for nabumetone and no details given).</italic></p></annotation><pub-id pub-id-type="pmid">16867024</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.chalasani.2008.1924">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Chalasani</surname>
+<given-names>N</given-names></string-name>, <string-name name-style="western"><surname>Fontana</surname>
+<given-names>RJ</given-names></string-name>, <string-name name-style="western"><surname>Bonkovsky</surname>
+<given-names>HL</given-names></string-name>, <string-name name-style="western"><surname>Watkins</surname>
+<given-names>PB</given-names></string-name>, <string-name name-style="western"><surname>Davern</surname>
+<given-names>T</given-names></string-name>, <string-name name-style="western"><surname>Serrano</surname>
+<given-names>J</given-names></string-name>, <string-name name-style="western"><surname>Yang</surname>
+<given-names>H</given-names></string-name>, <string-name name-style="western"><surname>Rochon</surname>
+<given-names>J</given-names></string-name>; <collab>Drug Induced Liver Injury Network (DILIN)</collab>. <article-title>Causes, clinical features, and outcomes from a prospective study of drug-induced liver injury in the United States.</article-title>
+<source>Gastroenterology</source>
+<year>2008</year>; <volume>135</volume>: <fpage>1924</fpage>-<lpage>34</lpage>.<annotation><p><italic toggle="yes">(Among 300 cases of drug induced liver disease in the US collected from 2004 to 2008, NSAIDs were implicated as a sole agent in 8 cases [4 diclofenac, 2 celecoxib, 1 meloxicam, and 1 oxaprozin] and as one of several agents in 3 cases [1 diclofenac, 1 celecoxib, 1 ibuprofen]; nabumetone not listed).</italic></p></annotation><pub-id pub-id-type="pmid">18955056</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.bannwarth.2008.485">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Bannwarth</surname>
+<given-names>B.</given-names></string-name>
+<article-title>Safety of nonselective NSAID nabumetone: focus on gastrointestinal toxicity.</article-title>
+<source>Drug Saf</source>
+<year>2008</year>; <volume>31</volume>: <fpage>485</fpage>-<lpage>503</lpage>.<annotation><p><italic toggle="yes">(Review of chemistry, pharmacology and gastrointestinal tolerance of nabumetone; during first 7 years on the market, the frequency of hepatic adverse event reports was 3.4 per million prescriptions and serious hepatic events 1.3 per million, which was markedly lower than for diclofenac [13.6 and 4.3 per million] and similar to naproxen [1.8 and 2.9 per million] and piroxicam [0.2 and 1.2 per million]).</italic></p></annotation><pub-id pub-id-type="pmid">18484783</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.bessone.2010.5651">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Bessone</surname>
+<given-names>F.</given-names></string-name>
+<article-title>Non-steroidal anti-inflammatory drugs: What is the actual risk of liver damage?</article-title>
+<source>World J Gastroenterol</source>
+<year>2010</year>; <volume>16</volume>: <fpage>5651</fpage>-<lpage>61</lpage>.<annotation><p><italic toggle="yes">(Review of estimated frequency of drug induced liver injury due to NSAIDs from large published epidemiological studies; nabumetone not discussed).</italic></p></annotation><pub-id pub-id-type="pmid">21128314</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.reuben.2010.2065">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Reuben</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Koch</surname>
+<given-names>DG</given-names></string-name>, <string-name name-style="western"><surname>Lee</surname>
+<given-names>WM</given-names></string-name>; <collab>Acute Liver Failure Study Group</collab>. <article-title>Drug-induced acute liver failure: results of a U.S. multicenter, prospective study.</article-title>
+<source>Hepatology</source>
+<year>2010</year>; <volume>52</volume>: <fpage>2065</fpage>-<lpage>76</lpage>.<annotation><p><italic toggle="yes">(Among 1198 patients with acute liver failure enrolled in a US prospective study between 1998 and 2007, 133 were attributed to drug induced liver injury including 7 to NSAIDs with 4 attributed to bromfenac, 2 to diclofenac and 1 to etodolac, but none to nabumetone).</italic></p></annotation><pub-id pub-id-type="pmid">20949552</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.gulmez.2013.135">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Gulmez</surname>
+<given-names>SE</given-names></string-name>, <string-name name-style="western"><surname>Larrey</surname>
+<given-names>D</given-names></string-name>, <string-name name-style="western"><surname>Pageaux</surname>
+<given-names>GP</given-names></string-name>, <string-name name-style="western"><surname>Lignot</surname>
+<given-names>S</given-names></string-name>, <string-name name-style="western"><surname>Lassalle</surname>
+<given-names>R</given-names></string-name>, <string-name name-style="western"><surname>Jov&#x000e9;</surname>
+<given-names>J</given-names></string-name>, <string-name name-style="western"><surname>Gatta</surname>
+<given-names>A</given-names></string-name>, <etal>et al.</etal>
+<article-title>Transplantation for acute liver failure in patients exposed to NSAIDs or paracetamol (acetaminophen): the multinational case-population SALT study.</article-title>
+<source>Drug Saf</source>
+<year>2013</year>; <volume>36</volume>: <fpage>135</fpage>-<lpage>44</lpage>.<annotation><p><italic toggle="yes">(Among 600 patients undergoing liver transplantation for acute liver failure at 52 European liver transplant centers between 2005 and 2007, 301 were considered idiopathic and had received a medication within 30 days of onset; including acetaminophen in 192 and NSAIDs in 44, including diclofenac [the most commonly used NSAID] in 7; nabumetone was not specifically mentioned).</italic></p></annotation><pub-id pub-id-type="pmid">23325533</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.bj_rnsson.2013.1419">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Bj&#x000f6;rnsson</surname>
+<given-names>ES</given-names></string-name>, <string-name name-style="western"><surname>Bergmann</surname>
+<given-names>OM</given-names></string-name>, <string-name name-style="western"><surname>Bj&#x000f6;rnsson</surname>
+<given-names>HK</given-names></string-name>, <string-name name-style="western"><surname>Kvaran</surname>
+<given-names>RB</given-names></string-name>, <string-name name-style="western"><surname>Olafsson</surname>
+<given-names>S</given-names></string-name>. <article-title>Incidence, presentation and outcomes in patients with drug-induced liver injury in the general population of Iceland.</article-title>
+<source>Gastroenterology</source>
+<year>2013</year>; <volume>144</volume>: <fpage>1419</fpage>-<lpage>25</lpage>.<annotation><p><italic toggle="yes">(In a population based study of drug induced liver injury from Iceland, 96 cases were identified over a 2 year period, including 6 attributed to diclofenac [ranking 2nd], but none for nabumetone or other NSAIDs).</italic></p></annotation><pub-id pub-id-type="pmid">23419359</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.hern_ndez.2014.231">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Hern&#x000e1;ndez</surname>
+<given-names>N</given-names></string-name>, <string-name name-style="western"><surname>Bessone</surname>
+<given-names>F</given-names></string-name>, <string-name name-style="western"><surname>S&#x000e1;nchez</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>di Pace</surname>
+<given-names>M</given-names></string-name>, <string-name name-style="western"><surname>Brahm</surname>
+<given-names>J</given-names></string-name>, <string-name name-style="western"><surname>Zapata</surname>
+<given-names>R, A</given-names></string-name>
+<string-name name-style="western"><surname>Chirino</surname>
+<given-names>R</given-names></string-name>, <etal>et al.</etal>
+<article-title>Profile of idiosyncratic drug induced liver injury in Latin America. An analysis of published reports.</article-title>
+<source>Ann Hepatol</source>
+<year>2014</year>; <volume>13</volume>: <fpage>231</fpage>-<lpage>9</lpage>.<annotation><p><italic toggle="yes">(Systematic review of literature of drug induced liver injury in Latin American countries published from 1996 to 2012 identified 176 cases, the most common class of implicated agents being NSAIDs [n=62, 32%], and specific agents were nimesulide [n=53], piroxicam [5], diclofenac [2], gold salts [1], and naproxen [1]).</italic></p></annotation><pub-id pub-id-type="pmid">24552865</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.chalasani.2015.1340">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Chalasani</surname>
+<given-names>N</given-names></string-name>, <string-name name-style="western"><surname>Bonkovsky</surname>
+<given-names>HL</given-names></string-name>, <string-name name-style="western"><surname>Fontana</surname>
+<given-names>R</given-names></string-name>, <string-name name-style="western"><surname>Lee</surname>
+<given-names>W</given-names></string-name>, <string-name name-style="western"><surname>Stolz</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Talwalkar</surname>
+<given-names>J</given-names></string-name>, <string-name name-style="western"><surname>Reddy</surname>
+<given-names>KR</given-names></string-name>, <etal>et al.</etal>; <collab>United States Drug Induced Liver Injury Network</collab>. <article-title>Features and outcomes of 899 patients with drug-induced liver injury: The DILIN Prospective Study.</article-title>
+<source>Gastroenterology</source>
+<year>2015</year>; <volume>148</volume>: <fpage>1340</fpage>-<lpage>52.e7</lpage>.<annotation><p><italic toggle="yes">(Among 899 cases of drug induced liver injury enrolled in a US prospective study between 2004 and 2013, 28 were attributed to NSAIDs [Schmeltzer 2016]).</italic></p></annotation><pub-id pub-id-type="pmid">25754159</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.schmeltzer.2016.603">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Schmeltzer</surname>
+<given-names>PA</given-names></string-name>, <string-name name-style="western"><surname>Kosinski</surname>
+<given-names>AS</given-names></string-name>, <string-name name-style="western"><surname>Kleiner</surname>
+<given-names>DE</given-names></string-name>, <string-name name-style="western"><surname>Hoofnagle</surname>
+<given-names>JH</given-names></string-name>, <string-name name-style="western"><surname>Stolz</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Fontana</surname>
+<given-names>RJ</given-names></string-name>, <string-name name-style="western"><surname>Russo</surname>
+<given-names>MW</given-names></string-name>; <collab>Drug-Induced Liver Injury Network (DILIN)</collab>. <article-title>Liver injury from nonsteroidal anti-inflammatory drugs in the United States.</article-title>
+<source>Liver Int</source>
+<year>2016</year>; <volume>36</volume>: <fpage>603</fpage>-<lpage>9</lpage>.<annotation><p><italic toggle="yes">(Among 1221 cases of drug induced liver injury enrolled in a prospective, US database between 2004 and 2014, 30 cases [2.5%] were attributed to NSAIDs, most commonly diclofenac [n=16], but also celecoxib [3], meloxicam [3], etodolac [2], ibuprofen [2], oxaprozin [2], valdecoxib [1] and sulindac [1], but none for nabumetone).</italic></p></annotation><pub-id pub-id-type="pmid">26601797</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.donati.2016.238">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Donati</surname>
+<given-names>M</given-names></string-name>, <string-name name-style="western"><surname>Conforti</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Lenti</surname>
+<given-names>MC</given-names></string-name>, <string-name name-style="western"><surname>Capuano</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Bortolami</surname>
+<given-names>O</given-names></string-name>, <string-name name-style="western"><surname>Motola</surname>
+<given-names>D</given-names></string-name>, <string-name name-style="western"><surname>Moretti</surname>
+<given-names>U</given-names></string-name>, <etal>et al.</etal>; <collab>DILI-IT Study Group</collab>. <article-title>Risk of acute and serious liver injury associated to nimesulide and other NSAIDs: data from drug-induced liver injury case-control study in Italy.</article-title>
+<source>Br J Clin Pharmacol</source>
+<year>2016</year>; <volume>82</volume>: <fpage>238</fpage>-<lpage>48</lpage>.<annotation><p><italic toggle="yes">(Among 179 cases of acute liver injury and 1770 controls admitted to 9 Italian hospitals between 2010 and 2014, NSAIDs used more frequently in cases compared to controls included nimesulide [17% vs 10%: odds ratio 1.88] and ibuprofen [14% vs 10%: odds ratio 1.59] and risk was higher in those taking higher doses).</italic></p></annotation><pub-id pub-id-type="pmid">26991794</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.zoubek.2018.292">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Zoubek</surname>
+<given-names>ME</given-names></string-name>, <string-name name-style="western"><surname>Gonz&#x000e1;lez-Jimenez</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Medina-C&#x000e1;liz</surname>
+<given-names>I</given-names></string-name>, <string-name name-style="western"><surname>Robles-D&#x000ed;az</surname>
+<given-names>M</given-names></string-name>, <string-name name-style="western"><surname>Hernandez</surname>
+<given-names>N</given-names></string-name>, <string-name name-style="western"><surname>Romero-G&#x000f3;mez</surname>
+<given-names>M</given-names></string-name>, <string-name name-style="western"><surname>Bessone</surname>
+<given-names>F</given-names></string-name>, <etal>et al.</etal>
+<article-title>High Prevalence of ibuprofen drug-induced Liver injury in Spanish and Latin-American registries.</article-title>
+<source>Clin Gastroenterol Hepatol</source>
+<year>2018</year>; <volume>16</volume>: <fpage>292</fpage>-<lpage>4</lpage>.<annotation><p><italic toggle="yes">(Analysis of a Spanish and Latin-American registries identified 73 cases of NSAID induced liver injury, the most common agents being nimesulide [38%], diclofenac [34%] and ibuprofen [17%]; nabumetone and other NSAIDs not mentioned).</italic></p></annotation><pub-id pub-id-type="pmid">28782674</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.meunier.2018.187">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Meunier</surname>
+<given-names>L</given-names></string-name>, <string-name name-style="western"><surname>Larrey</surname>
+<given-names>D</given-names></string-name>. <article-title>Recent advances in hepatotoxicity of non-steroidal anti-inflammatory drugs.</article-title>
+<source>Ann Hepatol</source>
+<year>2018</year>; <volume>17</volume>: <fpage>187</fpage>-<lpage>91</lpage>.<annotation><p><italic toggle="yes">(Review of the hepatotoxicity of NSAIDS mentions the most commonly implicated are diclofenac, nimesulide, sulindac, ibuprofen, piroxicam, naproxen and aspirin).</italic></p></annotation><pub-id pub-id-type="pmid">29469052</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF31">
+            <mixed-citation publication-type="journal"><article-title>Nonopioid drugs for pain.</article-title>
+<source>Med Lett Drugs Ther.</source>
+<year>2022</year>;<volume>64</volume>(<issue>1645</issue>):<fpage>33</fpage>-<lpage>40</lpage>..<annotation><p><italic toggle="yes">(Concise review of the nonopioid drugs for pain mentions that NSAIDs are considered to be more effective than acetaminophen for mild to moderate pain and that they can cause small increases in serum aminotransferase levels but that serious hepatotoxicity is rare, occurring most frequently with diclofenac, while cholestatic hepatitis has been reported with use of celecoxib).</italic></p></annotation><pub-id pub-id-type="pmid">35231019</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.bonkovsky.2024.1409">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Bonkovsky</surname>
+<given-names>HL</given-names></string-name>, <string-name name-style="western"><surname>Ghabril</surname>
+<given-names>M</given-names></string-name>, <string-name name-style="western"><surname>Nicoletti</surname>
+<given-names>P</given-names></string-name>, <string-name name-style="western"><surname>Dellinger</surname>
+<given-names>A</given-names></string-name>, <string-name name-style="western"><surname>Fontana</surname>
+<given-names>RJ</given-names></string-name>, <string-name name-style="western"><surname>Barnhart</surname>
+<given-names>H</given-names></string-name>, <string-name name-style="western"><surname>Gu</surname>
+<given-names>J</given-names></string-name>, <etal>et al</etal>; <collab>US DILIN Investigators</collab>. <article-title>Drug-induced liver injury (DILI) ascribed to non-steroidal anti-inflammatory drugs (NSAIDs) in the USA-update with genetic correlations.</article-title>
+<source>Liver Int.</source>
+<year>2024</year>;<volume>44</volume>:<fpage>1409</fpage>-<lpage>1421</lpage>..<annotation><p><italic toggle="yes">(Among 55 cases of drug induced liver injury attributed to NSAIDs enrolled in a U.S. database between 2004 and 2022, 29 were attributed to diclofenac, 7 to celecoxib, 5 to ibuprofen, 4 to etodolac and meloxicam, 2 to oxaprozin, and 1 to naproxen and sulindac, but none to nabumetone).</italic></p></annotation><pub-id pub-id-type="pmid">38451034</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.torgersen.2024.943">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Torgersen</surname>
+<given-names>J</given-names></string-name>, <string-name name-style="western"><surname>Mezochow</surname>
+<given-names>AK</given-names></string-name>, <string-name name-style="western"><surname>Newcomb</surname>
+<given-names>CW</given-names></string-name>, <string-name name-style="western"><surname>Carbonari</surname>
+<given-names>DM</given-names></string-name>, <string-name name-style="western"><surname>Hennessy</surname>
+<given-names>S</given-names></string-name>, <string-name name-style="western"><surname>Rentsch</surname>
+<given-names>CT</given-names></string-name>, <string-name name-style="western"><surname>Park</surname>
+<given-names>LS</given-names></string-name>, <etal>et al.</etal>
+<article-title>Severe acute liver injury after hepatotoxic medication initiation in real-world data.</article-title>
+<source>JAMA Intern Med.</source>
+<year>2024</year>;<volume>184</volume>:<fpage>943</fpage>-<lpage>952</lpage>..<annotation><p><italic toggle="yes">(Analysis of the US Veterans Administration electronic health records between 1999 and 2021 identified 1739 hospitalizations for acute liver injury suspected to be attributed to prescribed medications, at rates for NSAIDs of 1:7,700 for sulindac, 1:8,300 for indomethacin, 1:9,100 for naproxen, 1:11,000 for ibuprofen, 1:12,500 for diclofenac, and 1:14,300 for celecoxib; nabumetone was not mentioned).</italic></p></annotation><pub-id pub-id-type="pmid">38913369</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.chen.2025.151">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Chen</surname>
+<given-names>VL</given-names></string-name>, <string-name name-style="western"><surname>Rockey</surname>
+<given-names>DC</given-names></string-name>, <string-name name-style="western"><surname>Bjornsson</surname>
+<given-names>ES</given-names></string-name>, <string-name name-style="western"><surname>Barnhart</surname>
+<given-names>H</given-names></string-name>, <string-name name-style="western"><surname>Hoofnagle</surname>
+<given-names>JH</given-names></string-name>; <collab>Drug-Induced Liver Injury Network Investigators</collab>. <article-title>Incidence of idiosyncratic drug-induced liver injury caused by prescription drugs.</article-title>
+<source>Drug Saf.</source>
+<year>2025</year>;<volume>48</volume>:<fpage>151</fpage>-<lpage>160</lpage>..<annotation><p><italic toggle="yes">(Analysis of 1284 cases of drug-induced liver injury enrolled in a U.S. prospective study, identified 23 cases due to diclofenac for an estimated incidence of 1 per 4,800 new persons treated each year, while other NSAIDs had lower numbers and estimated rates, including celecoxib [4, 1:25,000] and meloxicam [n=3, 1:87,000], there were no cases due to nabumetone and its incidence could not be estimated).</italic></p></annotation><pub-id pub-id-type="pmid">39317916</pub-id>
+</mixed-citation>
+          </ref>
+          <ref id="Nabumetone.REF.bessone.2025.89">
+            <mixed-citation publication-type="journal"><string-name name-style="western"><surname>Bessone</surname>
+<given-names>F</given-names></string-name>, <string-name name-style="western"><surname>Hernandez</surname>
+<given-names>N</given-names></string-name>, <string-name name-style="western"><surname>Medina-Caliz</surname>
+<given-names>I</given-names></string-name>, <string-name name-style="western"><surname>Garc&#x000ed;a-Cort&#x000e9;s</surname>
+<given-names>M</given-names></string-name>, <string-name name-style="western"><surname>Schinoni</surname>
+<given-names>MI</given-names></string-name>, <string-name name-style="western"><surname>Mendizabal</surname>
+<given-names>M</given-names></string-name>, <string-name name-style="western"><surname>Chiodi</surname>
+<given-names>D</given-names></string-name>, <etal>et al.</etal>
+<article-title>Drug-induced liver injury in Latin America: 10-year experience of the Latin American DILI (LATINDILI) Network.</article-title>
+<source>Clin Gastroenterol Hepatol.</source>
+<year>2025</year>;<volume>23</volume>:<fpage>89</fpage>-<lpage>102</lpage>..<annotation><p><italic toggle="yes">(Among 458 cases of idiosyncratic drug-induced liver injury enrolled in a prospective Latin American database over a 10 year period, 49 were attributed to NSAIDs, including 19 [4.1%] to diclofenac, 14 [3.0%] to nimesulide and 11 [2.4%] to ibuprofen, and 1 case each to celecoxib, ketoprofen, ketorolac, meloxicam, and piroxicam, while no case was attributed to nabumetone [personal communication]).</italic></p></annotation><pub-id pub-id-type="pmid">38992407</pub-id>
+</mixed-citation>
+          </ref>
+        </ref-list>
+      </sec>
+      <sec sec-type="link-group" id="Nabumetone.OTHER_REFERENCE_LINKS">
+        <title>OTHER REFERENCE LINKS</title>
+        <p>1. <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://www.ncbi.nlm.nih.gov/sites/entrez?cmd=search&#x00026;db=pubmed&#x00026;pubmedfilters=true&#x00026;term=Butanones/AE+AND+nabumetone%5BNM%5D+AND+Human%5BMH%5D+AND+(%20drug-induced+liver+injury+OR+jaundice/CI+OR+bile+duct+diseases/CI+OR+liver/DE+OR+liver+diseases/CI)+AND+(%221900/1/1%22%5BEDat%5D:%222999/12/31%22%5BEDat%5D)">Recent References on Nabumetone: from PubMed.gov</ext-link></p>
+        <p>2. <ext-link xmlns:xlink="http://www.w3.org/1999/xlink" ext-link-type="uri" xlink:href="https://clinicaltrials.gov/ct2/results?term=nabumetone">Trials on Nabumetone: from ClinicalTrials.gov</ext-link></p>
+      </sec>
+    </body>
+  </book-part>
+</book-part-wrapper>

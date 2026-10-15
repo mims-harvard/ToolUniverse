@@ -130,7 +130,7 @@ Here's how to use ESM through Claude Code (an example of Option 1):
 **1. Add the MCP Server to Claude:**
 
 ```bash
-claude mcp add tooluniverse --env ESM_MCP_SERVER_HOST=$ESM_MCP_SERVER_HOST -- uvx tooluniverse
+claude mcp add --scope user tooluniverse --env ESM_MCP_SERVER_HOST=$ESM_MCP_SERVER_HOST -- uvx tooluniverse
 ```
 
 **2. Start Claude and use the tool:**

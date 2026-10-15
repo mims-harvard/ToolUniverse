@@ -529,9 +529,7 @@ def test_opennih_rejects_unknown_parameters_before_network(monkeypatch):
         raise AssertionError("invalid arguments attempted a network request")
 
     monkeypatch.setattr(tool, "_make_mcp_request", fail_on_network)
-    result = tool.run(
-        {"query": "CRISPR", "fiscal_yaer_start": 2025, "limit": 1}
-    )
+    result = tool.run({"query": "CRISPR", "fiscal_yaer_start": 2025, "limit": 1})
 
     assert result["status"] == "error"
     assert "Additional properties are not allowed" in result["error"]
@@ -580,6 +578,23 @@ def test_opennih_tools_register_without_network(monkeypatch):
         raise AssertionError("OpenNIH category load attempted a network request")
 
     monkeypatch.setattr(OpenNIHTool, "_make_mcp_request", fail_on_network)
+    # Tools that other test files register with @register_tool(config=...)
+    # (tests/examples/test_local_tools_*.py) load like user tools whatever the
+    # category filter, so under xdist they leaked into this set. Keep only
+    # the package's own decorator configs.
+    from tooluniverse import tool_registry
+
+    monkeypatch.setattr(
+        tool_registry,
+        "_config_registry",
+        {
+            tool_type: config
+            for tool_type, config in tool_registry._config_registry.items()
+            if getattr(
+                tool_registry._tool_registry.get(tool_type), "__module__", ""
+            ).startswith("tooluniverse.")
+        },
+    )
     tu = ToolUniverse()
     tu.load_tools(tool_type=["opennih"])
 

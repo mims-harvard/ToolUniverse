@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def CoL_search_species(
     q: str,
-    rank: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
-    offset: Optional[int | Any] = None,
+    rank: Optional[str] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,11 +25,11 @@ def CoL_search_species(
     ----------
     q : str
         Scientific name to search for (e.g., 'Homo sapiens', 'Panthera leo', 'Arabido...
-    rank : str | Any
+    rank : str
         Filter by taxonomic rank: 'species', 'genus', 'family', 'order', 'class', 'ph...
-    limit : int | Any
+    limit : int
         Maximum number of results to return (default 10, max 1000)
-    offset : int | Any
+    offset : int
         Offset for pagination
     stream_callback : Callable, optional
         Callback for streaming output

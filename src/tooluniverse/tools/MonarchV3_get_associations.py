@@ -9,8 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def MonarchV3_get_associations(
-    subject: str,
     category: str,
+    subject: Optional[str] = None,
+    object: Optional[str] = None,
     limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -23,9 +24,11 @@ def MonarchV3_get_associations(
     Parameters
     ----------
     subject : str
-        Subject entity CURIE. Examples: 'HGNC:11998' (TP53), 'MONDO:0005148' (type 2 ...
+        Subject-side entity CURIE, i.e. the entity on the LEFT of the association (th...
+    object : str
+        Object-side entity CURIE, i.e. the entity on the RIGHT of the association (th...
     category : str
-        Biolink association category. Options: 'biolink:GeneToPhenotypicFeatureAssoci...
+        Biolink association category, written as subject->object. Options: 'biolink:G...
     limit : int
         Maximum number of associations to return (default: 20, max: 200).
     stream_callback : Callable, optional
@@ -44,7 +47,12 @@ def MonarchV3_get_associations(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"subject": subject, "category": category, "limit": limit}.items()
+        for k, v in {
+            "subject": subject,
+            "object": object,
+            "category": category,
+            "limit": limit,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

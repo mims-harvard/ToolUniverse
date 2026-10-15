@@ -21,7 +21,7 @@ def UniBind_search_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search the UniBind catalog of curated, experimentally derived direct transcription factor (TF)-DN...
 
@@ -52,7 +52,7 @@ def UniBind_search_datasets(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

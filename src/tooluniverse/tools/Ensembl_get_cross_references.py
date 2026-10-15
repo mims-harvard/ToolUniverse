@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def Ensembl_get_cross_references(
     ensembl_id: str,
-    external_db: Optional[str | Any] = None,
+    external_db: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,7 +23,7 @@ def Ensembl_get_cross_references(
     ----------
     ensembl_id : str
         Ensembl stable identifier. Can be gene (ENSG*), transcript (ENST*), or transl...
-    external_db : str | Any
+    external_db : str
         Optional: filter by external database name. Examples: 'HGNC', 'EntrezGene', '...
     stream_callback : Callable, optional
         Callback for streaming output

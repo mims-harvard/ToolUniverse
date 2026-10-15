@@ -16,6 +16,7 @@ def ClinicalCalc_CHA2DS2_VASc(
     stroke_history: Optional[bool] = None,
     vascular_disease: Optional[bool] = None,
     female: Optional[bool] = None,
+    sex: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -39,7 +40,9 @@ def ClinicalCalc_CHA2DS2_VASc(
     vascular_disease : bool
         Vascular disease (prior MI, PAD, aortic plaque)
     female : bool
-        Female sex
+        Female sex (legacy boolean; equivalent to sex='female'). If both 'female' and...
+    sex : str
+        Biological sex: 'female'/'f' or 'male'/'m' (case-insensitive). Preferred over...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -64,6 +67,7 @@ def ClinicalCalc_CHA2DS2_VASc(
             "stroke_history": stroke_history,
             "vascular_disease": vascular_disease,
             "female": female,
+            "sex": sex,
         }.items()
         if v is not None
     }

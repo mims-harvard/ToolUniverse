@@ -1,0 +1,20 @@
+{
+  "api_name": "eQTL Catalogue REST API (EMBL-EBI)",
+  "base_url": "https://www.ebi.ac.uk/eqtl/api/v2",
+  "failure_mode": "HTTP 410 Gone on every path and every version",
+  "root_cause": "EBI retired the eQTL Catalogue REST API. /eqtl/api/, /eqtl/api/datasets, /eqtl/api/v1/datasets and /eqtl/api/v2/datasets all answer 410 with the body 'This API is no longer available. See the eQTL data access documentation: https://www.ebi.ac.uk/eqtl/Data_access/'. That page now offers only FTP flat files, HDF5 and Tabix; there is no REST replacement to repoint at, unlike the GWAS Catalog whose deprecated summary-statistics API has /gwas/api/v2.",
+  "confirmed_broken_date": "2026-09-22",
+  "last_retry_date": "2026-09-22",
+  "retry_count": 3,
+  "github_issues": [],
+  "retry_after": "2027-03-01",
+  "workaround": "Bulk download from https://ftp.ebi.ac.uk/pub/databases/spot/eQTL/ (tab-delimited and HDF5, with Tabix indexes for region queries), documented at https://www.ebi.ac.uk/eqtl/Data_access/. For association lookups that only need a gene or variant, OpenTargets (opentargets_* tools) exposes eQTL evidence through its GraphQL API and remains live.",
+  "workaround_tool_file": "src/tooluniverse/data/opentargets_tools.json",
+  "investigation_notes": [
+    "Surfaced by the weekly tool health check: both eqtl tools returned status_code 410.",
+    "Three consecutive requests to /eqtl/api/v2/datasets?size=1 returned 410 (2026-09-22).",
+    "Probed v1, v2 and the unversioned path, plus /eqtl/api/ itself -- all 410.",
+    "ftp.ebi.ac.uk/pub/databases/spot/eQTL/ returns 200, confirming the data moved rather than vanished."
+  ],
+  "attempted_config_file": "src/tooluniverse/data/broken_apis/eqtl_tools.json"
+}

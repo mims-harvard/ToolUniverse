@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def OpenFDA_search_drug_enforcement(
-    search: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
-    count: Optional[str | Any] = None,
+    search: Optional[str] = None,
+    limit: Optional[int] = None,
+    count: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,12 +22,12 @@ def OpenFDA_search_drug_enforcement(
 
     Parameters
     ----------
-    search : str | Any
+    search : str
         Lucene query for drug recalls (e.g., 'classification:"Class I"', 'status:Ongo...
-    limit : int | Any
+    limit : int
         Maximum number of results (default 5, max 100)
-    count : str | Any
-        Field to count by for frequency analysis (e.g., 'classification', 'recalling_...
+    count : str
+        Field to count by for frequency analysis. Must use the '.exact' keyword sub-f...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

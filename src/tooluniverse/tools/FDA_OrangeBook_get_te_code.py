@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def FDA_OrangeBook_get_te_code(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_te_code",
     brand_name: Optional[str] = None,
     generic_name: Optional[str] = None,
     *,

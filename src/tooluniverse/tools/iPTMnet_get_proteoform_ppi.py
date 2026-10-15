@@ -1,7 +1,7 @@
 """
 iPTMnet_get_proteoform_ppi
 
-Get proteoform-state-level protein-protein interactions from iPTMnet. Unlike iPTMnet_get_ptm_ppi ...
+NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has ...
 """
 
 from typing import Any, Optional, Callable
@@ -9,15 +9,15 @@ from ._shared_client import get_shared_client
 
 
 def iPTMnet_get_proteoform_ppi(
-    operation: str,
     uniprot_id: str,
+    operation: Optional[str] = "get_proteoform_ppi",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get proteoform-state-level protein-protein interactions from iPTMnet. Unlike iPTMnet_get_ptm_ppi ...
+    NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has ...
 
     Parameters
     ----------
