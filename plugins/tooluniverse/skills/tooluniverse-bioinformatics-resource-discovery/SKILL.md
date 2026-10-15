@@ -47,7 +47,7 @@ Verified live: `BioTools_search {"q": "RNA-seq", "size": 3}` -> 6,081 total matc
 
 Verified live: `SmartAPI_search_apis {"query": "biothings", "limit": 3}` -> real APIs including "Biothings Therapeutic Target Database API" (`base_url: https://biothings.transltr.io/ttd`) and "MyGeneset.info API". Feeding that `api_id` into `SmartAPI_get_api` returns `base_urls` (prod/test/CI variants), `endpoint_count: 5`, and the actual endpoint paths (`/query`, `/metadata`, `/association/{id}`, ...).
 
-**Use this to find an API not yet wrapped as a dedicated ToolUniverse tool** — resolve its base URL and endpoints here, then either call it directly (if simple/one-off) or use `tooluniverse-create-tool`/`devtu-create-tool` to wrap it properly. Also useful for resolving an API mentioned in a paper's methods section to its actual current base URL.
+**Use this to find an API not yet wrapped as a dedicated ToolUniverse tool** — resolve its base URL and endpoints here, then either call it directly (if simple/one-off) or use `create-tooluniverse-skill` to wrap it properly (the `devtu-create-tool` workflow it builds on now ships in the separate tu-harness plugin). Also useful for resolving an API mentioned in a paper's methods section to its actual current base URL.
 
 ## 3. ELIXIR TeSS — Training Materials & Events
 
