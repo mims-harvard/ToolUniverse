@@ -1,7 +1,7 @@
 ---
 
 name: tooluniverse-publish-tool
-description: "Help the user publish one tool from their shared computer to ToolUniverse so other scientists' AI assistants can find and run it, choosing whether only they, specific colleagues, or everyone can use it. Prepares and tests the tool for them; the user makes the final Publish click. Use when the user says \"publish my tool\", \"put my model in Discover\", \"let anyone use this tool\", \"let only my collaborators use this tool\", or \"unpublish my tool\"."
+description: "Help the user publish one tool from their shared computer to ToolUniverse so other scientists' AI scientists can find and run it, choosing whether only they, specific colleagues, or everyone can use it. Prepares and tests the tool for them; the user makes the final Publish click. Use when the user says \"publish my tool\", \"put my model in Discover\", \"let anyone use this tool\", \"let only my collaborators use this tool\", or \"unpublish my tool\"."
 ---
 
 # Publish one tool to ToolUniverse
