@@ -174,13 +174,26 @@ def _score(doc: Dict[str, Any]) -> Dict[str, Any]:
             "central-bin delta from two sequences. CPU-only here: about four "
             "minutes per variant, four variants maximum."
         ),
+        # Structurally identical to the published catalogue entry in
+        # src/tooluniverse/data/remote_tools/borzoi_calico_tools.json -- every
+        # bound here is one `_check` already enforces, so the schema the server
+        # advertises and the schema a caller reads are the same contract.
         "parameter": {
             "type": "object",
+            "additionalProperties": False,
             "properties": {
                 "variants": {
                     "type": "array",
+                    "minItems": 1,
+                    # The default of MAX_VARIANTS, written as a literal: a
+                    # published schema has to be the same for every caller, and
+                    # BORZOI_CALICO_MAX_VARIANTS can move the enforced ceiling
+                    # on one host. A host that raises it advertises 4 and
+                    # accepts more; it never advertises more than it accepts.
+                    "maxItems": 4,
                     "items": {
                         "type": "object",
+                        "additionalProperties": False,
                         "properties": {
                             "chrom": {
                                 "type": "string",
@@ -188,10 +201,19 @@ def _score(doc: Dict[str, Any]) -> Dict[str, Any]:
                             },
                             "pos": {
                                 "type": "integer",
+                                "minimum": 1,
                                 "description": "1-based position, as in a VCF.",
                             },
-                            "ref": {"type": "string", "description": "Reference allele (ACGT; SNVs only)."},
-                            "alt": {"type": "string", "description": "Alternate allele (ACGT; SNVs only)."},
+                            "ref": {
+                                "type": "string",
+                                "pattern": "^[ACGTacgt]+$",
+                                "description": "Reference allele (ACGT; SNVs only).",
+                            },
+                            "alt": {
+                                "type": "string",
+                                "pattern": "^[ACGTacgt]+$",
+                                "description": "Alternate allele (ACGT; SNVs only).",
+                            },
                             "id": {
                                 "type": "string",
                                 "description": "Optional identifier, echoed into the output. Defaults to chrom_pos_ref_alt.",
@@ -206,6 +228,8 @@ def _score(doc: Dict[str, Any]) -> Dict[str, Any]:
                 },
                 "top_tracks": {
                     "type": "integer",
+                    "minimum": 1,
+                    "maximum": MAX_TOP_TRACKS,
                     "description": (
                         "How many tracks to name per variant, ranked by |SAD|, "
                         "between 1 and 100 (default 20). The full 6,385-track "

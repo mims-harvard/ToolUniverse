@@ -184,6 +184,34 @@ is one dependency-free file (`remote_resident/protocol.py`) loaded by path.
    larger than the between-mode difference (15 s), so the honest answer is "no
    ratio established" -- which is a result, and is what the provider records.
 
+26. **Running the tests you remember instead of the directory.**
+   `tests/unit/test_remote_runtime.py` went green for every provider on this
+   standard, so it became the gate by habit. `tests/unit/test_remote_schema_parity.py`
+   sits beside it, holds twenty tests, and had been **red since the commit that
+   released opendde and colabdesign** -- both shipped with no
+   `src/tooluniverse/remote/<slug>/README.md` at all, which that file checks and
+   nothing else does. Running the whole directory also rejected three skills and
+   three READMEs over a documented contract I did not know existed: eight
+   **line-anchored** commands in the SKILL (`^python -m …`,
+   `endpoint is http://127.0.0.1:<port>/mcp`, `^Operation: …`,
+   `^> Validation status…`, and bare `tu doctor` / `tu serve --share` /
+   `tu remote share` / `tu remote share … --workers N` lines), a published
+   `src/tooluniverse/data/remote_tools/<slug>_tools.json` whose `parameter`
+   schema the skill's `~~~json` example is validated against, a **frozen**
+   `## TOU validation and deployment status (2026-08-16)` heading in the README
+   (the date is the Platform-matrix evidence date, not the provider's), and
+   sixteen required phrases across the two. **Two providers were released in a
+   state the suite rejects.** And the directory held two more red modules that
+   one file could never show: `test_remote_setup_preflight.py` rejected both new
+   skills for omitting the shared
+   `scripts/remote_validation/setup_skill_preflight.py` command, and
+   `test_remote_tool_boundaries.py`'s boltz case had been red since **admission
+   started probing the machine** (`5a8fbc72`) -- `run.assert_called_once()`
+   counts the `ps` and two `nvidia-smi` probes, when the property it is for is
+   that the *provider* command runs once. Three red modules, three different
+   causes, none of them the file I was running. `pytest tests/unit` costs a few
+   minutes; running one file costs a release.
+
 ## What eight verified providers cost, and where the time went
 
 Every figure measured on one GB10 (aarch64, cc 12.1), held worker, steady state. "cold → warm" is

@@ -103,7 +103,7 @@ description = "OpenDDE 1.1.1 (Aureka) AlphaFold3-class all-atom structure predic
 operations = ["opendde_fold"]
 status = "verified"
 verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02), venv route,
-CPython 3.12.10, torch 2.7.0+cu128 with NVRTC 12.9.86 first on LD_LIBRARY_PATH,
+CPython 3.12.10, torch 2.7.1+cu128 with NVRTC 12.9.86 first on LD_LIBRARY_PATH,
 kit mode OFF (this kit's levers are not enabled here; see the header). Wall times
 are from a card shared with other sessions and do not reproduce; peaks do.
 

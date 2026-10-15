@@ -54,6 +54,15 @@ be resident at once.
 - About 1.0 GiB of disk for the SavedModel and ~600 MB for the environment.
 - Python **3.11** for the model environment (the kit's `python` pin).
 
+Run the standard-library contract check before downloading large dependencies:
+
+~~~bash
+python scripts/remote_validation/setup_skill_preflight.py --implementation enformer_deepmind
+~~~
+
+After exporting provider resources, add `--check-provider-env`. After the server
+starts, add `--live` to verify the exact MCP tool set without running the model.
+
 ## Create the environment
 
 ```bash
@@ -157,6 +166,97 @@ $ PYTHON=~/enformer-dm-venv/bin/python bash run.sh check
 exit 3. On x86-64 with a CUDA TensorFlow, set `[kit] mode = "exact"` and its
 fourteen levers engage; `tu remote setup` refuses the mismatch by name before
 installing.
+
+## What the Platform evidence covers, and what it does not
+
+This implementation was added after the authenticated 2026-08-16 Platform
+matrix and was not part of it. That matrix imported each implementation it
+covered as unpublished owner drafts and invoked them through
+`/expert-sessions/{id}/test`; this provider was imported as no such draft and
+invoked through no such route. It has not been exercised through the Platform
+at all: the evidence above is local, on one card, through the loopback
+endpoint. Public publication, independent-caller authorization/isolation,
+saturation, and persistent supervision are untested.
+
+## Authorize once, then share with one short command
+
+Run once per machine, and again after key rotation:
+
+~~~bash
+tu remote login
+~~~
+
+Then each private share is:
+
+~~~bash
+tu remote share enformer_deepmind
+~~~
+
+Override the defaults only when needed:
+
+~~~bash
+tu remote share enformer_deepmind --name my-enformer-deepmind-remote --workers 1
+~~~
+
+Sharing automatically starts the browser flow when the key is missing,
+expired, or revoked. A malformed or revoked explicit
+`TOOLUNIVERSE_SERVICE_KEY` fails fast instead of being silently replaced.
+Use `tu remote logout` to remove only the locally stored key.
+
+## Check discovery and relay privately
+
+~~~bash
+tu doctor --forward http://127.0.0.1:8060/mcp --json
+tu serve --share --forward http://127.0.0.1:8060/mcp --name validation-enformer-deepmind --workers 1
+~~~
+
+## Run a verified example
+
+The Streamable HTTP endpoint is http://127.0.0.1:8060/mcp. In a second
+activated shell run:
+
+Operation: run_enformer_deepmind_predict
+
+~~~json
+{"sequence":"ACGTACGT","organism":"human","tracks":[0,4100]}
+~~~
+
+That eight-base request is a **plumbing check, not a result**: anything shorter
+than 393,216 bases is N-padded, so the model sees almost nothing but zero
+columns and the numbers it returns mean nothing. It costs the same three
+minutes as a real window. The sequence the acceptance runs used -- and the one
+whose `sum(centre)` of 4606.426440 reproduced across two requests -- is
+`src/tooluniverse/remote/enformer_deepmind/smoke/input.txt`, which is too long
+to inline; the block below reads it when it is there and falls back to the
+short request when it is not.
+
+Invoke the example through the live local MCP endpoint:
+
+~~~bash
+python - <<'PY'
+import asyncio
+import json
+import pathlib
+from fastmcp import Client
+
+async def main():
+    arguments = json.loads('''{"sequence":"ACGTACGT","organism":"human","tracks":[0,4100]}''')
+    smoke = pathlib.Path(
+        "src/tooluniverse/remote/enformer_deepmind/smoke/input.txt"
+    )
+    if smoke.is_file():
+        arguments["sequence"] = smoke.read_text().strip()
+    async with Client("http://127.0.0.1:8060/mcp") as client:
+        result = await client.call_tool("run_enformer_deepmind_predict", arguments)
+        print(result)
+
+asyncio.run(main())
+PY
+~~~
+
+Expected success shape: implementation, organism, n_bins 896, n_tracks 5313, a bounded centre array and timing. Check scientific meaning, finite values,
+output bounds, invalid-input behaviour, and the absence of paths,
+secrets and traces.
 
 ## Troubleshooting
 

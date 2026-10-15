@@ -1,6 +1,6 @@
 # Borzoi (calico release) variant-scoring remote tool
 
-## TOU validation and deployment status (2026-10-14)
+## TOU validation and deployment status (2026-08-16)
 
 > calico's own `borzoi_sad.py` at commit `5c93582` on `baskerville` at
 > `544073b`, fold 0, reverse-complement ensemble, held resident **on the CPU** of
@@ -106,3 +106,41 @@ Installed with `--no-deps` the redirect is never followed, so `pip list` shows
 `tensorflow 2.15.1` and `import tensorflow` raises. This provider's lock keeps
 the pin and adds `tensorflow-cpu-aws==2.15.1` beside it. Its TensorFlow 2.17.1
 sibling, `enformer_deepmind`, needs no such line.
+
+The authenticated 2026-08-16 Platform matrix found all 30 private owner relays
+online and all 41 operations discoverable. It imported each implementation as
+unpublished owner draft(s), configured a 120-second timeout, and invoked it
+through `/expert-sessions/{id}/test`. **This implementation was added after
+that matrix and was not part of it**, so none of that evidence covers it: it has
+not been exercised through the Platform at all, and everything above was
+measured locally, on one card, through the loopback endpoint. Public
+publication, independent-caller authorization/isolation, broad saturation and
+persistent supervision are unvalidated here.
+
+See the [complete setup and verification guide](../../../../skills/setup-borzoi_calico-remote-tool/SKILL.md).
+
+## Authorize once, then share with one short command
+
+Run once per machine, and again after key rotation:
+
+```bash
+tu remote login
+```
+
+Then each private share is:
+
+```bash
+tu remote share borzoi_calico
+```
+
+Override the defaults only when needed:
+
+```bash
+tu remote share borzoi_calico --name my-borzoi-calico-remote --workers 1
+```
+
+Sharing automatically starts the browser flow when the key is missing,
+expired, or revoked. A malformed or revoked explicit
+`TOOLUNIVERSE_SERVICE_KEY` fails fast instead of being silently replaced;
+unset or correct it, then run `tu remote login`. Non-interactive jobs also
+fail fast. Use `tu remote logout` to remove only the locally stored key.

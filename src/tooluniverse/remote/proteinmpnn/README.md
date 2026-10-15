@@ -1,6 +1,6 @@
 # ProteinMPNN remote tool
 
-## TOU validation and deployment status (2026-10-14)
+## TOU validation and deployment status (2026-08-16)
 
 > ProteinMPNN / SolubleMPNN at stock commit `8907e667` ran on the NVIDIA GB10 (aarch64, cc 12.1, driver 580.173.02) **on the CPU**, holding stock's own design loop, under kit mode `off` with one lever kept (`fast_parse`). **`[gpu] policy = "none"` and no `vram_budget_gb`, which is the point of this provider and not a limitation of it:** `admission.py` skips a provider with no declared budget, so this one is admitted while the card is full and can be resident alongside every folding model on the box. Its central claim is EQUIVALENCE, not speed, and it was checked rather than argued: the acceptance suite byte-compares the worker's reply against `run.sh design --mode off` across five cases — two backbones, two seeds, two temperatures, two batch layouts and both weight sets, 36 designs — comparing every field stock writes, and every field was identical. **Read three notes before deploying.** (1) The kit's optimised `exact` line also runs on this CPU host and is also byte-identical there; it was declined on the clock, 38.53 s of generation against stock's 30.45 s, because every lever that survives a CPU host is a way of filling a GPU. (2) Building this provider found a real bug in the admission gate: a CPU provider's absent budget was read as UNKNOWN rather than zero, so a held worker refused every GPU provider on the host — exactly inverted. Fixed, with tests, and verified live. (3) **The owed quiet-host pair is paid and it halved the number.** The first runs happened while another session held the host at 681 % CPU and load 20.6 on 20 cores. Re-measured at load 3.25, same request: stock 15.22 and 14.40 s generation against 22.05 and 20.66 s wall, resident 18.3 and 19.2 s design against 18.4 and 19.5 s wall. Both contended figures were ~2.4x inflated and the real wall ratio is **1.13x**, not the 1.4x recorded as the expectation -- because residency saves a constant ~3 s, which reads as 1.40x against a contended 42.8 s baseline and 1.13x against a true 21 s one. Public publication, cross-user isolation, concurrency, recovery, backbones above 400 residues, multi-chain complexes and design quality are unvalidated; keep this deployment private.
 
@@ -26,6 +26,44 @@ New-user check: `python scripts/remote_validation/setup_skill_preflight.py
 --implementation proteinmpnn`. Add `--check-provider-env` before launch,
 `--live` after launch, and `--check-connect-prereqs` before sharing. Live
 preflight checks exact MCP discovery only; it does not run or validate a model.
+
+The authenticated 2026-08-16 Platform matrix found all 30 private owner relays
+online and all 41 operations discoverable. It imported each implementation as
+unpublished owner draft(s), configured a 120-second timeout, and invoked it
+through `/expert-sessions/{id}/test`. **This implementation was added after
+that matrix and was not part of it**, so none of that evidence covers it: it has
+not been exercised through the Platform at all, and everything above was
+measured locally, on one card, through the loopback endpoint. Public
+publication, independent-caller authorization/isolation, broad saturation and
+persistent supervision are unvalidated here.
+
+See the [complete setup and verification guide](../../../../skills/setup-proteinmpnn-remote-tool/SKILL.md).
+
+## Authorize once, then share with one short command
+
+Run once per machine, and again after key rotation:
+
+```bash
+tu remote login
+```
+
+Then each private share is:
+
+```bash
+tu remote share proteinmpnn
+```
+
+Override the defaults only when needed:
+
+```bash
+tu remote share proteinmpnn --name my-proteinmpnn-remote --workers 1
+```
+
+Sharing automatically starts the browser flow when the key is missing,
+expired, or revoked. A malformed or revoked explicit
+`TOOLUNIVERSE_SERVICE_KEY` fails fast instead of being silently replaced;
+unset or correct it, then run `tu remote login`. Non-interactive jobs also
+fail fast. Use `tu remote logout` to remove only the locally stored key.
 
 ## Where this sits among the siblings
 

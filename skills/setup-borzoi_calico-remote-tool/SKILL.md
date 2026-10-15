@@ -47,6 +47,15 @@ throughput, and for this one when the paper's statistics are what you need.
   directory that must be **writable** — see below.
 - ~10 GiB of free RAM per request. Peak RSS measured 10,011,120 KB.
 
+Run the standard-library contract check before downloading large dependencies:
+
+~~~bash
+python scripts/remote_validation/setup_skill_preflight.py --implementation borzoi_calico
+~~~
+
+After exporting provider resources, add `--check-provider-env`. After the server
+starts, add `--live` to verify the exact MCP tool set without running the model.
+
 ## The weights directory must be writable
 
 Unlike every other provider on this standard, a read-only weights mount does not
@@ -179,6 +188,82 @@ Neither of these was caught by comparing outputs. The first is invisible to the
 gate because the pinned stats make the bug and a "fixed" version agree; the
 second failed loudly. **Read the stock script; do not infer it from its own
 output.**
+
+## What the Platform evidence covers, and what it does not
+
+This implementation was added after the authenticated 2026-08-16 Platform
+matrix and was not part of it. That matrix imported each implementation it
+covered as unpublished owner drafts and invoked them through
+`/expert-sessions/{id}/test`; this provider was imported as no such draft and
+invoked through no such route. It has not been exercised through the Platform
+at all: the evidence above is local, on one card, through the loopback
+endpoint. Public publication, independent-caller authorization/isolation,
+saturation, and persistent supervision are untested.
+
+## Authorize once, then share with one short command
+
+Run once per machine, and again after key rotation:
+
+~~~bash
+tu remote login
+~~~
+
+Then each private share is:
+
+~~~bash
+tu remote share borzoi_calico
+~~~
+
+Override the defaults only when needed:
+
+~~~bash
+tu remote share borzoi_calico --name my-borzoi-calico-remote --workers 1
+~~~
+
+Sharing automatically starts the browser flow when the key is missing,
+expired, or revoked. A malformed or revoked explicit
+`TOOLUNIVERSE_SERVICE_KEY` fails fast instead of being silently replaced.
+Use `tu remote logout` to remove only the locally stored key.
+
+## Check discovery and relay privately
+
+~~~bash
+tu doctor --forward http://127.0.0.1:8061/mcp --json
+tu serve --share --forward http://127.0.0.1:8061/mcp --name validation-borzoi-calico --workers 1
+~~~
+
+## Run a verified example
+
+The Streamable HTTP endpoint is http://127.0.0.1:8061/mcp. In a second
+activated shell run:
+
+Operation: run_borzoi_calico_sad
+
+~~~json
+{"variants":[{"chrom":"chr1","pos":43110773,"ref":"G","alt":"A"}],"top_tracks":5}
+~~~
+
+Invoke the example through the live local MCP endpoint:
+
+~~~bash
+python - <<'PY'
+import asyncio
+import json
+from fastmcp import Client
+
+async def main():
+    arguments = json.loads('''{"variants":[{"chrom":"chr1","pos":43110773,"ref":"G","alt":"A"}],"top_tracks":5}''')
+    async with Client("http://127.0.0.1:8061/mcp") as client:
+        result = await client.call_tool("run_borzoi_calico_sad", arguments)
+        print(result)
+
+asyncio.run(main())
+PY
+~~~
+
+Expected success shape: implementation, n_variants, n_tracks 6385, stats, a variants array whose top_tracks carry all four statistics, and sad_h5. Check scientific meaning, finite values,
+output bounds, invalid-input behaviour, and the absence of paths,
+secrets and traces.
 
 ## Troubleshooting
 

@@ -190,6 +190,98 @@ and 1.5840 alone. That is a different baseline, not a defect — and the kit's o
 a one-structure request against the two-structure run is how this looked like a
 bug for ten minutes.
 
+## What the Platform evidence covers, and what it does not
+
+This implementation was added after the authenticated 2026-08-16 Platform
+matrix and was not part of it. That matrix imported each implementation it
+covered as unpublished owner drafts and invoked them through
+`/expert-sessions/{id}/test`; this provider was imported as no such draft and
+invoked through no such route. It has not been exercised through the Platform
+at all: the evidence above is local, on one card, through the loopback
+endpoint. Public publication, independent-caller authorization/isolation,
+saturation, and persistent supervision are untested.
+
+## Authorize once, then share with one short command
+
+Run once per machine, and again after key rotation:
+
+~~~bash
+tu remote login
+~~~
+
+Then each private share is:
+
+~~~bash
+tu remote share proteinmpnn
+~~~
+
+Override the defaults only when needed:
+
+~~~bash
+tu remote share proteinmpnn --name my-proteinmpnn-remote --workers 1
+~~~
+
+Sharing automatically starts the browser flow when the key is missing,
+expired, or revoked. A malformed or revoked explicit
+`TOOLUNIVERSE_SERVICE_KEY` fails fast instead of being silently replaced.
+Use `tu remote logout` to remove only the locally stored key.
+
+## Check discovery and relay privately
+
+~~~bash
+tu doctor --forward http://127.0.0.1:8049/mcp --json
+tu serve --share --forward http://127.0.0.1:8049/mcp --name validation-proteinmpnn --workers 1
+~~~
+
+## Run a verified example
+
+The Streamable HTTP endpoint is http://127.0.0.1:8049/mcp. In a second
+activated shell run:
+
+Operation: proteinmpnn_design
+
+~~~json
+{"structure":"ATOM      1  N   MET A   1      27.340  24.430   2.614  1.00  0.00           N\n","num_sequences":4,"seed":37}
+~~~
+
+That one ATOM line shows the **shape of the request, not a request that
+works**: a single atom is not a backbone and the tool refuses it. The
+structure the equivalence gate actually ran -- the first 40 residues of chain A
+of 5L33, the monomer the kit's own README designs with -- is 27 KB and lives in
+`src/tooluniverse/remote/proteinmpnn/smoke/input.json`, with the seed, weight
+set, temperature and batch size that were byte-compared against `run.sh design
+--mode off`. The block below uses that file when it is present.
+
+Invoke the example through the live local MCP endpoint:
+
+~~~bash
+python - <<'PY'
+import asyncio
+import json
+import pathlib
+from fastmcp import Client
+
+async def main():
+    arguments = json.loads('''{"structure":"ATOM      1  N   MET A   1      27.340  24.430   2.614  1.00  0.00           N\n","num_sequences":4,"seed":37}''')
+    smoke = pathlib.Path("src/tooluniverse/remote/proteinmpnn/smoke/input.json")
+    if smoke.is_file():
+        arguments = {
+            key: value
+            for key, value in json.loads(smoke.read_text()).items()
+            if not key.startswith("_")
+        }
+    async with Client("http://127.0.0.1:8049/mcp") as client:
+        result = await client.call_tool("proteinmpnn_design", arguments)
+        print(result)
+
+asyncio.run(main())
+PY
+~~~
+
+Expected success shape: structures (with native_sequence, native_score and a designs array), n_designs and timing_s. Check scientific meaning, finite values,
+output bounds, invalid-input behaviour, and the absence of paths,
+secrets and traces.
+
 ## Troubleshooting
 
 | symptom | cause |

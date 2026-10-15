@@ -165,8 +165,13 @@ def _predict(doc: Dict[str, Any]) -> Dict[str, Any]:
             "minutes: this release has no GPU-capable build for this machine's "
             "architecture and runs on the CPU."
         ),
+        # Structurally identical to the published catalogue entry in
+        # src/tooluniverse/data/remote_tools/enformer_deepmind_tools.json --
+        # every bound here is one `_check` already enforces, so the schema the
+        # server advertises and the schema a caller reads are the same contract.
         "parameter": {
             "type": "object",
+            "additionalProperties": False,
             "properties": {
                 "sequence": {
                     "type": "string",
@@ -176,6 +181,9 @@ def _predict(doc: Dict[str, Any]) -> Dict[str, Any]:
                         "the central 196,608. The cost does not depend on the "
                         "length you send."
                     ),
+                    "minLength": 1,
+                    "maxLength": MAX_INPUT_LENGTH,
+                    "pattern": "^[ACGTNacgtn]+$",
                 },
                 "organism": {
                     "type": "string",
@@ -188,7 +196,8 @@ def _predict(doc: Dict[str, Any]) -> Dict[str, Any]:
                 },
                 "tracks": {
                     "type": "array",
-                    "items": {"type": "integer"},
+                    "items": {"type": "integer", "minimum": 0},
+                    "maxItems": MAX_TRACKS,
                     "description": (
                         "Track indices whose full 896-bin profile to return, at "
                         "most 32. The centre bin of every track is returned "
