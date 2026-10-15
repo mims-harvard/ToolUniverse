@@ -1844,16 +1844,45 @@ class TestAdmission:
         assert not v
         assert "could not be established" in v.reason
 
-    def test_unified_memory_is_read_as_a_capacity_not_an_error(self):
-        """`nvidia-smi` answers [N/A] here because the device has no total."""
+    def test_unified_memory_is_read_as_a_capacity_not_an_error(self, monkeypatch):
+        """`[N/A]` is the unified-memory answer, so MemTotal is the pool.
+
+        This asserted the live host instead of the code path, and so it only
+        held on a machine with unified memory and a driver: CI has no
+        `nvidia-smi` at all, took the OSError branch, and read the None that
+        branch is supposed to return as a bug in the branch above it. Fake the
+        three answers and all three are checked anywhere.
+        """
+        import subprocess as sp
+
         from tooluniverse.remote_resident import admission
 
+        def answering(value):
+            def run(*_args, **_kwargs):
+                return sp.CompletedProcess([], 0, value, "")
+
+            return run
+
+        # Unified memory: no device total of its own, so the pool is MemTotal.
+        monkeypatch.setattr(admission.subprocess, "run", answering("[N/A]\n"))
         cap, source = admission.capacity_gib()
-        assert cap is not None, (
-            "this host has a pool even though the device has no total"
-        )
-        assert cap > 1.0
-        assert "MemTotal" in source or "memory.total" in source
+        assert cap is not None and cap > 1.0
+        assert "MemTotal" in source
+
+        # A discrete card does have one, and MemTotal is not the ceiling then.
+        monkeypatch.setattr(admission.subprocess, "run", answering("81920\n"))
+        cap, source = admission.capacity_gib()
+        assert cap == pytest.approx(80.0)
+        assert "memory.total" in source
+
+        # No driver at all is neither of those, and must not become a number.
+        def missing(*_args, **_kwargs):
+            raise FileNotFoundError("nvidia-smi")
+
+        monkeypatch.setattr(admission.subprocess, "run", missing)
+        cap, source = admission.capacity_gib()
+        assert cap is None
+        assert "nvidia-smi did not run" in source
 
     def test_the_reason_always_carries_the_numbers(self):
         """Section 8: a refusal names what happened, not that something did."""
@@ -2206,6 +2235,14 @@ class TestTheCliAndTheGateAgree:
             return {"ghost@elsewhere": 100.0}
 
         monkeypatch.setattr(admission, "machine_holdings", fake_holdings)
+        # The pool has to be pinned too. The arithmetic below is written against
+        # a 121.6 GiB pool, and reading it off the live host made the test pass
+        # only on the machine it was written on: CI has no `nvidia-smi`, so
+        # capacity is None there and every refusal says so instead of naming the
+        # holdings this test is about.
+        monkeypatch.setattr(
+            admission, "capacity_gib", lambda: (121.6, "pinned by the test")
+        )
 
         doc = json.loads(_run_room("--json"))
         assert calls, "the command did not consult machine_holdings"
