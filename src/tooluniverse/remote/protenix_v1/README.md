@@ -77,6 +77,25 @@ with its fix, and the measured numbers a host schedules on. This file carries
 the deployment contract and deliberately does not restate it, because two copies
 of a procedure drift and only one of them gets corrected.
 
+## Getting the structures out
+
+`return_structures: true` returns the mmCIF as text, and that works only for
+small complexes. **A tool result is capped at 100,000 characters** by
+`smcp.py`, which then falls back to RAW STRING truncation -- it cuts the JSON
+mid-string and hands the caller something that does not parse, rather than a
+short answer or a named error. A 131-residue monomer measured 102,306
+characters, so the very first thing most callers fold already exceeds it. The
+tool now refuses a structure above that limit with a message naming the way
+through, instead of letting the transport corrupt the reply.
+
+The way through is **`out_dir`**: an absolute server-side directory the
+predictions are written to, returned as `structure_paths`. That is also the
+right shape when one provider's output is another's input -- it keeps a
+megabyte of mmCIF off the wire entirely. `apnovo_generate_designs` already
+works this way, returning a `run_dir` its own evaluation reads, and the
+apnovo -> protenix_v1 -> apnovo chain measured on 2026-10-15 used `out_dir`
+for exactly this reason.
+
 ## Overview
 
 Protenix 1.1.0 all-atom structure prediction for a protein, nucleic-acid, ligand and ion complex

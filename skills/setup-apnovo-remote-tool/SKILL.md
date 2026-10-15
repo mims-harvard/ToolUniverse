@@ -250,6 +250,24 @@ first confidence record names no structure to score against. Every other key
 in `confidences` is carried through into the metric row, so a sibling's pTM,
 ipTM and pLDDT arrive without any mapping here.
 
+**This path has been run.** On 2026-10-15, upstream's `kemp_test_manifest.json`
+at 2 designs / 50 steps, folded by `protenix_v1` (both derived states, the
+complex with ligand `CCD_6NT`), ingested and scored: `status: ok`, 2 designs,
+**547 metrics each**, families `['complex', 'monomer', 'sampled', 'sequence']`,
+of which 68 are kemp-suite metrics including `complex/acid_base/distance`
+6.086 A. kemp_0000: `monomer/tm_score` 89.47, `monomer/rmsd` 1.596 A, zero
+missing motif residues. The confidence pass-through is visible as
+`complex/plddt` 94.71 and `complex/iptm` 0.9285.
+
+Two things to know when you fold with a sibling. The predicted mmCIF of a
+130-residue monomer is ~100 KB, and **a tool result is capped at 100,000
+characters** by the transport before falling back to raw truncation -- which
+corrupts the JSON rather than shortening it -- so ask the folding provider for
+`out_dir` and read the files from disk, not for `return_structures`. And
+`apnovo_evaluate_designs` reports `eval_suite_skipped`: upstream SKIPS a
+reaction suite it cannot compute, with a warning rather than an error, so an
+empty list there is what tells you the suite actually ran.
+
 ## Troubleshooting
 
 **`weights_terms_not_accepted`** — intended. See above.

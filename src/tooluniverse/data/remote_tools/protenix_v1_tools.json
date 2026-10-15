@@ -87,6 +87,12 @@
           "minimum": 1,
           "maximum": 20
         },
+        "out_dir": {
+          "type": "string",
+          "description": "Write the predicted structures to this directory on the server instead of a temporary one, and return their paths. This is how to get a structure larger than the transport can carry, and how to hand one provider's output to another's input without the mmCIF making a round trip through the caller.",
+          "minLength": 1,
+          "maxLength": 4096
+        },
         "return_structures": {
           "type": "boolean",
           "description": "Return the mmCIF text (default false: megabytes). The confidence scores come back either way.",
@@ -115,6 +121,17 @@
         },
         "structures_note": {
           "type": "string"
+        },
+        "structure_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Server-side mmCIF paths, when out_dir was given."
+        },
+        "out_dir": {
+          "type": "string",
+          "description": "The directory the structures were written to."
         },
         "seeds": {
           "type": "array",

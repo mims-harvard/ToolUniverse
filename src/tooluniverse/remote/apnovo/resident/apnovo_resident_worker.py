@@ -869,20 +869,52 @@ class Engine:
             {k.split("/", 1)[0] for row in rows for k in row if "/" in k}
         )
         summary = out_dir / "evaluation_summary.csv"
-        return {
+        # A reaction suite that cannot run is SKIPPED WITH A WARNING, not an
+        # error: `_evaluate_state` catches MissingAtomError and ValueError,
+        # logs "Skipping <suite> suite metrics for ...", and carries on. Those
+        # warnings go to this subprocess's stderr, which is read only when the
+        # exit code is non-zero -- so a caller who asked for `eval_suite` got
+        # `status: ok` and silently none of its metrics. MEASURED on a folded
+        # two-design kemp campaign: every generic family came back and the
+        # kemp suite contributed nothing, with no way to tell from the reply.
+        skipped = [
+            line.split("Skipping ", 1)[1].strip()
+            for line in (proc.stderr or "").splitlines()
+            if "Skipping " in line and "suite metrics" in line
+        ]
+        out: dict = {
             "status": "ok",
             "n_designs": len(rows),
             "metric_families": families,
             "metrics": rows,
             "summary_csv_path": str(summary) if summary.is_file() else None,
-            "note": (
-                "This provider has no folding stage, so unless this campaign "
-                "already holds predicted structures only the families listed "
-                "in metric_families were computable. Every state-prefixed "
-                "metric the published threshold sets use is absent, and an "
-                "absent metric is not a passing one."
-            ),
         }
+        if suite:
+            out["eval_suite"] = suite
+            out["eval_suite_skipped"] = skipped
+        folded = sorted(f for f in families if f not in ("sequence", "sampled"))
+        if folded:
+            out["note"] = (
+                f"Folded states were present, so the state-prefixed families "
+                f"{folded} were computed from them. The confidence record each "
+                f"prediction arrived with is carried through as "
+                f"<state>/plddt, /ptm, /iptm and the rest."
+            )
+            if suite and skipped:
+                out["note"] += (
+                    f" The {suite} suite was SKIPPED for {len(skipped)} "
+                    f"(design, state) pair(s) -- see eval_suite_skipped. An "
+                    f"absent metric is not a passing one."
+                )
+        else:
+            out["note"] = (
+                "This campaign holds no predicted structures, so only the "
+                "families listed in metric_families were computable. Every "
+                "state-prefixed metric the published threshold sets use is "
+                "absent, and an absent metric is not a passing one. Fold the "
+                "designs elsewhere and send them to apnovo_ingest_folded."
+            )
+        return out
 
 
 def main(argv=None) -> int:

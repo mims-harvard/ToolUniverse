@@ -45,6 +45,10 @@ PROVIDER_DIR = os.path.dirname(os.path.abspath(__file__))
 MAX_CHAINS = 20
 MAX_TOKENS_TOTAL = 800
 MAX_STRUCTURE_BYTES = 32 * 1024 * 1024
+# `smcp.py` caps a serialized tool result at 100,000 characters and then falls
+# back to raw string truncation, so a structure larger than this does not come
+# back short -- it comes back unparseable. Leave room for the rest of the reply.
+MAX_TRANSPORT_CHARS = 90_000
 _MOLECULE_TYPES = ("protein", "dna", "rna", "ligand", "ion")
 _CHAIN_KEY = {
     "protein": "proteinChain",
@@ -163,13 +167,28 @@ def _fold(
     seed: int,
     options: Dict[str, Any],
     return_structures: bool,
+    keep_dir: str = "",
 ) -> Dict[str, Any]:
     """One prediction on the resident worker, or a named reason why not."""
+    import contextlib
     import json
     import tempfile
 
     query = [{"name": name, "sequences": chains}]
-    with tempfile.TemporaryDirectory(prefix="protenix_v1-") as work:
+    # A named `keep_dir` survives the call; the default temporary directory
+    # does not. The difference matters because the mmCIF cannot always come
+    # back through the transport -- see `structures_note` below -- so for a
+    # pipeline whose next stage needs the structures, a server-side directory
+    # is the only handoff that works. `apnovo_generate_designs` already uses
+    # exactly this shape, returning a `run_dir` its own evaluation reads.
+    keeper = (
+        contextlib.nullcontext(keep_dir)
+        if keep_dir
+        else tempfile.TemporaryDirectory(prefix="protenix_v1-")
+    )
+    with keeper as work:
+        if keep_dir:
+            os.makedirs(work, exist_ok=True)
         reply = _worker().request(
             {
                 "op": "predict",
@@ -208,21 +227,56 @@ def _fold(
                 "accurate."
             )
 
+        if keep_dir:
+            # Paths, not text: the next stage of a pipeline reads these.
+            out["structure_paths"] = structures
+            out["out_dir"] = work
+
         # Off by default: an all-atom mmCIF of a few hundred residues is
         # megabytes and five of them is tens, which is what a transport
         # truncates -- producing a broken answer rather than a refused one.
+        #
+        # MEASURED, and it is not a hypothetical: a 131-residue monomer comes
+        # back as 102,306 characters of mmCIF, and `smcp.py` caps a tool
+        # result at 100,000 before falling back to RAW STRING truncation --
+        # which cuts the JSON mid-string and hands the caller something that
+        # does not parse. `MAX_STRUCTURE_BYTES` below is 32 MiB, so the guard
+        # this comment describes misses the failure it describes by a factor
+        # of 335. The transport limit, not the output limit, is the binding
+        # one, and the only way past it is `out_dir`.
         if not return_structures:
             out["structures_note"] = (
-                "pass return_structures=true to receive the mmCIF text; the "
-                "files themselves live in a temporary directory that is "
-                "removed when this call returns"
+                "pass return_structures=true to receive the mmCIF text, or "
+                "out_dir to have the files written somewhere that survives "
+                "this call. Text is capped by the transport at 100,000 "
+                "characters, which one monomer of ~130 residues already "
+                "exceeds; out_dir is the route for anything larger. Without "
+                "either, the files live in a temporary directory that is "
+                "removed when this call returns."
             )
             return out
 
         texts = []
         for path in structures:
             try:
-                if os.path.getsize(path) > MAX_STRUCTURE_BYTES:
+                size = os.path.getsize(path)
+                # The transport's 100,000-character cap binds long before the
+                # 32 MiB output limit, and exceeding it corrupts the reply
+                # rather than failing it. Refuse here instead, and name the
+                # way through.
+                if size > MAX_TRANSPORT_CHARS:
+                    texts.append(
+                        {
+                            "name": os.path.basename(path),
+                            "error": (
+                                f"{size:,} bytes exceeds the {MAX_TRANSPORT_CHARS:,} "
+                                f"characters a tool result can carry; pass out_dir "
+                                f"to have this written to a directory instead"
+                            ),
+                        }
+                    )
+                    continue
+                if size > MAX_STRUCTURE_BYTES:
                     texts.append(
                         {
                             "name": os.path.basename(path),
@@ -358,6 +412,19 @@ def _fold(
                     "minimum": 1,
                     "maximum": 20,
                 },
+                "out_dir": {
+                    "type": "string",
+                    "description": (
+                        "Write the predicted structures to this directory on "
+                        "the server instead of a temporary one, and return "
+                        "their paths. This is how to get a structure larger "
+                        "than the transport can carry, and how to hand one "
+                        "provider's output to another's input without the "
+                        "mmCIF making a round trip through the caller."
+                    ),
+                    "minLength": 1,
+                    "maxLength": 4096,
+                },
                 "return_structures": {
                     "type": "boolean",
                     "description": (
@@ -376,6 +443,15 @@ def _fold(
                 "n_structures": {"type": "integer"},
                 "structures": {"type": "array", "items": {"type": "object"}},
                 "structures_note": {"type": "string"},
+                "structure_paths": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Server-side mmCIF paths, when out_dir was given.",
+                },
+                "out_dir": {
+                    "type": "string",
+                    "description": "The directory the structures were written to.",
+                },
                 "seeds": {"type": "array", "items": {"type": "integer"}},
                 "scores": {"type": "object"},
                 "inputs": {"type": "array", "items": {"type": "object"}},
@@ -417,6 +493,20 @@ class ProtenixV1FoldTool:
         return_structures = arguments.get("return_structures", False)
         if not isinstance(return_structures, bool):
             return {"error": "'return_structures' must be a boolean."}
+        out_dir = arguments.get("out_dir", "")
+        if out_dir is None:
+            out_dir = ""
+        if not isinstance(out_dir, str):
+            return {"error": "'out_dir' must be a string."}
+        out_dir = out_dir.strip()
+        if out_dir and not os.path.isabs(out_dir):
+            return {
+                "error": (
+                    "'out_dir' must be an absolute path on the server: a "
+                    "relative one would resolve against whatever directory "
+                    "this process happens to be in."
+                )
+            }
 
         seed = arguments.get("seed", 101)
         if not isinstance(seed, int) or isinstance(seed, bool) or seed < 0:
@@ -438,7 +528,7 @@ class ProtenixV1FoldTool:
             options[key] = value
 
         try:
-            return _fold(chains, name, seed, options, return_structures)
+            return _fold(chains, name, seed, options, return_structures, out_dir)
         except WorkerStartError as exc:  # the provider, not the request
             reason = getattr(exc, "reason", "") or type(exc).__name__
             return {

@@ -40,6 +40,13 @@
 # weights question -- openfold3, protenix_v1, esmfold2, chai1 and
 # rosettafold3 are five on this same standard -- and then evaluates.
 #
+# MEASURED 2026-10-15: generate -> protenix_v1 fold -> ingest -> evaluate ran
+# end to end on this GB10 and produced 547 metrics per design across all four
+# families, 68 of them kemp-suite. Residency showed as 79x at 50 steps
+# (158.52 s cold, 1.99 s held). `status` stays "untested" because
+# verify_provider.py has still not run: one campaign that completes is not an
+# acceptance.
+#
 # The operation was published before that route existed and could only ever
 # return a named error, which was a defect rather than a documented limit.
 # The second half of it was ours: `_evaluate` passed
