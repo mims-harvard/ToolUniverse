@@ -14,7 +14,7 @@ The person you are helping is usually a scientist, not a programmer. Answer in p
 
 | What you see | The user is on |
 |---|---|
-| ToolUniverse tools such as `what_can_i_use`, `list_skills` or `get_skill`, from the server `https://tooluniverse-backend.onrender.com/mcp` | **ToolUniverse Connect** (hosted) |
+| ToolUniverse tools such as `what_can_i_use`, `list_skills` or `get_skill`, from the server `https://mcp.aiscientist.tools` (earlier setups: `https://tooluniverse-backend.onrender.com/mcp`, which still works) | **ToolUniverse Connect** (hosted) |
 | A ToolUniverse server started on this computer (`uvx tooluniverse`, `tu serve`), the `tu` command, or Python `from tooluniverse import ToolUniverse` | **Local ToolUniverse** |
 | No ToolUniverse tools at all | **Not connected yet** |
 
@@ -36,12 +36,14 @@ Suggest **Connect** for most scientists, especially anyone who does not use a te
 
 The user needs a free account: https://connect.aiscientist.tools/register. Its **Your AI scientist** page (https://connect.aiscientist.tools/connect-agent) shows these steps for each app.
 
-- **Claude (claude.ai or the desktop app):** **Customize → Connectors**, click **+ Add**, then **Add custom connector**. Name it ToolUniverse, URL `https://tooluniverse-backend.onrender.com/mcp`. Sign in and click **Allow**. In each new chat, click **+** under the message box, choose **Connectors** and make sure ToolUniverse is switched on.
+Two addresses, so the user is not confused: **connect.aiscientist.tools** is the website people use (account, database logins, computers, publishing). **mcp.aiscientist.tools** is only the connection address that goes into the AI app; people paste it once and never need to open it. If they do open it in a browser, it leads to the website.
+
+- **Claude (claude.ai or the desktop app):** **Customize → Connectors**, click **+ Add**, then **Add custom connector**. Name it ToolUniverse, URL `https://mcp.aiscientist.tools`. Sign in and click **Allow**. In each new chat, click **+** under the message box, choose **Connectors** and make sure ToolUniverse is switched on.
 - **Claude Code:** run
-  `claude mcp add --transport http --scope user tooluniverse "https://tooluniverse-backend.onrender.com/mcp" && curl -fsSL https://connect.aiscientist.tools/skills.sh | sh -s -- claude-code && claude mcp login tooluniverse`
+  `claude mcp add --transport http --scope user tooluniverse "https://mcp.aiscientist.tools" && curl -fsSL https://connect.aiscientist.tools/skills.sh | sh -s -- claude-code && claude mcp login tooluniverse`
   A browser page opens; the user signs in and clicks **Allow**. Then start a new Claude Code session.
 - **Codex:** run
-  `codex mcp add tooluniverse --url "https://tooluniverse-backend.onrender.com/mcp" && curl -fsSL https://connect.aiscientist.tools/skills.sh | sh -s -- codex`
+  `codex mcp add tooluniverse --url "https://mcp.aiscientist.tools" && curl -fsSL https://connect.aiscientist.tools/skills.sh | sh -s -- codex`
   It starts the browser sign-in; if no page opens, run `codex mcp login tooluniverse`. Then start a new Codex session.
 
 The `skills.sh` part installs a few small guides like this one so the AI scientist knows when to read ToolUniverse's guides. There is no key to copy. Once added, Claude Code and Codex use ToolUniverse in every session; Claude needs the connector switched on per chat.
