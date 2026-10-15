@@ -72,6 +72,20 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "apnovo",
+        "tooluniverse.remote.apnovo.apnovo_tool",
+        8059,
+        (
+            "apnovo_validate_motif",
+            "apnovo_generate_designs",
+            "apnovo_resequence_designs",
+            "apnovo_evaluate_designs",
+        ),
+        ("APNOVO_WEIGHTS_ROOT", "TOOLUNIVERSE_APNOVO_PYTHON"),
+        ("APNOVO_WEIGHTS_ROOT",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "atlasfold",
         "tooluniverse.remote.atlasfold.atlasfold_tool",
         8043,

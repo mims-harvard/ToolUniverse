@@ -57,6 +57,18 @@ DEPLOYMENTS = (
         path_env=("EVO2_OPT_WEIGHTS",),
     ),
     Deployment(
+        "apnovo",
+        8059,
+        (
+            "apnovo_validate_motif",
+            "apnovo_generate_designs",
+            "apnovo_resequence_designs",
+            "apnovo_evaluate_designs",
+        ),
+        ("APNOVO_WEIGHTS_ROOT", "TOOLUNIVERSE_APNOVO_PYTHON"),
+        path_env=("APNOVO_WEIGHTS_ROOT",),
+    ),
+    Deployment(
         "atlasfold",
         8043,
         ("atlasfold_predict",),
