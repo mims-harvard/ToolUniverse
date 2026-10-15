@@ -76,10 +76,15 @@
 # RELEASED 2026-10-14: the deployment-table entry landed and `status` is
 # "verified". It was held at "untested" while remote_runtime.py carried another
 # session's uncommitted provider; that session's work is untouched and was
-# backed up before this commit, and its apnovo entry claims PORT 8058, which is
-# THIS PROVIDER'S port and the one every line of verified_on was measured on.
-# The collision is real and nothing caught it, so this commit also adds
+# backed up before this commit, and its apnovo entry claimed PORT 8058, which
+# is THIS PROVIDER'S port and the one every line of verified_on was measured
+# on. The collision was real and nothing caught it, so this commit also adds
 # test_remote_runtime.py::test_ports_are_unique.
+#
+# THE COLLISION IS RESOLVED, later the same day: apnovo was committed at PORT
+# 8059 and test_ports_are_unique passes. This provider did not move and
+# nothing here was re-measured, because nothing needed to be -- 8058 is this
+# provider's alone, which is what the whole of verified_on below assumes.
 #
 # WHAT WAS ESTABLISHED. The bring-up established the five setup steps, a
 # 35-residue fold, and a ladder in two held workers -- and listed what it had
@@ -138,10 +143,12 @@ RESIDENCY: the smoke shape costs 97 s cold (one prediction in a fresh worker) an
 18.9-26.4 s held across four consecutive requests, so ~4-5x on this shape. build_s
 is 22-42 s depending on contention.
 
-NOT YET REGISTERED in remote_runtime.py's deployment table: that file carried
-another session's uncommitted provider while this work ran, and editing it would
-have committed their work. `tu remote setup opendde` resolves by provider
-directory and needs no entry; `tu remote check/run/share` do. The entry is owed."""
+REGISTERED, on PORT 8058, in remote_runtime.py's deployment table and in
+setup_skill_preflight.py's catalog. It was owed for as long as those files
+carried another session's uncommitted provider, since editing them would have
+committed their work; the entry landed with this note's release. `tu remote
+setup opendde` resolves by provider directory and never needed an entry; `tu
+remote check/run/share` do, and now have one."""
 
 [runtime]
 mode = "resident"

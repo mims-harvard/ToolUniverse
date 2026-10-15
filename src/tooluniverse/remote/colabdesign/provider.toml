@@ -4,10 +4,18 @@
 # RELEASED 2026-10-14: the deployment-table entry landed and `status` is
 # "verified". It was held at "untested" while remote_runtime.py carried another
 # session's uncommitted provider; that session's work is untouched and was
-# backed up before this commit, and its apnovo entry claims PORT 8058, which is
-# THIS PROVIDER'S port and the one every line of verified_on was measured on.
-# The collision is real and nothing caught it, so this commit also adds
+# backed up before this commit. That session's apnovo entry claimed PORT 8058,
+# and the sentence that used to stand here called 8058 "THIS PROVIDER'S port":
+# it is not. 8058 is OPENDDE's, and this note was released in the same commit
+# as opendde's, whose copy of the sentence is the true one. THIS PROVIDER IS ON
+# 8054 -- what every line of verified_on was measured on, what the setup skill
+# publishes and what the deployment table now carries -- so the collision was
+# never with this provider at all. It was real between apnovo and opendde, and
+# nothing caught it, which is why that commit also adds
 # test_remote_runtime.py::test_ports_are_unique.
+#
+# THE COLLISION IS RESOLVED, later the same day: apnovo was committed at PORT
+# 8059 and test_ports_are_unique passes.
 #
 # WHAT WAS ESTABLISHED. The acceptance run, the 400-token row, the recycles axis and
 # the documented example have all since completed (see verified_on), on a quiet
@@ -100,11 +108,22 @@ from 11.6 (100 tokens) / 16.9 (200) / 51.8 (400) on a shape's first request to
 build_s is 1.16 s, so the process itself is cheap to hold and what residency
 buys here is the per-shape compile.
 
-NOT YET REGISTERED in remote_runtime.py's deployment table, and the harness
-caveat above is unfixed, for the same reason: both files carried another
-session's uncommitted provider while this work ran, and editing them would have
-committed their work. `tu remote setup colabdesign` resolves by provider
-directory and needs no entry; `tu remote check/run/share` do. Both are owed."""
+REGISTERED, on PORT 8054, in remote_runtime.py's deployment table and in
+setup_skill_preflight.py's catalog. It was owed for as long as those files
+carried another session's uncommitted provider, since editing them would have
+committed their work; the entry landed with this note's release. `tu remote
+setup colabdesign` resolves by provider directory and never needed an entry;
+`tu remote check/run/share` do, and now have one.
+
+THE HARNESS CAVEAT IS DISCLOSED RATHER THAN FIXED, and for this provider it
+still bites. verify_provider.py now states in its own docstring and beside the
+ladder that `peak_reserved_gib` is a running high-water mark in most of these
+workers, and it runs the ladder FIRST and ASCENDING so the rungs are read in
+the only order that keeps them honest. The workers that escape it reset the
+counter per request through `on_reset`; this one has no `on_reset`, so its
+per-request peak column is still a process high-water mark and every row after
+the 400-token rung still reads 12.0 because of that rung, not because of
+itself."""
 
 [runtime]
 mode = "resident"
