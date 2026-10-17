@@ -1,0 +1,132 @@
+# Enformer — genomic track prediction from 196,608 bp of DNA, held resident.
+#
+# The second provider brought onto the standard, and deliberately unlike the
+# first: a different framework pin (torch 2.13.0 against Boltz-2's 2.12.0), a
+# different kit activation (the mode variable and the kit's own .pth, which is
+# what 30 of the 36 kits offer, rather than Boltz-2's explicit worker_launch),
+# and weights that arrive from a hub at first load rather than from the kit's
+# install step.
+#
+# Measured on the same GB10 box; re-measure anywhere else.
+
+[provider]
+slug = "enformer"
+description = "Enformer genomic track prediction and variant effect from DNA sequence"
+operations = ["run_enformer_predict", "run_enformer_variant_effect"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02), kit off — see [kit]
+
+ACCEPTANCE 2026-10-17: 4/4 answered, every one produced=yes, and the run is
+COMPLETE rather than incomplete despite having no shaper -- see NO_SHAPER in
+scripts/remote_validation/verify_provider.py, which carries the reason and
+makes the suite exit 0 instead of telling its reader to add a ladder that
+would run the identical (1, 196608) tensor four times.
+
+5.8 s cold, then 1.6 / 1.6 / 1.6 s held.
+
+TWO THINGS THIS RUN FOUND, both recorded where they belong: the provider
+could not start at all before it ([kit] env_row), and the declared VRAM
+budget was a first-request figure ([gpu])."""
+
+[runtime]
+mode = "resident"
+# Residency is not what this one buys: enformer_tool.py already cached the model
+# in the MCP server's own process. On x86-64 it would also buy the kit's `graph`
+# lever, which captures on one call and replays on later ones and so is only
+# collectable by a process that survives between requests. On this host the kit
+# is off (see [kit]), and what remains is the separation — this stack pins torch
+# 2.13.0 and numpy 2.4.6 and cannot be installed beside ToolUniverse's — plus
+# the weights verification and the one lifecycle every provider shares.
+worker = "resident/enformer_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
+start_timeout_s = 900.0
+request_timeout_s = 1800.0
+# What a run that actually worked leaves behind. Enformer writes no files at
+# all -- it answers with arrays -- so the assertion is on the reply instead:
+# `centre` is the centre bin across every track, and an empty one means the
+# model produced nothing whatever the exit code said.
+output_keys = ["centre"]
+idle_timeout_s = 900.0
+smoke = "smoke/input.txt"
+smoke_timeout_s = 900.0
+
+[gpu]
+policy = "recommended"
+# MEASURED 4.69 GiB, and the figure this replaced was 4.12 -- BELOW an
+# observation this provider reliably produces, which is the direction that
+# lets a scheduler oversell.
+#
+# The old note said "4.12 GiB, identically on three runs", and that was true
+# of three runs in three PROCESSES. The acceptance suite's repeat phase, which
+# is four requests into ONE HELD WORKER, reads 4.12 on the first request and
+# 4.69 on the second, third and fourth. A held worker is what this provider
+# IS, so 4.69 is the figure a co-tenant has to plan against; 4.12 is only ever
+# true of a worker's first request.
+#
+# It still does not drift with the INPUT, which is what the old note was
+# really about and is still worth saying: every request is cropped or padded
+# to the same 196,608 bases, so the activation footprint is the same whatever
+# the caller sends. That is also why this provider has no shaper -- see
+# NO_SHAPER in scripts/remote_validation/verify_provider.py.
+vram_budget_gb = 4.69
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_ENFORMER_PYTHON"
+lock = "environment/requirements.lock"
+verify = "import torch, enformer_pytorch, enformer_opt; assert enformer_pytorch.__version__ == '0.8.12'"
+
+[weights]
+# Hugging Face's own cache, in its own layout. The kit's PINS.json records the
+# snapshot commit and the digest of the file that matters.
+root_env = "HF_HOME"
+root_default = "~/.cache/huggingface"
+# No URL is restated: upstream's own loader fetches the pinned snapshot. The
+# kit's install step has no --weights for this model, so the fetch is declared
+# here instead.
+fetch = "{python} -c \"from enformer_pytorch import from_pretrained; from_pretrained('EleutherAI/enformer-official-rough')\""
+
+[[weights.files]]
+name = "hub/models--EleutherAI--enformer-official-rough/snapshots/affe5713ae9017460706a44108289b13c5fee16c/pytorch_model.bin"
+size = 1005149571
+sha256 = "99b09d602e195d89c7d4debe144bb2f43907ba0d74006e97098e99d9171c439c"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "enformer"
+# This kit needs nothing from common/, but the checkout is shared with Boltz-2
+# and the sparse set is the union of what its providers declare.
+sparse = ["enformer", "common"]
+package = "enformer_opt"
+# "off" on this machine, and the reason is architectural, not a preference.
+# The kit's `exact` mode loads opt/forward/bin/enformer_fastkit_fused.so and
+# enformer_xattn_ext.so, and both are ELF x86-64 — the repository ships no
+# aarch64 build of them, for any of the eight kits that carry prebuilt host
+# objects. Its own `run.sh check` passes here (DRY mode=exact gpu=NVIDIA
+# GB10(sm121) build=sm_90-ptx): that line reports the GPU architecture its CUDA
+# objects target, which says nothing about the machine type of the file holding
+# them, so the failure surfaces only as an ImportError at load.
+#
+# On x86-64 set this to "exact" and the levers poscache, fused, graph and xattn
+# engage. `tu remote setup` refuses the mismatch by name before installing.
+mode = "off"
+# Declared, because an empty environment row and a FAILURE to read one are
+# indistinguishable from the launcher. With the kit off there is no row: the
+# kit is engaged by its mode variable and the .pth it installs, and neither is
+# installed here, so the worker runs plainly with nothing of the kit's in its
+# environment.
+#
+# THIS WAS NOT A STYLE POINT. Without it `kit_launch.build_command` refuses,
+# so this provider could not start AT ALL on this machine while carrying
+# `status = "verified"` -- found by running the acceptance suite against it
+# for the first time. Every one of the other thirteen kit-off providers in
+# this tree already declared it; enformer was the only one that did not.
+env_row = "none"
+env_row_reason = "the kit is off on aarch64 (its .so files are x86-64 only), and an off kit engages through no mode variable and no .pth, so there is no row to read. On x86-64 with mode `exact` the row carries the kit's own activation variables."
+install = "PYTHON={python} bash run.sh install"
+# Every lever, on this host: the objects that carry them are not loadable here.
+levers_declined = ["poscache", "fused", "graph", "xattn"]

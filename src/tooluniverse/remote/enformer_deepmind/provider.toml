@@ -1,0 +1,176 @@
+# enformer_deepmind — the official DeepMind Enformer TF-Hub SavedModel, held
+# resident, on the CPU.
+#
+# The third `policy = "none"` provider on this standard, and the first that is
+# CPU-only for a reason outside its own control: TensorFlow publishes no
+# GPU-capable aarch64 wheel at all, so `tf.test.is_built_with_cuda()` is False
+# and `list_physical_devices('GPU')` is empty on a box with a working GB10. That
+# is not a shortfall here, it is the composition property this standard cares
+# about -- see [gpu].
+#
+# Measured on one GB10 (aarch64, cc 12.1), kit off; re-measure anywhere else.
+
+[provider]
+slug = "enformer_deepmind"
+description = "Official DeepMind Enformer (TF-Hub SavedModel) genomic track prediction from DNA sequence"
+operations = ["run_enformer_deepmind_predict"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 121.6 GiB unified, driver 580.173.02), CPU only, kit off -- see [gpu] and [kit]
+
+ACCEPTANCE 2026-10-17: 4/4 answered, every one produced=yes, and the run is
+COMPLETE rather than incomplete despite having no shaper -- this provider is
+declared in NO_SHAPER in scripts/remote_validation/verify_provider.py, so the
+suite exits 0 and prints the reason instead of telling its reader to add a
+ladder that would certify nothing.
+
+The reason, restated from measurement: every request becomes (1, 393216, 4),
+so an 8 kb sequence and a 393 kb one cost the same.
+
+RESIDENCY BUYS THIS PROVIDER NOTHING, AND THE SUITE STRENGTHENS THAT CLAIM
+RATHER THAN JUST REPEATING IT. Four consecutive identical requests measured
+235.9 / 301.0 / 303.3 / 305.9 s: the second is not merely "not cheaper", it
+is about 28% DEARER, and then it plateaus. (Those absolute figures were taken
+while borzoi_calico was running on the same CPUs, so treat them as an upper
+bound; the shape -- first cheapest, then a higher plateau -- is the part that
+does not depend on the contention.)"""
+
+[runtime]
+mode = "resident"
+# WHAT RESIDENCY BUYS HERE IS ALMOST NOTHING, AND THE NUMBERS ARE THE REASON TO
+# SAY SO RATHER THAN IMPLY OTHERWISE. Two consecutive predictions of the same
+# window in one process, measured twice at two different host loads:
+#
+#   host quiet            194.1 s then 205.8 s   (human sum 2658074.750000 both)
+#   host at 834 % CPU     293.6 s then 294.7 s   (sum(centre) 4606.426440 both)
+#
+# The second call is NOT faster in either pair, so there is no graph tracing to
+# amortise and no warm-up to collect -- unlike every torch kit here, whose first
+# call pays a compile the next ones do not. That the claim replicates at two
+# loads is why it is stated at all; the absolute seconds are a property of
+# whatever else holds this host, which is why they are given with it. The model
+# load is 2.9 s warm and 28.6 s cold, and the worker starts in 6.1 s, so
+# residency is worth between 1 % and 10 % of a request depending only on the
+# page cache.
+#
+# Determinism, checked rather than assumed: the two calls of each pair returned
+# the same centre bin to the last float, and the mouse head answers
+# (896, 1643) -- both shapes exactly as stock/PINS.json declares them.
+#
+# Three things that are not the clock are why it is resident anyway: the stack
+# cannot be installed beside ToolUniverse's (TensorFlow 2.17.1 holds numpy to
+# 1.26.4), the weights are verified against the kit's pins before the worker
+# starts rather than per request, and it gets the one lifecycle, admission and
+# `room` accounting every provider on this standard shares.
+worker = "resident/enformer_deepmind_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
+# The SavedModel is 961 MB off local disk; nothing is fetched at start.
+start_timeout_s = 300.0
+# One window costs ~200 s on this CPU and a caller may send a longer sequence
+# than the model's own input length (it is centre-cropped, so the cost is flat),
+# but TensorFlow's intra-op pool is shared with whatever else holds this host.
+request_timeout_s = 1800.0
+idle_timeout_s = 900.0
+outputs = []
+# Enformer writes no files -- it answers with arrays -- so the assertion is on
+# the reply. `centre` is the centre bin across every track, and an empty one
+# means the model produced nothing whatever the exit code said. It is also the
+# key the torch-port `enformer` provider answers with, deliberately: the two
+# implementations can then be compared field for field.
+output_keys = ["centre"]
+smoke = "smoke/input.txt"
+smoke_timeout_s = 1800.0
+# WHY THIS PROVIDER WANTS NO SHAPER in `verify_provider.py`. Its cost is FLAT in
+# the input: every request is centre-cropped or N-padded to 393,216 bases, so an
+# 8 kb sequence and a 393 kb one cost the same ~200 s. A ladder over input
+# length would scale nothing and measure nothing. Repeats are the right test
+# here, which is what a provider with no shaper gets.
+
+[gpu]
+# `policy = "none"` IS A MEASUREMENT, not a preference, and it is read off the
+# installed wheel rather than the card:
+#
+#   tf.__version__                      2.17.1
+#   tf.test.is_built_with_cuda()        False
+#   tf.config.list_physical_devices     [] for 'GPU', on a GB10 that torch
+#                                       2.7.0+cu128 drives in the same session
+#
+# TensorFlow ships no GPU-capable aarch64 wheel at any version, so there is no
+# CUDA code in the artifact to reach the card with -- the same shape as the
+# torch floor below 2.7, one framework over.
+#
+# What this buys: a ~200 s genomics model that reserves no VRAM at all, so it
+# composes with a card that is already full. It is the complement of the
+# torch-port `enformer` provider (8011, policy = "recommended", 4.12 GiB), not
+# its replacement: both can be resident at once, and on this host they are the
+# official TensorFlow release and a community port of the same network.
+policy = "none"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_ENFORMER_DEEPMIND_PYTHON"
+lock = "environment/requirements.lock"
+verify = "import tensorflow as tf, tensorflow_hub as hub, numpy; assert tf.__version__ == '2.17.1'; assert hub.__version__ == '0.16.1'; assert numpy.__version__ == '1.26.4'"
+
+[weights]
+# tensorflow-hub's own cache, in its own layout: the pinned handle resolves
+# offline from this directory when the key below is present, and `hub.load`
+# fetches nothing. The worker refuses to start if the variable is unset rather
+# than silently reaching the network.
+root_env = "TFHUB_CACHE_DIR"
+root_default = "~/.cache/tfhub"
+fetch = "{python} -c \"import os; os.environ.setdefault('TFHUB_CACHE_DIR', os.environ['TFHUB_CACHE_DIR']); import tensorflow_hub as hub; hub.load('https://tfhub.dev/deepmind/enformer/1')\""
+
+[[weights.files]]
+name = "c444fdff3e183daf686869692c26e00391f6773c/saved_model.pb"
+size = 2310075
+sha256 = "c8f0af88f3626e7823f2b8fb2b8b7b07d6f337ae0aadc5f70c5671d263c695d6"
+
+[[weights.files]]
+name = "c444fdff3e183daf686869692c26e00391f6773c/variables/variables.data-00000-of-00001"
+size = 1005172750
+sha256 = "6a64f5fdb08b79efc5f18a1d18a804486390d5649046c8b63ac7bb6794cfc461"
+
+[[weights.files]]
+name = "c444fdff3e183daf686869692c26e00391f6773c/variables/variables.index"
+size = 5893
+sha256 = "7a30693fac902bd23140e962368a80577ed4a05e62c7602b25a820be32d53f91"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "enformer_deepmind"
+# This kit needs nothing from common/, but the checkout is shared and the sparse
+# set is the union of what its providers declare.
+sparse = ["enformer_deepmind", "common"]
+package = "enformer_deepmind_opt"
+# "off", and the reason is a file's ELF header rather than a preference. The
+# kit's `exact` mode needs opt/enformer_deepmind_opt/ops/edm_ops.so, whose
+# e_machine is 0x3e (x86-64); the repository ships no aarch64 build of it, as
+# for all eight kits that carry prebuilt host objects. And the levers behind it
+# are CUDA kernels, which a CPU-only TensorFlow could not reach even with an
+# aarch64 build: the kit's own dry run says so without being asked --
+# `NOT ACTIVE mode=exact reason=no CUDA device visible
+# (tf.config.list_physical_devices('GPU') is empty)`, exit 3.
+#
+# On x86-64 with a CUDA TensorFlow, set this to "exact" and its fourteen levers
+# engage. `tu remote setup` refuses the mismatch by name before installing.
+mode = "off"
+install = "PYTHON={python} bash run.sh install"
+# This kit keeps NO environment row, and that is read out of it rather than
+# assumed: `enformer_deepmind_opt` exports `enable`, `disable`, `apply`, `check`,
+# `status` and `PREFIX` and has no `modes.resolve` at all, so there is nothing
+# for the launcher's probe to read. Its switches live in the environment
+# directly -- `ENFORMER_DEEPMIND_OPT` selects the mode, and `EDM_OPS_ALLOW_TF`,
+# `EDM_REQUIRE_VECTOR` and `EDM_EXPF_K_BITS` tune levers that are declined here
+# -- which is the shape 1 of the 36 kits takes. Declaring it is required: the
+# launcher refuses rather than starting a worker with none of a kit's variables,
+# because openfold3 once ran with 0 of its 37.
+env_row = "none"
+env_row_reason = "the kit has no modes.resolve; ENFORMER_DEEPMIND_OPT selects the mode and EDM_* tune declined levers, all read from the environment directly"
+# Every lever, on this host. The kit's own words for why: a mode engages all of
+# its levers or refuses, and these are reached through one x86-64 object.
+levers_declined = [
+  "pool", "poolgemm", "bngelu", "bnconst", "poscache", "relsoftmax", "biasres",
+  "biasgelu", "poolgelu", "hostshape", "layernorm", "biasact", "qbias", "hostcrop",
+]

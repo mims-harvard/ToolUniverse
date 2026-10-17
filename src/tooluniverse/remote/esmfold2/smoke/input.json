@@ -1,0 +1,15 @@
+[
+  {
+    "id": "1BRS_barstar",
+    "sequences": [
+      {
+        "type": "protein",
+        "id": "A",
+        "sequence": "KKAVINGEQIRSISDLHQTLKKELALPEYYGENLDALWDALTGWVEYPLVLEWRQFEQSKQLTENGAESVLQVFREAKAEGADITIILS",
+        "msa": null
+      }
+    ],
+    "seeds": [0],
+    "num_diffusion_samples": 1
+  }
+]

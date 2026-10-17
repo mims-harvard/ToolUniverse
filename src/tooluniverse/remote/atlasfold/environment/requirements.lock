@@ -1,0 +1,212 @@
+# AtlasFold's model environment -- the stack this provider was built against, as
+# `pip freeze --all --exclude-editable` of the interpreter [env] python names,
+# on Python 3.11.12 (uv-managed CPython), linux-aarch64.
+#
+# The eighth distinct stack in this repository and it coexists with none of the
+# others: AtlasFold pins torch 2.7.1+cu128 / triton 3.3.1 / numpy 1.26.4 /
+# cuEquivariance 0.10.0 on Python 3.11, where OpenFold3 pins torch 2.10.0+cu128
+# on 3.11, Boltz-2 torch 2.12.0+cu130 and RoseTTAFold3 torch 2.13.0+cu130 on
+# 3.12. One model, one environment, one socket each.
+#
+# Rebuild (an NVIDIA driver that runs CUDA 12.8 -- 570 or newer -- and a C
+# compiler on PATH: Triton and the shared core's NVRTC kernels compile at first
+# use):
+#
+#   uv venv --seed --managed-python --python 3.11 ~/atlasfold-venv
+#   export TOOLUNIVERSE_ATLASFOLD_PYTHON=~/atlasfold-venv/bin/python
+#   grep -v '^#' requirements.lock > /tmp/afo.txt
+#   $TOOLUNIVERSE_ATLASFOLD_PYTHON -m pip install --no-deps -r /tmp/afo.txt \
+#       --extra-index-url https://download.pytorch.org/whl/cu128
+#   tu remote setup atlasfold            # the kit, its shared core, the weights
+#
+# `--no-deps` is deliberate: the list is complete, and letting a resolver
+# re-derive it is how a stack stops being the one that was measured. The kit
+# (atlasfold_opt), the vendored stock tree (atlasfold) and the shared core
+# (opt_core) install editable on top and are not here -- `--exclude-editable`
+# leaves them out by construction.
+#
+# `uv venv` IS used here, and that was checked rather than assumed. OpenFold3
+# cannot use it: `uv venv --seed` writes `_virtualenv.pth`, which puts a class
+# literally named `_Finder` on sys.meta_path, and openfold3_opt's `env.py` lists
+# `_Finder` in its HOOK_FINDER_CLASSES and reads it as a rival kit hook. This
+# kit has no such check. `atlasfold_opt/_autoload.py` guards with
+# `not any(isinstance(f, _Finder) for f in sys.meta_path)` -- an isinstance
+# against its OWN class, which uv's unrelated `_virtualenv._Finder` is not --
+# and `hooks/output_overlap.py` filters by module name
+# (`type(f).__module__.startswith("atlasfold_opt")`). Nothing in atlasfold_opt
+# or in common/opt_core scans site-packages for `.pth` files at all; the only
+# `.pth` either writes is `opt_core/mem/peak.py`'s own optional peak hook.
+# Confirmed by the result: the kit activates in this venv with 29 of 29 levers
+# and `skipped=none`. The kit's own STOCK.md recipe uses `uv venv --seed
+# --managed-python --python 3.11`, which is what was run.
+#
+# DEVIATIONS from the kit's own atlasfold/environment/requirements.lock:
+#
+#   NONE. Not one. `diff` of the two sorted pin sets is empty -- 49 lines,
+#   distribution for distribution and version for version. Nothing had to be
+#   substituted by name, for two reasons worth recording separately:
+#
+#     1. No pin in the kit's lock is a direct `name @ https://...x86_64...whl`
+#        URL. It names versions only, so there was nothing architecture-specific
+#        to replace -- unlike Enformer's, which pins nvidia-cudnn-frontend by
+#        direct link to an x86-64 file.
+#     2. Every one of the 49 publishes a linux-aarch64 or pure-Python wheel at
+#        exactly the pinned version, torch included:
+#        `torch-2.7.1+cu128-cp311-cp311-manylinux_2_28_aarch64.whl` exists on
+#        download.pytorch.org/whl/cu128, as do aarch64 builds of triton 3.3.1,
+#        numba 0.61.0, llvmlite 0.44.0, scipy 1.17.1, gemmi 0.7.5 and all
+#        sixteen nvidia-*-cu12 runtime wheels. The kit's STOCK.md calls its
+#        reference stack "Linux x86_64"; on this lock that is where it was
+#        measured, not a constraint.
+#
+#   The `--extra-index-url` above is not a deviation: torch 2.7.1+cu128 is a
+#   local-version wheel that only the PyTorch index serves, and it is the
+#   version the kit's lock names.
+#
+# `pip`, `setuptools` and `wheel` are excluded, as the kit's own lock header
+# excludes them ("pip, setuptools, wheel and the two editable installs ... are
+# not listed"). `packaging==26.3` IS in the kit's lock and is kept, even though
+# `uv venv --seed` also provides it at that same version.
+#
+# THE PIN THAT COSTS THIS PROVIDER MOST OF THE KIT: triton==3.3.1.
+#
+# It is the kit's own pin (torch 2.7.1+cu128 brings it) and it is NOT deviated
+# from here. On this card it cannot emit code at all. Its bundled LLVM does not
+# know `sm_121a`; it ignores the processor and then cannot lower the warp
+# shuffle that every block reduction emits:
+#
+#   'sm_121a' is not a recognized processor for this target (ignoring processor)  [x12]
+#   LLVM ERROR: Cannot select: intrinsic %llvm.nvvm.shfl.sync.bfly.i32
+#
+# followed by abort(). Measured here, the same `tl.sum` kernel on the same card:
+# triton 3.3.1 aborts, 3.6.0 (openfold3-venv) and 3.7.1 (esmfold2-venv) run it.
+#
+# WHAT A NEWER ptxas DOES AND DOES NOT FIX, since that is the known workaround
+# for the neighbouring triton versions and it does not reach this one. The
+# failure above is in Triton's LLVM lowering, UPSTREAM of ptxas. Measured, both
+# halves:
+#
+#   kernel with NO shuffle, bundled ptxas    ptxas-blackwell fatal : Value
+#                                            'sm_121a' is not defined for
+#                                            option 'gpu-name'
+#   kernel with NO shuffle, CUDA 12.9 ptxas  OK -- compiles and runs
+#   kernel WITH a shuffle,  bundled ptxas    LLVM ERROR: Cannot select ...
+#   kernel WITH a shuffle,  CUDA 12.9 ptxas  LLVM ERROR: Cannot select ...
+#                                            (identical, byte for byte)
+#
+# So `nvidia-cuda-nvcc-cu12==12.9.86` is NOT added to this lock: it would fix a
+# layer that is not the one that fails, and the 87 MB would buy nothing. For the
+# triton 3.4-3.5 band it IS the whole fix, and worth recording here because the
+# vendor agreed one version later -- triton 3.6.0 ships a second binary,
+# `ptxas-blackwell`, at exactly release 12.9. triton 3.3.1 also ships a
+# `ptxas-blackwell`, but it is CUDA 12.8 and tops out at `sm_120a`.
+#
+# Two further details for whoever meets this next:
+#   * triton 3.3.1 reads `TRITON_PTXAS-BLACKWELL_PATH`, not `TRITON_PTXAS_PATH`,
+#     for a card at cc >= 10.0 -- `get_ptxas(arch)` picks the binary NAME first
+#     (`ptxas-blackwell` when arch >= 100) and `_path_to_binary` derives the
+#     variable from it. The documented spelling silently does nothing.
+#   * `TRITON_OVERRIDE_ARCH` reaches `options.arch` (verified:
+#     `parse_options({}).arch == 'sm120'`) but not the target string LLVM
+#     objects to, which is set on the MLIR module in `make_ttgir`. Forcing
+#     `sm_arch_from_capability` to return `sm_120a` -- or `sm_90a` -- leaves the
+#     abort exactly where it was.
+#
+# Raising triton above 3.3.1 would be a deviation from the kit's pinned stack
+# that `stock/check_pins.py` is there to prevent, and is a decision about
+# pinned-stack integrity rather than a fix to apply quietly. It is not done. What
+# is done instead is in provider.toml: thirteen levers ablated through the kit's
+# own door, and the stock triangle backend forced to `torch` by a probe the
+# worker runs in a child process at start-up.
+#
+# cuequivariance-ops-torch-cu12==0.10.0 IS PART OF THE SAME STORY. It ships its
+# own Triton kernels, and `atlasfold.utils.kernel.cuequiv_available` resolves
+# upstream's default `--kernel auto` to `cuequiv` on nothing more than
+# `find_spec("cuequivariance_torch")` succeeding. Measured with NO kit word in
+# the environment -- stock AtlasFold, exactly as released:
+#
+#   stock, --kernel auto,   35 residues   folds
+#   stock, --kernel auto,  200 / 400 / 500 / 600 residues
+#                                         abort, cuequivariance_ops.triton.
+#                                         fused_layer_norm_triton:layer_norm_
+#                                         transpose_forward_kernel
+#   stock, --kernel torch, 600 residues   folds, 24.24 GiB
+#
+# which is to say THIS LOCK, UNMODIFIED AND WITH THE KIT SWITCHED OFF, CANNOT
+# FOLD A USEFUL SIZE ON THIS CARD under upstream's own default flag. That is a
+# property of the pinned stack meeting cc 12.1, not of the kit and not of this
+# provider, and it is why the worker chooses the backend instead of trusting the
+# default.
+#
+# ONE THING THIS LOCK INSTALLS AND DOES NOT MAKE LOADABLE, which cost a run to
+# find and which the worker fixes rather than this file. `nvidia-cuda-nvrtc-cu12
+# == 12.8.61` lays down `nvidia/cuda_nvrtc/lib/libnvrtc.so.12` inside
+# site-packages, and torch 2.7.1 does not preload it. `cuequivariance_ops`'s
+# `libcue_ops.so` dlopens it by soname, fails, and prints
+#
+#   Error while loading libcue_ops.so: libnvrtc.so.12: cannot open shared
+#   object file: No such file or directory
+#
+# after which `import cuequivariance_ops_torch` raises ImportError and the kit's
+# own warm-import census records
+# `warm_imports=...,cuequivariance_ops_torch:unavailable:ImportError,...`.
+# This is NOT cosmetic: `atlasfold.utils.kernel.cuequiv_available` tests only
+# `importlib.util.find_spec("cuequivariance_torch")`, which succeeds, so
+# `--kernel auto` still selects `cuequiv`, and the first triangle-attention call
+# then raises `ImportError: Error importing triangle_attention from
+# cuequivariance_ops_torch`. The kit's reference host has a CUDA 12.8 USER SPACE
+# (its own words) with libnvrtc on the loader path; a host whose CUDA comes only
+# from these wheels does not. The worker preloads the file from the installed
+# `nvidia` package with ctypes before anything imports cuEquivariance -- a path
+# derived from `nvidia.__file__`, never written down. See the worker's
+# `_preload_nvrtc`.
+#
+antlr4-python3-runtime==4.9.3
+certifi==2026.7.22
+charset-normalizer==3.5.1
+cuequivariance==0.11.1
+cuequivariance-ops-cu12==0.10.0
+cuequivariance-ops-torch-cu12==0.10.0
+cuequivariance-torch==0.10.0
+einops==0.8.0
+filelock==3.32.3
+fsspec==2026.7.0
+gemmi==0.7.5
+hf-xet==1.6.0
+huggingface_hub==0.36.2
+idna==3.19
+Jinja2==3.1.6
+llvmlite==0.44.0
+MarkupSafe==3.0.3
+mpmath==1.3.0
+networkx==3.6.1
+numba==0.61.0
+numpy==1.26.4
+nvidia-cublas-cu12==12.8.3.14
+nvidia-cuda-cupti-cu12==12.8.57
+nvidia-cuda-nvrtc-cu12==12.8.61
+nvidia-cuda-runtime-cu12==12.8.57
+nvidia-cudnn-cu12==9.7.1.26
+nvidia-cufft-cu12==11.3.3.41
+nvidia-cufile-cu12==1.13.0.11
+nvidia-curand-cu12==10.3.9.55
+nvidia-cusolver-cu12==11.7.2.55
+nvidia-cusparse-cu12==12.5.7.53
+nvidia-cusparselt-cu12==0.6.3
+nvidia-ml-py==13.610.43
+nvidia-nccl-cu12==2.26.2
+nvidia-nvjitlink-cu12==12.8.61
+nvidia-nvtx-cu12==12.8.55
+omegaconf==2.3.0
+opt_einsum==3.4.0
+packaging==26.3
+platformdirs==4.11.9
+PyYAML==6.0.3
+requests==2.34.2
+scipy==1.17.1
+sympy==1.14.0
+torch==2.7.1+cu128
+tqdm==4.70.1
+triton==3.3.1
+typing_extensions==4.16.0
+urllib3==2.8.0

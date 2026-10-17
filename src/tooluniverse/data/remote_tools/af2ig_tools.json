@@ -1,0 +1,135 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "af2ig_predict",
+    "description": "Re-predict a designed binder-target complex with AlphaFold 2 using the complex itself as the structural initial guess (nrbennet/dl_binder_design af2_initial_guess, model_1_ptm). This is the standard in-silico filter for designed binders: give it the complex as PDB text with the BINDER AS THE FIRST CHAIN and the target as the chains after it, and it returns the predicted complex and the interface confidence scores. The headline number is pae_interaction, in angstroms, where the field's working threshold is below 10. No MSA is built, no template is searched and no external service is contacted; the result is deterministic. The input must be a structure -- there is no sequence-only route.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "structure": {
+          "type": "string",
+          "description": "The complex as PDB text. CHAIN 1 IS THE BINDER and every following chain is the target; a single-chain file is predicted as a monomer and the interface scores come back null. ATOM records of standard residues are read; HETATM, waters and ligands are ignored. Backbone-only coordinates are enough.",
+          "minLength": 1
+        },
+        "num_recycle": {
+          "type": "integer",
+          "description": "AlphaFold recycling iterations (upstream's default is 3). This is compile-time: changing it rebuilds the held model and recompiles, which the reply reports as config_rebuilt.",
+          "minimum": 0,
+          "maximum": 20,
+          "default": 3
+        },
+        "initial_guess": {
+          "type": "boolean",
+          "description": "Use the input coordinates as the structural initial guess (default true, and the whole point of the method). False runs the same template-conditioned prediction without it, which is a different and weaker filter. Compile-time, as num_recycle is.",
+          "default": true
+        },
+        "force_monomer": {
+          "type": "boolean",
+          "description": "Treat the first chain alone as the whole input and drop the rest. Used to score a binder's own fold independently of its target.",
+          "default": false
+        },
+        "max_amide_dist": {
+          "type": "number",
+          "description": "Angstroms. A C-N amide distance above this is read as a chain break and gets AlphaFold's +200 residue-index offset (upstream's default 3.0).",
+          "minimum": 0.1,
+          "maximum": 100.0,
+          "default": 3.0
+        },
+        "return_structure": {
+          "type": "boolean",
+          "description": "Return the predicted complex as PDB text, with per-residue pLDDT in the B-factor column (default false: the scores are what a filter reads, and a few-hundred-residue PDB is hundreds of kilobytes). This is the ONLY way to get the structure: the server keeps no output directory and returns no host path.",
+          "default": false
+        }
+      },
+      "required": [
+        "structure"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "pae_interaction": {
+          "type": "number"
+        },
+        "scores": {
+          "type": "object"
+        },
+        "structure_name": {
+          "type": "string"
+        },
+        "structure": {
+          "type": "string"
+        },
+        "structure_note": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string"
+        },
+        "n_residues": {
+          "type": "integer"
+        },
+        "n_chains": {
+          "type": "integer"
+        },
+        "binder_length": {
+          "type": "integer"
+        },
+        "monomer": {
+          "type": "boolean"
+        },
+        "num_recycle": {
+          "type": "integer"
+        },
+        "initial_guess": {
+          "type": "boolean"
+        },
+        "config_rebuilt": {
+          "type": "boolean"
+        },
+        "new_length": {
+          "type": "boolean"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "seed": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "AF2IGPredictTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/af2ig",
+      "mcp_tool_name": "af2ig_predict"
+    },
+    "test_examples": [
+      {
+        "structure": "ATOM      1  N   LYS A   1      48.330  40.393   9.798  1.00 29.18           N  \nATOM      2  CA  LYS A   1      47.401  39.287   9.370  1.00 29.51           C  \nATOM      3  C   LYS A   1      47.507  38.911   7.890  1.00 28.30           C  \nATOM      4  O   LYS A   1      47.126  39.582   6.905  1.00 28.68           O  \nATOM      5  N   LYS A   2      48.047  37.742   7.642  1.00 26.22           N  \nATOM      6  CA  LYS A   2      48.270  37.151   6.331  1.00 25.12           C  \nATOM      7  C   LYS A   2      47.509  35.851   6.169  1.00 24.31           C  \nATOM      8  O   LYS A   2      47.675  35.055   7.114  1.00 25.51           O  \nATOM      9  N   ALA A   3      46.769  35.622   5.143  1.00 21.10           N  \nATOM     10  CA  ALA A   3      45.978  34.498   4.757  1.00 20.38           C  \nATOM     11  C   ALA A   3      46.489  33.983   3.396  1.00 20.72           C  \nATOM     12  O   ALA A   3      46.754  34.712   2.419  1.00 21.02           O  \nATOM     13  N   VAL A   4      46.734  32.695   3.274  1.00 20.76           N  \nATOM     14  CA  VAL A   4      47.246  32.078   2.049  1.00 19.90           C  \nATOM     15  C   VAL A   4      46.239  31.037   1.562  1.00 20.71           C  \nATOM     16  O   VAL A   4      45.764  30.221   2.364  1.00 19.98           O  \nATOM     17  N   ILE A   5      45.904  31.105   0.283  1.00 19.41           N  \nATOM     18  CA  ILE A   5      45.008  30.095  -0.304  1.00 20.78           C  \nATOM     19  C   ILE A   5      45.819  29.259  -1.317  1.00 20.51           C  \nATOM     20  O   ILE A   5      46.299  29.911  -2.268  1.00 20.94           O  \nATOM     21  N   ASN A   6      46.044  27.972  -1.179  1.00 20.27           N  \nATOM     22  CA  ASN A   6      46.781  27.201  -2.233  1.00 19.17           C  \nATOM     23  C   ASN A   6      45.680  26.718  -3.174  1.00 18.45           C  \nATOM     24  O   ASN A   6      45.045  25.676  -2.950  1.00 18.74           O  \nATOM     25  N   GLY A   7      45.366  27.502  -4.197  1.00 17.00           N  \nATOM     26  CA  GLY A   7      44.300  27.227  -5.089  1.00 17.98           C  \nATOM     27  C   GLY A   7      44.278  25.792  -5.594  1.00 20.92           C  \nATOM     28  O   GLY A   7      43.172  25.330  -5.865  1.00 20.09           O  \nATOM     29  N   GLU A   8      45.440  25.154  -5.750  1.00 22.42           N  \nATOM     30  CA  GLU A   8      45.391  23.789  -6.276  1.00 24.85           C  \nATOM     31  C   GLU A   8      44.882  22.817  -5.219  1.00 25.23           C  \nATOM     32  O   GLU A   8      44.402  21.743  -5.631  1.00 26.91           O  \nATOM     33  N   GLN A   9      44.885  23.103  -3.944  1.00 25.21           N  \nATOM     34  CA  GLN A   9      44.329  22.179  -2.942  1.00 25.61           C  \nATOM     35  C   GLN A   9      42.835  22.343  -2.735  1.00 25.21           C  \nATOM     36  O   GLN A   9      42.201  21.600  -1.974  1.00 25.43           O  \nATOM     37  N   ILE A  10      42.129  23.264  -3.370  1.00 24.82           N  \nATOM     38  CA  ILE A  10      40.707  23.520  -3.213  1.00 24.72           C  \nATOM     39  C   ILE A  10      39.930  22.644  -4.209  1.00 26.36           C  \nATOM     40  O   ILE A  10      39.897  22.840  -5.430  1.00 26.78           O  \nTER\nATOM     41  N   VAL B   1      16.783  48.812  26.447  1.00 30.15           N  \nATOM     42  CA  VAL B   1      17.591  48.101  25.416  1.00 27.93           C  \nATOM     43  C   VAL B   1      16.643  47.160  24.676  1.00 25.52           C  \nATOM     44  O   VAL B   1      16.213  46.129  25.220  1.00 26.86           O  \nATOM     45  N   ILE B   2      16.327  47.509  23.466  1.00 23.19           N  \nATOM     46  CA  ILE B   2      15.435  46.625  22.666  1.00 21.26           C  \nATOM     47  C   ILE B   2      16.364  45.902  21.716  1.00 19.99           C  \nATOM     48  O   ILE B   2      16.847  46.590  20.823  1.00 18.74           O  \nATOM     49  N   ASN B   3      16.649  44.649  21.953  1.00 18.92           N  \nATOM     50  CA  ASN B   3      17.576  43.909  21.092  1.00 18.90           C  \nATOM     51  C   ASN B   3      17.217  42.451  20.905  1.00 18.85           C  \nATOM     52  O   ASN B   3      18.091  41.583  20.672  1.00 20.22           O  \nATOM     53  N   THR B   4      15.924  42.149  21.003  1.00 18.34           N  \nATOM     54  CA  THR B   4      15.446  40.768  20.856  1.00 17.49           C  \nATOM     55  C   THR B   4      14.741  40.706  19.505  1.00 17.10           C  \nATOM     56  O   THR B   4      14.398  41.793  19.033  1.00 14.97           O  \nATOM     57  N   PHE B   5      14.524  39.531  18.945  1.00 16.90           N  \nATOM     58  CA  PHE B   5      13.825  39.493  17.635  1.00 16.30           C  \nATOM     59  C   PHE B   5      12.489  40.210  17.620  1.00 16.44           C  \nATOM     60  O   PHE B   5      12.204  41.045  16.703  1.00 14.76           O  \nATOM     61  N   ASP B   6      11.589  39.916  18.576  1.00 16.89           N  \nATOM     62  CA  ASP B   6      10.259  40.555  18.622  1.00 18.04           C  \nATOM     63  C   ASP B   6      10.215  42.022  19.020  1.00 17.60           C  \nATOM     64  O   ASP B   6       9.427  42.784  18.475  1.00 17.85           O  \nATOM     65  N   GLY B   7      11.039  42.359  20.025  1.00 16.48           N  \nATOM     66  CA  GLY B   7      11.036  43.791  20.394  1.00 15.91           C  \nATOM     67  C   GLY B   7      11.474  44.625  19.176  1.00 16.20           C  \nATOM     68  O   GLY B   7      10.794  45.617  18.852  1.00 17.11           O  \nATOM     69  N   VAL B   8      12.585  44.269  18.512  1.00 15.04           N  \nATOM     70  CA  VAL B   8      13.062  45.031  17.341  1.00 13.36           C  \nATOM     71  C   VAL B   8      12.110  44.889  16.152  1.00 12.91           C  \nATOM     72  O   VAL B   8      11.847  45.872  15.464  1.00 12.95           O  \nATOM     73  N   ALA B   9      11.531  43.736  15.924  1.00 14.31           N  \nATOM     74  CA  ALA B   9      10.611  43.525  14.819  1.00 15.19           C  \nATOM     75  C   ALA B   9       9.361  44.380  15.045  1.00 16.40           C  \nATOM     76  O   ALA B   9       8.860  44.943  14.089  1.00 14.62           O  \nATOM     77  N   ASP B  10       8.901  44.422  16.309  1.00 17.72           N  \nATOM     78  CA  ASP B  10       7.697  45.240  16.539  1.00 17.70           C  \nATOM     79  C   ASP B  10       8.013  46.702  16.371  1.00 16.47           C  \nATOM     80  O   ASP B  10       7.220  47.462  15.836  1.00 17.49           O  \nTER\nEND\n",
+        "num_recycle": 3
+      }
+    ]
+  }
+]

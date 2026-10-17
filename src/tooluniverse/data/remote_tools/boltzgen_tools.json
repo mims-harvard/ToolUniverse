@@ -1,0 +1,180 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "boltzgen_design",
+    "description": "Design protein backbones and sequences with BoltzGen and return the designs with their ranking metrics. Input is a BoltzGen design specification in YAML: a mapping with an 'entities' list. An unconditional monomer is one protein entity with a length range ('sequence: 60..80'); a binder additionally names a target structure as a 'file' entity, whose PDB text is supplied through 'target_files'. The whole six-step pipeline (design, inverse folding, refolding, analysis, filtering) runs unless 'steps' names fewer. No MSA server is used.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "spec": {
+          "type": "string",
+          "description": "BoltzGen design specification, YAML. Unconditional 60-mer:\nentities:\n  - protein:\n      id: A\n      sequence: 60..60\nBinder against a target, whose PDB goes in target_files under the same name:\nentities:\n  - protein: {id: B, sequence: 60..80}\n  - file:\n      path: target.pdb\n      include: [{chain: {id: A}}]\n      binding_types: [{chain: {id: A, binding: '39,96,98'}}]\n      structure_groups: all",
+          "minLength": 10,
+          "maxLength": 262144
+        },
+        "target_files": {
+          "type": "object",
+          "description": "Files the specification names by a relative path, as {file name: text}. A spec's 'file' entity is resolved against the specification's own directory, so a target PDB must be supplied here.",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "default": {}
+        },
+        "num_designs": {
+          "type": "integer",
+          "description": "How many designs to generate (default 4). Upstream's own default is 10000, which is a campaign rather than a request, so this provider does not use it.",
+          "default": 4,
+          "minimum": 2,
+          "maximum": 256
+        },
+        "diffusion_batch_size": {
+          "type": "integer",
+          "description": "Designs per diffusion batch (default: min(num_designs, 4)). Must be at least 2 and no more than num_designs: the optimization kit's mask-hoist lever cannot serve a batch of one design and the kit refuses the run. Larger batches are faster and use more GPU memory.",
+          "minimum": 2,
+          "maximum": 32
+        },
+        "steps": {
+          "type": "array",
+          "description": "Pipeline steps to run, in upstream's own names (design, inverse_folding, design_folding, folding, analysis, filtering). Omit for all of them; ['design'] generates backbones only and returns no ranking metrics.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "protocol": {
+          "type": "string",
+          "description": "Upstream's design protocol (default protein-anything), which picks the pipeline steps."
+        },
+        "sampling_steps": {
+          "type": "integer",
+          "description": "Denoiser steps the design step runs. Omit for upstream's own 500, which is what its published results use. Lowering it trades design quality for wall time and is for previews and smoke runs, not for designs that will be ordered: the reply reports the value every configured step actually ran.",
+          "minimum": 2,
+          "maximum": 1000
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed; pipeline step i runs with seed + i, and the same seed reproduces the job. Required by the optimization kit, so 0 is used when none is given.",
+          "default": 0,
+          "minimum": 0
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the mmCIF/PDB text of every design (default false: megabytes). The paths and the ranking metrics come back either way.",
+          "default": false
+        }
+      },
+      "required": [
+        "spec"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "run_dir": {
+          "type": "string"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "num_designs": {
+          "type": "integer"
+        },
+        "diffusion_batch_size": {
+          "type": "integer"
+        },
+        "sampling_steps": {
+          "type": "object"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "n_structures": {
+          "type": "integer"
+        },
+        "structure_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "structures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "metrics_file": {
+          "type": "string"
+        },
+        "n_metric_rows": {
+          "type": "integer"
+        },
+        "metrics_note": {
+          "type": "string"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "levers_applied": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "warning": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "BoltzGenDesignTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/boltzgen",
+      "mcp_tool_name": "boltzgen_design"
+    },
+    "test_examples": [
+      {
+        "spec": "entities:\n  - protein:\n      id: A\n      sequence: 60..60\n",
+        "num_designs": 2,
+        "seed": 0
+      }
+    ]
+  }
+]

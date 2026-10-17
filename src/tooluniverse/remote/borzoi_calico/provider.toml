@@ -1,0 +1,208 @@
+# borzoi_calico — calico's own Borzoi variant scoring (`borzoi_sad.py`), held
+# resident, on the CPU.
+#
+# The fourth `policy = "none"` provider, and the one where residency pays for a
+# reason you can point at in the stock script: `borzoi_sad.py` builds the
+# network, restores the checkpoint and assembles the reverse-complement ensemble
+# before it looks at a single variant, and that is ~49 s of a 304 s one-variant
+# run. The worker does it once. See [runtime].
+#
+# Measured on one GB10 (aarch64, cc 12.1), kit off; re-measure anywhere else.
+
+[provider]
+slug = "borzoi_calico"
+description = "Borzoi variant effect scoring (SAD/logSAD/D2/logD2 over 6,385 human RNA tracks) from calico's own release"
+operations = ["run_borzoi_calico_sad"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 121.6 GiB unified, driver 580.173.02), CPU only, kit off -- see [gpu] and [kit]
+
+ACCEPTANCE 2026-10-17: 12/12 answered, every one produced=yes. The rung is a
+VARIANT COUNT, not a length -- every variant is scored on a fixed 524,288-base
+genome window, so the model input is always (2, 524288, 4) and a length
+ladder would scale nothing. Rungs 1/2/3/4 (the worker's ceiling is 4):
+299.4 / 534.0 / 773.7 / 876.1 s, close to linear, which is what makes the
+variant count the right axis.
+
+RESIDENCY IS WORTH ABOUT 1.5x AND ONLY A HELD WORKER SHOWS IT: the same
+one-variant request costs 299.4 s as the first rung and 204.0 / 201.2 /
+193.3 s later in the same worker. The four repeats read 194.5 / 184.2 /
+194.9 / 186.5 s.
+
+Marginal cost per extra variant measures ~192-218 s, against the "about
+255 s on this CPU" the worker quotes when it refuses an over-large batch --
+conservative rather than wrong.
+
+peak is reported as None throughout, which is correct and not missing data:
+policy is "none" and there is no device memory to report.
+
+The seven hg38 SNVs the ladder draws from are REF-checked against the genome
+this provider reads, because a mismatched REF is not refused -- snp_seq1
+warns, returns an empty list, and the Keras call then dies on a (0,) array."""
+
+[runtime]
+mode = "resident"
+worker = "resident/borzoi_calico_resident_worker.py"
+launch = "tooluniverse.remote.borzoi_calico.launch:build_command"
+worker_args = [
+  "--socket", "{socket}",
+  "--slug", "{slug}",
+  "--weights-root", "{weights_root}",
+  "--borzoi-dir", "{borzoi_dir}",
+]
+# WHAT RESIDENCY BUYS, AND IT IS A CONSTANT RATHER THAN A RATIO -- the lesson
+# proteinmpnn's withdrawn 1.40x paid for. Stock's one-variant run takes 261.98
+# to 304.02 s wall of which the per-variant loop is ~255 s, so ~49 s is
+# parameter reading, the strand-sum transform, `SeqNN` + `restore` +
+# `build_slice` + `build_ensemble`, and opening the genome. None of it depends
+# on the request. MEASURED through the supervisor: the worker starts in 6.0 s
+# warm (4.9 s of it the model build) and 22.5 s cold, then answers in 208.9 s
+# and 222.5 s. Against stock's quietest run, 261.98 s at load 7.49, that is a
+# saving of about 53 s -- consistent with the ~49 s of setup read off the script,
+# and collected on EVERY request after the first.
+#
+# As a ratio that is ~1.25x on one variant and falls to ~1.07x at the declared
+# ceiling of four, because the saving does not grow with the request. The ratio
+# is therefore not the number to quote; the 53 s is. The checkpoint is 744 MB,
+# 185.9M parameters, and the reverse-complement ensemble build dominates, which
+# makes this the largest fixed cost of any CPU provider here.
+start_timeout_s = 900.0
+# ~255 s per variant at the declared ceiling of 4, plus the VCF read.
+request_timeout_s = 7200.0
+idle_timeout_s = 1800.0
+# Stock's own artifact, written by stock's own `initialize_output_h5` /
+# `write_snp_len` / `write_pct` into the request's directory. Asserting on it is
+# the point: the reply is read back out of this file, so a caller and the
+# equivalence gate see the same numbers.
+outputs = ["sad.h5"]
+output_keys = ["variants", "n_variants"]
+smoke = "smoke/input.json"
+smoke_timeout_s = 7200.0
+# WHAT A LADDER WOULD HAVE TO SCALE, for whoever adds this provider to
+# `verify_provider.py`'s SHAPERS: the cost scales with the VARIANT COUNT, not
+# with any sequence length -- every variant is a fixed 524,288-base window
+# either way. A shaper that tiles `variants` to 1, 2 and 4 is the right ladder
+# and costs about 30 minutes of CPU; one that lengthens a sequence would scale
+# nothing. With no shaper the harness runs repeats only, which is correct but
+# does not test the declared ceiling of 4.
+
+[gpu]
+# `policy = "none"` is read off the installed wheel, not the card: TensorFlow
+# publishes no GPU-capable aarch64 wheel at any version, so
+# `tf.test.is_built_with_cuda()` is False and `list_physical_devices('GPU')` is
+# empty on a GB10 that torch 2.7.0+cu128 drives in the same session. The upside
+# is the composition property -- ~10 GiB of host RSS and no VRAM at all, so this
+# is admitted while the card is full, which is what a variant-scoring job wants
+# to be when a folding model owns the GPU.
+#
+# Peak RSS is the number to watch instead, and it is large: 10,011,120 KB under
+# `off`, three runs within 30 MB of each other.
+policy = "none"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_BORZOI_CALICO_PYTHON"
+lock = "environment/requirements.lock"
+verify = "import tensorflow as tf, pysam, h5py; from baskerville import seqnn, vcf, dataset; import borzoi_sad; assert tf.__version__ == '2.15.1'"
+
+[weights]
+# One directory holds two unrelated things, and it must be WRITABLE -- see
+# launch.py. `f0/model0_best.h5` is read-only, but `pysam.Fastafile` builds
+# `hg38.ml.fa.fai` beside the genome on first use (borzoi_sad.py:246), so the
+# read-only weights mount every other provider here accepts does not serve this
+# one.
+root_env = "BORZOI_CALICO_WEIGHTS"
+root_default = "~/borzoi-kit-weights"
+fetch = "PYTHON={python} bash run.sh install --weights {weights_root}"
+
+[[weights.files]]
+name = "f0/model0_best.h5"
+size = 744112468
+sha256 = "7661c8d8541ae39293b1bf25392a4ec7b97b76114be5ddf82764644c3094eb9f"
+
+[[weights.files]]
+name = "hg38.ml.fa"
+size = 3091663428
+sha256 = "a3145abd8cad4cfdedde7e68a5c6263d4dfbdf1bfe4008beac9f002ddc6c8149"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "borzoi"
+sparse = ["borzoi", "common"]
+package = "borzoi_opt"
+# "off" -- AND THIS IS THE FIRST KIT ON THIS STANDARD WHOSE `exact` MODE ACTUALLY
+# RUNS HERE, which is why the reason is a measurement rather than an ELF header.
+#
+# This kit ships NO prebuilt host objects at all (the other eight that carry any
+# are x86-64 only) and its levers are data-path rewrites in Python --
+# `post_writer`, `graph_forward`, `copy_free_forward` -- not CUDA kernels. Its
+# own dry run passes in both modes here. So the kit's byte-identical claim was
+# testable on this host, and it was tested:
+#
+#   EQUIVALENCE, ESTABLISHED TWICE OVER. Compared dataset by dataset rather
+#   than as bytes -- HDF5 allocation order and the kit's chunked writer make a
+#   byte diff the wrong test -- across all 16 datasets: SAD, logSAD, D2, logD2
+#   at (1, 6385) float16; their four (6385, 279) percentile tables; and snp,
+#   chr, pos, ref_allele, alt_allele, percentiles, target_ids, target_labels.
+#     kit `exact` vs kit `off`        three pairs, every dataset equal
+#     THIS WORKER vs `run.sh --mode off`   every dataset equal
+#   The second is the one that matters: the worker holds the model and runs its
+#   own loop, so "it answers what stock answers" is a claim about this code, not
+#   about the kit. Its two requests also agreed to the last float
+#   (max|SAD| 35.6875, top track 6376 GTEX-1MA7X-1526-SM-DHXJF.1, twice).
+#
+#   SPEED, NOT ESTABLISHED -- ten runs, and that is why the mode is off. Wall
+#   seconds, with the 1-minute load average at each run's start:
+#     off    304.02 (7.79)  270.68 (12.40)  293.88 (20.41)  261.98 (7.49)  357.36 (27.59)
+#     exact  256.42 (8.47)  277.76 (14.26)  290.61 (22.88)  240.07 (12.71) 272.62 (13.95)
+#   Paired in order: 1.19x, 0.97x, 1.01x, 1.09x, 1.31x. Means 297.58 against
+#   267.50, which would read 1.11x -- and is NOT claimed. The spread WITHIN each
+#   mode (off 96 s, exact 51 s) dwarfs the 30 s between their means, and load
+#   ranged 7.49 to 27.59 across the ten, so each run sits at a different point on
+#   a moving baseline. The last pair makes the point: `off` at load 27.59 took
+#   357.36 s, the slowest run of all, which inflates `off`'s mean by itself.
+#
+#   The measurement was attempted three times and contaminated three times. The
+#   first six were a monotone load ramp. A balanced order (off,exact,exact,off)
+#   was meant to cancel a linear drift -- and this provider's own acceptance run
+#   was started beside it, two TensorFlow processes at 600-850 % CPU competing,
+#   which is the same contamination with ME as its source. Check your own
+#   background jobs as well as /proc/loadavg before timing anything.
+#
+#   PEAK RSS, consistently lower under `exact`, three pairs out of three:
+#   9,946,436-9,965,472 KB against 10,011,120-10,040,172 KB, about 75 MB of
+#   10 GB. Memory is not perturbed by CPU contention the way wall time is, so
+#   this is the one signal here that survives the host.
+#
+# Taken together: `exact` is correct here and buys about 0.8 % of peak RSS and no
+# measurable time, while `off` keeps the kit out of the numeric path entirely and
+# lets the worker import stock's own `borzoi_sad` writer. For a provider that has
+# to be supported, that trade goes to `off`. On an x86-64 GPU host -- what the
+# levers were written for -- set this to "exact".
+#
+# THE NEGATIVE CONTROL, which is the most useful thing this provider measured.
+# An earlier draft of the worker read the kit's pinned `-u` as "untransform" and
+# called `dataset.untransform_preds`; `-u` is declared `dest='untransform_old'`
+# (borzoi_sad.py:98-103), so stock calls `untransform_preds1`. That worker
+# started, answered in 321.9 s and again in 241.3 s, was deterministic to the
+# last float across both, returned the pinned shapes, the right `target_ids` and
+# a plausible `max|SAD|` of 9.34 on a real ENCODE track -- and every one of its
+# eight score datasets was wrong:
+#     SAD      1809 of 6385 values differ, max |delta| 34.66 (values reach 35.69)
+#     logSAD   1794 of 6385,              max |delta| 0.2738
+#     D2       1798 of 6385,              max |delta| 8.46
+#     logD2    1570 of 6385,              max |delta| 0.0101
+#   while snp, chr, pos, ref_allele, alt_allele, percentiles, target_ids and
+#   target_labels were all IDENTICAL.
+# A provider can be deterministic, correctly shaped, correctly labelled and
+# completely wrong in its numbers. Nothing but comparison against stock finds
+# that, which is why the gate is this provider's deliverable and not a formality.
+mode = "off"
+install = "PYTHON={python} bash run.sh install"
+# No environment row: `borzoi_opt` resolves modes against its own files under
+# `opt/datapath/pipeline_tf/v17` and exports no `modes.resolve`, so the
+# launcher's probe has nothing to read. `BORZOI_OPT` carries the mode and
+# launch.py sets it from this table.
+env_row = "none"
+env_row_reason = "borzoi_opt has no modes.resolve; BORZOI_OPT carries the mode and the kit reads its own files under opt/datapath/pipeline_tf/v17"
+levers_declined = ["post_writer", "graph_forward", "copy_free_forward", "kit_stamp"]

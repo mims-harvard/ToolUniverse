@@ -64,90 +64,182 @@ Use `tu remote logout` to remove only the locally stored key.
 
 ## Overview
 
-This directory contains the following MCP server implementations:
-- **boltz_MCP.py**: Provides molecular docking capabilities using Boltz2
+Two processes, in two environments, on purpose.
+
+```
+agent ──MCP──> boltz_mcp_server.py          ToolUniverse's environment, CPU only
+                      │
+                      │  Unix socket, one request at a time
+                      ▼
+               resident/boltz_resident_worker.py   the model's own environment
+                 run under the optimization kit's worker_launch;
+                 Boltz-2 built once and held on the GPU
+```
+
+They are separated because their pinned stacks conflict: the model needs torch
+2.12.0+cu130, triton 3.7.0 and numpy 1.26.4, which ToolUniverse cannot install
+alongside the rest of its 600+ tools. `provider.toml` in this directory declares
+the split, the weights and their digests, the measured device budget, and what
+the deployment can and cannot isolate.
+
+Holding the model is what makes it fast. Measured here (330-residue protein +
+aspirin with an affinity pass, NVIDIA GB10):
+
+| | per request |
+| --- | --- |
+| `boltz predict` in a subprocess, as this tool used to run it | 110 s |
+| optimization kit `--mode fast`, a fresh worker per call | 102 s |
+| **this worker, held, steady state** | **~54 s** |
+
+Most of that is not the kit's kernels -- they are worth ~8 % on this card, and
+three of its levers decline by name on compute capability 12.1 -- but the
+holding: the structure pass alone falls from ~23 s to 5.8 s, because CUDA graphs
+captured on one request are replayed on the next, which a worker that exits
+after every call can never collect. Outputs are bit-for-bit those of
+`run.sh pred --mode fast`: structure mean |dCA| 0.000 A, affinity identical.
+
+If no resident worker is configured, the tool runs `boltz predict` in a
+subprocess exactly as before. That path is slower, not different.
 
 ## Prerequisites
 
 ### Hardware Requirements
-- **GPU**: a CUDA-capable GPU is strongly recommended; measure memory and
-  concurrency with the model/input sizes used by your deployment.
+- A CUDA-capable GPU with at least the `vram_budget_gb` in `provider.toml`
+  (5.54 GiB measured peak) free, plus head-room for anything sharing the card.
+- An NVIDIA driver of the 580 series or newer (the pinned stack is CUDA 13.0).
+- No CUDA toolkit: the CUDA libraries are wheels in the lock file.
 
 ### System Requirements
-- Linux-based system (tested on Ubuntu/CentOS)
-- CUDA-compatible GPU drivers
-- Network access for API calls
+- Linux. A C compiler on `PATH` in the model environment (Triton compiles the
+  kit's kernels at first use).
+- Python 3.11 for the model environment; ToolUniverse's own may differ.
 
 ## Setup Instructions
 
-### 1. Environment Setup
-```bash
-# Create and activate conda environment for Boltz2
-conda create -n tooluniverse-env python=3.11 -c conda-forge -y
-conda activate tooluniverse-env
-
-# Navigate to the Boltz repository
-git clone https://github.com/jwohlwend/boltz.git
-cd boltz
-
-# Install Boltz2 in editable mode with CUDA support
-pip install -e ".[cuda]"
-```
-
-### 2. Verify Boltz2 Installation
+### One command
 
 ```bash
-# Test Boltz2 installation
-python -c "import boltz; print('Boltz2 installed successfully')"
+export TOOLUNIVERSE_BOLTZ_PYTHON=~/boltz2-venv/bin/python   # where the model's own environment is
+export BOLTZ_CACHE=~/.boltz                                 # where its weights are
 
-# Verify CUDA support
-python -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}')"
+tu remote setup boltz
 ```
 
-### 3. Install ToolUniverse and MCP Dependencies
+Five steps, each idempotent — a re-run reports `present` for what is already
+done and continues from wherever the last one stopped:
+
+| | |
+| --- | --- |
+| **preflight** | driver, compute capability, a compiler for Triton, free disk. Refused here costs a second, not 16 GB. |
+| **environment** | installs `environment/requirements.lock` into the interpreter above, `--no-deps`. It does not create the venv: see below. |
+| **kit** | clones the pinned commit of the optimization kit into `~/.cache/tooluniverse/kits/<repo>@<sha>/`, refuses a modified tree, runs the kit's own install — which fetches the weights through upstream's downloader. |
+| **weights** | every declared file re-read and compared to its SHA-256. |
+| **smoke** | one real prediction under a deadline, recorded in `~/.cache/tooluniverse/measured/boltz.json`. |
+
+Then:
 
 ```bash
-# Return to parent directory from boltz subdirectory
-cd ..
+tu remote check boltz     # what will engage on this machine
+tu remote run   boltz     # serve it
 ```
+
+### Running it in a container instead
+
+The stack can be a venv, a Docker image or an Apptainer `.sif`, and the choice
+changes one thing: the argv that starts the worker. Same script, same model,
+same socket.
+
+```toml
+[env]
+kind = "docker"
+image = "tu-boltz2-kit:f4f62fa"
+work_root = "/srv/tooluniverse/work"      # required: see below
+```
+
+`tu remote setup boltz` then builds the image from the kit's own
+`environment/Dockerfile` and everything else is unchanged.
+
+All three routes were measured here on the same input and the same card:
+
+| route | one prediction | peak reserved |
+| --- | --- | --- |
+| venv | 15 s | 3.21 GiB |
+| docker | 13 s | 3.21 GiB |
+| apptainer | 22 s | 3.21 GiB |
+
+The identical peak is the useful number: it says the three are running the same
+model on the same stack, rather than three things that merely all finish.
+
+Two things a container needs that a venv does not. `work_root` must be
+declared, because a per-request output path the caller invents is not visible
+inside unless something bound it. And the container is run as you rather than
+as root, so it is given a synthetic two-line `passwd`, a home of its own, and
+writable compiler caches — the host's `passwd` would expose every account on
+the machine, and without the rest numba, Triton and Boltz-2's own parsing
+zygote each fail in their own way.
+
+For Apptainer, `[env] sif` names the image instead:
+
+```toml
+[env]
+kind = "apptainer"
+sif = "~/sif/boltz2-kit.sif"
+work_root = "/srv/tooluniverse/work"
+```
+
+Its build needs privilege once and its run needs none, which is the point of
+the route rather than a wart: a `.def` with a `%post` runs commands inside the
+image, needing fakeroot, needing unprivileged user namespaces — and Ubuntu
+24.04 ships `kernel.apparmor_restrict_unprivileged_userns=1`, so `unshare
+--user` is denied even with `subuid`/`subgid` configured. So an administrator
+builds the `.sif` once on a machine with Docker, and everyone else runs it
+unprivileged, as themselves. That is also why Apptainer needs none of the
+`--user`, synthetic `passwd` and container-home machinery Docker does.
+
+`kind = "apptainer"` covers both Apptainer (Linux Foundation, 1.x) and
+SingularityCE (Sylabs, 4.x) — forks of one project, and the kits' own `.def`
+headers read "Apptainer / Singularity". Whichever is on `PATH` is used. What
+was measured here was SingularityCE 4.1.1, because Ubuntu 24.04 packages that
+one and upstream Apptainer publishes no aarch64 build.
+
+### The one thing setup does not do
+
+It installs into an interpreter, it does not build one — the outcome is what
+matters, and uv, `python -m venv`, conda and pixi all reach it. If
+`TOOLUNIVERSE_BOLTZ_PYTHON` is unset, setup refuses and prints the recipe. The
+short version, with the full one in the lock file's own header:
 
 ```bash
-# Install compatible NumPy version first
-pip install "numpy==2.0"
-
-# Install ToolUniverse
-git clone https://github.com/mims-harvard/ToolUniverse.git
-cd ToolUniverse
-
-python -m pip install . --no-cache-dir
-
-# Install additional dependencies
-pip install pyarrow fastparquet lxml
-pip install -U sentence-transformers
+uv venv --seed --managed-python --python 3.11.12 ~/boltz2-venv
+export TOOLUNIVERSE_BOLTZ_PYTHON=~/boltz2-venv/bin/python
 ```
 
-### 4. Environment Configuration
+This environment is **not** ToolUniverse's and must not be installed into it:
+torch 2.12.0+cu130, triton 3.7.0 and numpy 1.26.4 do not coexist with the rest
+of the package. That separation is why the MCP server talks to the model over a
+socket instead of importing it.
 
-#### Set Environment Variables
-Set the required environment variables on the **client machine** where you're calling the MCP tool from ToolUniverse (not on the GPU server where the tool is running):
+### What `setup` cannot promise
 
-```bash
-# For Boltz2 server (running on port 8080)
-export BOLTZ_MCP_SERVER_HOST="your-gpu-hostname"
-```
+The bytes are deterministic and the host checks are exhaustive, but whether a
+model *runs well* on an unseen card is not knowable before it runs. Three of the
+four problems this provider hit on its first machine appeared only at run time,
+and one of them presented as a stall. That is what the smoke step is for, and
+why its record — not `provider.toml`'s numbers — is what a scheduler should
+read. `provider.toml` says what was measured elsewhere; the record says what
+this machine did.
 
-**Important**: Set this variable on the machine where you're executing your ToolUniverse code, even if the MCP server is running on a different GPU machine.
+### Turning the resident worker off
 
-**Finding your GPU hostname:**
-```bash
-# Get current hostname by running this command on the GPU where your MCP server will run.
-hostname
+`TOOLUNIVERSE_BOLTZ_RESIDENT=0` forces the subprocess path. The tool also falls
+back to it on its own, logging the reason, whenever the worker cannot start.
 
-# Example hostnames:
-# - gpu-node-01
-# - compute-a100-001.cluster.edu
-# - localhost (if running locally)
-```
+### Giving the GPU back
+
+The worker retires after `idle_timeout_s` (15 minutes) with no requests, so a
+provider nobody is calling stops occupying the card. It also exits on its own if
+the MCP server that started it dies without stopping it -- being reparented to
+init, plus two minutes idle, is the signal.
 
 ## Running the MCP Server
 

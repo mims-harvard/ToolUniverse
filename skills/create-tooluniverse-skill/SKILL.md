@@ -8,6 +8,18 @@ disable-model-invocation: true
 
 Systematic workflow for creating production-ready ToolUniverse skills.
 
+> **The `devtu-*` skills this one hands off to are no longer in this
+> repository.** `devtu-optimize-skills`, `devtu-create-tool` and
+> `devtu-fix-tool` moved to the **tu-harness** plugin
+> ([tooluniverse/tooluniverse-harness](https://github.com/tooluniverse/tooluniverse-harness)),
+> because they operate on this repository rather than being something a user of
+> it calls. Install them with
+> `claude plugin install tu-harness@tooluniverse-harness`; the references below
+> name them by skill, so they resolve once that plugin is present. This skill
+> is maintainer-facing too -- it is not in the user-facing plugin mirror -- and
+> belongs beside them; it has not moved yet only because nothing forced the
+> question.
+
 ## Core Principles
 
 Build on the 10 pillars from `devtu-optimize-skills`:

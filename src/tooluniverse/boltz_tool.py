@@ -7,7 +7,10 @@ import json
 import shutil
 import math
 from .base_tool import BaseTool
+from .logging_config import get_logger
 from .tool_registry import register_tool
+
+logger = get_logger(__name__)
 
 
 _ALLOWED_AMINO_ACIDS = frozenset("ACDEFGHIKLMNPQRSTVWY")
@@ -62,9 +65,10 @@ def _validate_boltz_arguments(arguments):
             )
         representation = smiles if smiles is not None else ccd
         representation_name = "smiles" if smiles is not None else "ccd"
-        if not isinstance(representation, str) or not 1 <= len(
-            representation.strip()
-        ) <= 4096:
+        if (
+            not isinstance(representation, str)
+            or not 1 <= len(representation.strip()) <= 4096
+        ):
             raise ValueError(
                 f"Ligand at index {index} has an invalid '{representation_name}'."
             )
@@ -92,7 +96,9 @@ def _validate_boltz_arguments(arguments):
         or not math.isfinite(step_scale)
         or not 0 < step_scale <= 10
     ):
-        raise ValueError("'step_scale' must be a finite number greater than 0 and at most 10.")
+        raise ValueError(
+            "'step_scale' must be a finite number greater than 0 and at most 10."
+        )
     normalized["step_scale"] = float(step_scale)
     for name, default in (
         ("use_potentials", False),
@@ -122,17 +128,42 @@ class Boltz2DockingTool(BaseTool):
     """
 
     def __init__(self, tool_config: dict):
-        """
-        Initializes the BoltzDockingTool.
-        Checks if the 'boltz' command is available in the system's PATH.
+        """Initializes the BoltzDockingTool and checks that some path can run.
+
+        Either route will do. The subprocess route needs `boltz` on this
+        process's PATH; the resident route does not, and must not -- it runs the
+        model in its own environment precisely because that environment's pinned
+        stack (torch 2.12.0+cu130, triton 3.7.0, numpy 1.26.4) does not coexist
+        with ToolUniverse's. Requiring `boltz` here would make a correctly
+        separated deployment fail at construction.
         """
         super().__init__(tool_config)
-        if not shutil.which("boltz"):
-            raise EnvironmentError(
-                "The 'boltz' command is not found. "
-                "Please ensure the 'boltz' package is installed and accessible in the system's PATH. "
-                "Installation guide: https://github.com/jwohlwend/boltz"
+        if shutil.which("boltz"):
+            return
+        problem = self._resident_unavailable_reason()
+        if problem is None:
+            return
+        raise EnvironmentError(
+            "Boltz-2 can be reached by neither route. "
+            "The 'boltz' command is not on PATH (installation guide: "
+            "https://github.com/jwohlwend/boltz), and the resident worker is "
+            f"not available either: {problem}"
+        )
+
+    def _resident_unavailable_reason(self):
+        """None when a resident worker could be started, else why it could not."""
+        if not self._resident_enabled():
+            return f"{self._RESIDENT_ENV} is set to off"
+        try:
+            from tooluniverse.remote_resident import backend
+
+            worker = backend.worker_for_provider_dir(
+                os.path.join(os.path.dirname(__file__), "remote", "boltz")
             )
+            worker.manifest.python_executable()
+        except Exception as exc:  # noqa: BLE001 - the reason is the message
+            return f"{type(exc).__name__}: {exc}"
+        return None
 
     def _build_yaml_input(self, arguments: dict) -> dict:
         """Constructs the YAML data structure for the Boltz input."""
@@ -231,6 +262,234 @@ class Boltz2DockingTool(BaseTool):
                 "error": "Boltz prediction failed due to an internal provider error.",
             }
 
+    def _collect_results(
+        self, prediction_folder: str, input_filename: str, arguments: dict
+    ) -> dict:
+        """The tool's answer, read off the files a prediction wrote.
+
+        Shared by both execution paths so that a held worker and a subprocess
+        are indistinguishable to a caller: same keys, same size limits, same
+        fail-closed rule when the affinity artifact is missing.
+        """
+        results = {
+            "msa_mode": ("server" if arguments["use_msa_server"] else "single_sequence")
+        }
+
+        # 3. structure .cif
+        if arguments.get("return_structure", False):
+            structure_file = os.path.join(
+                prediction_folder, f"{input_filename}_model_0.cif"
+            )
+            if os.path.exists(structure_file):
+                if os.path.getsize(structure_file) > _MAX_STRUCTURE_BYTES:
+                    results["structure_error"] = (
+                        "Predicted structure exceeds the public output limit"
+                    )
+                else:
+                    with open(structure_file, "r", encoding="utf-8") as f:
+                        results["predicted_structure"] = f.read()
+                    results["structure_format"] = "cif"
+            else:
+                results["structure_error"] = (
+                    f"Missing {os.path.basename(structure_file)}"
+                )
+
+        # 4. affinity .json
+        affinity_file = os.path.join(
+            prediction_folder, f"affinity_{input_filename}.json"
+        )
+        if os.path.exists(affinity_file):
+            if os.path.getsize(affinity_file) > _MAX_AFFINITY_BYTES:
+                return {
+                    "status": "error",
+                    "error": "Boltz produced an invalid affinity prediction.",
+                    "msa_mode": results["msa_mode"],
+                }
+            else:
+                try:
+                    with open(affinity_file, "r", encoding="utf-8") as f:
+                        affinity = json.load(f)
+                    json.dumps(affinity, allow_nan=False)
+                    results["affinity_prediction"] = affinity
+                except (OSError, UnicodeError, ValueError, json.JSONDecodeError):
+                    return {
+                        "status": "error",
+                        "error": "Boltz produced an invalid affinity prediction.",
+                        "msa_mode": results["msa_mode"],
+                    }
+        else:
+            # Boltz 2.2.1 may exit zero after skipping an input whose MSA
+            # request failed. Missing the required affinity artifact must
+            # therefore fail closed instead of looking like a successful
+            # docking result to MCP and Platform callers.
+            return {
+                "status": "error",
+                "error": "Boltz did not produce an affinity prediction.",
+                "msa_mode": results["msa_mode"],
+            }
+
+        return results
+
+    def _predict_subprocess(
+        self,
+        input_yaml_path: str,
+        output_dir: str,
+        input_filename: str,
+        arguments: dict,
+        timeout: int,
+    ):
+        """One `boltz predict` process, as this tool has always run it.
+
+        Pays weight load, CUDA context and kernel compilation on every request
+        -- ~110 s for a 330-residue protein with a ligand on this project's GB10
+        box. It stays as the path taken when no resident worker is configured or
+        the resident one cannot start, so a deployment without the model
+        environment keeps working exactly as before.
+        """
+        # Construct the command-line arguments for Boltz
+        command = [
+            "boltz",
+            "predict",
+            input_yaml_path,
+            "--out_dir",
+            output_dir,
+            "--override",  # Override existing results if any
+            # Multiprocessing data-loader workers can deadlock when Boltz is
+            # launched from a long-lived MCP worker process.  A single
+            # in-process loader is slower at high throughput but reliable
+            # for this one-request-at-a-time provider wrapper.
+            "--num_workers",
+            "0",
+        ]
+
+        if arguments["use_msa_server"]:
+            command.append("--use_msa_server")
+
+        # Add optional command-line flags from arguments
+        for key in [
+            "recycling_steps",
+            "diffusion_samples",
+            "sampling_steps",
+            "step_scale",
+        ]:
+            if key in arguments:
+                command.extend([f"--{key}", str(arguments[key])])
+
+        if arguments.get("use_potentials", False):
+            command.append("--use_potentials")
+
+        # Execute the Boltz command
+        subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            check=True,  # Will raise CalledProcessError on non-zero exit codes
+        )
+
+        # locate the Boltz run folder under out_dir
+        root_dirs = [
+            d
+            for d in os.listdir(output_dir)
+            if os.path.isdir(os.path.join(output_dir, d))
+        ]
+        if not root_dirs:
+            return {
+                "status": "error",
+                "error": "No Boltz run folder found under out_dir",
+            }
+        run_dir_name = sorted(root_dirs)[-1]
+        return os.path.join(output_dir, run_dir_name, "predictions", input_filename)
+
+    # A deployment turns the held worker off with TOOLUNIVERSE_BOLTZ_RESIDENT=0.
+    # Anything else, including unset, tries it and falls back.
+    _RESIDENT_ENV = "TOOLUNIVERSE_BOLTZ_RESIDENT"
+
+    def _resident_enabled(self) -> bool:
+        return os.environ.get(self._RESIDENT_ENV, "1").strip().lower() not in (
+            "0",
+            "false",
+            "no",
+            "off",
+        )
+
+    def _predict(
+        self,
+        yaml_data: dict,
+        input_yaml_path: str,
+        output_dir: str,
+        input_filename: str,
+        arguments: dict,
+        timeout: int,
+    ):
+        """Run one prediction; return its predictions/ directory, or an error dict.
+
+        The held worker first, the subprocess if it is not available. Falling
+        back is not a silent downgrade of correctness -- the two paths were
+        verified to agree bit for bit on this project's box, structure
+        (mean |dCA| 0.000 A) and affinity (identical to 16 significant figures)
+        -- it is a downgrade of speed only, from ~47 s to ~110 s per request,
+        and the reason is logged.
+        """
+        if self._resident_enabled():
+            try:
+                return self._predict_resident(
+                    yaml_data, output_dir, input_filename, arguments
+                )
+            except Exception as exc:  # noqa: BLE001 - any reason falls back
+                logger.info(
+                    "Boltz resident worker unavailable (%s: %s); using a "
+                    "subprocess for this request",
+                    type(exc).__name__,
+                    exc,
+                )
+        return self._predict_subprocess(
+            input_yaml_path, output_dir, input_filename, arguments, timeout
+        )
+
+    def _predict_resident(
+        self,
+        yaml_data: dict,
+        output_dir: str,
+        input_filename: str,
+        arguments: dict,
+    ) -> str:
+        """One prediction on the worker that holds the model between requests."""
+        from tooluniverse.remote_resident import backend
+
+        worker = backend.worker_for_provider_dir(
+            os.path.join(os.path.dirname(__file__), "remote", "boltz")
+        )
+        options = {
+            k: arguments[k]
+            for k in (
+                "recycling_steps",
+                "sampling_steps",
+                "diffusion_samples",
+                "step_scale",
+                "use_potentials",
+                "use_msa_server",
+            )
+            if k in arguments
+        }
+        reply = worker.request(
+            {
+                "op": "predict",
+                "yaml": yaml.safe_dump(yaml_data, sort_keys=False),
+                "out_dir": output_dir,
+                "name": input_filename,
+                "seed": int(arguments.get("seed", 0)),
+                "options": options,
+            }
+        )
+        result = reply["result"]
+        logger.info(
+            "Boltz resident prediction: %s (peak reserved %.2f GiB)",
+            result.get("timing"),
+            result.get("peak_reserved_gib", float("nan")),
+        )
+        return os.path.join(result["out_dir"], "predictions", input_filename)
+
     def _run_provider(self, arguments: dict, timeout: int) -> dict:
         # Create a temporary directory to store input and output files
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -244,129 +503,17 @@ class Boltz2DockingTool(BaseTool):
             with open(input_yaml_path, "w") as f:
                 yaml.safe_dump(yaml_data, f, sort_keys=False)
 
-            # Construct the command-line arguments for Boltz
-            command = [
-                "boltz",
-                "predict",
+            prediction_folder = self._predict(
+                yaml_data,
                 input_yaml_path,
-                "--out_dir",
                 output_dir,
-                "--override",  # Override existing results if any
-                # Multiprocessing data-loader workers can deadlock when Boltz is
-                # launched from a long-lived MCP worker process.  A single
-                # in-process loader is slower at high throughput but reliable
-                # for this one-request-at-a-time provider wrapper.
-                "--num_workers",
-                "0",
-            ]
-
-            if arguments["use_msa_server"]:
-                command.append("--use_msa_server")
-
-            # Add optional command-line flags from arguments
-            for key in [
-                "recycling_steps",
-                "diffusion_samples",
-                "sampling_steps",
-                "step_scale",
-            ]:
-                if key in arguments:
-                    command.extend([f"--{key}", str(arguments[key])])
-
-            if arguments.get("use_potentials", False):
-                command.append("--use_potentials")
-
-            # Execute the Boltz command
-            subprocess.run(
-                command,
-                capture_output=True,
-                text=True,
-                timeout=timeout,
-                check=True,  # Will raise CalledProcessError on non-zero exit codes
+                input_filename,
+                arguments,
+                timeout,
             )
-
-            # --- Parse the output files ---
-            # 1. locate the Boltz run folder under your out_dir
-            root_dirs = [
-                d
-                for d in os.listdir(output_dir)
-                if os.path.isdir(os.path.join(output_dir, d))
-            ]
-            if not root_dirs:
-                return {
-                    "status": "error",
-                    "error": "No Boltz run folder found under out_dir",
-                }
-            if len(root_dirs) > 1:
-                # you could pick the latest by timestamp instead of the first
-                run_dir_name = sorted(root_dirs)[-1]
-            else:
-                run_dir_name = root_dirs[0]
-
-            run_root = os.path.join(output_dir, run_dir_name)
-
-            # 2. now point at predictions/<input_filename>
-            prediction_folder = os.path.join(run_root, "predictions", input_filename)
-            results = {
-                "msa_mode": (
-                    "server" if arguments["use_msa_server"] else "single_sequence"
-                )
-            }
-
-            # 3. structure .cif
-            if arguments.get("return_structure", False):
-                structure_file = os.path.join(
-                    prediction_folder, f"{input_filename}_model_0.cif"
-                )
-                if os.path.exists(structure_file):
-                    if os.path.getsize(structure_file) > _MAX_STRUCTURE_BYTES:
-                        results["structure_error"] = (
-                            "Predicted structure exceeds the public output limit"
-                        )
-                    else:
-                        with open(structure_file, "r", encoding="utf-8") as f:
-                            results["predicted_structure"] = f.read()
-                        results["structure_format"] = "cif"
-                else:
-                    results["structure_error"] = (
-                        f"Missing {os.path.basename(structure_file)}"
-                    )
-
-            # 4. affinity .json
-            affinity_file = os.path.join(
-                prediction_folder, f"affinity_{input_filename}.json"
-            )
-            if os.path.exists(affinity_file):
-                if os.path.getsize(affinity_file) > _MAX_AFFINITY_BYTES:
-                    return {
-                        "status": "error",
-                        "error": "Boltz produced an invalid affinity prediction.",
-                        "msa_mode": results["msa_mode"],
-                    }
-                else:
-                    try:
-                        with open(affinity_file, "r", encoding="utf-8") as f:
-                            affinity = json.load(f)
-                        json.dumps(affinity, allow_nan=False)
-                        results["affinity_prediction"] = affinity
-                    except (OSError, UnicodeError, ValueError, json.JSONDecodeError):
-                        return {
-                            "status": "error",
-                            "error": "Boltz produced an invalid affinity prediction.",
-                            "msa_mode": results["msa_mode"],
-                        }
-            else:
-                # Boltz 2.2.1 may exit zero after skipping an input whose MSA
-                # request failed. Missing the required affinity artifact must
-                # therefore fail closed instead of looking like a successful
-                # docking result to MCP and Platform callers.
-                return {
-                    "status": "error",
-                    "error": "Boltz did not produce an affinity prediction.",
-                    "msa_mode": results["msa_mode"],
-                }
-
-            return results
+            if isinstance(prediction_folder, dict):
+                return prediction_folder  # a named failure from the chosen path
+            return self._collect_results(prediction_folder, input_filename, arguments)
 
 
 if __name__ == "__main__":

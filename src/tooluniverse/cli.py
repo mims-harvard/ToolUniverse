@@ -2680,13 +2680,13 @@ def _print_remote_check(result: dict, *, as_json: bool) -> None:
     print(f"  Python 3.12: {python_label}")
     module_available = provider.get("module_available")
     module_label = (
-        "unknown"
-        if module_available is None
-        else ("yes" if module_available else "no")
+        "unknown" if module_available is None else ("yes" if module_available else "no")
     )
     print(f"  provider module: {module_label}")
-    for command, available in (provider.get("commands") or {}).items():
-        print(f"  command {command}: {'yes' if available else 'no'}")
+    model_env = result.get("model_environment")
+    if model_env is None:
+        for command, available in (provider.get("commands") or {}).items():
+            print(f"  command {command}: {'yes' if available else 'no'}")
     for variable in result.get("provider_environment") or []:
         ready = variable.get("set") and variable.get("path_exists", True)
         print(f"  environment {variable['name']}: {'ready' if ready else 'missing'}")
@@ -2698,9 +2698,73 @@ def _print_remote_check(result: dict, *, as_json: bool) -> None:
         print(f"  provider credential {credentials['name']}: {state}{suffix}")
         if credentials.get("detail"):
             print(f"    {credentials['detail']}")
+    manifest = result.get("manifest")
+    if manifest:
+        budget = manifest.get("vram_budget_gb")
+        budget_label = "unstated" if budget is None else f"{budget} GiB"
+        print(
+            f"  manifest: mode={manifest['mode']} vram_budget={budget_label} "
+            f"isolation={manifest['isolation']}"
+        )
+    weights = result.get("weights")
+    if weights:
+        if weights.get("ok"):
+            print(
+                f"  weights: {len(weights['declared'])}/{len(weights['declared'])} "
+                f"at their pins under {weights['root']}"
+            )
+        else:
+            print(
+                f"  weights: NOT at their pins under {weights.get('root') or '(unset)'}"
+            )
+            for problem in weights.get("problems") or []:
+                print(f"    {problem}")
+    if model_env is not None:
+        mark = "✓" if model_env.get("ok") else "✗"
+        print(
+            f"  {mark} model environment: {model_env.get('python') or '(unresolved)'}"
+        )
+        if model_env.get("error"):
+            print(f"    error: {model_env['error']}")
+        for command, available in (model_env.get("commands") or {}).items():
+            print(f"    command {command}: {'yes' if available else 'no'}")
+        for name, state in (model_env.get("modules") or {}).items():
+            print(f"    module {name}: {'yes' if state is True else state}")
+        mgpu = model_env.get("gpu") or {}
+        if mgpu.get("device"):
+            # Name the framework that found the device. A provider may hold the
+            # card with JAX while its torch is CPU-only by design, and printing
+            # "GPU: NVIDIA GB10 (cc 12.1, torch 2.7.1+cpu)" invites exactly the
+            # wrong conclusion about which of the two is driving it.
+            if mgpu.get("jax_backend") == "gpu":
+                via = f"jax {mgpu.get('jax_version', '?')}"
+            else:
+                via = f"torch {mgpu.get('torch_version', '?')}"
+            print(
+                f"    GPU: {mgpu['device']} (cc {mgpu.get('capability', '?')}, "
+                f"via {via})"
+            )
+        # A provider that declares `[gpu] policy = "none"` is not failing a GPU
+        # check; it has said it does not use one. Printing "failed" at it, and
+        # a "no module named jax" from a probe it never asked for, is noise that
+        # reads as a defect -- and this block ran before `gpu_policy` was even
+        # read, so it could not tell the difference.
+        model_gpu_policy = result.get("gpu_policy")
+        if model_gpu_policy == "none":
+            print("    GPU: not used (policy = none)")
+        else:
+            if mgpu.get("error") and mgpu.get("jax_backend") != "gpu":
+                print(f"    GPU error: {mgpu['error']}")
+            if mgpu.get("jax_error") and not mgpu.get("cuda_available"):
+                print(f"    GPU error (jax): {mgpu['jax_error']}")
+            print(
+                f"    CUDA tensor check: "
+                f"{'passed' if mgpu.get('tensor_sum') == 28.0 else 'failed'}"
+            )
+
     gpu = provider.get("gpu") or {}
     gpu_policy = result.get("gpu_policy")
-    if gpu_policy != "none":
+    if gpu_policy != "none" and model_env is None:
         passed = gpu.get("tensor_sum") == 28.0
         label = (
             "passed"
@@ -2719,26 +2783,231 @@ def _print_remote_check(result: dict, *, as_json: bool) -> None:
 
 
 def cmd_remote_list(args: argparse.Namespace) -> None:
-    """List reviewed provider entry points."""
-    from tooluniverse.remote_runtime import REMOTE_DEPLOYMENTS
+    """List reviewed provider entry points, and what each declares about itself."""
+    from tooluniverse.remote_runtime import REMOTE_DEPLOYMENTS, provider_manifest
 
-    rows = [
-        {
+    rows = []
+    seen = set()
+    for deployment in REMOTE_DEPLOYMENTS:
+        seen.add(deployment.slug)
+        row = {
             "implementation": deployment.slug,
             "endpoint": deployment.endpoint,
             "operations": list(deployment.operations),
             "gpu_policy": deployment.gpu_policy,
             "relay_workers": deployment.relay_workers,
         }
-        for deployment in REMOTE_DEPLOYMENTS
-    ]
+        manifest = provider_manifest(deployment)
+        if manifest is not None:
+            row["manifest"] = {
+                "mode": manifest.mode,
+                "status": manifest.status,
+                "vram_budget_gb": manifest.vram_budget_gb,
+                "isolation": manifest.isolation,
+                "env_kind": manifest.env_kind,
+            }
+        rows.append(row)
+
+    # A provider can carry a manifest before it has an entry point -- that is
+    # the order a rollout goes in -- and it would otherwise be invisible here.
+    for manifest in _manifests_without_deployment(seen):
+        rows.append(
+            {
+                "implementation": manifest.slug,
+                "endpoint": None,
+                "operations": list(manifest.operations),
+                "gpu_policy": manifest.gpu_policy,
+                "relay_workers": 1,
+                "manifest": {
+                    "mode": manifest.mode,
+                    "status": manifest.status,
+                    "vram_budget_gb": manifest.vram_budget_gb,
+                    "isolation": manifest.isolation,
+                    "env_kind": manifest.env_kind,
+                },
+                "note": "no entry point registered yet",
+            }
+        )
+
     if args.json:
         print(json.dumps({"implementations": rows}, indent=2))
         return
     for row in rows:
-        print(
-            f"{row['implementation']:<22} {row['endpoint']:<32} gpu={row['gpu_policy']}"
+        m = row.get("manifest")
+        endpoint = row["endpoint"] or "(not registered)"
+        tail = f"gpu={row['gpu_policy']}"
+        if m:
+            budget = "" if m["vram_budget_gb"] is None else f" {m['vram_budget_gb']}GiB"
+            tail += f"  {m['env_kind']}/{m['mode']}{budget}  {m['status']}"
+        print(f"{row['implementation']:<22} {endpoint:<32} {tail}")
+
+
+def cmd_remote_room(args):
+    """What fits right now: the question the measured budgets exist to answer.
+
+    `tu remote list` says what a provider costs. This says whether the machine
+    can carry it at this moment, which is a different question with a different
+    answer every few minutes, and the one an operator actually has.
+    """
+    import json
+
+    from tooluniverse.remote_resident import admission
+
+    # `machine_holdings`, not `backend.running()`: this command must answer with
+    # the same holdings the gate in `ensure_started` decides on, or an operator
+    # is told one thing and refused for another. `backend.running()` would also
+    # report nothing at all here, since this CLI process started no workers.
+    held = admission.machine_holdings()
+    cap, cap_source = admission.capacity_gib()
+    mem = admission.meminfo_gib()
+    tenants = admission._nvidia_pids()
+
+    manifests = _gpu_resident_manifests()
+    if args.slug:
+        manifests = [m for m in manifests if m.slug == args.slug]
+        if not manifests:
+            # `sys.exit`, not `return`: main() calls `args.func(args)` and drops
+            # the result, so a returned code is a refusal nobody can detect --
+            # the same defect one layer up as a refusal that never runs.
+            print(
+                f"no GPU resident provider called {args.slug!r}. "
+                f"`tu remote list` names them.",
+                file=sys.stderr,
+            )
+            sys.exit(2)
+
+    rows = []
+    for m in sorted(manifests, key=lambda m: -(m.vram_budget_gb or 0)):
+        v = admission.decide(
+            m.slug,
+            m.vram_budget_gb,
+            held,
+            reserve_gb=args.reserve,
+            mem=mem,
+            capacity=(cap, cap_source),
+            co_tenants=tenants,
         )
+        rows.append(
+            {
+                "slug": m.slug,
+                "status": m.status,
+                "vram_budget_gb": m.vram_budget_gb,
+                "fits": v.admit,
+                "reason": v.reason,
+            }
+        )
+
+    if args.json:
+        print(
+            json.dumps(
+                {
+                    "capacity_gib": None if cap is None else round(cap, 2),
+                    "capacity_source": cap_source,
+                    "declared_held_gb": round(
+                        sum(x for x in held.values() if x is not None), 2
+                    ),
+                    "held": held,
+                    "mem_free_gib": round(mem["MemFree"], 1),
+                    "mem_available_gib": round(mem["MemAvailable"], 1),
+                    "processes_on_card": tenants,
+                    "reserve_gb": args.reserve,
+                    "providers": rows,
+                },
+                indent=2,
+            )
+        )
+        return
+
+    declared = sum(x for x in held.values() if x is not None)
+    gate = "MemFree" if tenants else "MemAvailable"
+    print(
+        f"pool {'unknown' if cap is None else f'{cap:.1f} GiB'} ({cap_source}); "
+        f"{declared:.2f} GiB declared held by {len(held)} worker(s); "
+        f"{gate} {mem[gate]:.1f} GiB; {tenants} process(es) on the card; "
+        f"{args.reserve} GiB reserved for the host"
+    )
+    if held:
+        print("  holding: " + ", ".join(f"{k}={v}" for k, v in sorted(held.items())))
+    print()
+    for row in rows:
+        mark = "fits" if row["fits"] else "NO"
+        budget = "?" if row["vram_budget_gb"] is None else f"{row['vram_budget_gb']}"
+        print(f"  {mark:<4} {row['slug']:<16} {budget:>7} GiB   {row['status']}")
+    if args.slug:
+        print()
+        print(" ", rows[0]["reason"])
+    return
+
+
+def _gpu_resident_manifests():
+    """Every provider on disk that spends from the pool, registered or not.
+
+    Registration is a later step than a working manifest -- two providers are
+    sitting measured and unregistered right now -- and a provider you cannot
+    ask about is one you will start without asking.
+    """
+    import glob
+    import os
+
+    from tooluniverse.remote_resident import manifest as M
+
+    here = os.path.dirname(os.path.abspath(__file__))
+    out = []
+    for path in sorted(glob.glob(os.path.join(here, "remote", "*", "provider.toml"))):
+        try:
+            m = M.load(path)
+        except Exception:  # noqa: BLE001 - `tu remote check` is where that is reported
+            continue
+        if m.mode == "resident" and m.gpu_policy != "none":
+            out.append(m)
+    return out
+
+
+def _manifests_without_deployment(registered):
+    """Providers that declare a manifest but have no entry point yet."""
+    import importlib.util
+
+    from tooluniverse.remote_resident.manifest import MANIFEST_NAME
+    from tooluniverse.remote_resident.manifest import load as load_manifest
+
+    spec = importlib.util.find_spec("tooluniverse.remote")
+    if spec is None or not spec.submodule_search_locations:
+        return []
+    root = Path(list(spec.submodule_search_locations)[0])
+    out = []
+    for path in sorted(root.glob(f"*/{MANIFEST_NAME}")):
+        if path.parent.name in registered:
+            continue
+        try:
+            out.append(load_manifest(path))
+        except Exception:  # noqa: BLE001 - a broken manifest is `check`'s to report
+            continue
+    return out
+
+
+def cmd_remote_setup(args: argparse.Namespace) -> None:
+    """Install one provider's environment, kit and weights, then run it once."""
+    from tooluniverse.remote_resident import setup as rs
+
+    results = rs.run_setup(args.implementation, only=args.only)
+    if args.json:
+        print(json.dumps([vars(r) for r in results], indent=2, ensure_ascii=False))
+    else:
+        for r in results:
+            mark = "\u2713" if r.ok else "\u2717"
+            print(f"{mark} {r.step}: {r.verdict}{f' ({r.reason})' if r.reason else ''}")
+            if r.detail:
+                for line in str(r.detail).splitlines():
+                    print(f"    {line}")
+            for line in r.lines:
+                print(f"    {line}")
+        last = results[-1] if results else None
+        if last is not None and last.ok and not args.only:
+            print(
+                f"\n{args.implementation} is ready: "
+                f"tu remote check {args.implementation} \u2192 tu remote run {args.implementation}"
+            )
+    raise SystemExit(rs.exit_code(results))
 
 
 def cmd_remote_check(args: argparse.Namespace) -> None:
@@ -3955,6 +4224,25 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_remote_list)
 
     p = remote_sub.add_parser(
+        "room",
+        help="what fits on this machine right now, and why not",
+    )
+    p.add_argument(
+        "slug",
+        nargs="?",
+        help="ask about one provider; omit to rank every GPU provider",
+    )
+    p.add_argument(
+        "--reserve",
+        type=float,
+        default=4.0,
+        metavar="GIB",
+        help="room left for the host itself (default: 4.0)",
+    )
+    p.add_argument("--json", action="store_true", help="output machine-readable JSON")
+    p.set_defaults(func=cmd_remote_room)
+
+    p = remote_sub.add_parser(
         "login",
         help="authorize this computer in a browser and remember it securely",
     )
@@ -4042,6 +4330,19 @@ def build_parser() -> argparse.ArgumentParser:
             default=30,
             help="provider-environment check timeout in seconds (default: 30)",
         )
+
+    p = remote_sub.add_parser(
+        "setup",
+        help="install one provider's environment, kit and weights, then run it once",
+    )
+    p.add_argument("implementation", help="provider slug, e.g. boltz")
+    p.add_argument(
+        "--only",
+        choices=("preflight", "environment", "kit", "weights", "smoke"),
+        help="run one step instead of all of them",
+    )
+    p.add_argument("--json", action="store_true", help="output machine-readable JSON")
+    p.set_defaults(func=cmd_remote_setup)
 
     p = remote_sub.add_parser(
         "check",

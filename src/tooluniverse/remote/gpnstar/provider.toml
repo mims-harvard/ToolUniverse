@@ -1,0 +1,307 @@
+# GPN-Star -- a genomic language model that reads a multi-species alignment, held
+# resident: the effect of a single-nucleotide variant, as a log-likelihood ratio.
+#
+# WHAT THIS IS, established from the kit's own README, STOCK.md and upstream's source
+# rather than from the name. The name IS the GPN family (songlab-cal/gpn, "Genomic
+# Pre-trained Network"), but GPN-Star is not a sequence model like Evo 2 or GPN: it is a
+# masked-language model whose input is a WINDOW OF A MULTIPLE-SPECIES ALIGNMENT. For each
+# variant the window around it is read from a local alignment store (a zarr, one array per
+# chromosome, 100 species columns for the primary hg38 model), the variant position is
+# masked in the target (human) row, and the model predicts the base there.
+#
+# ONE REQUEST = a list of single-nucleotide variants (chrom, 1-based pos, ref, alt) scored
+# against an alignment store the host holds. Each variant is scored in both orientations,
+# forward and reverse-complement, and the score is the mean of
+#     logit(alt) - logit(ref)
+# at the masked position (src/gpn/star/inference.py MLMforVEPModel.forward). Negative means
+# the alternate base is less likely than the reference given what the alignment shows
+# evolution doing at that column. There is NO genome FASTA: the reference base is the
+# alignment's own target column, and a `ref` that disagrees with it is an error upstream
+# (gpn.scoring.require_reference_matches), which this worker lets through by name.
+#
+# THE ALIGNMENT STORE IS AN INPUT, NOT A WEIGHT. The kit never fetches it and neither does
+# this provider. The real hg38 100-way store (songlab/multiz100way on Hugging Face, MIT)
+# is a 42 GB zip that unpacks to ~64 GB; the kit ships a 0.14 MiB sparse cut of it that
+# holds ONLY the 128-bp windows of eight example variants plus the surrounding 512-row
+# chunks (examples/README.md). Until the operator points TOOLUNIVERSE_GPNSTAR_MSA_ROOT at a
+# full store, this provider answers for those chunks and for nothing else, and says so by
+# name: a variant outside them reads fill bytes and is refused with "no alignment data".
+#
+# WHICH PATH THE KIT TAKES, and what that means for torch. pins.torch is 2.13.0 (the
+# CUDA 13.0 build), which is >= 2.7, so the GPU is open here (STANDARD section 10); the
+# aarch64 wheel carries an sm_120 cubin and that runs on this card's sm_121.
+
+[provider]
+slug = "gpnstar"
+description = "GPN-Star multi-species-alignment language model: single-nucleotide variant effect scores"
+operations = ["run_gpnstar_vep"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02), venv route
+(Python 3.13.14, torch 2.13.0+cu130), kit mode exact with its `graph` lever declined
+(see the [kit] table), model v100-200m, scored against the kit's SPARSE EXAMPLE alignment (the
+full 42 GB hg38 store was not downloaded: every alignment-dependent statement below is
+about windows read from the example's 8 chunks, and from a synthetic store of the same
+shape for the worst-case-content measurements).
+
+VERIFIED ON 4 CONSECUTIVE IDENTICAL REQUESTS plus a mixed-batch-shape sequence, a
+window / batch-size / single-variant / refusal sequence, and an ascending ladder, one
+held worker, every request asserted to have filled its declared output_keys:
+
+    ladder   batch 2 / 8 / 32 / 64 at 128 bp   1.01 / 1.57 / 3.13 / 5.53 GiB
+    mixed    2, 2, 32, 2 variants              4/4
+    repeats  4 x the 8-variant smoke           4/4, 1.8 / 1.6 / 1.5 / 1.4 s
+    window   128 -> 256 -> 64 -> 512 -> 128    the 128 request's scores_sha256 is
+             byte-identical on all five of its occurrences, including after four
+             refused requests
+
+THE CARD WAS CONTENDED during every wall time quoted (load average ~65, five other GPU
+processes). Peaks reproduce under contention; wall times do not."""
+
+[runtime]
+mode = "resident"
+worker = "resident/gpnstar_resident_worker.py"
+launch = "tooluniverse.remote.gpnstar.launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}", "--model", "v100-200m"]
+# Imports ~4-7 s and the model build ~4-11 s, measured on a contended card; 600 s is
+# slack for a cold page cache on a first start, not an expectation.
+start_timeout_s = 600.0
+# The longest request the ceilings admit is 524,288 alignment columns
+# (MAX_REQUEST_TOKENS) and measured 260-286 s on a contended card (a flat ~0.5 ms a
+# column), so 900 s is >3x the worst admitted request.
+request_timeout_s = 900.0
+# 300 s, ARGUED FROM WHAT A RESTART LOSES. A restart re-pays the imports (~4-7 s),
+# the 0.8 GB checkpoint read plus the kit's apply (~4-11 s) and one ~0.7 s layer-0
+# self-check per batch shape: ~15-35 s on a contended card. Nothing expensive is
+# unpersisted -- Triton's cache lives under ~/.triton and survives the process, and the
+# kit's NVRTC kernels are ~1 s. That is the opposite of af3_jax (900 s: nothing
+# persists its autotune and a restart pays it again per bucket) and the same shape as
+# colabfold (300 s): a 200M-parameter model is cheap to rebuild and the card is shared,
+# so an idle tenant should leave rather than hold >=1 GiB for a quarter of an hour.
+idle_timeout_s = 300.0
+smoke = "smoke/input.json"
+smoke_timeout_s = 900.0
+# This provider writes no files, so there is nothing for `outputs` to match -- which is
+# also why there is no glob to be fooled by a file a failed run writes anyway. These are
+# the reply fields a successful run fills: one score and one id per variant. Both are
+# lists, so an empty one is caught. `n_variants` is deliberately NOT here: 0 is not
+# "absent" to the check, so a reply carrying n_variants = 0 would pass it.
+# TESTED with setup._what_it_produced against a directory holding the litter a failed
+# run leaves, and against five reply shapes (good; empty lists with every other field
+# present; an error reply; metadata with a stray scores.parquet; scores without ids):
+# only the first passes.
+output_keys = ["scores", "ids"]
+
+[gpu]
+policy = "required"
+# MEASURED, ONE HELD WORKER, THE LADDER ASCENDING, NOTHING LARGER RUN BEFORE IT, under
+# the provider's own ceilings (batch_size x window_size <= 8192 columns per forward;
+# 2048 variants; variants x window <= 524,288). Peak reserved, GiB:
+#
+#     columns per forward   256   1024   2048   4096   8192
+#     batch x window       2x128  8x128 16x128 32x128 64x128
+#     kit, worst-case rows  1.01   1.57   2.18   3.38  5.79 (after the rungs) / 5.23 (fresh)
+#     kit, real alignment   1.01   1.57   2.17   3.38  5.78
+#     stock (kit off)       1.00   1.57   2.45   4.20  7.72
+#
+# WORST-CASE ROWS is a synthetic store whose 99 non-target columns are independent
+# random draws, so no two windows share a row and the kit's de-dup lever can save
+# nothing; "real" is the kit's example alignment. They agree to 0.01 GiB, so the
+# example store does not flatter the figure.
+#
+# THE CEILING IS A PRODUCT AND THE CORNERS ARE NOT EQUAL. Peak follows the columns in
+# one forward (batch_size x window_size), not the variant count -- the variants go
+# through in batches. The three corners the 8192 ceiling admits, each in a fresh worker:
+#     64 x 128  5.23 GiB      32 x 256  5.23 GiB      16 x 512  5.23 GiB   (kit)
+#     64 x 128  7.72 GiB      32 x 256  6.55 GiB      16 x 512  6.55 GiB   (stock)
+# and 2048 variants at 64x128, 2048 at 32x256 and 1024 at 16x512 -- 32, 64 and 64
+# batches -- left the peak at 5.23 with no growth, on both stores.
+#
+# DECLARED AT 7.72: the 64 x 128 row under the STOCK K/V projections. The kit's own
+# route is below it (5.23-5.79), but the kit moves a batch shape to stock's projections
+# by rule when its layer-0 check rejects the reduced GEMM or the reduced route would not
+# fit (README: "a shape whose reduced route would not fit the memory obtainable runs
+# stock's own projections"; observed on an H100 at batch 128). No admitted shape took
+# that route here, and a budget that is exceeded the first time the kit takes it is not a
+# ceiling, so it is declared at the larger number. Not rounded up to 8.0: 7.72 is a
+# measurement.
+#
+# THE REQUEST CEILINGS WERE TESTED, NOT ASSUMED: 64 x 256 (16384 columns) is refused
+# "batch_size 64 x window_size 256 = 16384 tokens per forward; the limit is 8192", and
+# 1100 variants at window 512 (563,200) is refused for the second product, both before
+# anything reaches the card, in the tool and again in the worker. Without the first,
+# batch 64 and window 512 would be 32768 columns -- ~4x this row.
+#
+# THE LADDER'S SHAPE: ~0.76 GiB of weights plus context as a constant and ~0.6 GiB per
+# 1024 columns, so 1.01 -> 5.79 over 32x the input: 5.7x, the openfold3 family and not the
+# esmc one. A host that never goes past 16 x 128 holds this in 2.5 GiB.
+#
+# THE ONE THING THAT DID NOT RATCHET BOUNDEDLY AND IS NOT IN THE FIGURE: the kit's
+# `graph` lever, which is declined (see the [kit] table). With it on, 29 distinct small
+# shapes walked max_memory_reserved from 1.0 to 24.34 GiB (~0.8 GiB a shape; nothing
+# bounds the shape count). Declined, the same 29 shapes peak at 4.36 and stay there.
+vram_budget_gb = 7.72
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.13.0+cu130)"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_GPNSTAR_PYTHON"
+lock = "environment/requirements.lock"
+# EVERY COMPILED PIN IS IMPORTED, and a device op runs after the imports. A wheel can
+# install cleanly and SIGILL at import (tokenizers 0.10.x on aarch64 did), which in a
+# worker is a protocol error with no traceback; and a CUDA failure can surface in a
+# later, unrelated op, so the probe does work on the card afterwards. `gpnstar_opt`
+# is NOT here: the kit is installed by the NEXT step, and a verify that needs it
+# would reinstall the whole 5 GB lock on every re-run of this one.
+verify = "import torch, transformers, tokenizers, safetensors, numpy, zarr, numcodecs, numcodecs.blosc, pyarrow, pandas, datasets, accelerate, huggingface_hub, hf_xet, xxhash, regex, psutil, yaml, aiohttp, multidict, yarl, frozenlist, propcache, google_crc32c, gpn, importlib.metadata as m; assert m.version('gpn') == '0.9.0' and m.version('transformers') == '5.15.0' and torch.__version__.startswith('2.13.0'); x = torch.randn(256, 256, device='cuda'); float((x @ x).sum())"
+
+[weights]
+# Hugging Face's own cache in its own layout, which is what upstream's loader reads:
+# HF_HOME/hub/models--songlab--gpn-star-hg38-v100-200m/snapshots/<commit>/. The kit's
+# own activation check hashes EVERY file its pins list for the snapshot and refuses
+# (NOT ACTIVE, exit 3) one that is absent or off its digest, so all nine are declared,
+# not just the four the loader reads (config.json, model.safetensors and the two
+# phylo_dist arrays), or a cache the weights step certified could still be refused by
+# the kit at launch.
+root_env = "HF_HOME"
+root_default = "~/.gpnstar/hf_home"
+# The kit's own fetcher: huggingface_hub.snapshot_download(repo, revision=<pinned>) --
+# the client upstream's loader uses -- plus the refs/main the offline loader needs, then
+# the kit's own sha256 check. No URL is restated in ToolUniverse. HF_HUB_OFFLINE is
+# lifted for this command only. (Weights are served: a HEAD on the pinned revision's
+# model.safetensors answered 302 to Hugging Face's CDN with x-repo-commit equal to the
+# pin, from the upstream songlab organisation's own repository; the model cards say
+# `license: mit`.)
+fetch = "HF_HUB_OFFLINE=0 {python} -m gpnstar_opt.weights {weights_root}"
+
+# The nine entries below are GENERATED from the kit's own stock/PINS.json
+# weights["songlab/gpn-star-hg38-v100-200m"].files by a script, not transcribed.
+# snapshot_commit 0c949f132d35619a3eb188b402848c998a3313ae. The other four pinned
+# checkpoints (ce11-25m, m447-200m, p243-200m, tair10-25m) are NOT declared: each reads a
+# different alignment store this provider has none of, so serving one would be a request
+# no store could answer.
+[[weights.files]]
+name = "hub/models--songlab--gpn-star-hg38-v100-200m/snapshots/0c949f132d35619a3eb188b402848c998a3313ae/.gitattributes"
+size = 1519
+sha256 = "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361"
+
+[[weights.files]]
+name = "hub/models--songlab--gpn-star-hg38-v100-200m/snapshots/0c949f132d35619a3eb188b402848c998a3313ae/README.md"
+size = 24
+sha256 = "d8d7a46d41a1a37fe4f0a5f637bf55c649310185329127d8a2204632e480be17"
+
+[[weights.files]]
+name = "hub/models--songlab--gpn-star-hg38-v100-200m/snapshots/0c949f132d35619a3eb188b402848c998a3313ae/calibration_table/entropy.parquet"
+size = 12414
+sha256 = "b2e0a1f9586d7e378a09eb8923feb4f49b2e466900bb7f1fcee9ed752f5333e1"
+
+[[weights.files]]
+name = "hub/models--songlab--gpn-star-hg38-v100-200m/snapshots/0c949f132d35619a3eb188b402848c998a3313ae/calibration_table/llr.parquet"
+size = 34104
+sha256 = "162ed3d1bc05208a955f0440c4a010c82213632c41870307e701ba011775a5e4"
+
+[[weights.files]]
+name = "hub/models--songlab--gpn-star-hg38-v100-200m/snapshots/0c949f132d35619a3eb188b402848c998a3313ae/config.json"
+size = 727
+sha256 = "4ba460a8fbe150041287e9d236ef71d98d538632e6970ad128f5d132888b473c"
+
+[[weights.files]]
+name = "hub/models--songlab--gpn-star-hg38-v100-200m/snapshots/0c949f132d35619a3eb188b402848c998a3313ae/model.safetensors"
+size = 812151500
+sha256 = "994188342625ae86bf9b43f7463f471a92cfbf0ad80db4848dcdd8a534607f52"
+
+[[weights.files]]
+name = "hub/models--songlab--gpn-star-hg38-v100-200m/snapshots/0c949f132d35619a3eb188b402848c998a3313ae/phylo_dist/.snakemake_timestamp"
+size = 0
+sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+
+[[weights.files]]
+name = "hub/models--songlab--gpn-star-hg38-v100-200m/snapshots/0c949f132d35619a3eb188b402848c998a3313ae/phylo_dist/in_clade.npy"
+size = 928
+sha256 = "73f690315127e55ea00acb9079dbe29d17d89810c42eaaf7b488767182472470"
+
+[[weights.files]]
+name = "hub/models--songlab--gpn-star-hg38-v100-200m/snapshots/0c949f132d35619a3eb188b402848c998a3313ae/phylo_dist/pairwise.npy"
+size = 80128
+sha256 = "4b7fbc2fbaa60022e94996e90e1de1fd984e2b774175cd20285ba0adbe56343b"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "gpnstar"
+# gpnstar/opt declares `dependencies = []` but its install step (`run.sh install`) pip-
+# installs the shared core from ../common/opt_core editable, so `common` is needed. The
+# checkout is shared by every provider pinning this commit; the sparse set is the union.
+sparse = ["gpnstar", "common"]
+package = "gpnstar_opt"
+#
+# ACTIVATION is the common form (30 of 36 kits): the mode variable plus the kit's own
+# `opt/gpnstar_opt_autoload.pth`. THE VARIABLE IS `GPNSTAR_OPT`, read off the kit
+# (`_autoload.ENV = "GPNSTAR_OPT"`, opt/gpnstar_opt/_autoload.py:15; the .pth's own guard
+# header says `env=GPNSTAR_OPT` too), and kit_launch's probe found it there. With it set
+# to `exact` a meta-path finder waits for the first import of `gpn.star.inference` and arms
+# the three wrapper constructors (MLMforVEPModel, MLMforLogitsModel, ModelCenterEmbedding)
+# so that every model one builds is placed on the GPU with the levers applied. Nothing is
+# modified or shadowed; with the variable unset NOTHING of the kit is imported.
+mode = "exact"
+#
+# THE KIT HAS ONE MODE. `exact`: outputs bitwise equal to stock's under whatever numerics the
+# caller runs. Measured here, the kit CLI (`GPNSTAR_OPT=exact gpn star vep`) and stock
+# `gpn star vep` write byte-identical parquet on the 8-variant example, and this worker's
+# scores_sha256 over the same 8 variants is the same digest as both
+# (06efcb8415129e2c39165cfb8034d2d08c1da5867201efee28718627e386cf9c, sha256 over the
+# big-endian float64 of each score).
+#
+# NO ENVIRONMENT ROW, and this is the "absence" case rather than the "failed to read" one:
+# there is no gpnstar_opt.modes, so there is no resolve() of any shape, and STOCK.md
+# Variables says the package "reads GPNSTAR_OPT and HF_HOME ... and nothing else; it sets no
+# variable and no torch flag". The probe will record `modes_error` and return {}.
+env_row = "none"
+env_row_reason = "gpnstar_opt has no modes module and so no resolve() of any shape; _autoload.ENV = GPNSTAR_OPT is the whole switch, and STOCK.md Variables says the kit reads only GPNSTAR_OPT and HF_HOME and sets no variable of its own"
+#
+# `graph` IS DECLINED, AND NOT BY `levers_off`. This kit NEVER READS MODEL_OPT_LEVERS_OFF
+# (`grep -rn LEVERS_OFF opt/` returns nothing, exactly as for boltzgen and evo2), so
+# `levers_off = ["graph"]` would export a variable the kit ignores and look like a
+# decision. The worker instead calls the kit's own public `unpatch_graphs(model)`
+# (gpnstar_opt.accel.api), which releases the graphs and puts `model.forward` back to the
+# function the runner wrapped. The argument, all of it measured on this card with the
+# same 29 batch shapes (B x L for B in 2..16 at L=128, and L in 64 / 256 / 512):
+#
+#                                     peak reserved after the 29 shapes
+#     graph on  (the kit as shipped)    24.34 GiB   (~0.8 GiB per distinct shape)
+#     graph off (declined)               4.36 GiB   (flat after the largest shape)
+#
+# The lever captures one whole-forward CUDA graph per distinct (batch, window) shape up to
+# 2048 tokens and keeps every graph's activation pool; nothing in the kit bounds the
+# number of shapes, and a request chooses its own batch_size and window_size, so the VRAM a
+# held worker needs would be a function of how many different shapes anyone had ever asked
+# it for. No [gpu] vram_budget_gb can state that, and a number a host cannot add up is not
+# a tenant. What it costs: per-forward launch overhead at small batches (the kit's own
+# note: ~1,450 launches a forward, GPU ~half idle at B=8). Measured here, graph-off wall
+# times were not slower than graph-on over the same shapes on a contended card -- which
+# says the card was not launch-bound, NOT that the lever is worthless on a quiet one. A
+# host that wants it sets TOOLUNIVERSE_GPNSTAR_GRAPHS=on and measures its own memory.
+# `gpnstar_opt`'s ACTIVE line still names `graph` and its LEVER line still reads
+# state=on: both are written before the worker declines it, and the worker's own ready
+# line and every reply carry `levers_declined = ["graph"]`.
+levers_declined = ["graph"]
+#
+# NO [kit.env] TABLE, deliberately. The knobs this kit documents are GPNSTAR_OPT (supplied)
+# and HF_HOME (the weights root, supplied) and Triton's TRITON_CACHE_DIR, which is left at
+# its default under ~/.triton and persists across worker lifetimes. There is no size gate
+# or cap of the openfold3 kind to state: the ceilings live in the worker, where a reviewer
+# of this provider reads them, and in the tool.
+#
+# NO TF32. Stock's speed flag is `--tf32` and the kit follows whatever the caller sets;
+# this worker sets nothing, so the numerics are PyTorch's defaults (fp32, matmul TF32
+# off), and launch.py REMOVES NVIDIA_TF32_OVERRIDE and TORCH_ALLOW_TF32_CUBLAS_OVERRIDE
+# from the child so that an operator's shell cannot move them (verified in
+# /proc/<worker pid>/environ with both exported).
+#
+# `run.sh install` is two steps: `pip install -e ../common/opt_core -e opt` (the shared
+# core and the kit with its autoload .pth), then `stock/check_pins.py`, which compares
+# the installed gpn module by module against the carried archive and refuses by name any
+# gpn, transformers or stack pin off its pin. No --weights here: the weights step owns that.
+install = "bash run.sh install"

@@ -1,0 +1,225 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "colabdesign_design",
+    "description": "Design a protein BINDER against a target structure with BindCraft's binder-hallucination step on ColabDesign 1.1.3 and AlphaFold-Multimer v3. Give the target as PDB text, its chain, the binder length and optionally hotspot residues. No alignment is needed and no external service is contacted. One call is one trajectory (gradient-based sequence optimisation through the structure predictor): it returns the best binder sequence, whether the trajectory passed BindCraft's own pLDDT gates, and the final confidence terms. Only the design step runs -- no MPNN redesign, reprediction, relaxation or filtering. The first request of each (target residues, binder length, recycles) shape compiles for minutes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "target_pdb": {
+          "type": "string",
+          "description": "The target structure as PDB text (ATOM records). Crop it to the region around the binding site: target residues plus binder length may not exceed 400."
+        },
+        "chain": {
+          "type": "string",
+          "description": "Target chain id(s) in the PDB, e.g. 'A' or 'A,B'.",
+          "default": "A"
+        },
+        "binder_len": {
+          "type": "integer",
+          "description": "Length of the binder to design, in residues.",
+          "minimum": 8,
+          "maximum": 250
+        },
+        "hotspot": {
+          "type": "string",
+          "description": "Target residues the binder should contact, in BindCraft's grammar: '56', '31,33,57', 'A31,A33' or 'A1-10'. Omit for no hotspot."
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed for the trajectory.",
+          "default": 0,
+          "minimum": 0
+        },
+        "name": {
+          "type": "string",
+          "description": "A job name; it prefixes the design's name.",
+          "default": "design"
+        },
+        "num_recycles_design": {
+          "type": "integer",
+          "description": "AlphaFold recycles per design step (BindCraft's default is 1). Part of the compiled program, so changing it recompiles.",
+          "minimum": 1,
+          "maximum": 3
+        },
+        "soft_iterations": {
+          "type": "integer",
+          "description": "Stage-1 logit iterations (BindCraft default 75). Upstream hard-codes the first 50, so values below 50 are not accepted.",
+          "minimum": 50,
+          "maximum": 200
+        },
+        "temporary_iterations": {
+          "type": "integer",
+          "description": "Stage-2 softmax iterations (BindCraft default 45).",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "hard_iterations": {
+          "type": "integer",
+          "description": "Stage-3 one-hot iterations (BindCraft default 5).",
+          "minimum": 0,
+          "maximum": 50
+        },
+        "greedy_iterations": {
+          "type": "integer",
+          "description": "Stage-4 PSSM semi-greedy iterations (BindCraft default 15).",
+          "minimum": 0,
+          "maximum": 50
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the design PDB text and the per-step trajectory (default false). Sequences and scores come back either way.",
+          "default": false
+        }
+      },
+      "required": [
+        "target_pdb",
+        "binder_len"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "sequences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "accepted_by_stage_gates": {
+          "type": "boolean"
+        },
+        "terminate": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "gate_fired": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "final": {
+          "type": "object"
+        },
+        "best_metric": {
+          "type": "number"
+        },
+        "best_metric_name": {
+          "type": "string"
+        },
+        "n_steps": {
+          "type": "integer"
+        },
+        "phases_run": {
+          "type": [
+            "array",
+            "object",
+            "string",
+            "integer"
+          ]
+        },
+        "tokens": {
+          "type": "integer"
+        },
+        "target_residues": {
+          "type": "integer"
+        },
+        "binder_len": {
+          "type": "integer"
+        },
+        "hotspot": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "num_recycles_design": {
+          "type": "integer"
+        },
+        "iterations": {
+          "type": "object"
+        },
+        "optimise_beta": {
+          "type": "boolean"
+        },
+        "engine_key": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "first_of_engine_key": {
+          "type": "boolean"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "output_sha256": {
+          "type": "object"
+        },
+        "design_pdb": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "trajectory_jsonl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "structure_note": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "ColabDesignDesignTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/colabdesign",
+      "mcp_tool_name": "colabdesign_design"
+    },
+    "test_examples": [
+      {
+        "target_pdb": "ATOM    223  N   LYS A  46      42.677 -51.097 -27.336  1.00 30.62           N  \nATOM    224  CA  LYS A  46      43.737 -51.751 -28.084  1.00 33.55           C  \nATOM    225  C   LYS A  46      43.367 -53.198 -28.413  1.00 34.94           C  \nATOM    226  O   LYS A  46      43.812 -53.733 -29.424  1.00 36.17           O  \nATOM    232  N   GLN A  47      42.542 -53.793 -27.559  1.00 35.11           N  \nATOM    233  CA  GLN A  47      42.044 -55.155 -27.717  1.00 38.92           C  \nATOM    234  C   GLN A  47      40.532 -55.115 -27.597  1.00 35.82           C  \nATOM    235  O   GLN A  47      40.013 -54.557 -26.651  1.00 37.51           O  \nATOM    241  N   LEU A  48      39.839 -55.740 -28.541  1.00 34.86           N  \nATOM    242  CA  LEU A  48      38.396 -55.871 -28.486  1.00 33.75           C  \nATOM    243  C   LEU A  48      37.991 -56.747 -27.270  1.00 32.17           C  \nATOM    244  O   LEU A  48      38.291 -57.937 -27.261  1.00 34.34           O  \nATOM    249  N   ASP A  49      37.377 -56.147 -26.247  1.00 29.17           N  \nATOM    250  CA  ASP A  49      36.835 -56.894 -25.104  1.00 29.89           C  \nATOM    251  C   ASP A  49      35.384 -57.302 -25.342  1.00 27.26           C  \nATOM    252  O   ASP A  49      34.469 -56.551 -25.039  1.00 25.90           O  \nATOM    257  N   LEU A  50      35.166 -58.512 -25.836  1.00 27.29           N  \nATOM    258  CA  LEU A  50      33.796 -58.946 -26.135  1.00 26.96           C  \nATOM    259  C   LEU A  50      32.886 -59.041 -24.905  1.00 27.30           C  \nATOM    260  O   LEU A  50      31.676 -58.839 -25.015  1.00 27.10           O  \nATOM    265  N   ALA A  51      33.446 -59.312 -23.726  1.00 26.91           N  \nATOM    266  CA  ALA A  51      32.610 -59.468 -22.535  1.00 28.07           C  \nATOM    267  C   ALA A  51      31.873 -58.183 -22.187  1.00 27.80           C  \nATOM    268  O   ALA A  51      30.744 -58.228 -21.689  1.00 28.66           O  \nATOM    270  N   ALA A  52      32.463 -57.045 -22.559  1.00 27.21           N  \nATOM    271  CA  ALA A  52      31.887 -55.734 -22.245  1.00 25.64           C  \nATOM    272  C   ALA A  52      31.019 -55.140 -23.350  1.00 23.78           C  \nATOM    273  O   ALA A  52      30.189 -54.278 -23.054  1.00 26.12           O  \nATOM    275  N   LEU A  53      31.174 -55.625 -24.576  1.00 20.26           N  \nATOM    276  CA  LEU A  53      30.510 -55.050 -25.758  1.00 19.00           C  \nATOM    277  C   LEU A  53      29.093 -55.580 -25.988  1.00 18.32           C  \nATOM    278  O   LEU A  53      28.859 -56.795 -26.014  1.00 18.18           O  \nATOM    283  N   ILE A  54      28.177 -54.653 -26.220  1.00 17.55           N  \nATOM    284  CA  ILE A  54      26.876 -54.957 -26.764  1.00 17.55           C  \nATOM    285  C   ILE A  54      26.633 -54.103 -28.000  1.00 16.09           C  \nATOM    286  O   ILE A  54      26.825 -52.894 -27.947  1.00 16.82           O  \nATOM    291  N   VAL A  55      26.199 -54.738 -29.086  1.00 15.13           N  \nATOM    292  CA  VAL A  55      25.818 -54.058 -30.315  1.00 15.27           C  \nATOM    293  C   VAL A  55      24.373 -54.374 -30.630  1.00 14.36           C  \nATOM    294  O   VAL A  55      24.024 -55.547 -30.721  1.00 14.45           O  \nATOM    298  N   TYR A  56      23.555 -53.331 -30.811  1.00 13.69           N  \nATOM    299  CA  TYR A  56      22.116 -53.468 -30.995  1.00 13.66           C  \nATOM    300  C   TYR A  56      21.723 -52.695 -32.246  1.00 13.92           C  \nATOM    301  O   TYR A  56      21.989 -51.521 -32.334  1.00 14.70           O  \nATOM    310  N   TRP A  57      21.157 -53.377 -33.224  1.00 13.95           N  \nATOM    311  CA  TRP A  57      20.607 -52.725 -34.414  1.00 14.19           C  \nATOM    312  C   TRP A  57      19.111 -52.999 -34.500  1.00 13.68           C  \nATOM    313  O   TRP A  57      18.671 -54.159 -34.333  1.00 13.85           O  \nATOM    324  N   GLU A  58      18.334 -51.967 -34.832  1.00 13.55           N  \nATOM    325  CA  GLU A  58      16.912 -52.113 -35.054  1.00 13.97           C  \nATOM    326  C   GLU A  58      16.495 -51.300 -36.260  1.00 15.21           C  \nATOM    327  O   GLU A  58      17.196 -50.380 -36.684  1.00 14.76           O  \nATOM    333  N   MET A  59      15.322 -51.651 -36.797  1.00 16.36           N  \nATOM    334  CA  MET A  59      14.682 -50.807 -37.834  1.00 19.55           C  \nATOM    335  C   MET A  59      13.403 -50.356 -37.132  1.00 19.31           C  \nATOM    336  O   MET A  59      12.612 -51.231 -36.759  1.00 17.59           O  \nATOM    341  N   GLU A  60      13.194 -49.056 -37.006  1.00 19.50           N  \nATOM    342  CA  GLU A  60      12.153 -48.499 -36.124  1.00 21.07           C  \nATOM    343  C   GLU A  60      12.346 -49.170 -34.761  1.00 19.54           C  \nATOM    344  O   GLU A  60      13.380 -48.905 -34.121  1.00 18.62           O  \nATOM    350  N   ASP A  61      11.407 -50.016 -34.319  1.00 18.18           N  \nATOM    351  CA  ASP A  61      11.535 -50.673 -33.010  1.00 17.05           C  \nATOM    352  C   ASP A  61      11.775 -52.169 -33.169  1.00 16.99           C  \nATOM    353  O   ASP A  61      11.821 -52.926 -32.165  1.00 16.77           O  \nATOM    358  N   LYS A  62      11.916 -52.618 -34.418  1.00 16.15           N  \nATOM    359  CA  LYS A  62      12.090 -54.069 -34.696  1.00 17.08           C  \nATOM    360  C   LYS A  62      13.570 -54.450 -34.624  1.00 15.39           C  \nATOM    361  O   LYS A  62      14.352 -53.924 -35.408  1.00 14.38           O  \nATOM    367  N   ASN A  63      13.904 -55.370 -33.723  1.00 15.36           N  \nATOM    368  CA  ASN A  63      15.298 -55.736 -33.568  1.00 15.15           C  \nATOM    369  C   ASN A  63      15.815 -56.537 -34.741  1.00 15.86           C  \nATOM    370  O   ASN A  63      15.115 -57.419 -35.233  1.00 16.08           O  \nATOM    375  N   ILE A  64      17.013 -56.187 -35.189  1.00 16.06           N  \nATOM    376  CA  ILE A  64      17.704 -56.923 -36.236  1.00 16.96           C  \nATOM    377  C   ILE A  64      18.882 -57.673 -35.660  1.00 17.31           C  \nATOM    378  O   ILE A  64      18.998 -58.856 -35.915  1.00 18.04           O  \nATOM    383  N   ILE A  65      19.735 -56.991 -34.886  1.00 17.16           N  \nATOM    384  CA  ILE A  65      20.955 -57.579 -34.324  1.00 17.58           C  \nATOM    385  C   ILE A  65      20.987 -57.359 -32.817  1.00 16.65           C  \nATOM    386  O   ILE A  65      20.706 -56.261 -32.339  1.00 16.26           O  \nEND\n",
+        "chain": "A",
+        "binder_len": 12,
+        "hotspot": "56",
+        "seed": 0,
+        "name": "example",
+        "soft_iterations": 50,
+        "temporary_iterations": 0,
+        "hard_iterations": 0,
+        "greedy_iterations": 0
+      }
+    ]
+  }
+]

@@ -1,0 +1,173 @@
+# BoltzGen's model environment — `pip freeze --all --exclude-editable` of the
+# interpreter this provider's [env] python names, on Python 3.11.5 (uv-managed
+# CPython), linux-aarch64.
+#
+# The stack the kit pins and the fifth distinct one in this repository: Python
+# 3.11.5, torch 2.13.0+cu130, triton 3.7.1, numpy 2.0.2, numba 0.61.0,
+# cuequivariance 0.11.1 with NVIDIA's CUDA-13 ops pair. It coexists with none
+# of the others — Chai-1, Enformer, ESMFold-2 and RFdiffusion3 also run torch
+# 2.13.0+cu130 but on Python 3.12 and numpy 2.4.x, and BoltzGen's own pin check
+# compares the interpreter against 3.11.
+#
+# Rebuild (an NVIDIA driver for CUDA 13.0 — 580 or newer — and `gcc` on PATH,
+# which Triton uses to build the cuEquivariance kernels' launchers at first
+# use). This is the kit's own route-C recipe (STOCK.md §Stack) with the two
+# substitutions named below:
+#
+#   uv venv --seed --managed-python --python 3.11.5 ~/boltzgen-venv
+#   export TOOLUNIVERSE_BOLTZGEN_PYTHON=~/boltzgen-venv/bin/python
+#   $TOOLUNIVERSE_BOLTZGEN_PYTHON -m pip install --no-deps -r requirements.lock
+#   tu remote setup boltzgen            # the kit, its shared core and the weights
+#
+# --no-deps is deliberate: the list is complete, and letting a resolver
+# re-derive it is how a stack stops being the one that was measured. The kit
+# (boltzgen_opt) and its shared core (opt_core) install editable on top and are
+# not in this freeze.
+#
+# `uv venv` is used here and NOT the stdlib `venv` that OpenFold3's lock had to
+# fall back to. uv seeds `_virtualenv.pth`, which puts a class named `_Finder`
+# on sys.meta_path, and openfold3_opt reads any such name as a rival kit hook.
+# boltzgen_opt does not: it recognises its own hook by class identity
+# (`isinstance(f, Finder)`, opt/boltzgen_opt/_autoload.py:242) and the shared
+# core looks only for finders whose module ends in `._autoload`
+# (common/opt_core/opt_core/stock_proof.py:106). Checked, not assumed.
+#
+# TWO DEVIATIONS from the kit's own environment/requirements.lock. Both are
+# forced by linux-aarch64, neither is a version change, and nothing else
+# differs: this list and the kit's are otherwise byte-identical line for line
+# (103 shared lines + boltzgen==0.3.2; verified by diff of the sorted sets).
+#
+#  1. torch is `torch==2.13.0` where the kit writes
+#     `torch @ https://download.pytorch.org/whl/cu130/torch-2.13.0+cu130-cp311-cp311-manylinux_2_28_x86_64.whl`.
+#     Same version, same CUDA build, different architecture: PyPI's own
+#     linux-aarch64 wheel for 2.13.0 IS the cu130 build — it reports
+#     `torch.version.cuda = '13.0'`, `torch.__version__ = '2.13.0+cu130'` and
+#     `get_arch_list() = ['sm_80','sm_90','sm_100','sm_110','sm_120']`. An
+#     sm_120 cubin runs on this box's sm_121.
+#
+#  2. triton is `triton==3.7.1` where the kit names the PyTorch index's
+#     x86-64 wheel by URL. The kit's own header says that wheel is "the PyTorch
+#     index's own build of that version, not the package index's file"; no
+#     aarch64 build is published there, and PyPI's triton 3.7.1 aarch64 wheel
+#     is what this stack runs. This is the deviation to re-examine first if a
+#     Triton kernel of the `fast` mode misbehaves on this architecture.
+#
+# boltzgen==0.3.2 is in this list as an index pin, where the kit's route-C
+# recipe installs `stock/boltzgen-0.3.2-py3-none-any.whl` from its own tree.
+# That is not a deviation: the two files are the same bytes —
+# sha256 f832063040eb851deacca5641c1e41a5518696110142a937f888bd8db6806d96,
+# 357057 bytes, which is exactly what the kit's stock/PINS.json `wheel` pins
+# and what `pip download boltzgen==0.3.2` fetched here (compared, not assumed).
+# The kit's own pin check (stock/check_pins.py, run by the kit step) refuses
+# any other version or a file that differs from that wheel's RECORD.
+#
+# `pip check` reports cuequivariance-ops-cu12 / cuequivariance-ops-torch-cu12
+# as missing and nothing else. That is the kit's own documented stock
+# exception: boltzgen 0.3.2's wheel metadata names the CUDA-12 ops pair, and
+# this stack installs NVIDIA's CUDA-13 build of the same 0.11.1 release so the
+# ops library links the CUDA 13 libraries torch 2.13.0+cu130 ships rather than
+# a second CUDA runtime (STOCK.md §Stock exceptions).
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.3
+aiosignal==1.4.0
+antlr4-python3-runtime==4.9.3
+anyio==4.14.2
+attrs==26.1.0
+biopython==1.88
+biotite==1.6.0
+biotraj==1.2.2
+boltzgen==0.3.2
+certifi==2026.7.22
+charset-normalizer==3.5.1
+click==8.4.2
+contourpy==1.3.3
+cuda-bindings==13.3.1
+cuda-pathfinder==1.6.1
+cuda-toolkit==13.0.3.0
+cuequivariance==0.11.1
+cuequivariance-ops-cu13==0.11.1
+cuequivariance-ops-torch-cu13==0.11.1
+cuequivariance-torch==0.11.1
+cycler==0.12.1
+edit-distance==1.0.9
+einops==0.8.2
+einx==0.4.3
+filelock==3.32.3
+fonttools==4.63.0
+frozendict==2.4.7
+frozenlist==1.8.0
+fsspec==2026.7.0
+gemmi==0.7.5
+h11==0.16.0
+hf-xet==1.6.0
+httpcore==1.0.9
+httpx==0.28.1
+huggingface_hub==1.28.0
+hydra-core==1.3.5
+hydride==1.2.3
+idna==3.19
+Jinja2==3.1.6
+joblib==1.5.3
+kiwisolver==1.5.0
+lightning-utilities==0.15.3
+llvmlite==0.44.0
+logomaker==0.8.7
+MarkupSafe==3.0.3
+mashumaro==3.22
+matplotlib==3.11.1
+mpmath==1.3.0
+msgpack==1.2.1
+multidict==6.7.1
+narwhals==2.25.0
+networkx==3.6.1
+numba==0.61.0
+numpy==2.0.2
+nvidia-cublas==13.1.1.3
+nvidia-cuda-cupti==13.0.85
+nvidia-cuda-nvrtc==13.0.88
+nvidia-cuda-runtime==13.0.96
+nvidia-cudnn-cu13==9.20.0.48
+nvidia-cufft==12.0.0.61
+nvidia-cufile==1.15.1.6
+nvidia-curand==10.4.0.35
+nvidia-cusolver==12.0.4.66
+nvidia-cusparse==12.6.3.3
+nvidia-cusparselt-cu13==0.8.1
+nvidia-ml-py==13.610.43
+nvidia-nccl-cu13==2.29.7
+nvidia-nvjitlink==13.3.33
+nvidia-nvshmem-cu13==3.4.5
+nvidia-nvtx==13.0.85
+omegaconf==2.3.1
+opt_einsum==3.4.0
+packaging==26.3
+pandas==3.0.5
+pdbeccdutils==1.0.4
+pillow==12.3.0
+pip==26.2.1
+platformdirs==4.11.3
+propcache==0.5.2
+psutil==7.2.2
+pydssp==0.9.1
+pynvml==13.0.1
+pyparsing==3.3.2
+python-dateutil==2.9.0.post0
+pytorch-lightning==2.6.5
+PyYAML==6.0.3
+rdkit==2026.3.5
+redis==8.1.0
+requests==2.34.2
+scikit-learn==1.9.0
+scipy==1.17.1
+setuptools==84.0.0
+six==1.17.0
+sympy==1.14.0
+threadpoolctl==3.6.0
+torch==2.13.0
+torchmetrics==1.9.0
+tqdm==4.70.0
+triton==3.7.1
+typing_extensions==4.16.0
+urllib3==2.7.0
+wheel==0.48.0
+yarl==1.24.5

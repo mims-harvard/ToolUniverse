@@ -1,0 +1,386 @@
+# Evo 2 -- genomic foundation model, held resident: DNA sequence likelihoods
+# and per-position embeddings.
+#
+# The eleventh provider on the standard and the third that answers with arrays
+# rather than files (Enformer and ESM C are the others). What it serves is one
+# forward pass of Evo 2 over DNA: `Evo2.score_sequences` (the mean
+# log-likelihood the model assigns a sequence) and `Evo2.forward` with a
+# forward hook (the hidden states of one named layer).
+#
+# STATUS = "untested", AND THE REASON IS NOT THE MODEL. Four of the five setup
+# steps pass on this host -- preflight, kit, weights, and the lock installs --
+# and the one that does not is a TOOLCHAIN refusal about this card, not about
+# Evo 2. Two aarch64 obstacles were met; the first was cleared, the second is
+# the caller's call. Both are written out so nobody re-derives them.
+#
+# OBSTACLE 1, CLEARED: flash-attn has no aarch64 wheel, and `import evo2` does
+# not survive its absence. This is upstream's requirement, not the kit's, so
+# `[kit] mode = "off"` would not have routed around it. The chain, read out of
+# the installed packages rather than guessed:
+#
+#     evo2/models.py:19        from vortex.model.model import StripedHyena
+#     vortex/model/model.py:37 from vortex.model.attention import MHA
+#     vortex/model/attention.py:28  from vortex.model.rotary import RotaryEmbedding
+#     vortex/model/rotary.py:7      from vortex.ops.embedding.rotary import apply_rotary
+#     vortex/ops/__init__.py:1      from .attn_interface import (...)
+#     vortex/ops/attn_interface.py:7  import flash_attn_2_cuda
+#     ModuleNotFoundError: No module named 'flash_attn_2_cuda'
+#
+# attention.py guards ITS OWN `from vortex.ops import (...)` in a try/except
+# ImportError; rotary.py's import is not guarded, so the package is
+# unimportable, not merely degraded. And the model would not have built either
+# way: evo2_7b's config pins `use_flash_attn: True` with `attn_layer_idxs:
+# [3,10,17,24,31]`, and vortex's FlashSelfAttention asserts "FlashAttention is
+# not installed" in its constructor (stock/src/vortex/model/attention.py:70).
+# flash-attn 2.8.0.post2 was therefore BUILT FROM ITS SDIST for sm_120 against
+# a CUDA 12.8 toolkit extracted into $HOME without root; `import evo2` now
+# succeeds. environment/requirements.lock DEVIATION 3 is the whole recipe,
+# every step of it measured.
+#
+# OBSTACLE 2, OPEN AND NOT THIS PROVIDER'S TO DECIDE: this kit pins triton
+# 3.3.1, whose LLVM target machine does not know sm_121, and
+# `tu remote setup --only environment` now refuses the stack by name:
+#
+#     environment: REFUSED (triton_llvm_arch_unsupported)
+#     triton 3.3.1's LLVM target machine does not know sm_121: every kernel
+#     this stack compiles would abort the process with "LLVM ERROR: Cannot
+#     select", which no worker can catch.
+#
+# THAT REFUSAL IS CONSERVATIVE AND, FOR THIS PROVIDER, MEASURABLY STRONGER
+# THAN THE FACTS -- see the triton block in [kit] for the five kernels that
+# were compiled and RUN correctly on this card, and for the one kernel shape
+# that does abort and which nothing on Evo 2's path uses. Narrowing that check
+# or raising the lock's triton are both decisions for whoever owns the shared
+# tooling and the stack of record; neither is taken here.
+#
+# NOTHING BELOW IS MEASURED ON THE MODEL. [gpu] vram_budget_gb is a derived
+# reserve with its arithmetic and its envelope stated, and the standard's own
+# record is that derived reserves are wrong in both directions (openfold3's
+# was 3.8x high, esmfold2's 1.6x low). Re-measure before trusting it.
+
+[provider]
+slug = "evo2"
+description = "Evo 2 genomic foundation model: DNA sequence likelihoods and per-position embeddings"
+operations = ["run_evo2_score", "run_evo2_embed"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver
+580.173.02), venv route, kit mode fast (model evo2_7b), with flash-attn built
+from source for aarch64 and a CUDA 12.9 ptxas supplied to Triton. Both were
+necessary and neither was optional: `import evo2` does not survive flash-attn's
+absence, because upstream's `vortex/model/rotary.py` imports it unguarded -- so
+`[kit] mode = "off"` would not have routed around it.
+
+VERIFIED ON 4 CONSECUTIVE IDENTICAL REQUESTS plus a mixed-shape sequence and an
+ascending ladder, one held worker, every request asserted to have filled its
+declared output_keys:
+
+    ladder   1024 / 2048 / 4096 / 8192 bp   16.82 / 16.82 / 17.96 / 19.98 GiB
+    mixed    1024, 1024, 4096, 1024         4/4
+    repeats  4 x the 1024 bp smoke          4/4, 5.66 / 5.67 / 6.53 / 5.64 s
+
+The smoke alone took 243 s, almost all of it the 12.8 GiB checkpoint read."""
+
+[runtime]
+mode = "resident"
+worker = "resident/evo2_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+# --model is this worker's own argument, not the kit's: the kit takes the
+# model from whatever `Evo2(...)` the caller constructs and reads the route
+# off the object (opt/evo2_opt/activation.py `_on_constructed`). evo2_7b is
+# the size [weights] declares, and the one this card can hold -- see the
+# evo2_40b paragraph in [weights].
+worker_args = ["--socket", "{socket}", "--slug", "{slug}", "--model", "evo2_7b"]
+# 13.8 GiB read once per process. The kit's own README measures "~220 s" for
+# the first score in a fresh environment (checkpoint plus kernel compiles) and
+# "15-50 s a run" after, so the ceiling is deliberately generous: a cold page
+# cache reads all of it from disk and Triton compiles this card's kernels for
+# the first time.
+start_timeout_s = 1800.0
+request_timeout_s = 900.0
+idle_timeout_s = 900.0
+smoke = "smoke/input.fasta"
+smoke_timeout_s = 1800.0
+# This provider writes no files by default, so there is nothing for [runtime]
+# outputs to match. These are the reply fields a successful run fills: the
+# per-record scores and the lengths they were taken over. Both are lists, so
+# an empty one is caught -- which is the point, since Evo 2's own
+# `score_sequences` wraps every failure in `RuntimeError("Error during
+# sequence scoring: ...")` and a provider that only checked for an exception
+# would be checking the wrong thing.
+output_keys = ["scores", "sequence_lengths"]
+
+[gpu]
+policy = "required"
+# MEASURED. Ladder, one held worker, ascending, nothing larger run before it:
+#
+#     base pairs   peak reserved
+#           1024      16.82 GiB
+#           2048      16.82 GiB
+#           4096      17.96 GiB
+#           8192      19.98 GiB   <- the reference this budget declares
+#
+# 1.19x over 8x the length -- the esmc family, not the openfold3 one: a 12.8 GiB
+# checkpoint at 7B parameters dominates everything the input contributes. So a
+# host can treat this as a fixed ~20 GiB tenant for any window it will
+# realistically score, which is the useful kind of ladder.
+#
+# The derived reserve was 16.0 and the measurement is 19.98, so this one was
+# 20% LOW -- the dangerous direction, and the third of eleven estimates to miss
+# (openfold3 3.8x high, esmfold2 1.6x low, af3_torch 9x high). The smoke step's
+# own NOTE caught it: "peak 16.82 GiB exceeds the manifest's 16.0".
+#
+# Envelope: model evo2_7b, one record per request, <= 8192 bp, <= 8 records and
+# <= 16384 bp in total, all enforced in both the tool and the worker. evo2_40b
+# is a different provider entirely -- 76.6 GiB of weights, two visible devices
+# for vortex's layer split, and FP8 through Transformer Engine, none of which
+# this host has.
+vram_budget_gb = 19.98
+driver_min = 570
+driver_min_reason = "its pinned stack is CUDA 12.8 (torch 2.7.1+cu128)"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_EVO2_PYTHON"
+lock = "environment/requirements.lock"
+# The versions the kit's own pin check reads (stock/check_pins.py against
+# stock/PINS.json upstream.*), plus the kit package itself. `import evo2` is
+# in here on purpose even though it is exactly what fails on this host: the
+# environment step's job is to say whether this interpreter can run the model,
+# and an interpreter that cannot import evo2 cannot. See the flash-attn
+# paragraph at the top of this file for what the refusal means and what fixes
+# it.
+verify = "import torch, evo2, vortex, evo2_opt, importlib.metadata as m; assert m.version('evo2') == '0.6.0' and m.version('vtx') == '1.1.0' and torch.__version__.startswith('2.7.1')"
+
+[weights]
+# The kit's own variable and the kit's own layout: EVO2_OPT_WEIGHTS is "the
+# directory holding <model_name>.pt" (STOCK.md Sec.Variables), flat, which is
+# what `python -m evo2_opt.weights DIR` writes and what the route driver
+# passes to upstream as `local_path`.
+#
+# A SET DIRECTORY WITH NO CHECKPOINT IN IT IS NOT REFUSED BY THE KIT -- STOCK.md
+# says so in as many words: "A set directory whose <model_name>.pt the process
+# cannot see ... is not refused: score then also takes upstream's own download
+# (13.8 GB for evo2_7b)". That is precisely the failure mode the [[weights.files]]
+# digest exists to stop, so the worker additionally sets HF_HUB_OFFLINE=1 and
+# refuses by name when the file is absent, rather than quietly pulling 13.8 GB
+# at request time.
+root_env = "EVO2_OPT_WEIGHTS"
+root_default = "~/.evo2"
+# The kit's own fetcher, which uses huggingface_hub.hf_hub_download against
+# the repo and revision stock/PINS.json pins and then checks the sha256
+# itself. No URL is restated in ToolUniverse.
+fetch = "{python} -m evo2_opt.weights {weights_root} --model_name evo2_7b"
+
+# WHY evo2_7b AND NOT evo2_40b, settled before anything was downloaded.
+# stock/PINS.json checkpoints.evo2_40b is 82,253,491,694 bytes -- 76.6 GiB,
+# fetched as two .part files, concatenated, the parts then removed, so the
+# fetch needs ~153 GiB of free disk transiently. That alone is not the
+# blocker. These are:
+#   * it needs TWO visible devices. The kit's README: "evo2_40b needs two
+#     visible devices (vortex's layer split); set CUDA_VISIBLE_DEVICES
+#     accordingly." This host has one.
+#   * it needs FP8 via Transformer Engine. PINS stacks.img_a100.serves is
+#     ["evo2_7b"] only, and upstream raises ImportError in its own constructor
+#     for a non-7b model when TE is absent (evo2/models.py `load_evo2_model`).
+#     The lock here is the img_a100 stack -- see its header for why.
+#   * the kit's own `off` arm will not even pass use_kernels=True for it:
+#     STOCK.md records that "use_kernels=True over the two-device layer split
+#     scores NaN on every window".
+# So a host that wants the 40b needs two FP8-capable devices, the img_full
+# lock, and its own measurements. Nothing of it was downloaded.
+#
+# Mode `fast` would add one more checkpoint, evo2_1b_base.pt --
+# 2,698,327,083 bytes (2.51 GiB), sha256 8ffba7d0... in PINS -- as the draft
+# for speculative sampling. It is NOT declared because this provider runs
+# `exact` and does not serve `generate` at all; see [kit] mode.
+
+# The entry below is GENERATED from the kit's own stock/PINS.json by a script
+# (checkpoints.evo2_7b -> {file, bytes, sha256}), not transcribed. This kit's
+# PINS shape is a `checkpoints` table keyed by model name -- the sixth shape
+# the manifests have had to read, after a dict, a list of {local,url,...}, a
+# filename-keyed map, and a Hugging Face repo with a snapshot_commit.
+# generated from stock/PINS.json checkpoints.evo2_7b
+# arcinstitute/evo2_7b @ bda0089f92582d5baabf0f22d9fc85f3588f6b58
+[[weights.files]]
+name = "evo2_7b.pt"
+size = 13766621200
+sha256 = "c66645929dc1b9c631f5be656da8726f38946315dc9167000a615dd626fcecf4"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "evo2"
+# evo2/opt declares no dependency on common/ (opt/pyproject.toml:
+# `dependencies = []`, and nothing under opt/ imports opt_core), so this kit
+# needs only its own directory. "common" is named because the checkout is
+# shared by every provider pinning this commit and the sparse set is the union
+# of what its providers declare.
+sparse = ["evo2", "common"]
+package = "evo2_opt"
+#
+# ACTIVATION is the common form: the mode variable plus the kit's own
+# `opt/evo2_opt_autoload.pth`, not boltz2's worker_launch and not
+# rosettafold3's patched tree. Nothing in the kit is modified or shadowed.
+#
+# THE MODE VARIABLE IS `EVO2_OPT`, and it was read off the kit rather than
+# derived from the slug: `ENV = "EVO2_OPT"` at opt/evo2_opt/_autoload.py:10,
+# which is where kit_launch's probe looks second. THERE IS NO `modes` MODULE
+# IN THIS KIT AT ALL, so a probe that looked only at `modes.ENV` would have
+# found nothing. The .pth's own guard header is the independent confirmation:
+# `# opt_core autoload guard: package=evo2_opt env=EVO2_OPT tag=evo2-opt exit=3`.
+#
+# NO ENVIRONMENT ROW, and this is the "absence" case rather than the "failed
+# to read" one. There is no evo2_opt.modes, so there is no resolve() of any
+# of the four known signatures; opt/evo2_opt/__init__.py's own words are that
+# "the evo2_opt package reads only the three EVO2_OPT* variables" (STOCK.md
+# Sec.Variables lists them: EVO2_OPT, EVO2_OPT_WEIGHTS, EVO2_OPT_HOME), and
+# all three are supplied by kit_launch or by the editable install's own
+# location. The probe will record `modes_error: ModuleNotFoundError` and
+# return {}, which is correct and is declared here so build_command does not
+# have to guess which kind of empty it is seeing.
+env_row = "none"
+env_row_reason = "there is no evo2_opt.modes module and so no resolve() of any shape; _autoload.ENV = EVO2_OPT is the whole switch, and STOCK.md Sec.Variables says the package reads only EVO2_OPT, EVO2_OPT_WEIGHTS and EVO2_OPT_HOME -- all three set by kit_launch or by the editable install's location"
+#
+# MODE: `exact`, which is the kit's own default for `run.sh score` and
+# `run.sh check`. The kit's three modes are off | exact | fast and the
+# difference between the two kit modes is CONFINED TO GENERATION: README
+# Sec.Modes -- "fast -- exact plus speculative sampling in Evo2.generate with
+# the evo2_1b_base draft (k = 6): scoring identical". This provider does not
+# serve `generate`, so `fast` would buy nothing and cost a second 2.51 GiB
+# checkpoint. `exact`'s claim is the strong one and the reason to run a kit at
+# all here: "Outputs identical to off on the same stack."
+mode = "exact"
+#
+# WHAT THE GATE WILL AND WILL NOT REFUSE, read out of
+# opt/evo2_opt/activation.py `gate()` rather than assumed. It returns
+# ok=False -- one `[evo2-opt] NOT ACTIVE` line and exit 3 -- for exactly
+# three things: `evo2` or `vtx` absent or off the PINS version ("another
+# version is another stock"), torch not importable, and no CUDA device
+# visible. EVERYTHING ELSE IS NAMED ON THE ACTIVE LINE AND SERVED, including
+# this card (`unlisted(sm_121, 128 GiB: not a class the kit was measured on
+# -- engaged and named)`; PINS gpus lists h100 and a100_80gb) and any
+# torch/triton/flash-attn version off the pin. So unlike ESM C's kit, this one
+# does not refuse a partial activation at load.
+#
+# WHAT IT DOES REFUSE LATER: `kit.apply` raises KitRefused from the model's
+# CONSTRUCTOR for a model the levers cannot serve as constructed (the bf16
+# route's own `served()` checks the projection module type, the uniformity of
+# the three Hyena kernel flags, and `use_fp8_input_projections`), and on the
+# Transformer-Engine routes `kit/hooks.py` raises KitRefusedHooks for a forward
+# hook on a FOLDED PROJECTION -- "the L2 fold changes the projection's output
+# layout; run the package without the kit for these layer names
+# (return_embeddings)".
+#
+# WHICH ROUTE THIS PROVIDER ACTUALLY GETS: `bf16-projections(vortex-kernels)`.
+# kit/__init__.py `apply()` branches on `importlib.util.find_spec(
+# "transformer_engine")` -- NOT on the mode and not on the card -- and with TE
+# absent it takes opt/evo2_opt/kit/bf16.py, whose ROUTE is "bf16-projections"
+# and whose conv_path is "vortex-kernels" because this worker passes
+# use_kernels=True. So the lever set is NOT the 23 of kit/table.py's
+# `vortex-kernels` row; it is bf16.LEVERS -- 9 of them
+# (L1b_hcl_filter_cache, E7_triton_fir3_featurizer, E11_fused_rmsnorm_tail,
+# L2_interleave_fold_bf16_projection_weight,
+# E50_out_filter_dense_matmul_on_transposed_view, E56_fused_bias_residual,
+# E65_attention_residual_norm, E66_residual_into_next_pre_norm,
+# T9_cublaslt_config_selection) -- plus the S1 batch lever kit.apply appends on
+# every route. bf16.NOT_APPLICABLE names the five that step aside, with the
+# kit's own reasons: W1_fp8_weight_workspace_cache and
+# E61_general_gemm_out_buffer ("Transformer Engine is absent on this stack"),
+# L2_interleave_folded_into_te_master_weight (replaced by the bf16 fold above),
+# GATE_forward_gate_shape_manager ("this route holds no shape-bound store ...
+# every (batch, length) runs the same patched classes") and
+# G1_forward_graph_replay ("the graph replay rides on the forward gate, which
+# this route does not install").
+#
+# TWO CONSEQUENCES WORTH STATING SEPARATELY.
+#   * RESIDENCY. Losing G1_forward_graph_replay removes the mechanism that made
+#     rfdiffusion3 12x, so the gain expected here is ESMFold2's and ESM C's
+#     kind -- holding 12.82 GiB of weights rather than holding a graph. It also
+#     means the budget above does not need a graph pool in it.
+#   * EMBEDDINGS. With no gate installed, a hooked forward is NOT diverted to
+#     the stock path on this route and the folded-projection refusal is not
+#     wired either, even though the fold IS applied. That is why the worker
+#     restricts `layer_name` to blocks.<i>.mlp.l3 itself rather than relying on
+#     the kit to object; see its `_embed` docstring.
+#
+# levers_declined is left empty because nothing has declined yet: on this host
+# nothing has been applied yet. The five above are "not applicable", which is
+# the kit's own word and a different thing from a lever that tried and failed.
+#
+# ------------------------------------------------------------------ TRITON
+# TRITON IS ON EVO 2'S OWN PATH, NOT JUST THE KIT'S, so `mode = "off"` is not
+# an escape from anything in this block. `vortex/model/rotary.py:7` imports
+# `apply_rotary` from `vortex/ops/embedding/rotary.py`, which is a
+# `@triton.jit` kernel, and `ApplyRotaryEmb.forward` calls it for evo2_7b's
+# five attention layers on every forward -- in every mode. `use_kernels=True`
+# (the kit's own construction for the one-device models) adds three more
+# upstream Triton kernels, hcs/hcm/hcl. The kit's `exact` on the bf16 route
+# adds two of its own, E7_triton_fir3_featurizer (kit/fir3rows.py) and
+# E11_fused_rmsnorm_tail (kit/rmsnorm.py).
+#
+# THIS KIT CANNOT REACH opt_core's TRITON KERNELS AT ALL. A sibling kit
+# (atlasfold) aborted inside `opt_core/kernels/{ln/exactln,fpf_trimul}`; evo2's
+# opt declares `dependencies = []` and `grep -rn "opt_core" opt/evo2_opt/`
+# returns nothing, so neither is reachable from here. Its Triton is its own.
+#
+# WHAT WAS MEASURED ON THIS CARD, with the 12.9 ptxas the worker points Triton
+# at (resident/evo2_resident_worker.py `_point_triton_at_a_usable_ptxas`), each
+# kernel compiled and launched on tiny inputs with no model loaded:
+#
+#     vortex apply_rotary (every mode)            COMPILED AND CORRECT
+#     vortex hcs_conv (use_kernels=True)          COMPILED AND CORRECT
+#     kit E7 fir3_rows                            COMPILED AND CORRECT
+#     kit E11 rmsnorm_forward                     COMPILED AND CORRECT
+#     a hand-written tl.sum reduction             LLVM ERROR: Cannot select:
+#                                                 intrinsic %llvm.nvvm.shfl.sync.bfly.i32
+#
+# So the abort is NOT a property of the triton version alone -- it is a
+# property of a kernel that needs a warp-shuffle intrinsic the fallback target
+# cannot lower. `grep -n "tl.sum\|tl.reduce\|tl.dot"` over every Triton kernel
+# on this path (vortex hcs/hcm/hcl/rotary interfaces, evo2_opt/kit/*.py,
+# evo2_opt/gen/hyenafuse/*.py) finds NONE, and the kit says why in
+# gen/hyenafuse/kernel.py: "why the arithmetic is spelled out instead of using
+# tl.sum" -- it is spelled out for bitwise reproducibility, which incidentally
+# avoids the one intrinsic that aborts. The kit's RMSNorm reduction is a
+# hand-written pairwise tree (kit/rmsnorm.py `_row_sumsq`, `_pair_sum`) for the
+# same reason, and it compiles.
+#
+# WHAT IS STILL TRUE AND WHY NOTHING IS OVERRIDDEN HERE. triton 3.3.1's LLVM
+# lists up to sm_120a and not sm_121a (the probe's own `triton_llvm`), so it
+# "ignores the processor" and falls back; a future kernel that reduces across
+# lanes would abort the process, uncatchably, and no `try` helps. An sm_120a
+# cubin runs on sm_121, so asking LLVM for sm_120a would fix it outright --
+# but triton 3.3.1 offers no supported way to say so: the target comes from
+# `sm_arch_from_capability(capability)` with the device's own capability, and
+# `TRITON_OVERRIDE_ARCH` is used only in the compilation cache key
+# (backends/nvidia/compiler.py:180), never for the emitted --gpu-name. The two
+# real options are to narrow the shared check to "a kernel on the path needs an
+# unlowerable intrinsic" or to raise this lock's triton above the kit's pin.
+# The second changes the stack of record, so neither is done in this file.
+#
+# `levers_off` IS NOT SHIPPED, AND NOT BECAUSE IT WAS NOT NEEDED. This kit
+# NEVER READS `MODEL_OPT_LEVERS_OFF`: `grep -rn LEVERS_OFF` over the whole
+# evo2/ subtree returns nothing, exactly as boltzgen's does. kit_launch would
+# happily export the variable and the kit would ignore it, which is worse than
+# saying so -- so it is said here. If a lever has to be taken out of `exact`
+# on this card, the only doors this kit offers are `mode = "off"` (stock Evo 2,
+# a supported mode) and upstream's own `use_kernels` switch, which selects
+# between the two lever tables rather than disabling any.
+#
+# NO [kit.env] TABLE, deliberately. The knobs this kit documents are the three
+# EVO2_OPT* variables (all already supplied) and MODEL_OPT_JIT_ROOT, which
+# STOCK.md says is "read by run.sh only" -- the package itself never looks at
+# it. This provider does not go through run.sh, so Triton keeps its default
+# cache under ~/.triton, which is the kit's own documented behaviour without
+# run.sh ("unset = Triton's default under ~/.triton") and is persistent across
+# worker lifetimes, which is what the cache is for. There is no size gate or
+# cap of the openfold3 kind to state.
+#
+# `run.sh install` is two steps: `pip install -e opt` (the kit and its
+# autoload .pth) and `stock/check_pins.py`, which compares the installed evo2
+# and vtx FILE BY FILE against the wheels in stock/ and exits 3 on any
+# difference -- "a modified or editable checkout counts as different". No
+# --weights here: the weights step owns that.
+install = "bash run.sh install"
