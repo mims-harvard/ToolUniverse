@@ -572,6 +572,18 @@ MODES = {
 
 SHAPERS = {
     "mosaic": _mosaic_design,
+    # OpenDDE speaks Protenix's AlphaFold-Server style input: a one-job list whose
+    # first entity is a proteinChain, so its ladder is shaped exactly like
+    # protenix_v1's. The CEILING IS NOT: 400 tokens here against protenix_v1's
+    # 800, and 400 is the largest point its budget was ever measured at (512 and
+    # 800 were never run). This harness drives the WORKER, so a rung past 400 is
+    # refused by MAX_TOKENS in opendde_resident_worker and never reaches
+    # opendde_tool's MAX_TOKENS_TOTAL -- which is the refusal opendde's
+    # verified_on quotes. Keep --lengths at or below 400 for a ladder; go past it
+    # only to exercise the refusal.
+    "opendde": lambda x, n: _json_seq(
+        x, n, [0, "sequences", 0, "proteinChain", "sequence"]
+    ),
     "protenix_v1": lambda x, n: _json_seq(
         x, n, [0, "sequences", 0, "proteinChain", "sequence"]
     ),
