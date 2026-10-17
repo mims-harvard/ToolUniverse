@@ -39,11 +39,34 @@ smoke_timeout_s = 1800.0
 
 [gpu]
 policy = "required"
-# Measured over three consecutive folds in one held worker: 9.55, 9.76, 9.80
-# GiB. The later figure is the one to budget, as with Boltz-2 -- it grows a
-# little as the allocator settles, which is also why expandable_segments is
-# worth keeping (see [kit] levers_off).
-vram_budget_gb = 9.8
+# MEASURED 15.42 GiB at crop 768, and the figure this replaced was 9.8 --
+# which was a CROP-256 NUMBER, not a provider-wide one.
+#
+# The old note measured three consecutive folds in one held worker (9.55,
+# 9.76, 9.80) and reasoned correctly about why the figure grows as the
+# allocator settles. What it could not see is that all three folds were the
+# 89-residue smoke, which pads to the SMALLEST of chai-lab's seven exported
+# crops. The acceptance ladder reproduces 9.55 exactly at crop 256 and then
+# keeps going:
+#
+#     rung 250 -> crop 256   peak  9.55
+#     rung 380 -> crop 384   peak 10.56
+#     rung 500 -> crop 512   peak 11.83
+#     rung 760 -> crop 768   peak 15.42
+#
+# So the declared budget was below an observation at every crop above the
+# smallest, by up to 57%, which is the direction that lets a scheduler
+# oversell.
+#
+# THIS IS NOT A CEILING. 768 is the top of the measured ladder, not the top
+# of the model: crops 1024, 1536 and 2048 exist and are unmeasured here, and
+# they will be higher still. A caller who folds longer than 768 tokens is
+# outside this figure. 2048 tokens is where chai-lab itself refuses.
+#
+# The axis is the CROP rather than the residue count, which is also why this
+# provider's acceptance rungs are chosen to straddle crops -- see
+# _chai1_crop in scripts/remote_validation/verify_provider.py.
+vram_budget_gb = 15.42
 driver_min = 580
 driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.13.0+cu130)"
 shareable = true
