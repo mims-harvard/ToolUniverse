@@ -686,11 +686,21 @@ class SMCP(FastMCP):
             self.logger.error(f"Error getting valid categories: {e}")
             return set()
 
-    def _load_tools_with_filters(self, tool_type=None):
+    def _load_tools_with_filters(self, tool_type=None, clear_existing=True):
         """Load tools with the common set of filter parameters.
 
         Centralizes the repeated pattern of calling load_tools with the same
         exclude/include/tools_file/config kwargs used across _setup_smcp_tools.
+
+        ``clear_existing`` defaults to True because this server's filters
+        describe what it is to serve, not what to add to whatever is loaded.
+        Something usually IS loaded by the time this runs: a workspace
+        profile.yaml is applied when ToolUniverse is constructed, and it loads
+        the whole catalogue unless it says otherwise. Before this was explicit,
+        `self.include_tools` being `[]` made load_tools infer "add", so the
+        server's own filters quietly kept every tool that profile had loaded.
+        The compact-mode step below is the one caller that really does mean
+        "as well", and says so.
         """
         self.tooluniverse.load_tools(
             tool_type=tool_type,
@@ -701,6 +711,7 @@ class SMCP(FastMCP):
             tool_config_files=self.tool_config_files,
             include_tool_types=self.include_tool_types,
             exclude_tool_types=self.exclude_tool_types,
+            clear_existing=clear_existing,
         )
 
     def _ensure_compact_mode_categories(self):
@@ -709,7 +720,10 @@ class SMCP(FastMCP):
             return
         for category in ("tool_finder", "compact_mode"):
             try:
-                self._load_tools_with_filters(tool_type=[category])
+                # ADDED to the selection above, not loaded instead of it.
+                self._load_tools_with_filters(
+                    tool_type=[category], clear_existing=False
+                )
             except Exception as e:
                 self.logger.debug(f"Could not load category {category}: {e}")
 
@@ -1503,7 +1517,12 @@ class SMCP(FastMCP):
                     "Attempting to load tool_finder category for search functionality"
                 )
                 try:
-                    self._load_tools_with_filters(tool_type=["tool_finder"])
+                    # ADDED to whatever is serving, like the compact-mode step:
+                    # this is a search capability the server lacked, not a new
+                    # selection of what to serve.
+                    self._load_tools_with_filters(
+                        tool_type=["tool_finder"], clear_existing=False
+                    )
                 except Exception as e:
                     self.logger.debug(f"Could not load tool_finder category: {e}")
 

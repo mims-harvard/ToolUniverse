@@ -1224,6 +1224,7 @@ class ToolUniverse:
         exclude_tool_types=None,
         python_files=None,
         quiet=True,
+        clear_existing=None,
         _apply_profile_defaults=True,
     ):
         """
@@ -1253,6 +1254,15 @@ class ToolUniverse:
             quiet (bool, optional): Suppress missing-API-key warnings and
                 ``.env.template`` generation. Default ``True``. Pass ``False``
                 to see which keys are missing.
+            clear_existing (bool, optional): Whether to drop the tools already
+                loaded before loading this selection. ``True`` makes the call
+                mean "load ONLY this" and ``False`` makes it mean "load this AS
+                WELL". The default, ``None``, infers it the way this method
+                always has -- clearing unless ``include_tools`` or ``tools_file``
+                names tools -- which is ambiguous exactly when it matters, since
+                one argument then carries both intents. Say which one you mean
+                whenever something may already be loaded, and note that a
+                workspace ``profile.yaml`` loads the catalogue at construction.
 
         When a Profile is active, omitted filter arguments inherit the Profile's
         ``tools`` settings.  This keeps a plain ``load_tools()`` reload consistent
@@ -1293,7 +1303,13 @@ class ToolUniverse:
             if exclude_categories is None:
                 exclude_categories = profile_tools.get("exclude_categories", [])
             if include_tools is None and tools_file is None:
-                include_tools = profile_tools.get("include_tools", [])
+                # `or None`, not `[]`: an empty profile list means "the Profile
+                # names no tools", which is the same as omitting the argument.
+                # Leaving it as `[]` made it non-None, and the full-reload branch
+                # below tests for None -- so every workspace profile.yaml (the
+                # seeded default has `include_tools: []`) silently turned a later
+                # `load_tools(categories=[...])` into an additive no-op.
+                include_tools = profile_tools.get("include_tools") or None
             if include_tool_types is None:
                 include_tool_types = profile_tools.get("include_tool_types", [])
             if exclude_tool_types is None:
@@ -1310,9 +1326,17 @@ class ToolUniverse:
                 categories = tool_type
         self.logger.debug(f"Number of tools before load tools: {len(self.all_tools)}")
 
-        # Full reload (no include_tools): clear existing tools so repeated calls
-        # don't accumulate duplicates before deduplication runs.
-        if include_tools is None and tools_file is None:
+        # Clear the tools already loaded, so that this call means "load only
+        # this" rather than "load this as well". Which one a caller wanted used
+        # to be INFERRED from `include_tools`, and one argument cannot carry two
+        # intents: SMCP passes `include_tools=[]` on every load and depended on
+        # the inference to skip the clear for its compact-mode additions, which
+        # also made its filtered load inherit everything a workspace profile had
+        # loaded at construction. `clear_existing` now says it outright, and the
+        # inference is only the default for callers that do not.
+        if clear_existing is None:
+            clear_existing = include_tools is None and tools_file is None
+        if clear_existing:
             self.all_tools = []
             self.all_tool_dict = {}
             self.tool_category_dicts = {}
@@ -5381,7 +5405,9 @@ class ToolUniverse:
         """
         Load only specific tools by their names.
 
-        DEPRECATED: Use load_tools(include_tools=...) instead.
+        DEPRECATED: Use ``load_tools(include_tools=..., clear_existing=...)``
+        instead, which now takes the same ``clear_existing`` this one has always
+        had.
 
         Args:
             tool_names (list): List of tool names to load
@@ -5396,14 +5422,12 @@ class ToolUniverse:
             DeprecationWarning,
             stacklevel=2,
         )
-        if clear_existing:
-            self.all_tools = []
-            self.all_tool_dict = {}
-            self.tool_category_dicts = {}
-
-        # Use the enhanced load_tools method
-        original_count = len(self.all_tools)
-        self.load_tools(include_tools=tool_names)
+        # load_tools does the clearing now, and it clears more than the three
+        # dicts this method used to: the excluded-API-key bookkeeping was left
+        # behind here, which is the kind of drift that comes of two places
+        # doing the same job.
+        original_count = 0 if clear_existing else len(self.all_tools)
+        self.load_tools(include_tools=tool_names, clear_existing=clear_existing)
         return len(self.all_tools) - original_count
 
     def load_profile(

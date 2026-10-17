@@ -1,6 +1,6 @@
 ---
 name: tooluniverse-share-computer
-description: Share tools that live on this computer (the user's own Python function, script or notebook code, a model, a program they already run, or ToolUniverse's reviewed GPU models) so the user's and their colleagues' AI assistants can use them through ToolUniverse. You do the work; the user only answers questions and clicks Allow once in a browser. Use when the user says things like "share my model with my lab", "let my colleague use this script", "make this function a tool", "put my GPU models on ToolUniverse", or "keep my tool running".
+description: Share tools that live on this computer (the user's own Python function, script or notebook code, a model, a program they already run, or ToolUniverse's reviewed GPU models) so the user's and their colleagues' AI scientists can use them through ToolUniverse. You do the work; the user only answers questions and clicks Allow once in a browser. Use when the user says things like "share my model with my lab", "let my colleague use this script", "make this function a tool", "put my GPU models on ToolUniverse", or "keep my tool running".
 ---
 
 # Share a computer's tools through ToolUniverse
@@ -163,7 +163,7 @@ It survives logouts and reboots. Check it with `tuplatform-service status --name
 
 Explain the two choices in plain words and let the user pick:
 
-- **Specific colleagues use this computer's tools**: on https://connect.aiscientist.tools/remote-servers, the computer's card has **Create share code**. The user copies the code (or **Copy invitation**) and sends it. A colleague pastes it on their ToolUniverse Home page, and their AI assistant can then use these tools. The user can turn the code off at any time.
+- **Specific colleagues use this computer's tools**: on https://connect.aiscientist.tools/remote-servers, the computer's card has **Create share code**. The user copies the code (or **Copy invitation**) and sends it. A colleague pastes it on their ToolUniverse Home page, and their AI scientist can then use these tools. The user can turn the code off at any time.
 - **Anyone can find one tool in Discover**: publish a single tool. Use the skill `tooluniverse-publish-tool`.
 
 ## Stopping and undoing
