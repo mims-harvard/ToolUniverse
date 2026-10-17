@@ -41,10 +41,23 @@ smoke_timeout_s = 900.0
 
 [gpu]
 policy = "recommended"
-# Measured: 4.12 GiB, identically on three runs. It does not drift the way
-# Boltz-2's does, because every input is cropped or padded to the same 196,608
-# bases, so the activation footprint is the same whatever the caller sends.
-vram_budget_gb = 4.12
+# MEASURED 4.69 GiB, and the figure this replaced was 4.12 -- BELOW an
+# observation this provider reliably produces, which is the direction that
+# lets a scheduler oversell.
+#
+# The old note said "4.12 GiB, identically on three runs", and that was true
+# of three runs in three PROCESSES. The acceptance suite's repeat phase, which
+# is four requests into ONE HELD WORKER, reads 4.12 on the first request and
+# 4.69 on the second, third and fourth. A held worker is what this provider
+# IS, so 4.69 is the figure a co-tenant has to plan against; 4.12 is only ever
+# true of a worker's first request.
+#
+# It still does not drift with the INPUT, which is what the old note was
+# really about and is still worth saying: every request is cropped or padded
+# to the same 196,608 bases, so the activation footprint is the same whatever
+# the caller sends. That is also why this provider has no shaper -- see
+# NO_SHAPER in scripts/remote_validation/verify_provider.py.
+vram_budget_gb = 4.69
 shareable = true
 isolation = "process"
 
@@ -89,6 +102,19 @@ package = "enformer_opt"
 # On x86-64 set this to "exact" and the levers poscache, fused, graph and xattn
 # engage. `tu remote setup` refuses the mismatch by name before installing.
 mode = "off"
+# Declared, because an empty environment row and a FAILURE to read one are
+# indistinguishable from the launcher. With the kit off there is no row: the
+# kit is engaged by its mode variable and the .pth it installs, and neither is
+# installed here, so the worker runs plainly with nothing of the kit's in its
+# environment.
+#
+# THIS WAS NOT A STYLE POINT. Without it `kit_launch.build_command` refuses,
+# so this provider could not start AT ALL on this machine while carrying
+# `status = "verified"` -- found by running the acceptance suite against it
+# for the first time. Every one of the other thirteen kit-off providers in
+# this tree already declared it; enformer was the only one that did not.
+env_row = "none"
+env_row_reason = "the kit is off on aarch64 (its .so files are x86-64 only), and an off kit engages through no mode variable and no .pth, so there is no row to read. On x86-64 with mode `exact` the row carries the kit's own activation variables."
 install = "PYTHON={python} bash run.sh install"
 # Every lever, on this host: the objects that carry them are not loadable here.
 levers_declined = ["poscache", "fused", "graph", "xattn"]
