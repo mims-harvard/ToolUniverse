@@ -12,8 +12,10 @@ Paper: Wu, Z. et al., *Designing enzymes for new-to-nature chemistry and
 non-natural substrates with AlphaProtein Novo*, bioRxiv 2026,
 doi [10.64898/2026.10.01.756017](https://www.biorxiv.org/content/10.64898/2026.10.01.756017v1).
 
-**Validation status: `untested`.** Nothing here is claimed to have run. What has
-been established on this machine, and what has not, is listed under
+**Validation status: `verified`.** The acceptance suite has run twice, with two
+different ladders, and the full generate -> fold -> ingest -> evaluate chain has
+run end to end on this card. What has been established on this machine, and
+what has NOT — scientific quality above all — is listed under
 "What has been measured" below. Installation is
 `skills/setup-apnovo-remote-tool/SKILL.md`; scientific use is
 `skills/tooluniverse-enzyme-design/`.
@@ -121,8 +123,8 @@ Not established, and the reason in each case:
 
 | claim | status |
 |---|---|
-| residency gain **through the socket** | unmeasured. The 4.2x above was measured by driving upstream directly; the smoke sends one request, and one request cannot measure what a second would have reused. |
-| the acceptance suite | **not run.** `verify_provider.py` has not been run, so there is no ladder, no mixed-shape sequence and no repeat series. One smoke is not a test of a provider that holds state between requests. |
+| residency gain **through the socket** | **measured.** The acceptance suite ran twice through the worker socket and replayed held engines: 36.8 s against a 129.2 s cold rung at 1000 steps, and 2.0-2.2 s against a cold 73-144 s at the smoke's 50 steps. |
+| the acceptance suite | **run twice, passed twice.** `verify_provider.py apnovo` with `--lengths 100,250,500,1000` and with `--lengths 100,500,1000,2000`, `--repeats 4` each: 12/12 answered per run, every one `produced=yes`, `peak_reserved_gib` 2.0 on every request of both. The rungs are denoising step counts, because that — not the design length — is what keys a rebuild here. |
 | folding stage | **blocked on an entitlement question, not a technical one.** AP Novo's folding uses AF3 / AF3-LA weights, whose terms are separate from AP Novo's. `af3_jax` deliberately avoids them by converting public OpenFold3-preview2 weights instead. Which route this provider takes is the operator's decision and is not made here. It no longer blocks evaluation: `apnovo_ingest_folded` takes predictions made by a provider that has settled its own weights question and writes them where upstream's evaluation looks. |
 | resequencing stage | **done, on the CPU.** It gets the third interpreter it needs; it runs on the CPU because torch below 2.7 drives no sm_121 part, which is measured rather than assumed. Measured: one 129-residue design in 12 s. Its two environment variables are optional, and the operation refuses by name without them. |
 
@@ -153,7 +155,7 @@ smoke/input.json                    smallest input that exercises generation
 
 ## TOU validation and deployment status (2026-08-16)
 
-> AlphaProtein Novo generated designs on the NVIDIA GB10 (aarch64, cc 12.1, driver 580.173.02) with upstream's own code at commit e7ce276, kit mode `off` because there is no optimization kit for it. **Measured: the peak is set by the padding bucket and not by the step count** — `peak_pool_bytes` was 2,145,386,496 at 50 denoising steps and the same 2,145,386,496 at the published 1000, so the declared 2.0 GiB budget does not move with the setting a caller is most likely to change. Residency at 1000 steps is **4.2x**: a cold 512-residue bucket costs 79.3 s and a held one 18.8 s. At 50 steps the same pair is 61.3 s and 1.06 s, 58x, because compilation dominates there — plan with 4.2x, which is the figure at the setting the published campaigns use. What is held is the Haiku parameter set and upstream's per-(steps, partial_steps) compiled trajectory. **This provider is not a port of upstream's whole pipeline**: it serves motif validation, generation, resequencing and evaluation, and deliberately omits FOLDING, because AlphaFold 3 weights carry terms separate from AP Novo's and that question is unsettled here. Upstream's evaluation does not fall back to the metrics that need no prediction — it finds no folding seed in a design's metadata and refuses the whole run — so a campaign still has to be folded before it can be scored. **That no longer makes the operation unreachable, and part of why it was unreachable was ours:** `_evaluate` passed `--input_dir=01_generation` against a flag whose help says "Directory with the output of run_alphafold.py", so a folded campaign failed in exactly the same way as an unfolded one. The worker now reads `03_folded`, and `apnovo_ingest_folded` writes that stage from predictions made by any provider that has settled its own weights question — `openfold3`, `protenix_v1`, `esmfold2`, `chai1` and `rosettafold3` ship on this same standard. **MEASURED END TO END on 2026-10-15, on this GB10.** Generate -> fold -> ingest -> evaluate, all four stages through their MCP endpoints:
+> AlphaProtein Novo generated designs on the NVIDIA GB10 (aarch64, cc 12.1, driver 580.173.02) with upstream's own code at commit e7ce276, kit mode `off` because there is no optimization kit for it. **Measured: the peak is set by the model's one fixed input shape and not by the step count** — `peak_pool_bytes` was 2,145,386,496 at 50 denoising steps and the same 2,145,386,496 at the published 1000, so the declared 2.0 GiB budget does not move with the setting a caller is most likely to change. Residency at the published 1000 steps is **5.3x**: one 2-design request measures `per_design_s = [193.14, 36.55]`, so 193.1 s for the design that pays the XLA compile and 36.6 s for the one that reuses it. At 50 steps the same pair is 158.5 s and 1.99 s — far larger, because compilation dominates at 50 steps and real compute dominates at 1000. **Plan with the figure at your own step count**, and note that the axis is the step count rather than the design length: a second campaign at a different step count is cold again however many designs preceded it. *(An earlier version of this line said 79.3 s cold / 18.8 s held / 4.2x at 1000 steps. That pair does not reproduce; the 50-step pair does.)* What is held is the Haiku parameter set and upstream's per-(steps, partial_steps) compiled trajectory. **This provider is not a port of upstream's whole pipeline**: it serves motif validation, generation, resequencing and evaluation, and deliberately omits FOLDING, because AlphaFold 3 weights carry terms separate from AP Novo's and that question is unsettled here. Upstream's evaluation does not fall back to the metrics that need no prediction — it finds no folding seed in a design's metadata and refuses the whole run — so a campaign still has to be folded before it can be scored. **That no longer makes the operation unreachable, and part of why it was unreachable was ours:** `_evaluate` passed `--input_dir=01_generation` against a flag whose help says "Directory with the output of run_alphafold.py", so a folded campaign failed in exactly the same way as an unfolded one. The worker now reads `03_folded`, and `apnovo_ingest_folded` writes that stage from predictions made by any provider that has settled its own weights question — `openfold3`, `protenix_v1`, `esmfold2`, `chai1` and `rosettafold3` ship on this same standard. **MEASURED END TO END on 2026-10-15, on this GB10.** Generate -> fold -> ingest -> evaluate, all four stages through their MCP endpoints:
 
 | stage | what ran | result |
 |---|---|---|
@@ -164,7 +166,7 @@ smoke/input.json                    smallest input that exercises generation
 
 kemp_0000 scored `monomer/tm_score` **89.47**, `monomer/rmsd` **1.596 Å**, `monomer/gdt_ha` 62.60, `complex/motif_allatom_rmsd` 1.733 Å, `sampled/num_missing_motif_residues` **0** and zero ligand-backbone clashes; kemp_0001 scored tm_score 92.66 and rmsd 1.428 Å. **The reaction suite ran**: 68 of those metrics are kemp-specific, including the catalytic geometry it exists to measure — `complex/acid_base/distance` 6.086 Å and `complex/acid_base/angle1` 83.78 deg. Protenix's own confidence record arrives as `complex/plddt`, `/ptm`, `/iptm` and `/ranking_score`, which is the pass-through this design promised.
 
-So the state-prefixed families and the published threshold sets ARE reachable here, through a sibling provider. What has still **not** run is `verify_provider.py`: there is no acceptance ladder, no repeats and no cross-run equivalence for this provider, which is why `status` stays `untested`. One campaign that completes is not an acceptance. The acceptance suite has not been run, longer padding buckets are unmeasured, and scientific quality is unvalidated. The weights are licensed for non-commercial use by non-commercial organisations and must not be redistributed; public publication, cross-user isolation, concurrency and recovery are unvalidated. Keep this deployment private.
+So the state-prefixed families and the published threshold sets ARE reachable here, through a sibling provider. `verify_provider.py` **has now run**, twice, with two different ladders: 12/12 requests answered each time, every one `produced=yes`, and `peak_reserved_gib` 2.0 on every request of both runs — so `status` is `verified`. The rung is a denoising step count rather than a design length, because every design pads to one fixed shape and what keys a rebuild is upstream's `(sampling_steps, partial_steps)` trajectory cache; a length ladder here would have compiled one engine and printed four greens. See `provider.toml`'s `verified_on` for the figures and for the residency number it corrects. **Scientific quality remains unvalidated** — an acceptance measures that the provider answers, holds and rebuilds, not that its designs are good. The weights are licensed for non-commercial use by non-commercial organisations and must not be redistributed; public publication, cross-user isolation, concurrency and recovery are unvalidated. Keep this deployment private.
 
 - Operation: `apnovo_validate_motif`
 - Start: `python -m tooluniverse.remote.apnovo.apnovo_tool`
@@ -177,9 +179,11 @@ So the state-prefixed families and the published threshold sets ARE reachable he
   individual or to one organisation's representative, not to a host's users.
   Use one worker: the resident worker serves one request at a time by design,
   and a second in-flight request queues on its lock rather than doubling peak
-  VRAM. The measured VRAM budget is 2.0 GiB at the 512-residue padding bucket;
-  read the envelope it was measured at in the manifest before co-tenanting
-  anything else on the card, because a longer design uses a larger bucket.
+  VRAM. The measured VRAM budget is 2.0 GiB, and it is the figure for
+  every design this provider can accept rather than for one bucket among
+  several: upstream pads every design to one fixed 512-residue shape, so a
+  longer design does not use more VRAM — it is **refused**. Co-tenant against
+  2.0 GiB without reserving headroom for growth that cannot happen.
 - TOU check: `tu doctor --forward http://127.0.0.1:8059/mcp --json`
 - Private relay: `tu serve --share --forward http://127.0.0.1:8059/mcp --name validation-apnovo --workers 1`
 

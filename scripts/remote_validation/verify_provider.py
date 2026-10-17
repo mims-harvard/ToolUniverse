@@ -512,6 +512,41 @@ def _boltz_msa_mode(text):
     return "\n".join(kept) + "\n"
 
 
+def _apnovo_steps(text, n):
+    """A campaign at n DENOISING STEPS -- apnovo's engine key is not its length.
+
+    This is the af2ig case the module docstring names, in its sharpest form:
+    a length ladder here would rebuild NOTHING and still print four green
+    rungs. `run_generator.parse_and_prepare_diffusion_input` passes
+    `max_num_res=512` as a LITERAL, so every design of every length is padded
+    to the same 512 residues and compiled once -- which is also why this
+    provider's measured peak does not move with the design length, and why
+    `vram_budget_gb` could be quoted from one bucket at all.
+
+    What does change the engine is `_get_compiled_trajectory(sampling_steps,
+    num_partial_diffusion_steps)`, a module-level `functools.lru_cache` --
+    the same SHAPE of hazard genie3 carried, where a module-level mutable
+    permitted one build per process. So the rung is a step count, and the
+    ladder is a real sequence of distinct XLA compilations.
+
+    `Manifest` merges as `{**defaults, **entry}`, so the ENTRY wins over
+    `defaults`: setting only the defaults block would leave any design that
+    names its own step count untouched, and the ladder would silently run four
+    rungs at one value. Both are written.
+
+    Note the cache is `maxsize=8`. Four ladder rungs plus the smoke's own 50
+    is five keys, so no rung is evicted by a later one during a run.
+    """
+    doc = json.loads(text)
+    doc.setdefault("manifest", {}).setdefault("defaults", {})[
+        "num_sampling_steps"
+    ] = n
+    for design in doc["manifest"].get("designs") or []:
+        if "num_sampling_steps" in design:
+            design["num_sampling_steps"] = n
+    return json.dumps(doc)
+
+
 # A provider whose ACCURACY depends on a mode the smoke does not exercise
 # declares that mode here, and a run that skips it is INCOMPLETE.
 #
@@ -566,6 +601,24 @@ SHAPERS = {
     "af2ig": _af2ig_complex,
     "complexa": _complexa_design,
     "colabdesign": _colabdesign_case,
+    # NOT a length ladder: everything pads to 512 residues, so the rung is a
+    # denoising step count. See _apnovo_steps.
+    "apnovo": _apnovo_steps,
+}
+
+# What a rung MEANS, for a provider whose rung is not residues. The label is
+# not decoration: a run that printed "ladder 400aa" for apnovo would be
+# recording a design length that no rung ever used, and the measured table a
+# reader builds from this output would be wrong in the one column it exists
+# for. Default "aa".
+UNITS = {
+    "apnovo": "steps",
+    "colabdesign": "tokens",
+    "af2ig": "res (2 chains)",
+    "colabfold": "res (2 chains)",
+    "complexa": "res",
+    "evo2": "nt",
+    "gpnstar": "nt",
 }
 
 
@@ -629,6 +682,7 @@ def main() -> int:
     )
 
     shaper = SHAPERS.get(a.slug)
+    unit = UNITS.get(a.slug, "aa")
     lens = [int(x) for x in a.lengths.split(",")] if shaper else []
 
     # The ladder runs FIRST and ASCENDING. `peak_reserved_gib` is a running
@@ -641,12 +695,12 @@ def main() -> int:
     if lens:
         print("-- ladder, ascending, before anything larger (the budget envelope)")
         for n in lens:
-            ask(f"ladder {n}aa", shaper(text, n), f"L{n}")
+            ask(f"ladder {n}{unit}", shaper(text, n), f"L{n}")
 
         print("-- mixed shapes (a change and a repeat must both survive)")
         small, big = lens[0], lens[len(lens) // 2]
         for i, n in enumerate([small, small, big, small]):
-            ask(f"mixed {i} ({n}aa)", shaper(text, n), f"m{i}")
+            ask(f"mixed {i} ({n}{unit})", shaper(text, n), f"m{i}")
 
     print(f"-- {a.repeats} consecutive identical requests (the acceptance test)")
     ok = 0

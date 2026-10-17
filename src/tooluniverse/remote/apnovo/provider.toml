@@ -43,9 +43,10 @@
 # MEASURED 2026-10-15: generate -> protenix_v1 fold -> ingest -> evaluate ran
 # end to end on this GB10 and produced 547 metrics per design across all four
 # families, 68 of them kemp-suite. Residency showed as 79x at 50 steps
-# (158.52 s cold, 1.99 s held). `status` stays "untested" because
-# verify_provider.py has still not run: one campaign that completes is not an
-# acceptance.
+# (158.52 s cold, 1.99 s held).
+#
+# AND THE ACCEPTANCE HAS NOW RUN, twice, which is the thing one completed
+# campaign was never evidence for. See `verified_on`.
 #
 # The operation was published before that route existed and could only ever
 # return a named error, which was a defect rather than a documented limit.
@@ -92,17 +93,68 @@ operations = [
     "apnovo_ingest_folded",
     "apnovo_evaluate_designs",
 ]
-status = "untested"
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, driver 580.173.02), venv route, CPython 3.12,
+jax 0.10.2 on the lock's jax-cuda12 wheels, upstream alphaprotein_novo at the
+pinned commit e7ce276, kit mode `off` (there is no kit). 2026-10-15/16.
+
+ACCEPTANCE: scripts/remote_validation/verify_provider.py apnovo, run TWICE with
+different ladders -- `--lengths 100,250,500,1000` and `--lengths 100,500,1000,2000`,
+`--repeats 4` both times. 12/12 requests answered in each run, every one
+`produced=yes`, and `peak_reserved_gib` 2.0 on EVERY request of both.
+
+THE RUNG IS A STEP COUNT, NOT A LENGTH, and that is the whole reason this
+provider's acceptance means anything. A length ladder here would have compiled
+ONE engine and printed four greens: `run_generator.parse_and_prepare_diffusion_input`
+passes `max_num_res=512` as a literal, so every design of every length pads to
+one shape. What actually keys a rebuild is upstream's
+`_get_compiled_trajectory(sampling_steps, num_partial_diffusion_steps)`, a
+module-level `functools.lru_cache(maxsize=8)` -- the same shape of hazard
+genie3 carried. So the ladder walks step counts and each rung is a real,
+distinct XLA compilation. See the `apnovo` entry in that script's SHAPERS.
+
+HELD TIME IS LINEAR AND REPRODUCIBLE; COLD TIME IS NOT. Held fits about
+0.0365 s/step + 0.35 s across 100/500/1000/2000 steps in both runs
+(3.9-4.1 s at 100, 18.4 s at 500, 36.8 s at 1000). Cold at the smoke's 50
+steps was 73.0 s in one run and 143.9 s in the other on the same machine, so
+quote the held figure and treat any single cold number as an upper bound.
+
+THE COMPILE IS NOT CONSTANT IN THE STEP COUNT, which a scan-based trajectory
+would suggest it should be: cold minus held is about 80 s at 500 steps, 92 s
+at 1000 and 137 s at 2000.
+
+HOLDING SEVERAL COMPILED ENGINES DOES NOT GROW THE FOOTPRINT. At the top rung
+four distinct trajectories were live in that lru_cache and the peak was still
+2.0 GiB -- so the budget covers a worker that has served a mix of step counts,
+not only a fresh one.
+
+RESIDENCY, CORRECTED. An earlier note here reported 79.3 s cold and 18.8 s
+held at the published 1000 steps, for 4.2x. That pair does not reproduce. One
+2-design request at 1000 steps measures `per_design_s = [193.14, 36.55]` --
+193.1 s for the design that pays the compile and 36.6 s for the one that
+reuses it, so residency at 1000 steps is 5.3x, and the held figure agrees with
+the 36.8 s the acceptance ladder measured independently. The 50-step pair in
+that older note DOES reproduce (1.99 s held there, 2.0-2.2 s across the
+acceptance's four repeats); only the 1000-step pair was wrong."""
 
 [runtime]
-# MEASURED on an NVIDIA GB10, upstream's 2-design test manifest, 512-residue
-# bucket: at the published 1000 denoising steps a cold bucket costs 79.3 s and
-# a held one 18.8 s, so residency is worth 4.2x. At 50 steps the same pair is
-# 61.3 s and 1.06 s -- 58x -- because compilation dominates there and real
-# compute dominates at 1000. The 4.2x is the honest figure: it is the one at
-# the setting the published campaigns use. What is held is the Haiku parameter
-# set and upstream's per-(steps, partial_steps) compiled trajectory, neither of
-# which survives a process exit.
+# MEASURED on an NVIDIA GB10. What is held is the Haiku parameter set and
+# upstream's per-(steps, partial_steps) compiled trajectory, neither of which
+# survives a process exit -- so the axis residency pays off on is the STEP
+# COUNT, not the design length, which pads to one fixed shape either way.
+#
+# At the published 1000 denoising steps, one 2-design request measures
+# per_design_s = [193.14, 36.55]: 193.1 s for the design that pays the XLA
+# compile and 36.6 s for the one that reuses it, so residency is worth 5.3x
+# there. At 50 steps the pair is 158.5 s and 1.99 s -- far larger, because
+# compilation dominates at 50 steps and real compute dominates at 1000.
+#
+# PLAN WITH THE FIGURE AT YOUR OWN STEP COUNT. The two differ by more than an
+# order of magnitude, and a second campaign at a DIFFERENT step count is cold
+# again however many designs preceded it.
+#
+# An earlier version of this note quoted 79.3 s cold and 18.8 s held here, for
+# 4.2x. Those numbers do not reproduce; see verified_on.
 mode = "resident"
 worker = "resident/apnovo_resident_worker.py"
 # Its own launcher rather than kit_launch's: that one asks a `<slug>_opt`
@@ -155,15 +207,29 @@ output_keys = ["designs"]
 policy = "required"
 # MEASURED, and the measurement answered a question before it was asked:
 # the peak is set by the PADDING BUCKET, not by the step count. Upstream's
-# 2-design test manifest at the 512-residue bucket reported
+# 2-design test manifest, at the single fixed input shape, reported
 # peak_pool_bytes = 2,145,386,496 at 50 denoising steps and the SAME
 # 2,145,386,496 at 1000, with peak_bytes_in_use 1.01 GiB in both. So this
 # figure does not move with the setting a caller is most likely to change.
 # It is JAX's `peak_pool_bytes`, the analogue of torch's *reserved*; nvidia-smi
 # reports [N/A] for memory.used on this unified-memory part, so there is no
 # figure from there to compare it with, and a JAX budget does not belong in the
-# same column as a torch one. Designs longer than the 512 bucket have NOT been
-# run, and that is the axis this number would move on.
+# same column as a torch one.
+#
+# THERE IS NO SECOND BUCKET AND NO AXIS THIS NUMBER MOVES ON. An earlier note
+# here said designs longer than the 512 bucket had not been run and that this
+# was the axis the figure would move on; both halves were wrong.
+# `run_generator.parse_and_prepare_diffusion_input` passes `max_num_res=512`
+# as a LITERAL, not from config and not from the manifest, so EVERY design of
+# EVERY length pads to that one shape. A longer design does not cost more --
+# `motif_spec.create_designable_protein_features` REFUSES it. So 2.0 GiB is
+# the figure for every design this provider can accept, which is a stronger
+# statement than the one it replaces, not a weaker one.
+#
+# CONFIRMED BY THE ACCEPTANCE LADDER (2026-10-15): 2.0 GiB at 100, 250, 500
+# and 1000 denoising steps, with four distinct compiled trajectories live in
+# upstream's `lru_cache` at the top rung -- so holding several compiled
+# engines does not grow the footprint either.
 vram_budget_gb = 2.0
 driver_min = 580
 driver_min_reason = "jaxlib must emit code for sm_121 and a compute capability is only driven by a driver that enumerates it; the 580 series is the first that does for GB10-class parts. The lock's jax-cuda12 wheels carry the CUDA 12.9 runtime, whose own minor-version-compatibility floor is 525, so the higher floor binds. Same reasoning, same stack and same card as af3_jax."

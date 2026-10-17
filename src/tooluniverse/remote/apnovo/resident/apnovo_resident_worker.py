@@ -5,10 +5,10 @@ imports nothing from ToolUniverse: `worker_base.py` is loaded by path, and that
 module loads `protocol.py` the same way.
 
 WHAT RESIDENCY BUYS HERE, measured on an NVIDIA GB10 with upstream's own
-2-design 50-step test manifest at the 512-residue padding bucket:
+2-design 50-step test manifest (every design pads to one fixed shape):
 
-    design 0 (cold bucket, includes the XLA compile)   61.3 s
-    design 1 (same bucket, held)                        1.06 s
+    design 0 (cold, includes the XLA compile)          61.3 s
+    design 1 (held)                                     1.06 s
 
 Two things are held and neither survives a process exit: the Haiku parameters
 read out of a 547 MB zstd record set -- upstream's own comment says parameter
@@ -120,6 +120,54 @@ def _lay_out(work: Path, manifest: dict, files: dict) -> Path:
     path = work / "manifest.json"
     path.write_text(json.dumps(manifest))
     return path
+
+
+def _sampled_lengths(parsed_specs):
+    """The residue count each parsed spec drew, which is what the fixed input
+    shape is checked against (`create_designable_protein_features` compares
+    `len(res_map.source_residue_ids)`)."""
+    out = []
+    for p in parsed_specs:
+        res_map = getattr(p, "residue_map", None)
+        out.append(None if res_map is None else len(res_map.source_residue_ids))
+    return out
+
+
+def _diffusion_input(gen, spec, seed, global_config):
+    """Upstream's own conversion, with its one unactionable error reworded.
+
+    `run_generator.parse_and_prepare_diffusion_input` passes `max_num_res=512`
+    as a LITERAL -- not from config, not from the manifest -- so a design
+    above that length is not more expensive, it is REFUSED, by
+    `motif_spec.create_designable_protein_features`. Upstream's message is
+    "Number of residues in motif_spec > 512. Set max_num_res to a higher
+    value.", which names a knob reachable from neither a manifest, nor this
+    worker, nor the published operation. A caller who followed it would go
+    looking for a parameter that does not exist.
+
+    The ceiling is deliberately NOT restated here as a constant of our own.
+    Upstream owns the number and sets it in a function body, so a copy here
+    would drift silently the first time the pin moves. What is ours is the
+    advice.
+    """
+    try:
+        return gen.parse_and_prepare_diffusion_input(
+            spec=spec, seed=seed, global_config=global_config
+        )
+    except ValueError as exc:
+        if "max_num_res" not in str(exc):
+            raise
+        raise ValueError(
+            f"{exc} That ceiling is fixed in the model's input pipeline and is "
+            f"not a budget this provider can raise: every design is padded to "
+            f"one shape, which is also why the declared VRAM figure does not "
+            f"move with design length. Shorten the design instead -- "
+            f"`seq_length` and the gap ranges in `motif_str` together set the "
+            f"sampled length. That length is sampled PER SEED (this was seed "
+            f"{seed}), so a design near the ceiling fails intermittently "
+            f"rather than every time; `apnovo_validate_motif` reports the "
+            f"lengths it samples."
+        ) from exc
 
 
 class Engine:
@@ -294,6 +342,15 @@ class Engine:
                         "motif_str": job.motif_str,
                         "motif_atoms": job.motif_atoms or None,
                         "seq_length": job.seq_length,
+                        # The DECLARED constraint above is a string the caller
+                        # wrote; these are the lengths actually sampled at the
+                        # probe seeds, which is the number the model's fixed
+                        # input shape is checked against. A design whose
+                        # sampled length exceeds that shape is refused rather
+                        # than run more slowly, and because the length is
+                        # sampled per seed a design near the ceiling fails on
+                        # some seeds and not others.
+                        "sampled_design_lengths": _sampled_lengths(parsed),
                         "num_designs": job.num_designs,
                         "num_sampling_steps": job.num_sampling_steps,
                         "is_author_naming": job.is_author_naming,
@@ -310,7 +367,11 @@ class Engine:
             "note": (
                 "A spec that parses is not a spec that scaffolds: segment "
                 "lengths are sampled per design, and only generation shows "
-                "whether the motif is satisfiable at the sampled lengths."
+                "whether the motif is satisfiable at the sampled lengths. "
+                "`sampled_design_lengths` is what each probe seed drew; the "
+                "model pads every design to one fixed shape and refuses a "
+                "design above it, so a spec whose lengths vary across those "
+                "seeds will behave inconsistently near the ceiling."
             ),
         }
 
@@ -363,10 +424,8 @@ class Engine:
             partial_steps = job.partial_diffusion_num_steps
             for design in self._manifest_mod.expand_designs(job):
                 t0 = time.time()
-                dinput = self._gen.parse_and_prepare_diffusion_input(
-                    spec=spec,
-                    seed=design.seed,
-                    global_config=self._global_config,
+                dinput = _diffusion_input(
+                    self._gen, spec, design.seed, self._global_config
                 )
                 output, initial_dinput, aux = self._gen.run_sampling(
                     dinput=dinput,

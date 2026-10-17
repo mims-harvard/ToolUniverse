@@ -2547,3 +2547,117 @@ class TestApNovoFoldedStageLayout:
             self._engine(mod)._evaluate({"run_dir": str(run_dir)})
         assert "03_folded" in str(exc.value)
         assert "apnovo_ingest_folded" in str(exc.value)
+
+
+class TestApNovoFixedInputShape:
+    """A design above the model's fixed input shape is refused, actionably.
+
+    `run_generator.parse_and_prepare_diffusion_input` passes `max_num_res=512`
+    as a LITERAL at the commit `provider.toml` pins -- not from config, not
+    from the manifest -- so there is no "bucket" a longer design moves up
+    into. `motif_spec.create_designable_protein_features` raises, and its
+    message says "Set max_num_res to a higher value", which names a knob that
+    is reachable from neither a manifest nor the published operation. These
+    tests pin the rewording, and pin that we did NOT paper over it by copying
+    upstream's number into our own source, where it would drift the first time
+    the pin moves.
+    """
+
+    @staticmethod
+    def _worker_module():
+        import importlib.util
+
+        path = (
+            Path(__file__).resolve().parents[2]
+            / "src/tooluniverse/remote/apnovo/resident/apnovo_resident_worker.py"
+        )
+        spec = importlib.util.spec_from_file_location("_apnovo_worker_shape", path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    class _Gen:
+        """Stands in for upstream's run_generator module."""
+
+        def __init__(self, exc=None):
+            self.exc = exc
+            self.calls = []
+
+        def parse_and_prepare_diffusion_input(self, *, spec, seed, global_config):
+            self.calls.append(seed)
+            if self.exc is not None:
+                raise self.exc
+            return {"spec": spec, "seed": seed}
+
+    def test_the_ceiling_refusal_is_reworded_into_advice_a_caller_can_take(self):
+        mod = self._worker_module()
+        gen = self._Gen(
+            ValueError(
+                "Number of residues in motif_spec > 512. Set max_num_res to a"
+                " higher value."
+            )
+        )
+        with pytest.raises(ValueError) as exc:
+            mod._diffusion_input(gen, object(), 7, object())
+
+        msg = str(exc.value)
+        # upstream's own sentence is kept -- it names the real number
+        assert "512" in msg
+        # ... and contradicted where it misleads
+        assert "not a budget this provider can raise" in msg
+        # the two knobs that DO change the sampled length
+        assert "seq_length" in msg and "motif_str" in msg
+        # the seed, because the length is sampled per seed
+        assert "seed 7" in msg
+        # and the original is chained rather than swallowed
+        assert isinstance(exc.value.__cause__, ValueError)
+
+    def test_an_unrelated_value_error_is_not_dressed_up_as_a_length_problem(self):
+        """The except clause must not swallow every ValueError the pipeline
+        raises -- a motif that cannot be satisfied is a different failure and
+        telling its caller to shorten the design would send them the wrong
+        way."""
+        mod = self._worker_module()
+        gen = self._Gen(ValueError("motif atom OE2 not present in chain A"))
+        with pytest.raises(ValueError) as exc:
+            mod._diffusion_input(gen, object(), 0, object())
+        assert str(exc.value) == "motif atom OE2 not present in chain A"
+        assert "seq_length" not in str(exc.value)
+
+    def test_a_design_that_fits_is_passed_straight_through(self):
+        mod = self._worker_module()
+        gen = self._Gen()
+        spec = object()
+        out = mod._diffusion_input(gen, spec, 3, object())
+        assert out == {"spec": spec, "seed": 3}
+        assert gen.calls == [3]
+
+    def test_we_do_not_keep_our_own_copy_of_upstreams_ceiling(self):
+        """The number belongs to upstream and lives in a function body there.
+        A copy here would still read 512 after the pin moved."""
+        import inspect
+
+        mod = self._worker_module()
+        src = inspect.getsource(mod._diffusion_input)
+        # it may QUOTE upstream's message in the docstring, but must not
+        # compare against a literal of its own
+        body = src.split('"""')[-1]
+        assert "512" not in body, body
+
+    def test_validate_reports_the_lengths_it_actually_sampled(self):
+        """`seq_length` is what the caller wrote; this is what was drawn."""
+        mod = self._worker_module()
+
+        class _Map:
+            def __init__(self, n):
+                self.source_residue_ids = list(range(n))
+
+        class _Parsed:
+            def __init__(self, n):
+                self.residue_map = None if n is None else _Map(n)
+
+        assert mod._sampled_lengths([_Parsed(131), _Parsed(147), _Parsed(None)]) == [
+            131,
+            147,
+            None,
+        ]

@@ -5,7 +5,7 @@ description: Set up, launch, validate, and troubleshoot the AlphaProtein Novo (d
 
 # Set up AlphaProtein Novo as a remote tool
 
-> Validation status (2026-10-06): **`untested`, but all five setup steps now pass.** On the NVIDIA GB10 (aarch64, cc 12.1, driver 580.173.02): `tu remote setup apnovo` reports preflight OK, environment present, kit at the pinned commit, weights 1/1 at their pins, and `smoke: OK — one prediction in 69s, peak reserved 2.0 GiB`, which agrees with the manifest's independently measured budget. The weights refusal was tested in both directions. Driving upstream directly, residency is **4.2x** at the published 1000 denoising steps (79.3 s cold bucket, 18.8 s held) and 58x at 50 steps, where compilation rather than compute dominates — plan with 4.2x. **Still `untested`** because the acceptance suite has not been run: one smoke request cannot measure a provider that holds state between requests, and longer padding buckets are unmeasured. Folding and resequencing are deliberately not part of this provider. What has been established on
+> Validation status (2026-10-16): **`verified`.** The acceptance suite has now run twice, 12/12 requests answered each time with `peak_reserved_gib` 2.0 on every one; see `provider.toml`'s `verified_on`. Earlier status (2026-10-06): all five setup steps pass. On the NVIDIA GB10 (aarch64, cc 12.1, driver 580.173.02): `tu remote setup apnovo` reports preflight OK, environment present, kit at the pinned commit, weights 1/1 at their pins, and `smoke: OK — one prediction in 69s, peak reserved 2.0 GiB`, which agrees with the manifest's independently measured budget. The weights refusal was tested in both directions. Residency is **5.3x** at the published 1000 denoising steps (193.1 s for the design that pays the XLA compile, 36.6 s for the one that reuses it) and far larger at 50 steps (158.5 s and 1.99 s), where compilation rather than compute dominates — plan with the figure at your own step count. Folding and resequencing are deliberately not part of this provider. What has been established on
 > the NVIDIA GB10 (aarch64, cc 12.1, driver 580.173.02) is the environment and
 > the no-weights path: the 72-package lock installs natively, `alphafold3`'s C++
 > extension builds from source, the pinned stack reports
@@ -329,10 +329,17 @@ PY
 Confirm discovery contains apnovo_validate_motif, apnovo_generate_designs and
 apnovo_evaluate_designs; stop on empty, duplicate, or schema-drifted discovery.
 
-The first request into a padding bucket pays the XLA compile; the ones after it
-do not. Measured at the published 1000 denoising steps on the 512-residue
-bucket: 79.3 s cold, 18.8 s held. At 50 steps the same pair is 61.3 s and
-1.06 s. **Benchmark at the step count you will actually run** — a ratio
+The first request at a given **step count** pays the XLA compile; the ones
+after it do not. **The axis is the step count, not the design length.**
+Upstream pads every design to one fixed 512-residue shape, and caches the
+compiled trajectory in `functools.lru_cache(maxsize=8)` keyed on
+`(num_sampling_steps, num_partial_diffusion_steps)` — so a second campaign at
+a different step count is cold again however many designs preceded it, and a
+ninth distinct step count evicts the first. Measured at the published 1000
+denoising steps, as the two designs of one request: 193.1 s for the design
+that pays the compile and 36.6 s for the one that reuses it. At 50 steps the
+same pair is 158.5 s and 1.99 s. **Benchmark at the step count you will
+actually run** — a ratio
 measured at 50 steps says almost nothing about one at 1000, and this provider's
 own figures differ by more than an order of magnitude between them.
 
