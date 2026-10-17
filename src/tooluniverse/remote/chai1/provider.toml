@@ -21,6 +21,44 @@ verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173
 venv route, kit mode fast with the alloc lever off (see [kit]). Three folds of
 an 89-residue chain in one held worker: 67.6 s, 26.6 s, 25.7 s."""
 
+# ===========================================================================
+# KNOWN DEFECT, MEASURED 2026-10-17: THE FOOTPRINT GROWS ~0.04 GiB PER
+# REQUEST, ON BYTE-IDENTICAL INPUT, AND DOES NOT PLATEAU.
+#
+# Twenty consecutive identical requests into one held worker:
+# #   9.92 9.96 10.00 10.04 10.07 10.11 10.15 10.19 10.23 10.27
+#   10.31 10.35 10.39 10.43 10.46 10.50 10.54 10.58 10.62 10.66
+#
+# That is +0.039 GiB per request, linear, with no sign of settling in 20.
+# Wall time stays flat, so nothing is getting slower -- it is only the
+# memory. This worker RESETS peak stats before every prediction
+# (`torch.cuda.reset_peak_memory_stats()`), so each line is that request's
+# own peak and not a session high-water mark -- the growth is real per-request
+# growth.
+#
+# WHY THIS MATTERS MORE THAN ITS SIZE. Residency is the whole point of this
+# provider, and a worker that holds a model is meant to stay up. At this rate
+# the declared budget of 15.42 GiB is reached by the leak alone after
+# roughly 140 requests from a cold start -- which is a working afternoon,
+# not an edge case. A scheduler that admitted this provider against its
+# declared figure would be wrong by a growing amount.
+#
+# IT IS INVISIBLE TO EVERYTHING SHORTER. One smoke request shows nothing.
+# The acceptance suite's four repeats show +0.1 to +0.2, which reads as
+# allocator noise and was very nearly dismissed as such. Twenty repeats cost
+# about 16 minutes of card time and make it a straight line.
+#
+# CAUSE NOT IDENTIFIED, and deliberately not guessed at here. What is known:
+# `chai1` and `genie3` both show it at the SAME rate (~0.039 and ~0.040
+# GiB/request) while `boltz` and `boltzgen` -- same worker base, same serve
+# loop, same protocol -- show none at all, boltzgen being flat to the
+# hundredth across seven requests. So it is not the harness and not the
+# shared lifecycle.
+#
+# Reproduce with:
+#   python scripts/remote_validation/verify_provider.py chai1 --repeats 20
+# ===========================================================================
+
 [runtime]
 mode = "resident"
 worker = "resident/chai1_resident_worker.py"

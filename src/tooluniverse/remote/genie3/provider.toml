@@ -85,7 +85,46 @@ venv route, Python 3.10.13, torch 2.7.1+cu128, triton 3.3.1, kit mode `exact`
 
 Smoke: one unconditional 50-mer request, two designs at batch 1, 20 DDIM steps
 -- 11.7 s wall, model_setup_s 6.4, s_per_design_steady 0.288, peak reserved
-0.25 GiB. Three files written, the two PDB files matched by [runtime] outputs
+0.25 GiB. Three files written, the two PDB files matched by # ===========================================================================
+# KNOWN DEFECT, MEASURED 2026-10-17: THE FOOTPRINT GROWS ~0.04 GiB PER
+# REQUEST, ON BYTE-IDENTICAL INPUT, AND DOES NOT PLATEAU.
+#
+# Twenty consecutive identical requests into one held worker:
+# #   0.45 0.51 0.55 0.59 0.63 0.67 0.71 0.74 0.78 0.82
+#   0.86 0.90 0.94 0.98 1.02 1.06 1.10 1.13 1.17 1.21
+#
+# That is +0.040 GiB per request, linear, with no sign of settling in 20.
+# Wall time stays flat, so nothing is getting slower -- it is only the
+# memory. This worker reports `torch.cuda.max_memory_reserved()` with no
+# reset, so each line is the most it has ever reserved -- and torch only
+# raises that when the allocator actually reserves MORE, so a rising line is
+# real growth of the reserved pool, which is exactly what a co-tenant cannot
+# have.
+#
+# WHY THIS MATTERS MORE THAN ITS SIZE. Residency is the whole point of this
+# provider, and a worker that holds a model is meant to stay up. At this rate
+# the declared budget of 4.84 GiB is reached by the leak alone after
+# roughly 110 requests from a cold start -- which is a working afternoon,
+# not an edge case. A scheduler that admitted this provider against its
+# declared figure would be wrong by a growing amount.
+#
+# IT IS INVISIBLE TO EVERYTHING SHORTER. One smoke request shows nothing.
+# The acceptance suite's four repeats show +0.1 to +0.2, which reads as
+# allocator noise and was very nearly dismissed as such. Twenty repeats cost
+# 36 seconds of card time and make it a straight line.
+#
+# CAUSE NOT IDENTIFIED, and deliberately not guessed at here. What is known:
+# `chai1` and `genie3` both show it at the SAME rate (~0.039 and ~0.040
+# GiB/request) while `boltz` and `boltzgen` -- same worker base, same serve
+# loop, same protocol -- show none at all, boltzgen being flat to the
+# hundredth across seven requests. So it is not the harness and not the
+# shared lifecycle.
+#
+# Reproduce with:
+#   python scripts/remote_validation/verify_provider.py genie3 --repeats 20
+# ===========================================================================
+
+[runtime] outputs
 and the composed request.yaml correctly not matched.
 
 FOUR CONSECUTIVE IDENTICAL REQUESTS in one held worker, which is the acceptance

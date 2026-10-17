@@ -142,18 +142,48 @@ policy = "required"
 # MEASURED AT ONE POINT ONLY, and this provider is the reason the standard needs
 # to say that an envelope may be the DEVICE rather than the input.
 #
-# 28.03 GiB for the warm pass at 135 tokens (26.34 steady over four repeats in a
-# held worker). The derived reserve was 41.62 at 195 tokens, so the arithmetic
-# was 1.5x high -- the conservative direction, and the closest any of this
-# effort's pre-measurement estimates has come for a backward-pass model.
+# 33.99 GiB, the top of the bounded ladder below, and the figure it replaces
+# was 28.03 -- the warm pass at 135 tokens only.
 #
-# NO LADDER IS DECLARED, deliberately. Under `fast` the kit's checkpointing
-# planner budgets 0.90 x torch's reported total memory and keeps the most pair
-# blocks whose estimated peak fits it, so above roughly 500 tokens the plan
-# GROWS TO FILL WHATEVER CARD IT IS ON. On this one that is 109 GiB. A ladder
-# would therefore measure the host, not the model, and a number taken from it
-# would mean nothing on different hardware. `shareable = false` says the same
-# thing in the field a scheduler reads.
+# Re-measured, 135 tokens now reads 23.49 peak and 23.46 steady over the
+# repeats, BELOW the 28.03/26.34 recorded before; but 256 tokens reads 32.91
+# on the ladder and 33.99 on reuse, ABOVE it by 21%. So the old figure was not
+# conservative, it was taken at the smallest rung a caller can ask for, while
+# the tool layer permits up to 300 tokens.
+#
+# The derived reserve was 41.62 at 195 tokens, so the arithmetic was 1.5x
+# high -- the conservative direction, and the closest any of this effort's
+# pre-measurement estimates has come for a backward-pass model.
+#
+# A LADDER IS NOW DECLARED, BOUNDED, and the paragraph it replaces was right
+# about the wrong range. Under `fast` the kit's checkpointing planner budgets
+# 0.90 x torch's reported total memory and keeps the most pair blocks whose
+# estimated peak fits it, so ABOVE ROUGHLY 500 TOKENS the plan grows to fill
+# whatever card it is on -- on this one 109 GiB -- and a ladder there would
+# measure the host rather than the model. That remains true and is why no
+# rung goes near it.
+#
+# Below the tool layer's own 300-token ceiling the planner's policy stays
+# `none` and the numbers are bounded and reproducible, so a ladder in THAT
+# range measures the model. DEFAULT_LENGTHS gives this provider
+# 135/195/256/300 tokens, and it measured:
+#
+#     135 tokens   peak 23.49    46.0 s
+#     195 tokens   peak 27.89    63.2 s
+#     256 tokens   peak 32.91    84.9 s
+#     300 tokens   peak 28.28    60.6 s   <- CHEAPER AND FASTER THAN 256
+#
+# THE NON-MONOTONICITY IS THE POINT AND IT IS NOT NOISE. `POOL_MAX_TOKENS` is
+# 256, so the trunk fwd+bwd CUDA-graph pool is installed only at or below it:
+# the 256 rung pays for that pool and the 300 rung does not. It is not merely
+# capture cost either -- the mixed phase re-runs 256 against a pool already
+# captured and still reads 33.99 GiB and 80.0 s. So at the top of its enabled
+# range the pool costs about 4.6 GiB and 24 s and does not earn either back.
+# That is a kit-tuning fact no smooth curve would have shown, and it is the
+# reason the rungs straddle 256 instead of being evenly spaced.
+#
+# `shareable = false` still says in the field a scheduler reads that this
+# provider cannot promise a co-tenant anything under `fast`.
 #
 # The bounded alternative is a different kit MODE, not a knob: `big` plans by a
 # floor rather than a budget and the kit's own planner puts it at 29.5-48.0 GiB
@@ -163,7 +193,7 @@ policy = "required"
 # Count does not move the peak, which is the opposite of rfdiffusion3: the kit
 # refuses `batch_size > 1` on every mode, so N designs are N sequential loops
 # and the peak is one design's.
-vram_budget_gb = 28.03
+vram_budget_gb = 33.99
 # False, and deliberately: see the `card` paragraph above. At the declared
 # 195-token envelope this provider leaves most of a 121 GiB card free, but the
 # `fast` plan's own rule is to expand into whatever the card has, so a
