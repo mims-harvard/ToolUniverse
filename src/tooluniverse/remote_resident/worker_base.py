@@ -4,7 +4,9 @@ This file runs inside the *model's* environment, not ToolUniverse's, and is
 loaded by path for the same reason ``protocol.py`` is: that environment holds a
 pinned scientific stack and nothing of this package, and importing
 ``tooluniverse`` there would drag in a dependency set it has no reason to carry.
-It therefore uses the standard library only.
+Its own imports are therefore the standard library only; the one function that
+needs the model's stack (:func:`release_cublas_workspaces`) imports inside the
+call.
 
 A provider's worker script supplies what is genuinely its own — building the
 model, and turning one request into one prediction — and calls :func:`serve`
@@ -62,6 +64,53 @@ def protocol():
             f"the wire protocol is not at {path}; set {PROTOCOL_ENV} to its path"
         )
     return _load_by_path("_tu_remote_protocol", path)
+
+
+def release_cublas_workspaces() -> int:
+    """Give back the cuBLAS workspaces torch caches per (handle, stream).
+
+    Returns the bytes freed, or 0 on a build with no such call and on CPU.
+
+    WHY A HELD MODEL NEEDS THIS. torch allocates a cuBLAS workspace the first
+    time a GEMM runs on a (handle, stream) pair and keeps it in a C++ static
+    map that nothing clears. A kit that captures a CUDA graph creates a fresh
+    side stream per request to warm up on before capturing, so every request
+    abandons a stream and leaves its workspace behind -- measured at exactly
+    ``torch.backends.cuda.blas_workspace_size()``, 32 MiB on this GB10, per
+    request on byte-identical input.
+
+    It is invisible to every ordinary check. The bytes are in
+    ``memory_allocated`` but held by no Python object, so a census of every
+    reachable CUDA tensor stays frozen while the number climbs,
+    ``gc.collect()`` returns nothing, and ``empty_cache()`` returns nothing --
+    it only drops blocks the allocator is *caching*, and these are live. What
+    it looks like from outside is one new fully-allocated allocator segment per
+    request, on a stream id that was not there before. ``chai1`` and ``genie3``
+    each grew ~0.04 GiB per request until this call, which is 140 requests to
+    chai1's whole declared budget; their manifests carry the measurements.
+
+    ONLY SAFE WHERE NO CAPTURED GRAPH OUTLIVES THE REQUEST. A CUDA graph that
+    captured cuBLAS calls holds the workspace pointer, and replaying it after
+    the workspace is freed reads memory the allocator has given away. Both
+    providers that call this capture and drop their graphs inside one request,
+    so nothing replays across the call -- and genie3, which can be told to keep
+    its graphs, does not call this when it has been. That is why this is a call
+    a provider makes for itself with its own reason, and not something
+    :func:`serve` does on everybody's behalf.
+    """
+    # The one function here that touches the model's stack rather than the
+    # standard library, and it imports inside the call so that the module's
+    # import stays what the docstring says it is.
+    try:
+        import torch  # noqa: PLC0415
+    except Exception:  # noqa: BLE001 - a worker without torch has no workspaces
+        return 0
+    clear = getattr(getattr(torch, "_C", None), "_cuda_clearCublasWorkspaces", None)
+    if clear is None or not torch.cuda.is_available():
+        return 0
+    before = torch.cuda.memory_allocated()
+    clear()
+    return max(0, before - torch.cuda.memory_allocated())
 
 
 def serve(
@@ -194,4 +243,11 @@ def bootstrap(worker_file: str):
     return _load_by_path("_tu_worker_base", base)
 
 
-__all__ = ["protocol", "serve", "bootstrap", "PROTOCOL_ENV", "ORPHAN_GRACE_ENV"]
+__all__ = [
+    "protocol",
+    "serve",
+    "bootstrap",
+    "release_cublas_workspaces",
+    "PROTOCOL_ENV",
+    "ORPHAN_GRACE_ENV",
+]

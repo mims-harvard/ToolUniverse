@@ -1057,8 +1057,31 @@ def _design(req: dict) -> dict:
             f"{len(designs)} PDB files for {n_designs} designs sampled -- the "
             f"pass is incomplete; read the worker log for the kit's own lines"
         )
+    # The kit warms up each capture on a fresh side stream (g3fast.py), so
+    # every request left torch holding a 32 MiB cuBLAS workspace for a stream
+    # nothing would use again: 0.040 GiB a request, and the wall time climbed
+    # with it (6.7 s by the eighth request against 2.2 s flat once released).
+    # NOT when the graphs are kept: a held graph captured those cuBLAS calls
+    # and would replay against a freed workspace.
+    if not KEEP_GRAPHS:
+        freed = WB.release_cublas_workspaces()
+        if freed:
+            body["cublas_workspaces_freed_mib"] = round(freed / 2**20, 1)
     body["peak_reserved_gib"] = round(torch.cuda.max_memory_reserved() / 2**30, 2)
     return body
+
+
+def _reset() -> None:
+    """Make ``peak_reserved_gib`` this request's peak rather than the session's.
+
+    Without this the figure was ``max_memory_reserved`` over the whole life of
+    the worker -- a high-water mark that can only ever rise, which reads as
+    per-request growth whether or not any is happening and is not what the
+    other providers on this standard report. The acceptance suite runs its
+    ladder ascending precisely because some workers report a session mark, and
+    this one should not be among them.
+    """
+    torch.cuda.reset_peak_memory_stats()
 
 
 def _ready() -> dict:
@@ -1098,6 +1121,7 @@ if __name__ == "__main__":
             socket_path=args.socket,
             on_predict=_design,
             ready=_ready,
+            on_reset=_reset,
             log=say,
         )
     )

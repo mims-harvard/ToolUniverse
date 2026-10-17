@@ -2661,3 +2661,84 @@ class TestApNovoFixedInputShape:
             147,
             None,
         ]
+
+
+class TestCublasWorkspacesAreReleased:
+    """The 32 MiB a request that no Python object held.
+
+    torch keeps one cuBLAS workspace per (handle, stream) in a C++ static map
+    that nothing clears. A kit that captures a CUDA graph warms it up on a
+    fresh side stream, so every request abandoned a stream and left its
+    workspace behind: measured at exactly
+    `torch.backends.cuda.blas_workspace_size()` -- 32 MiB on the GB10 -- for
+    `chai1` and `genie3`, linear, with no plateau in twenty requests.
+
+    It was invisible to every ordinary check, which is why these tests exist
+    at the call site rather than on a number: the bytes are in
+    `memory_allocated` but reachable from no tensor, so `gc.collect()` freed
+    nothing and `empty_cache()` freed nothing.
+    """
+
+    @staticmethod
+    def _base():
+        import importlib.util
+
+        path = (
+            Path(__file__).resolve().parents[2]
+            / "src/tooluniverse/remote_resident/worker_base.py"
+        )
+        spec = importlib.util.spec_from_file_location("_wb_cublas", path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    @staticmethod
+    def _worker_src(slug: str) -> str:
+        return (
+            Path(__file__).resolve().parents[2]
+            / f"src/tooluniverse/remote/{slug}/resident/{slug}_resident_worker.py"
+        ).read_text()
+
+    def test_the_helper_is_offered_by_the_shared_runtime(self):
+        base = self._base()
+        assert callable(base.release_cublas_workspaces)
+        assert "release_cublas_workspaces" in base.__all__
+
+    def test_a_build_without_the_call_gives_back_nothing_rather_than_raising(self):
+        """Not every pinned stack has `_cuda_clearCublasWorkspaces`, and a
+        worker must not die at the end of a successful request because of it."""
+        base = self._base()
+        assert base.release_cublas_workspaces() >= 0
+
+    def test_the_providers_that_capture_a_graph_per_request_release(self):
+        for slug in ("chai1", "genie3"):
+            src = self._worker_src(slug)
+            assert "WB.release_cublas_workspaces()" in src, (
+                f"{slug} captures a CUDA graph per request on a fresh side "
+                f"stream, which strands a cuBLAS workspace every time"
+            )
+
+    def test_genie3_does_not_release_while_it_is_holding_its_graphs(self):
+        """The one unsafe case, and it is reachable by an environment variable.
+
+        A held CUDA graph captured those cuBLAS calls, so freeing the
+        workspace under it makes replay read memory the allocator has given
+        away. `GENIE3_RESIDENT_KEEP_GRAPHS=1` is exactly that case.
+        """
+        src = self._worker_src("genie3")
+        call = src.index("WB.release_cublas_workspaces()")
+        guard = src.rindex("if not KEEP_GRAPHS:", 0, call)
+        between = src[guard:call]
+        assert between.count("\n") <= 3, (
+            "the release must sit directly under `if not KEEP_GRAPHS:` -- a "
+            "held graph replaying against a freed workspace is a wrong answer, "
+            "not a crash"
+        )
+
+    def test_genie3_reports_a_per_request_peak_not_a_session_mark(self):
+        """`max_memory_reserved` without a reset can only ever rise, so it
+        reads as per-request growth whether or not any is happening -- and it
+        is not what the other providers on this standard report."""
+        src = self._worker_src("genie3")
+        assert "torch.cuda.reset_peak_memory_stats()" in src
+        assert "on_reset=_reset" in src
