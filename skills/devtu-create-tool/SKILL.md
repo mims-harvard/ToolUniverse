@@ -30,18 +30,28 @@ class MyTool(BaseTool):          MyAPI_search()
 
 One class handles multiple operations. JSON defines individual wrappers. Need BOTH.
 
-## Three-Step Registration
+## Registration and Generated Metadata
 
 **Step 1**: Class registration via `@register_tool("MyAPITool")`
 
 **Step 2** (MOST COMMONLY MISSED): Config registration in `default_config.py`:
 ```python
-TOOLS_CONFIGS = {
+default_tool_files = {
     "my_category": os.path.join(current_dir, "data", "my_category_tools.json"),
 }
 ```
 
 **Step 3**: Automatic wrapper generation on `tu.load_tools()`
+
+**Step 4**: After adding, renaming, or removing a registered tool class, regenerate the committed lazy registry and test it:
+
+```bash
+python src/tooluniverse/generate_lazy_registry.py
+pytest tests/unit/test_generator_invariants.py -q --no-cov
+```
+
+Commit the generated `_lazy_registry_static.py` change. Do not append entries by hand. Dynamic wrapper and `test_new_tools.py` checks can pass through fallback discovery while this file is stale; CI also requires the generator consistency test.
+
 
 ---
 
@@ -56,8 +66,8 @@ TOOLS_CONFIGS = {
 
 ```python
 from typing import Dict, Any
-from tooluniverse.tool import BaseTool
-from tooluniverse.tool_utils import register_tool
+from tooluniverse.base_tool import BaseTool
+from tooluniverse.tool_registry import register_tool
 import requests
 
 @register_tool("MyAPITool")
@@ -103,21 +113,21 @@ class MyAPITool(BaseTool):
 [
   {
     "name": "MyAPI_search",
-    "class": "MyAPITool",
+    "type": "MyAPITool",
     "description": "Search items. Returns array of results. Supports Boolean operators. Example: 'protein AND membrane'.",
     "parameter": {
       "type": "object",
       "required": ["operation", "query"],
       "properties": {
-        "operation": {"const": "search", "description": "Operation (fixed)"},
+        "operation": {"type": "string", "const": "search", "description": "Operation (fixed)"},
         "query": {"type": "string", "description": "Search term"},
         "limit": {"type": ["integer", "null"], "description": "Max results (1-100)"}
       }
     },
     "return_schema": {
       "oneOf": [
-        {"type": "object", "properties": {"data": {"type": "array"}}},
-        {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        {"type": "object", "properties": {"status": {"const": "success"}, "data": {"type": "array"}}, "required": ["status", "data"]},
+        {"type": "object", "properties": {"status": {"const": "error"}, "error": {"type": "string"}}, "required": ["status", "error"]}
       ]
     },
     "test_examples": [{"operation": "search", "query": "protein", "limit": 10}]
@@ -133,7 +143,7 @@ class MyAPITool(BaseTool):
 - **Description 150-250 chars**: what, format, example, notes
 - **NEVER raise in run()**: return `{"status": "error", "error": "..."}`
 - **Set timeout** on all HTTP requests (30s)
-- **Standard response**: `{"status": "success|error", "data": {...}}`
+- **Standard response**: success `{"status": "success", "data": ...}`; failure `{"status": "error", "error": "..."}`. Envelope schemas declare `status` and require the appropriate payload; do not nest a `data` property in a payload-only schema.
 
 ---
 
@@ -183,6 +193,7 @@ Full guide: [references/testing-guide.md](references/testing-guide.md)
 2. **Level 2** — ToolUniverse test: `tu.tools.YourTool_op1(...)`, check registration
 3. **Level 3** — Real API test: use real IDs, verify actual responses
 4. **MANDATORY** — Run `python scripts/test_new_tools.py your_tool -v` → 0 failures
+5. **Generated registry** — Regenerate and run `tests/unit/test_generator_invariants.py`; include the generated diff in the PR
 
 ### Verification Script
 
@@ -193,8 +204,8 @@ import sys; sys.path.insert(0, 'src')
 from tooluniverse.tool_registry import get_tool_registry
 import tooluniverse.your_tool_module
 assert 'YourToolClass' in get_tool_registry(), 'Step 1 FAILED'
-from tooluniverse.default_config import TOOLS_CONFIGS
-assert 'your_category' in TOOLS_CONFIGS, 'Step 2 FAILED'
+from tooluniverse.default_config import default_tool_files
+assert 'your_category' in default_tool_files, 'Step 2 FAILED'
 from tooluniverse import ToolUniverse
 tu = ToolUniverse(); tu.load_tools()
 assert hasattr(tu.tools, 'YourCategory_op1'), 'Step 3 FAILED'
