@@ -72,7 +72,14 @@ def test_only_the_description_changed(name):
             "spl_product_data_elements",
         ]
     }
-    assert set(config["parameter"]["properties"]) == {"drug_name", "limit", "skip"}
+    # `route` is the one parameter every label-section tool gained since
+    # (test_fda_label_route_and_other_sections.py)
+    assert set(config["parameter"]["properties"]) == {
+        "drug_name",
+        "limit",
+        "skip",
+        "route",
+    }
 
 
 @pytest.mark.parametrize("name", [CHILD, PEDIATRIC])

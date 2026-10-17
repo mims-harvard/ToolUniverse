@@ -1,7 +1,7 @@
 """
 FDA_get_clinical_pharmacology_by_drug_name
 
-Retrieve clinical pharmacology information based on drug names.
+Retrieve clinical pharmacology information based on drug names. Pass 'route' whenever the product...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def FDA_get_clinical_pharmacology_by_drug_name(
     drug_name: str,
     limit: Optional[int] = None,
     skip: Optional[int] = None,
+    route: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve clinical pharmacology information based on drug names.
+    Retrieve clinical pharmacology information based on drug names. Pass 'route' whenever the product...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def FDA_get_clinical_pharmacology_by_drug_name(
         The number of records to return.
     skip : int
         The number of records to skip.
+    route : str
+        Optional route of administration of the product whose label you want, as open...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def FDA_get_clinical_pharmacology_by_drug_name(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"drug_name": drug_name, "limit": limit, "skip": skip}.items()
+        for k, v in {
+            "drug_name": drug_name,
+            "limit": limit,
+            "skip": skip,
+            "route": route,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(
