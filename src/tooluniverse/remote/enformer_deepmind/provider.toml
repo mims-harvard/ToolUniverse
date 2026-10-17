@@ -15,7 +15,24 @@ slug = "enformer_deepmind"
 description = "Official DeepMind Enformer (TF-Hub SavedModel) genomic track prediction from DNA sequence"
 operations = ["run_enformer_deepmind_predict"]
 status = "verified"
-verified_on = "NVIDIA GB10 (aarch64, cc 12.1, 121.6 GiB unified, driver 580.173.02), CPU only, kit off -- see [gpu] and [kit]"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 121.6 GiB unified, driver 580.173.02), CPU only, kit off -- see [gpu] and [kit]
+
+ACCEPTANCE 2026-10-17: 4/4 answered, every one produced=yes, and the run is
+COMPLETE rather than incomplete despite having no shaper -- this provider is
+declared in NO_SHAPER in scripts/remote_validation/verify_provider.py, so the
+suite exits 0 and prints the reason instead of telling its reader to add a
+ladder that would certify nothing.
+
+The reason, restated from measurement: every request becomes (1, 393216, 4),
+so an 8 kb sequence and a 393 kb one cost the same.
+
+RESIDENCY BUYS THIS PROVIDER NOTHING, AND THE SUITE STRENGTHENS THAT CLAIM
+RATHER THAN JUST REPEATING IT. Four consecutive identical requests measured
+235.9 / 301.0 / 303.3 / 305.9 s: the second is not merely "not cheaper", it
+is about 28% DEARER, and then it plateaus. (Those absolute figures were taken
+while borzoi_calico was running on the same CPUs, so treat them as an upper
+bound; the shape -- first cheapest, then a higher plateau -- is the part that
+does not depend on the contention.)"""
 
 [runtime]
 mode = "resident"

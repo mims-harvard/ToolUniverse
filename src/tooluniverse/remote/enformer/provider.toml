@@ -14,7 +14,19 @@ slug = "enformer"
 description = "Enformer genomic track prediction and variant effect from DNA sequence"
 operations = ["run_enformer_predict", "run_enformer_variant_effect"]
 status = "verified"
-verified_on = "NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02), kit off — see [kit]"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02), kit off — see [kit]
+
+ACCEPTANCE 2026-10-17: 4/4 answered, every one produced=yes, and the run is
+COMPLETE rather than incomplete despite having no shaper -- see NO_SHAPER in
+scripts/remote_validation/verify_provider.py, which carries the reason and
+makes the suite exit 0 instead of telling its reader to add a ladder that
+would run the identical (1, 196608) tensor four times.
+
+5.8 s cold, then 1.6 / 1.6 / 1.6 s held.
+
+TWO THINGS THIS RUN FOUND, both recorded where they belong: the provider
+could not start at all before it ([kit] env_row), and the declared VRAM
+budget was a first-request figure ([gpu])."""
 
 [runtime]
 mode = "resident"

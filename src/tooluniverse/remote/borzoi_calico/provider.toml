@@ -14,7 +14,30 @@ slug = "borzoi_calico"
 description = "Borzoi variant effect scoring (SAD/logSAD/D2/logD2 over 6,385 human RNA tracks) from calico's own release"
 operations = ["run_borzoi_calico_sad"]
 status = "verified"
-verified_on = "NVIDIA GB10 (aarch64, cc 12.1, 121.6 GiB unified, driver 580.173.02), CPU only, kit off -- see [gpu] and [kit]"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 121.6 GiB unified, driver 580.173.02), CPU only, kit off -- see [gpu] and [kit]
+
+ACCEPTANCE 2026-10-17: 12/12 answered, every one produced=yes. The rung is a
+VARIANT COUNT, not a length -- every variant is scored on a fixed 524,288-base
+genome window, so the model input is always (2, 524288, 4) and a length
+ladder would scale nothing. Rungs 1/2/3/4 (the worker's ceiling is 4):
+299.4 / 534.0 / 773.7 / 876.1 s, close to linear, which is what makes the
+variant count the right axis.
+
+RESIDENCY IS WORTH ABOUT 1.5x AND ONLY A HELD WORKER SHOWS IT: the same
+one-variant request costs 299.4 s as the first rung and 204.0 / 201.2 /
+193.3 s later in the same worker. The four repeats read 194.5 / 184.2 /
+194.9 / 186.5 s.
+
+Marginal cost per extra variant measures ~192-218 s, against the "about
+255 s on this CPU" the worker quotes when it refuses an over-large batch --
+conservative rather than wrong.
+
+peak is reported as None throughout, which is correct and not missing data:
+policy is "none" and there is no device memory to report.
+
+The seven hg38 SNVs the ladder draws from are REF-checked against the genome
+this provider reads, because a mismatched REF is not refused -- snp_seq1
+warns, returns an empty list, and the Keras call then dies on a (0,) array."""
 
 [runtime]
 mode = "resident"

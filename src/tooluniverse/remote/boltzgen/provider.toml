@@ -76,7 +76,23 @@ specification that `configure` writes whether or not anything is designed.
 
 The card was contended by unrelated sessions for part of this work and the
 wall times above say which. Peak reserved was identical contended and idle.
-The [gpu] ladder was measured twice, in two workers, and reproduced exactly."""
+The [gpu] ladder was measured twice, in two workers, and reproduced exactly.
+
+ACCEPTANCE 2026-10-17: 13/13 answered, every one produced=yes, and THE
+RECORDED LADDER REPRODUCED EXACTLY. 60/100/200/400/600 residues measured
+2.49 / 2.59 / 2.96 / 6.74 / 7.89 GiB against the 2.49 / 2.59 / 2.96 / 6.74 /
+7.89 already written above -- five points, to the hundredth. This is the
+first provider in this effort whose recorded numbers survived an independent
+re-measurement unchanged.
+
+No produced=NOTHING on any rung, so upstream never reached the path where it
+skips a diffusion batch it cannot fit and still exits 0.
+
+The peak is also perfectly deterministic: 2.49 GiB on all seven 60-residue
+requests across the ladder, mixed and repeat phases. That matters as a
+control -- chai1 and genie3 grow 0.04 GiB per request on identical input and
+share this worker base, so the growth is theirs rather than the harness's.
+"""
 
 [runtime]
 mode = "resident"

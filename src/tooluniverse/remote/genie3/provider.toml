@@ -153,7 +153,27 @@ exercises the upstream one-config-per-process reset (preamble fact 5) six times.
 Wall times above are from a quiet card. The ladder shared the card with a
 sibling provider that preallocates 93.6 GiB in cycles, so its wall times are not
 quoted and its peaks are (STANDARD.md section 13: peaks reproduce under
-contention, wall times do not)."""
+contention, wall times do not).
+
+ACCEPTANCE 2026-10-17: 12/12 answered, every one produced=yes, and THIS RUN
+IS THE REGRESSION TEST FOR _reset_upstream_config. Upstream's FieldReference
+defect is still present at the pinned commit -- the first
+build_sample_config_from_dict in a process succeeds and every later one
+raises -- and nothing had ever driven a SECOND build through the suite. Every
+shape change here rebuilt the engine (model_setup_s 17-25 s each) and none
+raised. The mixed phase's first rung, a 100-residue request immediately after
+the 670 one, is precisely the shot that used to fail.
+
+Rungs 100/200/400/670 residues: peak 0.31 / 0.61 / 1.36 / 3.27 GiB, below the
+declared 4.84, which stands.
+
+The single-engine hold is visible too: mixed 0 builds (24.3 s), mixed 1
+reuses (4.7 s), mixed 2 at 400 rebuilds (78.7 s), mixed 3 back at 100
+rebuilds again (22.6 s).
+
+Found here and recorded above: the footprint grows ~0.040 GiB per request on
+identical input and does not plateau in 20.
+"""
 
 [runtime]
 mode = "resident"

@@ -26,7 +26,39 @@ status = "verified"
 verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02),
 venv route, kit mode fast, overlay applied. Three unconditional 60-mers in one
 held worker: 19.4 s, 1.6 s, 1.6 s. The VRAM ladder under [gpu] was measured in
-one further held worker on the same card."""
+one further held worker on the same card.
+
+ACCEPTANCE 2026-10-17: 12/12 answered, every one produced=yes, and the worker
+survived the whole run. That was the specific risk: the kit's attention
+preflight refuses by raising KernelsRefused, which subclasses SystemExit, and
+the shared serve loop catches Exception -- so a refusal would not fail a
+request, it would take the worker down with exit 5. The ladder is held at or
+under the measured 400 residues for exactly that reason.
+
+LENGTH ALONE REBUILDS NOTHING HERE. _build_key is
+{diffusion_batch_size, inference_sampler}; length, n_batches, seed and the
+specification are all free. So each rung also nudges
+inference_sampler.num_timesteps by +1 (201..204, sitting on upstream's
+default of 200) to make every rung a distinct build key -- a loop bound, not
+a shape, so it moves the key without moving the peak.
+
+Rungs 100/200/300/400 residues: peak 1.79 / 3.35 / 6.06 / 9.28 GiB, below the
+declared 12.49, which therefore stands.
+
+ITS peak_reserved_gib IS A SESSION HIGH-WATER MARK, NOT A PER-REQUEST FIGURE,
+and this run shows it plainly: a 100-residue request reads 1.79 on the
+ascending ladder and 6.80 / 8.54 for the identical input later, after the
+400-residue rung has set a higher mark. Only the ascending ladder values are
+real per-size numbers. This is why the suite insists the ladder runs first
+and ascending, and a differently ordered run would have recorded nonsense.
+
+The previously recorded ladder (2.62 / 2.92 / 7.47 / 12.49) did NOT
+reproduce -- measured lower at three of four points. The likely cause is a
+different diffusion_batch_size (the worker defaults to 1; upstream's config
+default is 8). Recorded rather than acted on: the declared budget sits above
+every observation, and lowering a budget on one run is the dangerous
+direction.
+"""
 
 [runtime]
 mode = "resident"

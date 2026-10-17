@@ -20,7 +20,24 @@ upstream Apptainer publishes no aarch64 build. Both modes: the smoke's
 `msa: empty`, and `use_msa_server` against api.colabfold.com, which is the one
 a user should choose -- single-sequence mean TM-score to experiment was 0.637
 against 0.960 with the server, on five PDB entries released after every model's
-cutoff, so a pass in the smoke's mode alone does not verify this provider."""
+cutoff, so a pass in the smoke's mode alone does not verify this provider.
+
+ACCEPTANCE 2026-10-17: 13/13 answered, every one produced=yes -- the ladder,
+the mixed phase, four repeats and the declared MSA-server mode. Rungs are
+100/200/290/400 residues (DEFAULT_LENGTHS), chosen around
+BOLTZ_GRAPH_TRUNK_MAX_TOKENS=300 rather than evenly: peak 3.33 / 3.82 / 4.86
+/ 5.20 GiB, so the declared 5.54 stands and is above every observation.
+
+The ceiling behaves as the kit documents. 290 residues (graphed) costs 11.8 s
+and 400 (above the cap, so eager by name) costs 21.8 s -- a clear
+per-residue jump at the boundary, and the generations below it survive the
+step-aside. The default 100,200,400,800 ladder would have sent two of its
+four rungs above the cap, where nothing is captured.
+
+No footprint drift: the four repeats read 3.74 / 3.46 / 3.52 / 3.57, i.e.
+noise with no trend, which is worth recording because chai1 and genie3 --
+same worker base -- grow 0.04 GiB per request on identical input.
+"""
 
 [runtime]
 mode = "resident"

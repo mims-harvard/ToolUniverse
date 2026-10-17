@@ -166,7 +166,24 @@ changes nothing about whether to deploy this provider: its value is
 What else is untested: public publication, cross-user isolation, concurrency,
 recovery, backbones above 400 residues (the declared ceiling is 3000 and has
 not been walked to it), multi-chain complexes, and design quality. Keep this
-deployment private."""
+deployment private.
+
+ACCEPTANCE 2026-10-17: 12/12 answered, every one produced=yes. Rungs
+106/200/400/800 residues: 39.8 / 54.1 / 109.2 / 220.4 s, linear above 200,
+which is the shape an autoregressive decode of L steps should have.
+
+800 RESIDUES RAN. The note above says backbones beyond 400 are untested; the
+measured envelope is now 800. The 3000-residue ceiling remains untested.
+
+This ladder is a COST TABLE, NOT A REBUILD TEST, and the shaper's docstring
+says so: the only cache in this worker is keyed on the weight set, there is
+no torch.compile and no CUDA graph, and upstream is dynamic-shape eager. What
+the mixed phase still earns is the demonstration that a second DIFFERENT
+input neither corrupts the held model nor breaks the seed replay.
+
+peak is None on every rung -- correct for policy "none", with no device
+memory to report.
+"""
 
 [runtime]
 mode = "resident"

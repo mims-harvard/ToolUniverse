@@ -75,7 +75,24 @@ references once the kit's own writers have written them, and collects between
 designs. Four requests moved the high-water mark by 0.04 GiB.
 
 The smoke step measured 28.03 GiB on its own run, which is the figure [gpu]
-declares."""
+declares.
+
+ACCEPTANCE 2026-10-17: 12/12 answered, every one produced=yes. Rungs are
+TOKEN COUNTS (135/195/256/300), which is the real engine key here --
+n_tokens = len(target_seq) + binder_len keys the kit's composition memo, and
+a different value returns every shape-bound graph pool and re-plans the
+backward checkpoint policy. Kept on the warm pass, since the design pass's
+length is a pinned module constant the kit refuses to see changed.
+
+Growing past the 115-residue pd-l1 preset means leaving the preset route:
+resolve_target refuses a preset name carrying a target_sequence and refuses
+a non-preset name without one, so the ladder renames the target and supplies
+its own sequence, keeping input-design.json's own 80:195 binder share.
+
+Found here and recorded in [gpu]: the declared budget was a 135-token number
+(28.03 against 33.99 at 256), and the ladder is NON-MONOTONIC at the
+POOL_MAX_TOKENS=256 boundary -- 300 tokens is cheaper and faster than 256.
+"""
 
 [runtime]
 mode = "resident"

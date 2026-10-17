@@ -19,7 +19,23 @@ operations = ["chai1_fold"]
 status = "verified"
 verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02),
 venv route, kit mode fast with the alloc lever off (see [kit]). Three folds of
-an 89-residue chain in one held worker: 67.6 s, 26.6 s, 25.7 s."""
+an 89-residue chain in one held worker: 67.6 s, 26.6 s, 25.7 s.
+
+ACCEPTANCE 2026-10-17: 12/12 answered, every one produced=yes. Rungs
+250/380/500/760 residues, chosen to land in FOUR DIFFERENT CROPS
+(256/384/512/768) because the crop -- not the residue count -- is what keys
+the Inductor compile cache. The generic 100,200,400,800 ladder maps to
+256, 256, 512, 1024, i.e. its second rung is a byte-identical engine to its
+first and would print green having compiled nothing.
+
+The four compiles are visible in the timings: rung 250 costs 189.4 s and the
+mixed phase's 250 costs 51.1 s, so ~138 s of the first was the crop-256
+compile, replayed free afterwards; same shape at 500 (222.5 s -> 120.9 s).
+
+Found here and recorded in [gpu]: the declared budget was a crop-256 number
+(9.8 against 15.42 at crop 768), and the footprint grows ~0.039 GiB per
+request on identical input.
+"""
 
 # ===========================================================================
 # KNOWN DEFECT, MEASURED 2026-10-17: THE FOOTPRINT GROWS ~0.04 GiB PER
