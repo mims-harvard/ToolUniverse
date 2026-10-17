@@ -14,11 +14,33 @@ Nothing caught it because the leak needs a workspace profile to exist, and a
 clean checkout has none. These cases make one.
 """
 
+import json
+from pathlib import Path
+
 import pytest
 
 from tooluniverse import ToolUniverse
+from tooluniverse.execute_function import default_tool_files
 
 pytestmark = pytest.mark.unit
+
+
+def _built_in_json_names():
+    """Names the shipped JSON declares, which are the ones a category selects.
+
+    Tools other tests register in-process with ``@register_tool(config=...)``
+    have no category and load whatever the filter says, so only built-in names
+    can witness a leak. A whole-suite run is where that distinction shows up.
+    """
+    names = set()
+    for path in default_tool_files.values():
+        try:
+            data = json.loads(Path(path).read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if isinstance(data, list):
+            names.update(t.get("name") for t in data if isinstance(t, dict))
+    return names
 
 
 @pytest.fixture
@@ -41,9 +63,16 @@ def test_category_filter_replaces_what_the_workspace_profile_loaded(
     tu.load_tools(categories=["opennih"])
 
     names = set(tu.all_tool_dict)
-    assert names, "the filtered load returned nothing"
-    leaked = sorted(name for name in names if not name.startswith("OpenNIH_"))
-    assert not leaked, f"{len(leaked)} tools outside the category: {leaked[:10]}"
+    assert any(name.startswith("OpenNIH_") for name in names), (
+        "the filtered load returned none of the category it asked for"
+    )
+    leaked = sorted(
+        (_built_in_json_names() & names)
+        - {name for name in names if name.startswith("OpenNIH_")}
+    )
+    assert not leaked, (
+        f"{len(leaked)} built-in tools outside the category: {leaked[:10]}"
+    )
 
 
 def test_exclude_categories_is_not_undone_by_the_workspace_profile(
