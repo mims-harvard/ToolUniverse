@@ -1,7 +1,7 @@
 {
  "_what": "The smallest input that exercises proteinmpnn's whole path: the first 40 residues of chain A of 5L33, the monomer the kit's own README designs with (inputs/PDB_monomers/pdbs/5L33.pdb of the stock clone at 8907e667), carried inline so a request needs nothing off this host. Every ATOM line of those residues is kept, side chains included, because stock's parser reads N, CA, C and O and ignores the rest -- filtering here would test a different file than a caller sends.",
  "_why_four_sequences": "num_sequences = 4 in one batch, so the smoke exercises the whole per-batch path (one forward over 4 decoded copies) rather than the degenerate batch of one, and still returns in seconds.",
- "_why_40_residues": "40 is below stock's k_neighbors of 48, which is deliberate: the featuriser then runs with k = L, the shape a short backbone takes, and the acceptance ladder in provider.toml walks 106 and up for the ordinary one.",
+ "_why_40_residues": "40 is below stock's k_neighbors of 48, which is deliberate: the featuriser then runs with k = L, the shape a short backbone takes, and the acceptance ladder walks 106 and up for the ordinary one -- that ladder is DEFAULT_LENGTHS[\"proteinmpnn\"] in scripts/remote_validation/verify_provider.py, not anything in provider.toml, which has never carried one.",
  "_seed": "37 is the kit README's own example seed, so this input is comparable to it.",
  "num_sequences": 4,
  "batch_size": 4,

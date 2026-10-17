@@ -547,6 +547,454 @@ def _apnovo_steps(text, n):
     return json.dumps(doc)
 
 
+def _ef2inv_case(text, n):
+    """A warm-pass case of exactly n TOTAL TOKENS -- ef2inv's engine key.
+
+    `n_tokens = len(target_seq) + st.binder_len` (worker:648), and that number
+    is the key of the kit's composition memo: `fastkit.enable` returns every
+    shape-bound CUDA-graph pool and memoised hidden state and RE-PLANS the
+    backward checkpoint policy when it changes, while the same value
+    re-installs nothing and says so in one line. So unlike apnovo, here the
+    size IS the key -- but it is the token count of the COMPLEX, which is why
+    the rung is quoted in tokens rather than residues.
+
+    TWO DISCONTINUITIES MAKE THIS LADDER WORTH MORE THAN A CURVE. The trunk
+    fwd+bwd graph pool is installed only at n_tokens <= 256
+    (`POOL_MAX_TOKENS`), so a rung at 256 and one above it run structurally
+    different compositions; and the checkpoint planner re-reads free memory
+    and keeps as many pair blocks as fit, so its chosen policy is a per-rung
+    fact. Suggested: `--lengths 135,195,256,300` -- the smoke's own size, the
+    size the 28.03 GiB budget was quoted at, the last rung with the pool, and
+    the tool layer's ceiling.
+
+    THE TARGET HAS TO BE RENAMED, not just lengthened. `resolve_target`
+    refuses a preset name carrying a `target_sequence` ("is a preset target;
+    omit target_sequence") and refuses a non-preset name without one, so
+    growing past the 115-residue pd-l1 preset means leaving the preset route
+    entirely. The binder keeps input-design.json's own 80:195 share of the
+    complex, so both chains grow instead of a fixed 20-residue binder against
+    a swelling target.
+
+    Kept at `pass: "warm"` deliberately. The design pass's length is a pinned
+    module constant the kit refuses to see changed, so a design ladder would
+    be four 150-step runs; the warm pass runs the same fold-under-grad and
+    re-plans the same composition in seconds.
+
+    NOTE THE BUDGET. `vram_budget_gb` is 28.03, quoted at 195 tokens under
+    mode `fast`, whose planner deliberately grows to fill the card -- so rungs
+    above that will record peaks well above the declared figure, and nothing
+    refuses them. That is the declared behaviour of the mode, not a fault, but
+    it means these rungs do not establish an envelope the way other providers'
+    do.
+    """
+    doc = json.loads(text)
+    # input-design.json's own shape: an 80-residue binder in a 195-token
+    # complex. Clamped to the tool layer's 8..200 binder range so a rung stays
+    # something a caller could also have asked for.
+    binder = max(8, min(200, round(n * 80 / 195)))
+    target_len = n - binder
+    if target_len < 1:
+        raise ValueError(f"ef2inv shaper: rung {n} is too small to hold a binder")
+    doc["target_name"] = "ladder"  # NOT a preset name, or target_sequence is refused
+    # No "|": the worker counts len(target_seq) raw while the kit's own
+    # complex_tokens strips chain breaks, and the two must agree.
+    doc["target_sequence"] = _tile(PROT, target_len)
+    doc["binder_len"] = binder
+    doc["pass"] = "warm"
+    return json.dumps(doc)
+
+
+def _proteinmpnn_backbone(text, n):
+    """Resize proteinmpnn's inline backbone to exactly n residues.
+
+    NOTHING HERE REBUILDS, AND THAT IS THE FINDING. The only cache in this
+    worker is `_model(variant)`, keyed on the weight set and nothing else;
+    there is no torch.compile, no CUDA graph and no shape-keyed dict anywhere
+    in the file, and upstream is dynamic-shape eager (`torch.topk(...,
+    min(self.top_k, X.shape[1]))` adapts k to L at runtime). So this ladder is
+    NOT a rebuild test and must not be read as one -- it is a cost-versus-size
+    table plus a robustness sweep, and the honest reason to run it is that
+    residue count drives the one genuinely sequential part of the model, the
+    autoregressive decode, which is L steps long. The mixed phase still earns
+    its place: it shows a second DIFFERENT input neither corrupts the held
+    model nor breaks the seed replay.
+
+    The harness will print `peak=None` for every rung. That is correct rather
+    than broken -- this provider runs on the CPU under `policy = "none"` and
+    reports `rss_gib`, because there is no device memory to report.
+
+    THE RESIZE IS esm_if1's RECIPE WITH A DIFFERENT PARSER'S RULES. Rungs at
+    or below the record's length truncate it; longer rungs lay whole copies
+    down 200 A apart along +x and renumber consecutively. What differs from
+    esm_if1:
+
+      - the kit's `fast_parse` rebuilds the sequence over
+        `range(min_resn, max_resn + 1)` and emits ANY MISSING NUMBER AS A GAP
+        -- sequence character "-" and NaN coordinates, and "-" is inside
+        stock's alphabet so it is not dropped. A gap would silently inflate
+        the residue count and feed NaN into the featuriser. So the numbering
+        has to be strictly consecutive, which is why resseq is rewritten
+        rather than carried.
+      - residue number is read from `line[22:27]`, FIVE columns, with a
+        trailing letter taken as an insertion code. The %4d plus a space below
+        keeps column 27 blank, so no rung is read as an icode.
+      - columns past 54 are not parsed here (biotite's occupancy/B-factor
+        requirement that shaped esm_if1's slicing does not apply), but they
+        are carried anyway so the record stays a valid PDB.
+
+    ONE PROPERTY esm_if1 HAS THAT THIS DOES NOT, said plainly: the smoke's
+    record is 40 residues and k is `min(48, L)`, so above 48 residues at least
+    eight of every residue's neighbours necessarily come from another copy at
+    200 A. That is numerically harmless -- the RBF basis saturates, no NaN --
+    but the kNN graph does NOT stay inside one copy, so rungs above 48
+    residues are a measurement of what a length costs rather than a
+    biological backbone. Building from the kit's full 106-residue chain A
+    would fix that and would make the shaper read a file the smoke does not
+    carry; keeping it self-contained was the trade taken.
+    """
+    doc = json.loads(text)
+    res, order = {}, []
+    for line in doc["structure"].splitlines():
+        if not line.startswith("ATOM") or len(line) < 54:
+            continue
+        key = line[22:27]
+        if key not in res:
+            res[key] = []
+            order.append(key)
+        res[key].append(line)
+    if not order:
+        raise ValueError("proteinmpnn shaper: the smoke input carries no ATOM records")
+
+    out, serial, resseq = [], 0, 0
+    while resseq < n:
+        shift = 200.0 * (resseq // len(order))
+        for key in order:
+            if resseq >= n:
+                break
+            resseq += 1
+            for line in res[key]:
+                serial += 1
+                x = float(line[30:38]) + shift
+                out.append(
+                    "%s%5d%s%s%4d %s%8.3f%s"
+                    % (
+                        line[:6],
+                        serial,
+                        line[11:21],
+                        "A",
+                        resseq,
+                        line[27:30],
+                        x,
+                        line[38:],
+                    )
+                )
+    doc["structure"] = "\n".join(out) + "\nEND\n"
+    return json.dumps(doc)
+
+
+def _genie3_len(text, n):
+    """A genie3 request for designs of exactly n residues.
+
+    Here the size really is the key, and generously so: `_engine_key` is a
+    sha256 over the WHOLE composed request with only `paths.rootdir` and
+    `experiment.name` removed, and the worker holds exactly one engine and
+    rebuilds on any mismatch. So every rung is a genuine
+    `build_everything` -- checkpoint read, network construction, sampler and
+    data module.
+
+    THIS IS THE PROVIDER THE MIXED PHASE WAS WRITTEN FOR, and the ladder's
+    second rung is what found it. Upstream's `default_config` is a
+    module-level ConfigDict whose `common` section holds module-level
+    `FieldReference` objects, so the first `build_sample_config_from_dict` in
+    a process succeeds and every later one raises
+    "Cannot update a FieldReference from another FieldReference". It has
+    nothing to do with the request -- not its length, not its batch size --
+    only with being the SECOND build. Four identical requests could never
+    have reached it. The worker now deep-copies a pristine config before
+    anything builds and rebinds it before every build, and refuses to start
+    if the config is already polluted, so a mixed ladder should PASS -- and
+    that pass is the regression test for exactly that repair.
+
+    `n_sample` stays at 2 deliberately: at batch size 1 that is two batches of
+    the same feature shape, which is the only thing that exercises the CUDA
+    graph's capture-then-replay, and the reply's `graph_cache.hits` should
+    read 1. Dropping it to 1 leaves a miss and no hit. `n_sample_step` and
+    `direction_scale` are held constant because both are also in the engine
+    key, and varying two axes at once would confound the ladder.
+    """
+    import yaml
+
+    doc = yaml.safe_load(text)
+    ds = doc["generation"]["dataset"]
+    ds["min_length"] = n
+    ds["max_length"] = n
+    # min == max already pins one length; the measured ladder used n here.
+    ds["length_step"] = n
+    return yaml.safe_dump(doc, sort_keys=False)
+
+
+def _boltzgen_len(text, n):
+    """A boltzgen monomer of exactly n residues.
+
+    SAY THIS PLAINLY: boltzgen has NO ENGINE KEY, because it holds no engine.
+    Upstream re-reads the step's checkpoint inside every run, the kit's
+    in-process module is exec'd fresh per request, and `configure` is a clean
+    subprocess -- so every request is already a full rebuild and there is no
+    cache a ladder could fail to invalidate. What residency buys here is the
+    process: imports, the CUDA context and the Triton / cuEquivariance JIT
+    caches. This ladder therefore measures the per-request capture shape and
+    the VRAM envelope, and it is not a rebuild test.
+
+    It is still worth running, for a reason specific to this provider: the
+    kit's cross-attention lever keeps a MODULE-LEVEL `STATS` dict and
+    `_disable(reason)` turns the lever off FOR THE PROCESS on a mismatch, and
+    the atexit verdict then ends the process with exit 3. So one bad shape
+    poisons every later request in a held worker -- genie3's hazard in a
+    different place, and only a mixed sequence of shapes can find it.
+
+    `n..n` rather than a range: `parse_polymer` draws
+    `np.random.randint(start, end + 1)` per design, so a range would give
+    every design in the batch a different shape and the rung would not be one
+    length.
+
+    num_designs and diffusion_batch_size stay at 2. Neither is an engine key
+    -- they are resolved in a per-request subprocess -- but a diffusion batch
+    of ONE is refused by the worker on this mode, and that pre-check exists
+    because without it the kit's hoist self-check fails a stride comparison,
+    disables the lever for the process and ends it with exit 3. `steps` stays
+    ["design"] so the rung is the one GPU step the budget was measured on;
+    the full pipeline would also load Boltz-2 for folding, a different and
+    larger peak.
+
+    WATCH FOR `produced=NOTHING` RATHER THAN A FAILURE. Upstream SKIPS a
+    diffusion batch it cannot fit and still exits 0, so an over-large rung
+    comes back successful and empty. `ask` prints produced=NOTHING for it and
+    does not count it as failed; read that as a failed rung by hand.
+    """
+    import yaml
+
+    doc = yaml.safe_load(text)
+    doc["specification"]["entities"][0]["protein"]["sequence"] = "%d..%d" % (n, n)
+    return yaml.safe_dump(doc, sort_keys=False)
+
+
+def _rfdiffusion3_case(text, n):
+    """n residues, AND a per-rung sampler perturbation -- because length alone
+    rebuilds nothing here.
+
+    THE APNOVO TRAP, A THIRD TIME, in the provider whose own measured ladder
+    is written in residues. `_build_key` is
+    `{"diffusion_batch_size", "inference_sampler"}` and NOTHING ELSE: the
+    length, `n_batches`, the seed and the specification are all free, and
+    `engine.initialize()` returns early once the engine exists. So a pure
+    length ladder would move the tensor shapes and the peak while reusing one
+    build for every rung, and would print four greens having rebuilt nothing.
+
+    The rung therefore carries both. The length is what the VRAM envelope is
+    quoted in, so it stays the rung's number; `num_timesteps` is perturbed by
+    an injective function of it so every rung is also a distinct build key --
+    a 2.7 GB checkpoint reload and a model construct per rung.
+
+    THE PERTURBATION IS DELIBERATELY TINY AND SITS ON THE DEFAULT. Upstream's
+    default is 200, so 200 + n // 100 gives 201..204 across the measured
+    ladder: within about 2% of the configuration the envelope was measured at,
+    and `num_timesteps` is a LOOP BOUND rather than a shape, so it moves the
+    build key without moving the peak the ladder exists to measure.
+
+    DO NOT LADDER ABOVE THE MEASURED 400 RESIDUES. The kit pins its
+    dense-versus-sparse atom-attention decision per shape for the process, and
+    on this route a shape it sends sparse is REFUSED -- by raising
+    `KernelsRefused`, which subclasses `SystemExit`. The shared serve loop
+    catches `Exception`, and SystemExit is not one, so that refusal does not
+    fail a request: it takes the whole resident worker down with exit 5, and
+    every later rung and repeat in the run then fails to connect. A ladder
+    that dies partway is that, not a harness fault. The threshold is a joint
+    function of length, diffusion batch and CURRENTLY FREE memory, so a
+    co-tenant can trip it at a rung that passed before.
+
+    None of the levers the kit refuses by name (classifier-free guidance,
+    low-memory mode, the symmetry sampler, compile_model) is set here.
+    """
+    doc = json.loads(text)
+    spec = doc["specification"]
+    # The smoke's design name is "smoke60"; read it rather than hard-code it.
+    name = next(iter(spec))
+    spec[name]["length"] = str(n)
+    opts = doc.setdefault("options", {})
+    sampler = dict(opts.get("inference_sampler") or {})
+    sampler["num_timesteps"] = 200 + n // 100
+    opts["inference_sampler"] = sampler
+    return json.dumps(doc)
+
+
+def _boltz_len(text, n):
+    """A boltz YAML of n residues -- the rung is the exact token count.
+
+    Boltz does NOT pad: `inferencev2` features the record with
+    `max_tokens=None` and `max_atoms=None`, and the batch is one record, so n
+    residues go through the trunk as n tokens. The engine is the kit's
+    `graph_trunk` lever, whose generations are keyed on `b["z"].shape[1]` with
+    no rounding -- one `torch.cuda.MemPool` and one captured set of graphs per
+    DISTINCT token count, held at module level across requests. That cache is
+    what the provider's "structure pass falls from ~23 s to 5.8 s" is.
+
+    TWO THINGS DECIDE THE RIGHT RUNGS, and the default ladder gets both wrong.
+    Graphs are used only inside [MIN, MAX] tokens and the fast row sets
+    `BOLTZ_GRAPH_TRUNK_MAX_TOKENS=300`: above it the lever steps aside BY NAME
+    (counted `eager:above_max_tokens`) and captures nothing, so rungs of 400
+    and 800 would exercise no engine at all. And only two generations are
+    kept, so a third distinct count evicts the oldest -- itself worth seeing.
+    Hence 100/200/290/400: three capture generations with one eviction, then
+    one deliberate rung above the ceiling to exercise the step-aside and the
+    pool release.
+
+    `msa: empty` is rewritten onto the chain rather than assumed. A protein
+    chain without it defaults to the MSA-SERVER path, which is a different
+    mode, not a different size -- and that mode is what this file's MODES
+    entry toggles deliberately. A shaper that dropped it would silently merge
+    the two axes.
+
+    No ascending discipline is needed for this provider's peaks: its worker
+    resets `torch.cuda` peak stats per request through `on_reset`, so every
+    rung reports its own peak rather than a session high-water mark.
+    """
+    seq = _tile(PROT, n)
+    out, done = [], False
+    for line in text.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("sequence:"):
+            out.append(line[: len(line) - len(line.lstrip())] + "sequence: " + seq)
+            done = True
+        elif stripped.startswith("msa:"):
+            out.append(line[: len(line) - len(line.lstrip())] + "msa: empty")
+        else:
+            out.append(line)
+    if not done:
+        raise ValueError(
+            "boltz shaper: no `sequence:` line in the smoke -- re-derive this "
+            "from the smoke rather than guessing its shape"
+        )
+    return chr(10).join(out) + chr(10)
+
+
+def _chai1_crop(text, n):
+    """A chai1 FASTA of n residues -- and n must be chosen to CHANGE THE CROP.
+
+    THIS IS THE apnovo TRAP, LIVE, AND THE DEFAULT LADDER WALKS INTO IT.
+    chai-lab pads every input to one of seven exported sizes --
+    `AVAILABLE_MODEL_SIZES = [256, 384, 512, 768, 1024, 1536, 2048]`, and
+    `pad_size` returns the smallest one >= the token count. The crop, not the
+    residue count, is then asserted and threaded through every module as
+    `crop_size`, and the kit's hoisted denoiser caches its Inductor compile in
+    a dict keyed on `(crop_size, hoister)` that lives for the life of the
+    process. So the engine key is the CROP.
+
+    The default `100,200,400,800` lands on crops 256, 256, 512, 1024: rung 2
+    is a byte-identical engine to rung 1 and would print green having built
+    nothing. DEFAULT_LENGTHS therefore gives this provider 250/380/500/760 ->
+    256/384/512/768, four distinct crops and four distinct compiles.
+
+    A rung exactly on a boundary is fine (`pad_size` is `>=`), and one residue
+    over a boundary jumps a crop -- useful if you want to assert the bucket
+    moved rather than assume it.
+
+    Single chain on purpose: the smoke is one protein chain, the declared
+    budget was measured on it, and nothing in the engine key cares about chain
+    count. The cost is that `iptm` is vacuous at every rung, which is a real
+    gap -- an interface ladder would need two chains with DISTINCT `name=`
+    values (duplicate names are refused outright) and distinct sequences (the
+    ESM pass deduplicates by sequence, so two identical chains would embed
+    once and that leg would stop scaling).
+
+    The header grammar is strict and is reproduced rather than carried:
+    exactly one `|`, an entity word from a five-case match, and a label that
+    is either `name=<x>` or a bare `<x>`. A second `|` raises.
+
+    CEILING: 2048 tokens, a real refusal -- `raise_if_too_many_tokens` raises
+    `UnsupportedInputError`, and `pad_size` would raise before that. Do not
+    ladder above it expecting a measurement.
+
+    Like boltz, this worker resets peak memory stats at the top of every
+    prediction, so its peaks are per-request and need no ascending discipline.
+    """
+    if n > 2048:
+        raise ValueError(
+            "chai1 shaper: %d tokens is above the top exported size (2048); "
+            "chai-lab refuses it rather than running it" % n
+        )
+    return ">protein|name=rung%d" % n + chr(10) + _tile(PROT, n) + chr(10)
+
+
+# hg38 SNVs whose REF has been checked against the genome this provider reads,
+# the hg38 FASTA this provider reads, `$BORZOI_CALICO_WEIGHTS/hg38.ml.fa`
+# (worker: `WEIGHTS_ROOT / "hg38.ml.fa"`), through its .fai -- all seven match.
+#
+# THE CHECK IS THE POINT, because a wrong REF here does not get refused, it
+# CRASHES. `vcf_snps` does not validate by default, and `snp_seq1` on a
+# mismatch prints "WARNING: ... reference genome does not match any allele"
+# and returns an EMPTY LIST (baskerville/vcf.py:244-248). That becomes an
+# array of shape (0,) and the Keras call fails inside the model, which reads
+# as a provider defect rather than a bad fixture. So these cannot be invented,
+# and they cannot be tiled from a pattern the way a protein sequence can.
+#
+# The first row is the smoke's own variant, so rung 1 is the smoke. The other
+# six are the kit's own test input (borzoi/tests/inputs/example_snvs.vcf) --
+# the same provenance argument fixtures/README.md makes for gpnstar. Seven is
+# more than the ceiling of four, so no row is ever repeated within a run.
+_BORZOI_SNVS = [
+    ("chr1", 43110773, "G", "A"),
+    ("chr1", 5874827, "C", "T"),
+    ("chr2", 5540132, "G", "T"),
+    ("chr3", 5099582, "C", "T"),
+    ("chr5", 6023169, "T", "C"),
+    ("chr8", 5724953, "G", "A"),
+    ("chr12", 5290537, "C", "G"),
+]
+
+
+def _borzoi_variants(text, n):
+    """A request for n variants -- borzoi's rung is a VARIANT COUNT, not a length.
+
+    Nothing in this provider recompiles: `SeqNN` is built once at worker start
+    over a fixed `Input(shape=(524288, 4))` and `SeqNN.__call__` is plain eager
+    numpy, with no `tf.function` and so no retrace cache to key on. And the
+    caller's own sequence never reaches the model at all -- each variant is
+    scored on a 524,288-base window cut from the genome around it, so the
+    tensor is always (2, 524288, 4), one ref row and one alt row.
+
+    So a length ladder would scale nothing, and this is the axis that does
+    scale: cost is per variant, and the count is also what sizes the output
+    HDF5 datasets and what `write_pct` takes its percentiles over -- a
+    one-row percentile and an n-row percentile are different arithmetic, which
+    no number of repeats would reach.
+
+    THE RUNG IS NOT CLAMPED TO THE CEILING ON PURPOSE. The worker refuses more
+    than `BORZOI_CALICO_MAX_VARIANTS` (4 by default), so an over-large rung
+    shows that refusal happening rather than quietly becoming a smaller run --
+    the same choice the opendde entry below makes about its 512-token ceiling.
+    Run this one as `--lengths 1,2,3,4`; the default 100,200,400,800 is four
+    refusals, which is a real result but not a ladder.
+    """
+    doc = json.loads(text)
+    out = []
+    for i in range(n):
+        chrom, pos, ref, alt = _BORZOI_SNVS[i % len(_BORZOI_SNVS)]
+        # Distinguish the rows if n ever exceeds the pool, so the `snp` dataset
+        # and the reply rows stay addressable.
+        suffix = "" if i < len(_BORZOI_SNVS) else "_%d" % (i // len(_BORZOI_SNVS))
+        out.append(
+            {
+                "chrom": chrom,
+                "pos": pos,
+                "ref": ref,
+                "alt": alt,
+                "id": f"{chrom}_{pos}_{ref}_{alt}_b38{suffix}",
+            }
+        )
+    doc["variants"] = out
+    return json.dumps(doc)
+
+
 # A provider whose ACCURACY depends on a mode the smoke does not exercise
 # declares that mode here, and a run that skips it is INCOMPLETE.
 #
@@ -616,6 +1064,87 @@ SHAPERS = {
     # NOT a length ladder: everything pads to 512 residues, so the rung is a
     # denoising step count. See _apnovo_steps.
     "apnovo": _apnovo_steps,
+    # NOT a length ladder either: the rung is a variant count. See
+    # _borzoi_variants, and run it as `--lengths 1,2,3,4`.
+    "borzoi_calico": _borzoi_variants,
+    # The rung IS the size here, but it is the COMPLEX's token count, and it
+    # really does re-plan the composition. See _ef2inv_case.
+    "ef2inv": _ef2inv_case,
+    # A cost table rather than a rebuild test, and the docstring says so.
+    "proteinmpnn": _proteinmpnn_backbone,
+    "boltz": _boltz_len,
+    # The rung must CHANGE THE CROP, not merely the length. See _chai1_crop.
+    "chai1": _chai1_crop,
+    "genie3": _genie3_len,
+    "boltzgen": _boltzgen_len,
+    # Length alone rebuilds NOTHING here; the rung carries a sampler
+    # perturbation too. See _rfdiffusion3_case.
+    "rfdiffusion3": _rfdiffusion3_case,
+}
+
+
+# THE DEFAULT LADDER IS WRONG FOR SOME PROVIDERS, AND WRONG IN THE WAY THIS
+# SCRIPT EXISTS TO CATCH. 100/200/400/800 lands chai1 on crops 256, 256, 512
+# and 1024 -- its second rung is a byte-identical engine to its first, and it
+# would print green having compiled nothing. It puts two of boltz's four rungs
+# above the token ceiling where the graph lever steps aside and captures
+# nothing. It asks borzoi_calico for 100 variants against a ceiling of 4, so
+# every rung is a refusal rather than a rung.
+#
+# A provider that knows its own engine key also knows where the rungs belong,
+# so it says so here and `--lengths` stays available to override.
+DEFAULT_LENGTHS = {
+    # crops 256 / 384 / 512 / 768 -- four distinct exported sizes
+    "chai1": [250, 380, 500, 760],
+    # three capture generations (one eviction at KEEP=2), then one rung above
+    # BOLTZ_GRAPH_TRUNK_MAX_TOKENS=300 to exercise the step-aside
+    "boltz": [100, 200, 290, 400],
+    # the ceiling is 4 variants, and each costs about 255 s
+    "borzoi_calico": [1, 2, 3, 4],
+    # the smoke's own size, the size the budget was quoted at, the last rung
+    # that still gets the trunk graph pool, and the tool layer's ceiling
+    "ef2inv": [135, 195, 256, 300],
+    # denoising steps, with the published setting as the top rung
+    "apnovo": [100, 250, 500, 1000],
+    # 106 is the full 5L33 chain A; 400 is the top of what has ever been run
+    "proteinmpnn": [106, 200, 400, 800],
+    # 670 is the top of the measured envelope and the tool's own ceiling
+    "genie3": [100, 200, 400, 670],
+    # the measured ladder; nothing here was ever pushed to failure
+    "boltzgen": [60, 100, 200, 400, 600],
+    # DO NOT RAISE. Past the measured 400 the kit's attention preflight can
+    # refuse via a SystemExit subclass, which kills the worker rather than
+    # failing the request.
+    "rfdiffusion3": [100, 200, 300, 400],
+}
+
+
+# A SHAPER WOULD BE WRONG HERE, AND SAYING "NO SHAPER" IS NOT THE SAME AS
+# SAYING SO. The `!! NO SHAPER` block below tells its reader to go and add
+# one; for these providers that advice would produce exactly the failure this
+# script exists to prevent -- four rungs, one engine, four greens. Each entry
+# is the reason, and a run of one of these is COMPLETE rather than incomplete.
+NO_SHAPER = {
+    "enformer": (
+        "every request is centre-cropped or N-padded to Enformer's fixed "
+        "196,608 bases before the model sees it (SEQ_LENGTH at "
+        "enformer_resident_worker.py:96, applied in _encode), so the tensor is "
+        "always (1, 196608) and a length ladder would run the SAME shape four "
+        "times. The worker also builds its model once at import and caches "
+        "nothing, so no request-reachable key exists to vary. (Under kit mode "
+        "`exact`, which is x86-64 only and `off` here, the graph lever keys on "
+        "batch size and window length -- and the worker fixes both.)"
+    ),
+    "enformer_deepmind": (
+        "same fixed window, one size up: every request becomes "
+        "(1, 393216, 4) (INPUT_LENGTH at "
+        "enformer_deepmind_resident_worker.py:103, applied in _one_hot), so an "
+        "8 kb sequence and a 393 kb one cost the same ~200 s. It is a TF-Hub "
+        "SavedModel called through predict_on_batch with no tf.function of "
+        "ours, so nothing is traced per shape either -- two consecutive "
+        "identical predictions measured 194.1 s and 205.8 s, i.e. the second "
+        "is not cheaper. Its provider.toml already declares this."
+    ),
 }
 
 # What a rung MEANS, for a provider whose rung is not residues. The label is
@@ -625,6 +1154,8 @@ SHAPERS = {
 # for. Default "aa".
 UNITS = {
     "apnovo": "steps",
+    "borzoi_calico": "variants",
+    "ef2inv": "tokens",
     "colabdesign": "tokens",
     "af2ig": "res (2 chains)",
     "colabfold": "res (2 chains)",
@@ -637,7 +1168,13 @@ UNITS = {
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("slug")
-    ap.add_argument("--lengths", default="100,200,400,800")
+    ap.add_argument(
+        "--lengths",
+        default=None,
+        help="comma-separated rungs; defaults to this provider's own ladder "
+        "from DEFAULT_LENGTHS, which exists because the generic "
+        "100,200,400,800 is actively wrong for several providers",
+    )
     ap.add_argument("--repeats", type=int, default=4)
     ap.add_argument(
         "--no-network",
@@ -695,7 +1232,19 @@ def main() -> int:
 
     shaper = SHAPERS.get(a.slug)
     unit = UNITS.get(a.slug, "aa")
-    lens = [int(x) for x in a.lengths.split(",")] if shaper else []
+    if a.lengths:
+        lens = [int(x) for x in a.lengths.split(",")] if shaper else []
+    else:
+        lens = list(DEFAULT_LENGTHS.get(a.slug, [100, 200, 400, 800])) if shaper else []
+    if lens:
+        print(
+            "   rungs %s %s (%s)"
+            % (
+                ",".join(str(x) for x in lens),
+                unit,
+                "given" if a.lengths else "this provider's own ladder",
+            )
+        )
 
     # The ladder runs FIRST and ASCENDING. `peak_reserved_gib` is a running
     # high-water mark in six of the eight workers written so far -- only boltz
@@ -745,7 +1294,13 @@ def main() -> int:
             if ask(f"mode {label}", mode["transform"](text), name, mode["options"]) is None:
                 modes_rc = max(modes_rc, 1)
 
-    if not shaper:
+    if not shaper and a.slug in NO_SHAPER:
+        print(
+            f"-- no shaper for {a.slug}, DELIBERATELY: {NO_SHAPER[a.slug]}\n"
+            f"   Repeats are the whole test for this provider, and this run "
+            f"is complete."
+        )
+    elif not shaper:
         print(
             f"!! NO SHAPER FOR {a.slug}: this run is INCOMPLETE, and not "
             f"only because the budget envelope is unestablished. Identical "
@@ -764,7 +1319,7 @@ def main() -> int:
     # report a mode that FAILED as merely unestablished.
     if ok != a.repeats or modes_rc == 1:
         return 1
-    if not shaper:
+    if not shaper and a.slug not in NO_SHAPER:
         return 2
     # A skipped mode leaves the run incomplete.
     return modes_rc
