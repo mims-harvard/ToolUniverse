@@ -1293,7 +1293,13 @@ class ToolUniverse:
             if exclude_categories is None:
                 exclude_categories = profile_tools.get("exclude_categories", [])
             if include_tools is None and tools_file is None:
-                include_tools = profile_tools.get("include_tools", [])
+                # `or None`, not `[]`: an empty profile list means "the Profile
+                # names no tools", which is the same as omitting the argument.
+                # Leaving it as `[]` made it non-None, and the full-reload branch
+                # below tests for None -- so every workspace profile.yaml (the
+                # seeded default has `include_tools: []`) silently turned a later
+                # `load_tools(categories=[...])` into an additive no-op.
+                include_tools = profile_tools.get("include_tools") or None
             if include_tool_types is None:
                 include_tool_types = profile_tools.get("include_tool_types", [])
             if exclude_tool_types is None:
@@ -1311,7 +1317,12 @@ class ToolUniverse:
         self.logger.debug(f"Number of tools before load tools: {len(self.all_tools)}")
 
         # Full reload (no include_tools): clear existing tools so repeated calls
-        # don't accumulate duplicates before deduplication runs.
+        # don't accumulate duplicates before deduplication runs. `is None` and
+        # not falsiness, deliberately: SMCP passes `include_tools=[]` on every
+        # load (smcp.py:524, :699) and relies on this branch being SKIPPED so
+        # that its compact-mode categories add to what it has already loaded
+        # (smcp.py:712). An empty list from a Profile is normalised to None
+        # above, which is why that case reaches the reload and this one does not.
         if include_tools is None and tools_file is None:
             self.all_tools = []
             self.all_tool_dict = {}
