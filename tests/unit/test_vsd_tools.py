@@ -246,7 +246,11 @@ def test_tooluniverse_end_to_end_register_query_and_remove(monkeypatch, tmp_path
         "VSDRemoveSource",
     ]
     tu = ToolUniverse()
-    tu.load_tools(include_tools=names, quiet=True)
+    # clear_existing, because the assertion below is "only these": include_tools
+    # on its own means "these as well", and a workspace profile.yaml -- which
+    # ToolUniverse seeds and applies at construction -- has by then loaded the
+    # whole catalogue. This passed only in a checkout that had no workspace.
+    tu.load_tools(include_tools=names, quiet=True, clear_existing=True)
     assert {tool["name"] for tool in tu.all_tools} == set(names)
 
     discovery = tu.run_one_function(
